@@ -52,28 +52,34 @@ class CLI {
     return console.log(JSON.stringify(json, null, 2));
   }
 
-  async getBalance() {
-    const hash = this.config.str(0, '');
-
-    const response = await this.client.getBalance(hash);
-
+  show(response) {
     if (!response) {
-      this.log('Balance not found.');
+      this.log('Response is empty.');
       return;
     }
 
     this.log(response.result);
   }
 
+  async blockflowFetch() {
+    const fromTs = this.config.int(0, '');
+    const toTs = this.config.int(1, '');
+
+    const response = await this.client.blockflowFetch(fromTs, toTs);
+    this.show(response);
+  }
+
+
+  async getBalance() {
+    const hash = this.config.str(0, '');
+
+    const response = await this.client.getBalance(hash);
+    this.show(response);
+  }
+
   async selfClique() {
     const response = await this.client.selfClique();
-
-    if (!response) {
-      this.log('Self clique not found.');
-      return;
-    }
-
-    this.log(response.result);
+    this.show(response);
   }
 
   async transfer() {
@@ -85,8 +91,7 @@ class CLI {
     const value = this.config.str(5, '');
 
     const response = await this.client.transfer(fromAddress, fromType, fromPrivateKey, toAddress, toType, value);
-
-    this.log(response.result);
+    this.show(response);
   }
 
 
@@ -124,6 +129,9 @@ class CLI {
       case 'balance':
         await this.getBalance();
         break;
+      case 'blockflow_fetch':
+        await this.blockflowFetch();
+        break;
       case 'self_clique':
         console.log(this.client.clique);
         break;
@@ -137,6 +145,7 @@ class CLI {
         this.log('Unrecognized command.');
         this.log('Commands:');
         this.log('  $ balance [address]: Get account balance.');
+        this.log('  $ blockflow_fetch [fromTs] [toTs]: Fetch blockflow history.');
         this.log('  $ self_clique: Return clique information.');
         this.log('  $ transfer [fromAddress] [fromType] [fromPrivateKey] [toAddress] [toType] [value]: Submit a new transaction.');
         this.log('  $ rpc [command] [args]: Execute RPC command.');
