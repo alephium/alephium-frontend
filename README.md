@@ -1,3 +1,7 @@
+# Install
+
+`npm install`
+
 # Usage
 
 ```

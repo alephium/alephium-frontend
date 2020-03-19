@@ -2,12 +2,6 @@
   "name": "alf-client",
   "version": "0.0.1",
   "description": "ALF node and wallet client",
-  "keywords": [
-    "http",
-    "request",
-    "socket.io",
-    "websockets"
-  ],
   "license": "GPL",
   "repository": "git://github.com/alephium/alephium-client.git",
   "homepage": "https://gitlab.com/alephium/alephium-client",
