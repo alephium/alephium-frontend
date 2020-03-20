@@ -69,7 +69,6 @@ class CLI {
     this.show(response);
   }
 
-
   async getBalance() {
     const hash = this.config.str(0, '');
 
@@ -93,8 +92,6 @@ class CLI {
     const response = await this.client.transfer(fromAddress, fromType, fromPrivateKey, toAddress, toType, value);
     this.show(response);
   }
-
-
 
   async rpc() {
     const method = this.argv.shift();
