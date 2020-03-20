@@ -1,0 +1,167 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const Config = require('bcfg');
+const CliqueClient = require('../lib/clique');
+const NodeClient = require('../lib/node');
+
+const ports = {
+  rpc: 10973
+};
+
+class CLI {
+  constructor() {
+    this.config = new Config('alf-cli', {
+      alias: {
+        'h': 'httphost',
+        'p': 'httpport'
+      }
+    });
+
+    this.config.load({
+      argv: true,
+      env: true
+    });
+
+    this.config.open('alf.conf');
+
+    this.argv = this.config.argv;
+  }
+
+  async connect() {
+    const client = new NodeClient({
+      host: this.config.str('http-host'),
+      port: this.config.uint('http-port')
+        || ports.rpc
+    });
+
+    const response = await client.selfClique();
+
+    if (!response) {
+      this.log('Self clique not found.');
+      return;
+    }
+
+    this.client = new CliqueClient(response.result);
+  }
+
+  log(json) {
+    if (typeof json === 'string')
+      return console.log.apply(console, arguments);
+    return console.log(JSON.stringify(json, null, 2));
+  }
+
+  show(response) {
+    if (!response) {
+      this.log('Response is empty.');
+      return;
+    }
+
+    this.log(response.result);
+  }
+
+  async blockflowFetch() {
+    const fromTs = this.config.int(0, '');
+    const toTs = this.config.int(1, '');
+
+    const response = await this.client.blockflowFetch(fromTs, toTs);
+    this.show(response);
+  }
+
+  async getBalance() {
+    const hash = this.config.str(0, '');
+
+    const response = await this.client.getBalance(hash);
+    this.show(response);
+  }
+
+  async selfClique() {
+    const response = await this.client.selfClique();
+    this.show(response);
+  }
+
+  async transfer() {
+    const fromAddress = this.config.str(0, '');
+    const fromType = this.config.str(1, '');
+    const fromPrivateKey = this.config.str(2, '');
+    const toAddress = this.config.str(3, '');
+    const toType = this.config.str(4, '');
+    const value = this.config.str(5, '');
+
+    const response = await this.client.transfer(fromAddress, fromType, fromPrivateKey, toAddress, toType, value);
+    this.show(response);
+  }
+
+  async rpc() {
+    const method = this.argv.shift();
+    const params = [];
+
+    for (const arg of this.argv) {
+      let param;
+      try {
+        param = JSON.parse(arg);
+      } catch (e) {
+        param = arg;
+      }
+      params.push(param);
+    }
+
+    let result;
+    try {
+      result = await this.client.execute(method, params);
+    } catch (e) {
+      if (e.type === 'RPCError') {
+        this.log(e.message);
+        return;
+      }
+      throw e;
+    }
+
+    this.log(result);
+  }
+
+  async open() {
+    switch (this.argv.shift()) {
+      case 'balance':
+        await this.getBalance();
+        break;
+      case 'blockflow_fetch':
+        await this.blockflowFetch();
+        break;
+      case 'self_clique':
+        console.log(this.client.clique);
+        break;
+      case 'transfer':
+        await this.transfer();
+        break;
+      case 'rpc':
+        await this.rpc();
+        break;
+      default:
+        this.log('Unrecognized command.');
+        this.log('Commands:');
+        this.log('  $ balance [address]: Get account balance.');
+        this.log('  $ blockflow_fetch [fromTs] [toTs]: Fetch blockflow history.');
+        this.log('  $ self_clique: Return clique information.');
+        this.log('  $ transfer [fromAddress] [fromType] [fromPrivateKey] [toAddress] [toType] [value]: Submit a new transaction.');
+        this.log('  $ rpc [command] [args]: Execute RPC command.');
+        break;
+    }
+  }
+
+  async destroy() {
+    if (this.client && this.client.opened)
+      await this.client.close();
+  }
+}
+
+(async () => {
+  const cli = new CLI();
+  await cli.connect()
+  await cli.open();
+  await cli.destroy();
+})().catch((err) => {
+  console.error(err.stack);
+  process.exit(1);
+});

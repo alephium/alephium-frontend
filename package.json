@@ -1,0 +1,33 @@
+{
+  "name": "alf-client",
+  "version": "0.0.1",
+  "description": "ALF node and wallet client",
+  "license": "GPL",
+  "repository": "git://github.com/alephium/alephium-client.git",
+  "homepage": "https://gitlab.com/alephium/alephium-client",
+  "bugs": {
+    "url": "https://gitlab.com/alephium/alephium-client/-/issues"
+  },
+  "author": "Cheng Wang <cheng.wang@alephium.org>",
+  "main": "./lib/alf-client.js",
+  "scripts": {
+    "lint": "eslint lib/ || exit 0",
+    "test": "bmocha --reporter spec test/*-test.js"
+  },
+  "bin": {
+    "alf-cli": "./bin/alf-cli"
+  },
+  "dependencies": {
+    "bcfg": "~0.1.6",
+    "bcurl": "~0.1.6",
+    "bsert": "~0.0.10"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "bmocha": "^2.1.0",
+    "eslint": "^6.8.0"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  }
+}
