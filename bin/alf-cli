@@ -39,8 +39,7 @@ class CLI {
     const response = await client.selfClique();
 
     if (!response) {
-      this.log('Self clique not found.');
-      return;
+      throw new Error('Self clique not found.');
     }
 
     this.client = new CliqueClient(response.result);
@@ -158,7 +157,7 @@ class CLI {
 
 (async () => {
   const cli = new CLI();
-  await cli.connect()
+  await cli.connect();
   await cli.open();
   await cli.destroy();
 })().catch((err) => {
