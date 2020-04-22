@@ -1,7 +1,8 @@
 'use strict';
 
 const assert = require('bsert');
-const wallet = require('../lib/wallet');
+const ALF = require('../lib/alf-client');
+const wallet = ALF.wallet;
 
 describe('Wallet', function() {
   it('should encrypt and decrypt using password', () => {
