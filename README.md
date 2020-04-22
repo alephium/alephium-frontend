@@ -10,3 +10,6 @@ node bin/alf-cli transfer 4b67a9704059abf76b5d75be94b0d16a85dd66d7dc106fcc2dd200
 
 node bin/alf-cli blockflow_fetch 0 0
 ```
+# Testing
+
+`npm test`
