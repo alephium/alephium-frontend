@@ -1,6 +1,6 @@
 {
   "name": "alf-client",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "ALF node and wallet client",
   "license": "GPL",
   "repository": "git://github.com/alephium/alephium-client.git",
