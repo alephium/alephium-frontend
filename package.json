@@ -22,7 +22,8 @@
     "bcurl": "~0.1.6",
     "browser-passworder": "^2.0.3",
     "bsert": "~0.0.10",
-    "elliptic": "^6.5.2"
+    "elliptic": "^6.5.2",
+    "keccakjs": "^0.2.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
