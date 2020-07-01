@@ -18,6 +18,7 @@
     "alf-cli": "./bin/alf-cli"
   },
   "dependencies": {
+    "base-x": "^3.0.2",
     "bcfg": "~0.1.6",
     "bcurl": "~0.1.6",
     "browser-passworder": "^2.0.3",
