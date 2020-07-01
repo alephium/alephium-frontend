@@ -18,7 +18,6 @@ describe('utils', function() {
     var hash = new keccak(256);
     hash.update(Buffer.from(pubKey, 'hex'))
     const result = hash.digest('hex');
-    console.log(result);
     assert.deepStrictEqual(pubKeyHash, result);
   });
 });
