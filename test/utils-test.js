@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('bsert');
-const keccak = require('keccakjs');
+const keccak = require('../lib/keccakjs');
 const utils = require('../lib/utils');
 const store = utils.Storage();
 
