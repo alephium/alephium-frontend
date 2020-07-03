@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('bsert');
-const bs58 = require('../lib/bs58');
 const keccak = require('../lib/keccakjs');
 const utils = require('../lib/utils');
 const store = utils.Storage();
@@ -20,10 +19,5 @@ describe('utils', function() {
     hash.update(Buffer.from(pubKey, 'hex'))
     const result = hash.digest('hex');
     assert.deepStrictEqual(pubKeyHash, result);
-  });
-  it('should encode in base58 in a compatible manner', () => {
-    const bytes = Buffer.from('003c176e659bea0f29a3e9bf7880c112b1b31b4dc826268187', 'hex')
-    const result = bs58.encode(bytes)
-    assert.deepStrictEqual('16UjcYNBG9GTK4uq2f7yYEbuifqCzoLMGS', result);
   })
 });
