@@ -131,9 +131,6 @@ class CLI {
       case 'self_clique':
         console.log(this.client.clique);
         break;
-      case 'transfer':
-        await this.transfer();
-        break;
       case 'rpc':
         await this.rpc();
         break;
@@ -143,7 +140,6 @@ class CLI {
         this.log('  $ balance [address]: Get account balance.');
         this.log('  $ blockflow_fetch [fromTs] [toTs]: Fetch blockflow history.');
         this.log('  $ self_clique: Return clique information.');
-        this.log('  $ transfer [fromAddress] [fromType] [fromPrivateKey] [toAddress] [toType] [value]: Submit a new transaction.');
         this.log('  $ rpc [command] [args]: Execute RPC command.');
         break;
     }
