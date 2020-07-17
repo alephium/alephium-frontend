@@ -13,8 +13,9 @@ describe('Wallet', function() {
   });
   it('should import wallet in a compatible manner', () => {
     let myWallet = wallet.import('absent man bright miss adult input hole useless twist chair kiss motor');
-    assert.deepStrictEqual('12GVuxoYsXXmchvYdBtt3xTDwzppqN5SUovzPB7fzycZu', myWallet.address);
-    assert.deepStrictEqual('406950245cf34a9beae04c30d0aaaf776b30301f2347d96d3843f363cd658559', myWallet.publicKey);
-    assert.deepStrictEqual('139ea0dacc82a61f0173e9df8ec9dbdf0b76a254725f6b095a31975dd996f6432c827fc6c4ceded76c042e655d1dc2efc014fadb01d640689e80dc50a5a3f55f', myWallet.privateKey);
+    assert.deepStrictEqual('12DrN5ufyGFaX2nhJrrUQUZFFwQPkxVRzgsfnU9BR82ux', myWallet.address);
+    assert.deepStrictEqual('5f78d6c00ea6b4b6721f833893b549a63a020327d77202a19f058e5dcd627be6', myWallet.publicKey);
+    assert.deepStrictEqual('c9e596165497cbe6b6fe6860c3bde14bfdba8d2600f85bb9e72ade3bdeb62a64', myWallet.privateKey);
+
   })
 });
