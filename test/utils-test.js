@@ -11,6 +11,7 @@ describe('utils', function() {
     store.save('default', obj0);
     const obj1 = store.load('default');
     assert.deepStrictEqual(obj0, obj1);
+    store.remove('default');
   });
   it('should hash in a compatible manner', () => {
     const pubKey = '6d084b24287fa0ad939c689fbcf76ec9b750520cc2c2637a9055bac83e6277a2';
@@ -19,5 +20,11 @@ describe('utils', function() {
     hash.update(Buffer.from(pubKey, 'hex'))
     const result = hash.digest('hex');
     assert.deepStrictEqual(pubKeyHash, result);
+  });
+  it('should store and list multiple wallets', () => {
+    const obj0 = { 'theAnswer': 42 };
+    store.save('one', obj0);
+    store.save('two', obj0);
+    assert.deepStrictEqual(['one', 'two'], store.list())
   })
 });
