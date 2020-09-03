@@ -1,6 +1,8 @@
 'use strict';
 
 const assert = require('bsert');
+const fs = require('fs');
+
 const ALF = require('../lib/alf-client');
 const wallet = ALF.wallet;
 
@@ -12,10 +14,13 @@ describe('Wallet', function() {
     assert.deepStrictEqual(myWallet, readWallet);
   });
   it('should import wallet in a compatible manner', () => {
-    let myWallet = wallet.import('captain author fragile cart whisper process ketchup wink black traffic near industry north tiny arrange extra bone segment yard rate globe normal flower wolf');
-    assert.deepStrictEqual('16YbeLhyPoj8aaGNFkyQP7g32pfESvAtr7RQqNRyv9GiH', myWallet.address);
-    assert.deepStrictEqual('03a6c7186bdde625959c70e8018a42a3c9139ce11ccfde7cbb6a038f56f1d03507', myWallet.publicKey);
-    assert.deepStrictEqual('ee0eb3a41ddfdbef696abd284e277d908bd7f643a452a399933f40cea052ac0f', myWallet.privateKey);
+    const genesis = JSON.parse(fs.readFileSync('test/genesis.json', 'utf8'));
+    genesis.forEach(function(row) {
+      let myWallet = wallet.import(row.mnemonic);
+      assert.deepStrictEqual(row.address, myWallet.address);
+      assert.deepStrictEqual(row.pubKey, myWallet.publicKey);
+      assert.deepStrictEqual(row.priKey, myWallet.privateKey);
+    });
   });
   it('should generate wallet from seed in a bip32 compatible manner', () => {
     let myWallet = wallet.fromSeed(Buffer.from('000102030405060708090a0b0c0d0e0f', 'hex'));
