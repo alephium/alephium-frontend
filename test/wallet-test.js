@@ -5,10 +5,10 @@ const ALF = require('../lib/alf-client');
 const wallet = ALF.wallet;
 
 describe('Wallet', function() {
-  it('should encrypt and decrypt using password', () => {
+  it('should encrypt and decrypt using password', async () => {
     let myPassword = 'utopia';
     let myWallet = wallet.generate();
-    let readWallet = wallet.open(myPassword, myWallet.encrypt(myPassword))
+    let readWallet = await wallet.open(myPassword, myWallet.encrypt(myPassword))
     assert.deepStrictEqual(myWallet, readWallet);
   });
   it('should import wallet in a compatible manner', () => {
