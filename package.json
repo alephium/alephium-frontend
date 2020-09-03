@@ -23,6 +23,7 @@
     "bcurl": "~0.1.6",
     "bip32": "^2.0.5",
     "bip39": "^3.0.2",
+    "blakejs": "^1.1.0",
     "browser-passworder": "^2.0.3",
     "browserify-sha3": "^0.0.4",
     "bsert": "~0.0.10",
