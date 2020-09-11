@@ -21,12 +21,13 @@
     "base-x": "^3.0.2",
     "bcfg": "~0.1.6",
     "bcurl": "~0.1.6",
+    "bip32": "^2.0.5",
     "bip39": "^3.0.2",
+    "blakejs": "^1.1.0",
     "browser-passworder": "^2.0.3",
     "browserify-sha3": "^0.0.4",
     "bsert": "~0.0.10",
-    "elliptic": "^6.5.2",
-    "sha3": "^1.2.2"
+    "elliptic": "^6.5.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
