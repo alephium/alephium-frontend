@@ -33,5 +33,14 @@ describe('Wallet', function() {
   it('generate mnemonic with 24 words', () => {
     let myWallet = wallet.generate(networkType);
     assert.deepStrictEqual(myWallet.mnemonic.split(" ").length, 24);
-  })
+  });
+
+  it('should read wallet file', async () => {
+    const wallets = JSON.parse(fs.readFileSync('test/wallets.json', 'utf8')).wallets;
+    for (const row of wallets) {
+      let imported = wallet.import(row.mnemonic, networkType);
+      let opened = await wallet.open(row.password, JSON.stringify(row.file), networkType);
+      assert.deepStrictEqual(imported, opened)
+    }
+  });
 });

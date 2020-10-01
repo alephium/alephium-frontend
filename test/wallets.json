@@ -1,0 +1,27 @@
+{
+  "wallets": [
+    {
+      "mnemonic" :"scan pause slender around cube flavor neck shrug gadget ramp rude lend capable tone nose unhappy gift across cluster minor tragic fever detail script",
+      "seed" : "f585d130dd79d3b5bd63aa99d9bc6e6107cfbbe393b86d70e865f6e75c60a37496afc1b25cd4d1ab3b82d9b41f469c6c112a9f310e441814147ff27a5d65882b",
+      "password": "36ae0b75ef06d2e902e473c879c6e853193760ffa5dc29dc8da76133149e0892",
+      "file": {
+        "encrypted":"7ff7990eba3f91a6fb4742bfa22141a7a74380911c2adf4ac3869958683777b79d153f1a981daaa3684d20cc063ba34e7d43033faf433fc5f5113341b882bd611cf33b5365ce578a1a13a86f140dbacb57df1966956dac929144c456e0e667a186087a7ce6546a8e3b38f05a1dfda2c078397513b8e34487aea7fbe17558f2dc16e86a181acc0645883295381d29e5654efcb3275bf1cfd191c991fc8257aaeab87dda59cfccabf8b68ed824fb42dabd1111d683581cc436b5a204c4586c242b5fc207971c35d5c2",
+        "salt":"35db23de059c389712487e3917dec4e460cce3d2ed81a8e0849b7d21261ae13052d579e0e03e9987aeb5f0dc468a9fcf1f66f9ff4883ec4dbbd00ec61fcfd4f8",
+        "iv":"80d62e8f64fdde931d326b6307ac8b8d283b152f84350e151ceb1268fad6624cfc3e74ee33fa17fe85e7ad60ce430d92e24c3ce67e4c5efb98e64d8d93c26b2d",
+        "version":1
+      }
+    },
+    {
+      "mnemonic" :"fence motor uncle pass zero curve garlic match palm kingdom quality keep undo scissors host lend ginger human loop mad sting horse swap track",
+      "seed": "f346de0a6cb3c8f50eb651ed4f17d572f7184813d3366215b4a1a61d7c776bedca41373d9008176bac8cb2ff8216d5cc3542f37fd520b4938295ca85013dbb3c",
+      "password": "36ae0b75ef06d2e902e473c879c6e853193760ffa5dc29dc8da76133149e0892",
+      "file" :
+        {
+          "encrypted":"26d1d448a31d388c08afb40e2a790ecfb15dcd1f9ce8348419939e98a386221db3a69d25a981a327f26cb4611a6ebb4b6b784905ae519adff4992b11c8b6ebb70857de510e92f1bfe63d549599707b4b55e3312c925c2db7a745eb454ac4804af5f503a4e519df05c57b5c20480fd5e64b851ea448701761e8ac1194e451b6462d6e53d4390a4d4f7ea48a838a472e9b90e716d24de21fa432ed51a4f8f8fa4cef25b59e75d0a45bf51ed7c4d140d8ae48441a1ef9cfccee98babec4c5aca52756d38f9e666f7d9e",
+          "salt":"dcef78fcef000f8c5cee2572a2b2e20635ade3c7c8075d236d1bc8ca522166a398a4039e10cb27228fac53712f94a1a5045b89aa9db0efb4d4b069f8c7ac433c",
+          "iv":"20ae7b28c1642eb372cd8c6b44a3336375e9534e509c9b5cc15d399a66169a990fe830f84a64cda52dac7daccafbf89ed52aa6b72a595b77cd3668dc9db57507",
+          "version":1}
+
+    }
+  ]
+}
