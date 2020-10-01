@@ -10,7 +10,7 @@ const networkType = "T";
 describe('Wallet', function() {
   it('should encrypt and decrypt using password', async () => {
     let myPassword = 'utopia';
-    let myWallet = wallet.generate(networkType);
+    let myWallet = wallet.generate(networkType).wallet;
     let readWallet = await wallet.open(myPassword, myWallet.encrypt(myPassword), networkType)
     assert.deepStrictEqual(myWallet, readWallet);
   });
@@ -26,7 +26,7 @@ describe('Wallet', function() {
   });
 
   it('should generate wallet from seed in a bip32 compatible manner', () => {
-    let myWallet = wallet.fromSeed(Buffer.from('000102030405060708090a0b0c0d0e0f', 'hex'), "", networkType);
+    let myWallet = wallet.fromSeed(Buffer.from('000102030405060708090a0b0c0d0e0f', 'hex'), networkType);
     assert.deepStrictEqual('582faca65228efd4cbf229a274c4811dd9e20fc5a49dca98d093e781b9f16bff', myWallet.privateKey);
   });
 
