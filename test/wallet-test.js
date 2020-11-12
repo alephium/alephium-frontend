@@ -43,7 +43,7 @@ describe('Wallet', function() {
 
   it('should generate wallet from seed in a bip32 compatible manner', () => {
     let myWallet = wallet.fromSeed(Buffer.from('000102030405060708090a0b0c0d0e0f', 'hex'), networkType);
-    assert.deepStrictEqual('582faca65228efd4cbf229a274c4811dd9e20fc5a49dca98d093e781b9f16bff', myWallet.privateKey);
+    assert.deepStrictEqual('ca9e41e365d987fb5fb29fc016ae14e90a5279ec8b890e0c25b13f748bd384cb', myWallet.privateKey);
   });
 
   it('generate mnemonic with 24 words', () => {

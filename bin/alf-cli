@@ -7,7 +7,7 @@ const CliqueClient = require('../lib/clique');
 const NodeClient = require('../lib/node');
 
 const ports = {
-  rpc: 10973
+  rest: 12973
 };
 
 class CLI {
@@ -33,7 +33,7 @@ class CLI {
     const client = new NodeClient({
       host: this.config.str('http-host'),
       port: this.config.uint('http-port')
-        || ports.rpc
+        || ports.rest
     });
 
     const response = await client.selfClique();
@@ -42,7 +42,7 @@ class CLI {
       throw new Error('Self clique not found.');
     }
 
-    this.client = new CliqueClient(response.result);
+    this.client = new CliqueClient(response);
   }
 
   log(json) {
@@ -92,34 +92,6 @@ class CLI {
     this.show(response);
   }
 
-  async rpc() {
-    const method = this.argv.shift();
-    const params = [];
-
-    for (const arg of this.argv) {
-      let param;
-      try {
-        param = JSON.parse(arg);
-      } catch (e) {
-        param = arg;
-      }
-      params.push(param);
-    }
-
-    let result;
-    try {
-      result = await this.client.execute(method, params);
-    } catch (e) {
-      if (e.type === 'RPCError') {
-        this.log(e.message);
-        return;
-      }
-      throw e;
-    }
-
-    this.log(result);
-  }
-
   async open() {
     switch (this.argv.shift()) {
       case 'balance':
@@ -131,16 +103,12 @@ class CLI {
       case 'self_clique':
         console.log(this.client.clique);
         break;
-      case 'rpc':
-        await this.rpc();
-        break;
       default:
         this.log('Unrecognized command.');
         this.log('Commands:');
         this.log('  $ balance [address]: Get account balance.');
         this.log('  $ blockflow_fetch [fromTs] [toTs]: Fetch blockflow history.');
         this.log('  $ self_clique: Return clique information.');
-        this.log('  $ rpc [command] [args]: Execute RPC command.');
         break;
     }
   }
