@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-'use strict';
-
-exports.CliqueClient = require('./clique');
-exports.NodeClient = require('./node');
-exports.utils = require('./utils');
-exports.wallet = require('./wallet');
+export { CliqueClient } from './clique'
+export { NodeClient } from './node'
+export { utils } from './utils'
+export  * as wallet from './wallet'

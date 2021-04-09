@@ -3,47 +3,14 @@
     "es6": true,
     "node": true
   },
-  "extends": "eslint:recommended",
-  "globals": {
-    "Atomics": "readable",
-    "BigInt": "readable",
-    "BigInt64Array": "readable",
-    "BigUint64Array": "readable",
-    "queueMicrotask": "readable",
-    "SharedArrayBuffer": "readable",
-    "TextEncoder": "readable",
-    "TextDecoder": "readable"
-  },
-  "overrides": [
-    {
-      "files": ["*.mjs"],
-      "parserOptions": {
-        "sourceType": "module"
-      }
-    },
-    {
-      "files": ["*.cjs"],
-      "parserOptions": {
-        "sourceType": "script"
-      }
-    },
-    {
-      "files": [
-        "test/{,**/}*.{mjs,cjs,js}"
-      ],
-      "env": {
-        "mocha": true
-      },
-      "globals": {
-        "register": "readable"
-      },
-      "rules": {
-        "max-len": "off",
-        "prefer-arrow-callback": "off"
-      }
-    }
+  "extends": [
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
-  "parser": "babel-eslint",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 10,
     "ecmaFeatures": {

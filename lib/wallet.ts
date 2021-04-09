@@ -47,7 +47,7 @@ class Wallet {
     this.privateKey = privateKey;
   }
 
-  encrypt(password) {
+  encrypt(password: string) {
     // TODO we currently support only 1 address
     const storedState = new StoredState(this.seed, 1, 0);
     return passwordCrypto.encrypt(password, JSON.stringify(storedState));
@@ -118,9 +118,4 @@ async function walletOpen(password, data, networkType) {
   return fromSeed(Buffer.from(config.seed,'hex'), networkType);
 }
 
-exports.Wallet = Wallet;
-exports.generate = walletGenerate;
-exports.import = walletImport;
-exports.open = walletOpen;
-exports.fromMnemonic = fromMnemonic;
-exports.fromSeed = fromSeed;
+export { Wallet, walletGenerate as generate, walletImport as import, walletOpen as opan, fromMnemonic, fromSeed }
