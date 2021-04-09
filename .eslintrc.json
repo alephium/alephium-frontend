@@ -50,7 +50,7 @@
       "globalReturn": true
     },
     "requireConfigFile": false,
-    "sourceType": "script"
+    "sourceType": "module"
   },
   "root": true,
   "rules": {

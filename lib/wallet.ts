@@ -14,21 +14,20 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-'use strict';
-
-const EdDSA = require('elliptic').eddsa;
-const ec = new EdDSA('ed25519');
-const crypto = require('crypto');
 const bip32 = require('bip32');
 const bip39 = require('bip39');
 
-const bs58 = require('../lib/bs58');
-const blake = require('blakejs')
-const utils = require('../lib/utils');
+const bs58 = require('./bs58');
+const blake = require('blakejs');
+const utils = require('./utils');
 const passwordCrypto = utils.PasswordCrypto();
 
 class StoredState {
-  constructor(seed, numberOfAddresses, activeAddressIndex) {
+  seed: string;
+  numberOfAddresses: number;
+  activeAddressIndex: number;
+
+  constructor(seed: Buffer, numberOfAddresses: number, activeAddressIndex: number) {
     this.seed = seed.toString('hex');
     this.numberOfAddresses = numberOfAddresses;
     this.activeAddressIndex = activeAddressIndex;
@@ -36,7 +35,12 @@ class StoredState {
 }
 
 class Wallet {
-  constructor(seed, address, publicKey, privateKey) {
+  seed: Buffer;
+  address: string;
+  publicKey: string;
+  privateKey: string;
+
+  constructor(seed: Buffer, address: string, publicKey: string, privateKey: string) {
     this.seed = seed;
     this.address = address;
     this.publicKey = publicKey;
@@ -44,30 +48,29 @@ class Wallet {
   }
 
   encrypt(password) {
-    //TODO we currently support only 1 address
-    const storedState = new StoredState(this.seed, 1, 0)
+    // TODO we currently support only 1 address
+    const storedState = new StoredState(this.seed, 1, 0);
     return passwordCrypto.encrypt(password, JSON.stringify(storedState));
   }
 }
 
 function path(networkType) {
-  var coinType = "";
+  let coinType = '';
 
     switch (networkType) {
-      case "M":
-        coinType = "1234'";
+      case 'M':
+        coinType = '1234\'';
         break;
-      case "T":
-        coinType = "1'";
+      case 'T':
+        coinType = '1\'';
         break;
-      case "D":
-        coinType = "-1'";
+      case 'D':
+        coinType = '-1\'';
         break;
     }
 
-  return `m/44'/${coinType}/0'/0/0`
+  return `m/44'/${coinType}/0'/0/0`;
 }
-
 
 function fromMnemonic(mnemonic, networkType) {
   const seed = bip39.mnemonicToSeedSync(mnemonic);
@@ -102,15 +105,17 @@ function walletGenerate(networkType) {
 }
 
 function walletImport(seedPhrase, networkType) {
-  if (!bip39.validateMnemonic(seedPhrase)) { throw new Error('Invalid seed phrase.'); }
+  if (!bip39.validateMnemonic(seedPhrase)) {
+    throw new Error('Invalid seed phrase.');
+  }
   return fromMnemonic(seedPhrase, networkType);
 }
 
 async function walletOpen(password, data, networkType) {
-  let dataDecrypted = await passwordCrypto.decrypt(password, data);
-  let config = JSON.parse(dataDecrypted);
+  const dataDecrypted = await passwordCrypto.decrypt(password, data);
+  const config = JSON.parse(dataDecrypted);
 
-  return fromSeed(Buffer.from(config.seed,'hex'), networkType)
+  return fromSeed(Buffer.from(config.seed,'hex'), networkType);
 }
 
 exports.Wallet = Wallet;
