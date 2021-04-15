@@ -11,7 +11,8 @@
   "author": "Cheng Wang <cheng.wang@alephium.org>",
   "main": "./dist/index.js",
   "scripts": {
-    "compile": "npx tsc",
+    "compile": "rm -rf dist && npx tsc",
+    "fetch-api-schema": "npx swagger-typescript-api -p https://raw.githubusercontent.com/alephium/alephium/master/api/src/main/resources/openapi.yaml -o ./types",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint lib/ || exit 0",
     "test": "bmocha --reporter spec test/*-test.js"
@@ -39,6 +40,7 @@
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.2.0",
     "prettier": "^2.2.1",
+    "swagger-typescript-api": "^8.0.3",
     "ts-node-dev": "^1.1.6",
     "typescript": "^4.2.4"
   },

@@ -19,6 +19,11 @@
  * @extends {bcurl.Client}
  */
 
+export interface Node {
+  host: string
+  port: number
+}
+
 class NodeClient {
   /**
    * Creat a node client.
@@ -26,11 +31,11 @@ class NodeClient {
    */
 
   host: string
-  port: string
+  port: number
 
-  constructor(host: string, port: string) {
-    this.host = host
-    this.port = port
+  constructor(node: Node) {
+    this.host = node.host
+    this.port = node.port
   }
 
   get(address: string, options?: RequestInit | undefined): Promise<Response> {
@@ -54,7 +59,7 @@ class NodeClient {
     return this.get('/infos/self-clique')
   }
 
-  transactionCreate(fromKey: string, toAddress: string, value: string, lockTime: string) {
+  transactionCreate(fromKey: string, toAddress: string, value: number, lockTime: string) {
     const root = `/transactions/build?fromKey=${fromKey}&toAddress=${toAddress}&value=${value}`
 
     if (lockTime == null) {
