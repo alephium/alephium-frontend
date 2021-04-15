@@ -19,6 +19,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
+    "moduleResolution": "node",
     // Generate d.ts files
     "declaration": true,
     // This compiler run should

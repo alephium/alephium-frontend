@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-export { CliqueClient } from './clique'
-export NodeClient from './node'
-export * from './utils';
+export * from './clique'
+export * from './node'
+export * from './utils'
 export * from './wallet'

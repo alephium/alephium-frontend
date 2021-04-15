@@ -14,40 +14,38 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-const assert = require('bsert')
-const { Client } = require('bcurl')
-
 /**
  * Node Client
  * @extends {bcurl.Client}
  */
 
-class NodeClient extends Client {
+class NodeClient {
   /**
    * Creat a node client.
    * @param {Object?} options
    */
 
-  constructor(options) {
-    super(options)
+  host: string
+  port: string
+
+  constructor(host: string, port: string) {
+    this.host = host
+    this.port = port
   }
 
-  blockflowFetch(fromTs, toTs) {
-    assert(typeof fromTs === 'number')
-    assert(typeof toTs === 'number')
+  get(address: string, options?: RequestInit | undefined): Promise<Response> {
+    return fetch(`${this.host}:${this.port}${address}`, options)
+  }
 
+  blockflowFetch(fromTs: number, toTs: number) {
     return this.get(`/blockflow?fromTs=${fromTs}&toTs=${toTs}`)
   }
 
-  getBalance(address) {
-    assert(typeof address === 'string')
-
+  getBalance(address: string) {
     return this.get(`/addresses/${address}/balance`)
   }
 
-  getGroup(address) {
-    assert(typeof address === 'string')
-
+  getGroup(address: string) {
     return this.get(`/addresses/${address}/group`)
   }
 
@@ -56,11 +54,7 @@ class NodeClient extends Client {
     return this.get('/infos/self-clique')
   }
 
-  transactionCreate(fromKey, toAddress, value, lockTime) {
-    assert(typeof fromKey === 'string')
-    assert(typeof toAddress === 'string')
-    assert(typeof value === 'string')
-
+  transactionCreate(fromKey: string, toAddress: string, value: string, lockTime: string) {
     const root = `/transactions/build?fromKey=${fromKey}&toAddress=${toAddress}&value=${value}`
 
     if (lockTime == null) {
@@ -70,13 +64,13 @@ class NodeClient extends Client {
     }
   }
 
-  transactionSend(tx, signature) {
-    assert(typeof tx === 'string')
-    assert(typeof signature === 'string')
-
-    return this.post('/transactions/send', {
-      unsignedTx: tx,
-      signature: signature
+  transactionSend(tx: string, signature: string) {
+    return this.get('/transactions/send', {
+      method: 'POST',
+      body: JSON.stringify({
+        unsignedTx: tx,
+        signature: signature
+      })
     })
   }
 }
