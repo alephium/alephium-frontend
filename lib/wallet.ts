@@ -14,108 +14,108 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-const bip32 = require('bip32');
-const bip39 = require('bip39');
+const bip32 = require('bip32')
+const bip39 = require('bip39')
 
-const bs58 = require('./bs58');
-const blake = require('blakejs');
-import * as utils from './utils';
-const passwordCrypto = utils.PasswordCrypto();
+const bs58 = require('./bs58')
+const blake = require('blakejs')
+import * as utils from './utils'
+const passwordCrypto = utils.PasswordCrypto()
 
 class StoredState {
-  seed: string;
-  numberOfAddresses: number;
-  activeAddressIndex: number;
+  seed: string
+  numberOfAddresses: number
+  activeAddressIndex: number
 
   constructor(seed: Buffer, numberOfAddresses: number, activeAddressIndex: number) {
-    this.seed = seed.toString('hex');
-    this.numberOfAddresses = numberOfAddresses;
-    this.activeAddressIndex = activeAddressIndex;
+    this.seed = seed.toString('hex')
+    this.numberOfAddresses = numberOfAddresses
+    this.activeAddressIndex = activeAddressIndex
   }
 }
 
 class Wallet {
-  seed: Buffer;
-  address: string;
-  publicKey: string;
-  privateKey: string;
+  seed: Buffer
+  address: string
+  publicKey: string
+  privateKey: string
 
   constructor(seed: Buffer, address: string, publicKey: string, privateKey: string) {
-    this.seed = seed;
-    this.address = address;
-    this.publicKey = publicKey;
-    this.privateKey = privateKey;
+    this.seed = seed
+    this.address = address
+    this.publicKey = publicKey
+    this.privateKey = privateKey
   }
 
   encrypt(password: string) {
     // TODO we currently support only 1 address
-    const storedState = new StoredState(this.seed, 1, 0);
-    return passwordCrypto.encrypt(password, JSON.stringify(storedState));
+    const storedState = new StoredState(this.seed, 1, 0)
+    return passwordCrypto.encrypt(password, JSON.stringify(storedState))
   }
 }
 
 function path(networkType) {
-  let coinType = '';
+  let coinType = ''
 
   switch (networkType) {
     case 'M':
-      coinType = '1234\'';
-      break;
+      coinType = '1234\''
+      break
     case 'T':
-      coinType = '1\'';
-      break;
+      coinType = '1\''
+      break
     case 'D':
-      coinType = '-1\'';
-      break;
+      coinType = '-1\''
+      break
   }
 
-  return `m/44'/${coinType}/0'/0/0`;
+  return `m/44'/${coinType}/0'/0/0`
 }
 
 function fromMnemonic(mnemonic, networkType) {
-  const seed = bip39.mnemonicToSeedSync(mnemonic);
-  return fromSeed(seed, networkType);
+  const seed = bip39.mnemonicToSeedSync(mnemonic)
+  return fromSeed(seed, networkType)
 }
 
 function fromSeed(seed, networkType) {
-  const masterKey = bip32.fromSeed(seed);
-  const keyPair = masterKey.derivePath(path(networkType));
+  const masterKey = bip32.fromSeed(seed)
+  const keyPair = masterKey.derivePath(path(networkType))
 
-  const publicKey = keyPair.publicKey.toString('hex');
-  const privateKey = keyPair.privateKey.toString('hex');
+  const publicKey = keyPair.publicKey.toString('hex')
+  const privateKey = keyPair.privateKey.toString('hex')
 
-  const context = blake.blake2bInit(32, null);
-  blake.blake2bUpdate(context, Buffer.from(publicKey, 'hex'));
-  const hash = blake.blake2bFinal(context);
+  const context = blake.blake2bInit(32, null)
+  blake.blake2bUpdate(context, Buffer.from(publicKey, 'hex'))
+  const hash = blake.blake2bFinal(context)
 
-  const pkhash = Buffer.from(hash, 'hex');
-  const type = Buffer.from([0]);
-  const bytes = Buffer.concat([type, pkhash]);
-  const address = networkType.concat(bs58.encode(bytes));
+  const pkhash = Buffer.from(hash, 'hex')
+  const type = Buffer.from([0])
+  const bytes = Buffer.concat([type, pkhash])
+  const address = networkType.concat(bs58.encode(bytes))
 
-  return new Wallet(seed, address, publicKey, privateKey);
+  return new Wallet(seed, address, publicKey, privateKey)
 }
 
 function walletGenerate(networkType) {
-  const mnemonic = bip39.generateMnemonic(256);
+  const mnemonic = bip39.generateMnemonic(256)
   return {
     mnemonic: mnemonic,
     wallet: fromMnemonic(mnemonic, networkType)
-  };
+  }
 }
 
 function walletImport(seedPhrase, networkType) {
   if (!bip39.validateMnemonic(seedPhrase)) {
-    throw new Error('Invalid seed phrase.');
+    throw new Error('Invalid seed phrase.')
   }
-  return fromMnemonic(seedPhrase, networkType);
+  return fromMnemonic(seedPhrase, networkType)
 }
 
-async function walletOpen(password, data, networkType) {
-  const dataDecrypted = await passwordCrypto.decrypt(password, data);
-  const config = JSON.parse(dataDecrypted);
+async function walletOpen(password: string, data: string, networkType: string) {
+  const dataDecrypted = await passwordCrypto.decrypt(password, data)
+  const config = JSON.parse(dataDecrypted)
 
-  return fromSeed(Buffer.from(config.seed, 'hex'), networkType);
+  return fromSeed(Buffer.from(config.seed, 'hex'), networkType)
 }
 
-export { Wallet, walletGenerate as generate, walletImport as import, walletOpen as opan, fromMnemonic, fromSeed }
+export { Wallet, walletGenerate as generate, walletImport as import, walletOpen as open, fromMnemonic, fromSeed }

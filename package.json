@@ -9,7 +9,7 @@
     "url": "https://gitlab.com/alephium/alephium-client/-/issues"
   },
   "author": "Cheng Wang <cheng.wang@alephium.org>",
-  "main": "./dist/index.js",
+  "main": "./dist/lib/index.js",
   "scripts": {
     "compile": "rm -rf dist && npx tsc",
     "fetch-api-schema": "npx swagger-typescript-api -p https://raw.githubusercontent.com/alephium/alephium/master/api/src/main/resources/openapi.yaml -o ./types",

@@ -88,4 +88,4 @@ class CliqueClient {
   }
 }
 
-module.exports = CliqueClient
+export default CliqueClient

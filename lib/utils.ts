@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
+import * as PC from './password-crypto'
+
 const isNode =
   typeof process !== 'undefined' && typeof process.release !== 'undefined' && process.release.name === 'node'
 
@@ -33,8 +35,7 @@ export const signatureEncode = (ec, signature) => {
 }
 
 export const PasswordCrypto = () => {
-  const util = require('./password-crypto')
-  return util.PasswordCrypto
+  return PC
 }
 
 export const Storage = () => {
