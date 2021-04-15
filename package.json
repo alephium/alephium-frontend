@@ -9,9 +9,10 @@
     "url": "https://gitlab.com/alephium/alephium-client/-/issues"
   },
   "author": "Cheng Wang <cheng.wang@alephium.org>",
-  "main": "./lib/alf-client.js",
+  "main": "./dist/index.js",
   "scripts": {
     "compile": "npx tsc",
+    "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint lib/ || exit 0",
     "test": "bmocha --reporter spec test/*-test.js"
   },
@@ -30,9 +31,15 @@
     "elliptic": "^6.5.3"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "babel-eslint": "^10.1.0",
     "bmocha": "^2.1.0",
     "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.2.0",
+    "prettier": "^2.2.1",
+    "ts-node-dev": "^1.1.6",
     "typescript": "^4.2.4"
   },
   "engines": {

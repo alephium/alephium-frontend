@@ -19,7 +19,7 @@ const bip39 = require('bip39');
 
 const bs58 = require('./bs58');
 const blake = require('blakejs');
-const utils = require('./utils');
+import * as utils from './utils';
 const passwordCrypto = utils.PasswordCrypto();
 
 class StoredState {
@@ -57,17 +57,17 @@ class Wallet {
 function path(networkType) {
   let coinType = '';
 
-    switch (networkType) {
-      case 'M':
-        coinType = '1234\'';
-        break;
-      case 'T':
-        coinType = '1\'';
-        break;
-      case 'D':
-        coinType = '-1\'';
-        break;
-    }
+  switch (networkType) {
+    case 'M':
+      coinType = '1234\'';
+      break;
+    case 'T':
+      coinType = '1\'';
+      break;
+    case 'D':
+      coinType = '-1\'';
+      break;
+  }
 
   return `m/44'/${coinType}/0'/0/0`;
 }
@@ -115,7 +115,7 @@ async function walletOpen(password, data, networkType) {
   const dataDecrypted = await passwordCrypto.decrypt(password, data);
   const config = JSON.parse(dataDecrypted);
 
-  return fromSeed(Buffer.from(config.seed,'hex'), networkType);
+  return fromSeed(Buffer.from(config.seed, 'hex'), networkType);
 }
 
 export { Wallet, walletGenerate as generate, walletImport as import, walletOpen as opan, fromMnemonic, fromSeed }

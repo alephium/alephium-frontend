@@ -14,10 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-'use strict';
-
-const assert = require('bsert');
-const {Client} = require('bcurl');
+const assert = require('bsert')
+const { Client } = require('bcurl')
 
 /**
  * Node Client
@@ -31,58 +29,56 @@ class NodeClient extends Client {
    */
 
   constructor(options) {
-    super(options);
+    super(options)
   }
 
   blockflowFetch(fromTs, toTs) {
-    assert(typeof fromTs === 'number');
-    assert(typeof toTs === 'number');
+    assert(typeof fromTs === 'number')
+    assert(typeof toTs === 'number')
 
-    return this.get(`/blockflow?fromTs=${fromTs}&toTs=${toTs}`);
+    return this.get(`/blockflow?fromTs=${fromTs}&toTs=${toTs}`)
   }
 
-
   getBalance(address) {
-    assert(typeof address === 'string');
+    assert(typeof address === 'string')
 
-    return this.get(`/addresses/${address}/balance`);
+    return this.get(`/addresses/${address}/balance`)
   }
 
   getGroup(address) {
-    assert(typeof address === 'string');
+    assert(typeof address === 'string')
 
-    return this.get(`/addresses/${address}/group`);
+    return this.get(`/addresses/${address}/group`)
   }
 
-
   selfClique() {
-      console.log('self clique.');
-    return this.get('/infos/self-clique');
+    console.log('self clique.')
+    return this.get('/infos/self-clique')
   }
 
   transactionCreate(fromKey, toAddress, value, lockTime) {
-    assert(typeof fromKey === 'string');
-    assert(typeof toAddress === 'string');
-    assert(typeof value === 'string');
+    assert(typeof fromKey === 'string')
+    assert(typeof toAddress === 'string')
+    assert(typeof value === 'string')
 
-    let root = `/transactions/build?fromKey=${fromKey}&toAddress=${toAddress}&value=${value}`;
+    const root = `/transactions/build?fromKey=${fromKey}&toAddress=${toAddress}&value=${value}`
 
     if (lockTime == null) {
-      return this.get(root);
+      return this.get(root)
     } else {
-      return this.get(root + `&lockTime=${lockTime}`);
+      return this.get(root + `&lockTime=${lockTime}`)
     }
   }
 
   transactionSend(tx, signature) {
-    assert(typeof tx === 'string');
-    assert(typeof signature === 'string');
+    assert(typeof tx === 'string')
+    assert(typeof signature === 'string')
 
     return this.post('/transactions/send', {
-      'unsignedTx': tx,
-      'signature': signature
-    });
+      unsignedTx: tx,
+      signature: signature
+    })
   }
 }
 
-module.exports = NodeClient;
+export default NodeClient
