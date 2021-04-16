@@ -17,10 +17,12 @@
 const bip32 = require('bip32')
 const bip39 = require('bip39')
 
-const bs58 = require('./bs58')
+import bs58 from './bs58'
 const blake = require('blakejs')
 import * as utils from './utils'
-const passwordCrypto = utils.PasswordCrypto()
+const passwordCrypto = utils.getPasswordCrypto()
+
+type NetworkType = 'T' | 'M' | 'D'
 
 class StoredState {
   seed: string
@@ -54,30 +56,30 @@ class Wallet {
   }
 }
 
-function path(networkType) {
+function path(networkType: NetworkType) {
   let coinType = ''
 
   switch (networkType) {
     case 'M':
-      coinType = '1234\''
+      coinType = "1234'"
       break
     case 'T':
-      coinType = '1\''
+      coinType = "1'"
       break
     case 'D':
-      coinType = '-1\''
+      coinType = "-1'"
       break
   }
 
   return `m/44'/${coinType}/0'/0/0`
 }
 
-function fromMnemonic(mnemonic, networkType) {
+function fromMnemonic(mnemonic: string, networkType: NetworkType) {
   const seed = bip39.mnemonicToSeedSync(mnemonic)
   return fromSeed(seed, networkType)
 }
 
-function fromSeed(seed, networkType) {
+function fromSeed(seed: Buffer, networkType: NetworkType) {
   const masterKey = bip32.fromSeed(seed)
   const keyPair = masterKey.derivePath(path(networkType))
 
@@ -96,7 +98,7 @@ function fromSeed(seed, networkType) {
   return new Wallet(seed, address, publicKey, privateKey)
 }
 
-function walletGenerate(networkType) {
+function walletGenerate(networkType: NetworkType) {
   const mnemonic = bip39.generateMnemonic(256)
   return {
     mnemonic: mnemonic,
@@ -104,14 +106,14 @@ function walletGenerate(networkType) {
   }
 }
 
-function walletImport(seedPhrase, networkType) {
+function walletImport(seedPhrase: string, networkType: NetworkType) {
   if (!bip39.validateMnemonic(seedPhrase)) {
     throw new Error('Invalid seed phrase.')
   }
   return fromMnemonic(seedPhrase, networkType)
 }
 
-async function walletOpen(password: string, data: string, networkType: string) {
+async function walletOpen(password: string, data: string, networkType: NetworkType) {
   const dataDecrypted = await passwordCrypto.decrypt(password, data)
   const config = JSON.parse(dataDecrypted)
 

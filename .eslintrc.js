@@ -13,7 +13,7 @@ module.exports = {
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/no-var-requires': 'off',
-    quotes: [1, 'single'],
+    quotes: [1, 'single', { avoidEscape: true }],
     'jsx-quotes': [2, 'prefer-double'],
     '@typescript-eslint/member-delimiter-style': [
       'error',

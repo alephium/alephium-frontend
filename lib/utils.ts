@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import * as PC from './password-crypto'
+import { PasswordCrypto } from './password-crypto'
 
 const isNode =
   typeof process !== 'undefined' && typeof process.release !== 'undefined' && process.release.name === 'node'
 
-export const signatureEncode = (ec, signature) => {
+export const signatureEncode = (ec: any, signature: any) => {
   let sNormalized = signature.s
   if (signature.s.cmp(ec.nh) === 1) {
     sNormalized = ec.n.sub(signature.s)
@@ -34,8 +34,8 @@ export const signatureEncode = (ec, signature) => {
   return Buffer.from(xs).toString('hex')
 }
 
-export const PasswordCrypto = () => {
-  return PC
+export const getPasswordCrypto = (): typeof PasswordCrypto => {
+  return PasswordCrypto
 }
 
 export const Storage = () => {
