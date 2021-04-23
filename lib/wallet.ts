@@ -120,4 +120,4 @@ async function walletOpen(password: string, data: string, networkType: NetworkTy
   return fromSeed(Buffer.from(config.seed, 'hex'), networkType)
 }
 
-export { Wallet, walletGenerate as generate, walletImport as import, walletOpen as open, fromMnemonic, fromSeed }
+export { Wallet, walletGenerate, walletImport, walletOpen, fromMnemonic, fromSeed }
