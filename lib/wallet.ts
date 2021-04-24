@@ -36,7 +36,7 @@ class StoredState {
   }
 }
 
-class Wallet {
+export class Wallet {
   seed: Buffer
   address: string
   publicKey: string
@@ -120,4 +120,4 @@ async function walletOpen(password: string, data: string, networkType: NetworkTy
   return fromSeed(Buffer.from(config.seed, 'hex'), networkType)
 }
 
-export { Wallet, walletGenerate, walletImport, walletOpen, fromMnemonic, fromSeed }
+export { walletGenerate, walletImport, walletOpen, fromMnemonic, fromSeed }

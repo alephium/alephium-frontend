@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import NodeClient from '../lib/node'
+import { NodeClient } from '../lib/node'
 import { Group, SelfClique } from '../types/Api'
 const EC = require('elliptic').ec
 const ec = new EC('secp256k1')
@@ -24,7 +24,7 @@ const utils = require('../lib/utils')
  * Clique Client
  */
 
-class CliqueClient {
+export class CliqueClient {
   /**
    * Creat a node client.
    */
@@ -87,5 +87,3 @@ class CliqueClient {
     return utils.signatureEncode(ec, signature)
   }
 }
-
-export default CliqueClient

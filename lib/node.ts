@@ -24,7 +24,7 @@ export interface Node {
   port: number
 }
 
-class NodeClient {
+export class NodeClient {
   /**
    * Creat a node client.
    * @param {Object?} options
@@ -79,5 +79,3 @@ class NodeClient {
     })
   }
 }
-
-export default NodeClient
