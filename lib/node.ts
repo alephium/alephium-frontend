@@ -38,8 +38,8 @@ export class NodeClient {
     this.port = node.port
   }
 
-  get(address: string, options?: RequestInit | undefined): Promise<Response> {
-    return fetch(`http://${this.host}:${this.port}${address}`, options)
+  async get(address: string, options?: RequestInit | undefined) {
+    return await (await fetch(`http://${this.host}:${this.port}${address}`, options)).json()
   }
 
   blockflowFetch(fromTs: number, toTs: number) {
