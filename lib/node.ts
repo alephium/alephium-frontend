@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
+import { Api, Balance } from '../api/Api'
+
 /**
  * Node Client
  * @extends {bcurl.Client}
@@ -24,22 +26,14 @@ export interface Node {
   port: number
 }
 
-export class NodeClient {
+export class NodeClient extends Api<null> {
   /**
    * Creat a node client.
    * @param {Object?} options
    */
 
-  host: string
-  port: number
-
-  constructor(node: Node) {
-    this.host = node.host
-    this.port = node.port
-  }
-
   async get(address: string, options?: RequestInit | undefined) {
-    return await (await fetch(`http://${this.host}:${this.port}${address}`, options)).json()
+    return await (await fetch(`${this.baseUrl}${address}`, options)).json()
   }
 
   blockflowFetch(fromTs: number, toTs: number) {
@@ -47,7 +41,8 @@ export class NodeClient {
   }
 
   getBalance(address: string) {
-    return this.get(`/addresses/${address}/balance`)
+    console.log(this.get(`/addresses/${address}/balance`))
+    return (this.get(`/addresses/${address}/balance`) as unknown) as Balance
   }
 
   getGroup(address: string) {

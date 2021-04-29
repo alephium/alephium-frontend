@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NodeClient } from '../lib/node'
-import { Group, SelfClique } from '../types/Api'
+import { Api, Group, HttpResponse, RequestParams, SelfClique } from '../api/Api'
 const EC = require('elliptic').ec
 const ec = new EC('secp256k1')
 const utils = require('../lib/utils')
@@ -24,34 +24,51 @@ const utils = require('../lib/utils')
  * Clique Client
  */
 
-export class CliqueClient {
+export class CliqueClient extends Api<null> {
   /**
    * Creat a node client.
    */
 
-  clique: SelfClique
-  clients: NodeClient[]
+  clique!: SelfClique
+  clients!: NodeClient[]
 
-  constructor(clique: SelfClique) {
-    this.clique = clique
+  async super() {
+    this.clique = await this.selfClique()
     this.clients = []
 
-    if (clique.nodes) {
-      for (const node of clique.nodes) {
-        const client = new NodeClient({ host: node.address, port: node.restPort })
+    // Get self clique
+
+    if (this.clique.nodes) {
+      for (const node of this.clique.nodes) {
+        const client = new NodeClient({ baseUrl: `${node.address}:${node.restPort}` })
 
         this.clients.push(client)
       }
     }
   }
 
+  /*
+  async get(address: string, options?: RequestInit | undefined) {
+    return await (await fetch(`${this.baseUrl}${address}`, options)).json()
+  }
+  */
+
+  async http<U, E, P = undefined>(fn: (args?: P) => Promise<HttpResponse<U, E>>, params?: P): Promise<U> {
+    const response = await fn(params)
+    return await response.json()
+  }
+
+  async selfClique() {
+    return this.http(this.infos.getInfosSelfClique)
+  }
+
   async getClientIndex(address: string) {
     const group = await this.getGroupIndex(address)
-    return group / this.clique.groupNumPerBroker
+    return Math.floor(group / this.clique.groupNumPerBroker)
   }
 
   async getGroupIndex(address: string) {
-    return (((await this.clients[0].getGroup(address)) as unknown) as Group).group
+    return await this.http(this.addresses.getAddressesAddressGroup, address)
   }
 
   async blockflowFetch(fromTs: number, toTs: number) {
@@ -59,8 +76,8 @@ export class CliqueClient {
   }
 
   async getBalance(address: string) {
-    const client = await this.getClientIndex(address)
-    return this.clients[client].getBalance(address)
+    const clientIndex = await this.getClientIndex(address)
+    return this.clients[clientIndex].getBalance(address)
   }
 
   getWebSocket(node_i: number) {
