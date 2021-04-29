@@ -39,7 +39,7 @@ export class NodeClient {
   }
 
   get(address: string, options?: RequestInit | undefined): Promise<Response> {
-    return fetch(`${this.host}:${this.port}${address}`, options)
+    return fetch(`http://${this.host}:${this.port}${address}`, options)
   }
 
   blockflowFetch(fromTs: number, toTs: number) {
@@ -55,7 +55,6 @@ export class NodeClient {
   }
 
   selfClique() {
-    console.log('self clique.')
     return this.get('/infos/self-clique')
   }
 
