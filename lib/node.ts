@@ -14,56 +14,42 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { Api, Balance } from '../api/Api'
+import { Api } from '../api/Api'
+import { getData } from './utils'
 
 /**
- * Node Client
- * @extends {bcurl.Client}
+ * Node client
  */
 
-export interface Node {
-  host: string
-  port: number
-}
-
 export class NodeClient extends Api<null> {
-  /**
-   * Creat a node client.
-   * @param {Object?} options
-   */
-
-  async get(address: string, options?: RequestInit | undefined) {
-    return await (await fetch(`${this.baseUrl}${address}`, options)).json()
-  }
-
   blockflowFetch(fromTs: number, toTs: number) {
-    return this.get(`/blockflow?fromTs=${fromTs}&toTs=${toTs}`)
+    //return this.get(`/blockflow?fromTs=${fromTs}&toTs=${toTs}`)
   }
 
-  getBalance(address: string) {
-    console.log(this.get(`/addresses/${address}/balance`))
-    return (this.get(`/addresses/${address}/balance`) as unknown) as Balance
+  async getBalance(address: string) {
+    return await getData(this.addresses.getAddressesAddressBalance(address))
   }
 
   getGroup(address: string) {
-    return this.get(`/addresses/${address}/group`)
+    //return this.get(`/addresses/${address}/group`)
   }
 
   selfClique() {
-    return this.get('/infos/self-clique')
+    //return this.get('/infos/self-clique')
   }
 
   transactionCreate(fromKey: string, toAddress: string, value: number, lockTime: string) {
     const root = `/transactions/build?fromKey=${fromKey}&toAddress=${toAddress}&value=${value}`
 
     if (lockTime == null) {
-      return this.get(root)
+      //return this.get(root)
     } else {
-      return this.get(root + `&lockTime=${lockTime}`)
+      //return this.get(root + `&lockTime=${lockTime}`)
     }
   }
 
   transactionSend(tx: string, signature: string) {
+    /*
     return this.get('/transactions/send', {
       method: 'POST',
       body: JSON.stringify({
@@ -71,5 +57,6 @@ export class NodeClient extends Api<null> {
         signature: signature
       })
     })
+    */
   }
 }

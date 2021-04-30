@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
+import { HttpResponse } from '../api/Api'
 import { PasswordCrypto } from './password-crypto'
 
 const isNode =
@@ -46,4 +47,8 @@ export const Storage = () => {
     const util = require('./utils-browser')
     return util.Storage
   }
+}
+
+export const getData = async <U>(res: Promise<HttpResponse<U>>): Promise<U> => {
+  return (await res).data
 }
