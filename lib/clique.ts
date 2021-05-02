@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NodeClient } from '../lib/node'
-import { Api, SelfClique } from '../api/Api'
+import { Api, SelfClique } from '../api/api-alephium'
 import { getData } from '.'
 const EC = require('elliptic').ec
 const ec = new EC('secp256k1')

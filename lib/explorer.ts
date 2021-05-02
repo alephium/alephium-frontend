@@ -1,4 +1,4 @@
-// Copyright 2018 The Alephium Authors
+// Copyright 2021 The Alephium Authors
 // This file is part of the alephium project.
 //
 // The library is free software: you can redistribute it and/or modify
@@ -14,8 +14,15 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-export * from './clique'
-export * from './node'
-export * from './utils'
-export * from './wallet'
-export * from './explorer'
+import { Api } from '../api/api-explorer'
+import { getData } from './utils'
+
+/**
+ * Node client
+ */
+
+export class ExplorerClient extends Api<null> {
+  async getTransactions(address: string) {
+    return await getData(this.addresses.getAddressesAddressTransactions(address))
+  }
+}

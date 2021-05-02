@@ -12,7 +12,8 @@
   "main": "./dist/lib/index.js",
   "scripts": {
     "compile": "rm -rf dist && npx tsc",
-    "fetch-api-schema": "npx swagger-typescript-api -p https://raw.githubusercontent.com/alephium/alephium/master/api/src/main/resources/openapi.json -o ./api",
+    "fetch-alephium-schema": "npx swagger-typescript-api -p https://raw.githubusercontent.com/alephium/alephium/master/api/src/main/resources/openapi.json -o ./api -n api-alephium.ts",
+    "fetch-explorer-schema": "npx swagger-typescript-api -p http://localhost:9090/docs/openapi.yaml -o ./api -n api-explorer.ts",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint lib/ || exit 0",
     "test": "bmocha --reporter spec test/*-test.js"
