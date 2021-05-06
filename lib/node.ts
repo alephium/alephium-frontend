@@ -38,25 +38,11 @@ export class NodeClient extends Api<null> {
     //return this.get('/infos/self-clique')
   }
 
-  transactionCreate(fromKey: string, toAddress: string, value: number, lockTime: string) {
-    const root = `/transactions/build?fromKey=${fromKey}&toAddress=${toAddress}&value=${value}`
-
-    if (lockTime == null) {
-      //return this.get(root)
-    } else {
-      //return this.get(root + `&lockTime=${lockTime}`)
-    }
+  async transactionCreate(fromKey: string, toAddress: string, value: string, lockTime?: number) {
+    return await getData(this.transactions.getTransactionsBuild({ fromKey, toAddress, value, lockTime }))
   }
 
-  transactionSend(tx: string, signature: string) {
-    /*
-    return this.get('/transactions/send', {
-      method: 'POST',
-      body: JSON.stringify({
-        unsignedTx: tx,
-        signature: signature
-      })
-    })
-    */
+  async transactionSend(tx: string, signature: string) {
+    return await getData(this.transactions.postTransactionsSend({ unsignedTx: tx, signature }))
   }
 }
