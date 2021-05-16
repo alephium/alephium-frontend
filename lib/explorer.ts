@@ -22,7 +22,11 @@ import { getData } from './utils'
  */
 
 export class ExplorerClient extends Api<null> {
-  async getTransactions(address: string) {
+  async getAddressTransactions(address: string) {
     return await getData(this.addresses.getAddressesAddressTransactions(address))
+  }
+
+  async getAddressDetails(address: string) {
+    return await getData(this.addresses.getAddressesAddress(address))
   }
 }
