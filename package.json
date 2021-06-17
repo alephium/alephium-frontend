@@ -18,7 +18,7 @@
     "fetch-explorer-schema": "npx swagger-typescript-api -p http://localhost:9090/docs/openapi.yaml -o ./api -n api-explorer.ts",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint lib/ || exit 0",
-    "test": "npm run compile && bmocha  --experimental-modules --reporter spec test/*-test.js --full-trace"
+    "test": "jest --config jestconfig.json"
   },
   "bin": {
     "alf-cli": "./bin/alf-cli"
@@ -30,21 +30,22 @@
     "bip39": "^3.0.2",
     "blakejs": "^1.1.0",
     "browserify-sha3": "^0.0.4",
-    "bsert": "~0.0.10",
     "elliptic": "^6.5.4"
   },
   "devDependencies": {
     "@types/elliptic": "^6.4.12",
+    "@types/jest": "^26.0.23",
     "@types/node": "^15.12.2",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "babel-eslint": "^10.1.0",
-    "bmocha": "^2.1.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.2.0",
+    "jest": "^27.0.4",
     "prettier": "^2.2.1",
     "swagger-typescript-api": "^8.0.3",
+    "ts-jest": "^27.0.3",
     "ts-node": "^10.0.0",
     "tslib": "^2.3.0",
     "typescript": "^4.3.3"
