@@ -15,7 +15,6 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { HttpResponse } from '../api/api-alephium'
-import { PasswordCrypto } from './password-crypto.js'
 
 const isNode =
   typeof process !== 'undefined' && typeof process.release !== 'undefined' && process.release.name === 'node'
@@ -33,10 +32,6 @@ export const signatureEncode = (ec: any, signature: any) => {
   xs.set(new Uint8Array(r), 0)
   xs.set(new Uint8Array(s), r.byteLength)
   return Buffer.from(xs).toString('hex')
-}
-
-export const getPasswordCrypto = (): typeof PasswordCrypto => {
-  return PasswordCrypto
 }
 
 export const Storage = () => {

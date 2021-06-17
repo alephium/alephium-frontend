@@ -24,6 +24,8 @@ interface AlfStorage {
   list: () => string[]
 }
 
+const walletsUrl = new URL('file:///' + process.env.HOME + '/.alf-wallets')
+
 function AlfStorage(this: AlfStorage) {
   this.walletsUrl = new URL('file:///' + process.env.HOME + '/.alf-wallets')
 

@@ -22,8 +22,7 @@ import bs58 from './bs58'
 // @ts-ignore
 import blake from 'blakejs'
 
-import * as utils from './utils'
-const passwordCrypto = utils.getPasswordCrypto()
+import { decrypt, encrypt } from './password-crypto'
 
 type NetworkType = 'T' | 'M' | 'D'
 
@@ -55,11 +54,11 @@ export class Wallet {
   encrypt(password: string) {
     // TODO we currently support only 1 address
     const storedState = new StoredState(this.seed, 1, 0)
-    return passwordCrypto.encrypt(password, JSON.stringify(storedState))
+    return encrypt(password, JSON.stringify(storedState))
   }
 }
 
-function path(networkType: NetworkType) {
+const path = (networkType: NetworkType) => {
   let coinType = ''
 
   switch (networkType) {
@@ -77,12 +76,12 @@ function path(networkType: NetworkType) {
   return `m/44'/${coinType}/0'/0/0`
 }
 
-function fromMnemonic(mnemonic: string, networkType: NetworkType) {
+export const fromMnemonic = (mnemonic: string, networkType: NetworkType) => {
   const seed = bip39.mnemonicToSeedSync(mnemonic)
   return fromSeed(seed, networkType)
 }
 
-function fromSeed(seed: Buffer, networkType: NetworkType) {
+export const fromSeed = (seed: Buffer, networkType: NetworkType) => {
   const masterKey = bip32.fromSeed(seed)
   const keyPair = masterKey.derivePath(path(networkType))
 
@@ -103,7 +102,7 @@ function fromSeed(seed: Buffer, networkType: NetworkType) {
   return new Wallet(seed, address, publicKey, privateKey)
 }
 
-function walletGenerate(networkType: NetworkType) {
+export const walletGenerate = (networkType: NetworkType) => {
   const mnemonic = bip39.generateMnemonic(256)
   return {
     mnemonic: mnemonic,
@@ -111,18 +110,16 @@ function walletGenerate(networkType: NetworkType) {
   }
 }
 
-function walletImport(seedPhrase: string, networkType: NetworkType) {
+export const walletImport = (seedPhrase: string, networkType: NetworkType) => {
   if (!bip39.validateMnemonic(seedPhrase)) {
     throw new Error('Invalid seed phrase.')
   }
   return fromMnemonic(seedPhrase, networkType)
 }
 
-async function walletOpen(password: string, data: string, networkType: NetworkType) {
-  const dataDecrypted = await passwordCrypto.decrypt(password, data)
+export const walletOpen = (password: string, data: string, networkType: NetworkType) => {
+  const dataDecrypted = decrypt(password, data)
   const config = JSON.parse(dataDecrypted)
 
   return fromSeed(Buffer.from(config.seed, 'hex'), networkType)
 }
-
-export { walletGenerate, walletImport, walletOpen, fromMnemonic, fromSeed }
