@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import assert from 'assert'
 import fs from 'fs'
 
 import * as wallet from '../dist/lib/wallet.js'
@@ -25,27 +24,27 @@ describe('Wallet', function () {
     const myPassword = 'utopia'
     const myWallet = wallet.walletGenerate(networkType).wallet
     const readWallet = await wallet.walletOpen(myPassword, myWallet.encrypt(myPassword), networkType)
-    assert.deepStrictEqual(myWallet, readWallet)
+    expect(JSON.stringify(myWallet)).toEqual(JSON.stringify(readWallet))
   })
 
   it('should import wallet in a compatible manner', () => {
     const genesis = JSON.parse(fs.readFileSync('test/genesis.json', 'utf8'))
     genesis.forEach(function (row: { mnemonic: string; address: string; pubKey: string; priKey: string }) {
       const myWallet = wallet.walletImport(row.mnemonic, networkType)
-      assert.deepStrictEqual(row.address, myWallet.address)
-      assert.deepStrictEqual(row.pubKey, myWallet.publicKey)
-      assert.deepStrictEqual(row.priKey, myWallet.privateKey)
+      expect(row.address).toEqual(myWallet.address)
+      expect(row.pubKey).toEqual(myWallet.publicKey)
+      expect(row.priKey).toEqual(myWallet.privateKey)
     })
   })
 
   it('should generate wallet from seed in a bip32 compatible manner', () => {
     const myWallet = wallet.fromSeed(Buffer.from('000102030405060708090a0b0c0d0e0f', 'hex'), networkType)
-    assert.deepStrictEqual('ca9e41e365d987fb5fb29fc016ae14e90a5279ec8b890e0c25b13f748bd384cb', myWallet.privateKey)
+    expect('ca9e41e365d987fb5fb29fc016ae14e90a5279ec8b890e0c25b13f748bd384cb').toEqual(myWallet.privateKey)
   })
 
   it('generate mnemonic with 24 words', () => {
     const myWallet = wallet.walletGenerate(networkType)
-    assert.deepStrictEqual(myWallet.mnemonic.split(' ').length, 24)
+    expect(myWallet.mnemonic.split(' ').length).toEqual(24)
   })
 
   it('should read wallet file', async () => {
@@ -53,7 +52,7 @@ describe('Wallet', function () {
     for (const row of wallets) {
       const imported = wallet.walletImport(row.mnemonic, networkType)
       const opened = await wallet.walletOpen(row.password, JSON.stringify(row.file), networkType)
-      assert.deepStrictEqual(imported, opened)
+      expect(JSON.stringify(imported)).toEqual(JSON.stringify(opened))
     }
   })
 })

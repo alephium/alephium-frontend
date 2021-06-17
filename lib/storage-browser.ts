@@ -14,22 +14,18 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-interface AlfStorage {
+class BrowserStorage {
   key: string
-  remove: (name: string) => void
-  load: (name: string) => void
-  save: (name: string, json: object) => void
-  list: () => string[]
-}
 
-function AlfStorage(this: AlfStorage) {
-  this.key = 'wallet'
+  constructor() {
+    this.key = 'wallet'
+  }
 
-  this.remove = function (name) {
+  remove = (name: string) => {
     window.localStorage.removeItem(this.key + '-' + name)
   }
 
-  this.load = function (name) {
+  load = (name: string) => {
     const str = window.localStorage.getItem(this.key + '-' + name)
     if (str) {
       return JSON.parse(str)
@@ -37,12 +33,12 @@ function AlfStorage(this: AlfStorage) {
     return null
   }
 
-  this.save = function (name, json) {
+  save = (name: string, json: unknown) => {
     const str = JSON.stringify(json)
     window.localStorage.setItem(this.key + '-' + name, str)
   }
 
-  this.list = function () {
+  list = () => {
     const prefixLen = this.key.length + 1
     const xs = []
     for (let i = 0, len = localStorage.length; i < len; ++i) {
@@ -55,4 +51,4 @@ function AlfStorage(this: AlfStorage) {
   }
 }
 
-exports.Storage = new Storage()
+export default BrowserStorage

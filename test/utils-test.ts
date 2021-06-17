@@ -18,14 +18,14 @@ import * as utils from '../dist/lib/utils.js'
 import EC from 'elliptic'
 import assert from 'assert'
 
-const store = utils.Storage()
+const store = utils.getStorage()
 
 describe('utils', function () {
   it('should store and load locally', () => {
     const obj0 = { theAnswer: 42 }
     store.save('default', obj0)
     const obj1 = store.load('default')
-    assert.deepStrictEqual(obj0, obj1)
+    expect(JSON.stringify(obj0)).toEqual(JSON.stringify(obj1))
     store.remove('default')
   })
 

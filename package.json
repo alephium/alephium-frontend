@@ -18,7 +18,7 @@
     "fetch-explorer-schema": "npx swagger-typescript-api -p http://localhost:9090/docs/openapi.yaml -o ./api -n api-explorer.ts",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint lib/ || exit 0",
-    "test": "jest --config jestconfig.json"
+    "test": "npm run compile && jest --useStderr --silent=false --verbose=true --config jestconfig.json"
   },
   "bin": {
     "alf-cli": "./bin/alf-cli"

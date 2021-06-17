@@ -51,7 +51,7 @@ export class Wallet {
     this.privateKey = privateKey
   }
 
-  encrypt(password: string) {
+  encrypt = (password: string) => {
     // TODO we currently support only 1 address
     const storedState = new StoredState(this.seed, 1, 0)
     return encrypt(password, JSON.stringify(storedState))

@@ -15,6 +15,8 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { HttpResponse } from '../api/api-alephium'
+import NodeStorage from './storage-node'
+import BrowserStorage from './storage-browser'
 
 const isNode =
   typeof process !== 'undefined' && typeof process.release !== 'undefined' && process.release.name === 'node'
@@ -34,13 +36,11 @@ export const signatureEncode = (ec: any, signature: any) => {
   return Buffer.from(xs).toString('hex')
 }
 
-export const Storage = () => {
+export const getStorage = () => {
   if (isNode) {
-    const util = require('./utils-node')
-    return util.Storage
+    return new NodeStorage()
   } else {
-    const util = require('./utils-browser')
-    return util.Storage
+    return new BrowserStorage()
   }
 }
 
