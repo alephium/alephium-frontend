@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { HttpResponse } from '../api/api-alephium'
-import { PasswordCrypto } from './password-crypto'
+import { PasswordCrypto } from './password-crypto.js'
 
 const isNode =
   typeof process !== 'undefined' && typeof process.release !== 'undefined' && process.release.name === 'node'

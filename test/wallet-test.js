@@ -16,25 +16,24 @@
 
 'use strict';
 
-const assert = require('bsert');
-const fs = require('fs');
+import assert from 'bsert'
+import fs from 'fs';
 
-const ALF = require('../lib/alf-client');
-const wallet = ALF.wallet;
+import * as wallet from '../dist/lib/wallet.js'
 const networkType = "T";
 
 describe('Wallet', function() {
   it('should encrypt and decrypt using password', async () => {
     let myPassword = 'utopia';
-    let myWallet = wallet.generate(networkType).wallet;
-    let readWallet = await wallet.open(myPassword, myWallet.encrypt(myPassword), networkType)
+    let myWallet = wallet.walletGenerate(networkType).wallet;
+    let readWallet = await wallet.walletOpen(myPassword, myWallet.encrypt(myPassword), networkType)
     assert.deepStrictEqual(myWallet, readWallet);
   });
 
   it('should import wallet in a compatible manner', () => {
     const genesis = JSON.parse(fs.readFileSync('test/genesis.json', 'utf8'));
     genesis.forEach(function(row) {
-      let myWallet = wallet.import(row.mnemonic, networkType);
+      let myWallet = wallet.walletImport(row.mnemonic, networkType);
       assert.deepStrictEqual(row.address, myWallet.address);
       assert.deepStrictEqual(row.pubKey, myWallet.publicKey);
       assert.deepStrictEqual(row.priKey, myWallet.privateKey);
@@ -47,15 +46,15 @@ describe('Wallet', function() {
   });
 
   it('generate mnemonic with 24 words', () => {
-    let myWallet = wallet.generate(networkType);
+    let myWallet = wallet.walletGenerate(networkType);
     assert.deepStrictEqual(myWallet.mnemonic.split(" ").length, 24);
   });
 
   it('should read wallet file', async () => {
     const wallets = JSON.parse(fs.readFileSync('test/wallets.json', 'utf8')).wallets;
     for (const row of wallets) {
-      let imported = wallet.import(row.mnemonic, networkType);
-      let opened = await wallet.open(row.password, JSON.stringify(row.file), networkType);
+      let imported = wallet.walletImport(row.mnemonic, networkType);
+      let opened = await wallet.walletOpen(row.password, JSON.stringify(row.file), networkType);
       assert.deepStrictEqual(imported, opened)
     }
   });

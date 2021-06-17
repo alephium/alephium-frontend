@@ -14,11 +14,14 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-const bip32 = require('bip32')
-const bip39 = require('bip39')
+import * as bip32 from 'bip32'
+import * as bip39 from 'bip39'
 
 import bs58 from './bs58'
-const blake = require('blakejs')
+
+// @ts-ignore
+import blake from 'blakejs'
+
 import * as utils from './utils'
 const passwordCrypto = utils.getPasswordCrypto()
 
@@ -82,6 +85,8 @@ function fromMnemonic(mnemonic: string, networkType: NetworkType) {
 function fromSeed(seed: Buffer, networkType: NetworkType) {
   const masterKey = bip32.fromSeed(seed)
   const keyPair = masterKey.derivePath(path(networkType))
+
+  if (!keyPair.privateKey) throw new Error('Missing private key')
 
   const publicKey = keyPair.publicKey.toString('hex')
   const privateKey = keyPair.privateKey.toString('hex')

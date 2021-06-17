@@ -16,8 +16,10 @@
 
 'use strict';
 
-const assert = require('bsert');
-const utils = require('../lib/utils');
+import assert from 'bsert'
+import * as utils from '../dist/lib/utils.js'
+import EC from 'elliptic'
+
 const store = utils.Storage();
 
 describe('utils', function() {
@@ -46,7 +48,6 @@ describe('utils', function() {
       ["There is a computer disease that anybody who works with computers knows about. It's a very serious disease and it interferes completely with the work. The trouble with computers is that you 'play' with them!", "e91671c46231f833a6406ccbea0e3e392c76c167bac1cb013f6f1013980455c2", "b552edd27580141f3b2a5463048cb7cd3e047b97c9f98076c32dbdf85a68718b279fa72dd19bfae05577e06c7c0c1900c371fcd5893f7e1d56a37d30174671f6"]
     ]
 
-    const EC = require('elliptic').ec
     const ec = new EC('secp256k1')
     vectors.forEach(vector => {
       const privateKey = vector[1]

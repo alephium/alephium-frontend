@@ -17,9 +17,10 @@
 import { NodeClient } from '../lib/node'
 import { Api, SelfClique } from '../api/api-alephium'
 import { getData } from '.'
-const EC = require('elliptic').ec
+import { ec as EC } from 'elliptic'
+
 const ec = new EC('secp256k1')
-const utils = require('../lib/utils')
+import * as utils from '../lib/utils'
 
 /**
  * Clique Client
