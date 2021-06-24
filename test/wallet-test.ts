@@ -16,21 +16,21 @@
 
 import fs from 'fs'
 
-import * as wallet from '../dist/lib/wallet.js'
+import * as walletUtils from '../dist/lib/wallet.js'
 const networkType = 'T'
 
 describe('Wallet', function () {
   it('should encrypt and decrypt using password', async () => {
     const myPassword = 'utopia'
-    const myWallet = wallet.walletGenerate(networkType).wallet
-    const readWallet = await wallet.walletOpen(myPassword, myWallet.encrypt(myPassword), networkType)
+    const myWallet = walletUtils.walletGenerate(networkType)
+    const readWallet = await walletUtils.walletOpen(myPassword, myWallet.encrypt(myPassword), networkType)
     expect(JSON.stringify(myWallet)).toEqual(JSON.stringify(readWallet))
   })
 
   it('should import wallet in a compatible manner', () => {
     const genesis = JSON.parse(fs.readFileSync('test/genesis.json', 'utf8'))
     genesis.forEach(function (row: { mnemonic: string; address: string; pubKey: string; priKey: string }) {
-      const myWallet = wallet.walletImport(row.mnemonic, networkType)
+      const myWallet = walletUtils.walletImport(row.mnemonic, networkType)
       expect(row.address).toEqual(myWallet.address)
       expect(row.pubKey).toEqual(myWallet.publicKey)
       expect(row.priKey).toEqual(myWallet.privateKey)
@@ -38,21 +38,30 @@ describe('Wallet', function () {
   })
 
   it('should generate wallet from seed in a bip32 compatible manner', () => {
-    const myWallet = wallet.fromSeed(Buffer.from('000102030405060708090a0b0c0d0e0f', 'hex'), networkType)
+    const myWallet = walletUtils.getWalletFromSeed(Buffer.from('000102030405060708090a0b0c0d0e0f', 'hex'), networkType)
     expect('ca9e41e365d987fb5fb29fc016ae14e90a5279ec8b890e0c25b13f748bd384cb').toEqual(myWallet.privateKey)
   })
 
   it('generate mnemonic with 24 words', () => {
-    const myWallet = wallet.walletGenerate(networkType)
+    const myWallet = walletUtils.walletGenerate(networkType)
     expect(myWallet.mnemonic.split(' ').length).toEqual(24)
   })
 
   it('should read wallet file', async () => {
     const wallets = JSON.parse(fs.readFileSync('test/wallets.json', 'utf8')).wallets
     for (const row of wallets) {
-      const imported = wallet.walletImport(row.mnemonic, networkType)
-      const opened = await wallet.walletOpen(row.password, JSON.stringify(row.file), networkType)
-      expect(JSON.stringify(imported)).toEqual(JSON.stringify(opened))
+      const imported = walletUtils.walletImport(row.mnemonic, networkType)
+      const opened = await walletUtils.walletOpen(row.password, JSON.stringify(row.file), networkType)
+
+      expect(imported.address).toEqual(opened.address)
+      expect(imported.publicKey).toEqual(opened.publicKey)
+      expect(imported.privateKey).toEqual(opened.privateKey)
+      expect(imported.seed).toEqual(opened.seed)
+
+      // Old wallets don't include mnemonic
+      if (opened.mnemonic) {
+        expect(imported.mnemonic).toEqual(opened.mnemonic)
+      }
     }
   })
 })

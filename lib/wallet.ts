@@ -27,33 +27,74 @@ import { decrypt, encrypt } from './password-crypto'
 type NetworkType = 'T' | 'M' | 'D'
 
 class StoredState {
-  seed: string
   numberOfAddresses: number
   activeAddressIndex: number
+  seed?: string
+  mnemonic?: string
 
-  constructor(seed: Buffer, numberOfAddresses: number, activeAddressIndex: number) {
-    this.seed = seed.toString('hex')
+  constructor({
+    numberOfAddresses,
+    activeAddressIndex,
+    seed,
+    mnemonic
+  }: {
+    numberOfAddresses: number
+    activeAddressIndex: number
+    seed?: Buffer
+    mnemonic?: string
+  }) {
     this.numberOfAddresses = numberOfAddresses
     this.activeAddressIndex = activeAddressIndex
+
+    if (mnemonic) {
+      this.mnemonic = mnemonic
+    } else if (seed) {
+      this.seed = seed.toString('hex')
+    } else {
+      throw new Error('Missing both seed and mnemonic. One of the two must be defined.')
+    }
   }
 }
 
+type WalletWithMnemonic = Wallet & { mnemonic: string }
+
 export class Wallet {
-  seed: Buffer
   address: string
   publicKey: string
   privateKey: string
+  seed: Buffer // TODO: We should differentiate the notion of account (seed, mnemonic) from individual addresses.
+  mnemonic?: string
 
-  constructor(seed: Buffer, address: string, publicKey: string, privateKey: string) {
-    this.seed = seed
+  constructor({
+    address,
+    publicKey,
+    privateKey,
+    seed,
+    mnemonic
+  }: {
+    address: string
+    publicKey: string
+    privateKey: string
+    seed: Buffer
+    mnemonic?: string
+  }) {
     this.address = address
     this.publicKey = publicKey
     this.privateKey = privateKey
+    this.seed = seed
+
+    if (mnemonic) {
+      this.mnemonic = mnemonic
+    }
   }
 
   encrypt = (password: string) => {
-    // TODO we currently support only 1 address
-    const storedState = new StoredState(this.seed, 1, 0)
+    const storedState = new StoredState({
+      numberOfAddresses: 1,
+      activeAddressIndex: 0,
+      seed: this.seed,
+      mnemonic: this.mnemonic
+    })
     return encrypt(password, JSON.stringify(storedState))
   }
 }
@@ -76,12 +117,20 @@ const path = (networkType: NetworkType) => {
   return `m/44'/${coinType}/0'/0/0`
 }
 
-export const fromMnemonic = (mnemonic: string, networkType: NetworkType) => {
+export const getWalletFromMnemonic = (mnemonic: string, networkType: NetworkType) => {
   const seed = bip39.mnemonicToSeedSync(mnemonic)
-  return fromSeed(seed, networkType)
+  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed, networkType)
+
+  return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
 }
 
-export const fromSeed = (seed: Buffer, networkType: NetworkType) => {
+export const getWalletFromSeed = (seed: Buffer, networkType: NetworkType) => {
+  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed, networkType)
+
+  return new Wallet({ seed, address, publicKey, privateKey })
+}
+
+const deriveAddressAndKeys = (seed: Buffer, networkType: NetworkType) => {
   const masterKey = bip32.fromSeed(seed)
   const keyPair = masterKey.derivePath(path(networkType))
 
@@ -99,27 +148,32 @@ export const fromSeed = (seed: Buffer, networkType: NetworkType) => {
   const bytes = Buffer.concat([type, pkhash])
   const address = networkType.concat(bs58.encode(bytes))
 
-  return new Wallet(seed, address, publicKey, privateKey)
+  return { address, publicKey, privateKey }
 }
 
 export const walletGenerate = (networkType: NetworkType) => {
   const mnemonic = bip39.generateMnemonic(256)
-  return {
-    mnemonic: mnemonic,
-    wallet: fromMnemonic(mnemonic, networkType)
-  }
+  return getWalletFromMnemonic(mnemonic, networkType)
 }
 
-export const walletImport = (seedPhrase: string, networkType: NetworkType) => {
-  if (!bip39.validateMnemonic(seedPhrase)) {
+export const walletImport = (mnemonic: string, networkType: NetworkType) => {
+  if (!bip39.validateMnemonic(mnemonic)) {
     throw new Error('Invalid seed phrase.')
   }
-  return fromMnemonic(seedPhrase, networkType)
+  return getWalletFromMnemonic(mnemonic, networkType)
 }
 
-export const walletOpen = (password: string, data: string, networkType: NetworkType) => {
-  const dataDecrypted = decrypt(password, data)
-  const config = JSON.parse(dataDecrypted)
+export const walletOpen = (password: string, encryptedWallet: string, networkType: NetworkType) => {
+  const dataDecrypted = decrypt(password, encryptedWallet)
+  const config = JSON.parse(dataDecrypted) as StoredState
 
-  return fromSeed(Buffer.from(config.seed, 'hex'), networkType)
+  if (config.mnemonic) {
+    return getWalletFromMnemonic(config.mnemonic, networkType)
+  } else if (config.seed) {
+    return getWalletFromSeed(Buffer.from(config.seed, 'hex'), networkType)
+  } else {
+    throw new Error(
+      'Problem with the encrypted wallet: missing both seed and mnemonic. One of the two must be defined.'
+    )
+  }
 }
