@@ -51,7 +51,13 @@ export class CliqueClient extends Api<null> {
 
   async getClientIndex(address: string) {
     const { group } = await getData(this.addresses.getAddressesAddressGroup(address))
-    return Math.floor(group / this.clique.groupNumPerBroker)
+
+    if (this.clique.nodes.length === 0) {
+      // This shouldn't happen as current user is in the clique
+      throw new Error('Unknown error (no nodes in the clique)')
+    }
+
+    return Math.floor(group / this.clique.nodes.length)
   }
 
   async getBalance(address: string) {

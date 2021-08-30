@@ -23,7 +23,7 @@ import blake from 'blakejs'
 
 import { decrypt, encrypt } from './password-crypto'
 
-type NetworkId = 0 | 1 // 0 = mainnet, 1 = testnet
+export type NetworkId = 0 | 1 // 0 = mainnet, 1 = testnet
 
 class StoredState {
   numberOfAddresses: number

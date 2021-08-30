@@ -23,7 +23,7 @@ export interface AddressInfo {
 
 export interface Addresses {
   activeAddress: string;
-  addresses?: string[];
+  addresses: string[];
 }
 
 export interface Asset {
@@ -35,7 +35,7 @@ export interface Asset1 {
   /** @format uint256 */
   amount: number;
   address: string;
-  tokens?: Token[];
+  tokens: Token[];
 
   /** @format int64 */
   lockTime: number;
@@ -58,7 +58,7 @@ export interface Balance {
 export interface Balances {
   /** @format uint256 */
   totalBalance: number;
-  balances?: AddressBalance[];
+  balances: AddressBalance[];
 }
 
 export interface Banned {
@@ -74,8 +74,8 @@ export interface BlockEntry {
   chainFrom: number;
   chainTo: number;
   height: number;
-  deps?: string[];
-  transactions?: Tx[];
+  deps: string[];
+  transactions: Tx[];
 }
 
 export interface BlockHeaderEntry {
@@ -86,7 +86,7 @@ export interface BlockHeaderEntry {
   chainFrom: number;
   chainTo: number;
   height: number;
-  deps?: string[];
+  deps: string[];
 }
 
 export interface BrokerInfo {
@@ -110,14 +110,14 @@ export interface BuildContractResult {
 
 export interface BuildMultisig {
   fromAddress: string;
-  fromPublicKeys?: string[];
-  destinations?: Destination[];
+  fromPublicKeys: string[];
+  destinations: Destination[];
   gas?: number;
   gasPrice?: GasPrice;
 }
 
 export interface BuildMultisigAddress {
-  keys?: string[];
+  keys: string[];
   mrequired: number;
 }
 
@@ -133,7 +133,7 @@ export interface BuildSweepAllTransaction {
 
 export interface BuildTransaction {
   fromPublicKey: string;
-  destinations?: Destination[];
+  destinations: Destination[];
   utxos?: OutputRef[];
   gas?: number;
   gasPrice?: GasPrice;
@@ -181,7 +181,7 @@ export interface Contract1 {
   /** @format uint256 */
   amount: number;
   address: string;
-  tokens?: Token[];
+  tokens: Token[];
 }
 
 export interface DecodeTransaction {
@@ -200,7 +200,7 @@ export interface Destination {
 }
 
 export interface FetchResponse {
-  blocks?: BlockEntry[][];
+  blocks: BlockEntry[][];
 }
 
 export interface GasPrice {
@@ -213,7 +213,7 @@ export interface Group {
 }
 
 export interface HashesAtHeight {
-  headers?: string[];
+  headers: string[];
 }
 
 export type Input = Asset | Contract;
@@ -238,11 +238,11 @@ export interface MinerAddressInfo {
 }
 
 export interface MinerAddresses {
-  addresses?: string[];
+  addresses: string[];
 }
 
 export interface MinerAddressesInfo {
-  addresses?: MinerAddressInfo[];
+  addresses: MinerAddressInfo[];
 }
 
 export type MisbehaviorAction = Unban;
@@ -322,7 +322,7 @@ export interface SelfClique {
   cliqueId: string;
   networkId: number;
   numZerosAtLeastInHash: number;
-  nodes?: PeerAddress[];
+  nodes: PeerAddress[];
   selfReady: boolean;
   synced: boolean;
   groupNumPerBroker: number;
@@ -346,7 +346,7 @@ export interface SubmitContract {
 
 export interface SubmitMultisig {
   unsignedTx: string;
-  signatures?: string[];
+  signatures: string[];
 }
 
 export interface SubmitTransaction {
@@ -371,15 +371,15 @@ export interface Token {
 }
 
 export interface Transfer {
-  destinations?: Destination[];
+  destinations: Destination[];
   gas?: number;
   gasPrice?: GasPrice;
 }
 
 export interface Tx {
   id: string;
-  inputs?: Input[];
-  outputs?: Output[];
+  inputs: Input[];
+  outputs: Output[];
   gasAmount: number;
 
   /** @format uint256 */
@@ -399,7 +399,7 @@ export interface UTXO {
 
   /** @format uint256 */
   amount: number;
-  tokens?: Token[];
+  tokens: Token[];
 
   /** @format int64 */
   lockTime: number;
@@ -411,13 +411,13 @@ export interface Unauthorized {
 }
 
 export interface Unban {
-  peers?: string[];
+  peers: string[];
 }
 
 export interface UnconfirmedTransactions {
   fromGroup: number;
   toGroup: number;
-  unconfirmedTransactions?: Tx[];
+  unconfirmedTransactions: Tx[];
 }
 
 export interface WalletCreation {
