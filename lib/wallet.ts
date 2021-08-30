@@ -23,7 +23,7 @@ import blake from 'blakejs'
 
 import { decrypt, encrypt } from './password-crypto'
 
-type NetworkType = 'T' | 'M' | 'D'
+type NetworkId = 0 | 1 // 0 = mainnet, 1 = testnet
 
 class StoredState {
   numberOfAddresses: number
@@ -98,40 +98,37 @@ export class Wallet {
   }
 }
 
-const path = (networkType: NetworkType) => {
+const path = (networkId: NetworkId) => {
   let coinType = ''
 
-  switch (networkType) {
-    case 'M':
+  switch (networkId) {
+    case 0:
       coinType = "1234'"
       break
-    case 'T':
+    case 1:
       coinType = "1'"
-      break
-    case 'D':
-      coinType = "-1'"
       break
   }
 
   return `m/44'/${coinType}/0'/0/0`
 }
 
-export const getWalletFromMnemonic = (mnemonic: string, networkType: NetworkType) => {
+export const getWalletFromMnemonic = (mnemonic: string, networkId: NetworkId) => {
   const seed = bip39.mnemonicToSeedSync(mnemonic)
-  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed, networkType)
+  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed, networkId)
 
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
 }
 
-export const getWalletFromSeed = (seed: Buffer, networkType: NetworkType) => {
-  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed, networkType)
+export const getWalletFromSeed = (seed: Buffer, networkId: NetworkId) => {
+  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed, networkId)
 
   return new Wallet({ seed, address, publicKey, privateKey })
 }
 
-const deriveAddressAndKeys = (seed: Buffer, networkType: NetworkType) => {
+const deriveAddressAndKeys = (seed: Buffer, networkId: NetworkId) => {
   const masterKey = bip32.fromSeed(seed)
-  const keyPair = masterKey.derivePath(path(networkType))
+  const keyPair = masterKey.derivePath(path(networkId))
 
   if (!keyPair.privateKey) throw new Error('Missing private key')
 
@@ -145,31 +142,31 @@ const deriveAddressAndKeys = (seed: Buffer, networkType: NetworkType) => {
   const pkhash = Buffer.from(hash)
   const type = Buffer.from([0])
   const bytes = Buffer.concat([type, pkhash])
-  const address = networkType.concat(bs58.encode(bytes))
+  const address = bs58.encode(bytes)
 
   return { address, publicKey, privateKey }
 }
 
-export const walletGenerate = (networkType: NetworkType) => {
+export const walletGenerate = (networkId: NetworkId) => {
   const mnemonic = bip39.generateMnemonic(256)
-  return getWalletFromMnemonic(mnemonic, networkType)
+  return getWalletFromMnemonic(mnemonic, networkId)
 }
 
-export const walletImport = (mnemonic: string, networkType: NetworkType) => {
+export const walletImport = (mnemonic: string, networkId: NetworkId) => {
   if (!bip39.validateMnemonic(mnemonic)) {
     throw new Error('Invalid seed phrase.')
   }
-  return getWalletFromMnemonic(mnemonic, networkType)
+  return getWalletFromMnemonic(mnemonic, networkId)
 }
 
-export const walletOpen = (password: string, encryptedWallet: string, networkType: NetworkType) => {
+export const walletOpen = (password: string, encryptedWallet: string, networkId: NetworkId) => {
   const dataDecrypted = decrypt(password, encryptedWallet)
   const config = JSON.parse(dataDecrypted) as StoredState
 
   if (config.mnemonic) {
-    return getWalletFromMnemonic(config.mnemonic, networkType)
+    return getWalletFromMnemonic(config.mnemonic, networkId)
   } else if (config.seed) {
-    return getWalletFromSeed(Buffer.from(config.seed, 'hex'), networkType)
+    return getWalletFromSeed(Buffer.from(config.seed, 'hex'), networkId)
   } else {
     throw new Error(
       'Problem with the encrypted wallet: missing both seed and mnemonic. One of the two must be defined.'
