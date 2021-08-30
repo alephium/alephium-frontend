@@ -19,7 +19,6 @@ import * as bip39 from 'bip39'
 
 import bs58 from './bs58'
 
-// @ts-ignore
 import blake from 'blakejs'
 
 import { decrypt, encrypt } from './password-crypto'
@@ -139,11 +138,11 @@ const deriveAddressAndKeys = (seed: Buffer, networkType: NetworkType) => {
   const publicKey = keyPair.publicKey.toString('hex')
   const privateKey = keyPair.privateKey.toString('hex')
 
-  const context = blake.blake2bInit(32, null)
+  const context = blake.blake2bInit(32)
   blake.blake2bUpdate(context, Buffer.from(publicKey, 'hex'))
   const hash = blake.blake2bFinal(context)
 
-  const pkhash = Buffer.from(hash, 'hex')
+  const pkhash = Buffer.from(hash)
   const type = Buffer.from([0])
   const bytes = Buffer.concat([type, pkhash])
   const address = networkType.concat(bs58.encode(bytes))
