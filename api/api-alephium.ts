@@ -13,7 +13,7 @@ export interface AddressBalance {
   address: string;
 
   /** @format uint256 */
-  balance: number;
+  balance: string;
 }
 
 export interface AddressInfo {
@@ -33,7 +33,7 @@ export interface Asset {
 
 export interface Asset1 {
   /** @format uint256 */
-  amount: number;
+  amount: string;
   address: string;
   tokens: Token[];
 
@@ -48,16 +48,16 @@ export interface BadRequest {
 
 export interface Balance {
   /** @format uint256 */
-  balance: number;
+  balance: string;
 
   /** @format uint256 */
-  lockedBalance: number;
+  lockedBalance: string;
   utxoNum: number;
 }
 
 export interface Balances {
   /** @format uint256 */
-  totalBalance: number;
+  totalBalance: string;
   balances: AddressBalance[];
 }
 
@@ -179,7 +179,7 @@ export interface Contract {
 
 export interface Contract1 {
   /** @format uint256 */
-  amount: number;
+  amount: string;
   address: string;
   tokens: Token[];
 }
@@ -192,7 +192,7 @@ export interface Destination {
   address: string;
 
   /** @format uint256 */
-  amount: number;
+  amount: string;
   tokens?: Token[];
 
   /** @format int64 */
@@ -205,7 +205,7 @@ export interface FetchResponse {
 
 export interface GasPrice {
   /** @format uint256 */
-  value: number;
+  value: string;
 }
 
 export interface Group {
@@ -367,7 +367,7 @@ export interface Token {
   id: string;
 
   /** @format uint256 */
-  amount: number;
+  amount: string;
 }
 
 export interface Transfer {
@@ -383,7 +383,7 @@ export interface Tx {
   gasAmount: number;
 
   /** @format uint256 */
-  gasPrice: number;
+  gasPrice: string;
 }
 
 export interface TxResult {
@@ -398,7 +398,7 @@ export interface UTXO {
   ref: OutputRef;
 
   /** @format uint256 */
-  amount: number;
+  amount: string;
   tokens: Token[];
 
   /** @format int64 */
