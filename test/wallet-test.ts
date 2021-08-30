@@ -17,7 +17,7 @@
 import fs from 'fs'
 
 import * as walletUtils from '../dist/lib/wallet.js'
-const networkType = 'T'
+const networkType = 1
 
 describe('Wallet', function () {
   it('should encrypt and decrypt using password', async () => {

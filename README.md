@@ -1,7 +1,7 @@
 # Install
 
 ```
-npm i
+npm ci
 ```
 
 # Compile

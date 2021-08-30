@@ -9,19 +9,39 @@
  * ---------------------------------------------------------------
  */
 
-export interface NotFound {
-  status: number;
-  detail: string;
-  resourceId: string;
+export interface AddressInfo {
+  /** @format uint256 */
+  balance: number;
+  txNumber: number;
 }
 
 export interface BadRequest {
-  status: number;
   detail: string;
+}
+
+export interface Input {
+  outputRef: Ref;
+  unlockScript?: string;
+  txHashRef: string;
+  address: string;
+
+  /** @format uint256 */
+  amount: number;
+}
+
+export interface InternalServerError {
+  detail: string;
+}
+
+export interface ListBlocks {
+  total: number;
+  blocks?: Lite[];
 }
 
 export interface Lite {
   hash: string;
+
+  /** @format int64 */
   timestamp: number;
   chainFrom: number;
   chainTo: number;
@@ -30,32 +50,19 @@ export interface Lite {
   mainChain: boolean;
 }
 
-export interface BlockEntry {
-  hash: string;
-  timestamp: number;
-  chainFrom: number;
-  chainTo: number;
-  height: number;
-  deps?: string[];
-  transactions?: Transaction[];
-  mainChain: boolean;
+export interface NotFound {
+  detail: string;
+  resource: string;
 }
 
-export interface Transaction {
-  hash: string;
-  timestamp: number;
-  inputs?: Input[];
-  outputs?: Output[];
-}
+export interface Output {
+  /** @format uint256 */
+  amount: number;
+  address: string;
 
-export interface Input {
-  outputRef: Ref;
-  unlockScript?: string;
-  txHashRef?: string;
-  address?: string;
-
-  /** @format double */
-  amount?: number;
+  /** @format int64 */
+  lockTime?: number;
+  spent?: string;
 }
 
 export interface Ref {
@@ -63,18 +70,54 @@ export interface Ref {
   key: string;
 }
 
-export interface Output {
-  /** @format double */
-  amount: number;
-  address: string;
-  lockTime?: number;
-  spent?: string;
+export interface ServiceUnavailable {
+  detail: string;
 }
 
-export interface AddressInfo {
-  /** @format double */
-  balance: number;
-  transactions?: Transaction[];
+export interface Transaction {
+  hash: string;
+  blockHash: string;
+
+  /** @format int64 */
+  timestamp: number;
+  inputs?: Input[];
+  outputs?: Output[];
+  gasAmount: number;
+
+  /** @format uint256 */
+  gasPrice: number;
+}
+
+export type TransactionLike = Transaction | UnconfirmedTx;
+
+export interface UInput {
+  outputRef: Ref;
+  unlockScript?: string;
+}
+
+export interface UOutput {
+  /** @format uint256 */
+  amount: number;
+  address: string;
+
+  /** @format int64 */
+  lockTime?: number;
+}
+
+export interface Unauthorized {
+  detail: string;
+}
+
+export interface UnconfirmedTx {
+  hash: string;
+  chainFrom: number;
+  chainTo: number;
+  inputs?: UInput[];
+  outputs?: UOutput[];
+  gasAmount: number;
+
+  /** @format uint256 */
+  gasPrice: number;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -245,8 +288,8 @@ export class HttpClient<SecurityDataType = unknown> {
       body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
     }).then(async (response) => {
       const r = response as HttpResponse<T, E>;
-      r.data = (null as unknown) as T;
-      r.error = (null as unknown) as E;
+      r.data = null as unknown as T;
+      r.error = null as unknown as E;
 
       const data = !responseFormat
         ? r
@@ -287,8 +330,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetBlocks
      * @request GET:/blocks
      */
-    getBlocks: (query: { "from-ts": number; "to-ts": number }, params: RequestParams = {}) =>
-      this.request<Lite[], BadRequest | NotFound>({
+    getBlocks: (query?: { page?: number; limit?: number }, params: RequestParams = {}) =>
+      this.request<ListBlocks, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blocks`,
         method: "GET",
         query: query,
@@ -304,9 +347,29 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/blocks/{block-hash}
      */
     getBlocksBlockHash: (blockHash: string, params: RequestParams = {}) =>
-      this.request<BlockEntry, BadRequest | NotFound>({
+      this.request<Lite, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blocks/${blockHash}`,
         method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get block's transactions
+     *
+     * @tags Blocks
+     * @name GetBlocksBlockHashTransactions
+     * @request GET:/blocks/{block-hash}/transactions
+     */
+    getBlocksBlockHashTransactions: (
+      blockHash: string,
+      query?: { page?: number; limit?: number },
+      params: RequestParams = {},
+    ) =>
+      this.request<Transaction[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/blocks/${blockHash}/transactions`,
+        method: "GET",
+        query: query,
         format: "json",
         ...params,
       }),
@@ -320,7 +383,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/transactions/{transaction-hash}
      */
     getTransactionsTransactionHash: (transactionHash: string, params: RequestParams = {}) =>
-      this.request<Transaction, BadRequest | NotFound>({
+      this.request<TransactionLike, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/transactions/${transactionHash}`,
         method: "GET",
         format: "json",
@@ -335,11 +398,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetAddressesAddress
      * @request GET:/addresses/{address}
      */
-    getAddressesAddress: (address: string, query?: { "tx-limit"?: number }, params: RequestParams = {}) =>
-      this.request<AddressInfo, BadRequest | NotFound>({
+    getAddressesAddress: (address: string, params: RequestParams = {}) =>
+      this.request<AddressInfo, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}`,
         method: "GET",
-        query: query,
         format: "json",
         ...params,
       }),
@@ -351,8 +413,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetAddressesAddressTransactions
      * @request GET:/addresses/{address}/transactions
      */
-    getAddressesAddressTransactions: (address: string, query?: { "tx-limit"?: number }, params: RequestParams = {}) =>
-      this.request<Transaction[], BadRequest | NotFound>({
+    getAddressesAddressTransactions: (
+      address: string,
+      query?: { page?: number; limit?: number },
+      params: RequestParams = {},
+    ) =>
+      this.request<Transaction[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}/transactions`,
         method: "GET",
         query: query,

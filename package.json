@@ -14,14 +14,11 @@
   "main": "./dist/lib/index.js",
   "scripts": {
     "compile": "rm -rf dist && npx tsc",
-    "fetch-alephium-schema": "npx swagger-typescript-api -p https://raw.githubusercontent.com/alephium/alephium/master/api/src/main/resources/openapi.json -o ./api -n api-alephium.ts",
+    "fetch-alephium-schema": "npx swagger-typescript-api -p http://127.0.0.1:12973/docs/openapi.json -o ./api -n api-alephium.ts",
     "fetch-explorer-schema": "npx swagger-typescript-api -p http://localhost:9090/docs/explorer-backend-openapi.json -o ./api -n api-explorer.ts",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint lib/ || exit 0",
     "test": "npm run compile && jest --useStderr --silent=false --verbose=true --config jestconfig.json"
-  },
-  "bin": {
-    "alf-cli": "./bin/alf-cli"
   },
   "dependencies": {
     "base-x": "^3.0.2",

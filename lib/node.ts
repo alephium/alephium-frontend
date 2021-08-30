@@ -22,27 +22,20 @@ import { getData } from './utils'
  */
 
 export class NodeClient extends Api<null> {
-  blockflowFetch(fromTs: number, toTs: number) {
-    //return this.get(`/blockflow?fromTs=${fromTs}&toTs=${toTs}`)
-  }
-
   async getBalance(address: string) {
     return await getData(this.addresses.getAddressesAddressBalance(address))
   }
 
-  getGroup(address: string) {
-    //return this.get(`/addresses/${address}/group`)
-  }
-
-  selfClique() {
-    //return this.get('/infos/self-clique')
-  }
-
-  async transactionCreate(fromKey: string, toAddress: string, value: string, lockTime?: number) {
-    return await getData(this.transactions.getTransactionsBuild({ fromKey, toAddress, value, lockTime }))
+  async transactionCreate(fromPublicKey: string, toAddress: string, amount: number, lockTime?: number) {
+    return await getData(
+      this.transactions.postTransactionsBuild({
+        fromPublicKey,
+        destinations: [{ address: toAddress, amount, lockTime }]
+      })
+    )
   }
 
   async transactionSend(tx: string, signature: string) {
-    return await getData(this.transactions.postTransactionsSend({ unsignedTx: tx, signature }))
+    return await getData(this.transactions.postTransactionsSubmit({ unsignedTx: tx, signature }))
   }
 }

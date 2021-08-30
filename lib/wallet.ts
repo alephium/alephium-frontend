@@ -108,6 +108,8 @@ const path = (networkId: NetworkId) => {
     case 1:
       coinType = "1'"
       break
+    default:
+      throw new Error('Unknown networkId')
   }
 
   return `m/44'/${coinType}/0'/0/0`
@@ -135,9 +137,7 @@ const deriveAddressAndKeys = (seed: Buffer, networkId: NetworkId) => {
   const publicKey = keyPair.publicKey.toString('hex')
   const privateKey = keyPair.privateKey.toString('hex')
 
-  const context = blake.blake2bInit(32)
-  blake.blake2bUpdate(context, Buffer.from(publicKey, 'hex'))
-  const hash = blake.blake2bFinal(context)
+  const hash = blake.blake2b(Buffer.from(publicKey, 'hex'), undefined, 32)
 
   const pkhash = Buffer.from(hash)
   const type = Buffer.from([0])
@@ -154,7 +154,7 @@ export const walletGenerate = (networkId: NetworkId) => {
 
 export const walletImport = (mnemonic: string, networkId: NetworkId) => {
   if (!bip39.validateMnemonic(mnemonic)) {
-    throw new Error('Invalid seed phrase.')
+    throw new Error('Invalid seed phrase')
   }
   return getWalletFromMnemonic(mnemonic, networkId)
 }

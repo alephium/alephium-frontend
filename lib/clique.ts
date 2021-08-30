@@ -54,10 +54,6 @@ export class CliqueClient extends Api<null> {
     return Math.floor(group / this.clique.groupNumPerBroker)
   }
 
-  async blockflowFetch(fromTs: number, toTs: number) {
-    return this.clients[0].blockflowFetch(fromTs, toTs)
-  }
-
   async getBalance(address: string) {
     const clientIndex = await this.getClientIndex(address)
     return await this.clients[clientIndex].getBalance(address)
@@ -70,7 +66,7 @@ export class CliqueClient extends Api<null> {
     }
   }
 
-  async transactionCreate(fromAddress: string, fromKey: string, toAddress: string, value: string, lockTime?: number) {
+  async transactionCreate(fromAddress: string, fromKey: string, toAddress: string, value: number, lockTime?: number) {
     const client = await this.getClientIndex(fromAddress)
     return this.clients[client].transactionCreate(fromKey, toAddress, value, lockTime)
   }
