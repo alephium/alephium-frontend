@@ -69,7 +69,7 @@ export class CliqueClient extends Api<null> {
       throw new Error('Unknown error (no nodes in the clique)')
     }
 
-    return Math.floor(group / this.clique.nodes.length)
+    return group % this.clique.nodes.length
   }
 
   async getBalance(address: string) {
@@ -85,13 +85,13 @@ export class CliqueClient extends Api<null> {
   }
 
   async transactionCreate(fromAddress: string, fromKey: string, toAddress: string, amount: string, lockTime?: number) {
-    const client = await this.getClientIndex(fromAddress)
-    return this.clients[client].transactionCreate(fromKey, toAddress, amount, lockTime)
+    const clientIndex = await this.getClientIndex(fromAddress)
+    return await this.clients[clientIndex].transactionCreate(fromKey, toAddress, amount, lockTime)
   }
 
   async transactionSend(fromAddress: string, tx: string, signature: string) {
-    const client = await this.getClientIndex(fromAddress)
-    return this.clients[client].transactionSend(tx, signature)
+    const clientIndex = await this.getClientIndex(fromAddress)
+    return await this.clients[clientIndex].transactionSend(tx, signature)
   }
 
   transactionSign(txHash: string, privateKey: string) {
