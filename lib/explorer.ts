@@ -21,8 +21,8 @@ import { Api } from '../api/api-explorer'
  */
 
 export class ExplorerClient extends Api<null> {
-  async getAddressTransactions(address: string) {
-    return await this.addresses.getAddressesAddressTransactions(address)
+  async getAddressTransactions(address: string, page: number) {
+    return await this.addresses.getAddressesAddressTransactions(address, { page })
   }
 
   async getAddressDetails(address: string) {
