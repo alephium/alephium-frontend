@@ -15,7 +15,6 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Api } from '../api/api-explorer'
-import { getData } from './utils'
 
 /**
  * Node client
@@ -23,10 +22,10 @@ import { getData } from './utils'
 
 export class ExplorerClient extends Api<null> {
   async getAddressTransactions(address: string) {
-    return await getData(this.addresses.getAddressesAddressTransactions(address))
+    return await this.addresses.getAddressesAddressTransactions(address)
   }
 
   async getAddressDetails(address: string) {
-    return await getData(this.addresses.getAddressesAddress(address))
+    return await this.addresses.getAddressesAddress(address)
   }
 }

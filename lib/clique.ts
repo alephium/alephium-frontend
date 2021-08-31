@@ -16,7 +16,6 @@
 
 import { NodeClient } from '../lib/node'
 import { Api, SelfClique } from '../api/api-alephium'
-import { getData } from '.'
 import { ec as EC } from 'elliptic'
 
 const ec = new EC('secp256k1')
@@ -32,7 +31,14 @@ export class CliqueClient extends Api<null> {
 
   async init() {
     this.clients = []
-    this.clique = await this.selfClique()
+
+    const res = await this.selfClique()
+
+    if (res.error) {
+      throw new Error(res.error.detail)
+    }
+
+    this.clique = res.data
 
     if (this.clique.nodes) {
       for (const node of this.clique.nodes) {
@@ -46,11 +52,17 @@ export class CliqueClient extends Api<null> {
   }
 
   async selfClique() {
-    return await getData(this.infos.getInfosSelfClique())
+    return await this.infos.getInfosSelfClique()
   }
 
   async getClientIndex(address: string) {
-    const { group } = await getData(this.addresses.getAddressesAddressGroup(address))
+    const res = await this.addresses.getAddressesAddressGroup(address)
+
+    if (res.error) {
+      throw new Error(res.error.detail)
+    }
+
+    const group = res.data.group
 
     if (this.clique.nodes.length === 0) {
       // This shouldn't happen as current user is in the clique

@@ -15,7 +15,6 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Api } from '../api/api-alephium'
-import { getData } from './utils'
 
 /**
  * Node client
@@ -23,19 +22,17 @@ import { getData } from './utils'
 
 export class NodeClient extends Api<null> {
   async getBalance(address: string) {
-    return await getData(this.addresses.getAddressesAddressBalance(address))
+    return await this.addresses.getAddressesAddressBalance(address)
   }
 
   async transactionCreate(fromPublicKey: string, toAddress: string, amount: string, lockTime?: number) {
-    return await getData(
-      this.transactions.postTransactionsBuild({
-        fromPublicKey,
-        destinations: [{ address: toAddress, amount, lockTime }]
-      })
-    )
+    return await this.transactions.postTransactionsBuild({
+      fromPublicKey,
+      destinations: [{ address: toAddress, amount, lockTime }]
+    })
   }
 
   async transactionSend(tx: string, signature: string) {
-    return await getData(this.transactions.postTransactionsSubmit({ unsignedTx: tx, signature }))
+    return await this.transactions.postTransactionsSubmit({ unsignedTx: tx, signature })
   }
 }

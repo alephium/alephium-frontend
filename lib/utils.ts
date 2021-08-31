@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { HttpResponse } from '../api/api-alephium'
 import NodeStorage from './storage-node'
 import BrowserStorage from './storage-browser'
+import EC from 'elliptic'
 
 const isNode =
   typeof process !== 'undefined' && typeof process.release !== 'undefined' && process.release.name === 'node'
 
-export const signatureEncode = (ec: any, signature: any) => {
+export const signatureEncode = (ec: EC.ec, signature: EC.ec.Signature) => {
   let sNormalized = signature.s
-  if (signature.s.cmp(ec.nh) === 1) {
+  if (ec.n && signature.s.cmp(ec.nh) === 1) {
     sNormalized = ec.n.sub(signature.s)
   }
 
-  const r = signature.r.toArrayLike(Uint8Array, 'be', 33).slice(1)
-  const s = sNormalized.toArrayLike(Uint8Array, 'be', 33).slice(1)
+  const r = signature.r.toArrayLike(Buffer, 'be', 33).slice(1)
+  const s = sNormalized.toArrayLike(Buffer, 'be', 33).slice(1)
 
   const xs = new Uint8Array(r.byteLength + s.byteLength)
   xs.set(new Uint8Array(r), 0)
@@ -42,8 +42,4 @@ export const getStorage = () => {
   } else {
     return new BrowserStorage()
   }
-}
-
-export const getData = async <U>(res: Promise<HttpResponse<U>>): Promise<U> => {
-  return (await res).data
 }
