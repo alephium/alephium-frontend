@@ -1,13 +1,17 @@
 # Install
 
-`npm ci`
+```
+npm ci
+```
 
-# Usage
+# Compile
 
 ```
-node bin/alf-cli balance 1Dx7Y4RxkCvoYvhQpMnRZi2yJnSbUeoVZY5R1vSYWSk9p
-node bin/alf-cli blockflow_fetch 0 0
+npm run compile
 ```
+
 # Testing
 
-`npm test`
+```
+npm run test
+```

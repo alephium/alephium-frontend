@@ -14,37 +14,41 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-function Storage() {
-  this.key = 'wallet';
+class BrowserStorage {
+  key: string
 
-  this.remove = function(name) {
-    window.localStorage.removeItem(this.key + '-' + name);
+  constructor() {
+    this.key = 'wallet'
   }
 
-  this.load = function(name) {
-    const str = window.localStorage.getItem(this.key + '-' + name);
-    if (typeof str !== 'undefined') {
-      return JSON.parse(str);
+  remove = (name: string) => {
+    window.localStorage.removeItem(this.key + '-' + name)
+  }
+
+  load = (name: string) => {
+    const str = window.localStorage.getItem(this.key + '-' + name)
+    if (str) {
+      return JSON.parse(str)
     }
-    return null;
+    return null
   }
 
-  this.save = function(name, json) {
-    const str = JSON.stringify(json);
-    window.localStorage.setItem(this.key + '-' + name, str);
-  };
+  save = (name: string, json: unknown) => {
+    const str = JSON.stringify(json)
+    window.localStorage.setItem(this.key + '-' + name, str)
+  }
 
-  this.list = function() {
-    const prefixLen = this.key.length + 1;
-    var xs = [];
-    for (var i = 0, len = localStorage.length; i < len; ++i) {
-      const key = localStorage.key(i);
-      if (key.startsWith(this.key)) {
-        xs.push(key.substring(prefixLen));
+  list = () => {
+    const prefixLen = this.key.length + 1
+    const xs = []
+    for (let i = 0, len = localStorage.length; i < len; ++i) {
+      const key = localStorage.key(i)
+      if (key && key.startsWith(this.key)) {
+        xs.push(key.substring(prefixLen))
       }
     }
-    return xs;
+    return xs
   }
 }
 
-exports.Storage = new Storage();
+export default BrowserStorage

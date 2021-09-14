@@ -14,48 +14,52 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-const fs = require("fs");
+import fs from 'fs'
 
-function Storage() {
-  this.walletsUrl = new URL('file:///' + process.env.HOME + '/.alf-wallets');
+class NodeStorage {
+  walletsUrl: string
 
-  if (!fs.existsSync(this.walletsUrl)){
-    fs.mkdirSync(this.walletsUrl);
-  }
+  constructor() {
+    this.walletsUrl = process.env.HOME + '/.alf-wallets'
 
-  this.remove = function(name) {
-    fs.unlinkSync(new URL(this.walletsUrl.toString() + '/' + name + '.dat'));
-  }
-
-  this.load = function(name) {
-    const buffer = fs.readFileSync(new URL(this.walletsUrl.toString() + '/' + name + '.dat'));
-    if (typeof buffer !== 'undefined') {
-      return JSON.parse(buffer.toString());
+    if (!fs.existsSync(this.walletsUrl)) {
+      fs.mkdirSync(this.walletsUrl)
     }
-    return null;
   }
 
-  this.save = function(name, json) {
-    const str = JSON.stringify(json);
-    const data = new Uint8Array(Buffer.from(str));
-    fs.writeFileSync(new URL(this.walletsUrl.toString() + '/' + name + '.dat'), data);
-  };
+  remove = (name: string) => {
+    fs.unlinkSync(this.walletsUrl + '/' + name + '.dat')
+  }
 
-  this.list = function() {
-    var xs = [];
+  load = (name: string) => {
+    const buffer = fs.readFileSync(this.walletsUrl + '/' + name + '.dat')
+    if (typeof buffer !== 'undefined') {
+      return JSON.parse(buffer.toString())
+    }
+    return null
+  }
+
+  save = (name: string, json: unknown) => {
+    const str = JSON.stringify(json)
+    const data = new Uint8Array(Buffer.from(str))
+    fs.writeFileSync(this.walletsUrl.toString() + '/' + name + '.dat', data)
+  }
+
+  list = () => {
+    const xs: string[] = []
     try {
       const files = fs.readdirSync(this.walletsUrl)
       files.forEach(function (file) {
         if (file.endsWith('.dat')) {
-          xs.push(file.substring(0, file.length - 4));
+          xs.push(file.substring(0, file.length - 4))
         }
       })
-    } catch(e) {
-      return [];
+    } catch (e) {
+      return []
     }
 
-    return xs;
+    return xs
   }
 }
 
-exports.Storage = new Storage();
+export default NodeStorage

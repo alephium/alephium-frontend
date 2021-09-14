@@ -1,39 +1,53 @@
 {
-  "name": "alf-client",
+  "name": "alephium-js",
   "version": "0.2.1",
   "description": "ALF node and wallet client",
   "license": "GPL",
+  "types": "dist/lib/index.d.ts",
+  "type": "module",
   "repository": "git://github.com/alephium/alephium-client.git",
   "homepage": "https://gitlab.com/alephium/alephium-client",
   "bugs": {
     "url": "https://gitlab.com/alephium/alephium-client/-/issues"
   },
   "author": "Cheng Wang <cheng.wang@alephium.org>",
-  "main": "./lib/alf-client.js",
+  "main": "./dist/lib/index.js",
   "scripts": {
+    "compile": "rm -rf dist && npx tsc",
+    "fetch-alephium-schema": "npx swagger-typescript-api -p http://127.0.0.1:12973/docs/openapi.json -o ./api -n api-alephium.ts",
+    "fetch-explorer-schema": "npx swagger-typescript-api -p http://localhost:9090/docs/explorer-backend-openapi.json -o ./api -n api-explorer.ts",
+    "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint lib/ || exit 0",
-    "test": "bmocha --reporter spec test/*-test.js"
-  },
-  "bin": {
-    "alf-cli": "./bin/alf-cli"
+    "test": "npm run compile && jest --useStderr --silent=false --verbose=true --config jestconfig.json"
   },
   "dependencies": {
-    "base-x": "^3.0.2",
+    "base-x": "^3.0.8",
     "bcfg": "~0.1.6",
-    "bcurl": "~0.1.6",
-    "bip32": "^2.0.5",
-    "bip39": "^3.0.2",
-    "blakejs": "^1.1.0",
-    "browserify-sha3": "^0.0.4",
-    "bsert": "~0.0.10",
-    "elliptic": "^6.5.3"
+    "bip32": "^2.0.6",
+    "bip39": "^3.0.4",
+    "blakejs": "^1.1.1",
+    "browserify-sha3": "^0.0.5",
+    "elliptic": "^6.5.4"
   },
   "devDependencies": {
+    "@types/elliptic": "^6.4.13",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.8",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
     "babel-eslint": "^10.1.0",
-    "bmocha": "^2.1.0",
-    "eslint": "^6.8.0"
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.1.0",
+    "prettier": "^2.3.2",
+    "swagger-typescript-api": "^9.2.0",
+    "ts-jest": "^27.0.5",
+    "ts-node": "^10.2.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.2"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=14.0.0"
   }
 }

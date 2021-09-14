@@ -14,9 +14,25 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-'use strict';
+import { Api } from '../api/api-alephium'
 
-exports.CliqueClient = require('./clique');
-exports.NodeClient = require('./node');
-exports.utils = require('./utils');
-exports.wallet = require('./wallet');
+/**
+ * Node client
+ */
+
+export class NodeClient extends Api<null> {
+  async getBalance(address: string) {
+    return await this.addresses.getAddressesAddressBalance(address)
+  }
+
+  async transactionCreate(fromPublicKey: string, toAddress: string, amount: string, lockTime?: number) {
+    return await this.transactions.postTransactionsBuild({
+      fromPublicKey,
+      destinations: [{ address: toAddress, amount, lockTime }]
+    })
+  }
+
+  async transactionSend(tx: string, signature: string) {
+    return await this.transactions.postTransactionsSubmit({ unsignedTx: tx, signature })
+  }
+}
