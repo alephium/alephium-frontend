@@ -32,7 +32,7 @@ jobs:
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "Bump to ${{ steps.get_version.outputs.VERSION }}"
-          git push
+          git push origin HEAD:master
       - name: Publish to npm
         run: |
           npm ci
