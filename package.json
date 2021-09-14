@@ -1,24 +1,31 @@
 {
   "name": "alephium-js",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "ALF node and wallet client",
   "license": "GPL",
+  "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "type": "module",
-  "repository": "git://github.com/alephium/alephium-client.git",
-  "homepage": "https://gitlab.com/alephium/alephium-client",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:alephium/alephium-js.git"
+  },
+  "homepage": "https://github.com/alephium/alephium-js",
   "bugs": {
-    "url": "https://gitlab.com/alephium/alephium-client/-/issues"
+    "url": "https://github.com/alephium/alephium-js/issues"
   },
   "author": "Cheng Wang <cheng.wang@alephium.org>",
-  "main": "./dist/lib/index.js",
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "compile": "rm -rf dist && npx tsc",
     "fetch-alephium-schema": "npx swagger-typescript-api -p http://127.0.0.1:12973/docs/openapi.json -o ./api -n api-alephium.ts",
     "fetch-explorer-schema": "npx swagger-typescript-api -p http://localhost:9090/docs/explorer-backend-openapi.json -o ./api -n api-explorer.ts",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint lib/ || exit 0",
-    "test": "npm run compile && jest --useStderr --silent=false --verbose=true --config jestconfig.json"
+    "test": "npm run compile && jest --useStderr --silent=false --verbose=true --config jestconfig.json",
+    "prepublishOnly": "npm run compile"
   },
   "dependencies": {
     "base-x": "^3.0.8",
