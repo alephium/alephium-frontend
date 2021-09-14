@@ -1,5 +1,5 @@
 {
-  "name": "alf-client",
+  "name": "alephium-js",
   "version": "0.2.1",
   "description": "ALF node and wallet client",
   "license": "GPL",
