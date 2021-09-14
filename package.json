@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/alephium/alephium-js/issues"
   },
-  "author": "Cheng Wang <cheng.wang@alephium.org>",
+  "author": "Cheng Wang <@alephium.org>",
   "files": [
     "dist/*"
   ],

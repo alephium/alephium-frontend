@@ -1,6 +1,6 @@
 with import <nixpkgs> {}; {
   sdlEnv = stdenv.mkDerivation {
-    name = "alephium-client";
+    name = "alephium-js";
     shellHook = ''
     '';
     buildInputs = [
