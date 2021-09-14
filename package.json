@@ -1,7 +1,7 @@
 {
   "name": "alephium-js",
-  "version": "0.10.1",
-  "description": "ALF node and wallet client",
+  "version": "0.10.0",
+  "description": "Alephium node and wallet client",
   "license": "GPL",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/alephium/alephium-js/issues"
   },
-  "author": "Cheng Wang <@alephium.org>",
+  "author": "Alephium dev <dev@alephium.org>",
   "files": [
     "dist/*"
   ],
@@ -55,6 +55,6 @@
     "typescript": "^4.4.2"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=10.0.0"
   }
 }
