@@ -35,8 +35,9 @@ class NodeStorage {
     const buffer = fs.readFileSync(this.walletsUrl + '/' + name + '.dat')
     if (typeof buffer !== 'undefined') {
       return JSON.parse(buffer.toString())
+    } else {
+      throw new Error(`Unable to load wallet ${name}`)
     }
-    return null
   }
 
   save = (name: string, json: unknown) => {

@@ -29,8 +29,9 @@ class BrowserStorage {
     const str = window.localStorage.getItem(this.key + '-' + name)
     if (str) {
       return JSON.parse(str)
+    } else {
+      throw new Error(`Unable to load wallet ${name}`)
     }
-    return null
   }
 
   save = (name: string, json: unknown) => {
