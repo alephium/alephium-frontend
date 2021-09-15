@@ -810,7 +810,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Wallets
      * @name PostWalletsWalletNameTransfer
-     * @summary Transfer ALF
+     * @summary Transfer ALPH
      * @request POST:/wallets/{wallet_name}/transfer
      */
     postWalletsWalletNameTransfer: (walletName: string, data: Transfer, params: RequestParams = {}) =>
@@ -828,7 +828,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Wallets
      * @name PostWalletsWalletNameSweepAll
-     * @summary Transfer all ALF to an address
+     * @summary Transfer all ALPH to an address
      * @request POST:/wallets/{wallet_name}/sweep-all
      */
     postWalletsWalletNameSweepAll: (walletName: string, data: SweepAll, params: RequestParams = {}) =>
