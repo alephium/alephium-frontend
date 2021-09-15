@@ -28,11 +28,17 @@ describe('Wallet', function () {
 
   it('should import wallet in a compatible manner', () => {
     const genesis = JSON.parse(fs.readFileSync('test/genesis.json', 'utf8'))
+    const randomAddress = '143jS8xaGNNRes4f1mxJWSpQcqj2xjsXUeu3xQqYgFm5h'
+    const randomPubKey = '034817bc790123a551aa82453cc2ca1dd5ea7a9ffb85443a1a67936c3299d7a751'
+    const randomPriKey = '695ac21c784d0d3f9f5441de0ee07f724d12be258f0ebdaef7ff5ee540f8e2d8'
     genesis.forEach(function (row: { mnemonic: string; address: string; pubKey: string; priKey: string }) {
       const myWallet = walletUtils.walletImport(row.mnemonic)
       expect(row.address).toEqual(myWallet.address)
+      expect(row.address).not.toEqual(randomAddress)
       expect(row.pubKey).toEqual(myWallet.publicKey)
+      expect(row.pubKey).not.toEqual(randomPubKey)
       expect(row.priKey).toEqual(myWallet.privateKey)
+      expect(row.priKey).not.toEqual(randomPriKey)
     })
   })
 
