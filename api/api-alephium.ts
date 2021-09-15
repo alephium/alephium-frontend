@@ -14,6 +14,7 @@ export interface AddressBalance {
 
   /** @format uint256 */
   balance: string;
+  warning?: string;
 }
 
 export interface AddressInfo {
@@ -53,6 +54,7 @@ export interface Balance {
   /** @format uint256 */
   lockedBalance: string;
   utxoNum: number;
+  warning?: string;
 }
 
 export interface Balances {
@@ -99,6 +101,8 @@ export interface BrokerInfo {
 export interface BuildContract {
   fromPublicKey: string;
   code: string;
+  gas?: number;
+  gasPrice?: GasPrice;
 }
 
 export interface BuildContractResult {
@@ -159,6 +163,9 @@ export interface Compile {
   type: string;
   code: string;
   state?: string;
+
+  /** @format uint256 */
+  issueTokenAmount?: string;
 }
 
 export interface CompileResult {
@@ -406,6 +413,11 @@ export interface UTXO {
   additionalData: string;
 }
 
+export interface UTXOs {
+  utxos: UTXO[];
+  warning?: string;
+}
+
 export interface Unauthorized {
   detail: string;
 }
@@ -516,15 +528,18 @@ export class HttpClient<SecurityDataType = unknown> {
     this.securityData = data;
   };
 
-  private addQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key];
+  private encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key);
     return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
   }
 
+  private addQueryParam(query: QueryParamsType, key: string) {
+    return this.encodeQueryParam(key, query[key]);
+  }
+
   private addArrayQueryParam(query: QueryParamsType, key: string) {
     const value = query[key];
-    return `${value.map(this.addQueryParam).join("&")}`;
+    return value.map((v: any) => this.encodeQueryParam(key, v)).join("&");
   }
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
@@ -544,9 +559,17 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.Json]: (input: any) =>
       input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
     [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((data, key) => {
-        data.append(key, input[key]);
-        return data;
+      Object.keys(input || {}).reduce((formData, key) => {
+        const property = input[key];
+        formData.append(
+          key,
+          property instanceof Blob
+            ? property
+            : typeof property === "object" && property !== null
+            ? JSON.stringify(property)
+            : `${property}`,
+        );
+        return formData;
       }, new FormData()),
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
@@ -779,10 +802,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get your total balance
      * @request GET:/wallets/{wallet_name}/balances
      */
-    getWalletsWalletNameBalances: (walletName: string, params: RequestParams = {}) =>
+    getWalletsWalletNameBalances: (walletName: string, query?: { utxosLimit?: number }, params: RequestParams = {}) =>
       this.request<Balances, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/wallets/${walletName}/balances`,
         method: "GET",
+        query: query,
         format: "json",
         ...params,
       }),
@@ -1121,13 +1145,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Blockflow
-     * @name GetBlockflowChains
+     * @name GetBlockflowChainInfo
      * @summary Get infos about the chain from the given groups
-     * @request GET:/blockflow/chains
+     * @request GET:/blockflow/chain-info
      */
-    getBlockflowChains: (query: { fromGroup: number; toGroup: number }, params: RequestParams = {}) =>
+    getBlockflowChainInfo: (query: { fromGroup: number; toGroup: number }, params: RequestParams = {}) =>
       this.request<ChainInfo, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/blockflow/chains`,
+        path: `/blockflow/chain-info`,
         method: "GET",
         query: query,
         format: "json",
@@ -1159,10 +1183,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get the balance of an address
      * @request GET:/addresses/{address}/balance
      */
-    getAddressesAddressBalance: (address: string, params: RequestParams = {}) =>
+    getAddressesAddressBalance: (address: string, query?: { utxosLimit?: number }, params: RequestParams = {}) =>
       this.request<Balance, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}/balance`,
         method: "GET",
+        query: query,
         format: "json",
         ...params,
       }),
@@ -1175,10 +1200,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get the UTXOs of an address
      * @request GET:/addresses/{address}/utxos
      */
-    getAddressesAddressUtxos: (address: string, params: RequestParams = {}) =>
-      this.request<UTXO[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+    getAddressesAddressUtxos: (address: string, query?: { utxosLimit?: number }, params: RequestParams = {}) =>
+      this.request<UTXOs, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}/utxos`,
         method: "GET",
+        query: query,
         format: "json",
         ...params,
       }),
