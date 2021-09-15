@@ -20,10 +20,13 @@ import * as walletUtils from '../dist/lib/wallet.js'
 
 describe('Wallet', function () {
   it('should encrypt and decrypt using password', async () => {
-    const myPassword = 'utopia'
+    const myPassword = 'alephium'
     const myWallet = walletUtils.walletGenerate()
     const readWallet = await walletUtils.walletOpen(myPassword, myWallet.encrypt(myPassword))
     expect(JSON.stringify(myWallet)).toEqual(JSON.stringify(readWallet))
+
+    const wrongPassword = 'utopia'
+    await expect(() => { walletUtils.walletOpen(wrongPassword, myWallet.encrypt(myPassword))}).toThrow('Unsupported state or unable to authenticate data')
   })
 
   it('should import wallet in a compatible manner', () => {
