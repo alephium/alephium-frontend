@@ -20,7 +20,7 @@ class NodeStorage {
   walletsUrl: string
 
   constructor() {
-    this.walletsUrl = process.env.HOME + '/.alphium-wallets'
+    this.walletsUrl = process.env.HOME + '/.alphium-wallet-apps'
 
     if (!fs.existsSync(this.walletsUrl)) {
       fs.mkdirSync(this.walletsUrl)
