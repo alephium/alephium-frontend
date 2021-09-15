@@ -98,39 +98,29 @@ export class Wallet {
   }
 }
 
-const path = (networkId: NetworkId) => {
-  let coinType = ''
-
-  switch (networkId) {
-    case 0:
-      coinType = "1234'"
-      break
-    case 1:
-      coinType = "1'"
-      break
-    default:
-      throw new Error('Unknown networkId')
-  }
+const getPath = () => {
+  // Being explicit: we always use coinType 1234 no matter the network.
+  const coinType = "1234'"
 
   return `m/44'/${coinType}/0'/0/0`
 }
 
-export const getWalletFromMnemonic = (mnemonic: string, networkId: NetworkId) => {
+export const getWalletFromMnemonic = (mnemonic: string) => {
   const seed = bip39.mnemonicToSeedSync(mnemonic)
-  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed, networkId)
+  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
 
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
 }
 
-export const getWalletFromSeed = (seed: Buffer, networkId: NetworkId) => {
-  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed, networkId)
+export const getWalletFromSeed = (seed: Buffer) => {
+  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
 
   return new Wallet({ seed, address, publicKey, privateKey })
 }
 
-const deriveAddressAndKeys = (seed: Buffer, networkId: NetworkId) => {
+const deriveAddressAndKeys = (seed: Buffer) => {
   const masterKey = bip32.fromSeed(seed)
-  const keyPair = masterKey.derivePath(path(networkId))
+  const keyPair = masterKey.derivePath(getPath())
 
   if (!keyPair.privateKey) throw new Error('Missing private key')
 
@@ -147,26 +137,26 @@ const deriveAddressAndKeys = (seed: Buffer, networkId: NetworkId) => {
   return { address, publicKey, privateKey }
 }
 
-export const walletGenerate = (networkId: NetworkId) => {
+export const walletGenerate = () => {
   const mnemonic = bip39.generateMnemonic(256)
-  return getWalletFromMnemonic(mnemonic, networkId)
+  return getWalletFromMnemonic(mnemonic)
 }
 
-export const walletImport = (mnemonic: string, networkId: NetworkId) => {
+export const walletImport = (mnemonic: string) => {
   if (!bip39.validateMnemonic(mnemonic)) {
     throw new Error('Invalid seed phrase')
   }
-  return getWalletFromMnemonic(mnemonic, networkId)
+  return getWalletFromMnemonic(mnemonic)
 }
 
-export const walletOpen = (password: string, encryptedWallet: string, networkId: NetworkId) => {
+export const walletOpen = (password: string, encryptedWallet: string) => {
   const dataDecrypted = decrypt(password, encryptedWallet)
   const config = JSON.parse(dataDecrypted) as StoredState
 
   if (config.mnemonic) {
-    return getWalletFromMnemonic(config.mnemonic, networkId)
+    return getWalletFromMnemonic(config.mnemonic)
   } else if (config.seed) {
-    return getWalletFromSeed(Buffer.from(config.seed, 'hex'), networkId)
+    return getWalletFromSeed(Buffer.from(config.seed, 'hex'))
   } else {
     throw new Error(
       'Problem with the encrypted wallet: missing both seed and mnemonic. One of the two must be defined.'
