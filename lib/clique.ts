@@ -72,7 +72,7 @@ export class CliqueClient extends Api<null> {
 
     const group = res.data.group
 
-    if (this.clique.nodes.length === 0) {
+    if (this.clients.length === 0) {
       // This shouldn't happen as current user is in the clique
       throw new Error('Unknown error (no nodes in the clique)')
     }
