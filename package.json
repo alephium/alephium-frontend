@@ -1,6 +1,6 @@
 {
   "name": "alephium-js",
-  "version": "0.10.0",
+  "version": "0.10.2",
   "description": "Alephium node and wallet client",
   "license": "GPL",
   "main": "dist/lib/index.js",
