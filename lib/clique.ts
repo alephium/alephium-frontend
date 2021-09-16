@@ -29,25 +29,33 @@ export class CliqueClient extends Api<null> {
   clique!: SelfClique
   clients!: NodeClient[]
 
-  async init() {
+  async init(isMultiNodesClique: boolean) {
     this.clients = []
 
-    const res = await this.selfClique()
+    if(isMultiNodesClique) {
+      const res = await this.selfClique()
 
-    if (res.error) {
-      throw new Error(res.error.detail)
-    }
-
-    this.clique = res.data
-
-    if (this.clique.nodes) {
-      for (const node of this.clique.nodes) {
-        const client = new NodeClient({
-          baseUrl: `http://${node.address}:${node.restPort}`
-        })
-
-        this.clients.push(client)
+      if (res.error) {
+        throw new Error(res.error.detail)
       }
+
+      this.clique = res.data
+
+      if (this.clique.nodes) {
+        for (const node of this.clique.nodes) {
+          const client = new NodeClient({
+            baseUrl: `http://${node.address}:${node.restPort}`
+          })
+
+          this.clients.push(client)
+        }
+      }
+    } else {
+      const client = new NodeClient({
+        baseUrl: this.baseUrl
+      })
+
+      this.clients.push(client)
     }
   }
 
