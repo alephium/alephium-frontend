@@ -77,7 +77,7 @@ export class CliqueClient extends Api<null> {
       throw new Error('Unknown error (no nodes in the clique)')
     }
 
-    return group % this.clique.nodes.length
+    return group % this.clients.length
   }
 
   async getBalance(address: string) {
