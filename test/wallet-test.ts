@@ -45,11 +45,6 @@ describe('Wallet', function () {
     })
   })
 
-  it('should generate wallet from seed in a bip32 compatible manner', () => {
-    const myWallet = walletUtils.getWalletFromSeed(Buffer.from('231613f21f4c749167d6d9e625c983b6c606134dbd7d99d55dea874e1d734eae1d45d7700bac615d6e9b764ac0985c4e1d69a822108bdcf015425f75f7cd1c2f', 'hex'))
-    expect('499fd1295acad7870e61f96aa1d28f4c0264439c7bc66840c7895c14fa71cfc5').toEqual(myWallet.privateKey)
-  })
-
   it('generate mnemonic with 24 words', () => {
     const myWallet = walletUtils.walletGenerate()
     expect(myWallet.mnemonic.split(' ').length).toEqual(24)
@@ -65,11 +60,7 @@ describe('Wallet', function () {
       expect(imported.publicKey).toEqual(opened.publicKey)
       expect(imported.privateKey).toEqual(opened.privateKey)
       expect(imported.seed).toEqual(opened.seed)
-
-      // Old wallets don't include mnemonic
-      if (opened.mnemonic) {
-        expect(imported.mnemonic).toEqual(opened.mnemonic)
-      }
+      expect(imported.mnemonic).toEqual(opened.mnemonic)
     }
   })
 })

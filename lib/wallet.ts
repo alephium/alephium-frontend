@@ -24,32 +24,14 @@ import blake from 'blakejs'
 import { decrypt, encrypt } from './password-crypto'
 
 class StoredState {
-  numberOfAddresses: number
-  activeAddressIndex: number
-  seed?: string
-  mnemonic?: string
+  mnemonic: string
 
   constructor({
-    numberOfAddresses,
-    activeAddressIndex,
-    seed,
-    mnemonic
+    mnemonic,
   }: {
-    numberOfAddresses: number
-    activeAddressIndex: number
-    seed?: Buffer
-    mnemonic?: string
+    mnemonic: string
   }) {
-    this.numberOfAddresses = numberOfAddresses
-    this.activeAddressIndex = activeAddressIndex
-
-    if (mnemonic) {
-      this.mnemonic = mnemonic
-    } else if (seed) {
-      this.seed = seed.toString('hex')
-    } else {
-      throw new Error('Missing both seed and mnemonic. One of the two must be defined.')
-    }
+    this.mnemonic = mnemonic
   }
 }
 
@@ -60,37 +42,31 @@ export class Wallet {
   publicKey: string
   privateKey: string
   seed: Buffer // TODO: We should differentiate the notion of account (seed, mnemonic) from individual addresses.
-  mnemonic?: string
+  mnemonic: string
 
   constructor({
     address,
     publicKey,
     privateKey,
     seed,
-    mnemonic
+    mnemonic,
   }: {
     address: string
     publicKey: string
     privateKey: string
     seed: Buffer
-    mnemonic?: string
+    mnemonic: string
   }) {
     this.address = address
     this.publicKey = publicKey
     this.privateKey = privateKey
     this.seed = seed
-
-    if (mnemonic) {
-      this.mnemonic = mnemonic
-    }
+    this.mnemonic = mnemonic
   }
 
   encrypt = (password: string) => {
     const storedState = new StoredState({
-      numberOfAddresses: 1,
-      activeAddressIndex: 0,
-      seed: this.seed,
-      mnemonic: this.mnemonic
+      mnemonic: this.mnemonic,
     })
     return encrypt(password, JSON.stringify(storedState))
   }
@@ -108,12 +84,6 @@ export const getWalletFromMnemonic = (mnemonic: string) => {
   const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
 
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
-}
-
-export const getWalletFromSeed = (seed: Buffer) => {
-  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
-
-  return new Wallet({ seed, address, publicKey, privateKey })
 }
 
 const deriveAddressAndKeys = (seed: Buffer) => {
@@ -151,13 +121,5 @@ export const walletOpen = (password: string, encryptedWallet: string) => {
   const dataDecrypted = decrypt(password, encryptedWallet)
   const config = JSON.parse(dataDecrypted) as StoredState
 
-  if (config.mnemonic) {
-    return getWalletFromMnemonic(config.mnemonic)
-  } else if (config.seed) {
-    return getWalletFromSeed(Buffer.from(config.seed, 'hex'))
-  } else {
-    throw new Error(
-      'Problem with the encrypted wallet: missing both seed and mnemonic. One of the two must be defined.'
-    )
-  }
+  return getWalletFromMnemonic(config.mnemonic)
 }
