@@ -108,4 +108,13 @@ export class CliqueClient extends Api<null> {
 
     return utils.signatureEncode(ec, signature)
   }
+
+  transactionVerifySignature(txHash: string, publicKey: string, signature: string) {
+    try {
+      const key = ec.keyFromPublic(publicKey, 'hex')
+      return key.verify(txHash, utils.signatureDecode(ec, signature))
+    } catch(error) {
+      return false
+    }
+  }
 }
