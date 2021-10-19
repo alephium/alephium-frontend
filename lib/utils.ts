@@ -18,7 +18,6 @@ import NodeStorage from './storage-node'
 import BrowserStorage from './storage-browser'
 import EC from 'elliptic'
 import BN from 'bn.js'
-import { assert } from 'console'
 
 const isNode =
   typeof process !== 'undefined' && typeof process.release !== 'undefined' && process.release.name === 'node'
@@ -41,16 +40,16 @@ export const signatureEncode = (ec: EC.ec, signature: EC.ec.Signature) => {
 // the signature should be in hex string format for 64 bytes
 export const signatureDecode = (ec: EC.ec, signature: string) => {
   if (signature.length !== 128) {
-    throw new Error("Invalid signature length")
+    throw new Error('Invalid signature length')
   }
 
   const sHex = signature.slice(64, 128)
   const s = new BN(sHex, 'hex')
   if (ec.n && s.cmp(ec.nh) < 1) {
     const decoded = { r: signature.slice(0, 64), s: sHex }
-    return decoded;
+    return decoded
   } else {
-    throw new Error("The signature is not normalized")
+    throw new Error('The signature is not normalized')
   }
 }
 

@@ -26,11 +26,7 @@ import { decrypt, encrypt } from './password-crypto'
 class StoredState {
   mnemonic: string
 
-  constructor({
-    mnemonic,
-  }: {
-    mnemonic: string
-  }) {
+  constructor({ mnemonic }: { mnemonic: string }) {
     this.mnemonic = mnemonic
   }
 }
@@ -49,7 +45,7 @@ export class Wallet {
     publicKey,
     privateKey,
     seed,
-    mnemonic,
+    mnemonic
   }: {
     address: string
     publicKey: string
@@ -66,7 +62,7 @@ export class Wallet {
 
   encrypt = (password: string) => {
     const storedState = new StoredState({
-      mnemonic: this.mnemonic,
+      mnemonic: this.mnemonic
     })
     return encrypt(password, JSON.stringify(storedState))
   }
