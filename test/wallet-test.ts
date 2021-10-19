@@ -21,7 +21,7 @@ import * as walletUtils from '../dist/lib/wallet.js'
 describe('Wallet', function () {
   it('should encrypt and decrypt using password', async () => {
     const myPassword = 'alephium'
-     const myWallet = walletUtils.walletGenerate()
+    const myWallet = walletUtils.walletGenerate()
     const readWallet = await walletUtils.walletOpen(myPassword, myWallet.encrypt(myPassword))
     expect(JSON.stringify(myWallet)).toEqual(JSON.stringify(readWallet))
 
