@@ -32,7 +32,7 @@ export class CliqueClient extends Api<null> {
   async init(isMultiNodesClique: boolean) {
     this.clients = []
 
-    if(isMultiNodesClique) {
+    if (isMultiNodesClique) {
       const res = await this.selfClique()
 
       if (res.error) {
@@ -113,7 +113,7 @@ export class CliqueClient extends Api<null> {
     try {
       const key = ec.keyFromPublic(publicKey, 'hex')
       return key.verify(txHash, utils.signatureDecode(ec, signature))
-    } catch(error) {
+    } catch (error) {
       return false
     }
   }

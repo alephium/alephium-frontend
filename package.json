@@ -23,7 +23,8 @@
     "fetch-alephium-schema": "npx swagger-typescript-api -p http://127.0.0.1:12973/docs/openapi.json -o ./api -n api-alephium.ts",
     "fetch-explorer-schema": "npx swagger-typescript-api -p http://localhost:9090/docs/explorer-backend-openapi.json -o ./api -n api-explorer.ts",
     "dev": "tsnd --respawn lib/index.ts",
-    "lint": "eslint lib/ || exit 0",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --fix --ext .ts",
     "test": "npm run compile && jest --useStderr --silent=false --verbose=true --config jestconfig.json",
     "prepublishOnly": "npm run compile"
   },
