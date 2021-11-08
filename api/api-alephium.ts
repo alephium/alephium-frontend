@@ -134,6 +134,11 @@ export interface BuildContractResult {
   toGroup: number;
 }
 
+export interface BuildInfo {
+  releaseVersion: string;
+  commit: string;
+}
+
 export interface BuildMultisig {
   fromAddress: string;
   fromPublicKeys: string[];
@@ -304,7 +309,7 @@ export type MisbehaviorAction = Unban;
 
 export interface NodeInfo {
   version: ReleaseVersion;
-  isMining: boolean;
+  buildInfo: BuildInfo;
 }
 
 export interface NotFound {
