@@ -9,22 +9,32 @@
  * ---------------------------------------------------------------
  */
 
+export interface Address {
+  value: string;
+}
+
 export interface AddressBalance {
   address: string;
 
   /** @format uint256 */
   balance: string;
+  balanceHint: Hint;
+
+  /** @format uint256 */
+  lockedBalance: string;
+  lockedBalanceHint: Hint;
   warning?: string;
 }
 
 export interface AddressInfo {
   address: string;
   publicKey: string;
+  group: number;
 }
 
 export interface Addresses {
   activeAddress: string;
-  addresses: string[];
+  addresses: Info[];
 }
 
 export interface Asset {
@@ -50,9 +60,11 @@ export interface BadRequest {
 export interface Balance {
   /** @format uint256 */
   balance: string;
+  balanceHint: Hint;
 
   /** @format uint256 */
   lockedBalance: string;
+  lockedBalanceHint: Hint;
   utxoNum: number;
   warning?: string;
 }
@@ -60,6 +72,7 @@ export interface Balance {
 export interface Balances {
   /** @format uint256 */
   totalBalance: string;
+  totalBalanceHint: Hint;
   balances: AddressBalance[];
 }
 
@@ -91,6 +104,10 @@ export interface BlockHeaderEntry {
   deps: string[];
 }
 
+export interface Bool {
+  value: boolean;
+}
+
 export interface BrokerInfo {
   cliqueId: string;
   brokerId: number;
@@ -103,13 +120,23 @@ export interface BuildContract {
   code: string;
   gas?: number;
   gasPrice?: GasPrice;
+  state?: string;
+
+  /** @format uint256 */
+  issueTokenAmount?: string;
 }
 
 export interface BuildContractResult {
   unsignedTx: string;
   hash: string;
+  contractId: string;
   fromGroup: number;
   toGroup: number;
+}
+
+export interface BuildInfo {
+  releaseVersion: string;
+  commit: string;
 }
 
 export interface BuildMultisig {
@@ -123,6 +150,20 @@ export interface BuildMultisig {
 export interface BuildMultisigAddress {
   keys: string[];
   mrequired: number;
+}
+
+export interface BuildScript {
+  fromPublicKey: string;
+  code: string;
+  gas?: number;
+  gasPrice?: GasPrice;
+}
+
+export interface BuildScriptResult {
+  unsignedTx: string;
+  hash: string;
+  fromGroup: number;
+  toGroup: number;
 }
 
 export interface BuildSweepAllTransaction {
@@ -150,22 +191,16 @@ export interface BuildTransactionResult {
   toGroup: number;
 }
 
+export interface ByteVec {
+  value: string;
+}
+
 export interface ChainInfo {
   currentHeight: number;
 }
 
 export interface ChangeActiveAddress {
   address: string;
-}
-
-export interface Compile {
-  address: string;
-  type: string;
-  code: string;
-  state?: string;
-
-  /** @format uint256 */
-  issueTokenAmount?: string;
 }
 
 export interface CompileResult {
@@ -189,6 +224,10 @@ export interface Contract1 {
   amount: string;
   address: string;
   tokens: Token[];
+}
+
+export interface ContractStateResult {
+  fields: Val[];
 }
 
 export interface DecodeTransaction {
@@ -223,6 +262,20 @@ export interface HashesAtHeight {
   headers: string[];
 }
 
+export interface Hint {
+  /** @format uint256 */
+  value: string;
+}
+
+export interface I256 {
+  value: string;
+}
+
+export interface Info {
+  address: string;
+  group: number;
+}
+
 export type Input = Asset | Contract;
 
 export interface InterCliquePeerInfo {
@@ -255,7 +308,8 @@ export interface MinerAddressesInfo {
 export type MisbehaviorAction = Unban;
 
 export interface NodeInfo {
-  isMining: boolean;
+  version: ReleaseVersion;
+  buildInfo: BuildInfo;
 }
 
 export interface NotFound {
@@ -288,6 +342,12 @@ export type PeerStatus = Banned | Penalty;
 
 export interface Penalty {
   value: number;
+}
+
+export interface ReleaseVersion {
+  major: number;
+  minor: number;
+  patch: number;
 }
 
 export interface Result {
@@ -344,13 +404,6 @@ export interface Sign {
   data: string;
 }
 
-export interface SubmitContract {
-  code: string;
-  tx: string;
-  signature: string;
-  fromGroup: number;
-}
-
 export interface SubmitMultisig {
   unsignedTx: string;
   signatures: string[];
@@ -401,6 +454,11 @@ export interface TxResult {
 
 export type TxStatus = Confirmed | MemPooled | NotFound1;
 
+export interface U256 {
+  /** @format uint256 */
+  value: string;
+}
+
 export interface UTXO {
   ref: OutputRef;
 
@@ -432,9 +490,17 @@ export interface UnconfirmedTransactions {
   unconfirmedTransactions: Tx[];
 }
 
+export type Val = Address | Bool | ByteVec | I256 | U256;
+
+export interface VerifySignature {
+  data: string;
+  signature: string;
+  publicKey: string;
+}
+
 export interface WalletCreation {
   password: string;
-  walletName?: string;
+  walletName: string;
   isMiner?: boolean;
   mnemonicPassphrase?: string;
   mnemonicSize?: number;
@@ -447,8 +513,8 @@ export interface WalletDeletion {
 export interface WalletRestore {
   password: string;
   mnemonic: string;
+  walletName: string;
   isMiner?: boolean;
-  walletName?: string;
   mnemonicPassphrase?: string;
 }
 
@@ -1348,31 +1414,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Contracts
-     * @name PostContractsSubmit
-     * @summary Submit a signed smart contract
-     * @request POST:/contracts/submit
+     * @name PostContractsCompileScript
+     * @summary Compile a script
+     * @request POST:/contracts/compile-script
      */
-    postContractsSubmit: (data: SubmitContract, params: RequestParams = {}) =>
-      this.request<TxResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/contracts/submit`,
-        method: "POST",
-        body: data,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Contracts
-     * @name PostContractsCompile
-     * @summary Compile a smart contract
-     * @request POST:/contracts/compile
-     */
-    postContractsCompile: (data: Compile, params: RequestParams = {}) =>
+    postContractsCompileScript: (data: string, params: RequestParams = {}) =>
       this.request<CompileResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/contracts/compile`,
+        path: `/contracts/compile-script`,
         method: "POST",
         body: data,
         type: ContentType.Json,
@@ -1384,19 +1432,75 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Contracts
-     * @name PostContractsBuild
-     * @summary Build an unsigned contract
-     * @request POST:/contracts/build
+     * @name PostContractsBuildScript
+     * @summary Build an unsigned script
+     * @request POST:/contracts/build-script
      */
-    postContractsBuild: (data: BuildContract, params: RequestParams = {}) =>
+    postContractsBuildScript: (data: BuildScript, params: RequestParams = {}) =>
+      this.request<BuildScriptResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/contracts/build-script`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Contracts
+     * @name PostContractsCompileContract
+     * @summary Compile a smart contract
+     * @request POST:/contracts/compile-contract
+     */
+    postContractsCompileContract: (data: string, params: RequestParams = {}) =>
+      this.request<CompileResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/contracts/compile-contract`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Contracts
+     * @name PostContractsBuildContract
+     * @summary Build an unsigned contract
+     * @request POST:/contracts/build-contract
+     */
+    postContractsBuildContract: (data: BuildContract, params: RequestParams = {}) =>
       this.request<
         BuildContractResult,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
       >({
-        path: `/contracts/build`,
+        path: `/contracts/build-contract`,
         method: "POST",
         body: data,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Contracts
+     * @name GetContractsAddressState
+     * @summary Get contract state
+     * @request GET:/contracts/{address}/state
+     */
+    getContractsAddressState: (address: string, query: { group: number }, params: RequestParams = {}) =>
+      this.request<
+        ContractStateResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/contracts/${address}/state`,
+        method: "GET",
+        query: query,
         format: "json",
         ...params,
       }),
@@ -1452,6 +1556,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     postMultisigSubmit: (data: SubmitMultisig, params: RequestParams = {}) =>
       this.request<TxResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/multisig/submit`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  };
+  utils = {
+    /**
+     * No description
+     *
+     * @tags Utils
+     * @name PostUtilsVerifySignature
+     * @summary Verify the SecP256K1 signature of some data
+     * @request POST:/utils/verify-signature
+     */
+    postUtilsVerifySignature: (data: VerifySignature, params: RequestParams = {}) =>
+      this.request<boolean, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/utils/verify-signature`,
         method: "POST",
         body: data,
         type: ContentType.Json,

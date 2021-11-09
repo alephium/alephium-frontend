@@ -11,7 +11,7 @@
 
 export interface AddressInfo {
   /** @format uint256 */
-  balance: number;
+  balance: string;
   txNumber: number;
 }
 
@@ -26,7 +26,7 @@ export interface Input {
   address: string;
 
   /** @format uint256 */
-  amount: number;
+  amount: string;
 }
 
 export interface InternalServerError {
@@ -57,7 +57,7 @@ export interface NotFound {
 
 export interface Output {
   /** @format uint256 */
-  amount: number;
+  amount: string;
   address: string;
 
   /** @format int64 */
@@ -85,7 +85,7 @@ export interface Transaction {
   gasAmount: number;
 
   /** @format uint256 */
-  gasPrice: number;
+  gasPrice: string;
 }
 
 export type TransactionLike = Transaction | UnconfirmedTx;
@@ -97,7 +97,7 @@ export interface UInput {
 
 export interface UOutput {
   /** @format uint256 */
-  amount: number;
+  amount: string;
   address: string;
 
   /** @format int64 */
@@ -117,7 +117,7 @@ export interface UnconfirmedTx {
   gasAmount: number;
 
   /** @format uint256 */
-  gasPrice: number;
+  gasPrice: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -186,15 +186,18 @@ export class HttpClient<SecurityDataType = unknown> {
     this.securityData = data;
   };
 
-  private addQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key];
+  private encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key);
     return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
   }
 
+  private addQueryParam(query: QueryParamsType, key: string) {
+    return this.encodeQueryParam(key, query[key]);
+  }
+
   private addArrayQueryParam(query: QueryParamsType, key: string) {
     const value = query[key];
-    return `${value.map(this.addQueryParam).join("&")}`;
+    return value.map((v: any) => this.encodeQueryParam(key, v)).join("&");
   }
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
@@ -214,9 +217,17 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.Json]: (input: any) =>
       input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
     [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((data, key) => {
-        data.append(key, input[key]);
-        return data;
+      Object.keys(input || {}).reduce((formData, key) => {
+        const property = input[key];
+        formData.append(
+          key,
+          property instanceof Blob
+            ? property
+            : typeof property === "object" && property !== null
+            ? JSON.stringify(property)
+            : `${property}`,
+        );
+        return formData;
       }, new FormData()),
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
