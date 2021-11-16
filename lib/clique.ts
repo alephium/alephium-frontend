@@ -32,13 +32,13 @@ export class CliqueClient extends Api<null> {
   async init(isMultiNodesClique: boolean) {
     this.clients = []
 
+    const res = await this.selfClique()
+
+    if (res.error) {
+      throw new Error(res.error.detail)
+    }
+
     if (isMultiNodesClique) {
-      const res = await this.selfClique()
-
-      if (res.error) {
-        throw new Error(res.error.detail)
-      }
-
       this.clique = res.data
 
       if (this.clique.nodes) {
