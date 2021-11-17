@@ -1,7 +1,7 @@
 {
   "name": "alephium-js",
   "version": "1.0.0",
-  "description": "Alephium node and wallet client",
+  "description": "A JS/TS library to interact with the Alephium platform",
   "license": "GPL",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
