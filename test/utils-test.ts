@@ -36,6 +36,13 @@ describe('utils', function () {
     assert.deepStrictEqual(['one', 'two'], store.list())
   })
 
+  it('should throw an error when decoding invalid signature', () => {
+    const ec = new EC.ec('secp256k1')
+    const signature = 'signature-with-wrong-length'
+
+    expect(() => utils.signatureDecode(ec, signature)).toThrowError('Invalid signature length')
+  })
+
   it('should compress signature', () => {
     const vectors = [
       [
