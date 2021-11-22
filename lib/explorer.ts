@@ -17,7 +17,7 @@
 import { Api } from '../api/api-explorer'
 
 /**
- * Node client
+ * Explorer client
  */
 
 export class ExplorerClient extends Api<null> {
