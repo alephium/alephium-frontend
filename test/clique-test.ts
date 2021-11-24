@@ -77,4 +77,62 @@ describe('clique', function () {
       expect(client.clients[0].baseUrl).toBe('http://127.0.0.1:12973')
     })
   })
+
+  it('should get the correct index of the clique', async () => {
+    const testCases = [
+      {
+        numberOfNodes: 1,
+        expectedIndexValues: [0, 0, 0, 0]
+      },
+      {
+        numberOfNodes: 2,
+        expectedIndexValues: [0, 1, 0, 1]
+      },
+      {
+        numberOfNodes: 3,
+        expectedIndexValues: [0, 1, 2, 0]
+      },
+      {
+        numberOfNodes: 4,
+        expectedIndexValues: [0, 1, 2, 3]
+      },
+      {
+        numberOfNodes: 0
+      }
+    ]
+
+    testCases.forEach(async (testCase) => {
+      const client = new clique.CliqueClient()
+      const mockedGetInfosSelfClique = jest.fn()
+      client.infos.getInfosSelfClique = mockedGetInfosSelfClique
+      mockedGetInfosSelfClique.mockResolvedValue({
+        data: {
+          nodes: Array.from({ length: testCase.numberOfNodes }, () => ({ address: 'x', restPort: 'y' }))
+        }
+      })
+      await client.init(testCase.numberOfNodes > 1)
+
+      if (testCase.numberOfNodes > 0 && testCase.expectedIndexValues) {
+        const mockedGetAddressesAddressGroup = jest.fn()
+        client.addresses.getAddressesAddressGroup = mockedGetAddressesAddressGroup
+        mockedGetAddressesAddressGroup
+          .mockResolvedValueOnce({ data: { group: 0 } })
+          .mockResolvedValueOnce({ data: { group: 1 } })
+          .mockResolvedValueOnce({ data: { group: 2 } })
+          .mockResolvedValueOnce({ data: { group: 3 } })
+
+        let index = await client.getClientIndex('0x0')
+        expect(index).toBe(testCase.expectedIndexValues[0])
+        index = await client.getClientIndex('0x0')
+        expect(index).toBe(testCase.expectedIndexValues[1])
+        index = await client.getClientIndex('0x0')
+        expect(index).toBe(testCase.expectedIndexValues[2])
+        index = await client.getClientIndex('0x0')
+        expect(index).toBe(testCase.expectedIndexValues[3])
+      } else {
+        client.clients = []
+        expect(client.getClientIndex('0x0')).rejects.toEqual(new Error('Unknown error (no nodes in the clique)'))
+      }
+    })
+  })
 })
