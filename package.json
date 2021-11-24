@@ -25,7 +25,9 @@
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --fix --ext .ts",
-    "test": "npm run compile && jest --useStderr --silent=false --verbose=true --config jestconfig.json",
+    "jest": "jest --useStderr --silent=false --verbose=true --config jestconfig.json",
+    "test": "npm run compile && npm run jest",
+    "test:coverage": "npm run compile && npm run jest -- --coverage",
     "prepublishOnly": "npm run compile"
   },
   "dependencies": {
