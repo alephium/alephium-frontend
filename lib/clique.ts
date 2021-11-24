@@ -64,20 +64,18 @@ export class CliqueClient extends Api<null> {
   }
 
   async getClientIndex(address: string) {
+    if (this.clients.length === 0) {
+      // This shouldn't happen as current user is in the clique
+      throw new Error('Unknown error (no nodes in the clique)')
+    }
+
     const res = await this.addresses.getAddressesAddressGroup(address)
 
     if (res.error) {
       throw new Error(res.error.detail)
     }
 
-    const group = res.data.group
-
-    if (this.clients.length === 0) {
-      // This shouldn't happen as current user is in the clique
-      throw new Error('Unknown error (no nodes in the clique)')
-    }
-
-    return group % this.clients.length
+    return res.data.group % this.clients.length
   }
 
   async getBalance(address: string) {
