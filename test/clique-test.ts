@@ -18,6 +18,7 @@ import * as clique from '../dist/lib/clique'
 
 import EC from 'elliptic'
 import assert from 'assert'
+import WS from 'jest-websocket-mock'
 
 import selfCliqueMockData from './self-clique.json'
 
@@ -134,5 +135,18 @@ describe('clique', function () {
         expect(client.getClientIndex('0x0')).rejects.toEqual(new Error('Unknown error (no nodes in the clique)'))
       }
     })
+  })
+
+  it("should return a websocket to the clique's node", async () => {
+    const client = new clique.CliqueClient()
+    const mockedGetInfosSelfClique = jest.fn()
+    client.infos.getInfosSelfClique = mockedGetInfosSelfClique
+    mockedGetInfosSelfClique.mockResolvedValue(selfCliqueMockData)
+
+    await client.init(true)
+
+    new WS('ws://127.0.0.1:11973/events')
+    const websocket = await client.getWebSocket(0)
+    expect(websocket?.url).toBe('ws://127.0.0.1:11973/events')
   })
 })
