@@ -19,6 +19,8 @@ import * as clique from '../dist/lib/clique'
 import EC from 'elliptic'
 import assert from 'assert'
 
+import selfCliqueMockData from './self-clique.json'
+
 describe('clique', function () {
   it('should verify signature', () => {
     const txHash = '8fc5f0d120b730f97f6cea5f02ae4a6ee7bf451d9261c623ea69d85e870201d2'
@@ -46,5 +48,33 @@ describe('clique', function () {
     const txHash = '8fc5f0d120b730f97f6cea5f02ae4a6ee7bf451d9261c623ea69d85e870201d2'
     const signature = client.transactionSign(txHash, privateKey)
     assert.strictEqual(client.transactionVerifySignature(txHash, publicKey, signature), true)
+  })
+
+  describe('self', function () {
+    const client = new clique.CliqueClient()
+    const mockedGetInfosSelfClique = jest.fn()
+    client.infos.getInfosSelfClique = mockedGetInfosSelfClique
+    mockedGetInfosSelfClique.mockResolvedValue(selfCliqueMockData)
+
+    it('should return information about the self clique', async () => {
+      const info = await client.selfClique()
+      expect(client.infos.getInfosSelfClique).toHaveBeenCalledTimes(1)
+      expect(info).toEqual(selfCliqueMockData)
+    })
+
+    it('should create a single node client', async () => {
+      const isMultiNodesClique = false
+
+      await client.init(isMultiNodesClique)
+      expect(client.clients.length).toBe(1)
+      expect(client.clients[0].baseUrl).toBe(client.baseUrl)
+    })
+
+    it('should create multiple node clients', async () => {
+      const isMultiNodesClique = true
+
+      await client.init(isMultiNodesClique)
+      expect(client.clients[0].baseUrl).toBe('http://127.0.0.1:12973')
+    })
   })
 })
