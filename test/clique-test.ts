@@ -51,7 +51,7 @@ describe('clique', function () {
     assert.strictEqual(client.transactionVerifySignature(txHash, publicKey, signature), true)
   })
 
-  describe('self', function () {
+  describe('', function () {
     const client = new clique.CliqueClient()
     const mockedGetInfosSelfClique = jest.fn()
     client.infos.getInfosSelfClique = mockedGetInfosSelfClique
@@ -76,6 +76,14 @@ describe('clique', function () {
 
       await client.init(isMultiNodesClique)
       expect(client.clients[0].baseUrl).toBe('http://127.0.0.1:12973')
+    })
+
+    it("should return a websocket to the clique's node", async () => {
+      await client.init(true)
+
+      new WS('ws://127.0.0.1:11973/events')
+      const websocket = await client.getWebSocket(0)
+      expect(websocket?.url).toBe('ws://127.0.0.1:11973/events')
     })
   })
 
@@ -137,16 +145,77 @@ describe('clique', function () {
     })
   })
 
-  it("should return a websocket to the clique's node", async () => {
+  describe('', () => {
     const client = new clique.CliqueClient()
     const mockedGetInfosSelfClique = jest.fn()
     client.infos.getInfosSelfClique = mockedGetInfosSelfClique
     mockedGetInfosSelfClique.mockResolvedValue(selfCliqueMockData)
+    const mockedGetAddressesAddressGroup = jest.fn()
+    client.addresses.getAddressesAddressGroup = mockedGetAddressesAddressGroup
+    mockedGetAddressesAddressGroup.mockResolvedValue({ data: { group: 0 } })
 
-    await client.init(true)
+    beforeAll(() => {
+      return client.init(false)
+    })
 
-    new WS('ws://127.0.0.1:11973/events')
-    const websocket = await client.getWebSocket(0)
-    expect(websocket?.url).toBe('ws://127.0.0.1:11973/events')
+    it('should get the balance of an address', async () => {
+      const balanceMockData = {
+        data: {
+          balance: '0',
+          balanceHint: '0 ALPH',
+          lockedBalance: '0',
+          lockedBalanceHint: '0 ALPH',
+          utxoNum: 0
+        }
+      }
+
+      const mockedGetBalance = jest.fn()
+      client.clients[0].getBalance = mockedGetBalance
+      mockedGetBalance.mockResolvedValue(balanceMockData)
+
+      const balance = await client.getBalance('0x0')
+
+      expect(client.clients[0].getBalance).toHaveBeenCalledTimes(1)
+      expect(balance).toEqual(balanceMockData)
+    })
+
+    it('should create a transaction', async () => {
+      const transactionMockData = {
+        data: {
+          unsignedTx: '0ecd20654c2e2be708495853e8da35c664247040c00bd10b9b13',
+          txId: '798e9e137aec7c2d59d9655b4ffa640f301f628bf7c365083bb255f6aa5f89ef',
+          fromGroup: 2,
+          toGroup: 1
+        }
+      }
+
+      const mockedTransactionCreate = jest.fn()
+      client.clients[0].transactionCreate = mockedTransactionCreate
+      mockedTransactionCreate.mockResolvedValue(transactionMockData)
+
+      const transaction = await client.transactionCreate('fromAddress', 'fromKey', 'toAdress', 'amount')
+
+      expect(client.clients[0].transactionCreate).toHaveBeenCalledTimes(1)
+      expect(transaction).toEqual(transactionMockData)
+    })
+
+    it('should send a transaction', async () => {
+      const transactionMockData = {
+        data: {
+          txId: '503bfb16230888af4924aa8f8250d7d348b862e267d75d3147f1998050b6da69',
+          fromGroup: 2,
+          toGroup: 1
+        }
+      }
+
+      const mockedTransactionSend = jest.fn()
+      client.clients[0].transactionSend = mockedTransactionSend
+      mockedTransactionSend.mockResolvedValue(transactionMockData)
+
+      const transaction = await client.transactionSend('fromAddress', 'tx', 'signature')
+
+      expect(client.clients[0].transactionSend).toHaveBeenCalledTimes(1)
+      expect(transaction).toEqual(transactionMockData)
+    })
   })
 })
