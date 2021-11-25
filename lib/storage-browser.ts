@@ -22,11 +22,11 @@ class BrowserStorage {
   }
 
   remove = (name: string) => {
-    window.localStorage.removeItem(this.key + '-' + name)
+    window.localStorage.removeItem(`${this.key}-${name}`)
   }
 
   load = (name: string) => {
-    const str = window.localStorage.getItem(this.key + '-' + name)
+    const str = window.localStorage.getItem(`${this.key}-${name}`)
     if (str) {
       return JSON.parse(str)
     } else {
@@ -36,7 +36,7 @@ class BrowserStorage {
 
   save = (name: string, json: unknown) => {
     const str = JSON.stringify(json)
-    window.localStorage.setItem(this.key + '-' + name, str)
+    window.localStorage.setItem(`${this.key}-${name}`, str)
   }
 
   list = () => {
