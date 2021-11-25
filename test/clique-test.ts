@@ -151,6 +151,25 @@ describe('clique', function () {
     })
   })
 
+  it('should throw an error when API returns an error', async () => {
+    const client = new clique.CliqueClient()
+
+    const mockedGetInfosSelfClique = jest.fn()
+    client.infos.getInfosSelfClique = mockedGetInfosSelfClique
+    mockedGetInfosSelfClique.mockResolvedValueOnce(selfCliqueMockData)
+    const mockedGetAddressesAddressGroup = jest.fn()
+    client.addresses.getAddressesAddressGroup = mockedGetAddressesAddressGroup
+    mockedGetAddressesAddressGroup.mockResolvedValue(errorMockData)
+
+    await client.init(false)
+
+    expect(client.getClientIndex('0x0')).rejects.toEqual(new Error(errorMockData.error.detail))
+
+    mockedGetInfosSelfClique.mockResolvedValueOnce(errorMockData)
+
+    expect(client.init(false)).rejects.toEqual(new Error(errorMockData.error.detail))
+  })
+
   describe('', () => {
     const client = new clique.CliqueClient()
     const mockedGetInfosSelfClique = jest.fn()

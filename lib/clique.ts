@@ -34,10 +34,6 @@ export class CliqueClient extends Api<null> {
 
     const res = await this.selfClique()
 
-    if (res.error) {
-      throw new Error(res.error.detail)
-    }
-
     if (isMultiNodesClique) {
       this.clique = res.data
 
@@ -60,7 +56,11 @@ export class CliqueClient extends Api<null> {
   }
 
   async selfClique() {
-    return await this.infos.getInfosSelfClique()
+    const res = await this.infos.getInfosSelfClique()
+
+    if (res.error) throw new Error(res.error.detail)
+
+    return res
   }
 
   async getClientIndex(address: string) {
@@ -71,9 +71,7 @@ export class CliqueClient extends Api<null> {
 
     const res = await this.addresses.getAddressesAddressGroup(address)
 
-    if (res.error) {
-      throw new Error(res.error.detail)
-    }
+    if (res.error) throw new Error(res.error.detail)
 
     return res.data.group % this.clients.length
   }
