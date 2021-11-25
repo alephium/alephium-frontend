@@ -65,4 +65,10 @@ describe('Wallet', function () {
       expect(imported.mnemonic).toEqual(opened.mnemonic)
     }
   })
+
+  it('should throw error if mnemonic is invalid', () => {
+    const invalidMnemonic =
+      'dog window beach above tiger attract barrel noodle autumn grain update either twelve security shoe teach quote flip reflect maple bike polar ivory gadget'
+    expect(() => walletUtils.walletImport(invalidMnemonic)).toThrow('Invalid seed phrase')
+  })
 })
