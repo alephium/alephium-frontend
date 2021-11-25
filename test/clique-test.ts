@@ -21,6 +21,12 @@ import assert from 'assert'
 import WS from 'jest-websocket-mock'
 
 import selfCliqueMockData from './self-clique.json'
+import {
+  balanceMockData,
+  transactionCreatedMockData,
+  transactionSubmittedMockData,
+  errorMockData
+} from './mocks/api-mock-data'
 
 describe('clique', function () {
   it('should verify signature', () => {
@@ -159,16 +165,6 @@ describe('clique', function () {
     })
 
     it('should get the balance of an address', async () => {
-      const balanceMockData = {
-        data: {
-          balance: '0',
-          balanceHint: '0 ALPH',
-          lockedBalance: '0',
-          lockedBalanceHint: '0 ALPH',
-          utxoNum: 0
-        }
-      }
-
       const mockedGetBalance = jest.fn()
       client.clients[0].getBalance = mockedGetBalance
       mockedGetBalance.mockResolvedValue(balanceMockData)
@@ -180,42 +176,25 @@ describe('clique', function () {
     })
 
     it('should create a transaction', async () => {
-      const transactionMockData = {
-        data: {
-          unsignedTx: '0ecd20654c2e2be708495853e8da35c664247040c00bd10b9b13',
-          txId: '798e9e137aec7c2d59d9655b4ffa640f301f628bf7c365083bb255f6aa5f89ef',
-          fromGroup: 2,
-          toGroup: 1
-        }
-      }
-
       const mockedTransactionCreate = jest.fn()
       client.clients[0].transactionCreate = mockedTransactionCreate
-      mockedTransactionCreate.mockResolvedValue(transactionMockData)
+      mockedTransactionCreate.mockResolvedValue(transactionCreatedMockData)
 
       const transaction = await client.transactionCreate('fromAddress', 'fromKey', 'toAdress', 'amount')
 
       expect(client.clients[0].transactionCreate).toHaveBeenCalledTimes(1)
-      expect(transaction).toEqual(transactionMockData)
+      expect(transaction).toEqual(transactionCreatedMockData)
     })
 
     it('should send a transaction', async () => {
-      const transactionMockData = {
-        data: {
-          txId: '503bfb16230888af4924aa8f8250d7d348b862e267d75d3147f1998050b6da69',
-          fromGroup: 2,
-          toGroup: 1
-        }
-      }
-
       const mockedTransactionSend = jest.fn()
       client.clients[0].transactionSend = mockedTransactionSend
-      mockedTransactionSend.mockResolvedValue(transactionMockData)
+      mockedTransactionSend.mockResolvedValue(transactionSubmittedMockData)
 
       const transaction = await client.transactionSend('fromAddress', 'tx', 'signature')
 
       expect(client.clients[0].transactionSend).toHaveBeenCalledTimes(1)
-      expect(transaction).toEqual(transactionMockData)
+      expect(transaction).toEqual(transactionSubmittedMockData)
     })
   })
 })
