@@ -15,8 +15,10 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import fs from 'fs'
+import * as bip32 from 'bip32'
 
 import * as walletUtils from '../dist/lib/wallet.js'
+import wallets from './wallets.json'
 
 describe('Wallet', function () {
   it('should encrypt and decrypt using password', async () => {
@@ -70,5 +72,18 @@ describe('Wallet', function () {
     const invalidMnemonic =
       'dog window beach above tiger attract barrel noodle autumn grain update either twelve security shoe teach quote flip reflect maple bike polar ivory gadget'
     expect(() => walletUtils.walletImport(invalidMnemonic)).toThrow('Invalid seed phrase')
+  })
+
+  it('should throw error if private key is missing', () => {
+    const importedWallet = wallets.wallets[0]
+    const seed = Buffer.from(importedWallet.seed, 'hex')
+    const neutered = bip32.fromSeed(seed).neutered()
+    const mockedDerivePath = jest.fn()
+    neutered.derivePath = mockedDerivePath
+    mockedDerivePath.mockReturnValue({ privateKey: undefined })
+
+    jest.spyOn(bip32, 'fromSeed').mockImplementation(() => neutered)
+
+    expect(() => walletUtils.walletImport(importedWallet.mnemonic)).toThrow('Missing private key')
   })
 })
