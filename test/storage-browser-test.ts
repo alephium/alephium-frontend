@@ -21,6 +21,7 @@
 import 'jest-localstorage-mock'
 
 import BrowserStorage from '../dist/lib/storage-browser'
+import * as utils from '../dist/lib/utils'
 
 describe('storage-browser', () => {
   const storage = new BrowserStorage()
@@ -85,5 +86,12 @@ describe('storage-browser', () => {
 
     expect(storage.list()).toEqual([name1, name2])
     expect(Object.keys(window.localStorage.__STORE__).length).toBe(2)
+  })
+})
+
+describe('utils', () => {
+  it('should return a browser storage', () => {
+    const storage = utils.getStorage()
+    expect(storage).toBeInstanceOf(BrowserStorage)
   })
 })
