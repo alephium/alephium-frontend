@@ -19,9 +19,6 @@ import BrowserStorage from './storage-browser'
 import EC from 'elliptic'
 import BN from 'bn.js'
 
-const isNode =
-  typeof process !== 'undefined' && typeof process.release !== 'undefined' && process.release.name === 'node'
-
 export const signatureEncode = (ec: EC.ec, signature: EC.ec.Signature) => {
   let sNormalized = signature.s
   if (ec.n && signature.s.cmp(ec.nh) === 1) {
@@ -53,10 +50,8 @@ export const signatureDecode = (ec: EC.ec, signature: string) => {
   }
 }
 
-export const getStorage = () => {
-  if (isNode) {
-    return new NodeStorage()
-  } else {
-    return new BrowserStorage()
-  }
+export const getStorage = (): BrowserStorage | NodeStorage => {
+  const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined'
+
+  return isBrowser ? new BrowserStorage() : new NodeStorage()
 }
