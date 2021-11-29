@@ -30,3 +30,42 @@ export const errorMockData = {
     detail: 'Error message'
   }
 }
+
+export const addressTransactionsMockData = {
+  data: [
+    {
+      hash: 'string',
+      blockHash: 'string',
+      timestamp: 0,
+      inputs: [
+        {
+          outputRef: {
+            scriptHint: 0,
+            key: 'string'
+          },
+          unlockScript: 'string',
+          txHashRef: 'string',
+          address: 'string',
+          amount: 'string'
+        }
+      ],
+      outputs: [
+        {
+          amount: 'string',
+          address: 'string',
+          lockTime: 0,
+          spent: 'string'
+        }
+      ],
+      gasAmount: 0,
+      gasPrice: 'string'
+    }
+  ]
+}
+
+export const addressDetailsMockData = {
+  data: {
+    balance: 'string',
+    txNumber: 0
+  }
+}
