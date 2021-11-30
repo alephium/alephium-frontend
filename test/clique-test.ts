@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import * as clique from '../lib/clique'
+import { CliqueClient } from '../lib'
 
 import EC from 'elliptic'
 import assert from 'assert'
@@ -36,7 +36,7 @@ describe('clique', function () {
     const wrongSig =
       '88471e7c97e558c98ac307ef699ed535ece319102fc69ea416dbb44fbb3cbf9c42dbfbf4ce73eb68c5e0d66122eb25d2ebe1cf9e37ef4c4f4e7a2ed35de141bc'
 
-    const client = new clique.CliqueClient()
+    const client = new CliqueClient()
     assert.strictEqual(client.transactionVerifySignature(txHash, pubKey, txSig), true)
     assert.strictEqual(client.transactionVerifySignature(txHash, pubKey, unnormalizedSig), false)
     assert.strictEqual(client.transactionVerifySignature(txHash, pubKey, wrongSig), false)
@@ -48,14 +48,14 @@ describe('clique', function () {
     const privateKey = key.getPrivate().toString('hex')
     const publicKey = key.getPublic().encode('hex', true)
 
-    const client = new clique.CliqueClient()
+    const client = new CliqueClient()
     const txHash = '8fc5f0d120b730f97f6cea5f02ae4a6ee7bf451d9261c623ea69d85e870201d2'
     const signature = client.transactionSign(txHash, privateKey)
     assert.strictEqual(client.transactionVerifySignature(txHash, publicKey, signature), true)
   })
 
   describe('', function () {
-    const client = new clique.CliqueClient()
+    const client = new CliqueClient()
     const mockedGetInfosSelfClique = jest.fn()
     client.infos.getInfosSelfClique = mockedGetInfosSelfClique
     mockedGetInfosSelfClique.mockResolvedValue(selfCliqueMockData)
@@ -114,7 +114,7 @@ describe('clique', function () {
     ]
 
     testCases.forEach(async (testCase) => {
-      const client = new clique.CliqueClient()
+      const client = new CliqueClient()
       const mockedGetInfosSelfClique = jest.fn()
       client.infos.getInfosSelfClique = mockedGetInfosSelfClique
       mockedGetInfosSelfClique.mockResolvedValue({
@@ -149,7 +149,7 @@ describe('clique', function () {
   })
 
   it('should throw an error when API returns an error', async () => {
-    const client = new clique.CliqueClient()
+    const client = new CliqueClient()
 
     const mockedGetInfosSelfClique = jest.fn()
     client.infos.getInfosSelfClique = mockedGetInfosSelfClique
@@ -168,7 +168,7 @@ describe('clique', function () {
   })
 
   describe('', () => {
-    const client = new clique.CliqueClient()
+    const client = new CliqueClient()
     const mockedGetInfosSelfClique = jest.fn()
     client.infos.getInfosSelfClique = mockedGetInfosSelfClique
     mockedGetInfosSelfClique.mockResolvedValue(selfCliqueMockData)
