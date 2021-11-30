@@ -1,4 +1,4 @@
-// Copyright 2018 The Alephium Authors
+// Copyright 2018 - 2021 The Alephium Authors
 // This file is part of the alephium project.
 //
 // The library is free software: you can redistribute it and/or modify
@@ -14,9 +14,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import fs from 'fs'
+import * as bip32 from 'bip32'
 
-import * as walletUtils from '../dist/lib/wallet.js'
+import * as walletUtils from '../lib/wallet'
+
+import wallets from './fixtures/wallets.json'
+import genesis from './fixtures/genesis.json'
 
 describe('Wallet', function () {
   it('should encrypt and decrypt using password', async () => {
@@ -32,7 +35,6 @@ describe('Wallet', function () {
   })
 
   it('should import wallet in a compatible manner', () => {
-    const genesis = JSON.parse(fs.readFileSync('test/genesis.json', 'utf8'))
     const randomAddress = '143jS8xaGNNRes4f1mxJWSpQcqj2xjsXUeu3xQqYgFm5h'
     const randomPubKey = '034817bc790123a551aa82453cc2ca1dd5ea7a9ffb85443a1a67936c3299d7a751'
     const randomPriKey = '695ac21c784d0d3f9f5441de0ee07f724d12be258f0ebdaef7ff5ee540f8e2d8'
@@ -53,8 +55,7 @@ describe('Wallet', function () {
   })
 
   it('should read wallet file', async () => {
-    const wallets = JSON.parse(fs.readFileSync('test/wallets.json', 'utf8')).wallets
-    for (const row of wallets) {
+    for (const row of wallets.wallets) {
       const imported = walletUtils.walletImport(row.mnemonic)
       const opened = await walletUtils.walletOpen(row.password, JSON.stringify(row.file))
 
@@ -64,5 +65,24 @@ describe('Wallet', function () {
       expect(imported.seed).toEqual(opened.seed)
       expect(imported.mnemonic).toEqual(opened.mnemonic)
     }
+  })
+
+  it('should throw error if mnemonic is invalid', () => {
+    const invalidMnemonic =
+      'dog window beach above tiger attract barrel noodle autumn grain update either twelve security shoe teach quote flip reflect maple bike polar ivory gadget'
+    expect(() => walletUtils.walletImport(invalidMnemonic)).toThrow('Invalid seed phrase')
+  })
+
+  it('should throw error if private key is missing', () => {
+    const importedWallet = wallets.wallets[0]
+    const seed = Buffer.from(importedWallet.seed, 'hex')
+    const neutered = bip32.fromSeed(seed).neutered()
+    const mockedDerivePath = jest.fn()
+    neutered.derivePath = mockedDerivePath
+    mockedDerivePath.mockReturnValue({ privateKey: undefined })
+
+    jest.spyOn(bip32, 'fromSeed').mockImplementation(() => neutered)
+
+    expect(() => walletUtils.walletImport(importedWallet.mnemonic)).toThrow('Missing private key')
   })
 })

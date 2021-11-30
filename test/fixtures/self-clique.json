@@ -1,0 +1,19 @@
+{
+  "data": {
+    "cliqueId": "02f342de9b742719e1e9c939c54a13db5a7e3c4926b04428cbc45d70f8e6bcef4d",
+    "networkId": 0,
+    "numZerosAtLeastInHash": 37,
+    "nodes": [
+      {
+        "address": "127.0.0.1",
+        "restPort": 12973,
+        "wsPort": 11973,
+        "minerApiPort": 10973
+      }
+    ],
+    "selfReady": true,
+    "synced": true,
+    "groupNumPerBroker": 4,
+    "groups": 4
+  }
+}

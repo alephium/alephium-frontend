@@ -1,4 +1,4 @@
-// Copyright 2018 The Alephium Authors
+// Copyright 2018 - 2021 The Alephium Authors
 // This file is part of the alephium project.
 //
 // The library is free software: you can redistribute it and/or modify
@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import NodeStorage from './storage-node'
-import BrowserStorage from './storage-browser'
 import EC from 'elliptic'
 import BN from 'bn.js'
 
-const isNode =
-  typeof process !== 'undefined' && typeof process.release !== 'undefined' && process.release.name === 'node'
+import NodeStorage from './storage-node'
+import BrowserStorage from './storage-browser'
 
 export const signatureEncode = (ec: EC.ec, signature: EC.ec.Signature) => {
   let sNormalized = signature.s
@@ -53,10 +51,8 @@ export const signatureDecode = (ec: EC.ec, signature: string) => {
   }
 }
 
-export const getStorage = () => {
-  if (isNode) {
-    return new NodeStorage()
-  } else {
-    return new BrowserStorage()
-  }
+export const getStorage = (): BrowserStorage | NodeStorage => {
+  const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined'
+
+  return isBrowser ? new BrowserStorage() : new NodeStorage()
 }

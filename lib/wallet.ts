@@ -1,4 +1,4 @@
-// Copyright 2018 The Alephium Authors
+// Copyright 2018 - 2021 The Alephium Authors
 // This file is part of the alephium project.
 //
 // The library is free software: you can redistribute it and/or modify
@@ -16,11 +16,9 @@
 
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
-
-import bs58 from './bs58'
-
 import blake from 'blakejs'
 
+import bs58 from './bs58'
 import { decrypt, encrypt } from './password-crypto'
 
 class StoredState {

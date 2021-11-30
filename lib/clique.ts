@@ -1,4 +1,4 @@
-// Copyright 2018 The Alephium Authors
+// Copyright 2018 - 2021 The Alephium Authors
 // This file is part of the alephium project.
 //
 // The library is free software: you can redistribute it and/or modify
@@ -14,12 +14,13 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { NodeClient } from '../lib/node'
-import { Api, SelfClique } from '../api/api-alephium'
 import { ec as EC } from 'elliptic'
 
+import { Api, SelfClique } from '../api/api-alephium'
+import { NodeClient } from './node'
+import * as utils from './utils'
+
 const ec = new EC('secp256k1')
-import * as utils from '../lib/utils'
 
 /**
  * Clique Client
@@ -33,10 +34,6 @@ export class CliqueClient extends Api<null> {
     this.clients = []
 
     const res = await this.selfClique()
-
-    if (res.error) {
-      throw new Error(res.error.detail)
-    }
 
     if (isMultiNodesClique) {
       this.clique = res.data
@@ -60,24 +57,24 @@ export class CliqueClient extends Api<null> {
   }
 
   async selfClique() {
-    return await this.infos.getInfosSelfClique()
+    const res = await this.infos.getInfosSelfClique()
+
+    if (res.error) throw new Error(res.error.detail)
+
+    return res
   }
 
   async getClientIndex(address: string) {
-    const res = await this.addresses.getAddressesAddressGroup(address)
-
-    if (res.error) {
-      throw new Error(res.error.detail)
-    }
-
-    const group = res.data.group
-
     if (this.clients.length === 0) {
       // This shouldn't happen as current user is in the clique
       throw new Error('Unknown error (no nodes in the clique)')
     }
 
-    return group % this.clients.length
+    const res = await this.addresses.getAddressesAddressGroup(address)
+
+    if (res.error) throw new Error(res.error.detail)
+
+    return res.data.group % this.clients.length
   }
 
   async getBalance(address: string) {

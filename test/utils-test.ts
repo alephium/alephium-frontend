@@ -1,4 +1,4 @@
-// Copyright 2018 The Alephium Authors
+// Copyright 2018 - 2021 The Alephium Authors
 // This file is part of the alephium project.
 //
 // The library is free software: you can redistribute it and/or modify
@@ -14,26 +14,18 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import * as utils from '../dist/lib/utils.js'
 import EC from 'elliptic'
 import assert from 'assert'
 
-const store = utils.getStorage()
+import * as utils from '../lib/utils'
+import NodeStorage from '../lib/storage-node'
 
 describe('utils', function () {
-  it('should store and load locally', () => {
-    const obj0 = { theAnswer: 42 }
-    store.save('default', obj0)
-    const obj1 = store.load('default')
-    expect(JSON.stringify(obj0)).toEqual(JSON.stringify(obj1))
-    store.remove('default')
-  })
+  it('should throw an error when decoding invalid signature', () => {
+    const ec = new EC.ec('secp256k1')
+    const signature = 'signature-with-wrong-length'
 
-  it('should store and list multiple wallets', () => {
-    const obj0 = { theAnswer: 42 }
-    store.save('one', obj0)
-    store.save('two', obj0)
-    assert.deepStrictEqual(['one', 'two'], store.list())
+    expect(() => utils.signatureDecode(ec, signature)).toThrowError('Invalid signature length')
   })
 
   it('should compress signature', () => {
@@ -82,5 +74,10 @@ describe('utils', function () {
       const signature = utils.signatureEncode(ec, keyPair.sign(sha256))
       assert.deepStrictEqual(signature, signatureExpected)
     })
+  })
+
+  it('should return a node storage', () => {
+    const storage = utils.getStorage()
+    expect(storage).toBeInstanceOf(NodeStorage)
   })
 })
