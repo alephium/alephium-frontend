@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import * as explorer from '../lib/explorer'
-import { addressTransactionsMockData, addressDetailsMockData } from './mocks/api-mock-data'
+import addressMockData from './fixtures/address.json'
 
 describe('explorer', function () {
   const client = new explorer.ExplorerClient()
@@ -23,24 +23,24 @@ describe('explorer', function () {
   it('should get the transactions of the address', async () => {
     const mockedGetAddressesAddressTransactions = jest.fn()
     client.addresses.getAddressesAddressTransactions = mockedGetAddressesAddressTransactions
-    mockedGetAddressesAddressTransactions.mockResolvedValue(addressTransactionsMockData)
+    mockedGetAddressesAddressTransactions.mockResolvedValue({ data: addressMockData.transactions })
 
     const transactions = await client.getAddressTransactions('0x0', 0)
 
     expect(client.addresses.getAddressesAddressTransactions).toHaveBeenCalledTimes(1)
     expect(client.addresses.getAddressesAddressTransactions).toHaveBeenCalledWith('0x0', { page: 0 })
-    expect(transactions).toEqual(addressTransactionsMockData)
+    expect(transactions).toEqual({ data: addressMockData.transactions })
   })
 
   it('should get the details of the address', async () => {
     const mockedGetAddressesAddress = jest.fn()
     client.addresses.getAddressesAddress = mockedGetAddressesAddress
-    mockedGetAddressesAddress.mockResolvedValue(addressDetailsMockData)
+    mockedGetAddressesAddress.mockResolvedValue({ data: addressMockData.details })
 
     const details = await client.getAddressDetails('0x0')
 
     expect(client.addresses.getAddressesAddress).toHaveBeenCalledTimes(1)
     expect(client.addresses.getAddressesAddress).toHaveBeenCalledWith('0x0')
-    expect(details).toEqual(addressDetailsMockData)
+    expect(details).toEqual({ data: addressMockData.details })
   })
 })

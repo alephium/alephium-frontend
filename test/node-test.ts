@@ -15,7 +15,8 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import * as node from '../lib/node'
-import { balanceMockData, transactionCreatedMockData, transactionSubmittedMockData } from './mocks/api-mock-data'
+import balanceMockData from './fixtures/balance.json'
+import transactionMockData from './fixtures/transaction.json'
 
 describe('node', function () {
   const client = new node.NodeClient()
@@ -34,7 +35,7 @@ describe('node', function () {
   it('should build a transaction', async () => {
     const mockedPostTransactionsBuild = jest.fn()
     client.transactions.postTransactionsBuild = mockedPostTransactionsBuild
-    mockedPostTransactionsBuild.mockResolvedValue(transactionCreatedMockData)
+    mockedPostTransactionsBuild.mockResolvedValue({ data: transactionMockData.created })
 
     const transaction = await client.transactionCreate('fromPublicKey', 'toAddress', 'amount')
 
@@ -43,13 +44,13 @@ describe('node', function () {
       fromPublicKey: 'fromPublicKey',
       destinations: [{ address: 'toAddress', amount: 'amount', lockTime: undefined }]
     })
-    expect(transaction).toEqual(transactionCreatedMockData)
+    expect(transaction).toEqual({ data: transactionMockData.created })
   })
 
   it('should submit a transaction', async () => {
     const mockedPostTransactionsSubmit = jest.fn()
     client.transactions.postTransactionsSubmit = mockedPostTransactionsSubmit
-    mockedPostTransactionsSubmit.mockResolvedValue(transactionSubmittedMockData)
+    mockedPostTransactionsSubmit.mockResolvedValue({ data: transactionMockData.submitted })
 
     const transaction = await client.transactionSend('tx', 'signature')
 
@@ -58,6 +59,6 @@ describe('node', function () {
       unsignedTx: 'tx',
       signature: 'signature'
     })
-    expect(transaction).toEqual(transactionSubmittedMockData)
+    expect(transaction).toEqual({ data: transactionMockData.submitted })
   })
 })

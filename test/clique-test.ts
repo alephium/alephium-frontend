@@ -20,13 +20,10 @@ import EC from 'elliptic'
 import assert from 'assert'
 import WS from 'jest-websocket-mock'
 
-import selfCliqueMockData from './self-clique.json'
-import {
-  balanceMockData,
-  transactionCreatedMockData,
-  transactionSubmittedMockData,
-  errorMockData
-} from './mocks/api-mock-data'
+import selfCliqueMockData from './fixtures/self-clique.json'
+import balanceMockData from './fixtures/balance.json'
+import transactionMockData from './fixtures/transaction.json'
+import errorMockData from './fixtures/error.json'
 
 describe('clique', function () {
   it('should verify signature', () => {
@@ -197,23 +194,23 @@ describe('clique', function () {
     it('should create a transaction', async () => {
       const mockedTransactionCreate = jest.fn()
       client.clients[0].transactionCreate = mockedTransactionCreate
-      mockedTransactionCreate.mockResolvedValue(transactionCreatedMockData)
+      mockedTransactionCreate.mockResolvedValue({ data: transactionMockData.created })
 
       const transaction = await client.transactionCreate('fromAddress', 'fromKey', 'toAdress', 'amount')
 
       expect(client.clients[0].transactionCreate).toHaveBeenCalledTimes(1)
-      expect(transaction).toEqual(transactionCreatedMockData)
+      expect(transaction).toEqual({ data: transactionMockData.created })
     })
 
     it('should send a transaction', async () => {
       const mockedTransactionSend = jest.fn()
       client.clients[0].transactionSend = mockedTransactionSend
-      mockedTransactionSend.mockResolvedValue(transactionSubmittedMockData)
+      mockedTransactionSend.mockResolvedValue({ data: transactionMockData.submitted })
 
       const transaction = await client.transactionSend('fromAddress', 'tx', 'signature')
 
       expect(client.clients[0].transactionSend).toHaveBeenCalledTimes(1)
-      expect(transaction).toEqual(transactionSubmittedMockData)
+      expect(transaction).toEqual({ data: transactionMockData.submitted })
     })
   })
 })
