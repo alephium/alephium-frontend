@@ -1,5 +1,7 @@
 # alephium-js
 
+[![Github CI](https://github.com/alephium/alephium-js/actions/workflows/test.yml/badge.svg)](https://github.com/alephium/alephium-js/actions/workflows/test.yml) [![NPM](https://img.shields.io/npm/v/alephium-js.svg)](https://www.npmjs.org/package/alephium-js) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
 A JavaScript/TypeScript library for building decentralized applications on the Alephium platform.
 
 ## Install
