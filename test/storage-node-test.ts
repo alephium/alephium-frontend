@@ -18,7 +18,7 @@ import assert from 'assert'
 import mock from 'mock-fs'
 import fs from 'fs'
 
-import NodeStorage from '../dist/lib/storage-node'
+import NodeStorage from '../lib/storage-node'
 
 describe('storage-node', () => {
   beforeEach(() => {

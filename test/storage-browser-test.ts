@@ -20,8 +20,8 @@
 
 import 'jest-localstorage-mock'
 
-import BrowserStorage from '../dist/lib/storage-browser'
-import * as utils from '../dist/lib/utils'
+import BrowserStorage from '../lib/storage-browser'
+import * as utils from '../lib/utils'
 
 describe('storage-browser', () => {
   const storage = new BrowserStorage()

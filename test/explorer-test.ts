@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import * as explorer from '../dist/lib/explorer'
+import * as explorer from '../lib/explorer'
 import { addressTransactionsMockData, addressDetailsMockData } from './mocks/api-mock-data'
 
 describe('explorer', function () {

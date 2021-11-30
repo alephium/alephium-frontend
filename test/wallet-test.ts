@@ -17,7 +17,7 @@
 import fs from 'fs'
 import * as bip32 from 'bip32'
 
-import * as walletUtils from '../dist/lib/wallet.js'
+import * as walletUtils from '../lib/wallet'
 import wallets from './wallets.json'
 
 describe('Wallet', function () {
