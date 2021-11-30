@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import * as utils from '../lib/utils'
 import EC from 'elliptic'
 import assert from 'assert'
 
+import * as utils from '../lib/utils'
 import NodeStorage from '../lib/storage-node'
 
 describe('utils', function () {

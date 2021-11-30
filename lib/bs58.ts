@@ -16,6 +16,7 @@
 
 /** This source is under MIT License and come originally from https://github.com/cryptocoinjs/bs58 **/
 import basex from 'base-x'
+
 const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 
 export default basex(ALPHABET)

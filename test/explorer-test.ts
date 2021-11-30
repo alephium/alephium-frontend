@@ -14,11 +14,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import * as explorer from '../lib/explorer'
+import { ExplorerClient } from '../lib'
+
 import addressMockData from './fixtures/address.json'
 
 describe('explorer', function () {
-  const client = new explorer.ExplorerClient()
+  const client = new ExplorerClient()
 
   it('should get the transactions of the address', async () => {
     const mockedGetAddressesAddressTransactions = jest.fn()

@@ -16,11 +16,9 @@
 
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
-
-import bs58 from './bs58'
-
 import blake from 'blakejs'
 
+import bs58 from './bs58'
 import { decrypt, encrypt } from './password-crypto'
 
 class StoredState {

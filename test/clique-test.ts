@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { CliqueClient } from '../lib'
-
 import EC from 'elliptic'
 import assert from 'assert'
 import WS from 'jest-websocket-mock'
+
+import { CliqueClient } from '../lib'
 
 import selfCliqueMockData from './fixtures/self-clique.json'
 import balanceMockData from './fixtures/balance.json'

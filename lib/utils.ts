@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import NodeStorage from './storage-node'
-import BrowserStorage from './storage-browser'
 import EC from 'elliptic'
 import BN from 'bn.js'
+
+import NodeStorage from './storage-node'
+import BrowserStorage from './storage-browser'
 
 export const signatureEncode = (ec: EC.ec, signature: EC.ec.Signature) => {
   let sNormalized = signature.s

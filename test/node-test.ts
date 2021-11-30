@@ -14,12 +14,13 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import * as node from '../lib/node'
+import { NodeClient } from '../lib'
+
 import balanceMockData from './fixtures/balance.json'
 import transactionMockData from './fixtures/transaction.json'
 
 describe('node', function () {
-  const client = new node.NodeClient()
+  const client = new NodeClient()
 
   it('should get the address balance', async () => {
     const mockedGetAddressesAddressBalance = jest.fn()

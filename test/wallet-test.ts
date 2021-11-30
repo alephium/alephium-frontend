@@ -17,6 +17,7 @@
 import * as bip32 from 'bip32'
 
 import * as walletUtils from '../lib/wallet'
+
 import wallets from './fixtures/wallets.json'
 import genesis from './fixtures/genesis.json'
 

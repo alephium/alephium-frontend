@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { NodeClient } from '../lib/node'
-import { Api, SelfClique } from '../api/api-alephium'
 import { ec as EC } from 'elliptic'
-import * as utils from '../lib/utils'
+
+import { Api, SelfClique } from '../api/api-alephium'
+import { NodeClient } from './node'
+import * as utils from './utils'
 
 const ec = new EC('secp256k1')
 
