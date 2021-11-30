@@ -4,5 +4,7 @@
   },
   "testRegex": "(/test/(?!fixtures).*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "collectCoverage": true,
+  "coverageDirectory": "./coverage/",
   "collectCoverageFrom": ["lib/**/*.ts"]
 }
