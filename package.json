@@ -20,8 +20,8 @@
   ],
   "scripts": {
     "compile": "rm -rf dist && npx tsc",
-    "fetch-alephium-schema": "npx swagger-typescript-api -o ./api -n api-alephium.ts",
-    "fetch-explorer-schema": "npx swagger-typescript-api -o ./api -n api-explorer.ts",
+    "fetch-schema:alephium": "npx swagger-typescript-api -o ./api -n api-alephium.ts",
+    "fetch-schema:explorer": "npx swagger-typescript-api -o ./api -n api-explorer.ts",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --fix --ext .ts",

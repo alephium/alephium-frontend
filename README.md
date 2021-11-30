@@ -10,22 +10,35 @@ A JavaScript/TypeScript library for building decentralized applications on the A
 npm ci
 ```
 
-## Update schemas
+## Development
 
-Typings can automatically be fetched and built from the [node](https://github.com/alephium/alephium) and [explorer-backend](https://github.com/alephium/explorer-backend) OpenAPIs. You can use `npm run fetch-alephium-schema` and `npm run fetch-explorer-schema` respectively and pass the URL to the Swagger file using the `-p` flag. See following examples.
+### Update schemas
 
-### Examples
+Typings can automatically be fetched and built from the [node](https://github.com/alephium/alephium) and [explorer-backend](https://github.com/alephium/explorer-backend) OpenAPIs using the following commands:
+
+```shell
+npm run fetch-schema:alephium -- -p <alephium-swagger-openapi-file-url>
+npm run fetch-schema:explorer -- -p <explorer-swagger-openapi-file-url>
+```
+
+#### Examples
 
 Fetching the latest schema of the testnet explorer-backend:
 
-```
-npm run fetch-explorer-schema -- -p https://testnet-backend.alephium.org/docs/explorer-backend-openapi.json
+```shell
+npm run fetch-schema:explorer -- -p https://testnet-backend.alephium.org/docs/explorer-backend-openapi.json
 ```
 
-When developing locally, you can point towards your localhost service to fetch the latest schemas:
+Fetching the latest schema of the locally running explorer-backend:
 
+```shell
+npm run fetch-schema:explorer -- -p http://localhost:9090/docs/explorer-backend-openapi.json
 ```
-npm run fetch-explorer-schema -- -p http://localhost:9090/docs/explorer-backend-openapi.json
+
+Fetch the latest schema of the locally running Alephium node:
+
+```shell
+npm run fetch-schema:alephium -- -p http://localhost:12973/docs/openapi.json
 ```
 
 ## Compile
@@ -39,5 +52,5 @@ npm run compile
 ## Testing
 
 ```
-npm run test
+npm test
 ```
