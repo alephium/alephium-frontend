@@ -11,7 +11,7 @@
       "inputs": [
         {
           "outputRef": {
-            "scriptHint": 0,
+            "hint": 0,
             "key": "string"
           },
           "unlockScript": "string",
