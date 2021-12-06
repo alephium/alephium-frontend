@@ -66,7 +66,7 @@ export interface Output {
 }
 
 export interface Ref {
-  scriptHint: number;
+  hint: number;
   key: string;
 }
 
