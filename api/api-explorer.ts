@@ -19,6 +19,11 @@ export interface BadRequest {
   detail: string;
 }
 
+export interface ExplorerInfo {
+  releaseVersion: string;
+  commit: string;
+}
+
 export interface Input {
   outputRef: Ref;
   unlockScript?: string;
@@ -56,6 +61,9 @@ export interface NotFound {
 }
 
 export interface Output {
+  hint: number;
+  key: string;
+
   /** @format uint256 */
   amount: string;
   address: string;
@@ -72,6 +80,20 @@ export interface Ref {
 
 export interface ServiceUnavailable {
   detail: string;
+}
+
+export interface TokenSupply {
+  /** @format int64 */
+  timestamp: number;
+
+  /** @format uint256 */
+  total: string;
+
+  /** @format uint256 */
+  circulating: string;
+
+  /** @format uint256 */
+  maximum: string;
 }
 
 export interface Transaction {
@@ -341,7 +363,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetBlocks
      * @request GET:/blocks
      */
-    getBlocks: (query?: { page?: number; limit?: number }, params: RequestParams = {}) =>
+    getBlocks: (query?: { page?: number; limit?: number; reverse?: boolean }, params: RequestParams = {}) =>
       this.request<ListBlocks, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blocks`,
         method: "GET",
@@ -374,7 +396,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     getBlocksBlockHashTransactions: (
       blockHash: string,
-      query?: { page?: number; limit?: number },
+      query?: { page?: number; limit?: number; reverse?: boolean },
       params: RequestParams = {},
     ) =>
       this.request<Transaction[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -426,7 +448,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     getAddressesAddressTransactions: (
       address: string,
-      query?: { page?: number; limit?: number },
+      query?: { page?: number; limit?: number; reverse?: boolean },
       params: RequestParams = {},
     ) =>
       this.request<Transaction[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -434,6 +456,66 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: "GET",
         query: query,
         format: "json",
+        ...params,
+      }),
+  };
+  infos = {
+    /**
+     * @description Get explorer informations
+     *
+     * @tags Infos
+     * @name GetInfos
+     * @request GET:/infos
+     */
+    getInfos: (params: RequestParams = {}) =>
+      this.request<ExplorerInfo, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get token supply list
+     *
+     * @tags Infos
+     * @name GetInfosSupply
+     * @request GET:/infos/supply
+     */
+    getInfosSupply: (query?: { page?: number; limit?: number; reverse?: boolean }, params: RequestParams = {}) =>
+      this.request<TokenSupply[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/supply`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get the ALPH total supply
+     *
+     * @tags Infos
+     * @name GetInfosSupplyTotalAlph
+     * @request GET:/infos/supply/total-alph
+     */
+    getInfosSupplyTotalAlph: (params: RequestParams = {}) =>
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/supply/total-alph`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * @description Get the ALPH circulating supply
+     *
+     * @tags Infos
+     * @name GetInfosSupplyCirculatingAlph
+     * @request GET:/infos/supply/circulating-alph
+     */
+    getInfosSupplyCirculatingAlph: (params: RequestParams = {}) =>
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/supply/circulating-alph`,
+        method: "GET",
         ...params,
       }),
   };
