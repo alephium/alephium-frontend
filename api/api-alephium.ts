@@ -118,12 +118,13 @@ export interface BrokerInfo {
 export interface BuildContract {
   fromPublicKey: string;
   code: string;
-  gas?: number;
-  gasPrice?: GasPrice;
   state?: string;
 
   /** @format uint256 */
   issueTokenAmount?: string;
+  gas?: number;
+  gasPrice?: GasPrice;
+  utxosLimit?: number;
 }
 
 export interface BuildContractResult {
@@ -145,6 +146,7 @@ export interface BuildMultisig {
   destinations: Destination[];
   gas?: number;
   gasPrice?: GasPrice;
+  utxosLimit?: number;
 }
 
 export interface BuildMultisigAddress {
@@ -157,6 +159,7 @@ export interface BuildScript {
   code: string;
   gas?: number;
   gasPrice?: GasPrice;
+  utxosLimit?: number;
 }
 
 export interface BuildScriptResult {
@@ -174,6 +177,7 @@ export interface BuildSweepAllTransaction {
   lockTime?: number;
   gas?: number;
   gasPrice?: GasPrice;
+  utxosLimit?: number;
 }
 
 export interface BuildTransaction {
@@ -182,6 +186,7 @@ export interface BuildTransaction {
   utxos?: OutputRef[];
   gas?: number;
   gasPrice?: GasPrice;
+  utxosLimit?: number;
 }
 
 export interface BuildTransactionResult {
@@ -421,6 +426,7 @@ export interface SweepAll {
   lockTime?: number;
   gas?: number;
   gasPrice?: GasPrice;
+  utxosLimit?: number;
 }
 
 export interface Token {
@@ -434,6 +440,7 @@ export interface Transfer {
   destinations: Destination[];
   gas?: number;
   gasPrice?: GasPrice;
+  utxosLimit?: number;
 }
 
 export interface Tx {
