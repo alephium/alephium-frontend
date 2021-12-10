@@ -18,31 +18,28 @@ import { addressToGroup } from '../lib/address'
 
 describe('address', function () {
   it('should derive group', async () => {
-
     function check(address: string, expected: number) {
-      let group = addressToGroup(address, 4)
+      const group = addressToGroup(address, 4)
       expect(group).toEqual(expected)
     }
 
-    check("12psscGPMgdqctaeCA37HYAkpVBFX1LbN4dSvjyxbDyKk", 1)
-    check("16TGLiD3fqyuGFRFHffh58BC3okYCbjRH1WHPzeSp39Wi", 2)
-    check("15aTcpJfCX9akQqYuRMMgun6Mv6ek8bigB98VTUFMwKYA", 1)
-    check("164ejvnxGYRPUt3tYwJrMxBLLmeag2WACH4GfcsRUN3W7", 2)
-    check("15p5vK921GnxFSQgXZo8Wceg6EvwcXZ9rCQxE2SeXc1s5", 1)
-    check("1HSLAetSuMTKPHukvXYg6yaDuUJ67vxGashzFLEuu6qV6", 1)
-    check("1HbU1TDiUMAj33Cp5cA2xc9uTqp1bjWa5UvkeGLm4bDbE", 2)
-    check("13zn4s3fb5Q9d8rtszYdmYVpQ3MM9VM2xLBe9rMhcNxjd", 0)
-    check("1DdQwce5ZzFrEYyz1H5KU9v8hRpoTbq5i7zE5Nu5k4ope", 2)
-    check("19hpcUVGzdpWRD8yVUyP9pJwwxD6P5ixGUgSmVPbhBAVX", 2)
-    check("1DpNeY8uutS1FRW7D565WjUgu5HcKSYAMqZNWgUJWggWZ", 0)
-    check("1G1gjpt4mxij7JwP5SpX6ScwQHisWN3V5WBtFfWKtc3vo", 3)
-    check("19XyGb6f1upjvQAG4vexB1EmY3pU8G2VN5gM267Pdhogg", 3)
-    check("1H5YniQrUqxJY9ShTjMeX6DMgjPpYfdFqDvTgBYv6h1iz", 1)
-    check("18Ca9jZDqRcxTfdNr2hq5KBJjf7PJLA5PXMjRoeB83JNv", 3)
-    check("15XyPNJuZ85wyUMs4mwn98LLPMjiwUSCuTmR74NuxpwXT", 0)
-    check("1F6ssQRwH1p1omaoQR3eirFrycHC3mUr3Vw9pLcgEe33W", 1)
-    check("19JtVnQ4YLcA9mWPafnLmtWarAjdaLR3d7R5RAUjxHbe1", 3)
-
+    check('12psscGPMgdqctaeCA37HYAkpVBFX1LbN4dSvjyxbDyKk', 1)
+    check('16TGLiD3fqyuGFRFHffh58BC3okYCbjRH1WHPzeSp39Wi', 2)
+    check('15aTcpJfCX9akQqYuRMMgun6Mv6ek8bigB98VTUFMwKYA', 1)
+    check('164ejvnxGYRPUt3tYwJrMxBLLmeag2WACH4GfcsRUN3W7', 2)
+    check('15p5vK921GnxFSQgXZo8Wceg6EvwcXZ9rCQxE2SeXc1s5', 1)
+    check('1HSLAetSuMTKPHukvXYg6yaDuUJ67vxGashzFLEuu6qV6', 1)
+    check('1HbU1TDiUMAj33Cp5cA2xc9uTqp1bjWa5UvkeGLm4bDbE', 2)
+    check('13zn4s3fb5Q9d8rtszYdmYVpQ3MM9VM2xLBe9rMhcNxjd', 0)
+    check('1DdQwce5ZzFrEYyz1H5KU9v8hRpoTbq5i7zE5Nu5k4ope', 2)
+    check('19hpcUVGzdpWRD8yVUyP9pJwwxD6P5ixGUgSmVPbhBAVX', 2)
+    check('1DpNeY8uutS1FRW7D565WjUgu5HcKSYAMqZNWgUJWggWZ', 0)
+    check('1G1gjpt4mxij7JwP5SpX6ScwQHisWN3V5WBtFfWKtc3vo', 3)
+    check('19XyGb6f1upjvQAG4vexB1EmY3pU8G2VN5gM267Pdhogg', 3)
+    check('1H5YniQrUqxJY9ShTjMeX6DMgjPpYfdFqDvTgBYv6h1iz', 1)
+    check('18Ca9jZDqRcxTfdNr2hq5KBJjf7PJLA5PXMjRoeB83JNv', 3)
+    check('15XyPNJuZ85wyUMs4mwn98LLPMjiwUSCuTmR74NuxpwXT', 0)
+    check('1F6ssQRwH1p1omaoQR3eirFrycHC3mUr3Vw9pLcgEe33W', 1)
+    check('19JtVnQ4YLcA9mWPafnLmtWarAjdaLR3d7R5RAUjxHbe1', 3)
   })
 })
-

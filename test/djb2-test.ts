@@ -18,16 +18,15 @@ import { djb2 } from '../lib/djb2'
 
 describe('djb2', function () {
   it('djb2', async () => {
-
     function check(str: string, expected: number) {
-      let bytes = Buffer.from(str, 'utf8');
+      const bytes = Buffer.from(str, 'utf8')
       expect(djb2(bytes)).toEqual(expected)
     }
 
-    check("", 5381)
-    check("a", 177670)
-    check("z", 177695)
-    check("foo", 193491849)
-    check("bar", 193487034)
+    check('', 5381)
+    check('a', 177670)
+    check('z', 177695)
+    check('foo', 193491849)
+    check('bar', 193487034)
   })
 })

@@ -15,9 +15,9 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 export function djb2(bytes: Buffer) {
-  var hash = 5381
+  let hash = 5381
   for (let i = 0; i < bytes.length; i++) {
-    hash = ((hash << 5) + hash) + (bytes[i] & 0xFF)
+    hash = (hash << 5) + hash + (bytes[i] & 0xff)
   }
   return hash
 }
