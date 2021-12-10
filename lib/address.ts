@@ -15,9 +15,9 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import bs58 from '../lib/bs58'
-import { djb2 } from '../lib/djb2'
+import djb2 from '../lib/djb2'
 
-export function addressToGroup(address: string, numberOfGroup: number): number {
+export default function addressToGroup(address: string, numberOfGroup: number): number {
   const bytes = bs58.decode(address).slice(1)
   const value = djb2(bytes) | 1
   const hash = toPosInt(xorByte(value))

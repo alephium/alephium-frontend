@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { addressToGroup } from '../lib/address'
+import addressToGroup from '../lib/address'
 
 describe('address', function () {
   it('should derive group', async () => {
