@@ -17,11 +17,11 @@
 import bs58 from '../lib/bs58'
 import { djb2 } from '../lib/djb2'
 
-export function addressToGroup(address: string): number {
+export function addressToGroup(address: string, numberOfGroup: number): number {
   let bytes = bs58.decode(address).slice(1)
   let value = djb2(bytes) | 1
   let hash = toPosInt(xorByte(value))
-  let group = hash % 4
+  let group = hash % numberOfGroup
   return group
 }
 

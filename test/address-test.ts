@@ -20,7 +20,7 @@ describe('address', function () {
   it('should derive group', async () => {
 
     function check(address: string, expected: number) {
-      let group = addressToGroup(address)
+      let group = addressToGroup(address, 4)
       expect(group).toEqual(expected)
     }
 
