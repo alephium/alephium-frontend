@@ -12,6 +12,9 @@
 export interface AddressInfo {
   /** @format uint256 */
   balance: string
+
+  /** @format uint256 */
+  lockedBalance: string
   txNumber: number
 }
 
