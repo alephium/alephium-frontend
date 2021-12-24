@@ -11,6 +11,7 @@
 
 export interface Address {
   value: string
+  type: string
 }
 
 export interface AddressBalance {
@@ -18,11 +19,15 @@ export interface AddressBalance {
 
   /** @format uint256 */
   balance: string
-  balanceHint: Hint
+
+  /** @format x.x ALPH */
+  balanceHint: string
 
   /** @format uint256 */
   lockedBalance: string
-  lockedBalanceHint: Hint
+
+  /** @format x.x ALPH */
+  lockedBalanceHint: string
   warning?: string
 }
 
@@ -40,6 +45,7 @@ export interface Addresses {
 export interface Asset {
   outputRef: OutputRef
   unlockScript: string
+  type: string
 }
 
 export interface Asset1 {
@@ -51,6 +57,7 @@ export interface Asset1 {
   /** @format int64 */
   lockTime: number
   additionalData: string
+  type: string
 }
 
 export interface BadRequest {
@@ -60,11 +67,15 @@ export interface BadRequest {
 export interface Balance {
   /** @format uint256 */
   balance: string
-  balanceHint: Hint
+
+  /** @format x.x ALPH */
+  balanceHint: string
 
   /** @format uint256 */
   lockedBalance: string
-  lockedBalanceHint: Hint
+
+  /** @format x.x ALPH */
+  lockedBalanceHint: string
   utxoNum: number
   warning?: string
 }
@@ -72,13 +83,21 @@ export interface Balance {
 export interface Balances {
   /** @format uint256 */
   totalBalance: string
-  totalBalanceHint: Hint
+
+  /** @format x.x ALPH */
+  totalBalanceHint: string
   balances: AddressBalance[]
+}
+
+export interface Ban {
+  peers: string[]
+  type: string
 }
 
 export interface Banned {
   /** @format int64 */
   until: number
+  type: string
 }
 
 export interface BlockEntry {
@@ -106,6 +125,7 @@ export interface BlockHeaderEntry {
 
 export interface Bool {
   value: boolean
+  type: string
 }
 
 export interface BrokerInfo {
@@ -123,7 +143,9 @@ export interface BuildContract {
   /** @format uint256 */
   issueTokenAmount?: string
   gas?: number
-  gasPrice?: GasPrice
+
+  /** @format uint256 */
+  gasPrice?: string
   utxosLimit?: number
 }
 
@@ -145,7 +167,9 @@ export interface BuildMultisig {
   fromPublicKeys: string[]
   destinations: Destination[]
   gas?: number
-  gasPrice?: GasPrice
+
+  /** @format uint256 */
+  gasPrice?: string
   utxosLimit?: number
 }
 
@@ -158,7 +182,9 @@ export interface BuildScript {
   fromPublicKey: string
   code: string
   gas?: number
-  gasPrice?: GasPrice
+
+  /** @format uint256 */
+  gasPrice?: string
   utxosLimit?: number
 }
 
@@ -176,7 +202,9 @@ export interface BuildSweepAllTransaction {
   /** @format int64 */
   lockTime?: number
   gas?: number
-  gasPrice?: GasPrice
+
+  /** @format uint256 */
+  gasPrice?: string
   utxosLimit?: number
 }
 
@@ -185,7 +213,9 @@ export interface BuildTransaction {
   destinations: Destination[]
   utxos?: OutputRef[]
   gas?: number
-  gasPrice?: GasPrice
+
+  /** @format uint256 */
+  gasPrice?: string
   utxosLimit?: number
 }
 
@@ -198,6 +228,7 @@ export interface BuildTransactionResult {
 
 export interface ByteVec {
   value: string
+  type: string
 }
 
 export interface ChainInfo {
@@ -218,10 +249,12 @@ export interface Confirmed {
   chainConfirmations: number
   fromGroupConfirmations: number
   toGroupConfirmations: number
+  type: string
 }
 
 export interface Contract {
   outputRef: OutputRef
+  type: string
 }
 
 export interface Contract1 {
@@ -229,6 +262,7 @@ export interface Contract1 {
   amount: string
   address: string
   tokens: Token[]
+  type: string
 }
 
 export interface Contract2 {
@@ -254,13 +288,10 @@ export interface Destination {
   lockTime?: number
 }
 
+export type DiscoveryAction = Reachable | Unreachable
+
 export interface FetchResponse {
   blocks: BlockEntry[][]
-}
-
-export interface GasPrice {
-  /** @format uint256 */
-  value: string
 }
 
 export interface Group {
@@ -271,13 +302,9 @@ export interface HashesAtHeight {
   headers: string[]
 }
 
-export interface Hint {
-  /** @format uint256 */
-  value: string
-}
-
 export interface I256 {
   value: string
+  type: string
 }
 
 export interface Info {
@@ -293,13 +320,16 @@ export interface InterCliquePeerInfo {
   groupNumPerBroker: number
   address: string
   isSynced: boolean
+  clientVersion: string
 }
 
 export interface InternalServerError {
   detail: string
 }
 
-export type MemPooled = object
+export interface MemPooled {
+  type: string
+}
 
 export interface MinerAddressInfo {
   address: string
@@ -314,11 +344,13 @@ export interface MinerAddressesInfo {
   addresses: MinerAddressInfo[]
 }
 
-export type MisbehaviorAction = Unban
+export type MisbehaviorAction = Ban | Unban
 
 export interface NodeInfo {
   version: ReleaseVersion
   buildInfo: BuildInfo
+  upnp: boolean
+  externalAddress?: string
 }
 
 export interface NotFound {
@@ -326,7 +358,9 @@ export interface NotFound {
   resource: string
 }
 
-export type NotFound1 = object
+export interface NotFound1 {
+  type: string
+}
 
 export type Output = Asset1 | Contract1
 
@@ -351,6 +385,12 @@ export type PeerStatus = Banned | Penalty
 
 export interface Penalty {
   value: number
+  type: string
+}
+
+export interface Reachable {
+  peers: string[]
+  type: string
 }
 
 export interface ReleaseVersion {
@@ -433,7 +473,9 @@ export interface SweepAll {
   /** @format int64 */
   lockTime?: number
   gas?: number
-  gasPrice?: GasPrice
+
+  /** @format uint256 */
+  gasPrice?: string
   utxosLimit?: number
 }
 
@@ -447,7 +489,9 @@ export interface Token {
 export interface Transfer {
   destinations: Destination[]
   gas?: number
-  gasPrice?: GasPrice
+
+  /** @format uint256 */
+  gasPrice?: string
   utxosLimit?: number
 }
 
@@ -472,6 +516,7 @@ export type TxStatus = Confirmed | MemPooled | NotFound1
 export interface U256 {
   /** @format uint256 */
   value: string
+  type: string
 }
 
 export interface UTXO {
@@ -497,12 +542,18 @@ export interface Unauthorized {
 
 export interface Unban {
   peers: string[]
+  type: string
 }
 
 export interface UnconfirmedTransactions {
   fromGroup: number
   toGroup: number
   unconfirmedTransactions: Tx[]
+}
+
+export interface Unreachable {
+  peers: string[]
+  type: string
 }
 
 export type Val = Address | Bool | ByteVec | I256 | U256
@@ -896,14 +947,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Wallets
-     * @name GetWalletsWalletNameRevealMnemonic
+     * @name PostWalletsWalletNameRevealMnemonic
      * @summary Reveal your mnemonic. !!! use it with caution !!!
-     * @request GET:/wallets/{wallet_name}/reveal-mnemonic
+     * @request POST:/wallets/{wallet_name}/reveal-mnemonic
      */
-    getWalletsWalletNameRevealMnemonic: (walletName: string, data: RevealMnemonic, params: RequestParams = {}) =>
+    postWalletsWalletNameRevealMnemonic: (walletName: string, data: RevealMnemonic, params: RequestParams = {}) =>
       this.request<Result2, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/wallets/${walletName}/reveal-mnemonic`,
-        method: 'GET',
+        method: 'POST',
         body: data,
         type: ContentType.Json,
         format: 'json',
@@ -1159,12 +1210,45 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Infos
      * @name PostInfosMisbehaviors
-     * @summary Unban given peers
+     * @summary Ban/Unban given peers
      * @request POST:/infos/misbehaviors
      */
     postInfosMisbehaviors: (data: MisbehaviorAction, params: RequestParams = {}) =>
       this.request<void, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/misbehaviors`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Infos
+     * @name GetInfosUnreachable
+     * @summary Get the unreachable brokers
+     * @request GET:/infos/unreachable
+     */
+    getInfosUnreachable: (params: RequestParams = {}) =>
+      this.request<string[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/unreachable`,
+        method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Infos
+     * @name PostInfosDiscovery
+     * @summary Set brokers to be unreachable/reachable
+     * @request POST:/infos/discovery
+     */
+    postInfosDiscovery: (data: DiscoveryAction, params: RequestParams = {}) =>
+      this.request<void, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/discovery`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -1201,6 +1285,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<BlockEntry, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blockflow/blocks/${blockHash}`,
         method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Blockflow
+     * @name GetBlockflowIsBlockInMainChain
+     * @summary Check if the block is in main chain
+     * @request GET:/blockflow/is-block-in-main-chain
+     */
+    getBlockflowIsBlockInMainChain: (query: { blockHash: string }, params: RequestParams = {}) =>
+      this.request<boolean, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/blockflow/is-block-in-main-chain`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params
       }),
