@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { Api, GasPrice } from '../api/api-alephium'
+import { Api } from '../api/api-alephium'
 
 /**
  * Node client
@@ -31,7 +31,7 @@ export class NodeClient extends Api<null> {
     amount: string,
     lockTime?: number,
     gas?: number,
-    gasPrice?: GasPrice
+    gasPrice?: string
   ) {
     return await this.transactions.postTransactionsBuild({
       fromPublicKey,

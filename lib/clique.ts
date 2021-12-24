@@ -89,9 +89,17 @@ export class CliqueClient extends Api<null> {
     }
   }
 
-  async transactionCreate(fromAddress: string, fromKey: string, toAddress: string, amount: string, lockTime?: number) {
+  async transactionCreate(
+    fromAddress: string,
+    fromPublicKey: string,
+    toAddress: string,
+    amount: string,
+    lockTime?: number,
+    gas?: number,
+    gasPrice?: string
+  ) {
     const clientIndex = await this.getClientIndex(fromAddress)
-    return await this.clients[clientIndex].transactionCreate(fromKey, toAddress, amount, lockTime)
+    return await this.clients[clientIndex].transactionCreate(fromPublicKey, toAddress, amount, lockTime, gas, gasPrice)
   }
 
   async transactionSend(fromAddress: string, tx: string, signature: string) {
