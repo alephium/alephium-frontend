@@ -38,12 +38,21 @@ describe('node', function () {
     client.transactions.postTransactionsBuild = mockedPostTransactionsBuild
     mockedPostTransactionsBuild.mockResolvedValue({ data: transactionMockData.created })
 
-    const transaction = await client.transactionCreate('fromPublicKey', 'toAddress', 'amount')
+    const transaction = await client.transactionCreate(
+      'fromPublicKey',
+      'toAddress',
+      'amount',
+      undefined,
+      20000,
+      '1000000000'
+    )
 
     expect(client.transactions.postTransactionsBuild).toHaveBeenCalledTimes(1)
     expect(client.transactions.postTransactionsBuild).toHaveBeenLastCalledWith({
       fromPublicKey: 'fromPublicKey',
-      destinations: [{ address: 'toAddress', amount: 'amount', lockTime: undefined }]
+      destinations: [{ address: 'toAddress', amount: 'amount', lockTime: undefined }],
+      gas: 20000,
+      gasPrice: '1000000000'
     })
     expect(transaction).toEqual({ data: transactionMockData.created })
   })
