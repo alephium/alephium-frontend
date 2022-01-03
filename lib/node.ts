@@ -25,10 +25,19 @@ export class NodeClient extends Api<null> {
     return await this.addresses.getAddressesAddressBalance(address)
   }
 
-  async transactionCreate(fromPublicKey: string, toAddress: string, amount: string, lockTime?: number) {
+  async transactionCreate(
+    fromPublicKey: string,
+    toAddress: string,
+    amount: string,
+    lockTime?: number,
+    gas?: number,
+    gasPrice?: string
+  ) {
     return await this.transactions.postTransactionsBuild({
       fromPublicKey,
-      destinations: [{ address: toAddress, amount, lockTime }]
+      destinations: [{ address: toAddress, amount, lockTime }],
+      gas,
+      gasPrice
     })
   }
 

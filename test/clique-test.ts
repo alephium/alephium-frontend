@@ -196,7 +196,15 @@ describe('clique', function () {
       client.clients[0].transactionCreate = mockedTransactionCreate
       mockedTransactionCreate.mockResolvedValue({ data: transactionMockData.created })
 
-      const transaction = await client.transactionCreate('fromAddress', 'fromKey', 'toAdress', 'amount')
+      const transaction = await client.transactionCreate(
+        'fromAddress',
+        'fromKey',
+        'toAdress',
+        'amount',
+        undefined,
+        20000,
+        '1000000000'
+      )
 
       expect(client.clients[0].transactionCreate).toHaveBeenCalledTimes(1)
       expect(transaction).toEqual({ data: transactionMockData.created })
