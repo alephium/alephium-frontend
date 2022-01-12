@@ -41,6 +41,13 @@ export class NodeClient extends Api<null> {
     })
   }
 
+  async transactionConsolidateUTXOs(fromPublicKey: string, toAddress: string) {
+    return await this.transactions.postTransactionsSweepAddressBuild({
+      fromPublicKey,
+      toAddress
+    })
+  }
+
   async transactionSend(tx: string, signature: string) {
     return await this.transactions.postTransactionsSubmit({ unsignedTx: tx, signature })
   }

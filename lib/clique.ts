@@ -102,6 +102,11 @@ export class CliqueClient extends Api<null> {
     return await this.clients[clientIndex].transactionCreate(fromPublicKey, toAddress, amount, lockTime, gas, gasPrice)
   }
 
+  async transactionConsolidateUTXOs(fromPublicKey: string, fromAddress: string, toAddress: string) {
+    const clientIndex = await this.getClientIndex(fromAddress)
+    return await this.clients[clientIndex].transactionConsolidateUTXOs(fromPublicKey, toAddress)
+  }
+
   async transactionSend(fromAddress: string, tx: string, signature: string) {
     const clientIndex = await this.getClientIndex(fromAddress)
     return await this.clients[clientIndex].transactionSend(tx, signature)
