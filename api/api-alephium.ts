@@ -35,11 +35,12 @@ export interface AddressInfo {
   address: string
   publicKey: string
   group: number
+  path: string
 }
 
 export interface Addresses {
   activeAddress: string
-  addresses: Info[]
+  addresses: AddressInfo[]
 }
 
 export interface Asset {
@@ -110,6 +111,11 @@ export interface BlockEntry {
   height: number
   deps: string[]
   transactions: Tx[]
+  nonce: string
+  version: number
+  depStateHash: string
+  txsHash: string
+  target: string
 }
 
 export interface BlockHeaderEntry {
@@ -181,6 +187,9 @@ export interface BuildMultisigAddress {
 export interface BuildScript {
   fromPublicKey: string
   code: string
+
+  /** @format uint256 */
+  amount?: string
   gas?: number
 
   /** @format uint256 */
@@ -195,7 +204,7 @@ export interface BuildScriptResult {
   toGroup: number
 }
 
-export interface BuildSweepAllTransaction {
+export interface BuildSweepAddressTransactions {
   fromPublicKey: string
   toAddress: string
 
@@ -206,6 +215,12 @@ export interface BuildSweepAllTransaction {
   /** @format uint256 */
   gasPrice?: string
   utxosLimit?: number
+}
+
+export interface BuildSweepAddressTransactionsResult {
+  unsignedTxs: SweepAddressTransaction[]
+  fromGroup: number
+  toGroup: number
 }
 
 export interface BuildTransaction {
@@ -307,11 +322,6 @@ export interface I256 {
   type: string
 }
 
-export interface Info {
-  address: string
-  group: number
-}
-
 export type Input = Asset | Contract
 
 export interface InterCliquePeerInfo {
@@ -331,17 +341,12 @@ export interface MemPooled {
   type: string
 }
 
-export interface MinerAddressInfo {
-  address: string
-  group: number
-}
-
 export interface MinerAddresses {
   addresses: string[]
 }
 
 export interface MinerAddressesInfo {
-  addresses: MinerAddressInfo[]
+  addresses: AddressInfo[]
 }
 
 export type MisbehaviorAction = Ban | Unban
@@ -426,8 +431,8 @@ export interface Result5 {
   address: string
 }
 
-export interface Result6 {
-  address: string
+export interface Results {
+  results: Result3[]
 }
 
 export interface RevealMnemonic {
@@ -467,7 +472,7 @@ export interface SubmitTransaction {
   signature: string
 }
 
-export interface SweepAll {
+export interface Sweep {
   toAddress: string
 
   /** @format int64 */
@@ -477,6 +482,11 @@ export interface SweepAll {
   /** @format uint256 */
   gasPrice?: string
   utxosLimit?: number
+}
+
+export interface SweepAddressTransaction {
+  txId: string
+  unsignedTx: string
 }
 
 export interface Token {
@@ -983,13 +993,31 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Wallets
-     * @name PostWalletsWalletNameSweepAll
+     * @name PostWalletsWalletNameSweepActiveAddress
      * @summary Transfer all unlocked ALPH from the active address to another address
-     * @request POST:/wallets/{wallet_name}/sweep-all
+     * @request POST:/wallets/{wallet_name}/sweep-active-address
      */
-    postWalletsWalletNameSweepAll: (walletName: string, data: SweepAll, params: RequestParams = {}) =>
-      this.request<Result3, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/wallets/${walletName}/sweep-all`,
+    postWalletsWalletNameSweepActiveAddress: (walletName: string, data: Sweep, params: RequestParams = {}) =>
+      this.request<Results, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/wallets/${walletName}/sweep-active-address`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Wallets
+     * @name PostWalletsWalletNameSweepAllAddresses
+     * @summary Transfer unlocked ALPH from all addresses (including all mining addresses if applicable) to another address
+     * @request POST:/wallets/{wallet_name}/sweep-all-addresses
+     */
+    postWalletsWalletNameSweepAllAddresses: (walletName: string, data: Sweep, params: RequestParams = {}) =>
+      this.request<Results, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/wallets/${walletName}/sweep-all-addresses`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -1074,10 +1102,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Derive your next address
      * @request POST:/wallets/{wallet_name}/derive-next-address
      */
-    postWalletsWalletNameDeriveNextAddress: (walletName: string, params: RequestParams = {}) =>
-      this.request<Result5, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+    postWalletsWalletNameDeriveNextAddress: (
+      walletName: string,
+      query?: { group?: number },
+      params: RequestParams = {}
+    ) =>
+      this.request<AddressInfo, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/wallets/${walletName}/derive-next-address`,
         method: 'POST',
+        query: query,
         format: 'json',
         ...params
       }),
@@ -1091,14 +1124,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/wallets/{wallet_name}/derive-next-miner-addresses
      */
     postWalletsWalletNameDeriveNextMinerAddresses: (walletName: string, params: RequestParams = {}) =>
-      this.request<MinerAddressInfo[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>(
-        {
-          path: `/wallets/${walletName}/derive-next-miner-addresses`,
-          method: 'POST',
-          format: 'json',
-          ...params
-        }
-      ),
+      this.request<AddressInfo[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/wallets/${walletName}/derive-next-miner-addresses`,
+        method: 'POST',
+        format: 'json',
+        ...params
+      }),
 
     /**
      * No description
@@ -1252,6 +1283,40 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Infos
+     * @name GetInfosHistoryHashrate
+     * @summary Get history average hashrate on the given time interval
+     * @request GET:/infos/history-hashrate
+     */
+    getInfosHistoryHashrate: (query: { fromTs: number; toTs: number }, params: RequestParams = {}) =>
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/history-hashrate`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Infos
+     * @name GetInfosCurrentHashrate
+     * @summary Get average hashrate from `now - timespan(millis)` to `now`
+     * @request GET:/infos/current-hashrate
+     */
+    getInfosCurrentHashrate: (query?: { timespan?: number }, params: RequestParams = {}) =>
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/current-hashrate`,
+        method: 'GET',
+        query: query,
+        format: 'json',
         ...params
       })
   }
@@ -1452,16 +1517,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Transactions
-     * @name PostTransactionsSweepAllBuild
-     * @summary Build an unsigned transaction to send all unlocked balanced to an address
-     * @request POST:/transactions/sweep-all/build
+     * @name PostTransactionsSweepAddressBuild
+     * @summary Build unsigned transactions to send all unlocked balanced of one address to another address
+     * @request POST:/transactions/sweep-address/build
      */
-    postTransactionsSweepAllBuild: (data: BuildSweepAllTransaction, params: RequestParams = {}) =>
+    postTransactionsSweepAddressBuild: (data: BuildSweepAddressTransactions, params: RequestParams = {}) =>
       this.request<
-        BuildTransactionResult,
+        BuildSweepAddressTransactionsResult,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
       >({
-        path: `/transactions/sweep-all/build`,
+        path: `/transactions/sweep-address/build`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -1631,7 +1696,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/multisig/address
      */
     postMultisigAddress: (data: BuildMultisigAddress, params: RequestParams = {}) =>
-      this.request<Result6, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<Result5, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/multisig/address`,
         method: 'POST',
         body: data,
