@@ -20,6 +20,8 @@ import blake from 'blakejs'
 
 import bs58 from './bs58'
 import { decrypt, encrypt } from './password-crypto'
+import { totalNumberOfGroups } from './constants'
+import addressToGroup from './address'
 
 class StoredState {
   mnemonic: string
@@ -66,11 +68,14 @@ export class Wallet {
   }
 }
 
-const getPath = () => {
+export const getPath = (index?: number) => {
+  if (index !== undefined && index < 0) {
+    throw new Error('Invalid path index')
+  }
   // Being explicit: we always use coinType 1234 no matter the network.
   const coinType = "1234'"
 
-  return `m/44'/${coinType}/0'/0/0`
+  return `m/44'/${coinType}/0'/0/${index || '0'}`
 }
 
 export const getWalletFromMnemonic = (mnemonic: string) => {
@@ -80,9 +85,9 @@ export const getWalletFromMnemonic = (mnemonic: string) => {
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
 }
 
-const deriveAddressAndKeys = (seed: Buffer) => {
+const deriveAddressAndKeys = (seed: Buffer, pathIndex?: number) => {
   const masterKey = bip32.fromSeed(seed)
-  const keyPair = masterKey.derivePath(getPath())
+  const keyPair = masterKey.derivePath(getPath(pathIndex))
 
   if (!keyPair.privateKey) throw new Error('Missing private key')
 
@@ -97,6 +102,25 @@ const deriveAddressAndKeys = (seed: Buffer) => {
   const address = bs58.encode(bytes)
 
   return { address, publicKey, privateKey }
+}
+
+export const deriveNewAddressData = (seed: Buffer, forGroup?: number, pathIndex?: number, skipAddresses?: string[]) => {
+  if (forGroup !== undefined && (forGroup >= totalNumberOfGroups || forGroup < 0)) {
+    throw new Error('Invalid group number')
+  }
+
+  let newAddressData = deriveAddressAndKeys(seed, pathIndex)
+  let nextPathIndex = pathIndex
+
+  while (
+    (skipAddresses !== undefined && skipAddresses.length > 0 && skipAddresses.includes(newAddressData.address)) ||
+    (forGroup !== undefined && addressToGroup(newAddressData.address, totalNumberOfGroups) !== forGroup)
+  ) {
+    nextPathIndex = nextPathIndex ? nextPathIndex + 1 : 1
+    newAddressData = deriveAddressAndKeys(seed, nextPathIndex)
+  }
+
+  return newAddressData
 }
 
 export const walletGenerate = () => {
