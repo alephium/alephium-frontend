@@ -20,7 +20,7 @@ import blake from 'blakejs'
 
 import bs58 from './bs58'
 import { decrypt, encrypt } from './password-crypto'
-import { totalNumberOfGroups } from './constants'
+import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import addressToGroup from './address'
 
 class StoredState {
@@ -105,7 +105,7 @@ const deriveAddressAndKeys = (seed: Buffer, pathIndex?: number) => {
 }
 
 export const deriveNewAddressData = (seed: Buffer, forGroup?: number, pathIndex?: number, skipAddresses?: string[]) => {
-  if (forGroup !== undefined && (forGroup >= totalNumberOfGroups || forGroup < 0)) {
+  if (forGroup !== undefined && (forGroup >= TOTAL_NUMBER_OF_GROUPS || forGroup < 0)) {
     throw new Error('Invalid group number')
   }
 
@@ -114,7 +114,7 @@ export const deriveNewAddressData = (seed: Buffer, forGroup?: number, pathIndex?
 
   while (
     (skipAddresses !== undefined && skipAddresses.length > 0 && skipAddresses.includes(newAddressData.address)) ||
-    (forGroup !== undefined && addressToGroup(newAddressData.address, totalNumberOfGroups) !== forGroup)
+    (forGroup !== undefined && addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS) !== forGroup)
   ) {
     nextPathIndex = nextPathIndex ? nextPathIndex + 1 : 1
     newAddressData = deriveAddressAndKeys(seed, nextPathIndex)
