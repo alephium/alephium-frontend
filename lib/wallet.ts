@@ -69,7 +69,7 @@ export class Wallet {
 }
 
 export const getPath = (index?: number) => {
-  if (index !== undefined && index < 0) {
+  if ((index !== undefined && index < 0) || !Number.isInteger(index)) {
     throw new Error('Invalid path index')
   }
   // Being explicit: we always use coinType 1234 no matter the network.
