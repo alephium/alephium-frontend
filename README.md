@@ -58,6 +58,12 @@ npm run compile
 npm test
 ```
 
+or, to watch for changes:
+
+```
+npm run test:watch
+```
+
 [test-badge]: https://github.com/alephium/alephium-js/actions/workflows/test.yml/badge.svg
 [test-link]: https://github.com/alephium/alephium-js/actions/workflows/test.yml
 [coverage-badge]: https://codecov.io/gh/alephium/alephium-js/branch/master/graph/badge.svg
