@@ -111,12 +111,12 @@ const deriveAddressAndKeys = (seed: Buffer, addressIndex?: number): AddressAndKe
   return { address, publicKey, privateKey, addressIndex: addressIndex || 0 }
 }
 
-const findNextAvailableAddressIndex = (startIndex: number, skipIndexes?: number[]) => {
+const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
   let nextAvailableAddressIndex = startIndex
 
   do {
     nextAvailableAddressIndex++
-  } while (skipIndexes !== undefined && skipIndexes.includes(nextAvailableAddressIndex))
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
 
   return nextAvailableAddressIndex
 }
@@ -125,7 +125,7 @@ export const deriveNewAddressData = (
   seed: Buffer,
   forGroup?: number,
   addressIndex?: number,
-  skipAddressIndexes?: number[]
+  skipAddressIndexes: number[] = []
 ): AddressAndKeys => {
   if (forGroup !== undefined && (forGroup >= TOTAL_NUMBER_OF_GROUPS || forGroup < 0)) {
     throw new Error('Invalid group number')
@@ -133,7 +133,7 @@ export const deriveNewAddressData = (
 
   const initialAddressIndex = addressIndex || 0
 
-  let nextAddressIndex = skipAddressIndexes?.includes(initialAddressIndex)
+  let nextAddressIndex = skipAddressIndexes.includes(initialAddressIndex)
     ? findNextAvailableAddressIndex(initialAddressIndex, skipAddressIndexes)
     : initialAddressIndex
   let newAddressData: AddressAndKeys
