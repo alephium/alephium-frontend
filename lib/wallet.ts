@@ -85,7 +85,14 @@ export const getWalletFromMnemonic = (mnemonic: string) => {
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
 }
 
-const deriveAddressAndKeys = (seed: Buffer, addressIndex?: number) => {
+type AddressAndKeys = {
+  address: string
+  publicKey: string
+  privateKey: string
+  addressIndex: number
+}
+
+const deriveAddressAndKeys = (seed: Buffer, addressIndex?: number): AddressAndKeys => {
   const masterKey = bip32.fromSeed(seed)
   const keyPair = masterKey.derivePath(getPath(addressIndex))
 
@@ -101,29 +108,40 @@ const deriveAddressAndKeys = (seed: Buffer, addressIndex?: number) => {
   const bytes = Buffer.concat([type, pkhash])
   const address = bs58.encode(bytes)
 
-  return { address, publicKey, privateKey }
+  return { address, publicKey, privateKey, addressIndex: addressIndex || 0 }
+}
+
+const findNextAvailableAddressIndex = (startIndex: number, skipIndexes?: number[]) => {
+  let nextAvailableAddressIndex = startIndex
+
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes !== undefined && skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
 }
 
 export const deriveNewAddressData = (
   seed: Buffer,
   forGroup?: number,
   addressIndex?: number,
-  skipAddresses?: string[]
-) => {
+  skipAddressIndexes?: number[]
+): AddressAndKeys => {
   if (forGroup !== undefined && (forGroup >= TOTAL_NUMBER_OF_GROUPS || forGroup < 0)) {
     throw new Error('Invalid group number')
   }
 
-  let newAddressData = deriveAddressAndKeys(seed, addressIndex)
-  let nextAddressIndex = addressIndex
+  const initialAddressIndex = addressIndex || 0
 
-  while (
-    (skipAddresses !== undefined && skipAddresses.length > 0 && skipAddresses.includes(newAddressData.address)) ||
-    (forGroup !== undefined && addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS) !== forGroup)
-  ) {
-    nextAddressIndex = nextAddressIndex ? nextAddressIndex + 1 : 1
+  let nextAddressIndex = skipAddressIndexes?.includes(initialAddressIndex)
+    ? findNextAvailableAddressIndex(initialAddressIndex, skipAddressIndexes)
+    : initialAddressIndex
+  let newAddressData: AddressAndKeys
+
+  do {
     newAddressData = deriveAddressAndKeys(seed, nextAddressIndex)
-  }
+    nextAddressIndex = findNextAvailableAddressIndex(newAddressData.addressIndex, skipAddressIndexes)
+  } while (forGroup !== undefined && addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS) !== forGroup)
 
   return newAddressData
 }

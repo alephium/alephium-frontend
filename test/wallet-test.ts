@@ -95,19 +95,19 @@ describe('Wallet', function () {
   describe('should derive a new address', () => {
     const importedWallet = wallets.wallets[0]
     const seed = Buffer.from(importedWallet.seed, 'hex')
-    const { address: existingAddress } = walletUtils.deriveNewAddressData(seed)
+    const { address: existingAddress, addressIndex: existingAddressIndex } = walletUtils.deriveNewAddressData(seed)
 
     it('in a random group', () => {
       let newAddressData = walletUtils.deriveNewAddressData(seed)
       expect(newAddressData.address).toEqual(existingAddress)
-      newAddressData = walletUtils.deriveNewAddressData(seed, undefined, undefined, [existingAddress])
+      newAddressData = walletUtils.deriveNewAddressData(seed, undefined, undefined, [existingAddressIndex])
       expect(newAddressData.address).not.toEqual(existingAddress)
     })
 
     it('in a specific group', () => {
       const validGroups = Array.from(Array(TOTAL_NUMBER_OF_GROUPS).keys()) // [0, 1, 2, ..., TOTAL_NUMBER_OF_GROUPS - 1]
       validGroups.forEach((validGroup) => {
-        const newAddressData = walletUtils.deriveNewAddressData(seed, validGroup, undefined, [existingAddress])
+        const newAddressData = walletUtils.deriveNewAddressData(seed, validGroup, undefined, [existingAddressIndex])
         const groupOfNewAddress = addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS)
         expect(groupOfNewAddress).toEqual(validGroup)
         expect(newAddressData.address).not.toEqual(existingAddress)
@@ -115,9 +115,9 @@ describe('Wallet', function () {
 
       const invalidGroups = [-1, TOTAL_NUMBER_OF_GROUPS, TOTAL_NUMBER_OF_GROUPS + 1]
       invalidGroups.forEach((invalidGroup) => {
-        expect(() => walletUtils.deriveNewAddressData(seed, invalidGroup, undefined, [existingAddress])).toThrowError(
-          'Invalid group number'
-        )
+        expect(() =>
+          walletUtils.deriveNewAddressData(seed, invalidGroup, undefined, [existingAddressIndex])
+        ).toThrowError('Invalid group number')
       })
     })
 
