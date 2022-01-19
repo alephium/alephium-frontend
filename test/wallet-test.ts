@@ -18,7 +18,7 @@ import * as bip32 from 'bip32'
 
 import * as walletUtils from '../lib/wallet'
 import addressToGroup from '../lib/address'
-import { totalNumberOfGroups } from '../lib/constants'
+import { TOTAL_NUMBER_OF_GROUPS } from '../lib/constants'
 
 import wallets from './fixtures/wallets.json'
 import genesis from './fixtures/genesis.json'
@@ -105,15 +105,15 @@ describe('Wallet', function () {
     })
 
     it('in a specific group', () => {
-      const validGroups = Array.from(Array(totalNumberOfGroups).keys()) // [0, 1, 2, ..., totalNumberOfGroups - 1]
+      const validGroups = Array.from(Array(TOTAL_NUMBER_OF_GROUPS).keys()) // [0, 1, 2, ..., TOTAL_NUMBER_OF_GROUPS - 1]
       validGroups.forEach((validGroup) => {
         const newAddressData = walletUtils.deriveNewAddressData(seed, validGroup, undefined, [existingAddress])
-        const groupOfNewAddress = addressToGroup(newAddressData.address, totalNumberOfGroups)
+        const groupOfNewAddress = addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS)
         expect(groupOfNewAddress).toEqual(validGroup)
         expect(newAddressData.address).not.toEqual(existingAddress)
       })
 
-      const invalidGroups = [-1, totalNumberOfGroups, totalNumberOfGroups + 1]
+      const invalidGroups = [-1, TOTAL_NUMBER_OF_GROUPS, TOTAL_NUMBER_OF_GROUPS + 1]
       invalidGroups.forEach((invalidGroup) => {
         expect(() => walletUtils.deriveNewAddressData(seed, invalidGroup, undefined, [existingAddress])).toThrowError(
           'Invalid group number'
@@ -129,7 +129,7 @@ describe('Wallet', function () {
       expect(walletUtils.getPath(3)).toEqual("m/44'/1234'/0'/0/3")
       expect(walletUtils.getPath(4)).toEqual("m/44'/1234'/0'/0/4")
       expect(walletUtils.getPath(9999)).toEqual("m/44'/1234'/0'/0/9999")
-      expect(() => walletUtils.getPath(-1)).toThrowError('Invalid path index')
+      expect(() => walletUtils.getPath(-1)).toThrowError('Invalid address index path level')
     })
   })
 })

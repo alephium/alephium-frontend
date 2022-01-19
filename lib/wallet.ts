@@ -68,14 +68,14 @@ export class Wallet {
   }
 }
 
-export const getPath = (index?: number) => {
-  if ((index !== undefined && index < 0) || !Number.isInteger(index)) {
-    throw new Error('Invalid path index')
+export const getPath = (addressIndex?: number) => {
+  if (addressIndex !== undefined && (addressIndex < 0 || !Number.isInteger(addressIndex))) {
+    throw new Error('Invalid address index path level')
   }
   // Being explicit: we always use coinType 1234 no matter the network.
   const coinType = "1234'"
 
-  return `m/44'/${coinType}/0'/0/${index || '0'}`
+  return `m/44'/${coinType}/0'/0/${addressIndex || '0'}`
 }
 
 export const getWalletFromMnemonic = (mnemonic: string) => {
@@ -85,9 +85,9 @@ export const getWalletFromMnemonic = (mnemonic: string) => {
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
 }
 
-const deriveAddressAndKeys = (seed: Buffer, pathIndex?: number) => {
+const deriveAddressAndKeys = (seed: Buffer, addressIndex?: number) => {
   const masterKey = bip32.fromSeed(seed)
-  const keyPair = masterKey.derivePath(getPath(pathIndex))
+  const keyPair = masterKey.derivePath(getPath(addressIndex))
 
   if (!keyPair.privateKey) throw new Error('Missing private key')
 
@@ -104,20 +104,25 @@ const deriveAddressAndKeys = (seed: Buffer, pathIndex?: number) => {
   return { address, publicKey, privateKey }
 }
 
-export const deriveNewAddressData = (seed: Buffer, forGroup?: number, pathIndex?: number, skipAddresses?: string[]) => {
+export const deriveNewAddressData = (
+  seed: Buffer,
+  forGroup?: number,
+  addressIndex?: number,
+  skipAddresses?: string[]
+) => {
   if (forGroup !== undefined && (forGroup >= TOTAL_NUMBER_OF_GROUPS || forGroup < 0)) {
     throw new Error('Invalid group number')
   }
 
-  let newAddressData = deriveAddressAndKeys(seed, pathIndex)
-  let nextPathIndex = pathIndex
+  let newAddressData = deriveAddressAndKeys(seed, addressIndex)
+  let nextAddressIndex = addressIndex
 
   while (
     (skipAddresses !== undefined && skipAddresses.length > 0 && skipAddresses.includes(newAddressData.address)) ||
     (forGroup !== undefined && addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS) !== forGroup)
   ) {
-    nextPathIndex = nextPathIndex ? nextPathIndex + 1 : 1
-    newAddressData = deriveAddressAndKeys(seed, nextPathIndex)
+    nextAddressIndex = nextAddressIndex ? nextAddressIndex + 1 : 1
+    newAddressData = deriveAddressAndKeys(seed, nextAddressIndex)
   }
 
   return newAddressData
