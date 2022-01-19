@@ -47,44 +47,42 @@ export const getNumberOfTrailingZeros = (numberArray: string[]) => {
   return numberOfZeros
 }
 
-export const removeTrailingZeros = (numString: string, minDigits: number) => {
+export const removeTrailingZeros = (numString: string, minNumberOfDecimals: number) => {
   const numberArray = numString.split('')
 
   const numberOfZeros = getNumberOfTrailingZeros(numberArray)
 
   const numberArrayWithoutTrailingZeros = [...numberArray.slice(0, numberArray.length - numberOfZeros)]
 
-  if (numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.')
-    numberArrayWithoutTrailingZeros.push(produceTrailingZeros(minDigits))
+  if (minNumberOfDecimals && numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.')
+    numberArrayWithoutTrailingZeros.push(produceTrailingZeros(minNumberOfDecimals))
 
   return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
 
 export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimalsToShow?: number): string => {
-  const minDigits = 3
-
   if (baseNum < BigInt(0)) return '???'
 
   // For abbreviation, we don't need full precision and can work with number
   const alephNum = Number(baseNum) / QUINTILLION
 
-  // what tier? (determines SI symbol)
+  const minNumberOfDecimals = alephNum > -0.01 && alephNum < 0.01 ? 3 : 2
+  const tinyAmountsMaxNumberDecimals = 5
+  const numberOfDecimalsToDisplay = nbOfDecimalsToShow || minNumberOfDecimals
 
-  let tier = (Math.log10(alephNum) / 3) | 0
+  if (showFullPrecision) {
+    const decimals = countDecimals(alephNum) === 1 ? 16 : 18 // Avoid precision issue edge case
+    return removeTrailingZeros(alephNum.toFixed(decimals), minNumberOfDecimals)
+  }
 
-  const numberOfDigitsToDisplay = nbOfDecimalsToShow || minDigits
+  let tier = (Math.log10(alephNum) / 3) | 0 // what tier? (determines SI symbol)
 
-  if (tier < 0 || showFullPrecision) {
-    // Keep full precision for very low numbers (gas etc.)
-
-    if (countDecimals(alephNum) === 1) {
-      return removeTrailingZeros(alephNum.toFixed(16), minDigits) // Avoid precision issue edge case
-    }
-
-    return removeTrailingZeros(alephNum.toFixed(18), minDigits)
-  } else if (tier === 0) {
-    // Small number, low precision is ok
-    return removeTrailingZeros(alephNum.toFixed(numberOfDigitsToDisplay), minDigits)
+  if (tier < 0) {
+    // amount <= 0.001
+    return removeTrailingZeros(alephNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
+  } else if (tier <= 1) {
+    // amount < 1'000'000
+    return addApostrophe(removeTrailingZeros(alephNum.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals))
   } else if (tier >= MONEY_SYMBOL.length) {
     tier = MONEY_SYMBOL.length - 1
   }
@@ -97,7 +95,7 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
   // Here we need to be careful of precision issues
   const scaled = alephNum / scale
 
-  return scaled.toFixed(numberOfDigitsToDisplay) + suffix
+  return scaled.toFixed(numberOfDecimalsToDisplay) + suffix
 }
 
 export const calAmountDelta = (t: Transaction, id: string) => {
@@ -190,4 +188,16 @@ export const convertScientificToFloatString = (scientificNumber: string): string
   }
 
   return newNumber
+}
+
+const addApostrophe = (numString: string) => {
+  const integralPart = numString.split('.')[0]
+
+  if (integralPart.length > 3) {
+    return `${integralPart.slice(0, -3)}'${integralPart.slice(-3)}${
+      numString.includes('.') ? `.${numString.split('.')[1]}` : ''
+    }`
+  }
+
+  return numString
 }
