@@ -85,9 +85,7 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
       ? 2
       : alphNum < 1000000000000
       ? 3
-      : alphNum < 1000000000000000
-      ? 4
-      : 5
+      : 4
 
   if (tier < 0) {
     return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
