@@ -127,7 +127,7 @@ export const deriveNewAddressData = (
   addressIndex?: number,
   skipAddressIndexes: number[] = []
 ): AddressAndKeys => {
-  if (forGroup !== undefined && (forGroup >= TOTAL_NUMBER_OF_GROUPS || forGroup < 0)) {
+  if (forGroup !== undefined && (forGroup >= TOTAL_NUMBER_OF_GROUPS || forGroup < 0 || !Number.isInteger(forGroup))) {
     throw new Error('Invalid group number')
   }
 
@@ -136,12 +136,12 @@ export const deriveNewAddressData = (
   let nextAddressIndex = skipAddressIndexes.includes(initialAddressIndex)
     ? findNextAvailableAddressIndex(initialAddressIndex, skipAddressIndexes)
     : initialAddressIndex
-  let newAddressData: AddressAndKeys
+  let newAddressData = deriveAddressAndKeys(seed, nextAddressIndex)
 
-  do {
-    newAddressData = deriveAddressAndKeys(seed, nextAddressIndex)
+  while (forGroup !== undefined && addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS) !== forGroup) {
     nextAddressIndex = findNextAvailableAddressIndex(newAddressData.addressIndex, skipAddressIndexes)
-  } while (forGroup !== undefined && addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS) !== forGroup)
+    newAddressData = deriveAddressAndKeys(seed, nextAddressIndex)
+  }
 
   return newAddressData
 }
