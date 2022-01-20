@@ -26,14 +26,14 @@ import {
 } from '../lib/numbers'
 import transactions from './fixtures/transactions.json'
 
-const alf = (amount: bigint) => {
+const alph = (amount: bigint) => {
   return amount * BigInt('1000000000000000000')
 }
 
 const minDigits = 3
 
 it('Should abbreviate amount', () => {
-  expect(abbreviateAmount(alf(BigInt(-1)))).toEqual('???'),
+  expect(abbreviateAmount(alph(BigInt(-1)))).toEqual('???'),
     expect(abbreviateAmount(BigInt(0))).toEqual('0.000'),
     expect(abbreviateAmount(BigInt(1))).toEqual('0.000'),
     expect(abbreviateAmount(BigInt(100000))).toEqual('0.000'),
@@ -43,19 +43,19 @@ it('Should abbreviate amount', () => {
     expect(abbreviateAmount(BigInt('20000000000000000'))).toEqual('0.02'),
     expect(abbreviateAmount(BigInt('200000000000000000'))).toEqual('0.2'),
     expect(abbreviateAmount(BigInt('2000000000000000000'))).toEqual('2.00'),
-    expect(abbreviateAmount(alf(BigInt(1230)))).toEqual("1'230.00"),
-    expect(abbreviateAmount(alf(BigInt(1230000)))).toEqual('1.23M'),
-    expect(abbreviateAmount(alf(BigInt(1234000)))).toEqual('1.23M'),
-    expect(abbreviateAmount(alf(BigInt(1230000000)))).toEqual('1.23B'),
-    expect(abbreviateAmount(alf(BigInt(1235000000)))).toEqual('1.24B'),
-    expect(abbreviateAmount(alf(BigInt(1230000000000)))).toEqual('1.23T'),
-    expect(abbreviateAmount(alf(BigInt(1237000000000)))).toEqual('1.24T'),
-    expect(abbreviateAmount(alf(BigInt(1230000000000000)))).toEqual('1230.00T'),
-    expect(abbreviateAmount(alf(BigInt(1)))).toEqual('1.00')
+    expect(abbreviateAmount(alph(BigInt(1230)))).toEqual("1'230.00"),
+    expect(abbreviateAmount(alph(BigInt(1230000)))).toEqual('1.23M'),
+    expect(abbreviateAmount(alph(BigInt(1234000)))).toEqual('1.23M'),
+    expect(abbreviateAmount(alph(BigInt(1230000000)))).toEqual('1.23B'),
+    expect(abbreviateAmount(alph(BigInt(1235000000)))).toEqual('1.24B'),
+    expect(abbreviateAmount(alph(BigInt(1230000000000)))).toEqual('1.23T'),
+    expect(abbreviateAmount(alph(BigInt(1237000000000)))).toEqual('1.24T'),
+    expect(abbreviateAmount(alph(BigInt(1230000000000000)))).toEqual('1230.00T'),
+    expect(abbreviateAmount(alph(BigInt(1)))).toEqual('1.00')
 })
 
 it('Should keep full amount precision', () => {
-  expect(abbreviateAmount(alf(BigInt(-1)))).toEqual('???'),
+  expect(abbreviateAmount(alph(BigInt(-1)))).toEqual('???'),
     expect(abbreviateAmount(BigInt(0), true)).toEqual('0.000'),
     expect(abbreviateAmount(BigInt(1), true)).toEqual('0.000000000000000001'),
     expect(abbreviateAmount(BigInt(100001), true)).toEqual('0.000000000000100001'),
@@ -67,12 +67,12 @@ it('Should keep full amount precision', () => {
     expect(abbreviateAmount(BigInt('20000000000000000'), true)).toEqual('0.02'),
     expect(abbreviateAmount(BigInt('200000000000000000'), true)).toEqual('0.2'),
     expect(abbreviateAmount(BigInt('2000000000000000000'), true)).toEqual('2.00'),
-    expect(abbreviateAmount(alf(BigInt(1230)), true)).toEqual('1230.00'),
-    expect(abbreviateAmount(alf(BigInt(1230000)), true)).toEqual('1230000.00'),
-    expect(abbreviateAmount(alf(BigInt(1230000000)), true)).toEqual('1230000000.00'),
-    expect(abbreviateAmount(alf(BigInt(1230000000000)), true)).toEqual('1230000000000.00'),
-    expect(abbreviateAmount(alf(BigInt(1230000000000000)), true)).toEqual('1230000000000000.00'),
-    expect(abbreviateAmount(alf(BigInt(1)), true)).toEqual('1.00')
+    expect(abbreviateAmount(alph(BigInt(1230)), true)).toEqual('1230.00'),
+    expect(abbreviateAmount(alph(BigInt(1230000)), true)).toEqual('1230000.00'),
+    expect(abbreviateAmount(alph(BigInt(1230000000)), true)).toEqual('1230000000.00'),
+    expect(abbreviateAmount(alph(BigInt(1230000000000)), true)).toEqual('1230000000000.00'),
+    expect(abbreviateAmount(alph(BigInt(1230000000000000)), true)).toEqual('1230000000000000.00'),
+    expect(abbreviateAmount(alph(BigInt(1)), true)).toEqual('1.00')
 })
 
 it('Should remove trailing zeros', () => {
@@ -84,14 +84,14 @@ it('Should remove trailing zeros', () => {
 
 it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {
   expect(calAmountDelta(transactions.oneInputOneOutput, transactions.oneInputOneOutput.inputs[0].address)).toEqual(
-    alf(BigInt(-50))
+    alph(BigInt(-50))
   ),
     expect(calAmountDelta(transactions.twoInputsOneOutput, transactions.twoInputsOneOutput.inputs[0].address)).toEqual(
-      alf(BigInt(-150))
+      alph(BigInt(-150))
     ),
     expect(
       calAmountDelta(transactions.twoInputsZeroOutput, transactions.twoInputsZeroOutput.inputs[0].address)
-    ).toEqual(alf(BigInt(-200))),
+    ).toEqual(alph(BigInt(-200))),
     expect(() =>
       calAmountDelta(transactions.missingInputs, transactions.missingInputs.outputs[0].address)
     ).toThrowError('Missing transaction details'),
