@@ -113,7 +113,7 @@ describe('Wallet', function () {
         expect(newAddressData.address).not.toEqual(existingAddress)
       })
 
-      const invalidGroups = [-1, TOTAL_NUMBER_OF_GROUPS, TOTAL_NUMBER_OF_GROUPS + 1]
+      const invalidGroups = [-1, TOTAL_NUMBER_OF_GROUPS, TOTAL_NUMBER_OF_GROUPS + 1, -0.1, 0.1, 1e18, -1e18]
       invalidGroups.forEach((invalidGroup) => {
         expect(() =>
           walletUtils.deriveNewAddressData(seed, invalidGroup, undefined, [existingAddressIndex])
@@ -127,9 +127,16 @@ describe('Wallet', function () {
       expect(walletUtils.getPath(1)).toEqual("m/44'/1234'/0'/0/1")
       expect(walletUtils.getPath(2)).toEqual("m/44'/1234'/0'/0/2")
       expect(walletUtils.getPath(3)).toEqual("m/44'/1234'/0'/0/3")
+      expect(walletUtils.getPath(3)).toEqual("m/44'/1234'/0'/0/3")
       expect(walletUtils.getPath(4)).toEqual("m/44'/1234'/0'/0/4")
       expect(walletUtils.getPath(9999)).toEqual("m/44'/1234'/0'/0/9999")
+      expect(walletUtils.getPath(1e18)).toEqual("m/44'/1234'/0'/0/1000000000000000000")
       expect(() => walletUtils.getPath(-1)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(0.1)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(-0.1)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(1e21)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(1e-21)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(1e-18)).toThrowError('Invalid address index path level')
     })
   })
 })

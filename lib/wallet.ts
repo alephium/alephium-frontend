@@ -69,7 +69,10 @@ export class Wallet {
 }
 
 export const getPath = (addressIndex?: number) => {
-  if (addressIndex !== undefined && (addressIndex < 0 || !Number.isInteger(addressIndex))) {
+  if (
+    addressIndex !== undefined &&
+    (addressIndex < 0 || !Number.isInteger(addressIndex) || addressIndex.toString().includes('e'))
+  ) {
     throw new Error('Invalid address index path level')
   }
   // Being explicit: we always use coinType 1234 no matter the network.
