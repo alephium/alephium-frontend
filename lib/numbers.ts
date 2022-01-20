@@ -65,23 +65,33 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
 
   // For abbreviation, we don't need full precision and can work with number
   const alephNum = Number(baseNum) / QUINTILLION
-
-  const minNumberOfDecimals = alephNum > -0.01 && alephNum < 0.01 ? 3 : 2
-  const tinyAmountsMaxNumberDecimals = 5
-  const numberOfDecimalsToDisplay = nbOfDecimalsToShow || minNumberOfDecimals
+  const minNumberOfDecimals = alephNum < 0.01 ? 3 : 2
 
   if (showFullPrecision) {
     const decimals = countDecimals(alephNum) === 1 ? 16 : 18 // Avoid precision issue edge case
     return removeTrailingZeros(alephNum.toFixed(decimals), minNumberOfDecimals)
   }
 
-  let tier = (Math.log10(alephNum) / 3) | 0 // what tier? (determines SI symbol)
+  const tinyAmountsMaxNumberDecimals = 5
+  const numberOfDecimalsToDisplay = nbOfDecimalsToShow || minNumberOfDecimals
+  let tier =
+    alephNum < 0.001
+      ? -1
+      : alephNum < 1000
+      ? 0
+      : alephNum < 1000000
+      ? 1
+      : alephNum < 1000000000
+      ? 2
+      : alephNum < 1000000000000
+      ? 3
+      : alephNum < 1000000000000000
+      ? 4
+      : 5
 
   if (tier < 0) {
-    // amount <= 0.001
     return removeTrailingZeros(alephNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
   } else if (tier <= 1) {
-    // amount < 1'000'000
     return addApostrophe(removeTrailingZeros(alephNum.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals))
   } else if (tier >= MONEY_SYMBOL.length) {
     tier = MONEY_SYMBOL.length - 1

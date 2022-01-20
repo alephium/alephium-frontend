@@ -45,8 +45,11 @@ it('Should abbreviate amount', () => {
     expect(abbreviateAmount(BigInt('2000000000000000000'))).toEqual('2.00'),
     expect(abbreviateAmount(alf(BigInt(1230)))).toEqual("1'230.00"),
     expect(abbreviateAmount(alf(BigInt(1230000)))).toEqual('1.23M'),
+    expect(abbreviateAmount(alf(BigInt(1234000)))).toEqual('1.23M'),
     expect(abbreviateAmount(alf(BigInt(1230000000)))).toEqual('1.23B'),
+    expect(abbreviateAmount(alf(BigInt(1235000000)))).toEqual('1.24B'),
     expect(abbreviateAmount(alf(BigInt(1230000000000)))).toEqual('1.23T'),
+    expect(abbreviateAmount(alf(BigInt(1237000000000)))).toEqual('1.24T'),
     expect(abbreviateAmount(alf(BigInt(1230000000000000)))).toEqual('1230.00T'),
     expect(abbreviateAmount(alf(BigInt(1)))).toEqual('1.00')
 })
