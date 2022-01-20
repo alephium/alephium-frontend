@@ -74,24 +74,14 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
 
   const tinyAmountsMaxNumberDecimals = 5
   const numberOfDecimalsToDisplay = nbOfDecimalsToShow || minNumberOfDecimals
-  const tier =
-    alphNum < 0.001
-      ? -1
-      : alphNum < 1000
-      ? 0
-      : alphNum < 1000000
-      ? 1
-      : alphNum < 1000000000
-      ? 2
-      : alphNum < 1000000000000
-      ? 3
-      : 4
 
-  if (tier < 0) {
+  if (alphNum < 0.001) {
     return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
-  } else if (tier <= 1) {
+  } else if (alphNum <= 1000000) {
     return addApostrophe(removeTrailingZeros(alphNum.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals))
   }
+
+  const tier = alphNum < 1000000000 ? 2 : alphNum < 1000000000000 ? 3 : 4
 
   // get suffix and determine scale
   const suffix = MONEY_SYMBOL[tier]
