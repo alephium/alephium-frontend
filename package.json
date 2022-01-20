@@ -27,6 +27,7 @@
     "lint:fix": "eslint . --fix --ext .ts",
     "jest": "jest --useStderr --silent=false --verbose=true --config jestconfig.json",
     "test": "npm run compile && npm run jest",
+    "test:watch": "npm run compile && npm run jest -- --watch",
     "prepublishOnly": "npm run compile"
   },
   "dependencies": {

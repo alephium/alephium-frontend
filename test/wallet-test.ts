@@ -17,11 +17,17 @@
 import * as bip32 from 'bip32'
 
 import * as walletUtils from '../lib/wallet'
+import addressToGroup from '../lib/address'
+import { TOTAL_NUMBER_OF_GROUPS } from '../lib/constants'
 
 import wallets from './fixtures/wallets.json'
 import genesis from './fixtures/genesis.json'
 
 describe('Wallet', function () {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should encrypt and decrypt using password', async () => {
     const myPassword = 'alephium'
     const myWallet = walletUtils.walletGenerate()
@@ -81,8 +87,56 @@ describe('Wallet', function () {
     neutered.derivePath = mockedDerivePath
     mockedDerivePath.mockReturnValue({ privateKey: undefined })
 
-    jest.spyOn(bip32, 'fromSeed').mockImplementation(() => neutered)
+    jest.spyOn(bip32, 'fromSeed').mockImplementationOnce(() => neutered)
 
     expect(() => walletUtils.walletImport(importedWallet.mnemonic)).toThrow('Missing private key')
+  })
+
+  describe('should derive a new address', () => {
+    const importedWallet = wallets.wallets[0]
+    const seed = Buffer.from(importedWallet.seed, 'hex')
+    const { address: existingAddress, addressIndex: existingAddressIndex } = walletUtils.deriveNewAddressData(seed)
+
+    it('in a random group', () => {
+      let newAddressData = walletUtils.deriveNewAddressData(seed)
+      expect(newAddressData.address).toEqual(existingAddress)
+      newAddressData = walletUtils.deriveNewAddressData(seed, undefined, undefined, [existingAddressIndex])
+      expect(newAddressData.address).not.toEqual(existingAddress)
+    })
+
+    it('in a specific group', () => {
+      const validGroups = Array.from(Array(TOTAL_NUMBER_OF_GROUPS).keys()) // [0, 1, 2, ..., TOTAL_NUMBER_OF_GROUPS - 1]
+      validGroups.forEach((validGroup) => {
+        const newAddressData = walletUtils.deriveNewAddressData(seed, validGroup, undefined, [existingAddressIndex])
+        const groupOfNewAddress = addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS)
+        expect(groupOfNewAddress).toEqual(validGroup)
+        expect(newAddressData.address).not.toEqual(existingAddress)
+      })
+
+      const invalidGroups = [-1, TOTAL_NUMBER_OF_GROUPS, TOTAL_NUMBER_OF_GROUPS + 1, -0.1, 0.1, 1e18, -1e18]
+      invalidGroups.forEach((invalidGroup) => {
+        expect(() =>
+          walletUtils.deriveNewAddressData(seed, invalidGroup, undefined, [existingAddressIndex])
+        ).toThrowError('Invalid group number')
+      })
+    })
+
+    it('of a specific path index', () => {
+      expect(walletUtils.getPath()).toEqual("m/44'/1234'/0'/0/0")
+      expect(walletUtils.getPath(0)).toEqual("m/44'/1234'/0'/0/0")
+      expect(walletUtils.getPath(1)).toEqual("m/44'/1234'/0'/0/1")
+      expect(walletUtils.getPath(2)).toEqual("m/44'/1234'/0'/0/2")
+      expect(walletUtils.getPath(3)).toEqual("m/44'/1234'/0'/0/3")
+      expect(walletUtils.getPath(3)).toEqual("m/44'/1234'/0'/0/3")
+      expect(walletUtils.getPath(4)).toEqual("m/44'/1234'/0'/0/4")
+      expect(walletUtils.getPath(9999)).toEqual("m/44'/1234'/0'/0/9999")
+      expect(walletUtils.getPath(1e18)).toEqual("m/44'/1234'/0'/0/1000000000000000000")
+      expect(() => walletUtils.getPath(-1)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(0.1)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(-0.1)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(1e21)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(1e-21)).toThrowError('Invalid address index path level')
+      expect(() => walletUtils.getPath(1e-18)).toThrowError('Invalid address index path level')
+    })
   })
 })

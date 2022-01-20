@@ -20,6 +20,8 @@ import blake from 'blakejs'
 
 import bs58 from './bs58'
 import { decrypt, encrypt } from './password-crypto'
+import { TOTAL_NUMBER_OF_GROUPS } from './constants'
+import addressToGroup from './address'
 
 class StoredState {
   mnemonic: string
@@ -66,11 +68,17 @@ export class Wallet {
   }
 }
 
-const getPath = () => {
+export const getPath = (addressIndex?: number) => {
+  if (
+    addressIndex !== undefined &&
+    (addressIndex < 0 || !Number.isInteger(addressIndex) || addressIndex.toString().includes('e'))
+  ) {
+    throw new Error('Invalid address index path level')
+  }
   // Being explicit: we always use coinType 1234 no matter the network.
   const coinType = "1234'"
 
-  return `m/44'/${coinType}/0'/0/0`
+  return `m/44'/${coinType}/0'/0/${addressIndex || '0'}`
 }
 
 export const getWalletFromMnemonic = (mnemonic: string) => {
@@ -80,9 +88,16 @@ export const getWalletFromMnemonic = (mnemonic: string) => {
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
 }
 
-const deriveAddressAndKeys = (seed: Buffer) => {
+type AddressAndKeys = {
+  address: string
+  publicKey: string
+  privateKey: string
+  addressIndex: number
+}
+
+const deriveAddressAndKeys = (seed: Buffer, addressIndex?: number): AddressAndKeys => {
   const masterKey = bip32.fromSeed(seed)
-  const keyPair = masterKey.derivePath(getPath())
+  const keyPair = masterKey.derivePath(getPath(addressIndex))
 
   if (!keyPair.privateKey) throw new Error('Missing private key')
 
@@ -96,7 +111,42 @@ const deriveAddressAndKeys = (seed: Buffer) => {
   const bytes = Buffer.concat([type, pkhash])
   const address = bs58.encode(bytes)
 
-  return { address, publicKey, privateKey }
+  return { address, publicKey, privateKey, addressIndex: addressIndex || 0 }
+}
+
+const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+  let nextAvailableAddressIndex = startIndex
+
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
+}
+
+export const deriveNewAddressData = (
+  seed: Buffer,
+  forGroup?: number,
+  addressIndex?: number,
+  skipAddressIndexes: number[] = []
+): AddressAndKeys => {
+  if (forGroup !== undefined && (forGroup >= TOTAL_NUMBER_OF_GROUPS || forGroup < 0 || !Number.isInteger(forGroup))) {
+    throw new Error('Invalid group number')
+  }
+
+  const initialAddressIndex = addressIndex || 0
+
+  let nextAddressIndex = skipAddressIndexes.includes(initialAddressIndex)
+    ? findNextAvailableAddressIndex(initialAddressIndex, skipAddressIndexes)
+    : initialAddressIndex
+  let newAddressData = deriveAddressAndKeys(seed, nextAddressIndex)
+
+  while (forGroup !== undefined && addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS) !== forGroup) {
+    nextAddressIndex = findNextAvailableAddressIndex(newAddressData.addressIndex, skipAddressIndexes)
+    newAddressData = deriveAddressAndKeys(seed, nextAddressIndex)
+  }
+
+  return newAddressData
 }
 
 export const walletGenerate = () => {
