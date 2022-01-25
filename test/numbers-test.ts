@@ -34,11 +34,13 @@ const minDigits = 3
 
 it('Should abbreviate amount', () => {
   expect(abbreviateAmount(alph(BigInt(-1)))).toEqual('???'),
-    expect(abbreviateAmount(BigInt(0))).toEqual('0.000'),
-    expect(abbreviateAmount(BigInt(1))).toEqual('0.000'),
-    expect(abbreviateAmount(BigInt(100000))).toEqual('0.000'),
-    expect(abbreviateAmount(BigInt(1000000000))).toEqual('0.000'),
-    expect(abbreviateAmount(BigInt(2000000000))).toEqual('0.000'),
+    expect(abbreviateAmount(BigInt(0))).toEqual('0.00'),
+    expect(abbreviateAmount(BigInt(1))).toEqual('0.00'),
+    expect(abbreviateAmount(BigInt(100000))).toEqual('0.00'),
+    expect(abbreviateAmount(BigInt(900000000000))).toEqual('0.00'),
+    expect(abbreviateAmount(BigInt(4000000000000))).toEqual('0.00'),
+    expect(abbreviateAmount(BigInt(5000000000000))).toEqual('0.00001'),
+    expect(abbreviateAmount(BigInt(6000000000000))).toEqual('0.00001'),
     expect(abbreviateAmount(BigInt(2000000000000000))).toEqual('0.002'),
     expect(abbreviateAmount(BigInt('20000000000000000'))).toEqual('0.02'),
     expect(abbreviateAmount(BigInt('200000000000000000'))).toEqual('0.2'),
@@ -56,7 +58,7 @@ it('Should abbreviate amount', () => {
 
 it('Should keep full amount precision', () => {
   expect(abbreviateAmount(alph(BigInt(-1)))).toEqual('???'),
-    expect(abbreviateAmount(BigInt(0), true)).toEqual('0.000'),
+    expect(abbreviateAmount(BigInt(0), true)).toEqual('0.00'),
     expect(abbreviateAmount(BigInt(1), true)).toEqual('0.000000000000000001'),
     expect(abbreviateAmount(BigInt(100001), true)).toEqual('0.000000000000100001'),
     expect(abbreviateAmount(BigInt(1000000000), true)).toEqual('0.000000001'),

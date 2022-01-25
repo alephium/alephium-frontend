@@ -65,7 +65,7 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
 
   // For abbreviation, we don't need full precision and can work with number
   const alphNum = Number(baseNum) / QUINTILLION
-  const minNumberOfDecimals = alphNum < 0.01 ? 3 : 2
+  const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
 
   if (showFullPrecision) {
     const decimals = countDecimals(alphNum) === 1 ? 16 : 18 // Avoid precision issue edge case
