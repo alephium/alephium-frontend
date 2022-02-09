@@ -491,6 +491,10 @@ export interface Sweep {
 export interface SweepAddressTransaction {
   txId: string
   unsignedTx: string
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
 }
 
 export interface Token {
