@@ -27,6 +27,12 @@ export interface ExplorerInfo {
   commit: string
 }
 
+export interface Hashrate {
+  /** @format int64 */
+  timestamp: number
+  value: string
+}
+
 export interface Input {
   outputRef: Ref
   unlockScript?: string
@@ -56,6 +62,9 @@ export interface Lite {
   height: number
   txNumber: number
   mainChain: boolean
+
+  /** @format bigint */
+  hashRate: string
 }
 
 export interface NotFound {
@@ -74,6 +83,12 @@ export interface Output {
   /** @format int64 */
   lockTime?: number
   spent?: string
+}
+
+export interface PerChainValue {
+  chainFrom: number
+  chainTo: number
+  value: number
 }
 
 export interface Ref {
@@ -479,6 +494,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+     * @description List latest height for each chain
+     *
+     * @tags Infos
+     * @name GetInfosHeights
+     * @request GET:/infos/heights
+     */
+    getInfosHeights: (params: RequestParams = {}) =>
+      this.request<PerChainValue[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/heights`,
+        method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
      * @description Get token supply list
      *
      * @tags Infos
@@ -519,6 +549,39 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/supply/circulating-alph`,
         method: 'GET',
+        ...params
+      })
+  }
+  charts = {
+    /**
+     * @description `interval` query param: 0 = 10 minutes, 1 = hourly, 2 = daily
+     *
+     * @tags Charts
+     * @name GetChartsHashrates
+     * @summary Get explorer informations.
+     * @request GET:/charts/hashrates
+     */
+    getChartsHashrates: (query: { fromTs: number; toTs: number; interval: number }, params: RequestParams = {}) =>
+      this.request<Hashrate[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/charts/hashrates`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      })
+  }
+  utils = {
+    /**
+     * @description Perform a sanity check
+     *
+     * @tags Utils
+     * @name PutUtilsSanityCheck
+     * @request PUT:/utils/sanity-check
+     */
+    putUtilsSanityCheck: (params: RequestParams = {}) =>
+      this.request<void, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/utils/sanity-check`,
+        method: 'PUT',
         ...params
       })
   }

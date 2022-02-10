@@ -236,6 +236,10 @@ export interface BuildTransaction {
 
 export interface BuildTransactionResult {
   unsignedTx: string
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
   txId: string
   fromGroup: number
   toGroup: number
@@ -487,6 +491,10 @@ export interface Sweep {
 export interface SweepAddressTransaction {
   txId: string
   unsignedTx: string
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
 }
 
 export interface Token {
@@ -1760,6 +1768,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         type: ContentType.Json,
         format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Utils
+     * @name PutUtilsCheckHashIndexing
+     * @summary Check and repair the indexing of block hashes
+     * @request PUT:/utils/check-hash-indexing
+     */
+    putUtilsCheckHashIndexing: (params: RequestParams = {}) =>
+      this.request<void, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/utils/check-hash-indexing`,
+        method: 'PUT',
         ...params
       })
   }
