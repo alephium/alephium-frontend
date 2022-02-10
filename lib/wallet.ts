@@ -88,7 +88,7 @@ export const getWalletFromMnemonic = (mnemonic: string) => {
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
 }
 
-type AddressAndKeys = {
+export type AddressAndKeys = {
   address: string
   publicKey: string
   privateKey: string
