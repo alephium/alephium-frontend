@@ -21,7 +21,7 @@ import blake from 'blakejs'
 import bs58 from './bs58'
 import { decrypt, encrypt } from './password-crypto'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
-import addressToGroup from './address'
+import { addressToGroup } from './address'
 
 class StoredState {
   mnemonic: string

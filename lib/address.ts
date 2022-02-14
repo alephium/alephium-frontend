@@ -17,7 +17,7 @@
 import bs58 from '../lib/bs58'
 import djb2 from '../lib/djb2'
 
-export default function addressToGroup(address: string, totalNumberOfGroups: number): number {
+export function addressToGroup(address: string, totalNumberOfGroups: number): number {
   const bytes = bs58.decode(address).slice(1)
   const value = djb2(bytes) | 1
   const hash = toPosInt(xorByte(value))
