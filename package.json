@@ -5,7 +5,7 @@
   "license": "GPL",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
-  "type": "module",
+  "type": "commonjs",
   "repository": {
     "type": "git",
     "url": "git@github.com:alephium/alephium-js.git"
