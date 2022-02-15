@@ -66,6 +66,10 @@ export const removeTrailingZeros = (numString: string, minNumberOfDecimals?: num
   return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
 
+const removeLeadingZeros = (numString: string): string => {
+  return numString.replace(/^0+/, '')
+}
+
 export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimalsToShow?: number): string => {
   if (baseNum < BigInt(0)) return '???'
 
@@ -74,7 +78,7 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
   const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
 
   if (showFullPrecision) {
-    const decimals = countDecimals(alphNum) === 1 ? 16 : 18 // Avoid precision issue edge case
+    const decimals = countDecimals(alphNum) === 1 ? 16 : NUM_OF_ZEROS_IN_QUINTILLION // Avoid precision issue edge case
     return removeTrailingZeros(alphNum.toFixed(decimals), minNumberOfDecimals)
   }
 
@@ -129,16 +133,21 @@ export const countDecimals = (value: number) => {
   return parseInt(str.split('e-')[1]) || 0
 }
 
-export const convertToQALPH = (amount: string): bigint => {
-  let cleanedAmount = amount
+export const convertAlphToSet = (amount: string): string => {
+  const prefix = amount.startsWith('-') ? '-' : ''
+  let cleanedAmount = prefix ? amount.substring(1) : amount
 
-  if (amount.includes('e')) {
-    cleanedAmount = convertScientificToFloatString(amount)
+  if (cleanedAmount === '0') return '0'
+
+  if (cleanedAmount.includes('e')) {
+    cleanedAmount = convertScientificToFloatString(cleanedAmount)
   }
 
   const numberOfDecimals = cleanedAmount.includes('.') ? cleanedAmount.length - 1 - cleanedAmount.indexOf('.') : 0
-  const numberOfZerosToAdd = 18 - numberOfDecimals
-  return BigInt(`${cleanedAmount.replace('.', '')}${produceTrailingZeros(numberOfZerosToAdd)}`)
+  const numberOfZerosToAdd = NUM_OF_ZEROS_IN_QUINTILLION - numberOfDecimals
+  const amountWithAppendedZeros = cleanedAmount.replace('.', '') + produceTrailingZeros(numberOfZerosToAdd)
+
+  return prefix + removeLeadingZeros(amountWithAppendedZeros)
 }
 
 export const convertScientificToFloatString = (scientificNumber: string): string => {
