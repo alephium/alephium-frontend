@@ -48,15 +48,20 @@ export const getNumberOfTrailingZeros = (numberArray: string[]) => {
   return numberOfZeros
 }
 
-export const removeTrailingZeros = (numString: string, minNumberOfDecimals: number) => {
+export const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) => {
   const numberArray = numString.split('')
 
   const numberOfZeros = getNumberOfTrailingZeros(numberArray)
 
   const numberArrayWithoutTrailingZeros = [...numberArray.slice(0, numberArray.length - numberOfZeros)]
 
-  if (minNumberOfDecimals && numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.')
-    numberArrayWithoutTrailingZeros.push(produceTrailingZeros(minNumberOfDecimals))
+  if (numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.') {
+    if (minNumberOfDecimals) {
+      numberArrayWithoutTrailingZeros.push(produceTrailingZeros(minNumberOfDecimals))
+    } else {
+      numberArrayWithoutTrailingZeros.pop()
+    }
+  }
 
   return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
