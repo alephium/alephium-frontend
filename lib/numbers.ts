@@ -21,6 +21,7 @@ import { Transaction } from '../api/api-explorer'
 export const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
 export const QUINTILLION = 1000000000000000000
 export const BILLION = 1000000000
+const NUM_OF_ZEROS_IN_QUINTILLION = 18
 
 const produceTrailingZeros = (numberOfZeros: number) => {
   let zerosString = ''
@@ -196,4 +197,17 @@ const addApostrophe = (numString: string) => {
   }
 
   return numString
+}
+
+export const convertSetToAlph = (amountInSet: string): string => {
+  if (amountInSet.length === 0 || !amountInSet.match(/^\d+$/)) throw 'Invalid Set amount'
+
+  if (amountInSet === '0') return '0'
+
+  const positionForDot = amountInSet.length - NUM_OF_ZEROS_IN_QUINTILLION
+  const withDotAdded =
+    positionForDot > 0
+      ? amountInSet.substring(0, positionForDot) + '.' + amountInSet.substring(positionForDot)
+      : '0.' + produceTrailingZeros(NUM_OF_ZEROS_IN_QUINTILLION - amountInSet.length) + amountInSet
+  return removeTrailingZeros(withDotAdded)
 }

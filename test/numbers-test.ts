@@ -22,7 +22,8 @@ import {
   convertScientificToFloatString,
   convertToQALPH,
   countDecimals,
-  removeTrailingZeros
+  removeTrailingZeros,
+  convertSetToAlph
 } from '../lib/numbers'
 import transactions from './fixtures/transactions.json'
 
@@ -213,4 +214,16 @@ it('should calculate number of decimals', () => {
   // expect(countDecimals(1000.00000000000001)).toEqual(14),
   // expect(countDecimals(100.000000000000001)).toEqual(15),
   // expect(countDecimals(10.0000000000000001)).toEqual(16)
+})
+
+it('should convert Set amount amount to Alph amount', () => {
+  expect(convertSetToAlph('0')).toEqual('0'),
+    expect(convertSetToAlph('1')).toEqual('0.000000000000000001'),
+    expect(convertSetToAlph('100000000000000000')).toEqual('0.1'),
+    expect(convertSetToAlph('1000000000000000000')).toEqual('1'),
+    expect(convertSetToAlph('99999917646000000000000')).toEqual('99999.917646'),
+    expect(convertSetToAlph('99999917646000000000001')).toEqual('99999.917646000000000001'),
+    expect(() => convertSetToAlph('1.1')).toThrowError('Invalid Set amount'),
+    expect(() => convertSetToAlph('-1')).toThrowError('Invalid Set amount'),
+    expect(() => convertSetToAlph('1000000a000000')).toThrowError('Invalid Set amount')
 })
