@@ -66,8 +66,13 @@ export const removeTrailingZeros = (numString: string, minNumberOfDecimals?: num
   return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
 
-const removeLeadingZeros = (numString: string): string => {
-  return numString.replace(/^0+/, '')
+export const removeLeadingZeros = (numString: string): string => {
+  const prefix = numString.startsWith('-') ? '-' : ''
+  let cleanedNumString = prefix ? numString.substring(1) : numString
+  if (cleanedNumString === '0') return '0'
+  cleanedNumString = cleanedNumString.replace(/^0+/, '')
+  cleanedNumString = cleanedNumString.startsWith('.') ? `0${cleanedNumString}` : cleanedNumString
+  return prefix + cleanedNumString
 }
 
 export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimalsToShow?: number): string => {

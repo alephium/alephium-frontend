@@ -23,7 +23,8 @@ import {
   convertAlphToSet,
   countDecimals,
   removeTrailingZeros,
-  convertSetToAlph
+  convertSetToAlph,
+  removeLeadingZeros
 } from '../lib/numbers'
 import transactions from './fixtures/transactions.json'
 
@@ -227,7 +228,23 @@ it('should convert Set amount amount to Alph amount', () => {
     expect(convertSetToAlph('1000000000000000000')).toEqual('1'),
     expect(convertSetToAlph('99999917646000000000000')).toEqual('99999.917646'),
     expect(convertSetToAlph('99999917646000000000001')).toEqual('99999.917646000000000001'),
+    expect(() => convertSetToAlph('0.1')).toThrowError('Invalid Set amount'),
     expect(() => convertSetToAlph('1.1')).toThrowError('Invalid Set amount'),
     expect(() => convertSetToAlph('-1')).toThrowError('Invalid Set amount'),
     expect(() => convertSetToAlph('1000000a000000')).toThrowError('Invalid Set amount')
+})
+
+it('should remove leading zeros', () => {
+  expect(removeLeadingZeros('0')).toEqual('0'),
+    expect(removeLeadingZeros('01')).toEqual('1'),
+    expect(removeLeadingZeros('0.1')).toEqual('0.1'),
+    expect(removeLeadingZeros('000.1')).toEqual('0.1'),
+    expect(removeLeadingZeros('1')).toEqual('1'),
+    expect(removeLeadingZeros('01.0')).toEqual('1.0'),
+    expect(removeLeadingZeros('-0')).toEqual('0'),
+    expect(removeLeadingZeros('-01')).toEqual('-1'),
+    expect(removeLeadingZeros('-0.1')).toEqual('-0.1'),
+    expect(removeLeadingZeros('-000.1')).toEqual('-0.1'),
+    expect(removeLeadingZeros('-1')).toEqual('-1'),
+    expect(removeLeadingZeros('-01.0')).toEqual('-1.0')
 })
