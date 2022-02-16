@@ -17,7 +17,7 @@
 import * as bip32 from 'bip32'
 
 import * as walletUtils from '../lib/wallet'
-import addressToGroup from '../lib/address'
+import { addressToGroup } from '../lib/address'
 import { TOTAL_NUMBER_OF_GROUPS } from '../lib/constants'
 
 import wallets from './fixtures/wallets.json'
