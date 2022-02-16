@@ -66,15 +66,6 @@ export const removeTrailingZeros = (numString: string, minNumberOfDecimals?: num
   return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
 
-export const removeLeadingZeros = (numString: string): string => {
-  const prefix = numString.startsWith('-') ? '-' : ''
-  let cleanedNumString = prefix ? numString.substring(1) : numString
-  if (cleanedNumString === '0') return '0'
-  cleanedNumString = cleanedNumString.replace(/^0+/, '')
-  cleanedNumString = cleanedNumString.startsWith('.') ? `0${cleanedNumString}` : cleanedNumString
-  return prefix + cleanedNumString
-}
-
 export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimalsToShow?: number): string => {
   if (baseNum < BigInt(0)) return '???'
 
@@ -109,7 +100,7 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
   return scaled.toFixed(numberOfDecimalsToDisplay) + suffix
 }
 
-export const calAmountDelta = (t: Transaction, id: string) => {
+export const calAmountDelta = (t: Transaction, id: string): bigint => {
   if (!t.inputs || !t.outputs) {
     throw 'Missing transaction details'
   }
@@ -124,7 +115,7 @@ export const calAmountDelta = (t: Transaction, id: string) => {
   return outputAmount - inputAmount
 }
 
-export const countDecimals = (value: number) => {
+export const countDecimals = (value: number): number => {
   if (Number.isInteger(value)) return 0
 
   let str = value.toString()
@@ -138,11 +129,11 @@ export const countDecimals = (value: number) => {
   return parseInt(str.split('e-')[1]) || 0
 }
 
-export const convertAlphToSet = (amount: string): string => {
-  const prefix = amount.startsWith('-') ? '-' : ''
-  let cleanedAmount = prefix ? amount.substring(1) : amount
+export const convertAlphToSet = (amount: string): bigint => {
+  if (amount.length === 0 || amount.startsWith('-')) throw 'Invalid Alph amount'
+  if (amount === '0') return BigInt(0)
 
-  if (cleanedAmount === '0') return '0'
+  let cleanedAmount = amount
 
   if (cleanedAmount.includes('e')) {
     cleanedAmount = convertScientificToFloatString(cleanedAmount)
@@ -150,9 +141,9 @@ export const convertAlphToSet = (amount: string): string => {
 
   const numberOfDecimals = cleanedAmount.includes('.') ? cleanedAmount.length - 1 - cleanedAmount.indexOf('.') : 0
   const numberOfZerosToAdd = NUM_OF_ZEROS_IN_QUINTILLION - numberOfDecimals
-  const amountWithAppendedZeros = cleanedAmount.replace('.', '') + produceTrailingZeros(numberOfZerosToAdd)
+  cleanedAmount = cleanedAmount.replace('.', '') + produceTrailingZeros(numberOfZerosToAdd)
 
-  return prefix + removeLeadingZeros(amountWithAppendedZeros)
+  return BigInt(cleanedAmount)
 }
 
 export const convertScientificToFloatString = (scientificNumber: string): string => {
@@ -206,7 +197,7 @@ export const convertScientificToFloatString = (scientificNumber: string): string
   return newNumber
 }
 
-const addApostrophe = (numString: string) => {
+const addApostrophe = (numString: string): string => {
   const integralPart = numString.split('.')[0]
 
   if (integralPart.length > 3) {
@@ -218,12 +209,10 @@ const addApostrophe = (numString: string) => {
   return numString
 }
 
-export const convertSetToAlph = (amountInSet: string | bigint): string => {
+export const convertSetToAlph = (amountInSet: bigint): string => {
   const amountInSetStr = amountInSet.toString()
 
-  if (amountInSetStr.length === 0 || !amountInSetStr.match(/^\d+$/)) throw 'Invalid Set amount'
-
-  if (amountInSetStr === '0') return '0'
+  if (amountInSetStr === '0') return amountInSetStr
 
   const positionForDot = amountInSetStr.length - NUM_OF_ZEROS_IN_QUINTILLION
   const withDotAdded =
