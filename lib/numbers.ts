@@ -218,15 +218,17 @@ const addApostrophe = (numString: string) => {
   return numString
 }
 
-export const convertSetToAlph = (amountInSet: string): string => {
-  if (amountInSet.length === 0 || !amountInSet.match(/^\d+$/)) throw 'Invalid Set amount'
+export const convertSetToAlph = (amountInSet: string | bigint): string => {
+  const amountInSetStr = amountInSet.toString()
 
-  if (amountInSet === '0') return '0'
+  if (amountInSetStr.length === 0 || !amountInSetStr.match(/^\d+$/)) throw 'Invalid Set amount'
 
-  const positionForDot = amountInSet.length - NUM_OF_ZEROS_IN_QUINTILLION
+  if (amountInSetStr === '0') return '0'
+
+  const positionForDot = amountInSetStr.length - NUM_OF_ZEROS_IN_QUINTILLION
   const withDotAdded =
     positionForDot > 0
-      ? amountInSet.substring(0, positionForDot) + '.' + amountInSet.substring(positionForDot)
-      : '0.' + produceTrailingZeros(NUM_OF_ZEROS_IN_QUINTILLION - amountInSet.length) + amountInSet
+      ? amountInSetStr.substring(0, positionForDot) + '.' + amountInSetStr.substring(positionForDot)
+      : '0.' + produceTrailingZeros(NUM_OF_ZEROS_IN_QUINTILLION - amountInSetStr.length) + amountInSetStr
   return removeTrailingZeros(withDotAdded)
 }
