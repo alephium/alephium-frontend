@@ -15,4 +15,4 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 export const TOTAL_NUMBER_OF_GROUPS = 4
-export const MIN_UTXO_SET_AMOUNT = '1000000000000'
+export const MIN_UTXO_SET_AMOUNT = BigInt(1000000000000)
