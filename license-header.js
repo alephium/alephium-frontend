@@ -15,19 +15,3 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-
-import { Api } from '../api/api-explorer'
-
-/**
- * Explorer client
- */
-
-export class ExplorerClient extends Api<null> {
-  async getAddressTransactions(address: string, page: number) {
-    return await this.addresses.getAddressesAddressTransactions(address, { page })
-  }
-
-  async getAddressDetails(address: string) {
-    return await this.addresses.getAddressesAddress(address)
-  }
-}
