@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { assert } from 'console'
 import { Transaction } from '../api/api-explorer'
 
 const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
@@ -24,22 +25,13 @@ const NUM_OF_ZEROS_IN_QUINTILLION = 18
 
 export const BILLION = 1000000000
 
-const produceZeros = (numberOfZeros: number): string => {
-  let zerosString = ''
-  let i = 0
-  while (i < numberOfZeros) {
-    zerosString += '0'
-    i++
-  }
+const produceZeros = (numberOfZeros: number): string => '0'.repeat(numberOfZeros)
 
-  return zerosString
-}
-
-const getNumberOfTrailingZeros = (numberArray: string[]) => {
+const getNumberOfTrailingZeros = (numString: string) => {
   let numberOfZeros = 0
 
-  for (let i = numberArray.length - 1; i >= 0; i--) {
-    if (numberArray[i] === '0') {
+  for (let i = numString.length - 1; i >= 0; i--) {
+    if (numString[i] === '0') {
       numberOfZeros++
     } else {
       break
@@ -50,21 +42,28 @@ const getNumberOfTrailingZeros = (numberArray: string[]) => {
 }
 
 const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) => {
-  const numberArray = numString.split('')
+  const numberOfZeros = getNumberOfTrailingZeros(numString)
+  const numStringWithoutTrailingZeros = numString.substring(0, numString.length - numberOfZeros)
 
-  const numberOfZeros = getNumberOfTrailingZeros(numberArray)
+  if (minNumberOfDecimals) {
+    assert(minNumberOfDecimals > 0, 'minNumberOfDecimals should be positive')
 
-  const numberArrayWithoutTrailingZeros = [...numberArray.slice(0, numberArray.length - numberOfZeros)]
+    const indexOfPoint = numStringWithoutTrailingZeros.indexOf('.')
+    assert(indexOfPoint != -1, 'numString should contain decimal point')
+    const numberOfDecimals = numStringWithoutTrailingZeros.length - 1 - indexOfPoint
 
-  if (numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.') {
-    if (minNumberOfDecimals) {
-      numberArrayWithoutTrailingZeros.push(produceZeros(minNumberOfDecimals))
+    if (numberOfDecimals < minNumberOfDecimals) {
+      return numStringWithoutTrailingZeros.concat(produceZeros(minNumberOfDecimals - numberOfDecimals))
     } else {
-      numberArrayWithoutTrailingZeros.pop()
+      return numStringWithoutTrailingZeros
+    }
+  } else {
+    if (numStringWithoutTrailingZeros[numStringWithoutTrailingZeros.length - 1] === '.') {
+      return numStringWithoutTrailingZeros.substring(0, numStringWithoutTrailingZeros.length - 1)
+    } else {
+      return numStringWithoutTrailingZeros
     }
   }
-
-  return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
 
 export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimalsToShow?: number): string => {
