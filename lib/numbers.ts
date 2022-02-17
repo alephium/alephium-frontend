@@ -23,7 +23,7 @@ export const QUINTILLION = 1000000000000000000
 export const BILLION = 1000000000
 const NUM_OF_ZEROS_IN_QUINTILLION = 18
 
-const produceTrailingZeros = (numberOfZeros: number) => {
+const produceZeros = (numberOfZeros: number): string => {
   let zerosString = ''
   let i = 0
   while (i < numberOfZeros) {
@@ -57,7 +57,7 @@ export const removeTrailingZeros = (numString: string, minNumberOfDecimals?: num
 
   if (numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.') {
     if (minNumberOfDecimals) {
-      numberArrayWithoutTrailingZeros.push(produceTrailingZeros(minNumberOfDecimals))
+      numberArrayWithoutTrailingZeros.push(produceZeros(minNumberOfDecimals))
     } else {
       numberArrayWithoutTrailingZeros.pop()
     }
@@ -141,7 +141,7 @@ export const convertAlphToSet = (amount: string): bigint => {
 
   const numberOfDecimals = cleanedAmount.includes('.') ? cleanedAmount.length - 1 - cleanedAmount.indexOf('.') : 0
   const numberOfZerosToAdd = NUM_OF_ZEROS_IN_QUINTILLION - numberOfDecimals
-  cleanedAmount = cleanedAmount.replace('.', '') + produceTrailingZeros(numberOfZerosToAdd)
+  cleanedAmount = cleanedAmount.replace('.', '') + produceZeros(numberOfZerosToAdd)
 
   return BigInt(cleanedAmount)
 }
@@ -167,7 +167,7 @@ export const convertScientificToFloatString = (scientificNumber: string): string
     const amountWithoutEandDot = newNumber.substring(0, positionOfE).replace('.', '')
     if (moveDotBy >= positionOfDot) {
       const numberOfZeros = moveDotBy - (positionOfDot > -1 ? positionOfDot : 1)
-      newNumber = `0.${produceTrailingZeros(numberOfZeros)}${amountWithoutEandDot}`
+      newNumber = `0.${produceZeros(numberOfZeros)}${amountWithoutEandDot}`
     } else {
       const newPositionOfDot = positionOfDot - moveDotBy
       newNumber = `${amountWithoutEandDot.substring(0, newPositionOfDot)}.${amountWithoutEandDot.substring(
@@ -180,7 +180,7 @@ export const convertScientificToFloatString = (scientificNumber: string): string
     const numberOfDecimals = newNumber.indexOf('.') > -1 ? positionOfE - newNumber.indexOf('.') - 1 : 0
     const amountWithoutEandDot = newNumber.substring(0, positionOfE).replace('.', '')
     if (numberOfDecimals <= moveDotBy) {
-      newNumber = `${amountWithoutEandDot}${produceTrailingZeros(moveDotBy - numberOfDecimals)}`
+      newNumber = `${amountWithoutEandDot}${produceZeros(moveDotBy - numberOfDecimals)}`
     } else {
       const positionOfDot = newNumber.indexOf('.')
       const newPositionOfDot = positionOfDot + moveDotBy
@@ -218,6 +218,6 @@ export const convertSetToAlph = (amountInSet: bigint): string => {
   const withDotAdded =
     positionForDot > 0
       ? amountInSetStr.substring(0, positionForDot) + '.' + amountInSetStr.substring(positionForDot)
-      : '0.' + produceTrailingZeros(NUM_OF_ZEROS_IN_QUINTILLION - amountInSetStr.length) + amountInSetStr
+      : '0.' + produceZeros(NUM_OF_ZEROS_IN_QUINTILLION - amountInSetStr.length) + amountInSetStr
   return removeTrailingZeros(withDotAdded)
 }
