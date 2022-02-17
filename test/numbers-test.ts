@@ -16,15 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import rewire from 'rewire'
 import {
   abbreviateAmount,
   calAmountDelta,
   convertScientificToFloatString,
   convertAlphToSet,
-  countDecimals,
-  removeTrailingZeros,
   convertSetToAlph
 } from '../lib/numbers'
+
 import transactions from './fixtures/transactions.json'
 
 const alph = (amount: bigint) => {
@@ -76,17 +76,6 @@ it('Should keep full amount precision', () => {
     expect(abbreviateAmount(alph(BigInt(1230000000000)), true)).toEqual('1230000000000.00'),
     expect(abbreviateAmount(alph(BigInt(1230000000000000)), true)).toEqual('1230000000000000.00'),
     expect(abbreviateAmount(alph(BigInt(1)), true)).toEqual('1.00')
-})
-
-it('Should remove trailing zeros', () => {
-  expect(removeTrailingZeros('0.00010000', minDigits)).toEqual('0.0001'),
-    expect(removeTrailingZeros('10000.000', minDigits)).toEqual('10000.000'),
-    expect(removeTrailingZeros('-10000.0001000', minDigits)).toEqual('-10000.0001'),
-    expect(removeTrailingZeros('-0.0001020000', minDigits)).toEqual('-0.000102'),
-    expect(removeTrailingZeros('0.00010000')).toEqual('0.0001'),
-    expect(removeTrailingZeros('10000.000')).toEqual('10000'),
-    expect(removeTrailingZeros('-10000.0001000')).toEqual('-10000.0001'),
-    expect(removeTrailingZeros('-0.0001020000')).toEqual('-0.000102')
 })
 
 it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {
@@ -186,40 +175,6 @@ it('should convert scientific numbers to floats or integers', () => {
     expect(convertScientificToFloatString('.1e19')).toEqual('1000000000000000000')
 })
 
-it('should calculate number of decimals', () => {
-  expect(countDecimals(0.1)).toEqual(1),
-    expect(countDecimals(0.19)).toEqual(2),
-    expect(countDecimals(1000000.10001)).toEqual(5),
-    expect(countDecimals(1000000.0000000001)).toEqual(10),
-    expect(countDecimals(0.1234567891234567)).toEqual(16),
-    expect(countDecimals(-0.1)).toEqual(1),
-    expect(countDecimals(-0.19)).toEqual(2),
-    expect(countDecimals(-1000000.10001)).toEqual(5),
-    expect(countDecimals(-1000000.0000000001)).toEqual(10),
-    expect(countDecimals(1e-17)).toEqual(17),
-    expect(countDecimals(1.1e-17)).toEqual(18),
-    expect(countDecimals(-1.23456789e-20)).toEqual(28),
-    expect(countDecimals(-1.2e100)).toEqual(0),
-    expect(countDecimals(1.23456789e-20)).toEqual(28)
-
-  // The following tests will fail:
-  // expect(countDecimals(1000000000000000.01)).toEqual(2),
-  // expect(countDecimals(100000000000000.001)).toEqual(3),
-  // expect(countDecimals(10000000000000.0001)).toEqual(4),
-  // expect(countDecimals(1000000000000.00001)).toEqual(5),
-  // expect(countDecimals(100000000000.000001)).toEqual(6),
-  // expect(countDecimals(10000000000.0000001)).toEqual(7),
-  // expect(countDecimals(1000000000.00000001)).toEqual(8),
-  // expect(countDecimals(100000000.000000001)).toEqual(9),
-  // expect(countDecimals(10000000.0000000001)).toEqual(10),
-  // expect(countDecimals(1000000.00000000001)).toEqual(11),
-  // expect(countDecimals(100000.000000000001)).toEqual(12),
-  // expect(countDecimals(10000.0000000000001)).toEqual(13),
-  // expect(countDecimals(1000.00000000000001)).toEqual(14),
-  // expect(countDecimals(100.000000000000001)).toEqual(15),
-  // expect(countDecimals(10.0000000000000001)).toEqual(16)
-})
-
 it('should convert Set amount amount to Alph amount', () => {
   expect(convertSetToAlph(BigInt('0'))).toEqual('0'),
     expect(convertSetToAlph(BigInt('1'))).toEqual('0.000000000000000001'),
@@ -227,4 +182,40 @@ it('should convert Set amount amount to Alph amount', () => {
     expect(convertSetToAlph(BigInt('1000000000000000000'))).toEqual('1'),
     expect(convertSetToAlph(BigInt('99999917646000000000000'))).toEqual('99999.917646'),
     expect(convertSetToAlph(BigInt('99999917646000000000001'))).toEqual('99999.917646000000000001')
+})
+
+describe('should test not exported functions', () => {
+  const numberUtils = rewire('../dist/lib/numbers')
+  const removeTrailingZeros = numberUtils.__get__('removeTrailingZeros')
+  const hasExactlyOneDecimalPoint = numberUtils.__get__('hasExactlyOneDecimalPoint')
+
+  it('Should remove trailing zeros', () => {
+    expect(removeTrailingZeros('0.00010000', minDigits)).toEqual('0.0001'),
+      expect(removeTrailingZeros('10000.000', minDigits)).toEqual('10000.000'),
+      expect(removeTrailingZeros('-10000.0001000', minDigits)).toEqual('-10000.0001'),
+      expect(removeTrailingZeros('-0.0001020000', minDigits)).toEqual('-0.000102'),
+      expect(removeTrailingZeros('0.00010000')).toEqual('0.0001'),
+      expect(removeTrailingZeros('10000.000')).toEqual('10000'),
+      expect(removeTrailingZeros('-10000.0001000')).toEqual('-10000.0001'),
+      expect(removeTrailingZeros('-0.0001020000')).toEqual('-0.000102')
+  })
+
+  it('should calculate number of decimals', () => {
+    expect(hasExactlyOneDecimalPoint(0.1)).toEqual(true),
+      expect(hasExactlyOneDecimalPoint(-0.1)).toEqual(true),
+      expect(hasExactlyOneDecimalPoint(999999999999.9)).toEqual(true),
+      expect(hasExactlyOneDecimalPoint(9999999999999.9)).toEqual(true),
+      expect(hasExactlyOneDecimalPoint(0.19)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(1000000.10001)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(1000000.0000000001)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(0.1234567891234567)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(-0.19)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(-1000000.10001)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(-1000000.0000000001)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(1e-17)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(1.1e-17)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(-1.23456789e-20)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(-1.2e100)).toEqual(false),
+      expect(hasExactlyOneDecimalPoint(1.23456789e-20)).toEqual(false)
+  })
 })

@@ -18,10 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Transaction } from '../api/api-explorer'
 
-export const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
-export const QUINTILLION = 1000000000000000000
-export const BILLION = 1000000000
+const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
+const QUINTILLION = 1000000000000000000
 const NUM_OF_ZEROS_IN_QUINTILLION = 18
+
+export const BILLION = 1000000000
 
 const produceZeros = (numberOfZeros: number): string => {
   let zerosString = ''
@@ -34,7 +35,7 @@ const produceZeros = (numberOfZeros: number): string => {
   return zerosString
 }
 
-export const getNumberOfTrailingZeros = (numberArray: string[]) => {
+const getNumberOfTrailingZeros = (numberArray: string[]) => {
   let numberOfZeros = 0
 
   for (let i = numberArray.length - 1; i >= 0; i--) {
@@ -48,7 +49,7 @@ export const getNumberOfTrailingZeros = (numberArray: string[]) => {
   return numberOfZeros
 }
 
-export const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) => {
+const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) => {
   const numberArray = numString.split('')
 
   const numberOfZeros = getNumberOfTrailingZeros(numberArray)
@@ -74,7 +75,7 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
   const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
 
   if (showFullPrecision) {
-    const decimals = countDecimals(alphNum) === 1 ? 16 : NUM_OF_ZEROS_IN_QUINTILLION // Avoid precision issue edge case
+    const decimals = hasExactlyOneDecimalPoint(alphNum) ? 16 : NUM_OF_ZEROS_IN_QUINTILLION // Avoid precision issue edge case
     return removeTrailingZeros(alphNum.toFixed(decimals), minNumberOfDecimals)
   }
 
@@ -115,18 +116,18 @@ export const calAmountDelta = (t: Transaction, id: string): bigint => {
   return outputAmount - inputAmount
 }
 
-export const countDecimals = (value: number): number => {
-  if (Number.isInteger(value)) return 0
+const hasExactlyOneDecimalPoint = (value: number): boolean => {
+  if (Number.isInteger(value)) return false
 
   let str = value.toString()
   if (str.startsWith('-')) str = str.substring(1)
 
   if (str.indexOf('.') !== -1 && str.indexOf('e-') !== -1) {
-    return parseInt(str.split('e-')[1]) + str.split('e-')[0].split('.')[1].length || 0
+    return parseInt(str.split('e-')[1]) + str.split('e-')[0].split('.')[1].length === 1
   } else if (str.indexOf('.') !== -1) {
-    return str.split('.')[1].length || 0
+    return str.split('.')[1].length === 1
   }
-  return parseInt(str.split('e-')[1]) || 0
+  return parseInt(str.split('e-')[1]) === 1
 }
 
 export const convertAlphToSet = (amount: string): bigint => {
