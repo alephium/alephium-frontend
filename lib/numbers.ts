@@ -197,7 +197,7 @@ export const convertScientificToFloatString = (scientificNumber: string): string
   return newNumber
 }
 
-const addApostrophe = (numString: string): string => {
+export const addApostrophe = (numString: string): string => {
   const integralPart = numString.split('.')[0]
 
   if (integralPart.length > 3) {
