@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { assert } from 'console'
 import { Transaction } from '../api/api-explorer'
 
 const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
@@ -45,25 +44,20 @@ const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) =>
   const numberOfZeros = getNumberOfTrailingZeros(numString)
   const numStringWithoutTrailingZeros = numString.substring(0, numString.length - numberOfZeros)
 
-  if (minNumberOfDecimals) {
-    assert(minNumberOfDecimals > 0, 'minNumberOfDecimals should be positive')
+  if (!minNumberOfDecimals)
+    return numStringWithoutTrailingZeros.endsWith('.')
+      ? numStringWithoutTrailingZeros.slice(0, -1)
+      : numStringWithoutTrailingZeros
 
-    const indexOfPoint = numStringWithoutTrailingZeros.indexOf('.')
-    assert(indexOfPoint != -1, 'numString should contain decimal point')
-    const numberOfDecimals = numStringWithoutTrailingZeros.length - 1 - indexOfPoint
+  if (minNumberOfDecimals < 0) throw 'minNumberOfDecimals should be positive'
 
-    if (numberOfDecimals < minNumberOfDecimals) {
-      return numStringWithoutTrailingZeros.concat(produceZeros(minNumberOfDecimals - numberOfDecimals))
-    } else {
-      return numStringWithoutTrailingZeros
-    }
-  } else {
-    if (numStringWithoutTrailingZeros[numStringWithoutTrailingZeros.length - 1] === '.') {
-      return numStringWithoutTrailingZeros.substring(0, numStringWithoutTrailingZeros.length - 1)
-    } else {
-      return numStringWithoutTrailingZeros
-    }
-  }
+  const indexOfPoint = numStringWithoutTrailingZeros.indexOf('.')
+  if (indexOfPoint === -1) throw 'numString should contain decimal point'
+
+  const numberOfDecimals = numStringWithoutTrailingZeros.length - 1 - indexOfPoint
+  return numberOfDecimals < minNumberOfDecimals
+    ? numStringWithoutTrailingZeros.concat(produceZeros(minNumberOfDecimals - numberOfDecimals))
+    : numStringWithoutTrailingZeros
 }
 
 export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimalsToShow?: number): string => {
