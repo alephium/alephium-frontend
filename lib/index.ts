@@ -20,13 +20,5 @@ export * from './utils'
 export * from './wallet'
 export * from './explorer'
 export * from './address'
-export {
-  abbreviateAmount,
-  calAmountDelta,
-  convertAlphToSet,
-  convertScientificToFloatString,
-  addApostrophe,
-  convertSetToAlph,
-  BILLION
-} from './numbers'
+export { abbreviateAmount, calAmountDelta, convertAlphToSet, addApostrophe, convertSetToAlph, BILLION } from './numbers'
 export * from './constants'

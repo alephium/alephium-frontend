@@ -17,13 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import rewire from 'rewire'
-import {
-  abbreviateAmount,
-  calAmountDelta,
-  convertScientificToFloatString,
-  convertAlphToSet,
-  convertSetToAlph
-} from '../lib/numbers'
+import { abbreviateAmount, calAmountDelta, convertAlphToSet, convertSetToAlph } from '../lib/numbers'
 
 import transactions from './fixtures/transactions.json'
 
@@ -107,20 +101,20 @@ it('should convert Alph amount to Set amount', () => {
     expect(convertAlphToSet('0.01')).toEqual(BigInt('10000000000000000')),
     expect(convertAlphToSet('0.00000009')).toEqual(BigInt('90000000000')),
     expect(convertAlphToSet('0.000000000000000001')).toEqual(BigInt('1')),
-    expect(convertAlphToSet('1e-1')).toEqual(BigInt('100000000000000000')),
-    expect(convertAlphToSet('1e-2')).toEqual(BigInt('10000000000000000')),
-    expect(convertAlphToSet('1e-17')).toEqual(BigInt('10')),
-    expect(convertAlphToSet('1e-18')).toEqual(BigInt('1')),
-    expect(convertAlphToSet('1.1e-1')).toEqual(BigInt('110000000000000000')),
-    expect(convertAlphToSet('1.11e-1')).toEqual(BigInt('111000000000000000')),
-    expect(convertAlphToSet('1.99999999999999999e-1')).toEqual(BigInt('199999999999999999')),
-    expect(convertAlphToSet('1e+1')).toEqual(BigInt('10000000000000000000')),
-    expect(convertAlphToSet('1e+2')).toEqual(BigInt('100000000000000000000')),
-    expect(convertAlphToSet('1e+17')).toEqual(BigInt('100000000000000000000000000000000000')),
-    expect(convertAlphToSet('1e+18')).toEqual(BigInt('1000000000000000000000000000000000000')),
-    expect(convertAlphToSet('1.1e+1')).toEqual(BigInt('11000000000000000000')),
-    expect(convertAlphToSet('1.99999999999999999e+1')).toEqual(BigInt('19999999999999999900')),
-    expect(convertAlphToSet('123.45678e+2')).toEqual(BigInt('12345678000000000000000')),
+    expect(() => convertAlphToSet('1e-1')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1e-2')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1e-17')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1e-18')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1.1e-1')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1.11e-1')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1.99999999999999999e-1')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1e+1')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1e+2')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1e+17')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1e+18')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1.1e+1')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('1.99999999999999999e+1')).toThrow('Invalid Alph amount'),
+    expect(() => convertAlphToSet('123.45678e+2')).toThrow('Invalid Alph amount'),
     expect(() => convertAlphToSet('-1')).toThrow('Invalid Alph amount'),
     expect(() => convertAlphToSet('-0.000000000000000001')).toThrow('Invalid Alph amount'),
     expect(() => convertAlphToSet('-1e-1')).toThrow('Invalid Alph amount'),
@@ -137,42 +131,6 @@ it('should convert Alph amount to Set amount', () => {
     expect(() => convertAlphToSet('-1.1e+1')).toThrow('Invalid Alph amount'),
     expect(() => convertAlphToSet('-1.99999999999999999e+1')).toThrow('Invalid Alph amount'),
     expect(() => convertAlphToSet('-123.45678e+2')).toThrow('Invalid Alph amount')
-})
-
-it('should convert scientific numbers to floats or integers', () => {
-  expect(convertScientificToFloatString('1e-1')).toEqual('0.1'),
-    expect(convertScientificToFloatString('1e-2')).toEqual('0.01'),
-    expect(convertScientificToFloatString('1e-17')).toEqual('0.00000000000000001'),
-    expect(convertScientificToFloatString('1e-18')).toEqual('0.000000000000000001'),
-    expect(convertScientificToFloatString('1.1e-1')).toEqual('0.11'),
-    expect(convertScientificToFloatString('1.11e-1')).toEqual('0.111'),
-    expect(convertScientificToFloatString('1.99999999999999999e-1')).toEqual('0.199999999999999999'),
-    expect(convertScientificToFloatString('123.45678e-2')).toEqual('1.2345678'),
-    expect(convertScientificToFloatString('1e+1')).toEqual('10'),
-    expect(convertScientificToFloatString('1e+2')).toEqual('100'),
-    expect(convertScientificToFloatString('1e+17')).toEqual('100000000000000000'),
-    expect(convertScientificToFloatString('1e+18')).toEqual('1000000000000000000'),
-    expect(convertScientificToFloatString('1.1e+1')).toEqual('11'),
-    expect(convertScientificToFloatString('1.99999999999999999e+1')).toEqual('19.9999999999999999'),
-    expect(convertScientificToFloatString('123.45678e+2')).toEqual('12345.678'),
-    expect(convertScientificToFloatString('-1e-1')).toEqual('-0.1'),
-    expect(convertScientificToFloatString('-1e-2')).toEqual('-0.01'),
-    expect(convertScientificToFloatString('-1e-17')).toEqual('-0.00000000000000001'),
-    expect(convertScientificToFloatString('-1e-18')).toEqual('-0.000000000000000001'),
-    expect(convertScientificToFloatString('-1.1e-1')).toEqual('-0.11'),
-    expect(convertScientificToFloatString('-1.11e-1')).toEqual('-0.111'),
-    expect(convertScientificToFloatString('-1.99999999999999999e-1')).toEqual('-0.199999999999999999'),
-    expect(convertScientificToFloatString('-123.45678e-2')).toEqual('-1.2345678'),
-    expect(convertScientificToFloatString('-1e+1')).toEqual('-10'),
-    expect(convertScientificToFloatString('-1e+2')).toEqual('-100'),
-    expect(convertScientificToFloatString('-1e+17')).toEqual('-100000000000000000'),
-    expect(convertScientificToFloatString('-1e+18')).toEqual('-1000000000000000000'),
-    expect(convertScientificToFloatString('-1.1e+1')).toEqual('-11'),
-    expect(convertScientificToFloatString('-1.99999999999999999e+1')).toEqual('-19.9999999999999999'),
-    expect(convertScientificToFloatString('-123.45678e+2')).toEqual('-12345.678'),
-    expect(convertScientificToFloatString('123.45678e2')).toEqual('12345.678'),
-    expect(convertScientificToFloatString('1e18')).toEqual('1000000000000000000'),
-    expect(convertScientificToFloatString('.1e19')).toEqual('1000000000000000000')
 })
 
 it('should convert Set amount amount to Alph amount', () => {

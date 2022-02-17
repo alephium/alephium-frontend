@@ -124,71 +124,14 @@ const hasExactlyOneDecimalPoint = (value: number): boolean => {
 }
 
 export const convertAlphToSet = (amount: string): bigint => {
-  if (amount.length === 0 || amount.startsWith('-')) throw 'Invalid Alph amount'
+  if (amount.length === 0 || amount.startsWith('-') || amount.includes('e')) throw 'Invalid Alph amount'
   if (amount === '0') return BigInt(0)
 
-  let cleanedAmount = amount
-
-  if (cleanedAmount.includes('e')) {
-    cleanedAmount = convertScientificToFloatString(cleanedAmount)
-  }
-
-  const numberOfDecimals = cleanedAmount.includes('.') ? cleanedAmount.length - 1 - cleanedAmount.indexOf('.') : 0
+  const numberOfDecimals = amount.includes('.') ? amount.length - 1 - amount.indexOf('.') : 0
   const numberOfZerosToAdd = NUM_OF_ZEROS_IN_QUINTILLION - numberOfDecimals
-  cleanedAmount = cleanedAmount.replace('.', '') + produceZeros(numberOfZerosToAdd)
+  const cleanedAmount = amount.replace('.', '') + produceZeros(numberOfZerosToAdd)
 
   return BigInt(cleanedAmount)
-}
-
-export const convertScientificToFloatString = (scientificNumber: string): string => {
-  let newNumber = scientificNumber
-  const scientificNotation = scientificNumber.includes('e-')
-    ? 'e-'
-    : scientificNumber.includes('e+')
-    ? 'e+'
-    : scientificNumber.includes('e')
-    ? 'e'
-    : ''
-
-  if (scientificNumber.startsWith('-')) {
-    newNumber = newNumber.substring(1)
-  }
-
-  if (scientificNotation === 'e-') {
-    const positionOfE = newNumber.indexOf(scientificNotation)
-    const moveDotBy = Number(newNumber.substring(positionOfE + scientificNotation.length, newNumber.length))
-    const positionOfDot = newNumber.indexOf('.')
-    const amountWithoutEandDot = newNumber.substring(0, positionOfE).replace('.', '')
-    if (moveDotBy >= positionOfDot) {
-      const numberOfZeros = moveDotBy - (positionOfDot > -1 ? positionOfDot : 1)
-      newNumber = `0.${produceZeros(numberOfZeros)}${amountWithoutEandDot}`
-    } else {
-      const newPositionOfDot = positionOfDot - moveDotBy
-      newNumber = `${amountWithoutEandDot.substring(0, newPositionOfDot)}.${amountWithoutEandDot.substring(
-        newPositionOfDot
-      )}`
-    }
-  } else if (scientificNotation === 'e+' || scientificNotation === 'e') {
-    const positionOfE = newNumber.indexOf(scientificNotation)
-    const moveDotBy = Number(newNumber.substring(positionOfE + scientificNotation.length, newNumber.length))
-    const numberOfDecimals = newNumber.indexOf('.') > -1 ? positionOfE - newNumber.indexOf('.') - 1 : 0
-    const amountWithoutEandDot = newNumber.substring(0, positionOfE).replace('.', '')
-    if (numberOfDecimals <= moveDotBy) {
-      newNumber = `${amountWithoutEandDot}${produceZeros(moveDotBy - numberOfDecimals)}`
-    } else {
-      const positionOfDot = newNumber.indexOf('.')
-      const newPositionOfDot = positionOfDot + moveDotBy
-      newNumber = `${amountWithoutEandDot.substring(0, newPositionOfDot)}.${amountWithoutEandDot.substring(
-        newPositionOfDot
-      )}`
-    }
-  }
-
-  if (scientificNumber.startsWith('-')) {
-    newNumber = `-${newNumber}`
-  }
-
-  return newNumber
 }
 
 export const addApostrophe = (numString: string): string => {
