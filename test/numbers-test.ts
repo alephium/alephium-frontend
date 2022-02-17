@@ -201,7 +201,7 @@ describe('should test not exported functions', () => {
       expect(removeTrailingZeros('-0.0001020000')).toEqual('-0.000102')
   })
 
-  it('should calculate number of decimals', () => {
+  it('should evaluate whether there is only 1 decimal', () => {
     expect(hasExactlyOneDecimalPoint(0.1)).toEqual(true),
       expect(hasExactlyOneDecimalPoint(-0.1)).toEqual(true),
       expect(hasExactlyOneDecimalPoint(999999999999.9)).toEqual(true),
