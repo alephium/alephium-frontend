@@ -145,7 +145,6 @@ it('should convert Set amount amount to Alph amount', () => {
 describe('should test not exported functions', () => {
   const numberUtils = rewire('../dist/lib/numbers')
   const removeTrailingZeros = numberUtils.__get__('removeTrailingZeros')
-  const hasExactlyOneDecimalPoint = numberUtils.__get__('hasExactlyOneDecimalPoint')
 
   it('Should remove trailing zeros', () => {
     expect(removeTrailingZeros('0.00010000', minDigits)).toEqual('0.0001'),
@@ -157,24 +156,5 @@ describe('should test not exported functions', () => {
       expect(removeTrailingZeros('10000.000')).toEqual('10000'),
       expect(removeTrailingZeros('-10000.0001000')).toEqual('-10000.0001'),
       expect(removeTrailingZeros('-0.0001020000')).toEqual('-0.000102')
-  })
-
-  it('should evaluate whether there is only 1 decimal', () => {
-    expect(hasExactlyOneDecimalPoint(0.1)).toEqual(true),
-      expect(hasExactlyOneDecimalPoint(-0.1)).toEqual(true),
-      expect(hasExactlyOneDecimalPoint(999999999999.9)).toEqual(true),
-      expect(hasExactlyOneDecimalPoint(9999999999999.9)).toEqual(true),
-      expect(hasExactlyOneDecimalPoint(0.19)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(1000000.10001)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(1000000.0000000001)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(0.1234567891234567)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(-0.19)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(-1000000.10001)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(-1000000.0000000001)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(1e-17)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(1.1e-17)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(-1.23456789e-20)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(-1.2e100)).toEqual(false),
-      expect(hasExactlyOneDecimalPoint(1.23456789e-20)).toEqual(false)
   })
 })

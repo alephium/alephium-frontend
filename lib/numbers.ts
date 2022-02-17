@@ -68,8 +68,12 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
   const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
 
   if (showFullPrecision) {
-    const decimals = hasExactlyOneDecimalPoint(alphNum) ? 16 : NUM_OF_ZEROS_IN_QUINTILLION // Avoid precision issue edge case
-    return removeTrailingZeros(alphNum.toFixed(decimals), minNumberOfDecimals)
+    const baseNumString = baseNum.toString()
+    const numNonDecimals = baseNumString.length - NUM_OF_ZEROS_IN_QUINTILLION
+    const alphNumString =  numNonDecimals > 0 ?
+      baseNumString.substring(0, numNonDecimals).concat('.', baseNumString.substring(numNonDecimals)) :
+      '0.'.concat(produceZeros(-numNonDecimals), baseNumString)
+    return removeTrailingZeros(alphNumString, minNumberOfDecimals)
   }
 
   const tinyAmountsMaxNumberDecimals = 5
@@ -107,20 +111,6 @@ export const calAmountDelta = (t: Transaction, id: string): bigint => {
   }, BigInt(0))
 
   return outputAmount - inputAmount
-}
-
-const hasExactlyOneDecimalPoint = (value: number): boolean => {
-  if (Number.isInteger(value)) return false
-
-  let str = value.toString()
-  if (str.startsWith('-')) str = str.substring(1)
-
-  if (str.indexOf('.') !== -1 && str.indexOf('e-') !== -1) {
-    return parseInt(str.split('e-')[1]) + str.split('e-')[0].split('.')[1].length === 1
-  } else if (str.indexOf('.') !== -1) {
-    return str.split('.')[1].length === 1
-  }
-  return parseInt(str.split('e-')[1]) === 1
 }
 
 export const convertAlphToSet = (amount: string): bigint => {
