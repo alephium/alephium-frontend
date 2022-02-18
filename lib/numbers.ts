@@ -124,7 +124,9 @@ const hasExactlyOneDecimalPoint = (value: number): boolean => {
 }
 
 export const convertAlphToSet = (amount: string): bigint => {
-  if (amount.length === 0 || amount.startsWith('-') || amount.includes('e')) throw 'Invalid Alph amount'
+  const amountNumber = Number(amount)
+  if (Number.isNaN(amountNumber) || amountNumber < 0 || amount.length === 0 || amount.includes('e'))
+    throw 'Invalid Alph amount'
   if (amount === '0') return BigInt(0)
 
   const numberOfDecimals = amount.includes('.') ? amount.length - 1 - amount.indexOf('.') : 0
