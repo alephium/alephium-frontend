@@ -35,8 +35,8 @@
   ],
   "scripts": {
     "compile": "rm -rf dist && npx tsc",
-    "fetch-schema:alephium": "npx swagger-typescript-api -o ./api -n api-alephium.ts",
-    "fetch-schema:explorer": "npx swagger-typescript-api -o ./api -n api-explorer.ts",
+    "fetch-schema:alephium": "npx swagger-typescript-api -o ./api -n api-alephium.ts -p https://raw.githubusercontent.com/alephium/alephium/v1.2.8/api/src/main/resources/openapi.json",
+    "fetch-schema:explorer": "npx swagger-typescript-api -o ./api -n api-explorer.ts -p https://raw.githubusercontent.com/alephium/explorer-backend/v1.5.0/app/src/main/resources/explorer-backend-openapi.json",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --fix --ext .ts",
