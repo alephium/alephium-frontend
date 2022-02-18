@@ -22,8 +22,8 @@ One first needs to update the version number of `alephium` and `explorer-backend
 Typings can automatically generated using the following commands:
 
 ```shell
-npm run fetch-schema:alephium -- -p <alephium-swagger-openapi-file-url>
-npm run fetch-schema:explorer -- -p <explorer-swagger-openapi-file-url>
+npm run fetch-schema:alephium
+npm run fetch-schema:explorer
 ```
 
 #### Examples
