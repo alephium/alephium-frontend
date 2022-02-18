@@ -17,7 +17,14 @@ npm ci
 
 ### Update schemas
 
-One just needs to update the version number of `alephium` and `explorer-backend` in `package.json`. Kindly note that one needs to check the compatibility of both OpenAPI files manually.
+One first needs to update the version number of `alephium` and `explorer-backend` in `package.json`. Kindly note that one needs to check the compatibility of both OpenAPI files manually.
+
+Typings can automatically generated using the following commands:
+
+```shell
+npm run fetch-schema:alephium -- -p <alephium-swagger-openapi-file-url>
+npm run fetch-schema:explorer -- -p <explorer-swagger-openapi-file-url>
+```
 
 #### Examples
 
