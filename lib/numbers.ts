@@ -66,20 +66,20 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
   // For abbreviation, we don't need full precision and can work with number
   const alphNum = Number(baseNum) / QUINTILLION
   const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
+  const numberOfDecimalsToDisplay = nbOfDecimalsToShow || minNumberOfDecimals
 
   if (showFullPrecision) {
     const baseNumString = baseNum.toString()
     const numNonDecimals = baseNumString.length - NUM_OF_ZEROS_IN_QUINTILLION
-    const alphNumString =  numNonDecimals > 0 ?
-      baseNumString.substring(0, numNonDecimals).concat('.', baseNumString.substring(numNonDecimals)) :
-      '0.'.concat(produceZeros(-numNonDecimals), baseNumString)
-    return removeTrailingZeros(alphNumString, minNumberOfDecimals)
+    const alphNumString =
+      numNonDecimals > 0
+        ? baseNumString.substring(0, numNonDecimals).concat('.', baseNumString.substring(numNonDecimals))
+        : '0.'.concat(produceZeros(-numNonDecimals), baseNumString)
+    return removeTrailingZeros(alphNumString, numberOfDecimalsToDisplay)
   }
 
-  const tinyAmountsMaxNumberDecimals = 5
-  const numberOfDecimalsToDisplay = nbOfDecimalsToShow || minNumberOfDecimals
-
   if (alphNum < 0.001) {
+    const tinyAmountsMaxNumberDecimals = 5
     return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
   } else if (alphNum <= 1000000) {
     return addApostrophe(removeTrailingZeros(alphNum.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals))

@@ -69,7 +69,8 @@ it('Should keep full amount precision', () => {
     expect(abbreviateAmount(alph(BigInt(1230000000)), true)).toEqual('1230000000.00'),
     expect(abbreviateAmount(alph(BigInt(1230000000000)), true)).toEqual('1230000000000.00'),
     expect(abbreviateAmount(alph(BigInt(1230000000000000)), true)).toEqual('1230000000000000.00'),
-    expect(abbreviateAmount(alph(BigInt(1)), true)).toEqual('1.00')
+    expect(abbreviateAmount(alph(BigInt(1)), true)).toEqual('1.00'),
+    expect(abbreviateAmount(BigInt('1000000000000000000'), true, 3)).toEqual('1.000')
 })
 
 it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {
