@@ -60,7 +60,11 @@ const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) =>
     : numStringWithoutTrailingZeros
 }
 
-export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimalsToShow?: number): string => {
+export const formatAmountForDisplay = (
+  baseNum: bigint,
+  showFullPrecision = false,
+  nbOfDecimalsToShow?: number
+): string => {
   if (baseNum < BigInt(0)) return '???'
 
   // For abbreviation, we don't need full precision and can work with number
