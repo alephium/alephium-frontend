@@ -16,5 +16,4 @@ jobs:
         with:
           node-version: '16'
       - run: npm ci
-      - run: npm run fetch-schema:alephium && test -z "$(git status --porcelain)"
-      - run: npm run fetch-schema:explorer && test -z "$(git status --porcelain)"
+      - run: npm run update-schemas && test -z "$(git status --porcelain)"
