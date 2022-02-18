@@ -1,4 +1,4 @@
-name: Test
+name: Unit Test
 
 on:
   push:
@@ -23,5 +23,3 @@ jobs:
       - run: npm run lint
       - run: npm audit
       - run: npm test
-      - run: npm run fetch-schema:alephium && test -z "$(git status --porcelain)"
-      - run: npm run fetch-schema:explorer && test -z "$(git status --porcelain)"
