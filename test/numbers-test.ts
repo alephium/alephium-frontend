@@ -17,7 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import rewire from 'rewire'
-import { formatAmountForDisplay, calAmountDelta, convertAlphToSet, convertSetToAlph } from '../lib/numbers'
+import {
+  formatAmountForDisplay,
+  calAmountDelta,
+  convertAlphToSet,
+  convertSetToAlph,
+  addApostrophe
+} from '../lib/numbers'
 
 import transactions from './fixtures/transactions.json'
 
@@ -141,6 +147,42 @@ it('should convert Set amount amount to Alph amount', () => {
     expect(convertSetToAlph(BigInt('1000000000000000000'))).toEqual('1'),
     expect(convertSetToAlph(BigInt('99999917646000000000000'))).toEqual('99999.917646'),
     expect(convertSetToAlph(BigInt('99999917646000000000001'))).toEqual('99999.917646000000000001')
+})
+
+it('should add apostrophes', () => {
+  expect(addApostrophe('1')).toEqual('1'),
+    expect(addApostrophe('10')).toEqual('10'),
+    expect(addApostrophe('100')).toEqual('100'),
+    expect(addApostrophe('1000')).toEqual("1'000"),
+    expect(addApostrophe('10000')).toEqual("10'000"),
+    expect(addApostrophe('100000')).toEqual("100'000"),
+    expect(addApostrophe('1000000')).toEqual("1'000'000"),
+    expect(addApostrophe('10000000')).toEqual("10'000'000"),
+    expect(addApostrophe('100000000')).toEqual("100'000'000"),
+    expect(addApostrophe('1000000000')).toEqual("1'000'000'000"),
+    expect(addApostrophe('-1')).toEqual('-1'),
+    expect(addApostrophe('-10')).toEqual('-10'),
+    expect(addApostrophe('-100')).toEqual('-100'),
+    expect(addApostrophe('-1000')).toEqual("-1'000"),
+    expect(addApostrophe('-10000')).toEqual("-10'000"),
+    expect(addApostrophe('-100000')).toEqual("-100'000"),
+    expect(addApostrophe('-1000000')).toEqual("-1'000'000"),
+    expect(addApostrophe('-10000000')).toEqual("-10'000'000"),
+    expect(addApostrophe('-100000000')).toEqual("-100'000'000"),
+    expect(addApostrophe('-1000000000')).toEqual("-1'000'000'000"),
+    expect(addApostrophe('1.01')).toEqual('1.01'),
+    expect(addApostrophe('10.01')).toEqual('10.01'),
+    expect(addApostrophe('100.01')).toEqual('100.01'),
+    expect(addApostrophe('1000.01')).toEqual("1'000.01"),
+    expect(addApostrophe('10000.01')).toEqual("10'000.01"),
+    expect(addApostrophe('100000.01')).toEqual("100'000.01"),
+    expect(addApostrophe('1000000.01')).toEqual("1'000'000.01"),
+    expect(addApostrophe('10000000.01')).toEqual("10'000'000.01"),
+    expect(addApostrophe('100000000.01')).toEqual("100'000'000.01"),
+    expect(addApostrophe('1000000000.01')).toEqual("1'000'000'000.01"),
+    expect(() => addApostrophe('1.01e+1')).toThrow('Invalid number'),
+    expect(() => addApostrophe('asdf')).toThrow('Invalid number'),
+    expect(() => addApostrophe('')).toThrow('Invalid number')
 })
 
 describe('should test not exported functions', () => {

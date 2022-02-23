@@ -131,15 +131,10 @@ export const convertAlphToSet = (amount: string): bigint => {
 }
 
 export const addApostrophe = (numString: string): string => {
-  const integralPart = numString.split('.')[0]
+  const num = Number(numString)
+  if (Number.isNaN(num) || numString.length === 0 || numString.includes('e')) throw 'Invalid number'
 
-  if (integralPart.length > 3) {
-    return `${integralPart.slice(0, -3)}'${integralPart.slice(-3)}${
-      numString.includes('.') ? `.${numString.split('.')[1]}` : ''
-    }`
-  }
-
-  return numString
+  return numString.replace(/\B(?=(\d{3})+(?!\d))/g, "'")
 }
 
 export const convertSetToAlph = (amountInSet: bigint): string => {
