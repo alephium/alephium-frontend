@@ -86,7 +86,7 @@ export const formatAmountForDisplay = (
     const tinyAmountsMaxNumberDecimals = 5
     return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
   } else if (alphNum <= 1000000) {
-    return addApostrophe(removeTrailingZeros(alphNum.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals))
+    return addApostrophes(removeTrailingZeros(alphNum.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals))
   }
 
   const tier = alphNum < 1000000000 ? 2 : alphNum < 1000000000000 ? 3 : 4
@@ -118,9 +118,7 @@ export const calAmountDelta = (t: Transaction, id: string): bigint => {
 }
 
 export const convertAlphToSet = (amount: string): bigint => {
-  const amountNumber = Number(amount)
-  if (Number.isNaN(amountNumber) || amountNumber < 0 || amount.length === 0 || amount.includes('e'))
-    throw 'Invalid Alph amount'
+  if (!isNumber(amount) || Number(amount) < 0) throw 'Invalid Alph amount'
   if (amount === '0') return BigInt(0)
 
   const numberOfDecimals = amount.includes('.') ? amount.length - 1 - amount.indexOf('.') : 0
@@ -130,9 +128,8 @@ export const convertAlphToSet = (amount: string): bigint => {
   return BigInt(cleanedAmount)
 }
 
-export const addApostrophe = (numString: string): string => {
-  const num = Number(numString)
-  if (Number.isNaN(num) || numString.length === 0 || numString.includes('e')) throw 'Invalid number'
+export const addApostrophes = (numString: string): string => {
+  if (!isNumber(numString)) throw 'Invalid number'
 
   return numString.replace(/\B(?=(\d{3})+(?!\d))/g, "'")
 }
@@ -149,3 +146,6 @@ export const convertSetToAlph = (amountInSet: bigint): string => {
       : '0.' + produceZeros(NUM_OF_ZEROS_IN_QUINTILLION - amountInSetStr.length) + amountInSetStr
   return removeTrailingZeros(withDotAdded)
 }
+
+const isNumber = (numString: string): boolean =>
+  !Number.isNaN(Number(numString)) && numString.length > 0 && !numString.includes('e')

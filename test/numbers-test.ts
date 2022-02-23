@@ -22,7 +22,7 @@ import {
   calAmountDelta,
   convertAlphToSet,
   convertSetToAlph,
-  addApostrophe
+  addApostrophes
 } from '../lib/numbers'
 
 import transactions from './fixtures/transactions.json'
@@ -150,44 +150,45 @@ it('should convert Set amount amount to Alph amount', () => {
 })
 
 it('should add apostrophes', () => {
-  expect(addApostrophe('1')).toEqual('1'),
-    expect(addApostrophe('10')).toEqual('10'),
-    expect(addApostrophe('100')).toEqual('100'),
-    expect(addApostrophe('1000')).toEqual("1'000"),
-    expect(addApostrophe('10000')).toEqual("10'000"),
-    expect(addApostrophe('100000')).toEqual("100'000"),
-    expect(addApostrophe('1000000')).toEqual("1'000'000"),
-    expect(addApostrophe('10000000')).toEqual("10'000'000"),
-    expect(addApostrophe('100000000')).toEqual("100'000'000"),
-    expect(addApostrophe('1000000000')).toEqual("1'000'000'000"),
-    expect(addApostrophe('-1')).toEqual('-1'),
-    expect(addApostrophe('-10')).toEqual('-10'),
-    expect(addApostrophe('-100')).toEqual('-100'),
-    expect(addApostrophe('-1000')).toEqual("-1'000"),
-    expect(addApostrophe('-10000')).toEqual("-10'000"),
-    expect(addApostrophe('-100000')).toEqual("-100'000"),
-    expect(addApostrophe('-1000000')).toEqual("-1'000'000"),
-    expect(addApostrophe('-10000000')).toEqual("-10'000'000"),
-    expect(addApostrophe('-100000000')).toEqual("-100'000'000"),
-    expect(addApostrophe('-1000000000')).toEqual("-1'000'000'000"),
-    expect(addApostrophe('1.01')).toEqual('1.01'),
-    expect(addApostrophe('10.01')).toEqual('10.01'),
-    expect(addApostrophe('100.01')).toEqual('100.01'),
-    expect(addApostrophe('1000.01')).toEqual("1'000.01"),
-    expect(addApostrophe('10000.01')).toEqual("10'000.01"),
-    expect(addApostrophe('100000.01')).toEqual("100'000.01"),
-    expect(addApostrophe('1000000.01')).toEqual("1'000'000.01"),
-    expect(addApostrophe('10000000.01')).toEqual("10'000'000.01"),
-    expect(addApostrophe('100000000.01')).toEqual("100'000'000.01"),
-    expect(addApostrophe('1000000000.01')).toEqual("1'000'000'000.01"),
-    expect(() => addApostrophe('1.01e+1')).toThrow('Invalid number'),
-    expect(() => addApostrophe('asdf')).toThrow('Invalid number'),
-    expect(() => addApostrophe('')).toThrow('Invalid number')
+  expect(addApostrophes('1')).toEqual('1'),
+    expect(addApostrophes('10')).toEqual('10'),
+    expect(addApostrophes('100')).toEqual('100'),
+    expect(addApostrophes('1000')).toEqual("1'000"),
+    expect(addApostrophes('10000')).toEqual("10'000"),
+    expect(addApostrophes('100000')).toEqual("100'000"),
+    expect(addApostrophes('1000000')).toEqual("1'000'000"),
+    expect(addApostrophes('10000000')).toEqual("10'000'000"),
+    expect(addApostrophes('100000000')).toEqual("100'000'000"),
+    expect(addApostrophes('1000000000')).toEqual("1'000'000'000"),
+    expect(addApostrophes('-1')).toEqual('-1'),
+    expect(addApostrophes('-10')).toEqual('-10'),
+    expect(addApostrophes('-100')).toEqual('-100'),
+    expect(addApostrophes('-1000')).toEqual("-1'000"),
+    expect(addApostrophes('-10000')).toEqual("-10'000"),
+    expect(addApostrophes('-100000')).toEqual("-100'000"),
+    expect(addApostrophes('-1000000')).toEqual("-1'000'000"),
+    expect(addApostrophes('-10000000')).toEqual("-10'000'000"),
+    expect(addApostrophes('-100000000')).toEqual("-100'000'000"),
+    expect(addApostrophes('-1000000000')).toEqual("-1'000'000'000"),
+    expect(addApostrophes('1.01')).toEqual('1.01'),
+    expect(addApostrophes('10.01')).toEqual('10.01'),
+    expect(addApostrophes('100.01')).toEqual('100.01'),
+    expect(addApostrophes('1000.01')).toEqual("1'000.01"),
+    expect(addApostrophes('10000.01')).toEqual("10'000.01"),
+    expect(addApostrophes('100000.01')).toEqual("100'000.01"),
+    expect(addApostrophes('1000000.01')).toEqual("1'000'000.01"),
+    expect(addApostrophes('10000000.01')).toEqual("10'000'000.01"),
+    expect(addApostrophes('100000000.01')).toEqual("100'000'000.01"),
+    expect(addApostrophes('1000000000.01')).toEqual("1'000'000'000.01"),
+    expect(() => addApostrophes('1.01e+1')).toThrow('Invalid number'),
+    expect(() => addApostrophes('asdf')).toThrow('Invalid number'),
+    expect(() => addApostrophes('')).toThrow('Invalid number')
 })
 
 describe('should test not exported functions', () => {
   const numberUtils = rewire('../dist/lib/numbers')
   const removeTrailingZeros = numberUtils.__get__('removeTrailingZeros')
+  const isNumber = numberUtils.__get__('isNumber')
 
   it('Should remove trailing zeros', () => {
     expect(removeTrailingZeros('0.00010000', minDigits)).toEqual('0.0001'),
@@ -199,5 +200,15 @@ describe('should test not exported functions', () => {
       expect(removeTrailingZeros('10000.000')).toEqual('10000'),
       expect(removeTrailingZeros('-10000.0001000')).toEqual('-10000.0001'),
       expect(removeTrailingZeros('-0.0001020000')).toEqual('-0.000102')
+  })
+
+  it('Should check if string is a number', () => {
+    expect(isNumber('0.00010000')).toBeTruthy(),
+      expect(isNumber('1')).toBeTruthy(),
+      expect(isNumber('10000000')).toBeTruthy(),
+      expect(isNumber('010000000')).toBeTruthy(),
+      expect(isNumber('')).toBeFalsy(),
+      expect(isNumber('1.01e+1')).toBeFalsy(),
+      expect(isNumber('1a')).toBeFalsy()
   })
 })
