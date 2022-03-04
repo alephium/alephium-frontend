@@ -160,6 +160,8 @@ export interface UnconfirmedTx {
   gasPrice: string
 }
 
+import fetch from 'cross-fetch'
+
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
 

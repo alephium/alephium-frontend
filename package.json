@@ -40,8 +40,8 @@
   "scripts": {
     "compile": "rm -rf dist && npx tsc",
     "update-schemas": "npm run update-schema:alephium && npm run update-schema:explorer",
-    "update-schema:alephium": "npx swagger-typescript-api -o ./api -n api-alephium.ts -p https://raw.githubusercontent.com/alephium/alephium/v${npm_package_config_alephium_version}/api/src/main/resources/openapi.json",
-    "update-schema:explorer": "npx swagger-typescript-api -o ./api -n api-explorer.ts -p https://raw.githubusercontent.com/alephium/explorer-backend/v${npm_package_config_explorer_backend_version}/app/src/main/resources/explorer-backend-openapi.json",
+    "update-schema:alephium": "npx swagger-typescript-api -t ./api -o ./api -n api-alephium.ts -p https://raw.githubusercontent.com/alephium/alephium/v${npm_package_config_alephium_version}/api/src/main/resources/openapi.json",
+    "update-schema:explorer": "npx swagger-typescript-api -t ./api -o ./api -n api-explorer.ts -p https://raw.githubusercontent.com/alephium/explorer-backend/v${npm_package_config_explorer_backend_version}/app/src/main/resources/explorer-backend-openapi.json",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --fix --ext .ts",
