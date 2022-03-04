@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import bs58 from '../lib/bs58'
+import bs58 from './bs58'
 import djb2 from '../lib/djb2'
 
 export function addressToGroup(address: string, totalNumberOfGroups: number): number {

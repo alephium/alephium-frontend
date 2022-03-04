@@ -51,7 +51,7 @@
     "prepublishOnly": "npm run compile"
   },
   "dependencies": {
-    "base-x": "^3.0.8",
+    "base-x": "^4.0.0",
     "bcfg": "~0.1.6",
     "bip32": "^2.0.6",
     "bip39": "^3.0.4",
