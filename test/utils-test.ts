@@ -91,6 +91,10 @@ describe('utils', function () {
     expect(utils.groupOfAddress("2jW1n2icPtc55Cdm8TF9FjGH681cWthsaZW3gaUFekFZepJoeyY3ZbY7y5SCtAjyCjLL24c4L2Vnfv3KDdAypCddfAY")).toBe(0),
     expect(utils.groupOfAddress("2jXboVD9p66wrAHkPHx2AQocAzYXUWeppmRT3PuVT3ccxX9u8puTnwLeQ2VbTd4sNkgSEgk1cLbyVGLFshGweJCk1Mr")).toBe(1),
     expect(utils.groupOfAddress("2je1yvQHpg8bKCDmvr1koELSNbty5DHrHYRkXomiRNvP5VcsZTK3WisBco2sCtCULM2YbxRxPd7QwhdP2hz9PEQwB1S")).toBe(2),
-    expect(utils.groupOfAddress("2jWukVCejM4Zifz9LvMG4dfR6SEecHLX8VqbswhGwnu61d28B861UhLu3ZmTHu4N14m1kk9rbxreBYzcxta1WPawKzG")).toBe(3)
+    expect(utils.groupOfAddress("2jWukVCejM4Zifz9LvMG4dfR6SEecHLX8VqbswhGwnu61d28B861UhLu3ZmTHu4N14m1kk9rbxreBYzcxta1WPawKzG")).toBe(3),
+    expect(utils.groupOfAddress("eBrjfQNeyUCuxE4zpbfMZcbS3PuvbMJDQBCyk4HRHtX4")).toBe(0),
+    expect(utils.groupOfAddress("euWxyF55nGTxavL6mgGeMrFdvSRzHor8AmhgPXm8Lm9D")).toBe(1),
+    expect(utils.groupOfAddress("n2pYTzmA27tkp7UNFPhMJpjz3jr5vgessxqJ7kwomBMF")).toBe(2),
+    expect(utils.groupOfAddress("tLf6hDfrUugmxZhKxGoZMpAUBt3NcZ2hrTspTCmZ6JdQ")).toBe(3)
   })
 })
