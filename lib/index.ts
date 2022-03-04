@@ -26,7 +26,7 @@ export {
   formatAmountForDisplay,
   calAmountDelta,
   convertAlphToSet,
-  addApostrophe,
+  addApostrophes,
   convertSetToAlph,
   BILLION
 } from './numbers'
