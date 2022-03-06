@@ -51,7 +51,7 @@ export interface Asset {
 
 export interface Asset1 {
   /** @format uint256 */
-  amount: string
+  alphAmount: string
   address: string
   tokens: Token[]
 
@@ -59,6 +59,12 @@ export interface Asset1 {
   lockTime: number
   additionalData: string
   type: string
+}
+
+export interface Asset2 {
+  /** @format uint256 */
+  alphAmount: string
+  tokens: Token[]
 }
 
 export interface BadRequest {
@@ -141,10 +147,13 @@ export interface BrokerInfo {
   address: string
 }
 
-export interface BuildContract {
+export interface BuildContractDeployTx {
   fromPublicKey: string
-  code: string
-  state?: string
+  bytecode: string
+  initialFields?: Val[]
+
+  /** @format uint256 */
+  alphAmount?: string
 
   /** @format uint256 */
   issueTokenAmount?: string
@@ -155,12 +164,11 @@ export interface BuildContract {
   utxosLimit?: number
 }
 
-export interface BuildContractResult {
+export interface BuildContractDeployTxResult {
+  group: number
   unsignedTx: string
   hash: string
-  contractId: string
-  fromGroup: number
-  toGroup: number
+  contractAddress: string
 }
 
 export interface BuildInfo {
@@ -184,12 +192,12 @@ export interface BuildMultisigAddress {
   mrequired: number
 }
 
-export interface BuildScript {
+export interface BuildScriptTx {
   fromPublicKey: string
-  code: string
+  bytecode: string
 
   /** @format uint256 */
-  amount?: string
+  alphAmount?: string
   gas?: number
 
   /** @format uint256 */
@@ -197,11 +205,10 @@ export interface BuildScript {
   utxosLimit?: number
 }
 
-export interface BuildScriptResult {
+export interface BuildScriptTxResult {
   unsignedTx: string
-  hash: string
-  fromGroup: number
-  toGroup: number
+  txId: string
+  group: number
 }
 
 export interface BuildSweepAddressTransactions {
@@ -259,7 +266,11 @@ export interface ChangeActiveAddress {
 }
 
 export interface CompileResult {
-  code: string
+  bytecode: string
+  codeHash: string
+  fields: Fields
+  functions: Function[]
+  events: Event[]
 }
 
 export interface Confirmed {
@@ -278,7 +289,7 @@ export interface Contract {
 
 export interface Contract1 {
   /** @format uint256 */
-  amount: string
+  alphAmount: string
   address: string
   tokens: Token[]
   type: string
@@ -288,8 +299,12 @@ export interface Contract2 {
   code: string
 }
 
-export interface ContractStateResult {
+export interface ContractState {
+  address: string
+  bytecode: string
+  codeHash: string
   fields: Val[]
+  asset: Asset2
 }
 
 export interface DecodeTransaction {
@@ -300,7 +315,7 @@ export interface Destination {
   address: string
 
   /** @format uint256 */
-  amount: string
+  alphAmount: string
   tokens?: Token[]
 
   /** @format int64 */
@@ -309,8 +324,40 @@ export interface Destination {
 
 export type DiscoveryAction = Reachable | Unreachable
 
+export interface Event {
+  name: string
+  signature: string
+  fieldTypes: string[]
+}
+
+export interface Event1 {
+  blockHash: string
+  contractId: string
+  txId: string
+  index: number
+  fields: Val[]
+}
+
+export interface Events {
+  chainFrom: number
+  chainTo: number
+  events: Event1[]
+}
+
 export interface FetchResponse {
   blocks: BlockEntry[][]
+}
+
+export interface Fields {
+  signature: string
+  types: string[]
+}
+
+export interface Function {
+  name: string
+  signature: string
+  argTypes: string[]
+  returnTypes: string[]
 }
 
 export interface Group {
@@ -327,6 +374,11 @@ export interface I256 {
 }
 
 export type Input = Asset | Contract
+
+export interface InputAsset {
+  address: string
+  asset: Asset2
+}
 
 export interface InterCliquePeerInfo {
   cliqueId: string
@@ -495,6 +547,25 @@ export interface SweepAddressTransaction {
 
   /** @format uint256 */
   gasPrice: string
+}
+
+export interface TestContract {
+  group?: number
+  address?: string
+  bytecode: string
+  initialFields?: Val[]
+  initialAsset?: Asset2
+  testMethodIndex?: number
+  testArgs?: Val[]
+  existingContracts?: ContractState[]
+  inputAssets?: InputAsset[]
+}
+
+export interface TestContractResult {
+  returns: Val[]
+  gasUsed: number
+  contracts: ContractState[]
+  txOutputs: Output[]
 }
 
 export interface Token {
@@ -1304,7 +1375,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get history average hashrate on the given time interval
      * @request GET:/infos/history-hashrate
      */
-    getInfosHistoryHashrate: (query: { fromTs: number; toTs: number }, params: RequestParams = {}) =>
+    getInfosHistoryHashrate: (query: { fromTs: number; toTs?: number }, params: RequestParams = {}) =>
       this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/history-hashrate`,
         method: 'GET',
@@ -1339,7 +1410,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary List blocks on the given time interval
      * @request GET:/blockflow
      */
-    getBlockflow: (query: { fromTs: number; toTs: number }, params: RequestParams = {}) =>
+    getBlockflow: (query: { fromTs: number; toTs?: number }, params: RequestParams = {}) =>
       this.request<FetchResponse, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blockflow`,
         method: 'GET',
@@ -1623,13 +1694,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Contracts
-     * @name PostContractsBuildScript
+     * @name PostContractsUnsignedTxBuildScript
      * @summary Build an unsigned script
-     * @request POST:/contracts/build-script
+     * @request POST:/contracts/unsigned-tx/build-script
      */
-    postContractsBuildScript: (data: BuildScript, params: RequestParams = {}) =>
-      this.request<BuildScriptResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/contracts/build-script`,
+    postContractsUnsignedTxBuildScript: (data: BuildScriptTx, params: RequestParams = {}) =>
+      this.request<
+        BuildScriptTxResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/contracts/unsigned-tx/build-script`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -1659,16 +1733,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Contracts
-     * @name PostContractsBuildContract
+     * @name PostContractsUnsignedTxBuildContract
      * @summary Build an unsigned contract
-     * @request POST:/contracts/build-contract
+     * @request POST:/contracts/unsigned-tx/build-contract
      */
-    postContractsBuildContract: (data: BuildContract, params: RequestParams = {}) =>
+    postContractsUnsignedTxBuildContract: (data: BuildContractDeployTx, params: RequestParams = {}) =>
       this.request<
-        BuildContractResult,
+        BuildContractDeployTxResult,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
       >({
-        path: `/contracts/build-contract`,
+        path: `/contracts/unsigned-tx/build-contract`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -1685,16 +1759,33 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/contracts/{address}/state
      */
     getContractsAddressState: (address: string, query: { group: number }, params: RequestParams = {}) =>
-      this.request<
-        ContractStateResult,
-        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
-      >({
+      this.request<ContractState, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/contracts/${address}/state`,
         method: 'GET',
         query: query,
         format: 'json',
         ...params
-      })
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Contracts
+     * @name PostContractsTestContract
+     * @summary Test contract
+     * @request POST:/contracts/test-contract
+     */
+    postContractsTestContract: (data: TestContract, params: RequestParams = {}) =>
+      this.request<TestContractResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>(
+        {
+          path: `/contracts/test-contract`,
+          method: 'POST',
+          body: data,
+          type: ContentType.Json,
+          format: 'json',
+          ...params
+        }
+      )
   }
   multisig = {
     /**
@@ -1836,6 +1927,64 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'PUT',
         body: data,
         type: ContentType.Json,
+        ...params
+      })
+  }
+  events = {
+    /**
+     * No description
+     *
+     * @tags Events
+     * @name GetEventsInBlock
+     * @summary Get events for a contract within a block
+     * @request GET:/events/in-block
+     */
+    getEventsInBlock: (query: { block: string; contractAddress: string }, params: RequestParams = {}) =>
+      this.request<Events, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/events/in-block`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Events
+     * @name GetEventsWithinBlocks
+     * @summary Get events for a contract within a range of blocks
+     * @request GET:/events/within-blocks
+     */
+    getEventsWithinBlocks: (
+      query: { fromBlock: string; toBlock?: string; contractAddress: string },
+      params: RequestParams = {}
+    ) =>
+      this.request<Events[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/events/within-blocks`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Events
+     * @name GetEventsWithinTimeInterval
+     * @summary Get events for a contract within a time interval
+     * @request GET:/events/within-time-interval
+     */
+    getEventsWithinTimeInterval: (
+      query: { fromTs: number; toTs?: number; contractAddress: string },
+      params: RequestParams = {}
+    ) =>
+      this.request<Events[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/events/within-time-interval`,
+        method: 'GET',
+        query: query,
+        format: 'json',
         ...params
       })
   }
