@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import EC from 'elliptic'
+import * as EC from 'elliptic'
 import BN from 'bn.js'
 import bs58 from './bs58'
 
