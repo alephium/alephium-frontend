@@ -31,3 +31,5 @@ export {
   BILLION
 } from './numbers'
 export * from './constants'
+export * as api from '../api/api-alephium'
+export * as explorer from '../api/api-explorer'
