@@ -48,7 +48,8 @@
     "jest": "jest --useStderr --silent=false --verbose=true --config jestconfig.json",
     "test": "npm run compile && npm run jest",
     "test:watch": "npm run compile && npm run jest -- --watch",
-    "prepublishOnly": "npm run compile"
+    "prepublishOnly": "npm run compile",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "dependencies": {
     "base-x": "^4.0.0",

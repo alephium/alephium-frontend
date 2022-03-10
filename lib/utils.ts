@@ -63,17 +63,17 @@ export const getStorage = (): BrowserStorage | NodeStorage => {
 }
 
 const xorByte = (intValue: number) => {
-  var byte0 = (intValue >> 24) & 0xff;
-  var byte1 = (intValue >> 16) & 0xff;
-  var byte2 = (intValue >> 8) & 0xff;
-  var byte3 = intValue & 0xff;
-  return (byte0 ^ byte1 ^ byte2 ^ byte3) & 0xff;
+  var byte0 = (intValue >> 24) & 0xff
+  var byte1 = (intValue >> 16) & 0xff
+  var byte2 = (intValue >> 8) & 0xff
+  var byte3 = intValue & 0xff
+  return (byte0 ^ byte1 ^ byte2 ^ byte3) & 0xff
 }
 
 export const groupOfAddress = (address: string): number => {
   const decoded = bs58.decode(address)
 
-  if (decoded.length == 0) throw new Error("Address string is empty")
+  if (decoded.length == 0) throw new Error('Address string is empty')
   const addressType = decoded[0]
   const addressBody = decoded.slice(1)
 
@@ -98,7 +98,7 @@ const groupOfAddressBytes = (bytes: Uint8Array): number => {
 // Pay to public key hash address
 const groupOfP2pkhAddress = (address: Uint8Array): number => {
   if (address.length != 32) {
-      throw new Error(`Invalid p2pkh address length: ${address.length}`)
+    throw new Error(`Invalid p2pkh address length: ${address.length}`)
   }
 
   return groupOfAddressBytes(address)
@@ -106,8 +106,8 @@ const groupOfP2pkhAddress = (address: Uint8Array): number => {
 
 // Pay to multiple public key hash address
 const groupOfP2mpkhAddress = (address: Uint8Array): number => {
-  if ((address.length - 2) % 32 != 0){
-      throw new Error(`Invalid p2mpkh address length: ${address.length}`)
+  if ((address.length - 2) % 32 != 0) {
+    throw new Error(`Invalid p2mpkh address length: ${address.length}`)
   }
 
   return groupOfAddressBytes(address.slice(1, 33))
