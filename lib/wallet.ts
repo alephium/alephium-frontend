@@ -26,35 +26,30 @@ import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import { addressToGroup } from './address'
 
 class StoredState {
-  mnemonic: string
+  readonly version = 1
+  readonly mnemonic: string
 
   constructor({ mnemonic }: { mnemonic: string }) {
     this.mnemonic = mnemonic
   }
 }
 
-type WalletWithMnemonic = Wallet & { mnemonic: string }
-
-export class Wallet {
+type WalletProps = {
   address: string
   publicKey: string
   privateKey: string
-  seed: Buffer // TODO: We should differentiate the notion of account (seed, mnemonic) from individual addresses.
+  seed: Buffer
   mnemonic: string
+}
 
-  constructor({
-    address,
-    publicKey,
-    privateKey,
-    seed,
-    mnemonic
-  }: {
-    address: string
-    publicKey: string
-    privateKey: string
-    seed: Buffer
-    mnemonic: string
-  }) {
+export class Wallet {
+  readonly address: string
+  readonly publicKey: string
+  readonly privateKey: string
+  readonly seed: Buffer // TODO: We should differentiate the notion of account (seed, mnemonic) from individual addresses.
+  readonly mnemonic: string
+
+  constructor({ address, publicKey, privateKey, seed, mnemonic }: WalletProps) {
     this.address = address
     this.publicKey = publicKey
     this.privateKey = privateKey
@@ -83,11 +78,11 @@ export const getPath = (addressIndex?: number) => {
   return `m/44'/${coinType}/0'/0/${addressIndex || '0'}`
 }
 
-export const getWalletFromMnemonic = (mnemonic: string) => {
+export const getWalletFromMnemonic = (mnemonic: string): Wallet => {
   const seed = bip39.mnemonicToSeedSync(mnemonic)
   const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
 
-  return new Wallet({ seed, address, publicKey, privateKey, mnemonic }) as WalletWithMnemonic
+  return new Wallet({ seed, address, publicKey, privateKey, mnemonic })
 }
 
 export type AddressAndKeys = {
