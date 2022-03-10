@@ -63,10 +63,10 @@ export const getStorage = (): BrowserStorage | NodeStorage => {
 }
 
 const xorByte = (intValue: number) => {
-  var byte0 = (intValue >> 24) & 0xff
-  var byte1 = (intValue >> 16) & 0xff
-  var byte2 = (intValue >> 8) & 0xff
-  var byte3 = intValue & 0xff
+  const byte0 = (intValue >> 24) & 0xff
+  const byte1 = (intValue >> 16) & 0xff
+  const byte2 = (intValue >> 8) & 0xff
+  const byte3 = intValue & 0xff
   return (byte0 ^ byte1 ^ byte2 ^ byte3) & 0xff
 }
 
@@ -89,9 +89,9 @@ export const groupOfAddress = (address: string): number => {
 }
 
 const groupOfAddressBytes = (bytes: Uint8Array): number => {
-  var hint = djb2(bytes) | 1
-  var hash = xorByte(hint)
-  var group = hash % TOTAL_NUMBER_OF_GROUPS
+  const hint = djb2(bytes) | 1
+  const hash = xorByte(hint)
+  const group = hash % TOTAL_NUMBER_OF_GROUPS
   return group
 }
 
