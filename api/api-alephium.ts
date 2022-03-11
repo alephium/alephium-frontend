@@ -147,7 +147,7 @@ export interface BrokerInfo {
   address: string
 }
 
-export interface BuildContractDeployTx {
+export interface BuildContractDeployScriptTx {
   fromPublicKey: string
   bytecode: string
   initialFields?: Val[]
@@ -164,7 +164,7 @@ export interface BuildContractDeployTx {
   utxosLimit?: number
 }
 
-export interface BuildContractDeployTxResult {
+export interface BuildContractDeployScriptTxResult {
   group: number
   unsignedTx: string
   hash: string
@@ -1737,9 +1737,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Build an unsigned contract
      * @request POST:/contracts/unsigned-tx/build-contract
      */
-    postContractsUnsignedTxBuildContract: (data: BuildContractDeployTx, params: RequestParams = {}) =>
+    postContractsUnsignedTxBuildContract: (data: BuildContractDeployScriptTx, params: RequestParams = {}) =>
       this.request<
-        BuildContractDeployTxResult,
+        BuildContractDeployScriptTxResult,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
       >({
         path: `/contracts/unsigned-tx/build-contract`,
