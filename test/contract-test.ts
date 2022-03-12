@@ -41,6 +41,11 @@ describe('contract', function () {
     expect(testResult.contracts[0].fields).toEqual([1])
     expect(testResult.contracts[1].fileName).toEqual('add.ral')
     expect(testResult.contracts[1].fields).toEqual([3])
+    const events = testResult.events.sort((a, b) => a.name.localeCompare(b.name))
+    expect(events[0].name).toEqual("Add")
+    expect(events[0].fields).toEqual([2, 1])
+    expect(events[1].name).toEqual("Sub")
+    expect(events[1].fields).toEqual([2, 1])
 
     const signer = Signer.testSigner(client)
 

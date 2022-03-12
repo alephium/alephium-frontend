@@ -257,7 +257,7 @@ export class Contract extends Common {
     )
   }
 
-  toState(fields: Val[], asset: Asset, address?: string): ContractState {
+  toState(fields: Val[], asset: Asset, address: string): ContractState {
     return {
       fileName: this.fileName,
       address: address,
@@ -287,7 +287,7 @@ export class Contract extends Common {
     // console.log(JSON.stringify(apiParams, null, 2))
     const response = await client.contracts.postContractsTestContract(apiParams)
     // console.log(JSON.stringify(response.data, null, 2))
-    const result = this.fromTestContractResult(response.data)
+    const result = await this.fromTestContractResult(response.data)
     // console.log(JSON.stringify(await result, null, 2))
     this._contractAddresses.clear()
     return result
@@ -318,7 +318,7 @@ export class Contract extends Common {
     return this.functions.findIndex((func) => func.name === funcName)
   }
 
-  toApiContractState = (state: ContractState): api.ContractState => {
+  toApiContractState(state: ContractState): api.ContractState {
     if (state.address) {
       this._contractAddresses.set(state.address, state.fileName)
       return toApiContractState(state, state.address)
@@ -329,7 +329,7 @@ export class Contract extends Common {
   }
 
   toApiContractStates(states?: ContractState[]): api.ContractState[] | undefined {
-    return states ? states.map(this.toApiContractState) : undefined
+    return states ? states.map(state => this.toApiContractState(state)) : undefined
   }
 
   toTestContract(funcName: string, params: TestContractParams): api.TestContract {
@@ -372,6 +372,7 @@ export class Contract extends Common {
     const contract = await Contract.getContract(state.codeHash)
     return {
       fileName: contract.fileName,
+      address: state.address,
       bytecode: state.bytecode,
       codeHash: state.codeHash,
       fields: state.fields.map(fromApiVal),
@@ -380,12 +381,30 @@ export class Contract extends Common {
     }
   }
 
+  static async getEventName(fileName: string, eventIndex: number): Promise<string> {
+    const contract = await Contract.loadContract(fileName)
+    return contract.events[eventIndex].name
+  }
+
+  static async fromApiEvent(event: api.Event1, fileName: string): Promise<Event> {
+    return {
+      blockHash: event.blockHash,
+      contractAddress: event.contractAddress,
+      txId: event.txId,
+      name: await Contract.getEventName(fileName, event.eventIndex),
+      fields: event.fields.map(fromApiVal)
+    }
+  }
+
   async fromTestContractResult(result: api.TestContractResult): Promise<TestContractResult> {
     return {
       returns: result.returns.map(fromApiVal),
       gasUsed: result.gasUsed,
       contracts: await Promise.all(result.contracts.map((contract) => this.fromApiContractState(contract))),
-      txOutputs: result.txOutputs.map(fromApiOutput)
+      txOutputs: result.txOutputs.map(fromApiOutput),
+      events: await Promise.all(result.events.map((event) => {
+        return Contract.fromApiEvent(event, this._contractAddresses.get(event.contractAddress)!)
+      }))
     }
   }
 
@@ -612,7 +631,7 @@ export interface InputAsset {
 
 export interface ContractState {
   fileName: string
-  address?: string
+  address: string
   bytecode: string
   codeHash: string
   fields: Val[]
@@ -657,11 +676,20 @@ export interface TestContractParams {
   inputAssets?: InputAsset[] // default no input asserts
 }
 
+export interface Event {
+  blockHash: string
+  contractAddress: string
+  txId: string
+  name: string
+  fields: Val[]
+}
+
 export interface TestContractResult {
   returns: Val[]
   gasUsed: number
   contracts: ContractState[]
   txOutputs: Output[]
+  events: Event[]
 }
 export declare type Output = AssetOutput | ContractOutput
 export interface AssetOutput extends Asset {
