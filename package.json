@@ -50,8 +50,8 @@
     "test:watch": "npm run compile && npm run jest -- --watch",
     "prepublishOnly": "npm run compile",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "start-devnet": "node scripts/launch-devnet.js ${npm_package_config_alephium_version}",
-    "kill-devnet": "node scripts/kill-devnet.js"
+    "start-devnet": "node scripts/start-devnet.js ${npm_package_config_alephium_version}",
+    "stop-devnet": "node scripts/stop-devnet.js"
   },
   "dependencies": {
     "base-x": "^4.0.0",

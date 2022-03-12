@@ -34,7 +34,7 @@ function launchDevnet(devDir, jarFile) {
   try {
     const pid = parseInt(fs.readFileSync(pidFile).toString())
     if (pid) {
-      console.log(`Killing the running devnet: ${pid}`)
+      console.log(`Clearing the running devnet: ${pid}`)
       process.kill(pid)
     }
   } catch (_) {}
