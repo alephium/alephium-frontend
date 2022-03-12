@@ -46,17 +46,17 @@ describe('contract', function () {
 
     const subDeployTx = await sub.transactionForDeployment(signer, [0])
     expect(subDeployTx.group).toEqual(3)
-    const subSubmitResult = await signer.submitTransaction(subDeployTx.unsignedTx, subDeployTx.hash)
+    const subSubmitResult = await signer.submitTransaction(subDeployTx.unsignedTx, subDeployTx.txId)
     expect(subSubmitResult.fromGroup).toEqual(3)
     expect(subSubmitResult.toGroup).toEqual(3)
-    expect(subSubmitResult.txId).toEqual(subDeployTx.hash)
+    expect(subSubmitResult.txId).toEqual(subDeployTx.txId)
 
     const addDeployTx = await add.transactionForDeployment(signer, [0])
     expect(addDeployTx.group).toEqual(3)
-    const addSubmitResult = await signer.submitTransaction(addDeployTx.unsignedTx, addDeployTx.hash)
+    const addSubmitResult = await signer.submitTransaction(addDeployTx.unsignedTx, addDeployTx.txId)
     expect(addSubmitResult.fromGroup).toEqual(3)
     expect(addSubmitResult.toGroup).toEqual(3)
-    expect(addSubmitResult.txId).toEqual(addDeployTx.hash)
+    expect(addSubmitResult.txId).toEqual(addDeployTx.txId)
 
     const subAddress = subDeployTx.contractAddress
     const addAddress = addDeployTx.contractAddress

@@ -293,11 +293,11 @@ export class Contract extends Common {
     return result
   }
 
-  toApiFields(fields?: Val[]): api.Val[] | undefined {
-    return fields ? toApiFields(fields!, this.fields.types) : undefined
+  toApiFields(fields?: Val[]): api.Val[] {
+    return fields ? toApiFields(fields!, this.fields.types) : []
   }
 
-  toApiArgs(funcName: string, args?: Val[]): api.Val[] | undefined {
+  toApiArgs(funcName: string, args?: Val[]): api.Val[] {
     if (args) {
       const func = this.functions.find((func) => func.name == funcName)
       if (func == null) {
@@ -310,7 +310,7 @@ export class Contract extends Common {
         throw new Error(`Invalid number of arguments: ${args}`)
       }
     } else {
-      return undefined
+      return []
     }
   }
 
@@ -704,7 +704,7 @@ function fromApiOutput(output: api.Output): Output {
 export interface DeployContractTransaction {
   group: number
   unsignedTx: string
-  hash: string
+  txId: string
   contractAddress: string
 }
 

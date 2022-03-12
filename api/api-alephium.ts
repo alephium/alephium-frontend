@@ -43,6 +43,11 @@ export interface Addresses {
   addresses: AddressInfo[]
 }
 
+export interface Array {
+  value: Val[]
+  type: string
+}
+
 export interface Asset {
   outputRef: OutputRef
   unlockScript: string
@@ -150,7 +155,7 @@ export interface BrokerInfo {
 export interface BuildContractDeployScriptTx {
   fromPublicKey: string
   bytecode: string
-  initialFields?: Val[]
+  initialFields: Val[]
 
   /** @format uint256 */
   alphAmount?: string
@@ -167,7 +172,7 @@ export interface BuildContractDeployScriptTx {
 export interface BuildContractDeployScriptTxResult {
   group: number
   unsignedTx: string
-  hash: string
+  txId: string
   contractAddress: string
 }
 
@@ -332,9 +337,9 @@ export interface Event {
 
 export interface Event1 {
   blockHash: string
-  contractId: string
+  contractAddress: string
   txId: string
-  index: number
+  eventIndex: number
   fields: Val[]
 }
 
@@ -553,10 +558,10 @@ export interface TestContract {
   group?: number
   address?: string
   bytecode: string
-  initialFields?: Val[]
+  initialFields: Val[]
   initialAsset?: Asset2
   testMethodIndex?: number
-  testArgs?: Val[]
+  testArgs: Val[]
   existingContracts?: ContractState[]
   inputAssets?: InputAsset[]
 }
@@ -566,6 +571,7 @@ export interface TestContractResult {
   gasUsed: number
   contracts: ContractState[]
   txOutputs: Output[]
+  events: Event1[]
 }
 
 export interface Token {
@@ -645,7 +651,7 @@ export interface Unreachable {
   type: string
 }
 
-export type Val = Address | Bool | ByteVec | I256 | U256
+export type Val = Address | Array | Bool | ByteVec | I256 | U256
 
 export interface VerifySignature {
   data: string
@@ -895,7 +901,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title Alephium API
- * @version 1.0
+ * @version 1.3.0
  * @baseUrl {protocol}://{host}:{port}
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
