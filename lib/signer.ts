@@ -32,6 +32,10 @@ export class Signer {
     this.address = address
   }
 
+  static testSigner(client: CliqueClient): Signer {
+    return new Signer(client, 'alephium-js-test-only-wallet', '12LgGdbjE6EtnTKw5gdBwV2RRXuXPtzYM7SDZ45YJTRht')
+  }
+
   async getPublicKey(): Promise<string> {
     if (this._publicKey) {
       return this._publicKey

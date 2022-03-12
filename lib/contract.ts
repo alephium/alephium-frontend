@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import * as cryptojs from 'crypto-js'
 import * as crypto from 'crypto'
 import bs58 from './bs58'
+import fs from 'fs'
 import { promises as fsPromises } from 'fs'
 import { CliqueClient } from './clique'
 import * as api from '../api/api-alephium'
@@ -194,6 +195,9 @@ export class Contract extends Common {
   }
 
   static async from(client: CliqueClient, fileName: string, variables?: any): Promise<Contract> {
+    if (!fs.existsSync(Common._artifactFolder())) {
+      fs.mkdirSync(Common._artifactFolder(), { recursive: true })
+    }
     return Common._from(
       client,
       fileName,
