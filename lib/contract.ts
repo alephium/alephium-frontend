@@ -330,7 +330,7 @@ export class Contract extends Common {
   }
 
   toApiContractStates(states?: ContractState[]): api.ContractState[] | undefined {
-    return states ? states.map(state => this.toApiContractState(state)) : undefined
+    return states ? states.map((state) => this.toApiContractState(state)) : undefined
   }
 
   toTestContract(funcName: string, params: TestContractParams): api.TestContract {
@@ -384,7 +384,7 @@ export class Contract extends Common {
 
   static async fromApiEvent(event: api.Event1, fileName: string): Promise<Event> {
     const contract = await Contract.loadContract(fileName)
-    const eventDef = await contract.events[event.eventIndex];
+    const eventDef = await contract.events[event.eventIndex]
     return {
       blockHash: event.blockHash,
       contractAddress: event.contractAddress,
@@ -400,9 +400,11 @@ export class Contract extends Common {
       gasUsed: result.gasUsed,
       contracts: await Promise.all(result.contracts.map((contract) => this.fromApiContractState(contract))),
       txOutputs: result.txOutputs.map(fromApiOutput),
-      events: await Promise.all(result.events.map((event) => {
-        return Contract.fromApiEvent(event, this._contractAddresses.get(event.contractAddress)!)
-      }))
+      events: await Promise.all(
+        result.events.map((event) => {
+          return Contract.fromApiEvent(event, this._contractAddresses.get(event.contractAddress)!)
+        })
+      )
     }
   }
 
@@ -569,17 +571,17 @@ export function extractArray(tpe: string, v: Val): api.Val {
     throw new Error(`Expected array, got ${v}`)
   }
 
-  const semiColonIndex = tpe.lastIndexOf(";")
+  const semiColonIndex = tpe.lastIndexOf(';')
   if (semiColonIndex == -1) {
     throw new Error(`Invalid Val type: ${tpe}`)
   }
 
   const subType = tpe.slice(1, semiColonIndex)
-  const dim = parseInt(tpe.slice(semiColonIndex+1, -1))
+  const dim = parseInt(tpe.slice(semiColonIndex + 1, -1))
   if ((v as Val[]).length != dim) {
     throw new Error(`Invalid val dimension: ${v}`)
   } else {
-    return { value: (v as Val[]).map(v => toApiVal(v, subType)), type: 'ValArray'}
+    return { value: (v as Val[]).map((v) => toApiVal(v, subType)), type: 'Array' }
   }
 }
 
@@ -598,13 +600,13 @@ function toApiVal(v: Val, tpe: string): api.Val {
 }
 
 function decodeArrayType(tpe: string): [baseType: string, dims: number[]] {
-  const semiColonIndex = tpe.lastIndexOf(";")
+  const semiColonIndex = tpe.lastIndexOf(';')
   if (semiColonIndex === -1) {
     throw new Error(`Invalid Val type: ${tpe}`)
   }
 
   const subType = tpe.slice(1, semiColonIndex)
-  const dim = parseInt(tpe.slice(semiColonIndex+1, -1))
+  const dim = parseInt(tpe.slice(semiColonIndex + 1, -1))
   if (subType[0] == '[') {
     const [baseType, subDim] = decodeArrayType(subType)
     return [baseType, (subDim.unshift(dim), subDim)]
@@ -641,13 +643,12 @@ function _fromApiVal(vals: api.Val[], valIndex: number, tpe: string): [result: V
   } else if ((tpe === 'ByteVec' || tpe === 'Address') && firstVal.type === tpe) {
     return [firstVal.value as string, valIndex + 1]
   } else {
-    console.log(`===== A: ${valIndex} ${tpe}`)
     const [baseType, dims] = decodeArrayType(tpe)
     const arraySize = dims.reduce((a, b) => a * b)
     const nextIndex = valIndex + arraySize
     const valsToUse = vals.slice(valIndex, nextIndex)
-    if (valsToUse.length == arraySize && valsToUse.every(val => val.type === baseType)) {
-      const localVals = valsToUse.map(val => fromApiVal(val, baseType))
+    if (valsToUse.length == arraySize && valsToUse.every((val) => val.type === baseType)) {
+      const localVals = valsToUse.map((val) => fromApiVal(val, baseType))
       return [foldVals(localVals, dims), nextIndex]
     } else {
       throw new Error(`Invalid array Val type: ${valsToUse}, ${tpe}`)
@@ -656,11 +657,10 @@ function _fromApiVal(vals: api.Val[], valIndex: number, tpe: string): [result: V
 }
 
 function fromApiVals(vals: api.Val[], types: string[]): Val[] {
-  console.log(`======= B: ${JSON.stringify(vals)}, ${JSON.stringify(types)}`)
-  let valIndex: number = 0
+  let valIndex = 0
   const result: Val[] = []
   for (const currentType of types) {
-    let [val, nextIndex] = _fromApiVal(vals, valIndex, currentType)
+    const [val, nextIndex] = _fromApiVal(vals, valIndex, currentType)
     result.push(val)
     valIndex = nextIndex
   }

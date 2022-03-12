@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { CliqueClient } from '../lib/clique'
 import { Signer } from '../lib/signer'
-import { Contract, Script, TestContractParams, extractArray } from '../lib/contract'
+import { Contract, Script, TestContractParams } from '../lib/contract'
 
 describe('contract', function () {
   it('test contract', async () => {
@@ -42,9 +42,9 @@ describe('contract', function () {
     expect(testResult.contracts[1].fileName).toEqual('add.ral')
     expect(testResult.contracts[1].fields).toEqual([3])
     const events = testResult.events.sort((a, b) => a.name.localeCompare(b.name))
-    expect(events[0].name).toEqual("Add")
+    expect(events[0].name).toEqual('Add')
     expect(events[0].fields).toEqual([2, 1])
-    expect(events[1].name).toEqual("Sub")
+    expect(events[1].name).toEqual('Sub')
     expect(events[1].fields).toEqual([2, 1])
 
     const signer = Signer.testSigner(client)
