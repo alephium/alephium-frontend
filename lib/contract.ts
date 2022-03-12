@@ -32,10 +32,10 @@ export abstract class Common {
   codeHash: string
   functions: api.Function[]
 
-  static importRegex: RegExp = new RegExp('^import "[a-z][a-z_0-9]*.ral"', 'm')
-  static contractRegex: RegExp = new RegExp('^TxContract [A-Z][a-zA-Z0-9]*\\(', 'm')
-  static scriptRegex: RegExp = new RegExp('^TxScript [A-Z][a-zA-Z0-9]* \\{', 'm')
-  static variableRegex: RegExp = new RegExp('\\{\\{\\s+[a-z][a-zA-Z0-9]*\\s+\\}\\}', 'g')
+  static importRegex = new RegExp('^import "[a-z][a-z_0-9]*.ral"', 'm')
+  static contractRegex = new RegExp('^TxContract [A-Z][a-zA-Z0-9]*\\(', 'm')
+  static scriptRegex = new RegExp('^TxScript [A-Z][a-zA-Z0-9]* \\{', 'm')
+  static variableRegex = new RegExp('\\{\\{\\s+[a-z][a-zA-Z0-9]*\\s+\\}\\}', 'g')
 
   constructor(
     fileName: string,
@@ -60,16 +60,12 @@ export abstract class Common {
   }
 
   protected static _artifactFolder(): string {
-    return `./artifacts/`
+    return './artifacts/'
   }
 
-  static async handleImports(
-    contractStr: string,
-    importsCache: string[],
-    validate: (filaName: string) => void
-  ): Promise<string> {
+  static async handleImports(contractStr: string, importsCache: string[]): Promise<string> {
     const localImportsCache: string[] = []
-    var result = contractStr.replace(Common.importRegex, (match) => {
+    let result = contractStr.replace(Common.importRegex, (match) => {
       localImportsCache.push(match)
       return ''
     })
@@ -111,7 +107,7 @@ export abstract class Common {
     const contractStr = contractBuffer.toString()
 
     validate(contractStr)
-    return Common.handleImports(contractStr, importsCache, validate)
+    return Common.handleImports(contractStr, importsCache)
   }
 
   static checkFileNameExtension(fileName: string): void {
@@ -145,7 +141,7 @@ export abstract class Common {
   }
 
   static async load(fileName: string): Promise<Contract | Script> {
-    return Contract.loadContract(fileName).catch((_) => Script.loadContract(fileName))
+    return Contract.loadContract(fileName).catch(() => Script.loadContract(fileName))
   }
 
   protected _saveToFile(): Promise<void> {
@@ -184,6 +180,7 @@ export class Contract extends Common {
     } else if (contractMatches!.length > 1) {
       throw new Error(`Multiple contracts in: ${fileName}`)
     } else {
+      return
     }
   }
 
@@ -421,6 +418,7 @@ export class Script extends Common {
     } else if (scriptMatches.length > 1) {
       throw new Error(`Multiple scripts in: ${fileName}`)
     } else {
+      return
     }
   }
 
@@ -519,7 +517,9 @@ function extractByteVec(v: Val): string {
       if (address.length == 33 && address[0] == 3) {
         return Buffer.from(address.slice(1)).toString('hex')
       }
-    } catch (_) {}
+    } catch (_) {
+      return v as string
+    }
     return v as string
   } else {
     throw new Error(`Invalid string: ${v}`)
