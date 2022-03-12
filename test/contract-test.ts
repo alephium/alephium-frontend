@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { CliqueClient } from '../lib/clique'
 import { Signer } from '../lib/signer'
-import { Contract, Script, TestContractParams } from '../lib/contract'
+import { Contract, Script, TestContractParams, extractArray } from '../lib/contract'
 
 describe('contract', function () {
-  it('contract', async () => {
+  it('test contract', async () => {
     const client = new CliqueClient({ baseUrl: 'http://127.0.0.1:22973' })
     await client.init(false)
 
@@ -32,11 +32,11 @@ describe('contract', function () {
     const subState = sub.toState([0], { alphAmount: 1000000000000000000n }, subTestAddress)
     const testParams: TestContractParams = {
       initialFields: [0],
-      testArgs: [subTestAddress, 2, 1],
+      testArgs: [subTestAddress, [2, 1]],
       existingContracts: [subState]
     }
     const testResult = await add.test(client, 'add', testParams)
-    expect(testResult.returns).toEqual([3, 1])
+    expect(testResult.returns).toEqual([[3, 1]])
     expect(testResult.contracts[0].fileName).toEqual('sub.ral')
     expect(testResult.contracts[0].fields).toEqual([1])
     expect(testResult.contracts[1].fileName).toEqual('add.ral')

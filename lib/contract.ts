@@ -287,7 +287,8 @@ export class Contract extends Common {
     // console.log(JSON.stringify(apiParams, null, 2))
     const response = await client.contracts.postContractsTestContract(apiParams)
     // console.log(JSON.stringify(response.data, null, 2))
-    const result = await this.fromTestContractResult(response.data)
+    const methodIndex = params.testMethodIndex ? params.testMethodIndex : 0
+    const result = await this.fromTestContractResult(methodIndex, response.data)
     // console.log(JSON.stringify(await result, null, 2))
     this._contractAddresses.clear()
     return result
@@ -375,30 +376,27 @@ export class Contract extends Common {
       address: state.address,
       bytecode: state.bytecode,
       codeHash: state.codeHash,
-      fields: state.fields.map(fromApiVal),
+      fields: fromApiVals(state.fields, contract.fields.types),
       fieldTypes: await Contract.getFieldTypes(state.codeHash),
       asset: fromApiAsset(state.asset)
     }
   }
 
-  static async getEventName(fileName: string, eventIndex: number): Promise<string> {
-    const contract = await Contract.loadContract(fileName)
-    return contract.events[eventIndex].name
-  }
-
   static async fromApiEvent(event: api.Event1, fileName: string): Promise<Event> {
+    const contract = await Contract.loadContract(fileName)
+    const eventDef = await contract.events[event.eventIndex];
     return {
       blockHash: event.blockHash,
       contractAddress: event.contractAddress,
       txId: event.txId,
-      name: await Contract.getEventName(fileName, event.eventIndex),
-      fields: event.fields.map(fromApiVal)
+      name: eventDef.name,
+      fields: fromApiVals(event.fields, eventDef.fieldTypes)
     }
   }
 
-  async fromTestContractResult(result: api.TestContractResult): Promise<TestContractResult> {
+  async fromTestContractResult(methodIndex: number, result: api.TestContractResult): Promise<TestContractResult> {
     return {
-      returns: result.returns.map(fromApiVal),
+      returns: fromApiVals(result.returns, this.functions[methodIndex].returnTypes),
       gasUsed: result.gasUsed,
       contracts: await Promise.all(result.contracts.map((contract) => this.fromApiContractState(contract))),
       txOutputs: result.txOutputs.map(fromApiOutput),
@@ -506,7 +504,7 @@ export class Script extends Common {
 }
 
 export type Number256 = number | bigint
-export type Val = Number256 | boolean | string
+export type Val = Number256 | boolean | string | Val[]
 
 function extractBoolean(v: Val): boolean {
   if (typeof v === 'boolean') {
@@ -566,6 +564,25 @@ function decodeNumber256(n: string): Number256 {
   }
 }
 
+export function extractArray(tpe: string, v: Val): api.Val {
+  if (!Array.isArray(v)) {
+    throw new Error(`Expected array, got ${v}`)
+  }
+
+  const semiColonIndex = tpe.lastIndexOf(";")
+  if (semiColonIndex == -1) {
+    throw new Error(`Invalid Val type: ${tpe}`)
+  }
+
+  const subType = tpe.slice(1, semiColonIndex)
+  const dim = parseInt(tpe.slice(semiColonIndex+1, -1))
+  if ((v as Val[]).length != dim) {
+    throw new Error(`Invalid val dimension: ${v}`)
+  } else {
+    return { value: (v as Val[]).map(v => toApiVal(v, subType)), type: 'ValArray'}
+  }
+}
+
 function toApiVal(v: Val, tpe: string): api.Val {
   if (tpe === 'Bool') {
     return { value: extractBoolean(v), type: tpe }
@@ -576,16 +593,86 @@ function toApiVal(v: Val, tpe: string): api.Val {
   } else if (tpe === 'Address') {
     return { value: extractBs58(v), type: tpe }
   } else {
-    throw new Error(`Invalid Val type: ${tpe}`)
+    return extractArray(tpe, v)
   }
 }
 
-function fromApiVal(v: api.Val): Val {
-  if (v.type === 'Bool') {
+function decodeArrayType(tpe: string): [baseType: string, dims: number[]] {
+  const semiColonIndex = tpe.lastIndexOf(";")
+  if (semiColonIndex === -1) {
+    throw new Error(`Invalid Val type: ${tpe}`)
+  }
+
+  const subType = tpe.slice(1, semiColonIndex)
+  const dim = parseInt(tpe.slice(semiColonIndex+1, -1))
+  if (subType[0] == '[') {
+    const [baseType, subDim] = decodeArrayType(subType)
+    return [baseType, (subDim.unshift(dim), subDim)]
+  } else {
+    return [subType, [dim]]
+  }
+}
+
+function foldVals(vals: Val[], dims: number[]): Val {
+  if (dims.length == 1) {
+    return vals
+  } else {
+    const result: Val[] = []
+    const chunkSize = vals.length / dims[0]
+    const chunkDims = dims.slice(1)
+    for (let i = 0; i < vals.length; i += chunkSize) {
+      const chunk = vals.slice(i, i + chunkSize)
+      result.push(foldVals(chunk, chunkDims))
+    }
+    return result
+  }
+}
+
+function _fromApiVal(vals: api.Val[], valIndex: number, tpe: string): [result: Val, nextIndex: number] {
+  if (vals.length === 0) {
+    throw new Error('Not enough Vals')
+  }
+
+  const firstVal = vals[valIndex]
+  if (tpe === 'Bool' && firstVal.type === tpe) {
+    return [firstVal.value as boolean, valIndex + 1]
+  } else if ((tpe === 'U256' || tpe === 'I256') && firstVal.type === tpe) {
+    return [decodeNumber256(firstVal.value as string), valIndex + 1]
+  } else if ((tpe === 'ByteVec' || tpe === 'Address') && firstVal.type === tpe) {
+    return [firstVal.value as string, valIndex + 1]
+  } else {
+    console.log(`===== A: ${valIndex} ${tpe}`)
+    const [baseType, dims] = decodeArrayType(tpe)
+    const arraySize = dims.reduce((a, b) => a * b)
+    const nextIndex = valIndex + arraySize
+    const valsToUse = vals.slice(valIndex, nextIndex)
+    if (valsToUse.length == arraySize && valsToUse.every(val => val.type === baseType)) {
+      const localVals = valsToUse.map(val => fromApiVal(val, baseType))
+      return [foldVals(localVals, dims), nextIndex]
+    } else {
+      throw new Error(`Invalid array Val type: ${valsToUse}, ${tpe}`)
+    }
+  }
+}
+
+function fromApiVals(vals: api.Val[], types: string[]): Val[] {
+  console.log(`======= B: ${JSON.stringify(vals)}, ${JSON.stringify(types)}`)
+  let valIndex: number = 0
+  const result: Val[] = []
+  for (const currentType of types) {
+    let [val, nextIndex] = _fromApiVal(vals, valIndex, currentType)
+    result.push(val)
+    valIndex = nextIndex
+  }
+  return result
+}
+
+function fromApiVal(v: api.Val, tpe: string): Val {
+  if (v.type === 'Bool' && v.type === tpe) {
     return v.value as boolean
-  } else if (v.type === 'U256' || v.type === 'I256') {
+  } else if ((v.type === 'U256' || v.type === 'I256') && v.type === tpe) {
     return decodeNumber256(v.value as string)
-  } else if (v.type === 'ByteVec' || v.type === 'Address') {
+  } else if ((v.type === 'ByteVec' || v.type === 'Address') && v.type === tpe) {
     return v.value as string
   } else {
     throw new Error(`Invalid api.Val type: ${v}`)
