@@ -1,0 +1,17 @@
+{
+  "include": ["src", "bin"],
+  "exclude": ["node_modules", "test"],
+  "compilerOptions": {
+    "target": "es2020",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "es2020",
+    "declaration": true,
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "resolveJsonModule": true
+  }
+}

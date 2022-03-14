@@ -48,6 +48,7 @@ fsExtra.mkdirSync(path.join(projectRoot, 'src'))
 fsExtra.mkdirSync(path.join(projectRoot, 'test'))
 fsExtra.copySync(path.join(packageRoot, 'templates', 'package.json'), path.join(projectRoot, 'package.json'))
 fsExtra.copySync(path.join(packageRoot, 'templates', 'tsconfig.json'), path.join(projectRoot, 'tsconfig.json'))
+fsExtra.copySync(path.join(packageRoot, 'templates', 'README.md'), path.join(projectRoot, 'README.md'))
 fsExtra.copySync(path.join(packageRoot, 'templates', 'greeter.ts'), path.join(projectRoot, 'src', 'greeter.ts'))
 
 console.log('Project is initialized')
