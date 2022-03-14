@@ -7,6 +7,12 @@
 
 A JavaScript/TypeScript library for building decentralized applications on the Alephium platform.
 
+You could run the following command to scaffold a skelton project for smart contract development.
+
+```
+npx alephium-js [name]
+```
+
 ## Install
 
 ```
@@ -36,6 +42,7 @@ npm run compile
 ## Testing
 
 ```
+npm run start-devnet // this will start a devnet for smart contract tests
 npm test
 ```
 
