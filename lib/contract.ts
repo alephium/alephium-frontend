@@ -411,7 +411,7 @@ export class Contract extends Common {
       initialFields: this.toApiFields(initialFields)
     }
     const response = await signer.client.contracts.postContractsUnsignedTxBuildContract(params)
-    return fromApiDeployContractUnsignedTx(response.data)
+    return fromApiDeployContractUnsignedTx(CliqueClient.convert(response))
   }
 }
 
@@ -497,7 +497,7 @@ export class Script extends Common {
       utxosLimit: params && params.utxosLimit ? params.utxosLimit : undefined
     }
     const response = await signer.client.contracts.postContractsUnsignedTxBuildScript(apiParams)
-    return response.data
+    return CliqueClient.convert(response)
   }
 }
 

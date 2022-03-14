@@ -94,6 +94,7 @@ async function wait() {
       await wait()
     } else {
       console.log('Devnet is ready')
+      await timeout(1000)
       new Promise((resolve, reject) => {
         resolve()
       })
