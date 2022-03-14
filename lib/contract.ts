@@ -492,6 +492,7 @@ export class Script extends Common {
       fromPublicKey: await signer.getPublicKey(),
       bytecode: this.bytecode,
       alphAmount: params && params.alphAmount ? extractNumber256(params.alphAmount) : undefined,
+      tokens: params && params.tokens ? params.tokens.map(toApiToken) : undefined,
       gas: params && params.gas ? params.gas : undefined,
       gasPrice: params && params.gasPrice ? extractNumber256(params.gasPrice) : undefined,
       utxosLimit: params && params.utxosLimit ? params.utxosLimit : undefined
@@ -825,6 +826,7 @@ function fromApiDeployContractUnsignedTx(result: api.BuildContractDeployScriptTx
 
 export interface BuildScriptTx {
   alphAmount?: Number256
+  tokens?: Token[]
   gas?: number
   gasPrice?: Number256
   utxosLimit?: number

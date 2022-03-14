@@ -203,6 +203,7 @@ export interface BuildScriptTx {
 
   /** @format uint256 */
   alphAmount?: string
+  tokens?: Token[]
   gas?: number
 
   /** @format uint256 */
