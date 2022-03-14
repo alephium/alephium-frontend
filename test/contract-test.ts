@@ -21,7 +21,7 @@ import { Signer } from '../lib/signer'
 import { Contract, Script, TestContractParams } from '../lib/contract'
 
 describe('contract', function () {
-  it('test contract', async () => {
+  async function testSuite1() {
     const client = new CliqueClient({ baseUrl: 'http://127.0.0.1:22973' })
     await client.init(false)
 
@@ -72,5 +72,43 @@ describe('contract', function () {
     const mainSubmitResult = await signer.submitTransaction(mainScriptTx.unsignedTx, mainScriptTx.txId)
     expect(mainSubmitResult.fromGroup).toEqual(3)
     expect(mainSubmitResult.toGroup).toEqual(3)
+  }
+
+  async function testSuite2() {
+    const client = new CliqueClient({ baseUrl: 'http://127.0.0.1:22973' })
+    await client.init(false)
+
+    const greeter = await Contract.from(client, 'greeter.ral')
+
+    const testParams: TestContractParams = {
+      initialFields: [1]
+    }
+    const testResult = await greeter.test(client, 'greet', testParams)
+    expect(testResult.returns).toEqual([1])
+    expect(testResult.contracts[0].fileName).toEqual('greeter.ral')
+    expect(testResult.contracts[0].fields).toEqual([1])
+
+    const signer = Signer.testSigner(client)
+
+    const deployTx = await greeter.transactionForDeployment(signer, [1])
+    expect(deployTx.group).toEqual(3)
+    const submitResult = await signer.submitTransaction(deployTx.unsignedTx, deployTx.txId)
+    expect(submitResult.fromGroup).toEqual(3)
+    expect(submitResult.toGroup).toEqual(3)
+    expect(submitResult.txId).toEqual(deployTx.txId)
+
+    const greeterAddress = deployTx.contractAddress
+    const main = await Script.from(client, 'greeter-main.ral', { greeterAddress: greeterAddress })
+
+    const mainScriptTx = await main.transactionForDeployment(signer)
+    expect(mainScriptTx.group).toEqual(3)
+    const mainSubmitResult = await signer.submitTransaction(mainScriptTx.unsignedTx, mainScriptTx.txId)
+    expect(mainSubmitResult.fromGroup).toEqual(3)
+    expect(mainSubmitResult.toGroup).toEqual(3)
+  }
+
+  it('should test contracts', async () => {
+    await testSuite1()
+    await testSuite2()
   })
 })

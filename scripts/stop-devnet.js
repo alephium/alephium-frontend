@@ -1,6 +1,6 @@
-const fs = require('fs')
-const path = require('path')
-const process = require('process')
+import fs from 'fs'
+import path from 'path'
+import process from 'process'
 
 const pidFile = process.cwd() + path.sep + 'dev' + path.sep + 'alephium.pid'
 try {

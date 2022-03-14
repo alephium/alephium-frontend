@@ -20,7 +20,7 @@
       ]
     }
   },
-  "type": "commonjs",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git@github.com:alephium/alephium-js.git"
@@ -31,14 +31,16 @@
   },
   "author": "Alephium dev <dev@alephium.org>",
   "files": [
-    "dist/*"
+    "dist/*",
+    "dev/*",
+    "scripts/*"
   ],
   "config": {
     "alephium_version": "1.3.0-rc2",
     "explorer_backend_version": "1.5.0"
   },
   "scripts": {
-    "compile": "rm -rf dist && npx tsc",
+    "compile": "rm -rf dist && npx tsc --build .",
     "update-schemas": "npm run update-schema:alephium && npm run update-schema:explorer",
     "update-schema:alephium": "npx swagger-typescript-api -t ./api -o ./api -n api-alephium.ts -p https://raw.githubusercontent.com/alephium/alephium/v${npm_package_config_alephium_version}/api/src/main/resources/openapi.json",
     "update-schema:explorer": "npx swagger-typescript-api -t ./api -o ./api -n api-explorer.ts -p https://raw.githubusercontent.com/alephium/explorer-backend/v${npm_package_config_explorer_backend_version}/app/src/main/resources/explorer-backend-openapi.json",
@@ -51,7 +53,11 @@
     "prepublishOnly": "npm run compile",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start-devnet": "node scripts/start-devnet.js ${npm_package_config_alephium_version}",
+    "restart-devnet": "npm run start-devnet",
     "stop-devnet": "node scripts/stop-devnet.js"
+  },
+  "bin": {
+    "alephium-js": "dist/lib/cli/sample-project.js"
   },
   "dependencies": {
     "base-x": "^4.0.0",
@@ -61,11 +67,15 @@
     "blakejs": "^1.1.1",
     "cross-fetch": "^3.1.5",
     "crypto-js": "^4.1.1",
-    "elliptic": "^6.5.4"
+    "elliptic": "^6.5.4",
+    "find-up": "^6.3.0",
+    "fs-extra": "^10.0.1"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
     "@types/elliptic": "^6.4.13",
+    "@types/find-up": "^4.0.0",
+    "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.1",
     "@types/mock-fs": "^4.13.1",
     "@types/node": "^16.7.8",
@@ -84,6 +94,7 @@
     "mock-socket": "^9.0.8",
     "prettier": "^2.3.2",
     "rewire": "^6.0.0",
+    "shelljs": "^0.8.5",
     "swagger-typescript-api": "^9.2.0",
     "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",

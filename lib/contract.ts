@@ -130,7 +130,6 @@ export abstract class Common {
     try {
       const existingContract = await loadContract(fileName)
       if (existingContract.sourceCodeSha256 === contractHash) {
-        console.log('the code is already compiled')
         return existingContract
       } else {
         return __from(client, fileName, contractStr, contractHash)
@@ -284,12 +283,9 @@ export class Contract extends Common {
   async test(client: CliqueClient, funcName: string, params: TestContractParams): Promise<TestContractResult> {
     this._contractAddresses.clear()
     const apiParams: api.TestContract = this.toTestContract(funcName, params)
-    // console.log(JSON.stringify(apiParams, null, 2))
     const response = await client.contracts.postContractsTestContract(apiParams)
-    // console.log(JSON.stringify(response.data, null, 2))
     const methodIndex = params.testMethodIndex ? params.testMethodIndex : 0
     const result = await this.fromTestContractResult(methodIndex, response.data)
-    // console.log(JSON.stringify(await result, null, 2))
     this._contractAddresses.clear()
     return result
   }
