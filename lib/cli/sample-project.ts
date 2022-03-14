@@ -5,9 +5,6 @@ import path from 'path'
 import { findUpSync } from 'find-up'
 import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
 export function getPackageRoot(): string {
   const packageJsonPath = findUpSync('package.json', { cwd: path.dirname(__filename) })
 

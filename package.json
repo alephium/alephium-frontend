@@ -20,7 +20,7 @@
       ]
     }
   },
-  "type": "module",
+  "type": "commonjs",
   "repository": {
     "type": "git",
     "url": "git@github.com:alephium/alephium-js.git"
