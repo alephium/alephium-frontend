@@ -52,12 +52,12 @@
     "test:watch": "npm run compile && npm run jest -- --watch",
     "prepublishOnly": "npm run compile",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "start-devnet": "node scripts/start-devnet.js ${npm_package_config_alephium_version}",
-    "restart-devnet": "npm run start-devnet",
-    "stop-devnet": "node scripts/stop-devnet.js"
+    "devnet:start": "node scripts/start-devnet.js ${npm_package_config_alephium_version}",
+    "devnet:restart": "npm run start-devnet",
+    "devnet:stop": "node scripts/stop-devnet.js"
   },
   "bin": {
-    "alephium-js": "dist/lib/cli/sample-project.js"
+    "alephium": "dist/lib/cli/sample-project.js"
   },
   "dependencies": {
     "base-x": "^4.0.0",

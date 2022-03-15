@@ -26,16 +26,16 @@ import * as api from '../api/api-alephium'
 import { Signer } from './signer'
 
 export abstract class Common {
-  fileName: string
-  sourceCodeSha256: string
-  bytecode: string
-  codeHash: string
-  functions: api.Function[]
+  readonly fileName: string
+  readonly sourceCodeSha256: string
+  readonly bytecode: string
+  readonly codeHash: string
+  readonly functions: api.Function[]
 
-  static importRegex = new RegExp('^import "[a-z][a-z_0-9]*.ral"', 'm')
-  static contractRegex = new RegExp('^TxContract [A-Z][a-zA-Z0-9]*\\(', 'm')
-  static scriptRegex = new RegExp('^TxScript [A-Z][a-zA-Z0-9]* \\{', 'm')
-  static variableRegex = new RegExp('\\{\\{\\s+[a-z][a-zA-Z0-9]*\\s+\\}\\}', 'g')
+  static readonly importRegex = new RegExp('^import "[a-z][a-z_0-9]*.ral"', 'm')
+  static readonly contractRegex = new RegExp('^TxContract [A-Z][a-zA-Z0-9]*\\(', 'm')
+  static readonly scriptRegex = new RegExp('^TxScript [A-Z][a-zA-Z0-9]* \\{', 'm')
+  static readonly variableRegex = new RegExp('\\{\\{\\s+[a-z][a-zA-Z0-9]*\\s+\\}\\}', 'g')
 
   constructor(
     fileName: string,
@@ -59,7 +59,7 @@ export abstract class Common {
     return `./artifacts/${fileName}.json`
   }
 
-  protected static _artifactFolder(): string {
+  protected static _artifactsFolder(): string {
     return './artifacts/'
   }
 
@@ -129,11 +129,9 @@ export abstract class Common {
     const contractHash = cryptojs.SHA256(contractStr).toString()
     try {
       const existingContract = await loadContract(fileName)
-      if (existingContract.sourceCodeSha256 === contractHash) {
-        return existingContract
-      } else {
-        return __from(client, fileName, contractStr, contractHash)
-      }
+      return existingContract.sourceCodeSha256 === contractHash
+        ? existingContract
+        : __from(client, fileName, contractStr, contractHash)
     } catch (_) {
       return __from(client, fileName, contractStr, contractHash)
     }
@@ -191,8 +189,8 @@ export class Contract extends Common {
   }
 
   static async from(client: CliqueClient, fileName: string, variables?: any): Promise<Contract> {
-    if (!fs.existsSync(Common._artifactFolder())) {
-      fs.mkdirSync(Common._artifactFolder(), { recursive: true })
+    if (!fs.existsSync(Common._artifactsFolder())) {
+      fs.mkdirSync(Common._artifactsFolder(), { recursive: true })
     }
     return Common._from(
       client,
@@ -347,7 +345,7 @@ export class Contract extends Common {
   }
 
   static async getContract(codeHash: string): Promise<Contract> {
-    const files = await fsPromises.readdir(Common._artifactFolder())
+    const files = await fsPromises.readdir(Common._artifactsFolder())
     for (const file of files) {
       if (file.endsWith('.ral.json')) {
         const fileName = file.slice(0, -5)

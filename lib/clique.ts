@@ -59,7 +59,7 @@ export class CliqueClient extends Api<null> {
     }
   }
 
-  static convert<T, S>(response: api.HttpResponse<T, { detail: string }>): T {
+  static convert<T>(response: api.HttpResponse<T, { detail: string }>): T {
     if (response.error) {
       console.log(response.error.detail)
       throw new Error(response.error.detail)

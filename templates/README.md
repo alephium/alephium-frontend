@@ -3,7 +3,7 @@
 ## Install
 
 ```
-npm ci
+npm install
 ```
 
 ## Compile
@@ -23,6 +23,5 @@ npm run start-devnet // this will start a devnet for smart contract tests
 ## Testing
 
 ```
-npm run start-devnet // this will start a devnet for smart contract tests
 npm test
 ```

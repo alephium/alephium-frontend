@@ -66,7 +66,7 @@ async function prepareWallet() {
 }
 
 async function createWallet() {
-  console.log('Creat the test wallet')
+  console.log('Create the test wallet')
   await fetch('http://127.0.0.1:22973/wallets', {
     method: 'Put',
     body: `{"password":"${password}","mnemonic":"${mnemonic}","walletName":"${testWallet}"}`

@@ -7,7 +7,7 @@
 
 A JavaScript/TypeScript library for building decentralized applications on the Alephium platform.
 
-You could run the following command to scaffold a skelton project for smart contract development.
+You could run the following command to scaffold a skeleton project for smart contract development.
 
 ```
 npx alephium-js [name]
