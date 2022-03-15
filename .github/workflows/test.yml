@@ -22,5 +22,5 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm audit
-      - run: npm run start-devnet
+      - run: npm run devnet:start
       - run: npm test

@@ -42,7 +42,7 @@ npm run compile
 ## Testing
 
 ```
-npm run start-devnet // this will start a devnet for smart contract tests
+npm run devnet:start // this will start a devnet for smart contract tests
 npm test
 ```
 
