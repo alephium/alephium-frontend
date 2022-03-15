@@ -2,11 +2,11 @@
 import fsExtra from 'fs-extra'
 import process from 'process'
 import path from 'path'
-import { findUpSync } from 'find-up'
+import findup from 'find-up'
 import { fileURLToPath } from 'url'
 
 export function getPackageRoot(): string {
-  const packageJsonPath = findUpSync('package.json', { cwd: path.dirname(__filename) })
+  const packageJsonPath = findup.sync('package.json', { cwd: path.dirname(__filename) })
 
   if (packageJsonPath) {
     return path.dirname(packageJsonPath)

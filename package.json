@@ -68,13 +68,13 @@
     "cross-fetch": "^3.1.5",
     "crypto-js": "^4.1.1",
     "elliptic": "^6.5.4",
-    "find-up": "^6.3.0",
+    "find-up": "^2.1.0",
     "fs-extra": "^10.0.1"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
     "@types/elliptic": "^6.4.13",
-    "@types/find-up": "^4.0.0",
+    "@types/find-up": "^2.1.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.1",
     "@types/mock-fs": "^4.13.1",
