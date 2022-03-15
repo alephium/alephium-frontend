@@ -148,8 +148,8 @@ export abstract class Common {
 }
 
 export class Contract extends Common {
-  fields: api.Fields
-  events: api.Event[]
+  readonly fields: api.Fields
+  readonly events: api.Event[]
 
   // cache address for contracts
   private _contractAddresses: Map<string, string>

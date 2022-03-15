@@ -29,7 +29,7 @@ describe('contract', function () {
     const sub = await Contract.from(client, 'sub.ral')
 
     const subTestAddress = Contract.randomAddress()
-    const subState = sub.toState([0], { alphAmount: 1000000000000000000n }, subTestAddress)
+    const subState = sub.toState([0], { alphAmount: BigInt('1000000000000000000') }, subTestAddress)
     const testParams: TestContractParams = {
       initialFields: [0],
       testArgs: [subTestAddress, [2, 1]],
