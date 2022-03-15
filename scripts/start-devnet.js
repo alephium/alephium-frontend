@@ -1,8 +1,8 @@
-import fs from 'fs'
-import process from 'process'
-import path from 'path'
-import fetch from 'cross-fetch'
-import { spawn } from 'child_process'
+const fs = require('fs')
+const process = require('process')
+const path = require('path')
+const fetch = require('cross-fetch')
+const spawn = require('child_process').spawn
 
 async function _downloadFullNode(tag, fileName) {
   const url = `https://github.com/alephium/alephium/releases/download/v${tag}/alephium-${tag}.jar`
