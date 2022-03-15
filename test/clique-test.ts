@@ -127,21 +127,13 @@ describe('clique', function () {
       await client.init(testCase.numberOfNodes > 1)
 
       if (testCase.numberOfNodes > 0 && testCase.expectedIndexValues) {
-        const mockedGetAddressesAddressGroup = jest.fn()
-        client.addresses.getAddressesAddressGroup = mockedGetAddressesAddressGroup
-        mockedGetAddressesAddressGroup
-          .mockResolvedValueOnce({ data: { group: 0 } })
-          .mockResolvedValueOnce({ data: { group: 1 } })
-          .mockResolvedValueOnce({ data: { group: 2 } })
-          .mockResolvedValueOnce({ data: { group: 3 } })
-
-        let index = client.getClientIndex(addressMockData.hash)
+        let index = client.getClientIndex('1DpNeY8uutS1FRW7D565WjUgu5HcKSYAMqZNWgUJWggWZ') // group of address: 0
         expect(index).toBe(testCase.expectedIndexValues[0])
-        index = client.getClientIndex(addressMockData.hash)
+        index = client.getClientIndex('12psscGPMgdqctaeCA37HYAkpVBFX1LbN4dSvjyxbDyKk') // group of address: 1
         expect(index).toBe(testCase.expectedIndexValues[1])
-        index = client.getClientIndex(addressMockData.hash)
+        index = client.getClientIndex('16TGLiD3fqyuGFRFHffh58BC3okYCbjRH1WHPzeSp39Wi') // group of address: 2
         expect(index).toBe(testCase.expectedIndexValues[2])
-        index = client.getClientIndex(addressMockData.hash)
+        index = client.getClientIndex('1G1gjpt4mxij7JwP5SpX6ScwQHisWN3V5WBtFfWKtc3vo') // group of address: 3
         expect(index).toBe(testCase.expectedIndexValues[3])
       } else {
         client.clients = []
@@ -155,9 +147,6 @@ describe('clique', function () {
     const mockedGetInfosSelfClique = jest.fn()
     client.infos.getInfosSelfClique = mockedGetInfosSelfClique
     mockedGetInfosSelfClique.mockResolvedValue(selfCliqueMockData)
-    const mockedGetAddressesAddressGroup = jest.fn()
-    client.addresses.getAddressesAddressGroup = mockedGetAddressesAddressGroup
-    mockedGetAddressesAddressGroup.mockResolvedValue({ data: { group: 0 } })
 
     beforeAll(() => {
       return client.init(false)
