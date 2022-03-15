@@ -66,21 +66,14 @@ export class CliqueClient extends Api<null> {
     return res
   }
 
-  async getClientIndex(address: string) {
-    if (this.clients.length === 0) {
-      // This shouldn't happen as current user is in the clique
-      throw new Error('Unknown error (no nodes in the clique)')
-    }
-
-    const res = await this.addresses.getAddressesAddressGroup(address)
-
-    if (res.error) throw new Error(res.error.detail)
-
-    return res.data.group % this.clients.length
+  getClientIndex(address: string) {
+    if (this.clients.length === 0) throw new Error('No nodes in the clique')
+    const group = utils.groupOfAddress(address)
+    return group % this.clients.length
   }
 
   async getBalance(address: string) {
-    const clientIndex = await this.getClientIndex(address)
+    const clientIndex = this.getClientIndex(address)
     return await this.clients[clientIndex].getBalance(address)
   }
 
@@ -100,17 +93,17 @@ export class CliqueClient extends Api<null> {
     gas?: number,
     gasPrice?: string
   ) {
-    const clientIndex = await this.getClientIndex(fromAddress)
+    const clientIndex = this.getClientIndex(fromAddress)
     return await this.clients[clientIndex].transactionCreate(fromPublicKey, toAddress, amount, lockTime, gas, gasPrice)
   }
 
   async transactionConsolidateUTXOs(fromPublicKey: string, fromAddress: string, toAddress: string) {
-    const clientIndex = await this.getClientIndex(fromAddress)
+    const clientIndex = this.getClientIndex(fromAddress)
     return await this.clients[clientIndex].transactionConsolidateUTXOs(fromPublicKey, toAddress)
   }
 
   async transactionSend(fromAddress: string, tx: string, signature: string) {
-    const clientIndex = await this.getClientIndex(fromAddress)
+    const clientIndex = this.getClientIndex(fromAddress)
     return await this.clients[clientIndex].transactionSend(tx, signature)
   }
 

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export default function djb2(bytes: Buffer) {
+export default function djb2(bytes: Uint8Array) {
   let hash = 5381
   for (let i = 0; i < bytes.length; i++) {
     hash = (hash << 5) + hash + (bytes[i] & 0xff)

@@ -25,7 +25,7 @@ import { CliqueClient } from '../lib'
 import selfCliqueMockData from './fixtures/self-clique.json'
 import balanceMockData from './fixtures/balance.json'
 import transactionMockData from './fixtures/transaction.json'
-import errorMockData from './fixtures/error.json'
+import addressMockData from './fixtures/address.json'
 
 describe('clique', function () {
   it('should verify signature', () => {
@@ -127,46 +127,19 @@ describe('clique', function () {
       await client.init(testCase.numberOfNodes > 1)
 
       if (testCase.numberOfNodes > 0 && testCase.expectedIndexValues) {
-        const mockedGetAddressesAddressGroup = jest.fn()
-        client.addresses.getAddressesAddressGroup = mockedGetAddressesAddressGroup
-        mockedGetAddressesAddressGroup
-          .mockResolvedValueOnce({ data: { group: 0 } })
-          .mockResolvedValueOnce({ data: { group: 1 } })
-          .mockResolvedValueOnce({ data: { group: 2 } })
-          .mockResolvedValueOnce({ data: { group: 3 } })
-
-        let index = await client.getClientIndex('0x0')
+        let index = client.getClientIndex('1DpNeY8uutS1FRW7D565WjUgu5HcKSYAMqZNWgUJWggWZ') // group of address: 0
         expect(index).toBe(testCase.expectedIndexValues[0])
-        index = await client.getClientIndex('0x0')
+        index = client.getClientIndex('12psscGPMgdqctaeCA37HYAkpVBFX1LbN4dSvjyxbDyKk') // group of address: 1
         expect(index).toBe(testCase.expectedIndexValues[1])
-        index = await client.getClientIndex('0x0')
+        index = client.getClientIndex('16TGLiD3fqyuGFRFHffh58BC3okYCbjRH1WHPzeSp39Wi') // group of address: 2
         expect(index).toBe(testCase.expectedIndexValues[2])
-        index = await client.getClientIndex('0x0')
+        index = client.getClientIndex('1G1gjpt4mxij7JwP5SpX6ScwQHisWN3V5WBtFfWKtc3vo') // group of address: 3
         expect(index).toBe(testCase.expectedIndexValues[3])
       } else {
         client.clients = []
-        expect(client.getClientIndex('0x0')).rejects.toEqual(new Error('Unknown error (no nodes in the clique)'))
+        expect(() => client.getClientIndex(addressMockData.hash)).toThrow('No nodes in the clique')
       }
     })
-  })
-
-  it('should throw an error when API returns an error', async () => {
-    const client = new CliqueClient()
-
-    const mockedGetInfosSelfClique = jest.fn()
-    client.infos.getInfosSelfClique = mockedGetInfosSelfClique
-    mockedGetInfosSelfClique.mockResolvedValueOnce(selfCliqueMockData)
-    const mockedGetAddressesAddressGroup = jest.fn()
-    client.addresses.getAddressesAddressGroup = mockedGetAddressesAddressGroup
-    mockedGetAddressesAddressGroup.mockResolvedValue(errorMockData)
-
-    await client.init(false)
-
-    expect(client.getClientIndex('0x0')).rejects.toEqual(new Error(errorMockData.error.detail))
-
-    mockedGetInfosSelfClique.mockResolvedValueOnce(errorMockData)
-
-    expect(client.init(false)).rejects.toEqual(new Error(errorMockData.error.detail))
   })
 
   describe('', () => {
@@ -174,9 +147,6 @@ describe('clique', function () {
     const mockedGetInfosSelfClique = jest.fn()
     client.infos.getInfosSelfClique = mockedGetInfosSelfClique
     mockedGetInfosSelfClique.mockResolvedValue(selfCliqueMockData)
-    const mockedGetAddressesAddressGroup = jest.fn()
-    client.addresses.getAddressesAddressGroup = mockedGetAddressesAddressGroup
-    mockedGetAddressesAddressGroup.mockResolvedValue({ data: { group: 0 } })
 
     beforeAll(() => {
       return client.init(false)
@@ -187,7 +157,7 @@ describe('clique', function () {
       client.clients[0].getBalance = mockedGetBalance
       mockedGetBalance.mockResolvedValue(balanceMockData)
 
-      const balance = await client.getBalance('0x0')
+      const balance = await client.getBalance(addressMockData.hash)
 
       expect(client.clients[0].getBalance).toHaveBeenCalledTimes(1)
       expect(balance).toEqual(balanceMockData)
@@ -199,10 +169,10 @@ describe('clique', function () {
       mockedTransactionCreate.mockResolvedValue({ data: transactionMockData.created })
 
       const transaction = await client.transactionCreate(
-        'fromAddress',
-        'fromKey',
-        'toAdress',
-        'amount',
+        '19XWyoWy6DjrRp7erWqPfBnh7HL1Sb2Ub8SVjux2d71Eb',
+        '03d3400977a9dabf737714ce672dd60e3e74afc7f9d61fa6a6d74f3e2909f7dc00',
+        '1CsutTzw8WVhqr1PB6F1tYinuLihAsAm9FxE7rVkC3Z2u',
+        '100000000000000',
         undefined,
         20000,
         '1000000000'
@@ -217,7 +187,11 @@ describe('clique', function () {
       client.clients[0].transactionSend = mockedTransactionSend
       mockedTransactionSend.mockResolvedValue({ data: transactionMockData.submitted })
 
-      const transaction = await client.transactionSend('fromAddress', 'tx', 'signature')
+      const transaction = await client.transactionSend(
+        '19XWyoWy6DjrRp7erWqPfBnh7HL1Sb2Ub8SVjux2d71Eb',
+        'tx',
+        'signature'
+      )
 
       expect(client.clients[0].transactionSend).toHaveBeenCalledTimes(1)
       expect(transaction).toEqual({ data: transactionMockData.submitted })
