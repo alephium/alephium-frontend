@@ -32,9 +32,9 @@ export abstract class Common {
   readonly codeHash: string
   readonly functions: api.Function[]
 
-  static readonly importRegex = new RegExp('^import "[a-z][a-z_0-9]*.ral"', 'm')
-  static readonly contractRegex = new RegExp('^TxContract [A-Z][a-zA-Z0-9]*\\(', 'm')
-  static readonly scriptRegex = new RegExp('^TxScript [A-Z][a-zA-Z0-9]* \\{', 'm')
+  static readonly importRegex = new RegExp('^import "[a-z][a-z_0-9]*.ral"', 'mg')
+  static readonly contractRegex = new RegExp('^TxContract [A-Z][a-zA-Z0-9]*\\(', 'mg')
+  static readonly scriptRegex = new RegExp('^TxScript [A-Z][a-zA-Z0-9]* \\{', 'mg')
   static readonly variableRegex = new RegExp('\\{\\{\\s+[a-z][a-zA-Z0-9]*\\s+\\}\\}', 'g')
 
   constructor(
@@ -171,7 +171,7 @@ export class Contract extends Common {
   }
 
   static checkCodeType(fileName: string, contractStr: string): void {
-    const contractMatches = Contract.contractRegex.exec(contractStr)
+    const contractMatches = contractStr.match(Contract.contractRegex)
     if (contractMatches === null) {
       throw new Error(`No contract found in: ${fileName}`)
     } else if (contractMatches!.length > 1) {
@@ -425,7 +425,7 @@ export class Script extends Common {
   }
 
   static checkCodeType(fileName: string, contractStr: string): void {
-    const scriptMatches = this.scriptRegex.exec(contractStr)
+    const scriptMatches = contractStr.match(this.scriptRegex)
     if (scriptMatches === null) {
       throw new Error(`No script found in: ${fileName}`)
     } else if (scriptMatches.length > 1) {
