@@ -55,7 +55,9 @@ function launchDevnet(devDir, jarFile) {
       console.log(`Clearing the running devnet: ${pid}`)
       process.kill(pid)
     }
-  } catch (_) {}
+  } catch (e) {
+    console.log(`Error in clearing the running devnet: ${e}`)
+  }
   fs.rmSync(devDir + path.sep + 'logs', { recursive: true, force: true })
   fs.rmSync(devDir + path.sep + 'network-4', { recursive: true, force: true })
 

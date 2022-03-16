@@ -24,7 +24,9 @@ const pidFile = process.cwd() + path.sep + 'dev' + path.sep + 'alephium.pid'
 try {
   const pid = parseInt(fs.readFileSync(pidFile).toString())
   if (pid) {
-    console.log(`Killing the running devnet: ${pid}`)
+    console.log(`Stopping the running devnet: ${pid}`)
     process.kill(pid)
   }
-} catch (_) {}
+} catch (e) {
+  console.log(`Error in stopping the running devnet: ${e}`)
+}
