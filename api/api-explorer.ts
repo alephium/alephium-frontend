@@ -22,6 +22,36 @@ export interface BadRequest {
   detail: string
 }
 
+export interface BlockEntryLite {
+  hash: string
+
+  /** @format int64 */
+  timestamp: number
+  chainFrom: number
+  chainTo: number
+  height: number
+  txNumber: number
+  mainChain: boolean
+
+  /** @format bigint */
+  hashRate: string
+}
+
+export interface ConfirmedTransaction {
+  hash: string
+  blockHash: string
+
+  /** @format int64 */
+  timestamp: number
+  inputs?: Input[]
+  outputs?: Output[]
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
+  type: string
+}
+
 export interface ExplorerInfo {
   releaseVersion: string
   commit: string
@@ -34,7 +64,7 @@ export interface Hashrate {
 }
 
 export interface Input {
-  outputRef: Ref
+  outputRef: OutputRef
   unlockScript?: string
   txHashRef: string
   address: string
@@ -49,22 +79,7 @@ export interface InternalServerError {
 
 export interface ListBlocks {
   total: number
-  blocks?: Lite[]
-}
-
-export interface Lite {
-  hash: string
-
-  /** @format int64 */
-  timestamp: number
-  chainFrom: number
-  chainTo: number
-  height: number
-  txNumber: number
-  mainChain: boolean
-
-  /** @format bigint */
-  hashRate: string
+  blocks?: BlockEntryLite[]
 }
 
 export interface NotFound {
@@ -85,15 +100,15 @@ export interface Output {
   spent?: string
 }
 
+export interface OutputRef {
+  hint: number
+  key: string
+}
+
 export interface PerChainValue {
   chainFrom: number
   chainTo: number
   value: number
-}
-
-export interface Ref {
-  hint: number
-  key: string
 }
 
 export interface ServiceUnavailable {
@@ -128,10 +143,10 @@ export interface Transaction {
   gasPrice: string
 }
 
-export type TransactionLike = Transaction | UnconfirmedTx
+export type TransactionLike = ConfirmedTransaction | UnconfirmedTransaction
 
 export interface UInput {
-  outputRef: Ref
+  outputRef: OutputRef
   unlockScript?: string
 }
 
@@ -148,7 +163,7 @@ export interface Unauthorized {
   detail: string
 }
 
-export interface UnconfirmedTx {
+export interface UnconfirmedTransaction {
   hash: string
   chainFrom: number
   chainTo: number
@@ -158,6 +173,7 @@ export interface UnconfirmedTx {
 
   /** @format uint256 */
   gasPrice: string
+  type: string
 }
 
 import fetch from 'cross-fetch'
@@ -400,7 +416,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/blocks/{block-hash}
      */
     getBlocksBlockHash: (blockHash: string, params: RequestParams = {}) =>
-      this.request<Lite, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<BlockEntryLite, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blocks/${blockHash}`,
         method: 'GET',
         format: 'json',
@@ -556,14 +572,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   }
   charts = {
     /**
-     * @description `interval` query param: 0 = 10 minutes, 1 = hourly, 2 = daily
+     * @description `interval-type` query param: hourly, daily
      *
      * @tags Charts
      * @name GetChartsHashrates
      * @summary Get explorer informations.
      * @request GET:/charts/hashrates
      */
-    getChartsHashrates: (query: { fromTs: number; toTs: number; interval: number }, params: RequestParams = {}) =>
+    getChartsHashrates: (
+      query: { fromTs: number; toTs: number; 'interval-type': string },
+      params: RequestParams = {}
+    ) =>
       this.request<Hashrate[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/charts/hashrates`,
         method: 'GET',

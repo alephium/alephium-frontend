@@ -43,18 +43,15 @@ export interface Addresses {
   addresses: AddressInfo[]
 }
 
-export interface Array {
-  value: Val[]
-  type: string
-}
-
-export interface Asset {
+export interface AssetInput {
   outputRef: OutputRef
   unlockScript: string
-  type: string
 }
 
-export interface Asset1 {
+export interface AssetOutput {
+  hint: number
+  key: string
+
   /** @format uint256 */
   alphAmount: string
   address: string
@@ -66,7 +63,7 @@ export interface Asset1 {
   type: string
 }
 
-export interface Asset2 {
+export interface AssetState {
   /** @format uint256 */
   alphAmount: string
   tokens: Token[]
@@ -121,7 +118,7 @@ export interface BlockEntry {
   chainTo: number
   height: number
   deps: string[]
-  transactions: Tx[]
+  transactions: Transaction[]
   nonce: string
   version: number
   depStateHash: string
@@ -195,6 +192,10 @@ export interface BuildMultisig {
 export interface BuildMultisigAddress {
   keys: string[]
   mrequired: number
+}
+
+export interface BuildMultisigAddressResult {
+  address: string
 }
 
 export interface BuildScriptTx {
@@ -274,9 +275,9 @@ export interface ChangeActiveAddress {
 export interface CompileResult {
   bytecode: string
   codeHash: string
-  fields: Fields
-  functions: Function[]
-  events: Event[]
+  fields: FieldsSig
+  functions: FunctionSig[]
+  events: EventSig[]
 }
 
 export interface Confirmed {
@@ -289,11 +290,13 @@ export interface Confirmed {
 }
 
 export interface Contract {
-  outputRef: OutputRef
-  type: string
+  code: string
 }
 
-export interface Contract1 {
+export interface ContractOutput {
+  hint: number
+  key: string
+
   /** @format uint256 */
   alphAmount: string
   address: string
@@ -301,16 +304,12 @@ export interface Contract1 {
   type: string
 }
 
-export interface Contract2 {
-  code: string
-}
-
 export interface ContractState {
   address: string
   bytecode: string
   codeHash: string
   fields: Val[]
-  asset: Asset2
+  asset: AssetState
 }
 
 export interface DecodeTransaction {
@@ -331,12 +330,6 @@ export interface Destination {
 export type DiscoveryAction = Reachable | Unreachable
 
 export interface Event {
-  name: string
-  signature: string
-  fieldTypes: string[]
-}
-
-export interface Event1 {
   blockHash: string
   contractAddress: string
   txId: string
@@ -344,22 +337,42 @@ export interface Event1 {
   fields: Val[]
 }
 
+export interface EventSig {
+  name: string
+  signature: string
+  fieldTypes: string[]
+}
+
 export interface Events {
   chainFrom: number
   chainTo: number
-  events: Event1[]
+  events: Event[]
 }
 
 export interface FetchResponse {
   blocks: BlockEntry[][]
 }
 
-export interface Fields {
+export interface FieldsSig {
   signature: string
   types: string[]
 }
 
-export interface Function {
+export interface FixedAssetOutput {
+  hint: number
+  key: string
+
+  /** @format uint256 */
+  alphAmount: string
+  address: string
+  tokens: Token[]
+
+  /** @format int64 */
+  lockTime: number
+  additionalData: string
+}
+
+export interface FunctionSig {
   name: string
   signature: string
   argTypes: string[]
@@ -379,11 +392,9 @@ export interface I256 {
   type: string
 }
 
-export type Input = Asset | Contract
-
 export interface InputAsset {
   address: string
-  asset: Asset2
+  asset: AssetState
 }
 
 export interface InterCliquePeerInfo {
@@ -425,11 +436,7 @@ export interface NotFound {
   resource: string
 }
 
-export interface NotFound1 {
-  type: string
-}
-
-export type Output = Asset1 | Contract1
+export type Output = AssetOutput | ContractOutput
 
 export interface OutputRef {
   hint: number
@@ -466,39 +473,12 @@ export interface ReleaseVersion {
   patch: number
 }
 
-export interface Result {
-  walletName: string
-  mnemonic: string
-}
-
-export interface Result1 {
-  walletName: string
-}
-
-export interface Result2 {
-  mnemonic: string
-}
-
-export interface Result3 {
-  txId: string
-  fromGroup: number
-  toGroup: number
-}
-
-export interface Result4 {
-  signature: string
-}
-
-export interface Result5 {
-  address: string
-}
-
-export interface Results {
-  results: Result3[]
-}
-
 export interface RevealMnemonic {
   password: string
+}
+
+export interface RevealMnemonicResult {
+  mnemonic: string
 }
 
 export interface Script {
@@ -522,6 +502,10 @@ export interface ServiceUnavailable {
 
 export interface Sign {
   data: string
+}
+
+export interface SignResult {
+  signature: string
 }
 
 export interface SubmitMultisig {
@@ -560,7 +544,7 @@ export interface TestContract {
   address?: string
   bytecode: string
   initialFields: Val[]
-  initialAsset?: Asset2
+  initialAsset?: AssetState
   testMethodIndex?: number
   testArgs: Val[]
   existingContracts?: ContractState[]
@@ -572,7 +556,7 @@ export interface TestContractResult {
   gasUsed: number
   contracts: ContractState[]
   txOutputs: Output[]
-  events: Event1[]
+  events: Event[]
 }
 
 export interface Token {
@@ -580,6 +564,21 @@ export interface Token {
 
   /** @format uint256 */
   amount: string
+}
+
+export interface Transaction {
+  unsigned: UnsignedTx
+  scriptExecutionOk: boolean
+  contractInputs: OutputRef[]
+  generatedOutputs: Output[]
+  inputSignatures: string[]
+  scriptSignatures: string[]
+}
+
+export interface TransactionTemplate {
+  unsigned: UnsignedTx
+  inputSignatures: string[]
+  scriptSignatures: string[]
 }
 
 export interface Transfer {
@@ -591,14 +590,18 @@ export interface Transfer {
   utxosLimit?: number
 }
 
-export interface Tx {
-  id: string
-  inputs: Input[]
-  outputs: Output[]
-  gasAmount: number
+export interface TransferResult {
+  txId: string
+  fromGroup: number
+  toGroup: number
+}
 
-  /** @format uint256 */
-  gasPrice: string
+export interface TransferResults {
+  results: TransferResult[]
+}
+
+export interface TxNotFound {
+  type: string
 }
 
 export interface TxResult {
@@ -607,7 +610,7 @@ export interface TxResult {
   toGroup: number
 }
 
-export type TxStatus = Confirmed | MemPooled | NotFound1
+export type TxStatus = Confirmed | MemPooled | TxNotFound
 
 export interface U256 {
   /** @format uint256 */
@@ -644,7 +647,7 @@ export interface Unban {
 export interface UnconfirmedTransactions {
   fromGroup: number
   toGroup: number
-  unconfirmedTransactions: Tx[]
+  unconfirmedTransactions: TransactionTemplate[]
 }
 
 export interface Unreachable {
@@ -652,7 +655,25 @@ export interface Unreachable {
   type: string
 }
 
-export type Val = Address | Array | Bool | ByteVec | I256 | U256
+export interface UnsignedTx {
+  txId: string
+  version: number
+  networkId: number
+  scriptOpt?: string
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
+  inputs: AssetInput[]
+  fixedOutputs: FixedAssetOutput[]
+}
+
+export type Val = Address | Bool | ByteVec | I256 | U256 | ValArray
+
+export interface ValArray {
+  value: Val[]
+  type: string
+}
 
 export interface VerifySignature {
   data: string
@@ -668,6 +689,11 @@ export interface WalletCreation {
   mnemonicSize?: number
 }
 
+export interface WalletCreationResult {
+  walletName: string
+  mnemonic: string
+}
+
 export interface WalletDeletion {
   password: string
 }
@@ -678,6 +704,10 @@ export interface WalletRestore {
   walletName: string
   isMiner?: boolean
   mnemonicPassphrase?: string
+}
+
+export interface WalletRestoreResult {
+  walletName: string
 }
 
 export interface WalletStatus {
@@ -932,7 +962,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/wallets
      */
     putWallets: (data: WalletRestore, params: RequestParams = {}) =>
-      this.request<Result1, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<
+        WalletRestoreResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
         path: `/wallets`,
         method: 'PUT',
         body: data,
@@ -950,7 +983,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/wallets
      */
     postWallets: (data: WalletCreation, params: RequestParams = {}) =>
-      this.request<Result, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<
+        WalletCreationResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
         path: `/wallets`,
         method: 'POST',
         body: data,
@@ -1050,7 +1086,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/wallets/{wallet_name}/reveal-mnemonic
      */
     postWalletsWalletNameRevealMnemonic: (walletName: string, data: RevealMnemonic, params: RequestParams = {}) =>
-      this.request<Result2, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<
+        RevealMnemonicResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
         path: `/wallets/${walletName}/reveal-mnemonic`,
         method: 'POST',
         body: data,
@@ -1068,7 +1107,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/wallets/{wallet_name}/transfer
      */
     postWalletsWalletNameTransfer: (walletName: string, data: Transfer, params: RequestParams = {}) =>
-      this.request<Result3, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<TransferResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/wallets/${walletName}/transfer`,
         method: 'POST',
         body: data,
@@ -1086,7 +1125,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/wallets/{wallet_name}/sweep-active-address
      */
     postWalletsWalletNameSweepActiveAddress: (walletName: string, data: Sweep, params: RequestParams = {}) =>
-      this.request<Results, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<TransferResults, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/wallets/${walletName}/sweep-active-address`,
         method: 'POST',
         body: data,
@@ -1104,7 +1143,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/wallets/{wallet_name}/sweep-all-addresses
      */
     postWalletsWalletNameSweepAllAddresses: (walletName: string, data: Sweep, params: RequestParams = {}) =>
-      this.request<Results, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<TransferResults, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/wallets/${walletName}/sweep-all-addresses`,
         method: 'POST',
         body: data,
@@ -1122,7 +1161,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/wallets/{wallet_name}/sign
      */
     postWalletsWalletNameSign: (walletName: string, data: Sign, params: RequestParams = {}) =>
-      this.request<Result4, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<SignResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/wallets/${walletName}/sign`,
         method: 'POST',
         body: data,
@@ -1644,13 +1683,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Transactions
-     * @name PostTransactionsDecode
+     * @name PostTransactionsDecodeUnsignedTx
      * @summary Decode an unsigned transaction
-     * @request POST:/transactions/decode
+     * @request POST:/transactions/decode-unsigned-tx
      */
-    postTransactionsDecode: (data: DecodeTransaction, params: RequestParams = {}) =>
-      this.request<Tx, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/transactions/decode`,
+    postTransactionsDecodeUnsignedTx: (data: DecodeTransaction, params: RequestParams = {}) =>
+      this.request<UnsignedTx, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/transactions/decode-unsigned-tx`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -1726,7 +1765,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Compile a smart contract
      * @request POST:/contracts/compile-contract
      */
-    postContractsCompileContract: (data: Contract2, params: RequestParams = {}) =>
+    postContractsCompileContract: (data: Contract, params: RequestParams = {}) =>
       this.request<CompileResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/contracts/compile-contract`,
         method: 'POST',
@@ -1804,7 +1843,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/multisig/address
      */
     postMultisigAddress: (data: BuildMultisigAddress, params: RequestParams = {}) =>
-      this.request<Result5, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<
+        BuildMultisigAddressResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
         path: `/multisig/address`,
         method: 'POST',
         body: data,

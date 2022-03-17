@@ -30,7 +30,7 @@ export abstract class Common {
   readonly sourceCodeSha256: string
   readonly bytecode: string
   readonly codeHash: string
-  readonly functions: api.Function[]
+  readonly functions: api.FunctionSig[]
 
   static readonly importRegex = new RegExp('^import "[a-z][a-z_0-9]*.ral"', 'mg')
   static readonly contractRegex = new RegExp('^TxContract [A-Z][a-zA-Z0-9]*\\(', 'mg')
@@ -42,7 +42,7 @@ export abstract class Common {
     sourceCodeSha256: string,
     bytecode: string,
     codeHash: string,
-    functions: api.Function[]
+    functions: api.FunctionSig[]
   ) {
     this.fileName = fileName
     this.sourceCodeSha256 = sourceCodeSha256
@@ -148,8 +148,8 @@ export abstract class Common {
 }
 
 export class Contract extends Common {
-  readonly fields: api.Fields
-  readonly events: api.Event[]
+  readonly fields: api.FieldsSig
+  readonly events: api.EventSig[]
 
   // cache address for contracts
   private _contractAddresses: Map<string, string>
@@ -159,9 +159,9 @@ export class Contract extends Common {
     sourceCodeSha256: string,
     bytecode: string,
     codeHash: string,
-    fields: api.Fields,
-    functions: api.Function[],
-    events: api.Event[]
+    fields: api.FieldsSig,
+    functions: api.FunctionSig[],
+    events: api.EventSig[]
   ) {
     super(fileName, sourceCodeSha256, bytecode, codeHash, functions)
     this.fields = fields
@@ -376,7 +376,7 @@ export class Contract extends Common {
     }
   }
 
-  static async fromApiEvent(event: api.Event1, fileName: string): Promise<Event> {
+  static async fromApiEvent(event: api.Event, fileName: string): Promise<Event> {
     const contract = await Contract.loadContract(fileName)
     const eventDef = await contract.events[event.eventIndex]
     return {
@@ -419,7 +419,7 @@ export class Script extends Common {
     sourceCodeSha256: string,
     bytecode: string,
     codeHash: string,
-    functions: api.Function[]
+    functions: api.FunctionSig[]
   ) {
     super(fileName, sourceCodeSha256, bytecode, codeHash, functions)
   }
@@ -692,14 +692,14 @@ function fromApiToken(token: api.Token): Token {
   return { id: token.id, amount: decodeNumber256(token.amount) }
 }
 
-function toApiAsset(asset: Asset): api.Asset2 {
+function toApiAsset(asset: Asset): api.AssetState {
   return {
     alphAmount: extractNumber256(asset.alphAmount),
     tokens: asset.tokens ? asset.tokens.map(toApiToken) : []
   }
 }
 
-function fromApiAsset(asset: api.Asset2): Asset {
+function fromApiAsset(asset: api.AssetState): Asset {
   return {
     alphAmount: decodeNumber256(asset.alphAmount),
     tokens: asset.tokens ? asset.tokens.map(fromApiToken) : undefined
@@ -788,8 +788,8 @@ export interface ContractOutput {
 }
 
 function fromApiOutput(output: api.Output): Output {
-  if (output.type === 'Asset') {
-    const asset = output as api.Asset1
+  if (output.type === 'AssetOutput') {
+    const asset = output as api.AssetOutput
     return {
       type: 'AssetOutput',
       address: asset.address,
@@ -798,8 +798,8 @@ function fromApiOutput(output: api.Output): Output {
       lockTime: asset.lockTime,
       additionalData: asset.additionalData
     }
-  } else if (output.type === 'Contract') {
-    const asset = output as api.Contract1
+  } else if (output.type === 'ContractOutput') {
+    const asset = output as api.ContractOutput
     return {
       type: 'ContractOutput',
       address: asset.address,
