@@ -556,14 +556,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   }
   charts = {
     /**
-     * @description `interval` query param: 0 = 10 minutes, 1 = hourly, 2 = daily
+     * @description `interval-type` query param: hourly, daily
      *
      * @tags Charts
      * @name GetChartsHashrates
      * @summary Get explorer informations.
      * @request GET:/charts/hashrates
      */
-    getChartsHashrates: (query: { fromTs: number; toTs: number; interval: number }, params: RequestParams = {}) =>
+    getChartsHashrates: (
+      query: { fromTs: number; toTs: number; 'interval-type': string },
+      params: RequestParams = {}
+    ) =>
       this.request<Hashrate[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/charts/hashrates`,
         method: 'GET',
