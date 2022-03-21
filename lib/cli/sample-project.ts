@@ -21,6 +21,7 @@ import fsExtra from 'fs-extra'
 import process from 'process'
 import path from 'path'
 import findup from 'find-up'
+import chalk from 'chalk'
 
 export function getPackageRoot(): string {
   const packageJsonPath = findup.sync('package.json', { cwd: path.dirname(__filename) })
@@ -37,13 +38,24 @@ const projectParent = process.cwd()
 
 const projectName = process.argv[2]
 if (!projectName) {
-  throw new Error('Please provide a project name')
+  console.log('Please provide a project name')
+  console.log(`  ${chalk.cyan('alephium')} ${chalk.green('<project-name>')}`)
+  console.log()
+  console.log('For example:')
+  console.log(`  ${chalk.cyan('alephium')} ${chalk.green('my-alephium-dapp')}`)
+  console.log()
+  process.exit(1)
 }
 const projectRoot = path.join(projectParent, projectName)
 if (fsExtra.existsSync(projectRoot)) {
-  throw new Error(`Project ${projectName} exists already.`)
+  console.log(`Project ${projectName} already exists. Try a different name.`)
+  console.log()
+  process.exit(1)
 }
-console.log(`Start to copy files from ${packageRoot} to ${projectRoot}`)
+console.log('Copying files')
+console.log(`  from ${packageRoot}`)
+console.log(`  to ${projectRoot}`)
+console.log('...')
 
 function copy(dir: string, files: string[]) {
   const packageDevDir = path.join(packageRoot, dir)
@@ -65,4 +77,10 @@ fsExtra.copySync(path.join(packageRoot, 'templates', 'tsconfig.json'), path.join
 fsExtra.copySync(path.join(packageRoot, 'templates', 'README.md'), path.join(projectRoot, 'README.md'))
 fsExtra.copySync(path.join(packageRoot, 'templates', 'greeter.ts'), path.join(projectRoot, 'src', 'greeter.ts'))
 
-console.log('Project is initialized')
+console.log('✅ Done.')
+console.log()
+console.log('✨ Project is initialized!')
+console.log()
+console.log('Next steps:')
+console.log(`  ${chalk.cyan(`cd ${projectName}`)}`)
+console.log(`  ${chalk.cyan('npm install')}`)
