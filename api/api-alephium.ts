@@ -9,11 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-export interface Address {
-  value: string
-  type: string
-}
-
 export interface AddressBalance {
   address: string
 
@@ -137,11 +132,6 @@ export interface BlockHeaderEntry {
   deps: string[]
 }
 
-export interface Bool {
-  value: boolean
-  type: string
-}
-
 export interface BrokerInfo {
   cliqueId: string
   brokerId: number
@@ -259,13 +249,15 @@ export interface BuildTransactionResult {
   toGroup: number
 }
 
-export interface ByteVec {
-  value: string
-  type: string
-}
-
 export interface ChainInfo {
   currentHeight: number
+}
+
+export interface ChainParams {
+  networkId: number
+  numZerosAtLeastInHash: number
+  groupNumPerBroker: number
+  groups: number
 }
 
 export interface ChangeActiveAddress {
@@ -387,11 +379,6 @@ export interface HashesAtHeight {
   headers: string[]
 }
 
-export interface I256 {
-  value: string
-  type: string
-}
-
 export interface InputAsset {
   address: string
   asset: AssetState
@@ -425,10 +412,13 @@ export interface MinerAddressesInfo {
 export type MisbehaviorAction = Ban | Unban
 
 export interface NodeInfo {
-  version: ReleaseVersion
   buildInfo: BuildInfo
   upnp: boolean
   externalAddress?: string
+}
+
+export interface NodeVersion {
+  version: ReleaseVersion
 }
 
 export interface NotFound {
@@ -487,13 +477,9 @@ export interface Script {
 
 export interface SelfClique {
   cliqueId: string
-  networkId: number
-  numZerosAtLeastInHash: number
   nodes: PeerAddress[]
   selfReady: boolean
   synced: boolean
-  groupNumPerBroker: number
-  groups: number
 }
 
 export interface ServiceUnavailable {
@@ -612,12 +598,6 @@ export interface TxResult {
 
 export type TxStatus = Confirmed | MemPooled | TxNotFound
 
-export interface U256 {
-  /** @format uint256 */
-  value: string
-  type: string
-}
-
 export interface UTXO {
   ref: OutputRef
 
@@ -668,10 +648,36 @@ export interface UnsignedTx {
   fixedOutputs: FixedAssetOutput[]
 }
 
-export type Val = Address | Bool | ByteVec | I256 | U256 | ValArray
+export type Val = ValAddress | ValArray | ValBool | ValByteVec | ValI256 | ValU256
+
+export interface ValAddress {
+  value: string
+  type: string
+}
 
 export interface ValArray {
   value: Val[]
+  type: string
+}
+
+export interface ValBool {
+  value: boolean
+  type: string
+}
+
+export interface ValByteVec {
+  value: string
+  type: string
+}
+
+export interface ValI256 {
+  value: string
+  type: string
+}
+
+export interface ValU256 {
+  /** @format uint256 */
+  value: string
   type: string
 }
 
@@ -1291,6 +1297,38 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     getInfosNode: (params: RequestParams = {}) =>
       this.request<NodeInfo, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/node`,
+        method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Infos
+     * @name GetInfosVersion
+     * @summary Get version about that node
+     * @request GET:/infos/version
+     */
+    getInfosVersion: (params: RequestParams = {}) =>
+      this.request<NodeVersion, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/version`,
+        method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Infos
+     * @name GetInfosChainParams
+     * @summary Get key params about your blockchain
+     * @request GET:/infos/chain-params
+     */
+    getInfosChainParams: (params: RequestParams = {}) =>
+      this.request<ChainParams, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/chain-params`,
         method: 'GET',
         format: 'json',
         ...params
