@@ -125,12 +125,12 @@ async function wait() {
   }
 }
 
-const tag = process.argv[2]
-console.log(`Full node version: ${tag}`)
-const devDir = path.resolve(process.cwd() + path.sep + 'dev')
-const jarFile = `${devDir}${path.sep}alephium-${tag}.jar`
-
 async function main() {
+  const tag = process.argv[2]
+  console.log(`Full node version: ${tag}`)
+  const devDir = path.resolve(process.cwd() + path.sep + 'dev')
+  const jarFile = `${devDir}${path.sep}alephium-${tag}.jar`
+
   console.log(`Dev folder: ${devDir}`)
   await downloadFullNode(tag, devDir, jarFile)
   launchDevnet(devDir, jarFile)
