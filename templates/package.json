@@ -7,7 +7,7 @@
     "dist/*"
   ],
   "config": {
-    "alephium_version": "1.3.0-rc6"
+    "alephium_version": "1.3.0-rc7"
   },
   "scripts": {
     "compile": "rm -rf dist && npx tsc --build .",
@@ -23,7 +23,7 @@
     "devnet:stop": "node scripts/stop-devnet.js"
   },
   "dependencies": {
-    "alephium-js": "^1.3.0"
+    "alephium-js": "~1.3.0"
   },
   "devDependencies": {},
   "engines": {
