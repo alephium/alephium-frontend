@@ -27,7 +27,7 @@ async function _downloadFullNode(tag, fileName) {
   const res0 = await fetch(url)
   const fileUrl = res0.url
   const res1 = await fetch(fileUrl)
-  await new Promise((resolve, reject) => {
+  await new Promise((resolve) => {
     console.log(`Downloading jar file to: ${fileName}`)
     const file = fs.createWriteStream(fileName)
     res1.body.pipe(file)
@@ -115,7 +115,7 @@ async function wait() {
     } else {
       console.log('Devnet is ready')
       await timeout(1000)
-      new Promise((resolve, reject) => {
+      new Promise((resolve) => {
         resolve()
       })
     }
@@ -125,12 +125,12 @@ async function wait() {
   }
 }
 
-const tag = process.argv[2]
-console.log(`Full node version: ${tag}`)
-const devDir = path.resolve(process.cwd() + path.sep + 'dev')
-const jarFile = `${devDir}${path.sep}alephium-${tag}.jar`
-
 async function main() {
+  const tag = process.argv[2]
+  console.log(`Full node version: ${tag}`)
+  const devDir = path.resolve(process.cwd() + path.sep + 'dev')
+  const jarFile = `${devDir}${path.sep}alephium-${tag}.jar`
+
   console.log(`Dev folder: ${devDir}`)
   await downloadFullNode(tag, devDir, jarFile)
   launchDevnet(devDir, jarFile)

@@ -53,7 +53,7 @@
     "prepublishOnly": "npm run compile",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "devnet:start": "node scripts/start-devnet.js ${npm_package_config_alephium_version}",
-    "devnet:restart": "npm run start-devnet",
+    "devnet:restart": "npm run devnet:start",
     "devnet:stop": "node scripts/stop-devnet.js"
   },
   "bin": {
