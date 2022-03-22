@@ -37,7 +37,7 @@ export class NodeClient extends Api<null> {
   ) {
     return await this.transactions.postTransactionsBuild({
       fromPublicKey,
-      destinations: [{ address: toAddress, amount, lockTime }],
+      destinations: [{ address: toAddress, alphAmount: amount, lockTime }],
       gas,
       gasPrice
     })
