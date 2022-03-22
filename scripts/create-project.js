@@ -17,13 +17,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import fsExtra from 'fs-extra'
-import process from 'process'
-import path from 'path'
-import findup from 'find-up'
-import chalk from 'chalk'
+const fsExtra = require('fs-extra')
+const process = require('process')
+const path = require('path')
+const findup = require('find-up')
+const chalk = require('chalk')
 
-export function getPackageRoot(): string {
+function getPackageRoot() {
   const packageJsonPath = findup.sync('package.json', { cwd: path.dirname(__filename) })
 
   if (packageJsonPath) {
@@ -57,7 +57,7 @@ console.log(`  from ${packageRoot}`)
 console.log(`  to ${projectRoot}`)
 console.log('...')
 
-function copy(dir: string, files: string[]) {
+function copy(dir, files) {
   const packageDevDir = path.join(packageRoot, dir)
   const projectDevDir = path.join(projectRoot, dir)
   fsExtra.mkdirSync(projectDevDir)
@@ -84,3 +84,6 @@ console.log()
 console.log('Next steps:')
 console.log(`  ${chalk.cyan(`cd ${projectName}`)}`)
 console.log(`  ${chalk.cyan('npm install')}`)
+console.log(`  ${chalk.cyan('npm run compile')}`)
+console.log(`  ${chalk.cyan('npm run devnet:start')}`)
+console.log(`  ${chalk.cyan('node dist/greeter.js')}`)
