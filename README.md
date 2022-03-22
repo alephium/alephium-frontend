@@ -1,2 +1,3 @@
-# mobile-wallet
-The official Alephium mobile wallet
+# Alephium mobile wallet
+
+The official Alephium mobile wallet.
