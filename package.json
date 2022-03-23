@@ -37,7 +37,7 @@
   ],
   "config": {
     "alephium_version": "1.3.0-rc7",
-    "explorer_backend_version": "1.6.0-rc2"
+    "explorer_backend_version": "1.6.0-rc3"
   },
   "scripts": {
     "compile": "rm -rf dist && npx tsc --build .",

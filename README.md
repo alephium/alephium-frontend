@@ -31,6 +31,16 @@ Typings can automatically generated using the following command:
 npm run update-schemas
 ```
 
+### Release
+
+To release a new version:
+
+```
+npm version X.Y.Z
+git push X.Y.Z
+git push vX.Y.Z
+```
+
 ## Compile
 
 Compile the TypeScript files into JavaScript:
