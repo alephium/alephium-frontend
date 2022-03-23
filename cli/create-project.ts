@@ -23,7 +23,7 @@ import path from 'path'
 import findup from 'find-up'
 import chalk from 'chalk'
 
-export function getPackageRoot(): string {
+function getPackageRoot(): string {
   const packageJsonPath = findup.sync('package.json', { cwd: path.dirname(__filename) })
 
   if (packageJsonPath) {
@@ -84,3 +84,6 @@ console.log()
 console.log('Next steps:')
 console.log(`  ${chalk.cyan(`cd ${projectName}`)}`)
 console.log(`  ${chalk.cyan('npm install')}`)
+console.log(`  ${chalk.cyan('npm run compile')}`)
+console.log(`  ${chalk.cyan('npm run devnet:start')}`)
+console.log(`  ${chalk.cyan('node dist/greeter.js')}`)
