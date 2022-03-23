@@ -2,7 +2,7 @@
   "name": "my-dapp-template",
   "version": "0.0.0",
   "license": "GPL",
-  "type": "module",
+  "type": "commonjs",
   "files": [
     "dist/*"
   ],
