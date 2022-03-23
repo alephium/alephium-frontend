@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-const fs = require('fs')
-const process = require('process')
-const path = require('path')
+import fs from 'fs'
+import process from 'process'
+import path from 'path'
 
 const pidFile = process.cwd() + path.sep + 'dev' + path.sep + 'alephium.pid'
 try {
