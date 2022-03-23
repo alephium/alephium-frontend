@@ -402,11 +402,16 @@ export class Contract extends Common {
     }
   }
 
-  async transactionForDeployment(signer: Signer, initialFields?: Val[]): Promise<DeployContractTransaction> {
+  async transactionForDeployment(
+    signer: Signer,
+    initialFields?: Val[],
+    issueTokenAmount?: string
+  ): Promise<DeployContractTransaction> {
     const params: api.BuildContractDeployScriptTx = {
       fromPublicKey: await signer.getPublicKey(),
       bytecode: this.bytecode,
-      initialFields: this.toApiFields(initialFields)
+      initialFields: this.toApiFields(initialFields),
+      issueTokenAmount: issueTokenAmount
     }
     const response = await signer.client.contracts.postContractsUnsignedTxBuildContract(params)
     return fromApiDeployContractUnsignedTx(CliqueClient.convert(response))
