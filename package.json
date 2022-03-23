@@ -57,7 +57,7 @@
     "devnet:stop": "node scripts/stop-devnet.js"
   },
   "bin": {
-    "alephium": "scripts/create-project.js"
+    "alephium": "dist/cli/create-project.js"
   },
   "dependencies": {
     "base-x": "^4.0.0",

@@ -17,13 +17,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-const fsExtra = require('fs-extra')
-const process = require('process')
-const path = require('path')
-const findup = require('find-up')
-const chalk = require('chalk')
+import fsExtra from 'fs-extra'
+import process from 'process'
+import path from 'path'
+import findup from 'find-up'
+import chalk from 'chalk'
 
-function getPackageRoot() {
+function getPackageRoot(): string {
   const packageJsonPath = findup.sync('package.json', { cwd: path.dirname(__filename) })
 
   if (packageJsonPath) {
@@ -57,7 +57,7 @@ console.log(`  from ${packageRoot}`)
 console.log(`  to ${projectRoot}`)
 console.log('...')
 
-function copy(dir, files) {
+function copy(dir: string, files: string[]) {
   const packageDevDir = path.join(packageRoot, dir)
   const projectDevDir = path.join(projectRoot, dir)
   fsExtra.mkdirSync(projectDevDir)
