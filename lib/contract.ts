@@ -282,7 +282,7 @@ export class Contract extends Common {
     this._contractAddresses.clear()
     const apiParams: api.TestContract = this.toTestContract(funcName, params)
     const response = await client.contracts.postContractsTestContract(apiParams)
-    const methodIndex = params.testMethodIndex ? params.testMethodIndex : 0
+    const methodIndex = params.testMethodIndex ? params.testMethodIndex : this.getMethodIndex(funcName)
     const result = await this.fromTestContractResult(methodIndex, response.data)
     this._contractAddresses.clear()
     return result
