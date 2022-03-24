@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm ci
+      - run: npm run devnet:start
       - run: npm test
       - name: Upload test coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
