@@ -3,3 +3,7 @@ dist/
 .vscode
 .DS_Store
 coverage/
+dev/logs
+dev/network*
+dev/alephium*
+artifacts/

@@ -1,0 +1,5 @@
+TxContract Greeter(btcPrice: U256) {
+    pub fn greet() -> U256 {
+        return btcPrice
+    }
+}

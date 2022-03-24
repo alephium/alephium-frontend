@@ -1,0 +1,8 @@
+import "add.ral"
+
+TxScript Main {
+    pub payable fn main() -> () {
+        let add = Add(#{{ addAddress }})
+        add.add(#{{ subAddress }}, [2, 1])
+    }
+}

@@ -16,22 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from './clique'
-export * from './node'
-export * from './utils'
-export * from './wallet'
-export * from './explorer'
-export * from './address'
-export * from './signer'
-export * from './contract'
-export {
-  formatAmountForDisplay,
-  calAmountDelta,
-  convertAlphToSet,
-  addApostrophes,
-  convertSetToAlph,
-  BILLION
-} from './numbers'
-export * from './constants'
-export * as node from '../api/api-alephium'
-export * as explorer from '../api/api-explorer'
+const fs = require('fs')
+const process = require('process')
+const path = require('path')
+
+const pidFile = process.cwd() + path.sep + 'dev' + path.sep + 'alephium.pid'
+try {
+  const pid = parseInt(fs.readFileSync(pidFile).toString())
+  if (pid) {
+    console.log(`Stopping the running devnet: ${pid}`)
+    process.kill(pid)
+  }
+} catch (e) {
+  console.log(`Error in stopping the running devnet: ${e}`)
+}

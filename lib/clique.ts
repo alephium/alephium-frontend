@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ec as EC } from 'elliptic'
 
+import * as api from '../api/api-alephium'
 import { Api, SelfClique } from '../api/api-alephium'
 import { NodeClient } from './node'
 import * as utils from './utils'
@@ -55,6 +56,15 @@ export class CliqueClient extends Api<null> {
       })
 
       this.clients.push(client)
+    }
+  }
+
+  static convert<T>(response: api.HttpResponse<T, { detail: string }>): T {
+    if (response.error) {
+      console.log(response.error.detail)
+      throw new Error(response.error.detail)
+    } else {
+      return response.data
     }
   }
 
