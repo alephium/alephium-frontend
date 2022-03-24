@@ -377,14 +377,28 @@ export class Contract extends Common {
   }
 
   static async fromApiEvent(event: api.Event, fileName: string): Promise<Event> {
-    const contract = await Contract.loadContract(fileName)
-    const eventDef = await contract.events[event.eventIndex]
+    let fieldTypes: string[]
+    let name: string
+
+    if (event.eventIndex == -1) {
+      name = 'ContractCreated'
+      fieldTypes = ['Address']
+    } else if (event.eventIndex == -2) {
+      name = 'ContractDestroyed'
+      fieldTypes = ['Address']
+    } else {
+      const contract = await Contract.loadContract(fileName)
+      const eventDef = await contract.events[event.eventIndex]
+      name = eventDef.name
+      fieldTypes = eventDef.fieldTypes
+    }
+
     return {
       blockHash: event.blockHash,
       contractAddress: event.contractAddress,
       txId: event.txId,
-      name: eventDef.name,
-      fields: fromApiVals(event.fields, eventDef.fieldTypes)
+      name: name,
+      fields: fromApiVals(event.fields, fieldTypes)
     }
   }
 
