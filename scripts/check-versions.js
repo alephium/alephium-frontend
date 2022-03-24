@@ -33,7 +33,11 @@ async function main() {
   const nodeVersionExpected = await extractNodeVersionFromExplorer(explorerVersionConfigured)
 
   if (nodeVersionExpected != nodeVersionConfigured) {
-    console.log(`Invalid node version: expected ${nodeVersionExpected}, configured ${nodeVersionConfigured}`)
+    console.log(
+      `Invalid node version: the configured explorer-backend version (${explorerVersionConfigured}) expects node ${nodeVersionExpected}.`
+    )
+    console.log(`Instead, the configured node version is ${nodeVersionConfigured}`)
+    console.log('Please, check that the configured node and explorer-backend versions in the package.json are correct.')
     process.exit(1)
   }
 }
