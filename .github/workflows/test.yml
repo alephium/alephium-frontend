@@ -19,8 +19,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm run check-versions
       - run: npm ci
+      - run: npm run check-versions
       - run: npm run lint
       - run: npm audit
       - run: npm run devnet:start
