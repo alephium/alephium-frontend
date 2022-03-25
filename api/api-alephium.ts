@@ -285,6 +285,15 @@ export interface Contract {
   code: string
 }
 
+export interface ContractEvent {
+  blockHash: string
+  contractAddress: string
+  txId: string
+  eventIndex: number
+  fields: Val[]
+  type: string
+}
+
 export interface ContractOutput {
   hint: number
   key: string
@@ -321,13 +330,7 @@ export interface Destination {
 
 export type DiscoveryAction = Reachable | Unreachable
 
-export interface Event {
-  blockHash: string
-  contractAddress: string
-  txId: string
-  eventIndex: number
-  fields: Val[]
-}
+export type Event = ContractEvent | TxScriptEvent
 
 export interface EventSig {
   name: string
@@ -594,6 +597,14 @@ export interface TxResult {
   txId: string
   fromGroup: number
   toGroup: number
+}
+
+export interface TxScriptEvent {
+  blockHash: string
+  txId: string
+  eventIndex: number
+  fields: Val[]
+  type: string
 }
 
 export type TxStatus = Confirmed | MemPooled | TxNotFound
@@ -2022,13 +2033,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Events
-     * @name GetEventsInBlock
+     * @name GetEventsContractInBlock
      * @summary Get events for a contract within a block
-     * @request GET:/events/in-block
+     * @request GET:/events/contract/in-block
      */
-    getEventsInBlock: (query: { block: string; contractAddress: string }, params: RequestParams = {}) =>
+    getEventsContractInBlock: (query: { block: string; contractAddress: string }, params: RequestParams = {}) =>
       this.request<Events, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/events/in-block`,
+        path: `/events/contract/in-block`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -2039,16 +2050,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Events
-     * @name GetEventsWithinBlocks
+     * @name GetEventsContractWithinBlocks
      * @summary Get events for a contract within a range of blocks
-     * @request GET:/events/within-blocks
+     * @request GET:/events/contract/within-blocks
      */
-    getEventsWithinBlocks: (
+    getEventsContractWithinBlocks: (
       query: { fromBlock: string; toBlock?: string; contractAddress: string },
       params: RequestParams = {}
     ) =>
       this.request<Events[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/events/within-blocks`,
+        path: `/events/contract/within-blocks`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -2059,16 +2070,33 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Events
-     * @name GetEventsWithinTimeInterval
+     * @name GetEventsContractWithinTimeInterval
      * @summary Get events for a contract within a time interval
-     * @request GET:/events/within-time-interval
+     * @request GET:/events/contract/within-time-interval
      */
-    getEventsWithinTimeInterval: (
+    getEventsContractWithinTimeInterval: (
       query: { fromTs: number; toTs?: number; contractAddress: string },
       params: RequestParams = {}
     ) =>
       this.request<Events[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/events/within-time-interval`,
+        path: `/events/contract/within-time-interval`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Events
+     * @name GetEventsTxScript
+     * @summary Get events for a TxScript
+     * @request GET:/events/tx-script
+     */
+    getEventsTxScript: (query: { block: string; txId: string }, params: RequestParams = {}) =>
+      this.request<Events, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/events/tx-script`,
         method: 'GET',
         query: query,
         format: 'json',

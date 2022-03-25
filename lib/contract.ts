@@ -282,7 +282,7 @@ export class Contract extends Common {
     this._contractAddresses.clear()
     const apiParams: api.TestContract = this.toTestContract(funcName, params)
     const response = await client.contracts.postContractsTestContract(apiParams)
-    const methodIndex = params.testMethodIndex ? params.testMethodIndex : 0
+    const methodIndex = params.testMethodIndex ? params.testMethodIndex : this.getMethodIndex(funcName)
     const result = await this.fromTestContractResult(methodIndex, response.data)
     this._contractAddresses.clear()
     return result
@@ -376,15 +376,33 @@ export class Contract extends Common {
     }
   }
 
-  static async fromApiEvent(event: api.Event, fileName: string): Promise<Event> {
-    const contract = await Contract.loadContract(fileName)
-    const eventDef = await contract.events[event.eventIndex]
-    return {
-      blockHash: event.blockHash,
-      contractAddress: event.contractAddress,
-      txId: event.txId,
-      name: eventDef.name,
-      fields: fromApiVals(event.fields, eventDef.fieldTypes)
+  static async fromApiEvent(event: api.Event, fileName: string): Promise<ContractEvent> {
+    let fieldTypes: string[]
+    let name: string
+
+    if (event.eventIndex == -1) {
+      name = 'ContractCreated'
+      fieldTypes = ['Address']
+    } else if (event.eventIndex == -2) {
+      name = 'ContractDestroyed'
+      fieldTypes = ['Address']
+    } else {
+      const contract = await Contract.loadContract(fileName)
+      const eventDef = await contract.events[event.eventIndex]
+      name = eventDef.name
+      fieldTypes = eventDef.fieldTypes
+    }
+
+    if (event.type === 'ContractEvent') {
+      return {
+        blockHash: event.blockHash,
+        contractAddress: (event as api.ContractEvent).contractAddress,
+        txId: event.txId,
+        name: name,
+        fields: fromApiVals(event.fields, fieldTypes)
+      }
+    } else {
+      throw new Error(`Expected ContractEvent only, but got ${event.type}`)
     }
   }
 
@@ -396,17 +414,23 @@ export class Contract extends Common {
       txOutputs: result.txOutputs.map(fromApiOutput),
       events: await Promise.all(
         result.events.map((event) => {
-          return Contract.fromApiEvent(event, this._contractAddresses.get(event.contractAddress)!)
+          const contractAddress = (event as api.ContractEvent).contractAddress
+          return Contract.fromApiEvent(event, this._contractAddresses.get(contractAddress)!)
         })
       )
     }
   }
 
-  async transactionForDeployment(signer: Signer, initialFields?: Val[]): Promise<DeployContractTransaction> {
+  async transactionForDeployment(
+    signer: Signer,
+    initialFields?: Val[],
+    issueTokenAmount?: string
+  ): Promise<DeployContractTransaction> {
     const params: api.BuildContractDeployScriptTx = {
       fromPublicKey: await signer.getPublicKey(),
       bytecode: this.bytecode,
-      initialFields: this.toApiFields(initialFields)
+      initialFields: this.toApiFields(initialFields),
+      issueTokenAmount: issueTokenAmount
     }
     const response = await signer.client.contracts.postContractsUnsignedTxBuildContract(params)
     return fromApiDeployContractUnsignedTx(CliqueClient.convert(response))
@@ -758,9 +782,18 @@ export interface TestContractParams {
   inputAssets?: InputAsset[] // default no input asserts
 }
 
-export interface Event {
+type Event = ContractEvent | TxScriptEvent
+
+export interface ContractEvent {
   blockHash: string
   contractAddress: string
+  txId: string
+  name: string
+  fields: Val[]
+}
+
+export interface TxScriptEvent {
+  blockHash: string
   txId: string
   name: string
   fields: Val[]
