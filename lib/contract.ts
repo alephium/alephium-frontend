@@ -376,7 +376,7 @@ export class Contract extends Common {
     }
   }
 
-  static async fromApiEvent(event: api.Event, fileName: string): Promise<Event> {
+  static async fromApiEvent(event: api.Event, fileName: string): Promise<ContractEvent> {
     let fieldTypes: string[]
     let name: string
 
@@ -393,12 +393,16 @@ export class Contract extends Common {
       fieldTypes = eventDef.fieldTypes
     }
 
-    return {
-      blockHash: event.blockHash,
-      contractAddress: event.contractAddress,
-      txId: event.txId,
-      name: name,
-      fields: fromApiVals(event.fields, fieldTypes)
+    if (event.type === 'ContractEvent') {
+      return {
+        blockHash: event.blockHash,
+        contractAddress: (event as api.ContractEvent).contractAddress,
+        txId: event.txId,
+        name: name,
+        fields: fromApiVals(event.fields, fieldTypes)
+      }
+    } else {
+      throw new Error(`Expected ContractEvent only, but got ${event.type}`)
     }
   }
 
@@ -410,7 +414,8 @@ export class Contract extends Common {
       txOutputs: result.txOutputs.map(fromApiOutput),
       events: await Promise.all(
         result.events.map((event) => {
-          return Contract.fromApiEvent(event, this._contractAddresses.get(event.contractAddress)!)
+          const contractAddress = (event as api.ContractEvent).contractAddress
+          return Contract.fromApiEvent(event, this._contractAddresses.get(contractAddress)!)
         })
       )
     }
@@ -777,9 +782,18 @@ export interface TestContractParams {
   inputAssets?: InputAsset[] // default no input asserts
 }
 
-export interface Event {
+type Event = ContractEvent | TxScriptEvent
+
+export interface ContractEvent {
   blockHash: string
   contractAddress: string
+  txId: string
+  name: string
+  fields: Val[]
+}
+
+export interface TxScriptEvent {
+  blockHash: string
   txId: string
   name: string
   fields: Val[]
