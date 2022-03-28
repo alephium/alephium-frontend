@@ -70,6 +70,13 @@ const xorByte = (intValue: number) => {
   return (byte0 ^ byte1 ^ byte2 ^ byte3) & 0xff
 }
 
+enum AddressType {
+  P2PKH = 0x00,
+  P2MPKH = 0x01,
+  P2SH = 0x02,
+  P2C = 0x03
+}
+
 export const groupOfAddress = (address: string): number => {
   const decoded = bs58.decode(address)
 
@@ -77,11 +84,11 @@ export const groupOfAddress = (address: string): number => {
   const addressType = decoded[0]
   const addressBody = decoded.slice(1)
 
-  if (addressType == 0x00) {
+  if (addressType == AddressType.P2PKH) {
     return groupOfP2pkhAddress(addressBody)
-  } else if (addressType == 0x01) {
+  } else if (addressType == AddressType.P2MPKH) {
     return groupOfP2mpkhAddress(addressBody)
-  } else if (addressType == 0x02) {
+  } else if (addressType == AddressType.P2SH) {
     return groupOfP2shAddress(addressBody)
   } else {
     throw new Error(`Invalid asset address type: ${addressType}`)
@@ -125,7 +132,7 @@ export function tokenIdFromAddress(address: string): string {
   const addressType = decoded[0]
   const addressBody = decoded.slice(1)
 
-  if (addressType == 0x03) {
+  if (addressType == AddressType.P2C) {
     return Buffer.from(addressBody).toString('hex')
   } else {
     throw new Error(`Invalid contract address type: ${addressType}`)
