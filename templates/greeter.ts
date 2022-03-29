@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { CliqueClient, Contract, Script, Signer, TestContractParams } from 'alephium-js'
+import { CliqueClient, Contract, Script, Signer, TestContractParams } from '@alephium/sdk'
 
 async function greet() {
   const client = new CliqueClient({ baseUrl: 'http://127.0.0.1:22973' })

@@ -16,5 +16,5 @@ jobs:
       - name: Upload test coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
         with:
-          name: codecov-alephium-js
+          name: codecov-alephium-js-sdk
           fail_ci_if_error: true

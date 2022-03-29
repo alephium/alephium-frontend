@@ -71,7 +71,7 @@ function launchDevnet(devDir, jarFile) {
   fs.writeFileSync(devDir + path.sep + 'alephium.pid', p.pid.toString(), { falg: 'w' })
 }
 
-const testWallet = 'alephium-js-test-only-wallet'
+const testWallet = 'alephium-js-sdk-test-only-wallet'
 const password = 'alph'
 const mnemonic =
   'vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault'
@@ -95,7 +95,7 @@ async function createWallet() {
 
 async function unlockWallet() {
   console.log('Unlock the test wallet')
-  await fetch('http://127.0.0.1:22973/wallets/alephium-js-test-only-wallet/unlock', {
+  await fetch('http://127.0.0.1:22973/wallets/alephium-js-sdk-test-only-wallet/unlock', {
     method: 'POST',
     body: '{ "password": "alph" }'
   })
