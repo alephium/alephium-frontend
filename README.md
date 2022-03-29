@@ -35,11 +35,22 @@ npm run update-schemas
 
 To release a new version:
 
-```
-npm version X.Y.Z
-git push X.Y.Z
-git push vX.Y.Z
-```
+1. Create a commit that updates the package version in package.json and package-lock.json and a `vX.Y.Z` tag with:
+   ```
+   npm version X.Y.Z
+   ```
+2. Push the tag to GitHub and trigger the publish workflow that will publish it on NPM with:
+
+   ```
+   git push [remote] vX.Y.Z
+   ```
+
+3. Unless you are on `master`, create a new branch and push it to GitHub so that the tagged commit belongs to a branch of this repo with:
+   ```
+   git checkout -b X.Y.Z
+   git push
+   ```
+   Otherwise, just push to `master`.
 
 ## Compile
 
