@@ -74,7 +74,7 @@ function launchDevnet(devDir, jarFile) {
 const testWallet = 'alephium-js-sdk-test-only-wallet'
 const password = 'alph'
 const mnemonic =
-  'vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault vault'
+  'pilot ignore adjust ritual fiscal educate judge paper senior erosion protect expose knife transfer slim stage credit candy menu source maze bonus baby cage'
 
 async function prepareWallet() {
   const wallets = await fetch('http://127.0.0.1:22973/wallets', { method: 'Get' }).then((res) => res.json())
