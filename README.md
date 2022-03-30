@@ -92,4 +92,4 @@ npm run test:watch
 [npm-link]: https://www.npmjs.org/package/@alephium/sdk
 [prettier-badge]: https://img.shields.io/badge/code_style-prettier-ff69b4.svg
 [prettier-link]: https://github.com/prettier/prettier
-[release-notes]: https://github.com/alephium/alephium-js/releases
+[release-notes]: https://github.com/alephium/js-sdk/releases
