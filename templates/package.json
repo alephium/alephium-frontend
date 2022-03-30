@@ -15,7 +15,7 @@
     "devnet:stop": "node scripts/stop-devnet.js"
   },
   "dependencies": {
-    "alephium-js": "~1.3.0"
+    "@alephium/sdk": "~0.0.1"
   },
   "engines": {
     "node": ">=14.0.0",

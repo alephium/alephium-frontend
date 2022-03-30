@@ -1,6 +1,6 @@
 {
-  "name": "alephium-js",
-  "version": "1.1.2",
+  "name": "@alephium/sdk",
+  "version": "0.0.1",
   "description": "A JS/TS library to interact with the Alephium platform",
   "license": "GPL",
   "main": "dist/lib/index.js",
@@ -23,11 +23,11 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "git@github.com:alephium/alephium-js.git"
+    "url": "git@github.com:alephium/js-sdk.git"
   },
-  "homepage": "https://github.com/alephium/alephium-js",
+  "homepage": "https://github.com/alephium/js-sdk",
   "bugs": {
-    "url": "https://github.com/alephium/alephium-js/issues"
+    "url": "https://github.com/alephium/js-sdk/issues"
   },
   "author": "Alephium dev <dev@alephium.org>",
   "config": {

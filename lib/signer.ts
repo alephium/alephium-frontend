@@ -33,7 +33,7 @@ export class Signer {
   }
 
   static testSigner(client: CliqueClient): Signer {
-    return new Signer(client, 'alephium-js-test-only-wallet', '12LgGdbjE6EtnTKw5gdBwV2RRXuXPtzYM7SDZ45YJTRht')
+    return new Signer(client, 'alephium-js-sdk-test-only-wallet', '12LgGdbjE6EtnTKw5gdBwV2RRXuXPtzYM7SDZ45YJTRht')
   }
 
   async getPublicKey(): Promise<string> {
