@@ -16,7 +16,18 @@ npx @alephium/sdk [name]
 ## Install
 
 ```
-npm ci
+npm install @alephium/sdk
+```
+
+💥 Until our SDK is stable, breaking changes will be introduced in **minor** versions (instead of the traditional major versions of semver). We recommend allowing patch-level updates and to always read the [release notes][release-notes] for breaking changes.
+
+```js
+// package.json
+{
+   "dependencies": {
+      "@alephium/sdk": "~X.Y.Z"
+   }
+}
 ```
 
 ## Development
@@ -81,3 +92,4 @@ npm run test:watch
 [npm-link]: https://www.npmjs.org/package/@alephium/sdk
 [prettier-badge]: https://img.shields.io/badge/code_style-prettier-ff69b4.svg
 [prettier-link]: https://github.com/prettier/prettier
+[release-notes]: https://github.com/alephium/alephium-js/releases
