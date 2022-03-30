@@ -15,7 +15,7 @@ npx @alephium/sdk [name]
 
 ## Install
 
-```
+```shell
 npm install @alephium/sdk
 ```
 
@@ -46,19 +46,21 @@ npm run update-schemas
 
 To release a new version:
 
-1. Create a commit that updates the package version in package.json and package-lock.json and a `vX.Y.Z` tag with:
-   ```
-   npm version X.Y.Z
+1. Create a commit that updates the package version in package.json and package-lock.json and a tag with:
+   ```shell
+   npm version patch # if you want to bump the patch version, without breaking changes
+   npm version minor # if you want to bump the minor version, with breaking changes
+   npm version prerelease --preid=rc # if you want to create a release candidate
    ```
 2. Push the tag to GitHub and trigger the publish workflow that will publish it on NPM with:
 
-   ```
-   git push [remote] vX.Y.Z
+   ```shell
+   git push [remote] <tag>
    ```
 
 3. Unless you are on `master`, create a new branch and push it to GitHub so that the tagged commit belongs to a branch of this repo with:
-   ```
-   git checkout -b X.Y.Z
+   ```shell
+   git checkout -b <tag>
    git push
    ```
    Otherwise, just push to `master`.
@@ -67,20 +69,20 @@ To release a new version:
 
 Compile the TypeScript files into JavaScript:
 
-```
+```shell
 npm run compile
 ```
 
 ## Testing
 
-```
+```shell
 npm run devnet:start // this will start a devnet for smart contract tests
 npm test
 ```
 
 or, to watch for changes:
 
-```
+```shell
 npm run test:watch
 ```
 
