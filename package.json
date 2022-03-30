@@ -30,11 +30,6 @@
     "url": "https://github.com/alephium/alephium-js/issues"
   },
   "author": "Alephium dev <dev@alephium.org>",
-  "files": [
-    "dist/*",
-    "dev/*",
-    "scripts/*"
-  ],
   "config": {
     "alephium_version": "1.3.0-rc9",
     "explorer_backend_version": "1.6.0-rc6"
