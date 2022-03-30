@@ -108,6 +108,8 @@ export interface OutputRef {
 export interface PerChainValue {
   chainFrom: number
   chainTo: number
+
+  /** @format int64 */
   value: number
 }
 
@@ -567,6 +569,35 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/supply/circulating-alph`,
         method: 'GET',
+        ...params
+      }),
+
+    /**
+     * @description Get the total number of transactions
+     *
+     * @tags Infos
+     * @name GetInfosTotalTransactions
+     * @request GET:/infos/total-transactions
+     */
+    getInfosTotalTransactions: (params: RequestParams = {}) =>
+      this.request<number, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/total-transactions`,
+        method: 'GET',
+        ...params
+      }),
+
+    /**
+     * @description Get the average block time for each chain
+     *
+     * @tags Infos
+     * @name GetInfosAverageBlockTimes
+     * @request GET:/infos/average-block-times
+     */
+    getInfosAverageBlockTimes: (params: RequestParams = {}) =>
+      this.request<PerChainValue[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/infos/average-block-times`,
+        method: 'GET',
+        format: 'json',
         ...params
       })
   }
