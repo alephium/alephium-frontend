@@ -32,7 +32,7 @@
   "author": "Alephium dev <dev@alephium.org>",
   "files": [
     "dist/*",
-    "dev/*",
+    "dev/user.conf",
     "scripts/*"
   ],
   "config": {
