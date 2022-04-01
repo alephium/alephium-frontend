@@ -463,7 +463,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   }
   addresses = {
     /**
-     * @description Get address informations
+     * @description Get address information
      *
      * @tags Addressess
      * @name GetAddressesAddress
