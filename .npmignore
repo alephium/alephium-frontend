@@ -24,7 +24,6 @@ artifacts/
 license-header.js
 jestconfig.json
 tsconfig.json
-!templates/tsconfig.json
 default.nix
 
 # Tests
