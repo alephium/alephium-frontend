@@ -2,7 +2,7 @@
   "include": ["lib/**/*", "cli/**/*"],
   "exclude": ["node_modules", "test"],
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es6",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
