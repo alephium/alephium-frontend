@@ -42,6 +42,10 @@ Typings can automatically generated using the following command:
 npm run update-schemas
 ```
 
+### Packaging
+
+We need to include the `.gitignore` file inside the npm package so that it can be used by the `dist/cli/create-project.js` script. To do that we define the `prepack` and `postpack` npm scripts that will rename the `.gitignore` file to `gitignore`, pack it into the package, and rename it back to `.gitignore`. Similar approach has been followed by `create-react-app`<sup>[1]</sup>.
+
 ### Release
 
 To release a new version:
@@ -76,7 +80,7 @@ npm run compile
 ## Testing
 
 ```shell
-npm run devnet:start // this will start a devnet for smart contract tests
+npm run devnet:start # this will start a devnet for smart contract tests
 npm test
 ```
 
@@ -95,3 +99,4 @@ npm run test:watch
 [prettier-badge]: https://img.shields.io/badge/code_style-prettier-ff69b4.svg
 [prettier-link]: https://github.com/prettier/prettier
 [release-notes]: https://github.com/alephium/js-sdk/releases
+[1]: https://github.com/facebook/create-react-app/blob/2da5517689b7510ff8d8b0148ce372782cb285d7/packages/react-scripts/scripts/init.js#L264-L278
