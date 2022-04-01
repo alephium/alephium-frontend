@@ -47,6 +47,8 @@
     "test": "npm run compile && npm run jest",
     "test:watch": "npm run compile && npm run jest -- --watch",
     "prepublishOnly": "npm run compile",
+    "prepack": "node scripts/rename-gitignore.js .gitignore gitignore",
+    "postpack": "node scripts/rename-gitignore.js gitignore .gitignore",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "devnet:start": "node scripts/start-devnet.js ${npm_package_config_alephium_version}",
     "devnet:restart": "npm run devnet:start",
