@@ -17,6 +17,9 @@
   "dependencies": {
     "@alephium/sdk": "~0.0.1"
   },
+  "devDependencies": {
+    "typescript": "^4.4.2"
+  },
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
