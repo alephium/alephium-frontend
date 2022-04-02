@@ -16,18 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StatusBar } from 'expo-status-bar'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
-import { ThemeProvider } from 'styled-components/native'
 
-import MainStackNavigation from './src/navigation'
-import { lightTheme } from './src/style/themes'
+import LandingScreen from '../screens/LandingScreen'
+import Routes from './routeNames'
 
-export default function App() {
-  return (
-    <ThemeProvider theme={lightTheme}>
-      <MainStackNavigation />
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  )
-}
+const Stack = createStackNavigator()
+
+const MainStackNavigation = () => (
+  <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen name={Routes.LANDING_SCREEN} component={LandingScreen} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  </NavigationContainer>
+)
+
+export default MainStackNavigation

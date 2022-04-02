@@ -16,18 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StatusBar } from 'expo-status-bar'
-import React from 'react'
-import { ThemeProvider } from 'styled-components/native'
+import { StyleProp, Text, View, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
 
-import MainStackNavigation from './src/navigation'
-import { lightTheme } from './src/style/themes'
+const LandingScreen = ({ style }: { style: StyleProp<ViewStyle> }) => (
+  <View style={style}>
+    <Text>Welcome to Alephium!</Text>
+  </View>
+)
 
-export default function App() {
-  return (
-    <ThemeProvider theme={lightTheme}>
-      <MainStackNavigation />
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  )
-}
+export default styled(LandingScreen)`
+  flex: 1;
+  background-color: ${({ theme }) => theme.bg.secondary};
+  justify-content: center;
+  align-items: center;
+`

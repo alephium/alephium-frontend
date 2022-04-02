@@ -16,18 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StatusBar } from 'expo-status-bar'
-import React from 'react'
-import { ThemeProvider } from 'styled-components/native'
-
-import MainStackNavigation from './src/navigation'
-import { lightTheme } from './src/style/themes'
-
-export default function App() {
-  return (
-    <ThemeProvider theme={lightTheme}>
-      <MainStackNavigation />
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  )
+const Routes = {
+  LANDING_SCREEN: 'LandingScreen'
 }
+
+export default Routes
