@@ -16,19 +16,36 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StatusBar } from 'expo-status-bar'
-import { Text, View } from 'react-native'
-import { ThemeProvider } from 'styled-components'
+import 'styled-components'
 
-import { lightTheme } from './src/style/themes'
+import { ThemeType } from './themes'
 
-export default function App() {
-  return (
-    <ThemeProvider theme={lightTheme}>
-      <View>
-        <Text>Welcome to Alephium Wallet</Text>
-        <StatusBar style="auto" />
-      </View>
-    </ThemeProvider>
-  )
+declare module 'styled-components' {
+  export interface DefaultTheme {
+    name: ThemeType
+    bg: {
+      primary: string
+      secondary: string
+      tertiary: string
+    }
+    font: {
+      primary: string
+      secondary: string
+      tertiary: string
+    }
+    shadow: {
+      primary: string
+      secondary: string
+      tertiary: string
+    }
+    border: {
+      primary: string
+      secondary: string
+    }
+    global: {
+      accent: string
+      alert: string
+      valid: string
+    }
+  }
 }
