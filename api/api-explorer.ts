@@ -465,7 +465,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * @description Get address information
      *
-     * @tags Addressess
+     * @tags Addresses
      * @name GetAddressesAddress
      * @request GET:/addresses/{address}
      */
@@ -480,7 +480,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * @description List transactions of a given address
      *
-     * @tags Addressess
+     * @tags Addresses
      * @name GetAddressesAddressTransactions
      * @request GET:/addresses/{address}/transactions
      */
