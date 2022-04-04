@@ -6,17 +6,11 @@
 npm install
 ```
 
-## Start a devnet
+## Start/stop a devnet
 
 ```shell
-npm run devnet:start # this will start a devnet for smart contract tests
-```
-
-## Stop/restart devnet
-
-```shell
+npm run devnet:start # this will start a devnet for smart contract development
 npm run devnet:stop
-npm run devnet:restart
 ```
 
 ## Compile
