@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { MotiView } from 'moti'
 import { StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -39,7 +40,17 @@ const LandingScreen = ({ style }: { style: StyleProp<ViewStyle> }) => (
         <Button title="Import wallet" type="secondary" variant="contrast" />
       </ButtonStack>
     </ActionContainer>
-    <GradientBackgroundStyled />
+    <GradientBackgroundStyled
+      from={{ scale: 3 }}
+      animate={{ scale: 1.2 }}
+      transition={{
+        loop: true,
+        type: 'timing',
+        duration: 5000
+      }}
+    >
+      <GradientBackground />
+    </GradientBackgroundStyled>
   </View>
 )
 
@@ -47,7 +58,7 @@ export default styled(LandingScreen)`
   flex: 1;
 `
 
-const GradientBackgroundStyled = styled(GradientBackground)`
+const GradientBackgroundStyled = styled(MotiView)`
   position: absolute;
   top: 0;
   right: 0;
