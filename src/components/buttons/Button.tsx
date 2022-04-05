@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Pressable, PressableProps, StyleProp, Text, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { borderRadius } from '../style/globalStyle'
+import { borderRadius } from '../../style/globalStyle'
 
 interface ButtonProps extends PressableProps {
   title: string
@@ -38,9 +38,9 @@ const Button = ({ style, title, type = 'primary', variant = 'default', ...props 
       accent: theme.global.accent
     }[variant],
     font: {
-      default: type === 'primary' ? theme.bg.primary : theme.font.primary,
-      contrast: type === 'primary' ? theme.font.primary : theme.bg.primary,
-      accent: type === 'primary' ? theme.bg.primary : theme.global.accent
+      default: type === 'primary' ? theme.font.contrast : theme.font.primary,
+      contrast: type === 'primary' ? theme.font.primary : theme.font.contrast,
+      accent: type === 'primary' ? theme.font.contrast : theme.global.accent
     }[variant]
   }
 

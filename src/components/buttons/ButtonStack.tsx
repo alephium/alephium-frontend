@@ -34,7 +34,7 @@ const ButtonStack: FC<ButtonStackProps> = ({ children, style }) => (
 )
 
 export default styled(ButtonStack)`
-  align-items: stretch;
+  width: 75%;
 `
 
 const ButtonContainer = styled(View)`

@@ -19,29 +19,50 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import Button from '../components/Button'
-import ButtonStack from '../components/ButtonStack'
+import Button from '../components/buttons/Button'
+import ButtonStack from '../components/buttons/ButtonStack'
+import GradientBackground from '../images/gradients/GradientBackground'
+import AlephiumLogo from '../images/logos/AlephiumLogo'
 
 const LandingScreen = ({ style }: { style: StyleProp<ViewStyle> }) => (
   <View style={style}>
+    <LogoContainer>
+      <AlephiumLogoStyled />
+    </LogoContainer>
     <TitleContainer>
       <TitleFirstLine>Welcome to the official</TitleFirstLine>
       <TitleSecondLine>Alephium Wallet</TitleSecondLine>
     </TitleContainer>
     <ActionContainer>
       <ButtonStack>
-        <Button title="New wallet" type="primary" />
-        <Button title="Import wallet" type="secondary" />
+        <Button title="New wallet" type="primary" variant="contrast" />
+        <Button title="Import wallet" type="secondary" variant="contrast" />
       </ButtonStack>
     </ActionContainer>
+    <GradientBackgroundStyled />
   </View>
 )
 
 export default styled(LandingScreen)`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  justify-content: center;
-  align-items: center;
+`
+
+const GradientBackgroundStyled = styled(GradientBackground)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+`
+
+const LogoContainer = styled(View)`
+  flex: 1.5;
+  margin-top: 100px;
+`
+
+const AlephiumLogoStyled = styled(AlephiumLogo)`
+  padding: 20% 0;
 `
 
 const TitleContainer = styled.View`
@@ -51,13 +72,18 @@ const TitleContainer = styled.View`
 `
 
 const TitleFirstLine = styled(Text)`
-  font-weight: bold;
+  font-size: 18px;
+  color: ${({ theme }) => theme.font.contrast};
 `
 
-const TitleSecondLine = styled(Text)``
+const TitleSecondLine = styled(Text)`
+  font-size: 18px;
+  font-weight: bold;
+  color: ${({ theme }) => theme.font.contrast};
+`
 
 const ActionContainer = styled.View`
-  flex: 1;
+  flex: 1.5;
   justify-content: center;
   align-items: center;
 `

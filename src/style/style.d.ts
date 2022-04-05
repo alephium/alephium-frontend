@@ -32,6 +32,7 @@ declare module 'styled-components' {
       primary: string
       secondary: string
       tertiary: string
+      contrast: string
     }
     shadow: {
       primary: string
@@ -46,6 +47,13 @@ declare module 'styled-components' {
       accent: string
       alert: string
       valid: string
+    }
+    gradient: {
+      yellow: string
+      orange: string
+      red: string
+      purple: string
+      cyan: string
     }
   }
 }
