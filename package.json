@@ -27,7 +27,8 @@
     "react-native-screens": "~3.10.1",
     "react-native-svg": "12.1.1",
     "react-navigation": "^4.4.4",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "lottie-react-native": "5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

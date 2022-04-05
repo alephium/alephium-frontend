@@ -21,15 +21,17 @@ import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
 
 import LandingScreen from '../screens/LandingScreen'
-import Routes from './routeNames'
+import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
+import RootStackParamList from './rootStackRoutes'
 
-const Stack = createStackNavigator()
+const RootStack = createStackNavigator<RootStackParamList>()
 
 const MainStackNavigation = () => (
   <NavigationContainer>
-    <Stack.Navigator>
-      <Stack.Screen name={Routes.LANDING_SCREEN} component={LandingScreen} options={{ headerShown: false }} />
-    </Stack.Navigator>
+    <RootStack.Navigator>
+      <RootStack.Screen name="LandingScreen" component={LandingScreen} options={{ headerShown: false }} />
+      <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} options={{ headerShown: false }} />
+    </RootStack.Navigator>
   </NavigationContainer>
 )
 

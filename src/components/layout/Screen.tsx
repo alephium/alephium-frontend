@@ -16,8 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-const Routes = {
-  LANDING_SCREEN: 'LandingScreen'
+import React, { FC } from 'react'
+import { StyleProp, View, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
+
+interface ScreenProps {
+  style?: StyleProp<ViewStyle>
 }
 
-export default Routes
+const Screen: FC<ScreenProps> = ({ children, style }) => {
+  return <View style={style}>{children}</View>
+}
+
+export default styled(Screen)`
+  flex: 1;
+  background-color: ${({ theme }) => theme.bg.primary};
+`

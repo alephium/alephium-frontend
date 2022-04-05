@@ -45,11 +45,12 @@ const Button = ({ style, title, type = 'primary', variant = 'default', ...props 
   }
 
   const buttonStyle: PressableProps['style'] = ({ pressed }) => [
-    { opacity: pressed ? 0.5 : 1 },
     {
+      opacity: pressed ? 0.5 : 1,
       backgroundColor: { primary: colors.bg, secondary: 'transparent' }[type],
       borderWidth: { primary: 0, secondary: 2 }[type],
-      borderColor: { primary: 'transparent', secondary: colors.bg }[type]
+      borderColor: { primary: 'transparent', secondary: colors.bg }[type],
+      elevation: type === 'primary' ? 8 : 0 // TODO: iOS shadows
     },
     style
   ]
