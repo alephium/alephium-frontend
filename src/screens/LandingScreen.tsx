@@ -19,15 +19,45 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
+import Button from '../components/Button'
+import ButtonStack from '../components/ButtonStack'
+
 const LandingScreen = ({ style }: { style: StyleProp<ViewStyle> }) => (
   <View style={style}>
-    <Text>Welcome to Alephium!</Text>
+    <TitleContainer>
+      <TitleFirstLine>Welcome to the official</TitleFirstLine>
+      <TitleSecondLine>Alephium Wallet</TitleSecondLine>
+    </TitleContainer>
+    <ActionContainer>
+      <ButtonStack>
+        <Button title="New wallet" type="primary" />
+        <Button title="Import wallet" type="secondary" />
+      </ButtonStack>
+    </ActionContainer>
   </View>
 )
 
 export default styled(LandingScreen)`
   flex: 1;
   background-color: ${({ theme }) => theme.bg.secondary};
+  justify-content: center;
+  align-items: center;
+`
+
+const TitleContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`
+
+const TitleFirstLine = styled(Text)`
+  font-weight: bold;
+`
+
+const TitleSecondLine = styled(Text)``
+
+const ActionContainer = styled.View`
+  flex: 1;
   justify-content: center;
   align-items: center;
 `
