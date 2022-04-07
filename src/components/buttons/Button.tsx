@@ -29,7 +29,7 @@ interface ButtonProps extends PressableProps {
   wide?: boolean
 }
 
-const Button = ({ style, title, type = 'primary', variant = 'default', ...props }: ButtonProps) => {
+const Button = ({ style, title, type = 'primary', variant = 'default', disabled, ...props }: ButtonProps) => {
   const theme = useTheme()
 
   const colors = {
@@ -47,7 +47,7 @@ const Button = ({ style, title, type = 'primary', variant = 'default', ...props 
 
   const buttonStyle: PressableProps['style'] = ({ pressed }) => [
     {
-      opacity: pressed ? 0.5 : 1,
+      opacity: pressed || disabled ? 0.5 : 1,
       backgroundColor: { primary: colors.bg, secondary: 'transparent' }[type],
       borderWidth: { primary: 0, secondary: 2 }[type],
       borderColor: { primary: 'transparent', secondary: colors.bg }[type],

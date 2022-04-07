@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { useState } from 'react'
 import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -28,6 +29,8 @@ import RootStackParamList from '../../navigation/rootStackRoutes'
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
+  const [walletName, setWalletName] = useState('')
+
   return (
     <Screen>
       <InstructionsContainer>
@@ -35,10 +38,10 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
         <InstructionsSecondLine>How should we call this wallet?</InstructionsSecondLine>
       </InstructionsContainer>
       <InputContainer>
-        <StyledInput label="Wallet name" autoFocus />
+        <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
       </InputContainer>
       <ActionsContainer>
-        <Button title="Next" type="primary" wide />
+        <Button title="Next" type="primary" wide disabled={walletName.length < 3} />
       </ActionsContainer>
     </Screen>
   )
