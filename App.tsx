@@ -22,11 +22,11 @@ import { ThemeProvider } from 'styled-components/native'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { lightTheme } from './src/style/themes'
 
-export default function App() {
-  return (
-    <ThemeProvider theme={lightTheme}>
-      <RootStackNavigation />
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  )
-}
+const App = () => (
+  <ThemeProvider theme={lightTheme}>
+    <RootStackNavigation />
+    <StatusBar style="auto" />
+  </ThemeProvider>
+)
+
+export default App

@@ -20,7 +20,7 @@ import { FC, ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-interface ButtonStackProps extends FC {
+interface ButtonStackProps {
   style?: StyleProp<ViewStyle>
   children: Array<ReactNode>
 }

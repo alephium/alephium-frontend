@@ -24,9 +24,7 @@ interface ScreenProps {
   style?: StyleProp<ViewStyle>
 }
 
-const Screen: FC<ScreenProps> = ({ children, style }) => {
-  return <SafeAreaView style={style}>{children}</SafeAreaView>
-}
+const Screen: FC<ScreenProps> = ({ children, style }) => <SafeAreaView style={style}>{children}</SafeAreaView>
 
 export default styled(Screen)`
   flex: 1;
