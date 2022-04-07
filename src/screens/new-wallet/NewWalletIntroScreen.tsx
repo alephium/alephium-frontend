@@ -24,6 +24,7 @@ import styled from 'styled-components/native'
 import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
+import LinkToWeb from '../../components/links/LinkToWeb'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
 const animationSrc = require('../../animations/wallet.json')
@@ -39,6 +40,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
       <TitleContainer>
         <TitleFirstLine>You are about to create a wallet 🎉</TitleFirstLine>
         <TitleSecondLine>Your gateway to the Alephium ecosystem</TitleSecondLine>
+        <LinkToWeb text="More info" url="https://wiki.alephium.org/Frequently-Asked-Questions.html" />
       </TitleContainer>
       <ActionsContainer>
         <ButtonStack>
@@ -75,6 +77,7 @@ const TitleFirstLine = styled(Text)`
 const TitleSecondLine = styled(Text)`
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
+  margin-bottom: 15px;
 `
 
 const ActionsContainer = styled.View`
