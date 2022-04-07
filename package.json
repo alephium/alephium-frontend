@@ -1,0 +1,51 @@
+{
+  "name": "alephium-mobile-wallet",
+  "version": "0.0.1",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
+    "lint:fix": "eslint . --fix --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
+  },
+  "dependencies": {
+    "@react-navigation/native": "^6.0.10",
+    "@react-navigation/stack": "^6.2.1",
+    "expo": "~44.0.0",
+    "expo-status-bar": "~1.2.0",
+    "lottie-react-native": "5.0.1",
+    "moti": "^0.17.1",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-native": "0.64.3",
+    "react-native-gesture-handler": "~2.1.0",
+    "react-native-reanimated": "~2.3.1",
+    "react-native-safe-area-context": "3.3.2",
+    "react-native-screens": "~3.10.1",
+    "react-native-svg": "12.1.1",
+    "react-navigation": "^4.4.4",
+    "styled-components": "^5.3.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@types/react": "~17.0.21",
+    "@types/react-native": "~0.64.12",
+    "@types/styled-components": "^5.1.24",
+    "@types/styled-components-react-native": "^5.1.3",
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-header": "^3.1.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.4.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "expo-cli": "^5.3.0",
+    "typescript": "~4.3.5"
+  },
+  "private": true
+}
