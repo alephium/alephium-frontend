@@ -31,26 +31,24 @@ const animationSrc = require('../../animations/wallet.json')
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
-const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
-  return (
-    <Screen>
-      <AnimationContainer>
-        <StyledAnimation source={animationSrc} autoPlay />
-      </AnimationContainer>
-      <TitleContainer>
-        <TitleFirstLine>You are about to create a wallet 🎉</TitleFirstLine>
-        <TitleSecondLine>Your gateway to the Alephium ecosystem</TitleSecondLine>
-        <LinkToWeb text="More info" url="https://wiki.alephium.org/Frequently-Asked-Questions.html" />
-      </TitleContainer>
-      <ActionsContainer>
-        <ButtonStack>
-          <Button title="Let's go!" type="primary" onPress={() => navigation.navigate('NewWalletNameScreen')} />
-          <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
-        </ButtonStack>
-      </ActionsContainer>
-    </Screen>
-  )
-}
+const NewWalletNameScreen = ({ navigation }: ScreenProps) => (
+  <Screen>
+    <AnimationContainer>
+      <StyledAnimation source={animationSrc} autoPlay />
+    </AnimationContainer>
+    <TitleContainer>
+      <TitleFirstLine>You are about to create a wallet 🎉</TitleFirstLine>
+      <TitleSecondLine>Your gateway to the Alephium ecosystem</TitleSecondLine>
+      <LinkToWeb text="More info" url="https://wiki.alephium.org/Frequently-Asked-Questions.html" />
+    </TitleContainer>
+    <ActionsContainer>
+      <ButtonStack>
+        <Button title="Let's go!" type="primary" onPress={() => navigation.navigate('NewWalletNameScreen')} />
+        <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
+      </ButtonStack>
+    </ActionsContainer>
+  </Screen>
+)
 
 const AnimationContainer = styled.View`
   flex: 1;
