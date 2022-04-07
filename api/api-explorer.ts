@@ -9,6 +9,14 @@
  * ---------------------------------------------------------------
  */
 
+export interface AddressBalance {
+  /** @format uint256 */
+  balance: string
+
+  /** @format uint256 */
+  lockedBalance: string
+}
+
 export interface AddressInfo {
   /** @format uint256 */
   balance: string
@@ -495,6 +503,36 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         query: query,
         format: 'json',
         ...params
+      }),
+
+    /**
+     * @description Get total transactions of a given address
+     *
+     * @tags Addresses
+     * @name GetAddressesAddressTotalTransactions
+     * @request GET:/addresses/{address}/total-transactions
+     */
+    getAddressesAddressTotalTransactions: (address: string, params: RequestParams = {}) =>
+      this.request<number, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/addresses/${address}/total-transactions`,
+        method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * @description Get address balance
+     *
+     * @tags Addresses
+     * @name GetAddressesAddressBalance
+     * @request GET:/addresses/{address}/balance
+     */
+    getAddressesAddressBalance: (address: string, params: RequestParams = {}) =>
+      this.request<AddressBalance, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/addresses/${address}/balance`,
+        method: 'GET',
+        format: 'json',
+        ...params
       })
   }
   infos = {
@@ -607,7 +645,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Charts
      * @name GetChartsHashrates
-     * @summary Get explorer informations.
+     * @summary Get hashrate chart in H/s
      * @request GET:/charts/hashrates
      */
     getChartsHashrates: (
