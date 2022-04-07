@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 type RootStackParamList = {
   LandingScreen: undefined
+  NewWalletIntroScreen: undefined
   NewWalletNameScreen: undefined
 }
 

@@ -30,7 +30,7 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
-const LandingScreen = ({ style, navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => (
+const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => (
   <Screen>
     <LogoContainer>
       <AlephiumLogoStyled />
@@ -45,7 +45,7 @@ const LandingScreen = ({ style, navigation }: { style: StyleProp<ViewStyle> } & 
           title="New wallet"
           type="primary"
           variant="contrast"
-          onPress={() => navigation.navigate('NewWalletNameScreen')}
+          onPress={() => navigation.navigate('NewWalletIntroScreen')}
         />
         <Button title="Import wallet" type="secondary" variant="contrast" />
       </ButtonStack>
@@ -80,10 +80,13 @@ const GradientBackgroundStyled = styled(MotiView)`
 const LogoContainer = styled(View)`
   flex: 1.5;
   margin-top: 100px;
+  justify-content: center;
+  align-items: center;
 `
 
 const AlephiumLogoStyled = styled(AlephiumLogo)`
-  padding: 20% 0;
+  width: 20%;
+  min-width: 40px;
 `
 
 const TitleContainer = styled.View`

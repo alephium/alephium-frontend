@@ -34,7 +34,7 @@ export const lightTheme: DefaultTheme = {
     contrast: '#ffffff'
   },
   border: {
-    primary: '#ebebeb',
+    primary: '#CCCCCC',
     secondary: '#f1f1f1'
   },
   shadow: {

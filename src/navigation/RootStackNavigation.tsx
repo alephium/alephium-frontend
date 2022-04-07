@@ -18,21 +18,30 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import React from 'react'
 
 import LandingScreen from '../screens/LandingScreen'
+import NewWalletIntroScreen from '../screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
 import RootStackParamList from './rootStackRoutes'
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
-const MainStackNavigation = () => (
+const RootStackNavigation = () => (
   <NavigationContainer>
-    <RootStack.Navigator>
+    <RootStack.Navigator
+      screenOptions={{
+        headerStyle: { elevation: 0, shadowOpacity: 0, backgroundColor: 'transparent' },
+        cardStyle: { backgroundColor: '#fff' },
+        headerTitle: ''
+      }}
+    >
       <RootStack.Screen name="LandingScreen" component={LandingScreen} options={{ headerShown: false }} />
-      <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} options={{ headerShown: false }} />
+
+      {/* NEW WALLET */}
+      <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
+      <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
     </RootStack.Navigator>
   </NavigationContainer>
 )
 
-export default MainStackNavigation
+export default RootStackNavigation

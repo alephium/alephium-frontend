@@ -19,13 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Pressable, PressableProps, StyleProp, Text, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { borderRadius } from '../../style/globalStyle'
+import { BORDER_RADIUS } from '../../style/globalStyle'
 
 interface ButtonProps extends PressableProps {
   title: string
   type?: 'primary' | 'secondary'
   variant?: 'default' | 'contrast' | 'accent'
   style?: StyleProp<ViewStyle>
+  wide?: boolean
 }
 
 const Button = ({ style, title, type = 'primary', variant = 'default', ...props }: ButtonProps) => {
@@ -50,7 +51,8 @@ const Button = ({ style, title, type = 'primary', variant = 'default', ...props 
       backgroundColor: { primary: colors.bg, secondary: 'transparent' }[type],
       borderWidth: { primary: 0, secondary: 2 }[type],
       borderColor: { primary: 'transparent', secondary: colors.bg }[type],
-      elevation: type === 'primary' ? 8 : 0 // TODO: iOS shadows
+      elevation: type === 'primary' ? 8 : 0, // TODO: iOS shadows
+      width: props.wide ? '75%' : 'auto'
     },
     style
   ]
@@ -63,9 +65,11 @@ const Button = ({ style, title, type = 'primary', variant = 'default', ...props 
 }
 
 export default styled(Button)`
-  border-radius: ${borderRadius};
-  padding: 15px 25px;
+  border-radius: ${BORDER_RADIUS}px;
+  padding: 0 25px;
+  height: 55px;
   align-items: center;
+  justify-content: center;
 `
 
 const ButtonText = styled(Text)`

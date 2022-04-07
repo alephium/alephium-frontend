@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import React, { FC } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { SafeAreaView, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 interface ScreenProps {
@@ -25,7 +25,7 @@ interface ScreenProps {
 }
 
 const Screen: FC<ScreenProps> = ({ children, style }) => {
-  return <View style={style}>{children}</View>
+  return <SafeAreaView style={style}>{children}</SafeAreaView>
 }
 
 export default styled(Screen)`

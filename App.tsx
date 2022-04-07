@@ -17,16 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StatusBar } from 'expo-status-bar'
-import React from 'react'
 import { ThemeProvider } from 'styled-components/native'
 
-import MainStackNavigation from './src/navigation'
+import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { lightTheme } from './src/style/themes'
 
 export default function App() {
   return (
     <ThemeProvider theme={lightTheme}>
-      <MainStackNavigation />
+      <RootStackNavigation />
       <StatusBar style="auto" />
     </ThemeProvider>
   )

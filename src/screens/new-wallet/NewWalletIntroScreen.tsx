@@ -17,59 +17,64 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import LottieView from 'lottie-react-native'
 import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../../components/buttons/Button'
-import Input from '../../components/inputs/Input'
+import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import RootStackParamList from '../../navigation/rootStackRoutes'
+
+const animationSrc = require('../../animations/wallet.json')
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   return (
     <Screen>
-      <InstructionsContainer>
-        <InstructionsFirstLine>Alright, let’s get to it.</InstructionsFirstLine>
-        <InstructionsSecondLine>How should we call this wallet?</InstructionsSecondLine>
-      </InstructionsContainer>
-      <InputContainer>
-        <StyledInput label="Wallet name" autoFocus />
-      </InputContainer>
+      <AnimationContainer>
+        <StyledAnimation source={animationSrc} autoPlay />
+      </AnimationContainer>
+      <TitleContainer>
+        <TitleFirstLine>You are about to create a wallet 🎉</TitleFirstLine>
+        <TitleSecondLine>Your gateway to the Alephium ecosystem</TitleSecondLine>
+      </TitleContainer>
       <ActionsContainer>
-        <Button title="Next" type="primary" wide />
+        <ButtonStack>
+          <Button title="Let's go!" type="primary" onPress={() => navigation.navigate('NewWalletNameScreen')} />
+          <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
+        </ButtonStack>
       </ActionsContainer>
     </Screen>
   )
 }
 
-const InstructionsContainer = styled.View`
+const AnimationContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
 `
 
-const InstructionsFirstLine = styled(Text)`
+const StyledAnimation = styled(LottieView)`
+  width: 40%;
+`
+
+const TitleContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`
+
+const TitleFirstLine = styled(Text)`
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: bold;
+`
+
+const TitleSecondLine = styled(Text)`
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
-  margin-bottom: 10px;
-`
-
-const InstructionsSecondLine = styled(Text)`
-  font-size: 16px;
-  font-weight: bold;
-  color: ${({ theme }) => theme.font.primary};
-`
-
-const InputContainer = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`
-
-const StyledInput = styled(Input)`
-  width: 80%;
 `
 
 const ActionsContainer = styled.View`
