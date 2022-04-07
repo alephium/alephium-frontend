@@ -18,47 +18,45 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
+import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
-import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-
-const instructions: Instruction[] = [
-  { text: "Alright, let's get to it.", type: 'secondary' },
-  { text: 'How should we call this wallet?', type: 'primary' }
-]
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
-const NewWalletNameScreen = ({
-  navigation,
-  route: {
-    params: { action }
-  }
-}: ScreenProps) => {
-  const [walletName, setWalletName] = useState('')
+const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
+  const [secretPhrase, setSecretPhrase] = useState('')
 
   return (
     <Screen>
-      <CenteredInstructions instructions={instructions} stretch />
+      <InstructionsContainer>
+        <InstructionsFirstLine>Enter your secret phrase.</InstructionsFirstLine>
+      </InstructionsContainer>
       <InputContainer>
-        <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
+        <StyledInput label="Secret phrase" value={secretPhrase} onChangeText={setSecretPhrase} autoFocus />
       </InputContainer>
       <ActionsContainer>
-        <Button
-          title="Next"
-          type="primary"
-          wide
-          disabled={walletName.length < 3}
-          onPress={() => navigation.navigate(action === 'create' ? 'PinCodeCreationScreen' : 'ImportWalletSeedScreen')}
-        />
+        <Button title="Next" type="primary" wide disabled />
       </ActionsContainer>
     </Screen>
   )
 }
+
+const InstructionsContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`
+
+const InstructionsFirstLine = styled(Text)`
+  font-size: 16px;
+  color: ${({ theme }) => theme.font.secondary};
+  margin-bottom: 10px;
+`
 
 const InputContainer = styled.View`
   flex: 1;
@@ -76,4 +74,4 @@ const ActionsContainer = styled.View`
   align-items: center;
 `
 
-export default NewWalletNameScreen
+export default ImportWalletSeedScreen

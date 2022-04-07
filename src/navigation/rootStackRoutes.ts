@@ -16,13 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+type Action = 'create' | 'import'
+
 type RootStackParamList = {
   LandingScreen: undefined
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
+  NewWalletIntroScreen: {
+    action: Action
+  }
+  NewWalletNameScreen: {
+    action: Action
+  }
   PinCodeCreationScreen: undefined
   AddBiometricsScreen: undefined
   NewWalletSuccessPage: undefined
+  ImportWalletSeedScreen: undefined
 }
 
 export default RootStackParamList

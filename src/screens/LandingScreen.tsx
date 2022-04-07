@@ -48,9 +48,14 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
             title="New wallet"
             type="primary"
             variant="contrast"
-            onPress={() => navigation.navigate('NewWalletIntroScreen')}
+            onPress={() => navigation.navigate('NewWalletIntroScreen', { action: 'create' })}
           />
-          <Button title="Import wallet" type="secondary" variant="contrast" />
+          <Button
+            title="Import wallet"
+            type="secondary"
+            variant="contrast"
+            onPress={() => navigation.navigate('NewWalletIntroScreen', { action: 'import' })}
+          />
         </ButtonStack>
       </ActionsContainer>
       <GradientBackgroundStyled

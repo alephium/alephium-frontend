@@ -29,21 +29,40 @@ import RootStackParamList from '../../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
-const instructions: Instruction[] = [
+const instructionsCreate: Instruction[] = [
   { text: 'You are about to create a wallet 🎉', type: 'primary' },
   { text: 'Your gateway to the Alephium ecosystem', type: 'secondary' },
   { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
 ]
+const instructionsImport: Instruction[] = [
+  { text: 'You are about to import a wallet 🎉', type: 'primary' },
+  { text: 'Get your secret phrase ready!', type: 'secondary' },
+  { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+]
 
-const NewWalletNameScreen = ({ navigation }: ScreenProps) => (
+const instructions = {
+  create: instructionsCreate,
+  import: instructionsImport
+}
+
+const NewWalletIntroScreen = ({
+  navigation,
+  route: {
+    params: { action }
+  }
+}: ScreenProps) => (
   <Screen>
     <AnimationContainer>
       <StyledAnimation source={animationSrc} autoPlay />
     </AnimationContainer>
-    <CenteredInstructions instructions={instructions} stretch />
+    <CenteredInstructions instructions={instructions[action]} stretch />
     <ActionsContainer>
       <ButtonStack>
-        <Button title="Let's go!" type="primary" onPress={() => navigation.navigate('NewWalletNameScreen')} />
+        <Button
+          title="Let's go!"
+          type="primary"
+          onPress={() => navigation.navigate('NewWalletNameScreen', { action })}
+        />
         <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
       </ButtonStack>
     </ActionsContainer>
@@ -66,4 +85,4 @@ const ActionsContainer = styled.View`
   align-items: center;
 `
 
-export default NewWalletNameScreen
+export default NewWalletIntroScreen

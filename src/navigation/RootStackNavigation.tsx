@@ -21,6 +21,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import LandingScreen from '../screens/LandingScreen'
 import AddBiometricsScreen from '../screens/new-wallet/AddBiometricsScreen'
+import ImportWalletSeedScreen from '../screens/new-wallet/ImportWalletSeedScreen'
 import NewWalletIntroScreen from '../screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
@@ -46,6 +47,7 @@ const RootStackNavigation = () => (
       <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
       <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
       <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
+      <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
     </RootStack.Navigator>
   </NavigationContainer>
 )
