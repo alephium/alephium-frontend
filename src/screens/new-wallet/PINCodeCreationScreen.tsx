@@ -16,11 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-type RootStackParamList = {
-  LandingScreen: undefined
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
-  PinCodeCreationScreen: undefined
+import { useState } from 'react'
+
+import PinInput from '../../components/inputs/PinInput'
+import Screen from '../../components/layout/Screen'
+
+const PinCodeCreationScreen = () => {
+  const [pinCode, setPinCode] = useState('')
+
+  return (
+    <Screen>
+      <PinInput value={pinCode} onPinChange={setPinCode} />
+    </Screen>
+  )
 }
 
-export default RootStackParamList
+export default PinCodeCreationScreen

@@ -41,7 +41,13 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
         <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
       </InputContainer>
       <ActionsContainer>
-        <Button title="Next" type="primary" wide disabled={walletName.length < 3} />
+        <Button
+          title="Next"
+          type="primary"
+          wide
+          disabled={walletName.length < 3}
+          onPress={() => navigation.navigate('PinCodeCreationScreen')}
+        />
       </ActionsContainer>
     </Screen>
   )

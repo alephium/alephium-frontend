@@ -22,6 +22,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import LandingScreen from '../screens/LandingScreen'
 import NewWalletIntroScreen from '../screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
+import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import RootStackParamList from './rootStackRoutes'
 
 const RootStack = createStackNavigator<RootStackParamList>()
@@ -40,6 +41,7 @@ const RootStackNavigation = () => (
       {/* NEW WALLET */}
       <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
       <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
+      <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
     </RootStack.Navigator>
   </NavigationContainer>
 )

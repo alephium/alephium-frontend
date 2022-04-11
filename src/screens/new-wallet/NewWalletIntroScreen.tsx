@@ -21,13 +21,12 @@ import LottieView from 'lottie-react-native'
 import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
+import animationSrc from '../../animations/wallet.json'
 import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import LinkToWeb from '../../components/links/LinkToWeb'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-
-const animationSrc = require('../../animations/wallet.json')
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
