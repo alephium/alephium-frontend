@@ -17,45 +17,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
-import styled from 'styled-components/native'
 
 import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
-import LinkToWeb from '../../components/links/LinkToWeb'
+import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
+
+const instructions: Instruction[] = [
+  { text: 'Choose a passcode to protect your wallet 🔐', type: 'primary' },
+  { text: 'Try not to forget it!', type: 'secondary' },
+  { text: 'Why?', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+]
 
 const PinCodeCreationScreen = () => {
   const [pinCode, setPinCode] = useState('')
 
   return (
     <Screen>
-      <TitleContainer>
-        <TitleFirstLine>Choose a passcode to protect your wallet 🔐</TitleFirstLine>
-        <TitleSecondLine>Try not to forget it!</TitleSecondLine>
-        <LinkToWeb text="Why?" url="https://wiki.alephium.org/Frequently-Asked-Questions.html" />
-      </TitleContainer>
+      <CenteredInstructions instructions={instructions} />
       <PinCodeInput pinLenght={6} value={pinCode} onPinChange={setPinCode} />
     </Screen>
   )
 }
-
-const TitleContainer = styled.View`
-  justify-content: center;
-  align-items: center;
-  padding: 10%;
-`
-
-const TitleFirstLine = styled.Text`
-  font-size: 16px;
-  margin-bottom: 10px;
-  font-weight: bold;
-  text-align: center;
-`
-
-const TitleSecondLine = styled.Text`
-  font-size: 16px;
-  color: ${({ theme }) => theme.font.secondary};
-  margin-bottom: 15px;
-  text-align: center;
-`
 
 export default PinCodeCreationScreen

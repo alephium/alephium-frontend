@@ -18,25 +18,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
-import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
+import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
+
+const instructions: Instruction[] = [
+  { text: 'Alright, let’s get to it.', type: 'secondary' },
+  { text: 'How should we call this wallet?', type: 'primary' }
+]
 
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const [walletName, setWalletName] = useState('')
 
   return (
     <Screen>
-      <InstructionsContainer>
-        <InstructionsFirstLine>Alright, let’s get to it.</InstructionsFirstLine>
-        <InstructionsSecondLine>How should we call this wallet?</InstructionsSecondLine>
-      </InstructionsContainer>
+      <CenteredInstructions instructions={instructions} style={{ flex: 1 }} />
       <InputContainer>
         <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
       </InputContainer>
@@ -52,24 +54,6 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
     </Screen>
   )
 }
-
-const InstructionsContainer = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`
-
-const InstructionsFirstLine = styled(Text)`
-  font-size: 16px;
-  color: ${({ theme }) => theme.font.secondary};
-  margin-bottom: 10px;
-`
-
-const InstructionsSecondLine = styled(Text)`
-  font-size: 16px;
-  font-weight: bold;
-  color: ${({ theme }) => theme.font.primary};
-`
 
 const InputContainer = styled.View`
   flex: 1;
