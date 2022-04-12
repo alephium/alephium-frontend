@@ -17,18 +17,45 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
+import styled from 'styled-components/native'
 
-import PinInput from '../../components/inputs/PinInput'
+import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
+import LinkToWeb from '../../components/links/LinkToWeb'
 
 const PinCodeCreationScreen = () => {
   const [pinCode, setPinCode] = useState('')
 
   return (
     <Screen>
-      <PinInput value={pinCode} onPinChange={setPinCode} />
+      <TitleContainer>
+        <TitleFirstLine>Choose a passcode to protect your wallet 🔐</TitleFirstLine>
+        <TitleSecondLine>Try not to forget it!</TitleSecondLine>
+        <LinkToWeb text="Why?" url="https://wiki.alephium.org/Frequently-Asked-Questions.html" />
+      </TitleContainer>
+      <PinCodeInput pinLenght={6} value={pinCode} onPinChange={setPinCode} />
     </Screen>
   )
 }
+
+const TitleContainer = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding: 10%;
+`
+
+const TitleFirstLine = styled.Text`
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: center;
+`
+
+const TitleSecondLine = styled.Text`
+  font-size: 16px;
+  color: ${({ theme }) => theme.font.secondary};
+  margin-bottom: 15px;
+  text-align: center;
+`
 
 export default PinCodeCreationScreen

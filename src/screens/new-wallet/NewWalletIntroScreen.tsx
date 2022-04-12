@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import animationSrc from '../../animations/wallet.json'
@@ -65,13 +64,13 @@ const TitleContainer = styled.View`
   align-items: center;
 `
 
-const TitleFirstLine = styled(Text)`
+const TitleFirstLine = styled.Text`
   font-size: 16px;
   margin-bottom: 10px;
   font-weight: bold;
 `
 
-const TitleSecondLine = styled(Text)`
+const TitleSecondLine = styled.Text`
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
   margin-bottom: 15px;

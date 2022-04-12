@@ -16,11 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
+import NumberKeyboard, { NumberKeyboardKey } from '../keyboard/NumberKeyboard'
+
 interface PinInputProps {
+  pinLenght: number
   value: string
   onPinChange: (value: string) => void
   style?: StyleProp<ViewStyle>
@@ -30,41 +33,42 @@ interface SlotProps {
   number: string | undefined
 }
 
-const PinInput = ({ value, onPinChange, style }: PinInputProps) => {
+const PinCodeInput = ({ pinLenght, value, onPinChange, style }: PinInputProps) => {
+  const [pin, setPin] = useState(value)
+
   const renderSlots = () => {
-    return [...new Array(6)].map((_, i) => <Slot key={i} number={value[i]} />)
+    return [...new Array(pinLenght)].map((_, i) => <Slot key={i} number={value[i]} />)
+  }
+
+  const handleKeyboardPress = (key: NumberKeyboardKey) => {
+    const newPin = key === 'delete' ? pin.slice(0, -1) : pin.length < pinLenght ? pin + key : pin
+    setPin(newPin)
+    onPinChange(newPin)
   }
 
   return (
     <View style={style}>
-      <HiddenTextInput value={value} onChangeText={onPinChange} autoFocus keyboardType="phone-pad" />
       <Slots>{renderSlots()}</Slots>
+      <NumberKeyboard onPress={handleKeyboardPress} />
     </View>
   )
 }
 
 const Slot = ({ number }: SlotProps) => <SlotContainer>{number ? <FilledSlot /> : <EmptySlot />}</SlotContainer>
 
-export default styled(PinInput)`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  height: 50px;
-`
-
-const HiddenTextInput = styled.TextInput`
-  opacity: 0;
-  position: absolute;
+export default styled(PinCodeInput)`
+  flex: 1;
 `
 
 const Slots = styled.View`
+  flex: 1;
   flex-direction: row;
   align-items: center;
   justify-content: center;
 `
 
-const SlotContainer = styled(View)`
-  width: 15%;
+const SlotContainer = styled.View`
+  width: 12%;
   justify-content: center;
   align-items: center;
 `
@@ -72,8 +76,8 @@ const SlotContainer = styled(View)`
 const FilledSlot = styled.View`
   border-radius: 50px;
   background-color: ${({ theme }) => theme.font.primary};
-  height: 10px;
-  width: 10px;
+  height: 12px;
+  width: 12px;
 `
 
 const EmptySlot = styled.View`
