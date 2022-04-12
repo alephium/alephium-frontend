@@ -16,20 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useMemo, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
+import { StackScreenProps } from '@react-navigation/stack'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
+import RootStackParamList from '../../navigation/rootStackRoutes'
+
+type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 
 const pinLength = 6
 
-const PinCodeCreationScreen = () => {
+const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const firstInstructionSet: Instruction[] = useMemo(
     () => [
-      { text: 'Choose a passcode to protect your wallet 🔐', type: 'primary' },
+      { text: 'Please choose a passcode 🔐', type: 'primary' },
       { text: 'Try not to forget it!', type: 'secondary' },
-      { text: 'Why?', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+      { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
     ],
     []
   )
@@ -42,20 +47,50 @@ const PinCodeCreationScreen = () => {
     []
   )
 
+  const errorInstructionSet: Instruction[] = useMemo(
+    () => [
+      { text: 'Oops, not the same code!', type: 'error' },
+      { text: 'Please try again 💪', type: 'secondary' }
+    ],
+    []
+  )
+
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const [isCheckingCode, setIsCheckingCode] = useState(false)
+  const [isVerifyingCode, setIsVerifyingCode] = useState(false)
+
+  useFocusEffect(
+    useCallback(() => {
+      // Reset the pin code on screen enter
+      setPinCode('')
+      setIsVerifyingCode(false)
+      setShownInstructions(firstInstructionSet)
+    }, [firstInstructionSet])
+  )
 
   useEffect(() => {
     // Switch to pin code check
-    if (pinCode.length === pinLength) {
-      setIsCheckingCode(true)
+    if (pinCode.length !== pinLength) return
+
+    const handlePinCodeSet = () => {
+      setIsVerifyingCode(true)
       setChosenPinCode(pinCode)
       setShownInstructions(secondInstructionSet)
       setPinCode('')
     }
-  }, [pinCode, secondInstructionSet])
+
+    const handlePinCodeVerification = () => {
+      if (pinCode === chosenPinCode) {
+        navigation.navigate('AddBiometricsScreen')
+      } else {
+        setPinCode('')
+        setShownInstructions(errorInstructionSet)
+      }
+    }
+
+    !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
+  }, [chosenPinCode, errorInstructionSet, isVerifyingCode, navigation, pinCode, secondInstructionSet])
 
   return (
     <Screen>

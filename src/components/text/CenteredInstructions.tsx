@@ -22,7 +22,7 @@ import styled from 'styled-components/native'
 import LinkToWeb from './LinkToWeb'
 
 export type Instruction = {
-  type: 'primary' | 'secondary' | 'link'
+  type: 'primary' | 'secondary' | 'error' | 'link'
   text: string
   url?: string
 }
@@ -54,9 +54,9 @@ export default styled(CenteredInstructions)`
 
 const Instruction = styled.Text<{ type: Instruction['type'] }>`
   color: ${({ type, theme }) =>
-    type === 'primary' ? theme.font.primary : type === 'secondary' ? theme.font.secondary : theme.font.primary};
+    ({ primary: theme.font.primary, secondary: theme.font.secondary, error: theme.global.alert, link: '' }[type])};
 
-  font-weight: ${({ type }) => (type === 'primary' ? 'bold' : 'normal')};
+  font-weight: ${({ type }) => (['primary', 'error'].includes(type) ? 'bold' : 'normal')};
   font-size: 16px;
   margin-bottom: 10px;
   text-align: center;

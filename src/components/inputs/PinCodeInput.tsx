@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -35,6 +35,10 @@ interface SlotProps {
 
 const PinCodeInput = ({ pinLenght, value, onPinChange, style }: PinInputProps) => {
   const [pin, setPin] = useState(value)
+
+  useEffect(() => {
+    setPin(value)
+  }, [value])
 
   const renderSlots = () => {
     return [...new Array(pinLenght)].map((_, i) => <Slot key={i} number={value[i]} />)
