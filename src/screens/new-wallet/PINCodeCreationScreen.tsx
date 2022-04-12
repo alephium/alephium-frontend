@@ -16,25 +16,51 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 
-const instructions: Instruction[] = [
-  { text: 'Choose a passcode to protect your wallet 🔐', type: 'primary' },
-  { text: 'Try not to forget it!', type: 'secondary' },
-  { text: 'Why?', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
-]
+const pinLength = 6
 
 const PinCodeCreationScreen = () => {
+  const firstInstructionSet: Instruction[] = useMemo(
+    () => [
+      { text: 'Choose a passcode to protect your wallet 🔐', type: 'primary' },
+      { text: 'Try not to forget it!', type: 'secondary' },
+      { text: 'Why?', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+    ],
+    []
+  )
+
+  const secondInstructionSet: Instruction[] = useMemo(
+    () => [
+      { text: 'Please type your code again', type: 'primary' },
+      { text: 'Making sure you got it right 😇', type: 'secondary' }
+    ],
+    []
+  )
+
   const [pinCode, setPinCode] = useState('')
+  const [chosenPinCode, setChosenPinCode] = useState('')
+  const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
+  const [isCheckingCode, setIsCheckingCode] = useState(false)
+
+  useEffect(() => {
+    // Switch to pin code check
+    if (pinCode.length === pinLength) {
+      setIsCheckingCode(true)
+      setChosenPinCode(pinCode)
+      setShownInstructions(secondInstructionSet)
+      setPinCode('')
+    }
+  }, [pinCode, secondInstructionSet])
 
   return (
     <Screen>
-      <CenteredInstructions instructions={instructions} />
-      <PinCodeInput pinLenght={6} value={pinCode} onPinChange={setPinCode} />
+      <CenteredInstructions instructions={shownInstructions} />
+      <PinCodeInput pinLenght={pinLength} value={pinCode} onPinChange={setPinCode} />
     </Screen>
   )
 }
