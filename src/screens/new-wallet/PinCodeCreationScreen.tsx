@@ -24,7 +24,10 @@ import { useCallback, useEffect, useState } from 'react'
 import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
+import { useGlobalContext } from '../../contexts/global'
+import { useWalletGenerationContext } from '../../contexts/walletGeneration'
 import RootStackParamList from '../../navigation/rootStackRoutes'
+import { createAndStoreWallet } from '../../utils/wallet'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 
@@ -47,7 +50,9 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
-  const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean | undefined>(undefined)
+  const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean>()
+  const { name, setPin, method } = useWalletGenerationContext()
+  const { setWallet } = useGlobalContext()
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
@@ -81,21 +86,27 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
       setPinCode('')
     }
 
-    const handlePinCodeVerification = () => {
+    const handlePinCodeVerification = async () => {
       if (pinCode === chosenPinCode) {
+        if (method === 'create') {
+          const wallet = await createAndStoreWallet(name, pinCode)
+          setWallet(wallet)
+        } else {
+          setPin(pinCode)
+        }
         if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
           navigation.navigate('AddBiometricsScreen')
         } else {
           // TODO: Navigate to following screen
         }
       } else {
+        setPinCode('')
         setShownInstructions(errorInstructionSet)
       }
-      setPinCode('')
     }
 
     !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
-  }, [chosenPinCode, hasAvailableBiometrics, isVerifyingCode, navigation, pinCode])
+  }, [chosenPinCode, hasAvailableBiometrics, isVerifyingCode, method, name, navigation, pinCode, setPin, setWallet])
 
   return (
     <Screen>

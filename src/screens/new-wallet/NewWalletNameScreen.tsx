@@ -24,6 +24,7 @@ import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
+import { useWalletGenerationContext } from '../../contexts/walletGeneration'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
 const instructions: Instruction[] = [
@@ -33,13 +34,16 @@ const instructions: Instruction[] = [
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
-const NewWalletNameScreen = ({
-  navigation,
-  route: {
-    params: { action }
+const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
+  const { name, setName } = useWalletGenerationContext()
+  const [walletName, setWalletName] = useState(name)
+
+  const handleButtonPress = () => {
+    if (walletName) {
+      setName(walletName)
+      navigation.navigate('PinCodeCreationScreen')
+    }
   }
-}: ScreenProps) => {
-  const [walletName, setWalletName] = useState('')
 
   return (
     <Screen>
@@ -48,13 +52,7 @@ const NewWalletNameScreen = ({
         <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
       </InputContainer>
       <ActionsContainer>
-        <Button
-          title="Next"
-          type="primary"
-          wide
-          disabled={walletName.length < 3}
-          onPress={() => navigation.navigate(action === 'create' ? 'PinCodeCreationScreen' : 'ImportWalletSeedScreen')}
-        />
+        <Button title="Next" type="primary" wide disabled={walletName.length < 3} onPress={handleButtonPress} />
       </ActionsContainer>
     </Screen>
   )

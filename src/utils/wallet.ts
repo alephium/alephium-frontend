@@ -16,15 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-type RootStackParamList = {
-  LandingScreen: undefined
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
-  PinCodeCreationScreen: undefined
-  AddBiometricsScreen: undefined
-  NewWalletSuccessPage: undefined
-  ImportWalletSeedScreen: undefined
-  DashboardScreen: undefined
-}
+import { Wallet, walletGenerate, walletImport } from '@alephium/sdk'
+import * as SecureStore from 'expo-secure-store'
 
-export default RootStackParamList
+export const createAndStoreWallet = async (name: string, pin: string, seed?: string): Promise<Wallet> => {
+  return new Promise((resolve) => {
+    try {
+      const wallet = seed ? walletImport(seed) : walletGenerate()
+
+      const encryptedWallet = wallet.encrypt(pin.toString())
+      SecureStore.setItemAsync(`${name.replaceAll(' ', '-')}-alephium-wallet`, encryptedWallet).then(() =>
+        resolve(wallet)
+      )
+    } catch (e) {
+      console.error(e, 'Error while creating wallet')
+    }
+  })
+}

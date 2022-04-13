@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
+import DashboardScreen from '../screens/DashboardScreen'
 import LandingScreen from '../screens/LandingScreen'
 import AddBiometricsScreen from '../screens/new-wallet/AddBiometricsScreen'
 import ImportWalletSeedScreen from '../screens/new-wallet/ImportWalletSeedScreen'
@@ -30,26 +31,32 @@ import RootStackParamList from './rootStackRoutes'
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
-const RootStackNavigation = () => (
-  <NavigationContainer>
-    <RootStack.Navigator
-      screenOptions={{
-        headerStyle: { elevation: 0, shadowOpacity: 0, backgroundColor: 'transparent' },
-        cardStyle: { backgroundColor: '#fff' },
-        headerTitle: ''
-      }}
-    >
-      <RootStack.Screen name="LandingScreen" component={LandingScreen} options={{ headerShown: false }} />
+const RootStackNavigation = () => {
+  const walletExists = false // TODO: check if wallet exists
 
-      {/* NEW WALLET */}
-      <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
-      <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
-      <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
-      <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-      <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
-      <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
-    </RootStack.Navigator>
-  </NavigationContainer>
-)
+  return (
+    <NavigationContainer>
+      <RootStack.Navigator
+        initialRouteName={walletExists ? 'LandingScreen' : 'LandingScreen'} // TODO: Update with login screen
+        screenOptions={{
+          headerStyle: { elevation: 0, shadowOpacity: 0, backgroundColor: 'transparent' },
+          cardStyle: { backgroundColor: '#fff' },
+          headerTitle: ''
+        }}
+      >
+        <RootStack.Screen name="LandingScreen" component={LandingScreen} options={{ headerShown: false }} />
+
+        {/* NEW WALLET */}
+        <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
+        <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
+        <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
+        <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
+        <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
+        <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
+        <RootStack.Screen name="DashboardScreen" component={DashboardScreen} />
+      </RootStack.Navigator>
+    </NavigationContainer>
+  )
+}
 
 export default RootStackNavigation

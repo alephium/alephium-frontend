@@ -16,15 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-type RootStackParamList = {
-  LandingScreen: undefined
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
-  PinCodeCreationScreen: undefined
-  AddBiometricsScreen: undefined
-  NewWalletSuccessPage: undefined
-  ImportWalletSeedScreen: undefined
-  DashboardScreen: undefined
+import { Wallet } from '@alephium/sdk'
+import { createContext, FC, useContext, useState } from 'react'
+
+export interface GlobalContextProps {
+  wallet?: Wallet
+  setWallet: (wallet: Wallet | undefined) => void
 }
 
-export default RootStackParamList
+export const GlobalContext = createContext<GlobalContextProps>({
+  wallet: undefined,
+  setWallet: () => null
+})
+
+export const GlobalContextProvider: FC = ({ children }) => {
+  const [wallet, setWallet] = useState<Wallet>()
+
+  return <GlobalContext.Provider value={{ wallet, setWallet }}>{children}</GlobalContext.Provider>
+}
+
+export const useGlobalContext = () => useContext(GlobalContext)

@@ -19,14 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StatusBar } from 'expo-status-bar'
 import { ThemeProvider } from 'styled-components/native'
 
+import { GlobalContextProvider } from './src/contexts/global'
+import { WalletGenerationContextProvider } from './src/contexts/walletGeneration'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { lightTheme } from './src/style/themes'
 
 const App = () => (
-  <ThemeProvider theme={lightTheme}>
-    <RootStackNavigation />
-    <StatusBar style="auto" />
-  </ThemeProvider>
+  <GlobalContextProvider>
+    <WalletGenerationContextProvider>
+      <ThemeProvider theme={lightTheme}>
+        <RootStackNavigation />
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </WalletGenerationContextProvider>
+  </GlobalContextProvider>
 )
 
 export default App

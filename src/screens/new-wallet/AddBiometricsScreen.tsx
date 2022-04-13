@@ -27,6 +27,7 @@ import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
+import { useWalletGenerationContext } from '../../contexts/walletGeneration'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
@@ -37,7 +38,10 @@ const instructions: Instruction[] = [
 ]
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
-  const navigateToNextPage = () => navigation.navigate('NewWalletSuccessPage')
+  const { method } = useWalletGenerationContext()
+
+  const navigateToNextPage = () =>
+    navigation.navigate(method === 'create' ? 'NewWalletSuccessPage' : 'ImportWalletSeedScreen')
 
   const handleActivateBiometrics = async () => {
     const authResult = await authenticateAsync({

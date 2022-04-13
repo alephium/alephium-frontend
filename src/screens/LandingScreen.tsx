@@ -25,6 +25,12 @@ import styled, { useTheme } from 'styled-components/native'
 import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
 import Screen from '../components/layout/Screen'
+import { useGlobalContext } from '../contexts/global'
+import {
+  defaults as walletGenerationDefaults,
+  useWalletGenerationContext,
+  WalletGenerationMethod
+} from '../contexts/walletGeneration'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
@@ -32,6 +38,16 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
+  const { setMethod, setName, setPin } = useWalletGenerationContext()
+  const { setWallet } = useGlobalContext()
+
+  const handleButtonPress = (method: WalletGenerationMethod) => {
+    setMethod(method)
+    setName(walletGenerationDefaults.name)
+    setPin(walletGenerationDefaults.pin)
+    setWallet(undefined)
+    navigation.navigate('NewWalletIntroScreen')
+  }
 
   return (
     <Screen>
@@ -44,17 +60,12 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
       </TitleContainer>
       <ActionsContainer>
         <ButtonStack>
-          <Button
-            title="New wallet"
-            type="primary"
-            variant="contrast"
-            onPress={() => navigation.navigate('NewWalletIntroScreen', { action: 'create' })}
-          />
+          <Button title="New wallet" type="primary" variant="contrast" onPress={() => handleButtonPress('create')} />
           <Button
             title="Import wallet"
             type="secondary"
             variant="contrast"
-            onPress={() => navigation.navigate('NewWalletIntroScreen', { action: 'import' })}
+            onPress={() => handleButtonPress('import')}
           />
         </ButtonStack>
       </ActionsContainer>

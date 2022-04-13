@@ -25,6 +25,7 @@ import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
+import { useWalletGenerationContext } from '../../contexts/walletGeneration'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
@@ -45,29 +46,24 @@ const instructions = {
   import: instructionsImport
 }
 
-const NewWalletIntroScreen = ({
-  navigation,
-  route: {
-    params: { action }
-  }
-}: ScreenProps) => (
-  <Screen>
-    <AnimationContainer>
-      <StyledAnimation source={animationSrc} autoPlay />
-    </AnimationContainer>
-    <CenteredInstructions instructions={instructions[action]} stretch />
-    <ActionsContainer>
-      <ButtonStack>
-        <Button
-          title="Let's go!"
-          type="primary"
-          onPress={() => navigation.navigate('NewWalletNameScreen', { action })}
-        />
-        <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
-      </ButtonStack>
-    </ActionsContainer>
-  </Screen>
-)
+const NewWalletIntroScreen = ({ navigation }: ScreenProps) => {
+  const { method } = useWalletGenerationContext()
+
+  return (
+    <Screen>
+      <AnimationContainer>
+        <StyledAnimation source={animationSrc} autoPlay />
+      </AnimationContainer>
+      <CenteredInstructions instructions={instructions[method]} stretch />
+      <ActionsContainer>
+        <ButtonStack>
+          <Button title="Let's go!" type="primary" onPress={() => navigation.navigate('NewWalletNameScreen')} />
+          <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
+        </ButtonStack>
+      </ActionsContainer>
+    </Screen>
+  )
+}
 
 const AnimationContainer = styled.View`
   flex: 1;

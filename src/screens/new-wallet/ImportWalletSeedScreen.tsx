@@ -17,30 +17,66 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
+import { useGlobalContext } from '../../contexts/global'
+import { useWalletGenerationContext } from '../../contexts/walletGeneration'
 import RootStackParamList from '../../navigation/rootStackRoutes'
+import { createAndStoreWallet } from '../../utils/wallet'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
+  const [words, setWords] = useState<string[]>([])
+  const { name, pin } = useWalletGenerationContext()
+  const { setWallet } = useGlobalContext()
+
+  useEffect(() => {
+    setWords(
+      secretPhrase
+        .trim()
+        .split(' ')
+        .filter((word) => word.length > 3)
+    )
+  }, [secretPhrase])
+
+  const handleWalletImport = () => {
+    if (!isNextButtonActive || !pin || !name) return
+
+    const createWalletAndNavigate = async () => {
+      const wallet = await createAndStoreWallet(name, pin, words.join(' '))
+      setWallet(wallet)
+
+      navigation.navigate('DashboardScreen')
+    }
+
+    createWalletAndNavigate()
+  }
+
+  // Alephium's node code uses 12 as the minimal mnemomic length.
+  const isNextButtonActive = words.length >= 12
 
   return (
     <Screen>
       <InstructionsContainer>
         <InstructionsFirstLine>Enter your secret phrase.</InstructionsFirstLine>
+        {words.length > 0 && (
+          <InstructionsSecondLine>
+            {words.length} {words.length === 1 ? 'word' : 'words'} entered.
+          </InstructionsSecondLine>
+        )}
       </InstructionsContainer>
       <InputContainer>
-        <StyledInput label="Secret phrase" value={secretPhrase} onChangeText={setSecretPhrase} autoFocus />
+        <StyledInput multiline label="Secret phrase" value={secretPhrase} onChangeText={setSecretPhrase} autoFocus />
       </InputContainer>
       <ActionsContainer>
-        <Button title="Next" type="primary" wide disabled />
+        <Button title="Import wallet" type="primary" wide disabled={!isNextButtonActive} onPress={handleWalletImport} />
       </ActionsContainer>
     </Screen>
   )
@@ -56,6 +92,12 @@ const InstructionsFirstLine = styled(Text)`
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
   margin-bottom: 10px;
+`
+
+const InstructionsSecondLine = styled(Text)`
+  font-size: 16px;
+  font-weight: bold;
+  color: ${({ theme }) => theme.font.primary};
 `
 
 const InputContainer = styled.View`
