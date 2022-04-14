@@ -30,7 +30,7 @@ interface PinInputProps {
 }
 
 interface SlotProps {
-  number: string | undefined
+  number?: string
 }
 
 const PinCodeInput = ({ pinLenght, value, onPinChange, style }: PinInputProps) => {

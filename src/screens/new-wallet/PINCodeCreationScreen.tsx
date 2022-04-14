@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
@@ -29,32 +29,23 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 
 const pinLength = 6
 
+const firstInstructionSet: Instruction[] = [
+  { text: 'Please choose a passcode 🔐', type: 'primary' },
+  { text: 'Try not to forget it!', type: 'secondary' },
+  { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+]
+
+const secondInstructionSet: Instruction[] = [
+  { text: 'Please type your code again', type: 'primary' },
+  { text: 'Making sure you got it right 😇', type: 'secondary' }
+]
+
+const errorInstructionSet: Instruction[] = [
+  { text: 'Oops, not the same code!', type: 'error' },
+  { text: 'Please try again 💪', type: 'secondary' }
+]
+
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
-  const firstInstructionSet: Instruction[] = useMemo(
-    () => [
-      { text: 'Please choose a passcode 🔐', type: 'primary' },
-      { text: 'Try not to forget it!', type: 'secondary' },
-      { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
-    ],
-    []
-  )
-
-  const secondInstructionSet: Instruction[] = useMemo(
-    () => [
-      { text: 'Please type your code again', type: 'primary' },
-      { text: 'Making sure you got it right 😇', type: 'secondary' }
-    ],
-    []
-  )
-
-  const errorInstructionSet: Instruction[] = useMemo(
-    () => [
-      { text: 'Oops, not the same code!', type: 'error' },
-      { text: 'Please try again 💪', type: 'secondary' }
-    ],
-    []
-  )
-
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
@@ -66,7 +57,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
       setPinCode('')
       setIsVerifyingCode(false)
       setShownInstructions(firstInstructionSet)
-    }, [firstInstructionSet])
+    }, [])
   )
 
   useEffect(() => {
@@ -81,16 +72,13 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     }
 
     const handlePinCodeVerification = () => {
-      if (pinCode === chosenPinCode) {
-        navigation.navigate('AddBiometricsScreen')
-      } else {
-        setPinCode('')
-        setShownInstructions(errorInstructionSet)
-      }
+      if (pinCode === chosenPinCode) navigation.navigate('AddBiometricsScreen')
+      setPinCode('')
+      setShownInstructions(errorInstructionSet)
     }
 
     !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
-  }, [chosenPinCode, errorInstructionSet, isVerifyingCode, navigation, pinCode, secondInstructionSet])
+  }, [chosenPinCode, isVerifyingCode, navigation, pinCode])
 
   return (
     <Screen>

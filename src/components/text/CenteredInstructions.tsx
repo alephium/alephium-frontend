@@ -29,6 +29,7 @@ export type Instruction = {
 
 interface CenteredInstructionsProps {
   instructions: Instruction[]
+  stretch?: boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -50,6 +51,7 @@ export default styled(CenteredInstructions)`
   justify-content: center;
   align-items: center;
   padding: 10%;
+  ${({ stretch }) => stretch && 'flex: 1;'}
 `
 
 const Instruction = styled.Text<{ type: Instruction['type'] }>`

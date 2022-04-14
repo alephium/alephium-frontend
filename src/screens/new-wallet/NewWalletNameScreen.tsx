@@ -29,7 +29,7 @@ import RootStackParamList from '../../navigation/rootStackRoutes'
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const instructions: Instruction[] = [
-  { text: 'Alright, let’s get to it.', type: 'secondary' },
+  { text: "Alright, let's get to it.", type: 'secondary' },
   { text: 'How should we call this wallet?', type: 'primary' }
 ]
 
@@ -38,7 +38,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <Screen>
-      <CenteredInstructions instructions={instructions} style={{ flex: 1 }} />
+      <CenteredInstructions instructions={instructions} stretch />
       <InputContainer>
         <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
       </InputContainer>

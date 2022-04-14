@@ -35,6 +35,10 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
     }
   ]
 
+  const handleKeyPress = (value: NumberKeyboardKey) => {
+    onPress(value)
+  }
+
   const renderRow = (values: Array<NumberKeyboardKey | ''>) => (
     <KeyboardRow>
       {values.map((value) => (
@@ -49,10 +53,6 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
       ))}
     </KeyboardRow>
   )
-
-  const handleKeyPress = (value: NumberKeyboardKey) => {
-    onPress(value)
-  }
 
   return (
     <KeyboardContainer>

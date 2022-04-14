@@ -39,7 +39,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => (
     <AnimationContainer>
       <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
     </AnimationContainer>
-    <CenteredInstructions instructions={instructions} style={{ flex: 1 }} />
+    <CenteredInstructions instructions={instructions} stretch />
     <ActionsContainer>
       <ButtonStack>
         <Button title="Activate" type="primary" />

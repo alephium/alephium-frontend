@@ -40,7 +40,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => (
     <AnimationContainer>
       <StyledAnimation source={animationSrc} autoPlay />
     </AnimationContainer>
-    <CenteredInstructions instructions={instructions} style={{ flex: 1 }} />
+    <CenteredInstructions instructions={instructions} stretch />
     <ActionsContainer>
       <ButtonStack>
         <Button title="Let's go!" type="primary" onPress={() => navigation.navigate('NewWalletNameScreen')} />
