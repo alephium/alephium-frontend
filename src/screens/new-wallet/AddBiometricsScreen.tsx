@@ -34,20 +34,22 @@ const instructions: Instruction[] = [
   { text: 'Use your fingerprint instead of the passcode to unlock the wallet', type: 'secondary' }
 ]
 
-const AddBiometricsScreen = ({ navigation }: ScreenProps) => (
-  <Screen>
-    <AnimationContainer>
-      <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
-    </AnimationContainer>
-    <CenteredInstructions instructions={instructions} stretch />
-    <ActionsContainer>
-      <ButtonStack>
-        <Button title="Activate" type="primary" />
-        <Button title="Later" type="secondary" />
-      </ButtonStack>
-    </ActionsContainer>
-  </Screen>
-)
+const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
+  return (
+    <Screen>
+      <AnimationContainer>
+        <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
+      </AnimationContainer>
+      <CenteredInstructions instructions={instructions} stretch />
+      <ActionsContainer>
+        <ButtonStack>
+          <Button title="Activate" type="primary" />
+          <Button title="Later" type="secondary" />
+        </ButtonStack>
+      </ActionsContainer>
+    </Screen>
+  )
+}
 
 const AnimationContainer = styled.View`
   flex: 1;
