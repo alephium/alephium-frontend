@@ -58,7 +58,7 @@ const Button = ({ style, title, type = 'primary', variant = 'default', disabled,
   ]
 
   return (
-    <Pressable style={buttonStyle} {...props}>
+    <Pressable style={buttonStyle} disabled={disabled} {...props}>
       <ButtonText style={{ color: colors.font }}>{title}</ButtonText>
     </Pressable>
   )

@@ -1,0 +1,66 @@
+/*
+Copyright 2018 - 2022 The Alephium Authors
+This file is part of the alephium project.
+
+The library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+The library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the library. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+import { StyleProp, View, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
+
+import LinkToWeb from './LinkToWeb'
+
+export type Instruction = {
+  type: 'primary' | 'secondary' | 'error' | 'link'
+  text: string
+  url?: string
+}
+
+interface CenteredInstructionsProps {
+  instructions: Instruction[]
+  stretch?: boolean
+  style?: StyleProp<ViewStyle>
+}
+
+const CenteredInstructions = ({ instructions, style }: CenteredInstructionsProps) => (
+  <View style={style}>
+    {instructions.map(({ text, type, url }, i) =>
+      type === 'link' ? (
+        <LinkToWeb key={i} text={text} url={url || ''} />
+      ) : (
+        <Instruction key={i} type={type}>
+          {text}
+        </Instruction>
+      )
+    )}
+  </View>
+)
+
+export default styled(CenteredInstructions)`
+  justify-content: center;
+  align-items: center;
+  padding: 10%;
+  ${({ stretch }) => stretch && 'flex: 1;'}
+`
+
+const Instruction = styled.Text<{ type: Instruction['type'] }>`
+  color: ${({ type, theme }) =>
+    ({ primary: theme.font.primary, secondary: theme.font.secondary, error: theme.global.alert, link: '' }[type])};
+
+  font-weight: ${({ type }) => (['primary', 'error'].includes(type) ? 'bold' : 'normal')};
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+  line-height: 23px;
+`

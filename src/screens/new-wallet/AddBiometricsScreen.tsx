@@ -17,52 +17,46 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
+import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
+import animationSrc from '../../animations/fingerprint.json'
 import Button from '../../components/buttons/Button'
-import Input from '../../components/inputs/Input'
+import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
+type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
 const instructions: Instruction[] = [
-  { text: "Alright, let's get to it.", type: 'secondary' },
-  { text: 'How should we call this wallet?', type: 'primary' }
+  { text: 'Do you want to activate biometric security? 👆', type: 'primary' },
+  { text: 'Use your fingerprint instead of the passcode to unlock the wallet', type: 'secondary' }
 ]
 
-const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
-  const [walletName, setWalletName] = useState('')
+const AddBiometricsScreen = ({ navigation }: ScreenProps) => (
+  <Screen>
+    <AnimationContainer>
+      <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
+    </AnimationContainer>
+    <CenteredInstructions instructions={instructions} stretch />
+    <ActionsContainer>
+      <ButtonStack>
+        <Button title="Activate" type="primary" />
+        <Button title="Later" type="secondary" />
+      </ButtonStack>
+    </ActionsContainer>
+  </Screen>
+)
 
-  return (
-    <Screen>
-      <CenteredInstructions instructions={instructions} stretch />
-      <InputContainer>
-        <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
-      </InputContainer>
-      <ActionsContainer>
-        <Button
-          title="Next"
-          type="primary"
-          wide
-          disabled={walletName.length < 3}
-          onPress={() => navigation.navigate('PinCodeCreationScreen')}
-        />
-      </ActionsContainer>
-    </Screen>
-  )
-}
-
-const InputContainer = styled.View`
+const AnimationContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
 `
 
-const StyledInput = styled(Input)`
-  width: 80%;
+const StyledAnimation = styled(LottieView)`
+  width: 60%;
 `
 
 const ActionsContainer = styled.View`
@@ -71,4 +65,4 @@ const ActionsContainer = styled.View`
   align-items: center;
 `
 
-export default NewWalletNameScreen
+export default AddBiometricsScreen

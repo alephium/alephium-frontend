@@ -18,29 +18,29 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
+import animationSrc from '../../animations/wallet.json'
 import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
-import LinkToWeb from '../../components/links/LinkToWeb'
+import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
-const animationSrc = require('../../animations/wallet.json')
-
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
+
+const instructions: Instruction[] = [
+  { text: 'You are about to create a wallet 🎉', type: 'primary' },
+  { text: 'Your gateway to the Alephium ecosystem', type: 'secondary' },
+  { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+]
 
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => (
   <Screen>
     <AnimationContainer>
       <StyledAnimation source={animationSrc} autoPlay />
     </AnimationContainer>
-    <TitleContainer>
-      <TitleFirstLine>You are about to create a wallet 🎉</TitleFirstLine>
-      <TitleSecondLine>Your gateway to the Alephium ecosystem</TitleSecondLine>
-      <LinkToWeb text="More info" url="https://wiki.alephium.org/Frequently-Asked-Questions.html" />
-    </TitleContainer>
+    <CenteredInstructions instructions={instructions} stretch />
     <ActionsContainer>
       <ButtonStack>
         <Button title="Let's go!" type="primary" onPress={() => navigation.navigate('NewWalletNameScreen')} />
@@ -58,24 +58,6 @@ const AnimationContainer = styled.View`
 
 const StyledAnimation = styled(LottieView)`
   width: 40%;
-`
-
-const TitleContainer = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`
-
-const TitleFirstLine = styled(Text)`
-  font-size: 16px;
-  margin-bottom: 10px;
-  font-weight: bold;
-`
-
-const TitleSecondLine = styled(Text)`
-  font-size: 16px;
-  color: ${({ theme }) => theme.font.secondary};
-  margin-bottom: 15px;
 `
 
 const ActionsContainer = styled.View`
