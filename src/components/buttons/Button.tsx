@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { FC } from 'react'
 import { Pressable, PressableProps, StyleProp, Text, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -27,9 +28,18 @@ interface ButtonProps extends PressableProps {
   variant?: 'default' | 'contrast' | 'accent'
   style?: StyleProp<ViewStyle>
   wide?: boolean
+  children?: React.ReactNode
 }
 
-const Button = ({ style, title, type = 'primary', variant = 'default', disabled, ...props }: ButtonProps) => {
+const Button: FC<ButtonProps> = ({
+  style,
+  title,
+  type = 'primary',
+  variant = 'default',
+  disabled,
+  children,
+  ...props
+}) => {
   const theme = useTheme()
 
   const colors = {
@@ -60,6 +70,7 @@ const Button = ({ style, title, type = 'primary', variant = 'default', disabled,
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
       <ButtonText style={{ color: colors.font }}>{title}</ButtonText>
+      {children}
     </Pressable>
   )
 }
@@ -70,6 +81,7 @@ export default styled(Button)`
   height: 55px;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 `
 
 const ButtonText = styled(Text)`

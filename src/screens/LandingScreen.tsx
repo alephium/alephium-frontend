@@ -31,8 +31,7 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
-  const theme = useTheme()
-  const { yellow, orange, red, purple, cyan } = theme.gradient
+  const { yellow, orange, red, purple, cyan } = useTheme().gradient
 
   return (
     <Screen>

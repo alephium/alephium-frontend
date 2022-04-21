@@ -21,7 +21,7 @@ import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
 import animationSrc from '../../animations/success.json'
-import Button from '../../components/buttons/Button'
+import HighlightButton from '../../components/buttons/HighlightButton'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import AlephiumLogo from '../../images/logos/AlephiumLogo'
@@ -42,7 +42,7 @@ const NewWalletSuccessPage = ({ navigation }: ScreenProps) => (
     </AnimationContainer>
     <CenteredInstructions instructions={instructions} stretch fontSize={19} />
     <ActionsContainer>
-      <Button title="Let's go!" type="primary" wide />
+      <HighlightButton title="Let's go!" wide />
     </ActionsContainer>
   </Screen>
 )
