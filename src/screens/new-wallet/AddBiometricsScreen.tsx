@@ -17,6 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { authenticateAsync } from 'expo-local-authentication'
+import { setItemAsync } from 'expo-secure-store'
 import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
@@ -31,10 +33,25 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
 const instructions: Instruction[] = [
   { text: 'Do you want to activate biometric security? 👆', type: 'primary' },
-  { text: 'Use your fingerprint instead of the passcode to unlock the wallet', type: 'secondary' }
+  { text: 'Use your fingerprint or your face instead of the passcode to unlock the wallet', type: 'secondary' }
 ]
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
+  const navigateToNextPage = () => navigation.navigate('NewWalletSuccessPage')
+
+  const handleActivateBiometrics = async () => {
+    const authResult = await authenticateAsync({
+      promptMessage: 'Activate biometrics',
+      disableDeviceFallback: true,
+      cancelLabel: 'Cancel'
+    })
+
+    if (authResult.success) {
+      setItemAsync('usingBiometrics', 'true')
+      navigateToNextPage()
+    }
+  }
+
   return (
     <Screen>
       <AnimationContainer>
@@ -43,8 +60,8 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
       <CenteredInstructions instructions={instructions} stretch />
       <ActionsContainer>
         <ButtonStack>
-          <Button title="Activate" type="primary" />
-          <Button title="Later" type="secondary" />
+          <Button title="Activate" type="primary" onPress={handleActivateBiometrics} />
+          <Button title="Later" type="secondary" onPress={navigateToNextPage} />
         </ButtonStack>
       </ActionsContainer>
     </Screen>

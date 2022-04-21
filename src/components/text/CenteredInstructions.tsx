@@ -31,15 +31,16 @@ interface CenteredInstructionsProps {
   instructions: Instruction[]
   stretch?: boolean
   style?: StyleProp<ViewStyle>
+  fontSize?: number
 }
 
-const CenteredInstructions = ({ instructions, style }: CenteredInstructionsProps) => (
+const CenteredInstructions = ({ instructions, style, fontSize = 16 }: CenteredInstructionsProps) => (
   <View style={style}>
     {instructions.map(({ text, type, url }, i) =>
       type === 'link' ? (
         <LinkToWeb key={i} text={text} url={url || ''} />
       ) : (
-        <Instruction key={i} type={type}>
+        <Instruction key={i} type={type} style={{ fontSize }}>
           {text}
         </Instruction>
       )

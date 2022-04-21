@@ -23,6 +23,7 @@ import LandingScreen from '../screens/LandingScreen'
 import AddBiometricsScreen from '../screens/new-wallet/AddBiometricsScreen'
 import NewWalletIntroScreen from '../screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
+import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import RootStackParamList from './rootStackRoutes'
 
@@ -44,6 +45,7 @@ const RootStackNavigation = () => (
       <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
       <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
       <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
+      <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
     </RootStack.Navigator>
   </NavigationContainer>
 )
