@@ -57,6 +57,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     useCallback(() => {
       setIsVerifyingCode(false)
       setShownInstructions(firstInstructionSet)
+      setPinCode('')
     }, [])
   )
 
