@@ -25,19 +25,15 @@ import BrowserStorage from './storage-browser'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import djb2 from './djb2'
 
-export const signatureEncode = (ec: EC.ec, signature: EC.ec.Signature) => {
+export const signatureEncode = (ec: EC.ec, signature: EC.ec.Signature): string => {
   let sNormalized = signature.s
   if (ec.n && signature.s.cmp(ec.nh) === 1) {
     sNormalized = ec.n.sub(signature.s)
   }
 
-  const r = signature.r.toArrayLike(Buffer, 'be', 33).slice(1)
-  const s = sNormalized.toArrayLike(Buffer, 'be', 33).slice(1)
-
-  const xs = new Uint8Array(r.byteLength + s.byteLength)
-  xs.set(new Uint8Array(r), 0)
-  xs.set(new Uint8Array(s), r.byteLength)
-  return Buffer.from(xs).toString('hex')
+  const r = signature.r.toString('hex', 66).slice(2)
+  const s = sNormalized.toString('hex', 66).slice(2)
+  return r + s
 }
 
 // the signature should be in hex string format for 64 bytes
@@ -137,4 +133,8 @@ export function tokenIdFromAddress(address: string): string {
   } else {
     throw new Error(`Invalid contract address type: ${addressType}`)
   }
+}
+
+export function binToHex(bin: Uint8Array): string {
+  return Buffer.from(bin).toString('hex')
 }

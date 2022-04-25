@@ -69,12 +69,12 @@ To release a new version:
    ```
    Otherwise, just push to `master`.
 
-## Compile
+## Build
 
 Compile the TypeScript files into JavaScript:
 
 ```shell
-npm run compile
+npm run build
 ```
 
 ## Testing

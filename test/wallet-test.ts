@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import * as bip32 from 'bip32'
+import { HDKey } from '@scure/bip32'
 
 import * as walletUtils from '../lib/wallet'
 import { addressToGroup } from '../lib/address'
@@ -84,14 +84,14 @@ describe('Wallet', function () {
   it('should throw error if private key is missing', () => {
     const importedWallet = wallets.wallets[0]
     const seed = Buffer.from(importedWallet.seed, 'hex')
-    const neutered = bip32.fromSeed(seed).neutered()
+    const hdKey = HDKey.fromMasterSeed(seed)
     const mockedDerivePath = jest.fn()
-    neutered.derivePath = mockedDerivePath
-    mockedDerivePath.mockReturnValue({ privateKey: undefined })
+    hdKey.derive = mockedDerivePath
+    mockedDerivePath.mockReturnValue({ privateKey: null })
 
-    jest.spyOn(bip32, 'fromSeed').mockImplementationOnce(() => neutered)
+    jest.spyOn(HDKey, 'fromMasterSeed').mockImplementationOnce(() => hdKey)
 
-    expect(() => walletUtils.walletImport(importedWallet.mnemonic)).toThrow('Missing private key')
+    expect(() => walletUtils.walletImport(importedWallet.mnemonic)).toThrow('Empty key pair')
   })
 
   describe('should derive a new address', () => {
