@@ -24,6 +24,7 @@ import styled from 'styled-components/native'
 import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
+import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useGlobalContext } from '../../contexts/global'
 import { useWalletGenerationContext } from '../../contexts/walletGeneration'
 import RootStackParamList from '../../navigation/rootStackRoutes'
@@ -62,16 +63,14 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isNextButtonActive = words.length >= 12
 
+  const instructions: Instruction[] = [{ text: 'Enter your secret phrase.', type: 'primary' }]
+
+  if (words.length)
+    instructions.push({ text: `${words.length} ${words.length === 1 ? 'word' : 'words'} entered.`, type: 'secondary' })
+
   return (
     <Screen>
-      <InstructionsContainer>
-        <InstructionsFirstLine>Enter your secret phrase.</InstructionsFirstLine>
-        {words.length > 0 && (
-          <InstructionsSecondLine>
-            {words.length} {words.length === 1 ? 'word' : 'words'} entered.
-          </InstructionsSecondLine>
-        )}
-      </InstructionsContainer>
+      <CenteredInstructions instructions={instructions} />
       <InputContainer>
         <StyledInput multiline label="Secret phrase" value={secretPhrase} onChangeText={setSecretPhrase} autoFocus />
       </InputContainer>
@@ -81,24 +80,6 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
     </Screen>
   )
 }
-
-const InstructionsContainer = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`
-
-const InstructionsFirstLine = styled(Text)`
-  font-size: 16px;
-  color: ${({ theme }) => theme.font.secondary};
-  margin-bottom: 10px;
-`
-
-const InstructionsSecondLine = styled(Text)`
-  font-size: 16px;
-  font-weight: bold;
-  color: ${({ theme }) => theme.font.primary};
-`
 
 const InputContainer = styled.View`
   flex: 1;
