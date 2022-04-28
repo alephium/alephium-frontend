@@ -39,7 +39,9 @@ All you have to do is to include the library in your HTML document. The `alephiu
 ```html
 <script src="alephium.min.js"></script>
 <script>
-  console.log(alephium)
+  const { walletGenerate } = alephium
+  const wallet = walletGenerate()
+  console.log(wallet)
 </script>
 ```
 
