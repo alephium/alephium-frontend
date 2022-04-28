@@ -4,6 +4,7 @@
   "description": "A JS/TS library to interact with the Alephium platform",
   "license": "GPL",
   "main": "dist/lib/index.js",
+  "browser": "dist/alephium.min.js",
   "types": "dist/lib/index.d.ts",
   "exports": {
     ".": "./dist/lib/index.js",
@@ -35,7 +36,7 @@
     "explorer_backend_version": "1.6.1"
   },
   "scripts": {
-    "compile": "rm -rf dist && npx tsc --build .",
+    "build": "rm -rf dist && npx tsc --build . && webpack",
     "update-schemas": "npm run update-schema:alephium && npm run update-schema:explorer",
     "update-schema:alephium": "npx swagger-typescript-api -t ./api -o ./api -n api-alephium.ts -p https://raw.githubusercontent.com/alephium/alephium/v${npm_package_config_alephium_version}/api/src/main/resources/openapi.json",
     "update-schema:explorer": "npx swagger-typescript-api -t ./api -o ./api -n api-explorer.ts -p https://raw.githubusercontent.com/alephium/explorer-backend/v${npm_package_config_explorer_backend_version}/app/src/main/resources/explorer-backend-openapi.json",
@@ -44,9 +45,9 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --fix --ext .ts",
     "jest": "jest --useStderr --silent=false --verbose=true --config jestconfig.json",
-    "test": "npm run compile && npm run jest",
-    "test:watch": "npm run compile && npm run jest -- --watch",
-    "prepublishOnly": "npm run compile",
+    "test": "npm run build && npm run jest",
+    "test:watch": "npm run build && npm run jest -- --watch",
+    "prepublishOnly": "npm run build",
     "prepack": "node scripts/rename-gitignore.js .gitignore gitignore",
     "postpack": "node scripts/rename-gitignore.js gitignore .gitignore",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
@@ -82,6 +83,8 @@
     "@typescript-eslint/eslint-plugin": "^4.30.0",
     "@typescript-eslint/parser": "^4.30.0",
     "babel-eslint": "^10.1.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-header": "^3.1.1",
@@ -94,11 +97,14 @@
     "prettier": "^2.3.2",
     "rewire": "^6.0.0",
     "shelljs": "^0.8.5",
+    "stream-browserify": "^3.0.0",
     "swagger-typescript-api": "^9.2.0",
     "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.2",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2"
   },
   "engines": {
     "node": ">=14.0.0",
