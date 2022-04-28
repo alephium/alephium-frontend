@@ -15,6 +15,8 @@ npx @alephium/sdk [name]
 
 ## Install
 
+### In Node projects
+
 ```shell
 npm install @alephium/sdk
 ```
@@ -28,6 +30,35 @@ npm install @alephium/sdk
       "@alephium/sdk": "~X.Y.Z"
    }
 }
+```
+
+### In browser projects
+
+All you have to do is to include the library in your HTML document. The `alephium` global variable will be available.
+
+```html
+<script src="alephium.min.js"></script>
+<script>
+  console.log(alephium)
+</script>
+```
+
+You can either build the library by cloning this repo and running the build script (the file will be located at `/dist/alephium.min.js`), or simply using a CDN.
+
+```shell
+npm run build
+```
+
+#### via UNPKG CDN
+
+```html
+<script src="https://unpkg.com/@alephium/sdk@X.Y.Z/dist/alephium.min.js"></script>
+```
+
+#### via jsDelivr CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@alephium/sdk@X.Y.Z/dist/alephium.min.js"></script>
 ```
 
 ## Development
