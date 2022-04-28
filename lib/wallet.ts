@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { HDKey } from '@scure/bip32'
+import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import blake from 'blakejs'
 
@@ -24,7 +24,6 @@ import bs58 from './bs58'
 import { decrypt, encrypt } from './password-crypto'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import { addressToGroup } from './address'
-import { binToHex } from './utils'
 
 class StoredState {
   readonly version = 1
@@ -80,7 +79,7 @@ export const getPath = (addressIndex?: number) => {
 }
 
 export const getWalletFromMnemonic = (mnemonic: string): Wallet => {
-  const seed = Buffer.from(bip39.mnemonicToSeedSync(mnemonic))
+  const seed = bip39.mnemonicToSeedSync(mnemonic)
   const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
 
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic })
@@ -94,15 +93,13 @@ export type AddressAndKeys = {
 }
 
 const deriveAddressAndKeys = (seed: Buffer, addressIndex?: number): AddressAndKeys => {
-  const masterKey = HDKey.fromMasterSeed(seed)
-  const keyPair = masterKey.derive(getPath(addressIndex))
+  const masterKey = bip32.fromSeed(seed)
+  const keyPair = masterKey.derivePath(getPath(addressIndex))
 
-  if (keyPair.privateKey === null || keyPair.publicKey === null) {
-    throw new Error('Empty key pair')
-  }
+  if (!keyPair.privateKey) throw new Error('Missing private key')
 
-  const publicKey = binToHex(keyPair.publicKey)
-  const privateKey = binToHex(keyPair.privateKey)
+  const publicKey = keyPair.publicKey.toString('hex')
+  const privateKey = keyPair.privateKey.toString('hex')
 
   const hash = blake.blake2b(Buffer.from(publicKey, 'hex'), undefined, 32)
 
