@@ -24,7 +24,7 @@ import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useWalletGenerationContext } from '../../contexts/walletGeneration'
+import { useGlobalContext } from '../../contexts/global'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
 const instructions: Instruction[] = [
@@ -35,7 +35,7 @@ const instructions: Instruction[] = [
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
-  const { name, setName } = useWalletGenerationContext()
+  const { name, setName } = useGlobalContext()
   const [walletName, setWalletName] = useState(name)
 
   const handleButtonPress = () => {

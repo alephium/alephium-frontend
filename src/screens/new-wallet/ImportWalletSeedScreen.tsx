@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useState } from 'react'
-import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../../components/buttons/Button'
@@ -35,8 +34,8 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
-  const { name, pin } = useWalletGenerationContext()
-  const { setWallet } = useGlobalContext()
+  const { pin } = useWalletGenerationContext()
+  const { name, setWallet } = useGlobalContext()
 
   useEffect(() => {
     setWords(

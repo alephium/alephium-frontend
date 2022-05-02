@@ -25,7 +25,7 @@ import styled, { useTheme } from 'styled-components/native'
 import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
 import Screen from '../components/layout/Screen'
-import { useGlobalContext } from '../contexts/global'
+import { defaults as generalDefaults, useGlobalContext } from '../contexts/global'
 import {
   defaults as walletGenerationDefaults,
   useWalletGenerationContext,
@@ -38,12 +38,12 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
-  const { setMethod, setName, setPin } = useWalletGenerationContext()
-  const { setWallet } = useGlobalContext()
+  const { setMethod, setPin } = useWalletGenerationContext()
+  const { setWallet, setName } = useGlobalContext()
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     setMethod(method)
-    setName(walletGenerationDefaults.name)
+    setName(generalDefaults.name)
     setPin(walletGenerationDefaults.pin)
     setWallet(undefined)
     navigation.navigate('NewWalletIntroScreen')

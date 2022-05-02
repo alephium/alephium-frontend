@@ -22,14 +22,12 @@ import styled from 'styled-components/native'
 
 import Screen from '../components/layout/Screen'
 import { useGlobalContext } from '../contexts/global'
-import { useWalletGenerationContext } from '../contexts/walletGeneration'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'>
 
 const DashboardScreen = ({ navigation }: ScreenProps) => {
-  const { name } = useWalletGenerationContext()
-  const { wallet } = useGlobalContext()
+  const { wallet, name } = useGlobalContext()
 
   return (
     <Screen>

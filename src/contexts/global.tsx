@@ -22,17 +22,24 @@ import { createContext, FC, useContext, useState } from 'react'
 export interface GlobalContextProps {
   wallet?: Wallet
   setWallet: (wallet: Wallet | undefined) => void
+  name: string
+  setName: (name: string) => void
 }
 
-export const GlobalContext = createContext<GlobalContextProps>({
+export const defaults = {
   wallet: undefined,
-  setWallet: () => null
-})
+  setWallet: () => null,
+  name: '',
+  setName: () => null
+}
+
+export const GlobalContext = createContext<GlobalContextProps>(defaults)
 
 export const GlobalContextProvider: FC = ({ children }) => {
   const [wallet, setWallet] = useState<Wallet>()
+  const [name, setName] = useState(defaults.name)
 
-  return <GlobalContext.Provider value={{ wallet, setWallet }}>{children}</GlobalContext.Provider>
+  return <GlobalContext.Provider value={{ wallet, setWallet, name, setName }}>{children}</GlobalContext.Provider>
 }
 
 export const useGlobalContext = () => useContext(GlobalContext)

@@ -51,8 +51,8 @@ const errorInstructionSet: Instruction[] = [
 
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean>()
-  const { name, setPin, method } = useWalletGenerationContext()
-  const { setWallet } = useGlobalContext()
+  const { setPin, method } = useWalletGenerationContext()
+  const { setWallet, name } = useGlobalContext()
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
