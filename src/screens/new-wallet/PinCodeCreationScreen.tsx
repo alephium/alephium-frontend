@@ -27,7 +27,7 @@ import CenteredInstructions, { Instruction } from '../../components/text/Centere
 import { useGlobalContext } from '../../contexts/global'
 import { useWalletGenerationContext } from '../../contexts/walletGeneration'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { createAndStoreWallet } from '../../utils/wallet'
+import { createAndStoreWallet } from '../../storage/wallet'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 

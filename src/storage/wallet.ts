@@ -19,14 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Wallet, walletGenerate, walletImport } from '@alephium/sdk'
 import * as SecureStore from 'expo-secure-store'
 
+const STORAGE_KEY_SUFFIX = 'wallet'
+
 export const createAndStoreWallet = async (name: string, pin: string, seed?: string): Promise<Wallet> => {
   return new Promise((resolve) => {
     try {
       const wallet = seed ? walletImport(seed) : walletGenerate()
 
       const encryptedWallet = wallet.encrypt(pin.toString())
-      // TODO: Change naming strategy to avoid name clearing
-      SecureStore.setItemAsync(`${name.replaceAll(' ', '-')}-alephium-wallet`, encryptedWallet).then(() =>
+      // TODO: Remove accountName from the key and use an index instead
+      SecureStore.setItemAsync(`${name.replaceAll(' ', '-')}-${STORAGE_KEY_SUFFIX}`, encryptedWallet).then(() =>
         resolve(wallet)
       )
     } catch (e) {
