@@ -136,7 +136,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
   const [addressesState, setAddressesState] = useState<AddressesStateMap>(new Map())
   const [isLoadingData, setIsLoadingData] = useState(false)
   const {
-    name,
+    walletName,
     wallet,
     settings: {
       network: { nodeHost, explorerApiHost }
@@ -185,7 +185,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
   )
 
   const updateAddressSettings = async (address: Address, settings: AddressSettings) => {
-    await storeAddressMetadataOfAccount(name, address.index, settings)
+    await storeAddressMetadataOfAccount(walletName, address.index, settings)
     address.settings = settings
     setAddress(address)
   }
@@ -251,20 +251,20 @@ export const AddressesContextProvider: FC = ({ children }) => {
 
   const saveNewAddress = useCallback(
     async (newAddress: Address) => {
-      await storeAddressMetadataOfAccount(name, newAddress.index, newAddress.settings)
+      await storeAddressMetadataOfAccount(walletName, newAddress.index, newAddress.settings)
       setAddress(newAddress)
       fetchAndStoreAddressesData([newAddress])
     },
-    [name, fetchAndStoreAddressesData, setAddress]
+    [walletName, setAddress, fetchAndStoreAddressesData]
   )
 
   // Initialize addresses state using the locally stored address metadata
   useEffect(() => {
     const initializeCurrentNetworkAddresses = async () => {
       console.log('🥇 Initializing current network addresses')
-      if (!name || !wallet) return
+      if (!walletName || !wallet) return
 
-      const addressesMetadata = await loadStoredAddressesMetadataOfAccount(name)
+      const addressesMetadata = await loadStoredAddressesMetadataOfAccount(walletName)
 
       if (addressesMetadata.length === 0) {
         saveNewAddress(
@@ -304,7 +304,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
       initializeCurrentNetworkAddresses()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, name, wallet, explorerApiHost, nodeHost])
+  }, [client, walletName, wallet, explorerApiHost, nodeHost])
 
   // Whenever the addresses state updates, check if there are pending transactions on the current network and if so,
   // keep querying the API until all pending transactions are confirmed.
