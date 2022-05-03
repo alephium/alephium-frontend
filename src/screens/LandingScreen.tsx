@@ -26,11 +26,7 @@ import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
 import Screen from '../components/layout/Screen'
 import { defaults as generalDefaults, useGlobalContext } from '../contexts/global'
-import {
-  defaults as walletGenerationDefaults,
-  useWalletGenerationContext,
-  WalletGenerationMethod
-} from '../contexts/walletGeneration'
+import { useWalletGenerationContext, WalletGenerationMethod } from '../contexts/walletGeneration'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
@@ -38,13 +34,13 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
-  const { setMethod, setPin } = useWalletGenerationContext()
-  const { setWallet, setName } = useGlobalContext()
+  const { setMethod } = useWalletGenerationContext()
+  const { setWallet, setWalletName, setPin } = useGlobalContext()
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     setMethod(method)
-    setName(generalDefaults.name)
-    setPin(walletGenerationDefaults.pin)
+    setWalletName(generalDefaults.walletName)
+    setPin(generalDefaults.pin)
     setWallet(undefined)
     navigation.navigate('NewWalletIntroScreen')
   }

@@ -35,12 +35,12 @@ const instructions: Instruction[] = [
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
-  const { name, setName } = useGlobalContext()
-  const [walletName, setWalletName] = useState(name)
+  const { walletName, setWalletName } = useGlobalContext()
+  const [walletNameLocal, setWalletNameLocal] = useState(walletName)
 
   const handleButtonPress = () => {
-    if (walletName) {
-      setName(walletName)
+    if (walletNameLocal) {
+      setWalletName(walletNameLocal)
       navigation.navigate('PinCodeCreationScreen')
     }
   }
@@ -49,7 +49,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
     <Screen>
       <CenteredInstructions instructions={instructions} stretch />
       <InputContainer>
-        <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
+        <StyledInput label="Wallet name" value={walletNameLocal} onChangeText={setWalletNameLocal} autoFocus />
       </InputContainer>
       <ActionsContainer>
         <Button title="Next" type="primary" wide disabled={walletName.length < 3} onPress={handleButtonPress} />

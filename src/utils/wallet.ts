@@ -25,6 +25,7 @@ export const createAndStoreWallet = async (name: string, pin: string, seed?: str
       const wallet = seed ? walletImport(seed) : walletGenerate()
 
       const encryptedWallet = wallet.encrypt(pin.toString())
+      // TODO: Change naming strategy to avoid name clearing
       SecureStore.setItemAsync(`${name.replaceAll(' ', '-')}-alephium-wallet`, encryptedWallet).then(() =>
         resolve(wallet)
       )

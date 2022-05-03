@@ -27,12 +27,12 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'>
 
 const DashboardScreen = ({ navigation }: ScreenProps) => {
-  const { wallet, name } = useGlobalContext()
+  const { wallet, walletName } = useGlobalContext()
 
   return (
     <Screen>
       <Text>Wallet name:</Text>
-      <Bold>{name}</Bold>
+      <Bold>{walletName}</Bold>
       <Text>Primary wallet address:</Text>
       <Bold>{wallet?.address}</Bold>
     </Screen>

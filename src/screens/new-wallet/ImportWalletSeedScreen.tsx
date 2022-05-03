@@ -33,7 +33,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
-  const { name, setWallet, pin } = useGlobalContext()
+  const { walletName, setWallet, pin } = useGlobalContext()
 
   useEffect(() => {
     setWords(
@@ -45,10 +45,10 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   }, [secretPhrase])
 
   const handleWalletImport = () => {
-    if (!pin || !name) return
+    if (!pin || !walletName) return
 
     const createWalletAndNavigate = async () => {
-      const wallet = await createAndStoreWallet(name, pin, words.join(' '))
+      const wallet = await createAndStoreWallet(walletName, pin, words.join(' '))
       setWallet(wallet)
 
       navigation.navigate('NewWalletSuccessPage')
