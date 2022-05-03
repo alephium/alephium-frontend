@@ -20,7 +20,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { MotiView } from 'moti'
 import { PressableProps } from 'react-native'
 import { useTheme } from 'styled-components'
-import styled from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 
 import Button from './Button'
 
@@ -64,21 +64,21 @@ const ButtonWrapper = styled(MotiView)`
   align-items: center;
 `
 
-const GradientContainer = styled(MotiView)`
+const fullScreen = css`
   position: absolute;
   top: 0;
   bottom: 0;
   right: 0;
   left: 0;
+`
+
+const GradientContainer = styled(MotiView)`
+  ${fullScreen}
   z-index: -1;
 `
 
 const StyledLinearGradient = styled(LinearGradient)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
+  ${fullScreen}
 `
 
 export default HighlightButton

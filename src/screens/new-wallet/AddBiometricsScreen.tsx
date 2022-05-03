@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { authenticateAsync } from 'expo-local-authentication'
-import { setItemAsync } from 'expo-secure-store'
+import * as SecureStore from 'expo-secure-store'
 import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
@@ -33,7 +33,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
 const instructions: Instruction[] = [
   { text: 'Do you want to activate biometric security? 👆', type: 'primary' },
-  { text: 'Use your fingerprint or your face instead of the passcode to unlock the wallet', type: 'secondary' }
+  { text: 'Use fingerprint or face recognition instead of the passcode to unlock the wallet', type: 'secondary' }
 ]
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
@@ -47,7 +47,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
     })
 
     if (authResult.success) {
-      setItemAsync('usingBiometrics', 'true')
+      SecureStore.setItemAsync('usingBiometrics', 'true')
       navigateToNextPage()
     }
   }
