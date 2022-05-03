@@ -24,13 +24,17 @@ export interface GlobalContextProps {
   setWallet: (wallet: Wallet | undefined) => void
   name: string
   setName: (name: string) => void
+  pin: string
+  setPin: (pin: string) => void
 }
 
 export const defaults = {
   wallet: undefined,
   setWallet: () => null,
   name: '',
-  setName: () => null
+  setName: () => null,
+  pin: '',
+  setPin: () => null
 }
 
 export const GlobalContext = createContext<GlobalContextProps>(defaults)
@@ -38,8 +42,13 @@ export const GlobalContext = createContext<GlobalContextProps>(defaults)
 export const GlobalContextProvider: FC = ({ children }) => {
   const [wallet, setWallet] = useState<Wallet>()
   const [name, setName] = useState(defaults.name)
+  const [pin, setPin] = useState(defaults.pin)
 
-  return <GlobalContext.Provider value={{ wallet, setWallet, name, setName }}>{children}</GlobalContext.Provider>
+  return (
+    <GlobalContext.Provider value={{ wallet, setWallet, name, setName, pin, setPin }}>
+      {children}
+    </GlobalContext.Provider>
+  )
 }
 
 export const useGlobalContext = () => useContext(GlobalContext)

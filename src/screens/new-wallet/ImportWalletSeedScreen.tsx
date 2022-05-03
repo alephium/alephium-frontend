@@ -25,7 +25,6 @@ import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useGlobalContext } from '../../contexts/global'
-import { useWalletGenerationContext } from '../../contexts/walletGeneration'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { createAndStoreWallet } from '../../utils/wallet'
 
@@ -34,8 +33,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
-  const { pin } = useWalletGenerationContext()
-  const { name, setWallet } = useGlobalContext()
+  const { name, setWallet, pin } = useGlobalContext()
 
   useEffect(() => {
     setWords(

@@ -51,8 +51,8 @@ const errorInstructionSet: Instruction[] = [
 
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean>()
-  const { setPin, method } = useWalletGenerationContext()
-  const { setWallet, name } = useGlobalContext()
+  const { method } = useWalletGenerationContext()
+  const { setWallet, name, setPin } = useGlobalContext()
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
@@ -91,9 +91,9 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
         if (method === 'create') {
           const wallet = await createAndStoreWallet(name, pinCode)
           setWallet(wallet)
-        } else {
-          setPin(pinCode)
         }
+        setPin(pinCode)
+
         if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
           navigation.navigate('AddBiometricsScreen')
         } else {

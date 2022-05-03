@@ -21,15 +21,11 @@ import { createContext, FC, useContext, useState } from 'react'
 export type WalletGenerationMethod = 'create' | 'import'
 
 export interface WalletGenerationContextProps {
-  pin: string
-  setPin: (pin: string) => void
   method: WalletGenerationMethod
   setMethod: (method: WalletGenerationMethod) => void
 }
 
 export const defaults: WalletGenerationContextProps = {
-  pin: '',
-  setPin: () => null,
   method: 'create',
   setMethod: () => null
 }
@@ -37,14 +33,9 @@ export const defaults: WalletGenerationContextProps = {
 export const WalletGenerationContext = createContext<WalletGenerationContextProps>(defaults)
 
 export const WalletGenerationContextProvider: FC = ({ children }) => {
-  const [pin, setPin] = useState(defaults.pin)
   const [method, setMethod] = useState<WalletGenerationMethod>(defaults.method)
 
-  return (
-    <WalletGenerationContext.Provider value={{ pin, setPin, method, setMethod }}>
-      {children}
-    </WalletGenerationContext.Provider>
-  )
+  return <WalletGenerationContext.Provider value={{ method, setMethod }}>{children}</WalletGenerationContext.Provider>
 }
 
 export const useWalletGenerationContext = () => useContext(WalletGenerationContext)
