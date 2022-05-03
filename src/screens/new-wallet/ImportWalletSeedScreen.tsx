@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components/native'
 
 import Button from '../../components/buttons/Button'
@@ -26,33 +26,53 @@ import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useGlobalContext } from '../../contexts/global'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-
-const instructions: Instruction[] = [
-  { text: "Alright, let's get to it.", type: 'secondary' },
-  { text: 'How should we call this wallet?', type: 'primary' }
-]
+import { createAndStoreWallet } from '../../utils/wallet'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
-const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
-  const { walletName, setWalletName } = useGlobalContext()
-  const [walletNameLocal, setWalletNameLocal] = useState(walletName)
+const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
+  const [secretPhrase, setSecretPhrase] = useState('')
+  const [words, setWords] = useState<string[]>([])
+  const { walletName, setWallet, pin } = useGlobalContext()
 
-  const handleButtonPress = () => {
-    if (walletNameLocal) {
-      setWalletName(walletNameLocal)
-      navigation.navigate('PinCodeCreationScreen')
+  useEffect(() => {
+    setWords(
+      secretPhrase
+        .trim()
+        .split(' ')
+        .filter((word) => word.length > 2)
+    )
+  }, [secretPhrase])
+
+  const handleWalletImport = () => {
+    if (!pin || !walletName) return
+
+    const createWalletAndNavigate = async () => {
+      const wallet = await createAndStoreWallet(walletName, pin, words.join(' '))
+      setWallet(wallet)
+
+      navigation.navigate('NewWalletSuccessPage')
     }
+
+    createWalletAndNavigate()
   }
+
+  // Alephium's node code uses 12 as the minimal mnemomic length.
+  const isNextButtonActive = words.length >= 12
+
+  const instructions: Instruction[] = [{ text: 'Enter your secret phrase.', type: 'primary' }]
+
+  if (words.length)
+    instructions.push({ text: `${words.length} ${words.length === 1 ? 'word' : 'words'} entered.`, type: 'secondary' })
 
   return (
     <Screen>
-      <CenteredInstructions instructions={instructions} stretch />
+      <CenteredInstructions instructions={instructions} />
       <InputContainer>
-        <StyledInput label="Wallet name" value={walletNameLocal} onChangeText={setWalletNameLocal} autoFocus />
+        <StyledInput multiline label="Secret phrase" value={secretPhrase} onChangeText={setSecretPhrase} autoFocus />
       </InputContainer>
       <ActionsContainer>
-        <Button title="Next" type="primary" wide disabled={walletName.length < 3} onPress={handleButtonPress} />
+        <Button title="Import wallet" type="primary" wide disabled={!isNextButtonActive} onPress={handleWalletImport} />
       </ActionsContainer>
     </Screen>
   )
@@ -74,4 +94,4 @@ const ActionsContainer = styled.View`
   align-items: center;
 `
 
-export default NewWalletNameScreen
+export default ImportWalletSeedScreen

@@ -42,7 +42,7 @@ const NewWalletSuccessPage = ({ navigation }: ScreenProps) => (
     </AnimationContainer>
     <CenteredInstructions instructions={instructions} stretch fontSize={19} />
     <ActionsContainer>
-      <HighlightButton title="Let's go!" wide />
+      <HighlightButton title="Let's go!" wide onPress={() => navigation.navigate('DashboardScreen')} />
     </ActionsContainer>
   </Screen>
 )

@@ -25,6 +25,8 @@ import styled, { useTheme } from 'styled-components/native'
 import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
 import Screen from '../components/layout/Screen'
+import { defaults as generalDefaults, useGlobalContext } from '../contexts/global'
+import { useWalletGenerationContext, WalletGenerationMethod } from '../contexts/walletGeneration'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
@@ -32,6 +34,16 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
+  const { setMethod } = useWalletGenerationContext()
+  const { setWallet, setWalletName, setPin } = useGlobalContext()
+
+  const handleButtonPress = (method: WalletGenerationMethod) => {
+    setMethod(method)
+    setWalletName(generalDefaults.walletName)
+    setPin(generalDefaults.pin)
+    setWallet(undefined)
+    navigation.navigate('NewWalletIntroScreen')
+  }
 
   return (
     <Screen>
@@ -44,13 +56,13 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
       </TitleContainer>
       <ActionsContainer>
         <ButtonStack>
+          <Button title="New wallet" type="primary" variant="contrast" onPress={() => handleButtonPress('create')} />
           <Button
-            title="New wallet"
-            type="primary"
+            title="Import wallet"
+            type="secondary"
             variant="contrast"
-            onPress={() => navigation.navigate('NewWalletIntroScreen')}
+            onPress={() => handleButtonPress('import')}
           />
-          <Button title="Import wallet" type="secondary" variant="contrast" />
         </ButtonStack>
       </ActionsContainer>
       <GradientBackgroundStyled
