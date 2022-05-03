@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
+import { isEnrolledAsync } from 'expo-local-authentication'
 import { useCallback, useEffect, useState } from 'react'
 
 import PinCodeInput from '../../components/inputs/PinCodeInput'
@@ -46,6 +47,7 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
+  const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean | undefined>(undefined)
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
@@ -53,12 +55,20 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
 
   useFocusEffect(
     useCallback(() => {
-      // Reset the pin code on screen enter
-      setPinCode('')
       setIsVerifyingCode(false)
       setShownInstructions(firstInstructionSet)
+      setPinCode('')
     }, [])
   )
+
+  useEffect(() => {
+    const checkBiometricsAvailability = async () => {
+      const available = await isEnrolledAsync()
+      setHasAvailableBiometrics(available)
+    }
+
+    checkBiometricsAvailability()
+  }, [])
 
   useEffect(() => {
     // Switch to pin code check
@@ -72,13 +82,20 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     }
 
     const handlePinCodeVerification = () => {
-      if (pinCode === chosenPinCode) navigation.navigate('AddBiometricsScreen')
+      if (pinCode === chosenPinCode) {
+        if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
+          navigation.navigate('AddBiometricsScreen')
+        } else {
+          // TODO: Navigate to following screen
+        }
+      } else {
+        setShownInstructions(errorInstructionSet)
+      }
       setPinCode('')
-      setShownInstructions(errorInstructionSet)
     }
 
     !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
-  }, [chosenPinCode, isVerifyingCode, navigation, pinCode])
+  }, [chosenPinCode, hasAvailableBiometrics, isVerifyingCode, navigation, pinCode])
 
   return (
     <Screen>

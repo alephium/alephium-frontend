@@ -28,7 +28,10 @@
     "react-native-screens": "~3.10.1",
     "react-native-svg": "12.1.1",
     "react-navigation": "^4.4.4",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "expo-secure-store": "~11.1.0",
+    "expo-local-authentication": "~12.1.0",
+    "expo-linear-gradient": "~11.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

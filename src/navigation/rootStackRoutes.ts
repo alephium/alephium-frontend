@@ -22,6 +22,7 @@ type RootStackParamList = {
   NewWalletNameScreen: undefined
   PinCodeCreationScreen: undefined
   AddBiometricsScreen: undefined
+  NewWalletSuccessPage: undefined
 }
 
 export default RootStackParamList
