@@ -42,7 +42,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       secretPhrase
         .trim()
         .split(' ')
-        .filter((word) => word.length > 3)
+        .filter((word) => word.length > 2)
     )
   }, [secretPhrase])
 
