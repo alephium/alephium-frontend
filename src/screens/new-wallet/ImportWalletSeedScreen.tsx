@@ -53,7 +53,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       const wallet = await createAndStoreWallet(name, pin, words.join(' '))
       setWallet(wallet)
 
-      navigation.navigate('DashboardScreen')
+      navigation.navigate('NewWalletSuccessPage')
     }
 
     createWalletAndNavigate()
