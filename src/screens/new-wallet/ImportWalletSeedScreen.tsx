@@ -47,7 +47,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   }, [secretPhrase])
 
   const handleWalletImport = () => {
-    if (!isNextButtonActive || !pin || !name) return
+    if (!pin || !name) return
 
     const createWalletAndNavigate = async () => {
       const wallet = await createAndStoreWallet(name, pin, words.join(' '))
