@@ -18,18 +18,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { LinearGradient } from 'expo-linear-gradient'
 import { MotiView } from 'moti'
-import { PressableProps } from 'react-native'
 import { useTheme } from 'styled-components'
 import styled, { css } from 'styled-components/native'
 
-import Button from './Button'
+import Button, { ButtonProps } from './Button'
 
-interface HighlightButtonProps extends PressableProps {
+interface HighlightButtonProps extends ButtonProps {
   title: string
   wide?: boolean
 }
 
-const HighlightButton = ({ title, wide }: HighlightButtonProps) => {
+const HighlightButton = ({ title, wide, ...props }: HighlightButtonProps) => {
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
 
   return (
@@ -42,7 +41,7 @@ const HighlightButton = ({ title, wide }: HighlightButtonProps) => {
         duration: 500
       }}
     >
-      <Button title={title} wide={wide}>
+      <Button title={title} wide={wide} {...props}>
         <GradientContainer
           from={{ scale: 1 }}
           animate={{ scale: 1.5 }}

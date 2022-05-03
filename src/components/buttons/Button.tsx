@@ -22,7 +22,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
 
-interface ButtonProps extends PressableProps {
+export interface ButtonProps extends PressableProps {
   title: string
   type?: 'primary' | 'secondary'
   variant?: 'default' | 'contrast' | 'accent'
