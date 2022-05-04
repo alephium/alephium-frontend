@@ -25,7 +25,6 @@ import { useGlobalContext } from './global'
 
 export interface ApiContextProps {
   client?: Client
-  setClient: (client: Client) => void
   isClientLoading: boolean
   network: NetworkType
   isOffline: boolean
@@ -33,7 +32,6 @@ export interface ApiContextProps {
 
 const defaults = {
   client: undefined,
-  setClient: () => null,
   isClientLoading: false,
   network: NetworkType.mainnet,
   isOffline: false
@@ -87,19 +85,7 @@ export const ApiContextProvider: FC = ({ children }) => {
     return () => clearInterval(interval)
   })
 
-  return (
-    <ApiContext.Provider
-      value={{
-        client,
-        setClient,
-        isClientLoading,
-        network,
-        isOffline
-      }}
-    >
-      {children}
-    </ApiContext.Provider>
-  )
+  return <ApiContext.Provider value={{ client, isClientLoading, network, isOffline }}>{children}</ApiContext.Provider>
 }
 
 export const useApiContext = () => useContext(ApiContext)
