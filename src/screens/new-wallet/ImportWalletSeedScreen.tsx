@@ -65,6 +65,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   if (words.length)
     instructions.push({ text: `${words.length} ${words.length === 1 ? 'word' : 'words'} entered.`, type: 'secondary' })
 
+  console.log('ImportWalletSeedScreen renders')
+
   return (
     <Screen>
       <CenteredInstructions instructions={instructions} />

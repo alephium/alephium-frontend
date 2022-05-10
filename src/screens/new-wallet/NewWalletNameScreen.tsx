@@ -45,6 +45,8 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
     }
   }
 
+  console.log('NewWalletNameScreen renders')
+
   return (
     <Screen>
       <CenteredInstructions instructions={instructions} stretch />

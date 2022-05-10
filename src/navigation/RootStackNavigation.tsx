@@ -34,6 +34,8 @@ const RootStack = createStackNavigator<RootStackParamList>()
 const RootStackNavigation = () => {
   const walletExists = false // TODO: check if wallet exists
 
+  console.log('RootStackNavigation renders')
+
   return (
     <NavigationContainer>
       <RootStack.Navigator

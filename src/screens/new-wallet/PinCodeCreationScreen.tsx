@@ -118,6 +118,8 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     walletName
   ])
 
+  console.log('PinCodeCreationScreen renders')
+
   return (
     <Screen>
       <CenteredInstructions instructions={shownInstructions} />

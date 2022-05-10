@@ -56,6 +56,8 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
     }
   }
 
+  console.log('AddBiometricsScreen renders')
+
   return (
     <Screen>
       <AnimationContainer>

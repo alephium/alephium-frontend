@@ -32,6 +32,8 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
   const { addresses } = useAddressesContext()
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.details.balance), BigInt(0))
 
+  console.log('DashboardScreen renders')
+
   return (
     <Screen>
       <Text>Wallet name:</Text>
