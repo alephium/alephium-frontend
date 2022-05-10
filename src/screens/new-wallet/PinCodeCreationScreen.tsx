@@ -25,7 +25,7 @@ import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useGlobalContext } from '../../contexts/global'
-import { useWalletGenerationContext } from '../../contexts/walletGeneration'
+import { useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { createAndStoreWallet } from '../../storage/wallet'
 
@@ -51,7 +51,7 @@ const errorInstructionSet: Instruction[] = [
 
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean>()
-  const { method } = useWalletGenerationContext()
+  const method = useAppSelector((state) => state.walletGeneration.method)
   const { setWallet, walletName, setPin } = useGlobalContext()
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')

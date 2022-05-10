@@ -17,28 +17,29 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StatusBar } from 'expo-status-bar'
+import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components/native'
 
 import { AddressesContextProvider } from './src/contexts/addresses'
 import { ApiContextProvider } from './src/contexts/api'
 import { GlobalContextProvider } from './src/contexts/global'
-import { WalletGenerationContextProvider } from './src/contexts/walletGeneration'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
+import { store } from './src/store/store'
 import { lightTheme } from './src/style/themes'
 
 const App = () => (
-  <GlobalContextProvider>
-    <ApiContextProvider>
-      <WalletGenerationContextProvider>
+  <Provider store={store}>
+    <GlobalContextProvider>
+      <ApiContextProvider>
         <AddressesContextProvider>
           <ThemeProvider theme={lightTheme}>
             <RootStackNavigation />
             <StatusBar style="auto" />
           </ThemeProvider>
         </AddressesContextProvider>
-      </WalletGenerationContextProvider>
-    </ApiContextProvider>
-  </GlobalContextProvider>
+      </ApiContextProvider>
+    </GlobalContextProvider>
+  </Provider>
 )
 
 export default App

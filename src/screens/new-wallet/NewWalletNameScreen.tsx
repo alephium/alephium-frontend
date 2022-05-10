@@ -52,7 +52,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
         <StyledInput label="Wallet name" value={walletNameLocal} onChangeText={setWalletNameLocal} autoFocus />
       </InputContainer>
       <ActionsContainer>
-        <Button title="Next" type="primary" wide disabled={walletName.length < 3} onPress={handleButtonPress} />
+        <Button title="Next" type="primary" wide disabled={walletNameLocal.length < 3} onPress={handleButtonPress} />
       </ActionsContainer>
     </Screen>
   )
