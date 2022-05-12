@@ -25,7 +25,6 @@ import styled, { useTheme } from 'styled-components/native'
 import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
 import Screen from '../components/layout/Screen'
-import { defaults as generalDefaults, useGlobalContext } from '../contexts/global'
 import { useAppDispatch } from '../hooks/redux'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -35,15 +34,11 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
-  const { setWallet, setWalletName, setPin } = useGlobalContext()
 
   const dispatch = useAppDispatch()
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
-    setWalletName(generalDefaults.walletName)
-    setPin(generalDefaults.pin)
-    setWallet(undefined)
     navigation.navigate('NewWalletIntroScreen')
   }
 

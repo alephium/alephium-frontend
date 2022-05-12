@@ -25,9 +25,10 @@ import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useGlobalContext } from '../../contexts/global'
-import { useAppSelector } from '../../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { createAndStoreWallet } from '../../storage/wallet'
+import { pinEntered } from '../../store/securitySlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 
@@ -52,11 +53,13 @@ const errorInstructionSet: Instruction[] = [
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean>()
   const method = useAppSelector((state) => state.walletGeneration.method)
-  const { setWallet, walletName, setPin } = useGlobalContext()
+  const { setWallet } = useGlobalContext()
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [isVerifyingCode, setIsVerifyingCode] = useState(false)
+  const dispatch = useAppDispatch()
+  const activeWalletName = useAppSelector((state) => state.activeWallet.name)
 
   useFocusEffect(
     useCallback(() => {
@@ -88,11 +91,12 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
 
     const handlePinCodeVerification = async () => {
       if (pinCode === chosenPinCode) {
+        dispatch(pinEntered(pinCode))
+
         if (method === 'create') {
-          const wallet = await createAndStoreWallet(walletName, pinCode)
+          const wallet = await createAndStoreWallet(activeWalletName, pinCode)
           setWallet(wallet)
         }
-        setPin(pinCode)
 
         if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
           navigation.navigate('AddBiometricsScreen')
@@ -108,14 +112,14 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
   }, [
     chosenPinCode,
+    dispatch,
     hasAvailableBiometrics,
     isVerifyingCode,
     method,
     navigation,
     pinCode,
-    setPin,
     setWallet,
-    walletName
+    activeWalletName
   ])
 
   console.log('PinCodeCreationScreen renders')

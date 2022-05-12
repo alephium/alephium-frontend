@@ -25,7 +25,10 @@ import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useGlobalContext } from '../../contexts/global'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
+import { createAndStoreWallet } from '../../storage/wallet'
+import { nameChanged } from '../../store/activeWalletSlice'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -35,13 +38,27 @@ const instructions: Instruction[] = [
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
-  const { walletName, setWalletName } = useGlobalContext()
-  const [walletNameLocal, setWalletNameLocal] = useState(walletName)
+  const [walletName, setWalletName] = useState('')
+  const dispatch = useAppDispatch()
+  const pin = useAppSelector((state) => state.security.pin)
+  const method = useAppSelector((state) => state.walletGeneration.method)
+  const { setWallet } = useGlobalContext()
 
-  const handleButtonPress = () => {
-    if (walletNameLocal) {
-      setWalletName(walletNameLocal)
-      navigation.navigate('PinCodeCreationScreen')
+  const handleButtonPress = async () => {
+    if (walletName) {
+      dispatch(nameChanged(walletName))
+
+      if (!pin) {
+        navigation.navigate('PinCodeCreationScreen')
+      } else {
+        if (method === 'create') {
+          const wallet = await createAndStoreWallet(walletName, pin)
+          setWallet(wallet)
+          navigation.navigate('DashboardScreen')
+        } else if (method === 'import') {
+          navigation.navigate('ImportWalletSeedScreen')
+        }
+      }
     }
   }
 
@@ -51,10 +68,10 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
     <Screen>
       <CenteredInstructions instructions={instructions} stretch />
       <InputContainer>
-        <StyledInput label="Wallet name" value={walletNameLocal} onChangeText={setWalletNameLocal} autoFocus />
+        <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
       </InputContainer>
       <ActionsContainer>
-        <Button title="Next" type="primary" wide disabled={walletNameLocal.length < 3} onPress={handleButtonPress} />
+        <Button title="Next" type="primary" wide disabled={walletName.length < 3} onPress={handleButtonPress} />
       </ActionsContainer>
     </Screen>
   )

@@ -23,25 +23,25 @@ import styled from 'styled-components/native'
 import Screen from '../components/layout/Screen'
 import { useAddressesContext } from '../contexts/addresses'
 import { useGlobalContext } from '../contexts/global'
+import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'>
 
 const DashboardScreen = ({ navigation }: ScreenProps) => {
-  const { wallet, walletName, settings } = useGlobalContext()
+  const { wallet } = useGlobalContext()
   const { addresses } = useAddressesContext()
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.details.balance), BigInt(0))
+  const activeWalletName = useAppSelector((state) => state.activeWallet.name)
 
   console.log('DashboardScreen renders')
 
   return (
     <Screen>
       <Text>Wallet name:</Text>
-      <Bold>{walletName}</Bold>
+      <Bold>{activeWalletName}</Bold>
       <Text>Primary wallet address:</Text>
       <Bold>{wallet?.address}</Bold>
-      <Text>Settings:</Text>
-      <Bold>{JSON.stringify(settings)}</Bold>
       <Text>Addresses:</Text>
       {addresses.map((address) => (
         <Bold key={address.hash}>{address.hash}</Bold>

@@ -17,44 +17,63 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Wallet } from '@alephium/sdk'
-import { createContext, FC, useContext, useState } from 'react'
+import { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
+import { AppState, AppStateStatus } from 'react-native'
 
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import useInitializeClient from '../hooks/useInitializeClient'
 import useLoadStoredSettings from '../hooks/useLoadStoredSettings'
+import { pinFlushed } from '../store/securitySlice'
 
 export interface GlobalContextProps {
-  wallet?: Wallet
-  setWallet: (wallet: Wallet | undefined) => void
-  walletName: string
-  setWalletName: (name: string) => void
-  pin: string
-  setPin: (pin: string) => void
+  wallet: Wallet | null
+  setWallet: (wallet: Wallet | null) => void
 }
 
 export const defaults = {
-  wallet: undefined,
-  setWallet: () => null,
-  walletName: '',
-  setWalletName: () => null,
-  pin: '',
-  setPin: () => null
+  wallet: null,
+  setWallet: () => null
 }
 
 export const GlobalContext = createContext<GlobalContextProps>(defaults)
 
 export const GlobalContextProvider: FC = ({ children }) => {
-  const [wallet, setWallet] = useState<Wallet>()
-  const [walletName, setWalletName] = useState(defaults.walletName)
-  const [pin, setPin] = useState(defaults.pin)
+  const [wallet, setWallet] = useState<Wallet | null>(null)
+  const appState = useRef(AppState.currentState)
+  const dispatch = useAppDispatch()
+  const pin = useAppSelector((state) => state.security.pin)
 
   useInitializeClient()
   useLoadStoredSettings()
 
-  return (
-    <GlobalContext.Provider value={{ wallet, setWallet, walletName, setWalletName, pin, setPin }}>
-      {children}
-    </GlobalContext.Provider>
-  )
+  const lockWallet = () => setWallet(null)
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
+        dispatch(pinFlushed())
+        lockWallet()
+      }
+
+      appState.current = nextAppState
+      console.log('AppState:', appState.current)
+    }
+
+    AppState.addEventListener('change', handleAppStateChange)
+
+    return () => {
+      AppState.removeEventListener('change', handleAppStateChange)
+    }
+  }, [dispatch])
+
+  useEffect(() => {
+    if (!pin) {
+      // TODO: Navigate to screen to ask for pin or biometrics
+      console.log('Needs to navigate to screen to enter pin or biometrics')
+    }
+  }, [pin])
+
+  return <GlobalContext.Provider value={{ wallet, setWallet }}>{children}</GlobalContext.Provider>
 }
 
 export const useGlobalContext = () => useContext(GlobalContext)

@@ -136,13 +136,14 @@ export const AddressesContext = createContext<AddressesContextProps>(initialAddr
 export const AddressesContextProvider: FC = ({ children }) => {
   const [addressesState, setAddressesState] = useState<AddressesStateMap>(new Map())
   const [isLoadingData, setIsLoadingData] = useState(false)
-  const { walletName, wallet } = useGlobalContext()
-  const previousWallet = useRef<Wallet | undefined>(wallet)
+  const { wallet } = useGlobalContext()
+  const previousWallet = useRef<Wallet | null>(wallet)
   const previousNodeApiHost = useRef<string>()
   const previousExplorerApiHost = useRef<string>()
   const network = useAppSelector((state) => state.network.network)
   const networkStatus = useAppSelector((state) => state.network.networkStatus)
   const networkSettings = useAppSelector((state) => state.network.networkSettings)
+  const activeWalletName = useAppSelector((state) => state.activeWallet.name)
   const addressesOfCurrentNetwork = Array.from(addressesState.values()).filter(
     (addressState) => addressState.network === network
   )
@@ -182,7 +183,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
   )
 
   const updateAddressSettings = async (address: Address, settings: AddressSettings) => {
-    await storeAddressMetadataOfAccount(walletName, address.index, settings)
+    await storeAddressMetadataOfAccount(activeWalletName, address.index, settings)
     address.settings = settings
     setAddress(address)
   }
@@ -248,20 +249,20 @@ export const AddressesContextProvider: FC = ({ children }) => {
 
   const saveNewAddress = useCallback(
     async (newAddress: Address) => {
-      await storeAddressMetadataOfAccount(walletName, newAddress.index, newAddress.settings)
+      await storeAddressMetadataOfAccount(activeWalletName, newAddress.index, newAddress.settings)
       setAddress(newAddress)
       fetchAndStoreAddressesData([newAddress])
     },
-    [walletName, setAddress, fetchAndStoreAddressesData]
+    [activeWalletName, setAddress, fetchAndStoreAddressesData]
   )
 
   // Initialize addresses state using the locally stored address metadata
   useEffect(() => {
     const initializeCurrentNetworkAddresses = async () => {
       console.log('🥇 Initializing current network addresses')
-      if (!walletName || !wallet) return
+      if (!activeWalletName || !wallet) return
 
-      const addressesMetadata = await loadStoredAddressesMetadataOfAccount(walletName)
+      const addressesMetadata = await loadStoredAddressesMetadataOfAccount(activeWalletName)
 
       if (addressesMetadata.length === 0) {
         saveNewAddress(
@@ -302,7 +303,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
       initializeCurrentNetworkAddresses()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, walletName, wallet, networkSettings.explorerApiHost, networkSettings.nodeHost])
+  }, [client, activeWalletName, wallet, networkSettings.explorerApiHost, networkSettings.nodeHost])
 
   // Whenever the addresses state updates, check if there are pending transactions on the current network and if so,
   // keep querying the API until all pending transactions are confirmed.

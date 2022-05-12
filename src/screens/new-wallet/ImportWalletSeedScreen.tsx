@@ -25,6 +25,7 @@ import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useGlobalContext } from '../../contexts/global'
+import { useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { createAndStoreWallet } from '../../storage/wallet'
 
@@ -33,7 +34,9 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
-  const { walletName, setWallet, pin } = useGlobalContext()
+  const { setWallet } = useGlobalContext()
+  const pin = useAppSelector((state) => state.security.pin)
+  const activeWalletName = useAppSelector((state) => state.activeWallet.name)
 
   useEffect(() => {
     setWords(
@@ -45,10 +48,10 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   }, [secretPhrase])
 
   const handleWalletImport = () => {
-    if (!pin || !walletName) return
+    if (!pin || !activeWalletName) return
 
     const createWalletAndNavigate = async () => {
-      const wallet = await createAndStoreWallet(walletName, pin, words.join(' '))
+      const wallet = await createAndStoreWallet(activeWalletName, pin, words.join(' '))
       setWallet(wallet)
 
       navigation.navigate('NewWalletSuccessPage')
