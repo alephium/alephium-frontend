@@ -16,25 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ThemeType } from '../style/themes'
-
-export interface Settings {
-  general: {
-    theme: ThemeType
-    walletLockTimeInMinutes: number | null
-    discreetMode: boolean
-    passwordRequirement: boolean
-  }
-  network: {
-    nodeHost: string
-    explorerApiHost: string
-    explorerUrl: string
-  }
-}
-
 export const enum NetworkType {
-  mainnet,
-  testnet,
-  localhost,
-  custom
+  mainnet = 'mainnet',
+  testnet = 'testnet',
+  localhost = 'localhost',
+  custom = 'custom'
 }
+
+export type NetworkPreset = Exclude<NetworkType, 'custom'>
+
+export type NetworkStatus = 'offline' | 'connecting' | 'online' | 'uninitialized'

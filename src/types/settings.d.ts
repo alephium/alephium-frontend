@@ -16,30 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { ThemeType } from '../style/themes'
+import { NetworkSettings } from '../types/settings'
 
-const name = 'walletGeneration'
-
-export type WalletGenerationMethod = 'create' | 'import'
-
-interface WalletGenerationState {
-  method: WalletGenerationMethod
+export interface GeneralSettings {
+  theme: ThemeType
+  walletLockTimeInMinutes: number | null
+  discreetMode: boolean
+  passwordRequirement: boolean
 }
 
-const initialState: WalletGenerationState = {
-  method: 'create'
+export interface NetworkSettings {
+  nodeHost: string
+  explorerApiHost: string
+  explorerUrl: string
 }
 
-const walletGenerationSlice = createSlice({
-  name,
-  initialState,
-  reducers: {
-    methodSelected: (state, action: PayloadAction<WalletGenerationMethod>) => {
-      state.method = action.payload
-    }
-  }
-})
+export interface Settings {
+  general: GeneralSettings
+  network: NetworkSettings
+}
 
-export const { methodSelected } = walletGenerationSlice.actions
+export type SettingsKey = keyof Settings
 
-export default walletGenerationSlice.reducer
+export type SettingsPartial = GeneralSettings | NetworkSettings

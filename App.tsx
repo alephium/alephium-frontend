@@ -21,7 +21,6 @@ import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components/native'
 
 import { AddressesContextProvider } from './src/contexts/addresses'
-import { ApiContextProvider } from './src/contexts/api'
 import { GlobalContextProvider } from './src/contexts/global'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { store } from './src/store/store'
@@ -30,14 +29,12 @@ import { lightTheme } from './src/style/themes'
 const App = () => (
   <Provider store={store}>
     <GlobalContextProvider>
-      <ApiContextProvider>
-        <AddressesContextProvider>
-          <ThemeProvider theme={lightTheme}>
-            <RootStackNavigation />
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </AddressesContextProvider>
-      </ApiContextProvider>
+      <AddressesContextProvider>
+        <ThemeProvider theme={lightTheme}>
+          <RootStackNavigation />
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </AddressesContextProvider>
     </GlobalContextProvider>
   </Provider>
 )

@@ -19,20 +19,24 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { CliqueClient, ExplorerClient } from '@alephium/sdk'
 
 import { Address } from '../contexts/addresses'
+import { defaultNetworkSettings } from '../storage/settings'
 import { AddressHash } from '../types/addresses'
-import { NetworkType, Settings } from '../types/settings'
+import { NetworkType } from '../types/network'
+import { NetworkSettings } from '../types/settings'
 import { TransactionType } from '../types/transactions'
 
-class Client {
-  readonly cliqueClient: CliqueClient
-  readonly explorerClient: ExplorerClient
+export class Client {
+  cliqueClient: CliqueClient
+  explorerClient: ExplorerClient
 
-  constructor({ nodeHost, explorerApiHost }: Settings['network']) {
+  constructor({ nodeHost, explorerApiHost }: NetworkSettings) {
     this.cliqueClient = new CliqueClient({ baseUrl: nodeHost })
     this.explorerClient = new ExplorerClient({ baseUrl: explorerApiHost })
   }
 
-  async init(isMultiNodesClique = false) {
+  async init({ nodeHost, explorerApiHost }: NetworkSettings, isMultiNodesClique = false) {
+    this.cliqueClient = new CliqueClient({ baseUrl: nodeHost })
+    this.explorerClient = new ExplorerClient({ baseUrl: explorerApiHost })
     await this.cliqueClient.init(isMultiNodesClique)
   }
 
@@ -124,4 +128,6 @@ class Client {
   }
 }
 
-export default Client
+const client = new Client(defaultNetworkSettings)
+
+export default client

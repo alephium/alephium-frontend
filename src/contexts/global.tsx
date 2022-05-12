@@ -17,15 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Wallet } from '@alephium/sdk'
-import { createContext, FC, useContext, useEffect, useState } from 'react'
+import { createContext, FC, useContext, useState } from 'react'
 
-import { defaultSettings, loadSettings, updateStoredSettings } from '../storage/settings'
-import { Settings } from '../types/settings'
-
-type UpdateSettingsFunctionSignature = <T extends keyof Settings>(
-  settingKeyToUpdate: T,
-  newSettings: Partial<Settings[T]>
-) => void
+import useInitializeClient from '../hooks/useInitializeClient'
+import useLoadStoredSettings from '../hooks/useLoadStoredSettings'
 
 export interface GlobalContextProps {
   wallet?: Wallet
@@ -34,8 +29,6 @@ export interface GlobalContextProps {
   setWalletName: (name: string) => void
   pin: string
   setPin: (pin: string) => void
-  settings: Settings
-  updateSettings: UpdateSettingsFunctionSignature
 }
 
 export const defaults = {
@@ -44,9 +37,7 @@ export const defaults = {
   walletName: '',
   setWalletName: () => null,
   pin: '',
-  setPin: () => null,
-  settings: defaultSettings,
-  updateSettings: () => null
+  setPin: () => null
 }
 
 export const GlobalContext = createContext<GlobalContextProps>(defaults)
@@ -55,26 +46,12 @@ export const GlobalContextProvider: FC = ({ children }) => {
   const [wallet, setWallet] = useState<Wallet>()
   const [walletName, setWalletName] = useState(defaults.walletName)
   const [pin, setPin] = useState(defaults.pin)
-  const [settings, setSettings] = useState(defaults.settings)
 
-  const updateSettings: UpdateSettingsFunctionSignature = async (settingKeyToUpdate, newSettings) => {
-    const updatedSettings = await updateStoredSettings(settingKeyToUpdate, newSettings)
-    updatedSettings && setSettings(updatedSettings)
-  }
-
-  useEffect(() => {
-    const getSettingsIntoState = async () => {
-      const newSettings = await loadSettings()
-      setSettings(newSettings)
-    }
-
-    getSettingsIntoState()
-  }, [])
+  useInitializeClient()
+  useLoadStoredSettings()
 
   return (
-    <GlobalContext.Provider
-      value={{ wallet, setWallet, walletName, setWalletName, pin, setPin, settings, updateSettings }}
-    >
+    <GlobalContext.Provider value={{ wallet, setWallet, walletName, setWalletName, pin, setPin }}>
       {children}
     </GlobalContext.Provider>
   )

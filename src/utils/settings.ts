@@ -18,28 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { isEqual } from 'lodash'
 
-import { NetworkType, Settings } from '../types/settings'
+import { networkPresetSettings } from '../storage/settings'
+import { NetworkSettings, NetworkType } from '../types/network'
 
-export const networkEndpoints: Record<Exclude<keyof typeof NetworkType, 'custom'>, Settings['network']> = {
-  mainnet: {
-    nodeHost: 'https://mainnet-wallet.alephium.org',
-    explorerApiHost: 'https://mainnet-backend.alephium.org',
-    explorerUrl: 'https://explorer.alephium.org'
-  },
-  testnet: {
-    nodeHost: 'https://testnet-wallet.alephium.org',
-    explorerApiHost: 'https://testnet-backend.alephium.org',
-    explorerUrl: 'https://testnet.alephium.org'
-  },
-  localhost: {
-    nodeHost: 'http://localhost:12973',
-    explorerApiHost: 'http://localhost:9090',
-    explorerUrl: 'http://localhost:3000'
-  }
-}
-
-export const getNetworkName = (settings: Settings['network']) => {
-  return (Object.entries(networkEndpoints).find(([, presetSettings]) => {
+export const getNetworkName = (settings: NetworkSettings) => {
+  return (Object.entries(networkPresetSettings).find(([, presetSettings]) => {
     return isEqual(presetSettings, settings)
   })?.[0] || NetworkType.custom) as NetworkType
 }

@@ -26,12 +26,13 @@ import {
 import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
 import { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
+import client from '../api/client'
+import { useAppSelector } from '../hooks/redux'
 import { loadStoredAddressesMetadataOfAccount, storeAddressMetadataOfAccount } from '../storage/addressesMetadata'
 import { AddressHash, AddressSettings } from '../types/addresses'
+import { NetworkType } from '../types/network'
 import { TimeInMs } from '../types/numbers'
-import { NetworkType } from '../types/settings'
 import { PendingTx } from '../types/transactions'
-import { useApiContext } from './api'
 import { useGlobalContext } from './global'
 
 export class Address {
@@ -135,17 +136,13 @@ export const AddressesContext = createContext<AddressesContextProps>(initialAddr
 export const AddressesContextProvider: FC = ({ children }) => {
   const [addressesState, setAddressesState] = useState<AddressesStateMap>(new Map())
   const [isLoadingData, setIsLoadingData] = useState(false)
-  const {
-    walletName,
-    wallet,
-    settings: {
-      network: { nodeHost, explorerApiHost }
-    }
-  } = useGlobalContext()
-  const { client, network } = useApiContext()
+  const { walletName, wallet } = useGlobalContext()
   const previousWallet = useRef<Wallet | undefined>(wallet)
   const previousNodeApiHost = useRef<string>()
   const previousExplorerApiHost = useRef<string>()
+  const network = useAppSelector((state) => state.network.network)
+  const networkStatus = useAppSelector((state) => state.network.networkStatus)
+  const networkSettings = useAppSelector((state) => state.network.networkSettings)
   const addressesOfCurrentNetwork = Array.from(addressesState.values()).filter(
     (addressState) => addressState.network === network
   )
@@ -192,7 +189,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
 
   const fetchAndStoreAddressesData = useCallback(
     async (addresses: Address[] = [], checkingForPendingTransactions = false) => {
-      if (!client) {
+      if (networkStatus === 'offline') {
         console.log('Could not fetch data because the wallet is offline')
         updateAddressesState(addresses)
         return
@@ -239,7 +236,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
       }
       setIsLoadingData(false)
     },
-    [client, addressesOfCurrentNetwork, updateAddressesState]
+    [networkStatus, addressesOfCurrentNetwork, updateAddressesState]
   )
 
   const fetchAddressTransactionsNextPage = async (address: Address) => {
@@ -288,7 +285,8 @@ export const AddressesContextProvider: FC = ({ children }) => {
 
     const walletHasChanged = previousWallet.current !== wallet
     const networkSettingsHaveChanged =
-      previousNodeApiHost.current !== nodeHost || previousExplorerApiHost.current !== explorerApiHost
+      previousNodeApiHost.current !== networkSettings.nodeHost ||
+      previousExplorerApiHost.current !== networkSettings.explorerApiHost
 
     // Clean state when locking the wallet or changing accounts
     if (wallet === undefined || wallet !== previousWallet.current) {
@@ -299,12 +297,12 @@ export const AddressesContextProvider: FC = ({ children }) => {
 
     if (wallet && (client === undefined || walletHasChanged || networkSettingsHaveChanged)) {
       previousWallet.current = wallet
-      previousNodeApiHost.current = nodeHost
-      previousExplorerApiHost.current = explorerApiHost
+      previousNodeApiHost.current = networkSettings.nodeHost
+      previousExplorerApiHost.current = networkSettings.explorerApiHost
       initializeCurrentNetworkAddresses()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, walletName, wallet, explorerApiHost, nodeHost])
+  }, [client, walletName, wallet, networkSettings.explorerApiHost, networkSettings.nodeHost])
 
   // Whenever the addresses state updates, check if there are pending transactions on the current network and if so,
   // keep querying the API until all pending transactions are confirmed.

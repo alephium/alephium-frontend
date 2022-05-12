@@ -18,12 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { configureStore } from '@reduxjs/toolkit'
 
+import networkReducer, { networkListenerMiddleware } from './networkSlice'
+import settingsReducer, { settingsListenerMiddleware } from './settingsSlice'
 import walletGenerationReducer from './walletGenerationSlice'
 
 export const store = configureStore({
   reducer: {
-    walletGeneration: walletGenerationReducer
-  }
+    walletGeneration: walletGenerationReducer,
+    network: networkReducer,
+    settings: settingsReducer
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().prepend(networkListenerMiddleware.middleware).prepend(settingsListenerMiddleware.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>
