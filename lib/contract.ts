@@ -25,6 +25,10 @@ import { CliqueClient } from './clique'
 import * as api from '../api/api-alephium'
 import { Signer } from './signer'
 
+type ContractVariables = {
+  [key: string]: string
+}
+
 export abstract class Common {
   readonly fileName: string
   readonly sourceCodeSha256: string
@@ -82,7 +86,7 @@ export abstract class Common {
     return result
   }
 
-  protected static _replaceVariables(contractStr: string, variables?: any): string {
+  protected static _replaceVariables(contractStr: string, variables?: ContractVariables): string {
     if (variables) {
       return contractStr.replace(Common.variableRegex, (match) => {
         const variableName = match.split(/(\s+)/)[2]
@@ -174,21 +178,25 @@ export class Contract extends Common {
     const contractMatches = contractStr.match(Contract.contractRegex)
     if (contractMatches === null) {
       throw new Error(`No contract found in: ${fileName}`)
-    } else if (contractMatches!.length > 1) {
+    } else if (contractMatches?.length > 1) {
       throw new Error(`Multiple contracts in: ${fileName}`)
     } else {
       return
     }
   }
 
-  static async loadContractStr(fileName: string, importsCache: string[], variables?: any): Promise<string> {
+  static async loadContractStr(
+    fileName: string,
+    importsCache: string[],
+    variables?: ContractVariables
+  ): Promise<string> {
     const result = await Common._loadContractStr(fileName, importsCache, (code) =>
       Contract.checkCodeType(fileName, code)
     )
     return Common._replaceVariables(result, variables)
   }
 
-  static async from(client: CliqueClient, fileName: string, variables?: any): Promise<Contract> {
+  static async from(client: CliqueClient, fileName: string, variables?: ContractVariables): Promise<Contract> {
     if (!fs.existsSync(Common._artifactsFolder())) {
       fs.mkdirSync(Common._artifactsFolder(), { recursive: true })
     }
@@ -289,7 +297,7 @@ export class Contract extends Common {
   }
 
   toApiFields(fields?: Val[]): api.Val[] {
-    return fields ? toApiFields(fields!, this.fields.types) : []
+    return fields ? toApiFields(fields, this.fields.types) : []
   }
 
   toApiArgs(funcName: string, args?: Val[]): api.Val[] {
@@ -414,8 +422,10 @@ export class Contract extends Common {
       txOutputs: result.txOutputs.map(fromApiOutput),
       events: await Promise.all(
         result.events.map((event) => {
-          const contractAddress = (event as api.ContractEvent).contractAddress
-          return Contract.fromApiEvent(event, this._contractAddresses.get(contractAddress)!)
+          const contractAddressKey = (event as api.ContractEvent).contractAddress
+          const contractAddress = this._contractAddresses.get(contractAddressKey)
+          if (contractAddress === undefined) throw new Error("Contract address couldn't be found")
+          return Contract.fromApiEvent(event, contractAddress)
         })
       )
     }
@@ -459,12 +469,16 @@ export class Script extends Common {
     }
   }
 
-  static async loadContractStr(fileName: string, importsCache: string[], variables?: any): Promise<string> {
+  static async loadContractStr(
+    fileName: string,
+    importsCache: string[],
+    variables?: ContractVariables
+  ): Promise<string> {
     const result = await Common._loadContractStr(fileName, importsCache, (code) => Script.checkCodeType(fileName, code))
     return await Common._replaceVariables(result, variables)
   }
 
-  static async from(client: CliqueClient, fileName: string, variables?: any): Promise<Script> {
+  static async from(client: CliqueClient, fileName: string, variables?: ContractVariables): Promise<Script> {
     return Common._from(
       client,
       fileName,
