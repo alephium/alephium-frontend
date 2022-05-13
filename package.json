@@ -36,7 +36,7 @@
     "explorer_backend_version": "1.6.1"
   },
   "scripts": {
-    "build": "npm run lint && rm -rf dist && npx tsc --build . && webpack",
+    "build": "rm -rf dist && npx tsc --build . && webpack",
     "update-schemas": "npm run update-schema:alephium && npm run update-schema:explorer",
     "update-schema:alephium": "npx swagger-typescript-api -t ./api -o ./api -n api-alephium.ts -p https://raw.githubusercontent.com/alephium/alephium/v${npm_package_config_alephium_version}/api/src/main/resources/openapi.json",
     "update-schema:explorer": "npx swagger-typescript-api -t ./api -o ./api -n api-explorer.ts -p https://raw.githubusercontent.com/alephium/explorer-backend/v${npm_package_config_explorer_backend_version}/app/src/main/resources/explorer-backend-openapi.json",
@@ -45,7 +45,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --fix --ext .ts",
     "jest": "jest --useStderr --silent=false --verbose=true --config jestconfig.json",
-    "test": "npm run build && npm run jest",
+    "test": "npm run lint && npm run build && npm run jest",
     "test:watch": "npm run build && npm run jest -- --watch",
     "prepublishOnly": "npm run build",
     "prepack": "node scripts/rename-gitignore.js .gitignore gitignore",
