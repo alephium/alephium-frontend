@@ -22,7 +22,6 @@ import { AppState, AppStateStatus } from 'react-native'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components/native'
 
-import { AddressesContextProvider } from './src/contexts/addresses'
 import { useAppDispatch, useAppSelector } from './src/hooks/redux'
 import useInitializeClient from './src/hooks/useInitializeClient'
 import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
@@ -35,12 +34,10 @@ import { lightTheme } from './src/style/themes'
 const App = () => (
   <Provider store={store}>
     <Main>
-      <AddressesContextProvider>
-        <ThemeProvider theme={lightTheme}>
-          <RootStackNavigation />
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </AddressesContextProvider>
+      <ThemeProvider theme={lightTheme}>
+        <RootStackNavigation />
+        <StatusBar style="auto" />
+      </ThemeProvider>
     </Main>
   </Provider>
 )
