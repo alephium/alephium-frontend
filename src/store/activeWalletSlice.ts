@@ -18,26 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { walletEncrypt, walletImport } from '@alephium/sdk'
 import { createListenerMiddleware, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import * as SecureStore from 'expo-secure-store'
 
+import { storeEncryptedWallet } from '../storage/wallets'
 import { Mnemonic } from '../types/wallet'
+import { addressAdded } from './addressesSlice'
 import { RootState } from './store'
 
 const sliceName = 'activeWallet'
 
 interface ActiveWalletState {
   name: string
-  primaryAddress: string
-  publicKey: string
-  privateKey: string
   mnemonic: string
 }
 
 const initialState: ActiveWalletState = {
   name: '',
-  primaryAddress: '',
-  publicKey: '',
-  privateKey: '',
   mnemonic: ''
 }
 
@@ -56,11 +51,8 @@ const activeWalletSlice = createSlice({
     mnemonicChanged: (state, action: PayloadAction<Mnemonic>) => {
       const mnemomic = action.payload
       try {
-        const wallet = walletImport(mnemomic)
+        walletImport(mnemomic)
         state.mnemonic = mnemomic
-        state.primaryAddress = wallet.address
-        state.publicKey = wallet.publicKey
-        state.privateKey = wallet.privateKey
       } catch (e) {
         console.log(e)
       }
@@ -75,18 +67,34 @@ export const activeWalletListenerMiddleware = createListenerMiddleware()
 // When the mnemomic changes, store it in persistent storage
 activeWalletListenerMiddleware.startListening({
   actionCreator: mnemonicChanged,
-  effect: async (action, { getState }) => {
-    const state = getState() as RootState
-    const pin = state.credentials.pin
-    const walletName = state[sliceName].name.replaceAll(' ', '-')
+  effect: async (action, { getState, dispatch }) => {
+    try {
+      const wallet = walletImport(action.payload)
+      const state = getState() as RootState
+      const pin = state.credentials.pin
+      const walletName = state[sliceName].name.replaceAll(' ', '-')
 
-    if (pin) {
-      const encryptedWallet = walletEncrypt(pin.toString(), action.payload)
-      // TODO: Remove accountName from the key and use an index instead
-      // Make sure wallets do not get overriden by other wallets
-      await SecureStore.setItemAsync(`wallet-${walletName}`, encryptedWallet)
-    } else {
-      console.error('Could not encrypt wallet, no PIN set')
+      if (pin) {
+        const encryptedWallet = walletEncrypt(pin.toString(), action.payload)
+        await storeEncryptedWallet(walletName, encryptedWallet)
+      } else {
+        console.error('Could not encrypt wallet, no PIN set')
+      }
+
+      console.log('dispatching addressAdded...')
+      dispatch(
+        addressAdded({
+          hash: wallet.address,
+          publicKey: wallet.publicKey,
+          privateKey: wallet.privateKey,
+          index: 0,
+          settings: {
+            isMain: true
+          }
+        })
+      )
+    } catch (e) {
+      console.log(e)
     }
   }
 })

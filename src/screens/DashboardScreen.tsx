@@ -28,7 +28,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'>
 
 const DashboardScreen = ({ navigation }: ScreenProps) => {
   const activeWalletName = useAppSelector((state) => state.activeWallet.name)
-  const activeWalletAddress = useAppSelector((state) => state.activeWallet.primaryAddress)
+  const activeWalletAddress = useAppSelector((state) => state.addresses.mainAddress)
 
   console.log('DashboardScreen renders')
 
