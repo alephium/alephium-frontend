@@ -57,12 +57,7 @@ export class Wallet {
     this.mnemonic = mnemonic
   }
 
-  encrypt = (password: string) => {
-    const storedState = new StoredState({
-      mnemonic: this.mnemonic
-    })
-    return encrypt(password, JSON.stringify(storedState))
-  }
+  encrypt = (password: string) => walletEncrypt(password, this.mnemonic)
 }
 
 export const getPath = (addressIndex?: number) => {
@@ -163,4 +158,11 @@ export const walletOpen = (password: string, encryptedWallet: string) => {
   const config = JSON.parse(dataDecrypted) as StoredState
 
   return getWalletFromMnemonic(config.mnemonic)
+}
+
+export const walletEncrypt = (password: string, mnemonic: string) => {
+  const storedState = new StoredState({
+    mnemonic
+  })
+  return encrypt(password, JSON.stringify(storedState))
 }
