@@ -92,4 +92,4 @@ activeWalletListenerMiddleware.startListening({
   }
 })
 
-export default activeWalletSlice.reducer
+export default activeWalletSlice

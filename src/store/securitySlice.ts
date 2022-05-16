@@ -43,4 +43,4 @@ const securitySlice = createSlice({
 
 export const { pinEntered, pinFlushed } = securitySlice.actions
 
-export default securitySlice.reducer
+export default securitySlice

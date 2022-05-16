@@ -74,4 +74,4 @@ networkListenerMiddleware.startListening({
   }
 })
 
-export default networkSlice.reducer
+export default networkSlice

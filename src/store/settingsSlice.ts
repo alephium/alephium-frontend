@@ -77,4 +77,4 @@ settingsListenerMiddleware.startListening({
   }
 })
 
-export default settingsSlice.reducer
+export default settingsSlice

@@ -42,4 +42,4 @@ const walletGenerationSlice = createSlice({
 
 export const { methodSelected } = walletGenerationSlice.actions
 
-export default walletGenerationSlice.reducer
+export default walletGenerationSlice
