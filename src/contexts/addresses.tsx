@@ -20,6 +20,7 @@ import {
   addressToGroup,
   deriveNewAddressData,
   getHumanReadableError,
+  getWalletFromMnemonic,
   TOTAL_NUMBER_OF_GROUPS,
   Wallet
 } from '@alephium/sdk'
@@ -33,7 +34,6 @@ import { AddressHash, AddressSettings } from '../types/addresses'
 import { NetworkType } from '../types/network'
 import { TimeInMs } from '../types/numbers'
 import { PendingTx } from '../types/transactions'
-import { useGlobalContext } from './global'
 
 export class Address {
   readonly hash: AddressHash
@@ -136,22 +136,23 @@ export const AddressesContext = createContext<AddressesContextProps>(initialAddr
 export const AddressesContextProvider: FC = ({ children }) => {
   const [addressesState, setAddressesState] = useState<AddressesStateMap>(new Map())
   const [isLoadingData, setIsLoadingData] = useState(false)
-  const { wallet } = useGlobalContext()
-  const previousWallet = useRef<Wallet | null>(wallet)
+  const wallet = useAppSelector((state) => state.activeWallet)
+  const walletFromMnemonic = getWalletFromMnemonic(wallet.mnemonic)
+  const previousWallet = useRef<Wallet | null>(walletFromMnemonic)
   const previousNodeApiHost = useRef<string>()
   const previousExplorerApiHost = useRef<string>()
-  const network = useAppSelector((state) => state.network.network)
-  const networkStatus = useAppSelector((state) => state.network.networkStatus)
-  const networkSettings = useAppSelector((state) => state.network.networkSettings)
+  const networkName = useAppSelector((state) => state.network.name)
+  const networkStatus = useAppSelector((state) => state.network.status)
+  const networkSettings = useAppSelector((state) => state.network.settings)
   const activeWalletName = useAppSelector((state) => state.activeWallet.name)
   const addressesOfCurrentNetwork = Array.from(addressesState.values()).filter(
-    (addressState) => addressState.network === network
+    (addressState) => addressState.network === networkName
   )
   const addressesWithPendingSentTxs = addressesOfCurrentNetwork.filter(
-    (address) => address.transactions.pending.filter((pendingTx) => pendingTx.network === network).length > 0
+    (address) => address.transactions.pending.filter((pendingTx) => pendingTx.network === networkName).length > 0
   )
 
-  const constructMapKey = useCallback((addressHash: AddressHash) => `${addressHash}-${network}`, [network])
+  const constructMapKey = useCallback((addressHash: AddressHash) => `${addressHash}-${networkName}`, [networkName])
 
   const getAddress = useCallback(
     (addressHash: AddressHash) => addressesState.get(constructMapKey(addressHash)),
@@ -164,7 +165,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
       setAddressesState((prevState) => {
         const newAddressesState = new Map(prevState)
         for (const newAddress of newAddresses) {
-          newAddress.network = network
+          newAddress.network = networkName
           newAddressesState.set(constructMapKey(newAddress.hash), newAddress)
         }
         return newAddressesState
@@ -172,7 +173,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
 
       console.log('✅ Updated addresses state: ', newAddresses)
     },
-    [constructMapKey, network]
+    [constructMapKey, networkName]
   )
 
   const setAddress = useCallback(
@@ -266,7 +267,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
 
       if (addressesMetadata.length === 0) {
         saveNewAddress(
-          new Address(wallet.address, wallet.publicKey, wallet.privateKey, 0, {
+          new Address(wallet.primaryAddress, wallet.publicKey, wallet.privateKey, 0, {
             isMain: true,
             label: undefined,
             color: undefined
@@ -276,7 +277,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
         console.log('👀 Found addresses metadata in local storage')
 
         const addressesToFetchData = addressesMetadata.map(({ index, ...settings }) => {
-          const { address, publicKey, privateKey } = deriveNewAddressData(wallet.seed, undefined, index)
+          const { address, publicKey, privateKey } = deriveNewAddressData(walletFromMnemonic.seed, undefined, index)
           return new Address(address, publicKey, privateKey, index, settings)
         })
         updateAddressesState(addressesToFetchData)
@@ -284,20 +285,20 @@ export const AddressesContextProvider: FC = ({ children }) => {
       }
     }
 
-    const walletHasChanged = previousWallet.current !== wallet
+    const walletHasChanged = previousWallet.current !== walletFromMnemonic
     const networkSettingsHaveChanged =
       previousNodeApiHost.current !== networkSettings.nodeHost ||
       previousExplorerApiHost.current !== networkSettings.explorerApiHost
 
     // Clean state when locking the wallet or changing accounts
-    if (wallet === undefined || wallet !== previousWallet.current) {
+    if (wallet === undefined || walletFromMnemonic !== previousWallet.current) {
       console.log('🧽 Cleaning state.')
       setAddressesState(new Map())
-      previousWallet.current = wallet
+      previousWallet.current = walletFromMnemonic
     }
 
     if (wallet && (client === undefined || walletHasChanged || networkSettingsHaveChanged)) {
-      previousWallet.current = wallet
+      previousWallet.current = walletFromMnemonic
       previousNodeApiHost.current = networkSettings.nodeHost
       previousExplorerApiHost.current = networkSettings.explorerApiHost
       initializeCurrentNetworkAddresses()
@@ -330,7 +331,7 @@ export const AddressesContextProvider: FC = ({ children }) => {
     return () => {
       clearInterval(interval)
     }
-  }, [addressesState, network, fetchAndStoreAddressesData, addressesOfCurrentNetwork, addressesWithPendingSentTxs])
+  }, [addressesState, networkName, fetchAndStoreAddressesData, addressesOfCurrentNetwork, addressesWithPendingSentTxs])
 
   return (
     <AddressesContext.Provider

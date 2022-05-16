@@ -24,18 +24,18 @@ import { useAppDispatch, useAppSelector } from './redux'
 
 const useInitializeClient = () => {
   const dispatch = useAppDispatch()
-  const network = useAppSelector((state) => state.network.network)
-  const networkStatus = useAppSelector((state) => state.network.networkStatus)
-  const networkSettings = useAppSelector((state) => state.network.networkSettings)
+  const networkName = useAppSelector((state) => state.network.name)
+  const networkStatus = useAppSelector((state) => state.network.status)
+  const networkSettings = useAppSelector((state) => state.network.settings)
 
   useEffect(() => {
     const initializeClient = async () => {
       try {
         await client.init(networkSettings)
         dispatch(networkStatusChanged('online'))
-        console.log(`Client initialized. Current network: ${network}`)
+        console.log(`Client initialized. Current network: ${networkName}`)
       } catch (e) {
-        console.error('Could not connect to network: ', network)
+        console.error('Could not connect to network: ', networkName)
         console.error(e)
         dispatch(networkStatusChanged('offline'))
       }
@@ -50,7 +50,7 @@ const useInitializeClient = () => {
     }
 
     return () => clearInterval(interval)
-  }, [dispatch, network, networkSettings, networkStatus])
+  }, [dispatch, networkName, networkSettings, networkStatus])
 }
 
 export default useInitializeClient

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { walletGenerate } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import styled from 'styled-components/native'
@@ -24,11 +25,9 @@ import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useGlobalContext } from '../../contexts/global'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { createAndStoreWallet } from '../../storage/wallet'
-import { nameChanged } from '../../store/activeWalletSlice'
+import { mnemonicChanged, nameChanged } from '../../store/activeWalletSlice'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -42,7 +41,6 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const pin = useAppSelector((state) => state.security.pin)
   const method = useAppSelector((state) => state.walletGeneration.method)
-  const { setWallet } = useGlobalContext()
 
   const handleButtonPress = async () => {
     if (walletName) {
@@ -52,8 +50,8 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
         navigation.navigate('PinCodeCreationScreen')
       } else {
         if (method === 'create') {
-          const wallet = await createAndStoreWallet(walletName, pin)
-          setWallet(wallet)
+          const wallet = walletGenerate()
+          dispatch(mnemonicChanged(wallet.mnemonic))
           navigation.navigate('DashboardScreen')
         } else if (method === 'import') {
           navigation.navigate('ImportWalletSeedScreen')

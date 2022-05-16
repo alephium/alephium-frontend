@@ -24,19 +24,18 @@ import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useGlobalContext } from '../../contexts/global'
-import { useAppSelector } from '../../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { createAndStoreWallet } from '../../storage/wallet'
+import { mnemonicChanged } from '../../store/activeWalletSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
-  const { setWallet } = useGlobalContext()
   const pin = useAppSelector((state) => state.security.pin)
   const activeWalletName = useAppSelector((state) => state.activeWallet.name)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     setWords(
@@ -50,14 +49,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const handleWalletImport = () => {
     if (!pin || !activeWalletName) return
 
-    const createWalletAndNavigate = async () => {
-      const wallet = await createAndStoreWallet(activeWalletName, pin, words.join(' '))
-      setWallet(wallet)
-
-      navigation.navigate('NewWalletSuccessPage')
-    }
-
-    createWalletAndNavigate()
+    dispatch(mnemonicChanged(words.join(' ')))
+    navigation.navigate('NewWalletSuccessPage')
   }
 
   // Alephium's node code uses 12 as the minimal mnemomic length.

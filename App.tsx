@@ -17,26 +17,68 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StatusBar } from 'expo-status-bar'
+import { FC, useEffect, useRef } from 'react'
+import { AppState, AppStateStatus } from 'react-native'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components/native'
 
 import { AddressesContextProvider } from './src/contexts/addresses'
-import { GlobalContextProvider } from './src/contexts/global'
+import { useAppDispatch, useAppSelector } from './src/hooks/redux'
+import useInitializeClient from './src/hooks/useInitializeClient'
+import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
+import { walletFlushed } from './src/store/activeWalletSlice'
+import { pinFlushed } from './src/store/securitySlice'
 import { store } from './src/store/store'
 import { lightTheme } from './src/style/themes'
 
 const App = () => (
   <Provider store={store}>
-    <GlobalContextProvider>
+    <Main>
       <AddressesContextProvider>
         <ThemeProvider theme={lightTheme}>
           <RootStackNavigation />
           <StatusBar style="auto" />
         </ThemeProvider>
       </AddressesContextProvider>
-    </GlobalContextProvider>
+    </Main>
   </Provider>
 )
+
+const Main: FC = ({ children }) => {
+  const appState = useRef(AppState.currentState)
+  const dispatch = useAppDispatch()
+  const pin = useAppSelector((state) => state.security.pin)
+
+  useInitializeClient()
+  useLoadStoredSettings()
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
+        dispatch(pinFlushed())
+        dispatch(walletFlushed())
+      }
+
+      appState.current = nextAppState
+      console.log('AppState:', appState.current)
+    }
+
+    AppState.addEventListener('change', handleAppStateChange)
+
+    return () => {
+      AppState.removeEventListener('change', handleAppStateChange)
+    }
+  }, [dispatch])
+
+  useEffect(() => {
+    if (!pin) {
+      // TODO: Navigate to screen to ask for pin or biometrics
+      console.log('Needs to navigate to screen to enter pin or biometrics')
+    }
+  }, [pin])
+
+  return <>{children}</>
+}
 
 export default App

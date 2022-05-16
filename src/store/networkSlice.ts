@@ -27,15 +27,15 @@ import { RootState } from './store'
 const name = 'network'
 
 interface NetworkState {
-  network: NetworkType
-  networkSettings: NetworkSettings
-  networkStatus: NetworkStatus
+  name: NetworkType
+  settings: NetworkSettings
+  status: NetworkStatus
 }
 
 const initialState: NetworkState = {
-  network: defaultNetwork,
-  networkSettings: defaultNetworkSettings,
-  networkStatus: 'uninitialized'
+  name: defaultNetwork,
+  settings: defaultNetworkSettings,
+  status: 'uninitialized'
 }
 
 const networkSlice = createSlice({
@@ -43,19 +43,19 @@ const networkSlice = createSlice({
   initialState,
   reducers: {
     networkChanged: (state, action: PayloadAction<NetworkPreset>) => {
-      state.network = action.payload
-      state.networkSettings = networkPresetSettings[action.payload]
-      state.networkStatus = 'connecting'
+      state.name = action.payload
+      state.settings = networkPresetSettings[action.payload]
+      state.status = 'connecting'
     },
     networkSettingsChanged: (state, action: PayloadAction<NetworkSettings>) => {
-      state.network = getNetworkName(action.payload)
-      state.networkSettings = action.payload
+      state.name = getNetworkName(action.payload)
+      state.settings = action.payload
 
       const missingNetworkSettings = !action.payload.nodeHost || !action.payload.explorerApiHost
-      state.networkStatus = missingNetworkSettings ? 'offline' : 'connecting'
+      state.status = missingNetworkSettings ? 'offline' : 'connecting'
     },
     networkStatusChanged: (state, action: PayloadAction<NetworkStatus>) => {
-      state.networkStatus = action.payload
+      state.status = action.payload
     }
   }
 })
@@ -70,7 +70,7 @@ networkListenerMiddleware.startListening({
   effect: async (action, { getState }) => {
     const state = getState() as RootState
 
-    await storeSettings('network', state[name].networkSettings)
+    await storeSettings('network', state[name].settings)
   }
 })
 
