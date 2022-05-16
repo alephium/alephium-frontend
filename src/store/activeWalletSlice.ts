@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { walletEncrypt, walletImport } from '@alephium/sdk'
-import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
+import { createListenerMiddleware, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import * as SecureStore from 'expo-secure-store'
 
 import { Mnemonic } from '../types/wallet'
@@ -73,9 +73,9 @@ export const { nameChanged, walletFlushed, mnemonicChanged } = activeWalletSlice
 
 export const activeWalletListenerMiddleware = createListenerMiddleware()
 
-// When the settings change, store them in persistent storage
+// When the mnemomic changes, store it in persistent storage
 activeWalletListenerMiddleware.startListening({
-  matcher: isAnyOf(mnemonicChanged),
+  actionCreator: mnemonicChanged,
   effect: async (action, { getState }) => {
     const state = getState() as RootState
     const pin = state.security.pin
