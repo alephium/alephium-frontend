@@ -65,6 +65,33 @@ export const storeEncryptedWallet = async (walletName: string, encryptedWallet: 
   await AsyncStorage.setItem('active-wallet-id', id)
 }
 
+export type ActiveEncryptedWallet = {
+  name: string
+  encryptedWallet: string
+}
+
+export const getActiveEncryptedWallet = async (): Promise<ActiveEncryptedWallet | null> => {
+  const id = await AsyncStorage.getItem('active-wallet-id')
+
+  if (!id) return null
+
+  const rawWalletIds = await AsyncStorage.getItem('wallet-ids')
+
+  if (!rawWalletIds) throw 'No wallets found'
+
+  const walletIds = JSON.parse(rawWalletIds)
+
+  const { name } = walletIds.find((wallet: WalletIdEntry) => wallet.id === id)
+  const encryptedWallet = await SecureStore.getItemAsync(`wallet-${id}`)
+
+  if (!encryptedWallet) throw 'Could not find encrypted wallet'
+
+  return {
+    name,
+    encryptedWallet
+  }
+}
+
 export const deleteEncryptedWallet = async (walletName: string) => {
   const rawWalletIds = await AsyncStorage.getItem('wallet-ids')
 

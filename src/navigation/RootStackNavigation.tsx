@@ -21,32 +21,34 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import DashboardScreen from '../screens/DashboardScreen'
 import LandingScreen from '../screens/LandingScreen'
+import LoginScreen from '../screens/LoginScreen'
 import AddBiometricsScreen from '../screens/new-wallet/AddBiometricsScreen'
 import ImportWalletSeedScreen from '../screens/new-wallet/ImportWalletSeedScreen'
 import NewWalletIntroScreen from '../screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
+import SplashScreen from '../screens/SplashScreen'
 import RootStackParamList from './rootStackRoutes'
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
-  const walletExists = false // TODO: check if wallet exists
-
   console.log('RootStackNavigation renders')
 
   return (
     <NavigationContainer>
       <RootStack.Navigator
-        initialRouteName={walletExists ? 'LandingScreen' : 'LandingScreen'} // TODO: Update with login screen
+        initialRouteName={'SplashScreen'}
         screenOptions={{
           headerStyle: { elevation: 0, shadowOpacity: 0, backgroundColor: 'transparent' },
           cardStyle: { backgroundColor: '#fff' },
           headerTitle: ''
         }}
       >
+        <RootStack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
         <RootStack.Screen name="LandingScreen" component={LandingScreen} options={{ headerShown: false }} />
+        <RootStack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
 
         {/* NEW WALLET */}
         <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />

@@ -68,15 +68,16 @@ export const activeWalletListenerMiddleware = createListenerMiddleware()
 activeWalletListenerMiddleware.startListening({
   actionCreator: mnemonicChanged,
   effect: async (action, { getState, dispatch }) => {
+    const state = getState() as RootState
+    if (!state.activeWallet.mnemonic) return
+
     try {
       const wallet = walletImport(action.payload)
-      const state = getState() as RootState
       const pin = state.credentials.pin
-      const walletName = state[sliceName].name.replaceAll(' ', '-')
 
       if (pin) {
         const encryptedWallet = walletEncrypt(pin.toString(), action.payload)
-        await storeEncryptedWallet(walletName, encryptedWallet)
+        await storeEncryptedWallet(state.activeWallet.name, encryptedWallet)
       } else {
         console.error('Could not encrypt wallet, no PIN set')
       }
