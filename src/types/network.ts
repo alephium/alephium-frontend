@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export const enum NetworkType {
+export const enum NetworkName {
   mainnet = 'mainnet',
   testnet = 'testnet',
   localhost = 'localhost',
   custom = 'custom'
 }
 
-export type NetworkPreset = Exclude<NetworkType, 'custom'>
+export type NetworkPreset = Exclude<NetworkName, 'custom'>
 
 export type NetworkStatus = 'offline' | 'connecting' | 'online' | 'uninitialized'
