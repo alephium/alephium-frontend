@@ -39,7 +39,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const [walletName, setWalletName] = useState('')
   const dispatch = useAppDispatch()
-  const pin = useAppSelector((state) => state.security.pin)
+  const pin = useAppSelector((state) => state.credentials.pin)
   const method = useAppSelector((state) => state.walletGeneration.method)
 
   const handleButtonPress = async () => {

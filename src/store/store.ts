@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { configureStore } from '@reduxjs/toolkit'
 
 import activeWalletSlice, { activeWalletListenerMiddleware } from './activeWalletSlice'
+import credentialsSlice from './credentialsSlice'
 import networkSlice, { networkListenerMiddleware } from './networkSlice'
-import securitySlice from './securitySlice'
 import settingsSlice, { settingsListenerMiddleware } from './settingsSlice'
 import walletGenerationSlice from './walletGenerationSlice'
 
@@ -29,7 +29,7 @@ export const store = configureStore({
     walletGeneration: walletGenerationSlice.reducer,
     network: networkSlice.reducer,
     settings: settingsSlice.reducer,
-    security: securitySlice.reducer,
+    credentials: credentialsSlice.reducer,
     activeWallet: activeWalletSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>

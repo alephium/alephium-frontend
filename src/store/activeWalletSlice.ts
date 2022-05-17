@@ -78,7 +78,7 @@ activeWalletListenerMiddleware.startListening({
   actionCreator: mnemonicChanged,
   effect: async (action, { getState }) => {
     const state = getState() as RootState
-    const pin = state.security.pin
+    const pin = state.credentials.pin
     const walletName = state[sliceName].name.replaceAll(' ', '-')
 
     if (pin) {

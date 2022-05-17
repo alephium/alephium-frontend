@@ -27,7 +27,7 @@ import useInitializeClient from './src/hooks/useInitializeClient'
 import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { walletFlushed } from './src/store/activeWalletSlice'
-import { pinFlushed } from './src/store/securitySlice'
+import { pinFlushed } from './src/store/credentialsSlice'
 import { store } from './src/store/store'
 import { lightTheme } from './src/style/themes'
 
@@ -45,7 +45,7 @@ const App = () => (
 const Main: FC = ({ children }) => {
   const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
-  const pin = useAppSelector((state) => state.security.pin)
+  const pin = useAppSelector((state) => state.credentials.pin)
 
   useInitializeClient()
   useLoadStoredSettings()

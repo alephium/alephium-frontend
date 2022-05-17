@@ -33,7 +33,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
-  const pin = useAppSelector((state) => state.security.pin)
+  const pin = useAppSelector((state) => state.credentials.pin)
   const activeWalletName = useAppSelector((state) => state.activeWallet.name)
   const dispatch = useAppDispatch()
 

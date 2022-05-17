@@ -28,7 +28,7 @@ import CenteredInstructions, { Instruction } from '../../components/text/Centere
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { mnemonicChanged } from '../../store/activeWalletSlice'
-import { pinEntered } from '../../store/securitySlice'
+import { pinEntered } from '../../store/credentialsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 
