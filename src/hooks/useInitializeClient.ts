@@ -16,39 +16,36 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import client from '../api/client'
 import { networkStatusChanged } from '../store/networkSlice'
 import { useAppDispatch, useAppSelector } from './redux'
+import useInterval from './useInterval'
 
 const useInitializeClient = () => {
   const dispatch = useAppDispatch()
   const network = useAppSelector((state) => state.network)
 
-  useEffect(() => {
-    const initializeClient = async () => {
-      try {
-        await client.init(network.settings)
-        dispatch(networkStatusChanged('online'))
-        console.log(`Client initialized. Current network: ${network.name}`)
-      } catch (e) {
-        console.error('Could not connect to network: ', network.name)
-        console.error(e)
-        dispatch(networkStatusChanged('offline'))
-      }
+  const initializeClient = useCallback(async () => {
+    try {
+      await client.init(network.settings)
+      dispatch(networkStatusChanged('online'))
+      console.log(`Client initialized. Current network: ${network.name}`)
+    } catch (e) {
+      console.error('Could not connect to network: ', network.name)
+      console.error(e)
+      dispatch(networkStatusChanged('offline'))
     }
+  }, [dispatch, network.name, network.settings])
 
-    let interval: ReturnType<typeof setInterval>
-
-    if (network.status === 'offline') {
-      interval = setInterval(initializeClient, 2000)
-    } else if (network.status === 'connecting') {
+  useEffect(() => {
+    if (network.status === 'connecting') {
       initializeClient()
     }
+  }, [initializeClient, network.status])
 
-    return () => clearInterval(interval)
-  }, [dispatch, network.name, network.settings, network.status])
+  useInterval(initializeClient, 2000, network.status !== 'offline')
 }
 
 export default useInitializeClient

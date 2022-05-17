@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { clone } from 'lodash'
 
-import { NetworkPreset, NetworkName } from '../types/network'
+import { NetworkName, NetworkPreset } from '../types/network'
 import { GeneralSettings, NetworkSettings, SettingsKey, SettingsPartial } from '../types/settings'
 
 const STORAGE_KEY = 'wallet-settings'
