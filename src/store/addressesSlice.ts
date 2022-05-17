@@ -25,7 +25,7 @@ import { TimeInMs } from '../types/numbers'
 import { PendingTx } from '../types/transactions'
 import { RootState } from './store'
 
-const name = 'addresses'
+const sliceName = 'addresses'
 
 type Address = {
   hash: string
@@ -73,7 +73,7 @@ const initialState: AddressesState = addressSettingsAdapter.getInitialState({
 })
 
 const addressesSlice = createSlice({
-  name,
+  name: sliceName,
   initialState,
   reducers: {
     addressAdded: (state, action: PayloadAction<AddressPartial>) => {
@@ -97,7 +97,7 @@ const addressesSlice = createSlice({
 })
 
 export const { selectById: selectAddressByHash, selectAll: selectAllAddresses } =
-  addressSettingsAdapter.getSelectors<RootState>((state) => state[name])
+  addressSettingsAdapter.getSelectors<RootState>((state) => state[sliceName])
 
 export const { addressAdded, addressesFlushed } = addressesSlice.actions
 
