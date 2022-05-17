@@ -27,7 +27,7 @@ import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { mnemonicChanged, nameChanged } from '../../store/activeWalletSlice'
+import { mnemonicChanged, walletNameChanged } from '../../store/activeWalletSlice'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -44,7 +44,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
 
   const handleButtonPress = async () => {
     if (walletName) {
-      dispatch(nameChanged(walletName))
+      dispatch(walletNameChanged(walletName))
 
       if (!pin) {
         navigation.navigate('PinCodeCreationScreen')

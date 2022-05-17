@@ -45,7 +45,7 @@ const activeWalletSlice = createSlice({
   name,
   initialState,
   reducers: {
-    nameChanged: (state, action) => {
+    walletNameChanged: (state, action) => {
       state.name = action.payload
     },
     walletFlushed: (state) => {
@@ -69,7 +69,7 @@ const activeWalletSlice = createSlice({
   }
 })
 
-export const { nameChanged, walletFlushed, mnemonicChanged } = activeWalletSlice.actions
+export const { walletNameChanged, walletFlushed, mnemonicChanged } = activeWalletSlice.actions
 
 export const activeWalletListenerMiddleware = createListenerMiddleware()
 
