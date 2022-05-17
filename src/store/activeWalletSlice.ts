@@ -23,7 +23,7 @@ import * as SecureStore from 'expo-secure-store'
 import { Mnemonic } from '../types/wallet'
 import { RootState } from './store'
 
-const name = 'activeWallet'
+const sliceName = 'activeWallet'
 
 interface ActiveWalletState {
   name: string
@@ -42,7 +42,7 @@ const initialState: ActiveWalletState = {
 }
 
 const activeWalletSlice = createSlice({
-  name,
+  name: sliceName,
   initialState,
   reducers: {
     walletNameChanged: (state, action: PayloadAction<string>) => {
@@ -79,7 +79,7 @@ activeWalletListenerMiddleware.startListening({
   effect: async (action, { getState }) => {
     const state = getState() as RootState
     const pin = state.security.pin
-    const walletName = state.activeWallet.name.replaceAll(' ', '-')
+    const walletName = state[sliceName].name.replaceAll(' ', '-')
 
     if (pin) {
       const encryptedWallet = walletEncrypt(pin.toString(), action.payload)

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-const name = 'walletGeneration'
+const sliceName = 'walletGeneration'
 
 export type WalletGenerationMethod = 'create' | 'import'
 
@@ -31,7 +31,7 @@ const initialState: WalletGenerationState = {
 }
 
 const walletGenerationSlice = createSlice({
-  name,
+  name: sliceName,
   initialState,
   reducers: {
     methodSelected: (state, action: PayloadAction<WalletGenerationMethod>) => {

@@ -24,7 +24,7 @@ import { NetworkSettings } from '../types/settings'
 import { getNetworkName } from '../utils/settings'
 import { RootState } from './store'
 
-const name = 'network'
+const sliceName = 'network'
 
 interface NetworkState {
   name: NetworkType
@@ -39,7 +39,7 @@ const initialState: NetworkState = {
 }
 
 const networkSlice = createSlice({
-  name,
+  name: sliceName,
   initialState,
   reducers: {
     networkChanged: (state, action: PayloadAction<NetworkPreset>) => {
@@ -70,7 +70,7 @@ networkListenerMiddleware.startListening({
   effect: async (action, { getState }) => {
     const state = getState() as RootState
 
-    await storeSettings('network', state[name].settings)
+    await storeSettings('network', state[sliceName].settings)
   }
 })
 

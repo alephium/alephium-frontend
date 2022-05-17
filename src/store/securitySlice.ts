@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice } from '@reduxjs/toolkit'
 
-const name = 'security'
+const sliceName = 'security'
 
 interface SecurityState {
   pin: string | null
@@ -29,7 +29,7 @@ const initialState: SecurityState = {
 }
 
 const securitySlice = createSlice({
-  name,
+  name: sliceName,
   initialState,
   reducers: {
     pinEntered: (state, action) => {

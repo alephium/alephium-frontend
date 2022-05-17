@@ -22,12 +22,12 @@ import { defaultGeneralSettings, storeSettings } from '../storage/settings'
 import { GeneralSettings } from '../types/settings'
 import { RootState } from './store'
 
-const name = 'settings'
+const sliceName = 'settings'
 
 const initialState: GeneralSettings = defaultGeneralSettings
 
 const settingsSlice = createSlice({
-  name,
+  name: sliceName,
   initialState,
   reducers: {
     generalSettingsChanged: (state, action: PayloadAction<GeneralSettings>) => {
@@ -73,7 +73,7 @@ settingsListenerMiddleware.startListening({
   effect: async (action, { getState }) => {
     const state = getState() as RootState
 
-    await storeSettings('general', state[name])
+    await storeSettings('general', state[sliceName])
   }
 })
 
