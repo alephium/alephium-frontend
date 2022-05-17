@@ -31,7 +31,7 @@ const settingsSlice = createSlice({
   initialState,
   reducers: {
     generalSettingsChanged: (state, action: PayloadAction<GeneralSettings>) => {
-      return { ...action.payload }
+      return action.payload
     },
     themeChanged: (state, action: PayloadAction<GeneralSettings['theme']>) => {
       state.theme = action.payload
