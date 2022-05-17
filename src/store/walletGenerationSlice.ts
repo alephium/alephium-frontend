@@ -16,26 +16,30 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, FC, useContext, useState } from 'react'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+const sliceName = 'walletGeneration'
 
 export type WalletGenerationMethod = 'create' | 'import'
 
-export interface WalletGenerationContextProps {
+interface WalletGenerationState {
   method: WalletGenerationMethod
-  setMethod: (method: WalletGenerationMethod) => void
 }
 
-export const defaults: WalletGenerationContextProps = {
-  method: 'create',
-  setMethod: () => null
+const initialState: WalletGenerationState = {
+  method: 'create'
 }
 
-export const WalletGenerationContext = createContext<WalletGenerationContextProps>(defaults)
+const walletGenerationSlice = createSlice({
+  name: sliceName,
+  initialState,
+  reducers: {
+    methodSelected: (state, action: PayloadAction<WalletGenerationMethod>) => {
+      state.method = action.payload
+    }
+  }
+})
 
-export const WalletGenerationContextProvider: FC = ({ children }) => {
-  const [method, setMethod] = useState<WalletGenerationMethod>(defaults.method)
+export const { methodSelected } = walletGenerationSlice.actions
 
-  return <WalletGenerationContext.Provider value={{ method, setMethod }}>{children}</WalletGenerationContext.Provider>
-}
-
-export const useWalletGenerationContext = () => useContext(WalletGenerationContext)
+export default walletGenerationSlice

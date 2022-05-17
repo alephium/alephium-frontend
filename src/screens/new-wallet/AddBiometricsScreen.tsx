@@ -27,7 +27,7 @@ import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useWalletGenerationContext } from '../../contexts/walletGeneration'
+import { useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
@@ -38,7 +38,7 @@ const instructions: Instruction[] = [
 ]
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
-  const { method } = useWalletGenerationContext()
+  const method = useAppSelector((state) => state.walletGeneration.method)
 
   const navigateToNextPage = () =>
     navigation.navigate(method === 'create' ? 'NewWalletSuccessPage' : 'ImportWalletSeedScreen')
@@ -55,6 +55,8 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
       navigateToNextPage()
     }
   }
+
+  console.log('AddBiometricsScreen renders')
 
   return (
     <Screen>

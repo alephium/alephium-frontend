@@ -34,6 +34,8 @@ const RootStack = createStackNavigator<RootStackParamList>()
 const RootStackNavigation = () => {
   const walletExists = false // TODO: check if wallet exists
 
+  console.log('RootStackNavigation renders')
+
   return (
     <NavigationContainer>
       <RootStack.Navigator
@@ -53,7 +55,7 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
         <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
         <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
-        <RootStack.Screen name="DashboardScreen" component={DashboardScreen} />
+        <RootStack.Screen name="DashboardScreen" component={DashboardScreen} options={{ headerLeft: () => null }} />
       </RootStack.Navigator>
     </NavigationContainer>
   )

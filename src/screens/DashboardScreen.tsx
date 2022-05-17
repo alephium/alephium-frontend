@@ -21,20 +21,23 @@ import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import Screen from '../components/layout/Screen'
-import { useGlobalContext } from '../contexts/global'
+import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'>
 
 const DashboardScreen = ({ navigation }: ScreenProps) => {
-  const { wallet, walletName } = useGlobalContext()
+  const activeWalletName = useAppSelector((state) => state.activeWallet.name)
+  const activeWalletAddress = useAppSelector((state) => state.activeWallet.primaryAddress)
+
+  console.log('DashboardScreen renders')
 
   return (
     <Screen>
       <Text>Wallet name:</Text>
-      <Bold>{walletName}</Bold>
+      <Bold>{activeWalletName}</Bold>
       <Text>Primary wallet address:</Text>
-      <Bold>{wallet?.address}</Bold>
+      <Bold>{activeWalletAddress}</Bold>
     </Screen>
   )
 }

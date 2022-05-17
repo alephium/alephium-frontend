@@ -24,16 +24,18 @@ import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useGlobalContext } from '../../contexts/global'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { createAndStoreWallet } from '../../utils/wallet'
+import { mnemonicChanged } from '../../store/activeWalletSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
-  const { walletName, setWallet, pin } = useGlobalContext()
+  const pin = useAppSelector((state) => state.credentials.pin)
+  const activeWalletName = useAppSelector((state) => state.activeWallet.name)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     setWords(
@@ -45,16 +47,10 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   }, [secretPhrase])
 
   const handleWalletImport = () => {
-    if (!pin || !walletName) return
+    if (!pin || !activeWalletName) return
 
-    const createWalletAndNavigate = async () => {
-      const wallet = await createAndStoreWallet(walletName, pin, words.join(' '))
-      setWallet(wallet)
-
-      navigation.navigate('NewWalletSuccessPage')
-    }
-
-    createWalletAndNavigate()
+    dispatch(mnemonicChanged(words.join(' ')))
+    navigation.navigate('NewWalletSuccessPage')
   }
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
@@ -64,6 +60,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
   if (words.length)
     instructions.push({ text: `${words.length} ${words.length === 1 ? 'word' : 'words'} entered.`, type: 'secondary' })
+
+  console.log('ImportWalletSeedScreen renders')
 
   return (
     <Screen>

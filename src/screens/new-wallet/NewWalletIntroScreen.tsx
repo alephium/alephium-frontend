@@ -25,7 +25,7 @@ import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useWalletGenerationContext } from '../../contexts/walletGeneration'
+import { useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
@@ -47,8 +47,9 @@ const instructions = {
 }
 
 const NewWalletIntroScreen = ({ navigation }: ScreenProps) => {
-  const { method } = useWalletGenerationContext()
+  const method = useAppSelector((state) => state.walletGeneration.method)
 
+  console.log('NewWalletIntroScreen renders')
   return (
     <Screen>
       <AnimationContainer>

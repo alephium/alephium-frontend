@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { walletGenerate } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import styled from 'styled-components/native'
@@ -24,8 +25,9 @@ import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useGlobalContext } from '../../contexts/global'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
+import { mnemonicChanged, walletNameChanged } from '../../store/activeWalletSlice'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -35,21 +37,36 @@ const instructions: Instruction[] = [
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
-  const { walletName, setWalletName } = useGlobalContext()
-  const [walletNameLocal, setWalletNameLocal] = useState(walletName)
+  const [walletName, setWalletName] = useState('')
+  const dispatch = useAppDispatch()
+  const pin = useAppSelector((state) => state.credentials.pin)
+  const method = useAppSelector((state) => state.walletGeneration.method)
 
-  const handleButtonPress = () => {
-    if (walletNameLocal) {
-      setWalletName(walletNameLocal)
-      navigation.navigate('PinCodeCreationScreen')
+  const handleButtonPress = async () => {
+    if (walletName) {
+      dispatch(walletNameChanged(walletName))
+
+      if (!pin) {
+        navigation.navigate('PinCodeCreationScreen')
+      } else {
+        if (method === 'create') {
+          const wallet = walletGenerate()
+          dispatch(mnemonicChanged(wallet.mnemonic))
+          navigation.navigate('DashboardScreen')
+        } else if (method === 'import') {
+          navigation.navigate('ImportWalletSeedScreen')
+        }
+      }
     }
   }
+
+  console.log('NewWalletNameScreen renders')
 
   return (
     <Screen>
       <CenteredInstructions instructions={instructions} stretch />
       <InputContainer>
-        <StyledInput label="Wallet name" value={walletNameLocal} onChangeText={setWalletNameLocal} autoFocus />
+        <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
       </InputContainer>
       <ActionsContainer>
         <Button title="Next" type="primary" wide disabled={walletName.length < 3} onPress={handleButtonPress} />

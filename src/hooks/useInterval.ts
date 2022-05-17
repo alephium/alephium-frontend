@@ -16,21 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Wallet, walletGenerate, walletImport } from '@alephium/sdk'
-import * as SecureStore from 'expo-secure-store'
+import { useEffect, useRef } from 'react'
 
-export const createAndStoreWallet = async (name: string, pin: string, seed?: string): Promise<Wallet> => {
-  return new Promise((resolve) => {
-    try {
-      const wallet = seed ? walletImport(seed) : walletGenerate()
+const useInterval = (callback: () => void, delay: number, shouldPause = false) => {
+  const savedCallback = useRef<() => void>(() => null)
 
-      const encryptedWallet = wallet.encrypt(pin.toString())
-      // TODO: Change naming strategy to avoid name clearing
-      SecureStore.setItemAsync(`${name.replaceAll(' ', '-')}-alephium-wallet`, encryptedWallet).then(() =>
-        resolve(wallet)
-      )
-    } catch (e) {
-      console.error(e, 'Error while creating wallet')
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback
+  }, [callback])
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current()
     }
-  })
+    if (delay !== null && !shouldPause) {
+      const id = setInterval(tick, delay)
+      return () => clearInterval(id)
+    }
+  }, [delay, shouldPause])
 }
+
+export default useInterval

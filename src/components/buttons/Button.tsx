@@ -67,6 +67,8 @@ const Button: FC<ButtonProps> = ({
     style
   ]
 
+  console.log('Button renders')
+
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
       <ButtonText style={{ color: colors.font }}>{title}</ButtonText>

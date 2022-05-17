@@ -25,25 +25,24 @@ import styled, { useTheme } from 'styled-components/native'
 import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
 import Screen from '../components/layout/Screen'
-import { defaults as generalDefaults, useGlobalContext } from '../contexts/global'
-import { useWalletGenerationContext, WalletGenerationMethod } from '../contexts/walletGeneration'
+import { useAppDispatch } from '../hooks/redux'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
 import RootStackParamList from '../navigation/rootStackRoutes'
+import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
-  const { setMethod } = useWalletGenerationContext()
-  const { setWallet, setWalletName, setPin } = useGlobalContext()
+
+  const dispatch = useAppDispatch()
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
-    setMethod(method)
-    setWalletName(generalDefaults.walletName)
-    setPin(generalDefaults.pin)
-    setWallet(undefined)
+    dispatch(methodSelected(method))
     navigation.navigate('NewWalletIntroScreen')
   }
+
+  console.log('LandingScreen renders')
 
   return (
     <Screen>
