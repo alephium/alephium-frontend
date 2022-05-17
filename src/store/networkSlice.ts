@@ -43,16 +43,23 @@ const networkSlice = createSlice({
   initialState,
   reducers: {
     networkChanged: (state, action: PayloadAction<NetworkPreset>) => {
-      state.name = action.payload
-      state.settings = networkPresetSettings[action.payload]
-      state.status = 'connecting'
+      const networkName = action.payload
+
+      return {
+        name: networkName,
+        settings: networkPresetSettings[networkName],
+        status: 'connecting'
+      }
     },
     networkSettingsChanged: (state, action: PayloadAction<NetworkSettings>) => {
-      state.name = getNetworkName(action.payload)
-      state.settings = action.payload
+      const networkSettings = action.payload
+      const missingNetworkSettings = !networkSettings.nodeHost || !networkSettings.explorerApiHost
 
-      const missingNetworkSettings = !action.payload.nodeHost || !action.payload.explorerApiHost
-      state.status = missingNetworkSettings ? 'offline' : 'connecting'
+      return {
+        name: getNetworkName(networkSettings),
+        settings: networkSettings,
+        status: missingNetworkSettings ? 'offline' : 'connecting'
+      }
     },
     networkStatusChanged: (state, action: PayloadAction<NetworkStatus>) => {
       state.status = action.payload

@@ -35,8 +35,10 @@ const credentialsSlice = createSlice({
     pinEntered: (state, action) => {
       state.pin = action.payload
     },
-    pinFlushed: (state) => {
-      state.pin = null
+    pinFlushed: () => {
+      return {
+        ...initialState
+      }
     }
   }
 })

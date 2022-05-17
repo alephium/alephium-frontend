@@ -48,17 +48,16 @@ const activeWalletSlice = createSlice({
     walletNameChanged: (state, action: PayloadAction<string>) => {
       state.name = action.payload
     },
-    walletFlushed: (state) => {
-      state.name = ''
-      state.primaryAddress = ''
-      state.publicKey = ''
-      state.privateKey = ''
-      state.mnemonic = ''
+    walletFlushed: () => {
+      return {
+        ...initialState
+      }
     },
     mnemonicChanged: (state, action: PayloadAction<Mnemonic>) => {
+      const mnemomic = action.payload
       try {
-        const wallet = walletImport(action.payload)
-        state.mnemonic = action.payload
+        const wallet = walletImport(mnemomic)
+        state.mnemonic = mnemomic
         state.primaryAddress = wallet.address
         state.publicKey = wallet.publicKey
         state.privateKey = wallet.privateKey

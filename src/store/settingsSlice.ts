@@ -31,10 +31,7 @@ const settingsSlice = createSlice({
   initialState,
   reducers: {
     generalSettingsChanged: (state, action: PayloadAction<GeneralSettings>) => {
-      state.theme = action.payload.theme
-      state.discreetMode = action.payload.discreetMode
-      state.walletLockTimeInMinutes = action.payload.walletLockTimeInMinutes
-      state.passwordRequirement = action.payload.passwordRequirement
+      return { ...action.payload }
     },
     themeChanged: (state, action: PayloadAction<GeneralSettings['theme']>) => {
       state.theme = action.payload
