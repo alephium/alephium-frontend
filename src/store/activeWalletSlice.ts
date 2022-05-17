@@ -45,7 +45,7 @@ const activeWalletSlice = createSlice({
   name,
   initialState,
   reducers: {
-    walletNameChanged: (state, action) => {
+    walletNameChanged: (state, action: PayloadAction<string>) => {
       state.name = action.payload
     },
     walletFlushed: (state) => {
