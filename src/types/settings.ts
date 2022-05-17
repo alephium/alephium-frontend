@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ThemeType } from '../style/themes'
-import { NetworkSettings } from '../types/settings'
 
 export interface GeneralSettings {
   theme: ThemeType
