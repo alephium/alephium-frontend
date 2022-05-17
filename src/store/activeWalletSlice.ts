@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { walletEncrypt, walletImport } from '@alephium/sdk'
-import { createListenerMiddleware, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { storeEncryptedWallet } from '../storage/wallets'
 import { Mnemonic } from '../types/wallet'
@@ -36,53 +36,27 @@ const initialState: ActiveWalletState = {
   mnemonic: ''
 }
 
-const activeWalletSlice = createSlice({
-  name: sliceName,
-  initialState,
-  reducers: {
-    walletNameChanged: (state, action: PayloadAction<string>) => {
-      state.name = action.payload
-    },
-    walletFlushed: () => {
-      return {
-        ...initialState
-      }
-    },
-    mnemonicChanged: (state, action: PayloadAction<Mnemonic>) => {
-      const mnemomic = action.payload
-      try {
-        walletImport(mnemomic)
-        state.mnemonic = mnemomic
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  }
-})
-
-export const { walletNameChanged, walletFlushed, mnemonicChanged } = activeWalletSlice.actions
-
-export const activeWalletListenerMiddleware = createListenerMiddleware()
-
-// When the mnemomic changes, store it in persistent storage
-activeWalletListenerMiddleware.startListening({
-  actionCreator: mnemonicChanged,
-  effect: async (action, { getState, dispatch }) => {
-    const state = getState() as RootState
-    if (!state.activeWallet.mnemonic) return
+export const walletStored = createAsyncThunk(
+  `${sliceName}/walletStored`,
+  async (mnemonic: Mnemonic, { getState, dispatch }) => {
+    let hasError = false
 
     try {
-      const wallet = walletImport(action.payload)
+      if (!mnemonic) throw 'Could not store wallet, mnemonic not set'
+
+      const state = getState() as RootState
+      if (!state[sliceName].name) throw 'Could not store wallet, wallet name is not set'
+
+      const wallet = walletImport(mnemonic)
       const pin = state.credentials.pin
 
       if (pin) {
-        const encryptedWallet = walletEncrypt(pin.toString(), action.payload)
-        await storeEncryptedWallet(state.activeWallet.name, encryptedWallet)
+        const encryptedWallet = walletEncrypt(pin.toString(), mnemonic)
+        await storeEncryptedWallet(state[sliceName].name, encryptedWallet)
       } else {
-        console.error('Could not encrypt wallet, no PIN set')
+        throw 'Could not encrypt wallet, no PIN set'
       }
 
-      console.log('dispatching addressAdded...')
       dispatch(
         addressAdded({
           hash: wallet.address,
@@ -96,8 +70,42 @@ activeWalletListenerMiddleware.startListening({
       )
     } catch (e) {
       console.log(e)
+      hasError = true
     }
+
+    return new Promise<Mnemonic>((resolve, reject) => {
+      if (hasError) {
+        reject(new Error('Could not store wallet'))
+      } else {
+        resolve(mnemonic)
+      }
+    })
+  }
+)
+
+const activeWalletSlice = createSlice({
+  name: sliceName,
+  initialState,
+  reducers: {
+    walletNameChanged: (state, action: PayloadAction<string>) => {
+      state.name = action.payload
+    },
+    walletFlushed: () => {
+      return {
+        ...initialState
+      }
+    },
+    mnemonicChanged: (state, action: PayloadAction<Mnemonic>) => {
+      state.mnemonic = action.payload
+    }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(walletStored.fulfilled, (state, action) => {
+      state.mnemonic = action.payload
+    })
   }
 })
+
+export const { walletNameChanged, walletFlushed, mnemonicChanged } = activeWalletSlice.actions
 
 export default activeWalletSlice

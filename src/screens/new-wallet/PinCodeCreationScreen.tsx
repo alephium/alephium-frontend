@@ -27,7 +27,7 @@ import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { mnemonicChanged } from '../../store/activeWalletSlice'
+import { walletStored } from '../../store/activeWalletSlice'
 import { pinEntered } from '../../store/credentialsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
@@ -94,7 +94,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
 
         if (method === 'create') {
           const wallet = walletGenerate()
-          dispatch(mnemonicChanged(wallet.mnemonic))
+          dispatch(walletStored(wallet.mnemonic))
         }
 
         if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {

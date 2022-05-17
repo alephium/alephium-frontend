@@ -26,7 +26,7 @@ import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { mnemonicChanged } from '../../store/activeWalletSlice'
+import { walletStored } from '../../store/activeWalletSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
@@ -49,7 +49,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const handleWalletImport = () => {
     if (!pin || !activeWalletName) return
 
-    dispatch(mnemonicChanged(words.join(' ')))
+    dispatch(walletStored(words.join(' ')))
     navigation.navigate('NewWalletSuccessPage')
   }
 

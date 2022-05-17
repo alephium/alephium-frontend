@@ -19,17 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { walletOpen } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { isEnrolledAsync } from 'expo-local-authentication'
-import * as SecureStore from 'expo-secure-store'
 import { useCallback, useEffect, useState } from 'react'
 
 import PinCodeInput from '../components/inputs/PinCodeInput'
 import Screen from '../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../components/text/CenteredInstructions'
-import { useAppDispatch } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { mnemonicChanged, nameChanged } from '../store/activeWalletSlice'
-import { pinEntered } from '../store/securitySlice'
+import { mnemonicChanged, walletNameChanged } from '../store/activeWalletSlice'
+import { addressAdded } from '../store/addressesSlice'
+import { pinEntered } from '../store/credentialsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 
@@ -46,13 +45,11 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const LoginScreen = ({ navigation, route }: ScreenProps) => {
-  const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean>()
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const dispatch = useAppDispatch()
   const activeEncryptedWallet = route.params.encryptedWallet
-
-  const [isUsingBiometrics, setIsUsingBiometrics] = useState(false)
+  const isAddressesStoreEmpty = useAppSelector((state) => !state.addresses.mainAddress)
 
   useFocusEffect(
     useCallback(() => {
@@ -62,24 +59,28 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
   )
 
   useEffect(() => {
-    const checkBiometricsAvailability = async () => {
-      const available = await isEnrolledAsync()
-      setHasAvailableBiometrics(available)
-      const biometricsEnabled = await SecureStore.getItemAsync('usingBiometrics')
-      setIsUsingBiometrics(biometricsEnabled === 'true')
-    }
-
-    checkBiometricsAvailability()
-  }, [])
-
-  useEffect(() => {
     if (pinCode.length !== pinLength) return
 
     try {
       const wallet = walletOpen(pinCode, activeEncryptedWallet.encryptedWallet)
       dispatch(pinEntered(pinCode))
-      dispatch(nameChanged(activeEncryptedWallet.name))
+      dispatch(walletNameChanged(activeEncryptedWallet.name))
       dispatch(mnemonicChanged(wallet.mnemonic))
+      if (isAddressesStoreEmpty) {
+        // TODO: check stored address metadata.
+        // For now I just initialize the store with the address at index 0.
+        dispatch(
+          addressAdded({
+            hash: wallet.address,
+            publicKey: wallet.publicKey,
+            privateKey: wallet.privateKey,
+            index: 0,
+            settings: {
+              isMain: true
+            }
+          })
+        )
+      }
       setPinCode('')
       navigation.navigate('DashboardScreen')
     } catch (e) {
@@ -87,7 +88,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
       setPinCode('')
       console.error(`Could not unlock wallet ${activeEncryptedWallet.name}`, e)
     }
-  }, [activeEncryptedWallet, dispatch, navigation, pinCode])
+  }, [activeEncryptedWallet, dispatch, isAddressesStoreEmpty, navigation, pinCode])
 
   console.log('LoginScreen renders')
 

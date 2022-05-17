@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { walletGenerate } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components/native'
 
 import Button from '../../components/buttons/Button'
@@ -27,7 +27,7 @@ import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { mnemonicChanged, walletNameChanged } from '../../store/activeWalletSlice'
+import { walletNameChanged, walletStored } from '../../store/activeWalletSlice'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -41,6 +41,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const pin = useAppSelector((state) => state.credentials.pin)
   const method = useAppSelector((state) => state.walletGeneration.method)
+  const mnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
 
   const handleButtonPress = async () => {
     if (walletName) {
@@ -51,14 +52,17 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
       } else {
         if (method === 'create') {
           const wallet = walletGenerate()
-          dispatch(mnemonicChanged(wallet.mnemonic))
-          navigation.navigate('DashboardScreen')
+          dispatch(walletStored(wallet.mnemonic))
         } else if (method === 'import') {
           navigation.navigate('ImportWalletSeedScreen')
         }
       }
     }
   }
+
+  useEffect(() => {
+    if (mnemonic) navigation.navigate('DashboardScreen')
+  }, [mnemonic, navigation])
 
   console.log('NewWalletNameScreen renders')
 
