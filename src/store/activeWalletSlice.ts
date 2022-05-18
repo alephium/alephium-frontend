@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { walletEncrypt, walletImport } from '@alephium/sdk'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { storeEncryptedWallet } from '../storage/wallets'
+import { storeWallet } from '../storage/wallets'
 import { Mnemonic } from '../types/wallet'
 import { addressAdded } from './addressesSlice'
 import { RootState } from './store'
@@ -36,27 +36,38 @@ const initialState: ActiveWalletState = {
   mnemonic: ''
 }
 
+type WalletStoredPayload = {
+  mnemonic: string
+  withBiometrics: boolean
+}
+
 export const walletStored = createAsyncThunk(
   `${sliceName}/walletStored`,
-  async (mnemonic: Mnemonic, { getState, dispatch }) => {
+  async (payload: WalletStoredPayload, { getState, dispatch }) => {
+    const { mnemonic, withBiometrics } = payload
     let hasError = false
 
     try {
       if (!mnemonic) throw 'Could not store wallet, mnemonic not set'
 
       const state = getState() as RootState
-      if (!state[sliceName].name) throw 'Could not store wallet, wallet name is not set'
+
+      const walletName = state[sliceName].name
+      if (!walletName) throw 'Could not store wallet, wallet name is not set'
 
       const wallet = walletImport(mnemonic)
-      const pin = state.credentials.pin
 
-      if (pin) {
-        const encryptedWallet = walletEncrypt(pin.toString(), mnemonic)
-        await storeEncryptedWallet(state[sliceName].name, encryptedWallet)
+      if (withBiometrics) {
+        await storeWallet(walletName, mnemonic, true)
       } else {
-        throw 'Could not encrypt wallet, no PIN set'
+        const pin = state.credentials.pin
+        if (!pin) throw 'Could not store wallet, pin to encrypt it is not set'
+
+        const encryptedWallet = walletEncrypt(pin, mnemonic)
+        await storeWallet(walletName, encryptedWallet, false)
       }
 
+      // TODO: Remove it from here and add it where you'll be reading the stored address metadata
       dispatch(
         addressAdded({
           hash: wallet.address,
@@ -69,7 +80,7 @@ export const walletStored = createAsyncThunk(
         })
       )
     } catch (e) {
-      console.log(e)
+      console.error(e)
       hasError = true
     }
 

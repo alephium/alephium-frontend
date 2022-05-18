@@ -25,7 +25,7 @@ interface WalletIdEntry {
   name: string
 }
 
-export const storeEncryptedWallet = async (walletName: string, encryptedWallet: string) => {
+export const storeWallet = async (walletName: string, mnemonic: string, withBiometrics: boolean) => {
   let id: string
   let walletIds = []
 
@@ -61,8 +61,18 @@ export const storeEncryptedWallet = async (walletName: string, encryptedWallet: 
     }
   }
 
-  await SecureStore.setItemAsync(`wallet-${id}`, encryptedWallet)
-  await AsyncStorage.setItem('active-wallet-id', id)
+  await SecureStore.setItemAsync(
+    `wallet-${id}`,
+    mnemonic,
+    withBiometrics
+      ? {
+          requireAuthentication: true,
+          authenticationPrompt: 'Please, authenticate to store your wallet securely'
+        }
+      : undefined
+  )
+  await SecureStore.setItemAsync('uses-biometrics', withBiometrics.toString())
+  await SecureStore.setItemAsync('active-wallet-id', id)
 }
 
 export type ActiveEncryptedWallet = {

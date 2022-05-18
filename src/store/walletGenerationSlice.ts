@@ -18,16 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { Mnemonic } from '../types/wallet'
+
 const sliceName = 'walletGeneration'
 
 export type WalletGenerationMethod = 'create' | 'import'
 
 interface WalletGenerationState {
   method: WalletGenerationMethod
+  importedMnemonic: Mnemonic
 }
 
 const initialState: WalletGenerationState = {
-  method: 'create'
+  method: 'create',
+  importedMnemonic: ''
 }
 
 const walletGenerationSlice = createSlice({
@@ -36,10 +40,16 @@ const walletGenerationSlice = createSlice({
   reducers: {
     methodSelected: (state, action: PayloadAction<WalletGenerationMethod>) => {
       state.method = action.payload
+    },
+    importedMnemonicChanged: (state, action: PayloadAction<Mnemonic>) => {
+      state.importedMnemonic = action.payload
+    },
+    flushImportedMnemonic: (state) => {
+      state.importedMnemonic = ''
     }
   }
 })
 
-export const { methodSelected } = walletGenerationSlice.actions
+export const { methodSelected, importedMnemonicChanged, flushImportedMnemonic } = walletGenerationSlice.actions
 
 export default walletGenerationSlice

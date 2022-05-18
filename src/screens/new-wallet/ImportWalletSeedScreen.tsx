@@ -25,8 +25,10 @@ import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import useBiometrics from '../../hooks/useBiometrics'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
+import { importedMnemonicChanged } from '../../store/walletGenerationSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
@@ -35,7 +37,9 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [words, setWords] = useState<string[]>([])
   const pin = useAppSelector((state) => state.credentials.pin)
   const activeWalletName = useAppSelector((state) => state.activeWallet.name)
+  const mnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
   const dispatch = useAppDispatch()
+  const hasAvailableBiometrics = useBiometrics()
 
   useEffect(() => {
     setWords(
@@ -49,9 +53,24 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const handleWalletImport = () => {
     if (!pin || !activeWalletName) return
 
-    dispatch(walletStored(words.join(' ')))
-    navigation.navigate('NewWalletSuccessPage')
+    const importedMnemonic = words.join(' ')
+
+    if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
+      dispatch(importedMnemonicChanged(importedMnemonic))
+      navigation.navigate('AddBiometricsScreen')
+    } else {
+      dispatch(
+        walletStored({
+          mnemonic: importedMnemonic,
+          withBiometrics: false
+        })
+      )
+    }
   }
+
+  useEffect(() => {
+    if (mnemonic) navigation.navigate('NewWalletSuccessPage')
+  }, [navigation, mnemonic])
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isNextButtonActive = words.length >= 12
