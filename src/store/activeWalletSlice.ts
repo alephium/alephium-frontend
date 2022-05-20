@@ -23,6 +23,7 @@ import { storeWallet } from '../storage/wallets'
 import { Mnemonic } from '../types/wallet'
 import { addressAdded } from './addressesSlice'
 import { RootState } from './store'
+import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
 const sliceName = 'activeWallet'
 
@@ -44,6 +45,8 @@ type WalletStoredPayload = {
 export const walletStored = createAsyncThunk(
   `${sliceName}/walletStored`,
   async (payload: WalletStoredPayload, { getState, dispatch }) => {
+    dispatch(loadingStarted())
+
     const { mnemonic, withBiometrics } = payload
     let hasError = false
 
@@ -85,6 +88,8 @@ export const walletStored = createAsyncThunk(
     }
 
     return new Promise<Mnemonic>((resolve, reject) => {
+      dispatch(loadingFinished())
+
       if (hasError) {
         reject(new Error('Could not store wallet'))
       } else {

@@ -108,9 +108,11 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
   }, [chosenPinCode, dispatch, hasAvailableBiometrics, isVerifyingCode, method, navigation, pinCode])
 
-  useEffect(() => {
-    if (mnemonic) navigation.navigate('NewWalletSuccessPage')
-  }, [mnemonic, navigation])
+  useFocusEffect(
+    useCallback(() => {
+      if (mnemonic) navigation.navigate('NewWalletSuccessPage')
+    }, [mnemonic, navigation])
+  )
 
   console.log('PinCodeCreationScreen renders')
 

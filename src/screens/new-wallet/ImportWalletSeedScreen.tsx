@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components/native'
 
 import Button from '../../components/buttons/Button'
@@ -68,9 +69,11 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
     }
   }
 
-  useEffect(() => {
-    if (mnemonic) navigation.navigate('NewWalletSuccessPage')
-  }, [navigation, mnemonic])
+  useFocusEffect(
+    useCallback(() => {
+      if (mnemonic) navigation.navigate('NewWalletSuccessPage')
+    }, [mnemonic, navigation])
+  )
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isNextButtonActive = words.length >= 12

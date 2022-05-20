@@ -27,11 +27,13 @@ export type WalletGenerationMethod = 'create' | 'import'
 interface WalletGenerationState {
   method: WalletGenerationMethod
   importedMnemonic: Mnemonic
+  loading: boolean
 }
 
 const initialState: WalletGenerationState = {
   method: 'create',
-  importedMnemonic: ''
+  importedMnemonic: '',
+  loading: false
 }
 
 const walletGenerationSlice = createSlice({
@@ -46,10 +48,17 @@ const walletGenerationSlice = createSlice({
     },
     flushImportedMnemonic: (state) => {
       state.importedMnemonic = ''
+    },
+    loadingStarted: (state) => {
+      state.loading = true
+    },
+    loadingFinished: (state) => {
+      state.loading = false
     }
   }
 })
 
-export const { methodSelected, importedMnemonicChanged, flushImportedMnemonic } = walletGenerationSlice.actions
+export const { methodSelected, importedMnemonicChanged, flushImportedMnemonic, loadingStarted, loadingFinished } =
+  walletGenerationSlice.actions
 
 export default walletGenerationSlice
