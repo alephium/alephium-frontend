@@ -25,13 +25,15 @@ const sliceName = 'walletGeneration'
 export type WalletGenerationMethod = 'create' | 'import'
 
 interface WalletGenerationState {
-  method: WalletGenerationMethod
+  method: WalletGenerationMethod | null
+  walletName: string
   importedMnemonic: Mnemonic
   loading: boolean
 }
 
 const initialState: WalletGenerationState = {
-  method: 'create',
+  method: null,
+  walletName: '',
   importedMnemonic: '',
   loading: false
 }
@@ -43,11 +45,14 @@ const walletGenerationSlice = createSlice({
     methodSelected: (state, action: PayloadAction<WalletGenerationMethod>) => {
       state.method = action.payload
     },
+    newWalletNameChanged: (state, action: PayloadAction<string>) => {
+      state.walletName = action.payload
+    },
     importedMnemonicChanged: (state, action: PayloadAction<Mnemonic>) => {
       state.importedMnemonic = action.payload
     },
-    flushImportedMnemonic: (state) => {
-      state.importedMnemonic = ''
+    flushWalletGenerationState: (state) => {
+      return initialState
     },
     loadingStarted: (state) => {
       state.loading = true
@@ -58,7 +63,13 @@ const walletGenerationSlice = createSlice({
   }
 })
 
-export const { methodSelected, importedMnemonicChanged, flushImportedMnemonic, loadingStarted, loadingFinished } =
-  walletGenerationSlice.actions
+export const {
+  methodSelected,
+  importedMnemonicChanged,
+  flushWalletGenerationState,
+  loadingStarted,
+  loadingFinished,
+  newWalletNameChanged
+} = walletGenerationSlice.actions
 
 export default walletGenerationSlice

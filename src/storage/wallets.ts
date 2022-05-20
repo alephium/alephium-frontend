@@ -20,102 +20,114 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
-interface WalletIdEntry {
-  id: string
-  name: string
-}
+import { ActiveWalletState } from '../store/activeWalletSlice'
+import { StoredWalletAuthType, WalletMetadata } from '../types/wallet'
 
-export const storeWallet = async (walletName: string, mnemonic: string, withBiometrics: boolean) => {
-  let id: string
-  let walletIds = []
+export const storeWallet = async (walletName: string, mnemonic: string, authType: StoredWalletAuthType) => {
+  let walletId: string
+  let walletsMetadata = []
 
-  const rawWalletIds = await AsyncStorage.getItem('wallet-ids')
+  const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
 
-  if (!rawWalletIds) {
-    id = nanoid()
-
-    await AsyncStorage.setItem(
-      'wallet-ids',
-      JSON.stringify([
-        {
-          id,
-          name: walletName
-        }
-      ])
-    )
+  if (!rawWalletsMetadata) {
+    // Storing first wallet ever, after a fresh app install
+    walletId = nanoid()
+    const initialWalletsMetadata: WalletMetadata[] = [
+      {
+        id: walletId,
+        name: walletName,
+        authType
+      }
+    ]
+    await AsyncStorage.setItem('wallets-metadata', JSON.stringify(initialWalletsMetadata))
   } else {
-    walletIds = JSON.parse(rawWalletIds)
-    const wallet = walletIds.find((wallet: WalletIdEntry) => wallet.name === walletName)
+    // Storing an additonal wallet, after at least one has been created and stored
+    walletsMetadata = JSON.parse(rawWalletsMetadata) as WalletMetadata[]
+    const walletMetadata = walletsMetadata.find((data: WalletMetadata) => data.name === walletName)
 
-    if (wallet) {
-      id = wallet.id
+    if (walletMetadata) {
+      // Will override stored wallet with the same name
+      walletId = walletMetadata.id
     } else {
-      id = nanoid()
-
-      walletIds.push({
-        id,
-        name: walletName
-      })
-
-      await AsyncStorage.setItem('wallet-ids', JSON.stringify(walletIds))
+      // Will store a new wallet
+      walletId = nanoid()
+      const newWalletMetadata: WalletMetadata = {
+        id: walletId,
+        name: walletName,
+        authType
+      }
+      walletsMetadata.push(newWalletMetadata)
+      await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
     }
   }
 
-  await SecureStore.setItemAsync(
-    `wallet-${id}`,
-    mnemonic,
-    withBiometrics
+  const secureStoreConfig =
+    authType === 'biometrics'
       ? {
           requireAuthentication: true,
           authenticationPrompt: 'Please, authenticate to store your wallet securely'
         }
       : undefined
-  )
-  await SecureStore.setItemAsync('uses-biometrics', withBiometrics.toString())
-  await SecureStore.setItemAsync('active-wallet-id', id)
+
+  await SecureStore.setItemAsync(`wallet-${walletId}`, mnemonic, secureStoreConfig)
+  await SecureStore.setItemAsync('active-wallet-id', walletId)
 }
 
-export type ActiveEncryptedWallet = {
-  name: string
-  encryptedWallet: string
-}
-
-export const getActiveEncryptedWallet = async (): Promise<ActiveEncryptedWallet | null> => {
-  const id = await AsyncStorage.getItem('active-wallet-id')
-
+export const getActiveWallet = async (): Promise<ActiveWalletState | null> => {
+  const id = await SecureStore.getItemAsync('active-wallet-id')
   if (!id) return null
 
-  const rawWalletIds = await AsyncStorage.getItem('wallet-ids')
+  const { name, authType } = await getWalletMetadataById(id)
 
-  if (!rawWalletIds) throw 'No wallets found'
+  const secureStoreConfig =
+    authType === 'biometrics'
+      ? {
+          requireAuthentication: true,
+          authenticationPrompt: 'Please, authenticate to unlock your wallet'
+        }
+      : undefined
 
-  const walletIds = JSON.parse(rawWalletIds)
+  const mnemonic = await SecureStore.getItemAsync(`wallet-${id}`, secureStoreConfig)
 
-  const { name } = walletIds.find((wallet: WalletIdEntry) => wallet.id === id)
-  const encryptedWallet = await SecureStore.getItemAsync(`wallet-${id}`)
-
-  if (!encryptedWallet) throw 'Could not find encrypted wallet'
+  if (!mnemonic) throw 'Could not find wallet'
 
   return {
     name,
-    encryptedWallet
-  }
+    mnemonic,
+    authType
+  } as ActiveWalletState
 }
 
 export const deleteEncryptedWallet = async (walletName: string) => {
-  const rawWalletIds = await AsyncStorage.getItem('wallet-ids')
+  const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
 
-  if (!rawWalletIds) throw 'No wallets found'
+  if (!rawWalletsMetadata) throw 'No wallets found'
 
-  const walletIds = JSON.parse(rawWalletIds)
-  const wallet = walletIds.find((wallet: WalletIdEntry) => wallet.name === walletName)
+  const walletsMetadata = JSON.parse(rawWalletsMetadata)
+  const walletMetadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.name === walletName)
 
-  if (!wallet) throw 'Could not find wallet'
+  if (!walletMetadata) throw 'Could not find wallet'
 
-  walletIds.splice(
-    walletIds.findIndex((w: WalletIdEntry) => w.name === walletName),
+  walletsMetadata.splice(
+    walletsMetadata.findIndex((data: WalletMetadata) => data.name === walletName),
     1
   )
-  await AsyncStorage.setItem('wallet-ids', JSON.stringify(walletIds))
-  await SecureStore.deleteItemAsync(`wallet-${wallet.id}`)
+  await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
+
+  const secureStoreConfig =
+    walletMetadata.authType === 'biometrics'
+      ? {
+          requireAuthentication: true,
+          authenticationPrompt: 'Please, authenticate to delete the wallet'
+        }
+      : undefined
+  await SecureStore.deleteItemAsync(`wallet-${walletMetadata.id}`, secureStoreConfig)
+}
+
+const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
+  const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
+  if (!rawWalletsMetadata) throw 'No wallets found'
+
+  const walletsMetadata = JSON.parse(rawWalletsMetadata)
+  return walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id) as WalletMetadata
 }

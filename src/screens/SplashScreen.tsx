@@ -24,29 +24,47 @@ import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Screen from '../components/layout/Screen'
+import { useAppDispatch } from '../hooks/redux'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { getActiveEncryptedWallet } from '../storage/wallets'
+import { getActiveWallet } from '../storage/wallets'
+import { walletChanged } from '../store/activeWalletSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
 
 const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
+  const dispatch = useAppDispatch()
+
+  const iliasIsTestingNewStuff = false
 
   useEffect(() => {
     const getEncryptedWalletFromStorageAndNavigate = async () => {
-      const encryptedWallet = await getActiveEncryptedWallet()
-      setTimeout(() => {
-        if (encryptedWallet === null) {
+      try {
+        const activeWallet = await getActiveWallet()
+        if (activeWallet === null) {
           navigation.navigate('LandingScreen')
+        } else if (activeWallet.authType === 'pin') {
+          navigation.navigate('LoginScreen', { activeWallet })
+        } else if (activeWallet.authType === 'biometrics') {
+          dispatch(walletChanged(activeWallet))
+          navigation.navigate('DashboardScreen')
         } else {
-          navigation.navigate('LoginScreen', { encryptedWallet })
+          throw new Error('Unknown auth type')
         }
-      }, 1000)
+      } catch (e) {
+        console.error(e)
+        // TODO: Handle following 2 cases:
+        // 1. User cancels biometric authentication even though the fetched wallet is stored with biometrics auth
+        // required. Show a message something like "You have to authenticate with your biometrics to access this wallet"
+        // 2. User had previously stored their wallet with biometrics auth, but in the meantime they removed their
+        // biometrics setup from their device. Show a message something like "This wallet is only accessibly via
+        // biometrics authentication, please set up biometrics on your device settings and try again."
+      }
     }
 
-    getEncryptedWalletFromStorageAndNavigate()
-  }, [navigation])
+    iliasIsTestingNewStuff ? navigation.navigate('LandingScreen') : getEncryptedWalletFromStorageAndNavigate()
+  }, [dispatch, iliasIsTestingNewStuff, navigation])
 
   console.log('SplashScreen renders')
 

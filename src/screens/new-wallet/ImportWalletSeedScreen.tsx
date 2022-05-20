@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components/native'
 
 import Button from '../../components/buttons/Button'
@@ -27,6 +26,7 @@ import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
+import useNavigateOnNewWalletSuccess from '../../hooks/useNavigateOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
 import { importedMnemonicChanged } from '../../store/walletGenerationSlice'
@@ -37,8 +37,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
   const pin = useAppSelector((state) => state.credentials.pin)
-  const activeWalletName = useAppSelector((state) => state.activeWallet.name)
-  const mnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
+  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
+  const activeWallet = useAppSelector((state) => state.activeWallet)
   const dispatch = useAppDispatch()
   const hasAvailableBiometrics = useBiometrics()
 
@@ -52,28 +52,39 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   }, [secretPhrase])
 
   const handleWalletImport = () => {
-    if (!pin || !activeWalletName) return
+    if (!pin || !walletName) return
 
     const importedMnemonic = words.join(' ')
 
-    if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
-      dispatch(importedMnemonicChanged(importedMnemonic))
-      navigation.navigate('AddBiometricsScreen')
-    } else {
+    if (activeWallet.authType) {
+      // This is not the first wallet, the user is already logged in
       dispatch(
         walletStored({
+          name: walletName,
           mnemonic: importedMnemonic,
-          withBiometrics: false
+          authType: activeWallet.authType
         })
       )
+    } else {
+      // This is the first wallet ever created
+      if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
+        dispatch(importedMnemonicChanged(importedMnemonic))
+        navigation.navigate('AddBiometricsScreen')
+      } else {
+        dispatch(
+          walletStored({
+            name: walletName,
+            mnemonic: importedMnemonic,
+            authType: 'pin'
+          })
+        )
+      }
     }
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      if (mnemonic) navigation.navigate('NewWalletSuccessPage')
-    }, [mnemonic, navigation])
-  )
+  useNavigateOnNewWalletSuccess(() => {
+    navigation.navigate('NewWalletSuccessPage')
+  })
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isNextButtonActive = words.length >= 12

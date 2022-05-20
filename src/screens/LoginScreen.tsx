@@ -24,10 +24,9 @@ import { useCallback, useEffect, useState } from 'react'
 import PinCodeInput from '../components/inputs/PinCodeInput'
 import Screen from '../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../components/text/CenteredInstructions'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { mnemonicChanged, walletNameChanged } from '../store/activeWalletSlice'
-import { addressAdded } from '../store/addressesSlice'
+import { walletChanged } from '../store/activeWalletSlice'
 import { pinEntered } from '../store/credentialsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
@@ -48,8 +47,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const dispatch = useAppDispatch()
-  const activeEncryptedWallet = route.params.encryptedWallet
-  const isAddressesStoreEmpty = useAppSelector((state) => !state.addresses.mainAddress)
+  const activeEncryptedWallet = route.params.activeWallet
 
   useFocusEffect(
     useCallback(() => {
@@ -62,25 +60,15 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     if (pinCode.length !== pinLength) return
 
     try {
-      const wallet = walletOpen(pinCode, activeEncryptedWallet.encryptedWallet)
+      const wallet = walletOpen(pinCode, activeEncryptedWallet.mnemonic)
       dispatch(pinEntered(pinCode))
-      dispatch(walletNameChanged(activeEncryptedWallet.name))
-      dispatch(mnemonicChanged(wallet.mnemonic))
-      if (isAddressesStoreEmpty) {
-        // TODO: check stored address metadata.
-        // For now I just initialize the store with the address at index 0.
-        dispatch(
-          addressAdded({
-            hash: wallet.address,
-            publicKey: wallet.publicKey,
-            privateKey: wallet.privateKey,
-            index: 0,
-            settings: {
-              isMain: true
-            }
-          })
-        )
-      }
+      dispatch(
+        walletChanged({
+          name: activeEncryptedWallet.name,
+          mnemonic: wallet.mnemonic,
+          authType: activeEncryptedWallet.authType
+        })
+      )
       setPinCode('')
       navigation.navigate('DashboardScreen')
     } catch (e) {
@@ -88,7 +76,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
       setPinCode('')
       console.error(`Could not unlock wallet ${activeEncryptedWallet.name}`, e)
     }
-  }, [activeEncryptedWallet, dispatch, isAddressesStoreEmpty, navigation, pinCode])
+  }, [activeEncryptedWallet, dispatch, navigation, pinCode])
 
   console.log('LoginScreen renders')
 

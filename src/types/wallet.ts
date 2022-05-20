@@ -17,3 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 export type Mnemonic = string
+
+export type StoredWalletAuthType = 'pin' | 'biometrics'
+
+export type WalletMetadata = {
+  id: string
+  name: string
+  authType: StoredWalletAuthType
+}

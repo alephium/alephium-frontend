@@ -17,10 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { walletGenerate } from '@alephium/sdk'
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { useCallback, useEffect } from 'react'
 import styled from 'styled-components/native'
 
 import animationSrc from '../../animations/fingerprint.json'
@@ -29,9 +27,10 @@ import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import useNavigateOnNewWalletSuccess from '../../hooks/useNavigateOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
-import { flushImportedMnemonic } from '../../store/walletGenerationSlice'
+import { StoredWalletAuthType } from '../../types/wallet'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
@@ -42,37 +41,34 @@ const instructions: Instruction[] = [
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   const method = useAppSelector((state) => state.walletGeneration.method)
-  const mnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
   const importedMnemonic = useAppSelector((state) => state.walletGeneration.importedMnemonic)
+  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
   const dispatch = useAppDispatch()
 
-  const createAndStoreWallet = async (withBiometrics: boolean) => {
+  const createAndStoreWallet = async (authType: StoredWalletAuthType) => {
     if (method === 'create') {
       const wallet = walletGenerate()
       dispatch(
         walletStored({
+          name: walletName,
           mnemonic: wallet.mnemonic,
-          withBiometrics
+          authType
         })
       )
     } else if (method === 'import' && importedMnemonic) {
       dispatch(
         walletStored({
+          name: walletName,
           mnemonic: importedMnemonic,
-          withBiometrics
+          authType
         })
       )
     }
   }
-  useFocusEffect(
-    useCallback(() => {
-      if (mnemonic) {
-        navigation.navigate('NewWalletSuccessPage')
 
-        if (importedMnemonic) dispatch(flushImportedMnemonic())
-      }
-    }, [dispatch, importedMnemonic, mnemonic, navigation])
-  )
+  useNavigateOnNewWalletSuccess(() => {
+    navigation.navigate('NewWalletSuccessPage')
+  })
 
   console.log('AddBiometricsScreen renders')
 
@@ -84,8 +80,8 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
       <CenteredInstructions instructions={instructions} stretch />
       <ActionsContainer>
         <ButtonStack>
-          <Button title="Activate" type="primary" onPress={() => createAndStoreWallet(true)} />
-          <Button title="Later" type="secondary" onPress={() => createAndStoreWallet(false)} />
+          <Button title="Activate" type="primary" onPress={() => createAndStoreWallet('biometrics')} />
+          <Button title="Later" type="secondary" onPress={() => createAndStoreWallet('pin')} />
         </ButtonStack>
       </ActionsContainer>
     </Screen>

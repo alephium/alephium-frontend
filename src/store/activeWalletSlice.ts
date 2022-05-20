@@ -20,8 +20,7 @@ import { walletEncrypt, walletImport } from '@alephium/sdk'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { storeWallet } from '../storage/wallets'
-import { Mnemonic } from '../types/wallet'
-import { addressAdded } from './addressesSlice'
+import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
@@ -29,71 +28,57 @@ const sliceName = 'activeWallet'
 
 interface ActiveWalletState {
   name: string
-  mnemonic: string
+  mnemonic: Mnemonic
+  authType: StoredWalletAuthType | null
 }
 
 const initialState: ActiveWalletState = {
   name: '',
-  mnemonic: ''
-}
-
-type WalletStoredPayload = {
-  mnemonic: string
-  withBiometrics: boolean
+  mnemonic: '',
+  authType: null
 }
 
 export const walletStored = createAsyncThunk(
   `${sliceName}/walletStored`,
-  async (payload: WalletStoredPayload, { getState, dispatch }) => {
+  async (payload: ActiveWalletState, { getState, dispatch }) => {
     dispatch(loadingStarted())
 
-    const { mnemonic, withBiometrics } = payload
+    const { name, mnemonic, authType } = payload
     let hasError = false
 
     try {
+      if (!name) throw 'Could not store wallet, wallet name is not set'
       if (!mnemonic) throw 'Could not store wallet, mnemonic not set'
 
-      const state = getState() as RootState
+      // Check if mnemonic is valid
+      walletImport(mnemonic)
 
-      const walletName = state[sliceName].name
-      if (!walletName) throw 'Could not store wallet, wallet name is not set'
-
-      const wallet = walletImport(mnemonic)
-
-      if (withBiometrics) {
-        await storeWallet(walletName, mnemonic, true)
-      } else {
+      if (authType === 'biometrics') {
+        await storeWallet(name, mnemonic, authType)
+      } else if (authType === 'pin') {
+        const state = getState() as RootState
         const pin = state.credentials.pin
         if (!pin) throw 'Could not store wallet, pin to encrypt it is not set'
 
         const encryptedWallet = walletEncrypt(pin, mnemonic)
-        await storeWallet(walletName, encryptedWallet, false)
+        await storeWallet(name, encryptedWallet, authType)
       }
-
-      // TODO: Remove it from here and add it where you'll be reading the stored address metadata
-      dispatch(
-        addressAdded({
-          hash: wallet.address,
-          publicKey: wallet.publicKey,
-          privateKey: wallet.privateKey,
-          index: 0,
-          settings: {
-            isMain: true
-          }
-        })
-      )
     } catch (e) {
       console.error(e)
       hasError = true
     }
 
-    return new Promise<Mnemonic>((resolve, reject) => {
+    return new Promise<ActiveWalletState>((resolve, reject) => {
       dispatch(loadingFinished())
 
       if (hasError) {
         reject(new Error('Could not store wallet'))
       } else {
-        resolve(mnemonic)
+        resolve({
+          name,
+          mnemonic,
+          authType
+        } as ActiveWalletState)
       }
     })
   }
@@ -103,25 +88,20 @@ const activeWalletSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    walletNameChanged: (state, action: PayloadAction<string>) => {
-      state.name = action.payload
-    },
     walletFlushed: () => {
-      return {
-        ...initialState
-      }
+      return initialState
     },
-    mnemonicChanged: (state, action: PayloadAction<Mnemonic>) => {
-      state.mnemonic = action.payload
+    walletChanged: (state, action: PayloadAction<ActiveWalletState>) => {
+      return action.payload
     }
   },
   extraReducers: (builder) => {
     builder.addCase(walletStored.fulfilled, (state, action) => {
-      state.mnemonic = action.payload
+      return action.payload
     })
   }
 })
 
-export const { walletNameChanged, walletFlushed, mnemonicChanged } = activeWalletSlice.actions
+export const { walletChanged, walletFlushed } = activeWalletSlice.actions
 
 export default activeWalletSlice

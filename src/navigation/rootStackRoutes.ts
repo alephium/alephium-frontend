@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ActiveEncryptedWallet } from '../storage/wallets'
+import { ActiveWalletState } from '../store/activeWalletSlice'
 
 type RootStackParamList = {
   LandingScreen: undefined
@@ -28,7 +28,7 @@ type RootStackParamList = {
   ImportWalletSeedScreen: undefined
   DashboardScreen: undefined
   LoginScreen: {
-    encryptedWallet: ActiveEncryptedWallet
+    activeWallet: ActiveWalletState
   }
   SplashScreen: undefined
 }

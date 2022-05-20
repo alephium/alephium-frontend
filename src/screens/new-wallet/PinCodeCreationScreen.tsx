@@ -26,6 +26,7 @@ import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
+import useNavigateOnNewWalletSuccess from '../../hooks/useNavigateOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
 import { pinEntered } from '../../store/credentialsSlice'
@@ -53,12 +54,12 @@ const errorInstructionSet: Instruction[] = [
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const hasAvailableBiometrics = useBiometrics()
   const method = useAppSelector((state) => state.walletGeneration.method)
+  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [isVerifyingCode, setIsVerifyingCode] = useState(false)
   const dispatch = useAppDispatch()
-  const mnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
 
   useFocusEffect(
     useCallback(() => {
@@ -91,8 +92,9 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
             const wallet = walletGenerate()
             dispatch(
               walletStored({
+                name: walletName,
                 mnemonic: wallet.mnemonic,
-                withBiometrics: false
+                authType: 'pin'
               })
             )
           }
@@ -106,13 +108,11 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     }
 
     !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
-  }, [chosenPinCode, dispatch, hasAvailableBiometrics, isVerifyingCode, method, navigation, pinCode])
+  }, [chosenPinCode, dispatch, hasAvailableBiometrics, isVerifyingCode, method, navigation, pinCode, walletName])
 
-  useFocusEffect(
-    useCallback(() => {
-      if (mnemonic) navigation.navigate('NewWalletSuccessPage')
-    }, [mnemonic, navigation])
-  )
+  useNavigateOnNewWalletSuccess(() => {
+    navigation.navigate('NewWalletSuccessPage')
+  })
 
   console.log('PinCodeCreationScreen renders')
 
