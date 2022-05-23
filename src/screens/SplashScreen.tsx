@@ -62,7 +62,9 @@ const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenPr
       }
     }
 
-    iliasIsTestingNewStuff ? navigation.navigate('LandingScreen') : getEncryptedWalletFromStorageAndNavigate()
+    setTimeout(() => {
+      iliasIsTestingNewStuff ? navigation.navigate('LandingScreen') : getEncryptedWalletFromStorageAndNavigate()
+    }, 1000)
   }, [dispatch, iliasIsTestingNewStuff, navigation])
 
   console.log('SplashScreen renders')
