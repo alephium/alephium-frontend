@@ -98,7 +98,7 @@ export const getActiveWallet = async (): Promise<ActiveWalletState | null> => {
   } as ActiveWalletState
 }
 
-export const deleteEncryptedWallet = async (walletName: string) => {
+export const deleteWalletByName = async (walletName: string) => {
   const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
 
   if (!rawWalletsMetadata) throw 'No wallets found'
@@ -114,6 +114,30 @@ export const deleteEncryptedWallet = async (walletName: string) => {
   )
   await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
 
+  const activeWalletId = await SecureStore.getItemAsync('active-wallet-id')
+  if (activeWalletId === walletMetadata.id) {
+    await SecureStore.deleteItemAsync('active-wallet-id')
+  }
+
+  await deleteWallet(walletMetadata)
+}
+
+export const deleteAllWallets = async () => {
+  const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
+
+  if (!rawWalletsMetadata) throw 'No wallets found'
+
+  const walletsMetadata = JSON.parse(rawWalletsMetadata)
+
+  for (const walletMetadata of walletsMetadata) {
+    await deleteWallet(walletMetadata)
+  }
+
+  await AsyncStorage.removeItem('wallets-metadata')
+  await SecureStore.deleteItemAsync('active-wallet-id')
+}
+
+const deleteWallet = async (walletMetadata: WalletMetadata) => {
   const secureStoreConfig =
     walletMetadata.authType === 'biometrics'
       ? {

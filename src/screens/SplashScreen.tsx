@@ -35,8 +35,6 @@ const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenPr
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
   const dispatch = useAppDispatch()
 
-  const iliasIsTestingNewStuff = false
-
   useEffect(() => {
     const getEncryptedWalletFromStorageAndNavigate = async () => {
       try {
@@ -63,9 +61,9 @@ const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenPr
     }
 
     setTimeout(() => {
-      iliasIsTestingNewStuff ? navigation.navigate('LandingScreen') : getEncryptedWalletFromStorageAndNavigate()
+      getEncryptedWalletFromStorageAndNavigate()
     }, 1000)
-  }, [dispatch, iliasIsTestingNewStuff, navigation])
+  }, [dispatch, navigation])
 
   console.log('SplashScreen renders')
 
