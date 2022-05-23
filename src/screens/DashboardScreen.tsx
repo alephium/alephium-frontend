@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { walletImport } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Text } from 'react-native'
 import styled from 'styled-components/native'
@@ -27,17 +28,17 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'>
 
 const DashboardScreen = ({ navigation }: ScreenProps) => {
-  const activeWalletName = useAppSelector((state) => state.activeWallet.name)
-  const activeWalletAddress = useAppSelector((state) => state.addresses.mainAddress)
+  const activeWallet = useAppSelector((state) => state.activeWallet)
+  const wallet = walletImport(activeWallet.mnemonic)
 
   console.log('DashboardScreen renders')
 
   return (
     <Screen>
       <Text>Wallet name:</Text>
-      <Bold>{activeWalletName}</Bold>
+      <Bold>{activeWallet.name}</Bold>
       <Text>Primary wallet address:</Text>
-      <Bold>{activeWalletAddress}</Bold>
+      <Bold>{wallet.address}</Bold>
     </Screen>
   )
 }
