@@ -76,24 +76,22 @@ const addressesSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    addressAdded: (state, action: PayloadAction<AddressPartial>) => {
-      addressSettingsAdapter.addOne(state, {
-        ...action.payload,
-        group: addressToGroup(action.payload.hash, TOTAL_NUMBER_OF_GROUPS)
-      })
+    addressesAdded: (state, action: PayloadAction<AddressPartial[]>) => {
+      const addresses = action.payload
 
-      if (action.payload.settings.isMain) {
-        const previousMainAddress = state.entities[action.payload.hash]
+      const newMainAddress = addresses.find((address) => address.settings.isMain)
+      if (newMainAddress) {
+        state.mainAddress = newMainAddress.hash
+
+        const previousMainAddress = state.entities[state.mainAddress]
         if (previousMainAddress) {
           previousMainAddress.settings.isMain = false
         }
-        state.mainAddress = action.payload.hash
       }
-    },
-    addressesAdded: (state, action: PayloadAction<AddressPartial[]>) => {
+
       addressSettingsAdapter.addMany(
         state,
-        action.payload.map((address) => ({
+        addresses.map((address) => ({
           ...address,
           group: addressToGroup(address.hash, TOTAL_NUMBER_OF_GROUPS)
         }))
@@ -108,6 +106,6 @@ const addressesSlice = createSlice({
 export const { selectById: selectAddressByHash, selectAll: selectAllAddresses } =
   addressSettingsAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const { addressAdded, addressesAdded, addressesFlushed } = addressesSlice.actions
+export const { addressesAdded, addressesFlushed } = addressesSlice.actions
 
 export default addressesSlice
