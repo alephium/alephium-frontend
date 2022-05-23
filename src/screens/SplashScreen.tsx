@@ -18,15 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { LinearGradient } from 'expo-linear-gradient'
-import { MotiView } from 'moti'
 import { useEffect } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Screen from '../components/layout/Screen'
 import { useAppDispatch } from '../hooks/redux'
-import AlephiumLogo from '../images/logos/AlephiumLogo'
 import RootStackParamList from '../navigation/rootStackRoutes'
+import { AlephiumLogoStyled, GradientBackgroundStyled } from '../screens/LandingScreen'
 import { getActiveWallet } from '../storage/wallets'
 import { walletChanged } from '../store/activeWalletSlice'
 
@@ -92,24 +91,8 @@ export default styled(SplashScreen)`
   flex: 1;
 `
 
-// TODO: DRY
-const GradientBackgroundStyled = styled(MotiView)`
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  z-index: -1;
-`
-
 const LogoContainer = styled(View)`
   flex: 1.5;
-  margin-top: 100px;
   justify-content: center;
   align-items: center;
-`
-
-const AlephiumLogoStyled = styled(AlephiumLogo)`
-  width: 20%;
-  min-width: 40px;
 `
