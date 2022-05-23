@@ -26,7 +26,7 @@ import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
 const sliceName = 'activeWallet'
 
-interface ActiveWalletState {
+export interface ActiveWalletState {
   name: string
   mnemonic: Mnemonic
   authType: StoredWalletAuthType | null
