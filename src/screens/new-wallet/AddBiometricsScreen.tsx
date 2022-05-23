@@ -27,7 +27,7 @@ import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
-import useNavigateOnNewWalletSuccess from '../../hooks/useNavigateOnNewWalletSuccess'
+import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
 import { StoredWalletAuthType } from '../../types/wallet'
@@ -66,7 +66,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
     }
   }
 
-  useNavigateOnNewWalletSuccess(() => {
+  useOnNewWalletSuccess(() => {
     navigation.navigate('NewWalletSuccessPage')
   })
 

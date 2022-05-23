@@ -26,7 +26,7 @@ import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
-import useNavigateOnNewWalletSuccess from '../../hooks/useNavigateOnNewWalletSuccess'
+import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
 import { pinEntered } from '../../store/credentialsSlice'
@@ -110,7 +110,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
   }, [chosenPinCode, dispatch, hasAvailableBiometrics, isVerifyingCode, method, navigation, pinCode, walletName])
 
-  useNavigateOnNewWalletSuccess(() => {
+  useOnNewWalletSuccess(() => {
     navigation.navigate('NewWalletSuccessPage')
   })
 

@@ -23,7 +23,7 @@ import { flushWalletGenerationState } from '../store/walletGenerationSlice'
 import { Mnemonic } from '../types/wallet'
 import { useAppDispatch, useAppSelector } from './redux'
 
-const useNavigateOnNewWalletSuccess = (navigationCallback: () => void) => {
+const useOnNewWalletSuccess = (callback: () => void) => {
   const activeWalletMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
   const currentActiveWalletMnemonic = useRef<Mnemonic>(activeWalletMnemonic)
 
@@ -32,12 +32,12 @@ const useNavigateOnNewWalletSuccess = (navigationCallback: () => void) => {
   useFocusEffect(
     useCallback(() => {
       if (currentActiveWalletMnemonic.current != activeWalletMnemonic) {
-        navigationCallback()
+        callback()
         dispatch(flushWalletGenerationState())
         currentActiveWalletMnemonic.current = activeWalletMnemonic
       }
-    }, [activeWalletMnemonic, dispatch, navigationCallback])
+    }, [activeWalletMnemonic, dispatch, callback])
   )
 }
 
-export default useNavigateOnNewWalletSuccess
+export default useOnNewWalletSuccess

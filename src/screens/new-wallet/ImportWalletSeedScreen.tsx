@@ -26,7 +26,7 @@ import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
-import useNavigateOnNewWalletSuccess from '../../hooks/useNavigateOnNewWalletSuccess'
+import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
 import { importedMnemonicChanged } from '../../store/walletGenerationSlice'
@@ -82,7 +82,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
     }
   }
 
-  useNavigateOnNewWalletSuccess(() => {
+  useOnNewWalletSuccess(() => {
     navigation.navigate('NewWalletSuccessPage')
   })
 
