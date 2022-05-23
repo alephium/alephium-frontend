@@ -36,7 +36,7 @@ const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenPr
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    const getEncryptedWalletFromStorageAndNavigate = async () => {
+    const getWalletFromStorageAndNavigate = async () => {
       try {
         const activeWallet = await getActiveWallet()
         if (activeWallet === null) {
@@ -61,7 +61,7 @@ const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenPr
     }
 
     setTimeout(() => {
-      getEncryptedWalletFromStorageAndNavigate()
+      getWalletFromStorageAndNavigate()
     }, 1000)
   }, [dispatch, navigation])
 

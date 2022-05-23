@@ -26,7 +26,7 @@ import Screen from '../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../components/text/CenteredInstructions'
 import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { walletChanged } from '../store/activeWalletSlice'
+import { ActiveWalletState, walletChanged } from '../store/activeWalletSlice'
 import { pinEntered } from '../store/credentialsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
@@ -44,10 +44,10 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const LoginScreen = ({ navigation, route }: ScreenProps) => {
+  const activeEncryptedWallet = route.params.activeWallet as ActiveWalletState
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const dispatch = useAppDispatch()
-  const activeEncryptedWallet = route.params.activeWallet
 
   useFocusEffect(
     useCallback(() => {
@@ -64,9 +64,8 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
       dispatch(pinEntered(pinCode))
       dispatch(
         walletChanged({
-          name: activeEncryptedWallet.name,
-          mnemonic: wallet.mnemonic,
-          authType: activeEncryptedWallet.authType
+          ...activeEncryptedWallet,
+          mnemonic: wallet.mnemonic
         })
       )
       setPinCode('')

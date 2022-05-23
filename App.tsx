@@ -24,6 +24,7 @@ import { ThemeProvider } from 'styled-components/native'
 
 import { useAppDispatch, useAppSelector } from './src/hooks/redux'
 import useInitializeClient from './src/hooks/useInitializeClient'
+import useLoadStoredAddressesMetadata from './src/hooks/useLoadStoredAddressesMetadata'
 import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { walletFlushed } from './src/store/activeWalletSlice'
@@ -45,10 +46,11 @@ const App = () => (
 const Main: FC = ({ children }) => {
   const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
-  const pin = useAppSelector((state) => state.credentials.pin)
+  const activeWallet = useAppSelector((state) => state.activeWallet)
 
   useInitializeClient()
   useLoadStoredSettings()
+  useLoadStoredAddressesMetadata()
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -69,11 +71,11 @@ const Main: FC = ({ children }) => {
   }, [dispatch])
 
   useEffect(() => {
-    if (!pin) {
+    if (!activeWallet.mnemonic) {
       // TODO: Navigate to screen to ask for pin or biometrics
       console.log('Needs to navigate to screen to enter pin or biometrics')
     }
-  }, [pin])
+  }, [activeWallet.mnemonic])
 
   return <>{children}</>
 }

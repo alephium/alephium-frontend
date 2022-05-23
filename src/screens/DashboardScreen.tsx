@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletImport } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Text } from 'react-native'
 import styled from 'styled-components/native'
@@ -27,16 +26,14 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
+import { selectAllAddresses } from '../store/addressesSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'>
 
 const DashboardScreen = ({ navigation }: ScreenProps) => {
   const activeWallet = useAppSelector((state) => state.activeWallet)
+  const addresses = useAppSelector(selectAllAddresses)
   const dispatch = useAppDispatch()
-
-  if (!activeWallet.mnemonic) return null
-
-  const wallet = walletImport(activeWallet.mnemonic)
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
@@ -51,7 +48,7 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
       <Text>Wallet name:</Text>
       <Bold>{activeWallet.name}</Bold>
       <Text>Primary wallet address:</Text>
-      <Bold>{wallet.address}</Bold>
+      <Bold>{addresses[0]?.hash}</Bold>
       <Button title="Delete all wallets to test fresh install" onPress={handleDeleteAllWallets} />
     </Screen>
   )
