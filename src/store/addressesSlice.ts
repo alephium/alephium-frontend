@@ -18,9 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
-import { createEntityAdapter, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
-import { AddressSettings } from '../types/addresses'
+import client from '../api/client'
+import { AddressHash, AddressSettings } from '../types/addresses'
 import { TimeInMs } from '../types/numbers'
 import { PendingTx } from '../types/transactions'
 import { RootState } from './store'
@@ -34,14 +35,15 @@ type Address = {
   group: number
   index: number
   settings: AddressSettings
-  networkData?: {
+  networkData: {
     details: AddressInfo
     transactions: {
       confirmed: Transaction[]
       pending: PendingTx[]
       loadedPage: number
     }
-    availableBalance: bigint
+    availableBalance: string
+    lockedBalance: string
     lastUsed: TimeInMs
   }
 }
@@ -66,11 +68,39 @@ const addressSettingsAdapter = createEntityAdapter<Address>({
 
 interface AddressesState extends EntityState<Address> {
   mainAddress: string
+  loading: boolean
 }
 
 const initialState: AddressesState = addressSettingsAdapter.getInitialState({
-  mainAddress: ''
+  mainAddress: '',
+  loading: false
 })
+
+export const fetchAddressesData = createAsyncThunk(
+  `${sliceName}/fetchAddressesData`,
+  async (payload: AddressHash[], { dispatch }) => {
+    const results = []
+    dispatch(loadingStarted())
+
+    for (const address of payload) {
+      const { data } = await client.explorerClient.getAddressDetails(address)
+      const availableBalance = data.balance
+        ? data.lockedBalance
+          ? (BigInt(data.balance) - BigInt(data.lockedBalance)).toString()
+          : data.balance
+        : undefined
+
+      results.push({
+        hash: address,
+        details: data,
+        availableBalance: availableBalance
+      })
+    }
+
+    dispatch(loadingFinished())
+    return results
+  }
+)
 
 const addressesSlice = createSlice({
   name: sliceName,
@@ -93,19 +123,53 @@ const addressesSlice = createSlice({
         state,
         addresses.map((address) => ({
           ...address,
-          group: addressToGroup(address.hash, TOTAL_NUMBER_OF_GROUPS)
+          group: addressToGroup(address.hash, TOTAL_NUMBER_OF_GROUPS),
+          networkData: {
+            details: {
+              balance: '0',
+              lockedBalance: '0',
+              txNumber: 0
+            },
+            transactions: {
+              confirmed: [],
+              pending: [],
+              loadedPage: 0
+            },
+            availableBalance: '0',
+            lockedBalance: '0',
+            lastUsed: 0
+          }
         }))
       )
     },
     addressesFlushed: (state) => {
       addressSettingsAdapter.setAll(state, [])
+    },
+    loadingStarted: (state) => {
+      state.loading = true
+    },
+    loadingFinished: (state) => {
+      state.loading = false
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchAddressesData.fulfilled, (state, action) => {
+      for (const address of action.payload) {
+        const { hash, details, availableBalance } = address
+
+        const addressState = state.entities[hash]
+        if (addressState) {
+          addressState.networkData.details = details
+          if (availableBalance) addressState.networkData.availableBalance = availableBalance
+        }
+      }
+    })
   }
 })
 
 export const { selectById: selectAddressByHash, selectAll: selectAllAddresses } =
   addressSettingsAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const { addressesAdded, addressesFlushed } = addressesSlice.actions
+export const { addressesAdded, addressesFlushed, loadingStarted, loadingFinished } = addressesSlice.actions
 
 export default addressesSlice

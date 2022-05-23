@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { formatAmountForDisplay } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Text } from 'react-native'
 import styled from 'styled-components/native'
@@ -34,6 +35,7 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
   const activeWallet = useAppSelector((state) => state.activeWallet)
   const addresses = useAppSelector(selectAllAddresses)
   const dispatch = useAppDispatch()
+  const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
@@ -47,8 +49,8 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
     <Screen>
       <Text>Wallet name:</Text>
       <Bold>{activeWallet.name}</Bold>
-      <Text>Primary wallet address:</Text>
-      <Bold>{addresses[0]?.hash}</Bold>
+      <Text>Total balance:</Text>
+      <Bold>{formatAmountForDisplay(totalBalance)}</Bold>
       <Button title="Delete all wallets to test fresh install" onPress={handleDeleteAllWallets} />
     </Screen>
   )
