@@ -82,7 +82,7 @@ export const storeWallet = async (
   return walletId
 }
 
-export const getActiveWallet = async (): Promise<ActiveWalletState | null> => {
+export const getStoredActiveWallet = async (): Promise<ActiveWalletState | null> => {
   const id = await SecureStore.getItemAsync('active-wallet-id')
   if (!id) return null
 

@@ -44,7 +44,7 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const LoginScreen = ({ navigation, route }: ScreenProps) => {
-  const activeEncryptedWallet = route.params.activeWallet as ActiveWalletState
+  const storedActiveEncryptedWallet = route.params.storedActiveWallet as ActiveWalletState
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const dispatch = useAppDispatch()
@@ -60,11 +60,11 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     if (pinCode.length !== pinLength) return
 
     try {
-      const wallet = walletOpen(pinCode, activeEncryptedWallet.mnemonic)
+      const wallet = walletOpen(pinCode, storedActiveEncryptedWallet.mnemonic)
       dispatch(pinEntered(pinCode))
       dispatch(
         walletChanged({
-          ...activeEncryptedWallet,
+          ...storedActiveEncryptedWallet,
           mnemonic: wallet.mnemonic
         })
       )
@@ -73,9 +73,9 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     } catch (e) {
       setShownInstructions(errorInstructionSet)
       setPinCode('')
-      console.error(`Could not unlock wallet ${activeEncryptedWallet.name}`, e)
+      console.error(`Could not unlock wallet ${storedActiveEncryptedWallet.name}`, e)
     }
-  }, [activeEncryptedWallet, dispatch, navigation, pinCode])
+  }, [storedActiveEncryptedWallet, dispatch, navigation, pinCode])
 
   console.log('LoginScreen renders')
 

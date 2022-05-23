@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NavigationContainer } from '@react-navigation/native'
+import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import DashboardScreen from '../screens/DashboardScreen'
@@ -31,13 +31,14 @@ import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import SplashScreen from '../screens/SplashScreen'
 import RootStackParamList from './rootStackRoutes'
 
+const navigationRef = createNavigationContainerRef<RootStackParamList>()
 const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
   console.log('RootStackNavigation renders')
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <RootStack.Navigator
         initialRouteName={'SplashScreen'}
         screenOptions={{
@@ -61,6 +62,12 @@ const RootStackNavigation = () => {
       </RootStack.Navigator>
     </NavigationContainer>
   )
+}
+
+export const navigate = (name: keyof RootStackParamList) => {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate(name)
+  }
 }
 
 export default RootStackNavigation
