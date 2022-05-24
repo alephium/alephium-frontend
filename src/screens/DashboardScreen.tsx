@@ -18,12 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { formatAmountForDisplay } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useEffect, useState } from 'react'
-import { Text } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ScrollView, Text, View } from 'react-native'
 import styled from 'styled-components/native'
+import Amount from '../components/Amount'
 
 import Button from '../components/buttons/Button'
 import Screen from '../components/layout/Screen'
+import TransactionRow from '../components/TransactionRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../storage/wallets'
@@ -39,6 +41,10 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
   const balanceFormatted = formatAmountForDisplay(totalBalance)
   const balanceInUsd = usdPrice * parseFloat(balanceFormatted)
+  const allConfirmedTxs = addresses
+    .map((address) => address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address })))
+    .flat()
+    .sort((a, b) => b.timestamp - a.timestamp)
   const dispatch = useAppDispatch()
 
   const handleDeleteAllWallets = () => {
@@ -65,22 +71,75 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <Screen>
-      <Text>Wallet name:</Text>
-      <Bold>{activeWallet.name}</Bold>
-      <Text>Total balance:</Text>
-      <Bold>
-        {balanceFormatted} ALPH ({balanceInUsd.toFixed(2)} USD)
-      </Bold>
-      <Button title="Delete all wallets to test fresh install" onPress={handleDeleteAllWallets} />
+      <ScrollView>
+        <ScreenSection>
+          <Text>{activeWallet.name}</Text>
+          <Price>{balanceInUsd.toFixed(2)} $</Price>
+          <AmountStyled value={totalBalance} fadeDecimals />
+          <Buttons>
+            <SendButton title="Send" />
+            <ReceiveButton title="Receive" />
+          </Buttons>
+        </ScreenSection>
+        <ScreenSection>
+          <H2>Latest transactions</H2>
+          <TransactionsList>
+            {allConfirmedTxs.map((tx, index) => (
+              <TransactionRow key={tx.hash} tx={tx} isLast={index === allConfirmedTxs.length - 1} />
+            ))}
+          </TransactionsList>
+        </ScreenSection>
+        <Button title="Delete all wallets to test fresh install" onPress={handleDeleteAllWallets} />
+      </ScrollView>
     </Screen>
   )
 }
 
-const Bold = styled.Text`
+const Price = styled.Text`
+  font-weight: bold;
+  font-size: 38px;
+  margin-bottom: 20px;
+`
+
+const AmountStyled = styled(Amount)`
   font-weight: bold;
   font-size: 20px;
-  text-align: center;
-  padding-bottom: 20px;
+  margin-bottom: 40px;
+`
+
+const Buttons = styled.View`
+  display: flex;
+  flex-direction: row;
+`
+
+const SendButton = styled(Button)`
+  flex: 1;
+  margin-right: 5px;
+`
+
+const ReceiveButton = styled(Button)`
+  flex: 1;
+  margin-left: 5px;
+`
+
+const H2 = styled.Text`
+  color: ${({ theme }) => theme.font.tertiary};
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+`
+
+const ScreenSection = styled(View)`
+  padding: 22px 20px;
+
+  border-bottom-color: ${({ theme }) => theme.border.secondary};
+  border-bottom-width: 1px;
+`
+
+const TransactionsList = styled(View)`
+  box-shadow: ${({ theme }) => theme.shadow.secondary};
+  border-radius: 12px;
+  background-color: white;
 `
 
 export default DashboardScreen

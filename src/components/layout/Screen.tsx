@@ -28,5 +28,5 @@ const Screen: FC<ScreenProps> = ({ children, style }) => <SafeAreaView style={st
 
 export default styled(Screen)`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.secondary};
 `

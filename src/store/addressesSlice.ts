@@ -28,7 +28,7 @@ import { RootState } from './store'
 
 const sliceName = 'addresses'
 
-type Address = {
+export type Address = {
   hash: string
   publicKey: string
   privateKey: string
@@ -102,6 +102,25 @@ export const fetchAddressesData = createAsyncThunk(
   }
 )
 
+export const fetchAddressConfirmedTransactions = createAsyncThunk(
+  `${sliceName}/fetchAddressConfirmedTransactions`,
+  async (payload: { hash: AddressHash; page: number }, { dispatch, getState }) => {
+    const { hash, page } = payload
+    dispatch(loadingStarted())
+
+    console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, hash)
+    const { data } = await client.explorerClient.getAddressTransactions(hash, page)
+
+    dispatch(loadingFinished())
+
+    return {
+      hash,
+      transactions: data,
+      page
+    }
+  }
+)
+
 const addressesSlice = createSlice({
   name: sliceName,
   initialState,
@@ -153,17 +172,27 @@ const addressesSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchAddressesData.fulfilled, (state, action) => {
-      for (const address of action.payload) {
-        const { hash, details, availableBalance } = address
+    builder
+      .addCase(fetchAddressesData.fulfilled, (state, action) => {
+        for (const address of action.payload) {
+          const { hash, details, availableBalance } = address
+
+          const addressState = state.entities[hash]
+          if (addressState) {
+            addressState.networkData.details = details
+            if (availableBalance) addressState.networkData.availableBalance = availableBalance
+          }
+        }
+      })
+      .addCase(fetchAddressConfirmedTransactions.fulfilled, (state, action) => {
+        const { hash, transactions, page } = action.payload
 
         const addressState = state.entities[hash]
         if (addressState) {
-          addressState.networkData.details = details
-          if (availableBalance) addressState.networkData.availableBalance = availableBalance
+          addressState.networkData.transactions.confirmed = transactions
+          addressState.networkData.transactions.loadedPage = page
         }
-      }
-    })
+      })
   }
 })
 
