@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { formatAmountForDisplay } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
+import { useEffect, useState } from 'react'
 import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -32,16 +33,33 @@ import { selectAllAddresses } from '../store/addressesSlice'
 type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'>
 
 const DashboardScreen = ({ navigation }: ScreenProps) => {
+  const [usdPrice, setUsdPrice] = useState(0)
   const activeWallet = useAppSelector((state) => state.activeWallet)
   const addresses = useAppSelector(selectAllAddresses)
-  const dispatch = useAppDispatch()
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
+  const balanceFormatted = formatAmountForDisplay(totalBalance)
+  const balanceInUsd = usdPrice * parseFloat(balanceFormatted)
+  const dispatch = useAppDispatch()
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
     dispatch(walletFlushed())
     navigation.navigate('LandingScreen')
   }
+
+  const fetchPrice = async () => {
+    try {
+      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=alephium&vs_currencies=usd')
+      const data = await response.json()
+      setUsdPrice(data.alephium.usd)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  useEffect(() => {
+    fetchPrice()
+  })
 
   console.log('DashboardScreen renders')
 
@@ -50,7 +68,9 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
       <Text>Wallet name:</Text>
       <Bold>{activeWallet.name}</Bold>
       <Text>Total balance:</Text>
-      <Bold>{formatAmountForDisplay(totalBalance)}</Bold>
+      <Bold>
+        {balanceFormatted} ALPH ({balanceInUsd.toFixed(2)} USD)
+      </Bold>
       <Button title="Delete all wallets to test fresh install" onPress={handleDeleteAllWallets} />
     </Screen>
   )
