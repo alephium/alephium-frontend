@@ -186,7 +186,7 @@ export interface UnconfirmedTransaction {
   type: string
 }
 
-import fetch from 'cross-fetch'
+import 'cross-fetch/polyfill'
 
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>

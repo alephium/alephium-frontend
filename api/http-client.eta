@@ -1,6 +1,6 @@
 <% const { config } = it; %>
 <% /* https://github.com/acacode/swagger-typescript-api/tree/next/templates/base/http-clients/ */ %>
 
-import fetch from 'cross-fetch';
+import 'cross-fetch/polyfill';
 
 <%~ includeFile(`@base/http-clients/fetch-http-client`, it) %>
