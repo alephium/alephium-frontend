@@ -68,6 +68,7 @@ export interface ExplorerInfo {
 export interface Hashrate {
   /** @format int64 */
   timestamp: number
+  hashrate: string
   value: string
 }
 
@@ -113,16 +114,52 @@ export interface OutputRef {
   key: string
 }
 
-export interface PerChainValue {
+export interface PerChainCount {
   chainFrom: number
   chainTo: number
+
+  /** @format int64 */
+  count: number
+}
+
+export interface PerChainDuration {
+  chainFrom: number
+  chainTo: number
+
+  /** @format int64 */
+  duration: number
 
   /** @format int64 */
   value: number
 }
 
+export interface PerChainHeight {
+  chainFrom: number
+  chainTo: number
+
+  /** @format int64 */
+  height: number
+
+  /** @format int64 */
+  value: number
+}
+
+export interface PerChainTimedCount {
+  /** @format int64 */
+  timestamp: number
+  totalCountPerChain?: PerChainCount[]
+}
+
 export interface ServiceUnavailable {
   detail: string
+}
+
+export interface TimedCount {
+  /** @format int64 */
+  timestamp: number
+
+  /** @format int64 */
+  totalCountAllChains: number
 }
 
 export interface TokenSupply {
@@ -565,7 +602,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/infos/heights
      */
     getInfosHeights: (params: RequestParams = {}) =>
-      this.request<PerChainValue[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<PerChainHeight[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/heights`,
         method: 'GET',
         format: 'json',
@@ -666,12 +703,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/infos/average-block-times
      */
     getInfosAverageBlockTimes: (params: RequestParams = {}) =>
-      this.request<PerChainValue[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/infos/average-block-times`,
-        method: 'GET',
-        format: 'json',
-        ...params
-      })
+      this.request<PerChainDuration[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>(
+        {
+          path: `/infos/average-block-times`,
+          method: 'GET',
+          format: 'json',
+          ...params
+        }
+      )
   }
   charts = {
     /**
@@ -688,6 +727,49 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<Hashrate[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/charts/hashrates`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * @description `interval-type` query param: hourly, daily
+     *
+     * @tags Charts
+     * @name GetChartsTransactionsCount
+     * @summary Get transaction count history
+     * @request GET:/charts/transactions-count
+     */
+    getChartsTransactionsCount: (
+      query: { fromTs: number; toTs: number; 'interval-type': string },
+      params: RequestParams = {}
+    ) =>
+      this.request<TimedCount[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/charts/transactions-count`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * @description `interval-type` query param: hourly, daily
+     *
+     * @tags Charts
+     * @name GetChartsTransactionsCountPerChain
+     * @summary Get transaction count history per chain
+     * @request GET:/charts/transactions-count-per-chain
+     */
+    getChartsTransactionsCountPerChain: (
+      query: { fromTs: number; toTs: number; 'interval-type': string },
+      params: RequestParams = {}
+    ) =>
+      this.request<
+        PerChainTimedCount[],
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/charts/transactions-count-per-chain`,
         method: 'GET',
         query: query,
         format: 'json',
