@@ -24,8 +24,9 @@ import { ThemeProvider } from 'styled-components/native'
 
 import { useAppDispatch, useAppSelector } from './src/hooks/redux'
 import useInitializeClient from './src/hooks/useInitializeClient'
+import useLoadStoredAddressesMetadata from './src/hooks/useLoadStoredAddressesMetadata'
 import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
-import RootStackNavigation from './src/navigation/RootStackNavigation'
+import RootStackNavigation, { navigate } from './src/navigation/RootStackNavigation'
 import { walletFlushed } from './src/store/activeWalletSlice'
 import { pinFlushed } from './src/store/credentialsSlice'
 import { store } from './src/store/store'
@@ -45,16 +46,19 @@ const App = () => (
 const Main: FC = ({ children }) => {
   const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
-  const pin = useAppSelector((state) => state.credentials.pin)
+  const activeWallet = useAppSelector((state) => state.activeWallet)
 
   useInitializeClient()
   useLoadStoredSettings()
+  useLoadStoredAddressesMetadata()
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
         dispatch(pinFlushed())
         dispatch(walletFlushed())
+      } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
+        navigate('SplashScreen')
       }
 
       appState.current = nextAppState
@@ -66,14 +70,7 @@ const Main: FC = ({ children }) => {
     return () => {
       AppState.removeEventListener('change', handleAppStateChange)
     }
-  }, [dispatch])
-
-  useEffect(() => {
-    if (!pin) {
-      // TODO: Navigate to screen to ask for pin or biometrics
-      console.log('Needs to navigate to screen to enter pin or biometrics')
-    }
-  }, [pin])
+  }, [activeWallet.mnemonic, dispatch])
 
   return <>{children}</>
 }

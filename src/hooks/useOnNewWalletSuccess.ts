@@ -31,7 +31,7 @@ const useOnNewWalletSuccess = (callback: () => void) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (currentActiveWalletMnemonic.current != activeWalletMnemonic) {
+      if (activeWalletMnemonic && currentActiveWalletMnemonic.current != activeWalletMnemonic) {
         callback()
         dispatch(flushWalletGenerationState())
         currentActiveWalletMnemonic.current = activeWalletMnemonic

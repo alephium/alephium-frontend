@@ -21,9 +21,26 @@ import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
 import { ActiveWalletState } from '../store/activeWalletSlice'
+import { AddressMetadata } from '../types/addresses'
 import { StoredWalletAuthType, WalletMetadata } from '../types/wallet'
 
-export const storeWallet = async (walletName: string, mnemonic: string, authType: StoredWalletAuthType) => {
+export const storeWallet = async (
+  walletName: string,
+  mnemonic: string,
+  authType: StoredWalletAuthType
+): Promise<string> => {
+  const getWalletMetadataInitialValue = (id: string): WalletMetadata => ({
+    id,
+    name: walletName,
+    authType,
+    addresses: [
+      {
+        index: 0,
+        isMain: true
+      }
+    ]
+  })
+
   let walletId: string
   let walletsMetadata = []
 
@@ -32,13 +49,7 @@ export const storeWallet = async (walletName: string, mnemonic: string, authType
   if (!rawWalletsMetadata) {
     // Storing first wallet ever, after a fresh app install
     walletId = nanoid()
-    const initialWalletsMetadata: WalletMetadata[] = [
-      {
-        id: walletId,
-        name: walletName,
-        authType
-      }
-    ]
+    const initialWalletsMetadata: WalletMetadata[] = [getWalletMetadataInitialValue(walletId)]
     await AsyncStorage.setItem('wallets-metadata', JSON.stringify(initialWalletsMetadata))
   } else {
     // Storing an additonal wallet, after at least one has been created and stored
@@ -51,11 +62,7 @@ export const storeWallet = async (walletName: string, mnemonic: string, authType
     } else {
       // Will store a new wallet
       walletId = nanoid()
-      const newWalletMetadata: WalletMetadata = {
-        id: walletId,
-        name: walletName,
-        authType
-      }
+      const newWalletMetadata: WalletMetadata = getWalletMetadataInitialValue(walletId)
       walletsMetadata.push(newWalletMetadata)
       await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
     }
@@ -71,9 +78,11 @@ export const storeWallet = async (walletName: string, mnemonic: string, authType
 
   await SecureStore.setItemAsync(`wallet-${walletId}`, mnemonic, secureStoreConfig)
   await SecureStore.setItemAsync('active-wallet-id', walletId)
+
+  return walletId
 }
 
-export const getActiveWallet = async (): Promise<ActiveWalletState | null> => {
+export const getStoredActiveWallet = async (): Promise<ActiveWalletState | null> => {
   const id = await SecureStore.getItemAsync('active-wallet-id')
   if (!id) return null
 
@@ -94,16 +103,13 @@ export const getActiveWallet = async (): Promise<ActiveWalletState | null> => {
   return {
     name,
     mnemonic,
-    authType
+    authType,
+    metadataId: id
   } as ActiveWalletState
 }
 
 export const deleteWalletByName = async (walletName: string) => {
-  const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
-
-  if (!rawWalletsMetadata) throw 'No wallets found'
-
-  const walletsMetadata = JSON.parse(rawWalletsMetadata)
+  const walletsMetadata = await getWalletsMetadata()
   const index = walletsMetadata.findIndex((data: WalletMetadata) => data.name === walletName)
 
   if (index < 0) throw 'Could not find wallet'
@@ -122,11 +128,7 @@ export const deleteWalletByName = async (walletName: string) => {
 }
 
 export const deleteAllWallets = async () => {
-  const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
-
-  if (!rawWalletsMetadata) throw 'No wallets found'
-
-  const walletsMetadata = JSON.parse(rawWalletsMetadata)
+  const walletsMetadata = await getWalletsMetadata()
 
   for (const walletMetadata of walletsMetadata) {
     await deleteWallet(walletMetadata)
@@ -148,9 +150,33 @@ const deleteWallet = async (walletMetadata: WalletMetadata) => {
 }
 
 const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
+  const walletsMetadata = await getWalletsMetadata()
+  return walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id) as WalletMetadata
+}
+
+export const storeAddressMetadata = async (walletId: string, addressMetadata: AddressMetadata) => {
+  const walletsMetadata = await getWalletsMetadata()
+  const walletMetadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.id === walletId) as WalletMetadata
+  const existingAddressMetadata = walletMetadata.addresses.find((data) => data.index === addressMetadata.index)
+
+  if (existingAddressMetadata) {
+    Object.assign(existingAddressMetadata, addressMetadata)
+  } else {
+    walletMetadata.addresses.push(addressMetadata)
+  }
+
+  console.log(`💽 Storing address index ${addressMetadata.index} metadata in persistent storage`)
+  await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
+}
+
+export const getAddressesMetadataByWalletId = async (id: string): Promise<AddressMetadata[]> => {
+  const walletMetadata = await getWalletMetadataById(id)
+  return walletMetadata.addresses
+}
+
+const getWalletsMetadata = async () => {
   const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
   if (!rawWalletsMetadata) throw 'No wallets found'
 
-  const walletsMetadata = JSON.parse(rawWalletsMetadata)
-  return walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id) as WalletMetadata
+  return JSON.parse(rawWalletsMetadata)
 }

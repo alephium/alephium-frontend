@@ -16,21 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ActiveWalletState } from '../store/activeWalletSlice'
+import { NetworkName } from './network'
 
-type RootStackParamList = {
-  LandingScreen: undefined
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
-  PinCodeCreationScreen: undefined
-  AddBiometricsScreen: undefined
-  NewWalletSuccessPage: undefined
-  ImportWalletSeedScreen: undefined
-  DashboardScreen: undefined
-  LoginScreen: {
-    storedActiveWallet: ActiveWalletState
-  }
-  SplashScreen: undefined
+type TransactionType = 'consolidation' | 'transfer' | 'sweep'
+
+export type PendingTx = {
+  txId: string
+  fromAddress: string
+  toAddress: string
+  timestamp: number
+  type: TransactionType
+  network: NetworkName
+  amount?: bigint
 }
-
-export default RootStackParamList

@@ -23,10 +23,10 @@ import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Screen from '../components/layout/Screen'
-import { useAppDispatch } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { AlephiumLogoStyled, GradientBackgroundStyled } from '../screens/LandingScreen'
-import { getActiveWallet } from '../storage/wallets'
+import { getStoredActiveWallet } from '../storage/wallets'
 import { walletChanged } from '../store/activeWalletSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
@@ -34,17 +34,18 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
 const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const { yellow, orange, red, purple, cyan } = useTheme().gradient
   const dispatch = useAppDispatch()
+  const activeWalletMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
 
   useEffect(() => {
-    const getEncryptedWalletFromStorageAndNavigate = async () => {
+    const getWalletFromStorageAndNavigate = async () => {
       try {
-        const activeWallet = await getActiveWallet()
-        if (activeWallet === null) {
+        const storedActiveWallet = await getStoredActiveWallet()
+        if (storedActiveWallet === null) {
           navigation.navigate('LandingScreen')
-        } else if (activeWallet.authType === 'pin') {
-          navigation.navigate('LoginScreen', { activeWallet })
-        } else if (activeWallet.authType === 'biometrics') {
-          dispatch(walletChanged(activeWallet))
+        } else if (storedActiveWallet.authType === 'pin') {
+          navigation.navigate('LoginScreen', { storedActiveWallet })
+        } else if (storedActiveWallet.authType === 'biometrics') {
+          dispatch(walletChanged(storedActiveWallet))
           navigation.navigate('DashboardScreen')
         } else {
           throw new Error('Unknown auth type')
@@ -61,9 +62,9 @@ const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenPr
     }
 
     setTimeout(() => {
-      getEncryptedWalletFromStorageAndNavigate()
+      if (!activeWalletMnemonic) getWalletFromStorageAndNavigate()
     }, 1000)
-  }, [dispatch, navigation])
+  }, [dispatch, navigation, activeWalletMnemonic])
 
   console.log('SplashScreen renders')
 
