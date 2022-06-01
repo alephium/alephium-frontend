@@ -21,8 +21,8 @@ import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import styled from 'styled-components/native'
-import Amount from '../components/Amount'
 
+import Amount from '../components/Amount'
 import Button from '../components/buttons/Button'
 import Screen from '../components/layout/Screen'
 import TransactionRow from '../components/TransactionRow'
@@ -65,7 +65,7 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
 
   useEffect(() => {
     fetchPrice()
-  })
+  }, [])
 
   console.log('DashboardScreen renders')
 
