@@ -83,7 +83,7 @@ export default styled(LandingScreen)`
   flex: 1;
 `
 
-const GradientBackgroundStyled = styled(MotiView)`
+export const GradientBackgroundStyled = styled(MotiView)`
   position: absolute;
   top: 0;
   right: 0;
@@ -99,7 +99,7 @@ const LogoContainer = styled(View)`
   align-items: center;
 `
 
-const AlephiumLogoStyled = styled(AlephiumLogo)`
+export const AlephiumLogoStyled = styled(AlephiumLogo)`
   width: 20%;
   min-width: 40px;
 `

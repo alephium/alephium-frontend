@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { walletGenerate } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
-import { authenticateAsync } from 'expo-local-authentication'
-import * as SecureStore from 'expo-secure-store'
 import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
@@ -27,8 +26,11 @@ import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useAppSelector } from '../../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
+import { walletStored } from '../../store/activeWalletSlice'
+import { StoredWalletAuthType } from '../../types/wallet'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
@@ -39,22 +41,34 @@ const instructions: Instruction[] = [
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   const method = useAppSelector((state) => state.walletGeneration.method)
+  const importedMnemonic = useAppSelector((state) => state.walletGeneration.importedMnemonic)
+  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
+  const dispatch = useAppDispatch()
 
-  const navigateToNextPage = () =>
-    navigation.navigate(method === 'create' ? 'NewWalletSuccessPage' : 'ImportWalletSeedScreen')
-
-  const handleActivateBiometrics = async () => {
-    const authResult = await authenticateAsync({
-      promptMessage: 'Activate biometrics',
-      disableDeviceFallback: true,
-      cancelLabel: 'Cancel'
-    })
-
-    if (authResult.success) {
-      SecureStore.setItemAsync('usingBiometrics', 'true')
-      navigateToNextPage()
+  const createAndStoreWallet = async (authType: StoredWalletAuthType) => {
+    if (method === 'create') {
+      const wallet = walletGenerate()
+      dispatch(
+        walletStored({
+          name: walletName,
+          mnemonic: wallet.mnemonic,
+          authType
+        })
+      )
+    } else if (method === 'import' && importedMnemonic) {
+      dispatch(
+        walletStored({
+          name: walletName,
+          mnemonic: importedMnemonic,
+          authType
+        })
+      )
     }
   }
+
+  useOnNewWalletSuccess(() => {
+    navigation.navigate('NewWalletSuccessPage')
+  })
 
   console.log('AddBiometricsScreen renders')
 
@@ -66,8 +80,8 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
       <CenteredInstructions instructions={instructions} stretch />
       <ActionsContainer>
         <ButtonStack>
-          <Button title="Activate" type="primary" onPress={handleActivateBiometrics} />
-          <Button title="Later" type="secondary" onPress={navigateToNextPage} />
+          <Button title="Activate" type="primary" onPress={() => createAndStoreWallet('biometrics')} />
+          <Button title="Later" type="secondary" onPress={() => createAndStoreWallet('pin')} />
         </ButtonStack>
       </ActionsContainer>
     </Screen>

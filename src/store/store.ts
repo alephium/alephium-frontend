@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { configureStore } from '@reduxjs/toolkit'
 
-import activeWalletSlice, { activeWalletListenerMiddleware } from './activeWalletSlice'
+import activeWalletSlice from './activeWalletSlice'
 import credentialsSlice from './credentialsSlice'
 import networkSlice, { networkListenerMiddleware } from './networkSlice'
 import settingsSlice, { settingsListenerMiddleware } from './settingsSlice'
@@ -33,10 +33,7 @@ export const store = configureStore({
     activeWallet: activeWalletSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .prepend(networkListenerMiddleware.middleware)
-      .prepend(settingsListenerMiddleware.middleware)
-      .prepend(activeWalletListenerMiddleware.middleware)
+    getDefaultMiddleware().prepend(networkListenerMiddleware.middleware).prepend(settingsListenerMiddleware.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>

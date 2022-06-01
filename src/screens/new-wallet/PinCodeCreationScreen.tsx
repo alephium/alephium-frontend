@@ -19,15 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { walletGenerate } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { isEnrolledAsync } from 'expo-local-authentication'
 import { useCallback, useEffect, useState } from 'react'
 
 import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import useBiometrics from '../../hooks/useBiometrics'
+import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { mnemonicChanged } from '../../store/activeWalletSlice'
+import { walletStored } from '../../store/activeWalletSlice'
 import { pinEntered } from '../../store/credentialsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
@@ -51,8 +52,9 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
-  const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean>()
+  const hasAvailableBiometrics = useBiometrics()
   const method = useAppSelector((state) => state.walletGeneration.method)
+  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
@@ -66,15 +68,6 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
       setPinCode('')
     }, [])
   )
-
-  useEffect(() => {
-    const checkBiometricsAvailability = async () => {
-      const available = await isEnrolledAsync()
-      setHasAvailableBiometrics(available)
-    }
-
-    checkBiometricsAvailability()
-  }, [])
 
   useEffect(() => {
     // Switch to pin code check
@@ -93,14 +86,20 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
         setPinCode('')
 
         if (method === 'create') {
-          const wallet = walletGenerate()
-          dispatch(mnemonicChanged(wallet.mnemonic))
-        }
-
-        if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
-          navigation.navigate('AddBiometricsScreen')
-        } else {
-          // TODO: Navigate to following screen
+          if (hasAvailableBiometrics) {
+            navigation.navigate('AddBiometricsScreen')
+          } else {
+            const wallet = walletGenerate()
+            dispatch(
+              walletStored({
+                name: walletName,
+                mnemonic: wallet.mnemonic,
+                authType: 'pin'
+              })
+            )
+          }
+        } else if (method === 'import') {
+          navigation.navigate('ImportWalletSeedScreen')
         }
       } else {
         setPinCode('')
@@ -109,7 +108,11 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     }
 
     !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
-  }, [chosenPinCode, dispatch, hasAvailableBiometrics, isVerifyingCode, method, navigation, pinCode])
+  }, [chosenPinCode, dispatch, hasAvailableBiometrics, isVerifyingCode, method, navigation, pinCode, walletName])
+
+  useOnNewWalletSuccess(() => {
+    navigation.navigate('NewWalletSuccessPage')
+  })
 
   console.log('PinCodeCreationScreen renders')
 

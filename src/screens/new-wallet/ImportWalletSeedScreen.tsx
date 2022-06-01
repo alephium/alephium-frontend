@@ -25,8 +25,11 @@ import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import useBiometrics from '../../hooks/useBiometrics'
+import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { mnemonicChanged } from '../../store/activeWalletSlice'
+import { walletStored } from '../../store/activeWalletSlice'
+import { importedMnemonicChanged } from '../../store/walletGenerationSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
@@ -34,8 +37,10 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
   const pin = useAppSelector((state) => state.credentials.pin)
-  const activeWalletName = useAppSelector((state) => state.activeWallet.name)
+  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
+  const activeWallet = useAppSelector((state) => state.activeWallet)
   const dispatch = useAppDispatch()
+  const hasAvailableBiometrics = useBiometrics()
 
   useEffect(() => {
     setWords(
@@ -47,11 +52,39 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   }, [secretPhrase])
 
   const handleWalletImport = () => {
-    if (!pin || !activeWalletName) return
+    if (!pin || !walletName) return
 
-    dispatch(mnemonicChanged(words.join(' ')))
-    navigation.navigate('NewWalletSuccessPage')
+    const importedMnemonic = words.join(' ')
+
+    if (activeWallet.authType) {
+      // This is not the first wallet, the user is already logged in
+      dispatch(
+        walletStored({
+          name: walletName,
+          mnemonic: importedMnemonic,
+          authType: activeWallet.authType
+        })
+      )
+    } else {
+      // This is the first wallet ever created
+      if (hasAvailableBiometrics) {
+        dispatch(importedMnemonicChanged(importedMnemonic))
+        navigation.navigate('AddBiometricsScreen')
+      } else {
+        dispatch(
+          walletStored({
+            name: walletName,
+            mnemonic: importedMnemonic,
+            authType: 'pin'
+          })
+        )
+      }
+    }
   }
+
+  useOnNewWalletSuccess(() => {
+    navigation.navigate('NewWalletSuccessPage')
+  })
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isNextButtonActive = words.length >= 12

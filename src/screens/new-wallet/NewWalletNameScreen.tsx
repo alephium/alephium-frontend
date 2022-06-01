@@ -26,8 +26,10 @@ import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { mnemonicChanged, walletNameChanged } from '../../store/activeWalletSlice'
+import { walletStored } from '../../store/activeWalletSlice'
+import { newWalletNameChanged } from '../../store/walletGenerationSlice'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -39,26 +41,37 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const [walletName, setWalletName] = useState('')
   const dispatch = useAppDispatch()
-  const pin = useAppSelector((state) => state.credentials.pin)
   const method = useAppSelector((state) => state.walletGeneration.method)
+  const activeWallet = useAppSelector((state) => state.activeWallet)
 
   const handleButtonPress = async () => {
     if (walletName) {
-      dispatch(walletNameChanged(walletName))
+      dispatch(newWalletNameChanged(walletName))
 
-      if (!pin) {
-        navigation.navigate('PinCodeCreationScreen')
-      } else {
-        if (method === 'create') {
-          const wallet = walletGenerate()
-          dispatch(mnemonicChanged(wallet.mnemonic))
-          navigation.navigate('DashboardScreen')
-        } else if (method === 'import') {
+      if (activeWallet.authType) {
+        // This is not the first wallet, the user is already logged in
+        if (method === 'import') {
           navigation.navigate('ImportWalletSeedScreen')
+        } else if (method === 'create') {
+          const wallet = walletGenerate()
+          dispatch(
+            walletStored({
+              name: walletName,
+              mnemonic: wallet.mnemonic,
+              authType: activeWallet.authType
+            })
+          )
         }
+      } else {
+        // This is the first wallet ever created
+        navigation.navigate('PinCodeCreationScreen')
       }
     }
   }
+
+  useOnNewWalletSuccess(() => {
+    navigation.navigate('NewWalletSuccessPage')
+  })
 
   console.log('NewWalletNameScreen renders')
 

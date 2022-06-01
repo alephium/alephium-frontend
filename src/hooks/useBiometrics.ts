@@ -16,12 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type Mnemonic = string
+import { isEnrolledAsync } from 'expo-local-authentication'
+import { useEffect, useState } from 'react'
 
-export type StoredWalletAuthType = 'pin' | 'biometrics'
+const useBiometrics = () => {
+  const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean>()
 
-export type WalletMetadata = {
-  id: string
-  name: string
-  authType: StoredWalletAuthType
+  useEffect(() => {
+    const checkBiometricsAvailability = async () => {
+      const available = await isEnrolledAsync()
+      setHasAvailableBiometrics(available)
+    }
+
+    checkBiometricsAvailability()
+  }, [])
+
+  return hasAvailableBiometrics
 }
+
+export default useBiometrics

@@ -17,78 +17,91 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { walletEncrypt, walletImport } from '@alephium/sdk'
-import { createListenerMiddleware, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import * as SecureStore from 'expo-secure-store'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { Mnemonic } from '../types/wallet'
+import { storeWallet } from '../storage/wallets'
+import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
 import { RootState } from './store'
+import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
 const sliceName = 'activeWallet'
 
-interface ActiveWalletState {
+export interface ActiveWalletState {
   name: string
-  primaryAddress: string
-  publicKey: string
-  privateKey: string
-  mnemonic: string
+  mnemonic: Mnemonic
+  authType: StoredWalletAuthType | null
 }
 
 const initialState: ActiveWalletState = {
   name: '',
-  primaryAddress: '',
-  publicKey: '',
-  privateKey: '',
-  mnemonic: ''
+  mnemonic: '',
+  authType: null
 }
+
+export const walletStored = createAsyncThunk(
+  `${sliceName}/walletStored`,
+  async (payload: ActiveWalletState, { getState, dispatch }) => {
+    dispatch(loadingStarted())
+
+    const { name, mnemonic, authType } = payload
+    let hasError = false
+
+    try {
+      if (!name) throw 'Could not store wallet, wallet name is not set'
+      if (!mnemonic) throw 'Could not store wallet, mnemonic not set'
+
+      // Check if mnemonic is valid
+      walletImport(mnemonic)
+
+      if (authType === 'biometrics') {
+        await storeWallet(name, mnemonic, authType)
+      } else if (authType === 'pin') {
+        const state = getState() as RootState
+        const pin = state.credentials.pin
+        if (!pin) throw 'Could not store wallet, pin to encrypt it is not set'
+
+        const encryptedWallet = walletEncrypt(pin, mnemonic)
+        await storeWallet(name, encryptedWallet, authType)
+      }
+    } catch (e) {
+      console.error(e)
+      hasError = true
+    }
+
+    return new Promise<ActiveWalletState>((resolve, reject) => {
+      dispatch(loadingFinished())
+
+      if (hasError) {
+        reject(new Error('Could not store wallet'))
+      } else {
+        resolve({
+          name,
+          mnemonic,
+          authType
+        } as ActiveWalletState)
+      }
+    })
+  }
+)
 
 const activeWalletSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    walletNameChanged: (state, action: PayloadAction<string>) => {
-      state.name = action.payload
-    },
     walletFlushed: () => {
-      return {
-        ...initialState
-      }
+      return initialState
     },
-    mnemonicChanged: (state, action: PayloadAction<Mnemonic>) => {
-      const mnemomic = action.payload
-      try {
-        const wallet = walletImport(mnemomic)
-        state.mnemonic = mnemomic
-        state.primaryAddress = wallet.address
-        state.publicKey = wallet.publicKey
-        state.privateKey = wallet.privateKey
-      } catch (e) {
-        console.log(e)
-      }
+    walletChanged: (state, action: PayloadAction<ActiveWalletState>) => {
+      return action.payload
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(walletStored.fulfilled, (state, action) => {
+      return action.payload
+    })
   }
 })
 
-export const { walletNameChanged, walletFlushed, mnemonicChanged } = activeWalletSlice.actions
-
-export const activeWalletListenerMiddleware = createListenerMiddleware()
-
-// When the mnemomic changes, store it in persistent storage
-activeWalletListenerMiddleware.startListening({
-  actionCreator: mnemonicChanged,
-  effect: async (action, { getState }) => {
-    const state = getState() as RootState
-    const pin = state.credentials.pin
-    const walletName = state[sliceName].name.replaceAll(' ', '-')
-
-    if (pin) {
-      const encryptedWallet = walletEncrypt(pin.toString(), action.payload)
-      // TODO: Remove accountName from the key and use an index instead
-      // Make sure wallets do not get overriden by other wallets
-      await SecureStore.setItemAsync(`wallet-${walletName}`, encryptedWallet)
-    } else {
-      console.error('Could not encrypt wallet, no PIN set')
-    }
-  }
-})
+export const { walletChanged, walletFlushed } = activeWalletSlice.actions
 
 export default activeWalletSlice
