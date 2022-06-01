@@ -67,7 +67,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       )
     } else {
       // This is the first wallet ever created
-      if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
+      if (hasAvailableBiometrics) {
         dispatch(importedMnemonicChanged(importedMnemonic))
         navigation.navigate('AddBiometricsScreen')
       } else {

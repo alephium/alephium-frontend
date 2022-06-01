@@ -104,14 +104,13 @@ export const deleteWalletByName = async (walletName: string) => {
   if (!rawWalletsMetadata) throw 'No wallets found'
 
   const walletsMetadata = JSON.parse(rawWalletsMetadata)
-  const walletMetadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.name === walletName)
+  const index = walletsMetadata.findIndex((data: WalletMetadata) => data.name === walletName)
 
-  if (!walletMetadata) throw 'Could not find wallet'
+  if (index < 0) throw 'Could not find wallet'
 
-  walletsMetadata.splice(
-    walletsMetadata.findIndex((data: WalletMetadata) => data.name === walletName),
-    1
-  )
+  const walletMetadata = walletsMetadata[index]
+
+  walletsMetadata.splice(index, 1)
   await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
 
   const activeWalletId = await SecureStore.getItemAsync('active-wallet-id')

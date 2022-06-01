@@ -86,7 +86,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
         setPinCode('')
 
         if (method === 'create') {
-          if (hasAvailableBiometrics !== undefined && hasAvailableBiometrics) {
+          if (hasAvailableBiometrics) {
             navigation.navigate('AddBiometricsScreen')
           } else {
             const wallet = walletGenerate()
