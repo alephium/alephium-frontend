@@ -96,7 +96,7 @@ const deriveAddressAndKeys = (seed: Buffer, addressIndex?: number): AddressAndKe
   const publicKey = keyPair.publicKey.toString('hex')
   const privateKey = keyPair.privateKey.toString('hex')
 
-  const hash = blake.blake2b(Buffer.from(publicKey, 'hex'), undefined, 32)
+  const hash = blake.blake2b(Uint8Array.from(Buffer.from(publicKey, 'hex')), undefined, 32)
 
   const pkhash = Buffer.from(hash)
   const type = Buffer.from([0])
