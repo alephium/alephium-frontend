@@ -63,6 +63,10 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
     }
   }
 
+  const handleSwitchWallet = () => {
+    navigation.navigate('SwitchWalletScreen')
+  }
+
   useEffect(() => {
     fetchPrice()
   }, [])
@@ -90,6 +94,7 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
           </TransactionsList>
         </ScreenSection>
         <Button title="Delete all wallets to test fresh install" onPress={handleDeleteAllWallets} />
+        <Button title="Switch wallet" onPress={handleSwitchWallet} />
       </ScrollView>
     </Screen>
   )

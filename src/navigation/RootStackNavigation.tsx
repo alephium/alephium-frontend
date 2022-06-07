@@ -29,6 +29,7 @@ import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import SplashScreen from '../screens/SplashScreen'
+import SwitchWalletScreen from '../screens/SwitchWalletScreen'
 import RootStackParamList from './rootStackRoutes'
 
 const navigationRef = createNavigationContainerRef<RootStackParamList>()
@@ -59,6 +60,11 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
         <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
         <RootStack.Screen name="DashboardScreen" component={DashboardScreen} options={{ headerLeft: () => null }} />
+        <RootStack.Screen
+          name="SwitchWalletScreen"
+          component={SwitchWalletScreen}
+          options={{ headerLeft: () => null }}
+        />
       </RootStack.Navigator>
     </NavigationContainer>
   )

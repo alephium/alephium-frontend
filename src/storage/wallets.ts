@@ -82,17 +82,14 @@ export const storeWallet = async (
   return walletId
 }
 
-export const getStoredActiveWallet = async (): Promise<ActiveWalletState | null> => {
-  const id = await SecureStore.getItemAsync('active-wallet-id')
-  if (!id) return null
-
+export const getStoredWalletById = async (id: string): Promise<ActiveWalletState | null> => {
   const { name, authType } = await getWalletMetadataById(id)
 
   const secureStoreConfig =
     authType === 'biometrics'
       ? {
           requireAuthentication: true,
-          authenticationPrompt: 'Please, authenticate to unlock your wallet'
+          authenticationPrompt: `Please, authenticate to unlock "${name}"`
         }
       : undefined
 
@@ -106,6 +103,13 @@ export const getStoredActiveWallet = async (): Promise<ActiveWalletState | null>
     authType,
     metadataId: id
   } as ActiveWalletState
+}
+
+export const getStoredActiveWallet = async (): Promise<ActiveWalletState | null> => {
+  const id = await SecureStore.getItemAsync('active-wallet-id')
+  if (!id) return null
+
+  return await getStoredWalletById(id)
 }
 
 export const deleteWalletByName = async (walletName: string) => {
@@ -143,7 +147,7 @@ const deleteWallet = async (walletMetadata: WalletMetadata) => {
     walletMetadata.authType === 'biometrics'
       ? {
           requireAuthentication: true,
-          authenticationPrompt: 'Please, authenticate to delete the wallet'
+          authenticationPrompt: `Please, authenticate to delete the wallet named "${walletMetadata.name}"`
         }
       : undefined
   await SecureStore.deleteItemAsync(`wallet-${walletMetadata.id}`, secureStoreConfig)
@@ -174,9 +178,13 @@ export const getAddressesMetadataByWalletId = async (id: string): Promise<Addres
   return walletMetadata.addresses
 }
 
-const getWalletsMetadata = async () => {
+export const getWalletsMetadata = async (): Promise<WalletMetadata[]> => {
   const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
   if (!rawWalletsMetadata) throw 'No wallets found'
 
   return JSON.parse(rawWalletsMetadata)
+}
+
+export const changeActiveWallet = async (walletId: string) => {
+  await SecureStore.setItemAsync('active-wallet-id', walletId)
 }

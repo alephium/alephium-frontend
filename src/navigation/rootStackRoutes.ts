@@ -28,9 +28,10 @@ type RootStackParamList = {
   ImportWalletSeedScreen: undefined
   DashboardScreen: undefined
   LoginScreen: {
-    storedActiveWallet: ActiveWalletState
+    storedWallet: ActiveWalletState
   }
   SplashScreen: undefined
+  SwitchWalletScreen: undefined
 }
 
 export default RootStackParamList

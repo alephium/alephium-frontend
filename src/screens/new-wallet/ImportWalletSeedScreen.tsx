@@ -36,7 +36,6 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
-  const pin = useAppSelector((state) => state.credentials.pin)
   const walletName = useAppSelector((state) => state.walletGeneration.walletName)
   const activeWallet = useAppSelector((state) => state.activeWallet)
   const dispatch = useAppDispatch()
@@ -52,7 +51,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   }, [secretPhrase])
 
   const handleWalletImport = () => {
-    if (!pin || !walletName) return
+    if (!walletName) return
 
     const importedMnemonic = words.join(' ')
 

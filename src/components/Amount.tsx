@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatAmountForDisplay } from '@alephium/sdk'
-import { StyleProp, Text, View, ViewStyle } from 'react-native'
+import { StyleProp, Text, ViewStyle } from 'react-native'
 import styled from 'styled-components'
 
 import { useAppSelector } from '../hooks/redux'
