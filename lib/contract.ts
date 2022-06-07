@@ -25,9 +25,7 @@ import { CliqueClient } from './clique'
 import * as api from '../api/api-alephium'
 import { Signer } from './signer'
 
-type ContractVariables = {
-  [key: string]: string
-}
+type ContractVariables = Record<string, string>
 
 export abstract class Common {
   readonly fileName: string
