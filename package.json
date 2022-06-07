@@ -45,7 +45,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --fix --ext .ts",
     "jest": "jest --useStderr --silent=false --verbose=true --config jestconfig.json",
-    "test": "npm run build && npm run jest",
+    "test": "npm run lint && npm run build && npm run jest",
     "test:watch": "npm run build && npm run jest -- --watch",
     "prepublishOnly": "npm run build",
     "prepack": "node scripts/rename-gitignore.js .gitignore gitignore",
