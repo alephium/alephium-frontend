@@ -73,8 +73,8 @@ export const getPath = (addressIndex?: number) => {
   return `m/44'/${coinType}/0'/0/${addressIndex || '0'}`
 }
 
-export const getWalletFromMnemonic = (mnemonic: string): Wallet => {
-  const seed = bip39.mnemonicToSeedSync(mnemonic)
+export const getWalletFromMnemonic = (mnemonic: string, password = ''): Wallet => {
+  const seed = bip39.mnemonicToSeedSync(mnemonic, password)
   const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
 
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic })
@@ -141,16 +141,16 @@ export const deriveNewAddressData = (
   return newAddressData
 }
 
-export const walletGenerate = () => {
+export const walletGenerate = (passphrase?: string) => {
   const mnemonic = bip39.generateMnemonic(256)
-  return getWalletFromMnemonic(mnemonic)
+  return getWalletFromMnemonic(mnemonic, passphrase)
 }
 
-export const walletImport = (mnemonic: string) => {
+export const walletImport = (mnemonic: string, passphrase?: string) => {
   if (!bip39.validateMnemonic(mnemonic)) {
     throw new Error('Invalid seed phrase')
   }
-  return getWalletFromMnemonic(mnemonic)
+  return getWalletFromMnemonic(mnemonic, passphrase)
 }
 
 export const walletOpen = (password: string, encryptedWallet: string) => {
