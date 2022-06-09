@@ -160,9 +160,9 @@ export const walletOpen = (passphrase: string, encryptedWallet: string) => {
   return getWalletFromMnemonic(config.mnemonic)
 }
 
-export const walletEncrypt = (passphrase: string, mnemonic: string) => {
+export const walletEncrypt = (password: string, mnemonic: string) => {
   const storedState = new StoredState({
     mnemonic
   })
-  return encrypt(passphrase, JSON.stringify(storedState))
+  return encrypt(password, JSON.stringify(storedState))
 }
