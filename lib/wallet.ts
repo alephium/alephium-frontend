@@ -73,8 +73,8 @@ export const getPath = (addressIndex?: number) => {
   return `m/44'/${coinType}/0'/0/${addressIndex || '0'}`
 }
 
-export const getWalletFromMnemonic = (mnemonic: string, password = ''): Wallet => {
-  const seed = bip39.mnemonicToSeedSync(mnemonic, password)
+export const getWalletFromMnemonic = (mnemonic: string, passphrase = ''): Wallet => {
+  const seed = bip39.mnemonicToSeedSync(mnemonic, passphrase)
   const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
 
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic })
@@ -153,16 +153,16 @@ export const walletImport = (mnemonic: string, passphrase?: string) => {
   return getWalletFromMnemonic(mnemonic, passphrase)
 }
 
-export const walletOpen = (password: string, encryptedWallet: string) => {
-  const dataDecrypted = decrypt(password, encryptedWallet)
+export const walletOpen = (passphrase: string, encryptedWallet: string) => {
+  const dataDecrypted = decrypt(passphrase, encryptedWallet)
   const config = JSON.parse(dataDecrypted) as StoredState
 
   return getWalletFromMnemonic(config.mnemonic)
 }
 
-export const walletEncrypt = (password: string, mnemonic: string) => {
+export const walletEncrypt = (passphrase: string, mnemonic: string) => {
   const storedState = new StoredState({
     mnemonic
   })
-  return encrypt(password, JSON.stringify(storedState))
+  return encrypt(passphrase, JSON.stringify(storedState))
 }
