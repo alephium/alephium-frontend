@@ -24,6 +24,7 @@ import styled from 'styled-components/native'
 
 import Amount from '../components/Amount'
 import Button from '../components/buttons/Button'
+import FooterMenu from '../components/FooterMenu'
 import Screen from '../components/layout/Screen'
 import TransactionRow from '../components/TransactionRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
@@ -96,6 +97,7 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
         <Button title="Delete all wallets to test fresh install" onPress={handleDeleteAllWallets} />
         <Button title="Switch wallet" onPress={handleSwitchWallet} />
       </ScrollView>
+      <FooterMenu />
     </Screen>
   )
 }

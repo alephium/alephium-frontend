@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
+import AddressesScreen from '../screens/AddressesScreen'
 import DashboardScreen from '../screens/DashboardScreen'
 import LandingScreen from '../screens/LandingScreen'
 import LoginScreen from '../screens/LoginScreen'
@@ -59,12 +60,14 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
         <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
         <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
+
         <RootStack.Screen name="DashboardScreen" component={DashboardScreen} options={{ headerLeft: () => null }} />
         <RootStack.Screen
           name="SwitchWalletScreen"
           component={SwitchWalletScreen}
           options={{ headerLeft: () => null }}
         />
+        <RootStack.Screen name="AddressesScreen" component={AddressesScreen} />
       </RootStack.Navigator>
     </NavigationContainer>
   )
