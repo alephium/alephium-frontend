@@ -74,4 +74,6 @@ const Decimals = styled(Text)`
   font-weight: bold;
 `
 
-export default Amount
+export default styled(Amount)`
+  font-weight: bold;
+`

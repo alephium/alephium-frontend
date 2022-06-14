@@ -62,7 +62,12 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
       <ScrollView>
         <ScreenSection>
           {addresses.map((address) => (
-            <AddressRow key={address.hash} address={address} />
+            <TouchableWithoutFeedback
+              onPress={() => navigation.navigate('AddressScreen', { address })}
+              key={address.hash}
+            >
+              <AddressRow address={address} />
+            </TouchableWithoutFeedback>
           ))}
         </ScreenSection>
       </ScrollView>

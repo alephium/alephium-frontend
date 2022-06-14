@@ -22,11 +22,12 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import React from 'react'
 import { StyleProp, Text, View, ViewStyle } from 'react-native'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Arrow from '../images/Arrow'
 import { Address } from '../store/addressesSlice'
 import Amount from './Amount'
+import { ListItem } from './List'
 
 dayjs.extend(relativeTime)
 
@@ -36,14 +37,14 @@ interface TransactionRowProps {
   isLast?: boolean
 }
 
-const TransactionRow = ({ tx, style }: TransactionRowProps) => {
+const TransactionRow = ({ tx, isLast, style }: TransactionRowProps) => {
   const amount = calAmountDelta(tx, tx.address.hash)
   const amountIsBigInt = typeof amount === 'bigint'
   const isOut = amountIsBigInt && amount < 0
   const theme = useTheme()
 
   return (
-    <View style={style}>
+    <ListItem style={style} isLast={isLast}>
       <Direction>
         {isOut ? (
           <Arrow direction="up" color={theme.font.secondary} />
@@ -58,23 +59,11 @@ const TransactionRow = ({ tx, style }: TransactionRowProps) => {
         value={BigInt(amountIsBigInt && amount < 0 ? (amount * -1).toString() : amount.toString())}
         fadeDecimals
       />
-    </View>
+    </ListItem>
   )
 }
 
-export default styled(TransactionRow)`
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  padding: 20px 15px;
-
-  ${({ isLast, theme }) =>
-    !isLast &&
-    css`
-      border-bottom-color: ${({ theme }) => theme.border.secondary};
-      border-bottom-width: 1px;
-    `};
-`
+export default TransactionRow
 
 const Item = styled(Text)`
   font-weight: bold;

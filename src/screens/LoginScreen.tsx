@@ -80,7 +80,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
   console.log('LoginScreen renders')
 
   return (
-    <Screen>
+    <Screen style={{ marginTop: 40 }}>
       <CenteredInstructions instructions={shownInstructions} />
       <PinCodeInput pinLenght={pinLength} value={pinCode} onPinChange={setPinCode} />
     </Screen>

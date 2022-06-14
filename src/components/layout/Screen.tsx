@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { SafeAreaView, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -28,5 +28,4 @@ const Screen: FC<ScreenProps> = ({ children, style }) => <SafeAreaView style={st
 
 export default styled(Screen)`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.secondary};
 `
