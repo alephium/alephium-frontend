@@ -114,7 +114,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
           </Actions>
         </Header>
         <ScreenSection>
-          <Price>{balanceInUsd.toFixed(2)} $</Price>
+          <AmountInUsd fiat={balanceInUsd} fadeDecimals suffix="$" />
           <AmountStyled value={totalBalance} fadeDecimals />
           <Buttons>
             <SendButton title="Send" />
@@ -138,7 +138,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   )
 }
 
-const Price = styled.Text`
+const AmountInUsd = styled(Amount)`
   font-weight: bold;
   font-size: 38px;
   margin-bottom: 10px;
