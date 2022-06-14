@@ -18,9 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { formatAmountForDisplay } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
+import {
+  Eye as EyeIcon,
+  MoreVertical as DotsIcon,
+  Settings2 as SettingsIcon,
+  ShieldAlert as SecurityIcon
+} from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
-import { ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { Pressable, ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
 import Button from '../components/buttons/Button'
@@ -33,6 +39,7 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
 import { selectAllAddresses } from '../store/addressesSlice'
+import { discreetModeChanged } from '../store/settingsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'> & {
   style?: StyleProp<ViewStyle>
@@ -40,7 +47,9 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'> & {
 
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const [usdPrice, setUsdPrice] = useState(0)
+  const theme = useTheme()
   const activeWallet = useAppSelector((state) => state.activeWallet)
+  const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const addresses = useAppSelector(selectAllAddresses)
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
   const balanceFormatted = formatAmountForDisplay(totalBalance)
@@ -57,6 +66,10 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     navigation.navigate('LandingScreen')
   }
 
+  const toggleDiscreetMode = () => {
+    dispatch(discreetModeChanged(!discreetMode))
+  }
+
   const fetchPrice = async () => {
     try {
       const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=alephium&vs_currencies=usd')
@@ -65,10 +78,6 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     } catch (e) {
       console.error(e)
     }
-  }
-
-  const handleSwitchWallet = () => {
-    navigation.navigate('SwitchWalletScreen')
   }
 
   useEffect(() => {
@@ -80,8 +89,31 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   return (
     <Screen style={style}>
       <ScrollView>
+        <Header>
+          <ButtonStyled variant="contrast" onPress={() => navigation.navigate('SwitchWalletScreen')}>
+            {/* TODO: Figure out how to fix the position of the dots to the right, no matter the length of the wallet name */}
+            <WalletName numberOfLines={1}>{activeWallet.name}</WalletName>
+            <DotsIcon size={24} color={theme.font.primary} />
+          </ButtonStyled>
+          <Actions>
+            <Pressable onPress={toggleDiscreetMode}>
+              <Icon>
+                <EyeIcon size={24} color={theme.font.primary} />
+              </Icon>
+            </Pressable>
+            <Pressable>
+              <Icon>
+                <SecurityIcon size={24} color={theme.font.primary} />
+              </Icon>
+            </Pressable>
+            <Pressable>
+              <Icon>
+                <SettingsIcon size={24} color={theme.font.primary} />
+              </Icon>
+            </Pressable>
+          </Actions>
+        </Header>
         <ScreenSection>
-          <Text>{activeWallet.name}</Text>
           <Price>{balanceInUsd.toFixed(2)} $</Price>
           <AmountStyled value={totalBalance} fadeDecimals />
           <Buttons>
@@ -99,7 +131,6 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
         </ScreenSection>
         <Buttons style={{ marginBottom: 120 }}>
           <Button title="Delete all wallets" onPress={handleDeleteAllWallets} />
-          <Button title="Switch wallet" onPress={handleSwitchWallet} />
         </Buttons>
       </ScrollView>
       <FooterMenu />
@@ -110,7 +141,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
 const Price = styled.Text`
   font-weight: bold;
   font-size: 38px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 `
 
 const AmountStyled = styled(Amount)`
@@ -146,6 +177,33 @@ const ScreenSection = styled(View)`
 
   border-bottom-color: ${({ theme }) => theme.border.secondary};
   border-bottom-width: 1px;
+`
+
+const Header = styled(View)`
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 22px 20px 18px;
+`
+
+const ButtonStyled = styled(Button)`
+  width: 50%;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 12px;
+  height: auto;
+`
+
+const WalletName = styled(Text)`
+  font-weight: 600;
+`
+
+const Actions = styled(View)`
+  flex-direction: row;
+  align-items: center;
+`
+
+const Icon = styled(View)`
+  padding: 18px 12px;
 `
 
 export default styled(DashboardScreen)`
