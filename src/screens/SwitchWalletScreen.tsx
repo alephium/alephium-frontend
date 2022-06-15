@@ -102,7 +102,6 @@ const useSortedWallets = () => {
   useEffect(() => {
     const getWallets = async () => {
       const wallets = await getWalletsMetadata()
-      console.log(wallets)
       setWallets(wallets)
     }
     getWallets()

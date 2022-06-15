@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { formatAmountForDisplay } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import {
+  ArrowDown as ArrowDownIcon,
+  ArrowUp as ArrowUpIcon,
   Eye as EyeIcon,
   MoreVertical as DotsIcon,
   Settings2 as SettingsIcon,
@@ -117,8 +119,14 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
           <AmountInUsd fiat={balanceInUsd} fadeDecimals suffix="$" />
           <AmountStyled value={totalBalance} fadeDecimals />
           <Buttons>
-            <SendButton title="Send" />
-            <ReceiveButton title="Receive" />
+            <SendButton>
+              <ArrowUpIcon size={24} color={theme.font.contrast} />
+              <ButtonText>Send</ButtonText>
+            </SendButton>
+            <ReceiveButton>
+              <ArrowDownIcon size={24} color={theme.font.contrast} />
+              <ButtonText>Receive</ButtonText>
+            </ReceiveButton>
           </Buttons>
         </ScreenSection>
         <ScreenSection>
@@ -154,15 +162,24 @@ const Buttons = styled.View`
   display: flex;
   flex-direction: row;
 `
+const IconedButton = styled(Button)`
+  flex-direction: row;
+`
 
-const SendButton = styled(Button)`
+const SendButton = styled(IconedButton)`
   flex: 1;
   margin-right: 5px;
 `
 
-const ReceiveButton = styled(Button)`
+const ReceiveButton = styled(IconedButton)`
   flex: 1;
   margin-left: 5px;
+`
+
+const ButtonText = styled(Text)`
+  color: ${({ theme }) => theme.font.contrast};
+  font-weight: 600;
+  margin-left: 10px;
 `
 
 const H2 = styled.Text`
