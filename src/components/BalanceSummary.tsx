@@ -33,8 +33,7 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
   const [usdPrice, setUsdPrice] = useState(0)
   const addresses = useAppSelector(selectAllAddresses)
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
-  const balanceFormatted = formatAmountForDisplay(totalBalance)
-  const balanceInUsd = usdPrice * parseFloat(balanceFormatted)
+  const balanceInUsd = usdPrice * parseFloat((totalBalance / BigInt(1e18)).toString())
 
   const fetchPrice = async () => {
     try {
