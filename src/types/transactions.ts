@@ -16,6 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Transaction } from '@alephium/sdk/api/explorer'
+
+import { Address } from '../store/addressesSlice'
 import { NetworkName } from './network'
 
 type TransactionType = 'consolidation' | 'transfer' | 'sweep'
@@ -29,3 +32,5 @@ export type PendingTx = {
   network: NetworkName
   amount?: bigint
 }
+
+export type DisplayTx = Transaction & { address: Address }

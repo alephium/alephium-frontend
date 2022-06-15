@@ -27,7 +27,7 @@ import Badge from '../components/Badge'
 import Button from '../components/buttons/Button'
 import Screen from '../components/layout/Screen'
 import List, { ListItem } from '../components/List'
-import TransactionRow from '../components/TransactionRow'
+import TransactionsList from '../components/TransactionsList'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { getAddressDisplayName } from '../utils/addresses'
 
@@ -40,7 +40,7 @@ const AddressScreen = ({
   }
 }: ScreenProps) => {
   const theme = useTheme()
-  const confirmedTxs = address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address }))
+
   console.log('AddressScreen renders')
 
   return (
@@ -95,12 +95,7 @@ const AddressScreen = ({
           </List>
         </ScreenSection>
         <ScreenSection>
-          <H2>Latest transactions</H2>
-          <List>
-            {confirmedTxs.map((tx, index) => (
-              <TransactionRow key={tx.hash} tx={tx} isLast={index === confirmedTxs.length - 1} />
-            ))}
-          </List>
+          <TransactionsList addresses={[address]} />
         </ScreenSection>
       </ScrollView>
     </Screen>
@@ -139,13 +134,6 @@ const ListItemStyled = styled(ListItem)`
 const BadgeText = styled(Text)`
   font-weight: 700;
   font-size: 18px;
-`
-
-const H2 = styled.Text`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 10px;
 `
 
 const NumberOfTxs = styled(Text)`

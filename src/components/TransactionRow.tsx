@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calAmountDelta } from '@alephium/sdk'
-import { Transaction } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import React from 'react'
@@ -25,14 +24,14 @@ import { StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Arrow from '../images/Arrow'
-import { Address } from '../store/addressesSlice'
+import { DisplayTx } from '../types/transactions'
 import Amount from './Amount'
 import { ListItem } from './List'
 
 dayjs.extend(relativeTime)
 
 interface TransactionRowProps {
-  tx: Transaction & { address: Address }
+  tx: DisplayTx
   style?: StyleProp<ViewStyle>
   isLast?: boolean
 }
