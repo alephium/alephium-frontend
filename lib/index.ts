@@ -23,7 +23,6 @@ export * from './wallet'
 export * from './explorer'
 export * from './address'
 export * from './signer'
-export * from './contract'
 export * from './errors'
 export {
   formatAmountForDisplay,
