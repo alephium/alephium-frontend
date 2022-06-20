@@ -48,7 +48,7 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     navigation.setOptions({
       headerTitle: `Addresses (${addresses.length})`,
       headerRight: () => (
-        <TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('NewAddressScreen')}>
           <PlusIcon size={24} color={theme.global.accent} style={{ marginRight: 20 }} />
         </TouchableWithoutFeedback>
       )
@@ -122,12 +122,13 @@ let AddressRow = ({ style, address }: AddressProps) => {
 }
 
 const ScreenSection = styled(View)`
-  padding: 22px 20px;
+  padding: 22px 20px 120px;
 `
 
 AddressRow = styled(AddressRow)`
   background-color: white;
   border-radius: 12px;
+  margin-bottom: 15px;
 `
 
 const Header = styled(View)`

@@ -19,4 +19,4 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Address } from '../store/addressesSlice'
 
 export const getAddressDisplayName = (address: Address): string =>
-  address.settings.label ?? address.hash.substring(0, 6)
+  address.settings.label || address.hash.substring(0, 6)

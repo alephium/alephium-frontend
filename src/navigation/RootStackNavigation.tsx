@@ -31,6 +31,7 @@ import NewWalletIntroScreen from '../screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
+import NewAddressScreen from '../screens/NewAddressScreen'
 import SplashScreen from '../screens/SplashScreen'
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
 import RootStackParamList from './rootStackRoutes'
@@ -76,6 +77,11 @@ const RootStackNavigation = () => {
           name="AddressScreen"
           component={AddressScreen}
           options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS }}
+        />
+        <RootStack.Screen
+          name="NewAddressScreen"
+          component={NewAddressScreen}
+          options={{ headerTitle: 'New address' }}
         />
       </RootStack.Navigator>
     </NavigationContainer>
