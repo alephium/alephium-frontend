@@ -102,7 +102,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
         <ScreenSection>
           <TransactionsList addresses={addresses} />
         </ScreenSection>
-        <Buttons style={{ marginBottom: 120 }}>
+        <Buttons style={{ marginBottom: 120, marginTop: 500 }}>
           <Button title="Delete all wallets" onPress={handleDeleteAllWallets} />
         </Buttons>
       </ScrollView>

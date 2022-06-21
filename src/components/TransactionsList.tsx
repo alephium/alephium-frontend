@@ -16,11 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StyleProp, Text, View, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { ActivityIndicator, StyleProp, Text, View, ViewStyle } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import List from '../components/List'
 import TransactionRow from '../components/TransactionRow'
+import { useAppSelector } from '../hooks/redux'
 import { Address } from '../store/addressesSlice'
 
 interface TransactionsListProps {
@@ -33,10 +34,15 @@ const TransactionsList = ({ addresses, style }: TransactionsListProps) => {
     .map((address) => address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address })))
     .flat()
     .sort((a, b) => b.timestamp - a.timestamp)
+  const isAddressDataLoading = useAppSelector((state) => state.addresses.loading)
+  const theme = useTheme()
 
   return (
     <View style={style}>
       <H2>Latest transactions</H2>
+      {allConfirmedTxs.length === 0 && isAddressDataLoading && (
+        <ActivityIndicator size="large" color={theme.font.primary} />
+      )}
       <List>
         {allConfirmedTxs.map((tx, index) => (
           <TransactionRow key={`${tx.hash}-${tx.address.hash}`} tx={tx} isLast={index === allConfirmedTxs.length - 1} />

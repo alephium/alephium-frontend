@@ -76,6 +76,38 @@ const initialState: AddressesState = addressSettingsAdapter.getInitialState({
   loading: false
 })
 
+export const fetchAddressesInitialData = createAsyncThunk(
+  `${sliceName}/fetchAddressesInitialData`,
+  async (payload: AddressHash[], { dispatch }) => {
+    const results = []
+    dispatch(loadingStarted())
+
+    for (const addressHash of payload) {
+      const { data } = await client.explorerClient.getAddressDetails(addressHash)
+      const availableBalance = data.balance
+        ? data.lockedBalance
+          ? (BigInt(data.balance) - BigInt(data.lockedBalance)).toString()
+          : data.balance
+        : undefined
+
+      const page = 1
+      console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, addressHash)
+      const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, page)
+
+      results.push({
+        hash: addressHash,
+        details: data,
+        availableBalance: availableBalance,
+        transactions,
+        page
+      })
+    }
+
+    dispatch(loadingFinished())
+    return results
+  }
+)
+
 export const fetchAddressesData = createAsyncThunk(
   `${sliceName}/fetchAddressesData`,
   async (payload: AddressHash[], { dispatch }) => {
@@ -115,7 +147,7 @@ export const fetchAddressConfirmedTransactions = createAsyncThunk(
 
     return {
       hash,
-      transactions: data,
+      transactions: data || [],
       page
     }
   }
@@ -196,6 +228,19 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchAddressesInitialData.fulfilled, (state, action) => {
+        for (const address of action.payload) {
+          const { hash, details, availableBalance, transactions, page } = address
+
+          const addressState = state.entities[hash]
+          if (addressState) {
+            addressState.networkData.details = details
+            addressState.networkData.transactions.confirmed = transactions
+            addressState.networkData.transactions.loadedPage = page
+            if (availableBalance) addressState.networkData.availableBalance = availableBalance
+          }
+        }
+      })
       .addCase(fetchAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, details, availableBalance } = address

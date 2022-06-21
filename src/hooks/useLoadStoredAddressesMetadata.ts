@@ -24,7 +24,8 @@ import {
   addressesAdded,
   addressesFlushed,
   fetchAddressConfirmedTransactions,
-  fetchAddressesData
+  fetchAddressesData,
+  fetchAddressesInitialData
 } from '../store/addressesSlice'
 import { Mnemonic } from '../types/wallet'
 import { useAppDispatch, useAppSelector } from './redux'
@@ -49,8 +50,7 @@ const useLoadStoredAddressesMetadata = () => {
       })
 
       dispatch(addressesAdded(addresses))
-      dispatch(fetchAddressesData(addresses.map((address) => address.hash)))
-      addresses.forEach((address) => dispatch(fetchAddressConfirmedTransactions({ hash: address.hash, page: 1 })))
+      dispatch(fetchAddressesInitialData(addresses.map((address) => address.hash)))
     }
   }, [activeWallet.metadataId, activeWallet.mnemonic, dispatch])
 

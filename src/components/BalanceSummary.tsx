@@ -16,10 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { formatAmountForDisplay } from '@alephium/sdk'
 import { useEffect, useState } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { selectAllAddresses } from '../store/addressesSlice'
@@ -30,10 +29,14 @@ interface BalanceSummaryProps {
 }
 
 const BalanceSummary = ({ style }: BalanceSummaryProps) => {
-  const [usdPrice, setUsdPrice] = useState(0)
+  const [usdPrice, setUsdPrice] = useState<number>()
   const addresses = useAppSelector(selectAllAddresses)
+  const isAddressDataLoading = useAppSelector((state) => state.addresses.loading)
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
-  const balanceInUsd = usdPrice * parseFloat((totalBalance / BigInt(1e18)).toString())
+  const balanceInUsd = (usdPrice || 0) * parseFloat((totalBalance / BigInt(1e18)).toString())
+  const showActivityIndicator = usdPrice === undefined || isAddressDataLoading
+
+  const theme = useTheme()
 
   const fetchPrice = async () => {
     try {
@@ -51,8 +54,14 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
 
   return (
     <View style={style}>
-      <AmountInUsd fiat={balanceInUsd} fadeDecimals suffix="$" />
-      <AmountStyled value={totalBalance} fadeDecimals />
+      {showActivityIndicator ? (
+        <ActivityIndicator size="large" color={theme.font.primary} />
+      ) : (
+        <>
+          <AmountInUsd fiat={balanceInUsd} fadeDecimals suffix="$" />
+          <AmountStyled value={totalBalance} fadeDecimals />
+        </>
+      )}
     </View>
   )
 }
