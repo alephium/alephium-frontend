@@ -47,9 +47,9 @@ const AddressScreen = ({
     <Screen>
       <ScrollView>
         <Header>
-          <Badge rounded border color={address.settings.color}>
+          <BadgeStyled rounded border color={address.settings.color}>
             <BadgeText>{getAddressDisplayName(address)}</BadgeText>
-          </Badge>
+          </BadgeStyled>
           <Actions>
             <ButtonStyled icon variant="contrast">
               <StarIcon fill={address.settings.isMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
@@ -110,11 +110,13 @@ const Header = styled(View)`
   flex-direction: row;
   justify-content: space-between;
   margin: 40px 20px;
+  max-width: 100%;
 `
 
 const Actions = styled(View)`
   flex-direction: row;
   align-items: center;
+  flex-grow: 1;
 `
 
 const ButtonStyled = styled(Button)`
@@ -138,6 +140,10 @@ const BadgeText = styled(Text)`
 
 const NumberOfTxs = styled(Text)`
   font-weight: 700;
+`
+
+const BadgeStyled = styled(Badge)`
+  flex-shrink: 1;
 `
 
 export default AddressScreen

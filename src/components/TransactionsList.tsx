@@ -39,7 +39,7 @@ const TransactionsList = ({ addresses, style }: TransactionsListProps) => {
       <H2>Latest transactions</H2>
       <List>
         {allConfirmedTxs.map((tx, index) => (
-          <TransactionRow key={tx.hash} tx={tx} isLast={index === allConfirmedTxs.length - 1} />
+          <TransactionRow key={`${tx.hash}-${tx.address.hash}`} tx={tx} isLast={index === allConfirmedTxs.length - 1} />
         ))}
       </List>
     </View>

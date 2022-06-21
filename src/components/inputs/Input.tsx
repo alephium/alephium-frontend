@@ -23,16 +23,17 @@ import { BORDER_RADIUS, INPUTS_HEIGHT } from '../../style/globalStyle'
 
 interface InputProps extends TextInputProps {
   label: string
+  color?: string
   style?: StyleProp<ViewStyle>
 }
 
-const Input = ({ label, style, ...props }: InputProps) => {
+const Input = ({ label, style, color, ...props }: InputProps) => {
   const theme = useTheme()
 
   return (
     <View style={style}>
       <Label>{label}</Label>
-      <StyledInput selectionColor={theme.gradient.yellow} {...props} />
+      <StyledInput selectionColor={theme.gradient.yellow} style={{ color: color }} {...props} />
     </View>
   )
 }

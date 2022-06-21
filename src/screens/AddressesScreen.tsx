@@ -134,11 +134,14 @@ AddressRow = styled(AddressRow)`
 const Header = styled(View)`
   flex-direction: row;
   justify-content: space-between;
+  max-width: 100%;
 `
 
 const Actions = styled(View)`
   flex-direction: row;
   align-items: center;
+  flex-grow: 1;
+  justify-content: flex-end;
 `
 
 const Name = styled(Text)<{ color?: string }>`
@@ -146,6 +149,7 @@ const Name = styled(Text)<{ color?: string }>`
   font-weight: 700;
   color: ${({ theme, color }) => color || theme.font.primary};
   padding: 17px 28px;
+  flex-shrink: 1;
 `
 
 const Icon = styled(View)`

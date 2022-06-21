@@ -30,7 +30,7 @@ import RNPickerSelect from 'react-native-picker-select'
 import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
-import Input from '../components/inputs/Input'
+import ColoredLabelInput, { ColoredLabelInputValue } from '../components/inputs/ColoredLabelInput'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -41,12 +41,16 @@ import {
   fetchAddressesData,
   selectAllAddresses
 } from '../store/addressesSlice'
+import { getRandomLabelColor } from '../utils/colors'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 
 const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const [newAddressData, setNewAddressData] = useState<AddressAndKeys>()
-  const [label, setLabel] = useState('')
+  const [coloredLabel, setColoredLabel] = useState<ColoredLabelInputValue>({
+    label: '',
+    color: getRandomLabelColor()
+  })
   const [group, setGroup] = useState<number>()
   const groupSelectOptions = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) =>
     generateGroupSelectOption(index)
@@ -57,8 +61,8 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const { seed } = walletImport(activeWallet.mnemonic)
   const addressSettings = {
     isMain: false,
-    label,
-    color: ''
+    label: coloredLabel?.label,
+    color: coloredLabel?.color
   }
 
   const dispatch = useAppDispatch()
@@ -108,7 +112,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     <Screen>
       <ScrollView>
         <ScreenSection>
-          <Input label="Address label" value={label} onChangeText={setLabel} autoFocus />
+          <ColoredLabelInput value={coloredLabel} onChange={setColoredLabel} />
           <RNPickerSelect
             onValueChange={(value: number) => setGroup(value)}
             value={group}
