@@ -43,11 +43,19 @@ const TransactionsList = ({ addresses, style }: TransactionsListProps) => {
       {allConfirmedTxs.length === 0 && isAddressDataLoading && (
         <ActivityIndicator size="large" color={theme.font.primary} />
       )}
-      <List>
-        {allConfirmedTxs.map((tx, index) => (
-          <TransactionRow key={`${tx.hash}-${tx.address.hash}`} tx={tx} isLast={index === allConfirmedTxs.length - 1} />
-        ))}
-      </List>
+      {allConfirmedTxs.length > 0 ? (
+        <List>
+          {allConfirmedTxs.map((tx, index) => (
+            <TransactionRow
+              key={`${tx.hash}-${tx.address.hash}`}
+              tx={tx}
+              isLast={index === allConfirmedTxs.length - 1}
+            />
+          ))}
+        </List>
+      ) : (
+        <Text>No transactions</Text>
+      )}
     </View>
   )
 }

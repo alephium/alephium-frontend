@@ -27,7 +27,7 @@ interface ListProps {
 const List: FC<ListProps> = ({ style, children }) => <View style={style}>{children}</View>
 
 export default styled(List)`
-  box-shadow: ${({ theme }) => theme.shadow.secondary};
+  ${({ theme }) => theme.shadow.secondary};
   border-radius: 12px;
   background-color: white;
 `

@@ -77,7 +77,7 @@ const MenuItems = styled(View)`
   background-color: white;
   border: 1px solid ${({ theme }) => theme.border.secondary};
   border-radius: 12px;
-  box-shadow: ${({ theme }) => theme.shadow.secondary};
+  ${({ theme }) => theme.shadow.secondary};
   padding: 9px 12px;
 `
 
