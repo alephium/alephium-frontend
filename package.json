@@ -1,6 +1,6 @@
 {
   "name": "@alephium/sdk",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A JS/TS library to interact with the Alephium platform",
   "license": "GPL",
   "main": "dist/lib/index.js",
@@ -32,8 +32,8 @@
   },
   "author": "Alephium dev <dev@alephium.org>",
   "config": {
-    "alephium_version": "1.3.0",
-    "explorer_backend_version": "1.6.9"
+    "alephium_version": "1.4.1",
+    "explorer_backend_version": "1.7.0"
   },
   "scripts": {
     "build": "rm -rf dist && npx tsc --build . && webpack",
