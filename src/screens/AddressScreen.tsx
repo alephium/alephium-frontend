@@ -32,7 +32,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { storeAddressMetadata } from '../storage/wallets'
 import { mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
-import { getAddressDisplayName } from '../utils/addresses'
+import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressScreen'>
 
@@ -83,7 +83,7 @@ const AddressScreen = ({
             <ButtonStyled icon variant="contrast" onPress={makeAddressMain} disabled={isCurrentAddressMain}>
               <StarIcon fill={isCurrentAddressMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
             </ButtonStyled>
-            <ButtonStyled icon variant="contrast">
+            <ButtonStyled icon variant="contrast" onPress={() => copyAddressToClipboard(address)}>
               <ClipboardIcon color={theme.font.primary} size={20} />
             </ButtonStyled>
             <ButtonStyled icon variant="contrast">

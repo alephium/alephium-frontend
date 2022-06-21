@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import * as Clipboard from 'expo-clipboard'
+
 import { Address } from '../store/addressesSlice'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
+
+export const copyAddressToClipboard = (address: Address) => {
+  Clipboard.setString(address.hash)
+}

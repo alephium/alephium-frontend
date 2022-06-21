@@ -27,8 +27,7 @@ import {
 } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
 import { useLayoutEffect } from 'react'
-import { ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { Pressable, ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
@@ -37,7 +36,7 @@ import Screen from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { Address, selectAllAddresses } from '../store/addressesSlice'
-import { getAddressDisplayName } from '../utils/addresses'
+import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressesScreen'>
 
@@ -49,9 +48,9 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     navigation.setOptions({
       headerTitle: `Addresses (${addresses.length})`,
       headerRight: () => (
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('NewAddressScreen')}>
+        <Pressable onPress={() => navigation.navigate('NewAddressScreen')}>
           <PlusIcon size={24} color={theme.global.accent} style={{ marginRight: 20 }} />
-        </TouchableWithoutFeedback>
+        </Pressable>
       )
     })
   })
@@ -63,12 +62,9 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
       <ScrollView>
         <ScreenSection>
           {addresses.map((address) => (
-            <TouchableWithoutFeedback
-              onPress={() => navigation.navigate('AddressScreen', { address })}
-              key={address.hash}
-            >
+            <Pressable onPress={() => navigation.navigate('AddressScreen', { address })} key={address.hash}>
               <AddressRow address={address} />
-            </TouchableWithoutFeedback>
+            </Pressable>
           ))}
         </ScreenSection>
       </ScrollView>
@@ -95,26 +91,26 @@ let AddressRow = ({ style, address }: AddressProps) => {
       <Header>
         <Name color={address.settings.color}>{getAddressDisplayName(address)}</Name>
         <Actions>
-          <TouchableWithoutFeedback>
+          <Pressable>
             <Icon>
               <StarIcon fill={address.settings.isMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
             </Icon>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => navigation.navigate('EditAddressScreen', { address })}>
+          </Pressable>
+          <Pressable onPress={() => navigation.navigate('EditAddressScreen', { address })}>
             <Icon>
               <PencilIcon color={theme.font.primary} size={20} />
             </Icon>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
+          </Pressable>
+          <Pressable onPress={() => copyAddressToClipboard(address)}>
             <Icon>
               <ClipboardIcon color={theme.font.primary} size={20} />
             </Icon>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
+          </Pressable>
+          <Pressable>
             <Icon style={{ marginRight: 12 }}>
               <QrCodeIcon color={theme.font.primary} size={20} />
             </Icon>
-          </TouchableWithoutFeedback>
+          </Pressable>
         </Actions>
       </Header>
       <AmountStyled value={BigInt(address.networkData.details.balance)} fadeDecimals />
