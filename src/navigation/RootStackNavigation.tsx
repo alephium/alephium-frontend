@@ -23,6 +23,7 @@ import { useTheme } from 'styled-components'
 import AddressesScreen from '../screens/AddressesScreen'
 import AddressScreen from '../screens/AddressScreen'
 import DashboardScreen from '../screens/DashboardScreen'
+import EditAddressScreen from '../screens/EditAddressScreen'
 import LandingScreen from '../screens/LandingScreen'
 import LoginScreen from '../screens/LoginScreen'
 import AddBiometricsScreen from '../screens/new-wallet/AddBiometricsScreen'
@@ -82,6 +83,11 @@ const RootStackNavigation = () => {
           name="NewAddressScreen"
           component={NewAddressScreen}
           options={{ headerTitle: 'New address' }}
+        />
+        <RootStack.Screen
+          name="EditAddressScreen"
+          component={EditAddressScreen}
+          options={{ headerTitle: 'Edit Address' }}
         />
       </RootStack.Navigator>
     </NavigationContainer>

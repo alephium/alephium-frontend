@@ -161,6 +161,13 @@ const addressesSlice = createSlice({
         }))
       )
     },
+    addressSettingsUpdated: (state, action: PayloadAction<{ hash: AddressHash; settings: AddressSettings }>) => {
+      const { hash, settings } = action.payload
+      const address = state.entities[hash]
+      if (address) {
+        address.settings = settings
+      }
+    },
     addressesFlushed: (state) => {
       addressSettingsAdapter.setAll(state, [])
     },
@@ -199,6 +206,7 @@ const addressesSlice = createSlice({
 export const { selectById: selectAddressByHash, selectAll: selectAllAddresses } =
   addressSettingsAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const { addressesAdded, addressesFlushed, loadingStarted, loadingFinished } = addressesSlice.actions
+export const { addressesAdded, addressesFlushed, loadingStarted, loadingFinished, addressSettingsUpdated } =
+  addressesSlice.actions
 
 export default addressesSlice

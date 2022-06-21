@@ -121,7 +121,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
             InputAccessoryView={() => null}
             style={pickerSelectStyles}
           />
-          <Button title="Generate" onPress={handleGeneratePress} />
+          <Button title="Generate" onPress={handleGeneratePress} style={{ marginTop: 20 }} />
         </ScreenSection>
       </ScrollView>
     </Screen>
@@ -146,7 +146,8 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: 'gray',
     borderRadius: 4,
     color: 'black',
-    paddingRight: 30 // to ensure the text is never behind the icon
+    paddingRight: 30, // to ensure the text is never behind the icon
+    marginTop: 20
   },
   inputAndroid: {
     fontSize: 16,
@@ -156,6 +157,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: 'purple',
     borderRadius: 8,
     color: 'black',
-    paddingRight: 30 // to ensure the text is never behind the icon
+    paddingRight: 30, // to ensure the text is never behind the icon
+    marginTop: 20
   }
 })

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useNavigation } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import dayjs from 'dayjs'
 import {
@@ -87,6 +88,7 @@ let AddressRow = ({ style, address }: AddressProps) => {
     address.networkData.transactions.confirmed.length > 0
       ? dayjs(address.networkData.transactions.confirmed[0].timestamp).fromNow()
       : 'Never used'
+  const navigation = useNavigation()
 
   return (
     <View style={style}>
@@ -98,7 +100,7 @@ let AddressRow = ({ style, address }: AddressProps) => {
               <StarIcon fill={address.settings.isMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
             </Icon>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => navigation.navigate('EditAddressScreen', { address })}>
             <Icon>
               <PencilIcon color={theme.font.primary} size={20} />
             </Icon>
