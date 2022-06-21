@@ -130,12 +130,12 @@ const addressesSlice = createSlice({
 
       const newMainAddress = addresses.find((address) => address.settings.isMain)
       if (newMainAddress) {
-        state.mainAddress = newMainAddress.hash
-
         const previousMainAddress = state.entities[state.mainAddress]
         if (previousMainAddress) {
           previousMainAddress.settings.isMain = false
         }
+
+        state.mainAddress = newMainAddress.hash
       }
 
       addressSettingsAdapter.addMany(
@@ -167,6 +167,22 @@ const addressesSlice = createSlice({
       if (address) {
         address.settings = settings
       }
+    },
+    mainAddressChanged: (state, action: PayloadAction<Address>) => {
+      const newMainAddress = action.payload
+
+      const previousMainAddress = state.entities[state.mainAddress]
+      addressSettingsAdapter.updateOne(state, {
+        id: state.mainAddress,
+        changes: { settings: { ...previousMainAddress?.settings, isMain: false } }
+      })
+
+      state.mainAddress = newMainAddress.hash
+
+      addressSettingsAdapter.updateOne(state, {
+        id: newMainAddress.hash,
+        changes: { settings: { ...newMainAddress.settings, isMain: true } }
+      })
     },
     addressesFlushed: (state) => {
       addressSettingsAdapter.setAll(state, [])
@@ -206,7 +222,13 @@ const addressesSlice = createSlice({
 export const { selectById: selectAddressByHash, selectAll: selectAllAddresses } =
   addressSettingsAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const { addressesAdded, addressesFlushed, loadingStarted, loadingFinished, addressSettingsUpdated } =
-  addressesSlice.actions
+export const {
+  addressesAdded,
+  addressesFlushed,
+  loadingStarted,
+  loadingFinished,
+  addressSettingsUpdated,
+  mainAddressChanged
+} = addressesSlice.actions
 
 export default addressesSlice

@@ -28,7 +28,10 @@ import Button from '../components/buttons/Button'
 import Screen from '../components/layout/Screen'
 import List, { ListItem } from '../components/List'
 import TransactionsList from '../components/TransactionsList'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
+import { storeAddressMetadata } from '../storage/wallets'
+import { mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
 import { getAddressDisplayName } from '../utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressScreen'>
@@ -40,6 +43,32 @@ const AddressScreen = ({
   }
 }: ScreenProps) => {
   const theme = useTheme()
+  const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
+  const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
+  const mainAddress = useAppSelector((state) => selectAddressByHash(state, state.addresses.mainAddress))
+  const isCurrentAddressMain = address.hash === mainAddressHash
+  const dispatch = useAppDispatch()
+
+  const makeAddressMain = async () => {
+    if (address.settings.isMain) return
+
+    dispatch(mainAddressChanged(address))
+
+    if (activeWalletMetadataId) {
+      if (mainAddress) {
+        await storeAddressMetadata(activeWalletMetadataId, {
+          index: mainAddress.index,
+          ...mainAddress.settings,
+          isMain: false
+        })
+      }
+      await storeAddressMetadata(activeWalletMetadataId, {
+        index: address.index,
+        ...address.settings,
+        isMain: true
+      })
+    }
+  }
 
   console.log('AddressScreen renders')
 
@@ -51,8 +80,8 @@ const AddressScreen = ({
             <BadgeText>{getAddressDisplayName(address)}</BadgeText>
           </BadgeStyled>
           <Actions>
-            <ButtonStyled icon variant="contrast">
-              <StarIcon fill={address.settings.isMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
+            <ButtonStyled icon variant="contrast" onPress={makeAddressMain} disabled={isCurrentAddressMain}>
+              <StarIcon fill={isCurrentAddressMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
             </ButtonStyled>
             <ButtonStyled icon variant="contrast">
               <ClipboardIcon color={theme.font.primary} size={20} />
@@ -117,6 +146,7 @@ const Actions = styled(View)`
   flex-direction: row;
   align-items: center;
   flex-grow: 1;
+  justify-content: flex-end;
 `
 
 const ButtonStyled = styled(Button)`
