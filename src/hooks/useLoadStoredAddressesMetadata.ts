@@ -20,13 +20,7 @@ import { deriveNewAddressData, walletImport } from '@alephium/sdk'
 import { useCallback, useEffect, useRef } from 'react'
 
 import { getAddressesMetadataByWalletId } from '../storage/wallets'
-import {
-  addressesAdded,
-  addressesFlushed,
-  fetchAddressConfirmedTransactions,
-  fetchAddressesData,
-  fetchAddressesInitialData
-} from '../store/addressesSlice'
+import { addressesAdded, addressesFlushed, fetchAddressesInitialData } from '../store/addressesSlice'
 import { Mnemonic } from '../types/wallet'
 import { useAppDispatch, useAppSelector } from './redux'
 

@@ -77,12 +77,10 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     }
   }, [storedActiveEncryptedWallet, dispatch, navigation, pinCode])
 
-  console.log('LoginScreen renders')
-
   return (
     <Screen style={{ marginTop: 40 }}>
       <CenteredInstructions instructions={shownInstructions} />
-      <PinCodeInput pinLenght={pinLength} value={pinCode} onPinChange={setPinCode} />
+      <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
     </Screen>
   )
 }

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon, Star as StarIcon } from 'lucide-react-native'
 import React, { useState } from 'react'
-import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Modal, ScrollView, Text, View } from 'react-native'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -40,16 +40,19 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'AddressScreen'>
 const AddressScreen = ({
   navigation,
   route: {
-    params: { address }
+    params: { addressHash }
   }
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
-  const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
+  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
   const mainAddress = useAppSelector((state) => selectAddressByHash(state, state.addresses.mainAddress))
-  const isCurrentAddressMain = address.hash === mainAddressHash
+  const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
+  const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
+  const isCurrentAddressMain = addressHash === mainAddressHash
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
+
+  if (!address) return null
 
   const makeAddressMain = async () => {
     if (address.settings.isMain) return
@@ -126,7 +129,7 @@ const AddressScreen = ({
           </List>
         </ScreenSection>
         <ScreenSection>
-          <TransactionsList addresses={[address]} />
+          <TransactionsList addressHashes={[address.hash]} />
         </ScreenSection>
       </ScrollView>
       <Modal

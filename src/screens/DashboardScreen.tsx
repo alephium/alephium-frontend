@@ -17,18 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import {
-  ArrowDown as ArrowDownIcon,
-  ArrowUp as ArrowUpIcon,
-  Eye as EyeIcon,
-  Settings2 as SettingsIcon,
-  ShieldAlert as SecurityIcon
-} from 'lucide-react-native'
-import { Pressable, ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
+import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon } from 'lucide-react-native'
+import { ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
+import DashboardHeaderActions from '../components/DashboardHeaderActions'
 import FooterMenu from '../components/FooterMenu'
 import Screen from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
@@ -37,8 +32,8 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
-import { selectAllAddresses } from '../store/addressesSlice'
-import { discreetModeChanged } from '../store/settingsSlice'
+import { selectAddressIds } from '../store/addressesSlice'
+import { AddressHash } from '../types/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'> & {
   style?: StyleProp<ViewStyle>
@@ -47,8 +42,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'> & {
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const discreetMode = useAppSelector((state) => state.settings.discreetMode)
-  const addresses = useAppSelector(selectAllAddresses)
+  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
@@ -56,34 +50,12 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     navigation.navigate('LandingScreen')
   }
 
-  const toggleDiscreetMode = () => {
-    dispatch(discreetModeChanged(!discreetMode))
-  }
-
-  console.log('DashboardScreen renders')
-
   return (
     <Screen style={style}>
       <ScrollView>
         <Header>
           <WalletSwitch />
-          <Actions>
-            <Pressable onPress={toggleDiscreetMode}>
-              <Icon>
-                <EyeIcon size={24} color={theme.font.primary} />
-              </Icon>
-            </Pressable>
-            <Pressable>
-              <Icon>
-                <SecurityIcon size={24} color={theme.font.primary} />
-              </Icon>
-            </Pressable>
-            <Pressable>
-              <Icon>
-                <SettingsIcon size={24} color={theme.font.primary} />
-              </Icon>
-            </Pressable>
-          </Actions>
+          <DashboardHeaderActions />
         </Header>
         <ScreenSection>
           <BalanceSummary />
@@ -99,7 +71,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
           </Buttons>
         </ScreenSection>
         <ScreenSection>
-          <TransactionsList addresses={addresses} />
+          <TransactionsList addressHashes={addressHashes} />
         </ScreenSection>
         <Buttons style={{ marginBottom: 120, marginTop: 500 }}>
           <Button title="Delete all wallets" onPress={handleDeleteAllWallets} />
@@ -150,14 +122,4 @@ const Header = styled(View)`
   justify-content: space-between;
   align-items: center;
   padding: 22px 20px 18px;
-`
-
-const Actions = styled(View)`
-  flex-direction: row;
-  align-items: center;
-`
-
-// TODO: Create standalone Icon component to allow us to define the size prop
-const Icon = styled(View)`
-  padding: 18px 12px;
 `

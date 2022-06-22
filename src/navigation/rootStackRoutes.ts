@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ActiveWalletState } from '../store/activeWalletSlice'
-import { Address } from '../store/addressesSlice'
+import { AddressHash } from '../types/addresses'
 
 type RootStackParamList = {
   LandingScreen: undefined
@@ -35,11 +35,11 @@ type RootStackParamList = {
   SwitchWalletScreen: undefined
   AddressesScreen: undefined
   AddressScreen: {
-    address: Address
+    addressHash: AddressHash
   }
   NewAddressScreen: undefined
   EditAddressScreen: {
-    address: Address
+    addressHash: AddressHash
   }
 }
 

@@ -22,28 +22,25 @@ import styled, { useTheme } from 'styled-components/native'
 import List from '../components/List'
 import TransactionRow from '../components/TransactionRow'
 import { useAppSelector } from '../hooks/redux'
-import { Address } from '../store/addressesSlice'
+import { selectConfirmedTransactions } from '../store/addressesSlice'
+import { AddressHash } from '../types/addresses'
 
 interface TransactionsListProps {
-  addresses: Address[]
+  addressHashes: AddressHash[]
   style?: StyleProp<ViewStyle>
 }
 
-const TransactionsList = ({ addresses, style }: TransactionsListProps) => {
-  const allConfirmedTxs = addresses
-    .map((address) => address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address })))
-    .flat()
-    .sort((a, b) => b.timestamp - a.timestamp)
+const TransactionsList = ({ addressHashes, style }: TransactionsListProps) => {
+  const allConfirmedTxs = useAppSelector((state) => selectConfirmedTransactions(state, addressHashes))
   const isAddressDataLoading = useAppSelector((state) => state.addresses.loading)
   const theme = useTheme()
 
   return (
     <View style={style}>
       <H2>Latest transactions</H2>
-      {allConfirmedTxs.length === 0 && isAddressDataLoading && (
+      {allConfirmedTxs.length === 0 && isAddressDataLoading ? (
         <ActivityIndicator size="large" color={theme.font.primary} />
-      )}
-      {allConfirmedTxs.length > 0 ? (
+      ) : allConfirmedTxs.length > 0 ? (
         <List>
           {allConfirmedTxs.map((tx, index) => (
             <TransactionRow

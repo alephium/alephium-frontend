@@ -22,7 +22,7 @@ import {
   LayoutTemplate as LayoutTemplateIcon,
   List as ListIcon
 } from 'lucide-react-native'
-import React from 'react'
+import React, { memo } from 'react'
 import { StyleProp, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -64,12 +64,12 @@ const FooterMenu = ({ style }: FooterMenuProps) => {
   )
 }
 
-export default styled(FooterMenu)`
+export default memo(styled(FooterMenu)`
   position: absolute;
   bottom: 35px;
   width: 100%;
   padding: 0 55px;
-`
+`)
 
 const MenuItems = styled(View)`
   flex-direction: row;

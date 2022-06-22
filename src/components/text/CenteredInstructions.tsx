@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { memo } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -48,12 +49,12 @@ const CenteredInstructions = ({ instructions, style, fontSize = 16 }: CenteredIn
   </View>
 )
 
-export default styled(CenteredInstructions)`
+export default memo(styled(CenteredInstructions)`
   justify-content: center;
   align-items: center;
   padding: 10%;
   ${({ stretch }) => stretch && 'flex: 1;'}
-`
+`)
 
 const Instruction = styled.Text<{ type: Instruction['type'] }>`
   color: ${({ type, theme }) =>

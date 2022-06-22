@@ -35,18 +35,19 @@ import FooterMenu from '../components/FooterMenu'
 import Screen from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { Address, selectAllAddresses } from '../store/addressesSlice'
+import { selectAddressByHash, selectAddressIds } from '../store/addressesSlice'
+import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressesScreen'>
 
 const AddressesScreen = ({ navigation }: ScreenProps) => {
-  const addresses = useAppSelector(selectAllAddresses)
+  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const theme = useTheme()
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: `Addresses (${addresses.length})`,
+      headerTitle: `Addresses (${addressHashes.length})`,
       headerRight: () => (
         <Pressable onPress={() => navigation.navigate('NewAddressScreen')}>
           <PlusIcon size={24} color={theme.global.accent} style={{ marginRight: 20 }} />
@@ -61,9 +62,9 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     <Screen>
       <ScrollView>
         <ScreenSection>
-          {addresses.map((address) => (
-            <Pressable onPress={() => navigation.navigate('AddressScreen', { address })} key={address.hash}>
-              <AddressRow address={address} />
+          {addressHashes.map((addressHash) => (
+            <Pressable onPress={() => navigation.navigate('AddressScreen', { addressHash })} key={addressHash}>
+              <AddressRow addressHash={addressHash} />
             </Pressable>
           ))}
         </ScreenSection>
@@ -74,17 +75,21 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
 }
 
 interface AddressProps {
-  address: Address
+  addressHash: AddressHash
   style?: StyleProp<ViewStyle>
 }
 
-let AddressRow = ({ style, address }: AddressProps) => {
+let AddressRow = ({ style, addressHash }: AddressProps) => {
   const theme = useTheme()
+  const navigation = useNavigation()
+  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
+
+  if (!address) return null
+
   const lastUsed =
     address.networkData.transactions.confirmed.length > 0
       ? dayjs(address.networkData.transactions.confirmed[0].timestamp).fromNow()
       : 'Never used'
-  const navigation = useNavigation()
 
   return (
     <View style={style}>
@@ -96,7 +101,7 @@ let AddressRow = ({ style, address }: AddressProps) => {
               <StarIcon fill={address.settings.isMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
             </Icon>
           </Pressable>
-          <Pressable onPress={() => navigation.navigate('EditAddressScreen', { address })}>
+          <Pressable onPress={() => navigation.navigate('EditAddressScreen', { addressHash })}>
             <Icon>
               <PencilIcon color={theme.font.primary} size={20} />
             </Icon>

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Pressable, View } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
@@ -34,6 +34,7 @@ interface ColoredLabelInputProps {
 }
 
 const ColoredLabelInput = ({ value, onChange }: ColoredLabelInputProps) => {
+  const [labelInputText, setLabelInputText] = useState(value.label)
   const [label, setLabel] = useState(value.label)
   const [color, setColor] = useState(value.color)
 
@@ -45,8 +46,9 @@ const ColoredLabelInput = ({ value, onChange }: ColoredLabelInputProps) => {
     <View>
       <Input
         label="Address label"
-        value={label}
-        onChangeText={setLabel}
+        value={labelInputText}
+        onChangeText={setLabelInputText}
+        onBlur={() => setLabel(labelInputText.trim())}
         autoFocus
         selectionColor={color || undefined}
         color={color || undefined}
@@ -69,7 +71,7 @@ const Colors = styled(View)`
   margin-top: 20px;
 `
 
-const Color = styled(Pressable)<{ color: string; selected: boolean }>`
+const Color = memo(styled(Pressable)<{ color: string; selected: boolean }>`
   width: 40px;
   height: 40px;
   border-radius: 10px;
@@ -82,4 +84,4 @@ const Color = styled(Pressable)<{ color: string; selected: boolean }>`
     css`
       border: 2px solid black;
     `}
-`
+`)

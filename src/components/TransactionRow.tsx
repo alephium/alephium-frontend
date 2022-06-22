@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { calAmountDelta } from '@alephium/sdk'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import React from 'react'
+import { memo } from 'react'
 import { StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -62,7 +62,9 @@ const TransactionRow = ({ tx, isLast, style }: TransactionRowProps) => {
   )
 }
 
-export default TransactionRow
+export default memo(TransactionRow, (prevProps, nextProps) => {
+  return prevProps.tx.hash === nextProps.tx.hash && prevProps.tx.address.hash === nextProps.tx.address.hash
+})
 
 const Item = styled(Text)`
   font-weight: bold;

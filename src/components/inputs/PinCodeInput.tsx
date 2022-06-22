@@ -16,14 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import NumberKeyboard, { NumberKeyboardKey } from '../keyboard/NumberKeyboard'
 
 interface PinInputProps {
-  pinLenght: number
+  pinLength: number
   value: string
   onPinChange: (value: string) => void
   style?: StyleProp<ViewStyle>
@@ -33,7 +33,7 @@ interface SlotProps {
   number?: string
 }
 
-const PinCodeInput = ({ pinLenght, value, onPinChange, style }: PinInputProps) => {
+const PinCodeInput = ({ pinLength, value, onPinChange, style }: PinInputProps) => {
   const [pin, setPin] = useState(value)
 
   useEffect(() => {
@@ -41,13 +41,16 @@ const PinCodeInput = ({ pinLenght, value, onPinChange, style }: PinInputProps) =
   }, [value])
 
   const renderSlots = () => {
-    return [...new Array(pinLenght)].map((_, i) => <Slot key={i} number={value[i]} />)
+    return [...new Array(pinLength)].map((_, i) => <Slot key={i} number={pin[i]} />)
   }
 
   const handleKeyboardPress = (key: NumberKeyboardKey) => {
-    const newPin = key === 'delete' ? pin.slice(0, -1) : pin.length < pinLenght ? pin + key : pin
+    const newPin = key === 'delete' ? pin.slice(0, -1) : pin.length < pinLength ? pin + key : pin
     setPin(newPin)
-    onPinChange(newPin)
+
+    if (newPin.length === pinLength) {
+      onPinChange(newPin)
+    }
   }
 
   return (
@@ -58,7 +61,9 @@ const PinCodeInput = ({ pinLenght, value, onPinChange, style }: PinInputProps) =
   )
 }
 
-const Slot = ({ number }: SlotProps) => <SlotContainer>{number ? <FilledSlot /> : <EmptySlot />}</SlotContainer>
+const Slot = memo(function Slot({ number }: SlotProps) {
+  return <SlotContainer>{number ? <FilledSlot /> : <EmptySlot />}</SlotContainer>
+})
 
 export default styled(PinCodeInput)`
   flex: 1;

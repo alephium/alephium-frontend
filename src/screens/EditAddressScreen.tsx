@@ -27,24 +27,27 @@ import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { storeAddressMetadata } from '../storage/wallets'
-import { addressSettingsUpdated } from '../store/addressesSlice'
+import { addressSettingsUpdated, selectAddressByHash } from '../store/addressesSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'EditAddressScreen'>
 
 const EditAddressScreen = ({
   navigation,
   route: {
-    params: { address }
+    params: { addressHash }
   }
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
+  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
   const [coloredLabel, setColoredLabel] = useState<ColoredLabelInputValue>({
-    label: address.settings.label ?? '',
-    color: address.settings.color ?? ''
+    label: address?.settings.label ?? '',
+    color: address?.settings.color ?? ''
   })
   const activeWallet = useAppSelector((state) => state.activeWallet)
+
+  if (!address) return null
   const addressSettings = {
-    isMain: address.settings.isMain,
+    isMain: address?.settings.isMain,
     label: coloredLabel?.label,
     color: coloredLabel?.color
   }
