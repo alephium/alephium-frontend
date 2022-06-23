@@ -1,7 +1,7 @@
 {
   "name": "alephium-mobile-wallet",
   "version": "0.0.1",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.ts",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -18,6 +18,7 @@
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/stack": "^6.2.1",
     "@reduxjs/toolkit": "^1.8.1",
+    "big-integer": "^1.6.51",
     "dayjs": "^1.11.2",
     "expo": "~44.0.0",
     "expo-linear-gradient": "~11.0.3",
