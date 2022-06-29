@@ -25,12 +25,12 @@ import { formatFiatAmountForDisplay } from '../utils/numbers'
 
 interface AmountProps {
   value?: bigint
-  style?: StyleProp<ViewStyle>
   fadeDecimals?: boolean
   fullPrecision?: boolean
   prefix?: string
   suffix?: string
   fiat?: number
+  style?: StyleProp<ViewStyle>
 }
 
 const Amount = ({ value, style, fadeDecimals, fullPrecision = false, prefix, suffix = '', fiat }: AmountProps) => {
