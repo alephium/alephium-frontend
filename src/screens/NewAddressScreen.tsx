@@ -46,6 +46,7 @@ import { getRandomLabelColor } from '../utils/colors'
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 
 const NewAddressScreen = ({ navigation }: ScreenProps) => {
+  const dispatch = useAppDispatch()
   const [newAddressData, setNewAddressData] = useState<AddressAndKeys>()
   const [coloredLabel, setColoredLabel] = useState<ColoredLabelInputValue>({
     label: '',
@@ -65,7 +66,10 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     color: coloredLabel?.color
   }
 
-  const dispatch = useAppDispatch()
+  useEffect(() => {
+    generateNewAddress(group)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [group])
 
   const generateNewAddress = useCallback(
     (group?: number) => {
@@ -100,11 +104,6 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
       })
     navigation.goBack()
   }
-
-  useEffect(() => {
-    generateNewAddress(group)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [group])
 
   console.log('NewAddressScreen renders')
 

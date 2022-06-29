@@ -39,8 +39,8 @@ const instructions: Instruction[] = [
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
-  const [walletName, setWalletName] = useState('')
   const dispatch = useAppDispatch()
+  const [walletName, setWalletName] = useState('')
   const method = useAppSelector((state) => state.walletGeneration.method)
   const activeWallet = useAppSelector((state) => state.activeWallet)
 

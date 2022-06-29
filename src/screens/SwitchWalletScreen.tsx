@@ -33,8 +33,8 @@ import { WalletMetadata } from '../types/wallet'
 type ScreenProps = StackScreenProps<RootStackParamList, 'SwitchWalletScreen'>
 
 const SwitchWalletScreen = ({ navigation }: ScreenProps) => {
-  const wallets = useSortedWallets()
   const dispatch = useAppDispatch()
+  const wallets = useSortedWallets()
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))

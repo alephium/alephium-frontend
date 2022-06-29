@@ -42,12 +42,12 @@ const AddressScreen = ({
     params: { address }
   }
 }: ScreenProps) => {
+  const dispatch = useAppDispatch()
   const theme = useTheme()
   const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
   const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
   const mainAddress = useAppSelector((state) => selectAddressByHash(state, state.addresses.mainAddress))
   const isCurrentAddressMain = address.hash === mainAddressHash
-  const dispatch = useAppDispatch()
 
   const makeAddressMain = async () => {
     if (address.settings.isMain) return

@@ -31,11 +31,10 @@ import { Mnemonic } from '../types/wallet'
 import { useAppDispatch, useAppSelector } from './redux'
 
 const useLoadStoredAddressesMetadata = () => {
+  const dispatch = useAppDispatch()
   const activeWallet = useAppSelector((state) => state.activeWallet)
   const currentActiveWalletMnemonic = useRef<Mnemonic>(activeWallet.mnemonic)
   const isAddressesStateEmpty = useAppSelector((state) => state.addresses.ids).length === 0
-
-  const dispatch = useAppDispatch()
 
   const initializeAddressesState = useCallback(async () => {
     if (activeWallet.metadataId) {

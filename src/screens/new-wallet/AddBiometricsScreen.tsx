@@ -40,10 +40,10 @@ const instructions: Instruction[] = [
 ]
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
+  const dispatch = useAppDispatch()
   const method = useAppSelector((state) => state.walletGeneration.method)
   const importedMnemonic = useAppSelector((state) => state.walletGeneration.importedMnemonic)
   const walletName = useAppSelector((state) => state.walletGeneration.walletName)
-  const dispatch = useAppDispatch()
 
   const createAndStoreWallet = async (authType: StoredWalletAuthType) => {
     if (method === 'create') {

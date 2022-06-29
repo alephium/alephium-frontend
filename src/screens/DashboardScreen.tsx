@@ -45,11 +45,10 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'> & {
 }
 
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
+  const dispatch = useAppDispatch()
   const theme = useTheme()
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const addresses = useAppSelector(selectAllAddresses)
-
-  const dispatch = useAppDispatch()
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()

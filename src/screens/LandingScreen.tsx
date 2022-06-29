@@ -33,9 +33,8 @@ import { methodSelected, WalletGenerationMethod } from '../store/walletGeneratio
 type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
-  const { yellow, orange, red, purple, cyan } = useTheme().gradient
-
   const dispatch = useAppDispatch()
+  const { yellow, orange, red, purple, cyan } = useTheme().gradient
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))

@@ -52,14 +52,14 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
+  const dispatch = useAppDispatch()
   const hasAvailableBiometrics = useBiometrics()
-  const method = useAppSelector((state) => state.walletGeneration.method)
-  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [isVerifyingCode, setIsVerifyingCode] = useState(false)
-  const dispatch = useAppDispatch()
+  const method = useAppSelector((state) => state.walletGeneration.method)
+  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
 
   useFocusEffect(
     useCallback(() => {

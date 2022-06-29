@@ -37,6 +37,7 @@ const EditAddressScreen = ({
     params: { address }
   }
 }: ScreenProps) => {
+  const dispatch = useAppDispatch()
   const [coloredLabel, setColoredLabel] = useState<ColoredLabelInputValue>({
     label: address.settings.label ?? '',
     color: address.settings.color ?? ''
@@ -47,8 +48,6 @@ const EditAddressScreen = ({
     label: coloredLabel?.label,
     color: coloredLabel?.color
   }
-
-  const dispatch = useAppDispatch()
 
   const handleSavePress = () => {
     if (coloredLabel.color === address.settings.color && coloredLabel.label === address.settings.label) return

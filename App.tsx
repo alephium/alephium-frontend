@@ -44,8 +44,8 @@ const App = () => (
 )
 
 const Main: FC = ({ children }) => {
-  const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
+  const appState = useRef(AppState.currentState)
   const activeWallet = useAppSelector((state) => state.activeWallet)
 
   useInitializeClient()

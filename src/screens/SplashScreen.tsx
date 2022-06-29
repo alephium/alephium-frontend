@@ -32,8 +32,8 @@ import { activeWalletChanged } from '../store/activeWalletSlice'
 type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
 
 const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
-  const { yellow, orange, red, purple, cyan } = useTheme().gradient
   const dispatch = useAppDispatch()
+  const { yellow, orange, red, purple, cyan } = useTheme().gradient
   const activeWalletMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
 
   useEffect(() => {
