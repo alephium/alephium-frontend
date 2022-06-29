@@ -55,7 +55,7 @@ const TransactionRow = ({ tx, isLast, style }: TransactionRowProps) => {
       <AddressHash numberOfLines={1}>{tx.address.hash}</AddressHash>
       <AmountStyled
         prefix={isOut ? '- ' : '+ '}
-        value={BigInt(amountIsBigInt && amount < 0 ? (amount * -1).toString() : amount.toString())}
+        value={BigInt(amountIsBigInt && amount < 0 ? (amount * -BigInt(1)).toString() : amount.toString())}
         fadeDecimals
       />
     </ListItem>
