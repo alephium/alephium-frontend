@@ -20,7 +20,12 @@ import { deriveNewAddressData, walletImport } from '@alephium/sdk'
 import { useCallback, useEffect, useRef } from 'react'
 
 import { getAddressesMetadataByWalletId } from '../storage/wallets'
-import { addressesAdded, fetchAddressConfirmedTransactions, fetchAddressesData } from '../store/addressesSlice'
+import {
+  addressesAdded,
+  addressesFlushed,
+  fetchAddressConfirmedTransactions,
+  fetchAddressesData
+} from '../store/addressesSlice'
 import { Mnemonic } from '../types/wallet'
 import { useAppDispatch, useAppSelector } from './redux'
 
@@ -50,15 +55,12 @@ const useLoadStoredAddressesMetadata = () => {
   }, [activeWallet.metadataId, activeWallet.mnemonic, dispatch])
 
   useEffect(() => {
-    if (
-      activeWallet.mnemonic &&
-      currentActiveWalletMnemonic.current != activeWallet.mnemonic &&
-      isAddressesStateEmpty
-    ) {
+    if (activeWallet.mnemonic && currentActiveWalletMnemonic.current != activeWallet.mnemonic) {
+      if (!isAddressesStateEmpty) dispatch(addressesFlushed())
       initializeAddressesState()
       currentActiveWalletMnemonic.current = activeWallet.mnemonic
     }
-  }, [activeWallet.mnemonic, initializeAddressesState, isAddressesStateEmpty])
+  }, [activeWallet.mnemonic, dispatch, initializeAddressesState, isAddressesStateEmpty])
 }
 
 export default useLoadStoredAddressesMetadata

@@ -18,16 +18,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { FC } from 'react'
 import { Pressable, PressableProps, StyleProp, Text, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
 
 export interface ButtonProps extends PressableProps {
-  title: string
+  title?: string
   type?: 'primary' | 'secondary'
   variant?: 'default' | 'contrast' | 'accent'
   style?: StyleProp<ViewStyle>
   wide?: boolean
+  icon?: boolean
   children?: React.ReactNode
 }
 
@@ -37,6 +38,7 @@ const Button: FC<ButtonProps> = ({
   type = 'primary',
   variant = 'default',
   disabled,
+  icon,
   children,
   ...props
 }) => {
@@ -71,7 +73,7 @@ const Button: FC<ButtonProps> = ({
 
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
-      <ButtonText style={{ color: colors.font }}>{title}</ButtonText>
+      {title && <ButtonText style={{ color: colors.font }}>{title}</ButtonText>}
       {children}
     </Pressable>
   )
@@ -79,11 +81,19 @@ const Button: FC<ButtonProps> = ({
 
 export default styled(Button)`
   border-radius: ${BORDER_RADIUS}px;
-  padding: 0 25px;
-  height: 55px;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+
+  ${({ icon }) =>
+    icon
+      ? css`
+          width: 45px;
+        `
+      : css`
+          padding: 0 25px;
+        `};
+  height: ${({ icon }) => (icon ? '45px' : '55px')};
 `
 
 const ButtonText = styled(Text)`

@@ -16,27 +16,31 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ActiveWalletState } from '../store/activeWalletSlice'
-import { Address } from '../store/addressesSlice'
+import { FC } from 'react'
+import { StyleProp, View, ViewStyle } from 'react-native'
+import styled, { css } from 'styled-components/native'
 
-type RootStackParamList = {
-  LandingScreen: undefined
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
-  PinCodeCreationScreen: undefined
-  AddBiometricsScreen: undefined
-  NewWalletSuccessPage: undefined
-  ImportWalletSeedScreen: undefined
-  DashboardScreen: undefined
-  LoginScreen: {
-    storedWallet: ActiveWalletState
-  }
-  SplashScreen: undefined
-  SwitchWalletScreen: undefined
-  AddressesScreen: undefined
-  AddressScreen: {
-    address: Address
-  }
+interface ListProps {
+  style?: StyleProp<ViewStyle>
 }
 
-export default RootStackParamList
+const List: FC<ListProps> = ({ style, children }) => <View style={style}>{children}</View>
+
+export default styled(List)`
+  box-shadow: ${({ theme }) => theme.shadow.secondary};
+  border-radius: 12px;
+  background-color: white;
+`
+
+export const ListItem = styled(View)<{ isLast?: boolean }>`
+  flex-direction: row;
+  align-items: center;
+  padding: 20px 15px;
+
+  ${({ isLast, theme }) =>
+    !isLast &&
+    css`
+      border-bottom-color: ${({ theme }) => theme.border.secondary};
+      border-bottom-width: 1px;
+    `};
+`

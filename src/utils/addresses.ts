@@ -16,27 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ActiveWalletState } from '../store/activeWalletSlice'
 import { Address } from '../store/addressesSlice'
 
-type RootStackParamList = {
-  LandingScreen: undefined
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
-  PinCodeCreationScreen: undefined
-  AddBiometricsScreen: undefined
-  NewWalletSuccessPage: undefined
-  ImportWalletSeedScreen: undefined
-  DashboardScreen: undefined
-  LoginScreen: {
-    storedWallet: ActiveWalletState
-  }
-  SplashScreen: undefined
-  SwitchWalletScreen: undefined
-  AddressesScreen: undefined
-  AddressScreen: {
-    address: Address
-  }
-}
-
-export default RootStackParamList
+export const getAddressDisplayName = (address: Address): string =>
+  address.settings.label ?? address.hash.substring(0, 6)

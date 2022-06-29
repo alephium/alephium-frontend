@@ -44,7 +44,7 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const LoginScreen = ({ navigation, route }: ScreenProps) => {
-  const storedActiveEncryptedWallet = route.params.storedActiveWallet as ActiveWalletState
+  const storedActiveEncryptedWallet = route.params.storedWallet as ActiveWalletState
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const dispatch = useAppDispatch()
@@ -80,7 +80,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
   console.log('LoginScreen renders')
 
   return (
-    <Screen>
+    <Screen style={{ marginTop: 40 }}>
       <CenteredInstructions instructions={shownInstructions} />
       <PinCodeInput pinLenght={pinLength} value={pinCode} onPinChange={setPinCode} />
     </Screen>

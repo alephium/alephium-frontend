@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { walletEncrypt, walletImport } from '@alephium/sdk'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { storeWallet } from '../storage/wallets'
+import { changeActiveWallet, storeWallet } from '../storage/wallets'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
@@ -88,6 +88,35 @@ export const walletStored = createAsyncThunk(
   }
 )
 
+export const activeWalletChanged = createAsyncThunk(
+  `${sliceName}/activeWalletChanged`,
+  async (payload: ActiveWalletState, { getState, dispatch }) => {
+    let hasError = false
+
+    try {
+      const { metadataId } = payload
+      if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
+
+      dispatch(loadingStarted())
+
+      await changeActiveWallet(metadataId)
+    } catch (e) {
+      console.error(e)
+      hasError = true
+    }
+
+    return new Promise<ActiveWalletState>((resolve, reject) => {
+      dispatch(loadingFinished())
+
+      if (hasError) {
+        reject(new Error('Could not store wallet'))
+      } else {
+        resolve(payload as ActiveWalletState)
+      }
+    })
+  }
+)
+
 const activeWalletSlice = createSlice({
   name: sliceName,
   initialState,
@@ -100,9 +129,13 @@ const activeWalletSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(walletStored.fulfilled, (state, action) => {
-      return action.payload
-    })
+    builder
+      .addCase(walletStored.fulfilled, (state, action) => {
+        return action.payload
+      })
+      .addCase(activeWalletChanged.fulfilled, (state, action) => {
+        return action.payload
+      })
   }
 })
 

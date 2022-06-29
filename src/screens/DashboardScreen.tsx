@@ -19,12 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { formatAmountForDisplay } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import Amount from '../components/Amount'
 import Button from '../components/buttons/Button'
+import FooterMenu from '../components/FooterMenu'
 import Screen from '../components/layout/Screen'
+import List from '../components/List'
 import TransactionRow from '../components/TransactionRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -32,9 +34,11 @@ import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
 import { selectAllAddresses } from '../store/addressesSlice'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'>
+type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'> & {
+  style?: StyleProp<ViewStyle>
+}
 
-const DashboardScreen = ({ navigation }: ScreenProps) => {
+const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const [usdPrice, setUsdPrice] = useState(0)
   const activeWallet = useAppSelector((state) => state.activeWallet)
   const addresses = useAppSelector(selectAllAddresses)
@@ -63,6 +67,10 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
     }
   }
 
+  const handleSwitchWallet = () => {
+    navigation.navigate('SwitchWalletScreen')
+  }
+
   useEffect(() => {
     fetchPrice()
   }, [])
@@ -70,7 +78,7 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
   console.log('DashboardScreen renders')
 
   return (
-    <Screen>
+    <Screen style={style}>
       <ScrollView>
         <ScreenSection>
           <Text>{activeWallet.name}</Text>
@@ -83,14 +91,18 @@ const DashboardScreen = ({ navigation }: ScreenProps) => {
         </ScreenSection>
         <ScreenSection>
           <H2>Latest transactions</H2>
-          <TransactionsList>
+          <List>
             {allConfirmedTxs.map((tx, index) => (
               <TransactionRow key={tx.hash} tx={tx} isLast={index === allConfirmedTxs.length - 1} />
             ))}
-          </TransactionsList>
+          </List>
         </ScreenSection>
-        <Button title="Delete all wallets to test fresh install" onPress={handleDeleteAllWallets} />
+        <Buttons style={{ marginBottom: 120 }}>
+          <Button title="Delete all wallets" onPress={handleDeleteAllWallets} />
+          <Button title="Switch wallet" onPress={handleSwitchWallet} />
+        </Buttons>
       </ScrollView>
+      <FooterMenu />
     </Screen>
   )
 }
@@ -136,10 +148,6 @@ const ScreenSection = styled(View)`
   border-bottom-width: 1px;
 `
 
-const TransactionsList = styled(View)`
-  box-shadow: ${({ theme }) => theme.shadow.secondary};
-  border-radius: 12px;
-  background-color: white;
+export default styled(DashboardScreen)`
+  padding-top: 30px;
 `
-
-export default DashboardScreen

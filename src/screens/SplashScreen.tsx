@@ -43,7 +43,7 @@ const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenPr
         if (storedActiveWallet === null) {
           navigation.navigate('LandingScreen')
         } else if (storedActiveWallet.authType === 'pin') {
-          navigation.navigate('LoginScreen', { storedActiveWallet })
+          navigation.navigate('LoginScreen', { storedWallet: storedActiveWallet })
         } else if (storedActiveWallet.authType === 'biometrics') {
           dispatch(walletChanged(storedActiveWallet))
           navigation.navigate('DashboardScreen')
