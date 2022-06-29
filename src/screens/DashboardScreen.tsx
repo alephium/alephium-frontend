@@ -158,6 +158,7 @@ const Actions = styled(View)`
   align-items: center;
 `
 
+// TODO: Create standalone Icon component to allow us to define the size prop
 const Icon = styled(View)`
   padding: 18px 12px;
 `
