@@ -77,7 +77,7 @@ export const storeWallet = async (
       : undefined
 
   await SecureStore.setItemAsync(`wallet-${walletId}`, mnemonic, secureStoreConfig)
-  await SecureStore.setItemAsync('active-wallet-id', walletId)
+  await AsyncStorage.setItem('active-wallet-id', walletId)
 
   return walletId
 }
@@ -106,7 +106,7 @@ export const getStoredWalletById = async (id: string): Promise<ActiveWalletState
 }
 
 export const getStoredActiveWallet = async (): Promise<ActiveWalletState | null> => {
-  const id = await SecureStore.getItemAsync('active-wallet-id')
+  const id = await AsyncStorage.getItem('active-wallet-id')
   if (!id) return null
 
   return await getStoredWalletById(id)
@@ -123,9 +123,9 @@ export const deleteWalletByName = async (walletName: string) => {
   walletsMetadata.splice(index, 1)
   await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
 
-  const activeWalletId = await SecureStore.getItemAsync('active-wallet-id')
+  const activeWalletId = await AsyncStorage.getItem('active-wallet-id')
   if (activeWalletId === walletMetadata.id) {
-    await SecureStore.deleteItemAsync('active-wallet-id')
+    await AsyncStorage.removeItem('active-wallet-id')
   }
 
   await deleteWallet(walletMetadata)
@@ -139,7 +139,7 @@ export const deleteAllWallets = async () => {
   }
 
   await AsyncStorage.removeItem('wallets-metadata')
-  await SecureStore.deleteItemAsync('active-wallet-id')
+  await AsyncStorage.removeItem('active-wallet-id')
 }
 
 const deleteWallet = async (walletMetadata: WalletMetadata) => {
@@ -186,5 +186,5 @@ export const getWalletsMetadata = async (): Promise<WalletMetadata[]> => {
 }
 
 export const changeActiveWallet = async (walletId: string) => {
-  await SecureStore.setItemAsync('active-wallet-id', walletId)
+  await AsyncStorage.setItem('active-wallet-id', walletId)
 }
