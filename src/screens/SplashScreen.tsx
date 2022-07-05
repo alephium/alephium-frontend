@@ -27,13 +27,13 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { AlephiumLogoStyled, GradientBackgroundStyled } from '../screens/LandingScreen'
 import { getStoredActiveWallet } from '../storage/wallets'
-import { walletChanged } from '../store/activeWalletSlice'
+import { activeWalletChanged } from '../store/activeWalletSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
 
 const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
-  const { yellow, orange, red, purple, cyan } = useTheme().gradient
   const dispatch = useAppDispatch()
+  const { yellow, orange, red, purple, cyan } = useTheme().gradient
   const activeWalletMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenPr
         } else if (storedActiveWallet.authType === 'pin') {
           navigation.navigate('LoginScreen', { storedWallet: storedActiveWallet })
         } else if (storedActiveWallet.authType === 'biometrics') {
-          dispatch(walletChanged(storedActiveWallet))
+          dispatch(activeWalletChanged(storedActiveWallet))
           navigation.navigate('DashboardScreen')
         } else {
           throw new Error('Unknown auth type')

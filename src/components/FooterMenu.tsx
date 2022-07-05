@@ -97,6 +97,5 @@ const TransferTab = styled(Tab)`
 
 const TabText = styled(Text)<{ isActive?: boolean }>`
   font-weight: 700;
-
   color: ${({ theme, isActive }) => (isActive ? theme.font.primary : theme.font.tertiary)};
 `

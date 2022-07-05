@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { walletEncrypt, walletImport } from '@alephium/sdk'
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { changeActiveWallet, storeWallet } from '../storage/wallets'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
@@ -123,9 +123,6 @@ const activeWalletSlice = createSlice({
   reducers: {
     walletFlushed: () => {
       return initialState
-    },
-    walletChanged: (state, action: PayloadAction<ActiveWalletState>) => {
-      return action.payload
     }
   },
   extraReducers: (builder) => {
@@ -139,6 +136,6 @@ const activeWalletSlice = createSlice({
   }
 })
 
-export const { walletChanged, walletFlushed } = activeWalletSlice.actions
+export const { walletFlushed } = activeWalletSlice.actions
 
 export default activeWalletSlice

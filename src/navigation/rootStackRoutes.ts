@@ -37,6 +37,10 @@ type RootStackParamList = {
   AddressScreen: {
     address: Address
   }
+  NewAddressScreen: undefined
+  EditAddressScreen: {
+    address: Address
+  }
 }
 
 export default RootStackParamList

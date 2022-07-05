@@ -27,9 +27,12 @@ import Badge from '../components/Badge'
 import Button from '../components/buttons/Button'
 import Screen from '../components/layout/Screen'
 import List, { ListItem } from '../components/List'
-import TransactionRow from '../components/TransactionRow'
+import TransactionsList from '../components/TransactionsList'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { getAddressDisplayName } from '../utils/addresses'
+import { storeAddressMetadata } from '../storage/wallets'
+import { mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
+import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressScreen'>
 
@@ -39,22 +42,48 @@ const AddressScreen = ({
     params: { address }
   }
 }: ScreenProps) => {
+  const dispatch = useAppDispatch()
   const theme = useTheme()
-  const confirmedTxs = address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address }))
+  const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
+  const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
+  const mainAddress = useAppSelector((state) => selectAddressByHash(state, state.addresses.mainAddress))
+  const isCurrentAddressMain = address.hash === mainAddressHash
+
+  const makeAddressMain = async () => {
+    if (address.settings.isMain) return
+
+    dispatch(mainAddressChanged(address))
+
+    if (activeWalletMetadataId) {
+      if (mainAddress) {
+        await storeAddressMetadata(activeWalletMetadataId, {
+          index: mainAddress.index,
+          ...mainAddress.settings,
+          isMain: false
+        })
+      }
+      await storeAddressMetadata(activeWalletMetadataId, {
+        index: address.index,
+        ...address.settings,
+        isMain: true
+      })
+    }
+  }
+
   console.log('AddressScreen renders')
 
   return (
     <Screen>
       <ScrollView>
         <Header>
-          <Badge rounded border color={address.settings.color}>
+          <BadgeStyled rounded border color={address.settings.color}>
             <BadgeText>{getAddressDisplayName(address)}</BadgeText>
-          </Badge>
+          </BadgeStyled>
           <Actions>
-            <ButtonStyled icon variant="contrast">
-              <StarIcon fill={address.settings.isMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
+            <ButtonStyled icon variant="contrast" onPress={makeAddressMain} disabled={isCurrentAddressMain}>
+              <StarIcon fill={isCurrentAddressMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
             </ButtonStyled>
-            <ButtonStyled icon variant="contrast">
+            <ButtonStyled icon variant="contrast" onPress={() => copyAddressToClipboard(address)}>
               <ClipboardIcon color={theme.font.primary} size={20} />
             </ButtonStyled>
             <ButtonStyled icon variant="contrast">
@@ -95,12 +124,7 @@ const AddressScreen = ({
           </List>
         </ScreenSection>
         <ScreenSection>
-          <H2>Latest transactions</H2>
-          <List>
-            {confirmedTxs.map((tx, index) => (
-              <TransactionRow key={tx.hash} tx={tx} isLast={index === confirmedTxs.length - 1} />
-            ))}
-          </List>
+          <TransactionsList addresses={[address]} />
         </ScreenSection>
       </ScrollView>
     </Screen>
@@ -115,11 +139,14 @@ const Header = styled(View)`
   flex-direction: row;
   justify-content: space-between;
   margin: 40px 20px;
+  max-width: 100%;
 `
 
 const Actions = styled(View)`
   flex-direction: row;
   align-items: center;
+  flex-grow: 1;
+  justify-content: flex-end;
 `
 
 const ButtonStyled = styled(Button)`
@@ -141,15 +168,12 @@ const BadgeText = styled(Text)`
   font-size: 18px;
 `
 
-const H2 = styled.Text`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 10px;
-`
-
 const NumberOfTxs = styled(Text)`
   font-weight: 700;
+`
+
+const BadgeStyled = styled(Badge)`
+  flex-shrink: 1;
 `
 
 export default AddressScreen

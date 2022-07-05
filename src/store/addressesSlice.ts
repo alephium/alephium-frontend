@@ -76,6 +76,38 @@ const initialState: AddressesState = addressSettingsAdapter.getInitialState({
   loading: false
 })
 
+export const fetchAddressesInitialData = createAsyncThunk(
+  `${sliceName}/fetchAddressesInitialData`,
+  async (payload: AddressHash[], { dispatch }) => {
+    const results = []
+    dispatch(loadingStarted())
+
+    for (const addressHash of payload) {
+      const { data } = await client.explorerClient.getAddressDetails(addressHash)
+      const availableBalance = data.balance
+        ? data.lockedBalance
+          ? (BigInt(data.balance) - BigInt(data.lockedBalance)).toString()
+          : data.balance
+        : undefined
+
+      const page = 1
+      console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, addressHash)
+      const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, page)
+
+      results.push({
+        hash: addressHash,
+        details: data,
+        availableBalance: availableBalance,
+        transactions,
+        page
+      })
+    }
+
+    dispatch(loadingFinished())
+    return results
+  }
+)
+
 export const fetchAddressesData = createAsyncThunk(
   `${sliceName}/fetchAddressesData`,
   async (payload: AddressHash[], { dispatch }) => {
@@ -115,7 +147,7 @@ export const fetchAddressConfirmedTransactions = createAsyncThunk(
 
     return {
       hash,
-      transactions: data,
+      transactions: data || [],
       page
     }
   }
@@ -130,12 +162,12 @@ const addressesSlice = createSlice({
 
       const newMainAddress = addresses.find((address) => address.settings.isMain)
       if (newMainAddress) {
-        state.mainAddress = newMainAddress.hash
-
         const previousMainAddress = state.entities[state.mainAddress]
         if (previousMainAddress) {
           previousMainAddress.settings.isMain = false
         }
+
+        state.mainAddress = newMainAddress.hash
       }
 
       addressSettingsAdapter.addMany(
@@ -161,6 +193,29 @@ const addressesSlice = createSlice({
         }))
       )
     },
+    addressSettingsUpdated: (state, action: PayloadAction<{ hash: AddressHash; settings: AddressSettings }>) => {
+      const { hash, settings } = action.payload
+      const address = state.entities[hash]
+      if (address) {
+        address.settings = settings
+      }
+    },
+    mainAddressChanged: (state, action: PayloadAction<Address>) => {
+      const newMainAddress = action.payload
+
+      const previousMainAddress = state.entities[state.mainAddress]
+      addressSettingsAdapter.updateOne(state, {
+        id: state.mainAddress,
+        changes: { settings: { ...previousMainAddress?.settings, isMain: false } }
+      })
+
+      state.mainAddress = newMainAddress.hash
+
+      addressSettingsAdapter.updateOne(state, {
+        id: newMainAddress.hash,
+        changes: { settings: { ...newMainAddress.settings, isMain: true } }
+      })
+    },
     addressesFlushed: (state) => {
       addressSettingsAdapter.setAll(state, [])
     },
@@ -173,6 +228,19 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchAddressesInitialData.fulfilled, (state, action) => {
+        for (const address of action.payload) {
+          const { hash, details, availableBalance, transactions, page } = address
+
+          const addressState = state.entities[hash]
+          if (addressState) {
+            addressState.networkData.details = details
+            addressState.networkData.transactions.confirmed = transactions
+            addressState.networkData.transactions.loadedPage = page
+            if (availableBalance) addressState.networkData.availableBalance = availableBalance
+          }
+        }
+      })
       .addCase(fetchAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, details, availableBalance } = address
@@ -199,6 +267,13 @@ const addressesSlice = createSlice({
 export const { selectById: selectAddressByHash, selectAll: selectAllAddresses } =
   addressSettingsAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const { addressesAdded, addressesFlushed, loadingStarted, loadingFinished } = addressesSlice.actions
+export const {
+  addressesAdded,
+  addressesFlushed,
+  loadingStarted,
+  loadingFinished,
+  addressSettingsUpdated,
+  mainAddressChanged
+} = addressesSlice.actions
 
 export default addressesSlice

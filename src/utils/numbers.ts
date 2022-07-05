@@ -16,21 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { addApostrophes } from '@alephium/sdk'
 
-import { Address } from '../store/addressesSlice'
-import { NetworkName } from './network'
+const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
 
-type TransactionType = 'consolidation' | 'transfer' | 'sweep'
+export const formatFiatAmountForDisplay = (amount: number): string => {
+  if (amount <= 1000000) return addApostrophes(amount.toFixed(2))
 
-export type PendingTx = {
-  txId: string
-  fromAddress: string
-  toAddress: string
-  timestamp: number
-  type: TransactionType
-  network: NetworkName
-  amount?: bigint
+  const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : 4
+  const suffix = MONEY_SYMBOL[tier]
+  const scale = Math.pow(10, tier * 3)
+  const scaled = amount / scale
+
+  return scaled.toFixed(2) + suffix
 }
-
-export type DisplayTx = Transaction & { address: Address }

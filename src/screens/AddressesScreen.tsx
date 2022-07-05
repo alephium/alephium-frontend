@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useNavigation } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import dayjs from 'dayjs'
 import {
@@ -26,8 +27,7 @@ import {
 } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
 import { useLayoutEffect } from 'react'
-import { ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { Pressable, ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
@@ -36,7 +36,7 @@ import Screen from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { Address, selectAllAddresses } from '../store/addressesSlice'
-import { getAddressDisplayName } from '../utils/addresses'
+import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressesScreen'>
 
@@ -48,9 +48,9 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     navigation.setOptions({
       headerTitle: `Addresses (${addresses.length})`,
       headerRight: () => (
-        <TouchableWithoutFeedback>
+        <Pressable onPress={() => navigation.navigate('NewAddressScreen')}>
           <PlusIcon size={24} color={theme.global.accent} style={{ marginRight: 20 }} />
-        </TouchableWithoutFeedback>
+        </Pressable>
       )
     })
   })
@@ -62,12 +62,9 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
       <ScrollView>
         <ScreenSection>
           {addresses.map((address) => (
-            <TouchableWithoutFeedback
-              onPress={() => navigation.navigate('AddressScreen', { address })}
-              key={address.hash}
-            >
+            <Pressable onPress={() => navigation.navigate('AddressScreen', { address })} key={address.hash}>
               <AddressRow address={address} />
-            </TouchableWithoutFeedback>
+            </Pressable>
           ))}
         </ScreenSection>
       </ScrollView>
@@ -87,32 +84,33 @@ let AddressRow = ({ style, address }: AddressProps) => {
     address.networkData.transactions.confirmed.length > 0
       ? dayjs(address.networkData.transactions.confirmed[0].timestamp).fromNow()
       : 'Never used'
+  const navigation = useNavigation()
 
   return (
     <View style={style}>
       <Header>
         <Name color={address.settings.color}>{getAddressDisplayName(address)}</Name>
         <Actions>
-          <TouchableWithoutFeedback>
+          <Pressable>
             <Icon>
               <StarIcon fill={address.settings.isMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
             </Icon>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
+          </Pressable>
+          <Pressable onPress={() => navigation.navigate('EditAddressScreen', { address })}>
             <Icon>
               <PencilIcon color={theme.font.primary} size={20} />
             </Icon>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
+          </Pressable>
+          <Pressable onPress={() => copyAddressToClipboard(address)}>
             <Icon>
               <ClipboardIcon color={theme.font.primary} size={20} />
             </Icon>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
+          </Pressable>
+          <Pressable>
             <Icon style={{ marginRight: 12 }}>
               <QrCodeIcon color={theme.font.primary} size={20} />
             </Icon>
-          </TouchableWithoutFeedback>
+          </Pressable>
         </Actions>
       </Header>
       <AmountStyled value={BigInt(address.networkData.details.balance)} fadeDecimals />
@@ -122,22 +120,26 @@ let AddressRow = ({ style, address }: AddressProps) => {
 }
 
 const ScreenSection = styled(View)`
-  padding: 22px 20px;
+  padding: 22px 20px 120px;
 `
 
 AddressRow = styled(AddressRow)`
   background-color: white;
   border-radius: 12px;
+  margin-bottom: 15px;
 `
 
 const Header = styled(View)`
   flex-direction: row;
   justify-content: space-between;
+  max-width: 100%;
 `
 
 const Actions = styled(View)`
   flex-direction: row;
   align-items: center;
+  flex-grow: 1;
+  justify-content: flex-end;
 `
 
 const Name = styled(Text)<{ color?: string }>`
@@ -145,8 +147,10 @@ const Name = styled(Text)<{ color?: string }>`
   font-weight: 700;
   color: ${({ theme, color }) => color || theme.font.primary};
   padding: 17px 28px;
+  flex-shrink: 1;
 `
 
+// TODO: Create standalone Icon component to allow us to define the size prop
 const Icon = styled(View)`
   padding: 18px 12px;
 `

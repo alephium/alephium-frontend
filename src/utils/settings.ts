@@ -19,7 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { isEqual } from 'lodash'
 
 import { networkPresetSettings } from '../storage/settings'
-import { NetworkSettings, NetworkName } from '../types/network'
+import { NetworkName } from '../types/network'
+import { NetworkSettings } from '../types/settings'
 
 export const getNetworkName = (settings: NetworkSettings) => {
   return (Object.entries(networkPresetSettings).find(([, presetSettings]) => {

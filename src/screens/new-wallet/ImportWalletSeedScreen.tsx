@@ -34,11 +34,11 @@ import { importedMnemonicChanged } from '../../store/walletGenerationSlice'
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
+  const dispatch = useAppDispatch()
   const [secretPhrase, setSecretPhrase] = useState('')
   const [words, setWords] = useState<string[]>([])
   const walletName = useAppSelector((state) => state.walletGeneration.walletName)
   const activeWallet = useAppSelector((state) => state.activeWallet)
-  const dispatch = useAppDispatch()
   const hasAvailableBiometrics = useBiometrics()
 
   useEffect(() => {

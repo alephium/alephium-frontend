@@ -24,10 +24,9 @@ import { Mnemonic } from '../types/wallet'
 import { useAppDispatch, useAppSelector } from './redux'
 
 const useOnNewWalletSuccess = (callback: () => void) => {
+  const dispatch = useAppDispatch()
   const activeWalletMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
   const currentActiveWalletMnemonic = useRef<Mnemonic>(activeWalletMnemonic)
-
-  const dispatch = useAppDispatch()
 
   useFocusEffect(
     useCallback(() => {

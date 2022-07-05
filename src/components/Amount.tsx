@@ -21,46 +21,60 @@ import { StyleProp, Text, ViewStyle } from 'react-native'
 import styled from 'styled-components'
 
 import { useAppSelector } from '../hooks/redux'
+import { formatFiatAmountForDisplay } from '../utils/numbers'
 
 interface AmountProps {
-  value: bigint | undefined
-  style?: StyleProp<ViewStyle>
+  value?: bigint
   fadeDecimals?: boolean
   fullPrecision?: boolean
   prefix?: string
+  suffix?: string
+  fiat?: number
+  style?: StyleProp<ViewStyle>
 }
 
-const Amount = ({ value, style, fadeDecimals, fullPrecision = false, prefix }: AmountProps) => {
+const Amount = ({ value, style, fadeDecimals, fullPrecision = false, prefix, suffix = '', fiat }: AmountProps) => {
   let integralPart = ''
   let fractionalPart = ''
-  let suffix = ''
+  let moneySymbol = ''
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
 
-  if (!discreetMode && value !== undefined) {
-    let amount = formatAmountForDisplay(value, fullPrecision)
-    if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
-      suffix = amount.slice(-1)
-      amount = amount.slice(0, -1)
+  if (!discreetMode) {
+    let amount = ''
+
+    if (fiat) {
+      amount = formatFiatAmountForDisplay(fiat)
+    } else if (value !== undefined) {
+      amount = formatAmountForDisplay(value, fullPrecision)
     }
-    const amountParts = amount.split('.')
-    integralPart = amountParts[0]
-    fractionalPart = amountParts[1]
+
+    if (amount) {
+      if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
+        moneySymbol = amount.slice(-1)
+        amount = amount.slice(0, -1)
+      }
+      const amountParts = amount.split('.')
+      integralPart = amountParts[0]
+      fractionalPart = amountParts[1]
+    }
   }
+
+  const displaySuffix = moneySymbol + suffix ? ' ' + suffix : ''
 
   return (
     <Text style={style}>
       {discreetMode ? (
         '•••'
-      ) : value !== undefined ? (
+      ) : integralPart ? (
         fadeDecimals ? (
           <>
             {prefix && <Text>{prefix}</Text>}
             <Text>{integralPart}</Text>
             <Decimals>.{fractionalPart}</Decimals>
-            {suffix && <Text>{suffix}</Text>}
+            {displaySuffix && <Text>{displaySuffix}</Text>}
           </>
         ) : (
-          `${integralPart}.${fractionalPart}`
+          `${integralPart}.${fractionalPart}${displaySuffix}`
         )
       ) : (
         '-'
