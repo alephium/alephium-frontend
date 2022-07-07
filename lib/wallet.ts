@@ -19,9 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import blake from 'blakejs'
+import { pbkdf2 } from 'crypto'
 
 import bs58 from './bs58'
-import { decrypt, encrypt } from './password-crypto'
+import { decrypt, decryptAsync, encrypt, encryptAsync, DecryptAsyncOptions, EncryptAsyncOptions } from './password-crypto'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import { addressToGroup } from './address'
 
@@ -169,3 +170,21 @@ export const walletEncrypt = (password: string, mnemonic: string) => {
 
   return encrypt(password, JSON.stringify(storedState))
 }
+
+export const walletOpenAsyncUnsafe = (password: string, encryptedWallet: string, { pbkdf2CustomFunc }: DecryptAsyncOptions): Promise<Wallet> => {
+  const _pbkdf2 = pbkdf2CustomFunc ?? pbkdf2
+  return decryptAsync(password, encryptedWallet, { pbkdf2CustomFunc: _pbkdf2 })
+    .then((data) => {
+      const config = JSON.parse(data) as StoredState
+      return getWalletFromMnemonic(config.mnemonic)
+    })
+}
+
+export const walletEncryptAsyncUnsafe = (password: string, mnemonic: string, { pbkdf2CustomFunc }: EncryptAsyncOptions): Promise<string>  => {
+  const storedState = new StoredState({
+    mnemonic
+  })
+  const _pbkdf2 = pbkdf2CustomFunc ?? pbkdf2
+  return encryptAsync(password, JSON.stringify(storedState), { pbkdf2CustomFunc: _pbkdf2 })
+}
+
