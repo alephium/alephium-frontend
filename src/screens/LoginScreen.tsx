@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
@@ -31,7 +32,7 @@ import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
 import { pinEntered } from '../store/credentialsSlice'
-import { unlockWalletAsync } from '../utils/wallet'
+import { pbkdf2 } from '../utils/crypto';
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 
@@ -62,32 +63,31 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     }, [])
   )
 
-  const unlockWallet = useCallback(async () => {
-    const wallet = await unlockWalletAsync(pinCode, storedActiveEncryptedWallet.mnemonic)
-    await dispatch(
-      activeWalletChanged({
-        ...storedActiveEncryptedWallet,
-        mnemonic: wallet.mnemonic
-      })
-    )
-    navigation.navigate('DashboardScreen')
-    setPinCode('')
-  }, [dispatch, navigation, pinCode, storedActiveEncryptedWallet])
-
   useEffect(() => {
     if (!pinFullyEntered) return
 
     setLoading(true)
 
     try {
-      dispatch(pinEntered(pinCode))
-      unlockWallet()
+      walletOpenAsyncUnsafe(pinCode, storedActiveEncryptedWallet.mnemonic, { pbkdf2CustomFunc: pbkdf2 })
+      .then((wallet) => {
+        console.log('opened', wallet)
+        dispatch(pinEntered(pinCode))
+        dispatch(
+          activeWalletChanged({
+            ...storedActiveEncryptedWallet,
+            mnemonic: wallet.mnemonic
+          })
+        )
+        setPinCode('')
+        navigation.navigate('DashboardScreen')
+      })
     } catch (e) {
       setShownInstructions(errorInstructionSet)
       setPinCode('')
       console.error(`Could not unlock wallet ${storedActiveEncryptedWallet.name}`, e)
     }
-  }, [dispatch, pinCode, pinFullyEntered, storedActiveEncryptedWallet.name, unlockWallet])
+  }, [dispatch, pinCode, pinFullyEntered, storedActiveEncryptedWallet.name])
 
   return (
     <Screen style={{ marginTop: 40 }}>

@@ -16,11 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletEncrypt, walletImport } from '@alephium/sdk'
+import { walletEncryptAsyncUnsafe, walletImport } from '@alephium/sdk'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { changeActiveWallet, storeWallet } from '../storage/wallets'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
+import { pbkdf2 } from '../utils/crypto'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
@@ -63,7 +64,8 @@ export const walletStored = createAsyncThunk(
         const pin = state.credentials.pin
         if (!pin) throw 'Could not store wallet, pin to encrypt it is not set'
 
-        const encryptedWallet = walletEncrypt(pin, mnemonic)
+        const encryptedWallet = await walletEncryptAsyncUnsafe(pin, mnemonic, { pbkdf2CustomFunc: pbkdf2 })
+        console.log('encrypted', encryptedWallet)
         metadataId = await storeWallet(name, encryptedWallet, authType)
       }
     } catch (e) {
