@@ -16,14 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { randomBytes, createCipheriv, createDecipheriv, pbkdf2, pbkdf2Sync, CipherKey, BinaryLike } from 'crypto'
+import { randomBytes, createCipheriv, createDecipheriv, pbkdf2Sync, CipherKey, BinaryLike } from 'crypto'
 
 const saltByteLength = 64
 const ivByteLength = 64
 const authTagLength = 16
 
-export interface EncryptAsyncOptions {
-  pbkdf2CustomFunc: typeof pbkdf2Sync
+export type Pbkdf2Function = (password: string, salt: Buffer) => Promise<Buffer>
+
+export interface AsyncOptions {
+  pbkdf2CustomFunc: Pbkdf2Function
 }
 
 export const encrypt = (password: string, dataRaw: string): string => {
@@ -33,7 +35,7 @@ export const encrypt = (password: string, dataRaw: string): string => {
   return _encrypt(data, salt, derivedKey)
 }
 
-export const encryptAsync = (password: string, dataRaw: string, { pbkdf2CustomFunc }: EncryptAsyncOptions): Promise<string> => {
+export const encryptAsync = (password: string, dataRaw: string, { pbkdf2CustomFunc }: AsyncOptions): Promise<string> => {
   const data = Buffer.from(dataRaw, 'utf8')
   const salt = randomBytes(saltByteLength)
   return keyFromPasswordAsync(password, salt, pbkdf2CustomFunc).then((derivedKey: Buffer) => _encrypt(data, salt, derivedKey))
@@ -54,10 +56,6 @@ const _encrypt = (data: Buffer, salt: Buffer, derivedKey: Buffer): string => {
   return JSON.stringify(payload)
 }
 
-export interface DecryptAsyncOptions {
-  pbkdf2CustomFunc: typeof pbkdf2
-}
-
 export const decrypt = (password: string, payloadRaw: string): string => {
   const payload = JSON.parse(payloadRaw)
 
@@ -73,7 +71,7 @@ export const decrypt = (password: string, payloadRaw: string): string => {
   return _decrypt(salt, iv, encrypted, derivedKey)
 }
 
-export const decryptAsync = (password: string, payloadRaw: string, { pbkdf2CustomFunc }: DecryptAsyncOptions): Promise<string> => {
+export const decryptAsync = (password: string, payloadRaw: string, { pbkdf2CustomFunc }: AsyncOptions): Promise<string> => {
   const payload = JSON.parse(payloadRaw)
 
   const version = payload.version
@@ -105,15 +103,10 @@ const createDecipher = (key: CipherKey, iv: BinaryLike | null) => {
   return createDecipheriv('aes-256-gcm', key, iv)
 }
 
-const keyFromPassword = (password: BinaryLike, salt: BinaryLike): Buffer => {
+const keyFromPassword = (password: string, salt: Buffer): Buffer => {
   return pbkdf2Sync(password, salt, 10000, 32, 'sha256')
 }
 
-const keyFromPasswordAsync = (password: BinaryLike, salt: BinaryLike, pbkdf2CustomFunc: typeof pbkdf2): Promise<Buffer> => {
-  return new Promise((resolve, reject) => {
-    pbkdf2CustomFunc(password, salt, 10000, 32, 'sha256', (err, data) => {
-      if (err) return reject(err)
-      resolve(data)
-    })
-  })
+const keyFromPasswordAsync = (password: string, salt: Buffer, pbkdf2: Pbkdf2Function): Promise<Buffer> => {
+  return pbkdf2(password, salt)
 }
