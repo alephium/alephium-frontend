@@ -55,7 +55,7 @@ export class Signer {
     const signature = await this.sign(txHash)
     const params: api.SubmitTransaction = { unsignedTx: unsignedTx, signature: signature }
     const response = await this.client.transactions.postTransactionsSubmit(params)
-    return CliqueClient.convert(response)
+    return fromApiSubmissionResult(CliqueClient.convert(response))
   }
 }
 
@@ -63,4 +63,8 @@ export interface SubmissionResult {
   txId: string
   fromGroup: number
   toGroup: number
+}
+
+function fromApiSubmissionResult(result: api.TxResult): SubmissionResult {
+  return result
 }

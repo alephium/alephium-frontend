@@ -32,13 +32,13 @@ export class NodeClient extends Api<null> {
     toAddress: string,
     amount: string,
     lockTime?: number,
-    gasAmount?: number,
+    gas?: number,
     gasPrice?: string
   ) {
     return await this.transactions.postTransactionsBuild({
       fromPublicKey,
-      destinations: [{ address: toAddress, attoAlphAmount: amount, lockTime }],
-      gasAmount,
+      destinations: [{ address: toAddress, alphAmount: amount, lockTime }],
+      gas,
       gasPrice
     })
   }
