@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletGenerate } from '@alephium/sdk'
+import { walletGenerateAsyncUnsafe } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useState } from 'react'
@@ -30,6 +30,7 @@ import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
 import { pinEntered } from '../../store/credentialsSlice'
+import { mnemonicToSeed } from '../../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 
@@ -89,7 +90,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
           if (hasAvailableBiometrics) {
             navigation.navigate('AddBiometricsScreen')
           } else {
-            const wallet = walletGenerate()
+            const wallet = await walletGenerateAsyncUnsafe({ mnemonicToSeedCustomFunc: mnemonicToSeed })
             dispatch(
               walletStored({
                 name: walletName,

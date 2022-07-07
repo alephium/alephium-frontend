@@ -23,3 +23,15 @@ export const pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> => {
   return rnPbkdf2.derive(password, _salt, 10000, 32, 'sha-256')
   .then((data: string) => Buffer.from(data, 'base64'))
 }
+
+// Directly from bip39 package
+function salt(password: string) {
+  return 'mnemonic' + (password || '');
+}
+
+// Derived from bip39 package
+export const mnemonicToSeed = (mnemonic: string, passphrase?: string): Promise<Buffer> => {
+  const salted = new Buffer(salt(passphrase ?? ''), 'utf8')
+  return rnPbkdf2.derive(mnemonic, salted.toString('base64'), 2048, 64, 'sha-512')
+  .then((data: string) => Buffer.from(data, 'base64'))
+}

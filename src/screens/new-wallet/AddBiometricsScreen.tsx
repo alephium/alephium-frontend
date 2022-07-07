@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { walletGenerateAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import { useState } from 'react'
@@ -33,7 +34,7 @@ import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
 import { StoredWalletAuthType } from '../../types/wallet'
-import { walletGenerateAsync } from '../../utils/wallet'
+import { mnemonicToSeed } from '../../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
@@ -53,7 +54,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
     setLoading(true)
 
     if (method === 'create') {
-      const wallet = await walletGenerateAsync()
+      const wallet = await walletGenerateAsyncUnsafe({ mnemonicToSeedCustomFunc: mnemonicToSeed })
       dispatch(
         walletStored({
           name: walletName,
