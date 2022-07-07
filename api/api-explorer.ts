@@ -23,8 +23,6 @@ export interface AddressInfo {
 
   /** @format uint256 */
   lockedBalance: string
-
-  /** @format int32 */
   txNumber: number
 }
 
@@ -33,22 +31,13 @@ export interface BadRequest {
 }
 
 export interface BlockEntryLite {
-  /** @format block-hash */
   hash: string
 
   /** @format int64 */
   timestamp: number
-
-  /** @format int32 */
   chainFrom: number
-
-  /** @format int32 */
   chainTo: number
-
-  /** @format int32 */
   height: number
-
-  /** @format int32 */
   txNumber: number
   mainChain: boolean
 
@@ -57,18 +46,13 @@ export interface BlockEntryLite {
 }
 
 export interface ConfirmedTransaction {
-  /** @format 32-byte-hash */
   hash: string
-
-  /** @format block-hash */
   blockHash: string
 
   /** @format int64 */
   timestamp: number
   inputs?: Input[]
   outputs?: Output[]
-
-  /** @format int32 */
   gasAmount: number
 
   /** @format uint256 */
@@ -84,15 +68,13 @@ export interface ExplorerInfo {
 export interface Hashrate {
   /** @format int64 */
   timestamp: number
-  hashrate: number
-  value: number
+  hashrate: string
+  value: string
 }
 
 export interface Input {
   outputRef: OutputRef
   unlockScript?: string
-
-  /** @format 32-byte-hash */
   txHashRef: string
   address: string
 
@@ -105,7 +87,6 @@ export interface InternalServerError {
 }
 
 export interface ListBlocks {
-  /** @format int32 */
   total: number
   blocks?: BlockEntryLite[]
 }
@@ -116,10 +97,7 @@ export interface NotFound {
 }
 
 export interface Output {
-  /** @format int32 */
   hint: number
-
-  /** @format 32-byte-hash */
   key: string
 
   /** @format uint256 */
@@ -128,24 +106,16 @@ export interface Output {
 
   /** @format int64 */
   lockTime?: number
-
-  /** @format 32-byte-hash */
   spent?: string
 }
 
 export interface OutputRef {
-  /** @format int32 */
   hint: number
-
-  /** @format 32-byte-hash */
   key: string
 }
 
 export interface PerChainCount {
-  /** @format int32 */
   chainFrom: number
-
-  /** @format int32 */
   chainTo: number
 
   /** @format int64 */
@@ -153,10 +123,7 @@ export interface PerChainCount {
 }
 
 export interface PerChainDuration {
-  /** @format int32 */
   chainFrom: number
-
-  /** @format int32 */
   chainTo: number
 
   /** @format int64 */
@@ -167,10 +134,7 @@ export interface PerChainDuration {
 }
 
 export interface PerChainHeight {
-  /** @format int32 */
   chainFrom: number
-
-  /** @format int32 */
   chainTo: number
 
   /** @format int64 */
@@ -219,18 +183,13 @@ export interface TokenSupply {
 }
 
 export interface Transaction {
-  /** @format 32-byte-hash */
   hash: string
-
-  /** @format block-hash */
   blockHash: string
 
   /** @format int64 */
   timestamp: number
   inputs?: Input[]
   outputs?: Output[]
-
-  /** @format int32 */
   gasAmount: number
 
   /** @format uint256 */
@@ -258,18 +217,11 @@ export interface Unauthorized {
 }
 
 export interface UnconfirmedTransaction {
-  /** @format 32-byte-hash */
   hash: string
-
-  /** @format int32 */
   chainFrom: number
-
-  /** @format int32 */
   chainTo: number
   inputs?: UInput[]
   outputs?: UOutput[]
-
-  /** @format int32 */
   gasAmount: number
 
   /** @format uint256 */
@@ -681,7 +633,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/infos/supply/total-alph
      */
     getInfosSupplyTotalAlph: (params: RequestParams = {}) =>
-      this.request<number, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/supply/total-alph`,
         method: 'GET',
         ...params
@@ -695,7 +647,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/infos/supply/circulating-alph
      */
     getInfosSupplyCirculatingAlph: (params: RequestParams = {}) =>
-      this.request<number, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/supply/circulating-alph`,
         method: 'GET',
         ...params
@@ -709,7 +661,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/infos/supply/reserved-alph
      */
     getInfosSupplyReservedAlph: (params: RequestParams = {}) =>
-      this.request<number, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/supply/reserved-alph`,
         method: 'GET',
         ...params
@@ -723,7 +675,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/infos/supply/locked-alph
      */
     getInfosSupplyLockedAlph: (params: RequestParams = {}) =>
-      this.request<number, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/supply/locked-alph`,
         method: 'GET',
         ...params
