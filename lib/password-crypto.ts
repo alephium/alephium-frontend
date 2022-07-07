@@ -35,10 +35,16 @@ export const encrypt = (password: string, dataRaw: string): string => {
   return _encrypt(data, salt, derivedKey)
 }
 
-export const encryptAsync = (password: string, dataRaw: string, { pbkdf2CustomFunc }: AsyncOptions): Promise<string> => {
+export const encryptAsync = (
+  password: string,
+  dataRaw: string,
+  { pbkdf2CustomFunc }: AsyncOptions
+): Promise<string> => {
   const data = Buffer.from(dataRaw, 'utf8')
   const salt = randomBytes(saltByteLength)
-  return keyFromPasswordAsync(password, salt, pbkdf2CustomFunc).then((derivedKey: Buffer) => _encrypt(data, salt, derivedKey))
+  return keyFromPasswordAsync(password, salt, pbkdf2CustomFunc).then((derivedKey: Buffer) =>
+    _encrypt(data, salt, derivedKey)
+  )
 }
 
 const _encrypt = (data: Buffer, salt: Buffer, derivedKey: Buffer): string => {
@@ -71,7 +77,11 @@ export const decrypt = (password: string, payloadRaw: string): string => {
   return _decrypt(salt, iv, encrypted, derivedKey)
 }
 
-export const decryptAsync = (password: string, payloadRaw: string, { pbkdf2CustomFunc }: AsyncOptions): Promise<string> => {
+export const decryptAsync = (
+  password: string,
+  payloadRaw: string,
+  { pbkdf2CustomFunc }: AsyncOptions
+): Promise<string> => {
   const payload = JSON.parse(payloadRaw)
 
   const version = payload.version
@@ -82,7 +92,9 @@ export const decryptAsync = (password: string, payloadRaw: string, { pbkdf2Custo
   const salt = Buffer.from(payload.salt, 'hex')
   const iv = Buffer.from(payload.iv, 'hex')
   const encrypted = Buffer.from(payload.encrypted, 'hex')
-  return keyFromPasswordAsync(password, salt, pbkdf2CustomFunc).then((derivedKey: Buffer) => _decrypt(salt, iv, encrypted, derivedKey))
+  return keyFromPasswordAsync(password, salt, pbkdf2CustomFunc).then((derivedKey: Buffer) =>
+    _decrypt(salt, iv, encrypted, derivedKey)
+  )
 }
 
 const _decrypt = (salt: Buffer, iv: Buffer, encrypted: Buffer, derivedKey: Buffer): string => {

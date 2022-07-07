@@ -86,10 +86,13 @@ export const getWalletFromMnemonic = (mnemonic: string, passphrase = ''): Wallet
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic })
 }
 
-export const getWalletFromMnemonicAsyncUnsafe = (mnemonic: string, passphrase = '', { mnemonicToSeedCustomFunc }: AsyncOptions): Promise<Wallet> => {
+export const getWalletFromMnemonicAsyncUnsafe = (
+  mnemonic: string,
+  passphrase = '',
+  { mnemonicToSeedCustomFunc }: AsyncOptions
+): Promise<Wallet> => {
   if (mnemonicToSeedCustomFunc === undefined) throw new Error('Must specify a mnemonicToSeedCustomFunc')
-  return mnemonicToSeedCustomFunc(mnemonic, passphrase)
-  .then((seed: Buffer) => {
+  return mnemonicToSeedCustomFunc(mnemonic, passphrase).then((seed: Buffer) => {
     const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
     return new Wallet({ seed, address, publicKey, privateKey, mnemonic })
   })
@@ -199,18 +202,24 @@ const _pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> => {
   })
 }
 
-export const walletOpenAsyncUnsafe = (password: string, encryptedWallet: string, { pbkdf2CustomFunc }: AsyncOptions): Promise<Wallet> => {
-  return decryptAsync(password, encryptedWallet, { pbkdf2CustomFunc: pbkdf2CustomFunc ?? _pbkdf2 })
-    .then((data) => {
-      const config = JSON.parse(data) as StoredState
-      return getWalletFromMnemonic(config.mnemonic)
-    })
+export const walletOpenAsyncUnsafe = (
+  password: string,
+  encryptedWallet: string,
+  { pbkdf2CustomFunc }: AsyncOptions
+): Promise<Wallet> => {
+  return decryptAsync(password, encryptedWallet, { pbkdf2CustomFunc: pbkdf2CustomFunc ?? _pbkdf2 }).then((data) => {
+    const config = JSON.parse(data) as StoredState
+    return getWalletFromMnemonic(config.mnemonic)
+  })
 }
 
-export const walletEncryptAsyncUnsafe = (password: string, mnemonic: string, { pbkdf2CustomFunc }: AsyncOptions): Promise<string>  => {
+export const walletEncryptAsyncUnsafe = (
+  password: string,
+  mnemonic: string,
+  { pbkdf2CustomFunc }: AsyncOptions
+): Promise<string> => {
   const storedState = new StoredState({
     mnemonic
   })
   return encryptAsync(password, JSON.stringify(storedState), { pbkdf2CustomFunc: pbkdf2CustomFunc ?? _pbkdf2 })
 }
-
