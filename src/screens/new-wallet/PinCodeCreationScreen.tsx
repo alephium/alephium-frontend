@@ -90,7 +90,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
           if (hasAvailableBiometrics) {
             navigation.navigate('AddBiometricsScreen')
           } else {
-            const wallet = await walletGenerateAsyncUnsafe({ mnemonicToSeedCustomFunc: mnemonicToSeed })
+            const wallet = await walletGenerateAsyncUnsafe(mnemonicToSeed)
             dispatch(
               walletStored({
                 name: walletName,

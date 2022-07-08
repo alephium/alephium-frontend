@@ -54,7 +54,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
     setLoading(true)
 
     if (method === 'create') {
-      const wallet = await walletGenerateAsyncUnsafe({ mnemonicToSeedCustomFunc: mnemonicToSeed })
+      const wallet = await walletGenerateAsyncUnsafe(mnemonicToSeed)
       dispatch(
         walletStored({
           name: walletName,

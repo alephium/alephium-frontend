@@ -21,10 +21,10 @@ import {
   addressToGroup,
   deriveNewAddressData,
   TOTAL_NUMBER_OF_GROUPS,
-  walletImport
+  walletImportAsyncUnsafe
 } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select'
 import styled from 'styled-components/native'
@@ -42,6 +42,7 @@ import {
   selectAllAddresses
 } from '../store/addressesSlice'
 import { getRandomLabelColor } from '../utils/colors'
+import { mnemonicToSeed } from '../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 
@@ -58,10 +59,10 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     color: getRandomLabelColor()
   })
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
+  const [seed, setSeed] = useState<Buffer>()
   const addresses = useAppSelector(selectAllAddresses)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const activeWallet = useAppSelector((state) => state.activeWallet)
-  const { seed } = walletImport(activeWallet.mnemonic)
   const addressSettings = {
     isMain: false,
     label: coloredLabel?.label,
@@ -69,19 +70,19 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   }
 
   useEffect(() => {
-    generateNewAddress()
+    const wallet = await walletImportAsyncUnsafe(mnemonicToSeed, activeWallet.mnemonic)
+    setSeed(wallet.seed)
+    generateNewAddress(wallet.seed)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const generateNewAddress = useCallback(
-    (inGroup?: number) => {
-      if (!seed) return
-      const data = deriveNewAddressData(seed, inGroup, undefined, currentAddressIndexes.current)
-      setNewAddressData(data)
-      setNewAddressGroup(inGroup ?? addressToGroup(data.address, TOTAL_NUMBER_OF_GROUPS))
-    },
-    [seed]
-  )
+  const generateNewAddress = (seed?: Buffer, inGroup?: number) => {
+    if (!seed) return
+    const data = deriveNewAddressData(seed, inGroup, undefined, currentAddressIndexes.current)
+    setNewAddressData(data)
+    setNewAddressGroup(inGroup ?? addressToGroup(data.address, TOTAL_NUMBER_OF_GROUPS))
+  }
 
   const handleGeneratePress = () => {
     if (!newAddressData) return
@@ -109,11 +110,9 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
 
   const handleGroupSelect = (value: number) => {
     if (value !== newAddressGroup) {
-      generateNewAddress(value)
+      generateNewAddress(seed, value)
     }
   }
-
-  console.log('NewAddressScreen renders')
 
   return (
     <Screen>

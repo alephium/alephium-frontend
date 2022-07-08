@@ -32,7 +32,7 @@ import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
 import { pinEntered } from '../store/credentialsSlice'
-import { pbkdf2 } from '../utils/crypto';
+import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 
@@ -69,25 +69,22 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     setLoading(true)
 
     try {
-      walletOpenAsyncUnsafe(pinCode, storedActiveEncryptedWallet.mnemonic, { pbkdf2CustomFunc: pbkdf2 })
-      .then((wallet) => {
-        console.log('opened', wallet)
-        dispatch(pinEntered(pinCode))
-        dispatch(
-          activeWalletChanged({
-            ...storedActiveEncryptedWallet,
-            mnemonic: wallet.mnemonic
-          })
-        )
-        setPinCode('')
-        navigation.navigate('DashboardScreen')
-      })
+      dispatch(pinEntered(pinCode))
+      const wallet = await walletOpenAsyncUnsafe(pinCode, storedActiveEncryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
+      dispatch(
+        activeWalletChanged({
+          ...storedActiveEncryptedWallet,
+          mnemonic: wallet.mnemonic
+        })
+      )
+      setPinCode('')
+      navigation.navigate('DashboardScreen')
     } catch (e) {
       setShownInstructions(errorInstructionSet)
       setPinCode('')
       console.error(`Could not unlock wallet ${storedActiveEncryptedWallet.name}`, e)
     }
-  }, [dispatch, pinCode, pinFullyEntered, storedActiveEncryptedWallet.name])
+  }, [dispatch, pinCode, pinFullyEntered, storedActiveEncryptedWallet, navigation])
 
   return (
     <Screen style={{ marginTop: 40 }}>

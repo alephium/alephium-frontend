@@ -20,18 +20,19 @@ import rnPbkdf2 from 'react-native-fast-pbkdf2'
 
 export const pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> => {
   const _salt = salt.toString('base64')
-  return rnPbkdf2.derive(password, _salt, 10000, 32, 'sha-256')
-  .then((data: string) => Buffer.from(data, 'base64'))
+  const data = rnPbkdf2.derive(password, _salt, 10000, 32, 'sha-256')
+  return Buffer.from(data, 'base64')
 }
 
 // Directly from bip39 package
 function salt(password: string) {
-  return 'mnemonic' + (password || '');
+  return 'mnemonic' + (password || '')
 }
 
 // Derived from bip39 package
-export const mnemonicToSeed = (mnemonic: string, passphrase?: string): Promise<Buffer> => {
-  const salted = new Buffer(salt(passphrase ?? ''), 'utf8')
-  return rnPbkdf2.derive(mnemonic, salted.toString('base64'), 2048, 64, 'sha-512')
-  .then((data: string) => Buffer.from(data, 'base64'))
+export const mnemonicToSeed = async (mnemonic: string, passphrase?: string): Promise<Buffer> => {
+  const mnemonicBuffer = new Buffer(mnemonic, 'utf-8')
+  const salted = new Buffer(salt(passphrase ?? ''), 'utf-8')
+  const data = await rnPbkdf2.derive(mnemonicBuffer.toString('base64'), salted.toString('base64'), 2048, 64, 'sha-512')
+  return Buffer.from(data, 'base64')
 }

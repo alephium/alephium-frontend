@@ -59,7 +59,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
           navigation.navigate('ImportWalletSeedScreen')
         } else if (method === 'create') {
           setLoading(true)
-          const wallet = await walletGenerateAsyncUnsafe({ mnemonicToSeedCustomFunc: mnemonicToSeed })
+          const wallet = await walletGenerateAsyncUnsafe(mnemonicToSeed)
           dispatch(
             walletStored({
               name: walletName,
