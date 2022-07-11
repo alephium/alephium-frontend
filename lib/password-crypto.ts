@@ -28,6 +28,7 @@ export const encrypt = (password: string, dataRaw: string): string => {
   const data = Buffer.from(dataRaw, 'utf8')
   const salt = randomBytes(saltByteLength)
   const derivedKey = keyFromPassword(password, salt)
+
   return _encrypt(data, salt, derivedKey)
 }
 
@@ -39,6 +40,7 @@ export const encryptAsync = async (
   const data = Buffer.from(dataRaw, 'utf8')
   const salt = randomBytes(saltByteLength)
   const derivedKey = await keyFromPasswordAsync(password, salt, pbkdf2CustomFunc)
+
   return _encrypt(data, salt, derivedKey)
 }
 
@@ -69,6 +71,7 @@ export const decrypt = (password: string, payloadRaw: string): string => {
   const iv = Buffer.from(payload.iv, 'hex')
   const encrypted = Buffer.from(payload.encrypted, 'hex')
   const derivedKey = keyFromPassword(password, salt)
+
   return _decrypt(iv, encrypted, derivedKey)
 }
 
@@ -88,6 +91,7 @@ export const decryptAsync = async (
   const iv = Buffer.from(payload.iv, 'hex')
   const encrypted = Buffer.from(payload.encrypted, 'hex')
   const derivedKey = await keyFromPasswordAsync(password, salt, pbkdf2CustomFunc)
+
   return _decrypt(iv, encrypted, derivedKey)
 }
 
