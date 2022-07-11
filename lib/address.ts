@@ -24,6 +24,7 @@ export function addressToGroup(address: string, totalNumberOfGroups: number): nu
   const value = djb2(bytes) | 1
   const hash = toPosInt(xorByte(value))
   const group = hash % totalNumberOfGroups
+
   return group
 }
 
@@ -31,6 +32,7 @@ function xorByte(value: number): number {
   const byte0 = value >> 24
   const byte1 = value >> 16
   const byte2 = value >> 8
+
   return byte0 ^ byte1 ^ byte2 ^ value
 }
 

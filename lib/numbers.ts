@@ -55,6 +55,7 @@ const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) =>
   if (indexOfPoint === -1) throw 'numString should contain decimal point'
 
   const numberOfDecimals = numStringWithoutTrailingZeros.length - 1 - indexOfPoint
+
   return numberOfDecimals < minNumberOfDecimals
     ? numStringWithoutTrailingZeros.concat(produceZeros(minNumberOfDecimals - numberOfDecimals))
     : numStringWithoutTrailingZeros
@@ -79,11 +80,13 @@ export const formatAmountForDisplay = (
       numNonDecimals > 0
         ? baseNumString.substring(0, numNonDecimals).concat('.', baseNumString.substring(numNonDecimals))
         : '0.'.concat(produceZeros(-numNonDecimals), baseNumString)
+
     return removeTrailingZeros(alphNumString, numberOfDecimalsToDisplay)
   }
 
   if (alphNum < 0.001) {
     const tinyAmountsMaxNumberDecimals = 5
+
     return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
   } else if (alphNum <= 1000000) {
     return addApostrophes(removeTrailingZeros(alphNum.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals))
@@ -144,6 +147,7 @@ export const convertSetToAlph = (amountInSet: bigint): string => {
     positionForDot > 0
       ? amountInSetStr.substring(0, positionForDot) + '.' + amountInSetStr.substring(positionForDot)
       : '0.' + produceZeros(NUM_OF_ZEROS_IN_QUINTILLION - amountInSetStr.length) + amountInSetStr
+
   return removeTrailingZeros(withDotAdded)
 }
 

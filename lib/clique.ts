@@ -79,17 +79,20 @@ export class CliqueClient extends Api<null> {
   getClientIndex(address: string) {
     if (this.clients.length === 0) throw new Error('No nodes in the clique')
     const group = utils.groupOfAddress(address)
+
     return group % this.clients.length
   }
 
   async getBalance(address: string) {
     const clientIndex = this.getClientIndex(address)
+
     return await this.clients[clientIndex].getBalance(address)
   }
 
   getWebSocket(node_i: number) {
     if (this.clique.nodes) {
       const node = this.clique.nodes[node_i]
+
       return new WebSocket('ws://' + node.address + ':' + node.wsPort + '/events')
     }
   }
@@ -104,16 +107,19 @@ export class CliqueClient extends Api<null> {
     gasPrice?: string
   ) {
     const clientIndex = this.getClientIndex(fromAddress)
+
     return await this.clients[clientIndex].transactionCreate(fromPublicKey, toAddress, amount, lockTime, gas, gasPrice)
   }
 
   async transactionConsolidateUTXOs(fromPublicKey: string, fromAddress: string, toAddress: string) {
     const clientIndex = this.getClientIndex(fromAddress)
+
     return await this.clients[clientIndex].transactionConsolidateUTXOs(fromPublicKey, toAddress)
   }
 
   async transactionSend(fromAddress: string, tx: string, signature: string) {
     const clientIndex = this.getClientIndex(fromAddress)
+
     return await this.clients[clientIndex].transactionSend(tx, signature)
   }
 
@@ -127,6 +133,7 @@ export class CliqueClient extends Api<null> {
   transactionVerifySignature(txHash: string, publicKey: string, signature: string) {
     try {
       const key = ec.keyFromPublic(publicKey, 'hex')
+
       return key.verify(txHash, utils.signatureDecode(ec, signature))
     } catch (error) {
       return false

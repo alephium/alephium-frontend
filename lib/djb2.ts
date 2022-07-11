@@ -21,5 +21,6 @@ export default function djb2(bytes: Uint8Array) {
   for (let i = 0; i < bytes.length; i++) {
     hash = (hash << 5) + hash + (bytes[i] & 0xff)
   }
+
   return hash
 }

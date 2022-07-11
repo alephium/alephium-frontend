@@ -69,6 +69,7 @@ export abstract class Common {
     const localImportsCache: string[] = []
     let result = contractStr.replace(Common.importRegex, (match) => {
       localImportsCache.push(match)
+
       return ''
     })
     for (const myImport of localImportsCache) {
@@ -81,6 +82,7 @@ export abstract class Common {
         result = result.concat('\n', importContractStr)
       }
     }
+
     return result
   }
 
@@ -109,6 +111,7 @@ export abstract class Common {
     const contractStr = contractBuffer.toString()
 
     validate(contractStr)
+
     return Common.handleImports(contractStr, importsCache)
   }
 
@@ -131,6 +134,7 @@ export abstract class Common {
     const contractHash = cryptojs.SHA256(contractStr).toString()
     try {
       const existingContract = await loadContract(fileName)
+
       return existingContract.sourceCodeSha256 === contractHash
         ? existingContract
         : __from(client, fileName, contractStr, contractHash)
@@ -145,6 +149,7 @@ export abstract class Common {
 
   protected _saveToFile(): Promise<void> {
     const artifactPath = Common._artifactPath(this.fileName)
+
     return fsPromises.writeFile(artifactPath, this.toString())
   }
 }
@@ -191,6 +196,7 @@ export class Contract extends Common {
     const result = await Common._loadContractStr(fileName, importsCache, (code) =>
       Contract.checkCodeType(fileName, code)
     )
+
     return Common._replaceVariables(result, variables)
   }
 
@@ -198,6 +204,7 @@ export class Contract extends Common {
     if (!fs.existsSync(Common._artifactsFolder())) {
       fs.mkdirSync(Common._artifactsFolder(), { recursive: true })
     }
+
     return Common._from(
       client,
       fileName,
@@ -224,6 +231,7 @@ export class Contract extends Common {
       compiled.events
     )
     await artifact._saveToFile()
+
     return artifact
   }
 
@@ -234,6 +242,7 @@ export class Contract extends Common {
     if (artifact.bytecode == null || artifact.fields == null || artifact.functions == null || artifact.events == null) {
       throw new Event('Compilation did not return the right data')
     }
+
     return new Contract(
       fileName,
       artifact.sourceCodeSha256,
@@ -275,12 +284,14 @@ export class Contract extends Common {
   static randomAddress(): string {
     const bytes = crypto.randomBytes(33)
     bytes[0] = 3
+
     return bs58.encode(bytes)
   }
 
   private _randomAddressWithCache(fileName: string): string {
     const address = Contract.randomAddress()
     this._contractAddresses.set(address, fileName)
+
     return address
   }
 
@@ -291,6 +302,7 @@ export class Contract extends Common {
     const methodIndex = params.testMethodIndex ? params.testMethodIndex : this.getMethodIndex(funcName)
     const result = await this.fromTestContractResult(methodIndex, response.data)
     this._contractAddresses.clear()
+
     return result
   }
 
@@ -322,9 +334,11 @@ export class Contract extends Common {
   toApiContractState(state: ContractState): api.ContractState {
     if (state.address) {
       this._contractAddresses.set(state.address, state.fileName)
+
       return toApiContractState(state, state.address)
     } else {
       const address = this._randomAddressWithCache(state.fileName)
+
       return toApiContractState(state, address)
     }
   }
@@ -337,6 +351,7 @@ export class Contract extends Common {
     const address: string = params.address
       ? (this._contractAddresses.set(params.address, this.fileName), params.address)
       : this._randomAddressWithCache(this.fileName)
+
     return {
       group: params.group,
       address: address,
@@ -371,6 +386,7 @@ export class Contract extends Common {
 
   async fromApiContractState(state: api.ContractState): Promise<ContractState> {
     const contract = await Contract.getContract(state.codeHash)
+
     return {
       fileName: contract.fileName,
       address: state.address,
@@ -423,6 +439,7 @@ export class Contract extends Common {
           const contractAddressKey = (event as api.ContractEvent).contractAddress
           const contractAddress = this._contractAddresses.get(contractAddressKey)
           if (contractAddress === undefined) throw new Error("Contract address couldn't be found")
+
           return Contract.fromApiEvent(event, contractAddress)
         })
       )
@@ -441,6 +458,7 @@ export class Contract extends Common {
       issueTokenAmount: issueTokenAmount
     }
     const response = await signer.client.contracts.postContractsUnsignedTxBuildContract(params)
+
     return fromApiDeployContractUnsignedTx(CliqueClient.convert(response))
   }
 }
@@ -473,6 +491,7 @@ export class Script extends Common {
     variables?: ContractVariables
   ): Promise<string> {
     const result = await Common._loadContractStr(fileName, importsCache, (code) => Script.checkCodeType(fileName, code))
+
     return await Common._replaceVariables(result, variables)
   }
 
@@ -495,6 +514,7 @@ export class Script extends Common {
     const compiled = (await client.contracts.postContractsCompileScript({ code: scriptStr })).data
     const artifact = new Script(fileName, contractHash, compiled.bytecode, compiled.codeHash, compiled.functions)
     await artifact._saveToFile()
+
     return artifact
   }
 
@@ -505,6 +525,7 @@ export class Script extends Common {
     if (artifact.bytecode == null || artifact.functions == null) {
       throw new Event('= Compilation did not return the right data')
     }
+
     return new Script(fileName, artifact.sourceCodeSha256, artifact.bytecode, artifact.codeHash, artifact.functions)
   }
 
@@ -532,6 +553,7 @@ export class Script extends Common {
       utxosLimit: params && params.utxosLimit ? params.utxosLimit : undefined
     }
     const response = await signer.client.contracts.postContractsUnsignedTxBuildScript(apiParams)
+
     return CliqueClient.convert(response)
   }
 }
@@ -570,6 +592,7 @@ function extractByteVec(v: Val): string {
     } catch (_) {
       return v as string
     }
+
     return v as string
   } else {
     throw new Error(`Invalid string: ${v}`)
@@ -580,6 +603,7 @@ function extractBs58(v: Val): string {
   if (typeof v === 'string') {
     try {
       bs58.decode(v)
+
       return v as string
     } catch (error) {
       throw new Error(`Invalid base58 string: ${v}`)
@@ -640,6 +664,7 @@ function decodeArrayType(tpe: string): [baseType: string, dims: number[]] {
   const dim = parseInt(tpe.slice(semiColonIndex + 1, -1))
   if (subType[0] == '[') {
     const [baseType, subDim] = decodeArrayType(subType)
+
     return [baseType, (subDim.unshift(dim), subDim)]
   } else {
     return [subType, [dim]]
@@ -657,6 +682,7 @@ function foldVals(vals: Val[], dims: number[]): Val {
       const chunk = vals.slice(i, i + chunkSize)
       result.push(foldVals(chunk, chunkDims))
     }
+
     return result
   }
 }
@@ -680,6 +706,7 @@ function _fromApiVal(vals: api.Val[], valIndex: number, tpe: string): [result: V
     const valsToUse = vals.slice(valIndex, nextIndex)
     if (valsToUse.length == arraySize && valsToUse.every((val) => val.type === baseType)) {
       const localVals = valsToUse.map((val) => fromApiVal(val, baseType))
+
       return [foldVals(localVals, dims), nextIndex]
     } else {
       throw new Error(`Invalid array Val type: ${valsToUse}, ${tpe}`)
@@ -695,6 +722,7 @@ function fromApiVals(vals: api.Val[], types: string[]): Val[] {
     result.push(val)
     valIndex = nextIndex
   }
+
   return result
 }
 
@@ -835,6 +863,7 @@ export interface ContractOutput {
 function fromApiOutput(output: api.Output): Output {
   if (output.type === 'AssetOutput') {
     const asset = output as api.AssetOutput
+
     return {
       type: 'AssetOutput',
       address: asset.address,
@@ -845,6 +874,7 @@ function fromApiOutput(output: api.Output): Output {
     }
   } else if (output.type === 'ContractOutput') {
     const asset = output as api.ContractOutput
+
     return {
       type: 'ContractOutput',
       address: asset.address,
