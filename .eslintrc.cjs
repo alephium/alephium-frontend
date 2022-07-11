@@ -41,7 +41,9 @@ module.exports = {
           requireLast: false
         }
       }
-    ]
+    ],
+    // require empty line above return statements
+    'padding-line-between-statements': ['error', { blankLine: 'always', prev: '*', next: 'return' }]
   },
   env: {
     browser: true,
