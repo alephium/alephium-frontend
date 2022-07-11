@@ -37,6 +37,7 @@ export const signatureEncode = (ec: EC.ec, signature: EC.ec.Signature) => {
   const xs = new Uint8Array(r.byteLength + s.byteLength)
   xs.set(new Uint8Array(r), 0)
   xs.set(new Uint8Array(s), r.byteLength)
+
   return Buffer.from(xs).toString('hex')
 }
 
@@ -50,6 +51,7 @@ export const signatureDecode = (ec: EC.ec, signature: string) => {
   const s = new BN(sHex, 'hex')
   if (ec.n && s.cmp(ec.nh) < 1) {
     const decoded = { r: signature.slice(0, 64), s: sHex }
+
     return decoded
   } else {
     throw new Error('The signature is not normalized')
@@ -67,6 +69,7 @@ const xorByte = (intValue: number) => {
   const byte1 = (intValue >> 16) & 0xff
   const byte2 = (intValue >> 8) & 0xff
   const byte3 = intValue & 0xff
+
   return (byte0 ^ byte1 ^ byte2 ^ byte3) & 0xff
 }
 
@@ -99,6 +102,7 @@ const groupOfAddressBytes = (bytes: Uint8Array): number => {
   const hint = djb2(bytes) | 1
   const hash = xorByte(hint)
   const group = hash % TOTAL_NUMBER_OF_GROUPS
+
   return group
 }
 

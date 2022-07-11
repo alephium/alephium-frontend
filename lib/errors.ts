@@ -39,5 +39,6 @@ export const getHumanReadableError = (e: unknown, defaultErrorMessage: string) =
   const serverError = isHTTPError(e)
     ? e.error.detail || `(${e.status}${e.statusText && `: ${e.statusText}`}) ${e.error.message || ''}`
     : stringifiedError
+
   return `${defaultErrorMessage}${serverError && `: ${serverError}`}`
 }

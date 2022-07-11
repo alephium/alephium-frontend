@@ -50,6 +50,7 @@ class BrowserStorage {
         xs.push(key.substring(prefixLen))
       }
     }
+
     return xs
   }
 }

@@ -42,12 +42,14 @@ export class Signer {
     } else {
       const response = await this.client.wallets.getWalletsWalletNameAddressesAddress(this.walletName, this.address)
       this._publicKey = CliqueClient.convert(response).publicKey
+
       return this._publicKey
     }
   }
 
   async sign(hash: string): Promise<string> {
     const response = await this.client.wallets.postWalletsWalletNameSign(this.walletName, { data: hash })
+
     return CliqueClient.convert(response).signature
   }
 
@@ -55,6 +57,7 @@ export class Signer {
     const signature = await this.sign(txHash)
     const params: api.SubmitTransaction = { unsignedTx: unsignedTx, signature: signature }
     const response = await this.client.transactions.postTransactionsSubmit(params)
+
     return fromApiSubmissionResult(CliqueClient.convert(response))
   }
 }

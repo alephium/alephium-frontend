@@ -143,6 +143,7 @@ export const deriveNewAddressData = (
 
 export const walletGenerate = (passphrase?: string) => {
   const mnemonic = bip39.generateMnemonic(256)
+
   return getWalletFromMnemonic(mnemonic, passphrase)
 }
 
@@ -150,6 +151,7 @@ export const walletImport = (mnemonic: string, passphrase?: string) => {
   if (!bip39.validateMnemonic(mnemonic)) {
     throw new Error('Invalid seed phrase')
   }
+
   return getWalletFromMnemonic(mnemonic, passphrase)
 }
 
@@ -164,5 +166,6 @@ export const walletEncrypt = (password: string, mnemonic: string) => {
   const storedState = new StoredState({
     mnemonic
   })
+
   return encrypt(password, JSON.stringify(storedState))
 }
