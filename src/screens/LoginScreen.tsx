@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Wallet, walletOpen } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
@@ -32,6 +31,7 @@ import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
 import { pinEntered } from '../store/credentialsSlice'
+import { unlockWalletAsync } from '../utils/wallet'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 
@@ -117,6 +117,3 @@ const Centered = styled(View)`
   justify-content: center;
   align-items: center;
 `
-
-const unlockWalletAsync = (pin: string, mnemonic: string): Promise<Wallet> =>
-  new Promise((resolve) => setTimeout(() => resolve(walletOpen(pin, mnemonic))))
