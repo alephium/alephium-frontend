@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import * as bip32 from 'bip32'
+import * as bip39 from 'bip39'
 
 import * as walletUtils from '../lib/wallet'
 import { addressToGroup } from '../lib/address'
@@ -139,6 +140,67 @@ describe('Wallet', function () {
       expect(() => walletUtils.getPath(1e21)).toThrowError('Invalid address index path level')
       expect(() => walletUtils.getPath(1e-21)).toThrowError('Invalid address index path level')
       expect(() => walletUtils.getPath(1e-18)).toThrowError('Invalid address index path level')
+    })
+  })
+
+  describe('should call custom functions', () => {
+    it('getWalletFromMnemonicAsyncUnsafe should call custom mnemonicToSeed function', async () => {
+      const mnemonic = wallets.wallets[0].mnemonic
+      const mnemonicToSeedCustomFunc = jest.fn((m: string) => Promise.resolve(bip39.mnemonicToSeedSync(m)))
+      const spy = jest.spyOn(walletUtils, 'getWalletFromSeed')
+      await walletUtils.getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, mnemonic)
+      expect(spy).toHaveBeenCalled()
+      expect(mnemonicToSeedCustomFunc.mock.calls.length).toBe(1)
+    })
+    it('walletGenerateAsyncUnsafe should call custom mnemonicToSeed function', async () => {
+      const mnemonicToSeedCustomFunc = jest.fn((m: string) => Promise.resolve(bip39.mnemonicToSeedSync(m)))
+      const spy = jest.spyOn(walletUtils, 'getWalletFromSeed')
+      await walletUtils.walletGenerateAsyncUnsafe(mnemonicToSeedCustomFunc)
+      expect(spy).toHaveBeenCalled()
+      expect(mnemonicToSeedCustomFunc.mock.calls.length).toBe(1)
+    })
+    it('walletImportAsyncUnsafe should call custom mnemonicToSeed function', async () => {
+      const mnemonic = wallets.wallets[0].mnemonic
+      const mnemonicToSeedCustomFunc = jest.fn((m: string) => Promise.resolve(bip39.mnemonicToSeedSync(m)))
+      const spy = jest.spyOn(walletUtils, 'getWalletFromSeed')
+      await walletUtils.walletImportAsyncUnsafe(mnemonicToSeedCustomFunc, mnemonic)
+      expect(spy).toHaveBeenCalled()
+      expect(mnemonicToSeedCustomFunc.mock.calls.length).toBe(1)
+    })
+    it('walletImportAsyncUnsafe should fail on bad mnemonic', async () => {
+      const mnemonic = wallets.wallets[0].mnemonic + 'soatehustaohsutah'
+      const mnemonicToSeedCustomFunc = jest.fn((m: string) => Promise.resolve(bip39.mnemonicToSeedSync(m)))
+      await walletUtils.walletImportAsyncUnsafe(mnemonicToSeedCustomFunc, mnemonic).catch((e) => {
+        expect(e).toStrictEqual(new Error('Invalid seed phrase'))
+      })
+    })
+    it('walletOpenAsyncUnsafe should call custom mnemonicToSeed and pbkdf2 function', async () => {
+      const wallet = wallets.wallets[0]
+      const password = wallet.password
+      const encryptedWallet = JSON.stringify(wallet.file)
+      const mnemonicToSeedCustomFunc = jest.fn((m: string) => Promise.resolve(bip39.mnemonicToSeedSync(m)))
+      const pbkdf2CustomFunc = jest.fn((p: string, s: Buffer) => walletUtils._pbkdf2(p, s))
+      await walletUtils.walletOpenAsyncUnsafe(password, encryptedWallet, pbkdf2CustomFunc, mnemonicToSeedCustomFunc)
+      expect(mnemonicToSeedCustomFunc.mock.calls.length).toBe(1)
+      expect(pbkdf2CustomFunc.mock.calls.length).toBe(1)
+    })
+    it('walletEncryptAsyncUnsafe should call custom pbkdf2 function', async () => {
+      const wallet = wallets.wallets[0]
+      const mnemonic = wallet.mnemonic
+      const password = wallet.password
+      const pbkdf2CustomFunc = jest.fn((p: string, s: Buffer) => walletUtils._pbkdf2(p, s))
+      await walletUtils.walletEncryptAsyncUnsafe(password, mnemonic, pbkdf2CustomFunc)
+      expect(pbkdf2CustomFunc.mock.calls.length).toBe(1)
+    })
+  })
+  describe('the default pbkdf2 function', () => {
+    it('should reject when giving an error', async () => {
+      const wallet = wallets.wallets[0]
+      const salt = wallet.file.salt
+      const password = wallet.password
+      await walletUtils._pbkdf2(password, Buffer.from(salt, 'base64')).catch(() => {
+        expect(true).toBe(true)
+      })
     })
   })
 })
