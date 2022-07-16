@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useNavigation } from '@react-navigation/native'
 import { MoreVertical as DotsIcon } from 'lucide-react-native'
+import { memo } from 'react'
 import { StyleProp, Text, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -42,13 +43,13 @@ const WalletSwitch = ({ style }: WalletSwitchProps) => {
   )
 }
 
-export default styled(WalletSwitch)`
+export default memo(styled(WalletSwitch)`
   width: 50%;
   flex-direction: row;
   justify-content: space-between;
   padding: 0 12px;
   height: 40px;
-`
+`)
 
 const WalletName = styled(Text)`
   font-weight: 700;

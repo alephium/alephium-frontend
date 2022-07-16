@@ -38,9 +38,9 @@ export const lightTheme: DefaultTheme = {
     secondary: '#f1f1f1'
   },
   shadow: {
-    primary: '0 2px 2px rgba(0, 0, 0, 0.03)',
-    secondary: '0 10px 10px rgba(0, 0, 0, 0.04)',
-    tertiary: '0 20px 20px rgba(0, 0, 0, 0.05)'
+    primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.03; shadow-radius: 2px; elevation: 2;',
+    secondary: 'shadow-color: black; shadow-offset: 0px 10px; shadow-opacity: 0.04; shadow-radius: 10px; elevation: 5;',
+    tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.05; shadow-radius: 20px; elevation: 5;'
   },
   global: {
     accent: '#5981f3',
@@ -74,9 +74,9 @@ export const darkTheme: DefaultTheme = {
     secondary: 'rgb(34, 34, 38)'
   },
   shadow: {
-    primary: '0 2px 2px rgba(0, 0, 0, 0.25)',
-    secondary: '0 10px 10px rgba(0, 0, 0, 0.3)',
-    tertiary: '0 25px 25px rgba(0, 0, 0, 0.2)'
+    primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.25; shadow-radius: 2px; elevation: 5;',
+    secondary: 'shadow-color: black; shadow-offset: 0px 10px; shadow-opacity: 0.3; shadow-radius: 10px; elevation: 5;',
+    tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
     accent: '#6083FF',

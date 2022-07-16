@@ -16,11 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletGenerate } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
+import LottieView from 'lottie-react-native'
 import { useState } from 'react'
+import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
+import animationSrc from '../../animations/wallet.json'
 import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
@@ -30,6 +32,7 @@ import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
 import { newWalletNameChanged } from '../../store/walletGenerationSlice'
+import { walletGenerateAsync } from '../../utils/wallet'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -43,6 +46,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const [walletName, setWalletName] = useState('')
   const method = useAppSelector((state) => state.walletGeneration.method)
   const activeWallet = useAppSelector((state) => state.activeWallet)
+  const [loading, setLoading] = useState(false)
 
   const handleButtonPress = async () => {
     if (walletName) {
@@ -53,7 +57,9 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
         if (method === 'import') {
           navigation.navigate('ImportWalletSeedScreen')
         } else if (method === 'create') {
-          const wallet = walletGenerate()
+          setLoading(true)
+
+          const wallet = await walletGenerateAsync()
           dispatch(
             walletStored({
               name: walletName,
@@ -77,13 +83,22 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <Screen>
-      <CenteredInstructions instructions={instructions} stretch />
-      <InputContainer>
-        <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
-      </InputContainer>
-      <ActionsContainer>
-        <Button title="Next" type="primary" wide disabled={walletName.length < 3} onPress={handleButtonPress} />
-      </ActionsContainer>
+      {!loading ? (
+        <>
+          <CenteredInstructions instructions={instructions} stretch />
+          <InputContainer>
+            <StyledInput label="Wallet name" value={walletName} onChangeText={setWalletName} autoFocus />
+          </InputContainer>
+          <ActionsContainer>
+            <Button title="Next" type="primary" wide disabled={walletName.length < 3} onPress={handleButtonPress} />
+          </ActionsContainer>
+        </>
+      ) : (
+        <Centered>
+          <StyledAnimation source={animationSrc} autoPlay />
+          <Text>Creating your wallet...</Text>
+        </Centered>
+      )}
     </Screen>
   )
 }
@@ -100,6 +115,16 @@ const StyledInput = styled(Input)`
 
 const ActionsContainer = styled.View`
   flex: 1.5;
+  justify-content: center;
+  align-items: center;
+`
+
+const StyledAnimation = styled(LottieView)`
+  width: 40%;
+`
+
+const Centered = styled.View`
+  flex: 1;
   justify-content: center;
   align-items: center;
 `

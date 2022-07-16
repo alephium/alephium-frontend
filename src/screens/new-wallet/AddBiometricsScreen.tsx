@@ -16,12 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletGenerate } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
+import { useState } from 'react'
+import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import animationSrc from '../../animations/fingerprint.json'
+import walletAnimationSrc from '../../animations/wallet.json'
 import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
@@ -31,6 +33,7 @@ import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { walletStored } from '../../store/activeWalletSlice'
 import { StoredWalletAuthType } from '../../types/wallet'
+import { walletGenerateAsync } from '../../utils/wallet'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
@@ -44,10 +47,13 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   const method = useAppSelector((state) => state.walletGeneration.method)
   const importedMnemonic = useAppSelector((state) => state.walletGeneration.importedMnemonic)
   const walletName = useAppSelector((state) => state.walletGeneration.walletName)
+  const [loading, setLoading] = useState(false)
 
   const createAndStoreWallet = async (authType: StoredWalletAuthType) => {
+    setLoading(true)
+
     if (method === 'create') {
-      const wallet = walletGenerate()
+      const wallet = await walletGenerateAsync()
       dispatch(
         walletStored({
           name: walletName,
@@ -75,15 +81,26 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   return (
     <Screen>
       <AnimationContainer>
-        <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
+        {loading ? (
+          <>
+            <StyledAnimation source={walletAnimationSrc} autoPlay speed={1.5} />
+            <Text>Creating your wallet...</Text>
+          </>
+        ) : (
+          <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
+        )}
       </AnimationContainer>
-      <CenteredInstructions instructions={instructions} stretch />
-      <ActionsContainer>
-        <ButtonStack>
-          <Button title="Activate" type="primary" onPress={() => createAndStoreWallet('biometrics')} />
-          <Button title="Later" type="secondary" onPress={() => createAndStoreWallet('pin')} />
-        </ButtonStack>
-      </ActionsContainer>
+      {!loading && (
+        <>
+          <CenteredInstructions instructions={instructions} stretch />
+          <ActionsContainer>
+            <ButtonStack>
+              <Button title="Activate" type="primary" onPress={() => createAndStoreWallet('biometrics')} />
+              <Button title="Later" type="secondary" onPress={() => createAndStoreWallet('pin')} />
+            </ButtonStack>
+          </ActionsContainer>
+        </>
+      )}
     </Screen>
   )
 }

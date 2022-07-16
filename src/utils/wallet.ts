@@ -16,31 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ActiveWalletState } from '../store/activeWalletSlice'
-import { AddressHash } from '../types/addresses'
+import { Wallet, walletGenerate, walletOpen } from '@alephium/sdk'
 
-type RootStackParamList = {
-  LandingScreen: undefined
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
-  PinCodeCreationScreen: undefined
-  AddBiometricsScreen: undefined
-  NewWalletSuccessPage: undefined
-  ImportWalletSeedScreen: undefined
-  DashboardScreen: undefined
-  LoginScreen: {
-    storedWallet: ActiveWalletState
-  }
-  SplashScreen: undefined
-  SwitchWalletScreen: undefined
-  AddressesScreen: undefined
-  AddressScreen: {
-    addressHash: AddressHash
-  }
-  NewAddressScreen: undefined
-  EditAddressScreen: {
-    addressHash: AddressHash
-  }
-}
+export const walletGenerateAsync = async (): Promise<Wallet> =>
+  new Promise((resolve) => setTimeout(() => resolve(walletGenerate())))
 
-export default RootStackParamList
+export const unlockWalletAsync = (pin: string, mnemonic: string): Promise<Wallet> =>
+  new Promise((resolve) => setTimeout(() => resolve(walletOpen(pin, mnemonic))))

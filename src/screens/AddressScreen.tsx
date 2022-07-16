@@ -18,8 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon, Star as StarIcon } from 'lucide-react-native'
-import React from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import React, { useState } from 'react'
+import { Modal, ScrollView, Text, View } from 'react-native'
+import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
@@ -39,15 +40,19 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'AddressScreen'>
 const AddressScreen = ({
   navigation,
   route: {
-    params: { address }
+    params: { addressHash }
   }
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
-  const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
+  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
   const mainAddress = useAppSelector((state) => selectAddressByHash(state, state.addresses.mainAddress))
-  const isCurrentAddressMain = address.hash === mainAddressHash
+  const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
+  const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
+  const isCurrentAddressMain = addressHash === mainAddressHash
+  const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
+
+  if (!address) return null
 
   const makeAddressMain = async () => {
     if (address.settings.isMain) return
@@ -86,7 +91,7 @@ const AddressScreen = ({
             <ButtonStyled icon variant="contrast" onPress={() => copyAddressToClipboard(address)}>
               <ClipboardIcon color={theme.font.primary} size={20} />
             </ButtonStyled>
-            <ButtonStyled icon variant="contrast">
+            <ButtonStyled icon variant="contrast" onPress={() => setIsQrCodeModalOpen(true)}>
               <QrCodeIcon color={theme.font.primary} size={20} />
             </ButtonStyled>
           </Actions>
@@ -124,9 +129,23 @@ const AddressScreen = ({
           </List>
         </ScreenSection>
         <ScreenSection>
-          <TransactionsList addresses={[address]} />
+          <TransactionsList addressHashes={[address.hash]} />
         </ScreenSection>
       </ScrollView>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isQrCodeModalOpen}
+        onRequestClose={() => {
+          setIsQrCodeModalOpen(!isQrCodeModalOpen)
+        }}
+      >
+        <ModalContent>
+          <QRCodeContainer>
+            <QRCode size={256} style={{ height: 'auto', maxWidth: '100%', width: '100%' }} value={address.hash} />
+          </QRCodeContainer>
+        </ModalContent>
+      </Modal>
     </Screen>
   )
 }
@@ -174,6 +193,20 @@ const NumberOfTxs = styled(Text)`
 
 const BadgeStyled = styled(Badge)`
   flex-shrink: 1;
+`
+
+const ModalContent = styled(View)`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`
+
+const QRCodeContainer = styled(View)`
+  background-color: ${({ theme }) => theme.bg.primary};
+  border-radius: 10px;
+  padding: 20px;
+  align-items: center;
+  ${({ theme }) => theme.shadow.primary}
 `
 
 export default AddressScreen

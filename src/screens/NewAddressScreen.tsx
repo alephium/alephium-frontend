@@ -45,6 +45,11 @@ import { getRandomLabelColor } from '../utils/colors'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 
+const groupSelectOptions = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) => ({
+  value: index,
+  label: `Group ${index}`
+}))
+
 const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const [newAddressData, setNewAddressData] = useState<AddressAndKeys>()
@@ -52,10 +57,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     label: '',
     color: getRandomLabelColor()
   })
-  const [group, setGroup] = useState<number>()
-  const groupSelectOptions = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) =>
-    generateGroupSelectOption(index)
-  )
+  const [newAddressGroup, setNewAddressGroup] = useState<number>()
   const addresses = useAppSelector(selectAllAddresses)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const activeWallet = useAppSelector((state) => state.activeWallet)
@@ -67,16 +69,16 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   }
 
   useEffect(() => {
-    generateNewAddress(group)
+    generateNewAddress()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [group])
+  }, [])
 
   const generateNewAddress = useCallback(
-    (group?: number) => {
+    (inGroup?: number) => {
       if (!seed) return
-      const data = deriveNewAddressData(seed, group, undefined, currentAddressIndexes.current)
+      const data = deriveNewAddressData(seed, inGroup, undefined, currentAddressIndexes.current)
       setNewAddressData(data)
-      setGroup(group || addressToGroup(data.address, TOTAL_NUMBER_OF_GROUPS))
+      setNewAddressGroup(inGroup ?? addressToGroup(data.address, TOTAL_NUMBER_OF_GROUPS))
     },
     [seed]
   )
@@ -105,6 +107,12 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     navigation.goBack()
   }
 
+  const handleGroupSelect = (value: number) => {
+    if (value !== newAddressGroup) {
+      generateNewAddress(value)
+    }
+  }
+
   console.log('NewAddressScreen renders')
 
   return (
@@ -113,8 +121,8 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
         <ScreenSection>
           <ColoredLabelInput value={coloredLabel} onChange={setColoredLabel} />
           <RNPickerSelect
-            onValueChange={(value: number) => setGroup(value)}
-            value={group}
+            onValueChange={handleGroupSelect}
+            value={newAddressGroup}
             items={groupSelectOptions}
             placeholder={{}}
             InputAccessoryView={() => null}
@@ -127,13 +135,11 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   )
 }
 
+export default NewAddressScreen
+
 const ScreenSection = styled(View)`
   padding: 22px 20px;
 `
-
-export default NewAddressScreen
-
-const generateGroupSelectOption = (groupNumber: number) => ({ value: groupNumber, label: `Group ${groupNumber}` })
 
 // copied from https://snack.expo.dev/@lfkwtz/react-native-picker-select
 const pickerSelectStyles = StyleSheet.create({

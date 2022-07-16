@@ -16,11 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletOpen } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
+import LottieView from 'lottie-react-native'
 import { useCallback, useEffect, useState } from 'react'
+import { Text, View } from 'react-native'
+import styled from 'styled-components/native'
 
+import animationSrc from '../animations/wallet.json'
 import PinCodeInput from '../components/inputs/PinCodeInput'
 import Screen from '../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../components/text/CenteredInstructions'
@@ -28,6 +31,7 @@ import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
 import { pinEntered } from '../store/credentialsSlice'
+import { unlockWalletAsync } from '../utils/wallet'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 
@@ -48,6 +52,8 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const storedActiveEncryptedWallet = route.params.storedWallet as ActiveWalletState
+  const pinFullyEntered = pinCode.length === pinLength
+  const [loading, setLoading] = useState(false)
 
   useFocusEffect(
     useCallback(() => {
@@ -56,35 +62,58 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     }, [])
   )
 
+  const unlockWallet = useCallback(async () => {
+    const wallet = await unlockWalletAsync(pinCode, storedActiveEncryptedWallet.mnemonic)
+    await dispatch(
+      activeWalletChanged({
+        ...storedActiveEncryptedWallet,
+        mnemonic: wallet.mnemonic
+      })
+    )
+    navigation.navigate('DashboardScreen')
+    setPinCode('')
+  }, [dispatch, navigation, pinCode, storedActiveEncryptedWallet])
+
   useEffect(() => {
-    if (pinCode.length !== pinLength) return
+    if (!pinFullyEntered) return
+
+    setLoading(true)
 
     try {
-      const wallet = walletOpen(pinCode, storedActiveEncryptedWallet.mnemonic)
       dispatch(pinEntered(pinCode))
-      dispatch(
-        activeWalletChanged({
-          ...storedActiveEncryptedWallet,
-          mnemonic: wallet.mnemonic
-        })
-      )
-      setPinCode('')
-      navigation.navigate('DashboardScreen')
+      unlockWallet()
     } catch (e) {
       setShownInstructions(errorInstructionSet)
       setPinCode('')
       console.error(`Could not unlock wallet ${storedActiveEncryptedWallet.name}`, e)
     }
-  }, [storedActiveEncryptedWallet, dispatch, navigation, pinCode])
-
-  console.log('LoginScreen renders')
+  }, [dispatch, pinCode, pinFullyEntered, storedActiveEncryptedWallet.name, unlockWallet])
 
   return (
     <Screen style={{ marginTop: 40 }}>
-      <CenteredInstructions instructions={shownInstructions} />
-      <PinCodeInput pinLenght={pinLength} value={pinCode} onPinChange={setPinCode} />
+      {!loading ? (
+        <>
+          <CenteredInstructions instructions={shownInstructions} />
+          <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
+        </>
+      ) : (
+        <Centered>
+          <StyledAnimation source={animationSrc} autoPlay />
+          <Text>Unlocking your wallet...</Text>
+        </Centered>
+      )}
     </Screen>
   )
 }
 
 export default LoginScreen
+
+const StyledAnimation = styled(LottieView)`
+  width: 40%;
+`
+
+const Centered = styled(View)`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`

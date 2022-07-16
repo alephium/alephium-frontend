@@ -119,7 +119,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   return (
     <Screen>
       <CenteredInstructions instructions={shownInstructions} />
-      <PinCodeInput pinLenght={pinLength} value={pinCode} onPinChange={setPinCode} />
+      <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
     </Screen>
   )
 }

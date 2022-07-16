@@ -18,7 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
-import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+  EntityState,
+  PayloadAction
+} from '@reduxjs/toolkit'
 
 import client from '../api/client'
 import { AddressHash, AddressSettings } from '../types/addresses'
@@ -264,8 +271,26 @@ const addressesSlice = createSlice({
   }
 })
 
-export const { selectById: selectAddressByHash, selectAll: selectAllAddresses } =
-  addressSettingsAdapter.getSelectors<RootState>((state) => state[sliceName])
+export const {
+  selectById: selectAddressByHash,
+  selectAll: selectAllAddresses,
+  selectIds: selectAddressIds
+} = addressSettingsAdapter.getSelectors<RootState>((state) => state[sliceName])
+
+export const selectMultipleAddresses = createSelector(
+  [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
+  (addresses, addressHashes) => addresses.filter((address) => addressHashes.includes(address.hash))
+)
+
+export const selectConfirmedTransactions = createSelector(
+  [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
+  (addresses, addressHashes) =>
+    addresses
+      .filter((address) => addressHashes.includes(address.hash))
+      .map((address) => address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address })))
+      .flat()
+      .sort((a, b) => b.timestamp - a.timestamp)
+)
 
 export const {
   addressesAdded,
