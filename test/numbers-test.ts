@@ -79,6 +79,10 @@ it('Should keep full amount precision', () => {
     expect(formatAmountForDisplay(BigInt('1000000000000000000'), true, 3)).toEqual('1.000')
 })
 
+it('Should display a defined number of decimals', () => {
+  expect(formatAmountForDisplay(BigInt('20053549281751930708'), false, 5)).toEqual('20.05355')
+})
+
 it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {
   expect(calAmountDelta(transactions.oneInputOneOutput, transactions.oneInputOneOutput.inputs[0].address)).toEqual(
     alph(BigInt(-50))

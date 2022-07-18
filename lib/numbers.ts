@@ -89,7 +89,12 @@ export const formatAmountForDisplay = (
 
     return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
   } else if (alphNum <= 1000000) {
-    return addApostrophes(removeTrailingZeros(alphNum.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals))
+    const amountWithRemovedTrailingZeros = removeTrailingZeros(
+      alphNum.toFixed(numberOfDecimalsToDisplay),
+      minNumberOfDecimals
+    )
+
+    return alphNum >= 1000 ? addApostrophes(amountWithRemovedTrailingZeros) : amountWithRemovedTrailingZeros
   }
 
   const tier = alphNum < 1000000000 ? 2 : alphNum < 1000000000000 ? 3 : 4
