@@ -194,7 +194,7 @@ export const walletEncrypt = (password: string, mnemonic: string) => {
   return encrypt(password, JSON.stringify(storedState))
 }
 
-export const _pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> => {
+const _pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> => {
   return new Promise((resolve, reject) => {
     pbkdf2(password, salt, 10000, 32, 'sha256', (err, data) => {
       if (err) return reject(err)

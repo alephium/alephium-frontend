@@ -144,6 +144,9 @@ describe('Wallet', function () {
   })
 
   describe('should call custom functions', () => {
+    const walletUtilsRewire = rewire('../dist/lib/wallet')
+    const _pbkdf2 = walletUtilsRewire.__get__('_pbkdf2')
+
     it('getWalletFromMnemonicAsyncUnsafe should call custom mnemonicToSeed function', async () => {
       const mnemonic = wallets.wallets[0].mnemonic
       const mnemonicToSeedCustomFunc = jest.fn((m: string) => Promise.resolve(bip39.mnemonicToSeedSync(m)))
@@ -179,7 +182,7 @@ describe('Wallet', function () {
       const password = wallet.password
       const encryptedWallet = JSON.stringify(wallet.file)
       const mnemonicToSeedCustomFunc = jest.fn((m: string) => Promise.resolve(bip39.mnemonicToSeedSync(m)))
-      const pbkdf2CustomFunc = jest.fn((p: string, s: Buffer) => walletUtils._pbkdf2(p, s))
+      const pbkdf2CustomFunc = jest.fn((p: string, s: Buffer) => _pbkdf2(p, s))
       await walletUtils.walletOpenAsyncUnsafe(password, encryptedWallet, pbkdf2CustomFunc, mnemonicToSeedCustomFunc)
       expect(mnemonicToSeedCustomFunc.mock.calls.length).toBe(1)
       expect(pbkdf2CustomFunc.mock.calls.length).toBe(1)
@@ -188,7 +191,7 @@ describe('Wallet', function () {
       const wallet = wallets.wallets[0]
       const mnemonic = wallet.mnemonic
       const password = wallet.password
-      const pbkdf2CustomFunc = jest.fn((p: string, s: Buffer) => walletUtils._pbkdf2(p, s))
+      const pbkdf2CustomFunc = jest.fn((p: string, s: Buffer) => _pbkdf2(p, s))
       await walletUtils.walletEncryptAsyncUnsafe(password, mnemonic, pbkdf2CustomFunc)
       expect(pbkdf2CustomFunc.mock.calls.length).toBe(1)
     })
@@ -198,7 +201,7 @@ describe('Wallet', function () {
       const wallet = wallets.wallets[0]
       const salt = wallet.file.salt
       const password = wallet.password
-      await walletUtils._pbkdf2(password, Buffer.from(salt, 'base64')).catch(() => {
+      await _pbkdf2(password, Buffer.from(salt, 'base64')).catch(() => {
         expect(true).toBe(true)
       })
     })
