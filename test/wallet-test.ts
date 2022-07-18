@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 
+import rewire from 'rewire'
+
 import * as walletUtils from '../lib/wallet'
 import { addressToGroup } from '../lib/address'
 import { TOTAL_NUMBER_OF_GROUPS } from '../lib/constants'
@@ -197,6 +199,9 @@ describe('Wallet', function () {
     })
   })
   describe('the default pbkdf2 function', () => {
+    const walletUtilsRewire = rewire('../dist/lib/wallet')
+    const _pbkdf2 = walletUtilsRewire.__get__('_pbkdf2')
+
     it('should reject when giving an error', async () => {
       const wallet = wallets.wallets[0]
       const salt = wallet.file.salt
