@@ -28,7 +28,6 @@ interface ListProps {
 const List = ({ style, children }: ListProps) => <View style={style}>{children}</View>
 
 export default styled(List)`
-  ${({ theme }) => theme.shadow.secondary};
   border-radius: 12px;
   background-color: white;
 `

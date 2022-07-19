@@ -46,7 +46,7 @@ const Button = ({
   const colors = {
     bg: {
       default: theme.font.primary,
-      contrast: theme.bg.primary,
+      contrast: theme.bg.highlight,
       accent: theme.global.accent
     }[variant],
     font: {
@@ -62,7 +62,6 @@ const Button = ({
       backgroundColor: { primary: colors.bg, secondary: 'transparent' }[type],
       borderWidth: { primary: 0, secondary: 2 }[type],
       borderColor: { primary: 'transparent', secondary: colors.bg }[type],
-      elevation: type === 'primary' ? 8 : 0, // TODO: iOS shadows
       width: props.wide ? '75%' : 'auto'
     },
     style

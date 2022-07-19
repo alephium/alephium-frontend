@@ -25,6 +25,7 @@ import {
 import React, { memo } from 'react'
 import { StyleProp, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { BORDER_RADIUS } from '../style/globalStyle'
 
 interface FooterMenuProps {
   style?: StyleProp<ViewStyle>
@@ -75,10 +76,9 @@ const MenuItems = styled(View)`
   flex-direction: row;
   justify-content: space-between;
   background-color: white;
-  border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 12px;
-  ${({ theme }) => theme.shadow.secondary};
-  padding: 9px 12px;
+  border-radius: ${BORDER_RADIUS}px;
+  padding: 15px;
+  ${({ theme }) => theme.shadow.tertiary};
 `
 
 const Tab = styled(View)`

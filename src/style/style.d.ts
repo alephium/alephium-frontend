@@ -24,6 +24,7 @@ declare module 'styled-components' {
   export interface DefaultTheme {
     name: ThemeType
     bg: {
+      highlight: string
       primary: string
       secondary: string
       tertiary: string

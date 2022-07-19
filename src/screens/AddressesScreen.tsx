@@ -133,7 +133,6 @@ AddressRow = styled(AddressRow)`
   border-radius: 12px;
   margin-bottom: 15px;
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  ${({ theme }) => theme.shadow.secondary}
 `
 
 const Header = styled(View)`

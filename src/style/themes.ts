@@ -23,14 +23,15 @@ export type ThemeType = 'light' | 'dark'
 export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
-    primary: '#ffffff',
-    secondary: '#fbfbfb',
+    highlight: '#fff',
+    primary: '#fafafa',
+    secondary: '#f3f3f3',
     tertiary: '#ededed'
   },
   font: {
-    primary: '#000',
-    secondary: '#797979',
-    tertiary: '#adadad',
+    primary: '#2c2c2c',
+    secondary: '#838383',
+    tertiary: '#ababab',
     contrast: '#ffffff'
   },
   border: {
@@ -40,7 +41,7 @@ export const lightTheme: DefaultTheme = {
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.03; shadow-radius: 2px; elevation: 2;',
     secondary: 'shadow-color: black; shadow-offset: 0px 10px; shadow-opacity: 0.04; shadow-radius: 10px; elevation: 5;',
-    tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.05; shadow-radius: 20px; elevation: 5;'
+    tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
     accent: '#5981f3',
@@ -59,6 +60,7 @@ export const lightTheme: DefaultTheme = {
 export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
+    highlight: '',
     primary: '#19191E',
     secondary: '#141417',
     tertiary: '#101012'

@@ -206,7 +206,6 @@ const QRCodeContainer = styled(View)`
   border-radius: 10px;
   padding: 20px;
   align-items: center;
-  ${({ theme }) => theme.shadow.primary}
 `
 
 export default AddressScreen

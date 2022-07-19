@@ -146,7 +146,7 @@ const WalletsList = styled(View)``
 
 const WalletListItem = styled(View)`
   padding: 16px 18px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
   display: flex;
   flex-direction: row;
   align-items: center;
