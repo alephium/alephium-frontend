@@ -18,6 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native'
 import { CardStyleInterpolators, createStackNavigator, StackScreenProps } from '@react-navigation/stack'
+import React from 'react'
+import { useWindowDimensions, View } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import AddressesScreen from '../screens/AddressesScreen'
@@ -42,6 +44,7 @@ const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
+  const { height: screenHeight } = useWindowDimensions()
 
   console.log('RootStackNavigation renders')
 
@@ -71,7 +74,33 @@ const RootStackNavigation = () => {
         <RootStack.Screen
           name="SwitchWalletScreen"
           component={SwitchWalletScreen}
-          options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS }}
+          options={{
+            cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
+            gestureEnabled: true,
+            gestureDirection: 'vertical',
+            gestureResponseDistance: screenHeight,
+            cardStyle: {
+              position: 'absolute',
+              bottom: 0,
+              width: '100%',
+              borderRadius: 20,
+              height: '60%',
+              overflow: 'visible'
+            },
+            header: () => (
+              <View
+                style={{
+                  position: 'absolute',
+                  height: 7,
+                  top: -20,
+                  width: '100%',
+                  alignItems: 'center'
+                }}
+              >
+                <View style={{ width: '30%', height: '100%', backgroundColor: theme.bg.tertiary, borderRadius: 20 }} />
+              </View>
+            )
+          }}
         />
         <RootStack.Screen name="AddressesScreen" component={AddressesScreen} />
         <RootStack.Screen
