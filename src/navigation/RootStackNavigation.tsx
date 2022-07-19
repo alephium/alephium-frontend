@@ -19,9 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native'
 import { CardStyleInterpolators, createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import React from 'react'
-import { useWindowDimensions, View } from 'react-native'
+import { View } from 'react-native'
 import { useTheme } from 'styled-components'
 
+import useBottomModalOptions from '../hooks/useBottomModalOptions'
 import AddressesScreen from '../screens/AddressesScreen'
 import AddressScreen from '../screens/AddressScreen'
 import DashboardScreen from '../screens/DashboardScreen'
@@ -44,7 +45,7 @@ const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
-  const { height: screenHeight } = useWindowDimensions()
+  const bottomModalOptions = useBottomModalOptions()
 
   console.log('RootStackNavigation renders')
 
@@ -71,42 +72,9 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
 
         <RootStack.Screen name="DashboardScreen" component={DashboardScreen} options={{ headerShown: false }} />
-        <RootStack.Screen
-          name="SwitchWalletScreen"
-          component={SwitchWalletScreen}
-          options={{
-            cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
-            gestureEnabled: true,
-            gestureDirection: 'vertical',
-            gestureResponseDistance: screenHeight,
-            cardStyle: {
-              position: 'absolute',
-              bottom: 0,
-              width: '100%',
-              borderRadius: 20,
-              overflow: 'visible'
-            },
-            header: () => (
-              <View
-                style={{
-                  position: 'absolute',
-                  height: 7,
-                  top: -20,
-                  width: '100%',
-                  alignItems: 'center'
-                }}
-              >
-                <View style={{ width: '30%', height: '100%', backgroundColor: theme.bg.tertiary, borderRadius: 20 }} />
-              </View>
-            )
-          }}
-        />
+        <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} options={bottomModalOptions} />
         <RootStack.Screen name="AddressesScreen" component={AddressesScreen} />
-        <RootStack.Screen
-          name="AddressScreen"
-          component={AddressScreen}
-          options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS }}
-        />
+        <RootStack.Screen name="AddressScreen" component={AddressScreen} options={bottomModalOptions} />
         <RootStack.Screen
           name="NewAddressScreen"
           component={NewAddressScreen}
