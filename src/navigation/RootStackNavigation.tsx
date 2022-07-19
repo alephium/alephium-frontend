@@ -84,7 +84,6 @@ const RootStackNavigation = () => {
               bottom: 0,
               width: '100%',
               borderRadius: 20,
-              height: '60%',
               overflow: 'visible'
             },
             header: () => (
