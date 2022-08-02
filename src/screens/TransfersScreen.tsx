@@ -25,44 +25,48 @@ import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
 import DashboardHeaderActions from '../components/DashboardHeaderActions'
 import Screen from '../components/layout/Screen'
+import TransactionsList from '../components/TransactionsList'
 import WalletSwitch from '../components/WalletSwitch'
-import { useAppDispatch } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
+import { selectAddressIds } from '../store/addressesSlice'
+import { AddressHash } from '../types/addresses'
 
-type ScreenProps = StackScreenProps<InWalletTabsParamList, 'DashboardScreen'> & {
+type ScreenProps = StackScreenProps<InWalletTabsParamList, 'TransfersScreen'> & {
   style?: StyleProp<ViewStyle>
 }
 
-const DashboardScreen = ({ navigation, style }: ScreenProps) => {
-  const dispatch = useAppDispatch()
-
-  const handleDeleteAllWallets = () => {
-    deleteAllWallets()
-    dispatch(walletFlushed())
-    navigation.getParent()?.navigate('LandingScreen')
-  }
+const TransfersScreen = ({ navigation, style }: ScreenProps) => {
+  const theme = useTheme()
+  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
 
   return (
     <Screen style={style}>
       <ScrollView>
-        <Header>
-          <WalletSwitch />
-          <DashboardHeaderActions />
-        </Header>
         <ScreenSection>
           <BalanceSummary />
+          <Buttons>
+            <SendButton>
+              <ArrowUpIcon size={24} color={theme.font.contrast} />
+              <ButtonText>Send</ButtonText>
+            </SendButton>
+            <ReceiveButton>
+              <ArrowDownIcon size={24} color={theme.font.contrast} />
+              <ButtonText>Receive</ButtonText>
+            </ReceiveButton>
+          </Buttons>
         </ScreenSection>
-        <Buttons style={{ marginBottom: 120, marginTop: 500 }}>
-          <Button title="Delete all wallets" onPress={handleDeleteAllWallets} />
-        </Buttons>
+        <ScreenSection>
+          <TransactionsList addressHashes={addressHashes} />
+        </ScreenSection>
       </ScrollView>
     </Screen>
   )
 }
 
-export default styled(DashboardScreen)`
+export default styled(TransfersScreen)`
   padding-top: 30px;
 `
 

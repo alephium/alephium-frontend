@@ -17,11 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-import {
-  ArrowLeftRight as ArrowsIcon,
-  LayoutTemplate as LayoutTemplateIcon,
-  List as ListIcon
-} from 'lucide-react-native'
 import React, { memo } from 'react'
 import { StyleProp, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -35,21 +30,27 @@ interface FooterMenuProps extends BottomTabBarProps {
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
   const theme = useTheme()
 
-  console.log(state)
-
   return (
     <View style={style}>
       <MenuItems>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key]
+          const isFocused = state.index === index
+
+          const Icon =
+            options.tabBarIcon &&
+            options.tabBarIcon({
+              focused: isFocused,
+              color: isFocused ? theme.font.primary : theme.font.tertiary,
+              size: 24
+            })
+
           const label =
             options.tabBarLabel !== undefined
               ? (options.tabBarLabel as string)
               : options.title !== undefined
               ? options.title
               : route.name
-
-          const isFocused = state.index === index
 
           const onPress = () => {
             const event = navigation.emit({
@@ -66,7 +67,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
           return (
             <TouchableWithoutFeedback onPress={onPress} key={label}>
               <OverviewTab>
-                <LayoutTemplateIcon color={isFocused ? theme.font.primary : theme.font.tertiary} size={24} />
+                {Icon}
                 <TabText isActive={isFocused}>{label}</TabText>
               </OverviewTab>
             </TouchableWithoutFeedback>

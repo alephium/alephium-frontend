@@ -17,11 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import {
+  ArrowLeftRight as ArrowsIcon,
+  LayoutTemplate as LayoutTemplateIcon,
+  List as ListIcon
+} from 'lucide-react-native'
 import React from 'react'
 
 import FooterMenu from '../components/FooterMenu'
 import AddressesScreen from '../screens/AddressesScreen'
 import DashboardScreen from '../screens/DashboardScreen'
+import TransfersScreen from '../screens/TransfersScreen'
 import InWalletTabsParamList from './inWalletRoutes'
 
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
@@ -37,8 +43,31 @@ const InWalletTabsNavigation = () => {
       }}
       tabBar={(props) => <FooterMenu {...props} />}
     >
-      <InWalletTabs.Screen name="DashboardScreen" component={DashboardScreen} options={{ headerShown: false }} />
-      <InWalletTabs.Screen name="AddressesScreen" component={AddressesScreen} />
+      <InWalletTabs.Screen
+        name="DashboardScreen"
+        component={DashboardScreen}
+        options={{
+          headerShown: false,
+          title: 'Overview',
+          tabBarIcon: ({ color, size }) => <ListIcon name="home" color={color} size={size} />
+        }}
+      />
+      <InWalletTabs.Screen
+        name="AddressesScreen"
+        component={AddressesScreen}
+        options={{
+          title: 'Addresses',
+          tabBarIcon: ({ color, size }) => <LayoutTemplateIcon name="home" color={color} size={size} />
+        }}
+      />
+      <InWalletTabs.Screen
+        name="TransfersScreen"
+        component={TransfersScreen}
+        options={{
+          title: 'Transfers',
+          tabBarIcon: ({ color, size }) => <ArrowsIcon name="home" color={color} size={size} />
+        }}
+      />
     </InWalletTabs.Navigator>
   )
 }
