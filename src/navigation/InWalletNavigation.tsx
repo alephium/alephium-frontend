@@ -22,8 +22,9 @@ import React from 'react'
 import FooterMenu from '../components/FooterMenu'
 import AddressesScreen from '../screens/AddressesScreen'
 import DashboardScreen from '../screens/DashboardScreen'
+import InWalletTabsParamList from './inWalletRoutes'
 
-const InWalletTabs = createBottomTabNavigator()
+const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 
 const InWalletTabsNavigation = () => {
   console.log('InWalletTabsNavigation renders')
@@ -34,7 +35,7 @@ const InWalletTabsNavigation = () => {
         headerStyle: { elevation: 0, shadowOpacity: 0, backgroundColor: 'transparent' },
         headerTitle: ''
       }}
-      tabBar={() => <FooterMenu />}
+      tabBar={(props) => <FooterMenu {...props} />}
     >
       <InWalletTabs.Screen name="DashboardScreen" component={DashboardScreen} options={{ headerShown: false }} />
       <InWalletTabs.Screen name="AddressesScreen" component={AddressesScreen} />

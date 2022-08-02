@@ -16,31 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ActiveWalletState } from '../store/activeWalletSlice'
-import { AddressHash } from '../types/addresses'
-
-type RootStackParamList = {
-  LandingScreen: undefined
-  NewWalletIntroScreen: undefined
-  NewWalletNameScreen: undefined
-  PinCodeCreationScreen: undefined
-  AddBiometricsScreen: undefined
-  NewWalletSuccessPage: undefined
-  ImportWalletSeedScreen: undefined
-  InWalletScreen: undefined
-  LoginScreen: {
-    storedWallet: ActiveWalletState
-  }
-  SplashScreen: undefined
-  SwitchWalletScreen: undefined
+type InWalletTabsParamList = {
+  DashboardScreen: undefined
   AddressesScreen: undefined
-  AddressScreen: {
-    addressHash: AddressHash
-  }
-  NewAddressScreen: undefined
-  EditAddressScreen: {
-    addressHash: AddressHash
-  }
 }
 
-export default RootStackParamList
+export default InWalletTabsParamList

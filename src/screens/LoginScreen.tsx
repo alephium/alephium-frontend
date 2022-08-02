@@ -71,7 +71,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
         mnemonic: wallet.mnemonic
       })
     )
-    navigation.navigate('DashboardScreen')
+    navigation.navigate('InWalletScreen')
     setPinCode('')
   }, [dispatch, pinCode, storedActiveEncryptedWallet, navigation])
 

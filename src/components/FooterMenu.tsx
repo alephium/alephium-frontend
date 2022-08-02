@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import {
   ArrowLeftRight as ArrowsIcon,
   LayoutTemplate as LayoutTemplateIcon,
@@ -25,41 +25,53 @@ import {
 import React, { memo } from 'react'
 import { StyleProp, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+
 import { BORDER_RADIUS } from '../style/globalStyle'
 
-interface FooterMenuProps {
+interface FooterMenuProps extends BottomTabBarProps {
   style?: StyleProp<ViewStyle>
 }
 
-const FooterMenu = ({ style }: FooterMenuProps) => {
-  const navigation = useNavigation()
-  const route = useRoute()
+const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
   const theme = useTheme()
+
+  console.log(state)
 
   return (
     <View style={style}>
       <MenuItems>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('DashboardScreen')}>
-          <OverviewTab>
-            <LayoutTemplateIcon
-              color={route.name === 'DashboardScreen' ? theme.font.primary : theme.font.tertiary}
-              size={24}
-            />
-            <TabText isActive={route.name === 'DashboardScreen'}>Overview</TabText>
-          </OverviewTab>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('AddressesScreen')}>
-          <Tab>
-            <ListIcon color={route.name === 'AddressesScreen' ? theme.font.primary : theme.font.tertiary} size={24} />
-            <TabText isActive={route.name === 'AddressesScreen'}>Addresses</TabText>
-          </Tab>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback>
-          <TransferTab>
-            <ArrowsIcon color={route.name === 'TransferScreen' ? theme.font.primary : theme.font.tertiary} size={24} />
-            <TabText isActive={route.name === 'TransferScreen'}>Transfer</TabText>
-          </TransferTab>
-        </TouchableWithoutFeedback>
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key]
+          const label =
+            options.tabBarLabel !== undefined
+              ? (options.tabBarLabel as string)
+              : options.title !== undefined
+              ? options.title
+              : route.name
+
+          const isFocused = state.index === index
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true
+            })
+
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name)
+            }
+          }
+
+          return (
+            <TouchableWithoutFeedback onPress={onPress} key={label}>
+              <OverviewTab>
+                <LayoutTemplateIcon color={isFocused ? theme.font.primary : theme.font.tertiary} size={24} />
+                <TabText isActive={isFocused}>{label}</TabText>
+              </OverviewTab>
+            </TouchableWithoutFeedback>
+          )
+        })}
       </MenuItems>
     </View>
   )

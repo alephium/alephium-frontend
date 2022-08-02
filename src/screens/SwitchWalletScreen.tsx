@@ -50,7 +50,7 @@ const SwitchWalletScreen = ({ navigation }: ScreenProps) => {
         navigation.navigate('LoginScreen', { storedWallet })
       } else if (storedWallet.authType === 'biometrics') {
         dispatch(activeWalletChanged(storedWallet))
-        navigation.navigate('DashboardScreen')
+        navigation.navigate('InWalletScreen')
       } else {
         throw new Error('Unknown auth type')
       }

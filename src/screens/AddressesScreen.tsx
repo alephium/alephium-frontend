@@ -31,7 +31,6 @@ import { Pressable, ScrollView, StyleProp, Text, View, ViewStyle } from 'react-n
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
-import FooterMenu from '../components/FooterMenu'
 import Screen from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -69,7 +68,6 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
           ))}
         </ScreenSection>
       </ScrollView>
-      <FooterMenu />
     </Screen>
   )
 }

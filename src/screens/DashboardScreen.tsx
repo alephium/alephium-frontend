@@ -24,18 +24,17 @@ import styled, { useTheme } from 'styled-components/native'
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
 import DashboardHeaderActions from '../components/DashboardHeaderActions'
-import FooterMenu from '../components/FooterMenu'
 import Screen from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
 import WalletSwitch from '../components/WalletSwitch'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import RootStackParamList from '../navigation/rootStackRoutes'
+import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'DashboardScreen'> & {
+type ScreenProps = StackScreenProps<InWalletTabsParamList, 'DashboardScreen'> & {
   style?: StyleProp<ViewStyle>
 }
 
@@ -77,7 +76,6 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
           <Button title="Delete all wallets" onPress={handleDeleteAllWallets} />
         </Buttons>
       </ScrollView>
-      <FooterMenu />
     </Screen>
   )
 }
