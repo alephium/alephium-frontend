@@ -23,14 +23,10 @@ import styled, { useTheme } from 'styled-components/native'
 
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
-import DashboardHeaderActions from '../components/DashboardHeaderActions'
 import Screen from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
-import WalletSwitch from '../components/WalletSwitch'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
-import { deleteAllWallets } from '../storage/wallets'
-import { walletFlushed } from '../store/activeWalletSlice'
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
@@ -99,11 +95,4 @@ const ScreenSection = styled(View)`
 
   border-bottom-color: ${({ theme }) => theme.border.secondary};
   border-bottom-width: 1px;
-`
-
-const Header = styled(View)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 22px 20px 18px;
 `

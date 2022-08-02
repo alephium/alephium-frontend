@@ -66,10 +66,10 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
 
           return (
             <TouchableWithoutFeedback onPress={onPress} key={label}>
-              <OverviewTab>
+              <Tab>
                 {Icon}
                 <TabText isActive={isFocused}>{label}</TabText>
-              </OverviewTab>
+              </Tab>
             </TouchableWithoutFeedback>
           )
         })}
@@ -96,16 +96,8 @@ const MenuItems = styled(View)`
 
 const Tab = styled(View)`
   align-items: center;
-`
-
-const OverviewTab = styled(Tab)`
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
-`
-
-const TransferTab = styled(Tab)`
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
 `
 
 const TabText = styled(Text)<{ isActive?: boolean }>`
