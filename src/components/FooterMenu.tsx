@@ -66,7 +66,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
 
           return (
             <TouchableWithoutFeedback onPress={onPress} key={label}>
-              <Tab>
+              <Tab active={isFocused}>
                 {Icon}
                 <TabText isActive={isFocused}>{label}</TabText>
               </Tab>
@@ -82,22 +82,28 @@ export default memo(styled(FooterMenu)`
   position: absolute;
   bottom: 35px;
   width: 100%;
-  padding: 0 55px;
+  align-items: center;
 `)
 
 const MenuItems = styled(View)`
+  width: 75%;
+  max-width: 350px;
+  min-width: 300px;
   flex-direction: row;
-  justify-content: space-between;
-  background-color: white;
+  background-color: ${({ theme }) => theme.bg.primary};
   border-radius: ${BORDER_RADIUS}px;
-  padding: 15px;
   ${({ theme }) => theme.shadow.tertiary};
+  padding: 5px;
 `
 
-const Tab = styled(View)`
+const Tab = styled(View)<{ active: boolean }>`
+  flex: 1;
   align-items: center;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
+  justify-content: space-between;
+  border-radius: ${BORDER_RADIUS * 0.7}px;
+  background-color: ${({ theme, active }) => (active ? theme.bg.tertiary : 'transparent')};
+  height: 60px;
+  padding: 8px 0 5px 0;
 `
 
 const TabText = styled(Text)<{ isActive?: boolean }>`
