@@ -19,11 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import blake from 'blakejs'
+import { pbkdf2 } from 'crypto'
 
 import bs58 from './bs58'
-import { decrypt, encrypt } from './password-crypto'
+import { decrypt, decryptAsync, encrypt, encryptAsync, Pbkdf2Function } from './password-crypto'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import { addressToGroup } from './address'
+
+type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
 
 class StoredState {
   readonly version = 1
@@ -73,11 +76,26 @@ export const getPath = (addressIndex?: number) => {
   return `m/44'/${coinType}/0'/0/${addressIndex || '0'}`
 }
 
-export const getWalletFromMnemonic = (mnemonic: string, passphrase = ''): Wallet => {
-  const seed = bip39.mnemonicToSeedSync(mnemonic, passphrase)
+export const getWalletFromSeed = (seed: Buffer, mnemonic: string): Wallet => {
   const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
 
   return new Wallet({ seed, address, publicKey, privateKey, mnemonic })
+}
+
+export const getWalletFromMnemonic = (mnemonic: string, passphrase = ''): Wallet => {
+  const seed = bip39.mnemonicToSeedSync(mnemonic, passphrase)
+
+  return getWalletFromSeed(seed, mnemonic)
+}
+
+export const getWalletFromMnemonicAsyncUnsafe = async (
+  mnemonicToSeedCustomFunc: MnemonicToSeedFunction,
+  mnemonic: string,
+  passphrase = ''
+): Promise<Wallet> => {
+  const seed = await mnemonicToSeedCustomFunc(mnemonic, passphrase)
+
+  return getWalletFromSeed(seed, mnemonic)
 }
 
 export type AddressAndKeys = {
@@ -147,6 +165,12 @@ export const walletGenerate = (passphrase?: string) => {
   return getWalletFromMnemonic(mnemonic, passphrase)
 }
 
+export const walletGenerateAsyncUnsafe = (mnemonicToSeedCustomFunc: MnemonicToSeedFunction, passphrase?: string) => {
+  const mnemonic = bip39.generateMnemonic(256)
+
+  return getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, mnemonic, passphrase)
+}
+
 export const walletImport = (mnemonic: string, passphrase?: string) => {
   if (!bip39.validateMnemonic(mnemonic)) {
     throw new Error('Invalid seed phrase')
@@ -168,4 +192,49 @@ export const walletEncrypt = (password: string, mnemonic: string) => {
   })
 
   return encrypt(password, JSON.stringify(storedState))
+}
+
+const _pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> => {
+  return new Promise((resolve, reject) => {
+    pbkdf2(password, salt, 10000, 32, 'sha256', (err, data) => {
+      if (err) return reject(err)
+      resolve(data)
+    })
+  })
+}
+
+export const walletImportAsyncUnsafe = async (
+  mnemonicToSeedCustomFunc: MnemonicToSeedFunction,
+  mnemonic: string,
+  passphrase?: string
+) => {
+  if (!bip39.validateMnemonic(mnemonic)) {
+    throw new Error('Invalid seed phrase')
+  }
+
+  return getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, mnemonic, passphrase)
+}
+
+export const walletOpenAsyncUnsafe = async (
+  password: string,
+  encryptedWallet: string,
+  pbkdf2CustomFunc: Pbkdf2Function,
+  mnemonicToSeedCustomFunc: MnemonicToSeedFunction
+): Promise<Wallet> => {
+  const data = await decryptAsync(password, encryptedWallet, pbkdf2CustomFunc ?? _pbkdf2)
+  const config = JSON.parse(data) as StoredState
+
+  return getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, config.mnemonic)
+}
+
+export const walletEncryptAsyncUnsafe = (
+  password: string,
+  mnemonic: string,
+  pbkdf2CustomFunc: Pbkdf2Function
+): Promise<string> => {
+  const storedState = new StoredState({
+    mnemonic
+  })
+
+  return encryptAsync(password, JSON.stringify(storedState), pbkdf2CustomFunc ?? _pbkdf2)
 }
