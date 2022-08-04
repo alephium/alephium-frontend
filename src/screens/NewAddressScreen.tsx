@@ -24,7 +24,7 @@ import {
   walletImportAsyncUnsafe
 } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select'
 import styled from 'styled-components/native'
@@ -69,13 +69,17 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     color: coloredLabel?.color
   }
 
-  useEffect(() => {
+  const importWallet = useCallback(async () => {
     const wallet = await walletImportAsyncUnsafe(mnemonicToSeed, activeWallet.mnemonic)
     setSeed(wallet.seed)
     generateNewAddress(wallet.seed)
+  }, [activeWallet])
+
+  useEffect(() => {
+    importWallet()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [importWallet])
 
   const generateNewAddress = (seed?: Buffer, inGroup?: number) => {
     if (!seed) return

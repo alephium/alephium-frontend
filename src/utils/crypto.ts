@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import rnPbkdf2 from 'react-native-fast-pbkdf2'
 
-export const pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> => {
+export const pbkdf2 = async (password: string, salt: Buffer): Promise<Buffer> => {
   const _salt = salt.toString('base64')
-  const data = rnPbkdf2.derive(password, _salt, 10000, 32, 'sha-256')
+  const data = await rnPbkdf2.derive(password, _salt, 10000, 32, 'sha-256')
   return Buffer.from(data, 'base64')
 }
 
