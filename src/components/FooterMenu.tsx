@@ -19,19 +19,28 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import React, { memo } from 'react'
 import { StyleProp, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native'
+import Animated, { interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../style/globalStyle'
 
 interface FooterMenuProps extends BottomTabBarProps {
+  scrollY: SharedValue<number>
   style?: StyleProp<ViewStyle>
 }
 
-const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
+const FooterMenu = ({ state, descriptors, navigation, style, scrollY }: FooterMenuProps) => {
   const theme = useTheme()
 
+  const footerStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(scrollY.value, [0, 50], [0, 100])
+    return {
+      transform: [{ translateY }]
+    }
+  })
+
   return (
-    <View style={style}>
+    <Animated.View style={[style, footerStyle]}>
       <MenuItems>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key]
@@ -74,7 +83,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
           )
         })}
       </MenuItems>
-    </View>
+    </Animated.View>
   )
 }
 

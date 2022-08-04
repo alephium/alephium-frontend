@@ -54,6 +54,12 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
         <ScreenSection>
           <BalanceSummary />
         </ScreenSection>
+        <ScreenSection>
+          <BalanceSummary />
+        </ScreenSection>
+        <ScreenSection>
+          <BalanceSummary />
+        </ScreenSection>
         <Buttons style={{ marginBottom: 120, marginTop: 500 }}>
           <Button title="Delete all wallets" onPress={handleDeleteAllWallets} />
         </Buttons>

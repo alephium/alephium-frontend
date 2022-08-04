@@ -22,7 +22,6 @@ import {
   LayoutTemplate as LayoutTemplateIcon,
   List as ListIcon
 } from 'lucide-react-native'
-import { useState } from 'react'
 import { useSharedValue } from 'react-native-reanimated'
 
 import DashboardHeaderActions from '../components/DashboardHeaderActions'
@@ -47,7 +46,7 @@ const InWalletTabsNavigation = () => {
           headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
           headerTitle: ''
         }}
-        tabBar={(props) => <FooterMenu {...props} />}
+        tabBar={(props) => <FooterMenu {...props} scrollY={scrollY} />}
       >
         <InWalletTabs.Screen
           name="DashboardScreen"
