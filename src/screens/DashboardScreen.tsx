@@ -17,14 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { ScrollView, StyleProp, View, ViewStyle } from 'react-native'
+import { useContext } from 'react'
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, ViewStyle } from 'react-native'
+import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
-import DashboardHeaderActions from '../components/DashboardHeaderActions'
 import Screen from '../components/layout/Screen'
-import WalletSwitch from '../components/WalletSwitch'
+import InWalletLayoutContext from '../contexts/InWalletLayoutContext'
 import { useAppDispatch } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { deleteAllWallets } from '../storage/wallets'
@@ -36,6 +37,7 @@ type ScreenProps = StackScreenProps<InWalletTabsParamList, 'DashboardScreen'> & 
 
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
+  const { setScrollY } = useContext(InWalletLayoutContext)
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
@@ -43,13 +45,13 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     navigation.getParent()?.navigate('LandingScreen')
   }
 
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setScrollY(e.nativeEvent.contentOffset.y)
+  }
+
   return (
     <Screen style={style}>
-      <ScrollView>
-        <Header>
-          <WalletSwitch />
-          <DashboardHeaderActions />
-        </Header>
+      <ScrollView onScroll={handleScroll}>
         <ScreenSection>
           <BalanceSummary />
         </ScreenSection>
@@ -72,12 +74,12 @@ const Buttons = styled.View`
 
 const ScreenSection = styled(View)`
   padding: 22px 20px;
-
   border-bottom-color: ${({ theme }) => theme.border.secondary};
   border-bottom-width: 1px;
 `
 
-const Header = styled(View)`
+const Header = styled(Animated.View)`
+  z-index: 1;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

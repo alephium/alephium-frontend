@@ -21,7 +21,7 @@ import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import React from 'react'
 import { useTheme } from 'styled-components'
 
-import useBottomModalOptions from '../hooks/useBottomModalOptions'
+import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'
 import AddressScreen from '../screens/AddressScreen'
 import EditAddressScreen from '../screens/EditAddressScreen'
 import LandingScreen from '../screens/LandingScreen'

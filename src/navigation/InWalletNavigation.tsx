@@ -22,9 +22,13 @@ import {
   LayoutTemplate as LayoutTemplateIcon,
   List as ListIcon
 } from 'lucide-react-native'
-import React from 'react'
+import { useState } from 'react'
 
+import DashboardHeaderActions from '../components/DashboardHeaderActions'
 import FooterMenu from '../components/FooterMenu'
+import WalletSwitch from '../components/WalletSwitch'
+import InWalletLayoutContext from '../contexts/InWalletLayoutContext'
+import useHeaderScrollStyle from '../hooks/layout/useHeaderScrollStyle'
 import AddressesScreen from '../screens/AddressesScreen'
 import DashboardScreen from '../screens/DashboardScreen'
 import TransfersScreen from '../screens/TransfersScreen'
@@ -33,42 +37,48 @@ import InWalletTabsParamList from './inWalletRoutes'
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 
 const InWalletTabsNavigation = () => {
-  console.log('InWalletTabsNavigation renders')
+  const [scrollY, setScrollY] = useState(0)
+
+  const headerStyle = useHeaderScrollStyle(scrollY)
 
   return (
-    <InWalletTabs.Navigator
-      screenOptions={{
-        headerStyle: { elevation: 0, shadowOpacity: 0, backgroundColor: 'transparent' },
-        headerTitle: ''
-      }}
-      tabBar={(props) => <FooterMenu {...props} />}
-    >
-      <InWalletTabs.Screen
-        name="DashboardScreen"
-        component={DashboardScreen}
-        options={{
-          headerShown: false,
-          title: 'Overview',
-          tabBarIcon: ({ color, size }) => <ListIcon name="home" color={color} size={size} />
+    <InWalletLayoutContext.Provider value={{ setScrollY, scrollY }}>
+      <InWalletTabs.Navigator
+        screenOptions={{
+          headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
+          headerTitle: ''
         }}
-      />
-      <InWalletTabs.Screen
-        name="AddressesScreen"
-        component={AddressesScreen}
-        options={{
-          title: 'Addresses',
-          tabBarIcon: ({ color, size }) => <LayoutTemplateIcon name="home" color={color} size={size} />
-        }}
-      />
-      <InWalletTabs.Screen
-        name="TransfersScreen"
-        component={TransfersScreen}
-        options={{
-          title: 'Transfers',
-          tabBarIcon: ({ color, size }) => <ArrowsIcon name="home" color={color} size={size} />
-        }}
-      />
-    </InWalletTabs.Navigator>
+        tabBar={(props) => <FooterMenu {...props} />}
+      >
+        <InWalletTabs.Screen
+          name="DashboardScreen"
+          component={DashboardScreen}
+          options={{
+            headerLeft: () => <WalletSwitch />,
+            headerRight: () => <DashboardHeaderActions />,
+            title: 'Overview',
+            tabBarIcon: ({ color, size }) => <ListIcon name="home" color={color} size={size} />
+          }}
+        />
+        <InWalletTabs.Screen
+          name="AddressesScreen"
+          component={AddressesScreen}
+          options={{
+            title: 'Addresses',
+            headerTintColor: 'black',
+            tabBarIcon: ({ color, size }) => <LayoutTemplateIcon name="home" color={color} size={size} />
+          }}
+        />
+        <InWalletTabs.Screen
+          name="TransfersScreen"
+          component={TransfersScreen}
+          options={{
+            title: 'Transfers',
+            tabBarIcon: ({ color, size }) => <ArrowsIcon name="home" color={color} size={size} />
+          }}
+        />
+      </InWalletTabs.Navigator>
+    </InWalletLayoutContext.Provider>
   )
 }
 
