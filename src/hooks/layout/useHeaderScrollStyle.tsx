@@ -17,18 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ViewStyle } from 'react-native'
-import { interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
+import { interpolateColor, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
 
 const scrollRange = [0, 50]
 
-const useHeaderScrollStyle = (scrollY: number): ViewStyle => {
+const useHeaderScrollStyle = (scrollY: SharedValue<number> | undefined): ViewStyle => {
   const theme = useTheme()
   const bgColorRange = [theme.bg.secondary, theme.bg.tertiary]
 
-  const backgroundColor = interpolateColor(scrollY, scrollRange, bgColorRange)
-
   return useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange)
     return {
       backgroundColor
     }

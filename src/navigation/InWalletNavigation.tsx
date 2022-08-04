@@ -23,12 +23,13 @@ import {
   List as ListIcon
 } from 'lucide-react-native'
 import { useState } from 'react'
+import { useSharedValue } from 'react-native-reanimated'
 
 import DashboardHeaderActions from '../components/DashboardHeaderActions'
 import FooterMenu from '../components/FooterMenu'
+import DefaultHeader from '../components/headers/DefaultHeader'
 import WalletSwitch from '../components/WalletSwitch'
 import InWalletLayoutContext from '../contexts/InWalletLayoutContext'
-import useHeaderScrollStyle from '../hooks/layout/useHeaderScrollStyle'
 import AddressesScreen from '../screens/AddressesScreen'
 import DashboardScreen from '../screens/DashboardScreen'
 import TransfersScreen from '../screens/TransfersScreen'
@@ -37,12 +38,10 @@ import InWalletTabsParamList from './inWalletRoutes'
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 
 const InWalletTabsNavigation = () => {
-  const [scrollY, setScrollY] = useState(0)
-
-  const headerStyle = useHeaderScrollStyle(scrollY)
+  const scrollY = useSharedValue(0)
 
   return (
-    <InWalletLayoutContext.Provider value={{ setScrollY, scrollY }}>
+    <InWalletLayoutContext.Provider value={{ scrollY }}>
       <InWalletTabs.Navigator
         screenOptions={{
           headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
@@ -54,8 +53,9 @@ const InWalletTabsNavigation = () => {
           name="DashboardScreen"
           component={DashboardScreen}
           options={{
-            headerLeft: () => <WalletSwitch />,
-            headerRight: () => <DashboardHeaderActions />,
+            header: () => (
+              <DefaultHeader HeaderRight={<DashboardHeaderActions />} HeaderLeft={<WalletSwitch />} scrollY={scrollY} />
+            ),
             title: 'Overview',
             tabBarIcon: ({ color, size }) => <ListIcon name="home" color={color} size={size} />
           }}

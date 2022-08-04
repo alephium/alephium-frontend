@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { useContext } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, ViewStyle } from 'react-native'
-import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import BalanceSummary from '../components/BalanceSummary'
@@ -37,7 +36,7 @@ type ScreenProps = StackScreenProps<InWalletTabsParamList, 'DashboardScreen'> & 
 
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const { setScrollY } = useContext(InWalletLayoutContext)
+  const { scrollY } = useContext(InWalletLayoutContext)
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
@@ -46,7 +45,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   }
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setScrollY(e.nativeEvent.contentOffset.y)
+    if (scrollY) scrollY.value = e.nativeEvent.contentOffset.y
   }
 
   return (
@@ -63,10 +62,6 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   )
 }
 
-export default styled(DashboardScreen)`
-  padding-top: 30px;
-`
-
 const Buttons = styled.View`
   display: flex;
   flex-direction: row;
@@ -78,10 +73,4 @@ const ScreenSection = styled(View)`
   border-bottom-width: 1px;
 `
 
-const Header = styled(Animated.View)`
-  z-index: 1;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 22px 20px 18px;
-`
+export default DashboardScreen

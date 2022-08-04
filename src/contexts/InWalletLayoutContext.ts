@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, Dispatch, SetStateAction } from 'react'
+import { createContext } from 'react'
+import { SharedValue } from 'react-native-reanimated'
 
 const InWalletLayoutContext = createContext({
-  setScrollY: (() => null) as Dispatch<SetStateAction<number>>,
-  scrollY: 0
+  scrollY: undefined as SharedValue<number> | undefined
 })
 
 export default InWalletLayoutContext
