@@ -17,9 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-import React, { memo } from 'react'
+import React, { memo, useRef, useState } from 'react'
 import { StyleProp, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native'
-import Animated, { interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
+import Animated, {
+  interpolate,
+  SharedValue,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue
+} from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../style/globalStyle'
@@ -29,11 +35,46 @@ interface FooterMenuProps extends BottomTabBarProps {
   style?: StyleProp<ViewStyle>
 }
 
+const scrollRange = [-50, 50]
+const translateRange = [-100, 100]
+
 const FooterMenu = ({ state, descriptors, navigation, style, scrollY }: FooterMenuProps) => {
   const theme = useTheme()
 
+  const scrollDirection = useSharedValue<'up' | 'down'>('down')
+
+  const lastScrollY = useSharedValue(0)
+  const lastTranslateY = useSharedValue(0)
+
+  const translateYValue = useDerivedValue(() => {
+    let value = lastTranslateY.value
+
+    if (scrollDirection.value === 'down' && lastScrollY.value > scrollY.value) {
+      scrollDirection.value = 'up'
+      value = 0
+    }
+
+    if (scrollDirection.value === 'up' && lastScrollY.value < scrollY.value) {
+      scrollDirection.value = 'down'
+      value = 0
+    }
+
+    // Update delta value
+    scrollDirection.value === 'down'
+      ? (value += scrollY.value - lastScrollY.value)
+      : (value -= scrollY.value - lastScrollY.value)
+
+    lastScrollY.value = scrollY.value
+    lastTranslateY.value = value
+
+    console.log(value)
+
+    return value
+  })
+
   const footerStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(scrollY.value, [0, 50], [0, 100])
+    const translateY = interpolate(translateYValue.value, scrollRange, translateRange)
+
     return {
       transform: [{ translateY }]
     }

@@ -20,7 +20,7 @@ import { ViewStyle } from 'react-native'
 import { interpolateColor, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
 
-const scrollRange = [0, 50]
+const scrollRange = [0, 100]
 
 const useHeaderScrollStyle = (scrollY: SharedValue<number> | undefined): ViewStyle => {
   const theme = useTheme()
