@@ -24,7 +24,7 @@ import {
   walletImportAsyncUnsafe
 } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select'
 import styled from 'styled-components/native'
@@ -69,20 +69,20 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     color: coloredLabel?.color
   }
 
-  const importWallet = useCallback(async () => {
-    const wallet = await walletImportAsyncUnsafe(mnemonicToSeed, activeWallet.mnemonic)
-    setSeed(wallet.seed)
-    generateNewAddress(wallet.seed)
-  }, [activeWallet])
+  useEffect(() => {
+    const importWallet = async () => {
+      const wallet = await walletImportAsyncUnsafe(mnemonicToSeed, activeWallet.mnemonic)
+      setSeed(wallet.seed)
+    }
+
+    importWallet()
+  }, [activeWallet.mnemonic])
 
   useEffect(() => {
-    importWallet()
+    if (seed) generateNewAddress(seed)
+  }, [seed])
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [importWallet])
-
-  const generateNewAddress = (seed?: Buffer, inGroup?: number) => {
-    if (!seed) return
+  const generateNewAddress = (seed: Buffer, inGroup?: number) => {
     const data = deriveNewAddressData(seed, inGroup, undefined, currentAddressIndexes.current)
     setNewAddressData(data)
     setNewAddressGroup(inGroup ?? addressToGroup(data.address, TOTAL_NUMBER_OF_GROUPS))
@@ -112,9 +112,9 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     navigation.goBack()
   }
 
-  const handleGroupSelect = (value: number) => {
-    if (value !== newAddressGroup) {
-      generateNewAddress(seed, value)
+  const handleGroupSelect = (group: number) => {
+    if (group !== newAddressGroup && seed) {
+      generateNewAddress(seed, group)
     }
   }
 
