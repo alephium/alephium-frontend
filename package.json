@@ -15,12 +15,12 @@
   },
   "dependencies": {
     "@alephium/sdk": "^0.0.14",
-    "@craftzdog/react-native-buffer": "^6.0.4",
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/stack": "^6.2.1",
     "@reduxjs/toolkit": "^1.8.1",
     "big-integer": "^1.6.51",
+    "buffer": "^6.0.3",
     "dayjs": "^1.11.2",
     "expo": "^45.0.0",
     "expo-clipboard": "~3.0.1",

@@ -17,6 +17,4 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 require('react-native-get-random-values')
 if (typeof BigInt === 'undefined') global.BigInt = require('big-integer')
-
-// TODO: Re-evaluate the necessity of this, as other cryptocurrency wallets use plain old "buffer"
-if (typeof Buffer === 'undefined') global.Buffer = require('@craftzdog/react-native-buffer').Buffer
+if (typeof Buffer === 'undefined') global.Buffer = require('buffer').Buffer
