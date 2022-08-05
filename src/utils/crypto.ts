@@ -35,6 +35,6 @@ function salt(password: string) {
 export const mnemonicToSeed = async (mnemonic: string, passphrase?: string): Promise<Buffer> => {
   const mnemonicBuffer = new Buffer(mnemonic, 'utf-8')
   const salted = new Buffer(salt(passphrase ?? ''), 'utf-8')
-  const data = await Aes.pbkdf2(mnemonicBuffer.toString('base64'), salted.toString('base64'), 2048, 512)
+  const data = await Aes.pbkdf2(mnemonicBuffer.toString('utf8'), salted.toString('utf8'), 2048, 512)
   return Buffer.from(data, 'hex')
 }
