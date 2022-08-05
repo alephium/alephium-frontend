@@ -63,16 +63,16 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     }, [])
   )
 
-  const openWallet = useCallback(async () => {
+  const unlockWallet = useCallback(async () => {
     const wallet = await walletOpenAsyncUnsafe(pinCode, storedActiveEncryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
-    dispatch(
+    await dispatch(
       activeWalletChanged({
         ...storedActiveEncryptedWallet,
         mnemonic: wallet.mnemonic
       })
     )
-    setPinCode('')
     navigation.navigate('DashboardScreen')
+    setPinCode('')
   }, [dispatch, pinCode, storedActiveEncryptedWallet, navigation])
 
   useEffect(() => {
@@ -82,13 +82,13 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
 
     try {
       dispatch(pinEntered(pinCode))
-      openWallet()
+      unlockWallet()
     } catch (e) {
       setShownInstructions(errorInstructionSet)
       setPinCode('')
       console.error(`Could not unlock wallet ${storedActiveEncryptedWallet.name}`, e)
     }
-  }, [dispatch, pinCode, pinFullyEntered, openWallet, storedActiveEncryptedWallet])
+  }, [dispatch, pinCode, pinFullyEntered, storedActiveEncryptedWallet.name, unlockWallet])
 
   return (
     <Screen style={{ marginTop: 40 }}>
