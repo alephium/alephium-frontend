@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useCallback, useEffect, useRef } from 'react'
-import { AppState, AppStateStatus } from 'react-native'
+import { Alert, AppState, AppStateStatus } from 'react-native'
 
 import { navigate } from '../navigation/RootStackNavigation'
 import { getStoredActiveWallet } from '../storage/wallets'
@@ -43,14 +43,18 @@ export const useAppStateChange = () => {
       } else {
         throw new Error('Unknown auth type')
       }
-    } catch (e) {
-      console.error(e)
-      // TODO: Handle following 2 cases:
-      // 1. User cancels biometric authentication even though the fetched wallet is stored with biometrics auth
-      // required. Show a message something like "You have to authenticate with your biometrics to access this wallet"
-      // 2. User had previously stored their wallet with biometrics auth, but in the meantime they removed their
-      // biometrics setup from their device. Show a message something like "This wallet is only accessibly via
-      // biometrics authentication, please set up biometrics on your device settings and try again."
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      if (e.message === 'User canceled the authentication') {
+        Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
+          { text: 'Try again', onPress: getWalletFromStorageAndNavigate }
+        ])
+      } else {
+        console.error(e)
+      }
+      // TODO: Handle case where user had previously stored their wallet with biometrics auth, but in the meantime they
+      // removed their biometrics setup from their device. Show a message something like "This wallet is only accessibly
+      // via biometrics authentication, please set up biometrics on your device settings and try again."
     }
   }, [dispatch])
 
