@@ -20,7 +20,6 @@ import { Pressable, PressableProps, StyleProp, Text, ViewStyle } from 'react-nat
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
-import { FC } from '../../types/misc'
 
 export interface ButtonProps extends PressableProps {
   title?: string
@@ -32,7 +31,7 @@ export interface ButtonProps extends PressableProps {
   children?: React.ReactNode
 }
 
-const Button: FC<ButtonProps> = ({
+const Button = ({
   style,
   title,
   type = 'primary',
@@ -41,7 +40,7 @@ const Button: FC<ButtonProps> = ({
   icon,
   children,
   ...props
-}) => {
+}: ButtonProps) => {
   const theme = useTheme()
 
   const colors = {

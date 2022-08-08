@@ -17,17 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { View, ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
-import { FC } from '../../types/misc'
-
-interface ButtonStackProps {
-  style?: StyleProp<ViewStyle>
+interface ButtonStackProps extends ViewProps {
   children: Array<ReactNode>
 }
 
-const ButtonStack: FC<ButtonStackProps> = ({ children, style }) => (
+const ButtonStack = ({ children, style }: ButtonStackProps) => (
   <View style={style}>
     {children?.map((child, i) => (
       <ButtonContainer key={i}>{child}</ButtonContainer>
