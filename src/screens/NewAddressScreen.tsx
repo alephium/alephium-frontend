@@ -23,10 +23,10 @@ import {
   TOTAL_NUMBER_OF_GROUPS,
   walletImportAsyncUnsafe
 } from '@alephium/sdk'
+import { Picker } from '@react-native-picker/picker'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import RNPickerSelect from 'react-native-picker-select'
 import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
@@ -123,14 +123,11 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
       <ScrollView>
         <ScreenSection>
           <ColoredLabelInput value={coloredLabel} onChange={setColoredLabel} />
-          <RNPickerSelect
-            onValueChange={handleGroupSelect}
-            value={newAddressGroup}
-            items={groupSelectOptions}
-            placeholder={{}}
-            InputAccessoryView={() => null}
-            style={pickerSelectStyles}
-          />
+          <Picker selectedValue={newAddressGroup} onValueChange={handleGroupSelect}>
+            {groupSelectOptions.map(({ value, label }) => (
+              <Picker.Item key={value} label={label} value={value} />
+            ))}
+          </Picker>
           <Button title="Generate" onPress={handleGeneratePress} style={{ marginTop: 20 }} />
         </ScreenSection>
       </ScrollView>
