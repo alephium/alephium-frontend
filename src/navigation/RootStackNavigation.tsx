@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native'
-import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
+import { CardStyleInterpolators, createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTheme } from 'styled-components'
 
 import AddressesScreen from '../screens/AddressesScreen'
@@ -94,9 +94,14 @@ const RootStackNavigation = () => {
   )
 }
 
-export const navigate = (name: keyof RootStackParamList) => {
+// Navigating without the navigation prop:
+// https://reactnavigation.org/docs/navigating-without-navigation-prop
+export const navigate = (
+  name: keyof RootStackParamList,
+  params?: StackScreenProps<RootStackParamList>['route']['params']
+) => {
   if (navigationRef.isReady()) {
-    navigationRef.navigate(name)
+    navigationRef.navigate(name, params)
   }
 }
 

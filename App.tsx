@@ -17,18 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StatusBar } from 'expo-status-bar'
-import { ReactNode, useEffect, useRef } from 'react'
-import { AppState, AppStateStatus } from 'react-native'
+import { ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components/native'
 
-import { useAppDispatch, useAppSelector } from './src/hooks/redux'
+import { useAppStateChange } from './src/hooks/useAppStateChange'
 import useInitializeClient from './src/hooks/useInitializeClient'
 import useLoadStoredAddressesMetadata from './src/hooks/useLoadStoredAddressesMetadata'
 import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
-import RootStackNavigation, { navigate } from './src/navigation/RootStackNavigation'
-import { walletFlushed } from './src/store/activeWalletSlice'
-import { pinFlushed } from './src/store/credentialsSlice'
+import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { store } from './src/store/store'
 import { lightTheme } from './src/style/themes'
 
@@ -44,33 +41,10 @@ const App = () => (
 )
 
 const Main = ({ children }: { children: ReactNode }) => {
-  const dispatch = useAppDispatch()
-  const appState = useRef(AppState.currentState)
-  const activeWallet = useAppSelector((state) => state.activeWallet)
-
   useInitializeClient()
   useLoadStoredSettings()
   useLoadStoredAddressesMetadata()
-
-  useEffect(() => {
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
-        dispatch(pinFlushed())
-        dispatch(walletFlushed())
-      } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
-        navigate('SplashScreen')
-      }
-
-      appState.current = nextAppState
-      console.log('AppState:', appState.current)
-    }
-
-    const subscription = AppState.addEventListener('change', handleAppStateChange)
-
-    return () => {
-      subscription.remove()
-    }
-  }, [activeWallet.mnemonic, dispatch])
+  useAppStateChange()
 
   return <>{children}</>
 }
