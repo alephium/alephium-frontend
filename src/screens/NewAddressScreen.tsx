@@ -26,7 +26,7 @@ import {
 import { Picker } from '@react-native-picker/picker'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useRef, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
@@ -140,29 +140,3 @@ export default NewAddressScreen
 const ScreenSection = styled(View)`
   padding: 22px 20px;
 `
-
-// copied from https://snack.expo.dev/@lfkwtz/react-native-picker-select
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-    marginTop: 20
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-    marginTop: 20
-  }
-})
