@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StatusBar } from 'expo-status-bar'
-import { FC, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components/native'
@@ -31,6 +31,7 @@ import { walletFlushed } from './src/store/activeWalletSlice'
 import { pinFlushed } from './src/store/credentialsSlice'
 import { store } from './src/store/store'
 import { lightTheme } from './src/style/themes'
+import { FC } from './src/types/misc'
 
 const App = () => (
   <Provider store={store}>
@@ -43,7 +44,7 @@ const App = () => (
   </Provider>
 )
 
-const Main: FC = ({ children }) => {
+const Main: FC<unknown> = ({ children }) => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
   const activeWallet = useAppSelector((state) => state.activeWallet)

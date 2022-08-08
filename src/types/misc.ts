@@ -16,17 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { SafeAreaView, StyleProp, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { FC as ReactFC, PropsWithChildren } from 'react'
 
-import { FC } from '../../types/misc'
-
-interface ScreenProps {
-  style?: StyleProp<ViewStyle>
-}
-
-const Screen: FC<ScreenProps> = ({ children, style }) => <SafeAreaView style={style}>{children}</SafeAreaView>
-
-export default styled(Screen)`
-  flex: 1;
-`
+export type FC<P> = ReactFC<PropsWithChildren<P>>

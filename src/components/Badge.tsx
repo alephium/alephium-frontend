@@ -16,10 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
 import { StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 import tinycolor from 'tinycolor2'
+
+import { FC } from '../types/misc'
 
 interface BadgeProps {
   color?: string

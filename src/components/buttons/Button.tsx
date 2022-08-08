@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
 import { Pressable, PressableProps, StyleProp, Text, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
+import { FC } from '../../types/misc'
 
 export interface ButtonProps extends PressableProps {
   title?: string
