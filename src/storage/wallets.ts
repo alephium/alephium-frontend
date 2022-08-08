@@ -24,6 +24,8 @@ import { ActiveWalletState } from '../store/activeWalletSlice'
 import { AddressMetadata } from '../types/addresses'
 import { StoredWalletAuthType, WalletMetadata } from '../types/wallet'
 
+const keychainService = 'alephium-mobile-wallet'
+
 export const storeWallet = async (
   walletName: string,
   mnemonic: string,
@@ -75,7 +77,7 @@ export const storeWallet = async (
           authenticationPrompt: 'Please, authenticate to store your wallet securely'
         }
       : {
-          keychainService: 'alephium-mobile-wallet'
+          keychainService
         }
 
   await SecureStore.setItemAsync(`wallet-${walletId}`, mnemonic, secureStoreConfig)
@@ -94,7 +96,7 @@ export const getStoredWalletById = async (id: string): Promise<ActiveWalletState
           authenticationPrompt: `Please, authenticate to unlock "${name}"`
         }
       : {
-          keychainService: 'alephium-mobile-wallet'
+          keychainService
         }
 
   const mnemonic = await SecureStore.getItemAsync(`wallet-${id}`, secureStoreConfig)
@@ -154,7 +156,7 @@ const deleteWallet = async (walletMetadata: WalletMetadata) => {
           authenticationPrompt: `Please, authenticate to delete the wallet named "${walletMetadata.name}"`
         }
       : {
-          keychainService: 'alephium-mobile-wallet'
+          keychainService
         }
   await SecureStore.deleteItemAsync(`wallet-${walletMetadata.id}`, secureStoreConfig)
 }
