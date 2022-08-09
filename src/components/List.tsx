@@ -21,7 +21,7 @@ import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 interface ListProps {
-  children: Array<ReactNode>
+  children: ReactNode[]
   style?: StyleProp<ViewStyle>
 }
 

@@ -21,7 +21,7 @@ import { View, ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
 interface ButtonStackProps extends ViewProps {
-  children: Array<ReactNode>
+  children: ReactNode[]
 }
 
 const ButtonStack = ({ children, style }: ButtonStackProps) => (
