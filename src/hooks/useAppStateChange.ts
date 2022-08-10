@@ -39,7 +39,7 @@ export const useAppStateChange = () => {
         navigateRootStack('LoginScreen', { storedWallet: storedActiveWallet })
       } else if (storedActiveWallet.authType === 'biometrics') {
         dispatch(activeWalletChanged(storedActiveWallet))
-        navigateRootStack('DashboardScreen')
+        navigateRootStack('InWalletScreen')
       } else {
         throw new Error('Unknown auth type')
       }
