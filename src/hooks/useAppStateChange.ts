@@ -44,6 +44,7 @@ export const useAppStateChange = () => {
         throw new Error('Unknown auth type')
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // TODO: Revisit error handling with proper error codes
     } catch (e: any) {
       if (e.message === 'User canceled the authentication') {
         Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
