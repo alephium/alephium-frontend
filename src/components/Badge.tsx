@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { StyleProp, Text, View, ViewStyle } from 'react-native'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 import tinycolor from 'tinycolor2'
 
@@ -73,7 +73,7 @@ export default styled(Badge)`
   }}
 `
 
-const BadgeText = styled(Text)<{ color?: string }>`
+const BadgeText = styled.Text<{ color?: string }>`
   ${({ color, theme }) => css`
     color: ${color || theme.font.primary};
   `}

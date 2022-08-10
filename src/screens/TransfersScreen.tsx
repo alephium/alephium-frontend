@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon } from 'lucide-react-native'
-import { ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
+import { ScrollView, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import BalanceSummary from '../components/BalanceSummary'
@@ -84,13 +84,13 @@ const ReceiveButton = styled(IconedButton)`
   margin-left: 5px;
 `
 
-const ButtonText = styled(Text)`
+const ButtonText = styled.Text`
   color: ${({ theme }) => theme.font.contrast};
   font-weight: 600;
   margin-left: 10px;
 `
 
-const ScreenSection = styled(View)`
+const ScreenSection = styled.View`
   padding: 22px 20px;
 
   border-bottom-color: ${({ theme }) => theme.border.secondary};

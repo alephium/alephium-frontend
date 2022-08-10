@@ -20,7 +20,7 @@ import { calAmountDelta } from '@alephium/sdk'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
-import { StyleProp, Text, View, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Arrow from '../images/Arrow'
@@ -66,11 +66,11 @@ export default memo(TransactionRow, (prevProps, nextProps) => {
   return prevProps.tx.hash === nextProps.tx.hash && prevProps.tx.address.hash === nextProps.tx.address.hash
 })
 
-const Item = styled(Text)`
+const Item = styled.Text`
   font-weight: bold;
 `
 
-const Direction = styled(View)`
+const Direction = styled.View`
   width: 15%;
 `
 

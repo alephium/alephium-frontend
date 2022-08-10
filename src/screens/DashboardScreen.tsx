@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, ViewStyle } from 'react-native'
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import BalanceSummary from '../components/BalanceSummary'
@@ -72,7 +72,7 @@ const Buttons = styled.View`
   flex-direction: row;
 `
 
-const ScreenSection = styled(View)`
+const ScreenSection = styled.View`
   padding: 22px 20px;
   border-bottom-color: ${({ theme }) => theme.border.secondary};
   border-bottom-width: 1px;

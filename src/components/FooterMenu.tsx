@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import React, { memo } from 'react'
-import { StyleProp, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native'
+import { StyleProp, TouchableWithoutFeedback, ViewStyle } from 'react-native'
 import Animated, {
   interpolate,
   SharedValue,
@@ -134,7 +134,7 @@ export default memo(styled(FooterMenu)`
   align-items: center;
 `)
 
-const MenuItems = styled(View)`
+const MenuItems = styled.View`
   width: 75%;
   max-width: 350px;
   min-width: 300px;
@@ -145,7 +145,7 @@ const MenuItems = styled(View)`
   padding: 5px;
 `
 
-const Tab = styled(View)<{ active: boolean }>`
+const Tab = styled.View<{ active: boolean }>`
   flex: 1;
   align-items: center;
   justify-content: space-between;
@@ -155,7 +155,7 @@ const Tab = styled(View)<{ active: boolean }>`
   padding: 8px 0 5px 0;
 `
 
-const TabText = styled(Text)<{ isActive?: boolean }>`
+const TabText = styled.Text<{ isActive?: boolean }>`
   font-weight: 700;
   color: ${({ theme, isActive }) => (isActive ? theme.font.primary : theme.font.tertiary)};
 `

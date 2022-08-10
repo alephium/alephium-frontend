@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Pressable, PressableProps, StyleProp, Text, ViewStyle } from 'react-native'
+import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
@@ -94,6 +94,6 @@ export default styled(Button)`
   height: ${({ icon }) => (icon ? '45px' : '55px')};
 `
 
-const ButtonText = styled(Text)`
+const ButtonText = styled.Text`
   font-weight: bold;
 `

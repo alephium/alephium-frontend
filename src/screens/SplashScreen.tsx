@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { LinearGradient } from 'expo-linear-gradient'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Screen from '../components/layout/Screen'
@@ -56,7 +56,7 @@ export default styled(SplashScreen)`
   flex: 1;
 `
 
-const LogoContainer = styled(View)`
+const LogoContainer = styled.View`
   flex: 1.5;
   justify-content: center;
   align-items: center;

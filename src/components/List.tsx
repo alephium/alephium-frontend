@@ -32,7 +32,7 @@ export default styled(List)`
   background-color: white;
 `
 
-export const ListItem = styled(View)<{ isLast?: boolean }>`
+export const ListItem = styled.View<{ isLast?: boolean }>`
   flex-direction: row;
   align-items: center;
   padding: 20px 15px;

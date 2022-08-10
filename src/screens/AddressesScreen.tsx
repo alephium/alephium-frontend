@@ -27,7 +27,7 @@ import {
 } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
 import { useLayoutEffect } from 'react'
-import { Pressable, ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native'
+import { Pressable, ScrollView, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
@@ -122,7 +122,7 @@ let AddressRow = ({ style, addressHash }: AddressProps) => {
   )
 }
 
-const ScreenSection = styled(View)`
+const ScreenSection = styled.View`
   padding: 22px 20px 120px;
 `
 
@@ -133,20 +133,20 @@ AddressRow = styled(AddressRow)`
   border: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
-const Header = styled(View)`
+const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   max-width: 100%;
 `
 
-const Actions = styled(View)`
+const Actions = styled.View`
   flex-direction: row;
   align-items: center;
   flex-grow: 1;
   justify-content: flex-end;
 `
 
-const Name = styled(Text)<{ color?: string }>`
+const Name = styled.Text<{ color?: string }>`
   font-size: 18px;
   font-weight: 700;
   color: ${({ theme, color }) => color || theme.font.primary};
@@ -155,7 +155,7 @@ const Name = styled(Text)<{ color?: string }>`
 `
 
 // TODO: Create standalone Icon component to allow us to define the size prop
-const Icon = styled(View)`
+const Icon = styled.View`
   padding: 18px 12px;
 `
 
@@ -165,7 +165,7 @@ const AmountStyled = styled(Amount)`
   margin-left: 28px;
 `
 
-const LastUsed = styled(Text)`
+const LastUsed = styled.Text`
   font-size: 12px;
   font-weight: 500;
   color: ${({ theme }) => theme.font.tertiary};

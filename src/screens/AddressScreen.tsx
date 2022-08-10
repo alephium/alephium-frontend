@@ -150,18 +150,18 @@ const AddressScreen = ({
   )
 }
 
-const ScreenSection = styled(View)`
+const ScreenSection = styled.View`
   padding: 20px;
 `
 
-const Header = styled(View)`
+const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   margin: 40px 20px;
   max-width: 100%;
 `
 
-const Actions = styled(View)`
+const Actions = styled.View`
   flex-direction: row;
   align-items: center;
   flex-grow: 1;
@@ -172,7 +172,7 @@ const ButtonStyled = styled(Button)`
   margin-left: 20px;
 `
 
-const Label = styled(Text)`
+const Label = styled.Text`
   color: ${({ theme }) => theme.font.secondary};
 `
 
@@ -182,12 +182,12 @@ const ListItemStyled = styled(ListItem)`
   min-height: 55px;
 `
 
-const BadgeText = styled(Text)`
+const BadgeText = styled.Text`
   font-weight: 700;
   font-size: 18px;
 `
 
-const NumberOfTxs = styled(Text)`
+const NumberOfTxs = styled.Text`
   font-weight: 700;
 `
 
@@ -195,13 +195,13 @@ const BadgeStyled = styled(Badge)`
   flex-shrink: 1;
 `
 
-const ModalContent = styled(View)`
+const ModalContent = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
 `
 
-const QRCodeContainer = styled(View)`
+const QRCodeContainer = styled.View`
   background-color: ${({ theme }) => theme.bg.primary};
   border-radius: 10px;
   padding: 20px;

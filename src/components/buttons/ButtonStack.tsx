@@ -36,6 +36,6 @@ export default styled(ButtonStack)`
   width: 75%;
 `
 
-const ButtonContainer = styled(View)`
+const ButtonContainer = styled.View`
   padding: 10px;
 `

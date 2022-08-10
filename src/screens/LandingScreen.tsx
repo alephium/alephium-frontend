@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { LinearGradient } from 'expo-linear-gradient'
 import { MotiView } from 'moti'
-import { StyleProp, Text, View, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
@@ -91,7 +91,7 @@ export const GradientBackgroundStyled = styled(MotiView)`
   z-index: -1;
 `
 
-const LogoContainer = styled(View)`
+const LogoContainer = styled.View`
   flex: 1.5;
   margin-top: 100px;
   justify-content: center;
@@ -109,12 +109,12 @@ const TitleContainer = styled.View`
   align-items: center;
 `
 
-const TitleFirstLine = styled(Text)`
+const TitleFirstLine = styled.Text`
   font-size: 18px;
   color: ${({ theme }) => theme.font.contrast};
 `
 
-const TitleSecondLine = styled(Text)`
+const TitleSecondLine = styled.Text`
   font-size: 18px;
   font-weight: bold;
   color: ${({ theme }) => theme.font.contrast};
