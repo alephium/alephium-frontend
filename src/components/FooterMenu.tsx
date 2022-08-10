@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-import React, { memo, useRef, useState } from 'react'
+import React, { memo } from 'react'
 import { StyleProp, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native'
 import Animated, {
   interpolate,
@@ -35,8 +35,8 @@ interface FooterMenuProps extends BottomTabBarProps {
   style?: StyleProp<ViewStyle>
 }
 
-const scrollRange = [-50, 50]
-const translateRange = [-100, 100]
+const scrollRange = [0, 80]
+const translateRange = [0, 100]
 
 const FooterMenu = ({ state, descriptors, navigation, style, scrollY }: FooterMenuProps) => {
   const theme = useTheme()
@@ -51,23 +51,22 @@ const FooterMenu = ({ state, descriptors, navigation, style, scrollY }: FooterMe
 
     if (scrollDirection.value === 'down' && lastScrollY.value > scrollY.value) {
       scrollDirection.value = 'up'
-      value = 0
     }
 
     if (scrollDirection.value === 'up' && lastScrollY.value < scrollY.value) {
       scrollDirection.value = 'down'
-      value = 0
     }
 
-    // Update delta value
-    scrollDirection.value === 'down'
-      ? (value += scrollY.value - lastScrollY.value)
-      : (value -= scrollY.value - lastScrollY.value)
+    if (value >= scrollRange[0] && value <= scrollRange[1]) {
+      const deltaScroll = Math.abs(scrollY.value - lastScrollY.value)
+      scrollDirection.value === 'down' ? (value += deltaScroll) : (value -= deltaScroll)
+    }
+
+    // Avoid overshoot
+    value = value < scrollRange[0] ? scrollRange[0] : value > scrollRange[1] ? scrollRange[1] : value
 
     lastScrollY.value = scrollY.value
     lastTranslateY.value = value
-
-    console.log(value)
 
     return value
   })
