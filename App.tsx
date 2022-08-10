@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StatusBar } from 'expo-status-bar'
-import { FC, useEffect, useRef } from 'react'
+import { ReactNode, useEffect, useRef } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components/native'
@@ -43,7 +43,7 @@ const App = () => (
   </Provider>
 )
 
-const Main: FC = ({ children }) => {
+const Main = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
   const activeWallet = useAppSelector((state) => state.activeWallet)

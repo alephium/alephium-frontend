@@ -16,16 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC, ReactNode } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { ReactNode } from 'react'
+import { View, ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
-interface ButtonStackProps {
-  style?: StyleProp<ViewStyle>
-  children: Array<ReactNode>
+interface ButtonStackProps extends ViewProps {
+  children: ReactNode[]
 }
 
-const ButtonStack: FC<ButtonStackProps> = ({ children, style }) => (
+const ButtonStack = ({ children, style }: ButtonStackProps) => (
   <View style={style}>
     {children?.map((child, i) => (
       <ButtonContainer key={i}>{child}</ButtonContainer>

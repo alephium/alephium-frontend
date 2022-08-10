@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
@@ -31,7 +32,7 @@ import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
 import { pinEntered } from '../store/credentialsSlice'
-import { unlockWalletAsync } from '../utils/wallet'
+import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 
@@ -63,7 +64,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
   )
 
   const unlockWallet = useCallback(async () => {
-    const wallet = await unlockWalletAsync(pinCode, storedActiveEncryptedWallet.mnemonic)
+    const wallet = await walletOpenAsyncUnsafe(pinCode, storedActiveEncryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
     await dispatch(
       activeWalletChanged({
         ...storedActiveEncryptedWallet,
@@ -72,7 +73,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     )
     navigation.navigate('DashboardScreen')
     setPinCode('')
-  }, [dispatch, navigation, pinCode, storedActiveEncryptedWallet])
+  }, [dispatch, pinCode, storedActiveEncryptedWallet, navigation])
 
   useEffect(() => {
     if (!pinFullyEntered) return

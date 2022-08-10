@@ -21,12 +21,12 @@ import {
   addressToGroup,
   deriveNewAddressData,
   TOTAL_NUMBER_OF_GROUPS,
-  walletImport
+  walletImportAsyncUnsafe
 } from '@alephium/sdk'
+import { Picker } from '@react-native-picker/picker'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
-import RNPickerSelect from 'react-native-picker-select'
+import { useEffect, useRef, useState } from 'react'
+import { ScrollView, View } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
@@ -42,6 +42,7 @@ import {
   selectAllAddresses
 } from '../store/addressesSlice'
 import { getRandomLabelColor } from '../utils/colors'
+import { mnemonicToSeed } from '../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 
@@ -58,10 +59,10 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     color: getRandomLabelColor()
   })
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
+  const [seed, setSeed] = useState<Buffer>()
   const addresses = useAppSelector(selectAllAddresses)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const activeWallet = useAppSelector((state) => state.activeWallet)
-  const { seed } = walletImport(activeWallet.mnemonic)
   const addressSettings = {
     isMain: false,
     label: coloredLabel?.label,
@@ -69,19 +70,23 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   }
 
   useEffect(() => {
-    generateNewAddress()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    const importWallet = async () => {
+      const wallet = await walletImportAsyncUnsafe(mnemonicToSeed, activeWallet.mnemonic)
+      setSeed(wallet.seed)
+    }
 
-  const generateNewAddress = useCallback(
-    (inGroup?: number) => {
-      if (!seed) return
-      const data = deriveNewAddressData(seed, inGroup, undefined, currentAddressIndexes.current)
-      setNewAddressData(data)
-      setNewAddressGroup(inGroup ?? addressToGroup(data.address, TOTAL_NUMBER_OF_GROUPS))
-    },
-    [seed]
-  )
+    importWallet()
+  }, [activeWallet.mnemonic])
+
+  useEffect(() => {
+    if (seed) generateNewAddress(seed)
+  }, [seed])
+
+  const generateNewAddress = (seed: Buffer, inGroup?: number) => {
+    const data = deriveNewAddressData(seed, inGroup, undefined, currentAddressIndexes.current)
+    setNewAddressData(data)
+    setNewAddressGroup(inGroup ?? addressToGroup(data.address, TOTAL_NUMBER_OF_GROUPS))
+  }
 
   const handleGeneratePress = () => {
     if (!newAddressData) return
@@ -107,27 +112,22 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     navigation.goBack()
   }
 
-  const handleGroupSelect = (value: number) => {
-    if (value !== newAddressGroup) {
-      generateNewAddress(value)
+  const handleGroupSelect = (group: number) => {
+    if (group !== newAddressGroup && seed) {
+      generateNewAddress(seed, group)
     }
   }
-
-  console.log('NewAddressScreen renders')
 
   return (
     <Screen>
       <ScrollView>
         <ScreenSection>
           <ColoredLabelInput value={coloredLabel} onChange={setColoredLabel} />
-          <RNPickerSelect
-            onValueChange={handleGroupSelect}
-            value={newAddressGroup}
-            items={groupSelectOptions}
-            placeholder={{}}
-            InputAccessoryView={() => null}
-            style={pickerSelectStyles}
-          />
+          <Picker selectedValue={newAddressGroup} onValueChange={handleGroupSelect}>
+            {groupSelectOptions.map(({ value, label }) => (
+              <Picker.Item key={value} label={label} value={value} />
+            ))}
+          </Picker>
           <Button title="Generate" onPress={handleGeneratePress} style={{ marginTop: 20 }} />
         </ScreenSection>
       </ScrollView>
@@ -140,29 +140,3 @@ export default NewAddressScreen
 const ScreenSection = styled(View)`
   padding: 22px 20px;
 `
-
-// copied from https://snack.expo.dev/@lfkwtz/react-native-picker-select
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-    marginTop: 20
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-    marginTop: 20
-  }
-})

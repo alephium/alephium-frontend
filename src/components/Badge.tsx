@@ -16,12 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
+import { ReactNode } from 'react'
 import { StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 import tinycolor from 'tinycolor2'
 
 interface BadgeProps {
+  children: ReactNode
   color?: string
   rounded?: boolean
   border?: boolean
@@ -29,7 +30,7 @@ interface BadgeProps {
   style?: StyleProp<ViewStyle>
 }
 
-const Badge: FC<BadgeProps> = ({ style, color, children }) => {
+const Badge = ({ style, color, children }: BadgeProps) => {
   return (
     <View style={style}>
       <BadgeText color={color}>{children}</BadgeText>
