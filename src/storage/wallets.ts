@@ -74,7 +74,8 @@ export const storeWallet = async (
     authType === 'biometrics'
       ? {
           requireAuthentication: true,
-          authenticationPrompt: 'Please, authenticate to store your wallet securely'
+          authenticationPrompt: 'Please, authenticate to store your wallet securely',
+          keychainService
         }
       : {
           keychainService
@@ -93,7 +94,8 @@ export const getStoredWalletById = async (id: string): Promise<ActiveWalletState
     authType === 'biometrics'
       ? {
           requireAuthentication: true,
-          authenticationPrompt: `Please, authenticate to unlock "${name}"`
+          authenticationPrompt: `Please, authenticate to unlock "${name}"`,
+          keychainService
         }
       : {
           keychainService
@@ -153,7 +155,8 @@ const deleteWallet = async (walletMetadata: WalletMetadata) => {
     walletMetadata.authType === 'biometrics'
       ? {
           requireAuthentication: true,
-          authenticationPrompt: `Please, authenticate to delete the wallet named "${walletMetadata.name}"`
+          authenticationPrompt: `Please, authenticate to delete the wallet named "${walletMetadata.name}"`,
+          keychainService
         }
       : {
           keychainService
