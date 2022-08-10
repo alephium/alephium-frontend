@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext } from 'react'
+import { createContext, useContext } from 'react'
 import { SharedValue } from 'react-native-reanimated'
 
 const InWalletLayoutContext = createContext({
@@ -24,3 +24,5 @@ const InWalletLayoutContext = createContext({
 })
 
 export default InWalletLayoutContext
+
+export const useInWalletLayoutContext = () => useContext(InWalletLayoutContext)

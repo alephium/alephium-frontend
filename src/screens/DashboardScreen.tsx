@@ -17,14 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { useContext } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
 import Screen from '../components/layout/Screen'
-import InWalletLayoutContext from '../contexts/InWalletLayoutContext'
+import { useInWalletLayoutContext } from '../contexts/InWalletLayoutContext'
 import { useAppDispatch } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { deleteAllWallets } from '../storage/wallets'
@@ -36,7 +35,7 @@ type ScreenProps = StackScreenProps<InWalletTabsParamList, 'DashboardScreen'> & 
 
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const { scrollY } = useContext(InWalletLayoutContext)
+  const { scrollY } = useInWalletLayoutContext()
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
