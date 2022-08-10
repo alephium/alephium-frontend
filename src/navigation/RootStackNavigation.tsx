@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native'
-import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
+import { CardStyleInterpolators, createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTheme } from 'styled-components'
 
 import AddressesScreen from '../screens/AddressesScreen'
@@ -37,7 +37,7 @@ import SplashScreen from '../screens/SplashScreen'
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
 import RootStackParamList from './rootStackRoutes'
 
-const navigationRef = createNavigationContainerRef<RootStackParamList>()
+const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
 const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
@@ -46,7 +46,7 @@ const RootStackNavigation = () => {
   console.log('RootStackNavigation renders')
 
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={rootStackNavigationRef}>
       <RootStack.Navigator
         initialRouteName={'SplashScreen'}
         screenOptions={{
@@ -94,9 +94,14 @@ const RootStackNavigation = () => {
   )
 }
 
-export const navigate = (name: keyof RootStackParamList) => {
-  if (navigationRef.isReady()) {
-    navigationRef.navigate(name)
+// Navigating without the navigation prop:
+// https://reactnavigation.org/docs/navigating-without-navigation-prop
+export const navigateRootStack = (
+  name: keyof RootStackParamList,
+  params?: StackScreenProps<RootStackParamList>['route']['params']
+) => {
+  if (rootStackNavigationRef.isReady()) {
+    rootStackNavigationRef.navigate(name, params)
   }
 }
 
