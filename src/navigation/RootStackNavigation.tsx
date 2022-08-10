@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
-import React from 'react'
 import { useTheme } from 'styled-components'
 
 import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'

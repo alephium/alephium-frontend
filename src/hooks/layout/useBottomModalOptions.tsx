@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { CardStyleInterpolators, StackNavigationOptions } from '@react-navigation/stack'
-import React from 'react'
 import { useWindowDimensions, View } from 'react-native'
 import { useTheme } from 'styled-components'
 
