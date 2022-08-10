@@ -49,12 +49,14 @@ export const useAppStateChange = () => {
         Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
           { text: 'Try again', onPress: getWalletFromStorageAndNavigate }
         ])
+      } else if (e.message === 'No biometrics are currently enrolled') {
+        Alert.alert(
+          'Authentication required',
+          'This wallet is only accessibly via biometrics authentication, please set up biometrics (fingerprint) on your device settings and try again.'
+        )
       } else {
         console.error(e)
       }
-      // TODO: Handle case where user had previously stored their wallet with biometrics auth, but in the meantime they
-      // removed their biometrics setup from their device. Show a message something like "This wallet is only accessibly
-      // via biometrics authentication, please set up biometrics on your device settings and try again."
     }
   }, [dispatch])
 
