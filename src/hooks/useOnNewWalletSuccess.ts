@@ -25,17 +25,23 @@ import { useAppDispatch, useAppSelector } from './redux'
 
 const useOnNewWalletSuccess = (callback: () => void) => {
   const dispatch = useAppDispatch()
-  const activeWalletMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
-  const currentActiveWalletMnemonic = useRef<Mnemonic>(activeWalletMnemonic)
+  const activeWallet = useAppSelector((state) => state.activeWallet)
+  const currentActiveWalletName = useRef<string>(activeWallet.name)
+  const currentActiveWalletMnemonic = useRef<Mnemonic>(activeWallet.mnemonic)
 
   useFocusEffect(
     useCallback(() => {
-      if (activeWalletMnemonic && currentActiveWalletMnemonic.current != activeWalletMnemonic) {
+      if (
+        activeWallet.mnemonic &&
+        (currentActiveWalletMnemonic.current != activeWallet.mnemonic ||
+          currentActiveWalletName.current !== activeWallet.name)
+      ) {
         callback()
         dispatch(flushWalletGenerationState())
-        currentActiveWalletMnemonic.current = activeWalletMnemonic
+        currentActiveWalletName.current = activeWallet.name
+        currentActiveWalletMnemonic.current = activeWallet.mnemonic
       }
-    }, [activeWalletMnemonic, dispatch, callback])
+    }, [activeWallet.mnemonic, activeWallet.name, callback, dispatch])
   )
 }
 
