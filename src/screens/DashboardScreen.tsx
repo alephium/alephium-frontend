@@ -17,14 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, ViewStyle } from 'react-native'
+import { ScrollView, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
 import Screen from '../components/layout/Screen'
-import { useInWalletLayoutContext } from '../contexts/InWalletLayoutContext'
 import { useAppDispatch } from '../hooks/redux'
+import useHandleScroll from '../hooks/useHandleScroll'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
@@ -35,16 +35,12 @@ type ScreenProps = StackScreenProps<InWalletTabsParamList, 'DashboardScreen'> & 
 
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const { scrollY } = useInWalletLayoutContext()
+  const handleScroll = useHandleScroll()
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
     dispatch(walletFlushed())
     navigation.getParent()?.navigate('LandingScreen')
-  }
-
-  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (scrollY) scrollY.value = e.nativeEvent.contentOffset.y
   }
 
   return (

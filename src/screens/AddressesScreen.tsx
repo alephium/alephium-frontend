@@ -33,6 +33,7 @@ import styled, { useTheme } from 'styled-components/native'
 import Amount from '../components/Amount'
 import Screen from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
+import useHandleScroll from '../hooks/useHandleScroll'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash, selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
@@ -42,6 +43,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'AddressesScreen'>
 
 const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
+  const handleScroll = useHandleScroll()
   const theme = useTheme()
 
   useLayoutEffect(() => {
@@ -59,7 +61,7 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <Screen>
-      <ScrollView>
+      <ScrollView onScroll={handleScroll}>
         <ScreenSection>
           {addressHashes.map((addressHash) => (
             <Pressable onPress={() => navigation.navigate('AddressScreen', { addressHash })} key={addressHash}>

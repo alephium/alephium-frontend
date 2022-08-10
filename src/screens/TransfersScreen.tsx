@@ -26,6 +26,7 @@ import Button from '../components/buttons/Button'
 import Screen from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
 import { useAppSelector } from '../hooks/redux'
+import useHandleScroll from '../hooks/useHandleScroll'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
@@ -37,10 +38,11 @@ type ScreenProps = StackScreenProps<InWalletTabsParamList, 'TransfersScreen'> & 
 const TransfersScreen = ({ navigation, style }: ScreenProps) => {
   const theme = useTheme()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
+  const handleScroll = useHandleScroll()
 
   return (
     <Screen style={style}>
-      <ScrollView>
+      <ScrollView onScroll={handleScroll}>
         <ScreenSection>
           <BalanceSummary />
           <Buttons>

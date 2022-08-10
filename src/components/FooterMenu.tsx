@@ -17,29 +17,37 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { StyleProp, TouchableWithoutFeedback, ViewStyle } from 'react-native'
 import Animated, {
   interpolate,
-  SharedValue,
   useAnimatedStyle,
   useDerivedValue,
-  useSharedValue
+  useSharedValue,
+  withTiming
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { useInWalletLayoutContext } from '../contexts/InWalletLayoutContext'
 import { BORDER_RADIUS } from '../style/globalStyle'
 
 interface FooterMenuProps extends BottomTabBarProps {
-  scrollY: SharedValue<number>
   style?: StyleProp<ViewStyle>
 }
 
-const scrollRange = [0, 80]
-const translateRange = [0, 100]
+const footerDistanceFromBottom = 35
+const footerMenuItemsPadding = 5
+const footerTabHeight = 60
 
-const FooterMenu = ({ state, descriptors, navigation, style, scrollY }: FooterMenuProps) => {
+const totalFooterHeight = footerMenuItemsPadding * 2 + footerTabHeight
+const topFooterPosition = footerDistanceFromBottom + totalFooterHeight
+
+const scrollRange = [0, 80]
+const translateRange = [0, topFooterPosition]
+
+const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
   const theme = useTheme()
+  const { scrollY } = useInWalletLayoutContext()
 
   const scrollDirection = useSharedValue<'up' | 'down'>('down')
 
@@ -47,6 +55,8 @@ const FooterMenu = ({ state, descriptors, navigation, style, scrollY }: FooterMe
   const lastTranslateY = useSharedValue(0)
 
   const translateYValue = useDerivedValue(() => {
+    if (scrollY === undefined) return 0
+
     let value = lastTranslateY.value
 
     if (scrollDirection.value === 'down' && lastScrollY.value > scrollY.value) {
@@ -65,6 +75,17 @@ const FooterMenu = ({ state, descriptors, navigation, style, scrollY }: FooterMe
     // Avoid overshoot
     value = value < scrollRange[0] ? scrollRange[0] : value > scrollRange[1] ? scrollRange[1] : value
 
+    if (
+      scrollDirection.value === 'down' &&
+      scrollY.value > footerDistanceFromBottom * (scrollRange[1] / translateRange[1])
+    ) {
+      value = scrollRange[1]
+    }
+
+    if (scrollDirection.value === 'up') {
+      value = scrollRange[0]
+    }
+
     lastScrollY.value = scrollY.value
     lastTranslateY.value = value
 
@@ -72,7 +93,9 @@ const FooterMenu = ({ state, descriptors, navigation, style, scrollY }: FooterMe
   })
 
   const footerStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(translateYValue.value, scrollRange, translateRange)
+    const translateY = withTiming(interpolate(translateYValue.value, scrollRange, translateRange), {
+      duration: 100
+    })
 
     return {
       transform: [{ translateY }]
@@ -129,7 +152,7 @@ const FooterMenu = ({ state, descriptors, navigation, style, scrollY }: FooterMe
 
 export default memo(styled(FooterMenu)`
   position: absolute;
-  bottom: 35px;
+  bottom: ${footerDistanceFromBottom}px;
   width: 100%;
   align-items: center;
 `)
@@ -142,7 +165,7 @@ const MenuItems = styled.View`
   background-color: ${({ theme }) => theme.bg.primary};
   border-radius: ${BORDER_RADIUS}px;
   ${({ theme }) => theme.shadow.tertiary};
-  padding: 5px;
+  padding: ${footerMenuItemsPadding}px;
 `
 
 const Tab = styled.View<{ active: boolean }>`
@@ -151,7 +174,7 @@ const Tab = styled.View<{ active: boolean }>`
   justify-content: space-between;
   border-radius: ${BORDER_RADIUS * 0.7}px;
   background-color: ${({ theme, active }) => (active ? theme.bg.tertiary : 'transparent')};
-  height: 60px;
+  height: ${footerTabHeight}px;
   padding: 8px 0 5px 0;
 `
 

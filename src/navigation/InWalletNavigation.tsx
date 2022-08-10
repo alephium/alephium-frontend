@@ -46,7 +46,7 @@ const InWalletTabsNavigation = () => {
           headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
           headerTitle: ''
         }}
-        tabBar={(props) => <FooterMenu {...props} scrollY={scrollY} />}
+        tabBar={(props) => <FooterMenu {...props} />}
       >
         <InWalletTabs.Screen
           name="DashboardScreen"
