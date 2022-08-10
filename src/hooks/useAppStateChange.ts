@@ -74,7 +74,6 @@ export const useAppStateChange = () => {
       }
 
       appState.current = nextAppState
-      console.log('AppState:', appState.current)
     }
 
     const subscription = AppState.addEventListener('change', handleAppStateChange)
