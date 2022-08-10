@@ -26,12 +26,9 @@ const useHeaderScrollStyle = (scrollY: SharedValue<number> | undefined): ViewSty
   const theme = useTheme()
   const bgColorRange = [theme.bg.secondary, theme.bg.tertiary]
 
-  return useAnimatedStyle(() => {
-    const backgroundColor = interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange)
-    return {
-      backgroundColor
-    }
-  })
+  return useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange)
+  }))
 }
 
 export default useHeaderScrollStyle
