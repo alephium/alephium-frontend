@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useCallback, useEffect, useRef } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 
-import { navigate } from '../navigation/RootStackNavigation'
+import { navigateRootStack } from '../navigation/RootStackNavigation'
 import { getStoredActiveWallet } from '../storage/wallets'
 import { activeWalletChanged, walletFlushed } from '../store/activeWalletSlice'
 import { pinFlushed } from '../store/credentialsSlice'
@@ -34,12 +34,12 @@ export const useAppStateChange = () => {
     try {
       const storedActiveWallet = await getStoredActiveWallet()
       if (storedActiveWallet === null) {
-        navigate('LandingScreen')
+        navigateRootStack('LandingScreen')
       } else if (storedActiveWallet.authType === 'pin') {
-        navigate('LoginScreen', { storedWallet: storedActiveWallet })
+        navigateRootStack('LoginScreen', { storedWallet: storedActiveWallet })
       } else if (storedActiveWallet.authType === 'biometrics') {
         dispatch(activeWalletChanged(storedActiveWallet))
-        navigate('DashboardScreen')
+        navigateRootStack('DashboardScreen')
       } else {
         throw new Error('Unknown auth type')
       }
@@ -66,7 +66,7 @@ export const useAppStateChange = () => {
         dispatch(pinFlushed())
         dispatch(walletFlushed())
       } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
-        navigate('SplashScreen')
+        navigateRootStack('SplashScreen')
 
         if (!activeWallet.mnemonic) {
           getWalletFromStorageAndNavigate()

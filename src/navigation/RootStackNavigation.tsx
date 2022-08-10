@@ -37,7 +37,7 @@ import SplashScreen from '../screens/SplashScreen'
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
 import RootStackParamList from './rootStackRoutes'
 
-const navigationRef = createNavigationContainerRef<RootStackParamList>()
+const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
 const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
@@ -46,7 +46,7 @@ const RootStackNavigation = () => {
   console.log('RootStackNavigation renders')
 
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={rootStackNavigationRef}>
       <RootStack.Navigator
         initialRouteName={'SplashScreen'}
         screenOptions={{
@@ -96,12 +96,12 @@ const RootStackNavigation = () => {
 
 // Navigating without the navigation prop:
 // https://reactnavigation.org/docs/navigating-without-navigation-prop
-export const navigate = (
+export const navigateRootStack = (
   name: keyof RootStackParamList,
   params?: StackScreenProps<RootStackParamList>['route']['params']
 ) => {
-  if (navigationRef.isReady()) {
-    navigationRef.navigate(name, params)
+  if (rootStackNavigationRef.isReady()) {
+    rootStackNavigationRef.navigate(name, params)
   }
 }
 
