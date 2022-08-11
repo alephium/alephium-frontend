@@ -16,22 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
-import { StyleProp, TextInputProps, View, ViewStyle } from 'react-native'
-import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated'
+import { useRef, useState } from 'react'
+import { StyleProp, TextInput, TextInputProps, ViewStyle } from 'react-native'
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import { BORDER_RADIUS, INPUTS_HEIGHT } from '../../style/globalStyle'
+import HighlightRow, { RoundedRowProps } from '../HighlightRow'
 
-interface InputProps extends TextInputProps {
+interface InputProps extends TextInputProps, RoundedRowProps {
   label: string
-  color?: string
+  isTopRounded?: boolean
+  isBottomRounded?: boolean
+  hasBottomBorder?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const Input = ({ label, style, color, value, ...props }: InputProps) => {
+const Input = ({ label, style, value, isTopRounded, isBottomRounded, hasBottomBorder, ...props }: InputProps) => {
   const theme = useTheme()
   const [isActive, setIsActive] = useState(false)
+  const inputRef = useRef<TextInput>(null)
 
   const handleFocus = () => {
     setIsActive(true)
@@ -50,39 +53,45 @@ const Input = ({ label, style, color, value, ...props }: InputProps) => {
   }))
 
   return (
-    <View style={style}>
-      <TextInputStyled
-        selectionColor={theme.gradient.yellow}
-        style={{ color: color }}
-        value={value}
-        {...props}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-      <Label style={labelStyle}>
-        <LabelText style={labelTextStyle}>{label}</LabelText>
-      </Label>
-    </View>
+    <HighlightRow
+      isTopRounded={isTopRounded}
+      isBottomRounded={isBottomRounded}
+      hasBottomBorder={hasBottomBorder}
+      style={style}
+    >
+      <InputContainer>
+        <Label style={labelStyle}>
+          <LabelText style={labelTextStyle}>{label}</LabelText>
+        </Label>
+        <TextInputStyled
+          selectionColor={theme.gradient.yellow}
+          value={value}
+          isTopRounded={isTopRounded}
+          isBottomRounded={isBottomRounded}
+          {...props}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          ref={inputRef}
+        />
+      </InputContainer>
+    </HighlightRow>
   )
 }
 
-export default styled(Input)`
+export default Input
+
+const InputContainer = styled.View`
   position: relative;
 `
 
-const leftPadding = 15
-
-const TextInputStyled = styled.TextInput`
-  border-radius: ${BORDER_RADIUS}px;
-  height: ${INPUTS_HEIGHT}px;
-  padding: 0 ${leftPadding}px;
-  background-color: ${({ theme }) => theme.bg.highlight};
+const TextInputStyled = styled.TextInput<{ isTopRounded: boolean; isBottomRounded: boolean }>`
+  height: 100%;
 `
 
 const Label = styled(Animated.View)`
   position: absolute;
-  left: ${leftPadding}px;
   bottom: 0;
+  left: 0;
   justify-content: center;
 `
 

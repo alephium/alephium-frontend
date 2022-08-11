@@ -22,7 +22,7 @@ import { ScrollView } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
-import ColoredLabelInput, { ColoredLabelInputValue } from '../components/inputs/ColoredLabelInput'
+// import ColoredLabelInput, { ColoredLabelInputValue } from '../components/inputs/ColorPicker'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -39,21 +39,21 @@ const EditAddressScreen = ({
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const [coloredLabel, setColoredLabel] = useState<ColoredLabelInputValue>({
-    label: address?.settings.label ?? '',
-    color: address?.settings.color ?? ''
-  })
+  // const [coloredLabel, setColoredLabel] = useState<ColoredLabelInputValue>({
+  //   label: address?.settings.label ?? '',
+  //   color: address?.settings.color ?? ''
+  // })
   const activeWallet = useAppSelector((state) => state.activeWallet)
 
   if (!address) return null
   const addressSettings = {
-    isMain: address?.settings.isMain,
-    label: coloredLabel?.label,
-    color: coloredLabel?.color
+    isMain: address?.settings.isMain
+    // label: coloredLabel?.label,
+    // color: coloredLabel?.color
   }
 
   const handleSavePress = () => {
-    if (coloredLabel.color === address.settings.color && coloredLabel.label === address.settings.label) return
+    // if (coloredLabel.color === address.settings.color && coloredLabel.label === address.settings.label) return
 
     dispatch(
       addressSettingsUpdated({
@@ -75,7 +75,7 @@ const EditAddressScreen = ({
     <Screen>
       <ScrollView>
         <ScreenSection>
-          <ColoredLabelInput value={coloredLabel} onChange={setColoredLabel} />
+          {/* <ColoredLabelInput value={coloredLabel} onChange={setColoredLabel} /> */}
           <Button title="Save" onPress={handleSavePress} style={{ marginTop: 20 }} />
         </ScreenSection>
       </ScrollView>

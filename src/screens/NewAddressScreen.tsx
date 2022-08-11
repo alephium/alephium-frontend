@@ -24,7 +24,8 @@ import { ActivityIndicator, ScrollView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
-import ColoredLabelInput, { ColoredLabelInputValue } from '../components/inputs/ColoredLabelInput'
+import ColorPicker from '../components/inputs/ColorPicker'
+import Input from '../components/inputs/Input'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -48,10 +49,8 @@ const groupSelectOptions = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, ind
 const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const [coloredLabel, setColoredLabel] = useState<ColoredLabelInputValue>({
-    label: '',
-    color: getRandomLabelColor()
-  })
+  const [label, setLabel] = useState('')
+  const [color, setColor] = useState<string>(getRandomLabelColor())
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
   const [seed, setSeed] = useState<Buffer>()
   const addresses = useAppSelector(selectAllAddresses)
@@ -59,8 +58,8 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const activeWallet = useAppSelector((state) => state.activeWallet)
   const addressSettings = {
     isMain: false,
-    label: coloredLabel?.label,
-    color: coloredLabel?.color
+    label,
+    color
   }
   const [loading, setLoading] = useState(false)
 
@@ -109,7 +108,15 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     <Screen>
       <ScrollView>
         <ScreenSection>
-          <ColoredLabelInput value={coloredLabel} onChange={setColoredLabel} />
+          <Input
+            value={label}
+            onChangeText={() => setLabel(label.trim())}
+            label="Label"
+            maxLength={50}
+            isTopRounded
+            hasBottomBorder
+          />
+          <ColorPicker value={color} onChange={setColor} />
           <Picker selectedValue={newAddressGroup} onValueChange={setNewAddressGroup}>
             <Picker.Item />
             {groupSelectOptions.map(({ value, label }) => (
