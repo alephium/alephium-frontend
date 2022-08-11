@@ -25,7 +25,7 @@ export const lightTheme: DefaultTheme = {
   bg: {
     highlight: '#fff',
     primary: '#fafafa',
-    secondary: '#f3f3f3',
+    secondary: '#f0f0f0',
     tertiary: '#e3e3e3'
   },
   font: {
