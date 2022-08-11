@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { memo } from 'react'
-import { StyleProp, TouchableWithoutFeedback, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -26,10 +26,11 @@ import Animated, {
   useSharedValue,
   withTiming
 } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { useInWalletLayoutContext } from '../contexts/InWalletLayoutContext'
 import { BORDER_RADIUS } from '../style/globalStyle'
+import FooterMenuItem from './FooterMenuItem'
 
 interface FooterMenuProps extends BottomTabBarProps {
   style?: StyleProp<ViewStyle>
@@ -46,7 +47,6 @@ const scrollRange = [0, 80]
 const translateRange = [0, topFooterPosition]
 
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
-  const theme = useTheme()
   const { scrollY } = useInWalletLayoutContext()
 
   const scrollDirection = useSharedValue<'up' | 'down'>('down')
@@ -105,46 +105,17 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
   return (
     <Animated.View style={[style, footerStyle]}>
       <MenuItems>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key]
-          const isFocused = state.index === index
-
-          const Icon =
-            options.tabBarIcon &&
-            options.tabBarIcon({
-              focused: isFocused,
-              color: isFocused ? theme.font.primary : theme.font.tertiary,
-              size: 24
-            })
-
-          const label =
-            options.tabBarLabel !== undefined
-              ? (options.tabBarLabel as string)
-              : options.title !== undefined
-              ? options.title
-              : route.name
-
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true
-            })
-
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name)
-            }
-          }
-
-          return (
-            <TouchableWithoutFeedback onPress={onPress} key={label}>
-              <Tab active={isFocused}>
-                {Icon}
-                <TabText isActive={isFocused}>{label}</TabText>
-              </Tab>
-            </TouchableWithoutFeedback>
-          )
-        })}
+        {state.routes.map((route, index) => (
+          <FooterMenuItem
+            options={descriptors[route.key].options}
+            isFocused={state.index === index}
+            routeName={route.name}
+            target={route.key}
+            navigation={navigation}
+            height={footerTabHeight}
+            key={route.name}
+          />
+        ))}
       </MenuItems>
     </Animated.View>
   )
@@ -166,19 +137,4 @@ const MenuItems = styled.View`
   border-radius: ${BORDER_RADIUS}px;
   ${({ theme }) => theme.shadow.tertiary};
   padding: ${footerMenuItemsPadding}px;
-`
-
-const Tab = styled.View<{ active: boolean }>`
-  flex: 1;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: ${BORDER_RADIUS * 0.7}px;
-  background-color: ${({ theme, active }) => (active ? theme.bg.tertiary : 'transparent')};
-  height: ${footerTabHeight}px;
-  padding: 8px 0 5px 0;
-`
-
-const TabText = styled.Text<{ isActive?: boolean }>`
-  font-weight: 700;
-  color: ${({ theme, isActive }) => (isActive ? theme.font.primary : theme.font.tertiary)};
 `
