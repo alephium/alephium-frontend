@@ -29,7 +29,7 @@ import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
 
-type ScreenProps = StackScreenProps<InWalletTabsParamList, 'DashboardScreen'> & {
+interface ScreenProps extends StackScreenProps<InWalletTabsParamList, 'DashboardScreen'> {
   style?: StyleProp<ViewStyle>
 }
 

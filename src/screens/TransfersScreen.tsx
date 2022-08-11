@@ -31,7 +31,7 @@ import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
-type ScreenProps = StackScreenProps<InWalletTabsParamList, 'TransfersScreen'> & {
+interface ScreenProps extends StackScreenProps<InWalletTabsParamList, 'TransfersScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
