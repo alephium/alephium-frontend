@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
+import { clamp } from 'lodash'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import Animated, {
@@ -74,12 +75,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
       value =
         value >= scrollRange[0] && value <= scrollRange[1] // value is within range
           ? value + (scrollY.value - lastScrollY.value) // move it according to scrolled distance
-          : // avoid overshooting
-          value < scrollRange[0]
-          ? scrollRange[0]
-          : value > scrollRange[1]
-          ? scrollRange[1]
-          : value
+          : clamp(value, scrollRange[0], scrollRange[1]) // avoid overshooting
 
       // Completely hide the footer when it touches the bottom of the screen
       if (scrollY.value > footerDistanceFromBottom * (scrollRange[1] / translateRange[1])) {
