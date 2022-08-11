@@ -67,23 +67,24 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
       scrollDirection.value = 'down'
     }
 
-    if (value >= scrollRange[0] && value <= scrollRange[1]) {
-      const deltaScroll = Math.abs(scrollY.value - lastScrollY.value)
-      scrollDirection.value === 'down' ? (value += deltaScroll) : (value -= deltaScroll)
-    }
-
-    // Avoid overshoot
-    value = value < scrollRange[0] ? scrollRange[0] : value > scrollRange[1] ? scrollRange[1] : value
-
-    if (
-      scrollDirection.value === 'down' &&
-      scrollY.value > footerDistanceFromBottom * (scrollRange[1] / translateRange[1])
-    ) {
-      value = scrollRange[1]
-    }
-
     if (scrollDirection.value === 'up') {
+      // Always show the footer when scrolling up.
       value = scrollRange[0]
+    } else if (scrollDirection.value === 'down') {
+      value =
+        value >= scrollRange[0] && value <= scrollRange[1] // value is within range
+          ? value + (scrollY.value - lastScrollY.value) // move it according to scrolled distance
+          : // avoid overshooting
+          value < scrollRange[0]
+          ? scrollRange[0]
+          : value > scrollRange[1]
+          ? scrollRange[1]
+          : value
+
+      // Completely hide the footer when it touches the bottom of the screen
+      if (scrollY.value > footerDistanceFromBottom * (scrollRange[1] / translateRange[1])) {
+        value = scrollRange[1]
+      }
     }
 
     lastScrollY.value = scrollY.value
