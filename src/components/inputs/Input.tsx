@@ -16,7 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native'
+import { useState } from 'react'
+import { StyleProp, TextInputProps, View, ViewStyle } from 'react-native'
+import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS, INPUTS_HEIGHT } from '../../style/globalStyle'
@@ -27,29 +29,64 @@ interface InputProps extends TextInputProps {
   style?: StyleProp<ViewStyle>
 }
 
-const Input = ({ label, style, color, ...props }: InputProps) => {
+const Input = ({ label, style, color, value, ...props }: InputProps) => {
   const theme = useTheme()
+  const [isActive, setIsActive] = useState(false)
+
+  const handleFocus = () => {
+    setIsActive(true)
+  }
+
+  const handleBlur = () => {
+    if (!value) setIsActive(false)
+  }
+
+  const labelStyle = useAnimatedStyle(() => ({
+    top: withTiming(!isActive ? 0 : -35, { duration: 100 })
+  }))
+
+  const labelTextStyle = useAnimatedStyle(() => ({
+    fontSize: withTiming(!isActive ? 14 : 11, { duration: 100 })
+  }))
 
   return (
     <View style={style}>
-      <Label>{label}</Label>
-      <StyledInput selectionColor={theme.gradient.yellow} style={{ color: color }} {...props} />
+      <TextInputStyled
+        selectionColor={theme.gradient.yellow}
+        style={{ color: color }}
+        value={value}
+        {...props}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      />
+      <Label style={labelStyle}>
+        <LabelText style={labelTextStyle}>{label}</LabelText>
+      </Label>
     </View>
   )
 }
 
-const StyledInput = styled(TextInput)`
+export default styled(Input)`
+  position: relative;
+`
+
+const leftPadding = 15
+
+const TextInputStyled = styled.TextInput`
   border-radius: ${BORDER_RADIUS}px;
-  border-color: ${({ theme }) => theme.border.primary};
-  border-width: 2px;
   height: ${INPUTS_HEIGHT}px;
-  padding: 0 15px;
+  padding: 0 ${leftPadding}px;
+  background-color: ${({ theme }) => theme.bg.highlight};
 `
 
-const Label = styled.Text`
+const Label = styled(Animated.View)`
   position: absolute;
-  top: -25px;
-  color: ${({ theme }) => theme.font.secondary};
+  left: ${leftPadding}px;
+  bottom: 0;
+  justify-content: center;
 `
 
-export default Input
+const LabelText = styled(Animated.Text)`
+  color: ${({ theme }) => theme.font.secondary};
+  font-size: ${({ isActive }) => (!isActive ? 14 : 11)}px;
+`
