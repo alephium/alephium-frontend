@@ -43,12 +43,7 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation, hei
       size: 24
     })
 
-  const label =
-    options.tabBarLabel !== undefined
-      ? (options.tabBarLabel as string)
-      : options.title !== undefined
-      ? options.title
-      : routeName
+  const label = (options.tabBarLabel as string) ?? options.title ?? routeName
 
   const onPress = () => {
     const event = navigation.emit({
