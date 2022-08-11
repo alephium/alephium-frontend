@@ -22,7 +22,7 @@ import { useTheme } from 'styled-components'
 
 const scrollRange = [0, 100]
 
-const useHeaderScrollStyle = (scrollY: SharedValue<number> | undefined): ViewStyle => {
+const useHeaderScrollStyle = (scrollY?: SharedValue<number>): ViewStyle => {
   const theme = useTheme()
   const bgColorRange = [theme.bg.secondary, theme.bg.tertiary]
 
