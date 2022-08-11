@@ -27,23 +27,23 @@ import {
 } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
 import { useLayoutEffect } from 'react'
-import { Pressable, ScrollView, StyleProp, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
-import Screen from '../components/layout/Screen'
+import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { useAppSelector } from '../hooks/redux'
-import useHandleScroll from '../hooks/useHandleScroll'
-import RootStackParamList from '../navigation/rootStackRoutes'
+import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { selectAddressByHash, selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'AddressesScreen'>
+interface ScreenProps extends StackScreenProps<InWalletTabsParamList, 'AddressesScreen'> {
+  style?: StyleProp<ViewStyle>
+}
 
-const AddressesScreen = ({ navigation }: ScreenProps) => {
+const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const handleScroll = useHandleScroll()
   const theme = useTheme()
 
   useLayoutEffect(() => {
@@ -60,17 +60,15 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
   console.log('AddressesScreen renders')
 
   return (
-    <Screen>
-      <ScrollView onScroll={handleScroll}>
-        <ScreenSection>
-          {addressHashes.map((addressHash) => (
-            <Pressable onPress={() => navigation.navigate('AddressScreen', { addressHash })} key={addressHash}>
-              <AddressRow addressHash={addressHash} />
-            </Pressable>
-          ))}
-        </ScreenSection>
-      </ScrollView>
-    </Screen>
+    <InWalletScrollScreen style={style}>
+      <ScreenSection>
+        {addressHashes.map((addressHash) => (
+          <Pressable onPress={() => navigation.navigate('AddressScreen', { addressHash })} key={addressHash}>
+            <AddressRow addressHash={addressHash} />
+          </Pressable>
+        ))}
+      </ScreenSection>
+    </InWalletScrollScreen>
   )
 }
 

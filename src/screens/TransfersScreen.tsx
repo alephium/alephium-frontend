@@ -18,15 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon } from 'lucide-react-native'
-import { ScrollView, StyleProp, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
-import Screen from '../components/layout/Screen'
+import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import TransactionsList from '../components/TransactionsList'
 import { useAppSelector } from '../hooks/redux'
-import useHandleScroll from '../hooks/useHandleScroll'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
@@ -38,29 +37,26 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList, 'Transfers
 const TransfersScreen = ({ navigation, style }: ScreenProps) => {
   const theme = useTheme()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const handleScroll = useHandleScroll()
 
   return (
-    <Screen style={style}>
-      <ScrollView onScroll={handleScroll}>
-        <ScreenSection>
-          <BalanceSummary />
-          <Buttons>
-            <SendButton>
-              <ArrowUpIcon size={24} color={theme.font.contrast} />
-              <ButtonText>Send</ButtonText>
-            </SendButton>
-            <ReceiveButton>
-              <ArrowDownIcon size={24} color={theme.font.contrast} />
-              <ButtonText>Receive</ButtonText>
-            </ReceiveButton>
-          </Buttons>
-        </ScreenSection>
-        <ScreenSection>
-          <TransactionsList addressHashes={addressHashes} />
-        </ScreenSection>
-      </ScrollView>
-    </Screen>
+    <InWalletScrollScreen style={style}>
+      <ScreenSection>
+        <BalanceSummary />
+        <Buttons>
+          <SendButton>
+            <ArrowUpIcon size={24} color={theme.font.contrast} />
+            <ButtonText>Send</ButtonText>
+          </SendButton>
+          <ReceiveButton>
+            <ArrowDownIcon size={24} color={theme.font.contrast} />
+            <ButtonText>Receive</ButtonText>
+          </ReceiveButton>
+        </Buttons>
+      </ScreenSection>
+      <ScreenSection>
+        <TransactionsList addressHashes={addressHashes} />
+      </ScreenSection>
+    </InWalletScrollScreen>
   )
 }
 
