@@ -68,7 +68,6 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
         <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
 
-        {/* IN WALLET TABS */}
         <RootStack.Screen name="InWalletScreen" component={InWalletTabsNavigation} options={{ headerShown: false }} />
 
         <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} options={bottomModalOptions} />
