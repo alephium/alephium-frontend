@@ -16,18 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressAndKeys,
-  addressToGroup,
-  deriveNewAddressData,
-  TOTAL_NUMBER_OF_GROUPS,
-  walletImportAsyncUnsafe
-} from '@alephium/sdk'
+import { deriveNewAddressData, TOTAL_NUMBER_OF_GROUPS, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { Picker } from '@react-native-picker/picker'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useRef, useState } from 'react'
-import { ScrollView } from 'react-native'
-import styled from 'styled-components/native'
+import { ActivityIndicator, ScrollView } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import ColoredLabelInput, { ColoredLabelInputValue } from '../components/inputs/ColoredLabelInput'
@@ -53,7 +47,7 @@ const groupSelectOptions = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, ind
 
 const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const [newAddressData, setNewAddressData] = useState<AddressAndKeys>()
+  const theme = useTheme()
   const [coloredLabel, setColoredLabel] = useState<ColoredLabelInputValue>({
     label: '',
     color: getRandomLabelColor()
@@ -68,6 +62,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     label: coloredLabel?.label,
     color: coloredLabel?.color
   }
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const importWallet = async () => {
@@ -78,18 +73,12 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     importWallet()
   }, [activeWallet.mnemonic])
 
-  useEffect(() => {
-    if (seed) generateNewAddress(seed)
-  }, [seed])
+  const handleGeneratePress = async () => {
+    if (!seed) return
 
-  const generateNewAddress = (seed: Buffer, inGroup?: number) => {
-    const data = deriveNewAddressData(seed, inGroup, undefined, currentAddressIndexes.current)
-    setNewAddressData(data)
-    setNewAddressGroup(inGroup ?? addressToGroup(data.address, TOTAL_NUMBER_OF_GROUPS))
-  }
+    setLoading(true)
 
-  const handleGeneratePress = () => {
-    if (!newAddressData) return
+    const newAddressData = deriveNewAddressData(seed, newAddressGroup, undefined, currentAddressIndexes.current)
 
     dispatch(
       addressesAdded([
@@ -104,18 +93,16 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     )
     dispatch(fetchAddressesData([newAddressData.address]))
     dispatch(fetchAddressConfirmedTransactions({ hash: newAddressData.address, page: 1 }))
+
     if (activeWallet.metadataId)
-      storeAddressMetadata(activeWallet.metadataId, {
+      await storeAddressMetadata(activeWallet.metadataId, {
         index: newAddressData.addressIndex,
         ...addressSettings
       })
-    navigation.goBack()
-  }
 
-  const handleGroupSelect = (group: number) => {
-    if (group !== newAddressGroup && seed) {
-      generateNewAddress(seed, group)
-    }
+    setLoading(false)
+
+    navigation.goBack()
   }
 
   return (
@@ -123,11 +110,13 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
       <ScrollView>
         <ScreenSection>
           <ColoredLabelInput value={coloredLabel} onChange={setColoredLabel} />
-          <Picker selectedValue={newAddressGroup} onValueChange={handleGroupSelect}>
+          <Picker selectedValue={newAddressGroup} onValueChange={setNewAddressGroup}>
+            <Picker.Item />
             {groupSelectOptions.map(({ value, label }) => (
               <Picker.Item key={value} label={label} value={value} />
             ))}
           </Picker>
+          {loading && <ActivityIndicator size="large" color={theme.font.primary} />}
           <Button title="Generate" onPress={handleGeneratePress} style={{ marginTop: 20 }} />
         </ScreenSection>
       </ScrollView>
