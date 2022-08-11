@@ -17,18 +17,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import Animated, { SharedValue } from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
+import { useInWalletLayoutContext } from '../../contexts/InWalletLayoutContext'
 import useHeaderScrollStyle from '../../hooks/layout/useHeaderScrollStyle'
 
 interface DefaultHeaderProps {
   HeaderRight: ReactNode
   HeaderLeft: ReactNode
-  scrollY: SharedValue<number>
 }
 
-const DefaultHeader = ({ HeaderRight, HeaderLeft, scrollY }: DefaultHeaderProps) => {
+const DefaultHeader = ({ HeaderRight, HeaderLeft }: DefaultHeaderProps) => {
+  const { scrollY } = useInWalletLayoutContext()
   const headerStyle = useHeaderScrollStyle(scrollY)
 
   return (

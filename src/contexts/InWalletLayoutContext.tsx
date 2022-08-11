@@ -16,13 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, useContext } from 'react'
-import { SharedValue } from 'react-native-reanimated'
+import { createContext, ReactNode, useContext } from 'react'
+import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
-const InWalletLayoutContext = createContext({
-  scrollY: undefined as SharedValue<number> | undefined
+// This is done so that the scrollY position of the screen's ScrollView can be passed to the DefaultHeader and
+// FooterMenu components so they can react to scrolling.
+
+interface InWalletLayoutContextProps {
+  scrollY?: SharedValue<number>
+}
+
+const InWalletLayoutContext = createContext<InWalletLayoutContextProps>({
+  scrollY: undefined
 })
 
-export default InWalletLayoutContext
+export const InWalletLayoutContextProvider = ({ children }: { children: ReactNode }) => {
+  const scrollY = useSharedValue(0)
+
+  return <InWalletLayoutContext.Provider value={{ scrollY }}>{children}</InWalletLayoutContext.Provider>
+}
 
 export const useInWalletLayoutContext = () => useContext(InWalletLayoutContext)
+
+export default InWalletLayoutContext
