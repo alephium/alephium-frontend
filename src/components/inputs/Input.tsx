@@ -16,22 +16,36 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { StyleProp, TextInput, TextInputProps, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import HighlightRow, { RoundedRowProps } from '../HighlightRow'
 
-interface InputProps extends TextInputProps, RoundedRowProps {
+export interface InputProps extends TextInputProps, RoundedRowProps {
   label: string
   isTopRounded?: boolean
   isBottomRounded?: boolean
   hasBottomBorder?: boolean
+  onPress?: () => void
+  resetDisabledColor?: boolean
+  IconComponent?: ReactNode
   style?: StyleProp<ViewStyle>
 }
 
-const Input = ({ label, style, value, isTopRounded, isBottomRounded, hasBottomBorder, ...props }: InputProps) => {
+const Input = ({
+  label,
+  style,
+  value,
+  isTopRounded,
+  isBottomRounded,
+  hasBottomBorder,
+  onPress,
+  resetDisabledColor,
+  IconComponent,
+  ...props
+}: InputProps) => {
   const theme = useTheme()
   const [isActive, setIsActive] = useState(false)
   const inputRef = useRef<TextInput>(null)
@@ -52,12 +66,18 @@ const Input = ({ label, style, value, isTopRounded, isBottomRounded, hasBottomBo
     fontSize: withTiming(!isActive ? 14 : 11, { duration: 100 })
   }))
 
+  useEffect(() => {
+    if (value && !isActive) setIsActive(true)
+  }, [isActive, value])
+
   return (
     <HighlightRow
       isTopRounded={isTopRounded}
       isBottomRounded={isBottomRounded}
       hasBottomBorder={hasBottomBorder}
+      onPress={onPress}
       isInput
+      hasIcon={!!IconComponent}
       style={style}
     >
       <InputContainer>
@@ -67,14 +87,14 @@ const Input = ({ label, style, value, isTopRounded, isBottomRounded, hasBottomBo
         <TextInputStyled
           selectionColor={theme.gradient.yellow}
           value={value}
-          isTopRounded={isTopRounded}
-          isBottomRounded={isBottomRounded}
           {...props}
           onFocus={handleFocus}
           onBlur={handleBlur}
           ref={inputRef}
+          style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
         />
       </InputContainer>
+      {IconComponent}
     </HighlightRow>
   )
 }
@@ -83,9 +103,10 @@ export default Input
 
 const InputContainer = styled.View`
   position: relative;
+  flex: 1;
 `
 
-const TextInputStyled = styled.TextInput<{ isTopRounded: boolean; isBottomRounded: boolean }>`
+const TextInputStyled = styled.TextInput`
   height: 100%;
 `
 

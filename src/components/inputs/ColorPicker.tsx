@@ -17,11 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { memo, useState } from 'react'
-import { Modal, StyleProp, Text, ViewStyle } from 'react-native'
+import { StyleProp, Text, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { labelColorPalette } from '../../utils/colors'
 import HighlightRow from '../HighlightRow'
+import ModalWithBackdrop from '../ModalWithBackdrop'
 
 interface ColorPickerProps {
   value: string
@@ -43,15 +44,13 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
         <Text>Color</Text>
         <Dot color={value} />
       </HighlightRow>
-      <Modal animationType="fade" visible={isModalVisible}>
-        <ModalContent>
-          <Colors>
-            {labelColorPalette.map((c) => (
-              <Color key={c} color={c} onPress={() => handleColorPress(c)} />
-            ))}
-          </Colors>
-        </ModalContent>
-      </Modal>
+      <ModalWithBackdrop animationType="fade" visible={isModalVisible} closeModal={() => setIsModalVisible(false)}>
+        <Colors>
+          {labelColorPalette.map((c) => (
+            <Color key={c} color={c} onPress={() => handleColorPress(c)} />
+          ))}
+        </Colors>
+      </ModalWithBackdrop>
     </>
   )
 }
@@ -70,23 +69,12 @@ const Dot = styled.View<{ color: string }>`
 `
 
 const Colors = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  margin-top: 20px;
   width: 100%;
+  height: 100%;
 `
 
-const Color = memo(styled.Pressable<{ color: string; selected: boolean }>`
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+const Color = memo(styled(HighlightRow)<{ color: string }>`
   background-color: ${({ color }) => color};
-  align-items: center;
-  justify-content: center;
-`)
-
-const ModalContent = styled.View`
+  width: 100%;
   flex: 1;
-  justify-content: center;
-  align-items: center;
-`
+`)

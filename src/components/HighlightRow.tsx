@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { ReactNode } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import { BORDER_RADIUS, INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
@@ -34,12 +33,13 @@ interface HighlightRowProps extends RoundedRowProps {
   title?: string
   subtitle?: string
   onPress?: () => void
+  hasIcon?: boolean
   style?: StyleProp<ViewStyle>
 }
 
 const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRowProps) => {
-  const Component = (
-    <View style={style}>
+  const componentContent = (
+    <>
       {title && (
         <View>
           <Title>{title}</Title>
@@ -47,10 +47,16 @@ const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRo
         </View>
       )}
       {children}
-    </View>
+    </>
   )
 
-  return onPress ? <TouchableWithoutFeedback onPress={onPress}>{Component}</TouchableWithoutFeedback> : Component
+  return onPress ? (
+    <Pressable onPress={onPress} style={style}>
+      {componentContent}
+    </Pressable>
+  ) : (
+    <View style={style}>{componentContent}</View>
+  )
 }
 
 export default styled(HighlightRow)`
@@ -70,6 +76,15 @@ export default styled(HighlightRow)`
           padding: 20px 15px;
           background-color: ${({ theme }) => theme.bg.primary};
         `}
+
+  ${({ isInput, hasIcon }) =>
+    isInput &&
+    hasIcon &&
+    css`
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    `}
 
   ${({ isTopRounded }) =>
     isTopRounded &&

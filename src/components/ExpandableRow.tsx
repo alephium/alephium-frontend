@@ -24,18 +24,20 @@ import styled, { useTheme } from 'styled-components/native'
 import HighlightRow from './HighlightRow'
 
 interface ExpandableRowProps {
+  // TODO: Find a better way to measure the height of the collapsable section
+  expandedHeight: number
   children: ReactNode
   style?: StyleProp<ViewStyle>
 }
 
-const ExpandableRow = ({ children, style }: ExpandableRowProps) => {
+const ExpandableRow = ({ expandedHeight, children, style }: ExpandableRowProps) => {
   const theme = useTheme()
   const [isExpanded, setIsExpanded] = useState(false)
 
   const toggleExpanded = () => setIsExpanded(!isExpanded)
 
   const collapsableSectionStyle = useAnimatedStyle(() => ({
-    height: withTiming(isExpanded ? 100 : 0)
+    height: withTiming(isExpanded ? expandedHeight : 0)
   }))
 
   const chevronStyle = useAnimatedStyle(() => ({

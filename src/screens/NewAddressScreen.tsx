@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { deriveNewAddressData, TOTAL_NUMBER_OF_GROUPS, walletImportAsyncUnsafe } from '@alephium/sdk'
-import { Picker } from '@react-native-picker/picker'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, ScrollView, Switch, View } from 'react-native'
@@ -28,6 +27,7 @@ import ExpandableRow from '../components/ExpandableRow'
 import HighlightRow from '../components/HighlightRow'
 import ColorPicker from '../components/inputs/ColorPicker'
 import Input from '../components/inputs/Input'
+import Select, { SelectOption } from '../components/inputs/Select'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -43,7 +43,7 @@ import { mnemonicToSeed } from '../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 
-const groupSelectOptions = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) => ({
+const groupSelectOptions: SelectOption<number>[] = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) => ({
   value: index,
   label: `Group ${index}`
 }))
@@ -113,14 +113,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     <Screen>
       <ScrollView>
         <ScreenSection>
-          <Input
-            value={label}
-            onChangeText={() => setLabel(label.trim())}
-            label="Label"
-            maxLength={50}
-            isTopRounded
-            hasBottomBorder
-          />
+          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} isTopRounded hasBottomBorder />
           <ColorPicker value={color} onChange={setColor} />
           <HighlightRow
             isBottomRounded
@@ -137,15 +130,16 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
           </HighlightRow>
         </ScreenSection>
         <ScreenSection>
-          <ExpandableRow>
-            <Select isInput isTopRounded isBottomRounded>
-              <Picker selectedValue={newAddressGroup} onValueChange={setNewAddressGroup}>
-                <Picker.Item />
-                {groupSelectOptions.map(({ value, label }) => (
-                  <Picker.Item key={value} label={label} value={value} />
-                ))}
-              </Picker>
-            </Select>
+          <ExpandableRow expandedHeight={90}>
+            <Select
+              options={groupSelectOptions}
+              allowEmpty
+              label="Group"
+              value={newAddressGroup}
+              onValueChange={setNewAddressGroup}
+              isTopRounded
+              isBottomRounded
+            />
           </ExpandableRow>
           {loading && <ActivityIndicator size="large" color={theme.font.primary} />}
           <Button title="Generate" onPress={handleGeneratePress} style={{ marginTop: 20 }} />
@@ -160,5 +154,3 @@ export default NewAddressScreen
 const ScreenSection = styled.View`
   padding: 22px 20px;
 `
-
-const Select = styled(HighlightRow)``
