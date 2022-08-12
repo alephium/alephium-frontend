@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
+import { StyleProp, ViewStyle } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
@@ -26,26 +27,25 @@ import useHeaderScrollStyle from '../../hooks/layout/useHeaderScrollStyle'
 interface DefaultHeaderProps {
   HeaderRight: ReactNode
   HeaderLeft: ReactNode
+  style?: StyleProp<ViewStyle>
 }
 
-const DefaultHeader = ({ HeaderRight, HeaderLeft }: DefaultHeaderProps) => {
+const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) => {
   const { scrollY } = useInWalletLayoutContext()
   const headerStyle = useHeaderScrollStyle(scrollY)
 
   return (
-    <HeaderContainer style={headerStyle}>
+    <Animated.View style={[style, headerStyle]}>
       {HeaderLeft}
       {HeaderRight}
-    </HeaderContainer>
+    </Animated.View>
   )
 }
 
-const HeaderContainer = styled(Animated.View)`
+export default styled(DefaultHeader)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 0 15px;
   padding-top: 40px;
 `
-
-export default DefaultHeader
