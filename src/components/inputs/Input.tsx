@@ -57,6 +57,7 @@ const Input = ({ label, style, value, isTopRounded, isBottomRounded, hasBottomBo
       isTopRounded={isTopRounded}
       isBottomRounded={isBottomRounded}
       hasBottomBorder={hasBottomBorder}
+      isInput
       style={style}
     >
       <InputContainer>

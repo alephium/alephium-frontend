@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import styled, { css } from 'styled-components/native'
 
 import { BORDER_RADIUS, INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
@@ -29,16 +30,44 @@ export interface RoundedRowProps {
 
 interface HighlightRowProps extends RoundedRowProps {
   children: ReactNode | ReactNode[]
+  isInput?: boolean
+  title?: string
+  subtitle?: string
+  onPress?: () => void
   style?: StyleProp<ViewStyle>
 }
 
-const HighlightRow = ({ children, style }: HighlightRowProps) => <View style={style}>{children}</View>
+const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRowProps) => (
+  <TouchableWithoutFeedback onPress={onPress}>
+    <View style={style}>
+      {title && (
+        <View>
+          <Title>{title}</Title>
+          {subtitle && <Subtitle>{subtitle}</Subtitle>}
+        </View>
+      )}
+      {children}
+    </View>
+  </TouchableWithoutFeedback>
+)
 
 export default styled(HighlightRow)`
-  height: ${INPUTS_HEIGHT}px;
-  padding: 0 ${INPUTS_PADDING}px;
-  background-color: ${({ theme }) => theme.bg.highlight};
-  justify-content: center;
+  ${({ isInput }) =>
+    isInput
+      ? css`
+          justify-content: center;
+          height: ${INPUTS_HEIGHT}px;
+          padding: 0 ${INPUTS_PADDING}px;
+          background-color: ${({ theme }) => theme.bg.highlight};
+        `
+      : css`
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          min-height: ${INPUTS_HEIGHT}px;
+          padding: 20px 15px;
+          background-color: ${({ theme }) => theme.bg.primary};
+        `}
 
   ${({ isTopRounded }) =>
     isTopRounded &&
@@ -60,4 +89,10 @@ export default styled(HighlightRow)`
       border-bottom-width: 1px;
       border-bottom-color: ${({ theme }) => theme.bg.secondary};
     `}
+`
+
+const Title = styled.Text``
+
+const Subtitle = styled.Text`
+  color: ${({ theme }) => theme.font.secondary};
 `

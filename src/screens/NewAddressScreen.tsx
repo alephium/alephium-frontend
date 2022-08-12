@@ -20,10 +20,11 @@ import { deriveNewAddressData, TOTAL_NUMBER_OF_GROUPS, walletImportAsyncUnsafe }
 import { Picker } from '@react-native-picker/picker'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, ScrollView } from 'react-native'
+import { ActivityIndicator, ScrollView, Switch } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
+import HighlightRow from '../components/HighlightRow'
 import ColorPicker from '../components/inputs/ColorPicker'
 import Input from '../components/inputs/Input'
 import Screen from '../components/layout/Screen'
@@ -51,13 +52,14 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const theme = useTheme()
   const [label, setLabel] = useState('')
   const [color, setColor] = useState<string>(getRandomLabelColor())
+  const [isMain, setIsMain] = useState(false)
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
   const [seed, setSeed] = useState<Buffer>()
   const addresses = useAppSelector(selectAllAddresses)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const activeWallet = useAppSelector((state) => state.activeWallet)
   const addressSettings = {
-    isMain: false,
+    isMain,
     label,
     color
   }
@@ -104,6 +106,8 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     navigation.goBack()
   }
 
+  const toggleIsMain = () => setIsMain(!isMain)
+
   return (
     <Screen>
       <ScrollView>
@@ -117,6 +121,21 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
             hasBottomBorder
           />
           <ColorPicker value={color} onChange={setColor} />
+          <HighlightRow
+            isBottomRounded
+            title="Main address"
+            subtitle="Default address for operations"
+            onPress={toggleIsMain}
+          >
+            <Switch
+              trackColor={{ false: theme.font.secondary, true: theme.global.accent }}
+              thumbColor={theme.font.contrast}
+              onValueChange={toggleIsMain}
+              value={isMain}
+            />
+          </HighlightRow>
+        </ScreenSection>
+        <ScreenSection>
           <Picker selectedValue={newAddressGroup} onValueChange={setNewAddressGroup}>
             <Picker.Item />
             {groupSelectOptions.map(({ value, label }) => (

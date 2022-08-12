@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 interface ListProps {
   children: ReactNode[]
@@ -30,17 +30,4 @@ const List = ({ style, children }: ListProps) => <View style={style}>{children}<
 export default styled(List)`
   border-radius: 12px;
   background-color: white;
-`
-
-export const ListItem = styled.View<{ isLast?: boolean }>`
-  flex-direction: row;
-  align-items: center;
-  padding: 20px 15px;
-
-  ${({ isLast, theme }) =>
-    !isLast &&
-    css`
-      border-bottom-color: ${({ theme }) => theme.border.secondary};
-      border-bottom-width: 1px;
-    `};
 `

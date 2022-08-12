@@ -26,8 +26,8 @@ import styled, { useTheme } from 'styled-components/native'
 import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import Button from '../components/buttons/Button'
+import HighlightRow from '../components/HighlightRow'
 import Screen from '../components/layout/Screen'
-import List, { ListItem } from '../components/List'
 import TransactionsList from '../components/TransactionsList'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -97,36 +97,36 @@ const AddressScreen = ({
           </Actions>
         </Header>
         <ScreenSection>
-          <List>
-            <ListItemStyled>
+          <View>
+            <HighlightRow isTopRounded>
               <Label>Address</Label>
               <View>
                 <Text>{address.hash.substring(0, 20)}...</Text>
               </View>
-            </ListItemStyled>
-            <ListItemStyled>
+            </HighlightRow>
+            <HighlightRow>
               <Label>Number of transactions</Label>
               <View>
                 <NumberOfTxs>{address.networkData.details.txNumber}</NumberOfTxs>
               </View>
-            </ListItemStyled>
-            <ListItemStyled>
+            </HighlightRow>
+            <HighlightRow>
               <Label>Locked ALPH balance</Label>
               <View>
                 <Badge border light>
                   <Amount value={BigInt(address.networkData.details.lockedBalance)} fadeDecimals />
                 </Badge>
               </View>
-            </ListItemStyled>
-            <ListItemStyled>
+            </HighlightRow>
+            <HighlightRow isBottomRounded>
               <Label>Total ALPH balance</Label>
               <View>
                 <Badge light>
                   <Amount value={BigInt(address.networkData.details.balance)} fadeDecimals />
                 </Badge>
               </View>
-            </ListItemStyled>
-          </List>
+            </HighlightRow>
+          </View>
         </ScreenSection>
         <ScreenSection>
           <TransactionsList addressHashes={[address.hash]} />
@@ -174,12 +174,6 @@ const ButtonStyled = styled(Button)`
 
 const Label = styled.Text`
   color: ${({ theme }) => theme.font.secondary};
-`
-
-const ListItemStyled = styled(ListItem)`
-  justify-content: space-between;
-  padding: 14px 20px;
-  min-height: 55px;
 `
 
 const BadgeText = styled.Text`

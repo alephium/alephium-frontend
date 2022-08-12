@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { memo, useState } from 'react'
 import { Modal, StyleProp, Text, ViewStyle } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import styled from 'styled-components/native'
 
 import { labelColorPalette } from '../../utils/colors'
@@ -40,12 +39,10 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
 
   return (
     <>
-      <TouchableWithoutFeedback onPress={() => setIsModalVisible(!isModalVisible)}>
-        <HighlightRow style={style}>
-          <Text>Color</Text>
-          <Dot color={value} />
-        </HighlightRow>
-      </TouchableWithoutFeedback>
+      <HighlightRow isInput style={style} onPress={() => setIsModalVisible(!isModalVisible)}>
+        <Text>Color</Text>
+        <Dot color={value} />
+      </HighlightRow>
       <Modal animationType="fade" visible={isModalVisible}>
         <ModalContent>
           <Colors>

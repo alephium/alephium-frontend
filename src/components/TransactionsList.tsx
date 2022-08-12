@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ActivityIndicator, StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import List from '../components/List'
 import TransactionRow from '../components/TransactionRow'
 import { useAppSelector } from '../hooks/redux'
 import { selectConfirmedTransactions } from '../store/addressesSlice'
@@ -41,15 +40,16 @@ const TransactionsList = ({ addressHashes, style }: TransactionsListProps) => {
       {allConfirmedTxs.length === 0 && isAddressDataLoading ? (
         <ActivityIndicator size="large" color={theme.font.primary} />
       ) : allConfirmedTxs.length > 0 ? (
-        <List>
+        <View>
           {allConfirmedTxs.map((tx, index) => (
             <TransactionRow
               key={`${tx.hash}-${tx.address.hash}`}
               tx={tx}
+              isFirst={index === 0}
               isLast={index === allConfirmedTxs.length - 1}
             />
           ))}
-        </List>
+        </View>
       ) : (
         <Text>No transactions</Text>
       )}

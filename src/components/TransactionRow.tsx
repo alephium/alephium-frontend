@@ -26,24 +26,25 @@ import styled, { useTheme } from 'styled-components/native'
 import Arrow from '../images/Arrow'
 import { DisplayTx } from '../types/transactions'
 import Amount from './Amount'
-import { ListItem } from './List'
+import HighlightRow from './HighlightRow'
 
 dayjs.extend(relativeTime)
 
 interface TransactionRowProps {
   tx: DisplayTx
-  style?: StyleProp<ViewStyle>
+  isFirst?: boolean
   isLast?: boolean
+  style?: StyleProp<ViewStyle>
 }
 
-const TransactionRow = ({ tx, isLast, style }: TransactionRowProps) => {
+const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => {
   const amount = calAmountDelta(tx, tx.address.hash)
   const amountIsBigInt = typeof amount === 'bigint'
   const isOut = amountIsBigInt && amount < 0
   const theme = useTheme()
 
   return (
-    <ListItem style={style} isLast={isLast}>
+    <HighlightRow style={style} hasBottomBorder={isLast} isBottomRounded={isLast} isTopRounded={isFirst}>
       <Direction>
         {isOut ? (
           <Arrow direction="up" color={theme.font.secondary} />
@@ -58,7 +59,7 @@ const TransactionRow = ({ tx, isLast, style }: TransactionRowProps) => {
         value={BigInt(amountIsBigInt && amount < 0 ? (amount * -BigInt(1)).toString() : amount.toString())}
         fadeDecimals
       />
-    </ListItem>
+    </HighlightRow>
   )
 }
 
