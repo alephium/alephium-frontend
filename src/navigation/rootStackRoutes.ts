@@ -27,13 +27,12 @@ type RootStackParamList = {
   AddBiometricsScreen: undefined
   NewWalletSuccessPage: undefined
   ImportWalletSeedScreen: undefined
-  DashboardScreen: undefined
+  InWalletScreen: undefined
   LoginScreen: {
     storedWallet: ActiveWalletState
   }
   SplashScreen: undefined
   SwitchWalletScreen: undefined
-  AddressesScreen: undefined
   AddressScreen: {
     addressHash: AddressHash
   }

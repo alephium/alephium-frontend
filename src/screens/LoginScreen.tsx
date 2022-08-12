@@ -21,7 +21,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import { useCallback, useEffect, useState } from 'react'
-import { Text, View } from 'react-native'
+import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import animationSrc from '../animations/wallet.json'
@@ -71,7 +71,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
         mnemonic: wallet.mnemonic
       })
     )
-    navigation.navigate('DashboardScreen')
+    navigation.navigate('InWalletScreen')
     setPinCode('')
   }, [dispatch, pinCode, storedActiveEncryptedWallet, navigation])
 
@@ -113,7 +113,7 @@ const StyledAnimation = styled(LottieView)`
   width: 40%;
 `
 
-const Centered = styled(View)`
+const Centered = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;

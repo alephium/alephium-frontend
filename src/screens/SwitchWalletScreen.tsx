@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useState } from 'react'
-import { Text, TouchableWithoutFeedback, View } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
@@ -50,7 +50,7 @@ const SwitchWalletScreen = ({ navigation }: ScreenProps) => {
         navigation.navigate('LoginScreen', { storedWallet })
       } else if (storedWallet.authType === 'biometrics') {
         dispatch(activeWalletChanged(storedWallet))
-        navigation.navigate('DashboardScreen')
+        navigation.navigate('InWalletScreen')
       } else {
         throw new Error('Unknown auth type')
       }
@@ -110,18 +110,18 @@ const useSortedWallets = () => {
   return sortedWallets
 }
 
-const Title = styled(Text)`
+const Title = styled.Text`
   font-weight: 600;
   font-size: 26px;
 `
 
-const Subtitle = styled(Text)`
+const Subtitle = styled.Text`
   font-weight: 500;
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
 `
 
-const ScreenSection = styled(View)<{ fill?: boolean }>`
+const ScreenSection = styled.View<{ fill?: boolean }>`
   padding: 29px 20px;
 
   ${({ fill }) => fill && 'flex: 1;'}
@@ -142,11 +142,11 @@ const ImportWalletButton = styled(Button)`
   margin-left: 5px;
 `
 
-const WalletsList = styled(View)``
+const WalletsList = styled.View``
 
-const WalletListItem = styled(View)`
+const WalletListItem = styled.View`
   padding: 16px 18px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -154,12 +154,12 @@ const WalletListItem = styled(View)`
   border-radius: 9px;
 `
 
-const WalletName = styled(Text)`
+const WalletName = styled.Text`
   font-weight: 500;
   font-size: 14px;
 `
 
-const RadioButton = styled(View)`
+const RadioButton = styled.View`
   width: 19px;
   height: 19px;
   border-radius: 19px;
@@ -171,7 +171,7 @@ const RadioButton = styled(View)`
   justify-content: center;
 `
 
-const RadioButtonChecked = styled(View)`
+const RadioButtonChecked = styled.View`
   width: 13px;
   height: 13px;
   border-radius: 13px;

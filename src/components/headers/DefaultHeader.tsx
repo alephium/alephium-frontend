@@ -17,30 +17,35 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import { StyleProp, ViewStyle } from 'react-native'
+import Animated from 'react-native-reanimated'
+import styled from 'styled-components/native'
 
-interface ListProps {
-  children: ReactNode[]
+import { useInWalletLayoutContext } from '../../contexts/InWalletLayoutContext'
+import useHeaderScrollStyle from '../../hooks/layout/useHeaderScrollStyle'
+
+interface DefaultHeaderProps {
+  HeaderRight: ReactNode
+  HeaderLeft: ReactNode
   style?: StyleProp<ViewStyle>
 }
 
-const List = ({ style, children }: ListProps) => <View style={style}>{children}</View>
+const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) => {
+  const { scrollY } = useInWalletLayoutContext()
+  const headerStyle = useHeaderScrollStyle(scrollY)
 
-export default styled(List)`
-  border-radius: 12px;
-  background-color: white;
-`
+  return (
+    <Animated.View style={[style, headerStyle]}>
+      {HeaderLeft}
+      {HeaderRight}
+    </Animated.View>
+  )
+}
 
-export const ListItem = styled.View<{ isLast?: boolean }>`
+export default styled(DefaultHeader)`
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  padding: 20px 15px;
-
-  ${({ isLast, theme }) =>
-    !isLast &&
-    css`
-      border-bottom-color: ${({ theme }) => theme.border.secondary};
-      border-bottom-width: 1px;
-    `};
+  padding: 0 15px;
+  padding-top: 40px;
 `

@@ -16,31 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import { ViewStyle } from 'react-native'
+import { interpolateColor, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
+import { useTheme } from 'styled-components'
 
-interface ListProps {
-  children: ReactNode[]
-  style?: StyleProp<ViewStyle>
+const scrollRange = [0, 100]
+
+const useHeaderScrollStyle = (scrollY?: SharedValue<number>): ViewStyle => {
+  const theme = useTheme()
+  const bgColorRange = [theme.bg.secondary, theme.bg.tertiary]
+
+  return useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange)
+  }))
 }
 
-const List = ({ style, children }: ListProps) => <View style={style}>{children}</View>
-
-export default styled(List)`
-  border-radius: 12px;
-  background-color: white;
-`
-
-export const ListItem = styled.View<{ isLast?: boolean }>`
-  flex-direction: row;
-  align-items: center;
-  padding: 20px 15px;
-
-  ${({ isLast, theme }) =>
-    !isLast &&
-    css`
-      border-bottom-color: ${({ theme }) => theme.border.secondary};
-      border-bottom-width: 1px;
-    `};
-`
+export default useHeaderScrollStyle

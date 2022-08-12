@@ -17,12 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native'
-import { CardStyleInterpolators, createStackNavigator, StackScreenProps } from '@react-navigation/stack'
+import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTheme } from 'styled-components'
 
-import AddressesScreen from '../screens/AddressesScreen'
+import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'
 import AddressScreen from '../screens/AddressScreen'
-import DashboardScreen from '../screens/DashboardScreen'
 import EditAddressScreen from '../screens/EditAddressScreen'
 import LandingScreen from '../screens/LandingScreen'
 import LoginScreen from '../screens/LoginScreen'
@@ -35,6 +34,7 @@ import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '../screens/NewAddressScreen'
 import SplashScreen from '../screens/SplashScreen'
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
+import InWalletTabsNavigation from './InWalletNavigation'
 import RootStackParamList from './rootStackRoutes'
 
 const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
@@ -42,6 +42,7 @@ const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
+  const bottomModalOptions = useBottomModalOptions()
 
   console.log('RootStackNavigation renders')
 
@@ -67,18 +68,11 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
         <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
 
-        <RootStack.Screen name="DashboardScreen" component={DashboardScreen} options={{ headerShown: false }} />
-        <RootStack.Screen
-          name="SwitchWalletScreen"
-          component={SwitchWalletScreen}
-          options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS }}
-        />
-        <RootStack.Screen name="AddressesScreen" component={AddressesScreen} />
-        <RootStack.Screen
-          name="AddressScreen"
-          component={AddressScreen}
-          options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS }}
-        />
+        <RootStack.Screen name="InWalletScreen" component={InWalletTabsNavigation} options={{ headerShown: false }} />
+
+        <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} options={bottomModalOptions} />
+        <RootStack.Screen name="AddressScreen" component={AddressScreen} options={bottomModalOptions} />
+
         <RootStack.Screen
           name="NewAddressScreen"
           component={NewAddressScreen}

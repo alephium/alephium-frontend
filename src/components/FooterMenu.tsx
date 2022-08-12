@@ -16,86 +16,122 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation, useRoute } from '@react-navigation/native'
-import {
-  ArrowLeftRight as ArrowsIcon,
-  LayoutTemplate as LayoutTemplateIcon,
-  List as ListIcon
-} from 'lucide-react-native'
-import React, { memo } from 'react'
-import { StyleProp, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
+import { memo } from 'react'
+import { StyleProp, ViewStyle } from 'react-native'
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withTiming
+} from 'react-native-reanimated'
+import styled from 'styled-components/native'
 
-interface FooterMenuProps {
+import { useInWalletLayoutContext } from '../contexts/InWalletLayoutContext'
+import { BORDER_RADIUS } from '../style/globalStyle'
+import { clamp } from '../utils/worklets'
+import FooterMenuItem from './FooterMenuItem'
+
+interface FooterMenuProps extends BottomTabBarProps {
   style?: StyleProp<ViewStyle>
 }
 
-const FooterMenu = ({ style }: FooterMenuProps) => {
-  const navigation = useNavigation()
-  const route = useRoute()
-  const theme = useTheme()
+const footerDistanceFromBottom = 35
+const footerMenuItemsPadding = 5
+const footerTabHeight = 60
+
+const totalFooterHeight = footerMenuItemsPadding * 2 + footerTabHeight
+const topFooterPosition = footerDistanceFromBottom + totalFooterHeight
+
+const scrollRange = [0, 80]
+const translateRange = [0, topFooterPosition]
+
+const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
+  const { scrollY } = useInWalletLayoutContext()
+
+  const scrollDirection = useSharedValue<'up' | 'down'>('down')
+
+  const lastScrollY = useSharedValue(0)
+  const lastTranslateY = useSharedValue(0)
+
+  const translateYValue = useDerivedValue(() => {
+    if (scrollY === undefined) return 0
+
+    let value = lastTranslateY.value
+
+    if (scrollDirection.value === 'down' && lastScrollY.value > scrollY.value) {
+      scrollDirection.value = 'up'
+    }
+
+    if (scrollDirection.value === 'up' && lastScrollY.value < scrollY.value) {
+      scrollDirection.value = 'down'
+    }
+
+    if (scrollDirection.value === 'up') {
+      // Always show the footer when scrolling up.
+      value = scrollRange[0]
+    } else if (scrollDirection.value === 'down') {
+      value =
+        value >= scrollRange[0] && value <= scrollRange[1] // value is within range
+          ? value + (scrollY.value - lastScrollY.value) // move it according to scrolled distance
+          : clamp(value, scrollRange[0], scrollRange[1]) // avoid overshooting
+
+      // Completely hide the footer when it touches the bottom of the screen
+      if (scrollY.value > footerDistanceFromBottom * (scrollRange[1] / translateRange[1])) {
+        value = scrollRange[1]
+      }
+    }
+
+    lastScrollY.value = scrollY.value
+    lastTranslateY.value = value
+
+    return value
+  })
+
+  const footerStyle = useAnimatedStyle(() => {
+    const translateY = withTiming(interpolate(translateYValue.value, scrollRange, translateRange), {
+      duration: 100
+    })
+
+    return {
+      transform: [{ translateY }]
+    }
+  })
 
   return (
-    <View style={style}>
+    <Animated.View style={[style, footerStyle]}>
       <MenuItems>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('DashboardScreen')}>
-          <OverviewTab>
-            <LayoutTemplateIcon
-              color={route.name === 'DashboardScreen' ? theme.font.primary : theme.font.tertiary}
-              size={24}
-            />
-            <TabText isActive={route.name === 'DashboardScreen'}>Overview</TabText>
-          </OverviewTab>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('AddressesScreen')}>
-          <Tab>
-            <ListIcon color={route.name === 'AddressesScreen' ? theme.font.primary : theme.font.tertiary} size={24} />
-            <TabText isActive={route.name === 'AddressesScreen'}>Addresses</TabText>
-          </Tab>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback>
-          <TransferTab>
-            <ArrowsIcon color={route.name === 'TransferScreen' ? theme.font.primary : theme.font.tertiary} size={24} />
-            <TabText isActive={route.name === 'TransferScreen'}>Transfer</TabText>
-          </TransferTab>
-        </TouchableWithoutFeedback>
+        {state.routes.map((route, index) => (
+          <FooterMenuItem
+            options={descriptors[route.key].options}
+            isFocused={state.index === index}
+            routeName={route.name}
+            target={route.key}
+            navigation={navigation}
+            height={footerTabHeight}
+            key={route.name}
+          />
+        ))}
       </MenuItems>
-    </View>
+    </Animated.View>
   )
 }
 
 export default memo(styled(FooterMenu)`
   position: absolute;
-  bottom: 35px;
+  bottom: ${footerDistanceFromBottom}px;
   width: 100%;
-  padding: 0 55px;
+  align-items: center;
 `)
 
-const MenuItems = styled(View)`
+const MenuItems = styled.View`
+  width: 75%;
+  max-width: 350px;
+  min-width: 300px;
   flex-direction: row;
-  justify-content: space-between;
-  background-color: white;
-  border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 12px;
-  ${({ theme }) => theme.shadow.secondary};
-  padding: 9px 12px;
-`
-
-const Tab = styled(View)`
-  align-items: center;
-`
-
-const OverviewTab = styled(Tab)`
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
-`
-
-const TransferTab = styled(Tab)`
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-`
-
-const TabText = styled(Text)<{ isActive?: boolean }>`
-  font-weight: 700;
-  color: ${({ theme, isActive }) => (isActive ? theme.font.primary : theme.font.tertiary)};
+  background-color: ${({ theme }) => theme.bg.primary};
+  border-radius: ${BORDER_RADIUS}px;
+  ${({ theme }) => theme.shadow.tertiary};
+  padding: ${footerMenuItemsPadding}px;
 `

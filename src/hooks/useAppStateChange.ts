@@ -39,18 +39,18 @@ export const useAppStateChange = () => {
         navigateRootStack('LoginScreen', { storedWallet: storedActiveWallet })
       } else if (storedActiveWallet.authType === 'biometrics') {
         dispatch(activeWalletChanged(storedActiveWallet))
-        navigateRootStack('DashboardScreen')
+        navigateRootStack('InWalletScreen')
       } else {
         throw new Error('Unknown auth type')
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       // TODO: Revisit error handling with proper error codes
-    } catch (e: any) {
-      if (e.message === 'User canceled the authentication') {
+    } catch (e: unknown) {
+      const error = e as { message?: string }
+      if (error.message === 'User canceled the authentication') {
         Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
           { text: 'Try again', onPress: getWalletFromStorageAndNavigate }
         ])
-      } else if (e.message === 'No biometrics are currently enrolled') {
+      } else if (error.message === 'No biometrics are currently enrolled') {
         Alert.alert(
           'Authentication required',
           'This wallet is only accessibly via biometrics authentication, please set up biometrics (fingerprint) on your device settings and try again.'

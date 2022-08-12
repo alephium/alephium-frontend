@@ -83,7 +83,7 @@ const Amount = ({ value, style, fadeDecimals, fullPrecision = false, prefix, suf
   )
 }
 
-const Decimals = styled(Text)`
+const Decimals = styled.Text`
   color: ${({ theme }) => theme.font.secondary};
   font-weight: bold;
 `

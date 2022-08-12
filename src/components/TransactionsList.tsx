@@ -59,7 +59,7 @@ const TransactionsList = ({ addressHashes, style }: TransactionsListProps) => {
 
 export default TransactionsList
 
-const H2 = styled(Text)`
+const H2 = styled.Text`
   color: ${({ theme }) => theme.font.tertiary};
   font-weight: bold;
   font-size: 16px;

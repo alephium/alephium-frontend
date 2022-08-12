@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { memo, useEffect, useState } from 'react'
-import { Pressable, View } from 'react-native'
+import { View } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import { labelColorPalette } from '../../utils/colors'
@@ -65,13 +65,13 @@ const ColoredLabelInput = ({ value, onChange }: ColoredLabelInputProps) => {
 
 export default ColoredLabelInput
 
-const Colors = styled(View)`
+const Colors = styled.View`
   flex-direction: row;
   justify-content: space-between;
   margin-top: 20px;
 `
 
-const Color = memo(styled(Pressable)<{ color: string; selected: boolean }>`
+const Color = memo(styled.Pressable<{ color: string; selected: boolean }>`
   width: 40px;
   height: 40px;
   border-radius: 10px;

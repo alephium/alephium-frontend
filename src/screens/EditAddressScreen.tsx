@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
-import { ScrollView, View } from 'react-native'
+import { ScrollView } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
@@ -83,7 +83,7 @@ const EditAddressScreen = ({
   )
 }
 
-const ScreenSection = styled(View)`
+const ScreenSection = styled.View`
   padding: 22px 20px;
 `
 

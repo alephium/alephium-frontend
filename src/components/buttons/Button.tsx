@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Pressable, PressableProps, StyleProp, Text, ViewStyle } from 'react-native'
+import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
@@ -46,7 +46,7 @@ const Button = ({
   const colors = {
     bg: {
       default: theme.font.primary,
-      contrast: theme.bg.primary,
+      contrast: theme.bg.highlight,
       accent: theme.global.accent
     }[variant],
     font: {
@@ -62,7 +62,6 @@ const Button = ({
       backgroundColor: { primary: colors.bg, secondary: 'transparent' }[type],
       borderWidth: { primary: 0, secondary: 2 }[type],
       borderColor: { primary: 'transparent', secondary: colors.bg }[type],
-      elevation: type === 'primary' ? 8 : 0, // TODO: iOS shadows
       width: props.wide ? '75%' : 'auto'
     },
     style
@@ -95,6 +94,6 @@ export default styled(Button)`
   height: ${({ icon }) => (icon ? '45px' : '55px')};
 `
 
-const ButtonText = styled(Text)`
+const ButtonText = styled.Text`
   font-weight: bold;
 `
