@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-import { clamp } from 'lodash'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import Animated, {
@@ -31,6 +30,7 @@ import styled from 'styled-components/native'
 
 import { useInWalletLayoutContext } from '../contexts/InWalletLayoutContext'
 import { BORDER_RADIUS } from '../style/globalStyle'
+import { clamp } from '../utils/worklets'
 import FooterMenuItem from './FooterMenuItem'
 
 interface FooterMenuProps extends BottomTabBarProps {
