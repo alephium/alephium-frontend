@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
+import { ReactNode, useCallback } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, ViewStyle } from 'react-native'
 
 import { useInWalletLayoutContext } from '../../contexts/InWalletLayoutContext'
@@ -30,9 +30,12 @@ interface ScreenProps {
 const InWalletScrollScreen = ({ style, children }: ScreenProps) => {
   const { scrollY } = useInWalletLayoutContext()
 
-  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (scrollY) scrollY.value = e.nativeEvent.contentOffset.y
-  }
+  const handleScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (scrollY) scrollY.value = e.nativeEvent.contentOffset.y
+    },
+    [scrollY]
+  )
 
   return (
     <Screen style={style}>
