@@ -50,38 +50,13 @@ const translateRange = [0, topFooterPosition]
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
   const { scrollY } = useInWalletLayoutContext()
 
-  const scrollDirection = useSharedValue<'up' | 'down'>('down')
-
   const lastScrollY = useSharedValue(0)
   const lastTranslateY = useSharedValue(0)
 
   const translateYValue = useDerivedValue(() => {
     if (scrollY === undefined) return 0
 
-    let value = lastTranslateY.value
-
-    if (scrollDirection.value === 'down' && lastScrollY.value > scrollY.value) {
-      scrollDirection.value = 'up'
-    }
-
-    if (scrollDirection.value === 'up' && lastScrollY.value < scrollY.value) {
-      scrollDirection.value = 'down'
-    }
-
-    if (scrollDirection.value === 'up') {
-      // Always show the footer when scrolling up.
-      value = scrollRange[0]
-    } else if (scrollDirection.value === 'down') {
-      value =
-        value >= scrollRange[0] && value <= scrollRange[1] // value is within range
-          ? value + (scrollY.value - lastScrollY.value) // move it according to scrolled distance
-          : clamp(value, scrollRange[0], scrollRange[1]) // avoid overshooting
-
-      // Completely hide the footer when it touches the bottom of the screen
-      if (scrollY.value > footerDistanceFromBottom * (scrollRange[1] / translateRange[1])) {
-        value = scrollRange[1]
-      }
-    }
+    const value = clamp(lastTranslateY.value + (scrollY.value - lastScrollY.value), scrollRange[0], scrollRange[1])
 
     lastScrollY.value = scrollY.value
     lastTranslateY.value = value
