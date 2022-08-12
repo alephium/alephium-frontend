@@ -37,8 +37,8 @@ interface HighlightRowProps extends RoundedRowProps {
   style?: StyleProp<ViewStyle>
 }
 
-const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRowProps) => (
-  <TouchableWithoutFeedback onPress={onPress}>
+const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRowProps) => {
+  const Component = (
     <View style={style}>
       {title && (
         <View>
@@ -48,8 +48,10 @@ const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRo
       )}
       {children}
     </View>
-  </TouchableWithoutFeedback>
-)
+  )
+
+  return onPress ? <TouchableWithoutFeedback onPress={onPress}>{Component}</TouchableWithoutFeedback> : Component
+}
 
 export default styled(HighlightRow)`
   ${({ isInput }) =>

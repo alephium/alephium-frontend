@@ -20,10 +20,11 @@ import { deriveNewAddressData, TOTAL_NUMBER_OF_GROUPS, walletImportAsyncUnsafe }
 import { Picker } from '@react-native-picker/picker'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, ScrollView, Switch } from 'react-native'
+import { ActivityIndicator, ScrollView, Switch, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
+import ExpandableRow from '../components/ExpandableRow'
 import HighlightRow from '../components/HighlightRow'
 import ColorPicker from '../components/inputs/ColorPicker'
 import Input from '../components/inputs/Input'
@@ -136,12 +137,16 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
           </HighlightRow>
         </ScreenSection>
         <ScreenSection>
-          <Picker selectedValue={newAddressGroup} onValueChange={setNewAddressGroup}>
-            <Picker.Item />
-            {groupSelectOptions.map(({ value, label }) => (
-              <Picker.Item key={value} label={label} value={value} />
-            ))}
-          </Picker>
+          <ExpandableRow>
+            <Select isInput isTopRounded isBottomRounded>
+              <Picker selectedValue={newAddressGroup} onValueChange={setNewAddressGroup}>
+                <Picker.Item />
+                {groupSelectOptions.map(({ value, label }) => (
+                  <Picker.Item key={value} label={label} value={value} />
+                ))}
+              </Picker>
+            </Select>
+          </ExpandableRow>
           {loading && <ActivityIndicator size="large" color={theme.font.primary} />}
           <Button title="Generate" onPress={handleGeneratePress} style={{ marginTop: 20 }} />
         </ScreenSection>
@@ -155,3 +160,5 @@ export default NewAddressScreen
 const ScreenSection = styled.View`
   padding: 22px 20px;
 `
+
+const Select = styled(HighlightRow)``
