@@ -59,6 +59,8 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   )
 }
 
+export default DashboardScreen
+
 const Buttons = styled.View`
   display: flex;
   flex-direction: row;
@@ -69,5 +71,3 @@ const ScreenSection = styled.View`
   border-bottom-color: ${({ theme }) => theme.border.secondary};
   border-bottom-width: 1px;
 `
-
-export default DashboardScreen
