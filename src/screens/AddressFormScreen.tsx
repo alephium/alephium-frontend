@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import { useState } from 'react'
-import { ScrollView, Switch } from 'react-native'
+import { ScrollView, Switch, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
@@ -38,6 +38,7 @@ interface AddressFormProps {
   }
   onSubmit: (isMain: boolean, label?: string, color?: string, group?: number) => void
   buttonText?: string
+  disableIsMainToggle?: boolean
 }
 
 const groupSelectOptions: SelectOption<number>[] = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) => ({
@@ -45,14 +46,26 @@ const groupSelectOptions: SelectOption<number>[] = Array.from(Array(TOTAL_NUMBER
   label: `Group ${index}`
 }))
 
-const AddressForm = ({ initialValues, onSubmit, buttonText = 'Generate' }: AddressFormProps) => {
+const AddressForm = ({
+  initialValues,
+  onSubmit,
+  buttonText = 'Generate',
+  disableIsMainToggle = false
+}: AddressFormProps) => {
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
   const [isMain, setIsMain] = useState(initialValues.isMain)
   const [group, setGroup] = useState(initialValues.group)
   const theme = useTheme()
 
-  const toggleIsMain = () => setIsMain(!isMain)
+  const toggleIsMain = () => {
+    if (!disableIsMainToggle) {
+      setIsMain(!isMain)
+    }
+  }
+
+  console.log('disableIsMainToggle', disableIsMainToggle)
+  console.log('typeof', typeof disableIsMainToggle)
 
   return (
     <Screen>
@@ -62,21 +75,29 @@ const AddressForm = ({ initialValues, onSubmit, buttonText = 'Generate' }: Addre
           justifyContent: 'space-between'
         }}
       >
-        <TopContent>
+        <View>
           <ScreenSection>
             <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} isTopRounded hasBottomBorder />
             <ColorPicker value={color} onChange={setColor} />
             <HighlightRow
               isBottomRounded
               title="Main address"
-              subtitle="Default address for operations"
+              subtitle={`Default address for operations${
+                disableIsMainToggle
+                  ? '. To remove this address from being the main address, you must set another one as main first.'
+                  : ''
+              }`}
               onPress={toggleIsMain}
             >
               <Switch
-                trackColor={{ false: theme.font.secondary, true: theme.global.accent }}
+                trackColor={{
+                  false: disableIsMainToggle ? theme.bg.tertiary : theme.font.secondary,
+                  true: disableIsMainToggle ? theme.bg.tertiary : theme.global.accent
+                }}
                 thumbColor={theme.font.contrast}
                 onValueChange={toggleIsMain}
                 value={isMain}
+                disabled={disableIsMainToggle}
               />
             </HighlightRow>
           </ScreenSection>
@@ -95,12 +116,10 @@ const AddressForm = ({ initialValues, onSubmit, buttonText = 'Generate' }: Addre
               </ExpandableRow>
             </ScreenSection>
           )}
-        </TopContent>
-        <BottomContent>
-          <ScreenSection>
-            <Button title={buttonText} centered onPress={() => onSubmit(isMain, label, color, group)} />
-          </ScreenSection>
-        </BottomContent>
+        </View>
+        <ScreenSection>
+          <Button title={buttonText} centered onPress={() => onSubmit(isMain, label, color, group)} />
+        </ScreenSection>
       </ScrollView>
     </Screen>
   )
@@ -111,7 +130,3 @@ export default AddressForm
 const ScreenSection = styled.View`
   padding: 22px 20px;
 `
-
-const TopContent = styled.View``
-
-const BottomContent = styled.View``

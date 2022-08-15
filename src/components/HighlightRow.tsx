@@ -39,16 +39,16 @@ interface HighlightRowProps extends RoundedRowProps {
 }
 
 const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRowProps) => {
-  const componentContent = (
+  const componentContent = title ? (
     <>
-      {title && (
-        <View>
-          <Text>{title}</Text>
-          {subtitle && <Subtitle>{subtitle}</Subtitle>}
-        </View>
-      )}
-      {children}
+      <LeftContent>
+        <Text>{title}</Text>
+        {subtitle && <Subtitle>{subtitle}</Subtitle>}
+      </LeftContent>
+      <RightContent>{children}</RightContent>
     </>
+  ) : (
+    children
   )
 
   return onPress ? (
@@ -111,4 +111,12 @@ export default styled(HighlightRow)`
 
 const Subtitle = styled.Text`
   color: ${({ theme }) => theme.font.secondary};
+`
+
+const LeftContent = styled.View`
+  flex: 1;
+`
+
+const RightContent = styled.View`
+  padding-left: ${INPUTS_PADDING}px;
 `

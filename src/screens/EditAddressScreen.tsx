@@ -73,7 +73,16 @@ const EditAddressScreen = ({
 
   console.log('EditAddressScreen renders')
 
-  return <AddressFormScreen initialValues={initialValues} onSubmit={handleSavePress} buttonText="Save" />
+  console.log('initial values is main', initialValues.isMain)
+
+  return (
+    <AddressFormScreen
+      initialValues={initialValues}
+      onSubmit={handleSavePress}
+      buttonText="Save"
+      disableIsMainToggle={initialValues.isMain}
+    />
+  )
 }
 
 export default EditAddressScreen

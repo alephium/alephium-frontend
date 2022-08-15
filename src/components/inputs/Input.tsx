@@ -84,11 +84,11 @@ const Input = ({
         <TextInputStyled
           selectionColor={theme.gradient.yellow}
           value={value}
-          {...props}
           onFocus={handleFocus}
           onBlur={handleBlur}
           ref={inputRef}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
+          {...props}
         />
       </InputContainer>
       {IconComponent}
