@@ -70,11 +70,6 @@
     "expo-cli": "^6.0.1",
     "typescript": "^4.6.3"
   },
-  "overrides": {
-    "react-native": {
-      "react-devtools-core": "4.14.0"
-    }
-  },
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.3.0"
