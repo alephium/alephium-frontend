@@ -31,7 +31,6 @@ import Screen from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { storeAddressMetadata } from '../storage/wallets'
 import { mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
 import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
@@ -46,9 +45,7 @@ const AddressScreen = ({
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const mainAddress = useAppSelector((state) => selectAddressByHash(state, state.addresses.mainAddress))
   const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
-  const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
   const isCurrentAddressMain = addressHash === mainAddressHash
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
 
@@ -57,22 +54,7 @@ const AddressScreen = ({
   const makeAddressMain = async () => {
     if (address.settings.isMain) return
 
-    dispatch(mainAddressChanged(address))
-
-    if (activeWalletMetadataId) {
-      if (mainAddress) {
-        await storeAddressMetadata(activeWalletMetadataId, {
-          index: mainAddress.index,
-          ...mainAddress.settings,
-          isMain: false
-        })
-      }
-      await storeAddressMetadata(activeWalletMetadataId, {
-        index: address.index,
-        ...address.settings,
-        isMain: true
-      })
-    }
+    await dispatch(mainAddressChanged(address))
   }
 
   console.log('AddressScreen renders')

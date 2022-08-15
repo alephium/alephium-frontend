@@ -25,8 +25,8 @@ import HighlightRow from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
 
 interface ColorPickerProps {
-  value: string
   onChange: (color: string) => void
+  value?: string
   style?: StyleProp<ViewStyle>
 }
 
@@ -61,11 +61,11 @@ export default styled(ColorPicker)`
   justify-content: space-between;
 `
 
-const Dot = styled.View<{ color: string }>`
+const Dot = styled.View<{ color?: string }>`
   height: 15px;
   width: 15px;
   border-radius: 15px;
-  background-color: ${({ color }) => color};
+  background-color: ${({ color, theme }) => color ?? theme.font.primary};
 `
 
 const Colors = styled.View`
