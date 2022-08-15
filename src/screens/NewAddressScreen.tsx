@@ -19,9 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
 
+import Loader from '../components/Loader'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { storeAddressMetadata } from '../storage/wallets'
@@ -47,7 +46,6 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
   const mainAddress = useAppSelector((state) => selectAddressByHash(state, mainAddressHash))
   const [loading, setLoading] = useState(false)
-  const theme = useTheme()
 
   const initialValues = {
     label: '',
@@ -113,22 +111,9 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   return (
     <>
       <AddressFormScreen initialValues={initialValues} onSubmit={handleGeneratePress} />
-      {loading && (
-        <Loading>
-          <ActivityIndicator size="large" color={theme.font.primary} />
-        </Loading>
-      )}
+      {loading && <Loader />}
     </>
   )
 }
 
 export default NewAddressScreen
-
-const Loading = styled.View`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-`
