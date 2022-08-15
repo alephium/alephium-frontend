@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { deriveNewAddressData, TOTAL_NUMBER_OF_GROUPS, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, ScrollView, Switch, View } from 'react-native'
+import { ActivityIndicator, ScrollView, Switch } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
@@ -110,47 +110,66 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const toggleIsMain = () => setIsMain(!isMain)
 
   return (
-    <Screen>
-      <ScrollView>
-        <ScreenSection>
-          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} isTopRounded hasBottomBorder />
-          <ColorPicker value={color} onChange={setColor} />
-          <HighlightRow
-            isBottomRounded
-            title="Main address"
-            subtitle="Default address for operations"
-            onPress={toggleIsMain}
-          >
-            <Switch
-              trackColor={{ false: theme.font.secondary, true: theme.global.accent }}
-              thumbColor={theme.font.contrast}
-              onValueChange={toggleIsMain}
-              value={isMain}
-            />
-          </HighlightRow>
-        </ScreenSection>
-        <ScreenSection>
-          <ExpandableRow expandedHeight={90}>
-            <Select
-              options={groupSelectOptions}
-              allowEmpty
-              label="Group"
-              value={newAddressGroup}
-              onValueChange={setNewAddressGroup}
-              isTopRounded
+    <ScreenStyled>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'space-between'
+        }}
+      >
+        <TopContent>
+          <ScreenSection>
+            <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} isTopRounded hasBottomBorder />
+            <ColorPicker value={color} onChange={setColor} />
+            <HighlightRow
               isBottomRounded
-            />
-          </ExpandableRow>
-          {loading && <ActivityIndicator size="large" color={theme.font.primary} />}
-          <Button title="Generate" onPress={handleGeneratePress} style={{ marginTop: 20 }} />
-        </ScreenSection>
+              title="Main address"
+              subtitle="Default address for operations"
+              onPress={toggleIsMain}
+            >
+              <Switch
+                trackColor={{ false: theme.font.secondary, true: theme.global.accent }}
+                thumbColor={theme.font.contrast}
+                onValueChange={toggleIsMain}
+                value={isMain}
+              />
+            </HighlightRow>
+          </ScreenSection>
+          <ScreenSection>
+            <ExpandableRow expandedHeight={90}>
+              <Select
+                options={groupSelectOptions}
+                allowEmpty
+                label="Group"
+                value={newAddressGroup}
+                onValueChange={setNewAddressGroup}
+                isTopRounded
+                isBottomRounded
+              />
+            </ExpandableRow>
+            {loading && <ActivityIndicator size="large" color={theme.font.primary} />}
+          </ScreenSection>
+        </TopContent>
+        <BottomContent>
+          <ScreenSection>
+            <Button title="Generate" centered onPress={handleGeneratePress} />
+          </ScreenSection>
+        </BottomContent>
       </ScrollView>
-    </Screen>
+    </ScreenStyled>
   )
 }
 
 export default NewAddressScreen
 
+const ScreenStyled = styled(Screen)`
+  justify-content: space-between;
+`
+
 const ScreenSection = styled.View`
   padding: 22px 20px;
 `
+
+const TopContent = styled.View``
+
+const BottomContent = styled.View``

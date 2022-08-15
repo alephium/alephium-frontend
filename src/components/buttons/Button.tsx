@@ -27,6 +27,7 @@ export interface ButtonProps extends PressableProps {
   variant?: 'default' | 'contrast' | 'accent'
   style?: StyleProp<ViewStyle>
   wide?: boolean
+  centered?: boolean
   icon?: boolean
   children?: React.ReactNode
 }
@@ -82,6 +83,14 @@ export default styled(Button)`
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  border-radius: 30px;
+
+  ${({ centered }) =>
+    centered &&
+    css`
+      min-width: 200px;
+      margin: 0 auto;
+    `}
 
   ${({ icon }) =>
     icon
