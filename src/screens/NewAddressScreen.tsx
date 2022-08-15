@@ -110,7 +110,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const toggleIsMain = () => setIsMain(!isMain)
 
   return (
-    <ScreenStyled>
+    <Screen>
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -156,15 +156,11 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
           </ScreenSection>
         </BottomContent>
       </ScrollView>
-    </ScreenStyled>
+    </Screen>
   )
 }
 
 export default NewAddressScreen
-
-const ScreenStyled = styled(Screen)`
-  justify-content: space-between;
-`
 
 const ScreenSection = styled.View`
   padding: 22px 20px;

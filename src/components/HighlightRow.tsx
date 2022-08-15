@@ -15,8 +15,9 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+
 import { ReactNode } from 'react'
-import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, Text, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import { BORDER_RADIUS, INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
@@ -42,7 +43,7 @@ const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRo
     <>
       {title && (
         <View>
-          <Title>{title}</Title>
+          <Text>{title}</Text>
           {subtitle && <Subtitle>{subtitle}</Subtitle>}
         </View>
       )}
@@ -107,8 +108,6 @@ export default styled(HighlightRow)`
       border-bottom-color: ${({ theme }) => theme.bg.secondary};
     `}
 `
-
-const Title = styled.Text``
 
 const Subtitle = styled.Text`
   color: ${({ theme }) => theme.font.secondary};

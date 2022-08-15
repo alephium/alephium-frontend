@@ -15,6 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+
 import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
@@ -27,10 +28,11 @@ interface ExpandableRowProps {
   // TODO: Find a better way to measure the height of the collapsable section
   expandedHeight: number
   children: ReactNode
+  title?: string
   style?: StyleProp<ViewStyle>
 }
 
-const ExpandableRow = ({ expandedHeight, children, style }: ExpandableRowProps) => {
+const ExpandableRow = ({ expandedHeight, children, title = 'Advanced options', style }: ExpandableRowProps) => {
   const theme = useTheme()
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -47,10 +49,10 @@ const ExpandableRow = ({ expandedHeight, children, style }: ExpandableRowProps) 
   return (
     <HighlightRow isTopRounded isBottomRounded style={style}>
       <Header onPress={toggleExpanded}>
-        <Title>Advanced options</Title>
-        <Chevron style={chevronStyle}>
+        <Title>{title}</Title>
+        <Animated.View style={chevronStyle}>
           <ChevronDown size={20} color={theme.font.primary} />
-        </Chevron>
+        </Animated.View>
       </Header>
       <CollapsableSection style={collapsableSectionStyle}>{children}</CollapsableSection>
     </HighlightRow>
@@ -81,5 +83,3 @@ const CollapsableSection = styled(Animated.View)`
   height: 0;
   overflow: hidden;
 `
-
-const Chevron = styled(Animated.View)``

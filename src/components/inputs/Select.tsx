@@ -32,9 +32,9 @@ export type SelectOption<T> = {
 
 interface SelectProps<T> extends Omit<InputProps, 'value'> {
   options: SelectOption<T>[]
+  value: T
   onValueChange: (value: T) => void
   allowEmpty?: boolean
-  value: T
 }
 
 function Select<T>({ options, allowEmpty, value, onValueChange, ...props }: SelectProps<T>) {

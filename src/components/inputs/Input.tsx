@@ -25,9 +25,6 @@ import HighlightRow, { RoundedRowProps } from '../HighlightRow'
 
 export interface InputProps extends TextInputProps, RoundedRowProps {
   label: string
-  isTopRounded?: boolean
-  isBottomRounded?: boolean
-  hasBottomBorder?: boolean
   onPress?: () => void
   resetDisabledColor?: boolean
   IconComponent?: ReactNode
