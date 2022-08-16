@@ -16,13 +16,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { SafeAreaView } from 'react-native'
-import { SafeAreaViewProps } from 'react-navigation'
+import { Modal, ModalProps } from 'react-native'
 import styled from 'styled-components/native'
 
-const Screen = ({ children, style }: SafeAreaViewProps) => <SafeAreaView style={style}>{children}</SafeAreaView>
+interface ModalWithBackdropProps extends ModalProps {
+  closeModal: () => void
+}
 
-export default styled(Screen)`
+const ModalWithBackdrop = ({ children, closeModal, ...props }: ModalWithBackdropProps) => (
+  <Modal transparent={true} {...props}>
+    <ModalBackdrop onPress={closeModal} />
+    <ModalContent>{children}</ModalContent>
+  </Modal>
+)
+
+export default ModalWithBackdrop
+
+const ModalContent = styled.View`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  justify-content: center;
+  align-items: center;
+  position: relative;
+`
+
+const ModalBackdrop = styled.Pressable`
+  flex: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
 `

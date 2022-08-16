@@ -17,17 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
-import { ScrollView } from 'react-native'
-import styled from 'styled-components/native'
 
-import Button from '../components/buttons/Button'
-import ColoredLabelInput, { ColoredLabelInputValue } from '../components/inputs/ColoredLabelInput'
-import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { storeAddressMetadata } from '../storage/wallets'
-import { addressSettingsUpdated, selectAddressByHash } from '../store/addressesSlice'
+import { addressSettingsUpdated, mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
+import { AddressSettings } from '../types/addresses'
+import AddressFormScreen from './AddressFormScreen'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'EditAddressScreen'>
 
@@ -39,22 +35,19 @@ const EditAddressScreen = ({
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const [coloredLabel, setColoredLabel] = useState<ColoredLabelInputValue>({
-    label: address?.settings.label ?? '',
-    color: address?.settings.color ?? ''
-  })
   const activeWallet = useAppSelector((state) => state.activeWallet)
+  const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
 
   if (!address) return null
-  const addressSettings = {
-    isMain: address?.settings.isMain,
-    label: coloredLabel?.label,
-    color: coloredLabel?.color
+
+  const initialValues = {
+    label: address.settings.label,
+    color: address.settings.color,
+    isMain: address.settings.isMain,
+    group: address.group
   }
 
-  const handleSavePress = () => {
-    if (coloredLabel.color === address.settings.color && coloredLabel.label === address.settings.label) return
-
+  const handleSavePress = async (addressSettings: AddressSettings) => {
     dispatch(
       addressSettingsUpdated({
         hash: address.hash,
@@ -62,29 +55,25 @@ const EditAddressScreen = ({
       })
     )
     if (activeWallet.metadataId)
-      storeAddressMetadata(activeWallet.metadataId, {
+      await storeAddressMetadata(activeWallet.metadataId, {
         index: address.index,
         ...addressSettings
       })
+
+    if (addressSettings.isMain && mainAddress !== addressHash) {
+      await dispatch(mainAddressChanged(address))
+    }
     navigation.goBack()
   }
 
-  console.log('EditAddressScreen renders')
-
   return (
-    <Screen>
-      <ScrollView>
-        <ScreenSection>
-          <ColoredLabelInput value={coloredLabel} onChange={setColoredLabel} />
-          <Button title="Save" onPress={handleSavePress} style={{ marginTop: 20 }} />
-        </ScreenSection>
-      </ScrollView>
-    </Screen>
+    <AddressFormScreen
+      initialValues={initialValues}
+      onSubmit={handleSavePress}
+      buttonText="Save"
+      disableIsMainToggle={initialValues.isMain}
+    />
   )
 }
-
-const ScreenSection = styled.View`
-  padding: 22px 20px;
-`
 
 export default EditAddressScreen

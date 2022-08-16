@@ -28,6 +28,7 @@ import {
 } from '@reduxjs/toolkit'
 
 import client from '../api/client'
+import { storeAddressMetadata } from '../storage/wallets'
 import { AddressHash, AddressSettings } from '../types/addresses'
 import { TimeInMs } from '../types/numbers'
 import { PendingTx } from '../types/transactions'
@@ -160,6 +161,43 @@ export const fetchAddressConfirmedTransactions = createAsyncThunk(
   }
 )
 
+export const mainAddressChanged = createAsyncThunk(
+  `${sliceName}/mainAddressChanged`,
+  async (payload: Address, { getState, dispatch }) => {
+    const newMainAddress = payload
+
+    dispatch(loadingStarted())
+
+    const state = getState() as RootState
+    const mainAddress = state.addresses.entities[state.addresses.mainAddress]
+
+    if (mainAddress && mainAddress.hash === newMainAddress.hash) {
+      throw 'Main address is already set to this address'
+    }
+
+    const activeWalletMetadataId = state.activeWallet.metadataId
+
+    if (activeWalletMetadataId) {
+      if (mainAddress) {
+        await storeAddressMetadata(activeWalletMetadataId, {
+          index: mainAddress.index,
+          ...mainAddress.settings,
+          isMain: false
+        })
+      }
+      await storeAddressMetadata(activeWalletMetadataId, {
+        index: newMainAddress.index,
+        ...newMainAddress.settings,
+        isMain: true
+      })
+    }
+
+    dispatch(loadingFinished())
+
+    return newMainAddress
+  }
+)
+
 const addressesSlice = createSlice({
   name: sliceName,
   initialState,
@@ -207,22 +245,6 @@ const addressesSlice = createSlice({
         address.settings = settings
       }
     },
-    mainAddressChanged: (state, action: PayloadAction<Address>) => {
-      const newMainAddress = action.payload
-
-      const previousMainAddress = state.entities[state.mainAddress]
-      addressSettingsAdapter.updateOne(state, {
-        id: state.mainAddress,
-        changes: { settings: { ...previousMainAddress?.settings, isMain: false } }
-      })
-
-      state.mainAddress = newMainAddress.hash
-
-      addressSettingsAdapter.updateOne(state, {
-        id: newMainAddress.hash,
-        changes: { settings: { ...newMainAddress.settings, isMain: true } }
-      })
-    },
     addressesFlushed: (state) => {
       addressSettingsAdapter.setAll(state, [])
     },
@@ -268,6 +290,22 @@ const addressesSlice = createSlice({
           addressState.networkData.transactions.loadedPage = page
         }
       })
+      .addCase(mainAddressChanged.fulfilled, (state, action) => {
+        const newMainAddress = action.payload
+
+        const previousMainAddress = state.entities[state.mainAddress]
+        addressSettingsAdapter.updateOne(state, {
+          id: state.mainAddress,
+          changes: { settings: { ...previousMainAddress?.settings, isMain: false } }
+        })
+
+        state.mainAddress = newMainAddress.hash
+
+        addressSettingsAdapter.updateOne(state, {
+          id: newMainAddress.hash,
+          changes: { settings: { ...newMainAddress.settings, isMain: true } }
+        })
+      })
   }
 })
 
@@ -292,13 +330,7 @@ export const selectConfirmedTransactions = createSelector(
       .sort((a, b) => b.timestamp - a.timestamp)
 )
 
-export const {
-  addressesAdded,
-  addressesFlushed,
-  loadingStarted,
-  loadingFinished,
-  addressSettingsUpdated,
-  mainAddressChanged
-} = addressesSlice.actions
+export const { addressesAdded, addressesFlushed, loadingStarted, loadingFinished, addressSettingsUpdated } =
+  addressesSlice.actions
 
 export default addressesSlice
