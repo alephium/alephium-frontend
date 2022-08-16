@@ -67,13 +67,13 @@ const AddressScreen = ({
             <BadgeText>{getAddressDisplayName(address)}</BadgeText>
           </BadgeStyled>
           <Actions>
-            <ButtonStyled icon variant="contrast" onPress={makeAddressMain} disabled={isCurrentAddressMain}>
+            <ButtonStyled onlyIcon variant="contrast" onPress={makeAddressMain} disabled={isCurrentAddressMain}>
               <StarIcon fill={isCurrentAddressMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
             </ButtonStyled>
-            <ButtonStyled icon variant="contrast" onPress={() => copyAddressToClipboard(address)}>
+            <ButtonStyled onlyIcon variant="contrast" onPress={() => copyAddressToClipboard(address)}>
               <ClipboardIcon color={theme.font.primary} size={20} />
             </ButtonStyled>
-            <ButtonStyled icon variant="contrast" onPress={() => setIsQrCodeModalOpen(true)}>
+            <ButtonStyled onlyIcon variant="contrast" onPress={() => setIsQrCodeModalOpen(true)}>
               <QrCodeIcon color={theme.font.primary} size={20} />
             </ButtonStyled>
           </Actions>

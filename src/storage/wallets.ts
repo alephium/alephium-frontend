@@ -164,6 +164,8 @@ const deleteWallet = async (walletMetadata: WalletMetadata) => {
   await SecureStore.deleteItemAsync(`wallet-${walletMetadata.id}`, secureStoreConfig)
 }
 
+export const areThereOtherWallets = async (): Promise<boolean> => !!AsyncStorage.getItem('wallets-metadata')
+
 const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
   const walletsMetadata = await getWalletsMetadata()
   return walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id) as WalletMetadata

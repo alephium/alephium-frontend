@@ -32,7 +32,10 @@ import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '../screens/NewAddressScreen'
+import SettingsScreen from '../screens/SettingsScreen'
 import SplashScreen from '../screens/SplashScreen'
+import SwitchNetworkScreen from '../screens/SwitchNetworkScreen'
+import SwitchWalletAfterDeletionScreen from '../screens/SwitchWalletAfterDeletionScreen'
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
 import InWalletTabsNavigation from './InWalletNavigation'
 import RootStackParamList from './rootStackRoutes'
@@ -82,6 +85,14 @@ const RootStackNavigation = () => {
           name="EditAddressScreen"
           component={EditAddressScreen}
           options={{ headerTitle: 'Edit Address' }}
+        />
+
+        <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
+        <RootStack.Screen name="SwitchNetworkScreen" component={SwitchNetworkScreen} options={bottomModalOptions} />
+        <RootStack.Screen
+          name="SwitchWalletAfterDeletionScreen"
+          component={SwitchWalletAfterDeletionScreen}
+          options={{ headerShown: false }}
         />
       </RootStack.Navigator>
     </NavigationContainer>

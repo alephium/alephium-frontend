@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import { useState } from 'react'
-import { ScrollView, Switch, View } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { ScrollView, View } from 'react-native'
+import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import ExpandableRow from '../components/ExpandableRow'
@@ -28,6 +28,7 @@ import ColorPicker from '../components/inputs/ColorPicker'
 import Input from '../components/inputs/Input'
 import Select, { SelectOption } from '../components/inputs/Select'
 import Screen from '../components/layout/Screen'
+import Toggle from '../components/Toggle'
 import { AddressSettings } from '../types/addresses'
 
 export type AddressFormData = AddressSettings & {
@@ -65,7 +66,6 @@ const AddressForm = ({
   const [color, setColor] = useState(initialValues.color)
   const [isMain, setIsMain] = useState(initialValues.isMain)
   const [group, setGroup] = useState(initialValues.group)
-  const theme = useTheme()
 
   const toggleIsMain = () => {
     if (!disableIsMainToggle) {
@@ -95,16 +95,7 @@ const AddressForm = ({
               }`}
               onPress={toggleIsMain}
             >
-              <Switch
-                trackColor={{
-                  false: disableIsMainToggle ? theme.bg.tertiary : theme.font.secondary,
-                  true: disableIsMainToggle ? theme.bg.tertiary : theme.global.accent
-                }}
-                thumbColor={theme.font.contrast}
-                onValueChange={toggleIsMain}
-                value={isMain}
-                disabled={disableIsMainToggle}
-              />
+              <Toggle onValueChange={toggleIsMain} value={isMain} disabled={disableIsMainToggle} />
             </HighlightRow>
           </ScreenSection>
           {initialValues.group === undefined && (

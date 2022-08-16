@@ -36,9 +36,6 @@ const settingsSlice = createSlice({
     themeChanged: (state, action: PayloadAction<GeneralSettings['theme']>) => {
       state.theme = action.payload
     },
-    walletLockTimeInMinutesChanged: (state, action: PayloadAction<GeneralSettings['walletLockTimeInMinutes']>) => {
-      state.walletLockTimeInMinutes = action.payload
-    },
     discreetModeChanged: (state, action: PayloadAction<GeneralSettings['discreetMode']>) => {
       state.discreetMode = action.payload
     },
@@ -48,25 +45,14 @@ const settingsSlice = createSlice({
   }
 })
 
-export const {
-  generalSettingsChanged,
-  themeChanged,
-  walletLockTimeInMinutesChanged,
-  discreetModeChanged,
-  passwordRequirementChanged
-} = settingsSlice.actions
+export const { generalSettingsChanged, themeChanged, discreetModeChanged, passwordRequirementChanged } =
+  settingsSlice.actions
 
 export const settingsListenerMiddleware = createListenerMiddleware()
 
 // When the settings change, store them in persistent storage
 settingsListenerMiddleware.startListening({
-  matcher: isAnyOf(
-    generalSettingsChanged,
-    themeChanged,
-    walletLockTimeInMinutesChanged,
-    discreetModeChanged,
-    passwordRequirementChanged
-  ),
+  matcher: isAnyOf(generalSettingsChanged, themeChanged, discreetModeChanged, passwordRequirementChanged),
   effect: async (action, { getState }) => {
     const state = getState() as RootState
 

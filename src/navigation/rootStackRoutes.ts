@@ -40,6 +40,9 @@ type RootStackParamList = {
   EditAddressScreen: {
     addressHash: AddressHash
   }
+  SettingsScreen: undefined
+  SwitchNetworkScreen: undefined
+  SwitchWalletAfterDeletionScreen: undefined
 }
 
 export default RootStackParamList

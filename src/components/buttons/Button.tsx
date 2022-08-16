@@ -16,20 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
+import tinycolor from 'tinycolor2'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
 
 export interface ButtonProps extends PressableProps {
   title?: string
   type?: 'primary' | 'secondary'
-  variant?: 'default' | 'contrast' | 'accent'
+  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert'
   style?: StyleProp<ViewStyle>
   wide?: boolean
   centered?: boolean
-  icon?: boolean
-  children?: React.ReactNode
+  onlyIcon?: boolean
+  prefixIcon?: ReactNode
+  children?: ReactNode
 }
 
 const Button = ({
@@ -38,7 +41,8 @@ const Button = ({
   type = 'primary',
   variant = 'default',
   disabled,
-  icon,
+  onlyIcon,
+  prefixIcon,
   children,
   ...props
 }: ButtonProps) => {
@@ -48,12 +52,16 @@ const Button = ({
     bg: {
       default: theme.font.primary,
       contrast: theme.bg.highlight,
-      accent: theme.global.accent
+      accent: theme.global.accent,
+      valid: tinycolor(theme.global.valid).setAlpha(0.1).toRgbString(),
+      alert: tinycolor(theme.global.alert).setAlpha(0.1).toRgbString()
     }[variant],
     font: {
       default: type === 'primary' ? theme.font.contrast : theme.font.primary,
       contrast: type === 'primary' ? theme.font.primary : theme.font.contrast,
-      accent: type === 'primary' ? theme.font.contrast : theme.global.accent
+      accent: type === 'primary' ? theme.font.contrast : theme.global.accent,
+      valid: theme.global.valid,
+      alert: theme.global.alert
     }[variant]
   }
 
@@ -72,6 +80,7 @@ const Button = ({
 
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
+      {prefixIcon && <PrefixIcon>{prefixIcon}</PrefixIcon>}
       {title && <ButtonText style={{ color: colors.font }}>{title}</ButtonText>}
       {children}
     </Pressable>
@@ -84,6 +93,7 @@ export default styled(Button)`
   justify-content: center;
   overflow: hidden;
   border-radius: 30px;
+  flex-direction: row;
 
   ${({ centered }) =>
     centered &&
@@ -92,17 +102,21 @@ export default styled(Button)`
       margin: 0 auto;
     `}
 
-  ${({ icon }) =>
-    icon
+  ${({ onlyIcon }) =>
+    onlyIcon
       ? css`
           width: 45px;
         `
       : css`
           padding: 0 25px;
         `};
-  height: ${({ icon }) => (icon ? '45px' : '55px')};
+  height: ${({ onlyIcon }) => (onlyIcon ? '45px' : '55px')};
 `
 
 const ButtonText = styled.Text`
   font-weight: bold;
+`
+
+const PrefixIcon = styled.View`
+  margin-right: 15px;
 `

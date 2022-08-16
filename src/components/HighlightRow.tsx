@@ -28,7 +28,7 @@ export interface BorderOptions {
   hasBottomBorder?: boolean
 }
 
-interface HighlightRowProps extends BorderOptions {
+export interface HighlightRowProps extends BorderOptions {
   children: ReactNode | ReactNode[]
   isInput?: boolean
   title?: string
@@ -74,7 +74,7 @@ export default styled(HighlightRow)`
           align-items: center;
           justify-content: space-between;
           min-height: ${INPUTS_HEIGHT}px;
-          padding: 20px 15px;
+          padding: 20px;
           background-color: ${({ theme }) => theme.bg.primary};
         `}
 

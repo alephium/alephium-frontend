@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useNavigation } from '@react-navigation/native'
 import { Eye as EyeIcon, Settings2 as SettingsIcon, ShieldAlert as SecurityIcon } from 'lucide-react-native'
 import { memo } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
@@ -32,6 +33,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const theme = useTheme()
   const dispatch = useAppDispatch()
+  const navigation = useNavigation()
 
   const toggleDiscreetMode = () => {
     dispatch(discreetModeChanged(!discreetMode))
@@ -49,7 +51,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           <SecurityIcon size={24} color={theme.font.primary} />
         </Icon>
       </Pressable>
-      <Pressable>
+      <Pressable onPress={() => navigation.navigate('SettingsScreen')}>
         <Icon>
           <SettingsIcon size={24} color={theme.font.primary} />
         </Icon>

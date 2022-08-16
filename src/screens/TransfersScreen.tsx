@@ -65,7 +65,6 @@ export default styled(TransfersScreen)`
 `
 
 const Buttons = styled.View`
-  display: flex;
   flex-direction: row;
 `
 const IconedButton = styled(Button)`
