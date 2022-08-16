@@ -41,10 +41,19 @@ interface AddressFormProps {
   disableIsMainToggle?: boolean
 }
 
-const groupSelectOptions: SelectOption<number>[] = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) => ({
-  value: index,
-  label: `Group ${index}`
-}))
+const groupSelectOptions: SelectOption<number | undefined>[] = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map(
+  (_, index) => ({
+    value: index,
+    label: `Group ${index}`
+  })
+)
+
+const emptyOption = {
+  value: undefined,
+  label: ''
+} as SelectOption<undefined>
+
+groupSelectOptions.unshift(emptyOption)
 
 const AddressForm = ({
   initialValues,
@@ -63,9 +72,6 @@ const AddressForm = ({
       setIsMain(!isMain)
     }
   }
-
-  console.log('disableIsMainToggle', disableIsMainToggle)
-  console.log('typeof', typeof disableIsMainToggle)
 
   return (
     <Screen>
@@ -106,7 +112,6 @@ const AddressForm = ({
               <ExpandableRow expandedHeight={90}>
                 <Select
                   options={groupSelectOptions}
-                  allowEmpty
                   label="Group"
                   value={group}
                   onValueChange={setGroup}

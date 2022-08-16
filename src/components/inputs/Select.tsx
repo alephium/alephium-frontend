@@ -34,10 +34,9 @@ interface SelectProps<T> extends Omit<InputProps, 'value'> {
   options: SelectOption<T>[]
   value: T
   onValueChange: (value: T) => void
-  allowEmpty?: boolean
 }
 
-function Select<T>({ options, allowEmpty, value, onValueChange, ...props }: SelectProps<T>) {
+function Select<T>({ options, value, onValueChange, ...props }: SelectProps<T>) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const theme = useTheme()
 
@@ -50,8 +49,6 @@ function Select<T>({ options, allowEmpty, value, onValueChange, ...props }: Sele
   const closeModal = () => setIsModalOpen(false)
 
   const inputValue = value !== undefined ? `Group ${value}` : ''
-
-  // TODO: allowEmpty
 
   return (
     <>

@@ -64,7 +64,11 @@ const Input = ({
   }))
 
   useEffect(() => {
-    if (value && !isActive) setIsActive(true)
+    if (value && !isActive) {
+      setIsActive(true)
+    } else if (!value && isActive) {
+      setIsActive(false)
+    }
   }, [isActive, value])
 
   return (
