@@ -47,14 +47,6 @@ const Input = ({
   const [isActive, setIsActive] = useState(false)
   const inputRef = useRef<TextInput>(null)
 
-  const handleFocus = () => {
-    setIsActive(true)
-  }
-
-  const handleBlur = () => {
-    if (!value) setIsActive(false)
-  }
-
   const labelStyle = useAnimatedStyle(() => ({
     top: withTiming(!isActive ? 0 : -35, { duration: 100 })
   }))
@@ -88,8 +80,8 @@ const Input = ({
         <TextInputStyled
           selectionColor={theme.gradient.yellow}
           value={value}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
+          onFocus={() => setIsActive(true)}
+          onBlur={() => !value && setIsActive(false)}
           ref={inputRef}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
           {...props}
