@@ -28,15 +28,15 @@ import ColorPicker from '../components/inputs/ColorPicker'
 import Input from '../components/inputs/Input'
 import Select, { SelectOption } from '../components/inputs/Select'
 import Screen from '../components/layout/Screen'
+import { AddressSettings } from '../types/addresses'
+
+export type AddressFormData = AddressSettings & {
+  group?: number
+}
 
 interface AddressFormProps {
-  initialValues: {
-    isMain: boolean
-    color?: string
-    label?: string
-    group?: number
-  }
-  onSubmit: (isMain: boolean, label?: string, color?: string, group?: number) => void
+  initialValues: AddressFormData
+  onSubmit: (data: AddressFormData) => void
   buttonText?: string
   disableIsMainToggle?: boolean
 }
@@ -123,7 +123,7 @@ const AddressForm = ({
           )}
         </View>
         <ScreenSection>
-          <Button title={buttonText} centered onPress={() => onSubmit(isMain, label, color, group)} />
+          <Button title={buttonText} centered onPress={() => onSubmit({ isMain, label, color, group })} />
         </ScreenSection>
       </ScrollView>
     </Screen>

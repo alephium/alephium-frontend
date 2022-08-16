@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { storeAddressMetadata } from '../storage/wallets'
 import { addressSettingsUpdated, mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
-import AddressFormScreen from './AddressFormScreen'
+import AddressFormScreen, { AddressFormData } from './AddressFormScreen'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'EditAddressScreen'>
 
@@ -46,7 +46,7 @@ const EditAddressScreen = ({
     group: address.group
   }
 
-  const handleSavePress = (isMain: boolean, label?: string, color?: string) => {
+  const handleSavePress = ({ isMain, label, color }: AddressFormData) => {
     const addressSettings = {
       label,
       color,

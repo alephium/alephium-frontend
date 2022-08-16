@@ -33,7 +33,7 @@ import {
 } from '../store/addressesSlice'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
-import AddressFormScreen from './AddressFormScreen'
+import AddressFormScreen, { AddressFormData } from './AddressFormScreen'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 
@@ -62,7 +62,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     importWallet()
   }, [activeWallet.mnemonic])
 
-  const handleGeneratePress = async (isMain: boolean, label?: string, color?: string, group?: number) => {
+  const handleGeneratePress = async ({ isMain, label, color, group }: AddressFormData) => {
     if (!seed) return
 
     setLoading(true)
