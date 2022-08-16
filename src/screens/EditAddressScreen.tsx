@@ -71,10 +71,6 @@ const EditAddressScreen = ({
     navigation.goBack()
   }
 
-  console.log('EditAddressScreen renders')
-
-  console.log('initial values is main', initialValues.isMain)
-
   return (
     <AddressFormScreen
       initialValues={initialValues}
