@@ -22,7 +22,8 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { storeAddressMetadata } from '../storage/wallets'
 import { addressSettingsUpdated, mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
-import AddressFormScreen, { AddressFormData } from './AddressFormScreen'
+import { AddressSettings } from '../types/addresses'
+import AddressFormScreen from './AddressFormScreen'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'EditAddressScreen'>
 
@@ -46,13 +47,7 @@ const EditAddressScreen = ({
     group: address.group
   }
 
-  const handleSavePress = async ({ isMain, label, color }: AddressFormData) => {
-    const addressSettings = {
-      label,
-      color,
-      isMain
-    }
-
+  const handleSavePress = async (addressSettings: AddressSettings) => {
     dispatch(
       addressSettingsUpdated({
         hash: address.hash,
@@ -65,7 +60,7 @@ const EditAddressScreen = ({
         ...addressSettings
       })
 
-    if (isMain && mainAddress !== addressHash) {
+    if (addressSettings.isMain && mainAddress !== addressHash) {
       await dispatch(mainAddressChanged(address))
     }
     navigation.goBack()
