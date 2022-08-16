@@ -22,13 +22,13 @@ import styled, { css } from 'styled-components/native'
 
 import { BORDER_RADIUS, INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
 
-export interface RoundedRowProps {
+export interface BorderOptions {
   isTopRounded?: boolean
   isBottomRounded?: boolean
   hasBottomBorder?: boolean
 }
 
-interface HighlightRowProps extends RoundedRowProps {
+interface HighlightRowProps extends BorderOptions {
   children: ReactNode | ReactNode[]
   isInput?: boolean
   title?: string

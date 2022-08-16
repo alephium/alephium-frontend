@@ -21,9 +21,9 @@ import { StyleProp, TextInput, TextInputProps, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import HighlightRow, { RoundedRowProps } from '../HighlightRow'
+import HighlightRow, { BorderOptions } from '../HighlightRow'
 
-export interface InputProps extends TextInputProps, RoundedRowProps {
+export interface InputProps extends TextInputProps, BorderOptions {
   label: string
   onPress?: () => void
   resetDisabledColor?: boolean
