@@ -165,48 +165,36 @@ export const mainAddressChanged = createAsyncThunk(
   `${sliceName}/mainAddressChanged`,
   async (payload: Address, { getState, dispatch }) => {
     const newMainAddress = payload
-    let hasError = false
 
     dispatch(loadingStarted())
 
     const state = getState() as RootState
     const mainAddress = state.addresses.entities[state.addresses.mainAddress]
 
-    try {
-      if (mainAddress && mainAddress.hash === newMainAddress.hash) {
-        throw 'Main address is already set to this address'
-      }
-
-      const activeWalletMetadataId = state.activeWallet.metadataId
-
-      if (activeWalletMetadataId) {
-        if (mainAddress) {
-          await storeAddressMetadata(activeWalletMetadataId, {
-            index: mainAddress.index,
-            ...mainAddress.settings,
-            isMain: false
-          })
-        }
-        await storeAddressMetadata(activeWalletMetadataId, {
-          index: newMainAddress.index,
-          ...newMainAddress.settings,
-          isMain: true
-        })
-      }
-    } catch (e) {
-      console.error(e)
-      hasError = true
+    if (mainAddress && mainAddress.hash === newMainAddress.hash) {
+      throw 'Main address is already set to this address'
     }
 
-    return new Promise<Address>((resolve, reject) => {
-      dispatch(loadingFinished())
+    const activeWalletMetadataId = state.activeWallet.metadataId
 
-      if (hasError) {
-        reject(new Error('Could not change main address'))
-      } else {
-        resolve(newMainAddress)
+    if (activeWalletMetadataId) {
+      if (mainAddress) {
+        await storeAddressMetadata(activeWalletMetadataId, {
+          index: mainAddress.index,
+          ...mainAddress.settings,
+          isMain: false
+        })
       }
-    })
+      await storeAddressMetadata(activeWalletMetadataId, {
+        index: newMainAddress.index,
+        ...newMainAddress.settings,
+        isMain: true
+      })
+    }
+
+    dispatch(loadingFinished())
+
+    return newMainAddress
   }
 )
 

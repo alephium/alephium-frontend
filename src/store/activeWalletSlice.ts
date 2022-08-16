@@ -47,74 +47,49 @@ export const walletStored = createAsyncThunk(
     dispatch(loadingStarted())
 
     const { name, mnemonic, authType } = payload
-    let hasError = false
-    let metadataId: string
+    let metadataId: string | null = null
 
-    try {
-      if (!name) throw 'Could not store wallet, wallet name is not set'
-      if (!mnemonic) throw 'Could not store wallet, mnemonic not set'
+    if (!name) throw 'Could not store wallet, wallet name is not set'
+    if (!mnemonic) throw 'Could not store wallet, mnemonic not set'
 
-      // Check if mnemonic is valid
-      await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
+    // Check if mnemonic is valid
+    await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
 
-      if (authType === 'biometrics') {
-        metadataId = await storeWallet(name, mnemonic, authType)
-      } else if (authType === 'pin') {
-        const state = getState() as RootState
-        const pin = state.credentials.pin
-        if (!pin) throw 'Could not store wallet, pin to encrypt it is not set'
+    if (authType === 'biometrics') {
+      metadataId = await storeWallet(name, mnemonic, authType)
+    } else if (authType === 'pin') {
+      const state = getState() as RootState
+      const pin = state.credentials.pin
+      if (!pin) throw 'Could not store wallet, pin to encrypt it is not set'
 
-        const encryptedWallet = await walletEncryptAsyncUnsafe(pin, mnemonic, pbkdf2)
-        metadataId = await storeWallet(name, encryptedWallet, authType)
-      }
-    } catch (e) {
-      console.error(e)
-      hasError = true
+      const encryptedWallet = await walletEncryptAsyncUnsafe(pin, mnemonic, pbkdf2)
+      metadataId = await storeWallet(name, encryptedWallet, authType)
     }
 
-    return new Promise<ActiveWalletState>((resolve, reject) => {
-      dispatch(loadingFinished())
+    dispatch(loadingFinished())
 
-      if (hasError) {
-        reject(new Error('Could not store wallet'))
-      } else {
-        resolve({
-          name,
-          mnemonic,
-          authType,
-          metadataId
-        } as ActiveWalletState)
-      }
-    })
+    return {
+      name,
+      mnemonic,
+      authType,
+      metadataId
+    } as ActiveWalletState
   }
 )
 
 export const activeWalletChanged = createAsyncThunk(
   `${sliceName}/activeWalletChanged`,
   async (payload: ActiveWalletState, { getState, dispatch }) => {
-    let hasError = false
+    const { metadataId } = payload
+    if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
 
-    try {
-      const { metadataId } = payload
-      if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
+    dispatch(loadingStarted())
 
-      dispatch(loadingStarted())
+    await changeActiveWallet(metadataId)
 
-      await changeActiveWallet(metadataId)
-    } catch (e) {
-      console.error(e)
-      hasError = true
-    }
+    dispatch(loadingFinished())
 
-    return new Promise<ActiveWalletState>((resolve, reject) => {
-      dispatch(loadingFinished())
-
-      if (hasError) {
-        reject(new Error('Could not store wallet'))
-      } else {
-        resolve(payload as ActiveWalletState)
-      }
-    })
+    return payload as ActiveWalletState
   }
 )
 
