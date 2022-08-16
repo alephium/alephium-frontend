@@ -46,7 +46,7 @@ const EditAddressScreen = ({
     group: address.group
   }
 
-  const handleSavePress = ({ isMain, label, color }: AddressFormData) => {
+  const handleSavePress = async ({ isMain, label, color }: AddressFormData) => {
     const addressSettings = {
       label,
       color,
@@ -60,13 +60,13 @@ const EditAddressScreen = ({
       })
     )
     if (activeWallet.metadataId)
-      storeAddressMetadata(activeWallet.metadataId, {
+      await storeAddressMetadata(activeWallet.metadataId, {
         index: address.index,
         ...addressSettings
       })
 
     if (isMain && mainAddress !== addressHash) {
-      dispatch(mainAddressChanged(address))
+      await dispatch(mainAddressChanged(address))
     }
     navigation.goBack()
   }
