@@ -22,6 +22,7 @@ import styled from 'styled-components/native'
 import HighlightRow, { HighlightRowProps } from './HighlightRow'
 
 interface RadioButtonRowProps extends Omit<HighlightRowProps, 'children'> {
+  title: string
   isActive: boolean
   isFirst: boolean
   isLast: boolean
