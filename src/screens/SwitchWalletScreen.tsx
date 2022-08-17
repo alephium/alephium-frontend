@@ -23,6 +23,7 @@ import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
+import ButtonsRow from '../components/buttons/ButtonsRow'
 import Screen from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
@@ -85,18 +86,18 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
         ))}
       </ScreenSection>
       <ScreenSection>
-        <Buttons>
-          <NewWalletButton
+        <ButtonsRow>
+          <Button
             title="New wallet"
             onPress={() => handleButtonPress('create')}
-            prefixIcon={<PlusIcon size={24} color={theme.font.contrast} />}
+            icon={<PlusIcon size={24} color={theme.font.contrast} />}
           />
-          <ImportWalletButton
+          <Button
             title="Import wallet"
             onPress={() => handleButtonPress('import')}
-            prefixIcon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
+            icon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
           />
-        </Buttons>
+        </ButtonsRow>
       </ScreenSection>
     </Screen>
   )
@@ -140,18 +141,4 @@ const ScreenSection = styled.View<{ fill?: boolean }>`
   padding: 29px 20px;
 
   ${({ fill }) => fill && 'flex: 1;'}
-`
-
-const Buttons = styled.View`
-  flex-direction: row;
-`
-
-const NewWalletButton = styled(Button)`
-  flex: 1;
-  margin-right: 5px;
-`
-
-const ImportWalletButton = styled(Button)`
-  flex: 1;
-  margin-left: 5px;
 `

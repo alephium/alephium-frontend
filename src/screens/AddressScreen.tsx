@@ -67,32 +67,39 @@ const AddressScreen = ({
             <BadgeText>{getAddressDisplayName(address)}</BadgeText>
           </BadgeStyled>
           <Actions>
-            <ButtonStyled onlyIcon variant="contrast" onPress={makeAddressMain} disabled={isCurrentAddressMain}>
-              <StarIcon fill={isCurrentAddressMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
-            </ButtonStyled>
-            <ButtonStyled onlyIcon variant="contrast" onPress={() => copyAddressToClipboard(address)}>
-              <ClipboardIcon color={theme.font.primary} size={20} />
-            </ButtonStyled>
-            <ButtonStyled onlyIcon variant="contrast" onPress={() => setIsQrCodeModalOpen(true)}>
-              <QrCodeIcon color={theme.font.primary} size={20} />
-            </ButtonStyled>
+            <ButtonStyled
+              variant="contrast"
+              onPress={makeAddressMain}
+              disabled={isCurrentAddressMain}
+              icon={<StarIcon fill={isCurrentAddressMain ? '#FFD66D' : theme.bg.tertiary} size={22} />}
+            />
+            <ButtonStyled
+              variant="contrast"
+              onPress={() => copyAddressToClipboard(address)}
+              icon={<ClipboardIcon color={theme.font.primary} size={20} />}
+            />
+            <ButtonStyled
+              variant="contrast"
+              onPress={() => setIsQrCodeModalOpen(true)}
+              icon={<QrCodeIcon color={theme.font.primary} size={20} />}
+            />
           </Actions>
         </Header>
         <ScreenSection>
           <View>
-            <HighlightRow isTopRounded>
+            <HighlightRow isTopRounded hasBottomBorder>
               <Label>Address</Label>
               <View>
                 <Text>{address.hash.substring(0, 20)}...</Text>
               </View>
             </HighlightRow>
-            <HighlightRow>
+            <HighlightRow hasBottomBorder>
               <Label>Number of transactions</Label>
               <View>
                 <NumberOfTxs>{address.networkData.details.txNumber}</NumberOfTxs>
               </View>
             </HighlightRow>
-            <HighlightRow>
+            <HighlightRow hasBottomBorder>
               <Label>Locked ALPH balance</Label>
               <View>
                 <Badge border light>

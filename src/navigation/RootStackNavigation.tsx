@@ -74,7 +74,7 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="InWalletScreen" component={InWalletTabsNavigation} options={{ headerShown: false }} />
 
         <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} options={bottomModalOptions} />
-        <RootStack.Screen name="AddressScreen" component={AddressScreen} options={bottomModalOptions} />
+        <RootStack.Screen name="AddressScreen" component={AddressScreen} />
 
         <RootStack.Screen
           name="NewAddressScreen"

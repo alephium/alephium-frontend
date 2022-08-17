@@ -31,6 +31,8 @@ import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
+import Button from '../components/buttons/Button'
+import DefaultHeader from '../components/headers/DefaultHeader'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
@@ -48,7 +50,6 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: `Addresses (${addressHashes.length})`,
       headerRight: () => (
         <Pressable onPress={() => navigation.navigate('NewAddressScreen')}>
           <PlusIcon size={24} color={theme.global.accent} style={{ marginRight: 20 }} />
@@ -122,9 +123,29 @@ let AddressRow = ({ style, addressHash }: AddressProps) => {
   )
 }
 
+export const AddressesScreenHeader = () => {
+  const theme = useTheme()
+  const navigation = useNavigation()
+
+  return (
+    <DefaultHeader
+      HeaderLeft="Addresses"
+      HeaderRight={
+        <Button
+          onPress={() => navigation.navigate('NewAddressScreen')}
+          icon={<PlusIcon size={24} color={theme.global.accent} />}
+          type="transparent"
+        />
+      }
+    />
+  )
+}
+
 const ScreenSection = styled.View`
   padding: 22px 20px 120px;
 `
+
+export default AddressesScreen
 
 AddressRow = styled(AddressRow)`
   background-color: white;
@@ -173,5 +194,3 @@ const LastUsed = styled.Text`
   margin-right: 16px;
   margin-bottom: 12px;
 `
-
-export default AddressesScreen

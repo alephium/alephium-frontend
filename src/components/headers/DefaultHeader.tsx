@@ -25,8 +25,8 @@ import { useInWalletLayoutContext } from '../../contexts/InWalletLayoutContext'
 import useHeaderScrollStyle from '../../hooks/layout/useHeaderScrollStyle'
 
 interface DefaultHeaderProps {
-  HeaderRight: ReactNode
-  HeaderLeft: ReactNode
+  HeaderLeft: ReactNode | string
+  HeaderRight?: ReactNode
   style?: StyleProp<ViewStyle>
 }
 
@@ -34,9 +34,11 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) =
   const { scrollY } = useInWalletLayoutContext()
   const headerStyle = useHeaderScrollStyle(scrollY)
 
+  const hasTitle = typeof HeaderLeft === 'string'
+
   return (
     <Animated.View style={[style, headerStyle]}>
-      {HeaderLeft}
+      {hasTitle ? <Title>{HeaderLeft}</Title> : HeaderLeft}
       {HeaderRight}
     </Animated.View>
   )
@@ -46,6 +48,11 @@ export default styled(DefaultHeader)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 15px;
-  padding-top: 40px;
+  padding: 40px 20px 10px 20px;
+`
+
+const Title = styled.Text`
+  font-size: 26px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.font.primary};
 `

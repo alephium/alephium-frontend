@@ -18,11 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon } from 'lucide-react-native'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
+import ButtonsRow from '../components/buttons/ButtonsRow'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import TransactionsList from '../components/TransactionsList'
 import { useAppSelector } from '../hooks/redux'
@@ -30,28 +29,19 @@ import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
-interface ScreenProps extends StackScreenProps<InWalletTabsParamList, 'TransfersScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+type ScreenProps = StackScreenProps<InWalletTabsParamList, 'TransfersScreen'>
 
-const TransfersScreen = ({ navigation, style }: ScreenProps) => {
+const TransfersScreen = ({ navigation }: ScreenProps) => {
   const theme = useTheme()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
 
   return (
-    <InWalletScrollScreen style={style}>
+    <InWalletScrollScreen>
       <ScreenSection>
-        <BalanceSummary />
-        <Buttons>
-          <SendButton>
-            <ArrowUpIcon size={24} color={theme.font.contrast} />
-            <ButtonText>Send</ButtonText>
-          </SendButton>
-          <ReceiveButton>
-            <ArrowDownIcon size={24} color={theme.font.contrast} />
-            <ButtonText>Receive</ButtonText>
-          </ReceiveButton>
-        </Buttons>
+        <ButtonsRow>
+          <Button title="Send" icon={<ArrowUpIcon size={24} color={theme.font.contrast} />} />
+          <Button title="Receive" icon={<ArrowDownIcon size={24} color={theme.font.contrast} />} />
+        </ButtonsRow>
       </ScreenSection>
       <ScreenSection>
         <TransactionsList addressHashes={addressHashes} />
@@ -60,32 +50,7 @@ const TransfersScreen = ({ navigation, style }: ScreenProps) => {
   )
 }
 
-export default styled(TransfersScreen)`
-  padding-top: 30px;
-`
-
-const Buttons = styled.View`
-  flex-direction: row;
-`
-const IconedButton = styled(Button)`
-  flex-direction: row;
-`
-
-const SendButton = styled(IconedButton)`
-  flex: 1;
-  margin-right: 5px;
-`
-
-const ReceiveButton = styled(IconedButton)`
-  flex: 1;
-  margin-left: 5px;
-`
-
-const ButtonText = styled.Text`
-  color: ${({ theme }) => theme.font.contrast};
-  font-weight: 600;
-  margin-left: 10px;
-`
+export default TransfersScreen
 
 const ScreenSection = styled.View`
   padding: 22px 20px;

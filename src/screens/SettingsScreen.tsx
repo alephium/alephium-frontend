@@ -97,13 +97,13 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
           <ScreenSectionTitle>Wallets</ScreenSectionTitle>
           <ButtonStyled
             title="Add a new wallet"
-            prefixIcon={<PlusIcon size={24} color={theme.global.valid} />}
+            icon={<PlusIcon size={24} color={theme.global.valid} />}
             variant="valid"
             onPress={() => navigation.navigate('LandingScreen')}
           />
           <Button
             title="Delete this wallet"
-            prefixIcon={<TrashIcon size={24} color={theme.global.alert} />}
+            icon={<TrashIcon size={24} color={theme.global.alert} />}
             variant="alert"
             onPress={handleDeleteButtonPress}
           />

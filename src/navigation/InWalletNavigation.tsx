@@ -22,13 +22,14 @@ import {
   LayoutTemplate as LayoutTemplateIcon,
   List as ListIcon
 } from 'lucide-react-native'
+import React from 'react'
 
 import DashboardHeaderActions from '../components/DashboardHeaderActions'
 import FooterMenu from '../components/FooterMenu'
 import DefaultHeader from '../components/headers/DefaultHeader'
 import WalletSwitch from '../components/WalletSwitch'
 import { InWalletLayoutContextProvider } from '../contexts/InWalletLayoutContext'
-import AddressesScreen from '../screens/AddressesScreen'
+import AddressesScreen, { AddressesScreenHeader } from '../screens/AddressesScreen'
 import DashboardScreen from '../screens/DashboardScreen'
 import TransfersScreen from '../screens/TransfersScreen'
 import InWalletTabsParamList from './inWalletRoutes'
@@ -58,7 +59,7 @@ const InWalletTabsNavigation = () => (
         component={AddressesScreen}
         options={{
           title: 'Addresses',
-          headerTintColor: 'black',
+          header: AddressesScreenHeader,
           tabBarIcon: ({ color, size }) => <LayoutTemplateIcon name="home" color={color} size={size} />
         }}
       />
@@ -67,6 +68,7 @@ const InWalletTabsNavigation = () => (
         component={TransfersScreen}
         options={{
           title: 'Transfers',
+          header: () => <DefaultHeader HeaderLeft="Transfers" />,
           tabBarIcon: ({ color, size }) => <ArrowsIcon name="home" color={color} size={size} />
         }}
       />
