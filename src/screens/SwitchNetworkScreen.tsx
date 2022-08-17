@@ -33,8 +33,9 @@ import { NetworkName, NetworkPreset } from '../types/network'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SwitchNetworkScreen'>
 
+const networkNames = Object.values(NetworkName)
+
 const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
-  const networkNames = Object.values(NetworkName)
   const currentNetworkName = useAppSelector((state) => state.network.name)
   const dispatch = useAppDispatch()
 
