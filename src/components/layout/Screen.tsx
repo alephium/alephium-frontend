@@ -18,11 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { SafeAreaView } from 'react-native'
 import { SafeAreaViewProps } from 'react-navigation'
-import styled from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 
 const Screen = ({ children, style }: SafeAreaViewProps) => <SafeAreaView style={style}>{children}</SafeAreaView>
 
 export default styled(Screen)`
   flex: 1;
   background-color: ${({ theme }) => theme.bg.secondary};
+`
+
+export const ScreenSection = styled.View<{ fill?: boolean }>`
+  padding: 22px 20px;
+
+  ${({ fill }) =>
+    fill &&
+    css`
+      flex: 1;
+    `}
 `

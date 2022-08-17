@@ -34,6 +34,7 @@ import Amount from '../components/Amount'
 import Button from '../components/buttons/Button'
 import DefaultHeader from '../components/headers/DefaultHeader'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
+import { ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { selectAddressByHash, selectAddressIds } from '../store/addressesSlice'
@@ -140,10 +141,6 @@ export const AddressesScreenHeader = () => {
     />
   )
 }
-
-const ScreenSection = styled.View`
-  padding: 22px 20px 120px;
-`
 
 export default AddressesScreen
 

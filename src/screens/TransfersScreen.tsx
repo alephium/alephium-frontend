@@ -18,11 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon } from 'lucide-react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
+import { ScreenSection } from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
@@ -51,10 +52,3 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 }
 
 export default TransfersScreen
-
-const ScreenSection = styled.View`
-  padding: 22px 20px;
-
-  border-bottom-color: ${({ theme }) => theme.border.secondary};
-  border-bottom-width: 1px;
-`

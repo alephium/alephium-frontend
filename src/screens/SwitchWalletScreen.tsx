@@ -24,7 +24,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
-import Screen from '../components/layout/Screen'
+import Screen, { ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -135,10 +135,4 @@ const Subtitle = styled.Text`
   font-weight: 500;
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
-`
-
-const ScreenSection = styled.View<{ fill?: boolean }>`
-  padding: 29px 20px;
-
-  ${({ fill }) => fill && 'flex: 1;'}
 `

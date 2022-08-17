@@ -23,6 +23,7 @@ import styled from 'styled-components/native'
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
+import { ScreenSection } from '../components/layout/Screen'
 import { useAppDispatch } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { deleteAllWallets } from '../storage/wallets'
@@ -57,10 +58,4 @@ export default DashboardScreen
 
 const Buttons = styled.View`
   flex-direction: row;
-`
-
-const ScreenSection = styled.View`
-  padding: 22px 20px;
-  border-bottom-color: ${({ theme }) => theme.border.secondary};
-  border-bottom-width: 1px;
 `

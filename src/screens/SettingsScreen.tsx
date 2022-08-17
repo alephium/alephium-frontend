@@ -25,7 +25,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
-import Screen from '../components/layout/Screen'
+import Screen, { ScreenSection } from '../components/layout/Screen'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -114,10 +114,6 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
 }
 
 export default SettingsScreen
-
-const ScreenSection = styled.View`
-  padding: 18px 18px 24px 18px;
-`
 
 const ScreenSectionTitle = styled.Text`
   font-size: 16px;

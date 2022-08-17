@@ -27,7 +27,7 @@ import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
-import Screen from '../components/layout/Screen'
+import Screen, { ScreenSection } from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -138,10 +138,6 @@ const AddressScreen = ({
     </Screen>
   )
 }
-
-const ScreenSection = styled.View`
-  padding: 20px;
-`
 
 const Header = styled.View`
   flex-direction: row;

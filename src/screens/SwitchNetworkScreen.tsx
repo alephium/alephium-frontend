@@ -24,7 +24,7 @@ import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import Input from '../components/inputs/Input'
-import Screen from '../components/layout/Screen'
+import Screen, { ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -109,12 +109,6 @@ export default SwitchNetworkScreen
 const Title = styled.Text`
   font-weight: 600;
   font-size: 26px;
-`
-
-const ScreenSection = styled.View<{ fill?: boolean }>`
-  padding: 29px 20px;
-
-  ${({ fill }) => fill && 'flex: 1;'}
 `
 
 const ButtonStyled = styled(Button)`
