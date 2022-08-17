@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon, Star as StarIcon } from 'lucide-react-native'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Modal, ScrollView, Text, View } from 'react-native'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
@@ -67,13 +67,13 @@ const AddressScreen = ({
             <BadgeText>{getAddressDisplayName(address)}</BadgeText>
           </BadgeStyled>
           <Actions>
-            <ButtonStyled icon variant="contrast" onPress={makeAddressMain} disabled={isCurrentAddressMain}>
+            <ButtonStyled onlyIcon variant="contrast" onPress={makeAddressMain} disabled={isCurrentAddressMain}>
               <StarIcon fill={isCurrentAddressMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
             </ButtonStyled>
-            <ButtonStyled icon variant="contrast" onPress={() => copyAddressToClipboard(address)}>
+            <ButtonStyled onlyIcon variant="contrast" onPress={() => copyAddressToClipboard(address)}>
               <ClipboardIcon color={theme.font.primary} size={20} />
             </ButtonStyled>
-            <ButtonStyled icon variant="contrast" onPress={() => setIsQrCodeModalOpen(true)}>
+            <ButtonStyled onlyIcon variant="contrast" onPress={() => setIsQrCodeModalOpen(true)}>
               <QrCodeIcon color={theme.font.primary} size={20} />
             </ButtonStyled>
           </Actions>

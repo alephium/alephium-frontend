@@ -16,25 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ThemeType } from '../style/themes'
+import { Switch, SwitchProps } from 'react-native'
+import { useTheme } from 'styled-components/native'
 
-export interface GeneralSettings {
-  theme: ThemeType
-  discreetMode: boolean
-  passwordRequirement: boolean
+interface ToggleProps extends SwitchProps {
+  onValueChange?: (value: boolean) => void
 }
 
-export interface NetworkSettings {
-  nodeHost: string
-  explorerApiHost: string
-  explorerUrl: string
+const Toggle = ({ onValueChange, ...props }: ToggleProps) => {
+  const theme = useTheme()
+
+  return (
+    <Switch
+      {...props}
+      onValueChange={onValueChange}
+      trackColor={{
+        false: props.disabled ? theme.bg.tertiary : theme.font.secondary,
+        true: props.disabled ? theme.bg.tertiary : theme.global.accent
+      }}
+      thumbColor={theme.font.contrast}
+    />
+  )
 }
 
-export interface Settings {
-  general: GeneralSettings
-  network: NetworkSettings
-}
-
-export type SettingsKey = keyof Settings
-
-export type SettingsPartial = GeneralSettings | NetworkSettings
+export default Toggle

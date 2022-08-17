@@ -17,12 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { TouchableWithoutFeedback } from 'react-native'
-import styled from 'styled-components/native'
+import { StyleProp, ViewStyle } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import Screen from '../components/layout/Screen'
+import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { getStoredWalletById, getWalletsMetadata } from '../storage/wallets'
@@ -30,11 +32,15 @@ import { activeWalletChanged } from '../store/activeWalletSlice'
 import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
 import { WalletMetadata } from '../types/wallet'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'SwitchWalletScreen'>
+export interface SwitchWalletScreenProps extends StackScreenProps<RootStackParamList, 'SwitchWalletScreen'> {
+  style?: StyleProp<ViewStyle>
+}
 
-const SwitchWalletScreen = ({ navigation }: ScreenProps) => {
+const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   const dispatch = useAppDispatch()
   const wallets = useSortedWallets()
+  const theme = useTheme()
+  const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
@@ -60,27 +66,36 @@ const SwitchWalletScreen = ({ navigation }: ScreenProps) => {
   }
 
   return (
-    <Screen>
+    <Screen style={style}>
       <ScreenSection>
         <Title>Wallets</Title>
         <Subtitle>Switch to another wallet?</Subtitle>
       </ScreenSection>
       <ScreenSection fill>
-        <WalletsList>
-          {wallets.map((wallet, index) => (
-            <TouchableWithoutFeedback key={wallet.id} onPress={() => handleWalletItemPress(wallet.id)}>
-              <WalletListItem>
-                <RadioButton>{index === 0 && <RadioButtonChecked />}</RadioButton>
-                <WalletName>{wallet.name}</WalletName>
-              </WalletListItem>
-            </TouchableWithoutFeedback>
-          ))}
-        </WalletsList>
+        {wallets.map((wallet, index) => (
+          <RadioButtonRow
+            key={wallet.id}
+            title={wallet.name}
+            onPress={() => handleWalletItemPress(wallet.id)}
+            isFirst={index === 0}
+            isLast={index === wallets.length - 1}
+            isActive={wallet.id === activeWalletMetadataId}
+            isInput
+          />
+        ))}
       </ScreenSection>
       <ScreenSection>
         <Buttons>
-          <NewWalletButton title="New wallet" onPress={() => handleButtonPress('create')} />
-          <ImportWalletButton title="Import wallet" onPress={() => handleButtonPress('import')} />
+          <NewWalletButton
+            title="New wallet"
+            onPress={() => handleButtonPress('create')}
+            prefixIcon={<PlusIcon size={24} color={theme.font.contrast} />}
+          />
+          <ImportWalletButton
+            title="Import wallet"
+            onPress={() => handleButtonPress('import')}
+            prefixIcon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
+          />
         </Buttons>
       </ScreenSection>
     </Screen>
@@ -105,7 +120,7 @@ const useSortedWallets = () => {
       setWallets(wallets)
     }
     getWallets()
-  }, [])
+  }, [activeWalletId])
 
   return sortedWallets
 }
@@ -128,7 +143,6 @@ const ScreenSection = styled.View<{ fill?: boolean }>`
 `
 
 const Buttons = styled.View`
-  display: flex;
   flex-direction: row;
 `
 
@@ -140,40 +154,4 @@ const NewWalletButton = styled(Button)`
 const ImportWalletButton = styled(Button)`
   flex: 1;
   margin-left: 5px;
-`
-
-const WalletsList = styled.View``
-
-const WalletListItem = styled.View`
-  padding: 16px 18px;
-  background-color: ${({ theme }) => theme.bg.highlight};
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 11px;
-  border-radius: 9px;
-`
-
-const WalletName = styled.Text`
-  font-weight: 500;
-  font-size: 14px;
-`
-
-const RadioButton = styled.View`
-  width: 19px;
-  height: 19px;
-  border-radius: 19px;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  margin-right: 21px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-`
-
-const RadioButtonChecked = styled.View`
-  width: 13px;
-  height: 13px;
-  border-radius: 13px;
-  background-color: ${({ theme }) => theme.font.primary};
 `

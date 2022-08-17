@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { clone } from 'lodash'
+import { Appearance } from 'react-native'
 
 import { NetworkName, NetworkPreset } from '../types/network'
 import { GeneralSettings, NetworkSettings, SettingsKey, SettingsPartial } from '../types/settings'
@@ -33,19 +34,13 @@ export const networkPresetSettings: Record<NetworkPreset, NetworkSettings> = {
     nodeHost: 'https://testnet-wallet.alephium.org',
     explorerApiHost: 'https://testnet-backend.alephium.org',
     explorerUrl: 'https://testnet.alephium.org'
-  },
-  [NetworkName.localhost]: {
-    nodeHost: 'http://localhost:12973',
-    explorerApiHost: 'http://localhost:9090',
-    explorerUrl: 'http://localhost:3000'
   }
 }
 
 export const defaultNetwork = NetworkName.testnet
 
 export const defaultGeneralSettings: GeneralSettings = {
-  theme: 'light',
-  walletLockTimeInMinutes: 3,
+  theme: Appearance.getColorScheme() === 'dark' ? 'dark' : 'light',
   discreetMode: false,
   passwordRequirement: false
 }

@@ -20,7 +20,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 
 import { navigateRootStack } from '../navigation/RootStackNavigation'
-import { getStoredActiveWallet } from '../storage/wallets'
+import { areThereOtherWallets, getStoredActiveWallet } from '../storage/wallets'
 import { activeWalletChanged, walletFlushed } from '../store/activeWalletSlice'
 import { pinFlushed } from '../store/credentialsSlice'
 import { useAppDispatch, useAppSelector } from './redux'
@@ -34,7 +34,8 @@ export const useAppStateChange = () => {
     try {
       const storedActiveWallet = await getStoredActiveWallet()
       if (storedActiveWallet === null) {
-        navigateRootStack('LandingScreen')
+        const result = await areThereOtherWallets()
+        navigateRootStack(result ? 'SwitchWalletAfterDeletionScreen' : 'LandingScreen')
       } else if (storedActiveWallet.authType === 'pin') {
         navigateRootStack('LoginScreen', { storedWallet: storedActiveWallet })
       } else if (storedActiveWallet.authType === 'biometrics') {
@@ -79,8 +80,6 @@ export const useAppStateChange = () => {
 
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
-    return () => {
-      subscription.remove()
-    }
+    return subscription.remove
   }, [activeWallet.mnemonic, dispatch, getWalletFromStorageAndNavigate])
 }

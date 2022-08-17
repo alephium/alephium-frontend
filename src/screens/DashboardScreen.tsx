@@ -46,13 +46,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
       <ScreenSection>
         <BalanceSummary />
       </ScreenSection>
-      <ScreenSection>
-        <BalanceSummary />
-      </ScreenSection>
-      <ScreenSection>
-        <BalanceSummary />
-      </ScreenSection>
-      <Buttons style={{ marginBottom: 120, marginTop: 500 }}>
+      <Buttons style={{ marginBottom: 120, marginTop: 600 }}>
         <Button title="Delete all wallets" onPress={handleDeleteAllWallets} />
       </Buttons>
     </InWalletScrollScreen>
@@ -62,7 +56,6 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
 export default DashboardScreen
 
 const Buttons = styled.View`
-  display: flex;
   flex-direction: row;
 `
 

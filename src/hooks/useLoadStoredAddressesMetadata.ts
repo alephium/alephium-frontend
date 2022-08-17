@@ -28,7 +28,10 @@ import { useAppDispatch, useAppSelector } from './redux'
 const useLoadStoredAddressesMetadata = () => {
   const dispatch = useAppDispatch()
   const activeWallet = useAppSelector((state) => state.activeWallet)
+  const networkSettings = useAppSelector((state) => state.network.settings)
   const currentActiveWalletMnemonic = useRef<Mnemonic>(activeWallet.mnemonic)
+  const currentNodeHost = useRef<string>(networkSettings.nodeHost)
+  const currentExplorerApiHost = useRef<string>(networkSettings.explorerApiHost)
   const isAddressesStateEmpty = useAppSelector((state) => state.addresses.ids).length === 0
 
   const initializeAddressesState = useCallback(async () => {
@@ -55,6 +58,24 @@ const useLoadStoredAddressesMetadata = () => {
       currentActiveWalletMnemonic.current = activeWallet.mnemonic
     }
   }, [activeWallet.mnemonic, dispatch, initializeAddressesState, isAddressesStateEmpty])
+
+  useEffect(() => {
+    if (
+      currentNodeHost.current !== networkSettings.nodeHost ||
+      currentExplorerApiHost.current !== networkSettings.explorerApiHost
+    ) {
+      if (!isAddressesStateEmpty) dispatch(addressesFlushed())
+      initializeAddressesState()
+      currentNodeHost.current = networkSettings.nodeHost
+      currentExplorerApiHost.current = networkSettings.explorerApiHost
+    }
+  }, [
+    dispatch,
+    initializeAddressesState,
+    isAddressesStateEmpty,
+    networkSettings.explorerApiHost,
+    networkSettings.nodeHost
+  ])
 }
 
 export default useLoadStoredAddressesMetadata
