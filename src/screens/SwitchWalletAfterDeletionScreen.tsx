@@ -36,6 +36,7 @@ const SwitchWalletAfterDeletion = (props: SwitchWalletScreenProps) => {
 
   const handleBackButton = () => {
     Alert.alert('Select a wallet', 'Please, select a wallet to continue')
+
     return true
   }
 

@@ -16,20 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StyleProp, Switch, SwitchProps, ViewStyle } from 'react-native'
+import { Switch, SwitchProps } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 interface ToggleProps extends SwitchProps {
   onValueChange?: (value: boolean) => void
-  style?: StyleProp<ViewStyle>
 }
 
-const Toggle = ({ style, onValueChange, ...props }: ToggleProps) => {
+const Toggle = ({ onValueChange, ...props }: ToggleProps) => {
   const theme = useTheme()
 
   return (
     <Switch
-      style={style}
       {...props}
       onValueChange={onValueChange}
       trackColor={{
