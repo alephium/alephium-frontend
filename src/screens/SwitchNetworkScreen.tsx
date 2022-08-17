@@ -45,7 +45,7 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
   const [explorerUrl, setExplorerUrl] = useState('')
   const [selectedNetwork, setSelectedNetwork] = useState(currentNetworkName)
 
-  const handleNetworkItemPress = async (newNetworkName: NetworkPreset | NetworkName.custom) => {
+  const handleNetworkItemPress = (newNetworkName: NetworkPreset | NetworkName.custom) => {
     setSelectedNetwork(newNetworkName)
 
     if (newNetworkName !== NetworkName.custom) {
@@ -56,7 +56,7 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
     }
   }
 
-  const saveCustomNetwork = async () => {
+  const saveCustomNetwork = () => {
     dispatch(
       networkSettingsChanged({
         nodeHost,
