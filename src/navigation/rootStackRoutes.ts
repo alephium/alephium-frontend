@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ActiveWalletState } from '../store/activeWalletSlice'
 import { AddressHash } from '../types/addresses'
+import { DisplayTx } from '../types/transactions'
 
 type RootStackParamList = {
   LandingScreen: undefined
@@ -43,6 +44,11 @@ type RootStackParamList = {
   SettingsScreen: undefined
   SwitchNetworkScreen: undefined
   SwitchWalletAfterDeletionScreen: undefined
+  TransactionScreen: {
+    tx: DisplayTx
+    isOut: boolean
+    amount: bigint
+  }
 }
 
 export default RootStackParamList

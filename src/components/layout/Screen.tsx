@@ -36,3 +36,8 @@ export const ScreenSection = styled.View<{ fill?: boolean }>`
       flex: 1;
     `}
 `
+
+export const BottomModalScreenTitle = styled.Text`
+  font-weight: 600;
+  font-size: 26px;
+`

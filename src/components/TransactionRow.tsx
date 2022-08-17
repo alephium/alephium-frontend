@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calAmountDelta } from '@alephium/sdk'
+import { useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
@@ -38,13 +39,21 @@ interface TransactionRowProps {
 }
 
 const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => {
-  const amount = calAmountDelta(tx, tx.address.hash)
-  const amountIsBigInt = typeof amount === 'bigint'
-  const isOut = amountIsBigInt && amount < 0
   const theme = useTheme()
+  const navigation = useNavigation()
+
+  let amount = calAmountDelta(tx, tx.address.hash)
+  const isOut = amount < 0
+  amount = isOut ? amount * BigInt(-1) : amount
 
   return (
-    <HighlightRow style={style} hasBottomBorder={isLast} isBottomRounded={isLast} isTopRounded={isFirst}>
+    <HighlightRow
+      style={style}
+      hasBottomBorder={!isLast}
+      isBottomRounded={isLast}
+      isTopRounded={isFirst}
+      onPress={() => navigation.navigate('TransactionScreen', { tx, isOut, amount })}
+    >
       <Direction>
         {isOut ? (
           <Arrow direction="up" color={theme.font.secondary} />
@@ -54,11 +63,7 @@ const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => 
       </Direction>
       <Date>{dayjs(tx.timestamp).fromNow()}</Date>
       <AddressHash numberOfLines={1}>{tx.address.hash}</AddressHash>
-      <AmountStyled
-        prefix={isOut ? '- ' : '+ '}
-        value={BigInt(amountIsBigInt && amount < 0 ? (amount * -BigInt(1)).toString() : amount.toString())}
-        fadeDecimals
-      />
+      <AmountStyled prefix={isOut ? '- ' : '+ '} value={amount} fadeDecimals />
     </HighlightRow>
   )
 }

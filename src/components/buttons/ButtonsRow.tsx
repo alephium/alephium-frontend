@@ -39,7 +39,7 @@ export default styled(ButtonsRow)`
   flex-direction: row;
 `
 
-const ButtonContainer = styled.View<{ isFirst: boolean; isLast: boolean }>`
+const ButtonContainer = styled.View<{ isFirst: boolean }>`
   flex: 1;
   margin-left: 5px;
 

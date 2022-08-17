@@ -24,7 +24,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
-import Screen, { ScreenSection } from '../components/layout/Screen'
+import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -69,7 +69,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   return (
     <Screen style={style}>
       <ScreenSection>
-        <Title>Wallets</Title>
+        <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <Subtitle>Switch to another wallet?</Subtitle>
       </ScreenSection>
       <ScreenSection fill>
@@ -125,11 +125,6 @@ const useSortedWallets = () => {
 
   return sortedWallets
 }
-
-const Title = styled.Text`
-  font-weight: 600;
-  font-size: 26px;
-`
 
 const Subtitle = styled.Text`
   font-weight: 500;

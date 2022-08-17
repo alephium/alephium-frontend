@@ -37,6 +37,7 @@ import SplashScreen from '../screens/SplashScreen'
 import SwitchNetworkScreen from '../screens/SwitchNetworkScreen'
 import SwitchWalletAfterDeletionScreen from '../screens/SwitchWalletAfterDeletionScreen'
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
+import TransactionScreen from '../screens/TransactionScreen'
 import InWalletTabsNavigation from './InWalletNavigation'
 import RootStackParamList from './rootStackRoutes'
 
@@ -94,6 +95,7 @@ const RootStackNavigation = () => {
           component={SwitchWalletAfterDeletionScreen}
           options={{ headerShown: false }}
         />
+        <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={bottomModalOptions} />
       </RootStack.Navigator>
     </NavigationContainer>
   )

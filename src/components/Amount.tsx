@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { formatAmountForDisplay } from '@alephium/sdk'
 import { StyleProp, Text, ViewStyle } from 'react-native'
-import styled from 'styled-components'
+import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { formatFiatAmountForDisplay } from '../utils/numbers'
