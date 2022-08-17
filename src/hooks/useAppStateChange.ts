@@ -80,8 +80,6 @@ export const useAppStateChange = () => {
 
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
-    return () => {
-      subscription.remove()
-    }
+    return subscription.remove
   }, [activeWallet.mnemonic, dispatch, getWalletFromStorageAndNavigate])
 }

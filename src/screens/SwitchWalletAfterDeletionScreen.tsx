@@ -26,11 +26,9 @@ import SwitchWalletScreen, { SwitchWalletScreenProps } from './SwitchWalletScree
 const SwitchWalletAfterDeletion = (props: SwitchWalletScreenProps) => {
   useFocusEffect(
     useCallback(() => {
-      BackHandler.addEventListener('hardwareBackPress', handleBackButton)
+      const subscription = BackHandler.addEventListener('hardwareBackPress', handleBackButton)
 
-      return () => {
-        BackHandler.removeEventListener('hardwareBackPress', handleBackButton)
-      }
+      return subscription.remove
     }, [])
   )
 
