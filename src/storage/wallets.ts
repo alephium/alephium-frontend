@@ -164,7 +164,13 @@ const deleteWallet = async (walletMetadata: WalletMetadata) => {
   await SecureStore.deleteItemAsync(`wallet-${walletMetadata.id}`, secureStoreConfig)
 }
 
-export const areThereOtherWallets = async (): Promise<boolean> => !!AsyncStorage.getItem('wallets-metadata')
+export const areThereOtherWallets = async (): Promise<boolean> => {
+  const rawWalletsMetadata = await AsyncStorage.getItem('wallets-metadata')
+  if (!rawWalletsMetadata) return false
+
+  const walletsMetadata = JSON.parse(rawWalletsMetadata) as WalletMetadata[]
+  return Array.isArray(walletsMetadata) && walletsMetadata.length > 0
+}
 
 const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
   const walletsMetadata = await getWalletsMetadata()
