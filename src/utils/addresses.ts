@@ -19,30 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import * as Clipboard from 'expo-clipboard'
 
 import { Address } from '../store/addressesSlice'
-import { AddressSettings, AddressVariant } from '../types/addresses'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
 
 export const copyAddressToClipboard = (address: Address) => {
   Clipboard.setString(address.hash)
-}
-
-export const isAddressSettings = (address: AddressVariant): address is AddressSettings =>
-  (address as AddressSettings).isMain !== undefined
-
-export function isAddress(address: AddressVariant): address is Address {
-  const _a = address as Address
-
-  return (
-    _a.hash !== undefined &&
-    _a.publicKey !== undefined &&
-    _a.privateKey !== undefined &&
-    _a.group !== undefined &&
-    _a.index !== undefined &&
-    _a.settings !== undefined &&
-    _a.networkData.details !== undefined &&
-    _a.networkData.transactions !== undefined &&
-    _a.networkData.availableBalance !== undefined
-  )
 }

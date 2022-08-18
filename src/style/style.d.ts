@@ -48,6 +48,7 @@ declare module 'styled-components' {
       accent: string
       alert: string
       valid: string
+      star: string
     }
     gradient: {
       yellow: string

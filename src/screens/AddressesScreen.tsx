@@ -98,7 +98,7 @@ let AddressRow = ({ style, addressHash }: AddressProps) => {
         <Actions>
           <Pressable>
             <Icon>
-              <StarIcon fill={address.settings.isMain ? '#FFD66D' : theme.bg.tertiary} size={22} />
+              <StarIcon fill={address.settings.isMain ? theme.global.star : theme.bg.tertiary} size={22} />
             </Icon>
           </Pressable>
           <Pressable onPress={() => navigation.navigate('EditAddressScreen', { addressHash })}>

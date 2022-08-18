@@ -21,11 +21,9 @@ import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { Address } from '../store/addressesSlice'
-import { AddressSettings } from '../types/addresses'
-import { isAddress, isAddressSettings } from '../utils/addresses'
 
 interface AddressBadgeProps {
-  address: Address | AddressSettings
+  address: Address | string
   color?: string
   style?: StyleProp<ViewStyle>
 }
@@ -33,22 +31,22 @@ interface AddressBadgeProps {
 const AddressBadge = ({ address, style }: AddressBadgeProps) => {
   const theme = useTheme()
 
-  const data = isAddress(address)
-    ? address.settings
-    : isAddressSettings(address)
-    ? address
-    : {
-        color: theme.font.primary,
-        isMain: false,
-        label: ''
-      }
-
   return (
     <View style={style}>
-      {data.label && (
-        <Symbol>{data.isMain ? <StarIcon size={16} fill="#FFD66D" /> : <Dot color={data.color} />}</Symbol>
+      {typeof address === 'string' ? (
+        <Label numberOfLines={1}>{address}</Label>
+      ) : (
+        <>
+          <Symbol>
+            {address.settings.isMain ? (
+              <StarIcon size={16} fill={theme.global.star} />
+            ) : (
+              <Dot color={address.settings.color} />
+            )}
+          </Symbol>
+          <Label numberOfLines={1}>{address.settings.label || address.hash}</Label>
+        </>
       )}
-      <Label numberOfLines={1}>{data.label || (address as Address).hash}</Label>
     </View>
   )
 }
@@ -71,4 +69,5 @@ const Dot = styled.View<{ color?: string }>`
 
 const Label = styled.Text`
   font-weight: 600;
+  flex-shrink: 1;
 `

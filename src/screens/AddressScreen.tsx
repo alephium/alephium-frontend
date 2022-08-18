@@ -71,7 +71,7 @@ const AddressScreen = ({
               variant="contrast"
               onPress={makeAddressMain}
               disabled={isCurrentAddressMain}
-              icon={<StarIcon fill={isCurrentAddressMain ? '#FFD66D' : theme.bg.tertiary} size={22} />}
+              icon={<StarIcon fill={isCurrentAddressMain ? theme.global.star : theme.bg.tertiary} size={22} />}
             />
             <ButtonStyled
               variant="contrast"

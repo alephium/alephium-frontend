@@ -16,8 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Address } from '../store/addressesSlice'
-
 export type AddressHash = string
 
 export type AddressSettings = {
@@ -29,5 +27,3 @@ export type AddressSettings = {
 export type AddressMetadata = AddressSettings & {
   index: number
 }
-
-export type AddressVariant = Address | AddressSettings

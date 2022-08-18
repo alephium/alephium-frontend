@@ -49,11 +49,7 @@ const IOList = ({ isOut, tx }: IOListProps) => {
 
     return (
       <View>
-        {addressWithMetadata ? (
-          <AddressBadge address={addressWithMetadata} />
-        ) : (
-          <BoldText numberOfLines={1}>{addressHash}</BoldText>
-        )}
+        <AddressBadge address={addressWithMetadata ?? addressHash} />
         {extraAddressesText && <Text>{extraAddressesText}</Text>}
       </View>
     )
