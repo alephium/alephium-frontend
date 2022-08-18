@@ -64,26 +64,14 @@ const TransactionScreen = ({
             <BoldText>Confirmed</BoldText>
           </HighlightRow>
           <HighlightRow title="From" hasBottomBorder>
-            {isOut ? (
-              <AddressContainer>
-                <AddressBadge address={tx.address} />
-              </AddressContainer>
-            ) : (
-              <AddressContainer>
-                <IOList isOut={isOut} tx={tx} />
-              </AddressContainer>
-            )}
+            <AddressContainer>
+              {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
+            </AddressContainer>
           </HighlightRow>
           <HighlightRow title="To" hasBottomBorder>
-            {!isOut ? (
-              <AddressContainer>
-                <AddressBadge address={tx.address} />
-              </AddressContainer>
-            ) : (
-              <AddressContainer>
-                <IOList isOut={isOut} tx={tx} />
-              </AddressContainer>
-            )}
+            <AddressContainer>
+              {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
+            </AddressContainer>
           </HighlightRow>
           <HighlightRow title="Fee" isBottomRounded>
             <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fadeDecimals fullPrecision suffix="ALPH" />
