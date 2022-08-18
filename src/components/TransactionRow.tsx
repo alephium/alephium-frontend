@@ -62,7 +62,9 @@ const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => 
         )}
       </Direction>
       <Date>{dayjs(tx.timestamp).fromNow()}</Date>
-      <AddressHash numberOfLines={1}>{tx.address.hash}</AddressHash>
+      <AddressHash numberOfLines={1} ellipsizeMode="middle">
+        {tx.address.hash}
+      </AddressHash>
       <AmountStyled prefix={isOut ? '- ' : '+ '} value={amount} fadeDecimals />
     </HighlightRow>
   )

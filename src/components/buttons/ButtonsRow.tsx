@@ -41,7 +41,7 @@ export default styled(ButtonsRow)`
 
 const ButtonContainer = styled.View<{ isFirst: boolean }>`
   flex: 1;
-  margin-left: 5px;
+  margin-left: 10px;
 
   ${({ isFirst }) =>
     isFirst &&

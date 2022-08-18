@@ -18,28 +18,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useNavigation } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import dayjs from 'dayjs'
-import {
-  Clipboard as ClipboardIcon,
-  Pencil as PencilIcon,
-  QrCode as QrCodeIcon,
-  Star as StarIcon
-} from 'lucide-react-native'
+import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
-import { useLayoutEffect } from 'react'
-import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import React, { useLayoutEffect, useState } from 'react'
+import { Pressable, StyleProp, ViewStyle } from 'react-native'
+import { useSharedValue } from 'react-native-reanimated'
+import Carousel from 'react-native-reanimated-carousel'
+import { useTheme } from 'styled-components/native'
 
-import Amount from '../components/Amount'
+import AddressCard from '../components/AddressCard'
 import Button from '../components/buttons/Button'
+import ButtonsRow from '../components/buttons/ButtonsRow'
 import DefaultHeader from '../components/headers/DefaultHeader'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
+import QRCodeModal from '../components/QRCodeModal'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
-import { selectAddressByHash, selectAddressIds } from '../store/addressesSlice'
+import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
-import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
+import { copyAddressToClipboard } from '../utils/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList, 'AddressesScreen'> {
   style?: StyleProp<ViewStyle>
@@ -47,7 +45,16 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList, 'Addresses
 
 const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
+  const [currentAddressHash, setCurrentAddressHash] = useState(addressHashes[0])
+  const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
+  const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
+  const progressValue = useSharedValue<number>(0)
   const theme = useTheme()
+
+  const onScrollEnd = (index: number) => {
+    setCurrentAddressHash(addressHashes[index])
+    setAreButtonsDisabled(false)
+  }
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -59,70 +66,55 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
     })
   })
 
-  console.log('AddressesScreen renders')
-
   return (
     <InWalletScrollScreen style={style}>
+      <Carousel
+        style={{
+          width: '100%',
+          justifyContent: 'center'
+        }}
+        width={290}
+        height={165}
+        loop={false}
+        onProgressChange={(_, absoluteProgress) => (progressValue.value = absoluteProgress)}
+        mode="parallax"
+        modeConfig={{
+          parallaxScrollingScale: 1,
+          parallaxScrollingOffset: -17
+        }}
+        data={addressHashes}
+        renderItem={(itemInfo) => <AddressCard addressHash={itemInfo.item} />}
+        onScrollBegin={() => setAreButtonsDisabled(true)}
+        onScrollEnd={onScrollEnd}
+      />
       <ScreenSection>
-        {addressHashes.map((addressHash) => (
-          <Pressable onPress={() => navigation.navigate('AddressScreen', { addressHash })} key={addressHash}>
-            <AddressRow addressHash={addressHash} />
-          </Pressable>
-        ))}
+        <ButtonsRow>
+          <Button
+            title="Copy address"
+            onPress={() => copyAddressToClipboard(currentAddressHash)}
+            icon={<ClipboardIcon color={theme.font.primary} size={20} />}
+            variant="contrast"
+            disabled={areButtonsDisabled}
+          />
+          <Button
+            title="Show QR code"
+            onPress={() => setIsQrCodeModalOpen(true)}
+            icon={<QrCodeIcon color={theme.font.primary} size={20} />}
+            variant="contrast"
+            disabled={areButtonsDisabled}
+          />
+        </ButtonsRow>
       </ScreenSection>
+      <QRCodeModal
+        addressHash={currentAddressHash}
+        isOpen={isQrCodeModalOpen}
+        onClose={() => setIsQrCodeModalOpen(false)}
+      />
     </InWalletScrollScreen>
   )
 }
 
-interface AddressProps {
-  addressHash: AddressHash
-  style?: StyleProp<ViewStyle>
-}
-
-let AddressRow = ({ style, addressHash }: AddressProps) => {
-  const theme = useTheme()
-  const navigation = useNavigation()
-  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-
-  if (!address) return null
-
-  const lastUsed =
-    address.networkData.transactions.confirmed.length > 0
-      ? dayjs(address.networkData.transactions.confirmed[0].timestamp).fromNow()
-      : 'Never used'
-
-  return (
-    <View style={style}>
-      <Header>
-        <Name color={address.settings.color}>{getAddressDisplayName(address)}</Name>
-        <Actions>
-          <Pressable>
-            <Icon>
-              <StarIcon fill={address.settings.isMain ? theme.global.star : theme.bg.tertiary} size={22} />
-            </Icon>
-          </Pressable>
-          <Pressable onPress={() => navigation.navigate('EditAddressScreen', { addressHash })}>
-            <Icon>
-              <PencilIcon color={theme.font.primary} size={20} />
-            </Icon>
-          </Pressable>
-          <Pressable onPress={() => copyAddressToClipboard(address)}>
-            <Icon>
-              <ClipboardIcon color={theme.font.primary} size={20} />
-            </Icon>
-          </Pressable>
-          <Pressable>
-            <Icon style={{ marginRight: 12 }}>
-              <QrCodeIcon color={theme.font.primary} size={20} />
-            </Icon>
-          </Pressable>
-        </Actions>
-      </Header>
-      <AmountStyled value={BigInt(address.networkData.details.balance)} fadeDecimals />
-      <LastUsed>{lastUsed}</LastUsed>
-    </View>
-  )
-}
+export default AddressesScreen
 
 export const AddressesScreenHeader = () => {
   const theme = useTheme()
@@ -141,53 +133,3 @@ export const AddressesScreenHeader = () => {
     />
   )
 }
-
-export default AddressesScreen
-
-AddressRow = styled(AddressRow)`
-  background-color: white;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  border: 1px solid ${({ theme }) => theme.border.secondary};
-`
-
-const Header = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  max-width: 100%;
-`
-
-const Actions = styled.View`
-  flex-direction: row;
-  align-items: center;
-  flex-grow: 1;
-  justify-content: flex-end;
-`
-
-const Name = styled.Text<{ color?: string }>`
-  font-size: 18px;
-  font-weight: 700;
-  color: ${({ theme, color }) => color || theme.font.primary};
-  padding: 17px 28px;
-  flex-shrink: 1;
-`
-
-// TODO: Create standalone Icon component to allow us to define the size prop
-const Icon = styled.View`
-  padding: 18px 12px;
-`
-
-const AmountStyled = styled(Amount)`
-  font-weight: 700;
-  font-size: 26px;
-  margin-left: 28px;
-`
-
-const LastUsed = styled.Text`
-  font-size: 12px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.font.tertiary};
-  text-align: right;
-  margin-right: 16px;
-  margin-bottom: 12px;
-`

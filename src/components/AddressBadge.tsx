@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Star as StarIcon } from 'lucide-react-native'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { Address } from '../store/addressesSlice'
@@ -25,26 +25,40 @@ import { Address } from '../store/addressesSlice'
 interface AddressBadgeProps {
   address: Address | string
   color?: string
+  hideSymbol?: boolean
+  textStyle?: StyleProp<TextStyle>
   style?: StyleProp<ViewStyle>
 }
 
-const AddressBadge = ({ address, style }: AddressBadgeProps) => {
+const AddressBadge = ({ address, hideSymbol = false, textStyle, style }: AddressBadgeProps) => {
   const theme = useTheme()
 
   return (
     <View style={style}>
       {typeof address === 'string' ? (
-        <Label numberOfLines={1}>{address}</Label>
+        <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
+          {address}
+        </Label>
       ) : (
         <>
-          <Symbol>
-            {address.settings.isMain ? (
-              <StarIcon size={16} fill={theme.global.star} />
-            ) : (
-              <Dot color={address.settings.color} />
-            )}
-          </Symbol>
-          <Label numberOfLines={1}>{address.settings.label || address.hash}</Label>
+          {!hideSymbol && (
+            <Symbol>
+              {address.settings.isMain ? (
+                <StarIcon size={16} fill={theme.global.star} />
+              ) : (
+                <Dot color={address.settings.color} />
+              )}
+            </Symbol>
+          )}
+          {address.settings.label ? (
+            <Label numberOfLines={1} style={textStyle}>
+              {address.settings.label}
+            </Label>
+          ) : (
+            <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
+              {address.hash}
+            </Label>
+          )}
         </>
       )}
     </View>

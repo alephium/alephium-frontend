@@ -16,12 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import * as Clipboard from 'expo-clipboard'
+import QRCode from 'react-qr-code'
 
-import { Address } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
+import ModalWithBackdrop from './ModalWithBackdrop'
 
-export const getAddressDisplayName = (address: Address): string =>
-  address.settings.label || address.hash.substring(0, 6)
+interface QRCodeModalProps {
+  addressHash: AddressHash
+  isOpen: boolean
+  onClose: () => void
+}
 
-export const copyAddressToClipboard = (addressHash: AddressHash) => Clipboard.setString(addressHash)
+const QRCodeModal = ({ addressHash, isOpen, onClose }: QRCodeModalProps) => (
+  <ModalWithBackdrop animationType="fade" visible={isOpen} closeModal={onClose}>
+    <QRCode size={256} style={{ height: 'auto', maxWidth: '100%', width: '100%' }} value={addressHash} />
+  </ModalWithBackdrop>
+)
+
+export default QRCodeModal
