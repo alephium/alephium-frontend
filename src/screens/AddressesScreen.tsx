@@ -20,15 +20,14 @@ import { useNavigation } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
-import React, { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
-import { useSharedValue } from 'react-native-reanimated'
-import Carousel from 'react-native-reanimated-carousel'
 import { useTheme } from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
+import Carousel from '../components/Carousel'
 import DefaultHeader from '../components/headers/DefaultHeader'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
@@ -48,7 +47,6 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const [currentAddressHash, setCurrentAddressHash] = useState(addressHashes[0])
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
-  const progressValue = useSharedValue<number>(0)
   const theme = useTheme()
 
   const onScrollEnd = (index: number) => {
@@ -69,23 +67,12 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   return (
     <InWalletScrollScreen style={style}>
       <Carousel
-        style={{
-          width: '100%',
-          justifyContent: 'center'
-        }}
-        width={290}
-        height={165}
-        loop={false}
-        onProgressChange={(_, absoluteProgress) => (progressValue.value = absoluteProgress)}
-        mode="parallax"
-        modeConfig={{
-          parallaxScrollingScale: 1,
-          parallaxScrollingOffset: -17
-        }}
         data={addressHashes}
         renderItem={(itemInfo) => <AddressCard addressHash={itemInfo.item} />}
-        onScrollBegin={() => setAreButtonsDisabled(true)}
+        onScrollStart={() => setAreButtonsDisabled(true)}
         onScrollEnd={onScrollEnd}
+        width={290}
+        height={165}
       />
       <ScreenSection>
         <ButtonsRow>
