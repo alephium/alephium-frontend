@@ -24,7 +24,6 @@ import { Address } from '../store/addressesSlice'
 
 interface AddressBadgeProps {
   address: Address | string
-  color?: string
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
   style?: StyleProp<ViewStyle>
