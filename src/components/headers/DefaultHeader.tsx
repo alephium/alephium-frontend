@@ -34,11 +34,9 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) =
   const { scrollY } = useInWalletLayoutContext()
   const headerStyle = useHeaderScrollStyle(scrollY)
 
-  const hasTitle = typeof HeaderLeft === 'string'
-
   return (
     <Animated.View style={[style, headerStyle]}>
-      {hasTitle ? <Title>{HeaderLeft}</Title> : HeaderLeft}
+      {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
       {HeaderRight}
     </Animated.View>
   )
