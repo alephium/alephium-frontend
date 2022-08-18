@@ -79,7 +79,7 @@ const Button = ({
 
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
-      {icon && <Icon withSpace={title || children}>{icon}</Icon>}
+      {icon && <Icon withSpace={!!title || !!children}>{icon}</Icon>}
       {title && <ButtonText style={{ color: colors.font }}>{title}</ButtonText>}
       {children}
     </Pressable>
