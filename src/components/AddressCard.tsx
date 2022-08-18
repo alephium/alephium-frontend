@@ -40,7 +40,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
 
   if (!address) return null
 
-  const bgColor = address.settings.color ?? 'white'
+  const bgColor = address.settings.color ?? theme.bg.highlight
   const textColor = tinycolor(bgColor).isDark() ? theme.font.contrast : theme.font.primary
 
   return (
