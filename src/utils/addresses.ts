@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import * as Clipboard from 'expo-clipboard'
+import Toast from 'react-native-root-toast'
 
 import { Address } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
@@ -24,4 +25,7 @@ import { AddressHash } from '../types/addresses'
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
 
-export const copyAddressToClipboard = (addressHash: AddressHash) => Clipboard.setString(addressHash)
+export const copyAddressToClipboard = (addressHash: AddressHash) => {
+  Clipboard.setString(addressHash)
+  Toast.show('Address copied!')
+}
