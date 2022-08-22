@@ -25,7 +25,7 @@ import { useInWalletLayoutContext } from '../../contexts/InWalletLayoutContext'
 import useHeaderScrollStyle from '../../hooks/layout/useHeaderScrollStyle'
 
 interface DefaultHeaderProps {
-  HeaderLeft: ReactNode | string
+  HeaderLeft: Omit<ReactNode, 'null' | 'undefined'>
   HeaderRight?: ReactNode
   style?: StyleProp<ViewStyle>
 }
@@ -36,8 +36,10 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) =
 
   return (
     <Animated.View style={[style, headerStyle]}>
-      {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
-      {HeaderRight}
+      <>
+        {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
+        {HeaderRight}
+      </>
     </Animated.View>
   )
 }
