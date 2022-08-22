@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
-import { useLayoutEffect, useState } from 'react'
+import { useCallback, useLayoutEffect, useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
@@ -63,6 +63,12 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
       )
     })
   })
+
+  useFocusEffect(
+    useCallback(() => {
+      if (currentAddressHash) setAreButtonsDisabled(false)
+    }, [currentAddressHash])
+  )
 
   return (
     <InWalletScrollScreen style={style}>
