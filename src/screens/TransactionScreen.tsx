@@ -74,7 +74,13 @@ const TransactionScreen = ({
             </AddressContainer>
           </HighlightRow>
           <HighlightRow title="Fee" isBottomRounded>
-            <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fadeDecimals fullPrecision suffix="ALPH" />
+            <Amount
+              value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
+              fadeDecimals
+              fullPrecision
+              suffix="ALPH"
+              hideOnDiscreetMode={false}
+            />
           </HighlightRow>
         </ScreenSection>
       </ScrollView>

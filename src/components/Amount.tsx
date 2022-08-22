@@ -30,16 +30,26 @@ interface AmountProps {
   prefix?: string
   suffix?: string
   fiat?: number
+  hideOnDiscreetMode?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const Amount = ({ value, style, fadeDecimals, fullPrecision = false, prefix, suffix = '', fiat }: AmountProps) => {
+const Amount = ({
+  value,
+  style,
+  fadeDecimals,
+  fullPrecision = false,
+  prefix,
+  suffix = '',
+  hideOnDiscreetMode = true,
+  fiat
+}: AmountProps) => {
   let integralPart = ''
   let fractionalPart = ''
   let moneySymbol = ''
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
 
-  if (!discreetMode) {
+  if (!discreetMode || !hideOnDiscreetMode) {
     let amount = ''
 
     if (fiat) {
@@ -63,7 +73,7 @@ const Amount = ({ value, style, fadeDecimals, fullPrecision = false, prefix, suf
 
   return (
     <Text style={style}>
-      {discreetMode ? (
+      {discreetMode && hideOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
         fadeDecimals ? (
