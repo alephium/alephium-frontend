@@ -19,19 +19,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { StyleProp, TextInput, TextInputProps, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import HighlightRow, { BorderOptions } from '../HighlightRow'
 
-export interface InputProps extends TextInputProps, BorderOptions {
+export type InputValue = string | number | undefined
+
+export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value'>, BorderOptions {
+  value: T
   label: string
   onPress?: () => void
   resetDisabledColor?: boolean
   IconComponent?: ReactNode
+  renderValue?: (value: T) => ReactNode
   style?: StyleProp<ViewStyle>
 }
 
-const Input = ({
+function Input<T extends InputValue>({
   label,
   style,
   value,
@@ -41,11 +45,15 @@ const Input = ({
   onPress,
   resetDisabledColor,
   IconComponent,
+  renderValue,
   ...props
-}: InputProps) => {
+}: InputProps<T>) {
   const theme = useTheme()
   const [isActive, setIsActive] = useState(false)
   const inputRef = useRef<TextInput>(null)
+
+  const renderedValue = renderValue ? renderValue(value) : value
+  const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   const labelStyle = useAnimatedStyle(() => ({
     top: withTiming(!isActive ? 0 : -35, { duration: 100 })
@@ -77,13 +85,15 @@ const Input = ({
         <Label style={labelStyle}>
           <LabelText style={labelTextStyle}>{label}</LabelText>
         </Label>
+        {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
         <TextInputStyled
           selectionColor={theme.gradient.yellow}
-          value={value}
+          value={renderedValue}
           onFocus={() => setIsActive(true)}
-          onBlur={() => !value && setIsActive(false)}
+          onBlur={() => !renderedValue && setIsActive(false)}
           ref={inputRef}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
+          hide={showCustomValueRendering}
           {...props}
         />
       </InputContainer>
@@ -99,8 +109,14 @@ const InputContainer = styled.View`
   flex: 1;
 `
 
-const TextInputStyled = styled.TextInput`
+const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
   height: 100%;
+
+  ${({ hide }) =>
+    hide &&
+    css`
+      opacity: 0;
+    `}
 `
 
 const Label = styled(Animated.View)`
@@ -113,4 +129,14 @@ const Label = styled(Animated.View)`
 const LabelText = styled(Animated.Text)`
   color: ${({ theme }) => theme.font.secondary};
   font-size: ${({ isActive }) => (!isActive ? 14 : 11)}px;
+`
+
+const CustomRenderedValue = styled.View`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  justify-content: center;
+  height: 100%;
 `
