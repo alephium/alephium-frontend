@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useNavigation } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon } from 'lucide-react-native'
 import { useTheme } from 'styled-components/native'
@@ -41,7 +42,11 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       <ScreenSection>
         <ButtonsRow>
           <Button title="Send" icon={<ArrowUpIcon size={24} color={theme.font.contrast} />} />
-          <Button title="Receive" icon={<ArrowDownIcon size={24} color={theme.font.contrast} />} />
+          <Button
+            title="Receive"
+            icon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
+            onPress={() => navigation.navigate('ReceiveScreen')}
+          />
         </ButtonsRow>
       </ScreenSection>
       <ScreenSection>
