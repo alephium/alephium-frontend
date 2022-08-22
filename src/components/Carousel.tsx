@@ -139,5 +139,4 @@ const Dot = styled(Animated.View)<{ size: number }>`
   height: ${({ size }) => size}px;
   border-radius: ${({ size }) => size}px;
   background-color: ${({ theme }) => theme.font.primary};
-  /* flex: 1; */
 `
