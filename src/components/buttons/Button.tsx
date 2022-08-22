@@ -75,6 +75,9 @@ const Button = ({
     style
   ]
 
+  if (!icon && !title && !children)
+    throw new Error('At least one of the following properties is required: icon, title, or children')
+
   console.log('Button renders')
 
   return (
