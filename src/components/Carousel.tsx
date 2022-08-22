@@ -45,7 +45,7 @@ function Carousel<T>({ data, renderItem, width, height, onScrollStart, onScrollE
           justifyContent: 'center'
         }}
         width={width ?? defaultWidth}
-        height={165}
+        height={height}
         loop={false}
         onProgressChange={(_, absoluteProgress) => (progressValue.value = absoluteProgress)}
         mode="parallax"
@@ -60,17 +60,15 @@ function Carousel<T>({ data, renderItem, width, height, onScrollStart, onScrollE
       />
       {!!progressValue && (
         <CarouselPagination>
-          {data.map((item, index) => {
-            return (
-              <CarouselPaginationItem
-                backgroundColor={theme.font.primary}
-                animValue={progressValue}
-                index={index}
-                key={index}
-                length={data.length}
-              />
-            )
-          })}
+          {data.map((_, index) => (
+            <CarouselPaginationItem
+              backgroundColor={theme.font.primary}
+              animValue={progressValue}
+              index={index}
+              key={index}
+              length={data.length}
+            />
+          ))}
         </CarouselPagination>
       )}
     </View>
