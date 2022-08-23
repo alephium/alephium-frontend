@@ -32,12 +32,12 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
   const price = useAppSelector((state) => state.price)
   const currency = useAppSelector((state) => state.settings.currency)
   const addresses = useAppSelector(selectAllAddresses)
-  const isAddressDataLoading = useAppSelector((state) => state.addresses.loading)
+  const addressDataStatus = useAppSelector((state) => state.addresses.status)
   const theme = useTheme()
 
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
   const balance = alphToFiat(totalBalance, price.value)
-  const showActivityIndicator = price.status === 'uninitialized' || isAddressDataLoading
+  const showActivityIndicator = price.status === 'uninitialized' || addressDataStatus === 'uninitialized'
 
   return (
     <View style={style}>

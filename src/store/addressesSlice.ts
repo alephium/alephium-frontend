@@ -77,11 +77,13 @@ const addressSettingsAdapter = createEntityAdapter<Address>({
 interface AddressesState extends EntityState<Address> {
   mainAddress: string
   loading: boolean
+  status: 'uninitialized' | 'initialized'
 }
 
 const initialState: AddressesState = addressSettingsAdapter.getInitialState({
   mainAddress: '',
-  loading: false
+  loading: false,
+  status: 'uninitialized'
 })
 
 export const fetchAddressesInitialData = createAsyncThunk(
@@ -247,6 +249,7 @@ const addressesSlice = createSlice({
     },
     addressesFlushed: (state) => {
       addressSettingsAdapter.setAll(state, [])
+      state.status = 'uninitialized'
     },
     loadingStarted: (state) => {
       state.loading = true
@@ -269,6 +272,7 @@ const addressesSlice = createSlice({
             if (availableBalance) addressState.networkData.availableBalance = availableBalance
           }
         }
+        state.status = 'initialized'
       })
       .addCase(fetchAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
