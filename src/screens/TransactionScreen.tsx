@@ -79,7 +79,7 @@ const TransactionScreen = ({
               fadeDecimals
               fullPrecision
               suffix="ALPH"
-              hideOnDiscreetMode={false}
+              showOnDiscreetMode
             />
           </HighlightRow>
         </ScreenSection>

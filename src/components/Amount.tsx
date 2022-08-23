@@ -30,7 +30,7 @@ interface AmountProps {
   prefix?: string
   suffix?: string
   fiat?: number
-  hideOnDiscreetMode?: boolean
+  showOnDiscreetMode?: boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -41,7 +41,7 @@ const Amount = ({
   fullPrecision = false,
   prefix,
   suffix = '',
-  hideOnDiscreetMode = true,
+  showOnDiscreetMode = false,
   fiat
 }: AmountProps) => {
   let integralPart = ''
@@ -49,7 +49,7 @@ const Amount = ({
   let moneySymbol = ''
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
 
-  if (!discreetMode || !hideOnDiscreetMode) {
+  if (!discreetMode || showOnDiscreetMode) {
     let amount = ''
 
     if (fiat) {
@@ -73,7 +73,7 @@ const Amount = ({
 
   return (
     <Text style={style}>
-      {discreetMode && hideOnDiscreetMode ? (
+      {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
         fadeDecimals ? (
