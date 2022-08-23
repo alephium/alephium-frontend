@@ -37,7 +37,7 @@ export interface SelectProps<T extends InputValue> extends Omit<InputProps<T>, '
   renderValue?: (value: T) => ReactNode
 }
 
-function Select<T extends InputValue>({ options, value, onValueChange, ...props }: SelectProps<T>) {
+function Select<T extends InputValue>({ options, onValueChange, ...props }: SelectProps<T>) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const theme = useTheme()
 
@@ -52,7 +52,6 @@ function Select<T extends InputValue>({ options, value, onValueChange, ...props 
   return (
     <>
       <Input
-        value={value}
         editable={false}
         onPress={openModal}
         resetDisabledColor
@@ -60,8 +59,12 @@ function Select<T extends InputValue>({ options, value, onValueChange, ...props 
         {...props}
       />
       <ModalWithBackdrop animationType="fade" visible={isModalOpen} closeModal={closeModal}>
-        {options.map(({ label, value }) => (
-          <Option onPress={() => handleOptionPress(value)} key={value ?? 'undefined'}>
+        {options.map(({ label, value }, index) => (
+          <Option
+            onPress={() => handleOptionPress(value)}
+            key={value ?? 'none'}
+            hasBottomBorder={index !== options.length - 1}
+          >
             {typeof label === 'string' ? <Text>{label}</Text> : label}
           </Option>
         ))}

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StatusBar } from 'expo-status-bar'
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components/native'
@@ -26,6 +26,7 @@ import { useAppStateChange } from './src/hooks/useAppStateChange'
 import useInitializeClient from './src/hooks/useInitializeClient'
 import useLoadStoredAddressesMetadata from './src/hooks/useLoadStoredAddressesMetadata'
 import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
+import useRefreshALPHPrice from './src/hooks/useRefreshALPHPrice'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { store } from './src/store/store'
 import { lightTheme } from './src/style/themes'
@@ -48,6 +49,7 @@ const Main = ({ children }: { children: ReactNode }) => {
   useLoadStoredSettings()
   useLoadStoredAddressesMetadata()
   useAppStateChange()
+  useRefreshALPHPrice()
 
   return <>{children}</>
 }

@@ -22,6 +22,7 @@ import activeWalletSlice from './activeWalletSlice'
 import addressesSlice from './addressesSlice'
 import credentialsSlice from './credentialsSlice'
 import networkSlice, { networkListenerMiddleware } from './networkSlice'
+import priceSlice from './priceSlice'
 import settingsSlice, { settingsListenerMiddleware } from './settingsSlice'
 import walletGenerationSlice from './walletGenerationSlice'
 
@@ -32,7 +33,8 @@ export const store = configureStore({
     settings: settingsSlice.reducer,
     credentials: credentialsSlice.reducer,
     activeWallet: activeWalletSlice.reducer,
-    addresses: addressesSlice.reducer
+    addresses: addressesSlice.reducer,
+    price: priceSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(networkListenerMiddleware.middleware).prepend(settingsListenerMiddleware.middleware)

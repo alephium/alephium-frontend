@@ -42,7 +42,8 @@ export const defaultNetwork = NetworkName.testnet
 export const defaultGeneralSettings: GeneralSettings = {
   theme: Appearance.getColorScheme() === 'dark' ? 'dark' : 'light',
   discreetMode: false,
-  passwordRequirement: false
+  passwordRequirement: false,
+  currency: 'USD'
 }
 
 export const defaultNetworkSettings: NetworkSettings = clone(networkPresetSettings[defaultNetwork])
@@ -59,7 +60,12 @@ export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> =
     const rawSettings = await AsyncStorage.getItem(constructSettingsStorageKey(key))
     if (!rawSettings) return defaultSettings[key]
 
-    return JSON.parse(rawSettings) as SettingsPartial
+    const loadedSettings = JSON.parse(rawSettings) as SettingsPartial
+
+    return {
+      ...defaultSettings[key],
+      ...loadedSettings
+    }
   } catch (e) {
     console.error(e)
     return defaultSettings[key] // Fallback to default settings if something went wrong

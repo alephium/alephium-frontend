@@ -16,20 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes } from '@alephium/sdk'
+import { useEffect } from 'react'
 
-const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
+import { priceUpdated } from '../store/priceSlice'
+import { useAppDispatch, useAppSelector } from './redux'
 
-export const formatFiatAmountForDisplay = (amount: number): string => {
-  if (amount <= 1000000) return addApostrophes(amount.toFixed(2))
+const useRefreshALPHPrice = () => {
+  const dispatch = useAppDispatch()
+  const priceStatus = useAppSelector((state) => state.price.status)
 
-  const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : 4
-  const suffix = MONEY_SYMBOL[tier]
-  const scale = Math.pow(10, tier * 3)
-  const scaled = amount / scale
+  useEffect(() => {
+    if (priceStatus === 'uninitialized') dispatch(priceUpdated())
+  }, [dispatch, priceStatus])
 
-  return scaled.toFixed(2) + suffix
+  useEffect(() => {
+    setInterval(() => {
+      dispatch(priceUpdated())
+    }, 60 * 1000)
+  }, [dispatch])
 }
 
-export const alphToFiat = (amount: bigint, price?: number): number =>
-  (price || 0) * parseFloat((amount / BigInt(1e18)).toString())
+export default useRefreshALPHPrice

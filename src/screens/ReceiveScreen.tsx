@@ -16,29 +16,40 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
-import React, { useState } from 'react'
+import { Clipboard as ClipboardIcon } from 'lucide-react-native'
+import { useState } from 'react'
 import { ScrollView } from 'react-native'
+import QRCode from 'react-qr-code'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '../components/AddressBadge'
+import Amount from '../components/Amount'
+import Button from '../components/buttons/Button'
+import HighlightRow from '../components/HighlightRow'
 import Select from '../components/inputs/Select'
 import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
-import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAllAddresses } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
+import { copyAddressToClipboard } from '../utils/addresses'
+import { alphToFiat } from '../utils/numbers'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'ReceiveScreen'>
-
-const ReceiveScreen = (props: ScreenProps) => {
+const ReceiveScreen = () => {
   const addressEntries = useAppSelector((state) => state.addresses.entities)
   const addresses = useAppSelector(selectAllAddresses)
   const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
-  const [toAddress, setToAddress] = useState<AddressHash>(mainAddress)
+  const price = useAppSelector((state) => state.price.value)
+  const currency = useAppSelector((state) => state.settings.currency)
+  const [toAddressHash, setToAddressHash] = useState<AddressHash>(mainAddress)
+  const toAddress = addressEntries[toAddressHash]
+  const theme = useTheme()
 
+  if (!toAddress) return null
+
+  const balance = alphToFiat(BigInt(toAddress.networkData.details.balance), price)
   const addressesOptions = addresses.map((address) => ({
     value: address.hash,
-    label: address.settings.label || address.hash
+    label: <AddressBadge address={address} />
   }))
 
   const renderValue = (addressHash: AddressHash) => {
@@ -56,11 +67,38 @@ const ReceiveScreen = (props: ScreenProps) => {
         <ScreenSection>
           <Select
             label="To address"
-            value={toAddress}
-            onValueChange={setToAddress}
+            value={toAddressHash}
+            onValueChange={setToAddressHash}
             options={addressesOptions}
             renderValue={renderValue}
+            isTopRounded
+            isBottomRounded
           />
+        </ScreenSection>
+        <CenteredScreenSection>
+          <QRCode
+            size={200}
+            bgColor={theme.bg.secondary}
+            style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
+            value={toAddressHash}
+          />
+        </CenteredScreenSection>
+        <CenteredScreenSection>
+          <Button
+            title="Copy address"
+            onPress={() => copyAddressToClipboard(toAddressHash)}
+            icon={<ClipboardIcon color={theme.font.contrast} size={20} />}
+          />
+        </CenteredScreenSection>
+        <ScreenSection>
+          <HighlightRow title="Address" isTopRounded hasBottomBorder>
+            <AddressText numberOfLines={1} ellipsizeMode="middle">
+              {toAddressHash}
+            </AddressText>
+          </HighlightRow>
+          <HighlightRow title="Current estimated value" isBottomRounded>
+            <AmountInFiat fiat={balance} fiatCurrency={currency} />
+          </HighlightRow>
         </ScreenSection>
       </ScrollView>
     </Screen>
@@ -68,3 +106,15 @@ const ReceiveScreen = (props: ScreenProps) => {
 }
 
 export default ReceiveScreen
+
+const CenteredScreenSection = styled(ScreenSection)`
+  align-items: center;
+`
+
+const AddressText = styled.Text`
+  max-width: 200px;
+`
+
+const AmountInFiat = styled(Amount)`
+  font-weight: 700;
+`
