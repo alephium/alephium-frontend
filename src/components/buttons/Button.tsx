@@ -23,6 +23,7 @@ import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
 import AppText from '../AppText'
+import GradientBackground from '../GradientBackground'
 
 export interface ButtonProps extends PressableProps {
   title?: string
@@ -32,6 +33,7 @@ export interface ButtonProps extends PressableProps {
   wide?: boolean
   centered?: boolean
   icon?: ReactNode
+  gradient?: boolean
   children?: ReactNode
 }
 
@@ -43,6 +45,7 @@ const Button = ({
   disabled,
   icon,
   children,
+  gradient = false,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -83,6 +86,7 @@ const Button = ({
 
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
+      {gradient && <GradientBackground style={{ opacity: disabled ? 0.5 : 1 }} />}
       {icon && <Icon withSpace={!!title || !!children}>{icon}</Icon>}
       {title && <ButtonText style={{ color: colors.font }}>{title}</ButtonText>}
       {children}
