@@ -16,16 +16,36 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import * as Clipboard from 'expo-clipboard'
-import Toast from 'react-native-root-toast'
+import { ReactNode } from 'react'
+import { StyleProp, View, ViewStyle } from 'react-native'
+import styled, { css } from 'styled-components/native'
 
-import { Address } from '../store/addressesSlice'
-import { AddressHash } from '../types/addresses'
-
-export const getAddressDisplayName = (address: Address): string =>
-  address.settings.label || address.hash.substring(0, 6)
-
-export const copyAddressToClipboard = (addressHash: AddressHash) => {
-  Clipboard.setString(addressHash)
-  Toast.show('Address copied!')
+interface ButtonsRowProps {
+  children: ReactNode[]
+  style?: StyleProp<ViewStyle>
 }
+
+const ButtonsRow = ({ children, style }: ButtonsRowProps) => (
+  <View style={style}>
+    {children.map((button, index) => (
+      <ButtonContainer key={index} isFirst={index === 0}>
+        {button}
+      </ButtonContainer>
+    ))}
+  </View>
+)
+
+export default styled(ButtonsRow)`
+  flex-direction: row;
+`
+
+const ButtonContainer = styled.View<{ isFirst: boolean }>`
+  flex: 1;
+  margin-left: 10px;
+
+  ${({ isFirst }) =>
+    isFirst &&
+    css`
+      margin-left: 0;
+    `}
+`

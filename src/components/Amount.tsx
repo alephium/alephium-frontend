@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { formatAmountForDisplay } from '@alephium/sdk'
 import { StyleProp, Text, ViewStyle } from 'react-native'
-import styled from 'styled-components'
+import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { formatFiatAmountForDisplay } from '../utils/numbers'
@@ -30,16 +30,26 @@ interface AmountProps {
   prefix?: string
   suffix?: string
   fiat?: number
+  showOnDiscreetMode?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const Amount = ({ value, style, fadeDecimals, fullPrecision = false, prefix, suffix = '', fiat }: AmountProps) => {
+const Amount = ({
+  value,
+  style,
+  fadeDecimals,
+  fullPrecision = false,
+  prefix,
+  suffix = '',
+  showOnDiscreetMode = false,
+  fiat
+}: AmountProps) => {
   let integralPart = ''
   let fractionalPart = ''
   let moneySymbol = ''
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
 
-  if (!discreetMode) {
+  if (!discreetMode || showOnDiscreetMode) {
     let amount = ''
 
     if (fiat) {
@@ -63,7 +73,7 @@ const Amount = ({ value, style, fadeDecimals, fullPrecision = false, prefix, suf
 
   return (
     <Text style={style}>
-      {discreetMode ? (
+      {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
         fadeDecimals ? (

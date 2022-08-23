@@ -63,5 +63,5 @@ const H2 = styled.Text`
   color: ${({ theme }) => theme.font.tertiary};
   font-weight: bold;
   font-size: 16px;
-  margin-bottom: 10px;
+  margin-bottom: 24px;
 `

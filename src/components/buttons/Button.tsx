@@ -25,13 +25,12 @@ import { BORDER_RADIUS } from '../../style/globalStyle'
 
 export interface ButtonProps extends PressableProps {
   title?: string
-  type?: 'primary' | 'secondary'
+  type?: 'primary' | 'secondary' | 'transparent'
   variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert'
   style?: StyleProp<ViewStyle>
   wide?: boolean
   centered?: boolean
-  onlyIcon?: boolean
-  prefixIcon?: ReactNode
+  icon?: ReactNode
   children?: ReactNode
 }
 
@@ -41,8 +40,7 @@ const Button = ({
   type = 'primary',
   variant = 'default',
   disabled,
-  onlyIcon,
-  prefixIcon,
+  icon,
   children,
   ...props
 }: ButtonProps) => {
@@ -54,7 +52,8 @@ const Button = ({
       contrast: theme.bg.highlight,
       accent: theme.global.accent,
       valid: tinycolor(theme.global.valid).setAlpha(0.1).toRgbString(),
-      alert: tinycolor(theme.global.alert).setAlpha(0.1).toRgbString()
+      alert: tinycolor(theme.global.alert).setAlpha(0.1).toRgbString(),
+      transparent: 'transparent'
     }[variant],
     font: {
       default: type === 'primary' ? theme.font.contrast : theme.font.primary,
@@ -68,19 +67,22 @@ const Button = ({
   const buttonStyle: PressableProps['style'] = ({ pressed }) => [
     {
       opacity: pressed || disabled ? 0.5 : 1,
-      backgroundColor: { primary: colors.bg, secondary: 'transparent' }[type],
-      borderWidth: { primary: 0, secondary: 2 }[type],
-      borderColor: { primary: 'transparent', secondary: colors.bg }[type],
+      backgroundColor: { primary: colors.bg, secondary: 'transparent', transparent: 'transparent' }[type],
+      borderWidth: { primary: 0, secondary: 2, transparent: 0 }[type],
+      borderColor: { primary: 'transparent', secondary: colors.bg, transparent: undefined }[type],
       width: props.wide ? '75%' : 'auto'
     },
     style
   ]
 
+  if (!icon && !title && !children)
+    throw new Error('At least one of the following properties is required: icon, title, or children')
+
   console.log('Button renders')
 
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
-      {prefixIcon && <PrefixIcon>{prefixIcon}</PrefixIcon>}
+      {icon && <Icon withSpace={!!title || !!children}>{icon}</Icon>}
       {title && <ButtonText style={{ color: colors.font }}>{title}</ButtonText>}
       {children}
     </Pressable>
@@ -102,21 +104,26 @@ export default styled(Button)`
       margin: 0 auto;
     `}
 
-  ${({ onlyIcon }) =>
-    onlyIcon
+  ${({ icon, title, children }) =>
+    icon && !title && !children
       ? css`
           width: 45px;
+          height: 45px;
         `
       : css`
           padding: 0 25px;
+          height: 55px;
         `};
-  height: ${({ onlyIcon }) => (onlyIcon ? '45px' : '55px')};
 `
 
 const ButtonText = styled.Text`
   font-weight: bold;
 `
 
-const PrefixIcon = styled.View`
-  margin-right: 15px;
+const Icon = styled.View<{ withSpace?: boolean }>`
+  ${({ withSpace }) =>
+    withSpace &&
+    css`
+      margin-right: 15px;
+    `}
 `

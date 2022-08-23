@@ -23,7 +23,8 @@ import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
-import Screen from '../components/layout/Screen'
+import ButtonsRow from '../components/buttons/ButtonsRow'
+import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -68,7 +69,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   return (
     <Screen style={style}>
       <ScreenSection>
-        <Title>Wallets</Title>
+        <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <Subtitle>Switch to another wallet?</Subtitle>
       </ScreenSection>
       <ScreenSection fill>
@@ -85,18 +86,18 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
         ))}
       </ScreenSection>
       <ScreenSection>
-        <Buttons>
-          <NewWalletButton
+        <ButtonsRow>
+          <Button
             title="New wallet"
             onPress={() => handleButtonPress('create')}
-            prefixIcon={<PlusIcon size={24} color={theme.font.contrast} />}
+            icon={<PlusIcon size={24} color={theme.font.contrast} />}
           />
-          <ImportWalletButton
+          <Button
             title="Import wallet"
             onPress={() => handleButtonPress('import')}
-            prefixIcon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
+            icon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
           />
-        </Buttons>
+        </ButtonsRow>
       </ScreenSection>
     </Screen>
   )
@@ -125,33 +126,8 @@ const useSortedWallets = () => {
   return sortedWallets
 }
 
-const Title = styled.Text`
-  font-weight: 600;
-  font-size: 26px;
-`
-
 const Subtitle = styled.Text`
   font-weight: 500;
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
-`
-
-const ScreenSection = styled.View<{ fill?: boolean }>`
-  padding: 29px 20px;
-
-  ${({ fill }) => fill && 'flex: 1;'}
-`
-
-const Buttons = styled.View`
-  flex-direction: row;
-`
-
-const NewWalletButton = styled(Button)`
-  flex: 1;
-  margin-right: 5px;
-`
-
-const ImportWalletButton = styled(Button)`
-  flex: 1;
-  margin-left: 5px;
 `

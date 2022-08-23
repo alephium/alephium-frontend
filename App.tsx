@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StatusBar } from 'expo-status-bar'
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
+import { RootSiblingParent } from 'react-native-root-siblings'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components/native'
 
@@ -30,14 +31,16 @@ import { store } from './src/store/store'
 import { lightTheme } from './src/style/themes'
 
 const App = () => (
-  <Provider store={store}>
-    <Main>
-      <ThemeProvider theme={lightTheme}>
-        <RootStackNavigation />
-        <StatusBar style="dark" />
-      </ThemeProvider>
-    </Main>
-  </Provider>
+  <RootSiblingParent>
+    <Provider store={store}>
+      <Main>
+        <ThemeProvider theme={lightTheme}>
+          <RootStackNavigation />
+          <StatusBar style="dark" />
+        </ThemeProvider>
+      </Main>
+    </Provider>
+  </RootSiblingParent>
 )
 
 const Main = ({ children }: { children: ReactNode }) => {
