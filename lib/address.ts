@@ -36,9 +36,7 @@ function xorByte(value: number): number {
   return byte0 ^ byte1 ^ byte2 ^ value
 }
 
-function toPosInt(byte: number): number {
-  return byte & 0xff
-}
-
 export const isAddressValid = (address: string) =>
   !!address && /^[1-9A-HJ-NP-Za-km-z]+$/.test(address) && bs58.decode(address).slice(1).length >= 32
+
+const toPosInt = (byte: number): number => byte & 0xff
