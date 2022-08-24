@@ -41,7 +41,11 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
     <InWalletScrollScreen>
       <ScreenSection>
         <ButtonsRow>
-          <Button title="Send" icon={<ArrowUpIcon size={24} color={theme.font.contrast} />} />
+          <Button
+            title="Send"
+            icon={<ArrowUpIcon size={24} color={theme.font.contrast} />}
+            onPress={() => navigation.navigate('SendScreen')}
+          />
           <Button
             title="Receive"
             icon={<ArrowDownIcon size={24} color={theme.font.contrast} />}

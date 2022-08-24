@@ -22,42 +22,29 @@ import { ScrollView } from 'react-native'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
 
-import AddressBadge from '../components/AddressBadge'
 import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
-import Select from '../components/inputs/Select'
-import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import AddressSelector from '../components/inputs/AddressSelector'
+import Screen, { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
-import { selectAllAddresses } from '../store/addressesSlice'
+import { selectAddressByHash } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard } from '../utils/addresses'
 import { attoAlphToFiat } from '../utils/numbers'
 
 const ReceiveScreen = () => {
-  const addressEntries = useAppSelector((state) => state.addresses.entities)
-  const addresses = useAppSelector(selectAllAddresses)
   const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
+  const [toAddressHash, setToAddressHash] = useState<AddressHash>(mainAddress)
+  const toAddress = useAppSelector((state) => selectAddressByHash(state, toAddressHash))
   const price = useAppSelector((state) => state.price.value)
   const currency = useAppSelector((state) => state.settings.currency)
-  const [toAddressHash, setToAddressHash] = useState<AddressHash>(mainAddress)
-  const toAddress = addressEntries[toAddressHash]
   const theme = useTheme()
 
   if (!toAddress) return null
 
   const balance = attoAlphToFiat(BigInt(toAddress.networkData.details.balance), price)
-  const addressesOptions = addresses.map((address) => ({
-    value: address.hash,
-    label: <AddressBadge address={address} />
-  }))
-
-  const renderValue = (addressHash: AddressHash) => {
-    const address = addressEntries[addressHash]
-
-    return address ? <AddressBadge address={address} /> : null
-  }
 
   return (
     <Screen>
@@ -66,12 +53,10 @@ const ReceiveScreen = () => {
           <BottomModalScreenTitle>Receive</BottomModalScreenTitle>
         </ScreenSection>
         <ScreenSection>
-          <Select
+          <AddressSelector
             label="To address"
             value={toAddressHash}
             onValueChange={setToAddressHash}
-            options={addressesOptions}
-            renderValue={renderValue}
             isTopRounded
             isBottomRounded
           />

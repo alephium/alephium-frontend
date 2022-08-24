@@ -39,7 +39,19 @@ export const ScreenSection = styled.View<{ fill?: boolean }>`
     `}
 `
 
-export const BottomModalScreenTitle = styled(AppText)`
+export const CenteredScreenSection = styled(ScreenSection)`
+  align-items: center;
+`
+
+export const BottomModalScreenTitle = styled.Text`
   font-weight: 600;
   font-size: 26px;
+`
+
+export const ScreenSectionTitle = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.font.tertiary};
+  margin-left: 8px;
+  margin-bottom: 24px;
 `

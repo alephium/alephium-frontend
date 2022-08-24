@@ -50,6 +50,7 @@ type RootStackParamList = {
     amount: bigint
   }
   ReceiveScreen: undefined
+  SendScreen: undefined
 }
 
 export default RootStackParamList

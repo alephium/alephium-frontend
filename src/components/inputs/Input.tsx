@@ -17,7 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import { StyleProp, TextInput, TextInputProps, ViewStyle } from 'react-native'
+import {
+  NativeSyntheticEvent,
+  StyleProp,
+  TextInput,
+  TextInputFocusEventData,
+  TextInputProps,
+  ViewStyle
+} from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -44,6 +51,8 @@ function Input<T extends InputValue>({
   isBottomRounded,
   hasBottomBorder,
   onPress,
+  onFocus,
+  onBlur,
   resetDisabledColor,
   IconComponent,
   renderValue,
@@ -65,12 +74,20 @@ function Input<T extends InputValue>({
   }))
 
   useEffect(() => {
-    if (value && !isActive) {
+    if (renderedValue) {
       setIsActive(true)
-    } else if (!value && isActive) {
-      setIsActive(false)
     }
-  }, [isActive, value])
+  }, [renderedValue])
+
+  const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    setIsActive(true)
+    onFocus && onFocus(e)
+  }
+
+  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    !renderedValue && setIsActive(false)
+    onBlur && onBlur(e)
+  }
 
   return (
     <HighlightRow
@@ -89,9 +106,9 @@ function Input<T extends InputValue>({
         {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
         <TextInputStyled
           selectionColor={theme.gradient.yellow}
-          value={renderedValue?.toString()}
-          onFocus={() => setIsActive(true)}
-          onBlur={() => !renderedValue && setIsActive(false)}
+          value={renderedValue}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           ref={inputRef}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
           hide={showCustomValueRendering}
