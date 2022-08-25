@@ -45,12 +45,20 @@ type RootStackParamList = {
   SwitchNetworkScreen: undefined
   SwitchWalletAfterDeletionScreen: undefined
   TransactionScreen: {
+    // TODO: Make all params serializable to help with state persistance
     tx: DisplayTx
     isOut: boolean
     amount: bigint
   }
   ReceiveScreen: undefined
   SendScreen: undefined
+  ConfirmSendScreen: {
+    fromAddressHash: string
+    toAddressHash: string
+    amount: string
+    gasAmount?: string
+    gasPrice?: string
+  }
 }
 
 export default RootStackParamList

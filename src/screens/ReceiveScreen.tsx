@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { useState } from 'react'
-import { ScrollView } from 'react-native'
+import { ScrollView, Text } from 'react-native'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -73,9 +73,9 @@ const ReceiveScreen = () => {
         </CenteredScreenSection>
         <ScreenSection>
           <HighlightRow title="Address" isTopRounded hasBottomBorder>
-            <AddressText numberOfLines={1} ellipsizeMode="middle">
+            <Text numberOfLines={1} ellipsizeMode="middle">
               {toAddressHash}
-            </AddressText>
+            </Text>
           </HighlightRow>
           <HighlightRow title="Current estimated value" isBottomRounded>
             <AmountInFiat fiat={balance} fiatCurrency={currency} />

@@ -65,14 +65,10 @@ const TransactionScreen = ({
             <BoldText>Confirmed</BoldText>
           </HighlightRow>
           <HighlightRow title="From" hasBottomBorder>
-            <AddressContainer>
-              {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
-            </AddressContainer>
+            {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
           </HighlightRow>
           <HighlightRow title="To" hasBottomBorder>
-            <AddressContainer>
-              {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
-            </AddressContainer>
+            {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
           </HighlightRow>
           <HighlightRow title="Fee" isBottomRounded>
             <Amount
@@ -93,10 +89,6 @@ export default TransactionScreen
 
 const BoldText = styled(AppText)`
   font-weight: 600;
-`
-
-const AddressContainer = styled.View`
-  max-width: 200px;
 `
 
 const ScreenSectionRow = styled(ScreenSection)`

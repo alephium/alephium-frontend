@@ -40,6 +40,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   resetDisabledColor?: boolean
   IconComponent?: ReactNode
   renderValue?: RenderValueFunc<T>
+  error?: string
   style?: StyleProp<ViewStyle>
 }
 
@@ -56,6 +57,7 @@ function Input<T extends InputValue>({
   resetDisabledColor,
   IconComponent,
   renderValue,
+  error,
   ...props
 }: InputProps<T>) {
   const theme = useTheme()
@@ -114,6 +116,7 @@ function Input<T extends InputValue>({
           hide={showCustomValueRendering}
           {...props}
         />
+        {error && <Error>{error}</Error>}
       </InputContainer>
       {IconComponent}
     </HighlightRow>
@@ -159,4 +162,12 @@ const CustomRenderedValue = styled.View`
   left: 0;
   justify-content: center;
   height: 100%;
+`
+
+const Error = styled.Text`
+  color: ${({ theme }) => theme.global.alert};
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  font-size: 11px;
 `

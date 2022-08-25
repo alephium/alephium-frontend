@@ -120,4 +120,5 @@ const LeftContent = styled.View`
 
 const RightContent = styled.View`
   padding-left: ${INPUTS_PADDING}px;
+  max-width: 200px;
 `
