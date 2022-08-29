@@ -17,26 +17,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ChevronDown } from 'lucide-react-native'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Text } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import HighlightRow from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
-import Input, { InputProps } from './Input'
+import Input, { InputProps, InputValue } from './Input'
 
-export type SelectOption<T> = {
+export type SelectOption<T extends InputValue> = {
   value: T
-  label: string
+  label: ReactNode
 }
 
-interface SelectProps<T> extends Omit<InputProps, 'value'> {
+export interface SelectProps<T extends InputValue> extends Omit<InputProps<T>, 'value'> {
   options: SelectOption<T>[]
   value: T
   onValueChange: (value: T) => void
+  renderValue?: (value: T) => ReactNode
 }
 
-function Select<T>({ options, value, onValueChange, ...props }: SelectProps<T>) {
+function Select<T extends InputValue>({ options, onValueChange, ...props }: SelectProps<T>) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const theme = useTheme()
 
@@ -48,12 +49,9 @@ function Select<T>({ options, value, onValueChange, ...props }: SelectProps<T>) 
   const openModal = () => setIsModalOpen(true)
   const closeModal = () => setIsModalOpen(false)
 
-  const inputValue = value !== undefined ? `Group ${value}` : ''
-
   return (
     <>
       <Input
-        value={inputValue}
         editable={false}
         onPress={openModal}
         resetDisabledColor
@@ -61,9 +59,13 @@ function Select<T>({ options, value, onValueChange, ...props }: SelectProps<T>) 
         {...props}
       />
       <ModalWithBackdrop animationType="fade" visible={isModalOpen} closeModal={closeModal}>
-        {options.map(({ label, value }) => (
-          <Option onPress={() => handleOptionPress(value)} key={label}>
-            <Text>{label}</Text>
+        {options.map(({ label, value }, index) => (
+          <Option
+            onPress={() => handleOptionPress(value)}
+            key={value ?? 'none'}
+            hasBottomBorder={index !== options.length - 1}
+          >
+            {typeof label === 'string' ? <Text>{label}</Text> : label}
           </Option>
         ))}
       </ModalWithBackdrop>

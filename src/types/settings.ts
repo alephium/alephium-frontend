@@ -18,10 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ThemeType } from '../style/themes'
 
+export type Currency = 'CHF' | 'GBP' | 'EUR' | 'USD'
+
 export interface GeneralSettings {
   theme: ThemeType
   discreetMode: boolean
   passwordRequirement: boolean
+  currency: Currency
 }
 
 export interface NetworkSettings {

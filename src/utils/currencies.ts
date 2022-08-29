@@ -16,20 +16,33 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes } from '@alephium/sdk'
+import { Currency } from '../types/settings'
 
-const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
-
-export const formatFiatAmountForDisplay = (amount: number): string => {
-  if (amount <= 1000000) return addApostrophes(amount.toFixed(2))
-
-  const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : 4
-  const suffix = MONEY_SYMBOL[tier]
-  const scale = Math.pow(10, tier * 3)
-  const scaled = amount / scale
-
-  return scaled.toFixed(2) + suffix
+type CurrencyData = {
+  name: string
+  ticker: Currency
+  symbol: string
 }
 
-export const alphToFiat = (amount: bigint, price?: number): number =>
-  (price || 0) * parseFloat((amount / BigInt(1e18)).toString())
+export const currencies: Record<Currency, CurrencyData> = {
+  CHF: {
+    name: 'Swiss francs',
+    ticker: 'CHF',
+    symbol: 'CHF'
+  },
+  EUR: {
+    name: 'Euro',
+    ticker: 'EUR',
+    symbol: '€'
+  },
+  GBP: {
+    name: 'Great Britain Pound',
+    ticker: 'GBP',
+    symbol: '£'
+  },
+  USD: {
+    name: 'United States Dollar',
+    ticker: 'USD',
+    symbol: '$'
+  }
+}

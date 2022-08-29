@@ -32,6 +32,7 @@ import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '../screens/NewAddressScreen'
+import ReceiveScreen from '../screens/ReceiveScreen'
 import SettingsScreen from '../screens/SettingsScreen'
 import SplashScreen from '../screens/SplashScreen'
 import SwitchNetworkScreen from '../screens/SwitchNetworkScreen'
@@ -96,6 +97,7 @@ const RootStackNavigation = () => {
           options={{ headerShown: false }}
         />
         <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={bottomModalOptions} />
+        <RootStack.Screen name="ReceiveScreen" component={ReceiveScreen} options={bottomModalOptions} />
       </RootStack.Navigator>
     </NavigationContainer>
   )

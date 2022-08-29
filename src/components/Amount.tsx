@@ -21,6 +21,8 @@ import { StyleProp, Text, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
+import { Currency } from '../types/settings'
+import { currencies } from '../utils/currencies'
 import { formatFiatAmountForDisplay } from '../utils/numbers'
 
 interface AmountProps {
@@ -30,6 +32,7 @@ interface AmountProps {
   prefix?: string
   suffix?: string
   fiat?: number
+  fiatCurrency?: Currency
   showOnDiscreetMode?: boolean
   style?: StyleProp<ViewStyle>
 }
@@ -42,6 +45,7 @@ const Amount = ({
   prefix,
   suffix = '',
   showOnDiscreetMode = false,
+  fiatCurrency,
   fiat
 }: AmountProps) => {
   let integralPart = ''
@@ -69,7 +73,7 @@ const Amount = ({
     }
   }
 
-  const displaySuffix = moneySymbol + suffix ? ' ' + suffix : ''
+  const displaySuffix = moneySymbol + suffix ? ` ${suffix}` : fiatCurrency ? ` ${currencies[fiatCurrency].symbol}` : ''
 
   return (
     <Text style={style}>

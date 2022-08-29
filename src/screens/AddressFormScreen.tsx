@@ -72,6 +72,8 @@ const AddressForm = ({
     }
   }
 
+  const renderGroupValue = (group?: number) => (group !== undefined ? `Group ${group}` : undefined)
+
   return (
     <Screen>
       <ScrollView
@@ -107,6 +109,7 @@ const AddressForm = ({
                   onValueChange={setGroup}
                   isTopRounded
                   isBottomRounded
+                  renderValue={renderGroupValue}
                 />
               </ExpandableRow>
             </ScreenSection>

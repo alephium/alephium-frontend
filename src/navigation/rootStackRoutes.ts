@@ -49,6 +49,7 @@ type RootStackParamList = {
     isOut: boolean
     amount: bigint
   }
+  ReceiveScreen: undefined
 }
 
 export default RootStackParamList

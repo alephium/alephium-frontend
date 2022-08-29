@@ -25,13 +25,16 @@ import styled, { useTheme } from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
+import Select from '../components/inputs/Select'
 import Screen, { ScreenSection } from '../components/layout/Screen'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteWalletByName } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
-import { discreetModeChanged, passwordRequirementChanged, themeChanged } from '../store/settingsSlice'
+import { currencyChanged, discreetModeChanged, passwordRequirementChanged, themeChanged } from '../store/settingsSlice'
+import { Currency } from '../types/settings'
+import { currencies } from '../utils/currencies'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SettingsScreen'>
 
@@ -44,10 +47,17 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const currentTheme = useAppSelector((state) => state.settings.theme)
   const currentNetworkName = useAppSelector((state) => state.network.name)
   const currentWalletName = useAppSelector((state) => state.activeWallet.name)
+  const currentCurrency = useAppSelector((state) => state.settings.currency)
+
+  const currencyOptions = Object.values(currencies).map((currency) => ({
+    label: `${currency.name} (${currency.ticker})`,
+    value: currency.ticker
+  }))
 
   const handleDiscreetModeChange = (value: boolean) => dispatch(discreetModeChanged(value))
   const handlePasswordRequirementChange = (value: boolean) => dispatch(passwordRequirementChanged(value))
   const handleThemeChange = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
+  const handleCurrencyChange = (currency: Currency) => dispatch(currencyChanged(currency))
 
   const handleDeleteButtonPress = () => {
     Alert.alert(
@@ -78,9 +88,16 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
           <HighlightRow title="Require authentication" subtitle="For important actions" hasBottomBorder>
             <Toggle value={passwordRequirement} onValueChange={handlePasswordRequirementChange} />
           </HighlightRow>
-          <HighlightRow title="Use dark theme" subtitle="Try it, it's nice" isBottomRounded>
+          <HighlightRow title="Use dark theme" subtitle="Try it, it's nice" hasBottomBorder>
             <Toggle value={currentTheme === 'dark'} onValueChange={handleThemeChange} />
           </HighlightRow>
+          <Select
+            options={currencyOptions}
+            label="Currency"
+            value={currentCurrency}
+            onValueChange={handleCurrencyChange}
+            isBottomRounded
+          />
         </ScreenSection>
         <ScreenSection>
           <ScreenSectionTitle>Networks</ScreenSectionTitle>
