@@ -28,6 +28,7 @@ import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Select from '../components/inputs/Select'
 import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import Text from '../components/Text'
 import { useAppSelector } from '../hooks/redux'
 import { selectAllAddresses } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
@@ -111,7 +112,7 @@ const CenteredScreenSection = styled(ScreenSection)`
   align-items: center;
 `
 
-const AddressText = styled.Text`
+const AddressText = styled(Text)`
   max-width: 200px;
 `
 

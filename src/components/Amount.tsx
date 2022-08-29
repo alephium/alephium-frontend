@@ -17,13 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatAmountForDisplay } from '@alephium/sdk'
-import { StyleProp, Text, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { Currency } from '../types/settings'
 import { currencies } from '../utils/currencies'
 import { formatFiatAmountForDisplay } from '../utils/numbers'
+import Text from './Text'
 
 interface AmountProps {
   value?: bigint
@@ -97,7 +98,7 @@ const Amount = ({
   )
 }
 
-const Decimals = styled.Text`
+const Decimals = styled(Text)`
   color: ${({ theme }) => theme.font.secondary};
   font-weight: bold;
 `

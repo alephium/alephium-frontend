@@ -23,6 +23,7 @@ import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import HighlightRow from './HighlightRow'
+import Text from './Text'
 
 interface ExpandableRowProps {
   // TODO: Find a better way to measure the height of the collapsable section
@@ -67,7 +68,7 @@ export default styled(ExpandableRow)`
   padding-bottom: 0;
 `
 
-const Title = styled.Text`
+const Title = styled(Text)`
   font-weight: bold;
 `
 

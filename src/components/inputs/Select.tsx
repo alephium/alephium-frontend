@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
-import { Text } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import HighlightRow from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
+import Text from '../Text'
 import Input, { InputProps, InputValue } from './Input'
 
 export type SelectOption<T extends InputValue> = {

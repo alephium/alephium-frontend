@@ -22,6 +22,7 @@ import styled, { css, useTheme } from 'styled-components/native'
 import tinycolor from 'tinycolor2'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
+import Text from '../Text'
 
 export interface ButtonProps extends PressableProps {
   title?: string
@@ -116,7 +117,7 @@ export default styled(Button)`
         `};
 `
 
-const ButtonText = styled.Text`
+const ButtonText = styled(Text)`
   font-weight: bold;
 `
 

@@ -26,6 +26,7 @@ import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
+import Text from '../components/Text'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { getStoredWalletById, getWalletsMetadata } from '../storage/wallets'
@@ -126,7 +127,7 @@ const useSortedWallets = () => {
   return sortedWallets
 }
 
-const Subtitle = styled.Text`
+const Subtitle = styled(Text)`
   font-weight: 500;
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};

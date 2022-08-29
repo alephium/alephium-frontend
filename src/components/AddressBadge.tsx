@@ -21,6 +21,7 @@ import { StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { Address } from '../store/addressesSlice'
+import Text from './Text'
 
 interface AddressBadgeProps {
   address: Address | string
@@ -80,7 +81,7 @@ const Dot = styled.View<{ color?: string }>`
   background-color: ${({ color, theme }) => color || theme.font.primary};
 `
 
-const Label = styled.Text`
+const Label = styled(Text)`
   font-weight: 600;
   flex-shrink: 1;
 `

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon, Star as StarIcon } from 'lucide-react-native'
 import { useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
@@ -28,6 +28,7 @@ import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Screen, { ScreenSection } from '../components/layout/Screen'
 import QRCodeModal from '../components/QRCodeModal'
+import Text from '../components/Text'
 import TransactionsList from '../components/TransactionsList'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -144,16 +145,16 @@ const ButtonStyled = styled(Button)`
   margin-left: 20px;
 `
 
-const Label = styled.Text`
+const Label = styled(Text)`
   color: ${({ theme }) => theme.font.secondary};
 `
 
-const BadgeText = styled.Text`
+const BadgeText = styled(Text)`
   font-weight: 700;
   font-size: 18px;
 `
 
-const NumberOfTxs = styled.Text`
+const NumberOfTxs = styled(Text)`
   font-weight: 700;
 `
 

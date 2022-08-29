@@ -18,12 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Input, Output } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { DisplayTx } from '../types/transactions'
 import AddressBadge from './AddressBadge'
+import Text from './Text'
 
 interface IOListProps {
   isOut: boolean
@@ -62,6 +63,6 @@ const IOList = ({ isOut, tx }: IOListProps) => {
 
 export default IOList
 
-const BoldText = styled.Text`
+const BoldText = styled(Text)`
   font-weight: 600;
 `

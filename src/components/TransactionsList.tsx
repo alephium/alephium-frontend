@@ -16,9 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ActivityIndicator, StyleProp, Text, View, ViewStyle } from 'react-native'
+import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import Text from '../components/Text'
 import TransactionRow from '../components/TransactionRow'
 import { useAppSelector } from '../hooks/redux'
 import { selectConfirmedTransactions } from '../store/addressesSlice'
@@ -59,7 +60,7 @@ const TransactionsList = ({ addressHashes, style }: TransactionsListProps) => {
 
 export default TransactionsList
 
-const H2 = styled.Text`
+const H2 = styled(Text)`
   color: ${({ theme }) => theme.font.tertiary};
   font-weight: bold;
   font-size: 16px;

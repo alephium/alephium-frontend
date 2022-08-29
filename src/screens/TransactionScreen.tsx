@@ -28,6 +28,7 @@ import Amount from '../components/Amount'
 import HighlightRow from '../components/HighlightRow'
 import IOList from '../components/IOList'
 import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import Text from '../components/Text'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
@@ -90,7 +91,7 @@ const TransactionScreen = ({
 
 export default TransactionScreen
 
-const BoldText = styled.Text`
+const BoldText = styled(Text)`
   font-weight: 600;
 `
 
@@ -108,7 +109,7 @@ const ExplorerLink = styled.Pressable`
   flex-direction: row;
 `
 
-const ExplorerLinkText = styled.Text`
+const ExplorerLinkText = styled(Text)`
   color: ${({ theme }) => theme.global.accent};
   font-size: 16px;
   font-weight: 700;

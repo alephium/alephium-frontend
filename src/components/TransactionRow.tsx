@@ -29,6 +29,7 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 import { DisplayTx } from '../types/transactions'
 import Amount from './Amount'
 import HighlightRow from './HighlightRow'
+import Text from './Text'
 
 dayjs.extend(relativeTime)
 
@@ -75,7 +76,7 @@ export default memo(TransactionRow, (prevProps, nextProps) => {
   return prevProps.tx.hash === nextProps.tx.hash && prevProps.tx.address.hash === nextProps.tx.address.hash
 })
 
-const Item = styled.Text`
+const Item = styled(Text)`
   font-weight: bold;
 `
 

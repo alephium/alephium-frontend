@@ -17,12 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { memo, useState } from 'react'
-import { StyleProp, Text, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { labelColorPalette } from '../../utils/colors'
 import HighlightRow from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
+import Text from '../Text'
 
 interface ColorPickerProps {
   onChange: (color: string) => void
