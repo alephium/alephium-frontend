@@ -32,7 +32,7 @@ import { useAppSelector } from '../hooks/redux'
 import { selectAllAddresses } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard } from '../utils/addresses'
-import { alphToFiat } from '../utils/numbers'
+import { attoAlphToFiat } from '../utils/numbers'
 
 const ReceiveScreen = () => {
   const addressEntries = useAppSelector((state) => state.addresses.entities)
@@ -46,7 +46,7 @@ const ReceiveScreen = () => {
 
   if (!toAddress) return null
 
-  const balance = alphToFiat(BigInt(toAddress.networkData.details.balance), price)
+  const balance = attoAlphToFiat(BigInt(toAddress.networkData.details.balance), price)
   const addressesOptions = addresses.map((address) => ({
     value: address.hash,
     label: <AddressBadge address={address} />
