@@ -29,13 +29,13 @@ import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
 import useRefreshALPHPrice from './src/hooks/useRefreshALPHPrice'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { store } from './src/store/store'
-import { lightTheme } from './src/style/themes'
+import { themes } from './src/style/themes'
 
 const App = () => (
   <RootSiblingParent>
     <Provider store={store}>
       <Main>
-        <ThemeProvider theme={lightTheme}>
+        <ThemeProvider theme={themes[store.getState().settings.theme]}>
           <RootStackNavigation />
           <StatusBar style="dark" />
         </ThemeProvider>
