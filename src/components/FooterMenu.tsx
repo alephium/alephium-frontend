@@ -65,9 +65,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
   })
 
   const footerStyle = useAnimatedStyle(() => {
-    const translateY = withTiming(interpolate(translateYValue.value, scrollRange, translateRange), {
-      duration: 100
-    })
+    const translateY = interpolate(translateYValue.value, scrollRange, translateRange)
 
     return {
       transform: [{ translateY }]
