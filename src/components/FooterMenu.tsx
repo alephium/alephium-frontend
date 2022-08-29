@@ -48,7 +48,7 @@ const scrollRange = [0, 80]
 const translateRange = [0, topFooterPosition]
 
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
-  const { scrollY } = useInWalletLayoutContext()
+  const { scrollY, hasMomentum } = useInWalletLayoutContext()
 
   const lastScrollY = useSharedValue(0)
   const lastTranslateY = useSharedValue(0)
@@ -65,7 +65,17 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
   })
 
   const footerStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(translateYValue.value, scrollRange, translateRange)
+    let translateY = interpolate(translateYValue.value, scrollRange, translateRange)
+
+    if (scrollY.value === 0) {
+      translateY = withTiming(0, { duration: 100 })
+      lastTranslateY.value = 0
+    } else if (!hasMomentum.value) {
+      const tY = Math.round(translateYValue.value / translateRange[1]) * translateRange[1]
+      translateY = withTiming(tY, { duration: 100 })
+      lastScrollY.value = scrollY.value
+      lastTranslateY.value = tY
+    }
 
     return {
       transform: [{ translateY }]

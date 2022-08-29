@@ -24,16 +24,19 @@ import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
 interface InWalletLayoutContextProps {
   scrollY?: SharedValue<number>
+  hasMomentum?: SharedValue<boolean>
 }
 
 const InWalletLayoutContext = createContext<InWalletLayoutContextProps>({
-  scrollY: undefined
+  scrollY: undefined,
+  hasMomentum: undefined
 })
 
 export const InWalletLayoutContextProvider = ({ children }: { children: ReactNode }) => {
   const scrollY = useSharedValue(0)
+  const hasMomentum = useSharedValue(false)
 
-  return <InWalletLayoutContext.Provider value={{ scrollY }}>{children}</InWalletLayoutContext.Provider>
+  return <InWalletLayoutContext.Provider value={{ scrollY, hasMomentum }}>{children}</InWalletLayoutContext.Provider>
 }
 
 export const useInWalletLayoutContext = () => useContext(InWalletLayoutContext)
