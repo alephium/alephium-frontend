@@ -32,4 +32,4 @@ export const formatFiatAmountForDisplay = (amount: number): string => {
 }
 
 export const attoAlphToFiat = (attoAlphAmount: bigint, fiatPrice = 0): number =>
-  fiatPrice * (parseFloat(attoAlphAmount) / 1e18)
+  fiatPrice * (parseFloat(attoAlphAmount.toString()) / 1e18)
