@@ -48,7 +48,7 @@ const scrollRange = [0, 80]
 const translateRange = [0, topFooterPosition]
 
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
-  const { scrollY, hasMomentum } = useInWalletLayoutContext()
+  const { scrollY, isScrolling } = useInWalletLayoutContext()
 
   const lastScrollY = useSharedValue(0)
   const lastTranslateY = useSharedValue(0)
@@ -70,7 +70,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
     if (scrollY.value === 0) {
       translateY = withTiming(0, { duration: 100 })
       lastTranslateY.value = 0
-    } else if (!hasMomentum.value) {
+    } else if (!isScrolling.value) {
       const tY = Math.round(translateYValue.value / translateRange[1]) * translateRange[1]
       translateY = withTiming(tY, { duration: 100 })
       lastScrollY.value = scrollY.value
