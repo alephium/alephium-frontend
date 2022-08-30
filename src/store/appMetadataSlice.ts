@@ -24,11 +24,13 @@ const sliceName = 'appMetadata'
 export interface AppMetadataState {
   lastNavigationState?: NavigationState
   isAppBackgroundedAcknowledged: boolean
+  isAuthenticated: boolean
 }
 
 const initialState: AppMetadataState = {
   lastNavigationState: undefined,
-  isAppBackgroundedAcknowledged: true
+  isAppBackgroundedAcknowledged: true,
+  isAuthenticated: false
 }
 
 const appMetadataSlice = createSlice({
@@ -42,10 +44,14 @@ const appMetadataSlice = createSlice({
     appBackgroundedAcknowledged: (state, action: PayloadAction<AppMetadataState['isAppBackgroundedAcknowledged']>) => ({
       ...state,
       isAppBackgroundedAcknowledged: action.payload
+    }),
+    authenticated: (state, action: PayloadAction<AppMetadataState['isAuthenticated']>) => ({
+      ...state,
+      isAuthenticated: action.payload
     })
   }
 })
 
-export const { appBackgroundedAcknowledged, routeChanged } = appMetadataSlice.actions
+export const { appBackgroundedAcknowledged, authenticated, routeChanged } = appMetadataSlice.actions
 
 export default appMetadataSlice

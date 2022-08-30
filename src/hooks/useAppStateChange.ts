@@ -22,7 +22,7 @@ import { Alert, AppState, AppStateStatus } from 'react-native'
 import { navigateRootStack } from '../navigation/RootStackNavigation'
 import { areThereOtherWallets, getStoredActiveWallet } from '../storage/wallets'
 import { activeWalletChanged, walletFlushed } from '../store/activeWalletSlice'
-import { appBackgroundedAcknowledged } from '../store/appMetadataSlice'
+import { appBackgroundedAcknowledged, authenticated } from '../store/appMetadataSlice'
 import { pinFlushed } from '../store/credentialsSlice'
 import { useAppDispatch, useAppSelector } from './redux'
 
@@ -68,6 +68,7 @@ export const useAppStateChange = () => {
       if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
         dispatch(pinFlushed())
         dispatch(walletFlushed())
+        dispatch(authenticated(false))
         dispatch(appBackgroundedAcknowledged(false))
       } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
         navigateRootStack('SplashScreen')
