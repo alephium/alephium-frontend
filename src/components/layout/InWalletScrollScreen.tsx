@@ -28,18 +28,25 @@ interface ScreenProps {
 }
 
 const InWalletScrollScreen = ({ style, children }: ScreenProps) => {
-  const { scrollY } = useInWalletLayoutContext()
+  const { scrollY, isScrolling } = useInWalletLayoutContext()
 
   const handleScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       if (scrollY) scrollY.value = e.nativeEvent.contentOffset.y
+      if (isScrolling !== undefined) isScrolling.value = true
     },
-    [scrollY]
+    [scrollY, isScrolling]
   )
+
+  const handleScrollEndDrag = useCallback(() => {
+    if (isScrolling !== undefined) isScrolling.value = false
+  }, [isScrolling])
 
   return (
     <Screen style={style}>
-      <ScrollView onScroll={handleScroll}>{children}</ScrollView>
+      <ScrollView onScroll={handleScroll} onScrollEndDrag={handleScrollEndDrag}>
+        {children}
+      </ScrollView>
     </Screen>
   )
 }
