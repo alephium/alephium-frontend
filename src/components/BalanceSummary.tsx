@@ -21,7 +21,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { selectAllAddresses } from '../store/addressesSlice'
-import { alphToFiat } from '../utils/numbers'
+import { attoAlphToFiat } from '../utils/numbers'
 import Amount from './Amount'
 
 interface BalanceSummaryProps {
@@ -36,7 +36,7 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
   const theme = useTheme()
 
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
-  const balance = alphToFiat(totalBalance, price.value)
+  const balance = attoAlphToFiat(totalBalance, price.value)
   const showActivityIndicator = price.status === 'uninitialized' || addressDataStatus === 'uninitialized'
 
   return (

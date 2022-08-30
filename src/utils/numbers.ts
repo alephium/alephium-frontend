@@ -31,5 +31,5 @@ export const formatFiatAmountForDisplay = (amount: number): string => {
   return scaled.toFixed(2) + suffix
 }
 
-export const alphToFiat = (amount: bigint, price?: number): number =>
-  (price || 0) * parseFloat((amount / BigInt(1e18)).toString())
+export const attoAlphToFiat = (attoAlphAmount: bigint, fiatPrice = 0): number =>
+  fiatPrice * (parseFloat(attoAlphAmount.toString()) / 1e18)
