@@ -31,6 +31,7 @@ import CenteredInstructions, { Instruction } from '../components/text/CenteredIn
 import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
+import { appBackgroundedAcknowledged } from '../store/appMetadataSlice'
 import { pinEntered } from '../store/credentialsSlice'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 
@@ -71,9 +72,10 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
         mnemonic: wallet.mnemonic
       })
     )
-    navigation.navigate('InWalletScreen')
+
     setPinCode('')
-  }, [dispatch, pinCode, storedActiveEncryptedWallet, navigation])
+    dispatch(appBackgroundedAcknowledged(true))
+  }, [dispatch, pinCode, storedActiveEncryptedWallet])
 
   useEffect(() => {
     if (!pinFullyEntered) return
