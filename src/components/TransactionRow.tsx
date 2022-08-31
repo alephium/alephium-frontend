@@ -28,8 +28,8 @@ import Arrow from '../images/Arrow'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { DisplayTx } from '../types/transactions'
 import Amount from './Amount'
-import HighlightRow from './HighlightRow'
 import AppText from './AppText'
+import HighlightRow from './HighlightRow'
 
 dayjs.extend(relativeTime)
 

@@ -24,8 +24,8 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import Button from './buttons/Button'
 import AppText from './AppText'
+import Button from './buttons/Button'
 
 interface WalletSwitchProps {
   style?: StyleProp<ViewStyle>

@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components/native'
 
-import HighlightRow, { HighlightRowProps } from './HighlightRow'
 import AppText from './AppText'
+import HighlightRow, { HighlightRowProps } from './HighlightRow'
 
 interface RadioButtonRowProps extends Omit<HighlightRowProps, 'children'> {
   title: string

@@ -22,8 +22,8 @@ import { StyleProp, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import HighlightRow from './HighlightRow'
 import AppText from './AppText'
+import HighlightRow from './HighlightRow'
 
 interface ExpandableRowProps {
   // TODO: Find a better way to measure the height of the collapsable section

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Star as StarIcon } from 'lucide-react-native'
-import { StyleProp, AppTextStyle, View, ViewStyle } from 'react-native'
+import { AppTextStyle, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { Address } from '../store/addressesSlice'
