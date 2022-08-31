@@ -19,7 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import Animated, { interpolate, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withTiming
+} from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import { useInWalletLayoutContext } from '../contexts/InWalletLayoutContext'
