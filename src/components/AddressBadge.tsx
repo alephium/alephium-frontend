@@ -17,16 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Star as StarIcon } from 'lucide-react-native'
-import { StyleProp, TextStyle, View, ViewStyle } from 'react-native'
+import { StyleProp, AppTextStyle, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { Address } from '../store/addressesSlice'
-import Text from './Text'
+import AppText from './AppText'
 
 interface AddressBadgeProps {
   address: Address | string
   hideSymbol?: boolean
-  textStyle?: StyleProp<TextStyle>
+  textStyle?: StyleProp<AppTextStyle>
   style?: StyleProp<ViewStyle>
 }
 
@@ -81,7 +81,7 @@ const Dot = styled.View<{ color?: string }>`
   background-color: ${({ color, theme }) => color || theme.font.primary};
 `
 
-const Label = styled(Text)`
+const Label = styled(AppText)`
   font-weight: 600;
   flex-shrink: 1;
 `

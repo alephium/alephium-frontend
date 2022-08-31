@@ -24,7 +24,7 @@ import { useAppSelector } from '../hooks/redux'
 import { Currency } from '../types/settings'
 import { currencies } from '../utils/currencies'
 import { formatFiatAmountForDisplay } from '../utils/numbers'
-import Text from './Text'
+import AppText from './AppText'
 
 interface AmountProps {
   value?: bigint
@@ -77,16 +77,16 @@ const Amount = ({
   const displaySuffix = moneySymbol + suffix ? ` ${suffix}` : fiatCurrency ? ` ${currencies[fiatCurrency].symbol}` : ''
 
   return (
-    <Text style={style}>
+    <AppText style={style}>
       {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
         fadeDecimals ? (
           <>
-            {prefix && <Text>{prefix}</Text>}
-            <Text>{integralPart}</Text>
+            {prefix && <AppText>{prefix}</AppText>}
+            <AppText>{integralPart}</AppText>
             <Decimals>.{fractionalPart}</Decimals>
-            {displaySuffix && <Text>{displaySuffix}</Text>}
+            {displaySuffix && <AppText>{displaySuffix}</AppText>}
           </>
         ) : (
           `${integralPart}.${fractionalPart}${displaySuffix}`
@@ -94,11 +94,11 @@ const Amount = ({
       ) : (
         '-'
       )}
-    </Text>
+    </AppText>
   )
 }
 
-const Decimals = styled(Text)`
+const Decimals = styled(AppText)`
   color: ${({ theme }) => theme.font.secondary};
   font-weight: bold;
 `

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import styled from 'styled-components/native'
 
 import HighlightRow, { HighlightRowProps } from './HighlightRow'
-import Text from './Text'
+import AppText from './AppText'
 
 interface RadioButtonRowProps extends Omit<HighlightRowProps, 'children'> {
   title: string
@@ -61,7 +61,7 @@ const RowContents = styled.View`
   flex-direction: row;
 `
 
-const Title = styled(Text)`
+const Title = styled(AppText)`
   font-weight: 500;
   font-size: 14px;
 `

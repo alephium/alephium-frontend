@@ -24,7 +24,7 @@ import styled from 'styled-components/native'
 import { useAppSelector } from '../hooks/redux'
 import { DisplayTx } from '../types/transactions'
 import AddressBadge from './AddressBadge'
-import Text from './Text'
+import AppText from './AppText'
 
 interface IOListProps {
   isOut: boolean
@@ -63,6 +63,6 @@ const IOList = ({ isOut, tx }: IOListProps) => {
 
 export default IOList
 
-const BoldText = styled(Text)`
+const BoldText = styled(AppText)`
   font-weight: 600;
 `

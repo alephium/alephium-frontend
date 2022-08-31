@@ -21,7 +21,7 @@ import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import { BORDER_RADIUS, INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
-import Text from './Text'
+import AppText from './AppText'
 
 export interface BorderOptions {
   isTopRounded?: boolean
@@ -43,7 +43,7 @@ const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRo
   const componentContent = title ? (
     <>
       <LeftContent>
-        <Text>{title}</Text>
+        <AppText>{title}</AppText>
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
       </LeftContent>
       <RightContent>{children}</RightContent>
