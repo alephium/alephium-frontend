@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
-import tinycolor from 'tinycolor2'
 
 interface BadgeProps {
   children: ReactNode
@@ -50,12 +50,12 @@ export default styled(Badge)`
 
       ${border &&
       css`
-        border: 1px solid ${tinycolor(usedColor).setAlpha(0.2).toString()};
+        border: 1px solid ${colord(usedColor).alpha(0.2).toHex()};
       `};
 
       ${!light &&
       css`
-        background-color: ${tinycolor(usedColor).setAlpha(0.08).toString()};
+        background-color: ${colord(usedColor).alpha(0.08).toHex()};
       `}
 
       ${light &&
