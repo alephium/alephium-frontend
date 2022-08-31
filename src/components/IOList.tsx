@@ -51,7 +51,7 @@ const IOList = ({ isOut, tx }: IOListProps) => {
     return (
       <View>
         <AddressBadge address={addressWithMetadata ?? addressHash} />
-        {extraAddressesText && <Text>{extraAddressesText}</Text>}
+        {extraAddressesText && <AppText>{extraAddressesText}</AppText>}
       </View>
     )
   } else if (tx.timestamp === genesisTimestamp) {

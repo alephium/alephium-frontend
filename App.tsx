@@ -38,7 +38,7 @@ const App = () => {
     return store.subscribe(() => {
       setTheme(themes[store.getState().settings.theme])
     })
-  }, [store])
+  }, [])
 
   return (
     <RootSiblingParent>

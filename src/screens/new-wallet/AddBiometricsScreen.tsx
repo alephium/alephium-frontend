@@ -24,10 +24,10 @@ import styled from 'styled-components/native'
 
 import animationSrc from '../../animations/fingerprint.json'
 import walletAnimationSrc from '../../animations/wallet.json'
+import AppText from '../../components/AppText'
 import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
-import Text from '../../components/Text'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
@@ -85,7 +85,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
         {loading ? (
           <>
             <StyledAnimation source={walletAnimationSrc} autoPlay speed={1.5} />
-            <Text>Creating your wallet...</Text>
+            <AppText>Creating your wallet...</AppText>
           </>
         ) : (
           <StyledAnimation source={animationSrc} autoPlay speed={1.5} />

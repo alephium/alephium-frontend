@@ -23,11 +23,11 @@ import { Alert } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Select from '../components/inputs/Select'
 import Screen, { ScreenSection } from '../components/layout/Screen'
-import Text from '../components/Text'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -133,7 +133,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
 
 export default SettingsScreen
 
-const ScreenSectionTitle = styled(Text)`
+const ScreenSectionTitle = styled(AppText)`
   font-size: 16px;
   font-weight: 600;
   color: ${({ theme }) => theme.font.tertiary};
@@ -141,7 +141,7 @@ const ScreenSectionTitle = styled(Text)`
   margin-bottom: 24px;
 `
 
-const CurrentNetwork = styled(Text)`
+const CurrentNetwork = styled(AppText)`
   font-weight: bold;
 `
 

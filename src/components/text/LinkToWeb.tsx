@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Linking, StyleProp, TextStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import Text from '../Text'
+import AppText from '../AppText'
 
 interface LinkToWebProps {
   text: string
@@ -36,9 +36,9 @@ const LinkToWeb = ({ text, url, style }: LinkToWebProps) => {
   }
 
   return (
-    <Text onPress={handleLinkPress} style={style}>
+    <AppText onPress={handleLinkPress} style={style}>
       {text}
-    </Text>
+    </AppText>
   )
 }
 

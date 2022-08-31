@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import Text from '../components/Text'
+import AppText from '../components/AppText'
 import TransactionRow from '../components/TransactionRow'
 import { useAppSelector } from '../hooks/redux'
 import { selectConfirmedTransactions } from '../store/addressesSlice'
@@ -52,7 +52,7 @@ const TransactionsList = ({ addressHashes, style }: TransactionsListProps) => {
           ))}
         </View>
       ) : (
-        <Text>No transactions</Text>
+        <AppText>No transactions</AppText>
       )}
     </View>
   )
@@ -60,7 +60,7 @@ const TransactionsList = ({ addressHashes, style }: TransactionsListProps) => {
 
 export default TransactionsList
 
-const H2 = styled(Text)`
+const H2 = styled(AppText)`
   color: ${({ theme }) => theme.font.tertiary};
   font-weight: bold;
   font-size: 16px;

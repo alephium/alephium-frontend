@@ -20,7 +20,7 @@ import { SafeAreaView } from 'react-native'
 import { SafeAreaViewProps } from 'react-navigation'
 import styled, { css } from 'styled-components/native'
 
-import Text from '../Text'
+import AppText from '../AppText'
 
 const Screen = ({ children, style }: SafeAreaViewProps) => <SafeAreaView style={style}>{children}</SafeAreaView>
 
@@ -39,7 +39,7 @@ export const ScreenSection = styled.View<{ fill?: boolean }>`
     `}
 `
 
-export const BottomModalScreenTitle = styled(Text)`
+export const BottomModalScreenTitle = styled(AppText)`
   font-weight: 600;
   font-size: 26px;
 `

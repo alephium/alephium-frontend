@@ -24,9 +24,9 @@ import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components/native'
 
 import animationSrc from '../animations/wallet.json'
+import AppText from '../components/AppText'
 import PinCodeInput from '../components/inputs/PinCodeInput'
 import Screen from '../components/layout/Screen'
-import Text from '../components/Text'
 import CenteredInstructions, { Instruction } from '../components/text/CenteredInstructions'
 import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -100,7 +100,7 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
       ) : (
         <Centered>
           <StyledAnimation source={animationSrc} autoPlay />
-          <Text>Unlocking your wallet...</Text>
+          <AppText>Unlocking your wallet...</AppText>
         </Centered>
       )}
     </Screen>

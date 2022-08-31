@@ -22,10 +22,10 @@ import { MotiView } from 'moti'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
 import Screen from '../components/layout/Screen'
-import Text from '../components/Text'
 import { useAppDispatch } from '../hooks/redux'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -110,12 +110,12 @@ const TitleContainer = styled.View`
   align-items: center;
 `
 
-const TitleFirstLine = styled(Text)`
+const TitleFirstLine = styled(AppText)`
   font-size: 18px;
   color: ${({ theme }) => theme.font.contrast};
 `
 
-const TitleSecondLine = styled(Text)`
+const TitleSecondLine = styled(AppText)`
   font-size: 18px;
   font-weight: bold;
   color: ${({ theme }) => theme.font.contrast};

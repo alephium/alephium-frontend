@@ -98,11 +98,11 @@ const Amount = ({
   )
 }
 
-const Decimals = styled(AppText)`
-  color: ${({ theme }) => theme.font.secondary};
+export default styled(Amount)`
   font-weight: bold;
 `
 
-export default styled(Amount)`
+const Decimals = styled(AppText)`
+  color: ${({ theme }) => theme.font.secondary};
   font-weight: bold;
 `

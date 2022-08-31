@@ -23,7 +23,7 @@ import styled from 'styled-components/native'
 
 import { useInWalletLayoutContext } from '../../contexts/InWalletLayoutContext'
 import useHeaderScrollStyle from '../../hooks/layout/useHeaderScrollStyle'
-import Text from '../Text'
+import AppText from '../AppText'
 
 interface DefaultHeaderProps {
   HeaderLeft: Omit<ReactNode, 'null' | 'undefined'>
@@ -52,7 +52,7 @@ export default styled(DefaultHeader)`
   padding: 40px 20px 10px 20px;
 `
 
-const Title = styled(Text)`
+const Title = styled(AppText)`
   font-size: 26px;
   font-weight: 600;
   color: ${({ theme }) => theme.font.primary};

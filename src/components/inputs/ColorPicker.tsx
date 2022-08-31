@@ -21,9 +21,9 @@ import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { labelColorPalette } from '../../utils/colors'
+import AppText from '../AppText'
 import HighlightRow from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
-import Text from '../Text'
 
 interface ColorPickerProps {
   onChange: (color: string) => void
@@ -42,7 +42,7 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
   return (
     <>
       <HighlightRow isInput style={style} onPress={() => setIsModalVisible(!isModalVisible)}>
-        <Text>Color</Text>
+        <AppText>Color</AppText>
         <Dot color={value} />
       </HighlightRow>
       <ModalWithBackdrop animationType="fade" visible={isModalVisible} closeModal={() => setIsModalVisible(false)}>

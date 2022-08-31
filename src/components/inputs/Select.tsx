@@ -20,9 +20,9 @@ import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from '../AppText'
 import HighlightRow from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
-import Text from '../Text'
 import Input, { InputProps, InputValue } from './Input'
 
 export type SelectOption<T extends InputValue> = {
@@ -65,7 +65,7 @@ function Select<T extends InputValue>({ options, onValueChange, ...props }: Sele
             key={value ?? 'none'}
             hasBottomBorder={index !== options.length - 1}
           >
-            {typeof label === 'string' ? <Text>{label}</Text> : label}
+            {typeof label === 'string' ? <AppText>{label}</AppText> : label}
           </Option>
         ))}
       </ModalWithBackdrop>
