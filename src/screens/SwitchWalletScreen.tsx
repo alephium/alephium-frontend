@@ -31,6 +31,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { getStoredWalletById, getWalletsMetadata } from '../storage/wallets'
 import { activeWalletChanged } from '../store/activeWalletSlice'
+import { authenticated } from '../store/appMetadataSlice'
 import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
 import { WalletMetadata } from '../types/wallet'
 
@@ -55,8 +56,10 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
       if (!storedWallet) return
 
       if (storedWallet.authType === 'pin') {
+        dispatch(authenticated(false))
         navigation.navigate('LoginScreen', { storedWallet })
       } else if (storedWallet.authType === 'biometrics') {
+        dispatch(authenticated(false))
         dispatch(activeWalletChanged(storedWallet))
         navigation.navigate('InWalletScreen')
       } else {
