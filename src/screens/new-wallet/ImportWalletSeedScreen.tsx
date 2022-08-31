@@ -108,6 +108,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   )
 }
 
+export default ImportWalletSeedScreen
+
 const InputContainer = styled.View`
   flex: 1;
   justify-content: center;
@@ -123,5 +125,3 @@ const ActionsContainer = styled.View`
   justify-content: center;
   align-items: center;
 `
-
-export default ImportWalletSeedScreen

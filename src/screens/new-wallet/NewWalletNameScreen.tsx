@@ -110,6 +110,8 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   )
 }
 
+export default NewWalletNameScreen
+
 const InputContainer = styled.View`
   flex: 1;
   justify-content: center;
@@ -135,5 +137,3 @@ const Centered = styled.View`
   justify-content: center;
   align-items: center;
 `
-
-export default NewWalletNameScreen

@@ -124,6 +124,8 @@ const AddressScreen = ({
   )
 }
 
+export default AddressScreen
+
 const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -158,5 +160,3 @@ const NumberOfTxs = styled.Text`
 const BadgeStyled = styled(Badge)`
   flex-shrink: 1;
 `
-
-export default AddressScreen

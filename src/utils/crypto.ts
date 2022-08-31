@@ -27,9 +27,7 @@ export const pbkdf2 = async (password: string, salt: Buffer): Promise<Buffer> =>
 }
 
 // Directly from bip39 package
-function salt(password: string) {
-  return 'mnemonic' + (password || '')
-}
+const salt = (password: string) => 'mnemonic' + (password || '')
 
 // Derived from bip39 package
 export const mnemonicToSeed = async (mnemonic: string, passphrase?: string): Promise<Buffer> => {

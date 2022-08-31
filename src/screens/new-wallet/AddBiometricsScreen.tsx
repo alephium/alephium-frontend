@@ -106,6 +106,8 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   )
 }
 
+export default AddBiometricsScreen
+
 const AnimationContainer = styled.View`
   flex: 1;
   justify-content: center;
@@ -121,5 +123,3 @@ const ActionsContainer = styled.View`
   justify-content: center;
   align-items: center;
 `
-
-export default AddBiometricsScreen

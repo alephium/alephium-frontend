@@ -47,6 +47,8 @@ const NewWalletSuccessPage = ({ navigation }: ScreenProps) => (
   </Screen>
 )
 
+export default NewWalletSuccessPage
+
 const AnimationContainer = styled.View`
   flex: 1;
   justify-content: center;
@@ -68,5 +70,3 @@ const ActionsContainer = styled.View`
   justify-content: center;
   align-items: center;
 `
-
-export default NewWalletSuccessPage
