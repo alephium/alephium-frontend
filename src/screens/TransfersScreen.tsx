@@ -27,10 +27,11 @@ import { ScreenSection } from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
+import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
-type ScreenProps = StackScreenProps<InWalletTabsParamList, 'TransfersScreen'>
+type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
   const theme = useTheme()

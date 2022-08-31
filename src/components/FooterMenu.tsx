@@ -67,13 +67,13 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
   const footerStyle = useAnimatedStyle(() => {
     let translateY = interpolate(translateYValue.value, scrollRange, translateRange)
 
-    if (scrollY.value === 0) {
+    if (scrollY?.value === 0) {
       translateY = withTiming(0, { duration: 100 })
       lastTranslateY.value = 0
-    } else if (!isScrolling.value) {
+    } else if (!isScrolling?.value) {
       const tY = Math.round(translateYValue.value / translateRange[1]) * translateRange[1]
       translateY = withTiming(tY, { duration: 100 })
-      lastScrollY.value = scrollY.value
+      lastScrollY.value = scrollY?.value ?? lastScrollY?.value ?? 0
       lastTranslateY.value = tY
     }
 
