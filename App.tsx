@@ -17,10 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StatusBar } from 'expo-status-bar'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { Provider } from 'react-redux'
-import { ThemeProvider } from 'styled-components/native'
+import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import { useAppStateChange } from './src/hooks/useAppStateChange'
 import useInitializeClient from './src/hooks/useInitializeClient'
@@ -31,18 +31,28 @@ import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { store } from './src/store/store'
 import { themes } from './src/style/themes'
 
-const App = () => (
-  <RootSiblingParent>
-    <Provider store={store}>
-      <Main>
-        <ThemeProvider theme={themes[store.getState().settings.theme]}>
-          <RootStackNavigation />
-          <StatusBar style="dark" />
-        </ThemeProvider>
-      </Main>
-    </Provider>
-  </RootSiblingParent>
-)
+const App = () => {
+  const [theme, setTheme] = useState<DefaultTheme>(themes.light)
+
+  useEffect(() => {
+    return store.subscribe(() => {
+      setTheme(themes[store.getState().settings.theme])
+    })
+  }, [store])
+
+  return (
+    <RootSiblingParent>
+      <Provider store={store}>
+        <Main>
+          <ThemeProvider theme={theme}>
+            <RootStackNavigation />
+            <StatusBar style="dark" />
+          </ThemeProvider>
+        </Main>
+      </Provider>
+    </RootSiblingParent>
+  )
+}
 
 const Main = ({ children }: { children: ReactNode }) => {
   useInitializeClient()
