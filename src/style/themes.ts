@@ -95,3 +95,8 @@ export const darkTheme: DefaultTheme = {
     cyan: '#49D2ED'
   }
 }
+
+export const themes = {
+  light: lightTheme,
+  dark: darkTheme
+}

@@ -22,6 +22,7 @@ import { StyleProp, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from './AppText'
 import HighlightRow from './HighlightRow'
 
 interface ExpandableRowProps {
@@ -67,7 +68,7 @@ export default styled(ExpandableRow)`
   padding-bottom: 0;
 `
 
-const Title = styled.Text`
+const Title = styled(AppText)`
   font-weight: bold;
 `
 

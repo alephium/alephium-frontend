@@ -22,6 +22,7 @@ import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
+import AppText from '../AppText'
 
 export interface ButtonProps extends PressableProps {
   title?: string
@@ -116,7 +117,7 @@ export default styled(Button)`
         `};
 `
 
-const ButtonText = styled.Text`
+const ButtonText = styled(AppText)`
   font-weight: bold;
 `
 

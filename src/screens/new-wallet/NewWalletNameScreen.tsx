@@ -20,10 +20,10 @@ import { walletGenerateAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import { useState } from 'react'
-import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import animationSrc from '../../animations/wallet.json'
+import AppText from '../../components/AppText'
 import Button from '../../components/buttons/Button'
 import Input from '../../components/inputs/Input'
 import Screen from '../../components/layout/Screen'
@@ -103,7 +103,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
       ) : (
         <Centered>
           <StyledAnimation source={animationSrc} autoPlay />
-          <Text>Creating your wallet...</Text>
+          <AppText>Creating your wallet...</AppText>
         </Centered>
       )}
     </Screen>

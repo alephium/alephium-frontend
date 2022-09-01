@@ -17,13 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatAmountForDisplay } from '@alephium/sdk'
-import { StyleProp, Text, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { Currency } from '../types/settings'
 import { currencies } from '../utils/currencies'
 import { formatFiatAmountForDisplay } from '../utils/numbers'
+import AppText from './AppText'
 
 interface AmountProps {
   value?: bigint
@@ -76,16 +77,16 @@ const Amount = ({
   const displaySuffix = moneySymbol + suffix ? ` ${suffix}` : fiatCurrency ? ` ${currencies[fiatCurrency].symbol}` : ''
 
   return (
-    <Text style={style}>
+    <AppText style={style}>
       {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
         fadeDecimals ? (
           <>
-            {prefix && <Text>{prefix}</Text>}
-            <Text>{integralPart}</Text>
+            {prefix && <AppText>{prefix}</AppText>}
+            <AppText>{integralPart}</AppText>
             <Decimals>.{fractionalPart}</Decimals>
-            {displaySuffix && <Text>{displaySuffix}</Text>}
+            {displaySuffix && <AppText>{displaySuffix}</AppText>}
           </>
         ) : (
           `${integralPart}.${fractionalPart}${displaySuffix}`
@@ -93,15 +94,15 @@ const Amount = ({
       ) : (
         '-'
       )}
-    </Text>
+    </AppText>
   )
 }
 
-const Decimals = styled.Text`
-  color: ${({ theme }) => theme.font.secondary};
+export default styled(Amount)`
   font-weight: bold;
 `
 
-export default styled(Amount)`
+const Decimals = styled(AppText)`
+  color: ${({ theme }) => theme.font.secondary};
   font-weight: bold;
 `

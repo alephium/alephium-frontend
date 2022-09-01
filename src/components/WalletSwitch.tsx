@@ -24,6 +24,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
+import AppText from './AppText'
 import Button from './buttons/Button'
 
 interface WalletSwitchProps {
@@ -52,6 +53,6 @@ export default memo(styled(WalletSwitch)`
   height: 40px;
 `)
 
-const WalletName = styled.Text`
+const WalletName = styled(AppText)`
   font-weight: 700;
 `

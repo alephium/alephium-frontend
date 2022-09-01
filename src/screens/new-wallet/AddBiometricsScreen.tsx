@@ -20,11 +20,11 @@ import { walletGenerateAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import { useState } from 'react'
-import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import animationSrc from '../../animations/fingerprint.json'
 import walletAnimationSrc from '../../animations/wallet.json'
+import AppText from '../../components/AppText'
 import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
@@ -85,7 +85,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
         {loading ? (
           <>
             <StyledAnimation source={walletAnimationSrc} autoPlay speed={1.5} />
-            <Text>Creating your wallet...</Text>
+            <AppText>Creating your wallet...</AppText>
           </>
         ) : (
           <StyledAnimation source={animationSrc} autoPlay speed={1.5} />

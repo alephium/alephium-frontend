@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
@@ -126,7 +127,7 @@ const useSortedWallets = () => {
   return sortedWallets
 }
 
-const Subtitle = styled.Text`
+const Subtitle = styled(AppText)`
   font-weight: 500;
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
