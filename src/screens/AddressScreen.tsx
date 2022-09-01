@@ -19,10 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon, Star as StarIcon } from 'lucide-react-native'
 import { useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
+import AppText from '../components/AppText'
 import Badge from '../components/Badge'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
@@ -88,7 +89,7 @@ const AddressScreen = ({
             <HighlightRow isTopRounded hasBottomBorder>
               <Label>Address</Label>
               <View>
-                <Text>{address.hash.substring(0, 20)}...</Text>
+                <AppText>{address.hash.substring(0, 20)}...</AppText>
               </View>
             </HighlightRow>
             <HighlightRow hasBottomBorder>
@@ -124,6 +125,8 @@ const AddressScreen = ({
   )
 }
 
+export default AddressScreen
+
 const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -142,21 +145,19 @@ const ButtonStyled = styled(Button)`
   margin-left: 20px;
 `
 
-const Label = styled.Text`
+const Label = styled(AppText)`
   color: ${({ theme }) => theme.font.secondary};
 `
 
-const BadgeText = styled.Text`
+const BadgeText = styled(AppText)`
   font-weight: 700;
   font-size: 18px;
 `
 
-const NumberOfTxs = styled.Text`
+const NumberOfTxs = styled(AppText)`
   font-weight: 700;
 `
 
 const BadgeStyled = styled(Badge)`
   flex-shrink: 1;
 `
-
-export default AddressScreen

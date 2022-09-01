@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { colord } from 'colord'
 import { Pencil as PencilIcon } from 'lucide-react-native'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
-import tinycolor from 'tinycolor2'
 
 import { useAppSelector } from '../hooks/redux'
+import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import AddressBadge from './AddressBadge'
@@ -35,13 +36,13 @@ interface AddressCardProps {
 
 const AddressCard = ({ style, addressHash }: AddressCardProps) => {
   const theme = useTheme()
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
 
   if (!address) return null
 
   const bgColor = address.settings.color ?? theme.bg.highlight
-  const textColor = tinycolor(bgColor).isDark() ? theme.font.contrast : theme.font.primary
+  const textColor = colord(bgColor).isDark() ? theme.font.contrast : theme.font.primary
 
   return (
     <Pressable

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calAmountDelta } from '@alephium/sdk'
-import { useNavigation } from '@react-navigation/native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
@@ -25,8 +25,10 @@ import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Arrow from '../images/Arrow'
+import RootStackParamList from '../navigation/rootStackRoutes'
 import { DisplayTx } from '../types/transactions'
 import Amount from './Amount'
+import AppText from './AppText'
 import HighlightRow from './HighlightRow'
 
 dayjs.extend(relativeTime)
@@ -40,7 +42,7 @@ interface TransactionRowProps {
 
 const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => {
   const theme = useTheme()
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   let amount = calAmountDelta(tx, tx.address.hash)
   const isOut = amount < 0
@@ -74,7 +76,7 @@ export default memo(TransactionRow, (prevProps, nextProps) => {
   return prevProps.tx.hash === nextProps.tx.hash && prevProps.tx.address.hash === nextProps.tx.address.hash
 })
 
-const Item = styled.Text`
+const Item = styled(AppText)`
   font-weight: bold;
 `
 

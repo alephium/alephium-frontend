@@ -16,32 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Linking, StyleProp, TextStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '../AppText'
-
-interface LinkToWebProps {
-  text: string
-  url: string
-  style?: StyleProp<TextStyle>
-}
-
-const LinkToWeb = ({ text, url, style }: LinkToWebProps) => {
-  const handleLinkPress = () => {
-    Linking.openURL(url).catch((err) => {
-      console.error('Failed to open web page: ', err)
-      alert('Failed to open page')
-    })
-  }
-
-  return (
-    <AppText onPress={handleLinkPress} style={style}>
-      {text}
-    </AppText>
-  )
-}
-
-export default styled(LinkToWeb)`
-  color: ${({ theme }) => theme.global.accent};
+export default styled.Text`
+  color: ${({ theme }) => theme.font.primary};
 `

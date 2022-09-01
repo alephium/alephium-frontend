@@ -88,7 +88,7 @@ function Input<T extends InputValue>({
         {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
         <TextInputStyled
           selectionColor={theme.gradient.yellow}
-          value={renderedValue}
+          value={renderedValue?.toString()}
           onFocus={() => setIsActive(true)}
           onBlur={() => !renderedValue && setIsActive(false)}
           ref={inputRef}
@@ -128,7 +128,6 @@ const Label = styled(Animated.View)`
 
 const LabelText = styled(Animated.Text)`
   color: ${({ theme }) => theme.font.secondary};
-  font-size: ${({ isActive }) => (!isActive ? 14 : 11)}px;
 `
 
 const CustomRenderedValue = styled.View`

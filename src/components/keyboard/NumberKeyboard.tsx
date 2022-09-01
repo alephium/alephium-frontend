@@ -20,6 +20,8 @@ import Icon from '@expo/vector-icons/Feather'
 import { PressableProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from '../AppText'
+
 interface NumberKeyboardProps {
   onPress: (value: NumberKeyboardKey) => void
 }
@@ -60,6 +62,8 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
   )
 }
 
+export default NumberKeyboard
+
 const KeyboardContainer = styled.View`
   width: 100%;
   border-top-color: ${({ theme }) => theme.border.secondary};
@@ -78,8 +82,6 @@ const KeyboardButton = styled.Pressable`
   background-color: ${({ theme }) => theme.bg.secondary};
 `
 
-const KeyText = styled.Text`
+const KeyText = styled(AppText)`
   font-size: 23px;
 `
-
-export default NumberKeyboard

@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
-import { Text } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from '../AppText'
 import HighlightRow from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
 import Input, { InputProps, InputValue } from './Input'
@@ -65,7 +65,7 @@ function Select<T extends InputValue>({ options, onValueChange, ...props }: Sele
             key={value ?? 'none'}
             hasBottomBorder={index !== options.length - 1}
           >
-            {typeof label === 'string' ? <Text>{label}</Text> : label}
+            {typeof label === 'string' ? <AppText>{label}</AppText> : label}
           </Option>
         ))}
       </ModalWithBackdrop>

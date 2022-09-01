@@ -17,10 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { Pressable, StyleProp, Text, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import { BORDER_RADIUS, INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
+import AppText from './AppText'
 
 export interface BorderOptions {
   isTopRounded?: boolean
@@ -42,7 +43,7 @@ const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRo
   const componentContent = title ? (
     <>
       <LeftContent>
-        <Text>{title}</Text>
+        <AppText>{title}</AppText>
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
       </LeftContent>
       <RightContent>{children}</RightContent>

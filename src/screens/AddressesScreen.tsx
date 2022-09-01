@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
@@ -34,11 +34,12 @@ import { ScreenSection } from '../components/layout/Screen'
 import QRCodeModal from '../components/QRCodeModal'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
+import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard } from '../utils/addresses'
 
-interface ScreenProps extends StackScreenProps<InWalletTabsParamList, 'AddressesScreen'> {
+interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'AddressesScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
@@ -111,7 +112,7 @@ export default AddressesScreen
 
 export const AddressesScreenHeader = () => {
   const theme = useTheme()
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   return (
     <DefaultHeader

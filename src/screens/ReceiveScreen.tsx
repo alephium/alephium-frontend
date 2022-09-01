@@ -24,6 +24,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '../components/AddressBadge'
 import Amount from '../components/Amount'
+import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Select from '../components/inputs/Select'
@@ -111,7 +112,7 @@ const CenteredScreenSection = styled(ScreenSection)`
   align-items: center;
 `
 
-const AddressText = styled.Text`
+const AddressText = styled(AppText)`
   max-width: 200px;
 `
 

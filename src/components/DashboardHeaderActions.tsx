@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Eye as EyeIcon, Settings2 as SettingsIcon, ShieldAlert as SecurityIcon } from 'lucide-react-native'
 import { memo } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import RootStackParamList from '../navigation/rootStackRoutes'
 import { discreetModeChanged } from '../store/settingsSlice'
 
 interface DashboardHeaderActionsProps {
@@ -33,7 +34,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const theme = useTheme()
   const dispatch = useAppDispatch()
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const toggleDiscreetMode = () => {
     dispatch(discreetModeChanged(!discreetMode))

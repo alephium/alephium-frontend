@@ -58,6 +58,8 @@ const HighlightButton = ({ title, wide, ...props }: HighlightButtonProps) => {
   )
 }
 
+export default HighlightButton
+
 const ButtonWrapper = styled(MotiView)`
   width: 100%;
   align-items: center;
@@ -79,5 +81,3 @@ const GradientContainer = styled(MotiView)`
 const StyledLinearGradient = styled(LinearGradient)`
   ${fullScreen}
 `
-
-export default HighlightButton

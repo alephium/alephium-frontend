@@ -66,6 +66,8 @@ const NewWalletIntroScreen = ({ navigation }: ScreenProps) => {
   )
 }
 
+export default NewWalletIntroScreen
+
 const AnimationContainer = styled.View`
   flex: 1;
   justify-content: center;
@@ -81,5 +83,3 @@ const ActionsContainer = styled.View`
   justify-content: center;
   align-items: center;
 `
-
-export default NewWalletIntroScreen

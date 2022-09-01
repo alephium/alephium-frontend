@@ -17,10 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { memo, useState } from 'react'
-import { StyleProp, Text, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { labelColorPalette } from '../../utils/colors'
+import AppText from '../AppText'
 import HighlightRow from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
 
@@ -41,7 +42,7 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
   return (
     <>
       <HighlightRow isInput style={style} onPress={() => setIsModalVisible(!isModalVisible)}>
-        <Text>Color</Text>
+        <AppText>Color</AppText>
         <Dot color={value} />
       </HighlightRow>
       <ModalWithBackdrop animationType="fade" visible={isModalVisible} closeModal={() => setIsModalVisible(false)}>

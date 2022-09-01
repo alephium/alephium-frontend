@@ -16,13 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { MoreVertical as DotsIcon } from 'lucide-react-native'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
+import RootStackParamList from '../navigation/rootStackRoutes'
+import AppText from './AppText'
 import Button from './buttons/Button'
 
 interface WalletSwitchProps {
@@ -31,7 +33,7 @@ interface WalletSwitchProps {
 
 const WalletSwitch = ({ style }: WalletSwitchProps) => {
   const theme = useTheme()
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const activeWallet = useAppSelector((state) => state.activeWallet)
 
   return (
@@ -51,6 +53,6 @@ export default memo(styled(WalletSwitch)`
   height: 40px;
 `)
 
-const WalletName = styled.Text`
+const WalletName = styled(AppText)`
   font-weight: 700;
 `
