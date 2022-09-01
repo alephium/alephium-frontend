@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
-import tinycolor from 'tinycolor2'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
 
@@ -51,8 +51,8 @@ const Button = ({
       default: theme.font.primary,
       contrast: theme.bg.highlight,
       accent: theme.global.accent,
-      valid: tinycolor(theme.global.valid).setAlpha(0.1).toRgbString(),
-      alert: tinycolor(theme.global.alert).setAlpha(0.1).toRgbString(),
+      valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
+      alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
       transparent: 'transparent'
     }[variant],
     font: {
