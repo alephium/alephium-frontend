@@ -130,6 +130,8 @@ export interface Hashrate {
 
 export interface Input {
   outputRef: OutputRef
+
+  /** @format hex-string */
   unlockScript?: string
   address?: string
 
@@ -274,20 +276,6 @@ export interface Transaction {
 
 export type TransactionLike = ConfirmedTransaction | UnconfirmedTransaction
 
-export interface UInput {
-  outputRef: OutputRef
-  unlockScript?: string
-}
-
-export interface UOutput {
-  /** @format uint256 */
-  amount: string
-  address: string
-
-  /** @format int64 */
-  lockTime?: number
-}
-
 export interface Unauthorized {
   detail: string
 }
@@ -301,14 +289,17 @@ export interface UnconfirmedTransaction {
 
   /** @format int32 */
   chainTo: number
-  inputs?: UInput[]
-  outputs?: UOutput[]
+  inputs?: Input[]
+  outputs?: AssetOutput[]
 
   /** @format int32 */
   gasAmount: number
 
   /** @format uint256 */
   gasPrice: string
+
+  /** @format int64 */
+  lastSeen: number
   type: string
 }
 
@@ -666,6 +657,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+     * @description List unconfirmed transactions of a given address
+     *
+     * @tags Addresses
+     * @name GetAddressesAddressUnconfirmedTransactions
+     * @request GET:/addresses/{address}/unconfirmed-transactions
+     */
+    getAddressesAddressUnconfirmedTransactions: (address: string, params: RequestParams = {}) =>
+      this.request<
+        UnconfirmedTransaction[],
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/addresses/${address}/unconfirmed-transactions`,
+        method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
      * @description Get address balance
      *
      * @tags Addresses
@@ -882,6 +891,29 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           ...params
         }
       )
+  }
+  unconfirmedTransactions = {
+    /**
+     * @description list unconfirmed transactions
+     *
+     * @tags Unconfirmed Transactions
+     * @name GetUnconfirmedTransactions
+     * @request GET:/unconfirmed-transactions
+     */
+    getUnconfirmedTransactions: (
+      query?: { page?: number; limit?: number; reverse?: boolean },
+      params: RequestParams = {}
+    ) =>
+      this.request<
+        UnconfirmedTransaction[],
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/unconfirmed-transactions`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      })
   }
   tokens = {
     /**

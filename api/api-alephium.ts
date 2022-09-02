@@ -96,8 +96,6 @@ export interface Balance {
 
   /** @format x.x ALPH */
   lockedBalanceHint: string
-  tokenBalances?: Token[]
-  lockedTokenBalances?: Token[]
 
   /** @format int32 */
   utxoNum: number
@@ -207,9 +205,6 @@ export interface BuildDeployContractTx {
 
   /** @format uint256 */
   gasPrice?: string
-
-  /** @format block-hash */
-  targetBlockHash?: string
 }
 
 export interface BuildDeployContractTxResult {
@@ -249,9 +244,6 @@ export interface BuildExecuteScriptTx {
 
   /** @format uint256 */
   gasPrice?: string
-
-  /** @format block-hash */
-  targetBlockHash?: string
 }
 
 export interface BuildExecuteScriptTxResult {
@@ -317,9 +309,6 @@ export interface BuildSweepAddressTransactions {
 
   /** @format uint256 */
   gasPrice?: string
-
-  /** @format block-hash */
-  targetBlockHash?: string
 }
 
 export interface BuildSweepAddressTransactionsResult {
@@ -343,9 +332,6 @@ export interface BuildTransaction {
 
   /** @format uint256 */
   gasPrice?: string
-
-  /** @format block-hash */
-  targetBlockHash?: string
 }
 
 export interface BuildTransactionResult {
@@ -429,14 +415,12 @@ export interface CompileContractResult {
   fields: FieldsSig
   functions: FunctionSig[]
   events: EventSig[]
-  warnings: string[]
 }
 
 export interface CompileScriptResult {
   bytecodeTemplate: string
   fields: FieldsSig
   functions: FunctionSig[]
-  warnings: string[]
 }
 
 export interface Confirmed {
@@ -563,6 +547,7 @@ export type DiscoveryAction = Reachable | Unreachable
 
 export interface EventSig {
   name: string
+  signature: string
   fieldNames: string[]
   fieldTypes: string[]
 }
@@ -572,9 +557,9 @@ export interface FetchResponse {
 }
 
 export interface FieldsSig {
+  signature: string
   names: string[]
   types: string[]
-  isMutable: boolean[]
 }
 
 export interface FixedAssetOutput {
@@ -600,12 +585,9 @@ export interface FixedAssetOutput {
 
 export interface FunctionSig {
   name: string
-  usePreapprovedAssets: boolean
-  useAssetsInContract: boolean
-  isPublic: boolean
-  paramNames: string[]
-  paramTypes: string[]
-  paramIsMutable: boolean[]
+  signature: string
+  argNames: string[]
+  argTypes: string[]
   returnTypes: string[]
 }
 
@@ -794,9 +776,6 @@ export interface Sweep {
 
   /** @format int32 */
   utxosLimit?: number
-
-  /** @format block-hash */
-  targetBlockHash?: string
 }
 
 export interface SweepAddressTransaction {
@@ -1273,7 +1252,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title Alephium API
- * @version 1.5.0
+ * @version 1.4.5
  * @baseUrl ../
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
