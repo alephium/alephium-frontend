@@ -51,7 +51,7 @@ const RootStackNavigation = () => {
 
   console.log('RootStackNavigation renders')
 
-  const MyTheme = {
+  const themeNavigator = {
     ...DefaultTheme,
     dark: theme.name === 'dark',
     colors: {
@@ -64,7 +64,7 @@ const RootStackNavigation = () => {
   }
 
   return (
-    <NavigationContainer ref={rootStackNavigationRef} theme={MyTheme}>
+    <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
       <RootStack.Navigator
         initialRouteName={'SplashScreen'}
         screenOptions={{
