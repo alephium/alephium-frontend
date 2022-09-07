@@ -50,7 +50,7 @@ const Button = ({
   const colors = {
     bg: {
       default: theme.font.primary,
-      contrast: theme.bg.highlight,
+      contrast: theme.bg.primary,
       accent: theme.global.accent,
       valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
       alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
@@ -119,6 +119,7 @@ export default styled(Button)`
 
 const ButtonText = styled(AppText)`
   font-weight: bold;
+  color: red;
 `
 
 const Icon = styled.View<{ withSpace?: boolean }>`
