@@ -113,6 +113,7 @@ const InputContainer = styled.View`
 
 const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
   height: 100%;
+  color: ${({ theme }) => theme.font.primary};
 
   ${({ hide }) =>
     hide &&
