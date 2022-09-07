@@ -5,35 +5,37 @@ on:
     branches: [master]
   pull_request:
 
-EnvSetup: &envSetup
-  runs-on: ubuntu-latest
-
-  strategy:
-    matrix:
-      node-version: [16]
-
-NodeSetup: &nodeSetup
-  name: Use Node.js ${{ matrix.node-version }}
-  uses: actions/setup-node@v3
-  with:
-    node-version: ${{ matrix.node-version }}
-    cache: 'npm'
-
 jobs:
   lint:
-    <<: *envSetup
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16]
 
     steps:
       - uses: actions/checkout@v3
-      - *nodeSetup
+        name: Use Node.js ${{ matrix.node-version }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
       - run: npm ci
       - run: npm run lint
 
   type-check:
-    <<: *envSetup
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16]
 
     steps:
       - uses: actions/checkout@v3
-      - *nodeSetup
+        name: Use Node.js ${{ matrix.node-version }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
       - run: npm ci
       - run: npm run type-check
