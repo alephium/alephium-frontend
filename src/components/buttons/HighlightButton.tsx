@@ -21,6 +21,7 @@ import { MotiView } from 'moti'
 import { useTheme } from 'styled-components'
 import styled, { css } from 'styled-components/native'
 
+import { themes } from '../../style/themes'
 import Button, { ButtonProps } from './Button'
 
 interface HighlightButtonProps extends ButtonProps {
@@ -41,7 +42,7 @@ const HighlightButton = ({ title, wide, ...props }: HighlightButtonProps) => {
         duration: 500
       }}
     >
-      <Button title={title} wide={wide} {...props}>
+      <Button title={title} style={{ color: themes.dark.font.primary }} wide={wide} {...props}>
         <GradientContainer
           from={{ scale: 1 }}
           animate={{ scale: 1.5 }}
