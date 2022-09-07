@@ -21,7 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
 import { useCallback, useLayoutEffect, useState } from 'react'
-import { Pressable, StyleProp, ViewStyle } from 'react-native'
+import { LayoutChangeEvent, Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
@@ -47,6 +47,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const [currentAddressHash, setCurrentAddressHash] = useState(addressHashes[0])
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
+  const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const theme = useTheme()
 
   const onScrollEnd = (index: number) => {
@@ -70,15 +71,23 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
     }, [currentAddressHash])
   )
 
+  const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
+    setHeightCarouselItem(event.nativeEvent.layout.height)
+  }
+
   return (
     <InWalletScrollScreen style={style}>
       <Carousel
         data={addressHashes}
-        renderItem={(itemInfo) => <AddressCard addressHash={itemInfo.item} key={itemInfo.item} />}
+        renderItem={(itemInfo) => (
+          <View onLayout={onLayoutCarouselItem} style={{ marginLeft: 16 }} key={itemInfo.item}>
+            <AddressCard addressHash={itemInfo.item} />
+          </View>
+        )}
         onScrollStart={() => setAreButtonsDisabled(true)}
         onScrollEnd={onScrollEnd}
-        width={290}
-        height={165}
+        offsetX={48}
+        height={heightCarouselItem}
       />
       <ScreenSection>
         <ButtonsRowStyled>

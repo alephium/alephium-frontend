@@ -17,8 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatAmountForDisplay } from '@alephium/sdk'
+import { FC, ReactNode } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { Currency } from '../types/settings'
@@ -26,15 +27,22 @@ import { currencies } from '../utils/currencies'
 import { formatFiatAmountForDisplay } from '../utils/numbers'
 import AppText from './AppText'
 
+interface TokenSymbolProps {
+  color?: string
+  style?: StyleProp<ViewStyle>
+}
+
 interface AmountProps {
   value?: bigint
   fadeDecimals?: boolean
   fullPrecision?: boolean
   prefix?: string
-  suffix?: string
+  suffix?: FC<TokenSymbolProps> | string
   fiat?: number
   fiatCurrency?: Currency
   showOnDiscreetMode?: boolean
+  color?: string
+  size?: number
   style?: StyleProp<ViewStyle>
 }
 
@@ -47,7 +55,9 @@ const Amount = ({
   suffix = '',
   showOnDiscreetMode = false,
   fiatCurrency,
-  fiat
+  fiat,
+  color,
+  size
 }: AmountProps) => {
   let integralPart = ''
   let fractionalPart = ''
@@ -74,23 +84,19 @@ const Amount = ({
     }
   }
 
-  const displaySuffix = moneySymbol + suffix ? ` ${suffix}` : fiatCurrency ? ` ${currencies[fiatCurrency].symbol}` : ''
-
   return (
-    <AppText style={style}>
+    <AppText size={size} style={style}>
       {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
-        fadeDecimals ? (
-          <>
-            {prefix && <AppText>{prefix}</AppText>}
-            <AppText>{integralPart}</AppText>
-            <Decimals>.{fractionalPart}</Decimals>
-            {displaySuffix && <AppText>{displaySuffix}</AppText>}
-          </>
-        ) : (
-          `${integralPart}.${fractionalPart}${displaySuffix}`
-        )
+        <>
+          {prefix && <AppText style={{ color }}>{prefix}</AppText>}
+          <AppText style={{ color }}>{integralPart}</AppText>
+          <Decimals fadeDecimals={fadeDecimals} color={color}>
+            .{fractionalPart}
+          </Decimals>
+          <Suffix {...{ suffix, moneySymbol, fiatCurrency, color }} />
+        </>
       ) : (
         '-'
       )}
@@ -102,7 +108,54 @@ export default styled(Amount)`
   font-weight: 500;
 `
 
-const Decimals = styled(AppText)`
-  color: ${({ theme }) => theme.font.secondary};
-  font-weight: 500;
+interface SuffixProps {
+  suffix: FC<TokenSymbolProps> | string
+  moneySymbol?: string
+  fiatCurrency?: Currency
+  color?: string
+}
+
+const Suffix = ({ suffix, moneySymbol, fiatCurrency, color }: SuffixProps) => {
+  const theme = useTheme()
+  const TokenSymbol = suffix
+  const _suffix =
+    typeof TokenSymbol === 'function' ? (
+      <TokenSymbol style={{ width: 15, height: 18 }} color={color ?? theme.font.secondary} />
+    ) : (
+      suffix
+    )
+
+  return (
+    <>
+      <Quantifier color={color}> {moneySymbol}</Quantifier>
+      <CurrencySymbol size={1 / 2} color={color}>
+        <> {_suffix || (fiatCurrency ? currencies[fiatCurrency].symbol : '')}</>
+      </CurrencySymbol>
+    </>
+  )
+}
+
+interface DecimalsProps {
+  fadeDecimals?: boolean
+  color?: string
+  children: ReactNode | ReactNode[]
+}
+
+const Decimals = ({ fadeDecimals, color, children }: DecimalsProps) => {
+  const theme = useTheme()
+  return (
+    <AppText color={fadeDecimals ? theme.font.secondary : color} bold={fadeDecimals}>
+      {children}
+    </AppText>
+  )
+}
+
+const Quantifier = styled(AppText)`
+  color: ${({ theme, color }) => color ?? theme.font.secondary};
+  font-weight: bold;
+`
+
+const CurrencySymbol = styled(AppText)`
+  color: ${({ theme, color }) => color ?? theme.font.secondary};
+  font-weight: normal;
 `
