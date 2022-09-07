@@ -102,7 +102,9 @@ function Input<T extends InputValue>({
   )
 }
 
-export default Input
+export default styled(Input)`
+  background-color: ${({ theme }) => theme.bg.primary};
+`
 
 const InputContainer = styled.View`
   position: relative;
