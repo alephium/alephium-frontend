@@ -10,6 +10,7 @@
  */
 
 export interface AddressBalance {
+  /** @format address */
   address: string
 
   /** @format uint256 */
@@ -27,41 +28,56 @@ export interface AddressBalance {
 }
 
 export interface AddressInfo {
+  /** @format address */
   address: string
+
+  /** @format public-key */
   publicKey: string
+
+  /** @format group-index */
   group: number
   path: string
 }
 
 export interface Addresses {
+  /** @format address */
   activeAddress: string
   addresses: AddressInfo[]
 }
 
 export interface AssetInput {
   outputRef: OutputRef
+
+  /** @format hex-string */
   unlockScript: string
 }
 
 export interface AssetOutput {
+  /** @format int32 */
   hint: number
+
+  /** @format 32-byte-hash */
   key: string
 
   /** @format uint256 */
-  alphAmount: string
+  attoAlphAmount: string
+
+  /** @format address */
   address: string
   tokens: Token[]
 
   /** @format int64 */
   lockTime: number
-  additionalData: string
+
+  /** @format hex-string */
+  message: string
   type: string
 }
 
 export interface AssetState {
   /** @format uint256 */
-  alphAmount: string
-  tokens: Token[]
+  attoAlphAmount: string
+  tokens?: Token[]
 }
 
 export interface BadRequest {
@@ -80,6 +96,8 @@ export interface Balance {
 
   /** @format x.x ALPH */
   lockedBalanceHint: string
+
+  /** @format int32 */
   utxoNum: number
   warning?: string
 }
@@ -105,62 +123,145 @@ export interface Banned {
 }
 
 export interface BlockEntry {
+  /** @format block-hash */
   hash: string
 
   /** @format int64 */
   timestamp: number
+
+  /** @format int32 */
   chainFrom: number
+
+  /** @format int32 */
   chainTo: number
+
+  /** @format int32 */
   height: number
   deps: string[]
   transactions: Transaction[]
+
+  /** @format hex-string */
   nonce: string
   version: number
+
+  /** @format 32-byte-hash */
   depStateHash: string
+
+  /** @format 32-byte-hash */
   txsHash: string
+
+  /** @format hex-string */
   target: string
 }
 
 export interface BlockHeaderEntry {
+  /** @format block-hash */
   hash: string
 
   /** @format int64 */
   timestamp: number
+
+  /** @format int32 */
   chainFrom: number
+
+  /** @format int32 */
   chainTo: number
+
+  /** @format int32 */
   height: number
   deps: string[]
 }
 
 export interface BrokerInfo {
+  /** @format clique-id */
   cliqueId: string
+
+  /** @format int32 */
   brokerId: number
+
+  /** @format int32 */
   brokerNum: number
-  address: string
+
+  /** @format inet-socket-address */
+  address: { addr: string; port: number }
 }
 
-export interface BuildContractDeployScriptTx {
+export interface BuildDeployContractTx {
+  /** @format public-key */
   fromPublicKey: string
+
+  /** @format hex-string */
   bytecode: string
-  initialFields: Val[]
 
   /** @format uint256 */
-  alphAmount?: string
+  initialAttoAlphAmount?: string
+  initialTokenAmounts?: Token[]
 
   /** @format uint256 */
   issueTokenAmount?: string
-  gas?: number
+
+  /** @format gas */
+  gasAmount?: number
 
   /** @format uint256 */
   gasPrice?: string
-  utxosLimit?: number
 }
 
-export interface BuildContractDeployScriptTxResult {
-  group: number
+export interface BuildDeployContractTxResult {
+  /** @format int32 */
+  fromGroup: number
+
+  /** @format int32 */
+  toGroup: number
   unsignedTx: string
+
+  /** @format gas */
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
+
+  /** @format 32-byte-hash */
   txId: string
+
+  /** @format address */
   contractAddress: string
+}
+
+export interface BuildExecuteScriptTx {
+  /** @format public-key */
+  fromPublicKey: string
+
+  /** @format hex-string */
+  bytecode: string
+
+  /** @format uint256 */
+  attoAlphAmount?: string
+  tokens?: Token[]
+
+  /** @format gas */
+  gasAmount?: number
+
+  /** @format uint256 */
+  gasPrice?: string
+}
+
+export interface BuildExecuteScriptTxResult {
+  /** @format int32 */
+  fromGroup: number
+
+  /** @format int32 */
+  toGroup: number
+  unsignedTx: string
+
+  /** @format gas */
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
+
+  /** @format 32-byte-hash */
+  txId: string
 }
 
 export interface BuildInfo {
@@ -169,114 +270,173 @@ export interface BuildInfo {
 }
 
 export interface BuildMultisig {
+  /** @format address */
   fromAddress: string
   fromPublicKeys: string[]
   destinations: Destination[]
+
+  /** @format gas */
   gas?: number
 
   /** @format uint256 */
   gasPrice?: string
-  utxosLimit?: number
 }
 
 export interface BuildMultisigAddress {
   keys: string[]
+
+  /** @format int32 */
   mrequired: number
 }
 
 export interface BuildMultisigAddressResult {
+  /** @format address */
   address: string
 }
 
-export interface BuildScriptTx {
-  fromPublicKey: string
-  bytecode: string
-
-  /** @format uint256 */
-  alphAmount?: string
-  tokens?: Token[]
-  gas?: number
-
-  /** @format uint256 */
-  gasPrice?: string
-  utxosLimit?: number
-}
-
-export interface BuildScriptTxResult {
-  unsignedTx: string
-  txId: string
-  group: number
-}
-
 export interface BuildSweepAddressTransactions {
+  /** @format public-key */
   fromPublicKey: string
+
+  /** @format address */
   toAddress: string
 
   /** @format int64 */
   lockTime?: number
-  gas?: number
+
+  /** @format gas */
+  gasAmount?: number
 
   /** @format uint256 */
   gasPrice?: string
-  utxosLimit?: number
 }
 
 export interface BuildSweepAddressTransactionsResult {
   unsignedTxs: SweepAddressTransaction[]
+
+  /** @format int32 */
   fromGroup: number
+
+  /** @format int32 */
   toGroup: number
 }
 
 export interface BuildTransaction {
+  /** @format public-key */
   fromPublicKey: string
   destinations: Destination[]
   utxos?: OutputRef[]
-  gas?: number
+
+  /** @format gas */
+  gasAmount?: number
 
   /** @format uint256 */
   gasPrice?: string
-  utxosLimit?: number
 }
 
 export interface BuildTransactionResult {
   unsignedTx: string
+
+  /** @format gas */
   gasAmount: number
 
   /** @format uint256 */
   gasPrice: string
+
+  /** @format 32-byte-hash */
   txId: string
+
+  /** @format int32 */
   fromGroup: number
+
+  /** @format int32 */
   toGroup: number
 }
 
+export interface CallContract {
+  /** @format int32 */
+  group: number
+
+  /** @format block-hash */
+  worldStateBlockHash?: string
+
+  /** @format 32-byte-hash */
+  txId?: string
+
+  /** @format address */
+  address: string
+
+  /** @format int32 */
+  methodIndex: number
+  args?: Val[]
+  existingContracts?: string[]
+  inputAssets?: TestInputAsset[]
+}
+
+export interface CallContractResult {
+  returns: Val[]
+
+  /** @format int32 */
+  gasUsed: number
+  contracts: ContractState[]
+  txInputs: string[]
+  txOutputs: Output[]
+  events: ContractEventByTxId[]
+}
+
 export interface ChainInfo {
+  /** @format int32 */
   currentHeight: number
 }
 
 export interface ChainParams {
   networkId: number
+
+  /** @format int32 */
   numZerosAtLeastInHash: number
+
+  /** @format int32 */
   groupNumPerBroker: number
+
+  /** @format int32 */
   groups: number
 }
 
 export interface ChangeActiveAddress {
+  /** @format address */
   address: string
 }
 
-export interface CompileResult {
+export interface CompileContractResult {
   bytecode: string
+
+  /** @format 32-byte-hash */
   codeHash: string
   fields: FieldsSig
   functions: FunctionSig[]
   events: EventSig[]
 }
 
+export interface CompileScriptResult {
+  bytecodeTemplate: string
+  fields: FieldsSig
+  functions: FunctionSig[]
+}
+
 export interface Confirmed {
+  /** @format block-hash */
   blockHash: string
+
+  /** @format int32 */
   txIndex: number
+
+  /** @format int32 */
   chainConfirmations: number
+
+  /** @format int32 */
   fromGroupConfirmations: number
+
+  /** @format int32 */
   toGroupConfirmations: number
   type: string
 }
@@ -286,62 +446,110 @@ export interface Contract {
 }
 
 export interface ContractEvent {
+  /** @format block-hash */
   blockHash: string
-  contractAddress: string
+
+  /** @format 32-byte-hash */
   txId: string
+
+  /** @format int32 */
   eventIndex: number
   fields: Val[]
-  type: string
+}
+
+export interface ContractEventByTxId {
+  /** @format block-hash */
+  blockHash: string
+
+  /** @format address */
+  contractAddress: string
+
+  /** @format int32 */
+  eventIndex: number
+  fields: Val[]
+}
+
+export interface ContractEvents {
+  events: ContractEvent[]
+
+  /** @format int32 */
+  nextStart: number
+}
+
+export interface ContractEventsByTxId {
+  events: ContractEventByTxId[]
+
+  /** @format int32 */
+  nextStart: number
 }
 
 export interface ContractOutput {
+  /** @format int32 */
   hint: number
+
+  /** @format 32-byte-hash */
   key: string
 
   /** @format uint256 */
-  alphAmount: string
+  attoAlphAmount: string
+
+  /** @format address */
   address: string
   tokens: Token[]
   type: string
 }
 
 export interface ContractState {
+  /** @format address */
   address: string
+
+  /** @format contract */
   bytecode: string
+
+  /** @format 32-byte-hash */
   codeHash: string
+
+  /** @format 32-byte-hash */
+  initialStateHash?: string
   fields: Val[]
   asset: AssetState
 }
 
-export interface DecodeTransaction {
+export interface DecodeUnsignedTx {
   unsignedTx: string
 }
 
+export interface DecodeUnsignedTxResult {
+  /** @format int32 */
+  fromGroup: number
+
+  /** @format int32 */
+  toGroup: number
+  unsignedTx: UnsignedTx
+}
+
 export interface Destination {
+  /** @format address */
   address: string
 
   /** @format uint256 */
-  alphAmount: string
+  attoAlphAmount: string
   tokens?: Token[]
 
   /** @format int64 */
   lockTime?: number
+
+  /** @format hex-string */
+  message?: string
 }
 
 export type DiscoveryAction = Reachable | Unreachable
 
-export type Event = ContractEvent | TxScriptEvent
-
 export interface EventSig {
   name: string
   signature: string
+  fieldNames: string[]
   fieldTypes: string[]
-}
-
-export interface Events {
-  chainFrom: number
-  chainTo: number
-  events: Event[]
 }
 
 export interface FetchResponse {
@@ -350,31 +558,41 @@ export interface FetchResponse {
 
 export interface FieldsSig {
   signature: string
+  names: string[]
   types: string[]
 }
 
 export interface FixedAssetOutput {
+  /** @format int32 */
   hint: number
+
+  /** @format 32-byte-hash */
   key: string
 
   /** @format uint256 */
-  alphAmount: string
+  attoAlphAmount: string
+
+  /** @format address */
   address: string
   tokens: Token[]
 
   /** @format int64 */
   lockTime: number
-  additionalData: string
+
+  /** @format hex-string */
+  message: string
 }
 
 export interface FunctionSig {
   name: string
   signature: string
+  argNames: string[]
   argTypes: string[]
   returnTypes: string[]
 }
 
 export interface Group {
+  /** @format int32 */
   group: number
 }
 
@@ -382,16 +600,18 @@ export interface HashesAtHeight {
   headers: string[]
 }
 
-export interface InputAsset {
-  address: string
-  asset: AssetState
-}
-
 export interface InterCliquePeerInfo {
+  /** @format clique-id */
   cliqueId: string
+
+  /** @format int32 */
   brokerId: number
+
+  /** @format int32 */
   groupNumPerBroker: number
-  address: string
+
+  /** @format inet-socket-address */
+  address: { addr: string; port: number }
   isSynced: boolean
   clientVersion: string
 }
@@ -417,7 +637,9 @@ export type MisbehaviorAction = Ban | Unban
 export interface NodeInfo {
   buildInfo: BuildInfo
   upnp: boolean
-  externalAddress?: string
+
+  /** @format inet-socket-address */
+  externalAddress?: { addr: string; port: number }
 }
 
 export interface NodeVersion {
@@ -432,18 +654,29 @@ export interface NotFound {
 export type Output = AssetOutput | ContractOutput
 
 export interface OutputRef {
+  /** @format int32 */
   hint: number
+
+  /** @format 32-byte-hash */
   key: string
 }
 
 export interface PeerAddress {
+  /** @format inet-address */
   address: string
+
+  /** @format int32 */
   restPort: number
+
+  /** @format int32 */
   wsPort: number
+
+  /** @format int32 */
   minerApiPort: number
 }
 
 export interface PeerMisbehavior {
+  /** @format inet-address */
   peer: string
   status: PeerStatus
 }
@@ -451,6 +684,7 @@ export interface PeerMisbehavior {
 export type PeerStatus = Banned | Penalty
 
 export interface Penalty {
+  /** @format int32 */
   value: number
   type: string
 }
@@ -461,8 +695,13 @@ export interface Reachable {
 }
 
 export interface ReleaseVersion {
+  /** @format int32 */
   major: number
+
+  /** @format int32 */
   minor: number
+
+  /** @format int32 */
   patch: number
 }
 
@@ -479,6 +718,7 @@ export interface Script {
 }
 
 export interface SelfClique {
+  /** @format clique-id */
   cliqueId: string
   nodes: PeerAddress[]
   selfReady: boolean
@@ -494,6 +734,7 @@ export interface Sign {
 }
 
 export interface SignResult {
+  /** @format signature */
   signature: string
 }
 
@@ -504,24 +745,45 @@ export interface SubmitMultisig {
 
 export interface SubmitTransaction {
   unsignedTx: string
+
+  /** @format signature */
   signature: string
 }
 
+export interface SubmitTxResult {
+  /** @format 32-byte-hash */
+  txId: string
+
+  /** @format int32 */
+  fromGroup: number
+
+  /** @format int32 */
+  toGroup: number
+}
+
 export interface Sweep {
+  /** @format address */
   toAddress: string
 
   /** @format int64 */
   lockTime?: number
-  gas?: number
+
+  /** @format gas */
+  gasAmount?: number
 
   /** @format uint256 */
   gasPrice?: string
+
+  /** @format int32 */
   utxosLimit?: number
 }
 
 export interface SweepAddressTransaction {
+  /** @format 32-byte-hash */
   txId: string
   unsignedTx: string
+
+  /** @format gas */
   gasAmount: number
 
   /** @format uint256 */
@@ -529,26 +791,54 @@ export interface SweepAddressTransaction {
 }
 
 export interface TestContract {
+  /** @format int32 */
   group?: number
+
+  /** @format block-hash */
+  blockHash?: string
+
+  /** @format 32-byte-hash */
+  txId?: string
+
+  /** @format address */
   address?: string
+
+  /** @format contract */
   bytecode: string
-  initialFields: Val[]
+  initialFields?: Val[]
   initialAsset?: AssetState
-  testMethodIndex?: number
-  testArgs: Val[]
+
+  /** @format int32 */
+  methodIndex?: number
+  args?: Val[]
   existingContracts?: ContractState[]
-  inputAssets?: InputAsset[]
+  inputAssets?: TestInputAsset[]
 }
 
 export interface TestContractResult {
+  /** @format address */
+  address: string
+
+  /** @format 32-byte-hash */
+  codeHash: string
   returns: Val[]
+
+  /** @format int32 */
   gasUsed: number
   contracts: ContractState[]
+  txInputs: string[]
   txOutputs: Output[]
-  events: Event[]
+  events: ContractEventByTxId[]
+}
+
+export interface TestInputAsset {
+  /** @format address */
+  address: string
+  asset: AssetState
 }
 
 export interface Token {
+  /** @format 32-byte-hash */
   id: string
 
   /** @format uint256 */
@@ -572,16 +862,25 @@ export interface TransactionTemplate {
 
 export interface Transfer {
   destinations: Destination[]
+
+  /** @format gas */
   gas?: number
 
   /** @format uint256 */
   gasPrice?: string
+
+  /** @format int32 */
   utxosLimit?: number
 }
 
 export interface TransferResult {
+  /** @format 32-byte-hash */
   txId: string
+
+  /** @format group-index */
   fromGroup: number
+
+  /** @format group-index */
   toGroup: number
 }
 
@@ -590,20 +889,6 @@ export interface TransferResults {
 }
 
 export interface TxNotFound {
-  type: string
-}
-
-export interface TxResult {
-  txId: string
-  fromGroup: number
-  toGroup: number
-}
-
-export interface TxScriptEvent {
-  blockHash: string
-  txId: string
-  eventIndex: number
-  fields: Val[]
   type: string
 }
 
@@ -618,6 +903,8 @@ export interface UTXO {
 
   /** @format int64 */
   lockTime: number
+
+  /** @format hex-string */
   additionalData: string
 }
 
@@ -636,7 +923,10 @@ export interface Unban {
 }
 
 export interface UnconfirmedTransactions {
+  /** @format int32 */
   fromGroup: number
+
+  /** @format int32 */
   toGroup: number
   unconfirmedTransactions: TransactionTemplate[]
 }
@@ -647,10 +937,15 @@ export interface Unreachable {
 }
 
 export interface UnsignedTx {
+  /** @format 32-byte-hash */
   txId: string
   version: number
   networkId: number
+
+  /** @format script */
   scriptOpt?: string
+
+  /** @format int32 */
   gasAmount: number
 
   /** @format uint256 */
@@ -662,6 +957,7 @@ export interface UnsignedTx {
 export type Val = ValAddress | ValArray | ValBool | ValByteVec | ValI256 | ValU256
 
 export interface ValAddress {
+  /** @format address */
   value: string
   type: string
 }
@@ -677,11 +973,13 @@ export interface ValBool {
 }
 
 export interface ValByteVec {
+  /** @format hex-string */
   value: string
   type: string
 }
 
 export interface ValI256 {
+  /** @format bigint */
   value: string
   type: string
 }
@@ -693,8 +991,13 @@ export interface ValU256 {
 }
 
 export interface VerifySignature {
+  /** @format hex-string */
   data: string
+
+  /** @format signature */
   signature: string
+
+  /** @format public-key */
   publicKey: string
 }
 
@@ -784,7 +1087,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = '{protocol}://{host}:{port}'
+  public baseUrl: string = '../'
   private securityData: SecurityDataType | null = null
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker']
   private abortControllers = new Map<CancelToken, AbortController>()
@@ -949,8 +1252,8 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title Alephium API
- * @version 1.3.0
- * @baseUrl {protocol}://{host}:{port}
+ * @version 1.4.5
+ * @baseUrl ../
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   wallets = {
@@ -1085,11 +1388,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get your total balance
      * @request GET:/wallets/{wallet_name}/balances
      */
-    getWalletsWalletNameBalances: (walletName: string, query?: { utxosLimit?: number }, params: RequestParams = {}) =>
+    getWalletsWalletNameBalances: (walletName: string, params: RequestParams = {}) =>
       this.request<Balances, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/wallets/${walletName}/balances`,
         method: 'GET',
-        query: query,
         format: 'json',
         ...params
       }),
@@ -1606,11 +1908,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get the balance of an address
      * @request GET:/addresses/{address}/balance
      */
-    getAddressesAddressBalance: (address: string, query?: { utxosLimit?: number }, params: RequestParams = {}) =>
+    getAddressesAddressBalance: (address: string, params: RequestParams = {}) =>
       this.request<Balance, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}/balance`,
         method: 'GET',
-        query: query,
         format: 'json',
         ...params
       }),
@@ -1623,11 +1924,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get the UTXOs of an address
      * @request GET:/addresses/{address}/utxos
      */
-    getAddressesAddressUtxos: (address: string, query?: { utxosLimit?: number }, params: RequestParams = {}) =>
+    getAddressesAddressUtxos: (address: string, params: RequestParams = {}) =>
       this.request<UTXOs, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}/utxos`,
         method: 'GET',
-        query: query,
         format: 'json',
         ...params
       }),
@@ -1719,7 +2019,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/transactions/submit
      */
     postTransactionsSubmit: (data: SubmitTransaction, params: RequestParams = {}) =>
-      this.request<TxResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<SubmitTxResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/transactions/submit`,
         method: 'POST',
         body: data,
@@ -1736,8 +2036,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Decode an unsigned transaction
      * @request POST:/transactions/decode-unsigned-tx
      */
-    postTransactionsDecodeUnsignedTx: (data: DecodeTransaction, params: RequestParams = {}) =>
-      this.request<UnsignedTx, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+    postTransactionsDecodeUnsignedTx: (data: DecodeUnsignedTx, params: RequestParams = {}) =>
+      this.request<
+        DecodeUnsignedTxResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
         path: `/transactions/decode-unsigned-tx`,
         method: 'POST',
         body: data,
@@ -1776,7 +2079,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/contracts/compile-script
      */
     postContractsCompileScript: (data: Script, params: RequestParams = {}) =>
-      this.request<CompileResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<
+        CompileScriptResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
         path: `/contracts/compile-script`,
         method: 'POST',
         body: data,
@@ -1789,16 +2095,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Contracts
-     * @name PostContractsUnsignedTxBuildScript
+     * @name PostContractsUnsignedTxExecuteScript
      * @summary Build an unsigned script
-     * @request POST:/contracts/unsigned-tx/build-script
+     * @request POST:/contracts/unsigned-tx/execute-script
      */
-    postContractsUnsignedTxBuildScript: (data: BuildScriptTx, params: RequestParams = {}) =>
+    postContractsUnsignedTxExecuteScript: (data: BuildExecuteScriptTx, params: RequestParams = {}) =>
       this.request<
-        BuildScriptTxResult,
+        BuildExecuteScriptTxResult,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
       >({
-        path: `/contracts/unsigned-tx/build-script`,
+        path: `/contracts/unsigned-tx/execute-script`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -1815,7 +2121,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/contracts/compile-contract
      */
     postContractsCompileContract: (data: Contract, params: RequestParams = {}) =>
-      this.request<CompileResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<
+        CompileContractResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
         path: `/contracts/compile-contract`,
         method: 'POST',
         body: data,
@@ -1828,16 +2137,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Contracts
-     * @name PostContractsUnsignedTxBuildContract
+     * @name PostContractsUnsignedTxDeployContract
      * @summary Build an unsigned contract
-     * @request POST:/contracts/unsigned-tx/build-contract
+     * @request POST:/contracts/unsigned-tx/deploy-contract
      */
-    postContractsUnsignedTxBuildContract: (data: BuildContractDeployScriptTx, params: RequestParams = {}) =>
+    postContractsUnsignedTxDeployContract: (data: BuildDeployContractTx, params: RequestParams = {}) =>
       this.request<
-        BuildContractDeployScriptTxResult,
+        BuildDeployContractTxResult,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
       >({
-        path: `/contracts/unsigned-tx/build-contract`,
+        path: `/contracts/unsigned-tx/deploy-contract`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -1874,6 +2183,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<TestContractResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>(
         {
           path: `/contracts/test-contract`,
+          method: 'POST',
+          body: data,
+          type: ContentType.Json,
+          format: 'json',
+          ...params
+        }
+      ),
+
+    /**
+     * No description
+     *
+     * @tags Contracts
+     * @name PostContractsCallContract
+     * @summary Call contract
+     * @request POST:/contracts/call-contract
+     */
+    postContractsCallContract: (data: CallContract, params: RequestParams = {}) =>
+      this.request<CallContractResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>(
+        {
+          path: `/contracts/call-contract`,
           method: 'POST',
           body: data,
           type: ContentType.Json,
@@ -1934,7 +2263,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/multisig/submit
      */
     postMultisigSubmit: (data: SubmitMultisig, params: RequestParams = {}) =>
-      this.request<TxResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+      this.request<SubmitTxResult, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/multisig/submit`,
         method: 'POST',
         body: data,
@@ -2033,33 +2362,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Events
-     * @name GetEventsContractInBlock
-     * @summary Get events for a contract within a block
-     * @request GET:/events/contract/in-block
+     * @name GetEventsContractContractaddress
+     * @summary Get events for a contract within a counter range
+     * @request GET:/events/contract/{contractAddress}
      */
-    getEventsContractInBlock: (query: { block: string; contractAddress: string }, params: RequestParams = {}) =>
-      this.request<Events, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/events/contract/in-block`,
-        method: 'GET',
-        query: query,
-        format: 'json',
-        ...params
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Events
-     * @name GetEventsContractWithinBlocks
-     * @summary Get events for a contract within a range of blocks
-     * @request GET:/events/contract/within-blocks
-     */
-    getEventsContractWithinBlocks: (
-      query: { fromBlock: string; toBlock?: string; contractAddress: string },
+    getEventsContractContractaddress: (
+      contractAddress: string,
+      query: { start: number; end?: number; group?: number },
       params: RequestParams = {}
     ) =>
-      this.request<Events[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/events/contract/within-blocks`,
+      this.request<ContractEvents, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/events/contract/${contractAddress}`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -2070,18 +2383,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Events
-     * @name GetEventsContractWithinTimeInterval
-     * @summary Get events for a contract within a time interval
-     * @request GET:/events/contract/within-time-interval
+     * @name GetEventsContractContractaddressCurrentCount
+     * @summary Get current value of the events counter for a contract
+     * @request GET:/events/contract/{contractAddress}/current-count
      */
-    getEventsContractWithinTimeInterval: (
-      query: { fromTs: number; toTs?: number; contractAddress: string },
-      params: RequestParams = {}
-    ) =>
-      this.request<Events[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/events/contract/within-time-interval`,
+    getEventsContractContractaddressCurrentCount: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<number, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/events/contract/${contractAddress}/current-count`,
         method: 'GET',
-        query: query,
         format: 'json',
         ...params
       }),
@@ -2090,13 +2399,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Events
-     * @name GetEventsTxScript
+     * @name GetEventsTxIdTxid
      * @summary Get events for a TxScript
-     * @request GET:/events/tx-script
+     * @request GET:/events/tx-id/{txId}
      */
-    getEventsTxScript: (query: { block: string; txId: string }, params: RequestParams = {}) =>
-      this.request<Events, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/events/tx-script`,
+    getEventsTxIdTxid: (txId: string, query?: { group?: number }, params: RequestParams = {}) =>
+      this.request<
+        ContractEventsByTxId,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/events/tx-id/${txId}`,
         method: 'GET',
         query: query,
         format: 'json',
