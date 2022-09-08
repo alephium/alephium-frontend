@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { useState } from 'react'
 import { ScrollView } from 'react-native'
@@ -77,12 +78,7 @@ const ReceiveScreen = () => {
           />
         </ScreenSection>
         <CenteredScreenSection>
-          <QRCode
-            size={200}
-            bgColor={theme.bg.secondary}
-            style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-            value={toAddressHash}
-          />
+          <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={toAddressHash} />
         </CenteredScreenSection>
         <CenteredScreenSection>
           <Button
