@@ -23,7 +23,8 @@ import styled, { css, useTheme } from 'styled-components/native'
 
 import HighlightRow, { BorderOptions } from '../HighlightRow'
 
-export type InputValue = string | number | undefined
+export type InputValue = string | number | undefined | unknown
+export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
 
 export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value'>, BorderOptions {
   value: T
@@ -31,7 +32,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   onPress?: () => void
   resetDisabledColor?: boolean
   IconComponent?: ReactNode
-  renderValue?: (value: T) => ReactNode
+  renderValue?: RenderValueFunc<T>
   style?: StyleProp<ViewStyle>
 }
 
@@ -52,7 +53,7 @@ function Input<T extends InputValue>({
   const [isActive, setIsActive] = useState(false)
   const inputRef = useRef<TextInput>(null)
 
-  const renderedValue = renderValue ? renderValue(value) : value
+  const renderedValue = renderValue ? renderValue(value) : (value as object).toString()
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   const labelStyle = useAnimatedStyle(() => ({

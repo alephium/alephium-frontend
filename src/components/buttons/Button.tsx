@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { ReactNode } from 'react'
-import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native'
+import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
@@ -28,7 +28,7 @@ export interface ButtonProps extends PressableProps {
   title?: string
   type?: 'primary' | 'secondary' | 'transparent'
   variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert'
-  style?: StyleProp<ViewStyle>
+  style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
   centered?: boolean
   icon?: ReactNode
