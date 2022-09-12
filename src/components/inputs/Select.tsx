@@ -23,7 +23,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '../AppText'
 import HighlightRow from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
-import Input, { InputProps, InputValue } from './Input'
+import Input, { InputProps, InputValue, RenderValueFunc } from './Input'
 
 export type SelectOption<T extends InputValue> = {
   value: T
@@ -34,10 +34,10 @@ export interface SelectProps<T extends InputValue> extends Omit<InputProps<T>, '
   options: SelectOption<T>[]
   value: T
   onValueChange: (value: T) => void
-  renderValue?: (value: T) => ReactNode
+  renderValue?: RenderValueFunc<T>
 }
 
-function Select<T extends InputValue>({ options, onValueChange, ...props }: SelectProps<T>) {
+function Select<T extends InputValue>({ options, onValueChange, value, renderValue }: SelectProps<T>) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const theme = useTheme()
 
@@ -56,13 +56,15 @@ function Select<T extends InputValue>({ options, onValueChange, ...props }: Sele
         onPress={openModal}
         resetDisabledColor
         IconComponent={<ChevronRight size={24} color={theme.font.secondary} />}
-        {...props}
+        value={value}
+        renderValue={renderValue}
+        label=""
       />
       <ModalWithBackdrop animationType="fade" visible={isModalOpen} closeModal={closeModal}>
         {options.map(({ label, value }, index) => (
           <Option
             onPress={() => handleOptionPress(value)}
-            key={value ?? 'none'}
+            key={(value as object).toString() ?? 'none'}
             hasBottomBorder={index !== options.length - 1}
           >
             {typeof label === 'string' ? <AppText>{label}</AppText> : label}

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native'
+import { createNavigationContainerRef, DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTheme } from 'styled-components'
 
@@ -51,8 +51,21 @@ const RootStackNavigation = () => {
 
   console.log('RootStackNavigation renders')
 
+  const themeNavigator = {
+    ...DefaultTheme,
+    dark: theme.name === 'dark',
+    colors: {
+      ...DefaultTheme.colors,
+      primary: theme.font.primary,
+      background: theme.bg.primary,
+      card: theme.bg.secondary,
+      text: theme.font.primary,
+      border: theme.border.primary
+    }
+  }
+
   return (
-    <NavigationContainer ref={rootStackNavigationRef}>
+    <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
       <RootStack.Navigator
         initialRouteName={'SplashScreen'}
         screenOptions={{

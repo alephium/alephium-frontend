@@ -77,12 +77,7 @@ const ReceiveScreen = () => {
           />
         </ScreenSection>
         <CenteredScreenSection>
-          <QRCode
-            size={200}
-            bgColor={theme.bg.secondary}
-            style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-            value={toAddressHash}
-          />
+          <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={toAddressHash} />
         </CenteredScreenSection>
         <CenteredScreenSection>
           <Button
