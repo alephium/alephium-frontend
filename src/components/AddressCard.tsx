@@ -25,6 +25,7 @@ import styled, { css, useTheme } from 'styled-components/native'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash } from '../store/addressesSlice'
+import { themes } from '../style/themes'
 import { AddressHash } from '../types/addresses'
 import AddressBadge from './AddressBadge'
 import Amount from './Amount'
@@ -41,8 +42,8 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
 
   if (!address) return null
 
-  const bgColor = address.settings.color ?? theme.bg.highlight
-  const textColor = colord(bgColor).isDark() ? theme.font.contrast : theme.font.primary
+  const bgColor = address.settings.color ?? theme.font.primary
+  const textColor = colord(bgColor).isDark() ? themes.dark.font.primary : themes.light.font.primary
 
   return (
     <Pressable

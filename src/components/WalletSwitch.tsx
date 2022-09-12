@@ -51,6 +51,7 @@ export default memo(styled(WalletSwitch)`
   justify-content: space-between;
   padding: 0 12px;
   height: 40px;
+  background-color: ${({ theme }) => theme.bg.primary};
 `)
 
 const WalletName = styled(AppText)`
