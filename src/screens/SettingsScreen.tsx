@@ -132,14 +132,6 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
 
 export default SettingsScreen
 
-const ScreenSectionTitle = styled(AppText)`
-  font-size: 16px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.font.tertiary};
-  margin-left: 8px;
-  margin-bottom: 24px;
-`
-
 const CurrentNetwork = styled(AppText)`
   font-weight: bold;
 `

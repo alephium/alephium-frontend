@@ -88,10 +88,6 @@ const ReceiveScreen = () => {
 
 export default ReceiveScreen
 
-const CenteredScreenSection = styled(ScreenSection)`
-  align-items: center;
-`
-
 const AddressText = styled(AppText)`
   max-width: 200px;
 `

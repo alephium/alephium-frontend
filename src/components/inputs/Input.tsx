@@ -108,7 +108,7 @@ function Input<T extends InputValue>({
         {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
         <TextInputStyled
           selectionColor={theme.gradient.yellow}
-          value={renderedValue}
+          value={renderedValue?.toString()}
           onFocus={handleFocus}
           onBlur={handleBlur}
           ref={inputRef}

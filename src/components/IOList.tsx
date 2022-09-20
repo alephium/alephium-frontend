@@ -46,6 +46,8 @@ const IOList = ({ isOut, tx }: IOListProps) => {
     const addressHash = isAllCurrentAddress ? tx.address.hash : notCurrentAddresses[0]
     const extraAddressesText = notCurrentAddresses.length > 1 ? `(+${notCurrentAddresses.length - 1})` : ''
 
+    if (!addressHash) return null
+
     const addressWithMetadata = addresses[addressHash]
 
     return (
