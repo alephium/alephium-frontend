@@ -17,11 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon } from 'lucide-react-native'
-import { useTheme } from 'styled-components/native'
 
-import Button from '../components/buttons/Button'
-import ButtonsRow from '../components/buttons/ButtonsRow'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
@@ -34,25 +30,10 @@ import { AddressHash } from '../types/addresses'
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
-  const theme = useTheme()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
 
   return (
     <InWalletScrollScreen>
-      <ScreenSection>
-        <ButtonsRow>
-          <Button
-            title="Send"
-            icon={<ArrowUpIcon size={24} color={theme.font.contrast} />}
-            onPress={() => navigation.navigate('SendScreen')}
-          />
-          <Button
-            title="Receive"
-            icon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
-            onPress={() => navigation.navigate('ReceiveScreen')}
-          />
-        </ButtonsRow>
-      </ScreenSection>
       <ScreenSection>
         <TransactionsList addressHashes={addressHashes} />
       </ScreenSection>

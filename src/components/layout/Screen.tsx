@@ -20,8 +20,6 @@ import { SafeAreaView } from 'react-native'
 import { SafeAreaViewProps } from 'react-navigation'
 import styled, { css } from 'styled-components/native'
 
-import AppText from '../AppText'
-
 const Screen = ({ children, style }: SafeAreaViewProps) => <SafeAreaView style={style}>{children}</SafeAreaView>
 
 export default styled(Screen)`

@@ -99,10 +99,10 @@ const Amount = ({
 }
 
 export default styled(Amount)`
-  font-weight: bold;
+  font-weight: 500;
 `
 
 const Decimals = styled(AppText)`
   color: ${({ theme }) => theme.font.secondary};
-  font-weight: bold;
+  font-weight: 500;
 `

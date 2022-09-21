@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { useState } from 'react'
 import { ScrollView, Text } from 'react-native'
@@ -23,20 +24,26 @@ import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
-import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import AddressSelector from '../components/inputs/AddressSelector'
 import Screen, { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
+import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard } from '../utils/addresses'
 import { attoAlphToFiat } from '../utils/numbers'
 
-const ReceiveScreen = () => {
+type ScreenProps = StackScreenProps<RootStackParamList, 'ReceiveScreen'>
+
+const ReceiveScreen = ({
+  route: {
+    params: { addressHash }
+  }
+}: ScreenProps) => {
   const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
-  const [toAddressHash, setToAddressHash] = useState<AddressHash>(mainAddress)
+  const [toAddressHash, setToAddressHash] = useState<AddressHash>(addressHash ?? mainAddress)
   const toAddress = useAppSelector((state) => selectAddressByHash(state, toAddressHash))
   const price = useAppSelector((state) => state.price.value)
   const currency = useAppSelector((state) => state.settings.currency)
@@ -87,10 +94,6 @@ const ReceiveScreen = () => {
 }
 
 export default ReceiveScreen
-
-const AddressText = styled(AppText)`
-  max-width: 200px;
-`
 
 const AmountInFiat = styled(Amount)`
   font-weight: 700;

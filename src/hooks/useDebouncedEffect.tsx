@@ -16,18 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { useEffect, useState } from 'react'
 
-interface ButtonsRowProps {
-  children: ReactNode[]
-  style?: StyleProp<ViewStyle>
+const useDebouncedEffect = (fnPre: () => void, fn: () => void, watchList: unknown[], periodInMs: number) => {
+  const [timeoutId, setTimeoutId] = useState<number>()
+
+  useEffect(() => {
+    fnPre()
+
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+
+    setTimeoutId(
+      setTimeout(() => {
+        fn()
+      }, periodInMs)
+    )
+    return () => {
+      timeoutId && clearTimeout(timeoutId)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, watchList)
 }
 
-const ButtonsRow = ({ children, style }: ButtonsRowProps) => <View style={style}>{children}</View>
-
-export default styled(ButtonsRow)`
-  flex-direction: row;
-  justify-content: space-evenly;
-`
+export default useDebouncedEffect

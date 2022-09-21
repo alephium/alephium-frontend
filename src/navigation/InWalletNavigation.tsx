@@ -54,21 +54,21 @@ const InWalletTabsNavigation = () => (
         }}
       />
       <InWalletTabs.Screen
-        name="AddressesScreen"
-        component={AddressesScreen}
-        options={{
-          title: 'Addresses',
-          header: AddressesScreenHeader,
-          tabBarIcon: ({ color, size }) => <LayoutTemplateIcon name="home" color={color} size={size} />
-        }}
-      />
-      <InWalletTabs.Screen
         name="TransfersScreen"
         component={TransfersScreen}
         options={{
           title: 'Transfers',
           header: () => <DefaultHeader HeaderLeft="Transfers" />,
           tabBarIcon: ({ color, size }) => <ArrowsIcon name="home" color={color} size={size} />
+        }}
+      />
+      <InWalletTabs.Screen
+        name="AddressesScreen"
+        component={AddressesScreen}
+        options={{
+          title: 'Addresses',
+          header: AddressesScreenHeader,
+          tabBarIcon: ({ color, size }) => <LayoutTemplateIcon name="home" color={color} size={size} />
         }}
       />
     </InWalletTabs.Navigator>

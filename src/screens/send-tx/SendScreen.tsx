@@ -16,46 +16,58 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BILLION, convertAlphToSet, formatAmountForDisplay } from '@alephium/sdk'
+import {
+  convertAlphToSet,
+  formatAmountForDisplay,
+  isAddressValid,
+  MINIMAL_GAS_AMOUNT,
+  MINIMAL_GAS_PRICE
+} from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
-import { ArrowRight as ArrowRightIcon } from 'lucide-react-native'
-import { useEffect, useState } from 'react'
-import { ScrollView, View } from 'react-native'
-import { useTheme } from 'styled-components/native'
+import { useCallback, useEffect, useState } from 'react'
+import { ActivityIndicator, Alert, ScrollView, View } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
+import client from '../../api/client'
+import Amount from '../../components/Amount'
+import AppText from '../../components/AppText'
 import Button from '../../components/buttons/Button'
 import ExpandableRow from '../../components/ExpandableRow'
+import HighlightRow from '../../components/HighlightRow'
 import AddressSelector from '../../components/inputs/AddressSelector'
 import Input from '../../components/inputs/Input'
-import Screen, { CenteredScreenSection, ScreenSection } from '../../components/layout/Screen'
+import Screen, { CenteredScreenSection, ScreenSection, ScreenSectionTitle } from '../../components/layout/Screen'
 import { useAppSelector } from '../../hooks/redux'
+import useDebouncedEffect from '../../hooks/useDebouncedEffect'
 import RootStackParamList from '../../navigation/rootStackRoutes'
+import { selectAddressByHash } from '../../store/addressesSlice'
 import { AddressHash } from '../../types/addresses'
 import { isNumericStringValid } from '../../utils/numbers'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SendScreen'>
 
-const SendScreen = ({ navigation }: ScreenProps) => {
+const SendScreen = ({
+  navigation,
+  route: {
+    params: { addressHash }
+  }
+}: ScreenProps) => {
   const theme = useTheme()
   const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
-  const [fromAddressHash, setFromAddressHash] = useState<AddressHash>(mainAddress)
-  const [toAddressHash, setToAddressHash] = useState<string>()
+  const [fromAddressHash, setFromAddressHash] = useState<AddressHash>(addressHash ?? mainAddress)
+  const fromAddress = useAppSelector((state) => selectAddressByHash(state, fromAddressHash))
+  const [toAddressHash, setToAddressHash] = useState<string>('')
   const [amountString, setAmountString] = useState('')
   const [amount, setAmount] = useState(BigInt(0))
+  const [fees, setFees] = useState<bigint>()
+  const [unsignedTxId, setUnsignedTxId] = useState('')
+  const [unsignedTransaction, setUnsignedTransaction] = useState('')
   const [gasAmount, setGasAmount] = useState('')
   const [gasPriceString, setGasPriceString] = useState('')
   const [gasPrice, setGasPrice] = useState<bigint>()
+  const [isLoadingTxData, setIsLoadingTxData] = useState(false)
 
-  // TODO: Import from SDK
-  const MINIMAL_GAS_AMOUNT = 20000
-  const MINIMAL_GAS_PRICE = BigInt(BILLION * 100)
-
-  const isFormDataComplete =
-    amount > BigInt(0) &&
-    // TODO: Use isAddressValid from SDK
-    !!toAddressHash &&
-    // TODO: Use isAddressValid from SDK
-    !!fromAddressHash
+  const isFormDataComplete = amount > BigInt(0) && isAddressValid(toAddressHash) && isAddressValid(fromAddressHash)
 
   const gasAmountHasError = !!gasAmount && parseInt(gasAmount) < MINIMAL_GAS_AMOUNT
   const gasPriceHasError = !!gasPrice && gasPrice < MINIMAL_GAS_PRICE
@@ -64,8 +76,38 @@ const SendScreen = ({ navigation }: ScreenProps) => {
   const handleGasAmountChange = (str: string) => isNumericStringValid(str, false) && setGasAmount(str)
   const handleGasPriceChange = (str: string) => isNumericStringValid(str) && setGasPriceString(str)
 
+  const buildTransaction = useCallback(() => {
+    if (!fromAddress || !toAddressHash) {
+      setIsLoadingTxData(false)
+      return
+    }
+
+    const createTransaction = async () => {
+      try {
+        const { data } = await client.cliqueClient.transactionCreate(
+          fromAddress.hash,
+          fromAddress.publicKey,
+          toAddressHash,
+          amount.toString(),
+          undefined,
+          gasAmount ? parseInt(gasAmount) : undefined,
+          gasPrice?.toString() || undefined
+        )
+        setUnsignedTransaction(data.unsignedTx)
+        setUnsignedTxId(data.txId)
+        setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))
+        setIsLoadingTxData(false)
+      } catch (e) {
+        Alert.alert('Estimation error', (e as unknown as { error: { detail: string } }).error.detail)
+      }
+    }
+
+    createTransaction()
+  }, [amount, fromAddress, gasAmount, gasPrice, toAddressHash])
+
   useEffect(() => {
     try {
+      console.log(amountString)
       setAmount(convertAlphToSet(amountString))
     } catch {
       setAmount(BigInt(0))
@@ -80,7 +122,14 @@ const SendScreen = ({ navigation }: ScreenProps) => {
     }
   }, [gasPriceString])
 
-  const handleContinuePress = () => {}
+  useDebouncedEffect(
+    () => setIsLoadingTxData(true),
+    () => buildTransaction(),
+    [amount, gasPrice, gasAmount],
+    2000
+  )
+
+  console.log((BigInt(amount) + BigInt(fees ?? 0)).toString())
 
   return (
     <Screen>
@@ -108,59 +157,80 @@ const SendScreen = ({ navigation }: ScreenProps) => {
               keyboardType="number-pad"
             />
           </ScreenSection>
-          {isFormDataComplete && (
-            <>
-              <ScreenSection>
-                <ExpandableRow title="Tweak gas settings" expandedHeight={165}>
-                  <Input
-                    label="Gas"
-                    value={gasAmount}
-                    onChangeText={handleGasAmountChange}
-                    isTopRounded
-                    hasBottomBorder
-                    keyboardType="number-pad"
-                    error={gasAmountHasError ? `Gas must be at least ${MINIMAL_GAS_AMOUNT}` : ''}
-                  />
-                  <Input
-                    label="Gas price"
-                    value={gasPriceString}
-                    onChangeText={handleGasPriceChange}
-                    isBottomRounded
-                    hasBottomBorder
-                    keyboardType="number-pad"
-                    error={
-                      gasPriceHasError
-                        ? `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
-                        : ''
-                    }
-                  />
-                </ExpandableRow>
-              </ScreenSection>
-            </>
-          )}
+          <ScreenSection>
+            <ScreenSectionTitle>Summary</ScreenSectionTitle>
+            <HighlightRow title="Est. fees" isTopRounded hasBottomBorder isSecondary>
+              {isLoadingTxData ? (
+                <ActivityIndicator size="large" color={theme.font.primary} />
+              ) : fees ? (
+                <Amount value={fees} fullPrecision />
+              ) : (
+                <AppText>-</AppText>
+              )}
+            </HighlightRow>
+            <HighlightRow title="Total amount" isBottomRounded isSecondary>
+              {isLoadingTxData ? (
+                <ActivityIndicator size="large" color={theme.font.primary} />
+              ) : (
+                <AmountStyled value={amount + BigInt(fees ?? 0)} fullPrecision />
+              )}
+            </HighlightRow>
+          </ScreenSection>
+          <ScreenSection>
+            <ExpandableRow title="Tweak gas settings" expandedHeight={165}>
+              <Input
+                label="Gas"
+                value={gasAmount}
+                onChangeText={handleGasAmountChange}
+                isTopRounded
+                hasBottomBorder
+                keyboardType="number-pad"
+                error={gasAmountHasError ? `Gas must be at least ${MINIMAL_GAS_AMOUNT}` : ''}
+              />
+              <Input
+                label="Gas price"
+                value={gasPriceString}
+                onChangeText={handleGasPriceChange}
+                isBottomRounded
+                hasBottomBorder
+                keyboardType="number-pad"
+                error={
+                  gasPriceHasError
+                    ? `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
+                    : ''
+                }
+              />
+            </ExpandableRow>
+          </ScreenSection>
         </View>
-        {isFormDataComplete && (
-          <CenteredScreenSection>
-            <Button
-              title="Continue"
-              onPress={() =>
-                navigation.navigate('ConfirmSendScreen', {
-                  fromAddressHash,
-                  toAddressHash,
-                  amount: amount.toString(),
-                  gasAmount: gasAmount || undefined,
-                  gasPrice: gasPrice ? gasPrice.toString() : undefined
-                })
-              }
-              icon={<ArrowRightIcon size={24} color={theme.font.contrast} />}
-              wide
-              disabled={!isFormDataComplete || gasAmountHasError || gasPriceHasError}
-            />
-          </CenteredScreenSection>
-        )}
+        <CenteredScreenSection>
+          <Button
+            title="Confirm"
+            gradient
+            onPress={() =>
+              navigation.navigate('ConfirmSendScreen', {
+                fromAddressHash,
+                toAddressHash,
+                amount: amount.toString(),
+                gasAmount: gasAmount || undefined,
+                gasPrice: gasPrice ? gasPrice.toString() : undefined,
+                unsignedTxId,
+                unsignedTransaction,
+                fees: fees ?? BigInt(0)
+              })
+            }
+            wide
+            disabled={!isFormDataComplete || gasAmountHasError || gasPriceHasError}
+          />
+        </CenteredScreenSection>
       </ScrollView>
     </Screen>
   )
 }
 
 export default SendScreen
+
+const AmountStyled = styled(Amount)`
+  color: ${({ theme }) => theme.global.accent};
+  font-weight: 700;
+`

@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
-import { Pencil as PencilIcon } from 'lucide-react-native'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -60,11 +59,6 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
             color: textColor
           }}
         />
-        <Pressable onPress={() => navigation.navigate('EditAddressScreen', { addressHash })}>
-          <Icon>
-            <PencilIcon color={textColor} size={20} />
-          </Icon>
-        </Pressable>
       </Header>
       {/* Replace ℵ with SVG or use dollar value instead */}
       <AmountStyled value={BigInt(address.networkData.details.balance)} suffix="ℵ" color={textColor} />
@@ -89,10 +83,6 @@ const Header = styled.View`
 const AddressBadgeStyled = styled(AddressBadge)`
   flex-shrink: 1;
   margin-right: 18px;
-`
-
-const Icon = styled.View`
-  margin-left: 18px;
 `
 
 const AmountStyled = styled(Amount)<{ color?: string }>`

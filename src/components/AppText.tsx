@@ -18,6 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components/native'
 
-export default styled.Text`
-  color: ${({ theme }) => theme.font.primary};
+interface TextProps {
+  isSecondary?: boolean
+}
+
+export default styled.Text<TextProps>`
+  color: ${({ theme, isSecondary }) => (isSecondary ? theme.font.secondary : theme.font.primary)};
 `

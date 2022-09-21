@@ -50,12 +50,19 @@ type RootStackParamList = {
     isOut: boolean
     amount: bigint
   }
-  ReceiveScreen: undefined
-  SendScreen: undefined
+  ReceiveScreen: {
+    addressHash: AddressHash
+  }
+  SendScreen: {
+    addressHash: AddressHash
+  }
   ConfirmSendScreen: {
     fromAddressHash: string
     toAddressHash: string
     amount: string
+    unsignedTxId: string
+    unsignedTransaction: string
+    fees: bigint
     gasAmount?: string
     gasPrice?: string
   }

@@ -32,6 +32,7 @@ export interface BorderOptions {
 export interface HighlightRowProps extends BorderOptions {
   children: ReactNode | ReactNode[]
   isInput?: boolean
+  isSecondary?: boolean
   title?: string
   subtitle?: string
   onPress?: () => void
@@ -43,7 +44,7 @@ const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRo
   const componentContent = title ? (
     <>
       <LeftContent>
-        <AppText>{title}</AppText>
+        <AppText isSecondary>{title}</AppText>
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
       </LeftContent>
       <RightContent>{children}</RightContent>
@@ -62,13 +63,13 @@ const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRo
 }
 
 export default styled(HighlightRow)`
-  ${({ isInput }) =>
+  ${({ theme, isInput, isSecondary }) =>
     isInput
       ? css`
           justify-content: center;
           height: ${INPUTS_HEIGHT}px;
           padding: 0 ${INPUTS_PADDING}px;
-          background-color: ${({ theme }) => theme.bg.highlight};
+          background-color: ${isSecondary ? theme.bg.accent : theme.bg.highlight};
         `
       : css`
           flex-direction: row;
@@ -76,7 +77,7 @@ export default styled(HighlightRow)`
           justify-content: space-between;
           min-height: ${INPUTS_HEIGHT}px;
           padding: 20px;
-          background-color: ${({ theme }) => theme.bg.primary};
+          background-color: ${isSecondary ? theme.bg.accent : theme.bg.primary};
         `}
 
   ${({ isInput, hasIcon }) =>
@@ -110,7 +111,7 @@ export default styled(HighlightRow)`
     `}
 `
 
-const Subtitle = styled.Text`
+const Subtitle = styled(AppText)`
   color: ${({ theme }) => theme.font.secondary};
 `
 

@@ -64,7 +64,7 @@ function Input<T extends InputValue>({
   const [isActive, setIsActive] = useState(false)
   const inputRef = useRef<TextInput>(null)
 
-  const renderedValue = renderValue ? renderValue(value) : (value as object).toString()
+  const renderedValue = renderValue ? renderValue(value) : value ? (value as object).toString() : ''
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   const labelStyle = useAnimatedStyle(() => ({
