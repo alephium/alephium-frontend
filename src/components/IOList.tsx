@@ -22,13 +22,13 @@ import { View } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
-import { DisplayTx } from '../types/transactions'
+import { AddressTransaction } from '../types/transactions'
 import AddressBadge from './AddressBadge'
 import AppText from './AppText'
 
 interface IOListProps {
   isOut: boolean
-  tx: DisplayTx
+  tx: AddressTransaction
 }
 
 const genesisTimestamp = 1231006505000

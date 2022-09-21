@@ -27,7 +27,7 @@ import Amount from '../components/Amount'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import AddressSelector from '../components/inputs/AddressSelector'
-import Screen, { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../components/layout/Screen'
+import { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash } from '../store/addressesSlice'
@@ -54,11 +54,11 @@ const ReceiveScreen = ({
   const balance = attoAlphToFiat(BigInt(toAddress.networkData.details.balance), price)
 
   return (
-    <Screen>
+    <>
+      <ScreenSection>
+        <BottomModalScreenTitle>Receive</BottomModalScreenTitle>
+      </ScreenSection>
       <ScrollView>
-        <ScreenSection>
-          <BottomModalScreenTitle>Receive</BottomModalScreenTitle>
-        </ScreenSection>
         <ScreenSection>
           <AddressSelector
             label="To address"
@@ -89,7 +89,7 @@ const ReceiveScreen = ({
           </HighlightRow>
         </ScreenSection>
       </ScrollView>
-    </Screen>
+    </>
   )
 }
 

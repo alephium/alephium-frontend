@@ -16,11 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { useWindowDimensions } from 'react-native'
 
-import { Address } from '../store/addressesSlice'
-import { NetworkName } from './network'
+const useModalDimensions = () => {
+  const { height } = useWindowDimensions()
+  return {
+    height: height - 64
+  }
+}
 
-type TransactionType = 'consolidation' | 'transfer' | 'sweep'
-
-export type AddressTransaction = Transaction & { address: Address }
+export default useModalDimensions

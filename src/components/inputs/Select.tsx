@@ -21,7 +21,7 @@ import { ReactNode, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../AppText'
-import HighlightRow from '../HighlightRow'
+import HighlightRow, { BorderOptions } from '../HighlightRow'
 import ModalWithBackdrop from '../ModalWithBackdrop'
 import Input, { InputProps, InputValue, RenderValueFunc } from './Input'
 
@@ -30,14 +30,21 @@ export type SelectOption<T extends InputValue> = {
   label: ReactNode
 }
 
-export interface SelectProps<T extends InputValue> extends Omit<InputProps<T>, 'value'> {
+export interface SelectProps<T extends InputValue> extends Omit<InputProps<T>, 'value'>, BorderOptions {
   options: SelectOption<T>[]
   value: T
   onValueChange: (value: T) => void
   renderValue?: RenderValueFunc<T>
 }
 
-function Select<T extends InputValue>({ options, onValueChange, value, renderValue }: SelectProps<T>) {
+function Select<T extends InputValue>({
+  options,
+  onValueChange,
+  value,
+  renderValue,
+  isTopRounded,
+  hasBottomBorder
+}: SelectProps<T>) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const theme = useTheme()
 
@@ -53,6 +60,8 @@ function Select<T extends InputValue>({ options, onValueChange, value, renderVal
     <>
       <Input
         editable={false}
+        isTopRounded={isTopRounded}
+        hasBottomBorder={hasBottomBorder}
         onPress={openModal}
         resetDisabledColor
         IconComponent={<ChevronRight size={24} color={theme.font.secondary} />}
@@ -65,6 +74,8 @@ function Select<T extends InputValue>({ options, onValueChange, value, renderVal
           <Option
             onPress={() => handleOptionPress(value)}
             key={(value as object).toString() ?? 'none'}
+            isTopRounded={index === 0}
+            isBottomRounded={index === options.length - 1}
             hasBottomBorder={index !== options.length - 1}
           >
             {typeof label === 'string' ? <AppText>{label}</AppText> : label}

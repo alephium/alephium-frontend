@@ -26,12 +26,12 @@ import {
   EntityState,
   PayloadAction
 } from '@reduxjs/toolkit'
+import { merge } from 'lodash'
 
 import client from '../api/client'
 import { storeAddressMetadata } from '../storage/wallets'
 import { AddressHash, AddressSettings } from '../types/addresses'
 import { TimeInMs } from '../types/numbers'
-import { PendingTx } from '../types/transactions'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -46,8 +46,7 @@ export type Address = {
   networkData: {
     details: AddressInfo
     transactions: {
-      confirmed: Transaction[]
-      pending: PendingTx[]
+      data: Transaction[]
       loadedPage: number
     }
     availableBalance: string
@@ -86,13 +85,15 @@ const initialState: AddressesState = addressSettingsAdapter.getInitialState({
   status: 'uninitialized'
 })
 
-export const fetchAddressesInitialData = createAsyncThunk(
-  `${sliceName}/fetchAddressesInitialData`,
-  async (payload: AddressHash[], { dispatch }) => {
+export const fetchAddressesDataPage = createAsyncThunk(
+  `${sliceName}/fetchAddressesDataPage`,
+  async (payload: { addresses: AddressHash[]; page?: number }, { dispatch }) => {
     const results = []
     dispatch(loadingStarted())
 
-    for (const addressHash of payload) {
+    const { addresses, page = 1 } = payload
+
+    for (const addressHash of addresses) {
       const { data } = await client.explorerClient.getAddressDetails(addressHash)
       const availableBalance = data.balance
         ? data.lockedBalance
@@ -100,7 +101,6 @@ export const fetchAddressesInitialData = createAsyncThunk(
           : data.balance
         : undefined
 
-      const page = 1
       console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, addressHash)
       const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, page)
 
@@ -229,8 +229,7 @@ const addressesSlice = createSlice({
               txNumber: 0
             },
             transactions: {
-              confirmed: [],
-              pending: [],
+              data: [],
               loadedPage: 0
             },
             availableBalance: '0',
@@ -239,6 +238,14 @@ const addressesSlice = createSlice({
           }
         }))
       )
+    },
+    addTransactionToAddress: (state, action: PayloadAction<Transaction>) => {
+      const tx = action.payload
+      if (!tx.inputs || !tx.inputs[0] || tx.inputs.length === 0) return
+
+      const address = state.entities[tx.inputs[0].address as string]
+      if (!address) return
+      address.networkData.transactions.data.push(tx)
     },
     addressSettingsUpdated: (state, action: PayloadAction<{ hash: AddressHash; settings: AddressSettings }>) => {
       const { hash, settings } = action.payload
@@ -260,16 +267,30 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAddressesInitialData.fulfilled, (state, action) => {
+      .addCase(fetchAddressesDataPage.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, details, availableBalance, transactions, page } = address
 
           const addressState = state.entities[hash]
           if (addressState) {
-            addressState.networkData.details = details
-            addressState.networkData.transactions.confirmed = transactions
-            addressState.networkData.transactions.loadedPage = page
-            if (availableBalance) addressState.networkData.availableBalance = availableBalance
+            const networkData = addressState.networkData
+            networkData.details = details
+            const newTxs: Transaction[] = transactions.reduce((newTxs: Transaction[], incomingTx: Transaction) => {
+              const targetTxIndex = networkData.transactions.data.findIndex(
+                (existingTx) => existingTx.hash === incomingTx.hash
+              )
+              if (targetTxIndex === -1) {
+                newTxs.push(incomingTx)
+              } else {
+                if (networkData.transactions.data[targetTxIndex].blockHash === '') {
+                  networkData.transactions.data.splice(targetTxIndex, 1, incomingTx)
+                }
+              }
+              return newTxs
+            }, [])
+            networkData.transactions.data = [].concat(networkData.transactions.data).concat(newTxs)
+            networkData.transactions.loadedPage = page
+            if (availableBalance) networkData.availableBalance = availableBalance
           }
         }
         state.status = 'initialized'
@@ -290,7 +311,7 @@ const addressesSlice = createSlice({
 
         const addressState = state.entities[hash]
         if (addressState) {
-          addressState.networkData.transactions.confirmed = transactions
+          addressState.networkData.transactions.data = transactions
           addressState.networkData.transactions.loadedPage = page
         }
       })
@@ -324,17 +345,26 @@ export const selectMultipleAddresses = createSelector(
   (addresses, addressHashes) => addresses.filter((address) => addressHashes.includes(address.hash))
 )
 
-export const selectConfirmedTransactions = createSelector(
+export const selectTransactions = createSelector(
   [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
   (addresses, addressHashes) =>
     addresses
       .filter((address) => addressHashes.includes(address.hash))
-      .map((address) => address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address })))
+      .map((address) => address.networkData.transactions.data.map((tx) => ({ ...tx, address })))
       .flat()
-      .sort((a, b) => b.timestamp - a.timestamp)
+      .sort((a, b) => {
+        const delta = b.timestamp - a.timestamp
+        return delta == 0 ? -1 : delta
+      })
 )
 
-export const { addressesAdded, addressesFlushed, loadingStarted, loadingFinished, addressSettingsUpdated } =
-  addressesSlice.actions
+export const {
+  addTransactionToAddress,
+  addressesAdded,
+  addressesFlushed,
+  loadingStarted,
+  loadingFinished,
+  addressSettingsUpdated
+} = addressesSlice.actions
 
 export default addressesSlice

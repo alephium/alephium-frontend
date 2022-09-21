@@ -16,67 +16,116 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useCallback, useState } from 'react'
 import { StackScreenProps } from '@react-navigation/stack'
-import { ScrollView, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native'
+import { useTheme } from 'styled-components/native'
 
+import client from '../../api/client'
 import AddressBadge from '../../components/AddressBadge'
 import Amount from '../../components/Amount'
 import Button from '../../components/buttons/Button'
 import HighlightRow from '../../components/HighlightRow'
-import Screen, { CenteredScreenSection, ScreenSection } from '../../components/layout/Screen'
+import Screen, { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../../components/layout/Screen'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import InWalletTabsParamList from '../../navigation/inWalletRoutes'
 import RootStackParamList from '../../navigation/rootStackRoutes'
+import { addTransactionToAddress, selectAddressByHash } from '../../store/addressesSlice'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'ConfirmSendScreen'>
+interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'ConfirmSendScreen'> {}
 
 const ConfirmSendScreen = ({
   navigation,
   route: {
     params: { fromAddressHash, toAddressHash, amount, gasAmount, gasPrice, unsignedTxId, unsignedTransaction, fees }
   }
-}: ScreenProps) => (
-  <Screen>
-    <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1,
-        justifyContent: 'space-between'
-      }}
-    >
-      <View>
-        <ScreenSection>
-          <HighlightRow title="From address" isTopRounded>
-            <AddressBadge address={fromAddressHash} />
-          </HighlightRow>
-          <HighlightRow title="To address">
-            <AddressBadge address={toAddressHash} />
-          </HighlightRow>
-          <HighlightRow title="Amount" isBottomRounded>
-            <Amount value={BigInt(amount)} fullPrecision />
-          </HighlightRow>
-        </ScreenSection>
-        <ScreenSection>
-          <HighlightRow title="Est. fees" isTopRounded>
-            <Amount value={fees} fullPrecision />
-          </HighlightRow>
-          <HighlightRow title="Total amount" isBottomRounded>
-            <Amount value={BigInt(amount) + fees} fullPrecision />
-          </HighlightRow>
-        </ScreenSection>
-        {gasAmount && gasPrice && (
+}: ScreenProps) => {
+  const theme = useTheme()
+  const dispatch = useAppDispatch()
+  const fromAddress = useAppSelector((state) => selectAddressByHash(state, fromAddressHash))
+  const [isSending, setIsSending] = useState(false)
+
+  const handleSend = useCallback(() => {
+    const send = async () => {
+      if (!fromAddress) return
+
+      setIsSending(true)
+      try {
+        const signature = await client.cliqueClient.transactionSign(unsignedTxId, fromAddress.privateKey)
+        const response = await client.cliqueClient.transactionSend(fromAddress.hash, unsignedTransaction, signature)
+        await dispatch(
+          addTransactionToAddress({
+            hash: unsignedTxId,
+            inputs: [{ outputRef: { hint: -1, key: '' }, address: fromAddressHash, attoAlphAmount: amount }],
+            outputs: [{ hint: -1, key: '', type: '', address: toAddressHash, attoAlphAmount: amount }],
+            timestamp: new Date().getTime(),
+            gasAmount: gasAmount ? parseInt(gasAmount) : 0,
+            gasPrice: gasPrice ? gasPrice.toString() : '',
+            blockHash: ''
+          })
+        )
+        navigation.navigate('TransfersScreen')
+      } catch (e) {
+        Alert.alert('Send error', (e as unknown as { error: { detail: string } }).error.detail)
+      }
+      setIsSending(false)
+    }
+
+    send()
+  }, [fromAddress])
+
+  const sendText = isSending ? 'Sending' : 'Send'
+
+  return (
+    <>
+      <ScreenSection>
+        <BottomModalScreenTitle>Review</BottomModalScreenTitle>
+      </ScreenSection>
+      <ScrollView>
+        <>
           <ScreenSection>
-            <HighlightRow title="Gas" isTopRounded>
-              <Text>{gasAmount}</Text>
+            <HighlightRow title="From address" isTopRounded>
+              <AddressBadge address={fromAddressHash} />
             </HighlightRow>
-            <HighlightRow title="Gas price" isBottomRounded>
-              <Amount value={BigInt(gasPrice)} fullPrecision />
+            <HighlightRow title="To address">
+              <AddressBadge address={toAddressHash} />
+            </HighlightRow>
+            <HighlightRow title="Amount" isBottomRounded>
+              <Amount value={BigInt(amount)} fullPrecision />
             </HighlightRow>
           </ScreenSection>
-        )}
-      </View>
-      <CenteredScreenSection>
-        <Button title="Send" wide gradient />
+          <ScreenSection>
+            <HighlightRow title="Est. fees" isTopRounded>
+              <Amount value={fees} fullPrecision />
+            </HighlightRow>
+            <HighlightRow title="Total amount" isBottomRounded>
+              <Amount value={BigInt(amount) + fees} fullPrecision />
+            </HighlightRow>
+          </ScreenSection>
+          {gasAmount && gasPrice && (
+            <ScreenSection>
+              <HighlightRow title="Gas" isTopRounded>
+                <Text>{gasAmount}</Text>
+              </HighlightRow>
+              <HighlightRow title="Gas price" isBottomRounded>
+                <Amount value={BigInt(gasPrice)} fullPrecision />
+              </HighlightRow>
+            </ScreenSection>
+          )}
+        </>
+      </ScrollView>
+      <CenteredScreenSection style={{ marginBottom: 20 }}>
+        <Button
+          onPress={handleSend}
+          title={sendText}
+          disabled={isSending}
+          wide
+          gradient
+          icon={isSending ? <ActivityIndicator size="large" color={theme.font.primary} /> : null}
+        />
       </CenteredScreenSection>
-    </ScrollView>
-  </Screen>
-)
+    </>
+  )
+}
 
 export default ConfirmSendScreen

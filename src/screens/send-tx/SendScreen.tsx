@@ -25,7 +25,7 @@ import {
 } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, Alert, ScrollView, View } from 'react-native'
+import { ActivityIndicator, Alert, ScrollView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import client from '../../api/client'
@@ -36,7 +36,12 @@ import ExpandableRow from '../../components/ExpandableRow'
 import HighlightRow from '../../components/HighlightRow'
 import AddressSelector from '../../components/inputs/AddressSelector'
 import Input from '../../components/inputs/Input'
-import Screen, { CenteredScreenSection, ScreenSection, ScreenSectionTitle } from '../../components/layout/Screen'
+import {
+  BottomModalScreenTitle,
+  CenteredScreenSection,
+  ScreenSection,
+  ScreenSectionTitle
+} from '../../components/layout/Screen'
 import { useAppSelector } from '../../hooks/redux'
 import useDebouncedEffect from '../../hooks/useDebouncedEffect'
 import RootStackParamList from '../../navigation/rootStackRoutes'
@@ -129,81 +134,73 @@ const SendScreen = ({
     2000
   )
 
-  console.log((BigInt(amount) + BigInt(fees ?? 0)).toString())
-
   return (
-    <Screen>
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: 'space-between'
-        }}
-      >
-        <View>
-          <ScreenSection>
-            <AddressSelector
-              label="From address"
-              value={fromAddressHash}
-              onValueChange={setFromAddressHash}
+    <>
+      <ScreenSection>
+        <BottomModalScreenTitle>Send</BottomModalScreenTitle>
+      </ScreenSection>
+      <ScrollView>
+        <ScreenSection>
+          <AddressSelector
+            label="From address"
+            value={fromAddressHash}
+            onValueChange={setFromAddressHash}
+            isTopRounded
+            hasBottomBorder
+          />
+          <Input label="To address" value={toAddressHash} onChangeText={setToAddressHash} hasBottomBorder />
+          <Input
+            label="Amount"
+            value={amountString}
+            onChangeText={handleAmountChange}
+            isBottomRounded
+            keyboardType="number-pad"
+          />
+        </ScreenSection>
+        <ScreenSection>
+          <ScreenSectionTitle>Summary</ScreenSectionTitle>
+          <HighlightRow title="Est. fees" isTopRounded hasBottomBorder isSecondary>
+            {isLoadingTxData ? (
+              <ActivityIndicator size="large" color={theme.font.primary} />
+            ) : fees ? (
+              <Amount value={fees} fullPrecision />
+            ) : (
+              <AppText>-</AppText>
+            )}
+          </HighlightRow>
+          <HighlightRow title="Total amount" isBottomRounded isSecondary>
+            {isLoadingTxData ? (
+              <ActivityIndicator size="large" color={theme.font.primary} />
+            ) : (
+              <AmountStyled value={amount + BigInt(fees ?? 0)} fullPrecision />
+            )}
+          </HighlightRow>
+        </ScreenSection>
+        <ScreenSection>
+          <ExpandableRow title="Tweak gas settings" expandedHeight={165}>
+            <Input
+              label="Gas"
+              value={gasAmount}
+              onChangeText={handleGasAmountChange}
               isTopRounded
               hasBottomBorder
-            />
-            <Input label="To address" value={toAddressHash} onChangeText={setToAddressHash} hasBottomBorder />
-            <Input
-              label="Amount"
-              value={amountString}
-              onChangeText={handleAmountChange}
-              isBottomRounded
               keyboardType="number-pad"
+              error={gasAmountHasError ? `Gas must be at least ${MINIMAL_GAS_AMOUNT}` : ''}
             />
-          </ScreenSection>
-          <ScreenSection>
-            <ScreenSectionTitle>Summary</ScreenSectionTitle>
-            <HighlightRow title="Est. fees" isTopRounded hasBottomBorder isSecondary>
-              {isLoadingTxData ? (
-                <ActivityIndicator size="large" color={theme.font.primary} />
-              ) : fees ? (
-                <Amount value={fees} fullPrecision />
-              ) : (
-                <AppText>-</AppText>
-              )}
-            </HighlightRow>
-            <HighlightRow title="Total amount" isBottomRounded isSecondary>
-              {isLoadingTxData ? (
-                <ActivityIndicator size="large" color={theme.font.primary} />
-              ) : (
-                <AmountStyled value={amount + BigInt(fees ?? 0)} fullPrecision />
-              )}
-            </HighlightRow>
-          </ScreenSection>
-          <ScreenSection>
-            <ExpandableRow title="Tweak gas settings" expandedHeight={165}>
-              <Input
-                label="Gas"
-                value={gasAmount}
-                onChangeText={handleGasAmountChange}
-                isTopRounded
-                hasBottomBorder
-                keyboardType="number-pad"
-                error={gasAmountHasError ? `Gas must be at least ${MINIMAL_GAS_AMOUNT}` : ''}
-              />
-              <Input
-                label="Gas price"
-                value={gasPriceString}
-                onChangeText={handleGasPriceChange}
-                isBottomRounded
-                hasBottomBorder
-                keyboardType="number-pad"
-                error={
-                  gasPriceHasError
-                    ? `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
-                    : ''
-                }
-              />
-            </ExpandableRow>
-          </ScreenSection>
-        </View>
-        <CenteredScreenSection>
+            <Input
+              label="Gas price"
+              value={gasPriceString}
+              onChangeText={handleGasPriceChange}
+              isBottomRounded
+              hasBottomBorder
+              keyboardType="number-pad"
+              error={
+                gasPriceHasError ? `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}` : ''
+              }
+            />
+          </ExpandableRow>
+        </ScreenSection>
+        <CenteredScreenSection style={{ marginBottom: 20 }}>
           <Button
             title="Confirm"
             gradient
@@ -213,7 +210,7 @@ const SendScreen = ({
                 toAddressHash,
                 amount: amount.toString(),
                 gasAmount: gasAmount || undefined,
-                gasPrice: gasPrice ? gasPrice.toString() : undefined,
+                gasPrice,
                 unsignedTxId,
                 unsignedTransaction,
                 fees: fees ?? BigInt(0)
@@ -224,7 +221,7 @@ const SendScreen = ({
           />
         </CenteredScreenSection>
       </ScrollView>
-    </Screen>
+    </>
   )
 }
 

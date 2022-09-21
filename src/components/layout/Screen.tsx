@@ -46,6 +46,17 @@ export const BottomModalScreenTitle = styled.Text`
   font-size: 26px;
 `
 
+export let BottomModal = ({ children, style }: SafeAreaViewProps) => (
+  <SafeAreaView style={style}>{children}</SafeAreaView>
+)
+BottomModal = styled(BottomModal)`
+  background-color: ${({ theme }) => theme.bg.secondary};
+  top: 400px;
+  position: absolute;
+  border-radius-top-left: 20px;
+  border-radius-top-right: 20px;
+`
+
 export const ScreenSectionTitle = styled.Text`
   font-size: 16px;
   font-weight: 600;

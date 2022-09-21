@@ -19,12 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
+import { ScrollView } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import Button from '../components/buttons/Button'
 import Input from '../components/inputs/Input'
-import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -69,38 +70,40 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
   }
 
   return (
-    <Screen>
+    <>
       <ScreenSection>
         <BottomModalScreenTitle>Current network</BottomModalScreenTitle>
       </ScreenSection>
-      <ScreenSection fill>
-        {networkNames.map((networkName, index) => (
-          <RadioButtonRow
-            key={networkName}
-            title={capitalize(networkName)}
-            onPress={() => handleNetworkItemPress(networkName)}
-            isFirst={index === 0}
-            isLast={index === networkNames.length - 1}
-            isActive={networkName === selectedNetwork}
-          />
-        ))}
-      </ScreenSection>
-      {showCustomNetworkForm && (
-        <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-          <ScreenSection>
-            <Input value={nodeHost} onChangeText={setNodeHost} label="Node host" isTopRounded hasBottomBorder />
-            <Input
-              value={explorerApiHost}
-              onChangeText={setExplorerApiHost}
-              label="Explorer API host"
-              hasBottomBorder
+      <ScrollView>
+        <ScreenSection fill>
+          {networkNames.map((networkName, index) => (
+            <RadioButtonRow
+              key={networkName}
+              title={capitalize(networkName)}
+              onPress={() => handleNetworkItemPress(networkName)}
+              isFirst={index === 0}
+              isLast={index === networkNames.length - 1}
+              isActive={networkName === selectedNetwork}
             />
-            <Input value={explorerUrl} onChangeText={setExplorerUrl} label="Explorer URL" isBottomRounded />
-            <ButtonStyled centered title="Save custom network" onPress={saveCustomNetwork} />
-          </ScreenSection>
-        </Animated.View>
-      )}
-    </Screen>
+          ))}
+        </ScreenSection>
+        {showCustomNetworkForm && (
+          <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+            <ScreenSection>
+              <Input value={nodeHost} onChangeText={setNodeHost} label="Node host" isTopRounded hasBottomBorder />
+              <Input
+                value={explorerApiHost}
+                onChangeText={setExplorerApiHost}
+                label="Explorer API host"
+                hasBottomBorder
+              />
+              <Input value={explorerUrl} onChangeText={setExplorerUrl} label="Explorer URL" isBottomRounded />
+              <ButtonStyled centered title="Save custom network" onPress={saveCustomNetwork} />
+            </ScreenSection>
+          </Animated.View>
+        )}
+      </ScrollView>
+    </>
   )
 }
 
@@ -108,4 +111,5 @@ export default SwitchNetworkScreen
 
 const ButtonStyled = styled(Button)`
   margin-top: 30px;
+  margin-bottom: 20px;
 `

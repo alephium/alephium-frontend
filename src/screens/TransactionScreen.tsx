@@ -45,7 +45,7 @@ const TransactionScreen = ({
   const explorerTxUrl = `${explorerBaseUrl}/#/transactions/${tx.hash}`
 
   return (
-    <Screen>
+    <>
       <ScrollView>
         <ScreenSectionRow>
           <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
@@ -54,7 +54,7 @@ const TransactionScreen = ({
             <ChevronRightIcon size={24} color={theme.global.accent} />
           </ExplorerLink>
         </ScreenSectionRow>
-        <ScreenSection>
+        <ScreenSection style={{ marginBottom: 20 }}>
           <HighlightRow title="Amount" isTopRounded hasBottomBorder>
             <Amount value={amount} fadeDecimals fullPrecision suffix="ALPH" />
           </HighlightRow>
@@ -62,7 +62,7 @@ const TransactionScreen = ({
             <BoldText>{dayjs(tx.timestamp).fromNow()}</BoldText>
           </HighlightRow>
           <HighlightRow title="Status" hasBottomBorder>
-            <BoldText>Confirmed</BoldText>
+            <BoldText>{tx.blockHash ? 'Confirmed' : 'Pending'}</BoldText>
           </HighlightRow>
           <HighlightRow title="From" hasBottomBorder>
             {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
@@ -81,7 +81,7 @@ const TransactionScreen = ({
           </HighlightRow>
         </ScreenSection>
       </ScrollView>
-    </Screen>
+    </>
   )
 }
 

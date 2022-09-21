@@ -17,16 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calAmountDelta } from '@alephium/sdk'
+import { Transaction } from '@alephium/sdk/api/explorer'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
+import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Arrow from '../images/Arrow'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { DisplayTx } from '../types/transactions'
+import { AddressTransaction } from '../types/transactions'
 import Amount from './Amount'
 import AppText from './AppText'
 import HighlightRow from './HighlightRow'
@@ -34,7 +35,7 @@ import HighlightRow from './HighlightRow'
 dayjs.extend(relativeTime)
 
 interface TransactionRowProps {
-  tx: DisplayTx
+  tx: AddressTransaction
   isFirst?: boolean
   isLast?: boolean
   style?: StyleProp<ViewStyle>
@@ -44,19 +45,23 @@ const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => 
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
-  let amount = calAmountDelta(tx, tx.address.hash)
+  let amount = calAmountDelta(tx as Transaction, tx.address.hash)
   const isOut = amount < 0
   amount = isOut ? amount * BigInt(-1) : amount
+
+  const isConfirmed = tx.blockHash !== ''
 
   return (
     <HighlightRow
       style={style}
+      isSecondary={!isConfirmed}
       hasBottomBorder={!isLast}
       isBottomRounded={isLast}
       isTopRounded={isFirst}
       onPress={() => navigation.navigate('TransactionScreen', { tx, isOut, amount })}
     >
       <Direction>
+        {isConfirmed ? null : <ActivityIndicator size="small" color={theme.font.primary} />}
         {isOut ? (
           <Arrow direction="up" color={theme.font.secondary} />
         ) : (
@@ -81,7 +86,9 @@ const Item = styled(AppText)`
 `
 
 const Direction = styled.View`
-  width: 15%;
+  align-items: center;
+  flex-direction: column;
+  margin-right: 20px;
 `
 
 const Date = styled(Item)`

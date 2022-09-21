@@ -17,31 +17,45 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { CardStyleInterpolators, StackNavigationOptions } from '@react-navigation/stack'
-import { useWindowDimensions, View } from 'react-native'
+import { View } from 'react-native'
 import { useTheme } from 'styled-components'
 
-const useBottomModalOptions = (): StackNavigationOptions => {
+interface BottomModalOptions {
+  height: number
+}
+
+const heights = {
+  pullTab: {
+    container: 20,
+    bar: 7
+  }
+}
+
+const borderRadius = 20
+
+const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOptions => {
   const theme = useTheme()
-  const { height: screenHeight } = useWindowDimensions()
+
+  const { height } = options ?? {}
 
   return {
     cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
     gestureEnabled: true,
     gestureDirection: 'vertical',
-    gestureResponseDistance: screenHeight,
+    gestureResponseDistance: height ? heights.pullTab.container * 4 + height : undefined,
     cardStyle: {
-      position: 'absolute',
-      bottom: 0,
-      width: '100%',
-      borderRadius: 20,
-      overflow: 'visible'
+      overflow: 'visible',
+      marginTop: heights.pullTab.container + (height ?? 0),
+      top: borderRadius,
+      borderRadius,
+      backgroundColor: theme.bg.secondary
     },
     header: () => (
       <View
         style={{
           position: 'absolute',
-          height: 7,
-          top: -20,
+          height: heights.pullTab.bar,
+          top: -heights.pullTab.container,
           width: '100%',
           alignItems: 'center'
         }}
