@@ -28,7 +28,7 @@ import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import HighlightRow from '../components/HighlightRow'
 import IOList from '../components/IOList'
-import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 

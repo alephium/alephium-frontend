@@ -27,7 +27,8 @@ import { fetchAddressesDataPage, selectTransactions } from '../store/addressesSl
 import { AddressHash } from '../types/addresses'
 
 // TODO: Pull this from an explorer endpoint
-const averageBlockTime = 1000 * 30
+// Go a little over the average
+const averageBlockTime = 1000 * 60 * 2
 
 interface TransactionsListProps {
   addressHashes: AddressHash[]
@@ -56,7 +57,7 @@ const TransactionsList = ({ addressHashes, style }: TransactionsListProps) => {
         <View>
           {txs.map((tx, index) => (
             <TransactionRow
-              key={`${tx.hash}-${tx.address.hash}`}
+              key={`${tx.hash}-${tx.address.hash}-${tx.blockHash}`}
               tx={tx}
               isFirst={index === 0}
               isLast={index === txs.length - 1}

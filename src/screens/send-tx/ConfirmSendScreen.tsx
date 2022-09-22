@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useCallback, useState } from 'react'
 import { StackScreenProps } from '@react-navigation/stack'
-import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native'
+import { useCallback, useState } from 'react'
+import { ActivityIndicator, Alert, ScrollView, Text } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 import client from '../../api/client'
@@ -26,13 +26,13 @@ import AddressBadge from '../../components/AddressBadge'
 import Amount from '../../components/Amount'
 import Button from '../../components/buttons/Button'
 import HighlightRow from '../../components/HighlightRow'
-import Screen, { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../../components/layout/Screen'
+import { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import InWalletTabsParamList from '../../navigation/inWalletRoutes'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { addTransactionToAddress, selectAddressByHash } from '../../store/addressesSlice'
 
-interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'ConfirmSendScreen'> {}
+type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'ConfirmSendScreen'>
 
 const ConfirmSendScreen = ({
   navigation,
@@ -52,7 +52,7 @@ const ConfirmSendScreen = ({
       setIsSending(true)
       try {
         const signature = await client.cliqueClient.transactionSign(unsignedTxId, fromAddress.privateKey)
-        const response = await client.cliqueClient.transactionSend(fromAddress.hash, unsignedTransaction, signature)
+        await client.cliqueClient.transactionSend(fromAddress.hash, unsignedTransaction, signature)
         await dispatch(
           addTransactionToAddress({
             hash: unsignedTxId,
@@ -72,7 +72,18 @@ const ConfirmSendScreen = ({
     }
 
     send()
-  }, [fromAddress])
+  }, [
+    fromAddress,
+    amount,
+    dispatch,
+    fromAddressHash,
+    gasAmount,
+    gasPrice,
+    navigation,
+    toAddressHash,
+    unsignedTransaction,
+    unsignedTxId
+  ])
 
   const sendText = isSending ? 'Sending' : 'Send'
 

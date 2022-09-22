@@ -217,7 +217,7 @@ const SendScreen = ({
               })
             }
             wide
-            disabled={!isFormDataComplete || gasAmountHasError || gasPriceHasError}
+            disabled={isLoadingTxData || !isFormDataComplete || gasAmountHasError || gasPriceHasError}
           />
         </CenteredScreenSection>
       </ScrollView>

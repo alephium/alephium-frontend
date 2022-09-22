@@ -26,7 +26,6 @@ import {
   EntityState,
   PayloadAction
 } from '@reduxjs/toolkit'
-import { merge } from 'lodash'
 
 import client from '../api/client'
 import { storeAddressMetadata } from '../storage/wallets'
@@ -288,7 +287,7 @@ const addressesSlice = createSlice({
               }
               return newTxs
             }, [])
-            networkData.transactions.data = [].concat(networkData.transactions.data).concat(newTxs)
+            networkData.transactions.data = [...networkData.transactions.data.concat(newTxs)]
             networkData.transactions.loadedPage = page
             if (availableBalance) networkData.availableBalance = availableBalance
           }
