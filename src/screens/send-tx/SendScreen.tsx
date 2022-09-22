@@ -82,7 +82,7 @@ const SendScreen = ({
   const handleGasPriceChange = (str: string) => isNumericStringValid(str) && setGasPriceString(str)
 
   const buildTransaction = useCallback(() => {
-    if (!fromAddress || !toAddressHash) {
+    if (!fromAddress || !toAddressHash || !amountString) {
       setIsLoadingTxData(false)
       return
     }
@@ -108,11 +108,10 @@ const SendScreen = ({
     }
 
     createTransaction()
-  }, [amount, fromAddress, gasAmount, gasPrice, toAddressHash])
+  }, [amount, amountString, fromAddress, gasAmount, gasPrice, toAddressHash])
 
   useEffect(() => {
     try {
-      console.log(amountString)
       setAmount(convertAlphToSet(amountString))
     } catch {
       setAmount(BigInt(0))
@@ -130,7 +129,7 @@ const SendScreen = ({
   useDebouncedEffect(
     () => setIsLoadingTxData(true),
     () => buildTransaction(),
-    [amount, gasPrice, gasAmount],
+    [amount, gasPrice, gasAmount, toAddressHash],
     2000
   )
 
