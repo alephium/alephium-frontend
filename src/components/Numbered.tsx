@@ -16,16 +16,38 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata } from './addresses'
+import { ReactNode } from 'react'
+import { View } from 'react-native'
 
-export type Mnemonic = string
+import AppText from './AppText'
 
-export type StoredWalletAuthType = 'pin' | 'biometrics'
-
-export type WalletMetadata = {
-  id: string
-  name: string
-  authType: StoredWalletAuthType
-  isMnemonicBackedUp: boolean
-  addresses: AddressMetadata[]
+interface NumberedProps {
+  index: number
+  children: ReactNode
 }
+
+const Numbered = ({ index, children }: NumberedProps) => (
+  <View
+    style={{
+      paddingRight: index % 2 == 0 ? 20 : 0,
+      marginBottom: 10,
+      flexDirection: 'row'
+    }}
+  >
+    <View style={{ marginRight: 5, width: 15 }}>
+      <AppText style={{ fontSize: 10, textAlign: 'right' }}>{index}</AppText>
+    </View>
+    <View
+      style={{
+        borderBottomWidth: 1,
+        borderColor: 'black',
+        paddingBottom: 5,
+        width: 100
+      }}
+    >
+      {children}
+    </View>
+  </View>
+)
+
+export default Numbered

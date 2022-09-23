@@ -66,6 +66,7 @@ type RootStackParamList = {
     gasAmount?: string
     gasPrice?: bigint
   }
+  SecurityScreen: undefined
 }
 
 export default RootStackParamList

@@ -61,7 +61,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
         walletStored({
           name: walletName,
           mnemonic: importedMnemonic,
-          authType: activeWallet.authType
+          authType: activeWallet.authType,
+          isMnemonicBackedUp: true
         })
       )
     } else {
@@ -74,7 +75,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
           walletStored({
             name: walletName,
             mnemonic: importedMnemonic,
-            authType: 'pin'
+            authType: 'pin',
+            isMnemonicBackedUp: true
           })
         )
       }

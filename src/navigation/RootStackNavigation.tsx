@@ -24,6 +24,7 @@ import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'
+import useScreenOptions from '../hooks/layout/useScreenOptions'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import AddressScreen from '../screens/AddressScreen'
 import EditAddressScreen from '../screens/EditAddressScreen'
@@ -37,6 +38,7 @@ import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '../screens/NewAddressScreen'
 import ReceiveScreen from '../screens/ReceiveScreen'
+import SecurityScreen from '../screens/SecurityScreen'
 import ConfirmSendScreen from '../screens/send-tx/ConfirmSendScreen'
 import SendScreen from '../screens/send-tx/SendScreen'
 import SettingsScreen from '../screens/SettingsScreen'
@@ -62,6 +64,7 @@ const RootStackNavigation = () => {
   const { lastNavigationState, isAppBackgroundedAcknowledged, isAuthenticated } = useAppSelector(
     (state) => state.appMetadata
   )
+  const securityScreenOptions = useScreenOptions({ title: 'Security', style: { backgroundColor: '#F7D1B6' } })
 
   const handleStateChange = (state?: NavigationState) => {
     // Do not record state changes until "foregrounding processes" are done (login, navigation state restore)
@@ -141,6 +144,7 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} options={bottomModalOptions} />
 
         <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
+        <RootStack.Screen name="SecurityScreen" component={SecurityScreen} options={securityScreenOptions} />
         <RootStack.Screen name="SwitchNetworkScreen" component={SwitchNetworkScreen} options={bottomModalOptions} />
         <RootStack.Screen
           name="SwitchWalletAfterDeletionScreen"

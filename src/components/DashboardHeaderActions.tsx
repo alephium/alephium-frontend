@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { Eye as EyeIcon, Settings2 as SettingsIcon, ShieldAlert as SecurityIcon } from 'lucide-react-native'
+import { Eye as EyeIcon, Settings2 as SettingsIcon, ShieldAlert } from 'lucide-react-native'
 import { memo } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -32,6 +32,7 @@ interface DashboardHeaderActionsProps {
 
 const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
+  const { isMnemonicBackedUp } = useAppSelector((state) => state.activeWallet)
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
@@ -47,10 +48,8 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           <EyeIcon size={24} color={theme.font.primary} />
         </Icon>
       </Pressable>
-      <Pressable>
-        <Icon>
-          <SecurityIcon size={24} color={theme.font.primary} />
-        </Icon>
+      <Pressable onPress={() => navigation.navigate('SecurityScreen')}>
+        <SecurityIcon alert={!isMnemonicBackedUp} />
       </Pressable>
       <Pressable onPress={() => navigation.navigate('SettingsScreen')}>
         <Icon>
@@ -70,3 +69,19 @@ export default memo(styled(DashboardHeaderActions)`
 const Icon = styled.View`
   padding: 18px 12px;
 `
+
+interface SecurityIconProps {
+  alert: boolean
+}
+
+const SecurityIcon = ({ alert }: SecurityIconProps) => {
+  const theme = useTheme()
+  const fgColor = alert ? theme.bg.primary : theme.font.primary
+  const bgColor = alert ? theme.global.alert : 'transparent'
+
+  return (
+    <Icon style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: bgColor, justifyContent: 'center' }}>
+      <ShieldAlert size={24} color={fgColor} />
+    </Icon>
+  )
+}

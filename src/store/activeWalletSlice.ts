@@ -30,6 +30,7 @@ const sliceName = 'activeWallet'
 export interface ActiveWalletState {
   name: string
   mnemonic: Mnemonic
+  isMnemonicBackedUp: boolean
   authType: StoredWalletAuthType | null
   metadataId: string | null
 }
@@ -37,6 +38,7 @@ export interface ActiveWalletState {
 const initialState: ActiveWalletState = {
   name: '',
   mnemonic: '',
+  isMnemonicBackedUp: false,
   authType: null,
   metadataId: null
 }
@@ -46,7 +48,7 @@ export const walletStored = createAsyncThunk(
   async (payload: Omit<ActiveWalletState, 'metadataId'>, { getState, dispatch }) => {
     dispatch(loadingStarted())
 
-    const { name, mnemonic, authType } = payload
+    const { name, mnemonic, authType, isMnemonicBackedUp } = payload
     let metadataId: string | null = null
 
     if (!name) throw 'Could not store wallet, wallet name is not set'
@@ -56,14 +58,14 @@ export const walletStored = createAsyncThunk(
     await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
 
     if (authType === 'biometrics') {
-      metadataId = await storeWallet(name, mnemonic, authType)
+      metadataId = await storeWallet(name, mnemonic, authType, isMnemonicBackedUp)
     } else if (authType === 'pin') {
       const state = getState() as RootState
       const pin = state.credentials.pin
       if (!pin) throw 'Could not store wallet, pin to encrypt it is not set'
 
       const encryptedWallet = await walletEncryptAsyncUnsafe(pin, mnemonic, pbkdf2)
-      metadataId = await storeWallet(name, encryptedWallet, authType)
+      metadataId = await storeWallet(name, encryptedWallet, authType, isMnemonicBackedUp)
     }
 
     dispatch(loadingFinished())
@@ -72,7 +74,8 @@ export const walletStored = createAsyncThunk(
       name,
       mnemonic,
       authType,
-      metadataId
+      metadataId,
+      isMnemonicBackedUp
     } as ActiveWalletState
   }
 )

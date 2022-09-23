@@ -46,7 +46,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const passwordRequirement = useAppSelector((state) => state.settings.passwordRequirement)
   const currentTheme = useAppSelector((state) => state.settings.theme)
   const currentNetworkName = useAppSelector((state) => state.network.name)
-  const currentWalletName = useAppSelector((state) => state.activeWallet.name)
+  const currentWallet = useAppSelector((state) => state.activeWallet)
   const currentCurrency = useAppSelector((state) => state.settings.currency)
 
   const currencyOptions = Object.values(currencies).map((currency) => ({
@@ -68,7 +68,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         {
           text: 'Delete',
           onPress: async () => {
-            await deleteWalletByName(currentWalletName)
+            await deleteWalletByName(currentWallet.name)
             dispatch(walletFlushed())
             navigation.navigate('SwitchWalletAfterDeletionScreen')
           }
@@ -118,7 +118,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
             variant="valid"
             onPress={() => navigation.navigate('LandingScreen')}
           />
-          <Button
+          <ButtonStyled
             title="Delete this wallet"
             icon={<TrashIcon size={24} color={theme.global.alert} />}
             variant="alert"

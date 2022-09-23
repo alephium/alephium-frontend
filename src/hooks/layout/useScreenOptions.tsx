@@ -16,16 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata } from './addresses'
+import { StackNavigationOptions } from '@react-navigation/stack'
+import { StyleProp, ViewStyle } from 'react-native'
 
-export type Mnemonic = string
-
-export type StoredWalletAuthType = 'pin' | 'biometrics'
-
-export type WalletMetadata = {
-  id: string
-  name: string
-  authType: StoredWalletAuthType
-  isMnemonicBackedUp: boolean
-  addresses: AddressMetadata[]
+interface UseScreenOptionsConfig {
+  title: string
+  style?: StyleProp<ViewStyle>
 }
+
+const useScreenOptions = ({ title, style }: UseScreenOptionsConfig): StackNavigationOptions => ({
+  headerTitle: title,
+  cardStyle: style
+})
+
+export default useScreenOptions

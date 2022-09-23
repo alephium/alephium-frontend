@@ -29,12 +29,16 @@ const keychainService = 'alephium-mobile-wallet'
 export const storeWallet = async (
   walletName: string,
   mnemonic: string,
-  authType: StoredWalletAuthType
+  authType: StoredWalletAuthType,
+  isMnemonicBackedUp: boolean
 ): Promise<string> => {
+  console.log('storeWallet', isMnemonicBackedUp)
+
   const getWalletMetadataInitialValue = (id: string): WalletMetadata => ({
     id,
     name: walletName,
     authType,
+    isMnemonicBackedUp: false,
     addresses: [
       {
         index: 0,
@@ -61,13 +65,14 @@ export const storeWallet = async (
     if (walletMetadata) {
       // Will override stored wallet with the same name
       walletId = walletMetadata.id
+      Object.assign(walletMetadata, { name: walletName, authType, isMnemonicBackedUp })
     } else {
       // Will store a new wallet
       walletId = nanoid()
       const newWalletMetadata: WalletMetadata = getWalletMetadataInitialValue(walletId)
       walletsMetadata.push(newWalletMetadata)
-      await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
     }
+    await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
   }
 
   const secureStoreConfig =
@@ -88,7 +93,7 @@ export const storeWallet = async (
 }
 
 export const getStoredWalletById = async (id: string): Promise<ActiveWalletState | null> => {
-  const { name, authType } = await getWalletMetadataById(id)
+  const { name, authType, isMnemonicBackedUp } = await getWalletMetadataById(id)
 
   const secureStoreConfig =
     authType === 'biometrics'
@@ -109,7 +114,8 @@ export const getStoredWalletById = async (id: string): Promise<ActiveWalletState
     name,
     mnemonic,
     authType,
-    metadataId: id
+    metadataId: id,
+    isMnemonicBackedUp
   } as ActiveWalletState
 }
 

@@ -95,7 +95,8 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
               walletStored({
                 name: walletName,
                 mnemonic: wallet.mnemonic,
-                authType: 'pin'
+                authType: 'pin',
+                isMnemonicBackedUp: false
               })
             )
           }

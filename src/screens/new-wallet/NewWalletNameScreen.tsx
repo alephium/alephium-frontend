@@ -64,7 +64,8 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
             walletStored({
               name: walletName,
               mnemonic: wallet.mnemonic,
-              authType: activeWallet.authType
+              authType: activeWallet.authType,
+              isMnemonicBackedUp: false
             })
           )
         }
