@@ -75,7 +75,7 @@ function Select<T extends InputValue>({
         {options.map(({ label, value }, index) => (
           <Option
             onPress={() => handleOptionPress(value)}
-            key={(value as object).toString() ?? 'none'}
+            key={(value as object)?.toString() ?? 'none'}
             isTopRounded={index === 0}
             isBottomRounded={index === options.length - 1}
             hasBottomBorder={index !== options.length - 1}
