@@ -22,7 +22,7 @@ import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
 import { useCallback, useLayoutEffect, useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
 import Button from '../components/buttons/Button'
@@ -81,7 +81,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
         height={165}
       />
       <ScreenSection>
-        <ButtonsRow>
+        <ButtonsRowStyled>
           <Button
             title="Send"
             icon={<ArrowUp size={24} color={theme.font.contrast} />}
@@ -103,7 +103,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
             disabled={areButtonsDisabled}
             circular
           />
-        </ButtonsRow>
+        </ButtonsRowStyled>
       </ScreenSection>
       <QRCodeModal
         addressHash={currentAddressHash}
@@ -133,3 +133,7 @@ export const AddressesScreenHeader = () => {
     />
   )
 }
+
+const ButtonsRowStyled = styled(ButtonsRow)`
+  margin: 0 20px;
+`
