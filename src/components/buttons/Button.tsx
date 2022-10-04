@@ -91,20 +91,16 @@ const Button = ({
 
   console.log('Button renders')
 
-  if (circular) {
-    return (
-      <View style={{ justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-        <Pressable style={buttonStyle} disabled={disabled} {...props}>
-          {gradient && <GradientBackground style={{ opacity: disabled ? 0.5 : 1 }} />}
-          {icon && <Icon>{icon}</Icon>}
-        </Pressable>
-        {title && <ButtonText style={{ color: colors.font.contrast }}>{title}</ButtonText>}
-        {children}
-      </View>
-    )
-  }
-
-  return (
+  return circular ? (
+    <View style={{ justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+      <Pressable style={buttonStyle} disabled={disabled} {...props}>
+        {gradient && <GradientBackground style={{ opacity: disabled ? 0.5 : 1 }} />}
+        {icon && <Icon>{icon}</Icon>}
+      </Pressable>
+      {title && <ButtonText style={{ color: colors.font.contrast }}>{title}</ButtonText>}
+      {children}
+    </View>
+  ) : (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
       {gradient && <GradientBackground style={{ opacity: disabled ? 0.5 : 1 }} />}
       {icon && <Icon withSpace={!!title || !!children}>{icon}</Icon>}
