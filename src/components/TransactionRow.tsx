@@ -61,11 +61,14 @@ const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => 
       onPress={() => navigation.navigate('TransactionScreen', { tx, isOut, amount })}
     >
       <Direction>
-        {isConfirmed ? null : <ActivityIndicator size="small" color={theme.font.primary} />}
-        {isOut ? (
-          <Arrow direction="up" color={theme.font.secondary} />
+        {isConfirmed ? (
+          isOut ? (
+            <Arrow direction="up" color={theme.font.secondary} />
+          ) : (
+            <Arrow direction="down" color={theme.global.valid} />
+          )
         ) : (
-          <Arrow direction="down" color={theme.global.valid} />
+          <ActivityIndicator size="small" color={theme.font.primary} />
         )}
       </Direction>
       <Date>{dayjs(tx.timestamp).fromNow()}</Date>
