@@ -43,6 +43,7 @@ function Select<T extends InputValue>({
   value,
   renderValue,
   isTopRounded,
+  isBottomRounded,
   hasBottomBorder
 }: SelectProps<T>) {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -61,6 +62,7 @@ function Select<T extends InputValue>({
       <Input
         editable={false}
         isTopRounded={isTopRounded}
+        isBottomRounded={isBottomRounded}
         hasBottomBorder={hasBottomBorder}
         onPress={openModal}
         resetDisabledColor
