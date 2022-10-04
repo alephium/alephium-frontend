@@ -74,7 +74,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
     <InWalletScrollScreen style={style}>
       <Carousel
         data={addressHashes}
-        renderItem={(itemInfo) => <AddressCard addressHash={itemInfo.item} />}
+        renderItem={(itemInfo) => <AddressCard addressHash={itemInfo.item} key={itemInfo.item} />}
         onScrollStart={() => setAreButtonsDisabled(true)}
         onScrollEnd={onScrollEnd}
         width={290}
