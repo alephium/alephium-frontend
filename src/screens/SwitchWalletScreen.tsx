@@ -19,13 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
+import { ScrollView, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
-import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -68,25 +68,27 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   }
 
   return (
-    <Screen style={style}>
+    <>
       <ScreenSection>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <Subtitle>Switch to another wallet?</Subtitle>
       </ScreenSection>
-      <ScreenSection fill>
-        {wallets.map((wallet, index) => (
-          <RadioButtonRow
-            key={wallet.id}
-            title={wallet.name}
-            onPress={() => handleWalletItemPress(wallet.id)}
-            isFirst={index === 0}
-            isLast={index === wallets.length - 1}
-            isActive={wallet.id === activeWalletMetadataId}
-            isInput
-          />
-        ))}
-      </ScreenSection>
-      <ScreenSection>
+      <ScrollView>
+        <ScreenSection>
+          {wallets.map((wallet, index) => (
+            <RadioButtonRow
+              key={wallet.id}
+              title={wallet.name}
+              onPress={() => handleWalletItemPress(wallet.id)}
+              isFirst={index === 0}
+              isLast={index === wallets.length - 1}
+              isActive={wallet.id === activeWalletMetadataId}
+              isInput
+            />
+          ))}
+        </ScreenSection>
+      </ScrollView>
+      <ScreenSection style={{ marginBottom: 20 }}>
         <ButtonsRow>
           <Button
             title="New wallet"
@@ -100,7 +102,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
           />
         </ButtonsRow>
       </ScreenSection>
-    </Screen>
+    </>
   )
 }
 

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import { useState } from 'react'
-import { ScrollView, View } from 'react-native'
+import { ScrollView } from 'react-native'
 
 import Button from '../components/buttons/Button'
 import ExpandableRow from '../components/ExpandableRow'
@@ -26,7 +26,7 @@ import HighlightRow from '../components/HighlightRow'
 import ColorPicker from '../components/inputs/ColorPicker'
 import Input from '../components/inputs/Input'
 import Select, { SelectOption } from '../components/inputs/Select'
-import Screen, { ScreenSection } from '../components/layout/Screen'
+import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import Toggle from '../components/Toggle'
 import { AddressSettings } from '../types/addresses'
 
@@ -75,51 +75,47 @@ const AddressForm = ({
   const renderGroupValue = (group?: number) => (group !== undefined ? `Group ${group}` : undefined)
 
   return (
-    <Screen>
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: 'space-between'
-        }}
-      >
-        <View>
-          <ScreenSection>
-            <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} isTopRounded hasBottomBorder />
-            <ColorPicker value={color} onChange={setColor} />
-            <HighlightRow
-              isBottomRounded
-              title="Main address"
-              subtitle={`Default address for operations${
-                disableIsMainToggle
-                  ? '. To remove this address from being the main address, you must set another one as main first.'
-                  : ''
-              }`}
-              onPress={toggleIsMain}
-            >
-              <Toggle onValueChange={toggleIsMain} value={isMain} disabled={disableIsMainToggle} />
-            </HighlightRow>
-          </ScreenSection>
-          {initialValues.group === undefined && (
-            <ScreenSection>
-              <ExpandableRow expandedHeight={90}>
-                <Select
-                  options={groupSelectOptions}
-                  label="Group"
-                  value={group}
-                  onValueChange={setGroup}
-                  isTopRounded
-                  isBottomRounded
-                  renderValue={renderGroupValue}
-                />
-              </ExpandableRow>
-            </ScreenSection>
-          )}
-        </View>
+    <>
+      <ScreenSection>
+        <BottomModalScreenTitle>Settings</BottomModalScreenTitle>
+      </ScreenSection>
+      <ScrollView>
         <ScreenSection>
-          <Button title={buttonText} centered onPress={() => onSubmit({ isMain, label, color, group })} />
+          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} isTopRounded hasBottomBorder />
+          <ColorPicker value={color} onChange={setColor} />
+          <HighlightRow
+            isBottomRounded
+            title="Main address"
+            subtitle={`Default address for operations${
+              disableIsMainToggle
+                ? '. To remove this address from being the main address, you must set another one as main first.'
+                : ''
+            }`}
+            onPress={toggleIsMain}
+          >
+            <Toggle onValueChange={toggleIsMain} value={isMain} disabled={disableIsMainToggle} />
+          </HighlightRow>
         </ScreenSection>
+        {initialValues.group === undefined && (
+          <ScreenSection>
+            <ExpandableRow expandedHeight={90}>
+              <Select
+                options={groupSelectOptions}
+                label="Group"
+                value={group}
+                onValueChange={setGroup}
+                isTopRounded
+                isBottomRounded
+                renderValue={renderGroupValue}
+              />
+            </ExpandableRow>
+          </ScreenSection>
+        )}
       </ScrollView>
-    </Screen>
+      <ScreenSection style={{ marginBottom: 20 }}>
+        <Button title={buttonText} centered onPress={() => onSubmit({ isMain, label, color, group })} />
+      </ScreenSection>
+    </>
   )
 }
 

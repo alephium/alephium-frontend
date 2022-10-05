@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon } from 'lucide-react-native'
+import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
 import { Plus as PlusIcon } from 'lucide-react-native'
 import { useCallback, useLayoutEffect, useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
 import Button from '../components/buttons/Button'
@@ -37,7 +37,6 @@ import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
-import { copyAddressToClipboard } from '../utils/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'AddressesScreen'> {
   style?: StyleProp<ViewStyle>
@@ -75,29 +74,36 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
     <InWalletScrollScreen style={style}>
       <Carousel
         data={addressHashes}
-        renderItem={(itemInfo) => <AddressCard addressHash={itemInfo.item} />}
+        renderItem={(itemInfo) => <AddressCard addressHash={itemInfo.item} key={itemInfo.item} />}
         onScrollStart={() => setAreButtonsDisabled(true)}
         onScrollEnd={onScrollEnd}
         width={290}
         height={165}
       />
       <ScreenSection>
-        <ButtonsRow>
+        <ButtonsRowStyled>
           <Button
-            title="Copy address"
-            onPress={() => copyAddressToClipboard(currentAddressHash)}
-            icon={<ClipboardIcon color={theme.font.primary} size={20} />}
-            variant="contrast"
+            title="Send"
+            icon={<ArrowUp size={24} color={theme.font.contrast} />}
+            onPress={() => navigation.navigate('SendScreen', { addressHash: currentAddressHash })}
             disabled={areButtonsDisabled}
+            circular
           />
           <Button
-            title="Show QR code"
-            onPress={() => setIsQrCodeModalOpen(true)}
-            icon={<QrCodeIcon color={theme.font.primary} size={20} />}
-            variant="contrast"
+            title="Receive"
+            icon={<ArrowDown size={24} color={theme.font.contrast} />}
+            onPress={() => navigation.navigate('ReceiveScreen', { addressHash: currentAddressHash })}
             disabled={areButtonsDisabled}
+            circular
           />
-        </ButtonsRow>
+          <Button
+            title="Settings"
+            icon={<Settings2 size={24} color={theme.font.contrast} />}
+            onPress={() => navigation.navigate('EditAddressScreen', { addressHash: currentAddressHash })}
+            disabled={areButtonsDisabled}
+            circular
+          />
+        </ButtonsRowStyled>
       </ScreenSection>
       <QRCodeModal
         addressHash={currentAddressHash}
@@ -127,3 +133,7 @@ export const AddressesScreenHeader = () => {
     />
   )
 }
+
+const ButtonsRowStyled = styled(ButtonsRow)`
+  margin: 0 20px;
+`

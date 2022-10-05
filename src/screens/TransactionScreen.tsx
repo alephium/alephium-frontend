@@ -28,7 +28,7 @@ import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import HighlightRow from '../components/HighlightRow'
 import IOList from '../components/IOList'
-import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
@@ -45,7 +45,7 @@ const TransactionScreen = ({
   const explorerTxUrl = `${explorerBaseUrl}/#/transactions/${tx.hash}`
 
   return (
-    <Screen>
+    <>
       <ScrollView>
         <ScreenSectionRow>
           <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
@@ -54,7 +54,7 @@ const TransactionScreen = ({
             <ChevronRightIcon size={24} color={theme.global.accent} />
           </ExplorerLink>
         </ScreenSectionRow>
-        <ScreenSection>
+        <ScreenSection style={{ marginBottom: 20 }}>
           <HighlightRow title="Amount" isTopRounded hasBottomBorder>
             <Amount value={amount} fadeDecimals fullPrecision suffix="ALPH" />
           </HighlightRow>
@@ -62,17 +62,13 @@ const TransactionScreen = ({
             <BoldText>{dayjs(tx.timestamp).fromNow()}</BoldText>
           </HighlightRow>
           <HighlightRow title="Status" hasBottomBorder>
-            <BoldText>Confirmed</BoldText>
+            <BoldText>{tx.blockHash ? 'Confirmed' : 'Pending'}</BoldText>
           </HighlightRow>
           <HighlightRow title="From" hasBottomBorder>
-            <AddressContainer>
-              {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
-            </AddressContainer>
+            {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
           </HighlightRow>
           <HighlightRow title="To" hasBottomBorder>
-            <AddressContainer>
-              {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
-            </AddressContainer>
+            {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
           </HighlightRow>
           <HighlightRow title="Fee" isBottomRounded>
             <Amount
@@ -85,7 +81,7 @@ const TransactionScreen = ({
           </HighlightRow>
         </ScreenSection>
       </ScrollView>
-    </Screen>
+    </>
   )
 }
 
@@ -93,10 +89,6 @@ export default TransactionScreen
 
 const BoldText = styled(AppText)`
   font-weight: 600;
-`
-
-const AddressContainer = styled.View`
-  max-width: 200px;
 `
 
 const ScreenSectionRow = styled(ScreenSection)`

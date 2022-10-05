@@ -18,11 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { ReactNode } from 'react'
-import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { Pressable, PressableProps, StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
 import AppText from '../AppText'
+import GradientBackground from '../GradientBackground'
 
 export interface ButtonProps extends PressableProps {
   title?: string
@@ -32,6 +33,8 @@ export interface ButtonProps extends PressableProps {
   wide?: boolean
   centered?: boolean
   icon?: ReactNode
+  gradient?: boolean
+  circular?: boolean
   children?: ReactNode
 }
 
@@ -43,6 +46,8 @@ const Button = ({
   disabled,
   icon,
   children,
+  gradient = false,
+  circular,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -55,23 +60,28 @@ const Button = ({
       valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
       alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
       transparent: 'transparent'
-    }[variant],
+    },
     font: {
       default: type === 'primary' ? theme.font.contrast : theme.font.primary,
       contrast: type === 'primary' ? theme.font.primary : theme.font.contrast,
       accent: type === 'primary' ? theme.font.contrast : theme.global.accent,
       valid: theme.global.valid,
       alert: theme.global.alert
-    }[variant]
+    }
   }
+
+  const bg = colors.bg[variant]
+  const font = colors.font[variant]
 
   const buttonStyle: PressableProps['style'] = ({ pressed }) => [
     {
       opacity: pressed || disabled ? 0.5 : 1,
-      backgroundColor: { primary: colors.bg, secondary: 'transparent', transparent: 'transparent' }[type],
+      backgroundColor: { primary: bg, secondary: 'transparent', transparent: 'transparent' }[type],
       borderWidth: { primary: 0, secondary: 2, transparent: 0 }[type],
-      borderColor: { primary: 'transparent', secondary: colors.bg, transparent: undefined }[type],
-      width: props.wide ? '75%' : 'auto'
+      borderColor: { primary: 'transparent', secondary: bg, transparent: undefined }[type],
+      width: circular ? 56 : props.wide ? '75%' : 'auto',
+      borderRadius: circular ? 100 : undefined,
+      justifyContent: circular ? 'center' : undefined
     },
     style
   ]
@@ -81,10 +91,20 @@ const Button = ({
 
   console.log('Button renders')
 
-  return (
+  return circular ? (
+    <View style={{ justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+      <Pressable style={buttonStyle} disabled={disabled} {...props}>
+        {gradient && <GradientBackground style={{ opacity: disabled ? 0.5 : 1 }} />}
+        {icon && <Icon>{icon}</Icon>}
+      </Pressable>
+      {title && <ButtonText style={{ color: colors.font.contrast }}>{title}</ButtonText>}
+      {children}
+    </View>
+  ) : (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
+      {gradient && <GradientBackground style={{ opacity: disabled ? 0.5 : 1 }} />}
       {icon && <Icon withSpace={!!title || !!children}>{icon}</Icon>}
-      {title && <ButtonText style={{ color: colors.font }}>{title}</ButtonText>}
+      {title && <ButtonText style={{ color: font }}>{title}</ButtonText>}
       {children}
     </Pressable>
   )

@@ -17,19 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { LinearGradient } from 'expo-linear-gradient'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
+import GradientBackground from '../components/GradientBackground'
 import Screen from '../components/layout/Screen'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { AlephiumLogoStyled, GradientBackgroundStyled } from '../screens/LandingScreen'
+import { AlephiumLogoStyled } from '../screens/LandingScreen'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
 
 const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
-  const { yellow, orange, red, purple, cyan } = useTheme().gradient
-
   console.log('SplashScreen renders')
 
   return (
@@ -37,17 +35,7 @@ const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenPr
       <LogoContainer>
         <AlephiumLogoStyled />
       </LogoContainer>
-      <GradientBackgroundStyled
-        from={{ scale: 1 }}
-        animate={{ scale: 2 }}
-        transition={{
-          loop: true,
-          type: 'timing',
-          duration: 2000
-        }}
-      >
-        <LinearGradient colors={[yellow, orange, red, purple, cyan]} style={{ width: '100%', height: '100%' }} />
-      </GradientBackgroundStyled>
+      <GradientBackground />
     </Screen>
   )
 }

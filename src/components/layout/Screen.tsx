@@ -20,8 +20,6 @@ import { SafeAreaView } from 'react-native'
 import { SafeAreaViewProps } from 'react-navigation'
 import styled, { css } from 'styled-components/native'
 
-import AppText from '../AppText'
-
 const Screen = ({ children, style }: SafeAreaViewProps) => <SafeAreaView style={style}>{children}</SafeAreaView>
 
 export default styled(Screen)`
@@ -39,7 +37,30 @@ export const ScreenSection = styled.View<{ fill?: boolean }>`
     `}
 `
 
-export const BottomModalScreenTitle = styled(AppText)`
+export const CenteredScreenSection = styled(ScreenSection)`
+  align-items: center;
+`
+
+export const BottomModalScreenTitle = styled.Text`
   font-weight: 600;
   font-size: 26px;
+`
+
+export let BottomModal = ({ children, style }: SafeAreaViewProps) => (
+  <SafeAreaView style={style}>{children}</SafeAreaView>
+)
+BottomModal = styled(BottomModal)`
+  background-color: ${({ theme }) => theme.bg.secondary};
+  top: 400px;
+  position: absolute;
+  border-radius-top-left: 20px;
+  border-radius-top-right: 20px;
+`
+
+export const ScreenSectionTitle = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.font.tertiary};
+  margin-left: 8px;
+  margin-bottom: 24px;
 `

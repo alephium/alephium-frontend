@@ -19,18 +19,5 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Transaction } from '@alephium/sdk/api/explorer'
 
 import { Address } from '../store/addressesSlice'
-import { NetworkName } from './network'
 
-type TransactionType = 'consolidation' | 'transfer' | 'sweep'
-
-export type PendingTx = {
-  txId: string
-  fromAddress: string
-  toAddress: string
-  timestamp: number
-  type: TransactionType
-  network: NetworkName
-  amount?: bigint
-}
-
-export type DisplayTx = Transaction & { address: Address }
+export type AddressTransaction = Transaction & { address: Address }

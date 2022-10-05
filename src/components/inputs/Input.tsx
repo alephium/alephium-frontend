@@ -17,7 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import { StyleProp, TextInput, TextInputProps, ViewStyle } from 'react-native'
+import {
+  NativeSyntheticEvent,
+  StyleProp,
+  TextInput,
+  TextInputFocusEventData,
+  TextInputProps,
+  ViewStyle
+} from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -33,6 +40,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   resetDisabledColor?: boolean
   IconComponent?: ReactNode
   renderValue?: RenderValueFunc<T>
+  error?: string
   style?: StyleProp<ViewStyle>
 }
 
@@ -44,16 +52,19 @@ function Input<T extends InputValue>({
   isBottomRounded,
   hasBottomBorder,
   onPress,
+  onFocus,
+  onBlur,
   resetDisabledColor,
   IconComponent,
   renderValue,
+  error,
   ...props
 }: InputProps<T>) {
   const theme = useTheme()
   const [isActive, setIsActive] = useState(false)
   const inputRef = useRef<TextInput>(null)
 
-  const renderedValue = renderValue ? renderValue(value) : (value as object).toString()
+  const renderedValue = renderValue ? renderValue(value) : value ? (value as object).toString() : ''
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   const labelStyle = useAnimatedStyle(() => ({
@@ -65,12 +76,20 @@ function Input<T extends InputValue>({
   }))
 
   useEffect(() => {
-    if (value && !isActive) {
+    if (renderedValue) {
       setIsActive(true)
-    } else if (!value && isActive) {
-      setIsActive(false)
     }
-  }, [isActive, value])
+  }, [renderedValue])
+
+  const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    setIsActive(true)
+    onFocus && onFocus(e)
+  }
+
+  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    !renderedValue && setIsActive(false)
+    onBlur && onBlur(e)
+  }
 
   return (
     <HighlightRow
@@ -90,13 +109,14 @@ function Input<T extends InputValue>({
         <TextInputStyled
           selectionColor={theme.gradient.yellow}
           value={renderedValue?.toString()}
-          onFocus={() => setIsActive(true)}
-          onBlur={() => !renderedValue && setIsActive(false)}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           ref={inputRef}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
           hide={showCustomValueRendering}
           {...props}
         />
+        {error && <Error>{error}</Error>}
       </InputContainer>
       {IconComponent}
     </HighlightRow>
@@ -142,4 +162,12 @@ const CustomRenderedValue = styled.View`
   left: 0;
   justify-content: center;
   height: 100%;
+`
+
+const Error = styled.Text`
+  color: ${({ theme }) => theme.global.alert};
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  font-size: 11px;
 `

@@ -19,15 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Trash2 as TrashIcon } from 'lucide-react-native'
-import { Alert } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { Alert, ScrollView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Select from '../components/inputs/Select'
-import Screen, { ScreenSection } from '../components/layout/Screen'
+import Screen, { ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -132,14 +131,6 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
 }
 
 export default SettingsScreen
-
-const ScreenSectionTitle = styled(AppText)`
-  font-size: 16px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.font.tertiary};
-  margin-left: 8px;
-  margin-bottom: 24px;
-`
 
 const CurrentNetwork = styled(AppText)`
   font-weight: bold;

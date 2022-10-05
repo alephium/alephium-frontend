@@ -21,9 +21,14 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import TransactionRow from '../components/TransactionRow'
-import { useAppSelector } from '../hooks/redux'
-import { selectConfirmedTransactions } from '../store/addressesSlice'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import useInterval from '../hooks/useInterval'
+import { fetchAddressesDataPage, selectTransactions } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
+
+// TODO: Pull this from an explorer endpoint
+// Go a little over the average
+const averageBlockTime = 1000 * 60 * 2
 
 interface TransactionsListProps {
   addressHashes: AddressHash[]
@@ -31,23 +36,31 @@ interface TransactionsListProps {
 }
 
 const TransactionsList = ({ addressHashes, style }: TransactionsListProps) => {
-  const allConfirmedTxs = useAppSelector((state) => selectConfirmedTransactions(state, addressHashes))
+  const dispatch = useAppDispatch()
+  const txs = useAppSelector((state) => selectTransactions(state, addressHashes))
   const isAddressDataLoading = useAppSelector((state) => state.addresses.loading)
   const theme = useTheme()
 
+  useInterval(() => {
+    dispatch(fetchAddressesDataPage({ addresses: addressHashes, page: 1 }))
+  }, averageBlockTime)
+
   return (
     <View style={style}>
-      <H2>Latest transactions</H2>
-      {allConfirmedTxs.length === 0 && isAddressDataLoading ? (
+      <Heading>
+        <H2>Latest transactions</H2>
+        {isAddressDataLoading && <ActivityIndicator size="small" color={theme.font.primary} />}
+      </Heading>
+      {txs.length === 0 && isAddressDataLoading ? (
         <ActivityIndicator size="large" color={theme.font.primary} />
-      ) : allConfirmedTxs.length > 0 ? (
+      ) : txs.length > 0 ? (
         <View>
-          {allConfirmedTxs.map((tx, index) => (
+          {txs.map((tx, index) => (
             <TransactionRow
-              key={`${tx.hash}-${tx.address.hash}`}
+              key={`${tx.hash}-${tx.address.hash}-${tx.blockHash}`}
               tx={tx}
               isFirst={index === 0}
-              isLast={index === allConfirmedTxs.length - 1}
+              isLast={index === txs.length - 1}
             />
           ))}
         </View>
@@ -64,5 +77,12 @@ const H2 = styled(AppText)`
   color: ${({ theme }) => theme.font.tertiary};
   font-weight: bold;
   font-size: 16px;
+`
+
+const Heading = styled(View)`
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 20px;
   margin-bottom: 24px;
 `

@@ -16,62 +16,54 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { useState } from 'react'
-import { ScrollView } from 'react-native'
+import { ScrollView, Text } from 'react-native'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
 
-import AddressBadge from '../components/AddressBadge'
 import Amount from '../components/Amount'
-import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
-import Select from '../components/inputs/Select'
-import Screen, { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import AddressSelector from '../components/inputs/AddressSelector'
+import { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
-import { selectAllAddresses } from '../store/addressesSlice'
+import RootStackParamList from '../navigation/rootStackRoutes'
+import { selectAddressByHash } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard } from '../utils/addresses'
 import { attoAlphToFiat } from '../utils/numbers'
 
-const ReceiveScreen = () => {
-  const addressEntries = useAppSelector((state) => state.addresses.entities)
-  const addresses = useAppSelector(selectAllAddresses)
+type ScreenProps = StackScreenProps<RootStackParamList, 'ReceiveScreen'>
+
+const ReceiveScreen = ({
+  route: {
+    params: { addressHash }
+  }
+}: ScreenProps) => {
   const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
+  const [toAddressHash, setToAddressHash] = useState<AddressHash>(addressHash ?? mainAddress)
+  const toAddress = useAppSelector((state) => selectAddressByHash(state, toAddressHash))
   const price = useAppSelector((state) => state.price.value)
   const currency = useAppSelector((state) => state.settings.currency)
-  const [toAddressHash, setToAddressHash] = useState<AddressHash>(mainAddress)
-  const toAddress = addressEntries[toAddressHash]
   const theme = useTheme()
 
   if (!toAddress) return null
 
   const balance = attoAlphToFiat(BigInt(toAddress.networkData.details.balance), price)
-  const addressesOptions = addresses.map((address) => ({
-    value: address.hash,
-    label: <AddressBadge address={address} />
-  }))
-
-  const renderValue = (addressHash: AddressHash) => {
-    const address = addressEntries[addressHash]
-
-    return address ? <AddressBadge address={address} /> : null
-  }
 
   return (
-    <Screen>
+    <>
+      <ScreenSection>
+        <BottomModalScreenTitle>Receive</BottomModalScreenTitle>
+      </ScreenSection>
       <ScrollView>
         <ScreenSection>
-          <BottomModalScreenTitle>Receive</BottomModalScreenTitle>
-        </ScreenSection>
-        <ScreenSection>
-          <Select
+          <AddressSelector
             label="To address"
             value={toAddressHash}
             onValueChange={setToAddressHash}
-            options={addressesOptions}
-            renderValue={renderValue}
             isTopRounded
             isBottomRounded
           />
@@ -88,28 +80,20 @@ const ReceiveScreen = () => {
         </CenteredScreenSection>
         <ScreenSection>
           <HighlightRow title="Address" isTopRounded hasBottomBorder>
-            <AddressText numberOfLines={1} ellipsizeMode="middle">
+            <Text numberOfLines={1} ellipsizeMode="middle">
               {toAddressHash}
-            </AddressText>
+            </Text>
           </HighlightRow>
           <HighlightRow title="Current estimated value" isBottomRounded>
             <AmountInFiat fiat={balance} fiatCurrency={currency} />
           </HighlightRow>
         </ScreenSection>
       </ScrollView>
-    </Screen>
+    </>
   )
 }
 
 export default ReceiveScreen
-
-const CenteredScreenSection = styled(ScreenSection)`
-  align-items: center;
-`
-
-const AddressText = styled(AppText)`
-  max-width: 200px;
-`
 
 const AmountInFiat = styled(Amount)`
   font-weight: 700;

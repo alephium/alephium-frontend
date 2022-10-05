@@ -22,13 +22,13 @@ import { View } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
-import { DisplayTx } from '../types/transactions'
+import { AddressTransaction } from '../types/transactions'
 import AddressBadge from './AddressBadge'
 import AppText from './AppText'
 
 interface IOListProps {
   isOut: boolean
-  tx: DisplayTx
+  tx: AddressTransaction
 }
 
 const genesisTimestamp = 1231006505000
@@ -45,6 +45,8 @@ const IOList = ({ isOut, tx }: IOListProps) => {
       .value()
     const addressHash = isAllCurrentAddress ? tx.address.hash : notCurrentAddresses[0]
     const extraAddressesText = notCurrentAddresses.length > 1 ? `(+${notCurrentAddresses.length - 1})` : ''
+
+    if (!addressHash) return null
 
     const addressWithMetadata = addresses[addressHash]
 

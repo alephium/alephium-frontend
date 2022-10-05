@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createNavigationContainerRef, DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
+import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'
@@ -33,6 +34,8 @@ import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '../screens/NewAddressScreen'
 import ReceiveScreen from '../screens/ReceiveScreen'
+import ConfirmSendScreen from '../screens/send-tx/ConfirmSendScreen'
+import SendScreen from '../screens/send-tx/SendScreen'
 import SettingsScreen from '../screens/SettingsScreen'
 import SplashScreen from '../screens/SplashScreen'
 import SwitchNetworkScreen from '../screens/SwitchNetworkScreen'
@@ -48,6 +51,8 @@ const RootStack = createStackNavigator<RootStackParamList>()
 const RootStackNavigation = () => {
   const theme = useTheme()
   const bottomModalOptions = useBottomModalOptions()
+  const { height: screenHeight } = useWindowDimensions()
+  const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
 
   console.log('RootStackNavigation renders')
 
@@ -88,7 +93,7 @@ const RootStackNavigation = () => {
 
         <RootStack.Screen name="InWalletScreen" component={InWalletTabsNavigation} options={{ headerShown: false }} />
 
-        <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} options={bottomModalOptions} />
+        <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} options={smallBottomModalOptions} />
         <RootStack.Screen name="AddressScreen" component={AddressScreen} />
 
         <RootStack.Screen
@@ -96,11 +101,7 @@ const RootStackNavigation = () => {
           component={NewAddressScreen}
           options={{ headerTitle: 'New address' }}
         />
-        <RootStack.Screen
-          name="EditAddressScreen"
-          component={EditAddressScreen}
-          options={{ headerTitle: 'Edit Address' }}
-        />
+        <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} options={bottomModalOptions} />
 
         <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
         <RootStack.Screen name="SwitchNetworkScreen" component={SwitchNetworkScreen} options={bottomModalOptions} />
@@ -109,8 +110,10 @@ const RootStackNavigation = () => {
           component={SwitchWalletAfterDeletionScreen}
           options={{ headerShown: false }}
         />
-        <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={bottomModalOptions} />
+        <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={smallBottomModalOptions} />
         <RootStack.Screen name="ReceiveScreen" component={ReceiveScreen} options={bottomModalOptions} />
+        <RootStack.Screen name="SendScreen" component={SendScreen} options={bottomModalOptions} />
+        <RootStack.Screen name="ConfirmSendScreen" component={ConfirmSendScreen} options={bottomModalOptions} />
       </RootStack.Navigator>
     </NavigationContainer>
   )

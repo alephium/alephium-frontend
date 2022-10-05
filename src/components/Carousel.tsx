@@ -58,14 +58,14 @@ function Carousel<T>({ data, renderItem, width, height, onScrollStart, onScrollE
         onScrollBegin={onScrollStart}
         onScrollEnd={onScrollEnd}
       />
-      {!!progressValue && (
+      {!!progressValue && data.length > 1 && (
         <CarouselPagination>
-          {data.map((_, index) => (
+          {data.map((hash, index) => (
             <CarouselPaginationItem
               backgroundColor={theme.font.primary}
               animValue={progressValue}
               index={index}
-              key={index}
+              key={`pagination-${hash}`}
               length={data.length}
             />
           ))}
@@ -79,7 +79,7 @@ export default Carousel
 
 const CarouselPagination = styled.View`
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   width: 100px;
   align-self: center;
   margin-top: 36px;
@@ -130,6 +130,7 @@ const Circle = styled.View<{ size: number }>`
   overflow: hidden;
   align-items: center;
   justify-content: center;
+  margin: 0 ${({ size }) => size / 2}px;
 `
 
 const Dot = styled(Animated.View)<{ size: number }>`

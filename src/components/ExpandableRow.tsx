@@ -52,7 +52,7 @@ const ExpandableRow = ({ expandedHeight, children, title = 'Advanced options', s
       <Header onPress={toggleExpanded}>
         <Title>{title}</Title>
         <Animated.View style={chevronStyle}>
-          <ChevronDown size={20} color={theme.font.primary} />
+          <ChevronDownStyled size={20} color={theme.font.primary} />
         </Animated.View>
       </Header>
       <CollapsableSection style={collapsableSectionStyle}>{children}</CollapsableSection>
@@ -61,7 +61,7 @@ const ExpandableRow = ({ expandedHeight, children, title = 'Advanced options', s
 }
 
 export default styled(ExpandableRow)`
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.secondary};
   flex-direction: column;
   justify-content: center;
   padding-top: 0;
@@ -70,10 +70,15 @@ export default styled(ExpandableRow)`
 
 const Title = styled(AppText)`
   font-weight: bold;
+  margin-right: 20px;
+`
+
+const ChevronDownStyled = styled(ChevronDown)`
+  position: relative;
+  top: 2px;
 `
 
 const Header = styled.TouchableOpacity`
-  justify-content: space-between;
   flex-direction: row;
   width: 100%;
   padding: 25px 0;

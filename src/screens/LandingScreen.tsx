@@ -17,14 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { LinearGradient } from 'expo-linear-gradient'
-import { MotiView } from 'moti'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
+import GradientBackground from '../components/GradientBackground'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch } from '../hooks/redux'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
@@ -35,7 +34,6 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const dispatch = useAppDispatch()
-  const { yellow, orange, red, purple, cyan } = useTheme().gradient
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
@@ -64,32 +62,13 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
           />
         </ButtonStack>
       </ActionsContainer>
-      <GradientBackgroundStyled
-        from={{ scale: 1 }}
-        animate={{ scale: 2 }}
-        transition={{
-          loop: true,
-          type: 'timing',
-          duration: 2000
-        }}
-      >
-        <LinearGradient colors={[yellow, orange, red, purple, cyan]} style={{ width: '100%', height: '100%' }} />
-      </GradientBackgroundStyled>
+      <GradientBackground />
     </Screen>
   )
 }
 
 export default styled(LandingScreen)`
   flex: 1;
-`
-
-export const GradientBackgroundStyled = styled(MotiView)`
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  z-index: -1;
 `
 
 const LogoContainer = styled.View`
