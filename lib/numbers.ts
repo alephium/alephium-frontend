@@ -17,13 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Transaction } from '../api/api-explorer'
+import { NUM_OF_ZEROS_IN_QUINTILLION, QUINTILLION } from './constants'
 
 const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
-const QUINTILLION = 1000000000000000000
-
-export const NUM_OF_ZEROS_IN_QUINTILLION = 18
-
-export const BILLION = 1000000000
 
 export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
