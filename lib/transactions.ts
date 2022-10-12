@@ -21,6 +21,8 @@ import { uniq } from './utils'
 
 export type TransactionDirection = 'out' | 'in'
 
+export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
+
 export const calcTxAmountDeltaForAddress = (
   tx: Transaction,
   address: string,
