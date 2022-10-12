@@ -88,7 +88,7 @@ export const formatAmountForDisplay = (
     const tinyAmountsMaxNumberDecimals = 5
 
     return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
-  } else if (alphNum <= 1000000) {
+  } else if (alphNum < 1000000) {
     const amountWithRemovedTrailingZeros = removeTrailingZeros(
       alphNum.toFixed(numberOfDecimalsToDisplay),
       minNumberOfDecimals

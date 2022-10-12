@@ -48,6 +48,7 @@ it('Should abbreviate amount', () => {
     expect(formatAmountForDisplay(BigInt('2000000000000000000'))).toEqual('2.00'),
     expect(formatAmountForDisplay(alph(BigInt(1230)))).toEqual("1'230.00"),
     expect(formatAmountForDisplay(alph(BigInt(1230000)))).toEqual('1.23M'),
+    expect(formatAmountForDisplay(alph(BigInt(1000000)))).toEqual('1.00M'),
     expect(formatAmountForDisplay(alph(BigInt(1234000)))).toEqual('1.23M'),
     expect(formatAmountForDisplay(alph(BigInt(1230000000)))).toEqual('1.23B'),
     expect(formatAmountForDisplay(alph(BigInt(1235000000)))).toEqual('1.24B'),
