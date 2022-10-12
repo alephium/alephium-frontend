@@ -20,7 +20,8 @@ import { Transaction } from '../api/api-explorer'
 
 const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
 const QUINTILLION = 1000000000000000000
-const NUM_OF_ZEROS_IN_QUINTILLION = 18
+
+export const NUM_OF_ZEROS_IN_QUINTILLION = 18
 
 export const BILLION = 1000000000
 
