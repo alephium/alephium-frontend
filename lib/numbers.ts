@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '../api/api-explorer'
+import { Transaction, UnconfirmedTransaction } from '../api/api-explorer'
 import { NUM_OF_ZEROS_IN_QUINTILLION, QUINTILLION } from './constants'
+import { uniq } from './utils'
 
 const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
 
@@ -120,6 +121,13 @@ export const calAmountDelta = (t: Transaction, id: string): bigint => {
   }, BigInt(0))
 
   return outputAmount - inputAmount
+}
+
+export const isConsolidationTx = (tx: Transaction | UnconfirmedTransaction): boolean => {
+  const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
+  const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
+
+  return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
 export const convertAlphToSet = (amount: string): bigint => {
