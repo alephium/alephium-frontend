@@ -57,7 +57,7 @@ export const isConsolidationTx = (tx: Transaction | UnconfirmedTransaction): boo
   return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
-const removeConsolidationChangeAmount = (totalOutputAmount: bigint, outputs: AssetOutput[] | Output[]) =>
+export const removeConsolidationChangeAmount = (totalOutputAmount: bigint, outputs: AssetOutput[] | Output[]) =>
   outputs.length > 1
     ? // If there are multiple outputs, the last one must be the change amount (this is a heuristic and not guaranteed)
       totalOutputAmount - BigInt(outputs[outputs.length - 1].attoAlphAmount)
