@@ -22,7 +22,8 @@ import {
   calAmountDelta,
   convertAlphToSet,
   convertSetToAlph,
-  addApostrophes
+  addApostrophes,
+  produceZeros
 } from '../lib/numbers'
 
 import transactions from './fixtures/transactions.json'
@@ -188,6 +189,14 @@ it('should add apostrophes', () => {
     expect(() => addApostrophes('1.01e+1')).toThrow('Invalid number'),
     expect(() => addApostrophes('asdf')).toThrow('Invalid number'),
     expect(() => addApostrophes('')).toThrow('Invalid number')
+})
+
+it('should produce the right number of zeros', () => {
+  expect(produceZeros(0)).toEqual(''),
+    expect(produceZeros(1)).toEqual('0'),
+    expect(produceZeros(2)).toEqual('00'),
+    expect(produceZeros(3)).toEqual('000'),
+    expect(produceZeros(-1)).toEqual('')
 })
 
 describe('should test not exported functions', () => {

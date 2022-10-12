@@ -25,7 +25,7 @@ export const NUM_OF_ZEROS_IN_QUINTILLION = 18
 
 export const BILLION = 1000000000
 
-const produceZeros = (numberOfZeros: number): string => '0'.repeat(numberOfZeros)
+export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
 const getNumberOfTrailingZeros = (numString: string) => {
   let numberOfZeros = 0
