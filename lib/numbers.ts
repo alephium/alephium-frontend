@@ -16,9 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction, UnconfirmedTransaction } from '../api/api-explorer'
 import { NUM_OF_ZEROS_IN_QUINTILLION, QUINTILLION } from './constants'
-import { uniq } from './utils'
 
 const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
 
@@ -106,28 +104,6 @@ export const formatAmountForDisplay = (
   const scaled = alphNum / scale
 
   return scaled.toFixed(numberOfDecimalsToDisplay) + suffix
-}
-
-export const calcTxAmountDeltaForAddress = (tx: Transaction, address: string): bigint => {
-  if (!tx.inputs || !tx.outputs) {
-    throw 'Missing transaction details'
-  }
-
-  const inputAmount = tx.inputs.reduce<bigint>((acc, input) => {
-    return input.attoAlphAmount && input.address === address ? acc + BigInt(input.attoAlphAmount) : acc
-  }, BigInt(0))
-  const outputAmount = tx.outputs.reduce<bigint>((acc, output) => {
-    return output.address === address ? acc + BigInt(output.attoAlphAmount) : acc
-  }, BigInt(0))
-
-  return outputAmount - inputAmount
-}
-
-export const isConsolidationTx = (tx: Transaction | UnconfirmedTransaction): boolean => {
-  const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
-  const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
-
-  return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
 export const convertAlphToSet = (amount: string): bigint => {

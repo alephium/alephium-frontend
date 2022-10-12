@@ -19,14 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import rewire from 'rewire'
 import {
   formatAmountForDisplay,
-  calcTxAmountDeltaForAddress,
   convertAlphToSet,
   convertSetToAlph,
   addApostrophes,
   produceZeros
 } from '../lib/numbers'
-
-import transactions from './fixtures/transactions.json'
 
 const alph = (amount: bigint) => {
   return amount * BigInt('1000000000000000000')
@@ -83,24 +80,6 @@ it('Should keep full amount precision', () => {
 
 it('Should display a defined number of decimals', () => {
   expect(formatAmountForDisplay(BigInt('20053549281751930708'), false, 5)).toEqual('20.05355')
-})
-
-it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {
-  expect(
-    calcTxAmountDeltaForAddress(transactions.oneInputOneOutput, transactions.oneInputOneOutput.inputs[0].address)
-  ).toEqual(alph(BigInt(-50))),
-    expect(
-      calcTxAmountDeltaForAddress(transactions.twoInputsOneOutput, transactions.twoInputsOneOutput.inputs[0].address)
-    ).toEqual(alph(BigInt(-150))),
-    expect(
-      calcTxAmountDeltaForAddress(transactions.twoInputsZeroOutput, transactions.twoInputsZeroOutput.inputs[0].address)
-    ).toEqual(alph(BigInt(-200))),
-    expect(() =>
-      calcTxAmountDeltaForAddress(transactions.missingInputs, transactions.missingInputs.outputs[0].address)
-    ).toThrowError('Missing transaction details'),
-    expect(() =>
-      calcTxAmountDeltaForAddress(transactions.missingOutputs, transactions.missingOutputs.inputs[0].address)
-    ).toThrowError('Missing transaction details')
 })
 
 it('should convert Alph amount to Set amount', () => {
