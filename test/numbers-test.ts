@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import rewire from 'rewire'
 import {
   formatAmountForDisplay,
-  calAmountDelta,
+  calcTxAmountDeltaForAddress,
   convertAlphToSet,
   convertSetToAlph,
   addApostrophes,
@@ -86,20 +86,20 @@ it('Should display a defined number of decimals', () => {
 })
 
 it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {
-  expect(calAmountDelta(transactions.oneInputOneOutput, transactions.oneInputOneOutput.inputs[0].address)).toEqual(
-    alph(BigInt(-50))
-  ),
-    expect(calAmountDelta(transactions.twoInputsOneOutput, transactions.twoInputsOneOutput.inputs[0].address)).toEqual(
-      alph(BigInt(-150))
-    ),
+  expect(
+    calcTxAmountDeltaForAddress(transactions.oneInputOneOutput, transactions.oneInputOneOutput.inputs[0].address)
+  ).toEqual(alph(BigInt(-50))),
     expect(
-      calAmountDelta(transactions.twoInputsZeroOutput, transactions.twoInputsZeroOutput.inputs[0].address)
+      calcTxAmountDeltaForAddress(transactions.twoInputsOneOutput, transactions.twoInputsOneOutput.inputs[0].address)
+    ).toEqual(alph(BigInt(-150))),
+    expect(
+      calcTxAmountDeltaForAddress(transactions.twoInputsZeroOutput, transactions.twoInputsZeroOutput.inputs[0].address)
     ).toEqual(alph(BigInt(-200))),
     expect(() =>
-      calAmountDelta(transactions.missingInputs, transactions.missingInputs.outputs[0].address)
+      calcTxAmountDeltaForAddress(transactions.missingInputs, transactions.missingInputs.outputs[0].address)
     ).toThrowError('Missing transaction details'),
     expect(() =>
-      calAmountDelta(transactions.missingOutputs, transactions.missingOutputs.inputs[0].address)
+      calcTxAmountDeltaForAddress(transactions.missingOutputs, transactions.missingOutputs.inputs[0].address)
     ).toThrowError('Missing transaction details')
 })
 

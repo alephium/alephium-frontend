@@ -108,16 +108,16 @@ export const formatAmountForDisplay = (
   return scaled.toFixed(numberOfDecimalsToDisplay) + suffix
 }
 
-export const calAmountDelta = (t: Transaction, id: string): bigint => {
-  if (!t.inputs || !t.outputs) {
+export const calcTxAmountDeltaForAddress = (tx: Transaction, address: string): bigint => {
+  if (!tx.inputs || !tx.outputs) {
     throw 'Missing transaction details'
   }
 
-  const inputAmount = t.inputs.reduce<bigint>((acc, input) => {
-    return input.attoAlphAmount && input.address === id ? acc + BigInt(input.attoAlphAmount) : acc
+  const inputAmount = tx.inputs.reduce<bigint>((acc, input) => {
+    return input.attoAlphAmount && input.address === address ? acc + BigInt(input.attoAlphAmount) : acc
   }, BigInt(0))
-  const outputAmount = t.outputs.reduce<bigint>((acc, output) => {
-    return output.address === id ? acc + BigInt(output.attoAlphAmount) : acc
+  const outputAmount = tx.outputs.reduce<bigint>((acc, output) => {
+    return output.address === address ? acc + BigInt(output.attoAlphAmount) : acc
   }, BigInt(0))
 
   return outputAmount - inputAmount
