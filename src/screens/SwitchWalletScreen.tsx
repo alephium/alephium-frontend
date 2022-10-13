@@ -53,13 +53,14 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   const handleWalletItemPress = async (walletId: string) => {
     try {
       const storedWallet = await getStoredWalletById(walletId)
+
       if (!storedWallet) return
 
+      dispatch(authenticated(false))
+
       if (storedWallet.authType === 'pin') {
-        dispatch(authenticated(false))
         navigation.navigate('LoginScreen', { storedWallet })
       } else if (storedWallet.authType === 'biometrics') {
-        dispatch(authenticated(false))
         dispatch(activeWalletChanged(storedWallet))
         navigation.navigate('InWalletScreen')
       } else {

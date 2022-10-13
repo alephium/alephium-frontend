@@ -34,14 +34,16 @@ export const useAppStateChange = () => {
   const getWalletFromStorageAndNavigate = useCallback(async () => {
     try {
       const storedActiveWallet = await getStoredActiveWallet()
+
       if (storedActiveWallet === null) {
         const result = await areThereOtherWallets()
+
         navigateRootStack(result ? 'SwitchWalletAfterDeletionScreen' : 'LandingScreen')
       } else if (storedActiveWallet.authType === 'pin') {
         navigateRootStack('LoginScreen', { storedWallet: storedActiveWallet })
       } else if (storedActiveWallet.authType === 'biometrics') {
         dispatch(activeWalletChanged(storedActiveWallet))
-        navigateRootStack('InWalletScreen')
+        dispatch(authenticated(true))
       } else {
         throw new Error('Unknown auth type')
       }
