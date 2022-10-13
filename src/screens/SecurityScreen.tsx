@@ -118,7 +118,7 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
             />
           )}
           <CenterText>Your secret recovery phrase is the only way to recover your wallet.</CenterText>
-          <BoldText>Don&apos;t loose it, and don&apos;t share it with anyone.</BoldText>
+          <BoldText>Don&apos;t lose it, and don&apos;t share it with anyone.</BoldText>
         </CellNotices>
         <CellReveal>
           <SwitchStyled
