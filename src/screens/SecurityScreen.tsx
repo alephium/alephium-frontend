@@ -17,11 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { colord } from 'colord'
 import { shuffle } from 'lodash'
 import { AlertTriangle } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { StyleProp, Switch, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../components/AppText'
@@ -31,6 +30,7 @@ import Screen from '../components/layout/Screen'
 import Notice from '../components/Notice'
 import OrderedListInput from '../components/OrderedListInput'
 import OrderedTable from '../components/OrderedTable'
+import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { walletStored } from '../store/activeWalletSlice'
@@ -121,21 +121,11 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
           <BoldText>Don&apos;t lose it, and don&apos;t share it with anyone.</BoldText>
         </CellNotices>
         <CellReveal>
-          <SwitchStyled
-            trackColor={{ false: theme.global.alert, true: theme.global.valid }}
-            thumbColor={isUnderstood ? colord(theme.global.valid).lighten(0.55).toHex() : theme.bg.primary}
-            onValueChange={() => setIsUnderstood(!isUnderstood)}
-            value={isUnderstood}
-          />
+          <ToggleStyled onValueChange={() => setIsUnderstood(!isUnderstood)} value={isUnderstood} />
           <AppText onPress={() => setIsUnderstood(!isUnderstood)}>I&apos;ve read and understood the above.</AppText>
         </CellReveal>
       </Fade>
-      <Button
-        style={{ backgroundColor: isWrongMatch ? 'red' : 'rgba(100, 0, 0, 0.4)' }}
-        disabled={!isUnderstood}
-        title={revealButtonText[state]}
-        onPress={handlePress[state]}
-      />
+      <Button disabled={!isUnderstood} title={revealButtonText[state]} onPress={handlePress[state]} />
       <Fade modal visible={isRevealed}>
         {mnemonicComponent[state]}
       </Fade>
@@ -171,6 +161,6 @@ const CellReveal = styled.View`
   margin-bottom: 40px;
 `
 
-const SwitchStyled = styled(Switch)`
+const ToggleStyled = styled(Toggle)`
   margin-right: 12px;
 `
