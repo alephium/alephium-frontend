@@ -80,7 +80,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
     navigation.navigate('NewWalletSuccessPage')
   })
 
-  console.log('NewWalletNameScreen renders')
+  // TODO: Do not allow same name as other wallets because metadata will be overiden (see storage/wallets.ts)
 
   return (
     <Screen>

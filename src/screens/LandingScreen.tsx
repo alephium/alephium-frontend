@@ -40,8 +40,6 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
     navigation.navigate('NewWalletIntroScreen')
   }
 
-  console.log('LandingScreen renders')
-
   return (
     <Screen>
       <LogoContainer>

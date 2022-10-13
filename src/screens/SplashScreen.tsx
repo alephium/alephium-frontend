@@ -27,18 +27,14 @@ import { AlephiumLogoStyled } from '../screens/LandingScreen'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
 
-const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
-  console.log('SplashScreen renders')
-
-  return (
-    <Screen>
-      <LogoContainer>
-        <AlephiumLogoStyled />
-      </LogoContainer>
-      <GradientBackground />
-    </Screen>
-  )
-}
+const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => (
+  <Screen>
+    <LogoContainer>
+      <AlephiumLogoStyled />
+    </LogoContainer>
+    <GradientBackground />
+  </Screen>
+)
 
 export default styled(SplashScreen)`
   flex: 1;

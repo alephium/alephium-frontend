@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { AlertTriangle } from 'lucide-react-native'
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -100,7 +100,7 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
 }
 
 export default styled(SecurityScreen)`
-  background-color: #f7d1b6;
+  background-color: ${({ theme }) => theme.global.pale};
 `
 
 const Messages = styled.View`

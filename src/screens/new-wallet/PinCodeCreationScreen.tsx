@@ -116,8 +116,6 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     navigation.navigate('NewWalletSuccessPage')
   })
 
-  console.log('PinCodeCreationScreen renders')
-
   return (
     <Screen>
       <CenteredInstructions instructions={shownInstructions} />

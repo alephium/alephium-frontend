@@ -26,7 +26,7 @@ import HighlightRow from '../components/HighlightRow'
 import ColorPicker from '../components/inputs/ColorPicker'
 import Input from '../components/inputs/Input'
 import Select, { SelectOption } from '../components/inputs/Select'
-import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
 import Toggle from '../components/Toggle'
 import { AddressSettings } from '../types/addresses'
 
@@ -112,9 +112,9 @@ const AddressForm = ({
           </ScreenSection>
         )}
       </ScrollView>
-      <ScreenSection style={{ marginBottom: 20 }}>
+      <BottomScreenSection>
         <Button title={buttonText} centered onPress={() => onSubmit({ isMain, label, color, group })} />
-      </ScreenSection>
+      </BottomScreenSection>
     </>
   )
 }

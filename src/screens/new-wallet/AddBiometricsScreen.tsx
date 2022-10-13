@@ -79,8 +79,6 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
     navigation.navigate('NewWalletSuccessPage')
   })
 
-  console.log('AddBiometricsScreen renders')
-
   return (
     <Screen>
       <AnimationContainer>

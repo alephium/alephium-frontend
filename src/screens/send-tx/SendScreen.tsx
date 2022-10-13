@@ -38,7 +38,7 @@ import AddressSelector from '../../components/inputs/AddressSelector'
 import Input from '../../components/inputs/Input'
 import {
   BottomModalScreenTitle,
-  CenteredScreenSection,
+  BottomScreenSection,
   ScreenSection,
   ScreenSectionTitle
 } from '../../components/layout/Screen'
@@ -199,7 +199,7 @@ const SendScreen = ({
             />
           </ExpandableRow>
         </ScreenSection>
-        <CenteredScreenSection style={{ marginBottom: 20 }}>
+        <BottomScreenSection>
           <Button
             title="Confirm"
             gradient
@@ -218,7 +218,7 @@ const SendScreen = ({
             wide
             disabled={isLoadingTxData || !isFormDataComplete || gasAmountHasError || gasPriceHasError}
           />
-        </CenteredScreenSection>
+        </BottomScreenSection>
       </ScrollView>
     </>
   )

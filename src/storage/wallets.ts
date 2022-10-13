@@ -32,8 +32,6 @@ export const storeWallet = async (
   authType: StoredWalletAuthType,
   isMnemonicBackedUp: boolean
 ): Promise<string> => {
-  console.log('storeWallet', isMnemonicBackedUp)
-
   const getWalletMetadataInitialValue = (id: string): WalletMetadata => ({
     id,
     name: walletName,
@@ -185,7 +183,7 @@ const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
 
 export const storePartialWalletMetadata = async (id: string, partialMetadata: Partial<WalletMetadata>) => {
   const walletsMetadata = await getWalletsMetadata()
-  const existingWalletMetadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id) as WalletMetadata
+  const existingWalletMetadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id)
 
   if (existingWalletMetadata) {
     Object.assign(existingWalletMetadata, partialMetadata)

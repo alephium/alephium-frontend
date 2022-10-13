@@ -67,4 +67,5 @@ export const ScreenSectionTitle = styled.Text`
 
 export const BottomScreenSection = styled(ScreenSection)`
   margin-bottom: 20px;
+  align-items: center;
 `
