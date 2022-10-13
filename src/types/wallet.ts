@@ -26,5 +26,6 @@ export type WalletMetadata = {
   id: string
   name: string
   authType: StoredWalletAuthType
+  isMnemonicBackedUp: boolean
   addresses: AddressMetadata[]
 }

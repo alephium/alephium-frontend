@@ -25,7 +25,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
-import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -92,7 +92,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
           ))}
         </ScreenSection>
       </ScrollView>
-      <ScreenSection style={{ marginBottom: 20 }}>
+      <BottomScreenSection>
         <ButtonsRow>
           <Button
             title="New wallet"
@@ -105,7 +105,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
             icon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
           />
         </ButtonsRow>
-      </ScreenSection>
+      </BottomScreenSection>
     </>
   )
 }

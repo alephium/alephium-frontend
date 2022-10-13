@@ -50,6 +50,7 @@ declare module 'styled-components' {
       alert: string
       valid: string
       star: string
+      pale: string
     }
     gradient: {
       yellow: string

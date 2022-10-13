@@ -26,7 +26,7 @@ import AddressBadge from '../../components/AddressBadge'
 import Amount from '../../components/Amount'
 import Button from '../../components/buttons/Button'
 import HighlightRow from '../../components/HighlightRow'
-import { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../../components/layout/Screen'
+import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import InWalletTabsParamList from '../../navigation/inWalletRoutes'
 import RootStackParamList from '../../navigation/rootStackRoutes'
@@ -45,33 +45,30 @@ const ConfirmSendScreen = ({
   const fromAddress = useAppSelector((state) => selectAddressByHash(state, fromAddressHash))
   const [isSending, setIsSending] = useState(false)
 
-  const handleSend = useCallback(() => {
-    const send = async () => {
-      if (!fromAddress) return
+  const handleSend = useCallback(async () => {
+    if (!fromAddress) return
 
-      setIsSending(true)
-      try {
-        const signature = await client.cliqueClient.transactionSign(unsignedTxId, fromAddress.privateKey)
-        await client.cliqueClient.transactionSend(fromAddress.hash, unsignedTransaction, signature)
-        await dispatch(
-          addTransactionToAddress({
-            hash: unsignedTxId,
-            inputs: [{ outputRef: { hint: -1, key: '' }, address: fromAddressHash, attoAlphAmount: amount }],
-            outputs: [{ hint: -1, key: '', type: '', address: toAddressHash, attoAlphAmount: amount }],
-            timestamp: new Date().getTime(),
-            gasAmount: gasAmount ? parseInt(gasAmount) : 0,
-            gasPrice: gasPrice ? gasPrice.toString() : '',
-            blockHash: ''
-          })
-        )
-        navigation.navigate('TransfersScreen')
-      } catch (e) {
-        Alert.alert('Send error', (e as unknown as { error: { detail: string } }).error.detail)
-      }
-      setIsSending(false)
+    setIsSending(true)
+
+    try {
+      const signature = client.cliqueClient.transactionSign(unsignedTxId, fromAddress.privateKey)
+      await client.cliqueClient.transactionSend(fromAddress.hash, unsignedTransaction, signature)
+      dispatch(
+        addTransactionToAddress({
+          hash: unsignedTxId,
+          inputs: [{ outputRef: { hint: -1, key: '' }, address: fromAddressHash, attoAlphAmount: amount }],
+          outputs: [{ hint: -1, key: '', type: '', address: toAddressHash, attoAlphAmount: amount }],
+          timestamp: new Date().getTime(),
+          gasAmount: gasAmount ? parseInt(gasAmount) : 0,
+          gasPrice: gasPrice ? gasPrice.toString() : '',
+          blockHash: ''
+        })
+      )
+      navigation.navigate('TransfersScreen')
+    } catch (e) {
+      Alert.alert('Send error', (e as unknown as { error: { detail: string } }).error.detail)
     }
-
-    send()
+    setIsSending(false)
   }, [
     fromAddress,
     amount,
@@ -84,8 +81,6 @@ const ConfirmSendScreen = ({
     unsignedTransaction,
     unsignedTxId
   ])
-
-  const sendText = isSending ? 'Sending' : 'Send'
 
   return (
     <>
@@ -125,16 +120,16 @@ const ConfirmSendScreen = ({
           )}
         </>
       </ScrollView>
-      <CenteredScreenSection style={{ marginBottom: 20 }}>
+      <BottomScreenSection>
         <Button
           onPress={handleSend}
-          title={sendText}
+          title={isSending ? 'Sending' : 'Send'}
           disabled={isSending}
           wide
           gradient
           icon={isSending ? <ActivityIndicator size="large" color={theme.font.primary} /> : null}
         />
-      </CenteredScreenSection>
+      </BottomScreenSection>
     </>
   )
 }

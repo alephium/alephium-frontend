@@ -28,7 +28,7 @@ import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import HighlightRow from '../components/HighlightRow'
 import IOList from '../components/IOList'
-import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
+import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
@@ -54,7 +54,7 @@ const TransactionScreen = ({
             <ChevronRightIcon size={24} color={theme.global.accent} />
           </ExplorerLink>
         </ScreenSectionRow>
-        <ScreenSection style={{ marginBottom: 20 }}>
+        <BottomScreenSection>
           <HighlightRow title="Amount" isTopRounded hasBottomBorder>
             <Amount value={amount} fadeDecimals fullPrecision suffix="ALPH" />
           </HighlightRow>
@@ -79,7 +79,7 @@ const TransactionScreen = ({
               showOnDiscreetMode
             />
           </HighlightRow>
-        </ScreenSection>
+        </BottomScreenSection>
       </ScrollView>
     </>
   )

@@ -59,7 +59,8 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
         walletStored({
           name: walletName,
           mnemonic: wallet.mnemonic,
-          authType
+          authType,
+          isMnemonicBackedUp: false
         })
       )
     } else if (method === 'import' && importedMnemonic) {
@@ -67,7 +68,8 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
         walletStored({
           name: walletName,
           mnemonic: importedMnemonic,
-          authType
+          authType,
+          isMnemonicBackedUp: true
         })
       )
     }
@@ -76,8 +78,6 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   useOnNewWalletSuccess(() => {
     navigation.navigate('NewWalletSuccessPage')
   })
-
-  console.log('AddBiometricsScreen renders')
 
   return (
     <Screen>

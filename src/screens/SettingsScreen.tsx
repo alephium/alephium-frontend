@@ -70,6 +70,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
           onPress: async () => {
             await deleteWalletByName(currentWalletName)
             dispatch(walletFlushed())
+
             navigation.navigate('SwitchWalletAfterDeletionScreen')
           }
         }
@@ -118,7 +119,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
             variant="valid"
             onPress={() => navigation.navigate('LandingScreen')}
           />
-          <Button
+          <ButtonStyled
             title="Delete this wallet"
             icon={<TrashIcon size={24} color={theme.global.alert} />}
             variant="alert"

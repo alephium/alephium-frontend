@@ -64,3 +64,8 @@ export const ScreenSectionTitle = styled.Text`
   margin-left: 8px;
   margin-bottom: 24px;
 `
+
+export const BottomScreenSection = styled(ScreenSection)`
+  margin-bottom: 20px;
+  align-items: center;
+`

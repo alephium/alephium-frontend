@@ -95,7 +95,8 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
               walletStored({
                 name: walletName,
                 mnemonic: wallet.mnemonic,
-                authType: 'pin'
+                authType: 'pin',
+                isMnemonicBackedUp: false
               })
             )
           }
@@ -114,8 +115,6 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   useOnNewWalletSuccess(() => {
     navigation.navigate('NewWalletSuccessPage')
   })
-
-  console.log('PinCodeCreationScreen renders')
 
   return (
     <Screen>

@@ -37,6 +37,7 @@ import NewWalletSuccessPage from '../screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '../screens/NewAddressScreen'
 import ReceiveScreen from '../screens/ReceiveScreen'
+import SecurityScreen from '../screens/SecurityScreen'
 import ConfirmSendScreen from '../screens/send-tx/ConfirmSendScreen'
 import SendScreen from '../screens/send-tx/SendScreen'
 import SettingsScreen from '../screens/SettingsScreen'
@@ -69,8 +70,6 @@ const RootStackNavigation = () => {
       dispatch(routeChanged(state))
     }
   }
-
-  console.log('RootStackNavigation renders')
 
   const themeNavigator = {
     ...DefaultTheme,
@@ -141,6 +140,11 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} options={bottomModalOptions} />
 
         <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
+        <RootStack.Screen
+          name="SecurityScreen"
+          component={SecurityScreen}
+          options={{ headerTitle: 'Security', cardStyle: { backgroundColor: theme.global.pale } }}
+        />
         <RootStack.Screen name="SwitchNetworkScreen" component={SwitchNetworkScreen} options={bottomModalOptions} />
         <RootStack.Screen
           name="SwitchWalletAfterDeletionScreen"

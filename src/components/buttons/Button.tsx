@@ -89,8 +89,6 @@ const Button = ({
   if (!icon && !title && !children)
     throw new Error('At least one of the following properties is required: icon, title, or children')
 
-  console.log('Button renders')
-
   return circular ? (
     <View style={{ justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
       <Pressable style={buttonStyle} disabled={disabled} {...props}>
@@ -139,7 +137,7 @@ export default styled(Button)`
 
 const ButtonText = styled(AppText)`
   font-weight: bold;
-  color: red;
+  text-align: center;
 `
 
 const Icon = styled.View<{ withSpace?: boolean }>`

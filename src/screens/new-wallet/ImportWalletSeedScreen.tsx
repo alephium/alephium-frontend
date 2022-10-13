@@ -61,7 +61,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
         walletStored({
           name: walletName,
           mnemonic: importedMnemonic,
-          authType: activeWallet.authType
+          authType: activeWallet.authType,
+          isMnemonicBackedUp: true
         })
       )
     } else {
@@ -74,7 +75,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
           walletStored({
             name: walletName,
             mnemonic: importedMnemonic,
-            authType: 'pin'
+            authType: 'pin',
+            isMnemonicBackedUp: true
           })
         )
       }
@@ -92,8 +94,6 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
   if (words.length)
     instructions.push({ text: `${words.length} ${words.length === 1 ? 'word' : 'words'} entered.`, type: 'secondary' })
-
-  console.log('ImportWalletSeedScreen renders')
 
   return (
     <Screen>

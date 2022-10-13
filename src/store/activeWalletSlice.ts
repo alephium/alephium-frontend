@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { walletEncryptAsyncUnsafe, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { changeActiveWallet, storeWallet } from '../storage/wallets'
+import { changeActiveWallet, storePartialWalletMetadata, storeWallet } from '../storage/wallets'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 import { RootState } from './store'
@@ -30,6 +30,7 @@ const sliceName = 'activeWallet'
 export interface ActiveWalletState {
   name: string
   mnemonic: Mnemonic
+  isMnemonicBackedUp: boolean
   authType: StoredWalletAuthType | null
   metadataId: string | null
 }
@@ -37,6 +38,7 @@ export interface ActiveWalletState {
 const initialState: ActiveWalletState = {
   name: '',
   mnemonic: '',
+  isMnemonicBackedUp: false,
   authType: null,
   metadataId: null
 }
@@ -46,7 +48,7 @@ export const walletStored = createAsyncThunk(
   async (payload: Omit<ActiveWalletState, 'metadataId'>, { getState, dispatch }) => {
     dispatch(loadingStarted())
 
-    const { name, mnemonic, authType } = payload
+    const { name, mnemonic, authType, isMnemonicBackedUp } = payload
     let metadataId: string | null = null
 
     if (!name) throw 'Could not store wallet, wallet name is not set'
@@ -56,14 +58,14 @@ export const walletStored = createAsyncThunk(
     await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
 
     if (authType === 'biometrics') {
-      metadataId = await storeWallet(name, mnemonic, authType)
+      metadataId = await storeWallet(name, mnemonic, authType, isMnemonicBackedUp)
     } else if (authType === 'pin') {
       const state = getState() as RootState
       const pin = state.credentials.pin
       if (!pin) throw 'Could not store wallet, pin to encrypt it is not set'
 
       const encryptedWallet = await walletEncryptAsyncUnsafe(pin, mnemonic, pbkdf2)
-      metadataId = await storeWallet(name, encryptedWallet, authType)
+      metadataId = await storeWallet(name, encryptedWallet, authType, isMnemonicBackedUp)
     }
 
     dispatch(loadingFinished())
@@ -72,14 +74,35 @@ export const walletStored = createAsyncThunk(
       name,
       mnemonic,
       authType,
-      metadataId
+      metadataId,
+      isMnemonicBackedUp
     } as ActiveWalletState
+  }
+)
+
+export const mnemonicBackedUp = createAsyncThunk(
+  `${sliceName}/mnemonicBackedUp`,
+  async (payload: ActiveWalletState['isMnemonicBackedUp'], { getState, dispatch }) => {
+    const isMnemonicBackedUp = payload
+
+    const state = getState() as RootState
+    const metadataId = state.activeWallet.metadataId
+
+    if (!metadataId) throw 'Could not store isMnemonicBackedUp, metadataId is not set'
+
+    dispatch(loadingStarted())
+
+    await storePartialWalletMetadata(metadataId, { isMnemonicBackedUp })
+
+    dispatch(loadingFinished())
+
+    return payload
   }
 )
 
 export const activeWalletChanged = createAsyncThunk(
   `${sliceName}/activeWalletChanged`,
-  async (payload: ActiveWalletState, { getState, dispatch }) => {
+  async (payload: ActiveWalletState, { dispatch }) => {
     const { metadataId } = payload
     if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
 
@@ -89,7 +112,7 @@ export const activeWalletChanged = createAsyncThunk(
 
     dispatch(loadingFinished())
 
-    return payload as ActiveWalletState
+    return payload
   }
 )
 
@@ -97,17 +120,14 @@ const activeWalletSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    walletFlushed: () => {
-      return initialState
-    }
+    walletFlushed: () => initialState
   },
   extraReducers: (builder) => {
     builder
-      .addCase(walletStored.fulfilled, (state, action) => {
-        return action.payload
-      })
-      .addCase(activeWalletChanged.fulfilled, (state, action) => {
-        return action.payload
+      .addCase(walletStored.fulfilled, (_, action) => action.payload)
+      .addCase(activeWalletChanged.fulfilled, (_, action) => action.payload)
+      .addCase(mnemonicBackedUp.fulfilled, (state, action) => {
+        state.isMnemonicBackedUp = action.payload
       })
   }
 })

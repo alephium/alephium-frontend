@@ -48,7 +48,8 @@ export const lightTheme: DefaultTheme = {
     accent: '#5981f3',
     alert: '#ed4a34',
     valid: '#4ebf08',
-    star: '#FFD66D'
+    star: '#FFD66D',
+    pale: '#f7d1b6'
   },
   gradient: {
     yellow: '#FFCD82',
@@ -87,7 +88,8 @@ export const darkTheme: DefaultTheme = {
     accent: '#6083FF',
     alert: '#ed4a34',
     valid: '#4ebf08',
-    star: '#FFD66D'
+    star: '#FFD66D',
+    pale: '#f7d1b6'
   },
   gradient: {
     yellow: '#FFCD82',
