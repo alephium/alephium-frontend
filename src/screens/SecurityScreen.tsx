@@ -17,150 +17,162 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { shuffle } from 'lodash'
 import { AlertTriangle } from 'lucide-react-native'
-import { useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
-import Fade from '../components/Fade'
-import Screen from '../components/layout/Screen'
-import Notice from '../components/Notice'
-import OrderedListInput from '../components/OrderedListInput'
+import ButtonsRow from '../components/buttons/ButtonsRow'
+import Screen, { BottomScreenSection } from '../components/layout/Screen'
+import { ScreenSection } from '../components/layout/Screen'
+import ModalWithBackdrop from '../components/ModalWithBackdrop'
 import OrderedTable from '../components/OrderedTable'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { walletStored } from '../store/activeWalletSlice'
+import { mnemonicBackedUp } from '../store/activeWalletSlice'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SecurityScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
-type State = 'hidden' | 'revealed' | 'backedup' | 'verified'
-
 const SecurityScreen = ({ navigation, style }: ScreenProps) => {
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const activeWallet = useAppSelector((state) => state.activeWallet)
-  const [wordsToVerify, setWordsToVerify] = useState<string[]>([])
-  const [state, setState] = useState<State>('hidden')
+  const { isMnemonicBackedUp, mnemonic } = activeWallet
+  const [isUnderstood, setIsUnderstood] = useState(false)
+  const [showMnemonic, setShowMnemonic] = useState(false)
 
-  const { isMnemonicBackedUp, name, mnemonic, authType } = activeWallet
+  const handleBackupConfirmation = useCallback(async () => {
+    if (!isMnemonicBackedUp) await dispatch(mnemonicBackedUp(true))
 
-  const [isUnderstood, setIsUnderstood] = useState(isMnemonicBackedUp)
-  const [isWrongMatch, setIsWrongMatch] = useState(false)
-
-  const isRevealed = state === 'revealed' || state === 'backedup'
-
-  const nextState: Record<State, State> = {
-    hidden: 'revealed',
-    revealed: isMnemonicBackedUp ? 'hidden' : 'backedup',
-    backedup: 'verified',
-    verified: 'verified'
-  }
-
-  const revealButtonText: Record<State, string> = {
-    hidden: 'Press to reveal',
-    revealed: !isMnemonicBackedUp ? 'Next' : 'Press to hide',
-    backedup: isWrongMatch ? 'Wrong match' : 'Confirm',
-    verified: ''
-  }
-
-  const handlePress: Record<State, () => void> = {
-    hidden: () => setState(nextState[state]),
-    revealed: () => setState(nextState[state]),
-    backedup: () => {
-      if (wordsToVerify.join(' ') == mnemonic) {
-        setState(nextState[state])
-        return
-      }
-      setIsWrongMatch(true)
-      setTimeout(() => {
-        setIsWrongMatch(false)
-      }, 1000)
-    },
-    verified: () => setState(nextState[state])
-  }
-
-  useEffect(() => {
-    if (state === 'verified') {
-      dispatch(walletStored({ name, mnemonic, authType, isMnemonicBackedUp: true })).then(() => {
-        navigation.navigate('InWalletScreen')
-      })
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state])
-
-  const mnemonicComponent = {
-    hidden: null,
-    revealed: <OrderedTable items={mnemonic.split(' ')} />,
-    backedup: (
-      <OrderedListInput items={shuffle(mnemonic.split(' '))} onChange={(words: string[]) => setWordsToVerify(words)} />
-    ),
-    verified: null
-  }
-
-  if (state === 'verified') return null
+    navigation.navigate('InWalletScreen')
+  }, [dispatch, isMnemonicBackedUp, navigation])
 
   return (
     <Screen style={style}>
-      <Fade visible={!isRevealed}>
-        <CellNotices>
+      <ScreenSection fill>
+        <Messages>
           {!isMnemonicBackedUp && (
-            <Notice
-              icon={<AlertTriangle size={64} color={theme.font.primary} />}
-              title="Action to take"
-              body="Backup your recovery phrase to avoid losing access to your wallet"
-            />
+            <NoticeBox>
+              <NoticeIcon>
+                <AlertTriangle size={64} color={theme.font.primary} />
+              </NoticeIcon>
+              <NoticeText>
+                <NoticeTitle>Action to take</NoticeTitle>
+                <NoticeBody>Backup your recovery phrase to avoid losing access to your wallet</NoticeBody>
+              </NoticeText>
+            </NoticeBox>
           )}
-          <CenterText>Your secret recovery phrase is the only way to recover your wallet.</CenterText>
-          <BoldText>Don&apos;t lose it, and don&apos;t share it with anyone.</BoldText>
-        </CellNotices>
-        <CellReveal>
+          <AdviceTexts>
+            <CenteredText>Your secret recovery phrase is the only way to recover your wallet.</CenteredText>
+            <BoldText>Don&apos;t lose it, and don&apos;t share it with anyone.</BoldText>
+          </AdviceTexts>
+        </Messages>
+        <ConsentSection>
           <ToggleStyled onValueChange={() => setIsUnderstood(!isUnderstood)} value={isUnderstood} />
-          <AppText onPress={() => setIsUnderstood(!isUnderstood)}>I&apos;ve read and understood the above.</AppText>
-        </CellReveal>
-      </Fade>
-      <Button disabled={!isUnderstood} title={revealButtonText[state]} onPress={handlePress[state]} />
-      <Fade modal visible={isRevealed}>
-        {mnemonicComponent[state]}
-      </Fade>
+          <ConsentText onPress={() => setIsUnderstood(!isUnderstood)}>
+            I understand and I&apos;m ready to write down my recovery phrase.
+          </ConsentText>
+        </ConsentSection>
+      </ScreenSection>
+      <BottomScreenSection>
+        <Button disabled={!isUnderstood} title="Reveal secret phrase" onPress={() => setShowMnemonic(true)} />
+      </BottomScreenSection>
+      <ModalWithBackdrop animationType="fade" visible={showMnemonic} closeModal={() => setShowMnemonic(false)}>
+        <SecretPhraseModalContent>
+          <ScreenSectionStyled fill>
+            <OrderedTable items={mnemonic.split(' ')} />
+          </ScreenSectionStyled>
+          <BottomScreenSection>
+            <ButtonsRow>
+              <Button title="Go back" onPress={() => setShowMnemonic(false)} />
+              <Button title="I wrote it down" onPress={handleBackupConfirmation} gradient />
+            </ButtonsRow>
+          </BottomScreenSection>
+        </SecretPhraseModalContent>
+      </ModalWithBackdrop>
     </Screen>
   )
 }
 
 export default styled(SecurityScreen)`
   background-color: #f7d1b6;
-  margin: 20px;
-  justify-content: space-between;
 `
 
-const CenterText = styled(AppText)`
-  text-align: center;
-  margin: 20px 0;
+const Messages = styled.View`
+  flex: 1;
 `
 
-const BoldText = styled(AppText)`
-  font-weight: bold;
-  text-align: center;
-`
-
-const CellNotices = styled.View`
-  align-items: center;
-  flex-grow: 1;
-  width: 80%;
-`
-
-const CellReveal = styled.View`
+const ConsentSection = styled.View`
   flex-direction: row;
   align-items: center;
-  margin-bottom: 40px;
+  margin: 0 40px 22px;
 `
 
 const ToggleStyled = styled(Toggle)`
   margin-right: 12px;
+`
+
+const NoticeBox = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: #f0b68d;
+  border-radius: 12px;
+  padding: 38px 33px;
+`
+
+const NoticeIcon = styled.View`
+  align-items: center;
+  margin-right: 20px;
+  flex-shrink: 0;
+  flex-grow: 1;
+`
+
+const NoticeText = styled.View`
+  flex-shrink: 1;
+`
+
+const NoticeTitle = styled(AppText)`
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 12px;
+`
+
+const NoticeBody = styled(AppText)`
+  font-weight: 600;
+  font-size: 16px;
+`
+
+const AdviceTexts = styled.View`
+  margin: 0 64px;
+  flex: 1;
+  justify-content: center;
+`
+
+const CenteredText = styled(AppText)`
+  text-align: center;
+`
+
+const BoldText = styled(CenteredText)`
+  margin-top: 20px;
+  font-weight: bold;
+`
+
+const ConsentText = styled(AppText)`
+  flex-shrink: 1;
+`
+
+const SecretPhraseModalContent = styled.View`
+ flex: 1
+ width: 100%;
+ background-color: #f7d1b6;
+`
+
+const ScreenSectionStyled = styled(ScreenSection)`
+  align-items: center;
+  justify-content: center;
 `

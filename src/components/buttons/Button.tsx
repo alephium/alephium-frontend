@@ -139,7 +139,7 @@ export default styled(Button)`
 
 const ButtonText = styled(AppText)`
   font-weight: bold;
-  color: red;
+  text-align: center;
 `
 
 const Icon = styled.View<{ withSpace?: boolean }>`

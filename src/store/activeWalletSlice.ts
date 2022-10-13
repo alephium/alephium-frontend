@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { walletEncryptAsyncUnsafe, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { changeActiveWallet, storeWallet } from '../storage/wallets'
+import { changeActiveWallet, storePartialWalletMetadata, storeWallet } from '../storage/wallets'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 import { RootState } from './store'
@@ -80,9 +80,29 @@ export const walletStored = createAsyncThunk(
   }
 )
 
+export const mnemonicBackedUp = createAsyncThunk(
+  `${sliceName}/mnemonicBackedUp`,
+  async (payload: ActiveWalletState['isMnemonicBackedUp'], { getState, dispatch }) => {
+    const isMnemonicBackedUp = payload
+
+    const state = getState() as RootState
+    const metadataId = state.activeWallet.metadataId
+
+    if (!metadataId) throw 'Could not store isMnemonicBackedUp, metadataId is not set'
+
+    dispatch(loadingStarted())
+
+    await storePartialWalletMetadata(metadataId, { isMnemonicBackedUp })
+
+    dispatch(loadingFinished())
+
+    return payload
+  }
+)
+
 export const activeWalletChanged = createAsyncThunk(
   `${sliceName}/activeWalletChanged`,
-  async (payload: ActiveWalletState, { getState, dispatch }) => {
+  async (payload: ActiveWalletState, { dispatch }) => {
     const { metadataId } = payload
     if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
 
@@ -92,7 +112,7 @@ export const activeWalletChanged = createAsyncThunk(
 
     dispatch(loadingFinished())
 
-    return payload as ActiveWalletState
+    return payload
   }
 )
 
@@ -100,17 +120,14 @@ const activeWalletSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    walletFlushed: () => {
-      return initialState
-    }
+    walletFlushed: () => initialState
   },
   extraReducers: (builder) => {
     builder
-      .addCase(walletStored.fulfilled, (state, action) => {
-        return action.payload
-      })
-      .addCase(activeWalletChanged.fulfilled, (state, action) => {
-        return action.payload
+      .addCase(walletStored.fulfilled, (_, action) => action.payload)
+      .addCase(activeWalletChanged.fulfilled, (_, action) => action.payload)
+      .addCase(mnemonicBackedUp.fulfilled, (state, action) => {
+        state.isMnemonicBackedUp = action.payload
       })
   }
 })

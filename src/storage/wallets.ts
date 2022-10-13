@@ -183,6 +183,17 @@ const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
   return walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id) as WalletMetadata
 }
 
+export const storePartialWalletMetadata = async (id: string, partialMetadata: Partial<WalletMetadata>) => {
+  const walletsMetadata = await getWalletsMetadata()
+  const existingWalletMetadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id) as WalletMetadata
+
+  if (existingWalletMetadata) {
+    Object.assign(existingWalletMetadata, partialMetadata)
+
+    await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
+  }
+}
+
 export const storeAddressMetadata = async (walletId: string, addressMetadata: AddressMetadata) => {
   const walletsMetadata = await getWalletsMetadata()
   const walletMetadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.id === walletId) as WalletMetadata
