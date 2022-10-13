@@ -17,11 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createNavigationContainerRef, DefaultTheme, NavigationContainer } from '@react-navigation/native'
+import { NavigationState } from '@react-navigation/routers'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
+import { useEffect, useState } from 'react'
 import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import AddressScreen from '../screens/AddressScreen'
 import EditAddressScreen from '../screens/EditAddressScreen'
 import LandingScreen from '../screens/LandingScreen'
@@ -42,6 +45,7 @@ import SwitchNetworkScreen from '../screens/SwitchNetworkScreen'
 import SwitchWalletAfterDeletionScreen from '../screens/SwitchWalletAfterDeletionScreen'
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
 import TransactionScreen from '../screens/TransactionScreen'
+import { appBackgroundedAcknowledged, routeChanged } from '../store/appMetadataSlice'
 import InWalletTabsNavigation from './InWalletNavigation'
 import RootStackParamList from './rootStackRoutes'
 
@@ -53,6 +57,18 @@ const RootStackNavigation = () => {
   const bottomModalOptions = useBottomModalOptions()
   const { height: screenHeight } = useWindowDimensions()
   const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
+  const dispatch = useAppDispatch()
+  const [isResetFromBeingInactive, setIsResetFromBeingInactive] = useState(false)
+  const { lastNavigationState, isAppBackgroundedAcknowledged, isAuthenticated } = useAppSelector(
+    (state) => state.appMetadata
+  )
+
+  const handleStateChange = (state?: NavigationState) => {
+    // Do not record state changes until "foregrounding processes" are done (login, navigation state restore)
+    if (isAppBackgroundedAcknowledged && isAuthenticated) {
+      dispatch(routeChanged(state))
+    }
+  }
 
   console.log('RootStackNavigation renders')
 
@@ -69,8 +85,29 @@ const RootStackNavigation = () => {
     }
   }
 
+  useEffect(
+    () => {
+      if (!isAuthenticated) {
+        setIsResetFromBeingInactive(false)
+        return
+      }
+
+      if (isAuthenticated && !isAppBackgroundedAcknowledged) {
+        rootStackNavigationRef.resetRoot(lastNavigationState)
+        setIsResetFromBeingInactive(true)
+        dispatch(appBackgroundedAcknowledged(true))
+
+        // Means this is a regular login, not coming back from being inactive
+      } else if (isAuthenticated && isAppBackgroundedAcknowledged && !isResetFromBeingInactive) {
+        rootStackNavigationRef.resetRoot({ index: 0, routes: [{ name: 'InWalletScreen' }] })
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isAppBackgroundedAcknowledged, isAuthenticated, isResetFromBeingInactive]
+  )
+
   return (
-    <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
+    <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
       <RootStack.Navigator
         initialRouteName={'SplashScreen'}
         screenOptions={{

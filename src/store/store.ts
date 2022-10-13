@@ -20,6 +20,7 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import activeWalletSlice from './activeWalletSlice'
 import addressesSlice from './addressesSlice'
+import appMetadataSlice from './appMetadataSlice'
 import credentialsSlice from './credentialsSlice'
 import networkSlice, { networkListenerMiddleware } from './networkSlice'
 import priceSlice from './priceSlice'
@@ -34,7 +35,8 @@ export const store = configureStore({
     credentials: credentialsSlice.reducer,
     activeWallet: activeWalletSlice.reducer,
     addresses: addressesSlice.reducer,
-    price: priceSlice.reducer
+    price: priceSlice.reducer,
+    appMetadata: appMetadataSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(networkListenerMiddleware.middleware).prepend(settingsListenerMiddleware.middleware)
