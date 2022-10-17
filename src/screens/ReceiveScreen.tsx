@@ -33,6 +33,7 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard } from '../utils/addresses'
+import { currencies } from '../utils/currencies'
 import { attoAlphToFiat } from '../utils/numbers'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'ReceiveScreen'>
@@ -85,7 +86,7 @@ const ReceiveScreen = ({
             </Text>
           </HighlightRow>
           <HighlightRow title="Current estimated value" isBottomRounded>
-            <AmountInFiat fiat={balance} fiatCurrency={currency} />
+            <AmountInFiat value={balance} isFiat suffix={currencies[currency].symbol} />
           </HighlightRow>
         </ScreenSection>
       </ScrollView>

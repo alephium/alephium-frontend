@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calAmountDelta } from '@alephium/sdk'
+import { calcTxAmountDeltaForAddress, getDirection } from '@alephium/sdk'
 import { Transaction } from '@alephium/sdk/api/explorer'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
@@ -45,9 +45,10 @@ const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => 
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
-  let amount = calAmountDelta(tx as Transaction, tx.address.hash)
-  const isOut = amount < 0
-  amount = isOut ? amount * BigInt(-1) : amount
+  let amount = calcTxAmountDeltaForAddress(tx as Transaction, tx.address.hash)
+  amount = amount < 0 ? amount * BigInt(-1) : amount
+
+  const isOut = getDirection(tx, tx.address.hash) === 'out'
 
   const isConfirmed = tx.blockHash !== ''
 

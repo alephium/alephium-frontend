@@ -16,42 +16,53 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactElement } from 'react'
-import { Dimensions, StyleProp, View, ViewProps } from 'react-native'
+import { ReactElement, useState } from 'react'
+import { Dimensions, LayoutChangeEvent, StyleProp, View, ViewProps } from 'react-native'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 import RNCarousel from 'react-native-reanimated-carousel'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 interface CarouselProps<T> {
   data: Array<T>
   renderItem: (itemInfo: { item: T }) => ReactElement
   width?: number
+  padding?: number
   height?: number
+  distance?: number
   onScrollStart?: () => void
   onScrollEnd?: (index: number) => void
 }
 
-function Carousel<T>({ data, renderItem, width, height, onScrollStart, onScrollEnd }: CarouselProps<T>) {
+function Carousel<T>({
+  data,
+  renderItem,
+  width,
+  height,
+  padding = 0,
+  distance = 0,
+  onScrollStart,
+  onScrollEnd
+}: CarouselProps<T>) {
   const progressValue = useSharedValue<number>(0)
   const theme = useTheme()
+  const [_width, setWidth] = useState(width ?? Dimensions.get('window').width - padding * 2)
 
-  const defaultWidth = Dimensions.get('window').width
+  const onLayout = (event: LayoutChangeEvent) => {
+    setWidth(width ?? event.nativeEvent.layout.width - padding * 2)
+  }
 
   return (
-    <View>
+    <View onLayout={onLayout}>
       <RNCarousel
-        style={{
-          width: '100%',
-          justifyContent: 'center'
-        }}
-        width={width ?? defaultWidth}
+        style={{ width: '100%', justifyContent: 'center' }}
+        width={_width}
         height={height}
         loop={false}
         onProgressChange={(_, absoluteProgress) => (progressValue.value = absoluteProgress)}
         mode="parallax"
         modeConfig={{
           parallaxScrollingScale: 1,
-          parallaxScrollingOffset: -17
+          parallaxScrollingOffset: distance * -1
         }}
         data={data}
         renderItem={renderItem}
@@ -60,12 +71,12 @@ function Carousel<T>({ data, renderItem, width, height, onScrollStart, onScrollE
       />
       {!!progressValue && data.length > 1 && (
         <CarouselPagination>
-          {data.map((hash, index) => (
+          {data.map((_, index) => (
             <CarouselPaginationItem
               backgroundColor={theme.font.primary}
               animValue={progressValue}
               index={index}
-              key={`pagination-${hash}`}
+              key={`pagination-${index}`}
               length={data.length}
             />
           ))}
@@ -79,8 +90,6 @@ export default Carousel
 
 const CarouselPagination = styled.View`
   flex-direction: row;
-  justify-content: center;
-  width: 100px;
   align-self: center;
   margin-top: 36px;
 `
@@ -114,13 +123,13 @@ const CarouselPaginationItem = ({ animValue, index, length, size = 12, style }: 
   }, [animValue, index, length])
 
   return (
-    <Circle style={style} size={size}>
+    <Circle style={style} size={size} isLast={index === length - 1}>
       <Dot style={animStyle} size={size - 3} />
     </Circle>
   )
 }
 
-const Circle = styled.View<{ size: number }>`
+const Circle = styled.View<{ size: number; isLast: boolean }>`
   background-color: ${({ theme }) => theme.font.contrast};
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
@@ -130,7 +139,12 @@ const Circle = styled.View<{ size: number }>`
   overflow: hidden;
   align-items: center;
   justify-content: center;
-  margin: 0 ${({ size }) => size / 2}px;
+
+  ${({ isLast }) =>
+    !isLast &&
+    css`
+      margin-right: 8px;
+    `}
 `
 
 const Dot = styled(Animated.View)<{ size: number }>`

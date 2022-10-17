@@ -16,19 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { css } from 'styled-components/native'
+import { StyleProp, ViewStyle } from 'react-native'
 
-export interface AppTextProps {
-  bold?: boolean
+export interface SvgProps {
+  style?: StyleProp<ViewStyle>
+  size?: number
   color?: string
 }
-
-export default styled.Text<AppTextProps>`
-  color: ${({ theme, color }) => color ?? theme.font.primary};
-
-  ${({ bold }) =>
-    bold &&
-    css`
-      font-weight: 700;
-    `}
-`

@@ -16,19 +16,31 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { css } from 'styled-components/native'
+import { AddressBalance } from '@alephium/sdk/api/explorer'
 
-export interface AppTextProps {
-  bold?: boolean
-  color?: string
+import { Currency } from './settings'
+
+export interface TokenWorth {
+  price?: number
+  currency: Currency
 }
 
-export default styled.Text<AppTextProps>`
-  color: ${({ theme, color }) => color ?? theme.font.primary};
+export const ALEPHIUM_TOKEN_ID = '0'
 
-  ${({ bold }) =>
-    bold &&
-    css`
-      font-weight: 700;
-    `}
-`
+export type AddressToken = {
+  id: string
+  balances: AddressBalance
+  worth?: TokenWorth
+}
+
+export type TokenMetadata = {
+  name: string
+  description: string
+  image: string
+  symbol: string
+  decimals: number
+}
+
+export type TokensMetadataMap = {
+  [key: string]: TokenMetadata
+}

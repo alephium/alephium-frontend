@@ -31,6 +31,7 @@ import client from '../api/client'
 import { storeAddressMetadata } from '../storage/wallets'
 import { AddressHash, AddressSettings } from '../types/addresses'
 import { TimeInMs } from '../types/numbers'
+import { AddressToken } from '../types/tokens'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -51,6 +52,7 @@ export type Address = {
     availableBalance: string
     lockedBalance: string
     lastUsed: TimeInMs
+    tokens: AddressToken[]
   }
 }
 
@@ -62,7 +64,7 @@ type AddressPartial = {
   settings: AddressSettings
 }
 
-const addressSettingsAdapter = createEntityAdapter<Address>({
+const addressesAdapter = createEntityAdapter<Address>({
   selectId: (address) => address.hash,
   sortComparer: (a, b) => {
     // Always keep main address to the top of the list
@@ -78,7 +80,7 @@ interface AddressesState extends EntityState<Address> {
   status: 'uninitialized' | 'initialized'
 }
 
-const initialState: AddressesState = addressSettingsAdapter.getInitialState({
+const initialState: AddressesState = addressesAdapter.getInitialState({
   mainAddress: '',
   loading: false,
   status: 'uninitialized'
@@ -103,38 +105,24 @@ export const fetchAddressesDataPage = createAsyncThunk(
       console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, addressHash)
       const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, page)
 
+      const { data: tokenIds } = await client.explorerClient.addresses.getAddressesAddressTokens(addressHash)
+
+      const tokens = await Promise.all(
+        tokenIds.map((id) =>
+          client.explorerClient.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then(({ data }) => ({
+            id,
+            balances: data
+          }))
+        )
+      )
+
       results.push({
         hash: addressHash,
         details: data,
         availableBalance: availableBalance,
         transactions,
+        tokens,
         page
-      })
-    }
-
-    dispatch(loadingFinished())
-    return results
-  }
-)
-
-export const fetchAddressesData = createAsyncThunk(
-  `${sliceName}/fetchAddressesData`,
-  async (payload: AddressHash[], { dispatch }) => {
-    const results = []
-    dispatch(loadingStarted())
-
-    for (const address of payload) {
-      const { data } = await client.explorerClient.getAddressDetails(address)
-      const availableBalance = data.balance
-        ? data.lockedBalance
-          ? (BigInt(data.balance) - BigInt(data.lockedBalance)).toString()
-          : data.balance
-        : undefined
-
-      results.push({
-        hash: address,
-        details: data,
-        availableBalance: availableBalance
       })
     }
 
@@ -216,7 +204,7 @@ const addressesSlice = createSlice({
         state.mainAddress = newMainAddress.hash
       }
 
-      addressSettingsAdapter.addMany(
+      addressesAdapter.addMany(
         state,
         addresses.map((address) => ({
           ...address,
@@ -233,7 +221,8 @@ const addressesSlice = createSlice({
             },
             availableBalance: '0',
             lockedBalance: '0',
-            lastUsed: 0
+            lastUsed: 0,
+            tokens: []
           }
         }))
       )
@@ -254,7 +243,7 @@ const addressesSlice = createSlice({
       }
     },
     addressesFlushed: (state) => {
-      addressSettingsAdapter.setAll(state, [])
+      addressesAdapter.setAll(state, [])
       state.status = 'uninitialized'
     },
     loadingStarted: (state) => {
@@ -268,7 +257,7 @@ const addressesSlice = createSlice({
     builder
       .addCase(fetchAddressesDataPage.fulfilled, (state, action) => {
         for (const address of action.payload) {
-          const { hash, details, availableBalance, transactions, page } = address
+          const { hash, details, availableBalance, transactions, page, tokens } = address
 
           const addressState = state.entities[hash]
           if (addressState) {
@@ -290,20 +279,11 @@ const addressesSlice = createSlice({
             networkData.transactions.data = [...networkData.transactions.data.concat(newTxs)]
             networkData.transactions.loadedPage = page
             if (availableBalance) networkData.availableBalance = availableBalance
+
+            networkData.tokens = tokens
           }
         }
         state.status = 'initialized'
-      })
-      .addCase(fetchAddressesData.fulfilled, (state, action) => {
-        for (const address of action.payload) {
-          const { hash, details, availableBalance } = address
-
-          const addressState = state.entities[hash]
-          if (addressState) {
-            addressState.networkData.details = details
-            if (availableBalance) addressState.networkData.availableBalance = availableBalance
-          }
-        }
       })
       .addCase(fetchAddressConfirmedTransactions.fulfilled, (state, action) => {
         const { hash, transactions, page } = action.payload
@@ -318,14 +298,14 @@ const addressesSlice = createSlice({
         const newMainAddress = action.payload
 
         const previousMainAddress = state.entities[state.mainAddress]
-        addressSettingsAdapter.updateOne(state, {
+        addressesAdapter.updateOne(state, {
           id: state.mainAddress,
           changes: { settings: { ...previousMainAddress?.settings, isMain: false } }
         })
 
         state.mainAddress = newMainAddress.hash
 
-        addressSettingsAdapter.updateOne(state, {
+        addressesAdapter.updateOne(state, {
           id: newMainAddress.hash,
           changes: { settings: { ...newMainAddress.settings, isMain: true } }
         })
@@ -337,7 +317,7 @@ export const {
   selectById: selectAddressByHash,
   selectAll: selectAllAddresses,
   selectIds: selectAddressIds
-} = addressSettingsAdapter.getSelectors<RootState>((state) => state[sliceName])
+} = addressesAdapter.getSelectors<RootState>((state) => state[sliceName])
 
 export const selectMultipleAddresses = createSelector(
   [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
@@ -356,6 +336,27 @@ export const selectTransactions = createSelector(
         return delta == 0 ? -1 : delta
       })
 )
+
+export const selectAllTokens = createSelector([selectAllAddresses], (addresses) => {
+  const resultTokens: AddressToken[] = []
+
+  addresses.forEach((address) => {
+    address.networkData.tokens.forEach((token) => {
+      const tokenBalances = resultTokens.find((resultToken) => resultToken.id === token.id)?.balances
+
+      if (tokenBalances) {
+        tokenBalances.balance = (BigInt(tokenBalances.balance) + BigInt(token.balances.balance)).toString()
+        tokenBalances.lockedBalance = (
+          BigInt(tokenBalances.lockedBalance) + BigInt(token.balances.lockedBalance)
+        ).toString()
+      } else {
+        resultTokens.push(token)
+      }
+    })
+  })
+
+  return resultTokens
+})
 
 export const {
   addTransactionToAddress,

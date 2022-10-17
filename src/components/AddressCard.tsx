@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -60,8 +60,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
           }}
         />
       </Header>
-      {/* Replace ℵ with SVG or use dollar value instead */}
-      <AmountStyled value={BigInt(address.networkData.details.balance)} suffix="ℵ" color={textColor} />
+      <AmountStyled value={BigInt(address.networkData.details.balance)} color={textColor} size={17} />
     </Pressable>
   )
 }
@@ -85,13 +84,7 @@ const AddressBadgeStyled = styled(AddressBadge)`
   margin-right: 18px;
 `
 
-const AmountStyled = styled(Amount)<{ color?: string }>`
+const AmountStyled = styled(Amount)`
   font-weight: 700;
   font-size: 26px;
-
-  ${({ color }) =>
-    color &&
-    css`
-      color: ${color};
-    `}
 `

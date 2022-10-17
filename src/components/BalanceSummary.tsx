@@ -21,6 +21,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { selectAllAddresses } from '../store/addressesSlice'
+import { currencies } from '../utils/currencies'
 import { attoAlphToFiat } from '../utils/numbers'
 import Amount from './Amount'
 
@@ -45,8 +46,8 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
         <ActivityIndicator size="large" color={theme.font.primary} />
       ) : (
         <>
-          <AmountInFiat fiat={balance} fadeDecimals fiatCurrency={currency} />
-          <AmountStyled value={totalBalance} fadeDecimals />
+          <AmountInFiat value={balance} isFiat fadeDecimals suffix={currencies[currency].symbol} />
+          <AmountStyled value={totalBalance} fadeDecimals size={14} />
         </>
       )}
     </View>
