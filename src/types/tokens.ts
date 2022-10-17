@@ -20,14 +20,27 @@ import { AddressBalance } from '@alephium/sdk/api/explorer'
 
 import { Currency } from './settings'
 
-export interface Worth {
-  amount?: number
+export interface TokenWorth {
+  price?: number
   currency: Currency
 }
 
-export interface Token extends AddressBalance {
+export const ALEPHIUM_TOKEN_ID = '0'
+
+export type AddressToken = {
   id: string
-  worth?: Worth
+  balances: AddressBalance
+  worth?: TokenWorth
 }
 
-export const ALEPHIUM_TOKEN_ID = '0'
+export type TokenMetadata = {
+  name: string
+  description: string
+  image: string
+  symbol: string
+  decimals: number
+}
+
+export type TokensMetadataMap = {
+  [key: string]: TokenMetadata
+}

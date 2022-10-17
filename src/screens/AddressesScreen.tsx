@@ -71,22 +71,21 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
     }, [currentAddressHash])
   )
 
-  const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
-    setHeightCarouselItem(event.nativeEvent.layout.height)
-  }
+  const onLayoutCarouselItem = (event: LayoutChangeEvent) => setHeightCarouselItem(event.nativeEvent.layout.height)
 
   return (
     <InWalletScrollScreen style={style}>
       <Carousel
         data={addressHashes}
-        renderItem={(itemInfo) => (
-          <View onLayout={onLayoutCarouselItem} style={{ marginLeft: 16 }} key={itemInfo.item}>
-            <AddressCard addressHash={itemInfo.item} />
+        renderItem={({ item }) => (
+          <View onLayout={onLayoutCarouselItem} key={item}>
+            <AddressCard addressHash={item} />
           </View>
         )}
         onScrollStart={() => setAreButtonsDisabled(true)}
         onScrollEnd={onScrollEnd}
-        offsetX={48}
+        padding={30}
+        distance={20}
         height={heightCarouselItem}
       />
       <ScreenSection>

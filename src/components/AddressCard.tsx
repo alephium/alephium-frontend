@@ -60,8 +60,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
           }}
         />
       </Header>
-      {/* Replace ℵ with SVG or use dollar value instead */}
-      <AmountStyled value={BigInt(address.networkData.details.balance)} suffix="ℵ" color={textColor} />
+      <AmountStyled value={BigInt(address.networkData.details.balance)} color={textColor} size={17} />
     </Pressable>
   )
 }

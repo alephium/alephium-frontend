@@ -16,21 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components/native'
-
-const defaultFontSize = 14
+import styled, { css } from 'styled-components/native'
 
 export interface AppTextProps {
   bold?: boolean
-  leftPadding?: boolean
-  size?: number
   color?: string
 }
 
 export default styled.Text<AppTextProps>`
-  color: ${({ theme }) => theme.font.primary};
-  ${({ bold }) => bold && 'font-weight: bold;'}
-  ${({ leftPadding }) => leftPadding && 'padding-left: 5%;'}
-  ${({ size }) => size !== undefined && `font-size: ${defaultFontSize + size * 2}px;`}
-  ${({ color }) => color && `color: ${color};`}
+  color: ${({ theme, color }) => color ?? theme.font.primary};
+
+  ${({ bold }) =>
+    bold &&
+    css`
+      font-weight: 700;
+    `}
 `

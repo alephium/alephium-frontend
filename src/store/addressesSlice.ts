@@ -31,7 +31,7 @@ import client from '../api/client'
 import { storeAddressMetadata } from '../storage/wallets'
 import { AddressHash, AddressSettings } from '../types/addresses'
 import { TimeInMs } from '../types/numbers'
-import { Token } from '../types/tokens'
+import { AddressToken } from '../types/tokens'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -43,7 +43,6 @@ export type Address = {
   group: number
   index: number
   settings: AddressSettings
-  tokens: Token[]
   networkData: {
     details: AddressInfo
     transactions: {
@@ -53,6 +52,7 @@ export type Address = {
     availableBalance: string
     lockedBalance: string
     lastUsed: TimeInMs
+    tokens: AddressToken[]
   }
 }
 
@@ -109,9 +109,10 @@ export const fetchAddressesDataPage = createAsyncThunk(
 
       const tokens = await Promise.all(
         tokenIds.map((id) =>
-          client.explorerClient.addresses
-            .getAddressesAddressTokensTokenIdBalance(addressHash, id)
-            .then(({ data: { balance, lockedBalance } }) => ({ id, balance, lockedBalance }))
+          client.explorerClient.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then(({ data }) => ({
+            id,
+            balances: data
+          }))
         )
       )
 
@@ -127,44 +128,6 @@ export const fetchAddressesDataPage = createAsyncThunk(
 
     dispatch(loadingFinished())
     return results
-  }
-)
-
-export const fetchAddressesData = createAsyncThunk(
-  `${sliceName}/fetchAddressesData`,
-  async (payload: AddressHash[], { dispatch }) => {
-    const addresses = []
-    dispatch(loadingStarted())
-
-    for (const addressHash of payload) {
-      const { data: addressData } = await client.explorerClient.getAddressDetails(addressHash)
-
-      const availableAlphBalance = addressData.balance
-        ? addressData.lockedBalance
-          ? (BigInt(addressData.balance) - BigInt(addressData.lockedBalance)).toString()
-          : addressData.balance
-        : undefined
-
-      const { data: tokenIds } = await client.explorerClient.addresses.getAddressesAddressTokens(addressHash)
-
-      const tokens = await Promise.all(
-        tokenIds.map((id) =>
-          client.explorerClient.addresses
-            .getAddressesAddressTokensTokenIdBalance(addressHash, id)
-            .then(({ data: { balance, lockedBalance } }) => ({ id, balance, lockedBalance }))
-        )
-      )
-
-      addresses.push({
-        hash: addressHash,
-        details: addressData,
-        availableBalance: availableAlphBalance,
-        tokens
-      })
-    }
-
-    dispatch(loadingFinished())
-    return addresses
   }
 )
 
@@ -246,7 +209,6 @@ const addressesSlice = createSlice({
         addresses.map((address) => ({
           ...address,
           group: addressToGroup(address.hash, TOTAL_NUMBER_OF_GROUPS),
-          tokens: [],
           networkData: {
             details: {
               balance: '0',
@@ -259,7 +221,8 @@ const addressesSlice = createSlice({
             },
             availableBalance: '0',
             lockedBalance: '0',
-            lastUsed: 0
+            lastUsed: 0,
+            tokens: []
           }
         }))
       )
@@ -317,22 +280,10 @@ const addressesSlice = createSlice({
             networkData.transactions.loadedPage = page
             if (availableBalance) networkData.availableBalance = availableBalance
 
-            addressState.tokens = tokens
+            networkData.tokens = tokens
           }
         }
         state.status = 'initialized'
-      })
-      .addCase(fetchAddressesData.fulfilled, (state, action) => {
-        for (const address of action.payload) {
-          const { hash, details, availableBalance, tokens } = address
-
-          const addressState = state.entities[hash]
-          if (addressState) {
-            addressState.networkData.details = details
-            addressState.tokens = tokens
-            if (availableBalance) addressState.networkData.availableBalance = availableBalance
-          }
-        }
       })
       .addCase(fetchAddressConfirmedTransactions.fulfilled, (state, action) => {
         const { hash, transactions, page } = action.payload
@@ -385,6 +336,27 @@ export const selectTransactions = createSelector(
         return delta == 0 ? -1 : delta
       })
 )
+
+export const selectAllTokens = createSelector([selectAllAddresses], (addresses) => {
+  const resultTokens: AddressToken[] = []
+
+  addresses.forEach((address) => {
+    address.networkData.tokens.forEach((token) => {
+      const tokenBalances = resultTokens.find((resultToken) => resultToken.id === token.id)?.balances
+
+      if (tokenBalances) {
+        tokenBalances.balance = (BigInt(tokenBalances.balance) + BigInt(token.balances.balance)).toString()
+        tokenBalances.lockedBalance = (
+          BigInt(tokenBalances.lockedBalance) + BigInt(token.balances.lockedBalance)
+        ).toString()
+      } else {
+        resultTokens.push(token)
+      }
+    })
+  })
+
+  return resultTokens
+})
 
 export const {
   addTransactionToAddress,

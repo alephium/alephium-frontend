@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS, INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
 import AppText from './AppText'
@@ -41,10 +41,12 @@ export interface HighlightRowProps extends BorderOptions {
 }
 
 const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRowProps) => {
+  const theme = useTheme()
+
   const componentContent = title ? (
     <>
       <LeftContent>
-        <AppText isSecondary>{title}</AppText>
+        <AppText color={theme.font.secondary}>{title}</AppText>
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
       </LeftContent>
       <RightContent>{children}</RightContent>

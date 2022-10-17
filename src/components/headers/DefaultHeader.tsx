@@ -48,8 +48,9 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) =
 export default styled(DefaultHeader)`
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
-  padding: 40px 20px 10px 20px;
+  align-items: flex-end;
+  padding: 40px 20px 18px 20px;
+  min-height: 110px;
 `
 
 const Title = styled(AppText)`

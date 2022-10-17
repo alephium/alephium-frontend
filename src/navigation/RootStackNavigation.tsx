@@ -71,6 +71,19 @@ const RootStackNavigation = () => {
     }
   }
 
+  const themeNavigator = {
+    ...DefaultTheme,
+    dark: theme.name === 'dark',
+    colors: {
+      ...DefaultTheme.colors,
+      primary: theme.font.primary,
+      background: theme.bg.primary,
+      card: theme.bg.secondary,
+      text: theme.font.primary,
+      border: theme.border.primary
+    }
+  }
+
   useEffect(
     () => {
       if (!isAuthenticated) {
@@ -91,19 +104,6 @@ const RootStackNavigation = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAppBackgroundedAcknowledged, isAuthenticated, isResetFromBeingInactive]
   )
-
-  const themeNavigator = {
-    ...DefaultTheme,
-    dark: theme.name === 'dark',
-    colors: {
-      ...DefaultTheme.colors,
-      primary: theme.font.primary,
-      background: theme.bg.primary,
-      card: theme.bg.secondary,
-      text: theme.font.primary,
-      border: theme.border.primary
-    }
-  }
 
   return (
     <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>

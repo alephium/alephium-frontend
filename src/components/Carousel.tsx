@@ -20,31 +20,41 @@ import { ReactElement, useState } from 'react'
 import { Dimensions, LayoutChangeEvent, StyleProp, View, ViewProps } from 'react-native'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 import RNCarousel from 'react-native-reanimated-carousel'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 interface CarouselProps<T> {
   data: Array<T>
   renderItem: (itemInfo: { item: T }) => ReactElement
   width?: number
-  offsetX?: number
+  padding?: number
   height?: number
+  distance?: number
   onScrollStart?: () => void
   onScrollEnd?: (index: number) => void
 }
 
-function Carousel<T>({ data, renderItem, width, height, offsetX = 0, onScrollStart, onScrollEnd }: CarouselProps<T>) {
+function Carousel<T>({
+  data,
+  renderItem,
+  width,
+  height,
+  padding = 0,
+  distance = 0,
+  onScrollStart,
+  onScrollEnd
+}: CarouselProps<T>) {
   const progressValue = useSharedValue<number>(0)
   const theme = useTheme()
-  const [_width, setWidth] = useState(width ?? Dimensions.get('window').width - offsetX)
+  const [_width, setWidth] = useState(width ?? Dimensions.get('window').width - padding * 2)
 
   const onLayout = (event: LayoutChangeEvent) => {
-    setWidth(width ?? event.nativeEvent.layout.width - offsetX)
+    setWidth(width ?? event.nativeEvent.layout.width - padding * 2)
   }
 
   return (
     <View onLayout={onLayout}>
       <RNCarousel
-        style={{ width: '100%' }}
+        style={{ width: '100%', justifyContent: 'center' }}
         width={_width}
         height={height}
         loop={false}
@@ -52,7 +62,7 @@ function Carousel<T>({ data, renderItem, width, height, offsetX = 0, onScrollSta
         mode="parallax"
         modeConfig={{
           parallaxScrollingScale: 1,
-          parallaxScrollingOffset: 0
+          parallaxScrollingOffset: distance * -1
         }}
         data={data}
         renderItem={renderItem}
@@ -61,12 +71,12 @@ function Carousel<T>({ data, renderItem, width, height, offsetX = 0, onScrollSta
       />
       {!!progressValue && data.length > 1 && (
         <CarouselPagination>
-          {data.map((hash, index) => (
+          {data.map((_, index) => (
             <CarouselPaginationItem
               backgroundColor={theme.font.primary}
               animValue={progressValue}
               index={index}
-              key={`pagination-${hash}`}
+              key={`pagination-${index}`}
               length={data.length}
             />
           ))}
@@ -113,13 +123,13 @@ const CarouselPaginationItem = ({ animValue, index, length, size = 12, style }: 
   }, [animValue, index, length])
 
   return (
-    <Circle style={style} size={size} hasMarginRight={index < length - 1}>
+    <Circle style={style} size={size} isLast={index === length - 1}>
       <Dot style={animStyle} size={size - 3} />
     </Circle>
   )
 }
 
-const Circle = styled.View<{ size: number; hasMarginRight: boolean }>`
+const Circle = styled.View<{ size: number; isLast: boolean }>`
   background-color: ${({ theme }) => theme.font.contrast};
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
@@ -129,7 +139,12 @@ const Circle = styled.View<{ size: number; hasMarginRight: boolean }>`
   overflow: hidden;
   align-items: center;
   justify-content: center;
-  margin-right: ${({ hasMarginRight }) => (hasMarginRight ? '8px' : 0)};
+
+  ${({ isLast }) =>
+    !isLast &&
+    css`
+      margin-right: 8px;
+    `}
 `
 
 const Dot = styled(Animated.View)<{ size: number }>`

@@ -20,9 +20,10 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
+import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
-import { ScreenSection } from '../components/layout/Screen'
+import { ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
 import TokensList from '../components/TokensList'
 import { useAppDispatch } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
@@ -45,8 +46,12 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   return (
     <InWalletScrollScreen style={style}>
       <ScreenSection>
-        <TokensList />
+        <BalanceSummary />
       </ScreenSection>
+      <ScreenSection>
+        <ScreenSectionTitle>Assets</ScreenSectionTitle>
+      </ScreenSection>
+      <TokensList />
       <Buttons style={{ marginBottom: 120, marginTop: 600 }}>
         <Button title="Delete all wallets" onPress={handleDeleteAllWallets} />
       </Buttons>
