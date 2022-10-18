@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode, useCallback } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
 
 import { useInWalletLayoutContext } from '../../contexts/InWalletLayoutContext'
 import Screen from './Screen'
@@ -45,10 +46,15 @@ const InWalletScrollScreen = ({ style, children }: ScreenProps) => {
   return (
     <Screen style={style}>
       <ScrollView onScroll={handleScroll} onScrollEndDrag={handleScrollEndDrag}>
-        {children}
+        <Content>{children}</Content>
       </ScrollView>
     </Screen>
   )
 }
 
 export default InWalletScrollScreen
+
+// Add extra padding so that content is not hidden by the footer menu
+const Content = styled.View`
+  padding-bottom: 160px;
+`

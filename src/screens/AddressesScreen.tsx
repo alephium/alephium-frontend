@@ -25,6 +25,7 @@ import { LayoutChangeEvent, Pressable, StyleProp, View, ViewStyle } from 'react-
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
+import AddressesTokensList from '../components/AddressesTokensList'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import Carousel from '../components/Carousel'
@@ -35,7 +36,7 @@ import QRCodeModal from '../components/QRCodeModal'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { selectAddressIds } from '../store/addressesSlice'
+import { selectAddressByHash, selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'AddressesScreen'> {
@@ -45,6 +46,7 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
 const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const [currentAddressHash, setCurrentAddressHash] = useState(addressHashes[0])
+  const currentAddress = useAppSelector((state) => selectAddressByHash(state, currentAddressHash))
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
@@ -113,6 +115,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
           />
         </ButtonsRowStyled>
       </ScreenSection>
+      {currentAddress && <AddressesTokensList addresses={[currentAddress]} />}
       <QRCodeModal
         addressHash={currentAddressHash}
         isOpen={isQrCodeModalOpen}
