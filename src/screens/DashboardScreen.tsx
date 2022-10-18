@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 
+import AddressesTokensList from '../components/AddressesTokensList'
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
-import TokensList from '../components/TokensList'
 import { useAppDispatch } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import { deleteAllWallets } from '../storage/wallets'
@@ -47,7 +47,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
       <ScreenSection>
         <BalanceSummary />
       </ScreenSection>
-      <TokensList />
+      <AddressesTokensList />
       <Button
         title="Delete all wallets"
         onPress={handleDeleteAllWallets}

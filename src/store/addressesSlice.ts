@@ -337,7 +337,7 @@ export const selectTransactions = createSelector(
       })
 )
 
-export const selectAllTokens = createSelector([selectAllAddresses], (addresses) => {
+export const selectTokens = createSelector([(state, addresses: Address[]) => addresses], (addresses) => {
   const resultTokens: AddressToken[] = []
 
   addresses.forEach((address) => {
