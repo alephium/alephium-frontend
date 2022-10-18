@@ -17,11 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatAmountForDisplay } from '@alephium/sdk'
-import { StyleProp, View, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { StyleProp, TextStyle } from 'react-native'
+import { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
-import Alef from '../images/icons/Alef'
 import { formatFiatAmountForDisplay } from '../utils/numbers'
 import AppText from './AppText'
 
@@ -36,8 +35,7 @@ interface AmountProps {
   color?: string
   size?: number
   bold?: boolean
-  align?: 'left' | 'right'
-  style?: StyleProp<ViewStyle>
+  style?: StyleProp<TextStyle>
 }
 
 const Amount = ({
@@ -49,7 +47,7 @@ const Amount = ({
   showOnDiscreetMode = false,
   isFiat = false,
   color,
-  size = 14,
+  size,
   bold,
   style
 }: AmountProps) => {
@@ -79,42 +77,25 @@ const Amount = ({
     }
   }
 
+  const fadedColor = fadeDecimals ? theme.font.secondary : color
+
   return (
-    <View style={style}>
+    <AppText {...{ bold, size, color }} style={style}>
       {discreetMode && !showOnDiscreetMode ? (
-        <AppText {...{ bold, size, color }}>•••</AppText>
+        '•••'
       ) : integralPart ? (
         <>
-          {prefix && <AppText {...{ bold, size, color }}>{`${prefix} `}</AppText>}
-          <AppText {...{ bold, size, color }}>{integralPart}</AppText>
-          <AppText
-            {...{ bold, size }}
-            color={fadeDecimals ? theme.font.secondary : color}
-          >{`.${fractionalPart} `}</AppText>
-          {quantitySymbol && (
-            <AppText
-              {...{ bold, size }}
-              color={fadeDecimals ? theme.font.secondary : color}
-            >{`${quantitySymbol} `}</AppText>
-          )}
-          {!suffix ? (
-            <Alef size={size * 0.63} color={color ?? theme.font.secondary} />
-          ) : (
-            <AppText size={size} color={color ?? theme.font.secondary}>
-              {suffix}
-            </AppText>
-          )}
+          {prefix && <AppText>{`${prefix} `}</AppText>}
+          <AppText>{integralPart}</AppText>
+          <AppText color={fadedColor}>{`.${fractionalPart} `}</AppText>
+          {quantitySymbol && <AppText color={fadedColor}>{`${quantitySymbol} `}</AppText>}
+          <AppText color={fadedColor}>{!suffix ? 'ℵ' : suffix}</AppText>
         </>
       ) : (
-        <AppText {...{ bold, size, color }}>-</AppText>
+        '-'
       )}
-    </View>
+    </AppText>
   )
 }
 
-export default styled(Amount)`
-  flex-direction: row;
-  flex: 1;
-  align-items: center;
-  justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
-`
+export default Amount
