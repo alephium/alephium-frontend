@@ -18,22 +18,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import Animated from 'react-native-reanimated'
-import styled from 'styled-components/native'
+import Animated, { interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
+import styled, { useTheme } from 'styled-components/native'
 
-import { useInWalletLayoutContext } from '../../contexts/InWalletLayoutContext'
-import useHeaderScrollStyle from '../../hooks/layout/useHeaderScrollStyle'
 import AppText from '../AppText'
 
-interface DefaultHeaderProps {
+export interface DefaultHeaderProps {
   HeaderLeft: Omit<ReactNode, 'null' | 'undefined'>
   HeaderRight?: ReactNode
   style?: StyleProp<ViewStyle>
+  scrollY?: number
 }
 
-const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) => {
-  const { scrollY } = useInWalletLayoutContext()
-  const headerStyle = useHeaderScrollStyle(scrollY)
+const scrollRange = [0, 100]
+
+const DefaultHeader = ({ HeaderRight, HeaderLeft, scrollY, style }: DefaultHeaderProps) => {
+  const theme = useTheme()
+  const bgColorRange = [theme.bg.secondary, theme.bg.tertiary]
+
+  const headerStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(scrollY || 0, scrollRange, bgColorRange)
+  }))
 
   return (
     <Animated.View style={[style, headerStyle]}>

@@ -29,10 +29,11 @@ import AddressesTokensList from '../components/AddressesTokensList'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import Carousel from '../components/Carousel'
-import DefaultHeader from '../components/headers/DefaultHeader'
+import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
 import QRCodeModal from '../components/QRCodeModal'
+import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -43,6 +44,25 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
   style?: StyleProp<ViewStyle>
 }
 
+const AddressesScreenHeader = (props: Partial<DefaultHeaderProps>) => {
+  const theme = useTheme()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+
+  return (
+    <DefaultHeader
+      HeaderLeft="Addresses"
+      HeaderRight={
+        <Button
+          onPress={() => navigation.navigate('NewAddressScreen')}
+          icon={<PlusIcon size={24} color={theme.global.accent} />}
+          type="transparent"
+        />
+      }
+      {...props}
+    />
+  )
+}
+
 const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const [currentAddressHash, setCurrentAddressHash] = useState(addressHashes[0])
@@ -51,6 +71,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const theme = useTheme()
+  const updateHeader = useInWalletTabScreenHeader(AddressesScreenHeader, navigation)
 
   const onScrollEnd = (index: number) => {
     setCurrentAddressHash(addressHashes[index])
@@ -76,7 +97,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => setHeightCarouselItem(event.nativeEvent.layout.height)
 
   return (
-    <InWalletScrollScreen style={style}>
+    <InWalletScrollScreen style={style} onScroll={updateHeader}>
       <Carousel
         data={addressHashes}
         renderItem={({ item }) => (
@@ -126,24 +147,6 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
 }
 
 export default AddressesScreen
-
-export const AddressesScreenHeader = () => {
-  const theme = useTheme()
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-
-  return (
-    <DefaultHeader
-      HeaderLeft="Addresses"
-      HeaderRight={
-        <Button
-          onPress={() => navigation.navigate('NewAddressScreen')}
-          icon={<PlusIcon size={24} color={theme.global.accent} />}
-          type="transparent"
-        />
-      }
-    />
-  )
-}
 
 const ButtonsRowStyled = styled(ButtonsRow)`
   margin: 0 20px;

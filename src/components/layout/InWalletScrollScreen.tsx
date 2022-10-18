@@ -25,18 +25,21 @@ import Screen from './Screen'
 
 interface ScreenProps {
   children: ReactNode | ReactNode[]
+  onScroll: (scrollY: number) => void
   style?: StyleProp<ViewStyle>
 }
 
-const InWalletScrollScreen = ({ style, children }: ScreenProps) => {
+const InWalletScrollScreen = ({ style, children, onScroll }: ScreenProps) => {
   const { scrollY, isScrolling } = useInWalletLayoutContext()
 
   const handleScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       if (scrollY) scrollY.value = e.nativeEvent.contentOffset.y
       if (isScrolling !== undefined) isScrolling.value = true
+
+      onScroll(e.nativeEvent.contentOffset.y)
     },
-    [scrollY, isScrolling]
+    [scrollY, isScrolling, onScroll]
   )
 
   const handleScrollEndDrag = useCallback(() => {
