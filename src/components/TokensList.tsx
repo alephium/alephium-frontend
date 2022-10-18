@@ -22,15 +22,13 @@ import { LayoutChangeEvent, View } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
+import useTokenMetadata from '../hooks/useTokenMetadata'
 import { selectAllAddresses, selectAllTokens } from '../store/addressesSlice'
-import { AddressToken, ALEPHIUM_TOKEN_ID, TokenMetadata, TokensMetadataMap } from '../types/tokens'
+import { AddressToken, ALEPHIUM_TOKEN_ID, TokenMetadata } from '../types/tokens'
 import Carousel from './Carousel'
 import HighlightRow from './HighlightRow'
 import { ScreenSection, ScreenSectionTitle } from './layout/Screen'
 import TokenInfo from './TokenInfo'
-
-// TODO: Use official Alephium tokens-meta repo
-const TOKEN_METADATA_URL = 'https://raw.githubusercontent.com/nop33/token-meta/master/tokens.json'
 
 const PAGE_SIZE = 3
 
@@ -39,12 +37,12 @@ const TokensList = () => {
   const addresses = useAppSelector(selectAllAddresses)
   const addressDataStatus = useAppSelector((state) => state.addresses.status)
   const fiatCurrency = useAppSelector((state) => state.settings.currency)
+  const allTokens = useAppSelector((state) => selectAllTokens(state))
+  const tokenMetadata = useTokenMetadata()
+
   const [carouselItemHeight, setCarouselItemHeight] = useState(258)
   const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
-  const allTokens = useAppSelector((state) => selectAllTokens(state))
-
   const [tokensChunked, setTokensChunked] = useState<AddressToken[][]>([])
-  const [tokensMetadata, setTokensMetadata] = useState<TokensMetadataMap>()
 
   const isLoading = price.status === 'uninitialized' || addressDataStatus === 'uninitialized'
 
@@ -62,12 +60,12 @@ const TokensList = () => {
         return (tokenB.worth.price ?? 0) - (tokenA.worth.price ?? 0)
       }
 
-      if (!tokensMetadata) {
+      if (!tokenMetadata) {
         return tokenA.id.localeCompare(tokenB.id)
       }
 
-      const tokenAName = tokensMetadata[tokenA.id]?.name
-      const tokenBName = tokensMetadata[tokenB.id]?.name
+      const tokenAName = tokenMetadata[tokenA.id]?.name
+      const tokenBName = tokenMetadata[tokenB.id]?.name
 
       if (!tokenAName || !tokenBName) {
         return tokenA.id.localeCompare(tokenB.id)
@@ -75,19 +73,8 @@ const TokensList = () => {
 
       return tokenAName.localeCompare(tokenBName)
     },
-    [tokensMetadata]
+    [tokenMetadata]
   )
-
-  useEffect(() => {
-    const fetchTokensMetadata = async () => {
-      const response = await fetch(TOKEN_METADATA_URL)
-      const data = await response.json()
-
-      setTokensMetadata(data)
-    }
-
-    fetchTokensMetadata()
-  }, [])
 
   useEffect(() => {
     if (addressDataStatus === 'uninitialized') return
@@ -127,8 +114,8 @@ const TokensList = () => {
                 name: 'Alephium',
                 decimals: 18
               } as TokenMetadata)
-            : tokensMetadata
-            ? tokensMetadata[token.id]
+            : tokenMetadata
+            ? tokenMetadata[token.id]
             : undefined
 
         return (

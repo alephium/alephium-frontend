@@ -16,27 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressBalance } from '@alephium/sdk/api/explorer'
+import { useEffect } from 'react'
 
-import { Currency } from './settings'
+import { tokenMetadataUpdated } from '../store/tokenMetadataSlice'
+import { useAppDispatch, useAppSelector } from './redux'
 
-export interface TokenWorth {
-  price?: number
-  currency: Currency
+const useTokenMetadata = () => {
+  const dispatch = useAppDispatch()
+  const { metadata, status } = useAppSelector((state) => state.tokenMetadata)
+
+  useEffect(() => {
+    if (status === 'uninitialized') dispatch(tokenMetadataUpdated())
+  }, [dispatch, status])
+
+  return metadata
 }
 
-export const ALEPHIUM_TOKEN_ID = '0'
-
-export type AddressToken = {
-  id: string
-  balances: AddressBalance
-  worth?: TokenWorth
-}
-
-export type TokenMetadata = {
-  name: string
-  description: string
-  image: string
-  symbol: string
-  decimals: number
-}
+export default useTokenMetadata
