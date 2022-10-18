@@ -21,6 +21,7 @@ import styled, { css } from 'styled-components/native'
 export interface AppTextProps {
   bold?: boolean
   color?: string
+  size?: number
 }
 
 export default styled.Text<AppTextProps>`
@@ -30,5 +31,11 @@ export default styled.Text<AppTextProps>`
     bold &&
     css`
       font-weight: 700;
+    `}
+
+  ${({ size }) =>
+    size &&
+    css`
+      font-size: ${size}px;
     `}
 `

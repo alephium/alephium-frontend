@@ -21,7 +21,7 @@ import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { useState } from 'react'
 import { ScrollView, Text } from 'react-native'
 import QRCode from 'react-qr-code'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
 import Button from '../components/buttons/Button'
@@ -86,7 +86,7 @@ const ReceiveScreen = ({
             </Text>
           </HighlightRow>
           <HighlightRow title="Current estimated value" isBottomRounded>
-            <AmountInFiat value={balance} isFiat suffix={currencies[currency].symbol} />
+            <Amount value={balance} isFiat suffix={currencies[currency].symbol} bold />
           </HighlightRow>
         </ScreenSection>
       </ScrollView>
@@ -95,7 +95,3 @@ const ReceiveScreen = ({
 }
 
 export default ReceiveScreen
-
-const AmountInFiat = styled(Amount)`
-  font-weight: 700;
-`

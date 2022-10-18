@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatAmountForDisplay } from '@alephium/sdk'
-import { StyleProp, ViewStyle } from 'react-native'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
@@ -35,6 +35,8 @@ interface AmountProps {
   showOnDiscreetMode?: boolean
   color?: string
   size?: number
+  bold?: boolean
+  align?: 'left' | 'right'
   style?: StyleProp<ViewStyle>
 }
 
@@ -47,7 +49,8 @@ const Amount = ({
   showOnDiscreetMode = false,
   isFiat = false,
   color,
-  size,
+  size = 14,
+  bold,
   style
 }: AmountProps) => {
   const theme = useTheme()
@@ -77,33 +80,41 @@ const Amount = ({
   }
 
   return (
-    <AppText style={style}>
+    <View style={style}>
       {discreetMode && !showOnDiscreetMode ? (
-        '•••'
+        <AppText {...{ bold, size, color }}>•••</AppText>
       ) : integralPart ? (
         <>
-          {prefix && <AppText style={{ color }}>{prefix}</AppText>}
-          <AppText style={{ color }}>{integralPart}</AppText>
-          <AppText color={fadeDecimals ? theme.font.secondary : color}>.{fractionalPart} </AppText>
-          {quantitySymbol && <Suffix color={color} bold>{` ${quantitySymbol}`}</Suffix>}
+          {prefix && <AppText {...{ bold, size, color }}>{`${prefix} `}</AppText>}
+          <AppText {...{ bold, size, color }}>{integralPart}</AppText>
+          <AppText
+            {...{ bold, size }}
+            color={fadeDecimals ? theme.font.secondary : color}
+          >{`.${fractionalPart} `}</AppText>
+          {quantitySymbol && (
+            <AppText
+              {...{ bold, size }}
+              color={fadeDecimals ? theme.font.secondary : color}
+            >{`${quantitySymbol} `}</AppText>
+          )}
           {!suffix ? (
-            <Alef size={size} color={color ?? theme.font.secondary} />
+            <Alef size={size * 0.63} color={color ?? theme.font.secondary} />
           ) : (
-            <Suffix color={color}>{suffix}</Suffix>
+            <AppText size={size} color={color ?? theme.font.secondary}>
+              {suffix}
+            </AppText>
           )}
         </>
       ) : (
-        '-'
+        <AppText {...{ bold, size, color }}>-</AppText>
       )}
-    </AppText>
+    </View>
   )
 }
 
 export default styled(Amount)`
-  font-weight: 500;
-`
-
-const Suffix = styled(AppText)`
-  color: ${({ theme, color }) => color ?? theme.font.secondary};
-  font-weight: normal;
+  flex-direction: row;
+  flex: 1;
+  align-items: center;
+  justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
 `

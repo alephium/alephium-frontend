@@ -40,5 +40,4 @@ const AlefSVG = ({ style, color }: SvgProps) => {
 
 export default styled(AlefSVG)`
   width: ${({ size }) => size ?? 11}px;
-  height: ${({ size }) => size ?? 11}px;
 `
