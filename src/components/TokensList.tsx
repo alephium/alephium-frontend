@@ -18,14 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { chunk } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, LayoutChangeEvent, View } from 'react-native'
-import { useTheme } from 'styled-components/native'
+import { LayoutChangeEvent, View } from 'react-native'
+import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { selectAllAddresses, selectAllTokens } from '../store/addressesSlice'
 import { AddressToken, ALEPHIUM_TOKEN_ID, TokenMetadata, TokensMetadataMap } from '../types/tokens'
 import Carousel from './Carousel'
 import HighlightRow from './HighlightRow'
+import { ScreenSection, ScreenSectionTitle } from './layout/Screen'
 import TokenInfo from './TokenInfo'
 
 // TODO: Use official Alephium tokens-meta repo
@@ -34,12 +35,12 @@ const TOKEN_METADATA_URL = 'https://raw.githubusercontent.com/nop33/token-meta/m
 const PAGE_SIZE = 3
 
 const TokensList = () => {
-  const theme = useTheme()
   const price = useAppSelector((state) => state.price)
   const addresses = useAppSelector(selectAllAddresses)
   const addressDataStatus = useAppSelector((state) => state.addresses.status)
   const fiatCurrency = useAppSelector((state) => state.settings.currency)
-  const [heightCarouselItem, setHeightCarouselItem] = useState(258)
+  const [carouselItemHeight, setCarouselItemHeight] = useState(258)
+  const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
   const allTokens = useAppSelector((state) => selectAllTokens(state))
 
   const [tokensChunked, setTokensChunked] = useState<AddressToken[][]>([])
@@ -109,10 +110,15 @@ const TokensList = () => {
   }, [addressDataStatus, addresses, allTokens, fiatCurrency, price.value, sortByWorthThenName])
 
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
-    if (event.nativeEvent.layout.height > heightCarouselItem) setHeightCarouselItem(event.nativeEvent.layout.height)
+    const newCarouselItemHeight = event.nativeEvent.layout.height
+
+    if (!isCarouselItemHeightAdapted || (isCarouselItemHeightAdapted && newCarouselItemHeight > carouselItemHeight)) {
+      setCarouselItemHeight(newCarouselItemHeight)
+      setIsCarouselItemHeightAdapted(true)
+    }
   }
 
-  const toCarouselItem = ({ item }: { item: AddressToken[] }) => (
+  const renderCarouselItem = ({ item }: { item: AddressToken[] }) => (
     <View onLayout={onLayoutCarouselItem}>
       {item.map((token, index, arr) => {
         const metadata =
@@ -139,11 +145,32 @@ const TokensList = () => {
     </View>
   )
 
-  return addressDataStatus === 'uninitialized' ? (
-    <ActivityIndicator size="large" color={theme.font.primary} />
-  ) : (
-    <Carousel data={tokensChunked} renderItem={toCarouselItem} padding={20} distance={10} height={heightCarouselItem} />
+  return (
+    <>
+      {tokensChunked.length > 1 && (
+        <>
+          <ScreenSectionTitleStyled>Assets</ScreenSectionTitleStyled>
+          <Carousel
+            data={tokensChunked}
+            renderItem={renderCarouselItem}
+            padding={20}
+            distance={10}
+            height={carouselItemHeight}
+          />
+        </>
+      )}
+      {tokensChunked.length === 1 && (
+        <ScreenSection>
+          <ScreenSectionTitle>Assets</ScreenSectionTitle>
+          {renderCarouselItem({ item: tokensChunked[0] })}
+        </ScreenSection>
+      )}
+    </>
   )
 }
 
 export default TokensList
+
+const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
+  margin-left: 28px;
+`
