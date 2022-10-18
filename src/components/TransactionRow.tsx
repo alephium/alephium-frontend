@@ -76,7 +76,7 @@ const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => 
       <AddressHash numberOfLines={1} ellipsizeMode="middle">
         {tx.address.hash}
       </AddressHash>
-      <AmountStyled prefix={isOut ? '- ' : '+ '} value={amount} fadeDecimals />
+      <AmountStyled prefix={isOut ? '-' : '+'} value={amount} fadeDecimals bold />
     </HighlightRow>
   )
 }
@@ -108,5 +108,4 @@ const AddressHash = styled(Item)`
 const AmountStyled = styled(Amount)`
   width: 25%;
   text-align: right;
-  font-weight: bold;
 `

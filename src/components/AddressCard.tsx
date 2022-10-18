@@ -60,7 +60,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
           }}
         />
       </Header>
-      <AmountStyled value={BigInt(address.networkData.details.balance)} color={textColor} size={17} />
+      <Amount value={BigInt(address.networkData.details.balance)} color={textColor} size={26} bold />
     </Pressable>
   )
 }
@@ -82,9 +82,4 @@ const Header = styled.View`
 const AddressBadgeStyled = styled(AddressBadge)`
   flex-shrink: 1;
   margin-right: 18px;
-`
-
-const AmountStyled = styled(Amount)`
-  font-weight: 700;
-  font-size: 26px;
 `

@@ -56,7 +56,7 @@ const TokenInfo = ({ id, name, balances, worth, isLoading, image, symbol, decima
           <ActivityIndicator size="small" color={theme.font.primary} />
         ) : (
           <>
-            <AmountToken value={BigInt(balances.balance)} fadeDecimals suffix={symbol} />
+            <Amount value={BigInt(balances.balance)} fadeDecimals suffix={symbol} bold />
             {fiatValue !== undefined && worth && (
               <Amount value={fiatValue} isFiat suffix={currencies[worth.currency].symbol} fadeDecimals />
             )}
@@ -98,8 +98,4 @@ const TokenIcon = styled.View`
 const TokenLogo = styled.Image`
   width: 100%;
   height: 100%;
-`
-
-const AmountToken = styled(Amount)`
-  font-weight: 700;
 `

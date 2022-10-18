@@ -26,7 +26,7 @@ import {
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, ScrollView } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 
 import client from '../../api/client'
 import Amount from '../../components/Amount'
@@ -171,7 +171,7 @@ const SendScreen = ({
             {isLoadingTxData ? (
               <ActivityIndicator size="large" color={theme.font.primary} />
             ) : (
-              <AmountStyled value={amount + BigInt(fees ?? 0)} fullPrecision />
+              <Amount value={amount + BigInt(fees ?? 0)} fullPrecision bold color={theme.global.accent} />
             )}
           </HighlightRow>
         </ScreenSection>
@@ -225,8 +225,3 @@ const SendScreen = ({
 }
 
 export default SendScreen
-
-const AmountStyled = styled(Amount)`
-  color: ${({ theme }) => theme.global.accent};
-  font-weight: 700;
-`

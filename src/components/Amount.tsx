@@ -17,11 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatAmountForDisplay } from '@alephium/sdk'
-import { StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { StyleProp, TextStyle } from 'react-native'
+import { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
-import Alef from '../images/icons/Alef'
 import { formatFiatAmountForDisplay } from '../utils/numbers'
 import AppText from './AppText'
 
@@ -35,7 +34,8 @@ interface AmountProps {
   showOnDiscreetMode?: boolean
   color?: string
   size?: number
-  style?: StyleProp<ViewStyle>
+  bold?: boolean
+  style?: StyleProp<TextStyle>
 }
 
 const Amount = ({
@@ -48,6 +48,7 @@ const Amount = ({
   isFiat = false,
   color,
   size,
+  bold,
   style
 }: AmountProps) => {
   const theme = useTheme()
@@ -76,21 +77,19 @@ const Amount = ({
     }
   }
 
+  const fadedColor = fadeDecimals ? theme.font.secondary : color
+
   return (
-    <AppText style={style}>
+    <AppText {...{ bold, size, color }} style={style}>
       {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
         <>
-          {prefix && <AppText style={{ color }}>{prefix}</AppText>}
-          <AppText style={{ color }}>{integralPart}</AppText>
-          <AppText color={fadeDecimals ? theme.font.secondary : color}>.{fractionalPart} </AppText>
-          {quantitySymbol && <Suffix color={color} bold>{` ${quantitySymbol}`}</Suffix>}
-          {!suffix ? (
-            <Alef size={size} color={color ?? theme.font.secondary} />
-          ) : (
-            <Suffix color={color}>{suffix}</Suffix>
-          )}
+          {prefix && <AppText>{`${prefix} `}</AppText>}
+          <AppText>{integralPart}</AppText>
+          <AppText color={fadedColor}>{`.${fractionalPart} `}</AppText>
+          {quantitySymbol && <AppText color={fadedColor}>{`${quantitySymbol} `}</AppText>}
+          <AppText color={fadedColor}>{!suffix ? 'ℵ' : suffix}</AppText>
         </>
       ) : (
         '-'
@@ -99,11 +98,4 @@ const Amount = ({
   )
 }
 
-export default styled(Amount)`
-  font-weight: 500;
-`
-
-const Suffix = styled(AppText)`
-  color: ${({ theme, color }) => color ?? theme.font.secondary};
-  font-weight: normal;
-`
+export default Amount

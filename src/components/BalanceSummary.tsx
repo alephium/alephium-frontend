@@ -46,8 +46,8 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
         <ActivityIndicator size="large" color={theme.font.primary} />
       ) : (
         <>
-          <AmountInFiat value={balance} isFiat fadeDecimals suffix={currencies[currency].symbol} />
-          <AmountStyled value={totalBalance} fadeDecimals size={14} />
+          <AmountInFiat value={balance} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+          <Amount value={totalBalance} fadeDecimals bold size={20} />
         </>
       )}
     </View>
@@ -57,13 +57,5 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
 export default BalanceSummary
 
 const AmountInFiat = styled(Amount)`
-  font-weight: bold;
-  font-size: 38px;
   margin-bottom: 10px;
-`
-
-const AmountStyled = styled(Amount)`
-  font-weight: bold;
-  font-size: 20px;
-  margin-bottom: 40px;
 `
