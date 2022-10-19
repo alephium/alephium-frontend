@@ -32,6 +32,7 @@ import { storeAddressMetadata } from '../storage/wallets'
 import { AddressHash, AddressSettings } from '../types/addresses'
 import { TimeInMs } from '../types/numbers'
 import { AddressToken } from '../types/tokens'
+import { getNewTransactions } from '../utils/transactions'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -87,13 +88,11 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
   status: 'uninitialized'
 })
 
-export const fetchAddressesDataNextPage = createAsyncThunk(
-  `${sliceName}/fetchAddressesDataNextPage`,
-  async (payload: AddressHash[], { getState, dispatch }) => {
+export const fetchAddressesData = createAsyncThunk(
+  `${sliceName}/fetchAddressesData`,
+  async (payload: AddressHash[], { dispatch }) => {
     const results = []
     dispatch(loadingStarted())
-
-    const state = getState() as RootState
 
     const addresses = payload
 
@@ -105,18 +104,9 @@ export const fetchAddressesDataNextPage = createAsyncThunk(
           : data.balance
         : undefined
 
-      const address = state.addresses.entities[addressHash]
-      const allPagesLoaded = address?.networkData.transactions.allPagesLoaded
-      const latestPage = address?.networkData.transactions.loadedPage ?? 0
-      let nextPage = latestPage
-      let newTransactions = [] as Transaction[]
-
-      if (!allPagesLoaded) {
-        nextPage += 1
-        console.log(`⬇️ Fetching page ${nextPage} of address confirmed transactions: `, addressHash)
-        const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, nextPage)
-        newTransactions = transactions
-      }
+      const page = 1
+      console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, addressHash)
+      const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, page)
 
       const { data: tokenIds } = await client.explorerClient.addresses.getAddressesAddressTokens(addressHash)
 
@@ -133,8 +123,44 @@ export const fetchAddressesDataNextPage = createAsyncThunk(
         hash: addressHash,
         details: data,
         availableBalance: availableBalance,
-        transactions: newTransactions,
+        transactions,
         tokens,
+        page
+      })
+    }
+
+    dispatch(loadingFinished())
+    return results
+  }
+)
+
+export const fetchAddressesTransactionsNextPage = createAsyncThunk(
+  `${sliceName}/fetchAddressesTransactionsNextPage`,
+  async (payload: AddressHash[], { getState, dispatch }) => {
+    const results = []
+    dispatch(loadingStarted())
+
+    const state = getState() as RootState
+
+    const addresses = payload
+
+    for (const addressHash of addresses) {
+      const address = state.addresses.entities[addressHash]
+      const allPagesLoaded = address?.networkData.transactions.allPagesLoaded
+      const latestPage = address?.networkData.transactions.loadedPage ?? 0
+      let nextPage = latestPage
+      let newTransactions = [] as Transaction[]
+
+      if (!allPagesLoaded) {
+        nextPage += 1
+        console.log(`⬇️ Fetching page ${nextPage} of address confirmed transactions: `, addressHash)
+        const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, nextPage)
+        newTransactions = transactions
+      }
+
+      results.push({
+        hash: addressHash,
+        transactions: newTransactions,
         page: nextPage
       })
     }
@@ -269,27 +295,39 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAddressesDataNextPage.fulfilled, (state, action) => {
+      .addCase(fetchAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, details, availableBalance, transactions, page, tokens } = address
-
           const addressState = state.entities[hash]
+
           if (addressState) {
             const networkData = addressState.networkData
             networkData.details = details
-            const newTxs: Transaction[] = transactions.reduce((newTxs: Transaction[], incomingTx: Transaction) => {
-              const targetTxIndex = networkData.transactions.data.findIndex(
-                (existingTx) => existingTx.hash === incomingTx.hash
-              )
-              if (targetTxIndex === -1) {
-                newTxs.push(incomingTx)
-              } else {
-                if (networkData.transactions.data[targetTxIndex].blockHash === '') {
-                  networkData.transactions.data.splice(targetTxIndex, 1, incomingTx)
-                }
+            networkData.tokens = tokens
+            if (availableBalance) networkData.availableBalance = availableBalance
+
+            const newTxs = getNewTransactions(transactions, networkData.transactions.data)
+
+            if (newTxs.length > 0) {
+              networkData.transactions.data = [...newTxs.concat(networkData.transactions.data)]
+
+              if (networkData.transactions.loadedPage === 0) {
+                networkData.transactions.loadedPage = page
               }
-              return newTxs
-            }, [])
+            }
+          }
+        }
+
+        state.status = 'initialized'
+      })
+      .addCase(fetchAddressesTransactionsNextPage.fulfilled, (state, action) => {
+        for (const address of action.payload) {
+          const { hash, transactions, page } = address
+          const addressState = state.entities[hash]
+
+          if (addressState) {
+            const networkData = addressState.networkData
+            const newTxs = getNewTransactions(transactions, networkData.transactions.data)
 
             if (newTxs.length > 0) {
               networkData.transactions.data = [...networkData.transactions.data.concat(newTxs)]
@@ -297,13 +335,8 @@ const addressesSlice = createSlice({
             } else {
               networkData.transactions.allPagesLoaded = true
             }
-
-            if (availableBalance) networkData.availableBalance = availableBalance
-
-            networkData.tokens = tokens
           }
         }
-        state.status = 'initialized'
       })
       .addCase(fetchAddressConfirmedTransactions.fulfilled, (state, action) => {
         const { hash, transactions, page } = action.payload
