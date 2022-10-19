@@ -25,11 +25,7 @@ export interface AppTextProps {
 }
 
 export default styled.Text<AppTextProps>`
-  ${({ color }) =>
-    color &&
-    css`
-      color: ${color};
-    `}
+  color: ${({ color, theme }) => color ?? theme.font.primary};
 
   ${({ bold }) =>
     bold &&

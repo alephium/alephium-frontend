@@ -85,8 +85,8 @@ const Amount = ({
         '•••'
       ) : integralPart ? (
         <>
-          {prefix && <AppText>{`${prefix} `}</AppText>}
-          <AppText>{integralPart}</AppText>
+          {prefix && <AppText color={color}>{`${prefix} `}</AppText>}
+          <AppText color={color}>{integralPart}</AppText>
           <AppText color={fadedColor}>{`.${fractionalPart} `}</AppText>
           {quantitySymbol && <AppText color={fadedColor}>{`${quantitySymbol} `}</AppText>}
           <AppText color={fadedColor}>{!suffix ? 'ℵ' : suffix}</AppText>
