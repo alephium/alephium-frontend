@@ -30,7 +30,7 @@ import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import Carousel from '../components/Carousel'
 import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
-import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
+import InWalletTransactionsFlatList from '../components/layout/InWalletTransactionsFlatList'
 import { ScreenSection } from '../components/layout/Screen'
 import QRCodeModal from '../components/QRCodeModal'
 import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
@@ -38,6 +38,7 @@ import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash, selectAddressIds } from '../store/addressesSlice'
+import { selectTransactions } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'AddressesScreen'> {
@@ -63,7 +64,7 @@ const AddressesScreenHeader = (props: Partial<DefaultHeaderProps>) => {
   )
 }
 
-const AddressesScreen = ({ navigation, style }: ScreenProps) => {
+const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const [currentAddressHash, setCurrentAddressHash] = useState(addressHashes[0])
   const currentAddress = useAppSelector((state) => selectAddressByHash(state, currentAddressHash))
@@ -72,6 +73,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const theme = useTheme()
   const updateHeader = useInWalletTabScreenHeader(AddressesScreenHeader, navigation)
+  const txs = useAppSelector((state) => selectTransactions(state, [currentAddressHash]))
 
   const onScrollEnd = (index: number) => {
     setCurrentAddressHash(addressHashes[index])
@@ -94,55 +96,66 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
     }, [currentAddressHash])
   )
 
+  if (!currentAddress) return null
+
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => setHeightCarouselItem(event.nativeEvent.layout.height)
 
   return (
-    <InWalletScrollScreen style={style} onScrollYChange={updateHeader}>
-      <Carousel
-        data={addressHashes}
-        renderItem={({ item }) => (
-          <View onLayout={onLayoutCarouselItem} key={item}>
-            <AddressCard addressHash={item} />
-          </View>
-        )}
-        onScrollStart={() => setAreButtonsDisabled(true)}
-        onScrollEnd={onScrollEnd}
-        padding={30}
-        distance={20}
-        height={heightCarouselItem}
-      />
-      <ScreenSection>
-        <ButtonsRowStyled>
-          <Button
-            title="Send"
-            icon={<ArrowUp size={24} color={theme.font.contrast} />}
-            onPress={() => navigation.navigate('SendScreen', { addressHash: currentAddressHash })}
-            disabled={areButtonsDisabled}
-            circular
+    <InWalletTransactionsFlatList
+      transactions={txs}
+      addressHashes={[currentAddressHash]}
+      haveAllPagesLoaded={currentAddress.networkData.transactions.allPagesLoaded}
+      onScrollYChange={updateHeader}
+      initialNumToRender={5}
+      ListHeaderComponent={
+        <>
+          <Carousel
+            data={addressHashes}
+            renderItem={({ item }) => (
+              <View onLayout={onLayoutCarouselItem} key={item}>
+                <AddressCard addressHash={item} />
+              </View>
+            )}
+            onScrollStart={() => setAreButtonsDisabled(true)}
+            onScrollEnd={onScrollEnd}
+            padding={30}
+            distance={20}
+            height={heightCarouselItem}
           />
-          <Button
-            title="Receive"
-            icon={<ArrowDown size={24} color={theme.font.contrast} />}
-            onPress={() => navigation.navigate('ReceiveScreen', { addressHash: currentAddressHash })}
-            disabled={areButtonsDisabled}
-            circular
+          <ScreenSection>
+            <ButtonsRowStyled>
+              <Button
+                title="Send"
+                icon={<ArrowUp size={24} color={theme.font.contrast} />}
+                onPress={() => navigation.navigate('SendScreen', { addressHash: currentAddressHash })}
+                disabled={areButtonsDisabled}
+                circular
+              />
+              <Button
+                title="Receive"
+                icon={<ArrowDown size={24} color={theme.font.contrast} />}
+                onPress={() => navigation.navigate('ReceiveScreen', { addressHash: currentAddressHash })}
+                disabled={areButtonsDisabled}
+                circular
+              />
+              <Button
+                title="Settings"
+                icon={<Settings2 size={24} color={theme.font.contrast} />}
+                onPress={() => navigation.navigate('EditAddressScreen', { addressHash: currentAddressHash })}
+                disabled={areButtonsDisabled}
+                circular
+              />
+            </ButtonsRowStyled>
+          </ScreenSection>
+          {currentAddress && <AddressesTokensList addresses={[currentAddress]} />}
+          <QRCodeModal
+            addressHash={currentAddressHash}
+            isOpen={isQrCodeModalOpen}
+            onClose={() => setIsQrCodeModalOpen(false)}
           />
-          <Button
-            title="Settings"
-            icon={<Settings2 size={24} color={theme.font.contrast} />}
-            onPress={() => navigation.navigate('EditAddressScreen', { addressHash: currentAddressHash })}
-            disabled={areButtonsDisabled}
-            circular
-          />
-        </ButtonsRowStyled>
-      </ScreenSection>
-      {currentAddress && <AddressesTokensList addresses={[currentAddress]} />}
-      <QRCodeModal
-        addressHash={currentAddressHash}
-        isOpen={isQrCodeModalOpen}
-        onClose={() => setIsQrCodeModalOpen(false)}
-      />
-    </InWalletScrollScreen>
+        </>
+      }
+    />
   )
 }
 
