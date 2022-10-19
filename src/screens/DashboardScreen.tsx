@@ -22,19 +22,29 @@ import { StyleProp, ViewStyle } from 'react-native'
 import AddressesTokensList from '../components/AddressesTokensList'
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
+import DashboardHeaderActions from '../components/DashboardHeaderActions'
+import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
+import WalletSwitch from '../components/WalletSwitch'
+import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
 import { useAppDispatch } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
+import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
 
-interface ScreenProps extends StackScreenProps<InWalletTabsParamList, 'DashboardScreen'> {
+interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
+const DashboardScreenHeader = (props: Partial<DefaultHeaderProps>) => (
+  <DefaultHeader HeaderRight={<DashboardHeaderActions />} HeaderLeft={<WalletSwitch />} {...props} />
+)
+
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
+  const updateHeader = useInWalletTabScreenHeader(DashboardScreenHeader, navigation)
 
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
@@ -43,7 +53,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   }
 
   return (
-    <InWalletScrollScreen style={style}>
+    <InWalletScrollScreen style={style} onScroll={updateHeader}>
       <ScreenSection>
         <BalanceSummary />
       </ScreenSection>

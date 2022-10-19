@@ -23,12 +23,9 @@ import {
   List as ListIcon
 } from 'lucide-react-native'
 
-import DashboardHeaderActions from '../components/DashboardHeaderActions'
 import FooterMenu from '../components/FooterMenu'
-import DefaultHeader from '../components/headers/DefaultHeader'
-import WalletSwitch from '../components/WalletSwitch'
 import { InWalletLayoutContextProvider } from '../contexts/InWalletLayoutContext'
-import AddressesScreen, { AddressesScreenHeader } from '../screens/AddressesScreen'
+import AddressesScreen from '../screens/AddressesScreen'
 import DashboardScreen from '../screens/DashboardScreen'
 import TransfersScreen from '../screens/TransfersScreen'
 import InWalletTabsParamList from './inWalletRoutes'
@@ -48,9 +45,8 @@ const InWalletTabsNavigation = () => (
         name="DashboardScreen"
         component={DashboardScreen}
         options={{
-          header: () => <DefaultHeader HeaderRight={<DashboardHeaderActions />} HeaderLeft={<WalletSwitch />} />,
           title: 'Overview',
-          tabBarIcon: ({ color, size }) => <ListIcon name="home" color={color} size={size} />
+          tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} />
         }}
       />
       <InWalletTabs.Screen
@@ -58,8 +54,7 @@ const InWalletTabsNavigation = () => (
         component={TransfersScreen}
         options={{
           title: 'Transfers',
-          header: () => <DefaultHeader HeaderLeft="Transfers" />,
-          tabBarIcon: ({ color, size }) => <ArrowsIcon name="home" color={color} size={size} />
+          tabBarIcon: ({ color, size }) => <ArrowsIcon color={color} size={size} />
         }}
       />
       <InWalletTabs.Screen
@@ -67,8 +62,7 @@ const InWalletTabsNavigation = () => (
         component={AddressesScreen}
         options={{
           title: 'Addresses',
-          header: AddressesScreenHeader,
-          tabBarIcon: ({ color, size }) => <LayoutTemplateIcon name="home" color={color} size={size} />
+          tabBarIcon: ({ color, size }) => <LayoutTemplateIcon color={color} size={size} />
         }}
       />
     </InWalletTabs.Navigator>

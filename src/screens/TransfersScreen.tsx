@@ -18,9 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 
+import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
 import TransactionsList from '../components/TransactionsList'
+import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -29,11 +31,16 @@ import { AddressHash } from '../types/addresses'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
+const TransfersScreenHeader = (props: Partial<DefaultHeaderProps>) => (
+  <DefaultHeader HeaderLeft="Transfers" {...props} />
+)
+
 const TransfersScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
+  const updateHeader = useInWalletTabScreenHeader(TransfersScreenHeader, navigation)
 
   return (
-    <InWalletScrollScreen>
+    <InWalletScrollScreen onScroll={updateHeader}>
       <ScreenSection>
         <TransactionsList addressHashes={addressHashes} />
       </ScreenSection>

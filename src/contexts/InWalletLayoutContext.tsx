@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createContext, ReactNode, useContext } from 'react'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
-// This is done so that the scrollY position of the screen's ScrollView can be passed to the DefaultHeader and
-// FooterMenu components so they can react to scrolling.
+// This is done so that the scrollY position of the screen's ScrollView can be passed to the FooterMenu component so
+// that it can react to scrolling.
 
 interface InWalletLayoutContextProps {
   scrollY?: SharedValue<number>
