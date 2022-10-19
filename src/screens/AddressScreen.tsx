@@ -29,7 +29,6 @@ import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Screen, { ScreenSection } from '../components/layout/Screen'
 import QRCodeModal from '../components/QRCodeModal'
-import TransactionsList from '../components/TransactionsList'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
@@ -115,9 +114,6 @@ const AddressScreen = ({
               </View>
             </HighlightRow>
           </View>
-        </ScreenSection>
-        <ScreenSection>
-          <TransactionsList addressHashes={[address.hash]} />
         </ScreenSection>
       </ScrollView>
       <QRCodeModal addressHash={address.hash} isOpen={isQrCodeModalOpen} onClose={() => setIsQrCodeModalOpen(false)} />
