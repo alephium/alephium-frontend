@@ -26,7 +26,7 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 import { storeAddressMetadata } from '../storage/wallets'
 import {
   addressesAdded,
-  fetchAddressesDataPage,
+  fetchAddressesDataNextPage,
   selectAddressByHash,
   selectAllAddresses
 } from '../store/addressesSlice'
@@ -83,7 +83,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
         }
       ])
     )
-    dispatch(fetchAddressesDataPage({ addresses: [newAddressData.address] }))
+    dispatch(fetchAddressesDataNextPage([newAddressData.address]))
 
     if (activeWallet.metadataId) {
       await storeAddressMetadata(activeWallet.metadataId, {

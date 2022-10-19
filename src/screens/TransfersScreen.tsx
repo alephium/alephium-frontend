@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { ActivityIndicator } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../components/AppText'
@@ -25,10 +26,15 @@ import InWalletFlatList from '../components/layout/InWalletFlatList'
 import { ScreenSectionTitle } from '../components/layout/Screen'
 import TransactionRow from '../components/TransactionRow'
 import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
-import { useAppSelector } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { selectAddressIds, selectTransactions } from '../store/addressesSlice'
+import {
+  fetchAddressesDataNextPage,
+  selectAddressIds,
+  selectHaveAllPagesLoaded,
+  selectTransactions
+} from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { AddressTransaction } from '../types/transactions'
 
@@ -45,6 +51,9 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const txs = useAppSelector((state) => selectTransactions(state, addressHashes))
   const updateHeader = useInWalletTabScreenHeader(TransfersScreenHeader, navigation)
   const theme = useTheme()
+  const dispatch = useAppDispatch()
+  const isLoading = useAppSelector((state) => state.addresses.loading)
+  const haveAllPagesLoaded = useAppSelector((state) => selectHaveAllPagesLoaded(state))
 
   const renderTransactionItem = ({ item: tx, index }: { item: AddressTransaction; index: number }) => (
     <TransactionRowStyled
@@ -55,6 +64,12 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
     />
   )
 
+  const fetchNextTransactionsPage = () => {
+    if (!isLoading && !haveAllPagesLoaded) {
+      dispatch(fetchAddressesDataNextPage(addressHashes))
+    }
+  }
+
   return (
     <InWalletFlatList
       data={txs}
@@ -63,13 +78,24 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       onScrollYChange={updateHeader}
       initialNumToRender={8}
       contentContainerStyle={{ flexGrow: 1 }}
+      onEndReached={fetchNextTransactionsPage}
       ListHeaderComponent={<ScreenSectionTitleStyled>Latest transactions</ScreenSectionTitleStyled>}
-      ListEmptyComponent={
-        <Placeholder>
-          <AppText color={theme.font.tertiary} bold>
-            No transactions yet
-          </AppText>
-        </Placeholder>
+      ListFooterComponent={
+        <Footer>
+          {haveAllPagesLoaded && txs.length > 0 && (
+            <AppText color={theme.font.tertiary} bold>
+              👏 You reached the end of history!
+            </AppText>
+          )}
+          {!haveAllPagesLoaded && isLoading && <ActivityIndicator size="large" color={theme.font.primary} />}
+          {txs.length === 0 && !isLoading && (
+            <Placeholder>
+              <AppText color={theme.font.tertiary} bold>
+                No transactions yet!
+              </AppText>
+            </Placeholder>
+          )}
+        </Footer>
       }
     />
   )
@@ -89,5 +115,11 @@ const TransactionRowStyled = styled(TransactionRow)`
 const Placeholder = styled.View`
   flex: 1;
   margin-top: 200px;
+  align-items: center;
+`
+
+const Footer = styled.View`
+  padding-top: 40px;
+  padding-bottom: 150px;
   align-items: center;
 `
