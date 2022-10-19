@@ -20,7 +20,7 @@ import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { useCallback, useEffect, useRef } from 'react'
 
 import { getAddressesMetadataByWalletId } from '../storage/wallets'
-import { addressesAdded, addressesFlushed, fetchAddressesDataPage } from '../store/addressesSlice'
+import { addressesAdded, addressesFlushed, fetchAddressesDataNextPage } from '../store/addressesSlice'
 import { Mnemonic } from '../types/wallet'
 import { mnemonicToSeed } from '../utils/crypto'
 import { useAppDispatch, useAppSelector } from './redux'
@@ -47,7 +47,7 @@ const useLoadStoredAddressesMetadata = () => {
       })
 
       dispatch(addressesAdded(addresses))
-      dispatch(fetchAddressesDataPage({ addresses: addresses.map((address) => address.hash), page: 1 }))
+      dispatch(fetchAddressesDataNextPage(addresses.map((address) => address.hash)))
     }
   }, [activeWallet.metadataId, activeWallet.mnemonic, dispatch])
 

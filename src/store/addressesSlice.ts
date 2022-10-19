@@ -48,6 +48,7 @@ export type Address = {
     transactions: {
       data: Transaction[]
       loadedPage: number
+      allPagesLoaded: boolean
     }
     availableBalance: string
     lockedBalance: string
@@ -86,13 +87,15 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
   status: 'uninitialized'
 })
 
-export const fetchAddressesDataPage = createAsyncThunk(
-  `${sliceName}/fetchAddressesDataPage`,
-  async (payload: { addresses: AddressHash[]; page?: number }, { dispatch }) => {
+export const fetchAddressesDataNextPage = createAsyncThunk(
+  `${sliceName}/fetchAddressesDataNextPage`,
+  async (payload: AddressHash[], { getState, dispatch }) => {
     const results = []
     dispatch(loadingStarted())
 
-    const { addresses, page = 1 } = payload
+    const state = getState() as RootState
+
+    const addresses = payload
 
     for (const addressHash of addresses) {
       const { data } = await client.explorerClient.getAddressDetails(addressHash)
@@ -102,8 +105,18 @@ export const fetchAddressesDataPage = createAsyncThunk(
           : data.balance
         : undefined
 
-      console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, addressHash)
-      const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, page)
+      const address = state.addresses.entities[addressHash]
+      const allPagesLoaded = address?.networkData.transactions.allPagesLoaded
+      const latestPage = address?.networkData.transactions.loadedPage ?? 0
+      let nextPage = latestPage
+      let newTransactions = [] as Transaction[]
+
+      if (!allPagesLoaded) {
+        nextPage += 1
+        console.log(`⬇️ Fetching page ${nextPage} of address confirmed transactions: `, addressHash)
+        const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, nextPage)
+        newTransactions = transactions
+      }
 
       const { data: tokenIds } = await client.explorerClient.addresses.getAddressesAddressTokens(addressHash)
 
@@ -120,9 +133,9 @@ export const fetchAddressesDataPage = createAsyncThunk(
         hash: addressHash,
         details: data,
         availableBalance: availableBalance,
-        transactions,
+        transactions: newTransactions,
         tokens,
-        page
+        page: nextPage
       })
     }
 
@@ -217,7 +230,8 @@ const addressesSlice = createSlice({
             },
             transactions: {
               data: [],
-              loadedPage: 0
+              loadedPage: 0,
+              allPagesLoaded: false
             },
             availableBalance: '0',
             lockedBalance: '0',
@@ -255,7 +269,7 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAddressesDataPage.fulfilled, (state, action) => {
+      .addCase(fetchAddressesDataNextPage.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, details, availableBalance, transactions, page, tokens } = address
 
@@ -276,8 +290,14 @@ const addressesSlice = createSlice({
               }
               return newTxs
             }, [])
-            networkData.transactions.data = [...networkData.transactions.data.concat(newTxs)]
-            networkData.transactions.loadedPage = page
+
+            if (newTxs.length > 0) {
+              networkData.transactions.data = [...networkData.transactions.data.concat(newTxs)]
+              networkData.transactions.loadedPage = page
+            } else {
+              networkData.transactions.allPagesLoaded = true
+            }
+
             if (availableBalance) networkData.availableBalance = availableBalance
 
             networkData.tokens = tokens
@@ -357,6 +377,10 @@ export const selectTokens = createSelector([(state, addresses: Address[]) => add
 
   return resultTokens
 })
+
+export const selectHaveAllPagesLoaded = createSelector([selectAllAddresses], (addresses) =>
+  addresses.every((address) => address.networkData.transactions.allPagesLoaded === true)
+)
 
 export const {
   addTransactionToAddress,

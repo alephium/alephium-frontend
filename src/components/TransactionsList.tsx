@@ -23,7 +23,7 @@ import AppText from '../components/AppText'
 import TransactionRow from '../components/TransactionRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import useInterval from '../hooks/useInterval'
-import { fetchAddressesDataPage, selectTransactions } from '../store/addressesSlice'
+import { fetchAddressesDataNextPage, selectTransactions } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
 // TODO: Pull this from an explorer endpoint
@@ -42,7 +42,7 @@ const TransactionsList = ({ addressHashes, style }: TransactionsListProps) => {
   const theme = useTheme()
 
   useInterval(() => {
-    dispatch(fetchAddressesDataPage({ addresses: addressHashes, page: 1 }))
+    dispatch(fetchAddressesDataNextPage(addressHashes))
   }, averageBlockTime)
 
   return (

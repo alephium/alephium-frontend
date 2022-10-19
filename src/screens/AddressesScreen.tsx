@@ -97,7 +97,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => setHeightCarouselItem(event.nativeEvent.layout.height)
 
   return (
-    <InWalletScrollScreen style={style} onScroll={updateHeader}>
+    <InWalletScrollScreen style={style} onScrollYChange={updateHeader}>
       <Carousel
         data={addressHashes}
         renderItem={({ item }) => (

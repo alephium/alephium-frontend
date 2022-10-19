@@ -16,27 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
-import { ScrollView, ScrollViewProps, StyleProp, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { FlatList, FlatListProps, StyleProp, ViewStyle } from 'react-native'
 
 import useScrollHandling from '../../hooks/layout/useScrollHandling'
 import Screen from './Screen'
 
-interface ScreenProps extends ScrollViewProps {
-  children: ReactNode | ReactNode[]
+interface ScreenProps<T> extends FlatListProps<T> {
   onScrollYChange: (scrollY: number) => void
   style?: StyleProp<ViewStyle>
 }
 
-const InWalletScrollScreen = ({
-  style,
-  children,
-  onScroll,
-  onScrollEndDrag,
-  onScrollYChange,
-  ...props
-}: ScreenProps) => {
+function InWalletFlatList<T>({ style, onScroll, onScrollEndDrag, onScrollYChange, ...props }: ScreenProps<T>) {
   const [handleScroll, handleScrollEndDrag] = useScrollHandling({
     onScroll,
     onScrollEndDrag,
@@ -45,16 +35,9 @@ const InWalletScrollScreen = ({
 
   return (
     <Screen style={style}>
-      <ScrollView onScroll={handleScroll} onScrollEndDrag={handleScrollEndDrag} {...props}>
-        <Content>{children}</Content>
-      </ScrollView>
+      <FlatList onScroll={handleScroll} onScrollEndDrag={handleScrollEndDrag} {...props} />
     </Screen>
   )
 }
 
-export default InWalletScrollScreen
-
-// Add extra padding so that content is not hidden by the footer menu
-const Content = styled.View`
-  padding-bottom: 160px;
-`
+export default InWalletFlatList

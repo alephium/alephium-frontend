@@ -53,7 +53,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   }
 
   return (
-    <InWalletScrollScreen style={style} onScroll={updateHeader}>
+    <InWalletScrollScreen style={style} onScrollYChange={updateHeader}>
       <ScreenSection>
         <BalanceSummary />
       </ScreenSection>
