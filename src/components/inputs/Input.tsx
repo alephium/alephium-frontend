@@ -27,8 +27,8 @@ import {
 } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
-import AppText from '../AppText'
 
+import AppText from '../AppText'
 import HighlightRow, { BorderOptions } from '../HighlightRow'
 
 export type InputValue = string | number | undefined | unknown
