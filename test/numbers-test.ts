@@ -196,7 +196,6 @@ it('should convert Set amount to fiat amount', () => {
     expect(convertSetToFiat(BigInt('100000000000'), 2)).toEqual(0.0000002),
     expect(convertSetToFiat(BigInt('10000000000'), 2)).toEqual(0.00000002),
     expect(convertSetToFiat(BigInt('1000000000'), 2)).toEqual(0.000000002),
-    expect(convertSetToFiat(BigInt('1000000000'), 2)).toEqual(0.000000002),
     expect(convertSetToFiat(BigInt('100000000'), 2)).toEqual(0.0000000002),
     expect(convertSetToFiat(BigInt('10000000'), 2)).toEqual(0.00000000002),
     expect(convertSetToFiat(BigInt('1000000'), 2)).toEqual(0.000000000002),
