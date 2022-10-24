@@ -16,15 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '../api/api-explorer'
+import { NUM_OF_ZEROS_IN_QUINTILLION, QUINTILLION } from './constants'
 
-const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
-const QUINTILLION = 1000000000000000000
-const NUM_OF_ZEROS_IN_QUINTILLION = 18
+const MAGNITUDE_SYMBOL = ['', 'K', 'M', 'B', 'T']
 
-export const BILLION = 1000000000
-
-const produceZeros = (numberOfZeros: number): string => '0'.repeat(numberOfZeros)
+export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
 const getNumberOfTrailingZeros = (numString: string) => {
   let numberOfZeros = 0
@@ -61,6 +57,21 @@ const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) =>
     : numStringWithoutTrailingZeros
 }
 
+const appendMagnitudeSymbol = (tier: number, amount: number, numberOfDecimalsToDisplay = 2): string => {
+  const reacthedEndOfMagnitudeSymbols = tier >= MAGNITUDE_SYMBOL.length
+  const adjustedTier = reacthedEndOfMagnitudeSymbols ? tier - 1 : tier
+  const suffix = MAGNITUDE_SYMBOL[adjustedTier]
+  const scale = Math.pow(10, adjustedTier * 3)
+  const scaled = amount / scale
+  const scaledRoundedUp = scaled.toFixed(numberOfDecimalsToDisplay)
+
+  return reacthedEndOfMagnitudeSymbols
+    ? addApostrophes(scaledRoundedUp) + suffix
+    : parseFloat(scaledRoundedUp) < 1000
+    ? scaledRoundedUp + suffix
+    : appendMagnitudeSymbol(tier + 1, amount, numberOfDecimalsToDisplay)
+}
+
 export const formatAmountForDisplay = (
   baseNum: bigint,
   showFullPrecision = false,
@@ -88,7 +99,7 @@ export const formatAmountForDisplay = (
     const tinyAmountsMaxNumberDecimals = 5
 
     return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
-  } else if (alphNum <= 1000000) {
+  } else if (alphNum < 1000000 && parseFloat(alphNum.toFixed(numberOfDecimalsToDisplay)) < 1000000) {
     const amountWithRemovedTrailingZeros = removeTrailingZeros(
       alphNum.toFixed(numberOfDecimalsToDisplay),
       minNumberOfDecimals
@@ -99,30 +110,20 @@ export const formatAmountForDisplay = (
 
   const tier = alphNum < 1000000000 ? 2 : alphNum < 1000000000000 ? 3 : 4
 
-  // get suffix and determine scale
-  const suffix = MONEY_SYMBOL[tier]
-  const scale = Math.pow(10, tier * 3)
-
-  // Scale the bigNum
-  // Here we need to be careful of precision issues
-  const scaled = alphNum / scale
-
-  return scaled.toFixed(numberOfDecimalsToDisplay) + suffix
+  return appendMagnitudeSymbol(tier, alphNum, numberOfDecimalsToDisplay)
 }
 
-export const calAmountDelta = (t: Transaction, id: string): bigint => {
-  if (!t.inputs || !t.outputs) {
-    throw 'Missing transaction details'
+export const formatFiatAmountForDisplay = (amount: number): string => {
+  if (amount < 0) throw `Invalid fiat amount: ${amount}. Fiat amount cannot be negative.`
+
+  if (amount < 1000000) {
+    const roundedUp = amount.toFixed(2)
+    if (parseFloat(roundedUp) < 1000000) return addApostrophes(roundedUp)
   }
 
-  const inputAmount = t.inputs.reduce<bigint>((acc, input) => {
-    return input.attoAlphAmount && input.address === id ? acc + BigInt(input.attoAlphAmount) : acc
-  }, BigInt(0))
-  const outputAmount = t.outputs.reduce<bigint>((acc, output) => {
-    return output.address === id ? acc + BigInt(output.attoAlphAmount) : acc
-  }, BigInt(0))
+  const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : 4
 
-  return outputAmount - inputAmount
+  return appendMagnitudeSymbol(tier, amount)
 }
 
 export const convertAlphToSet = (amount: string): bigint => {
@@ -158,3 +159,9 @@ export const convertSetToAlph = (amountInSet: bigint): string => {
 
 const isNumber = (numString: string): boolean =>
   !Number.isNaN(Number(numString)) && numString.length > 0 && !numString.includes('e')
+
+export const convertSetToFiat = (amountInSet: bigint, fiatAlphValue: number): number => {
+  if (fiatAlphValue < 0) throw `Invalid fiat value: ${fiatAlphValue}. Fiat value cannot be negative.`
+
+  return fiatAlphValue * (parseFloat(amountInSet.toString()) / QUINTILLION)
+}

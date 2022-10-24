@@ -142,3 +142,7 @@ export function tokenIdFromAddress(address: string): string {
     throw new Error(`Invalid contract address type: ${addressType}`)
   }
 }
+
+export function uniq<T>(array: T[]): Array<T> {
+  return Array.from(new Set(array))
+}
