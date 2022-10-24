@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createNavigationContainerRef, DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
@@ -46,7 +46,7 @@ import SwitchNetworkScreen from '../screens/SwitchNetworkScreen'
 import SwitchWalletAfterDeletionScreen from '../screens/SwitchWalletAfterDeletionScreen'
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
 import TransactionScreen from '../screens/TransactionScreen'
-import { appBackgroundedAcknowledged, routeChanged } from '../store/appMetadataSlice'
+import { routeChanged } from '../store/appMetadataSlice'
 import InWalletTabsNavigation from './InWalletNavigation'
 import RootStackParamList from './rootStackRoutes'
 
@@ -59,16 +59,11 @@ const RootStackNavigation = () => {
   const { height: screenHeight } = useWindowDimensions()
   const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
   const dispatch = useAppDispatch()
-  const [isResetFromBeingInactive, setIsResetFromBeingInactive] = useState(false)
-  const { lastNavigationState, isAppBackgroundedAcknowledged, isAuthenticated } = useAppSelector(
-    (state) => state.appMetadata
-  )
+  const lastNavigationState = useAppSelector((state) => state.appMetadata.lastNavigationState)
+  const isAuthenticated = !!useAppSelector((state) => state.activeWallet.mnemonic)
 
   const handleStateChange = (state?: NavigationState) => {
-    // Do not record state changes until "foregrounding processes" are done (login, navigation state restore)
-    if (isAppBackgroundedAcknowledged && isAuthenticated) {
-      dispatch(routeChanged(state))
-    }
+    if (state && isAuthenticated) dispatch(routeChanged(state))
   }
 
   const themeNavigator = {
@@ -84,26 +79,12 @@ const RootStackNavigation = () => {
     }
   }
 
-  useEffect(
-    () => {
-      if (!isAuthenticated) {
-        setIsResetFromBeingInactive(false)
-        return
-      }
-
-      if (isAuthenticated && !isAppBackgroundedAcknowledged) {
-        rootStackNavigationRef.resetRoot(lastNavigationState)
-        setIsResetFromBeingInactive(true)
-        dispatch(appBackgroundedAcknowledged(true))
-
-        // Means this is a regular login, not coming back from being inactive
-      } else if (isAuthenticated && isAppBackgroundedAcknowledged && !isResetFromBeingInactive) {
-        rootStackNavigationRef.resetRoot({ index: 0, routes: [{ name: 'InWalletScreen' }] })
-      }
-    },
+  useEffect(() => {
+    if (isAuthenticated) {
+      rootStackNavigationRef.resetRoot(lastNavigationState ?? { index: 0, routes: [{ name: 'InWalletScreen' }] })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isAppBackgroundedAcknowledged, isAuthenticated, isResetFromBeingInactive]
-  )
+  }, [isAuthenticated])
 
   return (
     <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>

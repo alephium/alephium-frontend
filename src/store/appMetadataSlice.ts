@@ -23,14 +23,10 @@ const sliceName = 'appMetadata'
 
 export interface AppMetadataState {
   lastNavigationState?: NavigationState
-  isAppBackgroundedAcknowledged: boolean
-  isAuthenticated: boolean
 }
 
 const initialState: AppMetadataState = {
-  lastNavigationState: undefined,
-  isAppBackgroundedAcknowledged: true,
-  isAuthenticated: false
+  lastNavigationState: undefined
 }
 
 const appMetadataSlice = createSlice({
@@ -39,16 +35,10 @@ const appMetadataSlice = createSlice({
   reducers: {
     routeChanged: (state, action: PayloadAction<AppMetadataState['lastNavigationState']>) => {
       state.lastNavigationState = action.payload
-    },
-    appBackgroundedAcknowledged: (state, action: PayloadAction<AppMetadataState['isAppBackgroundedAcknowledged']>) => {
-      state.isAppBackgroundedAcknowledged = action.payload
-    },
-    authenticated: (state, action: PayloadAction<AppMetadataState['isAuthenticated']>) => {
-      state.isAuthenticated = action.payload
     }
   }
 })
 
-export const { appBackgroundedAcknowledged, authenticated, routeChanged } = appMetadataSlice.actions
+export const { routeChanged } = appMetadataSlice.actions
 
 export default appMetadataSlice
