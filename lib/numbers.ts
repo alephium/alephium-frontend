@@ -106,6 +106,28 @@ export const formatAmountForDisplay = (
   return scaled.toFixed(numberOfDecimalsToDisplay) + suffix
 }
 
+export const formatFiatAmountForDisplay = (amount: number): string => {
+  if (amount < 0) throw `Invalid fiat amount: ${amount}. Fiat amount cannot be negative.`
+
+  if (amount < 1000000) {
+    const roundedUp = amount.toFixed(2)
+    if (parseFloat(roundedUp) < 1000000) return addApostrophes(roundedUp)
+  }
+
+  const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : 4
+
+  const appendMoneySymbol = (tier: number): string => {
+    const suffix = MONEY_SYMBOL[tier]
+    const scale = Math.pow(10, tier * 3)
+    const scaled = amount / scale
+    const scaledRoundedUp = scaled.toFixed(2)
+
+    return parseFloat(scaledRoundedUp) < 1000 ? scaledRoundedUp + suffix : appendMoneySymbol(tier + 1)
+  }
+
+  return appendMoneySymbol(tier)
+}
+
 export const convertAlphToSet = (amount: string): bigint => {
   if (!isNumber(amount) || Number(amount) < 0) throw 'Invalid Alph amount'
   if (amount === '0') return BigInt(0)
@@ -139,3 +161,9 @@ export const convertSetToAlph = (amountInSet: bigint): string => {
 
 const isNumber = (numString: string): boolean =>
   !Number.isNaN(Number(numString)) && numString.length > 0 && !numString.includes('e')
+
+export const convertSetToFiat = (amountInSet: bigint, fiatAlphValue: number): number => {
+  if (fiatAlphValue < 0) throw `Invalid fiat value: ${fiatAlphValue}. Fiat value cannot be negative.`
+
+  return fiatAlphValue * (parseFloat(amountInSet.toString()) / QUINTILLION)
+}

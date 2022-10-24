@@ -22,7 +22,9 @@ import {
   convertAlphToSet,
   convertSetToAlph,
   addApostrophes,
-  produceZeros
+  produceZeros,
+  convertSetToFiat,
+  formatFiatAmountForDisplay
 } from '../lib/numbers'
 
 const alph = (amount: bigint) => {
@@ -82,6 +84,46 @@ it('Should display a defined number of decimals', () => {
   expect(formatAmountForDisplay(BigInt('20053549281751930708'), false, 5)).toEqual('20.05355')
 })
 
+it('Should format fiat amount for display', () => {
+  expect(formatFiatAmountForDisplay(0)).toEqual('0.00'),
+    expect(formatFiatAmountForDisplay(0.1)).toEqual('0.10'),
+    expect(formatFiatAmountForDisplay(0.11)).toEqual('0.11'),
+    expect(formatFiatAmountForDisplay(0.111)).toEqual('0.11'),
+    expect(formatFiatAmountForDisplay(0.114)).toEqual('0.11'),
+    expect(formatFiatAmountForDisplay(0.115)).toEqual('0.12'),
+    expect(formatFiatAmountForDisplay(1.005)).toEqual('1.00'),
+    expect(formatFiatAmountForDisplay(1.006)).toEqual('1.01'),
+    expect(formatFiatAmountForDisplay(1000)).toEqual("1'000.00"),
+    expect(formatFiatAmountForDisplay(1000.09)).toEqual("1'000.09"),
+    expect(formatFiatAmountForDisplay(1000.099)).toEqual("1'000.10"),
+    expect(formatFiatAmountForDisplay(1000.095)).toEqual("1'000.10"),
+    expect(formatFiatAmountForDisplay(10000)).toEqual("10'000.00"),
+    expect(formatFiatAmountForDisplay(100000)).toEqual("100'000.00"),
+    expect(formatFiatAmountForDisplay(999999.99)).toEqual("999'999.99"),
+    expect(formatFiatAmountForDisplay(999999.999)).toEqual('1.00M'),
+    expect(formatFiatAmountForDisplay(1000000)).toEqual('1.00M'),
+    expect(formatFiatAmountForDisplay(1990000)).toEqual('1.99M'),
+    expect(formatFiatAmountForDisplay(1996000)).toEqual('2.00M'),
+    expect(formatFiatAmountForDisplay(1100000)).toEqual('1.10M'),
+    expect(formatFiatAmountForDisplay(1110000)).toEqual('1.11M'),
+    expect(formatFiatAmountForDisplay(1119000)).toEqual('1.12M'),
+    expect(formatFiatAmountForDisplay(1116000)).toEqual('1.12M'),
+    expect(formatFiatAmountForDisplay(1115000)).toEqual('1.11M'),
+    expect(formatFiatAmountForDisplay(10000000)).toEqual('10.00M'),
+    expect(formatFiatAmountForDisplay(100000000)).toEqual('100.00M'),
+    expect(formatFiatAmountForDisplay(999999000)).toEqual('1.00B'),
+    expect(formatFiatAmountForDisplay(1000000000)).toEqual('1.00B'),
+    expect(formatFiatAmountForDisplay(10000000000)).toEqual('10.00B'),
+    expect(formatFiatAmountForDisplay(100000000000)).toEqual('100.00B'),
+    expect(formatFiatAmountForDisplay(1000000000000)).toEqual('1.00T'),
+    expect(formatFiatAmountForDisplay(10000000000000)).toEqual('10.00T'),
+    expect(formatFiatAmountForDisplay(100000000000000)).toEqual('100.00T'),
+    expect(() => formatFiatAmountForDisplay(-1)).toThrow('Invalid fiat amount: -1. Fiat amount cannot be negative.'),
+    expect(() => formatFiatAmountForDisplay(-1.01)).toThrow(
+      'Invalid fiat amount: -1.01. Fiat amount cannot be negative.'
+    )
+})
+
 it('should convert Alph amount to Set amount', () => {
   expect(convertAlphToSet('0')).toEqual(BigInt('0')),
     expect(convertAlphToSet('1')).toEqual(BigInt('1000000000000000000')),
@@ -125,13 +167,51 @@ it('should convert Alph amount to Set amount', () => {
     expect(() => convertAlphToSet('-123.45678e+2')).toThrow('Invalid Alph amount')
 })
 
-it('should convert Set amount amount to Alph amount', () => {
+it('should convert Set amount to Alph amount', () => {
   expect(convertSetToAlph(BigInt('0'))).toEqual('0'),
     expect(convertSetToAlph(BigInt('1'))).toEqual('0.000000000000000001'),
     expect(convertSetToAlph(BigInt('100000000000000000'))).toEqual('0.1'),
     expect(convertSetToAlph(BigInt('1000000000000000000'))).toEqual('1'),
     expect(convertSetToAlph(BigInt('99999917646000000000000'))).toEqual('99999.917646'),
     expect(convertSetToAlph(BigInt('99999917646000000000001'))).toEqual('99999.917646000000000001')
+})
+
+it('should convert Set amount to fiat amount', () => {
+  expect(convertSetToFiat(BigInt('1000000000000000000'), 2)).toEqual(2),
+    expect(convertSetToFiat(BigInt('100000000000000000'), 2)).toEqual(0.2),
+    expect(convertSetToFiat(BigInt('10000000000000000'), 2)).toEqual(0.02),
+    expect(convertSetToFiat(BigInt('1000000000000000'), 2)).toEqual(0.002),
+    expect(convertSetToFiat(BigInt('100000000000000'), 2)).toEqual(0.0002),
+    expect(convertSetToFiat(BigInt('10000000000000'), 2)).toEqual(0.00002),
+    expect(convertSetToFiat(BigInt('1000000000000'), 2)).toEqual(0.000002),
+    expect(convertSetToFiat(BigInt('100000000000'), 2)).toEqual(0.0000002),
+    expect(convertSetToFiat(BigInt('10000000000'), 2)).toEqual(0.00000002),
+    expect(convertSetToFiat(BigInt('1000000000'), 2)).toEqual(0.000000002),
+    expect(convertSetToFiat(BigInt('1000000000'), 2)).toEqual(0.000000002),
+    expect(convertSetToFiat(BigInt('100000000'), 2)).toEqual(0.0000000002),
+    expect(convertSetToFiat(BigInt('10000000'), 2)).toEqual(0.00000000002),
+    expect(convertSetToFiat(BigInt('1000000'), 2)).toEqual(0.000000000002),
+    expect(convertSetToFiat(BigInt('100000'), 2)).toEqual(0.0000000000002),
+    expect(convertSetToFiat(BigInt('10000'), 2)).toEqual(0.00000000000002),
+    expect(convertSetToFiat(BigInt('1000'), 2)).toEqual(0.000000000000002),
+    expect(convertSetToFiat(BigInt('100'), 2)).toEqual(0.0000000000000002),
+    expect(convertSetToFiat(BigInt('10'), 2)).toEqual(0.00000000000000002),
+    expect(convertSetToFiat(BigInt('1'), 2)).toEqual(0.000000000000000002),
+    expect(convertSetToFiat(BigInt('1000000000000000000'), 2.1)).toEqual(2.1),
+    expect(convertSetToFiat(BigInt('1000000000000000000'), 2.100000000001)).toEqual(2.100000000001),
+    expect(convertSetToFiat(BigInt('1000000000000000000'), 0)).toEqual(0),
+    expect(convertSetToFiat(BigInt('10000000000000000000'), 3)).toEqual(30),
+    expect(convertSetToFiat(BigInt('1000000000000000000000000000'), 3)).toEqual(3000000000),
+    expect(convertSetToFiat(BigInt('1000000000000000000'), 1e1)).toEqual(10),
+    expect(() => convertSetToFiat(BigInt('1000000000000000000'), -2)).toThrow(
+      'Invalid fiat value: -2. Fiat value cannot be negative.'
+    ),
+    expect(() => convertSetToFiat(BigInt('1000000000000000000'), -0.2)).toThrow(
+      'Invalid fiat value: -0.2. Fiat value cannot be negative.'
+    ),
+    expect(() => convertSetToFiat(BigInt('1000000000000000000'), -1e-1)).toThrow(
+      'Invalid fiat value: -0.1. Fiat value cannot be negative.'
+    )
 })
 
 it('should add apostrophes', () => {
