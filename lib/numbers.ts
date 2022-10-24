@@ -57,6 +57,21 @@ const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) =>
     : numStringWithoutTrailingZeros
 }
 
+const appendMoneySymbol = (tier: number, amount: number, numberOfDecimalsToDisplay = 2): string => {
+  const reacthedEndOfMoneySymbols = tier >= MONEY_SYMBOL.length
+  const adjustedTier = reacthedEndOfMoneySymbols ? tier - 1 : tier
+  const suffix = MONEY_SYMBOL[adjustedTier]
+  const scale = Math.pow(10, adjustedTier * 3)
+  const scaled = amount / scale
+  const scaledRoundedUp = scaled.toFixed(numberOfDecimalsToDisplay)
+
+  return reacthedEndOfMoneySymbols
+    ? addApostrophes(scaledRoundedUp) + suffix
+    : parseFloat(scaledRoundedUp) < 1000
+    ? scaledRoundedUp + suffix
+    : appendMoneySymbol(tier + 1, amount, numberOfDecimalsToDisplay)
+}
+
 export const formatAmountForDisplay = (
   baseNum: bigint,
   showFullPrecision = false,
@@ -84,7 +99,7 @@ export const formatAmountForDisplay = (
     const tinyAmountsMaxNumberDecimals = 5
 
     return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
-  } else if (alphNum < 1000000) {
+  } else if (alphNum < 1000000 && parseFloat(alphNum.toFixed(numberOfDecimalsToDisplay)) < 1000000) {
     const amountWithRemovedTrailingZeros = removeTrailingZeros(
       alphNum.toFixed(numberOfDecimalsToDisplay),
       minNumberOfDecimals
@@ -95,15 +110,7 @@ export const formatAmountForDisplay = (
 
   const tier = alphNum < 1000000000 ? 2 : alphNum < 1000000000000 ? 3 : 4
 
-  // get suffix and determine scale
-  const suffix = MONEY_SYMBOL[tier]
-  const scale = Math.pow(10, tier * 3)
-
-  // Scale the bigNum
-  // Here we need to be careful of precision issues
-  const scaled = alphNum / scale
-
-  return scaled.toFixed(numberOfDecimalsToDisplay) + suffix
+  return appendMoneySymbol(tier, alphNum, numberOfDecimalsToDisplay)
 }
 
 export const formatFiatAmountForDisplay = (amount: number): string => {
@@ -116,16 +123,7 @@ export const formatFiatAmountForDisplay = (amount: number): string => {
 
   const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : 4
 
-  const appendMoneySymbol = (tier: number): string => {
-    const suffix = MONEY_SYMBOL[tier]
-    const scale = Math.pow(10, tier * 3)
-    const scaled = amount / scale
-    const scaledRoundedUp = scaled.toFixed(2)
-
-    return parseFloat(scaledRoundedUp) < 1000 ? scaledRoundedUp + suffix : appendMoneySymbol(tier + 1)
-  }
-
-  return appendMoneySymbol(tier)
+  return appendMoneySymbol(tier, amount)
 }
 
 export const convertAlphToSet = (amount: string): bigint => {
