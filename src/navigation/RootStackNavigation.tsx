@@ -38,8 +38,7 @@ import PinCodeCreationScreen from '../screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '../screens/NewAddressScreen'
 import ReceiveScreen from '../screens/ReceiveScreen'
 import SecurityScreen from '../screens/SecurityScreen'
-import ConfirmSendScreen from '../screens/send-tx/ConfirmSendScreen'
-import SendScreen from '../screens/send-tx/SendScreen'
+import SendScreen from '../screens/SendScreen'
 import SettingsScreen from '../screens/SettingsScreen'
 import SplashScreen from '../screens/SplashScreen'
 import SwitchNetworkScreen from '../screens/SwitchNetworkScreen'
@@ -135,7 +134,6 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={smallBottomModalOptions} />
         <RootStack.Screen name="ReceiveScreen" component={ReceiveScreen} options={bottomModalOptions} />
         <RootStack.Screen name="SendScreen" component={SendScreen} options={bottomModalOptions} />
-        <RootStack.Screen name="ConfirmSendScreen" component={ConfirmSendScreen} options={bottomModalOptions} />
       </RootStack.Navigator>
     </NavigationContainer>
   )

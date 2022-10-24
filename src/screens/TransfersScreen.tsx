@@ -24,7 +24,12 @@ import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHead
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { selectAddressIds, selectHaveAllPagesLoaded, selectTransactions } from '../store/addressesSlice'
+import {
+  selectAddressIds,
+  selectConfirmedTransactions,
+  selectHaveAllPagesLoaded,
+  selectPendingTransactions
+} from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
@@ -35,13 +40,15 @@ const TransfersScreenHeader = (props: Partial<DefaultHeaderProps>) => (
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const txs = useAppSelector((state) => selectTransactions(state, addressHashes))
+  const confirmedTransactions = useAppSelector((state) => selectConfirmedTransactions(state, addressHashes))
+  const pendingTransactions = useAppSelector((state) => selectPendingTransactions(state, addressHashes))
   const updateHeader = useInWalletTabScreenHeader(TransfersScreenHeader, navigation)
   const haveAllPagesLoaded = useAppSelector((state) => selectHaveAllPagesLoaded(state))
 
   return (
     <InWalletTransactionsFlatList
-      transactions={txs}
+      confirmedTransactions={confirmedTransactions}
+      pendingTransactions={pendingTransactions}
       addressHashes={addressHashes}
       haveAllPagesLoaded={haveAllPagesLoaded}
       onScrollYChange={updateHeader}

@@ -30,6 +30,7 @@ import HighlightRow from '../components/HighlightRow'
 import IOList from '../components/IOList'
 import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
+import { useTransactionInfo } from '../hooks/useTransactionalInfo'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'TransactionScreen'>
@@ -37,12 +38,15 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'TransactionScreen'>
 const TransactionScreen = ({
   navigation,
   route: {
-    params: { tx, isOut, amount }
+    params: { tx }
   }
 }: ScreenProps) => {
   const theme = useTheme()
+  const { amount, direction } = useTransactionInfo(tx, tx.address.hash)
   const explorerBaseUrl = useAppSelector((state) => state.network.settings.explorerUrl)
+
   const explorerTxUrl = `${explorerBaseUrl}/#/transactions/${tx.hash}`
+  const isOut = direction === 'out'
 
   return (
     <>

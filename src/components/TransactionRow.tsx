@@ -16,18 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calcTxAmountDeltaForAddress, getDirection } from '@alephium/sdk'
-import { Transaction } from '@alephium/sdk/api/explorer'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
-import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { StyleProp, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
 
-import Arrow from '../images/Arrow'
+import { useTransactionInfo } from '../hooks/useTransactionalInfo'
+import { useTransactionUI } from '../hooks/useTransactionUI'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { AddressTransaction } from '../types/transactions'
+import { isPendingTx } from '../utils/transactions'
 import Amount from './Amount'
 import AppText from './AppText'
 import HighlightRow from './HighlightRow'
@@ -42,47 +42,42 @@ interface TransactionRowProps {
 }
 
 const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => {
-  const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
-  let amount = calcTxAmountDeltaForAddress(tx as Transaction, tx.address.hash)
-  amount = amount < 0 ? amount * BigInt(-1) : amount
+  const { amount, infoType } = useTransactionInfo(tx, tx.address.hash)
+  const { amountSign, Icon, iconColor } = useTransactionUI(infoType)
 
-  const isOut = getDirection(tx, tx.address.hash) === 'out'
-
-  const isConfirmed = tx.blockHash !== ''
+  const handleOnPress = () => {
+    if (!isPendingTx(tx)) navigation.navigate('TransactionScreen', { tx })
+  }
 
   return (
     <HighlightRow
       style={style}
-      isSecondary={!isConfirmed}
       hasBottomBorder={!isLast}
       isBottomRounded={isLast}
       isTopRounded={isFirst}
-      onPress={() => navigation.navigate('TransactionScreen', { tx, isOut, amount })}
+      onPress={handleOnPress}
     >
       <Direction>
-        {isConfirmed ? (
-          isOut ? (
-            <Arrow direction="up" color={theme.font.secondary} />
-          ) : (
-            <Arrow direction="down" color={theme.global.valid} />
-          )
-        ) : (
-          <ActivityIndicator size="small" color={theme.font.primary} />
-        )}
+        <Icon size={16} strokeWidth={3} color={iconColor} />
       </Direction>
       <Date>{dayjs(tx.timestamp).fromNow()}</Date>
       <AddressHash numberOfLines={1} ellipsizeMode="middle">
         {tx.address.hash}
       </AddressHash>
-      <AmountStyled prefix={isOut ? '-' : '+'} value={amount} fadeDecimals bold />
+      <AmountStyled prefix={amountSign} value={amount} fadeDecimals bold />
     </HighlightRow>
   )
 }
 
 export default memo(TransactionRow, (prevProps, nextProps) => {
-  return prevProps.tx.hash === nextProps.tx.hash && prevProps.tx.address.hash === nextProps.tx.address.hash
+  return (
+    prevProps.tx.hash === nextProps.tx.hash &&
+    prevProps.tx.address.hash === nextProps.tx.address.hash &&
+    prevProps.isFirst === nextProps.isFirst &&
+    prevProps.isLast === nextProps.isLast
+  )
 })
 
 const Item = styled(AppText)`

@@ -20,4 +20,16 @@ import { Transaction } from '@alephium/sdk/api/explorer'
 
 import { Address } from '../store/addressesSlice'
 
-export type AddressTransaction = Transaction & { address: Address }
+export type PendingTransaction = {
+  hash: string
+  fromAddress: string
+  toAddress: string
+  timestamp: number
+  amount?: string
+  lockTime?: number
+  status: 'pending'
+}
+
+export type AddressConfirmedTransaction = Transaction & { address: Address }
+export type AddressPendingTransaction = PendingTransaction & { address: Address }
+export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction
