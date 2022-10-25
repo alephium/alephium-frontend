@@ -234,63 +234,65 @@ const SendScreen = ({
     <Screen>
       <ScrollView>
         <MainContent>
-          <ScreenSection>
-            <BottomModalScreenTitle>Send</BottomModalScreenTitle>
-          </ScreenSection>
-          <ScreenSection>
-            <AddressSelector
-              label="From address"
-              value={fromAddressHash}
-              onValueChange={setFromAddressHash}
-              isTopRounded
-              hasBottomBorder
-            />
-            <Input label="To address" value={toAddressHash} onChangeText={setToAddressHash} hasBottomBorder />
-            <Input
-              label="Amount"
-              value={amountString}
-              onChangeText={handleAmountChange}
-              isBottomRounded
-              keyboardType="number-pad"
-            />
-          </ScreenSection>
-          <ScreenSection>
-            <ExpandableRow title="Tweak gas settings" expandedHeight={165}>
-              <Input
-                label="Gas"
-                value={gasAmount}
-                onChangeText={handleGasAmountChange}
+          <>
+            <ScreenSection>
+              <BottomModalScreenTitle>Send</BottomModalScreenTitle>
+            </ScreenSection>
+            <ScreenSection>
+              <AddressSelector
+                label="From address"
+                value={fromAddressHash}
+                onValueChange={setFromAddressHash}
                 isTopRounded
                 hasBottomBorder
-                keyboardType="number-pad"
-                error={gasAmountHasError ? `Gas must be at least ${MINIMAL_GAS_AMOUNT}` : ''}
               />
+              <Input label="To address" value={toAddressHash} onChangeText={setToAddressHash} hasBottomBorder />
               <Input
-                label="Gas price"
-                value={gasPriceString}
-                onChangeText={handleGasPriceChange}
+                label="Amount"
+                value={amountString}
+                onChangeText={handleAmountChange}
                 isBottomRounded
-                hasBottomBorder
                 keyboardType="number-pad"
-                error={
-                  gasPriceHasError
-                    ? `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
-                    : ''
-                }
               />
-            </ExpandableRow>
-          </ScreenSection>
-          {txStep === 'send' && !isLoading && fees && totalAmount && (
-            <ScreenSection>
-              <ScreenSectionTitle>Summary</ScreenSectionTitle>
-              <HighlightRow title="Expected fee" isTopRounded hasBottomBorder isSecondary>
-                <Amount value={fees} fullPrecision />
-              </HighlightRow>
-              <HighlightRow title="Total amount" isBottomRounded isSecondary>
-                <Amount value={totalAmount} fullPrecision bold color={theme.global.accent} />
-              </HighlightRow>
             </ScreenSection>
-          )}
+            <ScreenSection>
+              <ExpandableRow title="Tweak gas settings" expandedHeight={165}>
+                <Input
+                  label="Gas"
+                  value={gasAmount}
+                  onChangeText={handleGasAmountChange}
+                  isTopRounded
+                  hasBottomBorder
+                  keyboardType="number-pad"
+                  error={gasAmountHasError ? `Gas must be at least ${MINIMAL_GAS_AMOUNT}` : ''}
+                />
+                <Input
+                  label="Gas price"
+                  value={gasPriceString}
+                  onChangeText={handleGasPriceChange}
+                  isBottomRounded
+                  hasBottomBorder
+                  keyboardType="number-pad"
+                  error={
+                    gasPriceHasError
+                      ? `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
+                      : ''
+                  }
+                />
+              </ExpandableRow>
+            </ScreenSection>
+            {txStep === 'send' && !isLoading && fees && totalAmount && (
+              <ScreenSection>
+                <ScreenSectionTitle>Summary</ScreenSectionTitle>
+                <HighlightRow title="Expected fee" isTopRounded hasBottomBorder isSecondary>
+                  <Amount value={fees} fullPrecision />
+                </HighlightRow>
+                <HighlightRow title="Total amount" isBottomRounded isSecondary>
+                  <Amount value={totalAmount} fullPrecision bold color={theme.global.accent} />
+                </HighlightRow>
+              </ScreenSection>
+            )}
+          </>
         </MainContent>
         <BottomScreenSection>
           <Button
