@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { GENESIS_TIMESTAMP } from '@alephium/sdk'
 import { Input, Output } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
 import { View } from 'react-native'
@@ -30,8 +31,6 @@ interface IOListProps {
   isOut: boolean
   tx: AddressConfirmedTransaction
 }
-
-const genesisTimestamp = 1231006505000
 
 const IOList = ({ isOut, tx }: IOListProps) => {
   const io = (isOut ? tx.outputs : tx.inputs) as Array<Output | Input> | undefined
@@ -56,7 +55,7 @@ const IOList = ({ isOut, tx }: IOListProps) => {
         {extraAddressesText && <AppText>{extraAddressesText}</AppText>}
       </View>
     )
-  } else if (tx.timestamp === genesisTimestamp) {
+  } else if (tx.timestamp === GENESIS_TIMESTAMP) {
     return <BoldText>Genesis TX</BoldText>
   } else {
     return <BoldText>Mining Rewards</BoldText>
