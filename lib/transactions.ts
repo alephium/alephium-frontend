@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetOutput, Output, Transaction, UnconfirmedTransaction } from '../api/api-explorer'
+import { AssetOutput, Input, Output, Transaction, UnconfirmedTransaction } from '../api/api-explorer'
+import { GENESIS_TIMESTAMP } from './constants'
 import { uniq } from './utils'
 
 export type TransactionDirection = 'out' | 'in'
@@ -63,3 +64,13 @@ export const removeConsolidationChangeAmount = (totalOutputAmount: bigint, outpu
       totalOutputAmount - BigInt(outputs[outputs.length - 1].attoAlphAmount)
     : // otherwise, it's a sweep transaction that consolidates all funds
       totalOutputAmount
+
+export const txHasOnlyInternalAddresses = (data: (Input | Output)[], internalAddressHashes: string[]): boolean =>
+  data.every((io) => io?.address && internalAddressHashes.some((hash) => hash === io.address))
+
+export const isTxMoveDuplicate = (tx: Transaction, addressHash: string, internalAddressHashes: string[]) =>
+  tx.inputs &&
+  tx.inputs.length > 0 &&
+  txHasOnlyInternalAddresses(tx.inputs, internalAddressHashes) &&
+  getDirection(tx, addressHash) == 'in' &&
+  tx.timestamp !== GENESIS_TIMESTAMP
