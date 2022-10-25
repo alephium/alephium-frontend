@@ -38,8 +38,8 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       pending: theme.font.primary
     }[infoType],
     amountSign: {
-      in: '+ ',
-      out: '- ',
+      in: '+',
+      out: '-',
       move: '',
       pending: ''
     }[infoType],

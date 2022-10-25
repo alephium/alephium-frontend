@@ -26,8 +26,9 @@ import {
 } from '@alephium/sdk'
 import { SweepAddressTransaction } from '@alephium/sdk/api/alephium'
 import { StackScreenProps } from '@react-navigation/stack'
+import { Codesandbox } from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
-import { Alert, ScrollView } from 'react-native'
+import { Alert, ScrollView, View } from 'react-native'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -38,6 +39,7 @@ import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import ExpandableRow from '../components/ExpandableRow'
 import HighlightRow from '../components/HighlightRow'
+import InfoBox from '../components/InfoBox'
 import AddressSelector from '../components/inputs/AddressSelector'
 import Input from '../components/inputs/Input'
 import Screen, {
@@ -164,6 +166,7 @@ const SendScreen = ({
       if (error?.detail && (error.detail.includes('consolidating') || error.detail.includes('consolidate'))) {
         setConsolidationRequired(true)
         setIsSweeping(true)
+        setIsConsolidateUTXOsModalVisible(true)
         await buildConsolidationTransactions()
       } else {
         Toast.show('Error while building the transaction')
@@ -229,7 +232,7 @@ const SendScreen = ({
 
   return (
     <Screen>
-      <ScrollViewStyled>
+      <ScrollView>
         <MainContent>
           <ScreenSection>
             <BottomModalScreenTitle>Send</BottomModalScreenTitle>
@@ -304,22 +307,28 @@ const SendScreen = ({
           closeModal={() => setIsConsolidateUTXOsModalVisible(false)}
         >
           <ConsolidationModalContent>
-            <ScreenSection fill>
-              <AppText>
-                It appers that the address you use to send funds from has too many UTXOs! Would you like to consolidate
-                them? This will cost as small fee.
-              </AppText>
-              <Amount value={fees} fullPrecision fadeDecimals />
-            </ScreenSection>
+            <ScreenSectionStyled fill>
+              <InfoBox title="Action to take" Icon={Codesandbox} iconColor="#64f6c2">
+                <View>
+                  <AppText>
+                    It appers that the address you use to send funds from has too many UTXOs! Would you like to
+                    consolidate them? This will cost as small fee.
+                  </AppText>
+                  <Fee>
+                    <Amount prefix="Fee:" value={fees} fullPrecision fadeDecimals bold />
+                  </Fee>
+                </View>
+              </InfoBox>
+            </ScreenSectionStyled>
             <BottomScreenSection>
               <ButtonsRow>
                 <Button title="Cancel" onPress={() => setIsConsolidateUTXOsModalVisible(false)} />
-                <Button title="Consolidate" onPress={sendTransaction} gradient />
+                <Button title="Consolidate" onPress={sendTransaction} />
               </ButtonsRow>
             </BottomScreenSection>
           </ConsolidationModalContent>
         </ModalWithBackdrop>
-      </ScrollViewStyled>
+      </ScrollView>
     </Screen>
   )
 }
@@ -329,18 +338,22 @@ export default SendScreen
 const ConsolidationModalContent = styled.View`
  flex: 1
  width: 100%;
- background-color: #f7d1b6;
+ background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const MainContent = styled.View`
   flex: 1;
-  border-width: 1px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 `
 
-const ScrollViewStyled = styled(ScrollView)`
-  border-width: 1px;
-  border-color: red;
+const ScreenSectionStyled = styled(ScreenSection)`
+  align-items: center;
+  justify-content: center;
+`
+
+const Fee = styled(AppText)`
+  display: flex;
+  margin-top: 20px;
 `

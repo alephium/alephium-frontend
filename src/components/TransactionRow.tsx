@@ -16,17 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { convertSetToFiat } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
+import { useAppSelector } from '../hooks/redux'
 import { useTransactionInfo } from '../hooks/useTransactionalInfo'
 import { useTransactionUI } from '../hooks/useTransactionUI'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { AddressTransaction } from '../types/transactions'
+import { currencies } from '../utils/currencies'
 import { isPendingTx } from '../utils/transactions'
 import Amount from './Amount'
 import AppText from './AppText'
@@ -43,9 +46,13 @@ interface TransactionRowProps {
 
 const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-
+  const price = useAppSelector((state) => state.price)
+  const currency = useAppSelector((state) => state.settings.currency)
   const { amount, infoType } = useTransactionInfo(tx, tx.address.hash)
-  const { amountSign, Icon, iconColor } = useTransactionUI(infoType)
+  const { amountSign, Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
+  const theme = useTheme()
+
+  const fiatValue = price.value !== undefined && amount !== undefined ? convertSetToFiat(amount, price.value) : 0
 
   const handleOnPress = () => {
     if (!isPendingTx(tx)) navigation.navigate('TransactionScreen', { tx })
@@ -60,13 +67,26 @@ const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => 
       onPress={handleOnPress}
     >
       <Direction>
-        <Icon size={16} strokeWidth={3} color={iconColor} />
+        <TransactionIcon color={iconBgColor}>
+          <Icon size={16} strokeWidth={3} color={iconColor} />
+        </TransactionIcon>
       </Direction>
-      <Date>{dayjs(tx.timestamp).fromNow()}</Date>
-      <AddressHash numberOfLines={1} ellipsizeMode="middle">
-        {tx.address.hash}
-      </AddressHash>
-      <AmountStyled prefix={amountSign} value={amount} fadeDecimals bold />
+      <TokenAndDate>
+        <AppText bold>{label} ALPH</AppText>
+        <AppText color={theme.font.tertiary}>{dayjs(tx.timestamp).fromNow()}</AppText>
+      </TokenAndDate>
+      <AmountColumn>
+        <AppText>
+          <AppText bold>{amountSign}</AppText>
+          <Amount value={amount} fadeDecimals bold />
+        </AppText>
+        <FiatValue>
+          <AppText bold color={theme.font.tertiary}>
+            {amountSign}
+          </AppText>
+          <Amount isFiat value={fiatValue} bold suffix={currencies[currency].symbol} color={theme.font.tertiary} />
+        </FiatValue>
+      </AmountColumn>
     </HighlightRow>
   )
 }
@@ -80,27 +100,31 @@ export default memo(TransactionRow, (prevProps, nextProps) => {
   )
 })
 
-const Item = styled(AppText)`
-  font-weight: bold;
-`
-
 const Direction = styled.View`
   align-items: center;
   flex-direction: column;
   margin-right: 20px;
 `
 
-const Date = styled(Item)`
-  width: 25%;
+const TokenAndDate = styled.View`
+  flex: 1;
   padding-right: 10px;
 `
 
-const AddressHash = styled(Item)`
-  width: 35%;
-  padding-right: 10px;
+const TransactionIcon = styled.View<{ color?: string }>`
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  background-color: ${({ color, theme }) => color || theme.font.primary};
 `
 
-const AmountStyled = styled(Amount)`
-  width: 25%;
-  text-align: right;
+const AmountColumn = styled.View`
+  flex: 1;
+  align-items: flex-end;
+`
+
+const FiatValue = styled(AppText)`
+  font-size: 12px;
 `

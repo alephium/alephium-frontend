@@ -60,7 +60,7 @@ const TransactionScreen = ({
         </ScreenSectionRow>
         <BottomScreenSection>
           <HighlightRow title="Amount" isTopRounded hasBottomBorder>
-            <Amount value={amount} fadeDecimals fullPrecision suffix="ALPH" />
+            <Amount value={amount} fadeDecimals fullPrecision bold />
           </HighlightRow>
           <HighlightRow title="Timestamp" hasBottomBorder>
             <BoldText>{dayjs(tx.timestamp).fromNow()}</BoldText>
@@ -79,7 +79,7 @@ const TransactionScreen = ({
               value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
               fadeDecimals
               fullPrecision
-              suffix="ALPH"
+              bold
               showOnDiscreetMode
             />
           </HighlightRow>

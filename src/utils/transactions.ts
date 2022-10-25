@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Output, Transaction } from '@alephium/sdk/api/explorer'
+import { Transaction } from '@alephium/sdk/api/explorer'
 
-import { Address } from '../store/addressesSlice'
 import { AddressPendingTransaction, AddressTransaction, PendingTransaction } from '../types/transactions'
 
 export const getNewTransactions = (
@@ -37,6 +36,3 @@ export const getRemainingPendingTransactions = (
 
 export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
   (tx as AddressPendingTransaction).status === 'pending'
-
-export const hasOnlyOutputsWith = (outputs: Output[], addresses: Address[]): boolean =>
-  outputs.every((o) => o?.address && addresses.map((a) => a.hash).indexOf(o.address) >= 0)

@@ -21,18 +21,19 @@ import {
   getDirection,
   isConsolidationTx,
   TransactionDirection,
-  TransactionInfoType
+  TransactionInfoType,
+  txHasOnlyInternalAddresses
 } from '@alephium/sdk'
 import { AssetOutput, Output } from '@alephium/sdk/api/explorer'
 
-import { selectAllAddresses } from '../store/addressesSlice'
+import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { AddressTransaction } from '../types/transactions'
-import { hasOnlyOutputsWith, isPendingTx } from '../utils/transactions'
+import { isPendingTx } from '../utils/transactions'
 import { useAppSelector } from './redux'
 
 export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressHash) => {
-  const addresses = useAppSelector(selectAllAddresses)
+  const addressHashes = useAppSelector(selectAddressIds) as string[]
 
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
@@ -55,7 +56,7 @@ export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressH
       infoType = 'move'
     } else {
       direction = getDirection(tx, addressHash)
-      infoType = direction === 'out' && hasOnlyOutputsWith(outputs, addresses) ? 'move' : direction
+      infoType = direction === 'out' && txHasOnlyInternalAddresses(outputs, addressHashes) ? 'move' : direction
     }
 
     lockTime = outputs.reduce(

@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { convertSetToFiat } from '@alephium/sdk'
 import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { selectAllAddresses } from '../store/addressesSlice'
 import { currencies } from '../utils/currencies'
-import { attoAlphToFiat } from '../utils/numbers'
 import Amount from './Amount'
 
 interface BalanceSummaryProps {
@@ -37,7 +37,7 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
   const theme = useTheme()
 
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
-  const balance = attoAlphToFiat(totalBalance, price.value)
+  const balance = convertSetToFiat(totalBalance, price.value ?? 0)
   const showActivityIndicator = price.status === 'uninitialized' || addressDataStatus === 'uninitialized'
 
   return (

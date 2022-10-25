@@ -16,12 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { formatAmountForDisplay } from '@alephium/sdk'
+import { formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
 import { StyleProp, TextStyle } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
-import { formatFiatAmountForDisplay } from '../utils/numbers'
 import AppText from './AppText'
 
 interface AmountProps {

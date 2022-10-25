@@ -111,7 +111,11 @@ const InWalletTransactionsFlatList = ({
               👏 You reached the end of history!
             </AppText>
           )}
-          {!haveAllPagesLoaded && isLoading && <ActivityIndicator size="large" color={theme.font.primary} />}
+          {!haveAllPagesLoaded && isLoading && (
+            <AppText color={theme.font.tertiary} bold>
+              Loading more...
+            </AppText>
+          )}
           {confirmedTransactions.length === 0 && !isLoading && (
             <AppText color={theme.font.tertiary} bold>
               No transactions yet!

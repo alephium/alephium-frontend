@@ -20,11 +20,12 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { AlertTriangle } from 'lucide-react-native'
 import { useCallback, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
+import InfoBox from '../components/InfoBox'
 import Screen, { BottomScreenSection } from '../components/layout/Screen'
 import { ScreenSection } from '../components/layout/Screen'
 import ModalWithBackdrop from '../components/ModalWithBackdrop'
@@ -39,7 +40,6 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'SecurityScre
 }
 
 const SecurityScreen = ({ navigation, style }: ScreenProps) => {
-  const theme = useTheme()
   const dispatch = useAppDispatch()
   const activeWallet = useAppSelector((state) => state.activeWallet)
   const { isMnemonicBackedUp, mnemonic } = activeWallet
@@ -57,15 +57,9 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
       <ScreenSection fill>
         <Messages>
           {!isMnemonicBackedUp && (
-            <NoticeBox>
-              <NoticeIcon>
-                <AlertTriangle size={64} color={theme.font.primary} />
-              </NoticeIcon>
-              <NoticeText>
-                <NoticeTitle>Action to take</NoticeTitle>
-                <NoticeBody>Backup your recovery phrase to avoid losing access to your wallet</NoticeBody>
-              </NoticeText>
-            </NoticeBox>
+            <InfoBox title="Action to take" Icon={AlertTriangle} bgColor="#f0b68d">
+              <AppText bold>Backup your recovery phrase to avoid losing access to your wallet</AppText>
+            </InfoBox>
           )}
           <AdviceTexts>
             <CenteredText>Your secret recovery phrase is the only way to recover your wallet.</CenteredText>
@@ -115,36 +109,6 @@ const ConsentSection = styled.View`
 
 const ToggleStyled = styled(Toggle)`
   margin-right: 12px;
-`
-
-const NoticeBox = styled.View`
-  flex-direction: row;
-  align-items: center;
-  background-color: #f0b68d;
-  border-radius: 12px;
-  padding: 38px 33px;
-`
-
-const NoticeIcon = styled.View`
-  align-items: center;
-  margin-right: 20px;
-  flex-shrink: 0;
-  flex-grow: 1;
-`
-
-const NoticeText = styled.View`
-  flex-shrink: 1;
-`
-
-const NoticeTitle = styled(AppText)`
-  font-weight: 700;
-  font-size: 18px;
-  margin-bottom: 12px;
-`
-
-const NoticeBody = styled(AppText)`
-  font-weight: 600;
-  font-size: 16px;
 `
 
 const AdviceTexts = styled.View`

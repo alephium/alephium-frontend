@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isTxMoveDuplicate } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 
 import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
@@ -40,7 +41,9 @@ const TransfersScreenHeader = (props: Partial<DefaultHeaderProps>) => (
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const confirmedTransactions = useAppSelector((state) => selectConfirmedTransactions(state, addressHashes))
+  const confirmedTransactions = useAppSelector((state) => selectConfirmedTransactions(state, addressHashes)).filter(
+    (tx) => !isTxMoveDuplicate(tx, tx.address.hash, addressHashes)
+  )
   const pendingTransactions = useAppSelector((state) => selectPendingTransactions(state, addressHashes))
   const updateHeader = useInWalletTabScreenHeader(TransfersScreenHeader, navigation)
   const haveAllPagesLoaded = useAppSelector((state) => selectHaveAllPagesLoaded(state))

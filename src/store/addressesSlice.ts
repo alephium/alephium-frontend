@@ -390,7 +390,7 @@ export const selectConfirmedTransactions = createSelector(
   (addresses, addressHashes) =>
     addresses
       .filter((address) => addressHashes.includes(address.hash))
-      .map((address) => [...address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address }))])
+      .map((address) => address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address })))
       .flat()
       .sort((a, b) => {
         const delta = b.timestamp - a.timestamp
@@ -403,7 +403,7 @@ export const selectPendingTransactions = createSelector(
   (addresses, addressHashes) =>
     addresses
       .filter((address) => addressHashes.includes(address.hash))
-      .map((address) => [...address.networkData.transactions.pending.map((tx) => ({ ...tx, address }))])
+      .map((address) => address.networkData.transactions.pending.map((tx) => ({ ...tx, address })))
       .flat()
       .sort((a, b) => {
         const delta = b.timestamp - a.timestamp

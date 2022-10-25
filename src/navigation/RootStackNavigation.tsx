@@ -131,7 +131,7 @@ const RootStackNavigation = () => {
           component={SwitchWalletAfterDeletionScreen}
           options={{ headerShown: false }}
         />
-        <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={smallBottomModalOptions} />
+        <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={bottomModalOptions} />
         <RootStack.Screen name="ReceiveScreen" component={ReceiveScreen} options={bottomModalOptions} />
         <RootStack.Screen name="SendScreen" component={SendScreen} options={bottomModalOptions} />
       </RootStack.Navigator>
