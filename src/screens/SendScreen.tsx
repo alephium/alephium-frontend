@@ -251,7 +251,7 @@ const SendScreen = ({
 
   return (
     <Screen>
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flex: 1 }}>
         <MainContent>
           <>
             <ScreenSection>
