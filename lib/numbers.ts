@@ -157,7 +157,7 @@ export const convertSetToAlph = (amountInSet: bigint): string => {
   return removeTrailingZeros(withDotAdded)
 }
 
-const isNumber = (numString: string): boolean =>
+export const isNumber = (numString: string): boolean =>
   !Number.isNaN(Number(numString)) && numString.length > 0 && !numString.includes('e')
 
 export const convertSetToFiat = (amountInSet: bigint, fiatAlphValue: number): number => {
