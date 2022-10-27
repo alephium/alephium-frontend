@@ -99,6 +99,7 @@ export const fetchAddressesData = createAsyncThunk(
     const addresses = payload
 
     for (const addressHash of addresses) {
+      console.log('⬇️ Fetching address details: ', addressHash)
       const { data } = await client.explorerClient.getAddressDetails(addressHash)
       const availableBalance = data.balance
         ? data.lockedBalance
@@ -106,10 +107,10 @@ export const fetchAddressesData = createAsyncThunk(
           : data.balance
         : undefined
 
-      const page = 1
-      console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, addressHash)
-      const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, page)
+      console.log('⬇️ Fetching 1st page of address confirmed transactions: ', addressHash)
+      const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, 1)
 
+      console.log('⬇️ Fetching address tokens: ', addressHash)
       const { data: tokenIds } = await client.explorerClient.addresses.getAddressesAddressTokens(addressHash)
 
       const tokens = await Promise.all(
@@ -126,8 +127,7 @@ export const fetchAddressesData = createAsyncThunk(
         details: data,
         availableBalance: availableBalance,
         transactions,
-        tokens,
-        page
+        tokens
       })
     }
 
@@ -169,25 +169,6 @@ export const fetchAddressesTransactionsNextPage = createAsyncThunk(
 
     dispatch(loadingFinished())
     return results
-  }
-)
-
-export const fetchAddressConfirmedTransactions = createAsyncThunk(
-  `${sliceName}/fetchAddressConfirmedTransactions`,
-  async (payload: { hash: AddressHash; page: number }, { dispatch, getState }) => {
-    const { hash, page } = payload
-    dispatch(loadingStarted())
-
-    console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, hash)
-    const { data } = await client.explorerClient.getAddressTransactions(hash, page)
-
-    dispatch(loadingFinished())
-
-    return {
-      hash,
-      transactions: data || [],
-      page
-    }
   }
 )
 
@@ -300,7 +281,7 @@ const addressesSlice = createSlice({
     builder
       .addCase(fetchAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
-          const { hash, details, availableBalance, transactions, page, tokens } = address
+          const { hash, details, availableBalance, transactions, tokens } = address
           const addressState = state.entities[hash]
 
           if (addressState) {
@@ -315,7 +296,7 @@ const addressesSlice = createSlice({
               networkData.transactions.confirmed = [...newTxs.concat(networkData.transactions.confirmed)]
 
               if (networkData.transactions.loadedPage === 0) {
-                networkData.transactions.loadedPage = page
+                networkData.transactions.loadedPage = 1
               }
 
               networkData.transactions.pending = getRemainingPendingTransactions(
@@ -344,15 +325,6 @@ const addressesSlice = createSlice({
               networkData.transactions.allPagesLoaded = true
             }
           }
-        }
-      })
-      .addCase(fetchAddressConfirmedTransactions.fulfilled, (state, action) => {
-        const { hash, transactions, page } = action.payload
-
-        const addressState = state.entities[hash]
-        if (addressState) {
-          addressState.networkData.transactions.confirmed = transactions
-          addressState.networkData.transactions.loadedPage = page
         }
       })
       .addCase(mainAddressChanged.fulfilled, (state, action) => {
