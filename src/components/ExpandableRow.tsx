@@ -66,6 +66,7 @@ export default styled(ExpandableRow)`
   justify-content: center;
   padding-top: 0;
   padding-bottom: 0;
+  padding: 0;
 `
 
 const Title = styled(AppText)`
@@ -81,7 +82,7 @@ const ChevronDownStyled = styled(ChevronDown)`
 const Header = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
-  padding: 25px 0;
+  padding: 25px 0 25px 6px;
 `
 
 const CollapsableSection = styled(Animated.View)`

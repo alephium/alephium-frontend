@@ -20,15 +20,18 @@ import {
   APIError,
   convertAlphToSet,
   formatAmountForDisplay,
+  getHumanReadableError,
   isAddressValid,
   MINIMAL_GAS_AMOUNT,
   MINIMAL_GAS_PRICE
 } from '@alephium/sdk'
 import { SweepAddressTransaction } from '@alephium/sdk/api/alephium'
 import { StackScreenProps } from '@react-navigation/stack'
+import { isEmpty } from 'lodash'
 import { Codesandbox } from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
-import { Alert, ScrollView, View } from 'react-native'
+import { Controller, useForm } from 'react-hook-form'
+import { ScrollView, View } from 'react-native'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -60,6 +63,16 @@ type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 
 
 type TxStep = 'build' | 'send'
 
+type FormData = {
+  fromAddressHash: AddressHash
+  toAddressHash: AddressHash
+  amountInAlph: string
+  gasAmount: string
+  gasPriceInAlph: string
+}
+
+const requiredErrorMessage = 'This field is required'
+
 const SendScreen = ({
   navigation,
   route: {
@@ -68,17 +81,10 @@ const SendScreen = ({
 }: ScreenProps) => {
   const theme = useTheme()
   const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
-  const [fromAddressHash, setFromAddressHash] = useState<AddressHash>(addressHash ?? mainAddress)
-  const fromAddress = useAppSelector((state) => selectAddressByHash(state, fromAddressHash))
-  const [toAddressHash, setToAddressHash] = useState<string>('')
-  const [amountString, setAmountString] = useState('')
   const [amount, setAmount] = useState(BigInt(0))
   const [fees, setFees] = useState<bigint>(BigInt(0))
   const [unsignedTxId, setUnsignedTxId] = useState('')
   const [unsignedTransaction, setUnsignedTransaction] = useState('')
-  const [gasAmount, setGasAmount] = useState('')
-  const [gasPriceString, setGasPriceString] = useState('')
-  const [gasPrice, setGasPrice] = useState<bigint>()
   const [isLoading, setIsLoading] = useState(false)
   const [isConsolidateUTXOsModalVisible, setIsConsolidateUTXOsModalVisible] = useState(false)
   const [consolidationRequired, setConsolidationRequired] = useState(false)
@@ -86,37 +92,40 @@ const SendScreen = ({
   const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<SweepAddressTransaction[]>([])
   const dispatch = useAppDispatch()
   const [txStep, setTxStep] = useState<TxStep>('build')
+  const {
+    control,
+    watch,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormData>({
+    defaultValues: {
+      fromAddressHash: addressHash ?? mainAddress,
+      toAddressHash: '',
+      amountInAlph: '',
+      gasAmount: '',
+      gasPriceInAlph: ''
+    }
+  })
+  const { fromAddressHash, toAddressHash, gasAmount, amountInAlph, gasPriceInAlph } = watch()
+  const fromAddress = useAppSelector((state) => selectAddressByHash(state, fromAddressHash))
+
+  const isFormValid = isEmpty(errors)
   const totalAmount = amount + fees
 
-  const isFormDataComplete = amount > BigInt(0) && isAddressValid(toAddressHash) && isAddressValid(fromAddressHash)
-
-  const gasAmountHasError = !!gasAmount && parseInt(gasAmount) < MINIMAL_GAS_AMOUNT
-  const gasPriceHasError = !!gasPrice && gasPrice < MINIMAL_GAS_PRICE
-
-  const handleAmountChange = (str: string) => isNumericStringValid(str) && setAmountString(str)
-  const handleGasAmountChange = (str: string) => isNumericStringValid(str, false) && setGasAmount(str)
-  const handleGasPriceChange = (str: string) => isNumericStringValid(str) && setGasPriceString(str)
-
-  useEffect(() => {
-    try {
-      setAmount(convertAlphToSet(amountString))
-    } catch {
-      setAmount(BigInt(0))
-    }
-  }, [amountString])
-
-  useEffect(() => {
-    try {
-      setGasPrice(convertAlphToSet(gasPriceString))
-    } catch {
-      setGasPrice(undefined)
-    }
-  }, [gasPriceString])
+  const validateIsAddressValid = (value: string) => isAddressValid(value) || 'This address is not valid'
+  const validateIsNumericStringValid = (value: string) => isNumericStringValid(value) || 'We need a number here!'
+  const validateOptionalIsNumericStringValid = (value: string) => !value || validateIsNumericStringValid(value)
+  const validateOptionalMinGasAmount = (value: string) =>
+    !value || parseInt(value) >= MINIMAL_GAS_AMOUNT || `Gas must be at least ${MINIMAL_GAS_AMOUNT}`
+  const validateOptionalMinGasPrice = (value: string) =>
+    !value ||
+    convertAlphToSet(value) >= MINIMAL_GAS_PRICE ||
+    `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
 
   useEffect(() => {
     if (txStep === 'send') setTxStep('build')
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fromAddress, toAddressHash, amount, gasAmount, gasPrice])
+  }, [fromAddress, toAddressHash, amountInAlph, gasAmount, gasPriceInAlph])
 
   const buildConsolidationTransactions = useCallback(async () => {
     if (!fromAddress) return
@@ -124,57 +133,67 @@ const SendScreen = ({
     setIsSweeping(true)
     setIsLoading(true)
 
-    const { unsignedTxs, fees } = await client.buildSweepTransactions(fromAddress, fromAddress.hash)
-
-    setSweepUnsignedTxs(unsignedTxs)
-    setFees(fees)
-    setIsLoading(false)
-  }, [fromAddress])
-
-  const buildTransaction = useCallback(async () => {
-    if (!fromAddress || !toAddressHash || !amountString) return
-
-    setIsLoading(true)
-
-    const isSweep = amount === BigInt(fromAddress.networkData.availableBalance)
-    setIsSweeping(isSweep)
-
     try {
-      if (isSweep) {
-        const { unsignedTxs, fees } = await client.buildSweepTransactions(fromAddress, toAddressHash)
-        setSweepUnsignedTxs(unsignedTxs)
-        setFees(fees)
-      } else {
-        const { data } = await client.cliqueClient.transactionCreate(
-          fromAddress.hash,
-          fromAddress.publicKey,
-          toAddressHash,
-          amount.toString(),
-          undefined,
-          gasAmount ? parseInt(gasAmount) : undefined,
-          gasPrice?.toString() || undefined
-        )
-        setUnsignedTransaction(data.unsignedTx)
-        setUnsignedTxId(data.txId)
-        setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))
-      }
-
-      setTxStep('send')
+      const { unsignedTxs, fees } = await client.buildSweepTransactions(fromAddress, fromAddress.hash)
+      setSweepUnsignedTxs(unsignedTxs)
+      setFees(fees)
     } catch (e) {
-      // TODO: When API error codes are available, replace this substring check with a proper error code check
-      const { error } = e as APIError
-      if (error?.detail && (error.detail.includes('consolidating') || error.detail.includes('consolidate'))) {
-        setConsolidationRequired(true)
-        setIsSweeping(true)
-        setIsConsolidateUTXOsModalVisible(true)
-        await buildConsolidationTransactions()
-      } else {
-        Toast.show('Error while building the transaction')
-      }
+      Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
     } finally {
       setIsLoading(false)
     }
-  }, [amount, amountString, buildConsolidationTransactions, fromAddress, gasAmount, gasPrice, toAddressHash])
+  }, [fromAddress])
+
+  const buildTransaction = useCallback(
+    async (formData: FormData) => {
+      if (!fromAddress || !isFormValid) return
+
+      setIsLoading(true)
+      const amountInSet = convertAlphToSet(formData.amountInAlph)
+      const isSweep = amountInSet === BigInt(fromAddress.networkData.availableBalance)
+
+      setAmount(amountInSet)
+      setIsSweeping(isSweep)
+
+      const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : ''
+      try {
+        if (isSweep) {
+          const { unsignedTxs, fees } = await client.buildSweepTransactions(fromAddress, formData.toAddressHash)
+          setSweepUnsignedTxs(unsignedTxs)
+          setFees(fees)
+        } else {
+          const { data } = await client.cliqueClient.transactionCreate(
+            fromAddress.hash,
+            fromAddress.publicKey,
+            formData.toAddressHash,
+            amountInSet.toString(),
+            undefined,
+            formData.gasAmount ? parseInt(formData.gasAmount) : undefined,
+            gasPriceInSet.toString() || undefined
+          )
+          setUnsignedTransaction(data.unsignedTx)
+          setUnsignedTxId(data.txId)
+          setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))
+        }
+
+        setTxStep('send')
+      } catch (e) {
+        // TODO: When API error codes are available, replace this substring check with a proper error code check
+        const { error } = e as APIError
+        if (error?.detail && (error.detail.includes('consolidating') || error.detail.includes('consolidate'))) {
+          setConsolidationRequired(true)
+          setIsSweeping(true)
+          setIsConsolidateUTXOsModalVisible(true)
+          await buildConsolidationTransactions()
+        } else {
+          Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
+        }
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [buildConsolidationTransactions, fromAddress, isFormValid]
+  )
 
   const sendTransaction = useCallback(async () => {
     if (!fromAddress) return
@@ -213,7 +232,7 @@ const SendScreen = ({
       }
       navigation.navigate('TransfersScreen')
     } catch (e) {
-      Alert.alert('Could not send transaction', (e as unknown as { error: { detail: string } }).error.detail)
+      Toast.show(getHumanReadableError(e, 'Could not send transaction'))
     }
     setIsLoading(false)
   }, [
@@ -239,45 +258,117 @@ const SendScreen = ({
               <BottomModalScreenTitle>Send</BottomModalScreenTitle>
             </ScreenSection>
             <ScreenSection>
-              <AddressSelector
-                label="From address"
-                value={fromAddressHash}
-                onValueChange={setFromAddressHash}
-                isTopRounded
-                hasBottomBorder
+              <Controller
+                name="fromAddressHash"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <AddressSelector
+                    label="From address"
+                    value={value}
+                    onValueChange={onChange}
+                    onBlur={onBlur}
+                    isTopRounded
+                    hasBottomBorder
+                    error={
+                      errors.fromAddressHash?.type === 'required'
+                        ? requiredErrorMessage
+                        : errors.fromAddressHash?.message
+                    }
+                  />
+                )}
+                rules={{
+                  required: true,
+                  validate: validateIsAddressValid
+                }}
+                control={control}
               />
-              <Input label="To address" value={toAddressHash} onChangeText={setToAddressHash} hasBottomBorder />
-              <Input
-                label="Amount"
-                value={amountString}
-                onChangeText={handleAmountChange}
-                isBottomRounded
-                keyboardType="number-pad"
+
+              <Controller
+                name="toAddressHash"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="To address"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    hasBottomBorder
+                    error={
+                      errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message
+                    }
+                  />
+                )}
+                rules={{
+                  required: true,
+                  validate: validateIsAddressValid
+                }}
+                control={control}
+              />
+              <Controller
+                name="amountInAlph"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Amount"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    isBottomRounded
+                    keyboardType="number-pad"
+                    error={
+                      errors.amountInAlph?.type === 'required' ? requiredErrorMessage : errors.amountInAlph?.message
+                    }
+                  />
+                )}
+                rules={{
+                  required: true,
+                  validate: validateIsNumericStringValid
+                }}
+                control={control}
               />
             </ScreenSection>
             <ScreenSection>
               <ExpandableRow title="Tweak gas settings" expandedHeight={165}>
-                <Input
-                  label="Gas"
-                  value={gasAmount}
-                  onChangeText={handleGasAmountChange}
-                  isTopRounded
-                  hasBottomBorder
-                  keyboardType="number-pad"
-                  error={gasAmountHasError ? `Gas must be at least ${MINIMAL_GAS_AMOUNT}` : ''}
+                <Controller
+                  control={control}
+                  rules={{
+                    validate: {
+                      validateOptionalIsNumericStringValid,
+                      validateOptionalMinGasAmount
+                    }
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      label="Gas"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      isTopRounded
+                      hasBottomBorder
+                      keyboardType="number-pad"
+                      error={errors.gasAmount?.message}
+                    />
+                  )}
+                  name="gasAmount"
                 />
-                <Input
-                  label="Gas price"
-                  value={gasPriceString}
-                  onChangeText={handleGasPriceChange}
-                  isBottomRounded
-                  hasBottomBorder
-                  keyboardType="number-pad"
-                  error={
-                    gasPriceHasError
-                      ? `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
-                      : ''
-                  }
+                <Controller
+                  control={control}
+                  rules={{
+                    validate: {
+                      validateOptionalIsNumericStringValid,
+                      validateOptionalMinGasPrice
+                    }
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      label="Gas price"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      isBottomRounded
+                      hasBottomBorder
+                      keyboardType="number-pad"
+                      error={errors.gasPriceInAlph?.message}
+                    />
+                  )}
+                  name="gasPriceInAlph"
                 />
               </ExpandableRow>
             </ScreenSection>
@@ -298,9 +389,9 @@ const SendScreen = ({
           <Button
             title={txStep === 'build' ? 'Continue' : 'Confirm'}
             gradient
-            onPress={txStep === 'build' ? buildTransaction : sendTransaction}
+            onPress={txStep === 'build' ? handleSubmit(buildTransaction) : sendTransaction}
             wide
-            disabled={isLoading || !isFormDataComplete || gasAmountHasError || gasPriceHasError}
+            disabled={isLoading || !isFormValid}
           />
         </BottomScreenSection>
         <ModalWithBackdrop

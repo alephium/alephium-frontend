@@ -16,7 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isNumber } from '@alephium/sdk'
+
 export const isNumericStringValid = (str: string, allowFloat = true) =>
+  isNumber(str) &&
   !str.endsWith(' ') &&
   !str.endsWith('-') &&
   !str.endsWith(',') &&
