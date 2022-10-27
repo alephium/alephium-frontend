@@ -1,8 +1,0 @@
-import "greeter.ral"
-
-TxScript Main {
-    pub payable fn main() -> () {
-        let greeter = Greeter(#{{ greeterAddress }})
-        assert!(greeter.greet() == 1)
-    }
-}

@@ -48,15 +48,10 @@
     "test": "npm run lint && npm run build && npm run jest",
     "test:watch": "npm run build && npm run jest -- --watch",
     "prepublishOnly": "npm run build",
-    "prepack": "node scripts/rename-gitignore.js .gitignore gitignore",
-    "postpack": "node scripts/rename-gitignore.js gitignore .gitignore",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "devnet:start": "node scripts/start-devnet.js ${npm_package_config_alephium_version}",
     "devnet:restart": "npm run devnet:start",
     "devnet:stop": "node scripts/stop-devnet.js"
-  },
-  "bin": {
-    "alephium": "dist/cli/create-project.js"
   },
   "dependencies": {
     "base-x": "^4.0.0",
@@ -64,18 +59,13 @@
     "bip32": "^2.0.6",
     "bip39": "^3.0.4",
     "blakejs": "^1.1.1",
-    "chalk": "^4.1.2",
     "cross-fetch": "^3.1.5",
     "crypto-js": "^4.1.1",
-    "elliptic": "^6.5.4",
-    "find-up": "^2.1.0",
-    "fs-extra": "^10.0.1"
+    "elliptic": "^6.5.4"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
     "@types/elliptic": "^6.4.13",
-    "@types/find-up": "^2.1.0",
-    "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.1",
     "@types/mock-fs": "^4.13.1",
     "@types/node": "^16.7.8",
