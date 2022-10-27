@@ -16,15 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
-import { Plus as PlusIcon } from 'lucide-react-native'
-import { useCallback, useLayoutEffect, useState } from 'react'
-import { LayoutChangeEvent, Pressable, StyleProp, View, ViewStyle } from 'react-native'
+import { useCallback, useState } from 'react'
+import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
+import AddressesScreenHeaderRight from '../components/AddressesScreenHeaderRight'
 import AddressesTokensList from '../components/AddressesTokensList'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
@@ -45,24 +45,9 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
   style?: StyleProp<ViewStyle>
 }
 
-const AddressesScreenHeader = (props: Partial<DefaultHeaderProps>) => {
-  const theme = useTheme()
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-
-  return (
-    <DefaultHeader
-      HeaderLeft="Addresses"
-      HeaderRight={
-        <Button
-          onPress={() => navigation.navigate('NewAddressScreen')}
-          icon={<PlusIcon size={24} color={theme.global.accent} />}
-          type="transparent"
-        />
-      }
-      {...props}
-    />
-  )
-}
+const AddressesScreenHeader = (props: Partial<DefaultHeaderProps>) => (
+  <DefaultHeader HeaderLeft="Addresses" HeaderRight={<AddressesScreenHeaderRight />} {...props} />
+)
 
 const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
@@ -80,16 +65,6 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     setCurrentAddressHash(addressHashes[index])
     setAreButtonsDisabled(false)
   }
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Pressable onPress={() => navigation.navigate('NewAddressScreen')}>
-          <PlusIcon size={24} color={theme.global.accent} style={{ marginRight: 20 }} />
-        </Pressable>
-      )
-    })
-  })
 
   useFocusEffect(
     useCallback(() => {
