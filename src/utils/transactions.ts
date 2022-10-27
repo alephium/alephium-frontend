@@ -20,13 +20,13 @@ import { Transaction } from '@alephium/sdk/api/explorer'
 
 import { AddressPendingTransaction, AddressTransaction, PendingTransaction } from '../types/transactions'
 
-export const getNewTransactions = (
+export const extractNewTransactions = (
   incomingTransactions: Transaction[],
   existingTransactions: Transaction[]
 ): Transaction[] =>
   incomingTransactions.filter((newTx) => !existingTransactions.some((existingTx) => existingTx.hash === newTx.hash))
 
-export const getRemainingPendingTransactions = (
+export const extractRemainingPendingTransactions = (
   existingPendingTransactions: PendingTransaction[],
   incomingTransactions: Transaction[]
 ) =>

@@ -33,7 +33,7 @@ import { AddressHash, AddressSettings } from '../types/addresses'
 import { TimeInMs } from '../types/numbers'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
-import { getNewTransactions, getRemainingPendingTransactions } from '../utils/transactions'
+import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -290,7 +290,7 @@ const addressesSlice = createSlice({
             networkData.tokens = tokens
             if (availableBalance) networkData.availableBalance = availableBalance
 
-            const newTxs = getNewTransactions(transactions, networkData.transactions.confirmed)
+            const newTxs = extractNewTransactions(transactions, networkData.transactions.confirmed)
 
             if (newTxs.length > 0) {
               networkData.transactions.confirmed = [...newTxs.concat(networkData.transactions.confirmed)]
@@ -299,7 +299,7 @@ const addressesSlice = createSlice({
                 networkData.transactions.loadedPage = 1
               }
 
-              networkData.transactions.pending = getRemainingPendingTransactions(
+              networkData.transactions.pending = extractRemainingPendingTransactions(
                 networkData.transactions.pending,
                 newTxs
               )
@@ -316,7 +316,7 @@ const addressesSlice = createSlice({
 
           if (addressState) {
             const networkData = addressState.networkData
-            const newTxs = getNewTransactions(transactions, networkData.transactions.confirmed)
+            const newTxs = extractNewTransactions(transactions, networkData.transactions.confirmed)
 
             if (newTxs.length > 0) {
               networkData.transactions.confirmed = [...networkData.transactions.confirmed.concat(newTxs)]
