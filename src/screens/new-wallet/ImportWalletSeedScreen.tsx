@@ -56,16 +56,11 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const allowedWords = useRef(bip39Words.split(' '))
 
   useEffect(() => {
-    if (typedInput.length <= 2) {
-      setPossibleMatches([])
-    } else {
-      const firstInputWord = typedInput.split(' ')[0].toLowerCase()
-      const possibleMatches = firstInputWord
-        ? allowedWords.current.filter((allowedWord) => allowedWord.startsWith(firstInputWord))
-        : []
-
-      setPossibleMatches(possibleMatches)
-    }
+    setPossibleMatches(
+      typedInput.length <= 2
+        ? []
+        : allowedWords.current.filter((allowedWord) => allowedWord.startsWith(typedInput.toLowerCase().trim()))
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typedInput])
 
@@ -80,7 +75,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
         }
       ])
     )
-    setTypedInput(typedInput.startsWith(word) ? typedInput.replace(word, '').trim() : '')
+    setTypedInput('')
   }
 
   const removeSelectedWord = (word: SelectedWord) =>
@@ -125,14 +120,6 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
     navigation.navigate('NewWalletSuccessPage')
   })
 
-  const cursorSelection =
-    typedInput.split(' ').length > 1
-      ? {
-          start: 0,
-          end: typedInput.split(' ')[0].length
-        }
-      : undefined
-
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isImportButtonVisible = selectedWords.length >= 12
 
@@ -171,9 +158,6 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       </ScrollView>
       <ScreenSectionBottom>
         <PossibleMatches>
-          {!possibleMatches.length && !selectedWords.length && (
-            <EnterMessage bold>Enter your secret phrase here:</EnterMessage>
-          )}
           {possibleMatches.map((word, index) => (
             <PossibleWordBox
               key={word}
@@ -197,7 +181,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
           isBottomRounded
           blurOnSubmit={false}
           autoCorrect={false}
-          selection={cursorSelection}
+          error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
+          placeholder="Type your secret phrase word by word"
         />
       </ScreenSectionBottom>
     </Screen>
@@ -261,10 +246,4 @@ const PossibleWordBox = styled(WordBox)<{ highlight?: boolean }>`
 
 const SelectedWordBox = styled(WordBox)`
   background-color: ${({ theme }) => theme.bg.secondary};
-`
-
-const EnterMessage = styled(AppText)`
-  margin-bottom: 10px;
-  margin-left: 6px;
-  color: ${({ theme }) => theme.font.tertiary};
 `
