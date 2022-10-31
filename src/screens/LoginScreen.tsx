@@ -36,14 +36,14 @@ import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 
-const pinLength = 6
+export const pinLength = 6
 
 const firstInstructionSet: Instruction[] = [
   { text: 'Please enter your pin', type: 'primary' },
   { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
 ]
 
-const errorInstructionSet: Instruction[] = [
+export const errorInstructionSet: Instruction[] = [
   { text: 'Oops, wrong pin!', type: 'error' },
   { text: 'Please try again 💪', type: 'secondary' }
 ]

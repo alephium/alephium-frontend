@@ -43,7 +43,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const theme = useTheme()
 
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
-  const passwordRequirement = useAppSelector((state) => state.settings.passwordRequirement)
+  const requireAuth = useAppSelector((state) => state.settings.requireAuth)
   const currentTheme = useAppSelector((state) => state.settings.theme)
   const currentNetworkName = useAppSelector((state) => state.network.name)
   const currentWalletName = useAppSelector((state) => state.activeWallet.name)
@@ -87,7 +87,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
             <Toggle value={discreetMode} onValueChange={handleDiscreetModeChange} />
           </HighlightRow>
           <HighlightRow title="Require authentication" subtitle="For important actions" hasBottomBorder>
-            <Toggle value={passwordRequirement} onValueChange={handlePasswordRequirementChange} />
+            <Toggle value={requireAuth} onValueChange={handlePasswordRequirementChange} />
           </HighlightRow>
           <HighlightRow title="Use dark theme" subtitle="Try it, it's nice" hasBottomBorder>
             <Toggle value={currentTheme === 'dark'} onValueChange={handleThemeChange} />

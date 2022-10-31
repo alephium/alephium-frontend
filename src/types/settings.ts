@@ -23,7 +23,7 @@ export type Currency = 'CHF' | 'GBP' | 'EUR' | 'USD'
 export interface GeneralSettings {
   theme: ThemeType
   discreetMode: boolean
-  passwordRequirement: boolean
+  requireAuth: boolean
   currency: Currency
 }
 

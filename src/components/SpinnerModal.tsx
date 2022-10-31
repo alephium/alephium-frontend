@@ -15,36 +15,34 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { colord } from 'colord'
+import { ActivityIndicator } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
-import { Modal, ModalProps } from 'react-native'
-import styled from 'styled-components/native'
+import ModalWithBackdrop from './ModalWithBackdrop'
 
-interface ModalWithBackdropProps extends ModalProps {
-  closeModal?: () => void
+interface SpinnerModalProps {
+  isActive: boolean
 }
 
-const ModalWithBackdrop = ({ children, closeModal, ...props }: ModalWithBackdropProps) => (
-  <Modal transparent={true} {...props}>
-    <ModalBackdrop onPress={closeModal} />
-    <ModalContent>{children}</ModalContent>
-  </Modal>
-)
+const SpinnerModal = ({ isActive }: SpinnerModalProps) => {
+  const theme = useTheme()
 
-export default ModalWithBackdrop
+  return (
+    <ModalWithBackdrop animationType="fade" visible={isActive}>
+      <SpinnerContainer>
+        <ActivityIndicator size={72} color={theme.font.tertiary} />
+      </SpinnerContainer>
+    </ModalWithBackdrop>
+  )
+}
 
-const ModalContent = styled.View`
-  flex: 1;
+export default SpinnerModal
+
+const SpinnerContainer = styled.View`
+  flex: 1
+  width: 100%;
+  background-color: ${({ theme }) => colord(theme.bg.secondary).alpha(0.8).toRgbString()};
   justify-content: center;
   align-items: center;
-  position: relative;
-`
-
-const ModalBackdrop = styled.Pressable`
-  flex: 1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.5);
 `

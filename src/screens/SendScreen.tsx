@@ -39,6 +39,7 @@ import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
+import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import ExpandableRow from '../components/ExpandableRow'
 import HighlightRow from '../components/HighlightRow'
 import InfoBox from '../components/InfoBox'
@@ -93,6 +94,8 @@ const SendScreen = ({
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isSweeping, setIsSweeping] = useState(false)
   const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<SweepAddressTransaction[]>([])
+  const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
+  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const dispatch = useAppDispatch()
   const [txStep, setTxStep] = useState<TxStep>('build')
   const {
@@ -122,10 +125,7 @@ const SendScreen = ({
     convertAlphToSet(value) >= MINIMAL_GAS_PRICE ||
     `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
 
-  useEffect(() => {
-    if (txStep === 'send') setTxStep('build')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fromAddress, toAddressHash, amountInAlph, gasAmount, gasPriceInAlph])
+  useEffect(() => setTxStep('build'), [fromAddress, toAddressHash, amountInAlph, gasAmount, gasPriceInAlph])
 
   const buildConsolidationTransactions = useCallback(async () => {
     if (!fromAddress) return
@@ -249,9 +249,17 @@ const SendScreen = ({
     unsignedTxId
   ])
 
+  const authenticateAndSend = useCallback(async () => {
+    if (requiresAuth) {
+      setIsAuthenticationModalVisible(true)
+    } else {
+      sendTransaction()
+    }
+  }, [requiresAuth, sendTransaction])
+
   return (
     <Screen>
-      <ScrollView contentContainerStyle={{ flex: 1 }}>
+      <ScrollView>
         <MainContent>
           <>
             <ScreenSection>
@@ -389,7 +397,7 @@ const SendScreen = ({
           <Button
             title={txStep === 'build' ? 'Continue' : 'Confirm'}
             gradient
-            onPress={txStep === 'build' ? handleSubmit(buildTransaction) : sendTransaction}
+            onPress={txStep === 'build' ? handleSubmit(buildTransaction) : authenticateAndSend}
             wide
             disabled={isLoading || !isFormValid}
           />
@@ -416,11 +424,14 @@ const SendScreen = ({
             <BottomScreenSection>
               <ButtonsRow>
                 <Button title="Cancel" onPress={() => setIsConsolidateUTXOsModalVisible(false)} />
-                <Button title="Consolidate" onPress={sendTransaction} />
+                <Button title="Consolidate" onPress={authenticateAndSend} />
               </ButtonsRow>
             </BottomScreenSection>
           </ConsolidationModalContent>
         </ModalWithBackdrop>
+        {isAuthenticationModalVisible && (
+          <ConfirmWithAuthModal onCancel={() => setIsAuthenticationModalVisible(false)} onConfirm={sendTransaction} />
+        )}
       </ScrollView>
     </Screen>
   )
