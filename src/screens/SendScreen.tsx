@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   APIError,
   convertAlphToSet,
+  convertSetToAlph,
   formatAmountForDisplay,
   getHumanReadableError,
   MINIMAL_GAS_AMOUNT,
@@ -102,6 +103,7 @@ const SendScreen = ({
     control,
     watch,
     handleSubmit,
+    setValue,
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: {
@@ -150,7 +152,7 @@ const SendScreen = ({
 
       setIsLoading(true)
       const amountInSet = convertAlphToSet(formData.amountInAlph)
-      const isSweep = amountInSet === BigInt(fromAddress.networkData.availableBalance)
+      const isSweep = amountInSet.toString() === fromAddress.networkData.availableBalance
 
       setAmount(amountInSet)
       setIsSweeping(isSweep)
@@ -257,6 +259,12 @@ const SendScreen = ({
     }
   }, [requiresAuth, sendTransaction])
 
+  const handleUseMaxAmountPress = useCallback(() => {
+    if (!fromAddress) return
+
+    setValue('amountInAlph', convertSetToAlph(BigInt(fromAddress.networkData.availableBalance)))
+  }, [fromAddress, setValue])
+
   return (
     <Screen>
       <ScrollView>
@@ -322,6 +330,14 @@ const SendScreen = ({
                     keyboardType="number-pad"
                     error={
                       errors.amountInAlph?.type === 'required' ? requiredErrorMessage : errors.amountInAlph?.message
+                    }
+                    RightContent={
+                      <UseMaxButton
+                        title="Use max"
+                        onPress={handleUseMaxAmountPress}
+                        type="transparent"
+                        variant="accent"
+                      />
                     }
                   />
                 )}
@@ -460,4 +476,8 @@ const ScreenSectionStyled = styled(ScreenSection)`
 const Fee = styled(AppText)`
   display: flex;
   margin-top: 20px;
+`
+
+const UseMaxButton = styled(Button)`
+  padding-right: 0;
 `

@@ -66,7 +66,7 @@ function Select<T extends InputValue>({
         hasBottomBorder={hasBottomBorder}
         onPress={openModal}
         resetDisabledColor
-        IconComponent={<ChevronRight size={24} color={theme.font.secondary} />}
+        RightContent={<ChevronRight size={24} color={theme.font.secondary} />}
         value={value}
         renderValue={renderValue}
         label=""
