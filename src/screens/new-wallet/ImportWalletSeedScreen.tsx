@@ -61,7 +61,6 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
         ? []
         : allowedWords.current.filter((allowedWord) => allowedWord.startsWith(typedInput.toLowerCase().trim()))
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typedInput])
 
   const selectWord = (word: string) => {
