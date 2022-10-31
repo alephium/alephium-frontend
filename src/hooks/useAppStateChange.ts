@@ -30,7 +30,9 @@ export const useAppStateChange = () => {
   const appState = useRef(AppState.currentState)
   const activeWallet = useAppSelector((state) => state.activeWallet)
 
-  const getWalletFromStorageAndNavigate = useCallback(async () => {
+  const unlockWallet = useCallback(async () => {
+    if (activeWallet.mnemonic) return
+
     try {
       const storedActiveWallet = await getStoredActiveWallet()
 
@@ -50,7 +52,7 @@ export const useAppStateChange = () => {
       const error = e as { message?: string }
       if (error.message === 'User canceled the authentication') {
         Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
-          { text: 'Try again', onPress: getWalletFromStorageAndNavigate }
+          { text: 'Try again', onPress: unlockWallet }
         ])
       } else if (error.message === 'No biometrics are currently enrolled') {
         Alert.alert(
@@ -61,7 +63,7 @@ export const useAppStateChange = () => {
         console.error(e)
       }
     }
-  }, [dispatch])
+  }, [activeWallet.mnemonic, dispatch])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -70,10 +72,7 @@ export const useAppStateChange = () => {
         dispatch(walletFlushed())
       } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
         navigateRootStack('SplashScreen')
-
-        if (!activeWallet.mnemonic) {
-          getWalletFromStorageAndNavigate()
-        }
+        unlockWallet()
       }
 
       appState.current = nextAppState
@@ -82,5 +81,5 @@ export const useAppStateChange = () => {
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [activeWallet.mnemonic, dispatch, getWalletFromStorageAndNavigate])
+  }, [activeWallet.mnemonic, dispatch, unlockWallet])
 }
