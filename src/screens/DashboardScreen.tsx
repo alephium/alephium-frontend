@@ -55,8 +55,8 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   }
 
   // TODO: Delete before release
-  const handleDeleteAllWallets = () => {
-    deleteAllWallets()
+  const handleDeleteAllWallets = async () => {
+    await deleteAllWallets()
     dispatch(walletFlushed())
     navigation.getParent()?.navigate('LandingScreen')
   }

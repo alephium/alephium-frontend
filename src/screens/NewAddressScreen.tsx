@@ -52,7 +52,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
       setSeed(wallet.seed)
     }
 
-    importWallet()
+    if (activeWallet.mnemonic) importWallet()
   }, [activeWallet.mnemonic])
 
   const handleGeneratePress = async ({ isMain, label, color, group }: AddressFormData) => {

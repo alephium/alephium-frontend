@@ -35,7 +35,7 @@ const useLoadStoredAddressesMetadata = () => {
   const isAddressesStateEmpty = useAppSelector((state) => state.addresses.ids).length === 0
 
   const initializeAddressesState = useCallback(async () => {
-    if (activeWallet.metadataId) {
+    if (activeWallet.metadataId && activeWallet.mnemonic) {
       console.log('👀 Found addresses metadata in persistent storage')
 
       const wallet = await walletImportAsyncUnsafe(mnemonicToSeed, activeWallet.mnemonic)

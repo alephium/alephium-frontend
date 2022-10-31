@@ -165,7 +165,7 @@ const deleteWallet = async (walletMetadata: WalletMetadata) => {
       : {
           keychainService
         }
-  await SecureStore.deleteItemAsync(`wallet-${walletMetadata.id}`, secureStoreConfig)
+  return await SecureStore.deleteItemAsync(`wallet-${walletMetadata.id}`, secureStoreConfig)
 }
 
 export const areThereOtherWallets = async (): Promise<boolean> => {

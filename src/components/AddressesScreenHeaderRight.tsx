@@ -16,20 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { Plus as PlusIcon } from 'lucide-react-native'
+import React from 'react'
+import { useTheme } from 'styled-components/native'
 
-import { Address } from '../store/addressesSlice'
+import RootStackParamList from '../navigation/rootStackRoutes'
+import Button from './buttons/Button'
 
-export type PendingTransaction = {
-  hash: string
-  fromAddress: string
-  toAddress: string
-  timestamp: number
-  amount?: string
-  lockTime?: number
-  status: 'pending'
+const AddressesScreenHeaderRight = () => {
+  const theme = useTheme()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+
+  return (
+    <Button
+      onPress={() => navigation.navigate('NewAddressScreen')}
+      icon={<PlusIcon size={24} color={theme.global.accent} />}
+      type="transparent"
+    />
+  )
 }
 
-export type AddressConfirmedTransaction = Transaction & { address: Address }
-export type AddressPendingTransaction = PendingTransaction & { address: Address }
-export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction
+export default AddressesScreenHeaderRight

@@ -32,7 +32,8 @@ import { storeAddressMetadata } from '../storage/wallets'
 import { AddressHash, AddressSettings } from '../types/addresses'
 import { TimeInMs } from '../types/numbers'
 import { AddressToken } from '../types/tokens'
-import { getNewTransactions } from '../utils/transactions'
+import { PendingTransaction } from '../types/transactions'
+import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -47,7 +48,8 @@ export type Address = {
   networkData: {
     details: AddressInfo
     transactions: {
-      data: Transaction[]
+      confirmed: Transaction[]
+      pending: PendingTransaction[]
       loadedPage: number
       allPagesLoaded: boolean
     }
@@ -97,6 +99,7 @@ export const fetchAddressesData = createAsyncThunk(
     const addresses = payload
 
     for (const addressHash of addresses) {
+      console.log('⬇️ Fetching address details: ', addressHash)
       const { data } = await client.explorerClient.getAddressDetails(addressHash)
       const availableBalance = data.balance
         ? data.lockedBalance
@@ -104,10 +107,10 @@ export const fetchAddressesData = createAsyncThunk(
           : data.balance
         : undefined
 
-      const page = 1
-      console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, addressHash)
-      const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, page)
+      console.log('⬇️ Fetching 1st page of address confirmed transactions: ', addressHash)
+      const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, 1)
 
+      console.log('⬇️ Fetching address tokens: ', addressHash)
       const { data: tokenIds } = await client.explorerClient.addresses.getAddressesAddressTokens(addressHash)
 
       const tokens = await Promise.all(
@@ -124,8 +127,7 @@ export const fetchAddressesData = createAsyncThunk(
         details: data,
         availableBalance: availableBalance,
         transactions,
-        tokens,
-        page
+        tokens
       })
     }
 
@@ -167,25 +169,6 @@ export const fetchAddressesTransactionsNextPage = createAsyncThunk(
 
     dispatch(loadingFinished())
     return results
-  }
-)
-
-export const fetchAddressConfirmedTransactions = createAsyncThunk(
-  `${sliceName}/fetchAddressConfirmedTransactions`,
-  async (payload: { hash: AddressHash; page: number }, { dispatch, getState }) => {
-    const { hash, page } = payload
-    dispatch(loadingStarted())
-
-    console.log(`⬇️ Fetching page ${page} of address confirmed transactions: `, hash)
-    const { data } = await client.explorerClient.getAddressTransactions(hash, page)
-
-    dispatch(loadingFinished())
-
-    return {
-      hash,
-      transactions: data || [],
-      page
-    }
   }
 )
 
@@ -255,7 +238,8 @@ const addressesSlice = createSlice({
               txNumber: 0
             },
             transactions: {
-              data: [],
+              confirmed: [],
+              pending: [],
               loadedPage: 0,
               allPagesLoaded: false
             },
@@ -267,13 +251,13 @@ const addressesSlice = createSlice({
         }))
       )
     },
-    addTransactionToAddress: (state, action: PayloadAction<Transaction>) => {
-      const tx = action.payload
-      if (!tx.inputs || !tx.inputs[0] || tx.inputs.length === 0) return
+    addPendingTransactionToAddress: (state, action: PayloadAction<PendingTransaction>) => {
+      const pendingTransaction = action.payload
 
-      const address = state.entities[tx.inputs[0].address as string]
+      const address = state.entities[pendingTransaction.fromAddress]
       if (!address) return
-      address.networkData.transactions.data.push(tx)
+
+      address.networkData.transactions.pending.push(pendingTransaction)
     },
     addressSettingsUpdated: (state, action: PayloadAction<{ hash: AddressHash; settings: AddressSettings }>) => {
       const { hash, settings } = action.payload
@@ -297,7 +281,7 @@ const addressesSlice = createSlice({
     builder
       .addCase(fetchAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
-          const { hash, details, availableBalance, transactions, page, tokens } = address
+          const { hash, details, availableBalance, transactions, tokens } = address
           const addressState = state.entities[hash]
 
           if (addressState) {
@@ -306,14 +290,19 @@ const addressesSlice = createSlice({
             networkData.tokens = tokens
             if (availableBalance) networkData.availableBalance = availableBalance
 
-            const newTxs = getNewTransactions(transactions, networkData.transactions.data)
+            const newTxs = extractNewTransactions(transactions, networkData.transactions.confirmed)
 
             if (newTxs.length > 0) {
-              networkData.transactions.data = [...newTxs.concat(networkData.transactions.data)]
+              networkData.transactions.confirmed = [...newTxs.concat(networkData.transactions.confirmed)]
 
               if (networkData.transactions.loadedPage === 0) {
-                networkData.transactions.loadedPage = page
+                networkData.transactions.loadedPage = 1
               }
+
+              networkData.transactions.pending = extractRemainingPendingTransactions(
+                networkData.transactions.pending,
+                newTxs
+              )
             }
           }
         }
@@ -327,24 +316,15 @@ const addressesSlice = createSlice({
 
           if (addressState) {
             const networkData = addressState.networkData
-            const newTxs = getNewTransactions(transactions, networkData.transactions.data)
+            const newTxs = extractNewTransactions(transactions, networkData.transactions.confirmed)
 
             if (newTxs.length > 0) {
-              networkData.transactions.data = [...networkData.transactions.data.concat(newTxs)]
+              networkData.transactions.confirmed = [...networkData.transactions.confirmed.concat(newTxs)]
               networkData.transactions.loadedPage = page
             } else {
               networkData.transactions.allPagesLoaded = true
             }
           }
-        }
-      })
-      .addCase(fetchAddressConfirmedTransactions.fulfilled, (state, action) => {
-        const { hash, transactions, page } = action.payload
-
-        const addressState = state.entities[hash]
-        if (addressState) {
-          addressState.networkData.transactions.data = transactions
-          addressState.networkData.transactions.loadedPage = page
         }
       })
       .addCase(mainAddressChanged.fulfilled, (state, action) => {
@@ -377,12 +357,25 @@ export const selectMultipleAddresses = createSelector(
   (addresses, addressHashes) => addresses.filter((address) => addressHashes.includes(address.hash))
 )
 
-export const selectTransactions = createSelector(
+export const selectConfirmedTransactions = createSelector(
   [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
   (addresses, addressHashes) =>
     addresses
       .filter((address) => addressHashes.includes(address.hash))
-      .map((address) => address.networkData.transactions.data.map((tx) => ({ ...tx, address })))
+      .map((address) => address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address })))
+      .flat()
+      .sort((a, b) => {
+        const delta = b.timestamp - a.timestamp
+        return delta == 0 ? -1 : delta
+      })
+)
+
+export const selectPendingTransactions = createSelector(
+  [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
+  (addresses, addressHashes) =>
+    addresses
+      .filter((address) => addressHashes.includes(address.hash))
+      .map((address) => address.networkData.transactions.pending.map((tx) => ({ ...tx, address })))
       .flat()
       .sort((a, b) => {
         const delta = b.timestamp - a.timestamp
@@ -416,7 +409,7 @@ export const selectHaveAllPagesLoaded = createSelector([selectAllAddresses], (ad
 )
 
 export const {
-  addTransactionToAddress,
+  addPendingTransactionToAddress,
   addressesAdded,
   addressesFlushed,
   loadingStarted,

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { convertSetToFiat } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { useState } from 'react'
@@ -34,7 +35,6 @@ import { selectAddressByHash } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard } from '../utils/addresses'
 import { currencies } from '../utils/currencies'
-import { attoAlphToFiat } from '../utils/numbers'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'ReceiveScreen'>
 
@@ -52,7 +52,7 @@ const ReceiveScreen = ({
 
   if (!toAddress) return null
 
-  const balance = attoAlphToFiat(BigInt(toAddress.networkData.details.balance), price)
+  const balance = convertSetToFiat(BigInt(toAddress.networkData.details.balance), price ?? 0)
 
   return (
     <>

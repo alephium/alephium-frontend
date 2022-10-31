@@ -31,7 +31,6 @@ import CenteredInstructions, { Instruction } from '../components/text/CenteredIn
 import { useAppDispatch } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
-import { authenticated } from '../store/appMetadataSlice'
 import { pinEntered } from '../store/credentialsSlice'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 
@@ -74,7 +73,6 @@ const LoginScreen = ({ navigation, route }: ScreenProps) => {
     )
 
     setPinCode('')
-    dispatch(authenticated(true))
   }, [dispatch, pinCode, storedActiveEncryptedWallet])
 
   useEffect(() => {

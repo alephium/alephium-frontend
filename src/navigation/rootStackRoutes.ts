@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ActiveWalletState } from '../store/activeWalletSlice'
 import { AddressHash } from '../types/addresses'
-import { AddressTransaction } from '../types/transactions'
+import { AddressConfirmedTransaction } from '../types/transactions'
 
 type RootStackParamList = {
   LandingScreen: undefined
@@ -46,25 +46,13 @@ type RootStackParamList = {
   SwitchWalletAfterDeletionScreen: undefined
   TransactionScreen: {
     // TODO: Make all params serializable to help with state persistance
-    tx: AddressTransaction
-    isOut: boolean
-    amount: bigint
+    tx: AddressConfirmedTransaction
   }
   ReceiveScreen: {
     addressHash: AddressHash
   }
   SendScreen: {
     addressHash: AddressHash
-  }
-  ConfirmSendScreen: {
-    fromAddressHash: string
-    toAddressHash: string
-    amount: string
-    unsignedTxId: string
-    unsignedTransaction: string
-    fees: bigint
-    gasAmount?: string
-    gasPrice?: bigint
   }
   SecurityScreen: undefined
 }

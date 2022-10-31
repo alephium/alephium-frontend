@@ -16,18 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calcTxAmountDeltaForAddress, getDirection } from '@alephium/sdk'
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { convertSetToFiat } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
-import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import Arrow from '../images/Arrow'
+import { useAppSelector } from '../hooks/redux'
+import { useTransactionInfo } from '../hooks/useTransactionalInfo'
+import { useTransactionUI } from '../hooks/useTransactionUI'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { AddressTransaction } from '../types/transactions'
+import { currencies } from '../utils/currencies'
+import { isPendingTx } from '../utils/transactions'
 import Amount from './Amount'
 import AppText from './AppText'
 import HighlightRow from './HighlightRow'
@@ -42,52 +45,60 @@ interface TransactionRowProps {
 }
 
 const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => {
-  const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const price = useAppSelector((state) => state.price)
+  const currency = useAppSelector((state) => state.settings.currency)
+  const { amount, infoType } = useTransactionInfo(tx, tx.address.hash)
+  const { amountSign, Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
+  const theme = useTheme()
 
-  let amount = calcTxAmountDeltaForAddress(tx as Transaction, tx.address.hash)
-  amount = amount < 0 ? amount * BigInt(-1) : amount
+  const fiatValue = price.value !== undefined && amount !== undefined ? convertSetToFiat(amount, price.value) : 0
 
-  const isOut = getDirection(tx, tx.address.hash) === 'out'
-
-  const isConfirmed = tx.blockHash !== ''
+  const handleOnPress = () => {
+    if (!isPendingTx(tx)) navigation.navigate('TransactionScreen', { tx })
+  }
 
   return (
     <HighlightRow
       style={style}
-      isSecondary={!isConfirmed}
       hasBottomBorder={!isLast}
       isBottomRounded={isLast}
       isTopRounded={isFirst}
-      onPress={() => navigation.navigate('TransactionScreen', { tx, isOut, amount })}
+      onPress={handleOnPress}
     >
       <Direction>
-        {isConfirmed ? (
-          isOut ? (
-            <Arrow direction="up" color={theme.font.secondary} />
-          ) : (
-            <Arrow direction="down" color={theme.global.valid} />
-          )
-        ) : (
-          <ActivityIndicator size="small" color={theme.font.primary} />
-        )}
+        <TransactionIcon color={iconBgColor}>
+          <Icon size={16} strokeWidth={3} color={iconColor} />
+        </TransactionIcon>
       </Direction>
-      <Date>{dayjs(tx.timestamp).fromNow()}</Date>
-      <AddressHash numberOfLines={1} ellipsizeMode="middle">
-        {tx.address.hash}
-      </AddressHash>
-      <AmountStyled prefix={isOut ? '-' : '+'} value={amount} fadeDecimals bold />
+      <TokenAndDate>
+        <AppText bold>{label} ALPH</AppText>
+        <AppText color={theme.font.tertiary}>{dayjs(tx.timestamp).fromNow()}</AppText>
+      </TokenAndDate>
+      <AmountColumn>
+        <AppText>
+          <AppText bold>{amountSign}</AppText>
+          <Amount value={amount} fadeDecimals bold />
+        </AppText>
+        <FiatValue>
+          <AppText bold color={theme.font.tertiary}>
+            {amountSign}
+          </AppText>
+          <Amount isFiat value={fiatValue} bold suffix={currencies[currency].symbol} color={theme.font.tertiary} />
+        </FiatValue>
+      </AmountColumn>
     </HighlightRow>
   )
 }
 
 export default memo(TransactionRow, (prevProps, nextProps) => {
-  return prevProps.tx.hash === nextProps.tx.hash && prevProps.tx.address.hash === nextProps.tx.address.hash
+  return (
+    prevProps.tx.hash === nextProps.tx.hash &&
+    prevProps.tx.address.hash === nextProps.tx.address.hash &&
+    prevProps.isFirst === nextProps.isFirst &&
+    prevProps.isLast === nextProps.isLast
+  )
 })
-
-const Item = styled(AppText)`
-  font-weight: bold;
-`
 
 const Direction = styled.View`
   align-items: center;
@@ -95,17 +106,25 @@ const Direction = styled.View`
   margin-right: 20px;
 `
 
-const Date = styled(Item)`
-  width: 25%;
+const TokenAndDate = styled.View`
+  flex: 1;
   padding-right: 10px;
 `
 
-const AddressHash = styled(Item)`
-  width: 35%;
-  padding-right: 10px;
+const TransactionIcon = styled.View<{ color?: string }>`
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  background-color: ${({ color, theme }) => color || theme.font.primary};
 `
 
-const AmountStyled = styled(Amount)`
-  width: 25%;
-  text-align: right;
+const AmountColumn = styled.View`
+  flex: 1;
+  align-items: flex-end;
+`
+
+const FiatValue = styled(AppText)`
+  font-size: 12px;
 `

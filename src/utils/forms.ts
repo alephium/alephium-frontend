@@ -16,29 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useState } from 'react'
+import { isAddressValid } from '@alephium/sdk'
 
-const useDebouncedEffect = (fnPre: () => void, fn: () => void, watchList: unknown[], periodInMs: number) => {
-  const [timeoutId, setTimeoutId] = useState<number>()
+import { isNumericStringValid } from './numbers'
 
-  useEffect(() => {
-    fnPre()
+export const validateIsAddressValid = (value: string) => isAddressValid(value) || 'This address is not valid.'
 
-    if (timeoutId) {
-      clearTimeout(timeoutId)
-    }
+export const validateIsNumericStringValid = (value: string) => isNumericStringValid(value) || 'A number is expected.'
 
-    setTimeoutId(
-      setTimeout(() => {
-        fn()
-      }, periodInMs)
-    )
-    return () => {
-      timeoutId && clearTimeout(timeoutId)
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, watchList)
-}
-
-export default useDebouncedEffect
+export const validateOptionalIsNumericStringValid = (value: string) => !value || validateIsNumericStringValid(value)

@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import dayjs from 'dayjs'
+import updateLocale from 'dayjs/plugin/updateLocale'
 import { StatusBar } from 'expo-status-bar'
 import { ReactNode, useEffect, useState } from 'react'
 import { RootSiblingParent } from 'react-native-root-siblings'
@@ -30,6 +32,25 @@ import useRefreshALPHPrice from './src/hooks/useRefreshALPHPrice'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
 import { store } from './src/store/store'
 import { themes } from './src/style/themes'
+
+dayjs.extend(updateLocale)
+dayjs.updateLocale('en', {
+  relativeTime: {
+    future: 'in %s',
+    past: '%s ago',
+    s: 'some sec',
+    m: '1m',
+    mm: '%dm',
+    h: '1h',
+    hh: '%dh',
+    d: '1d',
+    dd: '%dd',
+    M: '1mo',
+    MM: '%dmo',
+    y: '1y',
+    yy: '%dy'
+  }
+})
 
 const App = () => {
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
