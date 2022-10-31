@@ -23,7 +23,6 @@ import styled from 'styled-components/native'
 
 import { errorInstructionSet, pinLength } from '../screens/LoginScreen'
 import { getStoredActiveWallet } from '../storage/wallets'
-import { ActiveWalletState } from '../store/activeWalletSlice'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 import PinCodeInput from './inputs/PinCodeInput'
 import ModalWithBackdrop from './ModalWithBackdrop'
@@ -40,8 +39,7 @@ const firstInstructionSet: Instruction[] = [{ text: 'Please enter your pin', typ
 const ConfirmWithAuthModal = ({ onConfirm, onCancel }: ConfirmWithAuthModalProps) => {
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const [activeWallet, setActiveWallet] = useState<ActiveWalletState>()
-  const [requiresPin, setRequiresPin] = useState(false)
+  const [activeWalletEncryptedMnemonic, setActiveWalletEncryptedMnemonic] = useState<string>()
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -50,12 +48,10 @@ const ConfirmWithAuthModal = ({ onConfirm, onCancel }: ConfirmWithAuthModalProps
         const storedActiveWallet = await getStoredActiveWallet()
 
         if (storedActiveWallet) {
-          setActiveWallet(storedActiveWallet)
-
           if (storedActiveWallet.authType === 'biometrics') {
             onConfirm()
           } else if (storedActiveWallet.authType === 'pin') {
-            setRequiresPin(true)
+            setActiveWalletEncryptedMnemonic(storedActiveWallet.mnemonic)
           }
         }
       } catch (e: unknown) {
@@ -75,17 +71,16 @@ const ConfirmWithAuthModal = ({ onConfirm, onCancel }: ConfirmWithAuthModalProps
     }
 
     getWallet()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [onCancel, onConfirm])
 
   useEffect(() => {
-    if (!requiresPin || !pinCode || !activeWallet) return
+    if (!pinCode || !activeWalletEncryptedMnemonic) return
 
     const decryptMnemonic = async () => {
       setLoading(true)
 
       try {
-        await walletOpenAsyncUnsafe(pinCode, activeWallet.mnemonic, pbkdf2, mnemonicToSeed)
+        await walletOpenAsyncUnsafe(pinCode, activeWalletEncryptedMnemonic, pbkdf2, mnemonicToSeed)
         onConfirm()
       } catch (e) {
         setShownInstructions(errorInstructionSet)
@@ -96,8 +91,7 @@ const ConfirmWithAuthModal = ({ onConfirm, onCancel }: ConfirmWithAuthModalProps
     }
 
     decryptMnemonic()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pinCode])
+  }, [activeWalletEncryptedMnemonic, onConfirm, pinCode])
 
   return (
     <>

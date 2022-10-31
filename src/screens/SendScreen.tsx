@@ -136,7 +136,11 @@ const SendScreen = ({
     setIsLoading(true)
 
     try {
-      const { unsignedTxs, fees } = await client.buildSweepTransactions(fromAddress, fromAddress.hash)
+      const { unsignedTxs, fees } = await client.buildSweepTransactions(
+        fromAddress.hash,
+        fromAddress.publicKey,
+        fromAddress.hash
+      )
       setSweepUnsignedTxs(unsignedTxs)
       setFees(fees)
     } catch (e) {
@@ -148,7 +152,7 @@ const SendScreen = ({
 
   const buildTransaction = useCallback(
     async (formData: FormData) => {
-      if (!fromAddress || !isFormValid) return
+      if (!fromAddress?.hash || !isFormValid) return
 
       setIsLoading(true)
       const amountInSet = convertAlphToSet(formData.amountInAlph)
@@ -160,7 +164,11 @@ const SendScreen = ({
       const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : ''
       try {
         if (isSweep) {
-          const { unsignedTxs, fees } = await client.buildSweepTransactions(fromAddress, formData.toAddressHash)
+          const { unsignedTxs, fees } = await client.buildSweepTransactions(
+            fromAddress.hash,
+            fromAddress.publicKey,
+            formData.toAddressHash
+          )
           setSweepUnsignedTxs(unsignedTxs)
           setFees(fees)
         } else {
@@ -194,18 +202,24 @@ const SendScreen = ({
         setIsLoading(false)
       }
     },
-    [buildConsolidationTransactions, fromAddress, isFormValid]
+    [
+      buildConsolidationTransactions,
+      fromAddress?.hash,
+      fromAddress?.networkData.availableBalance,
+      fromAddress?.publicKey,
+      isFormValid
+    ]
   )
 
   const sendTransaction = useCallback(async () => {
-    if (!fromAddress) return
+    if (!fromAddress?.hash) return
 
     setIsLoading(true)
 
     try {
       if (isSweeping) {
         for (const { txId, unsignedTx } of sweepUnsignedTxs) {
-          client.signAndSendTransaction(fromAddress, txId, unsignedTx)
+          client.signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, txId, unsignedTx)
 
           dispatch(
             addPendingTransactionToAddress({
@@ -219,7 +233,7 @@ const SendScreen = ({
           )
         }
       } else {
-        client.signAndSendTransaction(fromAddress, unsignedTxId, unsignedTransaction)
+        client.signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, unsignedTxId, unsignedTransaction)
 
         dispatch(
           addPendingTransactionToAddress({
@@ -241,7 +255,8 @@ const SendScreen = ({
     amount,
     consolidationRequired,
     dispatch,
-    fromAddress,
+    fromAddress?.hash,
+    fromAddress?.privateKey,
     fromAddressHash,
     isSweeping,
     navigation,
@@ -264,6 +279,8 @@ const SendScreen = ({
 
     setValue('amountInAlph', convertSetToAlph(BigInt(fromAddress.networkData.availableBalance)))
   }, [fromAddress, setValue])
+
+  const handleAuthCancel = useCallback(() => setIsAuthenticationModalVisible(false), [])
 
   return (
     <Screen>
@@ -446,7 +463,7 @@ const SendScreen = ({
           </ConsolidationModalContent>
         </ModalWithBackdrop>
         {isAuthenticationModalVisible && (
-          <ConfirmWithAuthModal onCancel={() => setIsAuthenticationModalVisible(false)} onConfirm={sendTransaction} />
+          <ConfirmWithAuthModal onCancel={handleAuthCancel} onConfirm={sendTransaction} />
         )}
       </ScrollView>
     </Screen>
