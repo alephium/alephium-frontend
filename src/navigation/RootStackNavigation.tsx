@@ -102,7 +102,11 @@ const RootStackNavigation = () => {
         {/* NEW WALLET */}
         <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
         <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
-        <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
+        <RootStack.Screen
+          name="ImportWalletSeedScreen"
+          component={ImportWalletSeedScreen}
+          options={{ headerTitle: 'Import wallet' }}
+        />
         <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
         <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
         <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
