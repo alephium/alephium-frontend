@@ -21,7 +21,6 @@ import {
   convertAlphToSet,
   formatAmountForDisplay,
   getHumanReadableError,
-  isAddressValid,
   MINIMAL_GAS_AMOUNT,
   MINIMAL_GAS_PRICE
 } from '@alephium/sdk'
@@ -57,7 +56,11 @@ import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { addPendingTransactionToAddress, selectAddressByHash } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
-import { isNumericStringValid } from '../utils/numbers'
+import {
+  validateIsAddressValid,
+  validateIsNumericStringValid,
+  validateOptionalIsNumericStringValid
+} from '../utils/forms'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'SendScreen'>
 
@@ -112,9 +115,6 @@ const SendScreen = ({
   const isFormValid = isEmpty(errors)
   const totalAmount = amount + fees
 
-  const validateIsAddressValid = (value: string) => isAddressValid(value) || 'This address is not valid'
-  const validateIsNumericStringValid = (value: string) => isNumericStringValid(value) || 'We need a number here!'
-  const validateOptionalIsNumericStringValid = (value: string) => !value || validateIsNumericStringValid(value)
   const validateOptionalMinGasAmount = (value: string) =>
     !value || parseInt(value) >= MINIMAL_GAS_AMOUNT || `Gas must be at least ${MINIMAL_GAS_AMOUNT}`
   const validateOptionalMinGasPrice = (value: string) =>
