@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { StyleProp, ViewStyle } from 'react-native'
+import { RefreshControl, StyleProp, ViewStyle } from 'react-native'
 
 import AddressesTokensList from '../components/AddressesTokensList'
 import BalanceSummary from '../components/BalanceSummary'
@@ -28,11 +28,13 @@ import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
 import WalletSwitch from '../components/WalletSwitch'
 import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
-import { useAppDispatch } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
+import { fetchAddressesData, selectAddressIds } from '../store/addressesSlice'
+import { AddressHash } from '../types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
   style?: StyleProp<ViewStyle>
@@ -45,7 +47,14 @@ const DashboardScreenHeader = (props: Partial<DefaultHeaderProps>) => (
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const updateHeader = useInWalletTabScreenHeader(DashboardScreenHeader, navigation)
+  const isLoading = useAppSelector((state) => state.addresses.loading)
+  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
 
+  const refreshData = () => {
+    if (!isLoading) dispatch(fetchAddressesData(addressHashes))
+  }
+
+  // TODO: Delete before release
   const handleDeleteAllWallets = () => {
     deleteAllWallets()
     dispatch(walletFlushed())
@@ -53,7 +62,11 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   }
 
   return (
-    <InWalletScrollScreen style={style} onScrollYChange={updateHeader}>
+    <InWalletScrollScreen
+      style={style}
+      onScrollYChange={updateHeader}
+      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
+    >
       <ScreenSection>
         <BalanceSummary />
       </ScreenSection>

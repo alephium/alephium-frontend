@@ -16,26 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { css } from 'styled-components/native'
+import { Transaction } from '@alephium/sdk/api/explorer'
 
-export interface AppTextProps {
-  bold?: boolean
-  color?: string
-  size?: number
-}
-
-export default styled.Text<AppTextProps>`
-  color: ${({ color, theme }) => color ?? theme.font.primary};
-
-  ${({ bold }) =>
-    bold &&
-    css`
-      font-weight: 700;
-    `}
-
-  ${({ size }) =>
-    size &&
-    css`
-      font-size: ${size}px;
-    `}
-`
+export const getNewTransactions = (
+  incomingTransactions: Transaction[],
+  existingTransactions: Transaction[]
+): Transaction[] =>
+  incomingTransactions.reduce((newTxs: Transaction[], incomingTx: Transaction) => {
+    const targetTxIndex = existingTransactions.findIndex((existingTx) => existingTx.hash === incomingTx.hash)
+    if (targetTxIndex === -1) {
+      newTxs.push(incomingTx)
+    } else {
+      if (existingTransactions[targetTxIndex].blockHash === '') {
+        existingTransactions.splice(targetTxIndex, 1, incomingTx)
+      }
+    }
+    return newTxs
+  }, [])

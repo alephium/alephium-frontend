@@ -45,7 +45,11 @@ const TokenInfo = ({ id, name, balances, worth, isLoading, image, symbol, decima
     <View style={style}>
       <LeftGroup>
         <TokenIcon>
-          {isAlph ? <AlephiumLogo /> : image && <TokenLogo source={{ uri: `${TOKEN_IMAGE_URL}${image}` }} />}
+          {isAlph ? (
+            <AlephiumLogo color={theme.font.contrast} />
+          ) : (
+            image && <TokenLogo source={{ uri: `${TOKEN_IMAGE_URL}${image}` }} />
+          )}
         </TokenIcon>
         <AppText bold numberOfLines={1} style={{ flexShrink: 1 }}>
           {name ?? id}

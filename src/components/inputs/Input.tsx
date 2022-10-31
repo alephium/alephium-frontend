@@ -28,6 +28,7 @@ import {
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
+import AppText from '../AppText'
 import HighlightRow, { BorderOptions } from '../HighlightRow'
 
 export type InputValue = string | number | undefined | unknown
@@ -164,7 +165,7 @@ const CustomRenderedValue = styled.View`
   height: 100%;
 `
 
-const Error = styled.Text`
+const Error = styled(AppText)`
   color: ${({ theme }) => theme.global.alert};
   position: absolute;
   bottom: 5px;

@@ -20,7 +20,7 @@ import { ActivityIndicator, FlatListProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
-import { fetchAddressesDataNextPage } from '../../store/addressesSlice'
+import { fetchAddressesData, fetchAddressesTransactionsNextPage } from '../../store/addressesSlice'
 import { AddressHash } from '../../types/addresses'
 import { AddressTransaction } from '../../types/transactions'
 import AppText from '../AppText'
@@ -59,8 +59,12 @@ const InWalletTransactionsFlatList = ({
 
   const fetchNextTransactionsPage = () => {
     if (!isLoading && !haveAllPagesLoaded) {
-      dispatch(fetchAddressesDataNextPage(addressHashes))
+      dispatch(fetchAddressesTransactionsNextPage(addressHashes))
     }
+  }
+
+  const refreshData = () => {
+    if (!isLoading) dispatch(fetchAddressesData(addressHashes))
   }
 
   return (
@@ -70,6 +74,8 @@ const InWalletTransactionsFlatList = ({
       renderItem={renderTransactionItem}
       keyExtractor={transactionKeyExtractor}
       onEndReached={fetchNextTransactionsPage}
+      onRefresh={refreshData}
+      refreshing={isLoading}
       ListHeaderComponent={
         <>
           {ListHeaderComponent}
