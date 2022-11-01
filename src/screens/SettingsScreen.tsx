@@ -30,7 +30,7 @@ import Screen, { ScreenSection, ScreenSectionTitle } from '../components/layout/
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { deleteWalletByName } from '../storage/wallets'
+import { deleteWalletById } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
 import { currencyChanged, discreetModeChanged, passwordRequirementChanged, themeChanged } from '../store/settingsSlice'
 import { Currency } from '../types/settings'
@@ -46,8 +46,10 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const requireAuth = useAppSelector((state) => state.settings.requireAuth)
   const currentTheme = useAppSelector((state) => state.settings.theme)
   const currentNetworkName = useAppSelector((state) => state.network.name)
-  const currentWalletName = useAppSelector((state) => state.activeWallet.name)
+  const currentWalletId = useAppSelector((state) => state.activeWallet.metadataId)
   const currentCurrency = useAppSelector((state) => state.settings.currency)
+
+  if (!currentWalletId) return null
 
   const currencyOptions = Object.values(currencies).map((currency) => ({
     label: `${currency.name} (${currency.ticker})`,
@@ -68,7 +70,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         {
           text: 'Delete',
           onPress: async () => {
-            await deleteWalletByName(currentWalletName)
+            await deleteWalletById(currentWalletId)
             dispatch(walletFlushed())
 
             navigation.navigate('SwitchWalletAfterDeletionScreen')
