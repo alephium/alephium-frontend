@@ -178,6 +178,7 @@ const getSecureStoreConfig = (authType: StoredWalletAuthType, message: string) =
   authType === 'biometrics'
     ? {
         requireAuthentication: true,
-        authenticationPrompt: message
+        authenticationPrompt: message,
+        keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY
       }
     : {}
