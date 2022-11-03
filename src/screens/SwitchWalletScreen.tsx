@@ -16,10 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getHumanReadableError } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { ScrollView, StyleProp, ViewStyle } from 'react-native'
+import { Alert, ScrollView, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../components/AppText'
@@ -53,18 +54,17 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
     try {
       const storedWallet = await getStoredWalletById(walletId)
 
-      if (!storedWallet) return
-
       if (storedWallet.authType === 'pin') {
-        navigation.navigate('LoginScreen', { storedWallet })
-      } else if (storedWallet.authType === 'biometrics') {
+        navigation.navigate('LoginScreen', { storedWallet, navigateToDashboard: true })
+        return
+      }
+
+      if (storedWallet.authType === 'biometrics') {
         dispatch(activeWalletChanged(storedWallet))
         navigation.navigate('InWalletScreen')
-      } else {
-        throw new Error('Unknown auth type')
       }
     } catch (e) {
-      console.error('Could not switch wallets', e)
+      Alert.alert(getHumanReadableError(e, 'Could not switch wallets'))
     }
   }
 

@@ -31,6 +31,7 @@ type RootStackParamList = {
   InWalletScreen: undefined
   LoginScreen: {
     storedWallet: ActiveWalletState
+    navigateToDashboard?: boolean
   }
   SplashScreen: undefined
   SwitchWalletScreen: undefined

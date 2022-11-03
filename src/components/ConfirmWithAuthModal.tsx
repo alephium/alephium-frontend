@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletOpenAsyncUnsafe } from '@alephium/sdk'
-import { useEffect, useState } from 'react'
+import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
+import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -30,78 +30,73 @@ import SpinnerModal from './SpinnerModal'
 import CenteredInstructions, { Instruction } from './text/CenteredInstructions'
 
 interface ConfirmWithAuthModalProps {
-  onConfirm: () => void
+  onConfirm: (pin?: string) => void
   onCancel: () => void
+  usePin?: boolean
 }
 
 const firstInstructionSet: Instruction[] = [{ text: 'Please enter your pin', type: 'primary' }]
 
-const ConfirmWithAuthModal = ({ onConfirm, onCancel }: ConfirmWithAuthModalProps) => {
+const ConfirmWithAuthModal = ({ onConfirm, onCancel, usePin = false }: ConfirmWithAuthModalProps) => {
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [activeWalletEncryptedMnemonic, setActiveWalletEncryptedMnemonic] = useState<string>()
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    const getWallet = async () => {
-      try {
-        const storedActiveWallet = await getStoredActiveWallet()
+  const getStoredWallet = useCallback(async () => {
+    try {
+      const storedActiveWallet = await getStoredActiveWallet(usePin)
 
-        if (storedActiveWallet) {
-          if (storedActiveWallet.authType === 'biometrics') {
-            onConfirm()
-          } else if (storedActiveWallet.authType === 'pin') {
-            setActiveWalletEncryptedMnemonic(storedActiveWallet.mnemonic)
-          }
-        }
-      } catch (e: unknown) {
-        const error = e as { message?: string }
+      if (!storedActiveWallet) return
 
-        if (error.message === 'User canceled the authentication') {
-          onCancel()
-        } else if (error.message === 'No biometrics are currently enrolled') {
-          Alert.alert(
-            'Authentication required',
-            'To authenticate, please set up biometrics (fingerprint) on your device settings and try again.'
-          )
-        } else {
-          console.error(e)
-        }
+      if (storedActiveWallet.authType === 'biometrics') {
+        onConfirm()
+      } else if (storedActiveWallet.authType === 'pin') {
+        setActiveWalletEncryptedMnemonic(storedActiveWallet.mnemonic)
       }
+    } catch (e: unknown) {
+      Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
+      onCancel()
     }
+  }, [onCancel, onConfirm, usePin])
 
-    getWallet()
-  }, [onCancel, onConfirm])
+  const decryptMnemonic = useCallback(async () => {
+    if (!activeWalletEncryptedMnemonic) return
+
+    setLoading(true)
+
+    try {
+      await walletOpenAsyncUnsafe(pinCode, activeWalletEncryptedMnemonic, pbkdf2, mnemonicToSeed)
+      onConfirm(pinCode)
+    } catch (e) {
+      setShownInstructions(errorInstructionSet)
+      setPinCode('')
+    } finally {
+      setLoading(false)
+    }
+  }, [activeWalletEncryptedMnemonic, onConfirm, pinCode])
+
+  useEffect(() => {
+    getStoredWallet()
+  }, [getStoredWallet])
 
   useEffect(() => {
     if (!pinCode || !activeWalletEncryptedMnemonic) return
 
-    const decryptMnemonic = async () => {
-      setLoading(true)
-
-      try {
-        await walletOpenAsyncUnsafe(pinCode, activeWalletEncryptedMnemonic, pbkdf2, mnemonicToSeed)
-        onConfirm()
-      } catch (e) {
-        setShownInstructions(errorInstructionSet)
-        setPinCode('')
-      } finally {
-        setLoading(false)
-      }
-    }
-
     decryptMnemonic()
-  }, [activeWalletEncryptedMnemonic, onConfirm, pinCode])
+  }, [activeWalletEncryptedMnemonic, decryptMnemonic, pinCode])
 
   return (
     <>
       <ModalWithBackdrop animationType="fade" visible={true} closeModal={onCancel}>
-        <ModalContent>
-          <CenteredInstructions instructions={shownInstructions} />
-          <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
-        </ModalContent>
+        {activeWalletEncryptedMnemonic && (
+          <ModalContent>
+            <CenteredInstructions instructions={shownInstructions} />
+            <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
+          </ModalContent>
+        )}
       </ModalWithBackdrop>
-      <SpinnerModal isActive={loading} />
+      <SpinnerModal isActive={loading} text="Verifying passcode..." />
     </>
   )
 }

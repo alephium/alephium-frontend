@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createNavigationContainerRef, DefaultTheme, NavigationContainer } from '@react-navigation/native'
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
-import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useRef } from 'react'
+import { createStackNavigator } from '@react-navigation/stack'
+import { useCallback } from 'react'
 import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
@@ -46,11 +46,10 @@ import SwitchWalletAfterDeletionScreen from '../screens/SwitchWalletAfterDeletio
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
 import TransactionScreen from '../screens/TransactionScreen'
 import { routeChanged } from '../store/appMetadataSlice'
-import { Mnemonic } from '../types/wallet'
+import { rootStackNavigationRef } from '../utils/navigation'
 import InWalletTabsNavigation from './InWalletNavigation'
 import RootStackParamList from './rootStackRoutes'
 
-const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
 const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
@@ -59,9 +58,7 @@ const RootStackNavigation = () => {
   const { height: screenHeight } = useWindowDimensions()
   const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
   const dispatch = useAppDispatch()
-  const lastNavigationState = useAppSelector((state) => state.appMetadata.lastNavigationState)
   const currentMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
-  const lastActiveWalletMnemonic = useRef<Mnemonic>(currentMnemonic)
 
   const handleStateChange = useCallback(
     (state?: NavigationState) => {
@@ -82,22 +79,6 @@ const RootStackNavigation = () => {
       border: theme.border.primary
     }
   }
-
-  useEffect(() => {
-    const mnemonicChanged = currentMnemonic !== lastActiveWalletMnemonic.current
-
-    if (mnemonicChanged) {
-      if (currentMnemonic) {
-        const resetToDefaultScreen = lastActiveWalletMnemonic.current || !lastNavigationState
-
-        rootStackNavigationRef.resetRoot(
-          resetToDefaultScreen ? { index: 0, routes: [{ name: 'InWalletScreen' }] } : lastNavigationState
-        )
-      }
-
-      lastActiveWalletMnemonic.current = currentMnemonic
-    }
-  }, [currentMnemonic, lastNavigationState])
 
   return (
     <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
@@ -155,17 +136,6 @@ const RootStackNavigation = () => {
       </RootStack.Navigator>
     </NavigationContainer>
   )
-}
-
-// Navigating without the navigation prop:
-// https://reactnavigation.org/docs/navigating-without-navigation-prop
-export const navigateRootStack = (
-  name: keyof RootStackParamList,
-  params?: StackScreenProps<RootStackParamList>['route']['params']
-) => {
-  if (rootStackNavigationRef.isReady()) {
-    rootStackNavigationRef.navigate(name, params)
-  }
 }
 
 export default RootStackNavigation

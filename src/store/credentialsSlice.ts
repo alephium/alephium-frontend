@@ -21,11 +21,11 @@ import { createSlice } from '@reduxjs/toolkit'
 const sliceName = 'credentials'
 
 interface SecurityState {
-  pin: string | null
+  pin: string | undefined
 }
 
 const initialState: SecurityState = {
-  pin: null
+  pin: undefined
 }
 
 const credentialsSlice = createSlice({

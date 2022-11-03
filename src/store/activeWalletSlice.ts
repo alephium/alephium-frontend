@@ -16,12 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletEncryptAsyncUnsafe, walletImportAsyncUnsafe } from '@alephium/sdk'
+import { walletGenerateAsyncUnsafe, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { changeActiveWallet, storePartialWalletMetadata, storeWallet } from '../storage/wallets'
+import {
+  changeActiveWallet,
+  disableBiometrics,
+  enableBiometrics,
+  storePartialWalletMetadata,
+  storeWallet
+} from '../storage/wallets'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
-import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
+import { mnemonicToSeed } from '../utils/crypto'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
@@ -43,40 +49,60 @@ const initialState: ActiveWalletState = {
   metadataId: null
 }
 
-export const walletStored = createAsyncThunk(
+export const walletGeneratedAndStoredWithPin = createAsyncThunk(
   `${sliceName}/walletStored`,
-  async (payload: Omit<ActiveWalletState, 'metadataId'>, { getState, dispatch }) => {
+  async (
+    payload: {
+      name: ActiveWalletState['name']
+      mnemonicToImport?: ActiveWalletState['mnemonic']
+      pin: string
+    },
+    { dispatch }
+  ) => {
     dispatch(loadingStarted())
 
-    const { name, mnemonic, authType, isMnemonicBackedUp } = payload
-    let metadataId: string | null = null
+    const { name, pin, mnemonicToImport } = payload
 
     if (!name) throw 'Could not store wallet, wallet name is not set'
-    if (!mnemonic) throw 'Could not store wallet, mnemonic not set'
 
-    // Check if mnemonic is valid
-    await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
+    const wallet = mnemonicToImport
+      ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
+      : await walletGenerateAsyncUnsafe(mnemonicToSeed)
 
-    if (authType === 'biometrics') {
-      metadataId = await storeWallet(name, mnemonic, authType, isMnemonicBackedUp)
-    } else if (authType === 'pin') {
-      const state = getState() as RootState
-      const pin = state.credentials.pin
-      if (!pin) throw 'Could not store wallet, pin to encrypt it is not set'
-
-      const encryptedWallet = await walletEncryptAsyncUnsafe(pin, mnemonic, pbkdf2)
-      metadataId = await storeWallet(name, encryptedWallet, authType, isMnemonicBackedUp)
-    }
+    const isMnemonicBackedUp = !!mnemonicToImport
+    const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
 
     dispatch(loadingFinished())
 
     return {
       name,
-      mnemonic,
-      authType,
+      mnemonic: wallet.mnemonic,
+      authType: 'pin',
       metadataId,
       isMnemonicBackedUp
     } as ActiveWalletState
+  }
+)
+
+export const biometricsToggled = createAsyncThunk(
+  `${sliceName}/biometricsEnabled`,
+  async (enable: boolean, { getState, dispatch }) => {
+    dispatch(loadingStarted())
+
+    const state = getState() as RootState
+    const metadataId = state.activeWallet.metadataId
+
+    if (!metadataId) throw 'Could not enable biometrics, active wallet metadata ID not found'
+
+    if (enable) {
+      await enableBiometrics(metadataId, state.activeWallet.mnemonic)
+    } else {
+      await disableBiometrics(metadataId)
+    }
+
+    dispatch(loadingFinished())
+
+    return enable
   }
 )
 
@@ -124,10 +150,14 @@ const activeWalletSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(walletStored.fulfilled, (_, action) => action.payload)
+      .addCase(walletGeneratedAndStoredWithPin.fulfilled, (_, action) => action.payload)
       .addCase(activeWalletChanged.fulfilled, (_, action) => action.payload)
       .addCase(mnemonicBackedUp.fulfilled, (state, action) => {
         state.isMnemonicBackedUp = action.payload
+      })
+      .addCase(biometricsToggled.fulfilled, (state, action) => {
+        const biometricsEnabled = action.payload
+        state.authType = biometricsEnabled ? 'biometrics' : 'pin'
       })
   }
 })

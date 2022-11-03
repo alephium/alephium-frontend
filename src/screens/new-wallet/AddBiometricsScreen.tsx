@@ -16,25 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletGenerateAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import styled from 'styled-components/native'
 
 import animationSrc from '../../animations/fingerprint.json'
-import walletAnimationSrc from '../../animations/wallet.json'
-import AppText from '../../components/AppText'
 import Button from '../../components/buttons/Button'
 import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
+import SpinnerModal from '../../components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useAppDispatch, useAppSelector } from '../../hooks/redux'
-import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
+import { useAppDispatch } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { walletStored } from '../../store/activeWalletSlice'
-import { StoredWalletAuthType } from '../../types/wallet'
-import { mnemonicToSeed } from '../../utils/crypto'
+import { biometricsToggled } from '../../store/activeWalletSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
@@ -45,63 +40,32 @@ const instructions: Instruction[] = [
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const method = useAppSelector((state) => state.walletGeneration.method)
-  const importedMnemonic = useAppSelector((state) => state.walletGeneration.importedMnemonic)
-  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
   const [loading, setLoading] = useState(false)
 
-  const createAndStoreWallet = async (authType: StoredWalletAuthType) => {
+  const navigateToWelcomePage = useCallback(() => navigation.navigate('NewWalletSuccessPage'), [navigation])
+
+  const enableBiometrics = useCallback(async () => {
     setLoading(true)
 
-    if (method === 'create') {
-      const wallet = await walletGenerateAsyncUnsafe(mnemonicToSeed)
-      dispatch(
-        walletStored({
-          name: walletName,
-          mnemonic: wallet.mnemonic,
-          authType,
-          isMnemonicBackedUp: false
-        })
-      )
-    } else if (method === 'import' && importedMnemonic) {
-      dispatch(
-        walletStored({
-          name: walletName,
-          mnemonic: importedMnemonic,
-          authType,
-          isMnemonicBackedUp: true
-        })
-      )
-    }
-  }
+    await dispatch(biometricsToggled(true))
+    navigateToWelcomePage()
 
-  useOnNewWalletSuccess(() => {
-    navigation.navigate('NewWalletSuccessPage')
-  })
+    setLoading(false)
+  }, [dispatch, navigateToWelcomePage])
 
   return (
     <Screen>
       <AnimationContainer>
-        {loading ? (
-          <>
-            <StyledAnimation source={walletAnimationSrc} autoPlay speed={1.5} />
-            <AppText>Creating your wallet...</AppText>
-          </>
-        ) : (
-          <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
-        )}
+        <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
       </AnimationContainer>
-      {!loading && (
-        <>
-          <CenteredInstructions instructions={instructions} stretch />
-          <ActionsContainer>
-            <ButtonStack>
-              <Button title="Activate" type="primary" onPress={() => createAndStoreWallet('biometrics')} />
-              <Button title="Later" type="secondary" onPress={() => createAndStoreWallet('pin')} />
-            </ButtonStack>
-          </ActionsContainer>
-        </>
-      )}
+      <CenteredInstructions instructions={instructions} stretch />
+      <ActionsContainer>
+        <ButtonStack>
+          <Button title="Activate" type="primary" onPress={enableBiometrics} />
+          <Button title="Later" type="secondary" onPress={navigateToWelcomePage} />
+        </ButtonStack>
+      </ActionsContainer>
+      <SpinnerModal isActive={loading} text="Enabling biometrics..." />
     </Screen>
   )
 }
