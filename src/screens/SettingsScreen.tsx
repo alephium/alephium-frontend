@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Trash2 as TrashIcon } from 'lucide-react-native'
+import { useCallback } from 'react'
 import { Alert, ScrollView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -31,12 +32,17 @@ import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteWalletById } from '../storage/wallets'
-import { walletFlushed } from '../store/activeWalletSlice'
+import { biometricsToggled, walletFlushed } from '../store/activeWalletSlice'
 import { currencyChanged, discreetModeChanged, passwordRequirementChanged, themeChanged } from '../store/settingsSlice'
 import { Currency } from '../types/settings'
 import { currencies } from '../utils/currencies'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SettingsScreen'>
+
+const currencyOptions = Object.values(currencies).map((currency) => ({
+  label: `${currency.name} (${currency.ticker})`,
+  value: currency.ticker
+}))
 
 const SettingsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
@@ -48,20 +54,30 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const currentNetworkName = useAppSelector((state) => state.network.name)
   const currentWalletId = useAppSelector((state) => state.activeWallet.metadataId)
   const currentCurrency = useAppSelector((state) => state.settings.currency)
+  const biometricsEnabled = useAppSelector((state) => state.activeWallet.authType) === 'biometrics'
 
-  if (!currentWalletId) return null
+  const toggleBiometrics = useCallback(
+    () => dispatch(biometricsToggled(!biometricsEnabled)),
+    [biometricsEnabled, dispatch]
+  )
 
-  const currencyOptions = Object.values(currencies).map((currency) => ({
-    label: `${currency.name} (${currency.ticker})`,
-    value: currency.ticker
-  }))
+  const handleDiscreetModeChange = useCallback((value: boolean) => dispatch(discreetModeChanged(value)), [dispatch])
 
-  const handleDiscreetModeChange = (value: boolean) => dispatch(discreetModeChanged(value))
-  const handlePasswordRequirementChange = (value: boolean) => dispatch(passwordRequirementChanged(value))
-  const handleThemeChange = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
-  const handleCurrencyChange = (currency: Currency) => dispatch(currencyChanged(currency))
+  const handleCurrencyChange = useCallback((currency: Currency) => dispatch(currencyChanged(currency)), [dispatch])
 
-  const handleDeleteButtonPress = () => {
+  const handlePasswordRequirementChange = useCallback(
+    (value: boolean) => dispatch(passwordRequirementChanged(value)),
+    [dispatch]
+  )
+
+  const handleThemeChange = useCallback(
+    (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light')),
+    [dispatch]
+  )
+
+  const handleDeleteButtonPress = useCallback(() => {
+    if (!currentWalletId) return
+
     Alert.alert(
       'Deleting wallet',
       'Are you sure you want to delete your wallet? Ensure you have a backup of your secret recovery phrase.',
@@ -78,7 +94,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         }
       ]
     )
-  }
+  }, [currentWalletId, dispatch, navigation])
 
   return (
     <Screen>
@@ -93,6 +109,9 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
           </HighlightRow>
           <HighlightRow title="Use dark theme" subtitle="Try it, it's nice" hasBottomBorder>
             <Toggle value={currentTheme === 'dark'} onValueChange={handleThemeChange} />
+          </HighlightRow>
+          <HighlightRow title="Biometrics authentication" subtitle="Enhance your security" hasBottomBorder>
+            <Toggle value={biometricsEnabled} onValueChange={toggleBiometrics} />
           </HighlightRow>
           <Select
             options={currencyOptions}

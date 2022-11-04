@@ -114,7 +114,7 @@ export default styled(HighlightRow)`
 `
 
 const Subtitle = styled(AppText)`
-  color: ${({ theme }) => theme.font.secondary};
+  color: ${({ theme }) => theme.font.tertiary};
 `
 
 const LeftContent = styled.View`
