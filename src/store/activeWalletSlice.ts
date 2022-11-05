@@ -86,18 +86,26 @@ export const walletGeneratedAndStoredWithPin = createAsyncThunk(
 
 export const biometricsToggled = createAsyncThunk(
   `${sliceName}/biometricsEnabled`,
-  async (enable: boolean, { getState, dispatch }) => {
+  async (
+    payload: {
+      enable: boolean
+      metadataId?: ActiveWalletState['metadataId']
+    },
+    { getState, dispatch }
+  ) => {
+    const { enable, metadataId } = payload
+
     dispatch(loadingStarted())
 
     const state = getState() as RootState
-    const metadataId = state.activeWallet.metadataId
+    const id = metadataId || state.activeWallet.metadataId
 
-    if (!metadataId) throw 'Could not enable biometrics, active wallet metadata ID not found'
+    if (!id) throw 'Could not enable biometrics, active wallet metadata ID not found'
 
     if (enable) {
-      await enableBiometrics(metadataId, state.activeWallet.mnemonic)
+      await enableBiometrics(id, state.activeWallet.mnemonic)
     } else {
-      await disableBiometrics(metadataId)
+      await disableBiometrics(id)
     }
 
     dispatch(loadingFinished())

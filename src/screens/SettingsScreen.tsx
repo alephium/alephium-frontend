@@ -57,7 +57,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const biometricsEnabled = useAppSelector((state) => state.activeWallet.authType) === 'biometrics'
 
   const toggleBiometrics = useCallback(
-    () => dispatch(biometricsToggled(!biometricsEnabled)),
+    () => dispatch(biometricsToggled({ enable: !biometricsEnabled })),
     [biometricsEnabled, dispatch]
   )
 

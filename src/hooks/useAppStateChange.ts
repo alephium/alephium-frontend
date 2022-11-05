@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useCallback, useEffect, useRef } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 
-import { areThereOtherWallets, getActiveWalletAuthType, getStoredActiveWallet } from '../storage/wallets'
+import { areThereOtherWallets, getActiveWalletMetadata, getStoredActiveWallet } from '../storage/wallets'
 import { activeWalletChanged, biometricsToggled, walletFlushed } from '../store/activeWalletSlice'
 import { pinFlushed } from '../store/credentialsSlice'
 import { navigateRootStack, useRestoreNavigationState } from '../utils/navigation'
@@ -37,10 +37,10 @@ export const useAppStateChange = () => {
     if (activeWallet.mnemonic) return
 
     try {
-      const activeWalletAuthType = await getActiveWalletAuthType()
+      const activeWalletMetadata = await getActiveWalletMetadata()
 
-      if (activeWalletAuthType === 'biometrics' && !hasAvailableBiometrics) {
-        await dispatch(biometricsToggled(false))
+      if (activeWalletMetadata && activeWalletMetadata.authType === 'biometrics' && !hasAvailableBiometrics) {
+        await dispatch(biometricsToggled({ enable: false, metadataId: activeWalletMetadata.id }))
       }
 
       const storedActiveWallet = await getStoredActiveWallet()

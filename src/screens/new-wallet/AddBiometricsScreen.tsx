@@ -47,7 +47,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   const enableBiometrics = useCallback(async () => {
     setLoading(true)
 
-    await dispatch(biometricsToggled(true))
+    await dispatch(biometricsToggled({ enable: true }))
     navigateToWelcomePage()
 
     setLoading(false)

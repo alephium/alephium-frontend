@@ -64,7 +64,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
       if (lastActiveWallet.current.authType === 'biometrics' && hasAvailableBiometrics) {
-        await dispatch(biometricsToggled(true))
+        await dispatch(biometricsToggled({ enable: true }))
       }
 
       setLoading(false)

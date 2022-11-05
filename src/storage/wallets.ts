@@ -23,7 +23,7 @@ import { nanoid } from 'nanoid'
 
 import { ActiveWalletState } from '../store/activeWalletSlice'
 import { AddressMetadata } from '../types/addresses'
-import { Mnemonic, StoredWalletAuthType, WalletMetadata } from '../types/wallet'
+import { Mnemonic, WalletMetadata } from '../types/wallet'
 import { pbkdf2 } from '../utils/crypto'
 
 const defaultBiometricsConfig = {
@@ -118,14 +118,12 @@ export const getStoredActiveWallet = async (usePin?: boolean): Promise<ActiveWal
   return id ? await getStoredWalletById(id, usePin) : null
 }
 
-export const getActiveWalletAuthType = async (): Promise<StoredWalletAuthType | undefined> => {
+export const getActiveWalletMetadata = async (): Promise<WalletMetadata | undefined> => {
   const id = await AsyncStorage.getItem('active-wallet-id')
 
   if (!id) return
 
-  const activeWalletMetadata = await getWalletMetadataById(id)
-
-  return activeWalletMetadata.authType
+  return await getWalletMetadataById(id)
 }
 
 export const deleteWalletById = async (id: string) => {
