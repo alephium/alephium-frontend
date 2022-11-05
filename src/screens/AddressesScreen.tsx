@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -51,7 +51,8 @@ const AddressesScreenHeader = (props: Partial<DefaultHeaderProps>) => (
 
 const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const [currentAddressHash, setCurrentAddressHash] = useState(addressHashes[0])
+  const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
+  const [currentAddressHash, setCurrentAddressHash] = useState(mainAddress)
   const currentAddress = useAppSelector((state) => selectAddressByHash(state, currentAddressHash))
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
@@ -61,20 +62,58 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
   const confirmedTransactions = useAppSelector((state) => selectConfirmedTransactions(state, [currentAddressHash]))
   const pendingTransactions = useAppSelector((state) => selectPendingTransactions(state, [currentAddressHash]))
 
-  const onScrollEnd = (index: number) => {
-    setCurrentAddressHash(addressHashes[index])
-    setAreButtonsDisabled(false)
-  }
-
   useFocusEffect(
     useCallback(() => {
       if (currentAddressHash) setAreButtonsDisabled(false)
     }, [currentAddressHash])
   )
 
-  if (!currentAddress) return null
+  useEffect(() => {
+    if (mainAddress) setCurrentAddressHash(mainAddress)
+  }, [mainAddress])
 
-  const onLayoutCarouselItem = (event: LayoutChangeEvent) => setHeightCarouselItem(event.nativeEvent.layout.height)
+  const onAddressCardsScrollEnd = useCallback(
+    (index: number) => {
+      if (index < addressHashes.length) setCurrentAddressHash(addressHashes[index])
+      setAreButtonsDisabled(false)
+    },
+    [addressHashes]
+  )
+
+  const onAddressCardsScrollStart = useCallback(() => setAreButtonsDisabled(true), [])
+
+  const onLayoutCarouselItem = useCallback(
+    (event: LayoutChangeEvent) => setHeightCarouselItem(event.nativeEvent.layout.height),
+    []
+  )
+
+  const renderAddressCard = useCallback(
+    ({ item }: { item: string }) => (
+      <View onLayout={onLayoutCarouselItem} key={item}>
+        <AddressCard addressHash={item} />
+      </View>
+    ),
+    [onLayoutCarouselItem]
+  )
+
+  const navigateToSendScreen = useCallback(
+    () => navigation.navigate('SendScreen', { addressHash: currentAddressHash }),
+    [currentAddressHash, navigation]
+  )
+
+  const navigateToReceiveScreen = useCallback(
+    () => navigation.navigate('ReceiveScreen', { addressHash: currentAddressHash }),
+    [currentAddressHash, navigation]
+  )
+
+  const navigateToEditAddressScreen = useCallback(
+    () => navigation.navigate('EditAddressScreen', { addressHash: currentAddressHash }),
+    [currentAddressHash, navigation]
+  )
+
+  const closeQRCodeModal = useCallback(() => setIsQrCodeModalOpen(false), [])
+
+  if (!currentAddress) return null
 
   return (
     <InWalletTransactionsFlatList
@@ -88,13 +127,9 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
         <>
           <Carousel
             data={addressHashes}
-            renderItem={({ item }) => (
-              <View onLayout={onLayoutCarouselItem} key={item}>
-                <AddressCard addressHash={item} />
-              </View>
-            )}
-            onScrollStart={() => setAreButtonsDisabled(true)}
-            onScrollEnd={onScrollEnd}
+            renderItem={renderAddressCard}
+            onScrollStart={onAddressCardsScrollStart}
+            onScrollEnd={onAddressCardsScrollEnd}
             padding={30}
             distance={20}
             height={heightCarouselItem}
@@ -104,32 +139,28 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
               <Button
                 title="Send"
                 icon={<ArrowUp size={24} color={theme.font.contrast} />}
-                onPress={() => navigation.navigate('SendScreen', { addressHash: currentAddressHash })}
+                onPress={navigateToSendScreen}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Receive"
                 icon={<ArrowDown size={24} color={theme.font.contrast} />}
-                onPress={() => navigation.navigate('ReceiveScreen', { addressHash: currentAddressHash })}
+                onPress={navigateToReceiveScreen}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Settings"
                 icon={<Settings2 size={24} color={theme.font.contrast} />}
-                onPress={() => navigation.navigate('EditAddressScreen', { addressHash: currentAddressHash })}
+                onPress={navigateToEditAddressScreen}
                 disabled={areButtonsDisabled}
                 circular
               />
             </ButtonsRowStyled>
           </ScreenSection>
           {currentAddress && <AddressesTokensList addresses={[currentAddress]} />}
-          <QRCodeModal
-            addressHash={currentAddressHash}
-            isOpen={isQrCodeModalOpen}
-            onClose={() => setIsQrCodeModalOpen(false)}
-          />
+          <QRCodeModal addressHash={currentAddressHash} isOpen={isQrCodeModalOpen} onClose={closeQRCodeModal} />
         </>
       }
     />
