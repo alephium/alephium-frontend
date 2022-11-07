@@ -23,6 +23,18 @@ import { useCallback } from 'react'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
+const initialNavigationState = {
+  index: 0,
+  routes: [
+    {
+      name: 'InWalletScreen'
+    }
+  ]
+}
+
+// To avoid circular imports, the navigator ref is defined and exported here instead of the RootStackNavigation.tsx file
+// since the following util functions (that are used in screens imported by the RootStackNavigation) need the ref as
+// well as the RootStackNavigation itself.
 export const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
 
 export const useRestoreNavigationState = () => {
@@ -32,9 +44,7 @@ export const useRestoreNavigationState = () => {
     (reset?: boolean) => {
       const resetNavigationState = reset || !lastNavigationState
 
-      rootStackNavigationRef.resetRoot(
-        resetNavigationState ? { index: 0, routes: [{ name: 'InWalletScreen' }] } : lastNavigationState
-      )
+      rootStackNavigationRef.resetRoot(resetNavigationState ? initialNavigationState : lastNavigationState)
     },
     [lastNavigationState]
   )
