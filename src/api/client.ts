@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { CliqueClient, ExplorerClient } from '@alephium/sdk'
 
 import { defaultNetworkSettings } from '../storage/settings'
-import { Address } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { NetworkSettings } from '../types/settings'
 
@@ -38,8 +37,8 @@ export class Client {
     await this.cliqueClient.init(isMultiNodesClique)
   }
 
-  async buildSweepTransactions(address: Address, toHash: AddressHash) {
-    const { data } = await this.cliqueClient.transactionConsolidateUTXOs(address.publicKey, address.hash, toHash)
+  async buildSweepTransactions(fromHash: AddressHash, fromPublicKey: string, toHash: AddressHash) {
+    const { data } = await this.cliqueClient.transactionConsolidateUTXOs(fromPublicKey, fromHash, toHash)
     const fees = data.unsignedTxs.reduce((acc, tx) => acc + BigInt(tx.gasPrice) * BigInt(tx.gasAmount), BigInt(0))
 
     return {
@@ -48,9 +47,9 @@ export class Client {
     }
   }
 
-  async signAndSendTransaction(fromAddress: Address, txId: string, unsignedTx: string) {
-    const signature = this.cliqueClient.transactionSign(txId, fromAddress.privateKey)
-    const { data } = await this.cliqueClient.transactionSend(fromAddress.hash, unsignedTx, signature)
+  async signAndSendTransaction(fromHash: AddressHash, fromPrivateKey: string, txId: string, unsignedTx: string) {
+    const signature = this.cliqueClient.transactionSign(txId, fromPrivateKey)
+    const { data } = await this.cliqueClient.transactionSend(fromHash, unsignedTx, signature)
 
     return data
   }

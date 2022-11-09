@@ -39,7 +39,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   label: string
   onPress?: () => void
   resetDisabledColor?: boolean
-  IconComponent?: ReactNode
+  RightContent?: ReactNode
   renderValue?: RenderValueFunc<T>
   error?: string
   style?: StyleProp<ViewStyle>
@@ -56,7 +56,7 @@ function Input<T extends InputValue>({
   onFocus,
   onBlur,
   resetDisabledColor,
-  IconComponent,
+  RightContent,
   renderValue,
   error,
   ...props
@@ -99,7 +99,7 @@ function Input<T extends InputValue>({
       hasBottomBorder={hasBottomBorder}
       onPress={onPress}
       isInput
-      hasIcon={!!IconComponent}
+      hasRightContent={!!RightContent}
       style={style}
     >
       <InputContainer>
@@ -119,7 +119,7 @@ function Input<T extends InputValue>({
         />
         {error && <Error>{error}</Error>}
       </InputContainer>
-      {IconComponent}
+      {RightContent}
     </HighlightRow>
   )
 }

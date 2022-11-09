@@ -36,7 +36,7 @@ export interface HighlightRowProps extends BorderOptions {
   title?: string
   subtitle?: string
   onPress?: () => void
-  hasIcon?: boolean
+  hasRightContent?: boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -82,9 +82,9 @@ export default styled(HighlightRow)`
           background-color: ${isSecondary ? theme.bg.accent : theme.bg.primary};
         `}
 
-  ${({ isInput, hasIcon }) =>
+  ${({ isInput, hasRightContent }) =>
     isInput &&
-    hasIcon &&
+    hasRightContent &&
     css`
       flex-direction: row;
       align-items: center;

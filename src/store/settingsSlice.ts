@@ -40,8 +40,8 @@ const settingsSlice = createSlice({
     discreetModeChanged: (state, action: PayloadAction<GeneralSettings['discreetMode']>) => {
       state.discreetMode = action.payload
     },
-    passwordRequirementChanged: (state, action: PayloadAction<GeneralSettings['passwordRequirement']>) => {
-      state.passwordRequirement = action.payload
+    passwordRequirementChanged: (state, action: PayloadAction<GeneralSettings['requireAuth']>) => {
+      state.requireAuth = action.payload
     },
     currencyChanged: (state, action: PayloadAction<GeneralSettings['currency']>) => {
       state.currency = action.payload

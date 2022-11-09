@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   APIError,
   convertAlphToSet,
+  convertSetToAlph,
   formatAmountForDisplay,
   getHumanReadableError,
   MINIMAL_GAS_AMOUNT,
@@ -39,6 +40,7 @@ import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
+import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import ExpandableRow from '../components/ExpandableRow'
 import HighlightRow from '../components/HighlightRow'
 import InfoBox from '../components/InfoBox'
@@ -93,12 +95,15 @@ const SendScreen = ({
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isSweeping, setIsSweeping] = useState(false)
   const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<SweepAddressTransaction[]>([])
+  const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
+  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const dispatch = useAppDispatch()
   const [txStep, setTxStep] = useState<TxStep>('build')
   const {
     control,
     watch,
     handleSubmit,
+    setValue,
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: {
@@ -122,10 +127,7 @@ const SendScreen = ({
     convertAlphToSet(value) >= MINIMAL_GAS_PRICE ||
     `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
 
-  useEffect(() => {
-    if (txStep === 'send') setTxStep('build')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fromAddress, toAddressHash, amountInAlph, gasAmount, gasPriceInAlph])
+  useEffect(() => setTxStep('build'), [fromAddress, toAddressHash, amountInAlph, gasAmount, gasPriceInAlph])
 
   const buildConsolidationTransactions = useCallback(async () => {
     if (!fromAddress) return
@@ -134,7 +136,11 @@ const SendScreen = ({
     setIsLoading(true)
 
     try {
-      const { unsignedTxs, fees } = await client.buildSweepTransactions(fromAddress, fromAddress.hash)
+      const { unsignedTxs, fees } = await client.buildSweepTransactions(
+        fromAddress.hash,
+        fromAddress.publicKey,
+        fromAddress.hash
+      )
       setSweepUnsignedTxs(unsignedTxs)
       setFees(fees)
     } catch (e) {
@@ -146,11 +152,11 @@ const SendScreen = ({
 
   const buildTransaction = useCallback(
     async (formData: FormData) => {
-      if (!fromAddress || !isFormValid) return
+      if (!fromAddress?.hash || !isFormValid) return
 
       setIsLoading(true)
       const amountInSet = convertAlphToSet(formData.amountInAlph)
-      const isSweep = amountInSet === BigInt(fromAddress.networkData.availableBalance)
+      const isSweep = amountInSet.toString() === fromAddress.networkData.availableBalance
 
       setAmount(amountInSet)
       setIsSweeping(isSweep)
@@ -158,7 +164,11 @@ const SendScreen = ({
       const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : ''
       try {
         if (isSweep) {
-          const { unsignedTxs, fees } = await client.buildSweepTransactions(fromAddress, formData.toAddressHash)
+          const { unsignedTxs, fees } = await client.buildSweepTransactions(
+            fromAddress.hash,
+            fromAddress.publicKey,
+            formData.toAddressHash
+          )
           setSweepUnsignedTxs(unsignedTxs)
           setFees(fees)
         } else {
@@ -192,18 +202,24 @@ const SendScreen = ({
         setIsLoading(false)
       }
     },
-    [buildConsolidationTransactions, fromAddress, isFormValid]
+    [
+      buildConsolidationTransactions,
+      fromAddress?.hash,
+      fromAddress?.networkData.availableBalance,
+      fromAddress?.publicKey,
+      isFormValid
+    ]
   )
 
   const sendTransaction = useCallback(async () => {
-    if (!fromAddress) return
+    if (!fromAddress?.hash) return
 
     setIsLoading(true)
 
     try {
       if (isSweeping) {
         for (const { txId, unsignedTx } of sweepUnsignedTxs) {
-          client.signAndSendTransaction(fromAddress, txId, unsignedTx)
+          client.signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, txId, unsignedTx)
 
           dispatch(
             addPendingTransactionToAddress({
@@ -217,7 +233,7 @@ const SendScreen = ({
           )
         }
       } else {
-        client.signAndSendTransaction(fromAddress, unsignedTxId, unsignedTransaction)
+        client.signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, unsignedTxId, unsignedTransaction)
 
         dispatch(
           addPendingTransactionToAddress({
@@ -239,7 +255,8 @@ const SendScreen = ({
     amount,
     consolidationRequired,
     dispatch,
-    fromAddress,
+    fromAddress?.hash,
+    fromAddress?.privateKey,
     fromAddressHash,
     isSweeping,
     navigation,
@@ -249,9 +266,25 @@ const SendScreen = ({
     unsignedTxId
   ])
 
+  const authenticateAndSend = useCallback(async () => {
+    if (requiresAuth) {
+      setIsAuthenticationModalVisible(true)
+    } else {
+      sendTransaction()
+    }
+  }, [requiresAuth, sendTransaction])
+
+  const handleUseMaxAmountPress = useCallback(() => {
+    if (!fromAddress) return
+
+    setValue('amountInAlph', convertSetToAlph(BigInt(fromAddress.networkData.availableBalance)))
+  }, [fromAddress, setValue])
+
+  const handleAuthCancel = useCallback(() => setIsAuthenticationModalVisible(false), [])
+
   return (
     <Screen>
-      <ScrollView contentContainerStyle={{ flex: 1 }}>
+      <ScrollView>
         <MainContent>
           <>
             <ScreenSection>
@@ -314,6 +347,14 @@ const SendScreen = ({
                     keyboardType="number-pad"
                     error={
                       errors.amountInAlph?.type === 'required' ? requiredErrorMessage : errors.amountInAlph?.message
+                    }
+                    RightContent={
+                      <UseMaxButton
+                        title="Use max"
+                        onPress={handleUseMaxAmountPress}
+                        type="transparent"
+                        variant="accent"
+                      />
                     }
                   />
                 )}
@@ -389,7 +430,7 @@ const SendScreen = ({
           <Button
             title={txStep === 'build' ? 'Continue' : 'Confirm'}
             gradient
-            onPress={txStep === 'build' ? handleSubmit(buildTransaction) : sendTransaction}
+            onPress={txStep === 'build' ? handleSubmit(buildTransaction) : authenticateAndSend}
             wide
             disabled={isLoading || !isFormValid}
           />
@@ -416,11 +457,14 @@ const SendScreen = ({
             <BottomScreenSection>
               <ButtonsRow>
                 <Button title="Cancel" onPress={() => setIsConsolidateUTXOsModalVisible(false)} />
-                <Button title="Consolidate" onPress={sendTransaction} />
+                <Button title="Consolidate" onPress={authenticateAndSend} />
               </ButtonsRow>
             </BottomScreenSection>
           </ConsolidationModalContent>
         </ModalWithBackdrop>
+        {isAuthenticationModalVisible && (
+          <ConfirmWithAuthModal onCancel={handleAuthCancel} onConfirm={sendTransaction} />
+        )}
       </ScrollView>
     </Screen>
   )
@@ -449,4 +493,8 @@ const ScreenSectionStyled = styled(ScreenSection)`
 const Fee = styled(AppText)`
   display: flex;
   margin-top: 20px;
+`
+
+const UseMaxButton = styled(Button)`
+  padding-right: 0;
 `

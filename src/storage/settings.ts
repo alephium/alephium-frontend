@@ -42,7 +42,7 @@ export const defaultNetwork = NetworkName.testnet
 export const defaultGeneralSettings: GeneralSettings = {
   theme: Appearance.getColorScheme() === 'dark' ? 'dark' : 'light',
   discreetMode: false,
-  passwordRequirement: false,
+  requireAuth: false,
   currency: 'USD'
 }
 
