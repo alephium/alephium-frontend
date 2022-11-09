@@ -5,13 +5,7 @@
 [![NPM][npm-badge]][npm-link]
 [![code style: prettier][prettier-badge]][prettier-link]
 
-A JavaScript/TypeScript library for building decentralized applications on the Alephium platform.
-
-You could run the following command to scaffold a skeleton project for smart contract development.
-
-```
-npx @alephium/sdk [name]
-```
+A JavaScript/TypeScript library for building applications that interact the Alephium platform.
 
 ## Install
 
@@ -74,10 +68,6 @@ Typings can automatically generated using the following command:
 ```shell
 npm run update-schemas
 ```
-
-### Packaging
-
-We need to include the `.gitignore` file inside the npm package so that it can be used by the `dist/cli/create-project.js` script. To do that we define the `prepack` and `postpack` npm scripts that will rename the `.gitignore` file to `gitignore`, pack it into the package, and rename it back to `.gitignore`. Similar approach has been followed by `create-react-app`<sup>[1]</sup>.
 
 ### Release
 

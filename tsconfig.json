@@ -1,5 +1,5 @@
 {
-  "include": ["lib/**/*", "cli/**/*"],
+  "include": ["lib/**/*"],
   "exclude": ["node_modules", "test"],
   "compilerOptions": {
     "target": "es6",
