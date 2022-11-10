@@ -32,10 +32,12 @@ import { pinEntered } from '../../store/credentialsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 
+type Step = 'enter-pin' | 'verify-pin'
+
 const pinLength = 6
 
 const firstInstructionSet: Instruction[] = [
-  { text: 'Please choose a passcode 🔐', type: 'primary' },
+  { text: 'Please choose a pin 🔐', type: 'primary' },
   { text: 'Try not to forget it!', type: 'secondary' },
   { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
 ]
@@ -56,24 +58,26 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const [isVerifyingCode, setIsVerifyingCode] = useState(false)
   const method = useAppSelector((state) => state.walletGeneration.method)
   const name = useAppSelector((state) => state.walletGeneration.walletName)
   const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState<Step>('enter-pin')
+
+  const isPinCodeFullyEntered = pinCode.length === pinLength
 
   useFocusEffect(
     useCallback(() => {
-      setIsVerifyingCode(false)
+      setStep('enter-pin')
       setShownInstructions(firstInstructionSet)
       setPinCode('')
     }, [])
   )
 
   const handlePinCodeSet = useCallback(() => {
-    setIsVerifyingCode(true)
     setChosenPinCode(pinCode)
     setShownInstructions(secondInstructionSet)
     setPinCode('')
+    setStep('verify-pin')
   }, [pinCode])
 
   const handlePinCodeVerification = useCallback(async () => {
@@ -104,10 +108,14 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   }, [chosenPinCode, dispatch, hasAvailableBiometrics, method, name, navigation, pinCode])
 
   useEffect(() => {
-    if (pinCode.length !== pinLength) return
-
-    !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
-  }, [handlePinCodeSet, handlePinCodeVerification, isVerifyingCode, pinCode.length])
+    if (!isPinCodeFullyEntered) {
+      return
+    } else if (step === 'enter-pin') {
+      handlePinCodeSet()
+    } else if (step === 'verify-pin') {
+      handlePinCodeVerification()
+    }
+  }, [handlePinCodeSet, handlePinCodeVerification, isPinCodeFullyEntered, step])
 
   return (
     <Screen>

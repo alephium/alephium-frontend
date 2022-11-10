@@ -37,16 +37,16 @@ export interface ActiveWalletState {
   name: string
   mnemonic: Mnemonic
   isMnemonicBackedUp: boolean
-  authType: StoredWalletAuthType | null
-  metadataId: string | null
+  metadataId: string
+  authType?: StoredWalletAuthType
 }
 
 const initialState: ActiveWalletState = {
   name: '',
   mnemonic: '',
   isMnemonicBackedUp: false,
-  authType: null,
-  metadataId: null
+  metadataId: '',
+  authType: undefined
 }
 
 export const walletGeneratedAndStoredWithPin = createAsyncThunk(

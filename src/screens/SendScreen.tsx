@@ -280,8 +280,6 @@ const SendScreen = ({
     setValue('amountInAlph', convertSetToAlph(BigInt(fromAddress.networkData.availableBalance)))
   }, [fromAddress, setValue])
 
-  const handleAuthCancel = useCallback(() => setIsAuthenticationModalVisible(false), [])
-
   return (
     <Screen>
       <ScrollView>
@@ -462,9 +460,7 @@ const SendScreen = ({
             </BottomScreenSection>
           </ConsolidationModalContent>
         </ModalWithBackdrop>
-        {isAuthenticationModalVisible && (
-          <ConfirmWithAuthModal onCancel={handleAuthCancel} onConfirm={sendTransaction} />
-        )}
+        <ConfirmWithAuthModal isVisible={isAuthenticationModalVisible} onConfirm={sendTransaction} />
       </ScrollView>
     </Screen>
   )

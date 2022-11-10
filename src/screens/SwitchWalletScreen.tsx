@@ -55,7 +55,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
       const storedWallet = await getStoredWalletById(walletId)
 
       if (storedWallet.authType === 'pin') {
-        navigation.navigate('LoginScreen', { storedWallet, navigateToDashboard: true })
+        navigation.navigate('LoginScreen', { walletIdToLogin: walletId, resetNavigationOnLogin: true })
         return
       }
 

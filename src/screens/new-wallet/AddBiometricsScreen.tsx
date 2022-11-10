@@ -35,7 +35,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
 const instructions: Instruction[] = [
   { text: 'Do you want to activate biometric security? 👆', type: 'primary' },
-  { text: 'Use fingerprint or face recognition instead of the passcode to unlock the wallet', type: 'secondary' }
+  { text: 'Use fingerprint or face recognition instead of the pin to unlock the wallet', type: 'secondary' }
 ]
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {

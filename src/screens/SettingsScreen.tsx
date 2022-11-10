@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Trash2 as TrashIcon } from 'lucide-react-native'
-import { useCallback } from 'react'
 import { Alert, ScrollView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -30,6 +29,7 @@ import Select from '../components/inputs/Select'
 import Screen, { ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import useBiometrics from '../hooks/useBiometrics'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteWalletById } from '../storage/wallets'
 import { biometricsToggled, walletFlushed } from '../store/activeWalletSlice'
@@ -47,6 +47,7 @@ const currencyOptions = Object.values(currencies).map((currency) => ({
 const SettingsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
+  const hasAvailableBiometrics = useBiometrics()
 
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const requireAuth = useAppSelector((state) => state.settings.requireAuth)
@@ -56,26 +57,17 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const currentCurrency = useAppSelector((state) => state.settings.currency)
   const biometricsEnabled = useAppSelector((state) => state.activeWallet.authType) === 'biometrics'
 
-  const toggleBiometrics = useCallback(
-    () => dispatch(biometricsToggled({ enable: !biometricsEnabled })),
-    [biometricsEnabled, dispatch]
-  )
+  const toggleBiometrics = async () => await dispatch(biometricsToggled({ enable: !biometricsEnabled }))
 
-  const handleDiscreetModeChange = useCallback((value: boolean) => dispatch(discreetModeChanged(value)), [dispatch])
+  const toggleDiscreetMode = (value: boolean) => dispatch(discreetModeChanged(value))
 
-  const handleCurrencyChange = useCallback((currency: Currency) => dispatch(currencyChanged(currency)), [dispatch])
+  const toggleTheme = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
 
-  const handlePasswordRequirementChange = useCallback(
-    (value: boolean) => dispatch(passwordRequirementChanged(value)),
-    [dispatch]
-  )
+  const toggleAuthRequirement = (value: boolean) => dispatch(passwordRequirementChanged(value))
 
-  const handleThemeChange = useCallback(
-    (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light')),
-    [dispatch]
-  )
+  const handleCurrencyChange = (currency: Currency) => dispatch(currencyChanged(currency))
 
-  const handleDeleteButtonPress = useCallback(() => {
+  const handleDeleteButtonPress = () => {
     if (!currentWalletId) return
 
     Alert.alert(
@@ -94,7 +86,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         }
       ]
     )
-  }, [currentWalletId, dispatch, navigation])
+  }
 
   return (
     <Screen>
@@ -102,17 +94,19 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <HighlightRow title="Discreet mode" subtitle="Hide all amounts" isTopRounded hasBottomBorder>
-            <Toggle value={discreetMode} onValueChange={handleDiscreetModeChange} />
+            <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
           </HighlightRow>
           <HighlightRow title="Require authentication" subtitle="For important actions" hasBottomBorder>
-            <Toggle value={requireAuth} onValueChange={handlePasswordRequirementChange} />
+            <Toggle value={requireAuth} onValueChange={toggleAuthRequirement} />
           </HighlightRow>
           <HighlightRow title="Use dark theme" subtitle="Try it, it's nice" hasBottomBorder>
-            <Toggle value={currentTheme === 'dark'} onValueChange={handleThemeChange} />
+            <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
           </HighlightRow>
-          <HighlightRow title="Biometrics authentication" subtitle="Enhance your security" hasBottomBorder>
-            <Toggle value={biometricsEnabled} onValueChange={toggleBiometrics} />
-          </HighlightRow>
+          {hasAvailableBiometrics && (
+            <HighlightRow title="Biometrics authentication" subtitle="Enhance your security" hasBottomBorder>
+              <Toggle value={biometricsEnabled} onValueChange={toggleBiometrics} />
+            </HighlightRow>
+          )}
           <Select
             options={currencyOptions}
             label="Currency"

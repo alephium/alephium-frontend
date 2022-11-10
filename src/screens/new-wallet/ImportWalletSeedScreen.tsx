@@ -70,30 +70,24 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
     )
   }, [typedInput])
 
-  const selectWord = useCallback(
-    (word: string) => {
-      if (!word) return
+  const selectWord = (word: string) => {
+    if (!word) return
 
-      setSelectedWords(
-        selectedWords.concat([
-          {
-            word,
-            timestamp: new Date()
-          }
-        ])
-      )
-      setTypedInput('')
-    },
-    [selectedWords]
-  )
+    setSelectedWords(
+      selectedWords.concat([
+        {
+          word,
+          timestamp: new Date()
+        }
+      ])
+    )
+    setTypedInput('')
+  }
 
   const removeSelectedWord = (word: SelectedWord) =>
     setSelectedWords(selectedWords.filter((selectedWord) => selectedWord.timestamp !== word.timestamp))
 
-  const handleEnterPress = useCallback(
-    () => possibleMatches.length > 0 && selectWord(possibleMatches[0]),
-    [possibleMatches, selectWord]
-  )
+  const handleEnterPress = () => possibleMatches.length > 0 && selectWord(possibleMatches[0])
 
   const importWallet = useCallback(
     async (pin?: string) => {
@@ -128,9 +122,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
     [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, selectedWords, typedInput]
   )
 
-  const handleWalletImport = useCallback(() => importWallet(pin), [importWallet, pin])
-
-  const closePinModal = useCallback(() => setIsPinModalVisible(false), [])
+  const handleWalletImport = () => importWallet(pin)
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isImportButtonVisible = selectedWords.length >= 12 || enablePasteForDevelopment
@@ -197,7 +189,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
           placeholder="Type your secret phrase word by word"
         />
       </ScreenSectionBottom>
-      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={importWallet} onCancel={closePinModal} />}
+      <ConfirmWithAuthModal isVisible={isPinModalVisible} usePin onConfirm={importWallet} />
       <SpinnerModal isActive={loading} text="Importing wallet..." />
     </Screen>
   )

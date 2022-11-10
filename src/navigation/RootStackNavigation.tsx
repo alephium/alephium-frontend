@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 import { createStackNavigator } from '@react-navigation/stack'
-import { useCallback } from 'react'
 import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
@@ -58,14 +57,11 @@ const RootStackNavigation = () => {
   const { height: screenHeight } = useWindowDimensions()
   const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
   const dispatch = useAppDispatch()
-  const currentMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
+  const isAuthenticated = !!useAppSelector((state) => state.activeWallet.mnemonic)
 
-  const handleStateChange = useCallback(
-    (state?: NavigationState) => {
-      if (state && currentMnemonic) dispatch(routeChanged(state))
-    },
-    [currentMnemonic, dispatch]
-  )
+  const handleStateChange = (state?: NavigationState) => {
+    if (state && isAuthenticated) dispatch(routeChanged(state))
+  }
 
   const themeNavigator = {
     ...DefaultTheme,

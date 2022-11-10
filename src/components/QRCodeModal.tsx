@@ -30,6 +30,7 @@ interface QRCodeModalProps {
 
 const QRCodeModal = ({ addressHash, isOpen, onClose }: QRCodeModalProps) => {
   const theme = useTheme()
+
   return (
     <ModalWithBackdrop animationType="fade" visible={isOpen} closeModal={onClose}>
       <QRCode

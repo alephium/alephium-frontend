@@ -20,7 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
-import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
@@ -72,46 +72,18 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     if (mainAddress) setCurrentAddressHash(mainAddress)
   }, [mainAddress])
 
-  const onAddressCardsScrollEnd = useCallback(
-    (index: number) => {
-      if (index < addressHashes.length) setCurrentAddressHash(addressHashes[index])
-      setAreButtonsDisabled(false)
-    },
-    [addressHashes]
+  const onAddressCardsScrollEnd = (index: number) => {
+    if (index < addressHashes.length) setCurrentAddressHash(addressHashes[index])
+    setAreButtonsDisabled(false)
+  }
+
+  const onAddressCardsScrollStart = () => setAreButtonsDisabled(true)
+
+  const renderAddressCard = ({ item }: { item: string }) => (
+    <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height)} key={item}>
+      <AddressCard addressHash={item} />
+    </View>
   )
-
-  const onAddressCardsScrollStart = useCallback(() => setAreButtonsDisabled(true), [])
-
-  const onLayoutCarouselItem = useCallback(
-    (event: LayoutChangeEvent) => setHeightCarouselItem(event.nativeEvent.layout.height),
-    []
-  )
-
-  const renderAddressCard = useCallback(
-    ({ item }: { item: string }) => (
-      <View onLayout={onLayoutCarouselItem} key={item}>
-        <AddressCard addressHash={item} />
-      </View>
-    ),
-    [onLayoutCarouselItem]
-  )
-
-  const navigateToSendScreen = useCallback(
-    () => navigation.navigate('SendScreen', { addressHash: currentAddressHash }),
-    [currentAddressHash, navigation]
-  )
-
-  const navigateToReceiveScreen = useCallback(
-    () => navigation.navigate('ReceiveScreen', { addressHash: currentAddressHash }),
-    [currentAddressHash, navigation]
-  )
-
-  const navigateToEditAddressScreen = useCallback(
-    () => navigation.navigate('EditAddressScreen', { addressHash: currentAddressHash }),
-    [currentAddressHash, navigation]
-  )
-
-  const closeQRCodeModal = useCallback(() => setIsQrCodeModalOpen(false), [])
 
   if (!currentAddress) return null
 
@@ -139,28 +111,32 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
               <Button
                 title="Send"
                 icon={<ArrowUp size={24} color={theme.font.contrast} />}
-                onPress={navigateToSendScreen}
+                onPress={() => navigation.navigate('SendScreen', { addressHash: currentAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Receive"
                 icon={<ArrowDown size={24} color={theme.font.contrast} />}
-                onPress={navigateToReceiveScreen}
+                onPress={() => navigation.navigate('ReceiveScreen', { addressHash: currentAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Settings"
                 icon={<Settings2 size={24} color={theme.font.contrast} />}
-                onPress={navigateToEditAddressScreen}
+                onPress={() => navigation.navigate('EditAddressScreen', { addressHash: currentAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
             </ButtonsRowStyled>
           </ScreenSection>
           {currentAddress && <AddressesTokensList addresses={[currentAddress]} />}
-          <QRCodeModal addressHash={currentAddressHash} isOpen={isQrCodeModalOpen} onClose={closeQRCodeModal} />
+          <QRCodeModal
+            addressHash={currentAddressHash}
+            isOpen={isQrCodeModalOpen}
+            onClose={() => setIsQrCodeModalOpen(false)}
+          />
         </>
       }
     />

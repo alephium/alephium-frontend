@@ -74,7 +74,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
     [dispatch, hasAvailableBiometrics, name, navigation]
   )
 
-  const handleButtonPress = useCallback(async () => {
+  const handleButtonPress = async () => {
     if (!name) return
 
     dispatch(newWalletNameChanged(name))
@@ -92,9 +92,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
     if (method === 'create') {
       createNewWallet(pin)
     }
-  }, [createNewWallet, dispatch, isAuthenticated, method, name, navigation, pin])
-
-  const closePinModal = useCallback(() => setIsPinModalVisible(false), [])
+  }
 
   return (
     <Screen>
@@ -105,7 +103,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
       <ActionsContainer>
         <Button title="Next" type="primary" wide disabled={name.length < 3} onPress={handleButtonPress} />
       </ActionsContainer>
-      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} onCancel={closePinModal} />}
+      <ConfirmWithAuthModal isVisible={isPinModalVisible} usePin onConfirm={createNewWallet} />
       <SpinnerModal isActive={loading} text="Creating wallet..." />
     </Screen>
   )
