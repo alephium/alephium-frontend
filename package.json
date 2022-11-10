@@ -7,7 +7,10 @@
   "browser": "dist/alephium.min.js",
   "types": "dist/lib/index.d.ts",
   "exports": {
-    ".": "./dist/lib/index.js",
+    ".": {
+      "browser": "./dist/alephium.min.js",
+      "default": "./dist/lib/index.js"
+    },
     "./api/alephium": "./dist/api/api-alephium.js",
     "./api/explorer": "./dist/api/api-explorer.js"
   },
