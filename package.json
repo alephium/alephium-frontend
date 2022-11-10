@@ -1,13 +1,16 @@
 {
   "name": "@alephium/sdk",
-  "version": "0.2.1",
+  "version": "0.2.2-rc.0",
   "description": "A JS/TS library to interact with the Alephium platform",
   "license": "GPL",
   "main": "dist/lib/index.js",
   "browser": "dist/alephium.min.js",
   "types": "dist/lib/index.d.ts",
   "exports": {
-    ".": "./dist/lib/index.js",
+    ".": {
+      "browser": "./dist/alephium.min.js",
+      "default": "./dist/lib/index.js"
+    },
     "./api/alephium": "./dist/api/api-alephium.js",
     "./api/explorer": "./dist/api/api-explorer.js"
   },
