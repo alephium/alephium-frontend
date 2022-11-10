@@ -40,7 +40,7 @@ const pinLength = 6
 
 const firstInstructionSet: Instruction[] = [
   { text: 'Please enter your pin', type: 'primary' },
-  { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+  { text: 'More info', type: 'link', url: 'https://docs.alephium.org/Frequently-Asked-Questions.html' }
 ]
 
 const errorInstructionSet: Instruction[] = [

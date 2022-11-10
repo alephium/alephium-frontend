@@ -33,12 +33,12 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const instructionsCreate: Instruction[] = [
   { text: 'You are about to create a wallet 🎉', type: 'primary' },
   { text: 'Your gateway to the Alephium ecosystem', type: 'secondary' },
-  { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+  { text: 'More info', type: 'link', url: 'https://docs.alephium.org/Frequently-Asked-Questions.html' }
 ]
 const instructionsImport: Instruction[] = [
   { text: 'You are about to import a wallet 🎉', type: 'primary' },
   { text: 'Get your secret phrase ready!', type: 'secondary' },
-  { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+  { text: 'More info', type: 'link', url: 'https://docs.alephium.org/Frequently-Asked-Questions.html' }
 ]
 
 const instructions = {
