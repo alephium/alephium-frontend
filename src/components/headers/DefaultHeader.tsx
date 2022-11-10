@@ -24,7 +24,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '../AppText'
 
 export interface DefaultHeaderProps {
-  HeaderLeft: Omit<ReactNode, 'null' | 'undefined'>
+  HeaderLeft: ReactNode
   HeaderRight?: ReactNode
   style?: StyleProp<ViewStyle>
   scrollY?: number
@@ -42,10 +42,8 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, scrollY, style }: DefaultHeade
 
   return (
     <Animated.View style={[style, headerStyle]}>
-      <>
-        {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
-        {HeaderRight}
-      </>
+      {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
+      {HeaderRight}
     </Animated.View>
   )
 }
@@ -53,7 +51,7 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, scrollY, style }: DefaultHeade
 export default styled(DefaultHeader)`
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   padding: 40px 20px 18px 20px;
   min-height: 110px;
 `
