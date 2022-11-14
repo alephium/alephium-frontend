@@ -96,6 +96,8 @@ export interface Balance {
 
   /** @format x.x ALPH */
   lockedBalanceHint: string
+  tokenBalances?: Token[]
+  lockedTokenBalances?: Token[]
 
   /** @format int32 */
   utxoNum: number
@@ -120,6 +122,11 @@ export interface Banned {
   /** @format int64 */
   until: number
   type: string
+}
+
+export interface BlockAndEvents {
+  block: BlockEntry
+  events: ContractEventByBlockHash[]
 }
 
 export interface BlockEntry {
@@ -172,6 +179,14 @@ export interface BlockHeaderEntry {
   deps: string[]
 }
 
+export interface BlocksAndEventsPerTimeStampRange {
+  blocksAndEvents: BlockAndEvents[][]
+}
+
+export interface BlocksPerTimeStampRange {
+  blocks: BlockEntry[][]
+}
+
 export interface BrokerInfo {
   /** @format clique-id */
   cliqueId: string
@@ -205,6 +220,9 @@ export interface BuildDeployContractTx {
 
   /** @format uint256 */
   gasPrice?: string
+
+  /** @format block-hash */
+  targetBlockHash?: string
 }
 
 export interface BuildDeployContractTxResult {
@@ -244,6 +262,9 @@ export interface BuildExecuteScriptTx {
 
   /** @format uint256 */
   gasPrice?: string
+
+  /** @format block-hash */
+  targetBlockHash?: string
 }
 
 export interface BuildExecuteScriptTxResult {
@@ -309,6 +330,9 @@ export interface BuildSweepAddressTransactions {
 
   /** @format uint256 */
   gasPrice?: string
+
+  /** @format block-hash */
+  targetBlockHash?: string
 }
 
 export interface BuildSweepAddressTransactionsResult {
@@ -332,6 +356,9 @@ export interface BuildTransaction {
 
   /** @format uint256 */
   gasPrice?: string
+
+  /** @format block-hash */
+  targetBlockHash?: string
 }
 
 export interface BuildTransactionResult {
@@ -408,19 +435,44 @@ export interface ChangeActiveAddress {
 }
 
 export interface CompileContractResult {
+  version: string
+  name: string
   bytecode: string
+  bytecodeDebugPatch: string
 
   /** @format 32-byte-hash */
   codeHash: string
+
+  /** @format 32-byte-hash */
+  codeHashDebug: string
   fields: FieldsSig
   functions: FunctionSig[]
   events: EventSig[]
+  warnings: string[]
+}
+
+export interface CompileProjectResult {
+  contracts: CompileContractResult[]
+  scripts: CompileScriptResult[]
 }
 
 export interface CompileScriptResult {
+  version: string
+  name: string
   bytecodeTemplate: string
+  bytecodeDebugPatch: string
   fields: FieldsSig
   functions: FunctionSig[]
+  warnings: string[]
+}
+
+export interface CompilerOptions {
+  ignoreUnusedConstantsWarnings?: boolean
+  ignoreUnusedVariablesWarnings?: boolean
+  ignoreUnusedFieldsWarnings?: boolean
+  ignoreUnusedPrivateFunctionsWarnings?: boolean
+  ignoreReadonlyCheckWarnings?: boolean
+  ignoreExternalCallCheckWarnings?: boolean
 }
 
 export interface Confirmed {
@@ -443,6 +495,7 @@ export interface Confirmed {
 
 export interface Contract {
   code: string
+  compilerOptions?: CompilerOptions
 }
 
 export interface ContractEvent {
@@ -451,6 +504,18 @@ export interface ContractEvent {
 
   /** @format 32-byte-hash */
   txId: string
+
+  /** @format int32 */
+  eventIndex: number
+  fields: Val[]
+}
+
+export interface ContractEventByBlockHash {
+  /** @format 32-byte-hash */
+  txId: string
+
+  /** @format address */
+  contractAddress: string
 
   /** @format int32 */
   eventIndex: number
@@ -476,11 +541,12 @@ export interface ContractEvents {
   nextStart: number
 }
 
+export interface ContractEventsByBlockHash {
+  events: ContractEventByBlockHash[]
+}
+
 export interface ContractEventsByTxId {
   events: ContractEventByTxId[]
-
-  /** @format int32 */
-  nextStart: number
 }
 
 export interface ContractOutput {
@@ -515,6 +581,12 @@ export interface ContractState {
   asset: AssetState
 }
 
+export interface DebugMessage {
+  /** @format address */
+  contractAddress: string
+  message: string
+}
+
 export interface DecodeUnsignedTx {
   unsignedTx: string
 }
@@ -547,19 +619,14 @@ export type DiscoveryAction = Reachable | Unreachable
 
 export interface EventSig {
   name: string
-  signature: string
   fieldNames: string[]
   fieldTypes: string[]
 }
 
-export interface FetchResponse {
-  blocks: BlockEntry[][]
-}
-
 export interface FieldsSig {
-  signature: string
   names: string[]
   types: string[]
+  isMutable: boolean[]
 }
 
 export interface FixedAssetOutput {
@@ -585,9 +652,12 @@ export interface FixedAssetOutput {
 
 export interface FunctionSig {
   name: string
-  signature: string
-  argNames: string[]
-  argTypes: string[]
+  usePreapprovedAssets: boolean
+  useAssetsInContract: boolean
+  isPublic: boolean
+  paramNames: string[]
+  paramTypes: string[]
+  paramIsMutable: boolean[]
   returnTypes: string[]
 }
 
@@ -689,6 +759,11 @@ export interface Penalty {
   type: string
 }
 
+export interface Project {
+  code: string
+  compilerOptions?: CompilerOptions
+}
+
 export interface Reachable {
   peers: string[]
   type: string
@@ -715,6 +790,7 @@ export interface RevealMnemonicResult {
 
 export interface Script {
   code: string
+  compilerOptions?: CompilerOptions
 }
 
 export interface SelfClique {
@@ -776,6 +852,9 @@ export interface Sweep {
 
   /** @format int32 */
   utxosLimit?: number
+
+  /** @format block-hash */
+  targetBlockHash?: string
 }
 
 export interface SweepAddressTransaction {
@@ -829,6 +908,7 @@ export interface TestContractResult {
   txInputs: string[]
   txOutputs: Output[]
   events: ContractEventByTxId[]
+  debugMessages: DebugMessage[]
 }
 
 export interface TestInputAsset {
@@ -1252,7 +1332,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title Alephium API
- * @version 1.4.5
+ * @version 1.5.0
  * @baseUrl ../
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -1803,13 +1883,36 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Blockflow
-     * @name GetBlockflow
+     * @name GetBlockflowBlocks
      * @summary List blocks on the given time interval
-     * @request GET:/blockflow
+     * @request GET:/blockflow/blocks
      */
-    getBlockflow: (query: { fromTs: number; toTs?: number }, params: RequestParams = {}) =>
-      this.request<FetchResponse, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/blockflow`,
+    getBlockflowBlocks: (query: { fromTs: number; toTs?: number }, params: RequestParams = {}) =>
+      this.request<
+        BlocksPerTimeStampRange,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/blockflow/blocks`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Blockflow
+     * @name GetBlockflowBlocksWithEvents
+     * @summary List blocks with events on the given time interval
+     * @request GET:/blockflow/blocks-with-events
+     */
+    getBlockflowBlocksWithEvents: (query: { fromTs: number; toTs?: number }, params: RequestParams = {}) =>
+      this.request<
+        BlocksAndEventsPerTimeStampRange,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/blockflow/blocks-with-events`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -1827,6 +1930,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     getBlockflowBlocksBlockHash: (blockHash: string, params: RequestParams = {}) =>
       this.request<BlockEntry, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blockflow/blocks/${blockHash}`,
+        method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Blockflow
+     * @name GetBlockflowBlocksWithEventsBlockHash
+     * @summary Get a block and events with hash
+     * @request GET:/blockflow/blocks-with-events/{block_hash}
+     */
+    getBlockflowBlocksWithEventsBlockHash: (blockHash: string, params: RequestParams = {}) =>
+      this.request<BlockAndEvents, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/blockflow/blocks-with-events/${blockHash}`,
         method: 'GET',
         format: 'json',
         ...params
@@ -2053,6 +2172,27 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Transactions
+     * @name GetTransactionsDetailsTxid
+     * @summary Get transaction details
+     * @request GET:/transactions/details/{txId}
+     */
+    getTransactionsDetailsTxid: (
+      txId: string,
+      query?: { fromGroup?: number; toGroup?: number },
+      params: RequestParams = {}
+    ) =>
+      this.request<Transaction, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/transactions/details/${txId}`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Transactions
      * @name GetTransactionsStatus
      * @summary Get tx status
      * @request GET:/transactions/status
@@ -2126,6 +2266,27 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
       >({
         path: `/contracts/compile-contract`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Contracts
+     * @name PostContractsCompileProject
+     * @summary Compile a project
+     * @request POST:/contracts/compile-project
+     */
+    postContractsCompileProject: (data: Project, params: RequestParams = {}) =>
+      this.request<
+        CompileProjectResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/contracts/compile-project`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -2328,6 +2489,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Miners
+     * @name PostMinersCpuMiningMineOneBlock
+     * @summary Mine a block on CPU miner. !!! for test only !!!
+     * @request POST:/miners/cpu-mining/mine-one-block
+     */
+    postMinersCpuMiningMineOneBlock: (query: { fromGroup: number; toGroup: number }, params: RequestParams = {}) =>
+      this.request<boolean, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/miners/cpu-mining/mine-one-block`,
+        method: 'POST',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Miners
      * @name GetMinersAddresses
      * @summary List miner's addresses
      * @request GET:/miners/addresses
@@ -2368,7 +2546,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     getEventsContractContractaddress: (
       contractAddress: string,
-      query: { start: number; end?: number; group?: number },
+      query: { start: number; limit?: number; group?: number },
       params: RequestParams = {}
     ) =>
       this.request<ContractEvents, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -2400,7 +2578,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Events
      * @name GetEventsTxIdTxid
-     * @summary Get events for a TxScript
+     * @summary Get contract events for a transaction
      * @request GET:/events/tx-id/{txId}
      */
     getEventsTxIdTxid: (txId: string, query?: { group?: number }, params: RequestParams = {}) =>
@@ -2409,6 +2587,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
       >({
         path: `/events/tx-id/${txId}`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Events
+     * @name GetEventsBlockHashBlockhash
+     * @summary Get contract events for a block
+     * @request GET:/events/block-hash/{blockHash}
+     */
+    getEventsBlockHashBlockhash: (blockHash: string, query?: { group?: number }, params: RequestParams = {}) =>
+      this.request<
+        ContractEventsByBlockHash,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/events/block-hash/${blockHash}`,
         method: 'GET',
         query: query,
         format: 'json',

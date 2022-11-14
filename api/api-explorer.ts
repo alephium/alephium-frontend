@@ -290,7 +290,7 @@ export interface UnconfirmedTransaction {
   /** @format int32 */
   chainTo: number
   inputs?: Input[]
-  outputs?: AssetOutput[]
+  outputs?: Output[]
 
   /** @format int32 */
   gasAmount: number
@@ -540,7 +540,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Blocks
      * @name GetBlocksBlockHash
-     * @request GET:/blocks/{block-hash}
+     * @request GET:/blocks/{block_hash}
      */
     getBlocksBlockHash: (blockHash: string, params: RequestParams = {}) =>
       this.request<BlockEntryLite, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -555,7 +555,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Blocks
      * @name GetBlocksBlockHashTransactions
-     * @request GET:/blocks/{block-hash}/transactions
+     * @request GET:/blocks/{block_hash}/transactions
      */
     getBlocksBlockHashTransactions: (
       blockHash: string,
@@ -576,7 +576,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Transactions
      * @name GetTransactionsTransactionHash
-     * @request GET:/transactions/{transaction-hash}
+     * @request GET:/transactions/{transaction_hash}
      */
     getTransactionsTransactionHash: (transactionHash: string, params: RequestParams = {}) =>
       this.request<TransactionLike, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -584,22 +584,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'GET',
         format: 'json',
         ...params
-      })
-  }
-  transactionByOutputRefKey = {
+      }),
+
     /**
      * @description Get a transaction from a output reference key
      *
      * @tags Transactions
-     * @name GetTransactionByOutputRefKeyOutputRefKey
-     * @request GET:/transaction-by-output-ref-key/{output-ref-key}
+     * @name GetTransactionsByOutputRefKeyOutputRefKey
+     * @request GET:/transactions/by/output-ref-key/{output_ref_key}
      */
-    getTransactionByOutputRefKeyOutputRefKey: (outputRefKey: string, params: RequestParams = {}) =>
-      this.request<
-        ConfirmedTransaction,
-        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
-      >({
-        path: `/transaction-by-output-ref-key/${outputRefKey}`,
+    getTransactionsByOutputRefKeyOutputRefKey: (outputRefKey: string, params: RequestParams = {}) =>
+      this.request<Transaction, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/transactions/by/output-ref-key/${outputRefKey}`,
         method: 'GET',
         format: 'json',
         ...params
@@ -642,6 +638,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+     * @description List transactions of a given address within a time-range
+     *
+     * @tags Addresses
+     * @name GetAddressesAddressTimerangedTransactions
+     * @request GET:/addresses/{address}/timeranged-transactions
+     */
+    getAddressesAddressTimerangedTransactions: (
+      address: string,
+      query: { fromTs: number; toTs: number; page?: number; limit?: number; reverse?: boolean },
+      params: RequestParams = {}
+    ) =>
+      this.request<Transaction[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/addresses/${address}/timeranged-transactions`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
      * @description Get total transactions of a given address
      *
      * @tags Addresses
@@ -664,10 +680,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/addresses/{address}/unconfirmed-transactions
      */
     getAddressesAddressUnconfirmedTransactions: (address: string, params: RequestParams = {}) =>
-      this.request<
-        UnconfirmedTransaction[],
-        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
-      >({
+      this.request<TransactionLike[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}/unconfirmed-transactions`,
         method: 'GET',
         format: 'json',
@@ -709,7 +722,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Addresses
      * @name GetAddressesAddressTokensTokenIdTransactions
-     * @request GET:/addresses/{address}/tokens/{token-id}/transactions
+     * @request GET:/addresses/{address}/tokens/{token_id}/transactions
      */
     getAddressesAddressTokensTokenIdTransactions: (
       address: string,
@@ -730,7 +743,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Addresses
      * @name GetAddressesAddressTokensTokenIdBalance
-     * @request GET:/addresses/{address}/tokens/{token-id}/balance
+     * @request GET:/addresses/{address}/tokens/{token_id}/balance
      */
     getAddressesAddressTokensTokenIdBalance: (address: string, tokenId: string, params: RequestParams = {}) =>
       this.request<AddressBalance, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -896,7 +909,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * @description list unconfirmed transactions
      *
-     * @tags Unconfirmed Transactions
+     * @tags Transactions
      * @name GetUnconfirmedTransactions
      * @request GET:/unconfirmed-transactions
      */
@@ -904,10 +917,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query?: { page?: number; limit?: number; reverse?: boolean },
       params: RequestParams = {}
     ) =>
-      this.request<
-        UnconfirmedTransaction[],
-        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
-      >({
+      this.request<TransactionLike[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/unconfirmed-transactions`,
         method: 'GET',
         query: query,
@@ -937,7 +947,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Tokens
      * @name GetTokensTokenIdTransactions
-     * @request GET:/tokens/{token-id}/transactions
+     * @request GET:/tokens/{token_id}/transactions
      */
     getTokensTokenIdTransactions: (
       tokenId: string,
