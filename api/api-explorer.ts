@@ -584,19 +584,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'GET',
         format: 'json',
         ...params
-      })
-  }
-  transactionByOutputRefKey = {
+      }),
+
     /**
      * @description Get a transaction from a output reference key
      *
      * @tags Transactions
-     * @name GetTransactionByOutputRefKeyOutputRefKey
-     * @request GET:/transaction-by-output-ref-key/{output_ref_key}
+     * @name GetTransactionsByOutputRefKeyOutputRefKey
+     * @request GET:/transactions/by/output-ref-key/{output_ref_key}
      */
-    getTransactionByOutputRefKeyOutputRefKey: (outputRefKey: string, params: RequestParams = {}) =>
+    getTransactionsByOutputRefKeyOutputRefKey: (outputRefKey: string, params: RequestParams = {}) =>
       this.request<Transaction, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/transaction-by-output-ref-key/${outputRefKey}`,
+        path: `/transactions/by/output-ref-key/${outputRefKey}`,
         method: 'GET',
         format: 'json',
         ...params
@@ -632,6 +631,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<Transaction[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}/transactions`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * @description List transactions of a given address within a time-range
+     *
+     * @tags Addresses
+     * @name GetAddressesAddressTimerangedTransactions
+     * @request GET:/addresses/{address}/timeranged-transactions
+     */
+    getAddressesAddressTimerangedTransactions: (
+      address: string,
+      query: { fromTs: number; toTs: number; page?: number; limit?: number; reverse?: boolean },
+      params: RequestParams = {}
+    ) =>
+      this.request<Transaction[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/addresses/${address}/timeranged-transactions`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -890,7 +909,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * @description list unconfirmed transactions
      *
-     * @tags Unconfirmed Transactions
+     * @tags Transactions
      * @name GetUnconfirmedTransactions
      * @request GET:/unconfirmed-transactions
      */

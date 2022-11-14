@@ -435,6 +435,7 @@ export interface ChangeActiveAddress {
 }
 
 export interface CompileContractResult {
+  version: string
   name: string
   bytecode: string
   bytecodeDebugPatch: string
@@ -456,6 +457,7 @@ export interface CompileProjectResult {
 }
 
 export interface CompileScriptResult {
+  version: string
   name: string
   bytecodeTemplate: string
   bytecodeDebugPatch: string
@@ -2162,6 +2164,27 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Transactions
+     * @name GetTransactionsDetailsTxid
+     * @summary Get transaction details
+     * @request GET:/transactions/details/{txId}
+     */
+    getTransactionsDetailsTxid: (
+      txId: string,
+      query?: { fromGroup?: number; toGroup?: number },
+      params: RequestParams = {}
+    ) =>
+      this.request<Transaction, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/transactions/details/${txId}`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params
       }),
