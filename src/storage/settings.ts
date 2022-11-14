@@ -31,9 +31,9 @@ export const networkPresetSettings: Record<NetworkPreset, NetworkSettings> = {
     explorerUrl: 'https://explorer-v18.mainnet.alephium.org'
   },
   [NetworkName.testnet]: {
-    nodeHost: 'https://wallet-v18.testnet.alephium.org',
-    explorerApiHost: 'https://backend-v18.testnet.alephium.org',
-    explorerUrl: 'https://explorer-v18.testnet.alephium.org'
+    nodeHost: 'https://wallet.testnet.alephium.org',
+    explorerApiHost: 'https://backend.testnet.alephium.org',
+    explorerUrl: 'https://explorer.testnet.alephium.org'
   }
 }
 
