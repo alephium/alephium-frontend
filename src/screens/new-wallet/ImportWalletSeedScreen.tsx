@@ -164,7 +164,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
         <PossibleMatches>
           {possibleMatches.map((word, index) => (
             <PossibleWordBox
-              key={word}
+              key={`${word}-${index}`}
               onPress={() => selectWord(word)}
               highlight={index === 0}
               entering={FadeIn.delay(index * 100)}
