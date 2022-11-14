@@ -189,7 +189,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
           placeholder="Type your secret phrase word by word"
         />
       </ScreenSectionBottom>
-      <ConfirmWithAuthModal isVisible={isPinModalVisible} usePin onConfirm={importWallet} />
+      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={importWallet} />}
       <SpinnerModal isActive={loading} text="Importing wallet..." />
     </Screen>
   )

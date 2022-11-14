@@ -31,7 +31,6 @@ import CenteredInstructions, { Instruction } from './text/CenteredInstructions'
 
 interface ConfirmWithAuthModalProps {
   onConfirm: (pin?: string, wallet?: ActiveWalletState) => void
-  isVisible: boolean
   usePin?: boolean
   walletId?: string
 }
@@ -48,7 +47,7 @@ const errorInstructionSet: Instruction[] = [
   { text: 'Please try again 💪', type: 'secondary' }
 ]
 
-const ConfirmWithAuthModal = ({ onConfirm, isVisible, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
+const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [encryptedWallet, setEncryptedWallet] = useState<ActiveWalletState>()
@@ -99,7 +98,7 @@ const ConfirmWithAuthModal = ({ onConfirm, isVisible, walletId, usePin = false }
     decryptMnemonic()
   }, [encryptedWallet, onConfirm, pinCode])
 
-  if (!isVisible || shouldHideModal) return null
+  if (shouldHideModal) return null
 
   return (
     <>

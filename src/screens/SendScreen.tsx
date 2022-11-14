@@ -460,7 +460,7 @@ const SendScreen = ({
             </BottomScreenSection>
           </ConsolidationModalContent>
         </ModalWithBackdrop>
-        <ConfirmWithAuthModal isVisible={isAuthenticationModalVisible} onConfirm={sendTransaction} />
+        {isAuthenticationModalVisible && <ConfirmWithAuthModal onConfirm={sendTransaction} />}
       </ScrollView>
     </Screen>
   )

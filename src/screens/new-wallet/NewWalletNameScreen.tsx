@@ -103,7 +103,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
       <ActionsContainer>
         <Button title="Next" type="primary" wide disabled={name.length < 3} onPress={handleButtonPress} />
       </ActionsContainer>
-      <ConfirmWithAuthModal isVisible={isPinModalVisible} usePin onConfirm={createNewWallet} />
+      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} />}
       <SpinnerModal isActive={loading} text="Creating wallet..." />
     </Screen>
   )
