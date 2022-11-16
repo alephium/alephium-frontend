@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components/native'
 
 import animationSrc from '../../animations/fingerprint.json'
@@ -42,16 +42,16 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
 
-  const navigateToWelcomePage = useCallback(() => navigation.navigate('NewWalletSuccessPage'), [navigation])
+  const navigateToWelcomePage = () => navigation.navigate('NewWalletSuccessPage')
 
-  const enableBiometrics = useCallback(async () => {
+  const enableBiometrics = async () => {
     setLoading(true)
 
     await dispatch(biometricsToggled({ enable: true }))
     navigateToWelcomePage()
 
     setLoading(false)
-  }, [dispatch, navigateToWelcomePage])
+  }
 
   return (
     <Screen>

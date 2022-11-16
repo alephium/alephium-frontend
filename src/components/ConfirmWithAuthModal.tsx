@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -54,49 +54,47 @@ const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWi
   const [loading, setLoading] = useState(false)
   const [shouldHideModal, setShouldHideModal] = useState(false)
 
-  useEffect(() => {
-    const getStoredWallet = async () => {
-      try {
-        const storedWallet = walletId
-          ? await getStoredWalletById(walletId, usePin)
-          : await getStoredActiveWallet(usePin)
+  const getStoredWallet = useCallback(async () => {
+    try {
+      const storedWallet = walletId ? await getStoredWalletById(walletId, usePin) : await getStoredActiveWallet(usePin)
 
-        if (!storedWallet) return
+      if (!storedWallet) return
 
-        if (storedWallet.authType === 'biometrics') {
-          onConfirm()
-          setShouldHideModal(true)
-        } else if (storedWallet.authType === 'pin') {
-          setEncryptedWallet(storedWallet)
-        }
-      } catch (e: unknown) {
-        Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
+      if (storedWallet.authType === 'biometrics') {
+        onConfirm()
+        setShouldHideModal(true)
+      } else if (storedWallet.authType === 'pin') {
+        setEncryptedWallet(storedWallet)
       }
+    } catch (e: unknown) {
+      Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
     }
-
-    getStoredWallet()
   }, [onConfirm, usePin, walletId])
 
-  useEffect(() => {
+  const decryptMnemonic = useCallback(async () => {
     if (!pinCode || !encryptedWallet) return
 
-    const decryptMnemonic = async () => {
-      setLoading(true)
+    setLoading(true)
 
-      try {
-        const decryptedWallet = await walletOpenAsyncUnsafe(pinCode, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
-        onConfirm(pinCode, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
-        setShouldHideModal(true)
-      } catch (e) {
-        setShownInstructions(errorInstructionSet)
-        setPinCode('')
-      } finally {
-        setLoading(false)
-      }
+    try {
+      const decryptedWallet = await walletOpenAsyncUnsafe(pinCode, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
+      onConfirm(pinCode, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
+      setShouldHideModal(true)
+    } catch (e) {
+      setShownInstructions(errorInstructionSet)
+      setPinCode('')
+    } finally {
+      setLoading(false)
     }
-
-    decryptMnemonic()
   }, [encryptedWallet, onConfirm, pinCode])
+
+  useEffect(() => {
+    getStoredWallet()
+  }, [getStoredWallet])
+
+  useEffect(() => {
+    if (pinCode) decryptMnemonic()
+  }, [decryptMnemonic, pinCode])
 
   if (shouldHideModal) return null
 
