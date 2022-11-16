@@ -36,8 +36,10 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const [seed, setSeed] = useState<Buffer>()
   const addresses = useAppSelector(selectAllAddresses)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
-  const activeWallet = useAppSelector((state) => state.activeWallet)
-  const mainAddress = useAppSelector((state) => selectAddressByHash(state, state.addresses.mainAddress))
+  const [activeWallet, mainAddress] = useAppSelector((state) => [
+    state.activeWallet,
+    selectAddressByHash(state, state.addresses.mainAddress)
+  ])
   const [loading, setLoading] = useState(false)
 
   const initialValues = {

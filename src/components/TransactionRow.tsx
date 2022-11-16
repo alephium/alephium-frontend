@@ -46,8 +46,7 @@ interface TransactionRowProps {
 
 const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const price = useAppSelector((state) => state.price)
-  const currency = useAppSelector((state) => state.settings.currency)
+  const [price, currency] = useAppSelector((s) => [s.price, s.settings.currency])
   const { amount, infoType } = useTransactionInfo(tx, tx.address.hash)
   const { amountSign, Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
   const theme = useTheme()

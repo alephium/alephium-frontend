@@ -27,12 +27,17 @@ import { useAppDispatch, useAppSelector } from './redux'
 
 const useLoadStoredAddressesMetadata = () => {
   const dispatch = useAppDispatch()
-  const activeWallet = useAppSelector((state) => state.activeWallet)
-  const networkSettings = useAppSelector((state) => state.network.settings)
+  const [activeWallet, networkSettings, addressIds] = useAppSelector((s) => [
+    s.activeWallet,
+    s.network.settings,
+    s.addresses.ids
+  ])
+
   const currentActiveWalletMnemonic = useRef<Mnemonic>(activeWallet.mnemonic)
   const currentNodeHost = useRef<string>(networkSettings.nodeHost)
   const currentExplorerApiHost = useRef<string>(networkSettings.explorerApiHost)
-  const isAddressesStateEmpty = useAppSelector((state) => state.addresses.ids).length === 0
+
+  const isAddressesStateEmpty = addressIds.length === 0
 
   const initializeAddressesState = useCallback(async () => {
     if (activeWallet.metadataId && activeWallet.mnemonic) {

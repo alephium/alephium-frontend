@@ -34,9 +34,11 @@ const EditAddressScreen = ({
   }
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const activeWallet = useAppSelector((state) => state.activeWallet)
-  const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
+  const [address, activeWallet, mainAddress] = useAppSelector((s) => [
+    selectAddressByHash(s, addressHash),
+    s.activeWallet,
+    s.addresses.mainAddress
+  ])
 
   if (!address) return null
 

@@ -49,13 +49,12 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const theme = useTheme()
   const hasAvailableBiometrics = useBiometrics()
 
-  const discreetMode = useAppSelector((state) => state.settings.discreetMode)
-  const requireAuth = useAppSelector((state) => state.settings.requireAuth)
-  const currentTheme = useAppSelector((state) => state.settings.theme)
-  const currentNetworkName = useAppSelector((state) => state.network.name)
-  const currentWalletId = useAppSelector((state) => state.activeWallet.metadataId)
-  const currentCurrency = useAppSelector((state) => state.settings.currency)
-  const biometricsEnabled = useAppSelector((state) => state.activeWallet.authType) === 'biometrics'
+  const [
+    { discreetMode, requireAuth, theme: currentTheme, currency: currentCurrency },
+    currentNetworkName,
+    { metadataId: currentWalletId, authType }
+  ] = useAppSelector((s) => [s.settings, s.network.name, s.activeWallet])
+  const biometricsEnabled = authType === 'biometrics'
 
   const toggleBiometrics = async () => await dispatch(biometricsToggled({ enable: !biometricsEnabled }))
 

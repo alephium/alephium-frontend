@@ -41,16 +41,20 @@ const TransfersScreenHeader = (props: Partial<DefaultHeaderProps>) => (
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const confirmedTransactions = useAppSelector((state) => selectConfirmedTransactions(state, addressHashes)).filter(
+  const [confirmedTransactions, pendingTransactions, haveAllPagesLoaded] = useAppSelector((s) => [
+    selectConfirmedTransactions(s, addressHashes),
+    selectPendingTransactions(s, addressHashes),
+    selectHaveAllPagesLoaded(s)
+  ])
+  const updateHeader = useInWalletTabScreenHeader(TransfersScreenHeader, navigation)
+
+  const confirmedTransactionRemovedMovedDuplicates = confirmedTransactions.filter(
     (tx) => !isTxMoveDuplicate(tx, tx.address.hash, addressHashes)
   )
-  const pendingTransactions = useAppSelector((state) => selectPendingTransactions(state, addressHashes))
-  const updateHeader = useInWalletTabScreenHeader(TransfersScreenHeader, navigation)
-  const haveAllPagesLoaded = useAppSelector((state) => selectHaveAllPagesLoaded(state))
 
   return (
     <InWalletTransactionsFlatList
-      confirmedTransactions={confirmedTransactions}
+      confirmedTransactions={confirmedTransactionRemovedMovedDuplicates}
       pendingTransactions={pendingTransactions}
       addressHashes={addressHashes}
       haveAllPagesLoaded={haveAllPagesLoaded}

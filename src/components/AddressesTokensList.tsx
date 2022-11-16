@@ -37,12 +37,14 @@ interface AddressesTokensListProps {
 }
 
 const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListProps) => {
-  const price = useAppSelector((state) => state.price)
   const allAddresses = useAppSelector(selectAllAddresses)
   const addresses = addressesParam ?? allAddresses
-  const addressDataStatus = useAppSelector((state) => state.addresses.status)
-  const fiatCurrency = useAppSelector((state) => state.settings.currency)
-  const tokens = useAppSelector((state) => selectTokens(state, addresses))
+  const [price, addressDataStatus, fiatCurrency, tokens] = useAppSelector((s) => [
+    s.price,
+    s.addresses.status,
+    s.settings.currency,
+    selectTokens(s, addresses)
+  ])
   const tokenMetadata = useTokenMetadata()
 
   const [carouselItemHeight, setCarouselItemHeight] = useState(258)
