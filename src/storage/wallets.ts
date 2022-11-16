@@ -188,28 +188,32 @@ const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
 
 export const storePartialWalletMetadata = async (id: string, partialMetadata: Partial<WalletMetadata>) => {
   const walletsMetadata = await getWalletsMetadata()
-  const existingWalletMetadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id)
+  const index = walletsMetadata.findIndex((wallet: WalletMetadata) => wallet.id === id)
 
-  if (!existingWalletMetadata) throw `Could not find wallet with ID ${id}`
+  if (index < 0) throw `Could not find wallet with ID ${id}`
 
-  Object.assign(existingWalletMetadata, partialMetadata)
+  const updatedWalletMetadata = { ...walletsMetadata[index], ...partialMetadata }
+  walletsMetadata.splice(index, 1, updatedWalletMetadata)
 
   await storeWalletsMetadata(walletsMetadata)
 }
 
 export const storeAddressMetadata = async (walletId: string, addressMetadata: AddressMetadata) => {
   const walletsMetadata = await getWalletsMetadata()
-  const walletMetadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.id === walletId) as WalletMetadata
+  const walletIndex = walletsMetadata.findIndex((wallet: WalletMetadata) => wallet.id === walletId)
 
-  if (!walletMetadata) throw `Could not find wallet with ID ${walletId}`
+  if (walletIndex < 0) throw `Could not find wallet with ID ${walletId}`
 
-  const existingAddressMetadata = walletMetadata.addresses.find((data) => data.index === addressMetadata.index)
+  const walletMetadata = walletsMetadata[walletIndex]
+  const addressIndex = walletMetadata.addresses.findIndex((data) => data.index === addressMetadata.index)
 
-  if (existingAddressMetadata) {
-    Object.assign(existingAddressMetadata, addressMetadata)
+  if (addressIndex >= 0) {
+    walletMetadata.addresses.splice(addressIndex, 1, addressMetadata)
   } else {
     walletMetadata.addresses.push(addressMetadata)
   }
+
+  walletsMetadata.splice(walletIndex, 1, walletMetadata)
 
   console.log(`💽 Storing address index ${addressMetadata.index} metadata in persistent storage`)
   await storeWalletsMetadata(walletsMetadata)
