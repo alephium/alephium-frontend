@@ -16,36 +16,47 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isEnrolledAsync } from 'expo-local-authentication'
 import { useCallback, useEffect, useRef } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 
-import { navigateRootStack } from '../navigation/RootStackNavigation'
-import { areThereOtherWallets, getStoredActiveWallet } from '../storage/wallets'
-import { activeWalletChanged, walletFlushed } from '../store/activeWalletSlice'
+import { areThereOtherWallets, getActiveWalletMetadata, getStoredActiveWallet } from '../storage/wallets'
+import { activeWalletChanged, biometricsToggled, walletFlushed } from '../store/activeWalletSlice'
 import { pinFlushed } from '../store/credentialsSlice'
+import { navigateRootStack, useRestoreNavigationState } from '../utils/navigation'
 import { useAppDispatch, useAppSelector } from './redux'
 
 export const useAppStateChange = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
   const activeWallet = useAppSelector((state) => state.activeWallet)
+  const restoreNavigationState = useRestoreNavigationState()
 
   const unlockWallet = useCallback(async () => {
-    if (activeWallet.mnemonic) return
+    const hasAvailableBiometrics = await isEnrolledAsync()
 
     try {
+      const activeWalletMetadata = await getActiveWalletMetadata()
+
+      if (activeWalletMetadata && activeWalletMetadata.authType === 'biometrics' && !hasAvailableBiometrics) {
+        await dispatch(biometricsToggled({ enable: false, metadataId: activeWalletMetadata.id }))
+      }
+
       const storedActiveWallet = await getStoredActiveWallet()
 
-      if (storedActiveWallet === null) {
-        const result = await areThereOtherWallets()
+      if (!storedActiveWallet) {
+        navigateRootStack((await areThereOtherWallets()) ? 'SwitchWalletAfterDeletionScreen' : 'LandingScreen')
+        return
+      }
 
-        navigateRootStack(result ? 'SwitchWalletAfterDeletionScreen' : 'LandingScreen')
-      } else if (storedActiveWallet.authType === 'pin') {
-        navigateRootStack('LoginScreen', { storedWallet: storedActiveWallet })
-      } else if (storedActiveWallet.authType === 'biometrics') {
+      if (storedActiveWallet.authType === 'pin') {
+        navigateRootStack('LoginScreen', { walletIdToLogin: storedActiveWallet.metadataId })
+        return
+      }
+
+      if (storedActiveWallet.authType === 'biometrics') {
         await dispatch(activeWalletChanged(storedActiveWallet))
-      } else {
-        throw new Error('Unknown auth type')
+        restoreNavigationState()
       }
       // TODO: Revisit error handling with proper error codes
     } catch (e: unknown) {
@@ -54,16 +65,11 @@ export const useAppStateChange = () => {
         Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
           { text: 'Try again', onPress: unlockWallet }
         ])
-      } else if (error.message === 'No biometrics are currently enrolled') {
-        Alert.alert(
-          'Authentication required',
-          'This wallet is only accessibly via biometrics authentication, please set up biometrics (fingerprint) on your device settings and try again.'
-        )
       } else {
         console.error(e)
       }
     }
-  }, [activeWallet.mnemonic, dispatch])
+  }, [dispatch, restoreNavigationState])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {

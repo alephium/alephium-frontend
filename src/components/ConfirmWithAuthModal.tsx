@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletOpenAsyncUnsafe } from '@alephium/sdk'
+import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
-import { errorInstructionSet, pinLength } from '../screens/LoginScreen'
-import { getStoredActiveWallet } from '../storage/wallets'
+import { getStoredActiveWallet, getStoredWalletById } from '../storage/wallets'
+import { ActiveWalletState } from '../store/activeWalletSlice'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 import PinCodeInput from './inputs/PinCodeInput'
 import ModalWithBackdrop from './ModalWithBackdrop'
@@ -30,58 +30,64 @@ import SpinnerModal from './SpinnerModal'
 import CenteredInstructions, { Instruction } from './text/CenteredInstructions'
 
 interface ConfirmWithAuthModalProps {
-  onConfirm: () => void
-  onCancel: () => void
+  onConfirm: (pin?: string, wallet?: ActiveWalletState) => void
+  isVisible: boolean
+  usePin?: boolean
+  walletId?: string
 }
 
-const firstInstructionSet: Instruction[] = [{ text: 'Please enter your pin', type: 'primary' }]
+const pinLength = 6
 
-const ConfirmWithAuthModal = ({ onConfirm, onCancel }: ConfirmWithAuthModalProps) => {
+const firstInstructionSet: Instruction[] = [
+  { text: 'Please enter your pin', type: 'primary' },
+  { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
+]
+
+const errorInstructionSet: Instruction[] = [
+  { text: 'Oops, wrong pin!', type: 'error' },
+  { text: 'Please try again 💪', type: 'secondary' }
+]
+
+const ConfirmWithAuthModal = ({ onConfirm, isVisible, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
   const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const [activeWalletEncryptedMnemonic, setActiveWalletEncryptedMnemonic] = useState<string>()
+  const [encryptedWallet, setEncryptedWallet] = useState<ActiveWalletState>()
   const [loading, setLoading] = useState(false)
+  const [shouldHideModal, setShouldHideModal] = useState(false)
 
   useEffect(() => {
-    const getWallet = async () => {
+    const getStoredWallet = async () => {
       try {
-        const storedActiveWallet = await getStoredActiveWallet()
+        const storedWallet = walletId
+          ? await getStoredWalletById(walletId, usePin)
+          : await getStoredActiveWallet(usePin)
 
-        if (storedActiveWallet) {
-          if (storedActiveWallet.authType === 'biometrics') {
-            onConfirm()
-          } else if (storedActiveWallet.authType === 'pin') {
-            setActiveWalletEncryptedMnemonic(storedActiveWallet.mnemonic)
-          }
+        if (!storedWallet) return
+
+        if (storedWallet.authType === 'biometrics') {
+          onConfirm()
+          setShouldHideModal(true)
+        } else if (storedWallet.authType === 'pin') {
+          setEncryptedWallet(storedWallet)
         }
       } catch (e: unknown) {
-        const error = e as { message?: string }
-
-        if (error.message === 'User canceled the authentication') {
-          onCancel()
-        } else if (error.message === 'No biometrics are currently enrolled') {
-          Alert.alert(
-            'Authentication required',
-            'To authenticate, please set up biometrics (fingerprint) on your device settings and try again.'
-          )
-        } else {
-          console.error(e)
-        }
+        Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
       }
     }
 
-    getWallet()
-  }, [onCancel, onConfirm])
+    getStoredWallet()
+  }, [onConfirm, usePin, walletId])
 
   useEffect(() => {
-    if (!pinCode || !activeWalletEncryptedMnemonic) return
+    if (!pinCode || !encryptedWallet) return
 
     const decryptMnemonic = async () => {
       setLoading(true)
 
       try {
-        await walletOpenAsyncUnsafe(pinCode, activeWalletEncryptedMnemonic, pbkdf2, mnemonicToSeed)
-        onConfirm()
+        const decryptedWallet = await walletOpenAsyncUnsafe(pinCode, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
+        onConfirm(pinCode, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
+        setShouldHideModal(true)
       } catch (e) {
         setShownInstructions(errorInstructionSet)
         setPinCode('')
@@ -91,17 +97,21 @@ const ConfirmWithAuthModal = ({ onConfirm, onCancel }: ConfirmWithAuthModalProps
     }
 
     decryptMnemonic()
-  }, [activeWalletEncryptedMnemonic, onConfirm, pinCode])
+  }, [encryptedWallet, onConfirm, pinCode])
+
+  if (!isVisible || shouldHideModal) return null
 
   return (
     <>
-      <ModalWithBackdrop animationType="fade" visible={true} closeModal={onCancel}>
-        <ModalContent>
-          <CenteredInstructions instructions={shownInstructions} />
-          <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
-        </ModalContent>
+      <ModalWithBackdrop animationType="fade" visible>
+        {encryptedWallet && (
+          <ModalContent>
+            <CenteredInstructions instructions={shownInstructions} />
+            <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
+          </ModalContent>
+        )}
       </ModalWithBackdrop>
-      <SpinnerModal isActive={loading} />
+      <SpinnerModal isActive={loading} text="Verifying pin..." />
     </>
   )
 }

@@ -16,28 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletGenerateAsyncUnsafe } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useState } from 'react'
 
 import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
+import SpinnerModal from '../../components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
-import useOnNewWalletSuccess from '../../hooks/useOnNewWalletSuccess'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { walletStored } from '../../store/activeWalletSlice'
+import { walletGeneratedAndStoredWithPin } from '../../store/activeWalletSlice'
 import { pinEntered } from '../../store/credentialsSlice'
-import { mnemonicToSeed } from '../../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
+
+type Step = 'enter-pin' | 'verify-pin'
 
 const pinLength = 6
 
 const firstInstructionSet: Instruction[] = [
-  { text: 'Please choose a passcode 🔐', type: 'primary' },
+  { text: 'Please choose a pin 🔐', type: 'primary' },
   { text: 'Try not to forget it!', type: 'secondary' },
   { text: 'More info', type: 'link', url: 'https://wiki.alephium.org/Frequently-Asked-Questions.html' }
 ]
@@ -58,68 +58,70 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const [isVerifyingCode, setIsVerifyingCode] = useState(false)
   const method = useAppSelector((state) => state.walletGeneration.method)
-  const walletName = useAppSelector((state) => state.walletGeneration.walletName)
+  const name = useAppSelector((state) => state.walletGeneration.walletName)
+  const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState<Step>('enter-pin')
+
+  const isPinCodeFullyEntered = pinCode.length === pinLength
 
   useFocusEffect(
     useCallback(() => {
-      setIsVerifyingCode(false)
+      setStep('enter-pin')
       setShownInstructions(firstInstructionSet)
       setPinCode('')
     }, [])
   )
 
-  useEffect(() => {
-    // Switch to pin code check
-    if (pinCode.length !== pinLength) return
+  const handlePinCodeSet = useCallback(() => {
+    setChosenPinCode(pinCode)
+    setShownInstructions(secondInstructionSet)
+    setPinCode('')
+    setStep('verify-pin')
+  }, [pinCode])
 
-    const handlePinCodeSet = () => {
-      setIsVerifyingCode(true)
-      setChosenPinCode(pinCode)
-      setShownInstructions(secondInstructionSet)
+  const handlePinCodeVerification = useCallback(async () => {
+    if (pinCode !== chosenPinCode) {
       setPinCode('')
+      setShownInstructions(errorInstructionSet)
+      return
     }
 
-    const handlePinCodeVerification = async () => {
-      if (pinCode === chosenPinCode) {
-        dispatch(pinEntered(pinCode))
-        setPinCode('')
+    dispatch(pinEntered(pinCode))
 
-        if (method === 'create') {
-          if (hasAvailableBiometrics) {
-            navigation.navigate('AddBiometricsScreen')
-          } else {
-            const wallet = await walletGenerateAsyncUnsafe(mnemonicToSeed)
-            dispatch(
-              walletStored({
-                name: walletName,
-                mnemonic: wallet.mnemonic,
-                authType: 'pin',
-                isMnemonicBackedUp: false
-              })
-            )
-          }
-        } else if (method === 'import') {
-          navigation.navigate('ImportWalletSeedScreen')
-        }
-      } else {
-        setPinCode('')
-        setShownInstructions(errorInstructionSet)
-      }
+    if (method === 'import') {
+      navigation.navigate('ImportWalletSeedScreen')
+      return
     }
 
-    !isVerifyingCode ? handlePinCodeSet() : handlePinCodeVerification()
-  }, [chosenPinCode, dispatch, hasAvailableBiometrics, isVerifyingCode, method, navigation, pinCode, walletName])
+    if (method === 'create') {
+      setLoading(true)
 
-  useOnNewWalletSuccess(() => {
-    navigation.navigate('NewWalletSuccessPage')
-  })
+      await dispatch(walletGeneratedAndStoredWithPin({ name, pin: pinCode }))
+
+      setLoading(false)
+
+      navigation.navigate(hasAvailableBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessPage')
+    }
+
+    setPinCode('')
+  }, [chosenPinCode, dispatch, hasAvailableBiometrics, method, name, navigation, pinCode])
+
+  useEffect(() => {
+    if (!isPinCodeFullyEntered) {
+      return
+    } else if (step === 'enter-pin') {
+      handlePinCodeSet()
+    } else if (step === 'verify-pin') {
+      handlePinCodeVerification()
+    }
+  }, [handlePinCodeSet, handlePinCodeVerification, isPinCodeFullyEntered, step])
 
   return (
     <Screen>
       <CenteredInstructions instructions={shownInstructions} />
       <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
+      <SpinnerModal isActive={loading} text="Creating wallet..." />
     </Screen>
   )
 }

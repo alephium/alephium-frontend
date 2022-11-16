@@ -29,37 +29,47 @@ import Select from '../components/inputs/Select'
 import Screen, { ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import useBiometrics from '../hooks/useBiometrics'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { deleteWalletByName } from '../storage/wallets'
-import { walletFlushed } from '../store/activeWalletSlice'
+import { deleteWalletById } from '../storage/wallets'
+import { biometricsToggled, walletFlushed } from '../store/activeWalletSlice'
 import { currencyChanged, discreetModeChanged, passwordRequirementChanged, themeChanged } from '../store/settingsSlice'
 import { Currency } from '../types/settings'
 import { currencies } from '../utils/currencies'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SettingsScreen'>
 
+const currencyOptions = Object.values(currencies).map((currency) => ({
+  label: `${currency.name} (${currency.ticker})`,
+  value: currency.ticker
+}))
+
 const SettingsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
+  const hasAvailableBiometrics = useBiometrics()
 
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const requireAuth = useAppSelector((state) => state.settings.requireAuth)
   const currentTheme = useAppSelector((state) => state.settings.theme)
   const currentNetworkName = useAppSelector((state) => state.network.name)
-  const currentWalletName = useAppSelector((state) => state.activeWallet.name)
+  const currentWalletId = useAppSelector((state) => state.activeWallet.metadataId)
   const currentCurrency = useAppSelector((state) => state.settings.currency)
+  const biometricsEnabled = useAppSelector((state) => state.activeWallet.authType) === 'biometrics'
 
-  const currencyOptions = Object.values(currencies).map((currency) => ({
-    label: `${currency.name} (${currency.ticker})`,
-    value: currency.ticker
-  }))
+  const toggleBiometrics = async () => await dispatch(biometricsToggled({ enable: !biometricsEnabled }))
 
-  const handleDiscreetModeChange = (value: boolean) => dispatch(discreetModeChanged(value))
-  const handlePasswordRequirementChange = (value: boolean) => dispatch(passwordRequirementChanged(value))
-  const handleThemeChange = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
+  const toggleDiscreetMode = (value: boolean) => dispatch(discreetModeChanged(value))
+
+  const toggleTheme = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
+
+  const toggleAuthRequirement = (value: boolean) => dispatch(passwordRequirementChanged(value))
+
   const handleCurrencyChange = (currency: Currency) => dispatch(currencyChanged(currency))
 
   const handleDeleteButtonPress = () => {
+    if (!currentWalletId) return
+
     Alert.alert(
       'Deleting wallet',
       'Are you sure you want to delete your wallet? Ensure you have a backup of your secret recovery phrase.',
@@ -68,7 +78,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         {
           text: 'Delete',
           onPress: async () => {
-            await deleteWalletByName(currentWalletName)
+            await deleteWalletById(currentWalletId)
             dispatch(walletFlushed())
 
             navigation.navigate('SwitchWalletAfterDeletionScreen')
@@ -84,14 +94,19 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <HighlightRow title="Discreet mode" subtitle="Hide all amounts" isTopRounded hasBottomBorder>
-            <Toggle value={discreetMode} onValueChange={handleDiscreetModeChange} />
+            <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
           </HighlightRow>
           <HighlightRow title="Require authentication" subtitle="For important actions" hasBottomBorder>
-            <Toggle value={requireAuth} onValueChange={handlePasswordRequirementChange} />
+            <Toggle value={requireAuth} onValueChange={toggleAuthRequirement} />
           </HighlightRow>
           <HighlightRow title="Use dark theme" subtitle="Try it, it's nice" hasBottomBorder>
-            <Toggle value={currentTheme === 'dark'} onValueChange={handleThemeChange} />
+            <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
           </HighlightRow>
+          {hasAvailableBiometrics && (
+            <HighlightRow title="Biometrics authentication" subtitle="Enhance your security" hasBottomBorder>
+              <Toggle value={biometricsEnabled} onValueChange={toggleBiometrics} />
+            </HighlightRow>
+          )}
           <Select
             options={currencyOptions}
             label="Currency"

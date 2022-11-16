@@ -18,8 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { Mnemonic } from '../types/wallet'
-
 const sliceName = 'walletGeneration'
 
 export type WalletGenerationMethod = 'create' | 'import'
@@ -27,14 +25,12 @@ export type WalletGenerationMethod = 'create' | 'import'
 interface WalletGenerationState {
   method: WalletGenerationMethod | null
   walletName: string
-  importedMnemonic: Mnemonic
   loading: boolean
 }
 
 const initialState: WalletGenerationState = {
   method: null,
   walletName: '',
-  importedMnemonic: '',
   loading: false
 }
 
@@ -48,12 +44,7 @@ const walletGenerationSlice = createSlice({
     newWalletNameChanged: (state, action: PayloadAction<string>) => {
       state.walletName = action.payload
     },
-    importedMnemonicChanged: (state, action: PayloadAction<Mnemonic>) => {
-      state.importedMnemonic = action.payload
-    },
-    flushWalletGenerationState: (state) => {
-      return initialState
-    },
+    flushWalletGenerationState: () => initialState,
     loadingStarted: (state) => {
       state.loading = true
     },
@@ -63,13 +54,7 @@ const walletGenerationSlice = createSlice({
   }
 })
 
-export const {
-  methodSelected,
-  importedMnemonicChanged,
-  flushWalletGenerationState,
-  loadingStarted,
-  loadingFinished,
-  newWalletNameChanged
-} = walletGenerationSlice.actions
+export const { methodSelected, flushWalletGenerationState, loadingStarted, loadingFinished, newWalletNameChanged } =
+  walletGenerationSlice.actions
 
 export default walletGenerationSlice

@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ActiveWalletState } from '../store/activeWalletSlice'
 import { AddressHash } from '../types/addresses'
 import { AddressConfirmedTransaction } from '../types/transactions'
 
@@ -30,7 +29,8 @@ type RootStackParamList = {
   ImportWalletSeedScreen: undefined
   InWalletScreen: undefined
   LoginScreen: {
-    storedWallet: ActiveWalletState
+    walletIdToLogin?: string
+    resetNavigationOnLogin?: boolean
   }
   SplashScreen: undefined
   SwitchWalletScreen: undefined

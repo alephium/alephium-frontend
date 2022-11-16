@@ -19,19 +19,22 @@ import { colord } from 'colord'
 import { ActivityIndicator } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from './AppText'
 import ModalWithBackdrop from './ModalWithBackdrop'
 
 interface SpinnerModalProps {
   isActive: boolean
+  text?: string
 }
 
-const SpinnerModal = ({ isActive }: SpinnerModalProps) => {
+const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => {
   const theme = useTheme()
 
   return (
     <ModalWithBackdrop animationType="fade" visible={isActive}>
       <SpinnerContainer>
         <ActivityIndicator size={72} color={theme.font.tertiary} />
+        {text && <LoadingText bold>{text}</LoadingText>}
       </SpinnerContainer>
     </ModalWithBackdrop>
   )
@@ -45,4 +48,9 @@ const SpinnerContainer = styled.View`
   background-color: ${({ theme }) => colord(theme.bg.secondary).alpha(0.8).toRgbString()};
   justify-content: center;
   align-items: center;
+`
+
+const LoadingText = styled(AppText)`
+  margin-top: 20px;
+  color: ${({ theme }) => theme.font.tertiary};
 `
