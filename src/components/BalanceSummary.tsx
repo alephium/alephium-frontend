@@ -30,10 +30,8 @@ interface BalanceSummaryProps {
 }
 
 const BalanceSummary = ({ style }: BalanceSummaryProps) => {
-  const price = useAppSelector((state) => state.price)
-  const currency = useAppSelector((state) => state.settings.currency)
+  const [price, currency, addressDataStatus] = useAppSelector((s) => [s.price, s.settings.currency, s.addresses.status])
   const addresses = useAppSelector(selectAllAddresses)
-  const addressDataStatus = useAppSelector((state) => state.addresses.status)
   const theme = useTheme()
 
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))

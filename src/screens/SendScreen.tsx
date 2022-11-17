@@ -85,7 +85,7 @@ const SendScreen = ({
   }
 }: ScreenProps) => {
   const theme = useTheme()
-  const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
+  const [mainAddress, requiresAuth] = useAppSelector((s) => [s.addresses.mainAddress, s.settings.requireAuth])
   const [amount, setAmount] = useState(BigInt(0))
   const [fees, setFees] = useState<bigint>(BigInt(0))
   const [unsignedTxId, setUnsignedTxId] = useState('')
@@ -95,7 +95,6 @@ const SendScreen = ({
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isSweeping, setIsSweeping] = useState(false)
   const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<SweepAddressTransaction[]>([])
-  const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
   const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const dispatch = useAppDispatch()
   const [txStep, setTxStep] = useState<TxStep>('build')
@@ -460,7 +459,7 @@ const SendScreen = ({
             </BottomScreenSection>
           </ConsolidationModalContent>
         </ModalWithBackdrop>
-        <ConfirmWithAuthModal isVisible={isAuthenticationModalVisible} onConfirm={sendTransaction} />
+        {isAuthenticationModalVisible && <ConfirmWithAuthModal onConfirm={sendTransaction} />}
       </ScrollView>
     </Screen>
   )

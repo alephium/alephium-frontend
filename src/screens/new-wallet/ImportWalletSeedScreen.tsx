@@ -47,9 +47,11 @@ const enablePasteForDevelopment = false
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const name = useAppSelector((state) => state.walletGeneration.walletName)
-  const activeWallet = useAppSelector((state) => state.activeWallet)
-  const isAuthenticated = !!activeWallet.mnemonic
+  const [name, activeWallet, pin] = useAppSelector((s) => [
+    s.walletGeneration.walletName,
+    s.activeWallet,
+    s.credentials.pin
+  ])
   const hasAvailableBiometrics = useBiometrics()
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
@@ -58,9 +60,10 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const scrollRef = useRef<ScrollView>(null)
   const allowedWords = useRef(bip39Words.split(' '))
   const [loading, setLoading] = useState(false)
-  const pin = useAppSelector((state) => state.credentials.pin)
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
   const lastActiveWallet = useRef(activeWallet)
+
+  const isAuthenticated = !!activeWallet.mnemonic
 
   useEffect(() => {
     setPossibleMatches(
@@ -164,7 +167,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
         <PossibleMatches>
           {possibleMatches.map((word, index) => (
             <PossibleWordBox
-              key={word}
+              key={`${word}-${index}`}
               onPress={() => selectWord(word)}
               highlight={index === 0}
               entering={FadeIn.delay(index * 100)}
@@ -189,7 +192,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
           placeholder="Type your secret phrase word by word"
         />
       </ScreenSectionBottom>
-      <ConfirmWithAuthModal isVisible={isPinModalVisible} usePin onConfirm={importWallet} />
+      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={importWallet} />}
       <SpinnerModal isActive={loading} text="Importing wallet..." />
     </Screen>
   )

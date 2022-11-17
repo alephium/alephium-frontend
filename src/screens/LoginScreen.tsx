@@ -56,12 +56,9 @@ const LoginScreen = ({
 
   return (
     <Screen style={{ marginTop: 40 }}>
-      <ConfirmWithAuthModal
-        isVisible={isPinModalVisible}
-        usePin
-        onConfirm={handleSuccessfulLogin}
-        walletId={walletIdToLogin}
-      />
+      {isPinModalVisible && (
+        <ConfirmWithAuthModal usePin onConfirm={handleSuccessfulLogin} walletId={walletIdToLogin} />
+      )}
     </Screen>
   )
 }

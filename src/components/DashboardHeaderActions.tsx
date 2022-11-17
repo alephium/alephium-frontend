@@ -31,8 +31,10 @@ interface DashboardHeaderActionsProps {
 }
 
 const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
-  const discreetMode = useAppSelector((state) => state.settings.discreetMode)
-  const { isMnemonicBackedUp } = useAppSelector((state) => state.activeWallet)
+  const [discreetMode, isMnemonicBackedUp] = useAppSelector((s) => [
+    s.settings.discreetMode,
+    s.activeWallet.isMnemonicBackedUp
+  ])
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()

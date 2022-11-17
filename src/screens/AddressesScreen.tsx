@@ -53,14 +53,16 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
   const [currentAddressHash, setCurrentAddressHash] = useState(mainAddress)
-  const currentAddress = useAppSelector((state) => selectAddressByHash(state, currentAddressHash))
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const theme = useTheme()
   const updateHeader = useInWalletTabScreenHeader(AddressesScreenHeader, navigation)
-  const confirmedTransactions = useAppSelector((state) => selectConfirmedTransactions(state, [currentAddressHash]))
-  const pendingTransactions = useAppSelector((state) => selectPendingTransactions(state, [currentAddressHash]))
+  const [currentAddress, confirmedTransactions, pendingTransactions] = useAppSelector((s) => [
+    selectAddressByHash(s, currentAddressHash),
+    selectConfirmedTransactions(s, [currentAddressHash]),
+    selectPendingTransactions(s, [currentAddressHash])
+  ])
 
   useFocusEffect(
     useCallback(() => {

@@ -42,14 +42,17 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const [name, setName] = useState('')
-  const method = useAppSelector((state) => state.walletGeneration.method)
-  const activeWallet = useAppSelector((state) => state.activeWallet)
-  const isAuthenticated = !!activeWallet.mnemonic
+  const [method, activeWallet, pin] = useAppSelector((s) => [
+    s.walletGeneration.method,
+    s.activeWallet,
+    s.credentials.pin
+  ])
   const [loading, setLoading] = useState(false)
   const hasAvailableBiometrics = useBiometrics()
-  const pin = useAppSelector((state) => state.credentials.pin)
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
   const lastActiveWallet = useRef(activeWallet)
+
+  const isAuthenticated = !!activeWallet.mnemonic
 
   const createNewWallet = useCallback(
     async (pin?: string) => {
@@ -103,7 +106,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
       <ActionsContainer>
         <Button title="Next" type="primary" wide disabled={name.length < 3} onPress={handleButtonPress} />
       </ActionsContainer>
-      <ConfirmWithAuthModal isVisible={isPinModalVisible} usePin onConfirm={createNewWallet} />
+      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} />}
       <SpinnerModal isActive={loading} text="Creating wallet..." />
     </Screen>
   )

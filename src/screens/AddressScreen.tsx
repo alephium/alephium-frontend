@@ -44,8 +44,10 @@ const AddressScreen = ({
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const mainAddressHash = useAppSelector((state) => state.addresses.mainAddress)
+  const [address, mainAddressHash] = useAppSelector((state) => [
+    selectAddressByHash(state, addressHash),
+    state.addresses.mainAddress
+  ])
   const isCurrentAddressMain = addressHash === mainAddressHash
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
 
