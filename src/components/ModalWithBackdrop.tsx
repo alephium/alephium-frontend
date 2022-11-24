@@ -21,11 +21,12 @@ import styled from 'styled-components/native'
 
 interface ModalWithBackdropProps extends ModalProps {
   closeModal?: () => void
+  color?: string
 }
 
-const ModalWithBackdrop = ({ children, closeModal, ...props }: ModalWithBackdropProps) => (
+const ModalWithBackdrop = ({ children, closeModal, color, ...props }: ModalWithBackdropProps) => (
   <Modal transparent={true} {...props}>
-    <ModalBackdrop onPress={closeModal} />
+    <ModalBackdrop onPress={closeModal} color={color} />
     <ModalContent>{children}</ModalContent>
   </Modal>
 )
@@ -39,12 +40,12 @@ const ModalContent = styled.View`
   position: relative;
 `
 
-const ModalBackdrop = styled.Pressable`
+const ModalBackdrop = styled.Pressable<{ color?: string }>`
   flex: 1;
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${({ color }) => color || 'rgba(0, 0, 0, 0.5)'};
 `

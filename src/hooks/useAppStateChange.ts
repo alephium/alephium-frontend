@@ -29,7 +29,11 @@ import { useAppDispatch, useAppSelector } from './redux'
 export const useAppStateChange = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
-  const [activeWallet, lastNavigationState] = useAppSelector((s) => [s.activeWallet, s.appMetadata.lastNavigationState])
+  const [activeWallet, lastNavigationState, isQRCodeScannerOpen] = useAppSelector((s) => [
+    s.activeWallet,
+    s.appMetadata.lastNavigationState,
+    s.appMetadata.isQRCodeScannerOpen
+  ])
   const restoreNavigationState = useRestoreNavigationState()
 
   const unlockWallet = useCallback(async () => {
@@ -80,7 +84,7 @@ export const useAppStateChange = () => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
+      if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isQRCodeScannerOpen) {
         dispatch(pinFlushed())
         dispatch(walletFlushed())
       } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
@@ -93,5 +97,5 @@ export const useAppStateChange = () => {
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [activeWallet.mnemonic, dispatch, unlockWallet])
+  }, [activeWallet.mnemonic, dispatch, isQRCodeScannerOpen, unlockWallet])
 }
