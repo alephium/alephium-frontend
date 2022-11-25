@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createNavigationContainerRef } from '@react-navigation/native'
+import { NavigationState } from '@react-navigation/routers'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback } from 'react'
 
@@ -37,12 +38,21 @@ const initialNavigationState = {
 // well as the RootStackNavigation itself.
 export const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
 
+const excludedRoutesFromRestoring = ['SplashScreen', 'LoginScreen']
+
+export const isNavStateRestorable = (state: NavigationState) => {
+  const routes = state.routes.map((route) => route.name)
+  const latestRoute = routes.length > 0 ? routes[routes.length - 1] : undefined
+
+  return latestRoute && !excludedRoutesFromRestoring.includes(latestRoute)
+}
+
 export const useRestoreNavigationState = () => {
   const lastNavigationState = useAppSelector((state) => state.appMetadata.lastNavigationState)
 
   const restoreNavigationState = useCallback(
     (reset?: boolean) => {
-      const resetNavigationState = reset || !lastNavigationState
+      const resetNavigationState = reset || !lastNavigationState || !isNavStateRestorable(lastNavigationState)
 
       rootStackNavigationRef.resetRoot(resetNavigationState ? initialNavigationState : lastNavigationState)
     },

@@ -29,7 +29,7 @@ import { useAppDispatch, useAppSelector } from './redux'
 export const useAppStateChange = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
-  const activeWallet = useAppSelector((state) => state.activeWallet)
+  const [activeWallet, lastNavigationState] = useAppSelector((s) => [s.activeWallet, s.appMetadata.lastNavigationState])
   const restoreNavigationState = useRestoreNavigationState()
 
   const unlockWallet = useCallback(async () => {
@@ -38,6 +38,7 @@ export const useAppStateChange = () => {
     try {
       const activeWalletMetadata = await getActiveWalletMetadata()
 
+      // Disable biometrics if needed
       if (activeWalletMetadata && activeWalletMetadata.authType === 'biometrics' && !hasAvailableBiometrics) {
         await dispatch(biometricsToggled({ enable: false, metadataId: activeWalletMetadata.id }))
       }
@@ -45,7 +46,13 @@ export const useAppStateChange = () => {
       const storedActiveWallet = await getStoredActiveWallet()
 
       if (!storedActiveWallet) {
-        navigateRootStack((await areThereOtherWallets()) ? 'SwitchWalletAfterDeletionScreen' : 'LandingScreen')
+        if (await areThereOtherWallets()) {
+          navigateRootStack('SwitchWalletAfterDeletionScreen')
+        } else if (lastNavigationState) {
+          restoreNavigationState()
+        } else {
+          navigateRootStack('LandingScreen')
+        }
         return
       }
 
@@ -69,7 +76,7 @@ export const useAppStateChange = () => {
         console.error(e)
       }
     }
-  }, [dispatch, restoreNavigationState])
+  }, [dispatch, lastNavigationState, restoreNavigationState])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -77,7 +84,6 @@ export const useAppStateChange = () => {
         dispatch(pinFlushed())
         dispatch(walletFlushed())
       } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
-        navigateRootStack('SplashScreen')
         unlockWallet()
       }
 

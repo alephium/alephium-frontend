@@ -23,7 +23,7 @@ import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { useAppDispatch } from '../hooks/redux'
 import AddressScreen from '../screens/AddressScreen'
 import EditAddressScreen from '../screens/EditAddressScreen'
 import LandingScreen from '../screens/LandingScreen'
@@ -45,7 +45,7 @@ import SwitchWalletAfterDeletionScreen from '../screens/SwitchWalletAfterDeletio
 import SwitchWalletScreen from '../screens/SwitchWalletScreen'
 import TransactionScreen from '../screens/TransactionScreen'
 import { routeChanged } from '../store/appMetadataSlice'
-import { rootStackNavigationRef } from '../utils/navigation'
+import { isNavStateRestorable, rootStackNavigationRef } from '../utils/navigation'
 import InWalletTabsNavigation from './InWalletNavigation'
 import RootStackParamList from './rootStackRoutes'
 
@@ -57,10 +57,9 @@ const RootStackNavigation = () => {
   const { height: screenHeight } = useWindowDimensions()
   const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
   const dispatch = useAppDispatch()
-  const isAuthenticated = !!useAppSelector((state) => state.activeWallet.mnemonic)
 
   const handleStateChange = (state?: NavigationState) => {
-    if (state && isAuthenticated) dispatch(routeChanged(state))
+    if (state && isNavStateRestorable(state)) dispatch(routeChanged(state))
   }
 
   const themeNavigator = {

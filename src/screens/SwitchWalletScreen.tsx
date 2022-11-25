@@ -26,7 +26,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
-import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
+import Screen, { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
@@ -81,7 +81,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   }
 
   return (
-    <>
+    <Screen style={style}>
       <ScreenSection>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <Subtitle>Switch to another wallet?</Subtitle>
@@ -116,7 +116,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
         </ButtonsRow>
       </BottomScreenSection>
       <SpinnerModal isActive={loading} text="Switching wallets..." />
-    </>
+    </Screen>
   )
 }
 
