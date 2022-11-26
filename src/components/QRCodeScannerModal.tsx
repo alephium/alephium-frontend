@@ -60,10 +60,12 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan }: QRCodeScannerModalProps) 
             <X size={32} color={theme.font.primary} />
           </CloseButton>
         </ScreenSection>
-        <BarCodeScannerStyled
-          barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        />
+        {!scanned && (
+          <BarCodeScannerStyled
+            barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
+            onBarCodeScanned={handleBarCodeScanned}
+          />
+        )}
       </ScreenStyled>
     </ModalWithBackdrop>
   )

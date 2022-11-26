@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletOpenAsyncUnsafe } from '@alephium/sdk'
+import { simpleDecryptAsync } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { ScanLine } from 'lucide-react-native'
@@ -40,7 +40,7 @@ import { biometricsToggled, walletGeneratedAndStoredWithPin } from '../../store/
 import { qrCodeScannerToggled } from '../../store/appMetadataSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '../../style/globalStyle'
 import { bip39Words } from '../../utils/bip39'
-import { mnemonicToSeed, pbkdf2 } from '../../utils/crypto'
+import { pbkdf2 } from '../../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
@@ -72,7 +72,6 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false)
   const [encryptedWalletFromQRCode, setEncryptedWalletFromQRCode] = useState('')
-  const [decryptedMnemonicFromQRCode, setDecryptedMnemonicFromQRCode] = useState('')
 
   const isAuthenticated = !!activeWallet.mnemonic
   const openQRCodeScannerModal = () => dispatch(qrCodeScannerToggled(true))
@@ -117,7 +116,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const handleEnterPress = () => possibleMatches.length > 0 && selectWord(possibleMatches[0])
 
   const importWallet = useCallback(
-    async (pin?: string) => {
+    async (pin?: string, mnemonic?: string) => {
       if (!name) return
 
       if (!pin) {
@@ -128,9 +127,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       setLoading(true)
 
       const importedMnemonic =
-        decryptedMnemonicFromQRCode || enablePasteForDevelopment
-          ? typedInput
-          : selectedWords.map(({ word }) => word).join(' ')
+        mnemonic || (enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' '))
 
       await dispatch(walletGeneratedAndStoredWithPin({ name, pin, mnemonicToImport: importedMnemonic }))
 
@@ -149,16 +146,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       navigation.navigate('NewWalletSuccessPage')
     },
-    [
-      decryptedMnemonicFromQRCode,
-      dispatch,
-      hasAvailableBiometrics,
-      isAuthenticated,
-      name,
-      navigation,
-      selectedWords,
-      typedInput
-    ]
+    [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, selectedWords, typedInput]
   )
 
   const handleWalletImport = () => importWallet(pin)
@@ -170,10 +158,9 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
   const decryptAndImportWallet = async (password: string) => {
     try {
-      const decryptedWallet = await walletOpenAsyncUnsafe(password, encryptedWalletFromQRCode, pbkdf2, mnemonicToSeed)
+      const decryptedMnemonic = await simpleDecryptAsync(password, encryptedWalletFromQRCode, pbkdf2)
 
-      setDecryptedMnemonicFromQRCode(decryptedWallet.mnemonic)
-      importWallet(pin)
+      importWallet(pin, decryptedMnemonic)
     } catch (e) {
       console.error(e)
       Alert.alert('Could not decrypt wallet with the given password.')
@@ -245,7 +232,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
           placeholder="Type your secret phrase word by word"
         />
       </ScreenSectionBottom>
-      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={importWallet} />}
+      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin)} />}
       {isQRCodeScannerOpen && <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} />}
       {isPasswordModalVisible && (
         <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
