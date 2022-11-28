@@ -20,4 +20,4 @@ npm start
 
 Launch the Development Client app on your phone and enter the URL you see on your terminal (you can scan the QR code to get the URL).
 
-[dev-client]: https://expo.dev/accounts/nop33/projects/mobile-wallet/builds/53835e97-e663-43fc-b6f3-8affc5a3c17f
+[dev-client]: https://expo.dev/accounts/nop33/projects/mobile-wallet/builds/00080e0a-fca8-4b43-b988-e91e861227ed

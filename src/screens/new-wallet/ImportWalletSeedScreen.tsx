@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { simpleDecryptAsync } from '@alephium/sdk'
+import { decryptAsync } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { ScanLine } from 'lucide-react-native'
@@ -158,7 +158,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
   const decryptAndImportWallet = async (password: string) => {
     try {
-      const decryptedMnemonic = await simpleDecryptAsync(password, encryptedWalletFromQRCode, pbkdf2)
+      const decryptedMnemonic = await decryptAsync(password, encryptedWalletFromQRCode, pbkdf2)
 
       importWallet(pin, decryptedMnemonic)
     } catch (e) {
