@@ -63,7 +63,7 @@ export const discoverActiveAddresses = async (
 
   const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): AddressAndKeys[] => [])
   const activeAddresses: AddressAndKeys[] = []
-  const skipIndexes = [...addressIndexesToSkip]
+  const skipIndexes = Array.from(addressIndexesToSkip)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
     const newAddresses = deriveAddressesInGroup(group, NUM_OF_ADDRESSES_PER_GROUP_TO_CHECK, seed, skipIndexes)
@@ -107,7 +107,7 @@ const deriveAddressesInGroup = (
   skipIndexes: number[]
 ): AddressAndKeys[] => {
   const addresses = []
-  const skipAddressIndexes = [...skipIndexes]
+  const skipAddressIndexes = Array.from(skipIndexes)
 
   for (let j = 0; j < amount; j++) {
     const newAddress = deriveNewAddressData(seed, group, undefined, skipAddressIndexes)
