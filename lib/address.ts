@@ -44,39 +44,29 @@ export const isAddressValid = (address: string) =>
 
 const toPosInt = (byte: number): number => byte & 0xff
 
-/* The algorithm will first derive 20 addresses in each group (so, 80 in total) and make a single request to the server
-  which will return a boolean array of 80 elements (20 per group). It will then split this array into 4 arrays (one per
-  group) and it will cross-reference the results with the initially derived addresses to find the active ones, while
-  keeping count of the subsequent number of addresses that are inactive. Then, it will check whether this counter for
-  each group is below the gap, and if it is, it will check the next 20 addresses in the specific group with a following
-  request to the server. It will stop once the counter of inactive addresses for each group is equal or larger than the
-  predefined gap (5).
-*/
 export const discoverActiveAddresses = async (
   seed: Buffer,
-  addressIndexesToSkip: number[],
-  client: ExplorerClient
+  client: ExplorerClient,
+  addressIndexesToSkip: number[] = []
 ): Promise<AddressAndKeys[]> => {
   const GAP = 5
-  const QUERY_LIMIT = 80
-  const NUM_OF_ADDRESSES_PER_GROUP_TO_CHECK = QUERY_LIMIT / TOTAL_NUMBER_OF_GROUPS // 20
 
   const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): AddressAndKeys[] => [])
   const activeAddresses: AddressAndKeys[] = []
   const skipIndexes = Array.from(addressIndexesToSkip)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
-    const newAddresses = deriveAddressesInGroup(group, NUM_OF_ADDRESSES_PER_GROUP_TO_CHECK, seed, skipIndexes)
+    const newAddresses = deriveAddressesInGroup(group, GAP, seed, skipIndexes)
     addressesPerGroup[group] = newAddresses
     skipIndexes.push(...newAddresses.map((address) => address.addressIndex))
   }
 
   const addressesToCheckIfActive = addressesPerGroup.flat().map((address) => address.address)
-  const result = await client.addressesActive.postAddressesActive(addressesToCheckIfActive)
-  const resultsPerGroup = splitResultsArrayIntoOneArrayPerGroup(result.data, NUM_OF_ADDRESSES_PER_GROUP_TO_CHECK)
+  const results = await getActiveAddressesResults(addressesToCheckIfActive, client)
+  const resultsPerGroup = splitResultsArrayIntoOneArrayPerGroup(results, GAP)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
-    let { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
+    const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
       addressesPerGroup[group],
       resultsPerGroup[group]
     )
@@ -84,15 +74,20 @@ export const discoverActiveAddresses = async (
     let gapPerGroup = gap
     activeAddresses.push(...newActiveAddresses)
 
-    while (gapPerGroup <= GAP) {
-      const newAddresses = deriveAddressesInGroup(group, NUM_OF_ADDRESSES_PER_GROUP_TO_CHECK, seed, skipIndexes)
+    while (gapPerGroup < GAP) {
+      const remainingGap = GAP - gapPerGroup
+      const newAddresses = deriveAddressesInGroup(group, remainingGap, seed, skipIndexes)
       skipIndexes.push(...newAddresses.map((address) => address.addressIndex))
 
       const addressesToCheckIfActive = newAddresses.map((address) => address.address)
-      const result = await client.addressesActive.postAddressesActive(addressesToCheckIfActive)
+      const results = await getActiveAddressesResults(addressesToCheckIfActive, client)
 
-      ;({ gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(newAddresses, result.data))
-      gapPerGroup += gap
+      const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
+        newAddresses,
+        results,
+        gapPerGroup
+      )
+      gapPerGroup = gap
       activeAddresses.push(...newActiveAddresses)
     }
   }
@@ -132,9 +127,10 @@ const splitResultsArrayIntoOneArrayPerGroup = (array: boolean[], chunkSize: numb
 
 const getGapFromLastActiveAddress = (
   addresses: AddressAndKeys[],
-  results: boolean[]
+  results: boolean[],
+  startingGap = 0
 ): { gap: number; activeAddresses: AddressAndKeys[] } => {
-  let gap = 0
+  let gap = startingGap
   const activeAddresses = []
 
   for (let j = 0; j < addresses.length; j++) {
@@ -153,4 +149,21 @@ const getGapFromLastActiveAddress = (
     gap,
     activeAddresses
   }
+}
+
+const getActiveAddressesResults = async (
+  addressesToCheckIfActive: string[],
+  client: ExplorerClient
+): Promise<boolean[]> => {
+  const QUERY_LIMIT = 80
+  const results: boolean[] = []
+  let queryPage = 0
+
+  while (addressesToCheckIfActive.length > results.length) {
+    const addressesToQuery = addressesToCheckIfActive.slice(queryPage * QUERY_LIMIT, ++queryPage * QUERY_LIMIT)
+    const response = await client.addressesActive.postAddressesActive(addressesToQuery)
+    results.push(...response.data)
+  }
+
+  return results
 }
