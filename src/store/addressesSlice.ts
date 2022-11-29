@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
+import { addressToGroup, deriveNewAddressData, TOTAL_NUMBER_OF_GROUPS, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
 import {
   createAsyncThunk,
@@ -28,11 +28,13 @@ import {
 } from '@reduxjs/toolkit'
 
 import client from '../api/client'
-import { storeAddressMetadata } from '../storage/wallets'
+import { getAddressesMetadataByWalletId, storeAddressMetadata } from '../storage/wallets'
 import { AddressHash, AddressSettings } from '../types/addresses'
 import { TimeInMs } from '../types/numbers'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
+import { fetchAddressesData } from '../utils/addresses'
+import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
 import { RootState } from './store'
 
@@ -54,13 +56,12 @@ export type Address = {
       allPagesLoaded: boolean
     }
     availableBalance: string
-    lockedBalance: string
     lastUsed: TimeInMs
     tokens: AddressToken[]
   }
 }
 
-type AddressPartial = {
+export type AddressPartial = {
   hash: string
   publicKey: string
   privateKey: string
@@ -90,46 +91,13 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
   status: 'uninitialized'
 })
 
-export const fetchAddressesData = createAsyncThunk(
-  `${sliceName}/fetchAddressesData`,
+export const addressesDataFetched = createAsyncThunk(
+  `${sliceName}/addressesDataFetched`,
   async (payload: AddressHash[], { dispatch }) => {
-    const results = []
     dispatch(loadingStarted())
 
     const addresses = payload
-
-    for (const addressHash of addresses) {
-      console.log('⬇️ Fetching address details: ', addressHash)
-      const { data } = await client.explorerClient.getAddressDetails(addressHash)
-      const availableBalance = data.balance
-        ? data.lockedBalance
-          ? (BigInt(data.balance) - BigInt(data.lockedBalance)).toString()
-          : data.balance
-        : undefined
-
-      console.log('⬇️ Fetching 1st page of address confirmed transactions: ', addressHash)
-      const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, 1)
-
-      console.log('⬇️ Fetching address tokens: ', addressHash)
-      const { data: tokenIds } = await client.explorerClient.addresses.getAddressesAddressTokens(addressHash)
-
-      const tokens = await Promise.all(
-        tokenIds.map((id) =>
-          client.explorerClient.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then(({ data }) => ({
-            id,
-            balances: data
-          }))
-        )
-      )
-
-      results.push({
-        hash: addressHash,
-        details: data,
-        availableBalance: availableBalance,
-        transactions,
-        tokens
-      })
-    }
+    const results = await fetchAddressesData(addresses)
 
     dispatch(loadingFinished())
     return results
@@ -169,6 +137,36 @@ export const fetchAddressesTransactionsNextPage = createAsyncThunk(
 
     dispatch(loadingFinished())
     return results
+  }
+)
+
+export const addressesFromStoredMetadataInitialized = createAsyncThunk(
+  `${sliceName}/addressesFromStoredMetadataInitialized`,
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    const state = getState() as RootState
+
+    const { metadataId, mnemonic } = state.activeWallet
+
+    if (metadataId && mnemonic) {
+      dispatch(loadingStarted())
+
+      const { seed } = await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
+      const addressesMetadata = await getAddressesMetadataByWalletId(metadataId)
+
+      console.log(`👀 Found ${addressesMetadata.length} addresses metadata in persistent storage`)
+
+      const addresses = addressesMetadata.map(({ index, ...settings }) => {
+        const { address, publicKey, privateKey } = deriveNewAddressData(seed, undefined, index)
+        return { hash: address, publicKey, privateKey, index, settings }
+      })
+
+      dispatch(addressesAdded(addresses))
+      await dispatch(addressesDataFetched(addresses.map((address) => address.hash)))
+
+      dispatch(loadingFinished())
+    } else {
+      rejectWithValue('Could not restore addresses from metadata')
+    }
   }
 )
 
@@ -268,7 +266,6 @@ const addressesSlice = createSlice({
     },
     addressesFlushed: (state) => {
       addressesAdapter.setAll(state, [])
-      state.status = 'uninitialized'
     },
     loadingStarted: (state) => {
       state.loading = true
@@ -279,7 +276,7 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAddressesData.fulfilled, (state, action) => {
+      .addCase(addressesDataFetched.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, details, availableBalance, transactions, tokens } = address
           const addressState = state.entities[hash]

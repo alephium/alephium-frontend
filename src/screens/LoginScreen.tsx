@@ -21,9 +21,10 @@ import { useCallback, useState } from 'react'
 
 import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import Screen from '../components/layout/Screen'
-import { useAppDispatch } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
+import { addressesFlushed, addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
 import { pinEntered } from '../store/credentialsSlice'
 import { useRestoreNavigationState } from '../utils/navigation'
 
@@ -32,11 +33,12 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 const LoginScreen = ({
   navigation,
   route: {
-    params: { walletIdToLogin, resetNavigationOnLogin }
+    params: { walletIdToLogin, resetWalletOnLogin }
   }
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const restoreNavigationState = useRestoreNavigationState()
+  const addressesStatus = useAppSelector((state) => state.addresses.status)
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
@@ -47,11 +49,19 @@ const LoginScreen = ({
       setIsPinModalVisible(false)
 
       dispatch(pinEntered(pin))
-      dispatch(activeWalletChanged(wallet))
+      await dispatch(activeWalletChanged(wallet))
 
-      restoreNavigationState(resetNavigationOnLogin)
+      if (resetWalletOnLogin) {
+        dispatch(addressesFlushed())
+      }
+
+      if (resetWalletOnLogin || addressesStatus === 'uninitialized') {
+        dispatch(addressesFromStoredMetadataInitialized())
+      }
+
+      restoreNavigationState(resetWalletOnLogin)
     },
-    [dispatch, resetNavigationOnLogin, restoreNavigationState]
+    [addressesStatus, dispatch, resetWalletOnLogin, restoreNavigationState]
   )
 
   return (

@@ -24,7 +24,7 @@ import Loader from '../components/Loader'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { storeAddressMetadata } from '../storage/wallets'
-import { addressesAdded, fetchAddressesData, selectAddressByHash, selectAllAddresses } from '../store/addressesSlice'
+import { addressesAdded, addressesDataFetched, selectAddressByHash, selectAllAddresses } from '../store/addressesSlice'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import AddressFormScreen, { AddressFormData } from './AddressFormScreen'
@@ -80,7 +80,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
         }
       ])
     )
-    dispatch(fetchAddressesData([newAddressData.address]))
+    dispatch(addressesDataFetched([newAddressData.address]))
 
     if (activeWallet.metadataId) {
       await storeAddressMetadata(activeWallet.metadataId, {

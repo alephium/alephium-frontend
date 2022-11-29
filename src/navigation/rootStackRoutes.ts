@@ -30,7 +30,7 @@ type RootStackParamList = {
   InWalletScreen: undefined
   LoginScreen: {
     walletIdToLogin?: string
-    resetNavigationOnLogin?: boolean
+    resetWalletOnLogin?: boolean
   }
   SplashScreen: undefined
   SwitchWalletScreen: undefined

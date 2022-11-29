@@ -26,7 +26,6 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import { useAppStateChange } from './src/hooks/useAppStateChange'
 import useInitializeClient from './src/hooks/useInitializeClient'
-import useLoadStoredAddressesMetadata from './src/hooks/useLoadStoredAddressesMetadata'
 import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
 import useRefreshALPHPrice from './src/hooks/useRefreshALPHPrice'
 import RootStackNavigation from './src/navigation/RootStackNavigation'
@@ -78,7 +77,6 @@ const App = () => {
 const Main = ({ children }: { children: ReactNode }) => {
   useInitializeClient()
   useLoadStoredSettings()
-  useLoadStoredAddressesMetadata()
   useAppStateChange()
   useRefreshALPHPrice()
 
