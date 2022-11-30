@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addressToGroup, deriveNewAddressData, TOTAL_NUMBER_OF_GROUPS, walletImportAsyncUnsafe } from '@alephium/sdk'
+import {
+  addressToGroup,
+  deriveNewAddressData,
+  discoverActiveAddresses,
+  TOTAL_NUMBER_OF_GROUPS,
+  walletImportAsyncUnsafe
+} from '@alephium/sdk'
 import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
 import {
   createAsyncThunk,
@@ -34,6 +40,7 @@ import { TimeInMs } from '../types/numbers'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
 import { fetchAddressesData } from '../utils/addresses'
+import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
 import { RootState } from './store'
@@ -82,12 +89,14 @@ const addressesAdapter = createEntityAdapter<Address>({
 interface AddressesState extends EntityState<Address> {
   mainAddress: string
   loading: boolean
+  addressDiscoveryLoading: boolean
   status: 'uninitialized' | 'initialized'
 }
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
   mainAddress: '',
   loading: false,
+  addressDiscoveryLoading: false,
   status: 'uninitialized'
 })
 
@@ -207,6 +216,32 @@ export const mainAddressChanged = createAsyncThunk(
   }
 )
 
+export const activeAddressesDiscovered = createAsyncThunk(
+  `${sliceName}/activeAddressesDiscovered`,
+  async (payload: { seed: Buffer; skipIndexes: number[] }, { dispatch }) => {
+    const { seed, skipIndexes } = payload
+
+    dispatch(addressDiscoveryStarted())
+
+    const newAddressesData = await discoverActiveAddresses(seed, client.explorerClient, skipIndexes)
+    const newAddresses = newAddressesData.map((data) => ({
+      hash: data.address,
+      publicKey: data.publicKey,
+      privateKey: data.privateKey,
+      index: data.addressIndex,
+      settings: {
+        isMain: false,
+        color: getRandomLabelColor()
+      }
+    }))
+
+    dispatch(addressesAdded(newAddresses))
+    await dispatch(addressesDataFetched(newAddresses.map((address) => address.hash)))
+
+    dispatch(addressDiscoveryFinished())
+  }
+)
+
 const addressesSlice = createSlice({
   name: sliceName,
   initialState,
@@ -272,6 +307,12 @@ const addressesSlice = createSlice({
     },
     loadingFinished: (state) => {
       state.loading = false
+    },
+    addressDiscoveryStarted: (state) => {
+      state.addressDiscoveryLoading = true
+    },
+    addressDiscoveryFinished: (state) => {
+      state.addressDiscoveryLoading = false
     }
   },
   extraReducers: (builder) => {
@@ -411,7 +452,9 @@ export const {
   addressesFlushed,
   loadingStarted,
   loadingFinished,
-  addressSettingsUpdated
+  addressSettingsUpdated,
+  addressDiscoveryStarted,
+  addressDiscoveryFinished
 } = addressesSlice.actions
 
 export default addressesSlice
