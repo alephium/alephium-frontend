@@ -48,23 +48,22 @@ const toPosInt = (byte: number): number => byte & 0xff
 export const discoverActiveAddresses = async (
   masterKey: BIP32Interface,
   client: ExplorerClient,
-  addressIndexesToSkip: number[] = []
+  addressIndexesToSkip: number[] = [],
+  minGap = 5
 ): Promise<AddressAndKeys[]> => {
-  const GAP = 5
-
   const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): AddressAndKeys[] => [])
   const activeAddresses: AddressAndKeys[] = []
   const skipIndexes = Array.from(addressIndexesToSkip)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
-    const newAddresses = deriveAddressesInGroup(group, GAP, masterKey, skipIndexes)
+    const newAddresses = deriveAddressesInGroup(group, minGap, masterKey, skipIndexes)
     addressesPerGroup[group] = newAddresses
     skipIndexes.push(...newAddresses.map((address) => address.addressIndex))
   }
 
   const addressesToCheckIfActive = addressesPerGroup.flat().map((address) => address.address)
   const results = await getActiveAddressesResults(addressesToCheckIfActive, client)
-  const resultsPerGroup = splitResultsArrayIntoOneArrayPerGroup(results, GAP)
+  const resultsPerGroup = splitResultsArrayIntoOneArrayPerGroup(results, minGap)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
     const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
@@ -75,8 +74,8 @@ export const discoverActiveAddresses = async (
     let gapPerGroup = gap
     activeAddresses.push(...newActiveAddresses)
 
-    while (gapPerGroup < GAP) {
-      const remainingGap = GAP - gapPerGroup
+    while (gapPerGroup < minGap) {
+      const remainingGap = minGap - gapPerGroup
       const newAddresses = deriveAddressesInGroup(group, remainingGap, masterKey, skipIndexes)
       skipIndexes.push(...newAddresses.map((address) => address.addressIndex))
 
