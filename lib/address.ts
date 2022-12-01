@@ -21,6 +21,7 @@ import djb2 from '../lib/djb2'
 import { AddressAndKeys, deriveNewAddressData } from './wallet'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import { ExplorerClient } from './explorer'
+import { BIP32Interface } from 'bip32'
 
 export function addressToGroup(address: string, totalNumberOfGroups: number): number {
   const bytes = bs58.decode(address).slice(1)
@@ -45,7 +46,7 @@ export const isAddressValid = (address: string) =>
 const toPosInt = (byte: number): number => byte & 0xff
 
 export const discoverActiveAddresses = async (
-  seed: Buffer,
+  masterKey: BIP32Interface,
   client: ExplorerClient,
   addressIndexesToSkip: number[] = []
 ): Promise<AddressAndKeys[]> => {
@@ -56,7 +57,7 @@ export const discoverActiveAddresses = async (
   const skipIndexes = Array.from(addressIndexesToSkip)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
-    const newAddresses = deriveAddressesInGroup(group, GAP, seed, skipIndexes)
+    const newAddresses = deriveAddressesInGroup(group, GAP, masterKey, skipIndexes)
     addressesPerGroup[group] = newAddresses
     skipIndexes.push(...newAddresses.map((address) => address.addressIndex))
   }
@@ -76,7 +77,7 @@ export const discoverActiveAddresses = async (
 
     while (gapPerGroup < GAP) {
       const remainingGap = GAP - gapPerGroup
-      const newAddresses = deriveAddressesInGroup(group, remainingGap, seed, skipIndexes)
+      const newAddresses = deriveAddressesInGroup(group, remainingGap, masterKey, skipIndexes)
       skipIndexes.push(...newAddresses.map((address) => address.addressIndex))
 
       const addressesToCheckIfActive = newAddresses.map((address) => address.address)
@@ -98,14 +99,14 @@ export const discoverActiveAddresses = async (
 const deriveAddressesInGroup = (
   group: number,
   amount: number,
-  seed: Buffer,
+  masterKey: BIP32Interface,
   skipIndexes: number[]
 ): AddressAndKeys[] => {
   const addresses = []
   const skipAddressIndexes = Array.from(skipIndexes)
 
   for (let j = 0; j < amount; j++) {
-    const newAddress = deriveNewAddressData(seed, group, undefined, skipAddressIndexes)
+    const newAddress = deriveNewAddressData(masterKey, group, undefined, skipAddressIndexes)
     addresses.push(newAddress)
     skipAddressIndexes.push(newAddress.addressIndex)
   }

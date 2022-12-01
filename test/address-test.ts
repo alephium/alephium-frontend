@@ -59,7 +59,7 @@ describe('address', function () {
   })
 
   it('discovers active addresses', async () => {
-    const seed = walletImport(wallets.wallets[0].mnemonic).seed
+    const masterKey = walletImport(wallets.wallets[0].mnemonic).masterKey
     const client = new ExplorerClient()
     const mockedPostAddressesActive = jest.fn()
     client.addressesActive.postAddressesActive = mockedPostAddressesActive
@@ -73,7 +73,7 @@ describe('address', function () {
       const addresses: string[] = []
 
       for (let j = 0; j < 100; j++) {
-        const newAddress = deriveNewAddressData(seed, group, undefined, skipAddressIndexes)
+        const newAddress = deriveNewAddressData(masterKey, group, undefined, skipAddressIndexes)
         addresses.push(newAddress.address)
         skipAddressIndexes.push(newAddress.addressIndex)
       }
@@ -95,7 +95,7 @@ describe('address', function () {
       ]
     })
 
-    let results = await discoverActiveAddresses(seed, client)
+    let results = await discoverActiveAddresses(masterKey, client)
     expect(client.addressesActive.postAddressesActive).toBeCalledTimes(1)
     expect(results).toHaveLength(0)
     mockedPostAddressesActive.mockClear()
@@ -117,7 +117,7 @@ describe('address', function () {
         data: [false, false, false, false, false]
       })
 
-    results = await discoverActiveAddresses(seed, client)
+    results = await discoverActiveAddresses(masterKey, client)
     expect(client.addressesActive.postAddressesActive).toBeCalledTimes(2)
     expect(results).toHaveLength(1)
     expect(results.map((a) => a.address)).toContain(derivedAddresses.group0[4])
@@ -150,7 +150,7 @@ describe('address', function () {
         data: [false, false, false, false, false]
       })
 
-    results = await discoverActiveAddresses(seed, client)
+    results = await discoverActiveAddresses(masterKey, client)
     expect(client.addressesActive.postAddressesActive).toBeCalledTimes(4)
     expect(results).toHaveLength(3)
     const addresses = results.map((a) => a.address)
