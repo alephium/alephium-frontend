@@ -19,12 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 import { createStackNavigator } from '@react-navigation/stack'
-import { ActivityIndicator, useWindowDimensions } from 'react-native'
+import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
-import styled from 'styled-components/native'
 
 import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { useAppDispatch } from '../hooks/redux'
+import AddressDiscoveryScreen from '../screens/AddressDiscovery'
 import AddressScreen from '../screens/AddressScreen'
 import EditAddressScreen from '../screens/EditAddressScreen'
 import LandingScreen from '../screens/LandingScreen'
@@ -58,7 +58,6 @@ const RootStackNavigation = () => {
   const { height: screenHeight } = useWindowDimensions()
   const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
   const dispatch = useAppDispatch()
-  const addressDiscoveryLoading = useAppSelector((state) => state.addresses.addressDiscoveryLoading)
 
   const handleStateChange = (state?: NavigationState) => {
     if (state && isNavStateRestorable(state)) dispatch(routeChanged(state))
@@ -130,26 +129,14 @@ const RootStackNavigation = () => {
         <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={bottomModalOptions} />
         <RootStack.Screen name="ReceiveScreen" component={ReceiveScreen} options={bottomModalOptions} />
         <RootStack.Screen name="SendScreen" component={SendScreen} options={bottomModalOptions} />
+        <RootStack.Screen
+          name="AddressDiscoveryScreen"
+          component={AddressDiscoveryScreen}
+          options={{ headerTitle: 'Active addresses' }}
+        />
       </RootStack.Navigator>
-      {addressDiscoveryLoading && (
-        <BottomMessage>
-          <ActivityIndicator size="small" color={theme.font.secondary} />
-          <LoadingText>Scanning the blockchain to find your addresses. This might take a while.</LoadingText>
-        </BottomMessage>
-      )}
     </NavigationContainer>
   )
 }
 
 export default RootStackNavigation
-
-const BottomMessage = styled.View`
-  padding: 10px 20px;
-  flex-direction: row;
-`
-
-const LoadingText = styled.Text`
-  color: ${({ theme }) => theme.font.secondary};
-  margin-left: 20px;
-  flex-shrink: 1;
-`

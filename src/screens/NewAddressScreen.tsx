@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
+import { deriveNewAddressData, Wallet, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useRef, useState } from 'react'
 
@@ -33,7 +33,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 
 const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const [seed, setSeed] = useState<Buffer>()
+  const [masterKey, setMasterKey] = useState<Wallet['masterKey']>()
   const addresses = useAppSelector(selectAllAddresses)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const [activeWallet, mainAddress] = useAppSelector((state) => [
@@ -51,18 +51,18 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   useEffect(() => {
     const importWallet = async () => {
       const wallet = await walletImportAsyncUnsafe(mnemonicToSeed, activeWallet.mnemonic)
-      setSeed(wallet.seed)
+      setMasterKey(wallet.masterKey)
     }
 
     if (activeWallet.mnemonic) importWallet()
   }, [activeWallet.mnemonic])
 
   const handleGeneratePress = async ({ isMain, label, color, group }: AddressFormData) => {
-    if (!seed) return
+    if (!masterKey) return
 
     setLoading(true)
 
-    const newAddressData = deriveNewAddressData(seed, group, undefined, currentAddressIndexes.current)
+    const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
     const addressSettings = {
       label,
       color,

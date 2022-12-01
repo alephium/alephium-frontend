@@ -17,10 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  AddressAndKeys,
   addressToGroup,
   deriveNewAddressData,
-  discoverActiveAddresses,
   TOTAL_NUMBER_OF_GROUPS,
+  Wallet,
   walletImportAsyncUnsafe
 } from '@alephium/sdk'
 import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
@@ -40,7 +41,6 @@ import { TimeInMs } from '../types/numbers'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
 import { fetchAddressesData } from '../utils/addresses'
-import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
 import { RootState } from './store'
@@ -91,13 +91,15 @@ interface AddressesState extends EntityState<Address> {
   loading: boolean
   addressDiscoveryLoading: boolean
   status: 'uninitialized' | 'initialized'
+  discoveredAddresses: AddressAndKeys[]
 }
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
   mainAddress: '',
   loading: false,
   addressDiscoveryLoading: false,
-  status: 'uninitialized'
+  status: 'uninitialized',
+  discoveredAddresses: []
 })
 
 export const addressesDataFetched = createAsyncThunk(
@@ -159,13 +161,13 @@ export const addressesFromStoredMetadataInitialized = createAsyncThunk(
     if (metadataId && mnemonic) {
       dispatch(loadingStarted())
 
-      const { seed } = await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
+      const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
       const addressesMetadata = await getAddressesMetadataByWalletId(metadataId)
 
       console.log(`👀 Found ${addressesMetadata.length} addresses metadata in persistent storage`)
 
       const addresses = addressesMetadata.map(({ index, ...settings }) => {
-        const { address, publicKey, privateKey } = deriveNewAddressData(seed, undefined, index)
+        const { address, publicKey, privateKey } = deriveNewAddressData(masterKey, undefined, index)
         return { hash: address, publicKey, privateKey, index, settings }
       })
 
@@ -216,27 +218,54 @@ export const mainAddressChanged = createAsyncThunk(
   }
 )
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 export const activeAddressesDiscovered = createAsyncThunk(
   `${sliceName}/activeAddressesDiscovered`,
-  async (payload: { seed: Buffer; skipIndexes: number[] }, { dispatch }) => {
-    const { seed, skipIndexes } = payload
+  async (payload: { masterKey: Wallet['masterKey']; skipIndexes: number[] }, { getState, dispatch }) => {
+    const { masterKey, skipIndexes } = payload
 
     dispatch(addressDiscoveryStarted())
 
-    const newAddressesData = await discoverActiveAddresses(seed, client.explorerClient, skipIndexes)
-    const newAddresses = newAddressesData.map((data) => ({
-      hash: data.address,
-      publicKey: data.publicKey,
-      privateKey: data.privateKey,
-      index: data.addressIndex,
-      settings: {
-        isMain: false,
-        color: getRandomLabelColor()
-      }
-    }))
+    const skip = Array.from(skipIndexes)
 
-    dispatch(addressesAdded(newAddresses))
-    await dispatch(addressesDataFetched(newAddresses.map((address) => address.hash)))
+    let gap = 0
+    let group = 0
+
+    while (group < 4) {
+      console.log(`Gap ${gap}, Group ${group}`)
+      console.log('Deriving new address...')
+
+      const newAddressData = deriveNewAddressData(masterKey, group, undefined, skip)
+
+      console.log('Derived: ', newAddressData.address)
+      console.log('Checking if active...')
+
+      const { data } = await client.explorerClient.addressesActive.postAddressesActive([newAddressData.address])
+      const addressIsActive = data.length > 0 && data[0]
+
+      if (addressIsActive) {
+        console.log('Is active!')
+        gap = 0
+        dispatch(addressDiscovered(newAddressData))
+      } else {
+        console.log('Not active.')
+        gap += 1
+      }
+
+      if (gap === 5) {
+        group += 1
+      }
+
+      const state = getState() as RootState
+      if (!state.addresses.addressDiscoveryLoading) {
+        break
+      }
+
+      skip.push(newAddressData.addressIndex)
+
+      await sleep(1)
+    }
 
     dispatch(addressDiscoveryFinished())
   }
@@ -313,6 +342,9 @@ const addressesSlice = createSlice({
     },
     addressDiscoveryFinished: (state) => {
       state.addressDiscoveryLoading = false
+    },
+    addressDiscovered: (state, action: PayloadAction<AddressAndKeys>) => {
+      state.discoveredAddresses.push(action.payload)
     }
   },
   extraReducers: (builder) => {
@@ -454,7 +486,8 @@ export const {
   loadingFinished,
   addressSettingsUpdated,
   addressDiscoveryStarted,
-  addressDiscoveryFinished
+  addressDiscoveryFinished,
+  addressDiscovered
 } = addressesSlice.actions
 
 export default addressesSlice

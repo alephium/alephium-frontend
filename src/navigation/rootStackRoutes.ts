@@ -55,6 +55,7 @@ type RootStackParamList = {
     addressHash: AddressHash
   }
   SecurityScreen: undefined
+  AddressDiscoveryScreen: undefined
 }
 
 export default RootStackParamList

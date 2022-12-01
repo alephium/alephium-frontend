@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
-import { Plus as PlusIcon, Trash2 as TrashIcon } from 'lucide-react-native'
+import { Plus as PlusIcon, Search, Trash2 as TrashIcon } from 'lucide-react-native'
 import { Alert, ScrollView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -124,6 +124,15 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
           >
             <CurrentNetwork>{capitalize(currentNetworkName)}</CurrentNetwork>
           </HighlightRow>
+        </ScreenSection>
+        <ScreenSection>
+          <ScreenSectionTitle>Addresses</ScreenSectionTitle>
+          <ButtonStyled
+            title="Scan for active addresses"
+            icon={<Search size={24} color={theme.font.contrast} />}
+            variant="accent"
+            onPress={() => navigation.navigate('AddressDiscoveryScreen')}
+          />
         </ScreenSection>
         <ScreenSection>
           <ScreenSectionTitle>Wallets</ScreenSectionTitle>
