@@ -18,16 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { randomBytes, createCipheriv, createDecipheriv, pbkdf2Sync, CipherKey, BinaryLike } from 'crypto'
 
+type Digest = 'sha256' | 'sha512'
+
 const saltByteLength = 64
 const ivByteLength = 64
 const authTagLength = 16
 
 export type Pbkdf2Function = (password: string, salt: Buffer) => Promise<Buffer>
 
-export const encrypt = (password: string, dataRaw: string): string => {
+export const encrypt = (password: string, dataRaw: string, digest: Digest = 'sha256'): string => {
   const data = Buffer.from(dataRaw, 'utf8')
   const salt = randomBytes(saltByteLength)
-  const derivedKey = keyFromPassword(password, salt)
+  const derivedKey = keyFromPassword(password, salt, digest)
 
   return _encrypt(data, salt, derivedKey)
 }
@@ -50,16 +52,16 @@ const _encrypt = (data: Buffer, salt: Buffer, derivedKey: Buffer): string => {
   const encrypted = Buffer.concat([cipher.update(data), cipher.final()])
   const authTag = cipher.getAuthTag()
   const payload = {
-    salt: salt.toString('hex'),
     iv: iv.toString('hex'),
     encrypted: Buffer.concat([encrypted, authTag]).toString('hex'),
+    salt: salt.toString('hex'),
     version: 1
   }
 
   return JSON.stringify(payload)
 }
 
-export const decrypt = (password: string, payloadRaw: string): string => {
+export const decrypt = (password: string, payloadRaw: string, digest: Digest = 'sha256'): string => {
   const payload = JSON.parse(payloadRaw)
 
   const version = payload.version
@@ -70,7 +72,7 @@ export const decrypt = (password: string, payloadRaw: string): string => {
   const salt = Buffer.from(payload.salt, 'hex')
   const iv = Buffer.from(payload.iv, 'hex')
   const encrypted = Buffer.from(payload.encrypted, 'hex')
-  const derivedKey = keyFromPassword(password, salt)
+  const derivedKey = keyFromPassword(password, salt, digest)
 
   return _decrypt(iv, encrypted, derivedKey)
 }
@@ -113,8 +115,8 @@ const createDecipher = (key: CipherKey, iv: BinaryLike | null) => {
   return createDecipheriv('aes-256-gcm', key, iv)
 }
 
-const keyFromPassword = (password: BinaryLike, salt: BinaryLike): Buffer => {
-  return pbkdf2Sync(password, salt, 10000, 32, 'sha256')
+const keyFromPassword = (password: BinaryLike, salt: BinaryLike, digest: Digest): Buffer => {
+  return pbkdf2Sync(password, salt, 10000, 32, digest)
 }
 
 const keyFromPasswordAsync = (password: string, salt: Buffer, pbkdf2CustomFunc: Pbkdf2Function): Promise<Buffer> => {
