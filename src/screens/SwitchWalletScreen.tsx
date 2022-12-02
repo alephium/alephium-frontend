@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/sdk'
+import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
@@ -26,14 +26,17 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
-import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
+import Screen, { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
+import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { getStoredWalletById, getWalletsMetadata } from '../storage/wallets'
 import { activeWalletChanged } from '../store/activeWalletSlice'
 import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
 import { WalletMetadata } from '../types/wallet'
+import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
+import { useRestoreNavigationState } from '../utils/navigation'
 
 export interface SwitchWalletScreenProps extends StackScreenProps<RootStackParamList, 'SwitchWalletScreen'> {
   style?: StyleProp<ViewStyle>
@@ -43,7 +46,9 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   const dispatch = useAppDispatch()
   const wallets = useSortedWallets()
   const theme = useTheme()
-  const activeWalletMetadataId = useAppSelector((state) => state.activeWallet.metadataId)
+  const [activeWalletMetadataId, pin] = useAppSelector((s) => [s.activeWallet.metadataId, s.credentials.pin])
+  const restoreNavigationState = useRestoreNavigationState()
+  const [loading, setLoading] = useState(false)
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
@@ -51,25 +56,32 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   }
 
   const handleWalletItemPress = async (walletId: string) => {
+    setLoading(true)
+
     try {
       const storedWallet = await getStoredWalletById(walletId)
 
       if (storedWallet.authType === 'pin') {
-        navigation.navigate('LoginScreen', { walletIdToLogin: walletId, resetNavigationOnLogin: true })
-        return
-      }
-
-      if (storedWallet.authType === 'biometrics') {
+        if (pin) {
+          const decryptedWallet = await walletOpenAsyncUnsafe(pin, storedWallet.mnemonic, pbkdf2, mnemonicToSeed)
+          dispatch(activeWalletChanged({ ...storedWallet, mnemonic: decryptedWallet.mnemonic }))
+          restoreNavigationState(true)
+        } else {
+          navigation.navigate('LoginScreen', { walletIdToLogin: walletId, resetNavigationOnLogin: true })
+        }
+      } else if (storedWallet.authType === 'biometrics') {
         dispatch(activeWalletChanged(storedWallet))
         navigation.navigate('InWalletScreen')
       }
     } catch (e) {
       Alert.alert(getHumanReadableError(e, 'Could not switch wallets'))
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <>
+    <Screen style={style}>
       <ScreenSection>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <Subtitle>Switch to another wallet?</Subtitle>
@@ -103,7 +115,8 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
           />
         </ButtonsRow>
       </BottomScreenSection>
-    </>
+      <SpinnerModal isActive={loading} text="Switching wallets..." />
+    </Screen>
   )
 }
 
