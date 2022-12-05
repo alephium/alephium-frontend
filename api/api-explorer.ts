@@ -638,6 +638,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+     * @description List transactions for given addresses
+     *
+     * @tags Addresses
+     * @name PostAddressesTransactions
+     * @request POST:/addresses/transactions
+     */
+    postAddressesTransactions: (
+      query?: { page?: number; limit?: number; reverse?: boolean },
+      data?: string[],
+      params: RequestParams = {}
+    ) =>
+      this.request<Transaction[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/addresses/transactions`,
+        method: 'POST',
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params
+      }),
+
+    /**
      * @description List transactions of a given address within a time-range
      *
      * @tags Addresses
@@ -750,6 +772,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/addresses/${address}/tokens/${tokenId}/balance`,
         method: 'GET',
         format: 'json',
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Addresses
+     * @name GetAddressesAddressExportTransactionsCsv
+     * @request GET:/addresses/{address}/export-transactions/csv
+     */
+    getAddressesAddressExportTransactionsCsv: (
+      address: string,
+      query: { fromTs: number; toTs: number },
+      params: RequestParams = {}
+    ) =>
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/addresses/${address}/export-transactions/csv`,
+        method: 'GET',
+        query: query,
         ...params
       })
   }
