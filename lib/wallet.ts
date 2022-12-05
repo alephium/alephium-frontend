@@ -43,6 +43,7 @@ type WalletProps = {
   privateKey: string
   seed: Buffer
   mnemonic: string
+  masterKey: bip32.BIP32Interface
 }
 
 export class Wallet {
@@ -51,13 +52,15 @@ export class Wallet {
   readonly privateKey: string
   readonly seed: Buffer // TODO: We should differentiate the notion of account (seed, mnemonic) from individual addresses.
   readonly mnemonic: string
+  readonly masterKey: bip32.BIP32Interface
 
-  constructor({ address, publicKey, privateKey, seed, mnemonic }: WalletProps) {
+  constructor({ address, publicKey, privateKey, seed, mnemonic, masterKey }: WalletProps) {
     this.address = address
     this.publicKey = publicKey
     this.privateKey = privateKey
     this.seed = seed
     this.mnemonic = mnemonic
+    this.masterKey = masterKey
   }
 
   encrypt = (password: string) => walletEncrypt(password, this.mnemonic)
@@ -77,9 +80,10 @@ export const getPath = (addressIndex?: number) => {
 }
 
 export const getWalletFromSeed = (seed: Buffer, mnemonic: string): Wallet => {
-  const { address, publicKey, privateKey } = deriveAddressAndKeys(seed)
+  const masterKey = bip32.fromSeed(seed)
+  const { address, publicKey, privateKey } = deriveAddressAndKeys(masterKey)
 
-  return new Wallet({ seed, address, publicKey, privateKey, mnemonic })
+  return new Wallet({ seed, address, publicKey, privateKey, mnemonic, masterKey })
 }
 
 export const getWalletFromMnemonic = (mnemonic: string, passphrase = ''): Wallet => {
@@ -105,17 +109,14 @@ export type AddressAndKeys = {
   addressIndex: number
 }
 
-const deriveAddressAndKeys = (seed: Buffer, addressIndex?: number): AddressAndKeys => {
-  const masterKey = bip32.fromSeed(seed)
+const deriveAddressAndKeys = (masterKey: bip32.BIP32Interface, addressIndex?: number): AddressAndKeys => {
   const keyPair = masterKey.derivePath(getPath(addressIndex))
 
   if (!keyPair.privateKey) throw new Error('Missing private key')
 
   const publicKey = keyPair.publicKey.toString('hex')
   const privateKey = keyPair.privateKey.toString('hex')
-
-  const hash = blake.blake2b(Uint8Array.from(Buffer.from(publicKey, 'hex')), undefined, 32)
-
+  const hash = blake.blake2b(Uint8Array.from(keyPair.publicKey), undefined, 32)
   const pkhash = Buffer.from(hash)
   const type = Buffer.from([0])
   const bytes = Buffer.concat([type, pkhash])
@@ -135,7 +136,7 @@ const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[]
 }
 
 export const deriveNewAddressData = (
-  seed: Buffer,
+  masterKey: bip32.BIP32Interface,
   forGroup?: number,
   addressIndex?: number,
   skipAddressIndexes: number[] = []
@@ -149,11 +150,11 @@ export const deriveNewAddressData = (
   let nextAddressIndex = skipAddressIndexes.includes(initialAddressIndex)
     ? findNextAvailableAddressIndex(initialAddressIndex, skipAddressIndexes)
     : initialAddressIndex
-  let newAddressData = deriveAddressAndKeys(seed, nextAddressIndex)
+  let newAddressData = deriveAddressAndKeys(masterKey, nextAddressIndex)
 
   while (forGroup !== undefined && addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS) !== forGroup) {
     nextAddressIndex = findNextAvailableAddressIndex(newAddressData.addressIndex, skipAddressIndexes)
-    newAddressData = deriveAddressAndKeys(seed, nextAddressIndex)
+    newAddressData = deriveAddressAndKeys(masterKey, nextAddressIndex)
   }
 
   return newAddressData
