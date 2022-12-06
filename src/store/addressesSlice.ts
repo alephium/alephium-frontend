@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   AddressAndKeys,
   addressToGroup,
+  deriveAddressAndKeys,
   deriveNewAddressData,
   TOTAL_NUMBER_OF_GROUPS,
   Wallet,
@@ -42,6 +43,7 @@ import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
 import { fetchAddressesData } from '../utils/addresses'
 import { mnemonicToSeed } from '../utils/crypto'
+import { sleep } from '../utils/misc'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
 import { RootState } from './store'
 
@@ -218,53 +220,130 @@ export const mainAddressChanged = createAsyncThunk(
   }
 )
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+  let nextAvailableAddressIndex = startIndex
+
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
+}
+
+const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
+  let maxIndexBeforeFirstGap = indexes[0]
+
+  for (let index = indexes[1]; index < indexes.length; index++) {
+    if (index - maxIndexBeforeFirstGap > 1) {
+      break
+    } else {
+      maxIndexBeforeFirstGap = index
+    }
+  }
+
+  return maxIndexBeforeFirstGap
+}
+
+type AddressIndex = Address['index']
+
+type AddressDiscoveryGroupData = {
+  highestIndex: AddressIndex | undefined
+  gap: number
+}
+
+const initializeAddressDiscoveryGroupsData = (addresses: Address[]): AddressDiscoveryGroupData[] => {
+  const groupsData: AddressDiscoveryGroupData[] = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, () => ({
+    highestIndex: undefined,
+    gap: 0
+  }))
+
+  for (const address of addresses) {
+    const groupData = groupsData[address.group]
+
+    if (groupData.highestIndex === undefined || groupData.highestIndex < address.index) {
+      groupData.highestIndex = address.index
+    }
+  }
+
+  return groupsData
+}
 
 export const activeAddressesDiscovered = createAsyncThunk(
   `${sliceName}/activeAddressesDiscovered`,
-  async (payload: { masterKey: Wallet['masterKey']; skipIndexes: number[] }, { getState, dispatch }) => {
-    const { masterKey, skipIndexes } = payload
-
+  async (_, { getState, dispatch }) => {
     dispatch(addressDiscoveryStarted())
 
-    const skip = Array.from(skipIndexes)
+    const minGap = 5
+    const state = getState() as RootState
+    await sleep(1) // Allow execution to continue to not block rendering
+    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, state.activeWallet.mnemonic)
+    const addresses = selectAllAddresses(state)
+    const activeAddressIndexes: AddressIndex[] = addresses.map((address) => address.index)
+    const groupsData = initializeAddressDiscoveryGroupsData(addresses)
+    const derivedDataCache = new Map<AddressIndex, AddressAndKeys & { group: number }>()
 
-    let gap = 0
     let group = 0
+    let checkedIndexes = Array.from(activeAddressIndexes)
+    let maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(activeAddressIndexes)
 
-    while (group < 4) {
-      console.log(`Gap ${gap}, Group ${group}`)
-      console.log('Deriving new address...')
+    try {
+      while (group < 4) {
+        const groupData = groupsData[group]
+        let newAddressGroup: number | undefined = undefined
+        let index = groupData.highestIndex ?? maxIndexBeforeFirstGap
+        let newAddressData: AddressAndKeys | undefined = undefined
 
-      const newAddressData = deriveNewAddressData(masterKey, group, undefined, skip)
+        while (newAddressGroup !== group) {
+          index = findNextAvailableAddressIndex(index, checkedIndexes)
+          checkedIndexes.push(index)
 
-      console.log('Derived: ', newAddressData.address)
-      console.log('Checking if active...')
+          const cachedData = derivedDataCache.get(index)
 
-      const { data } = await client.explorerClient.addressesActive.postAddressesActive([newAddressData.address])
-      const addressIsActive = data.length > 0 && data[0]
+          if (cachedData) {
+            if (cachedData.group !== group) {
+              continue
+            }
 
-      if (addressIsActive) {
-        console.log('Is active!')
-        gap = 0
-        dispatch(addressDiscovered(newAddressData))
-      } else {
-        console.log('Not active.')
-        gap += 1
+            newAddressData = cachedData
+            newAddressGroup = cachedData.group
+          } else {
+            await sleep(1)
+            newAddressData = deriveAddressAndKeys(masterKey, index)
+            newAddressGroup = addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS)
+            derivedDataCache.set(index, { ...newAddressData, group: newAddressGroup })
+          }
+        }
+
+        if (!newAddressData) {
+          continue
+        }
+
+        groupData.highestIndex = newAddressData.addressIndex
+
+        const { data } = await client.explorerClient.addressesActive.postAddressesActive([newAddressData.address])
+        const addressIsActive = data.length > 0 && data[0]
+
+        if (addressIsActive) {
+          groupData.gap = 0
+          activeAddressIndexes.push(newAddressData.addressIndex)
+          maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(activeAddressIndexes)
+          dispatch(addressDiscovered(newAddressData))
+        } else {
+          groupData.gap += 1
+        }
+
+        if (groupData.gap === minGap) {
+          group += 1
+          checkedIndexes = Array.from(activeAddressIndexes)
+        }
+
+        const state = getState() as RootState
+        if (!state.addresses.addressDiscoveryLoading) {
+          break
+        }
       }
-
-      if (gap === 5) {
-        group += 1
-      }
-
-      const state = getState() as RootState
-      if (!state.addresses.addressDiscoveryLoading) {
-        break
-      }
-
-      skip.push(newAddressData.addressIndex)
-
-      await sleep(1)
+    } catch (e) {
+      console.error(e)
     }
 
     dispatch(addressDiscoveryFinished())

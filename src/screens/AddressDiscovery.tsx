@@ -16,10 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Search, X } from 'lucide-react-native'
-import { useState } from 'react'
 import { ActivityIndicator, ScrollView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -31,40 +29,21 @@ import Screen, { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import {
-  activeAddressesDiscovered,
-  addressDiscoveryFinished,
-  addressDiscoveryStarted,
-  selectAllAddresses
-} from '../store/addressesSlice'
-import { mnemonicToSeed } from '../utils/crypto'
-import { sleep } from '../utils/misc'
+import { activeAddressesDiscovered, addressDiscoveryFinished, selectAllAddresses } from '../store/addressesSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>
 
 const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const mnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
   const addresses = useAppSelector(selectAllAddresses)
-  const discoveredAddresses = useAppSelector((state) => state.addresses.discoveredAddresses)
+  const [discoveredAddresses, addressDiscoveryLoading] = useAppSelector((s) => [
+    s.addresses.discoveredAddresses,
+    s.addresses.addressDiscoveryLoading
+  ])
 
-  const [scanning, setScanning] = useState(false)
-
-  const skipIndexes = addresses.map((address) => address.index)
-
-  const startScan = async () => {
-    setScanning(true)
-    dispatch(addressDiscoveryStarted())
-    await sleep(1)
-    const wallet = await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
-    dispatch(activeAddressesDiscovered({ masterKey: wallet.masterKey, skipIndexes }))
-  }
-
-  const stopScan = () => {
-    setScanning(false)
-    dispatch(addressDiscoveryFinished())
-  }
+  const startScan = () => dispatch(activeAddressesDiscovered())
+  const stopScan = () => dispatch(addressDiscoveryFinished())
 
   return (
     <Screen>
@@ -87,13 +66,13 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
             </HighlightRow>
           ))}
         </ScreenSection>
-        {(scanning || discoveredAddresses.length > 0) && (
+        {(addressDiscoveryLoading || discoveredAddresses.length > 0) && (
           <ScreenSection>
             <NewDiscoveredAddressesTitle>
               <ScreenSectionTitle>Newly discovered addresses</ScreenSectionTitle>
             </NewDiscoveredAddressesTitle>
 
-            {scanning && (
+            {addressDiscoveryLoading && (
               <ScanningIndication>
                 <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
                 <AppText color={theme.font.secondary}>Scanning...</AppText>
@@ -115,7 +94,7 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
         )}
       </ScrollView>
       <BottomScreenSection>
-        {!scanning ? (
+        {!addressDiscoveryLoading ? (
           <Button icon={<Search size={24} color={theme.font.contrast} />} title="Start scanning" onPress={startScan} />
         ) : (
           <Button icon={<X size={24} color={theme.font.contrast} />} title="Stop scanning" onPress={stopScan} />
