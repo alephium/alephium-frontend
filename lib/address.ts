@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import bs58 from './bs58'
 import djb2 from '../lib/djb2'
-import { AddressAndKeys, deriveNewAddressData } from './wallet'
+import { AddressKeyPair, deriveNewAddressData } from './wallet'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import { ExplorerClient } from './explorer'
 import { BIP32Interface } from 'bip32'
@@ -50,18 +50,18 @@ export const discoverActiveAddresses = async (
   client: ExplorerClient,
   addressIndexesToSkip: number[] = [],
   minGap = 5
-): Promise<AddressAndKeys[]> => {
-  const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): AddressAndKeys[] => [])
-  const activeAddresses: AddressAndKeys[] = []
+): Promise<AddressKeyPair[]> => {
+  const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): AddressKeyPair[] => [])
+  const activeAddresses: AddressKeyPair[] = []
   const skipIndexes = Array.from(addressIndexesToSkip)
 
   for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
     const newAddresses = deriveAddressesInGroup(group, minGap, masterKey, skipIndexes)
     addressesPerGroup[group] = newAddresses
-    skipIndexes.push(...newAddresses.map((address) => address.addressIndex))
+    skipIndexes.push(...newAddresses.map((address) => address.index))
   }
 
-  const addressesToCheckIfActive = addressesPerGroup.flat().map((address) => address.address)
+  const addressesToCheckIfActive = addressesPerGroup.flat().map((address) => address.hash)
   const results = await getActiveAddressesResults(addressesToCheckIfActive, client)
   const resultsPerGroup = splitResultsArrayIntoOneArrayPerGroup(results, minGap)
 
@@ -77,9 +77,9 @@ export const discoverActiveAddresses = async (
     while (gapPerGroup < minGap) {
       const remainingGap = minGap - gapPerGroup
       const newAddresses = deriveAddressesInGroup(group, remainingGap, masterKey, skipIndexes)
-      skipIndexes.push(...newAddresses.map((address) => address.addressIndex))
+      skipIndexes.push(...newAddresses.map((address) => address.index))
 
-      const addressesToCheckIfActive = newAddresses.map((address) => address.address)
+      const addressesToCheckIfActive = newAddresses.map((address) => address.hash)
       const results = await getActiveAddressesResults(addressesToCheckIfActive, client)
 
       const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
@@ -100,14 +100,14 @@ const deriveAddressesInGroup = (
   amount: number,
   masterKey: BIP32Interface,
   skipIndexes: number[]
-): AddressAndKeys[] => {
+): AddressKeyPair[] => {
   const addresses = []
   const skipAddressIndexes = Array.from(skipIndexes)
 
   for (let j = 0; j < amount; j++) {
     const newAddress = deriveNewAddressData(masterKey, group, undefined, skipAddressIndexes)
     addresses.push(newAddress)
-    skipAddressIndexes.push(newAddress.addressIndex)
+    skipAddressIndexes.push(newAddress.index)
   }
 
   return addresses
@@ -126,10 +126,10 @@ const splitResultsArrayIntoOneArrayPerGroup = (array: boolean[], chunkSize: numb
 }
 
 const getGapFromLastActiveAddress = (
-  addresses: AddressAndKeys[],
+  addresses: AddressKeyPair[],
   results: boolean[],
   startingGap = 0
-): { gap: number; activeAddresses: AddressAndKeys[] } => {
+): { gap: number; activeAddresses: AddressKeyPair[] } => {
   let gap = startingGap
   const activeAddresses = []
 

@@ -120,7 +120,7 @@ describe('address', function () {
     results = await discoverActiveAddresses(masterKey, client)
     expect(client.addressesActive.postAddressesActive).toBeCalledTimes(2)
     expect(results).toHaveLength(1)
-    expect(results.map((a) => a.address)).toContain(derivedAddresses.group0[4])
+    expect(results.map((a) => a.hash)).toContain(derivedAddresses.group0[4])
     mockedPostAddressesActive.mockClear()
 
     // Scenario 3:
@@ -153,7 +153,7 @@ describe('address', function () {
     results = await discoverActiveAddresses(masterKey, client)
     expect(client.addressesActive.postAddressesActive).toBeCalledTimes(4)
     expect(results).toHaveLength(3)
-    const addresses = results.map((a) => a.address)
+    const addresses = results.map((a) => a.hash)
     expect(addresses).toContain(derivedAddresses.group0[4])
     expect(addresses).toContain(derivedAddresses.group0[7])
     expect(addresses).toContain(derivedAddresses.group2[0])
