@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { configureStore } from '@reduxjs/toolkit'
 
 import activeWalletSlice from './activeWalletSlice'
+import addressDiscoverySlice from './addressDiscoverySlice'
 import addressesSlice from './addressesSlice'
 import appMetadataSlice from './appMetadataSlice'
 import credentialsSlice from './credentialsSlice'
@@ -38,7 +39,8 @@ export const store = configureStore({
     addresses: addressesSlice.reducer,
     price: priceSlice.reducer,
     appMetadata: appMetadataSlice.reducer,
-    tokenMetadata: tokenMetadataSlice.reducer
+    tokenMetadata: tokenMetadataSlice.reducer,
+    addressDiscovery: addressDiscoverySlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(networkListenerMiddleware.middleware).prepend(settingsListenerMiddleware.middleware)

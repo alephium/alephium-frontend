@@ -17,12 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  AddressAndKeys,
+  AddressKeyPair,
   addressToGroup,
   deriveAddressAndKeys,
-  deriveNewAddressData,
   TOTAL_NUMBER_OF_GROUPS,
-  Wallet,
   walletImportAsyncUnsafe
 } from '@alephium/sdk'
 import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
@@ -42,19 +40,16 @@ import { TimeInMs } from '../types/numbers'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
 import { fetchAddressesData } from '../utils/addresses'
+import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
-import { sleep } from '../utils/misc'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
+import { addressesImported } from './addressDiscoverySlice'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
 
-export type Address = {
-  hash: string
-  publicKey: string
-  privateKey: string
+export type Address = AddressKeyPair & {
   group: number
-  index: number
   settings: AddressSettings
   networkData: {
     details: AddressInfo
@@ -70,13 +65,7 @@ export type Address = {
   }
 }
 
-export type AddressPartial = {
-  hash: string
-  publicKey: string
-  privateKey: string
-  index: number
-  settings: AddressSettings
-}
+export type AddressPartial = AddressKeyPair & { settings?: AddressSettings }
 
 const addressesAdapter = createEntityAdapter<Address>({
   selectId: (address) => address.hash,
@@ -93,15 +82,13 @@ interface AddressesState extends EntityState<Address> {
   loading: boolean
   addressDiscoveryLoading: boolean
   status: 'uninitialized' | 'initialized'
-  discoveredAddresses: AddressAndKeys[]
 }
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
   mainAddress: '',
   loading: false,
   addressDiscoveryLoading: false,
-  status: 'uninitialized',
-  discoveredAddresses: []
+  status: 'uninitialized'
 })
 
 export const addressesDataFetched = createAsyncThunk(
@@ -168,10 +155,10 @@ export const addressesFromStoredMetadataInitialized = createAsyncThunk(
 
       console.log(`👀 Found ${addressesMetadata.length} addresses metadata in persistent storage`)
 
-      const addresses = addressesMetadata.map(({ index, ...settings }) => {
-        const { address, publicKey, privateKey } = deriveNewAddressData(masterKey, undefined, index)
-        return { hash: address, publicKey, privateKey, index, settings }
-      })
+      const addresses = addressesMetadata.map(({ index, ...settings }) => ({
+        ...deriveAddressAndKeys(masterKey, index),
+        settings
+      }))
 
       dispatch(addressesAdded(addresses))
       await dispatch(addressesDataFetched(addresses.map((address) => address.hash)))
@@ -220,135 +207,31 @@ export const mainAddressChanged = createAsyncThunk(
   }
 )
 
-const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
-  let nextAvailableAddressIndex = startIndex
-
-  do {
-    nextAvailableAddressIndex++
-  } while (skipIndexes.includes(nextAvailableAddressIndex))
-
-  return nextAvailableAddressIndex
-}
-
-const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
-  let maxIndexBeforeFirstGap = indexes[0]
-
-  for (let index = indexes[1]; index < indexes.length; index++) {
-    if (index - maxIndexBeforeFirstGap > 1) {
-      break
-    } else {
-      maxIndexBeforeFirstGap = index
-    }
+const getInitialAddressState = (addressData: AddressPartial) => ({
+  ...addressData,
+  settings: addressData.settings || {
+    isMain: false,
+    color: getRandomLabelColor()
+  },
+  group: addressToGroup(addressData.hash, TOTAL_NUMBER_OF_GROUPS),
+  networkData: {
+    details: {
+      balance: '0',
+      lockedBalance: '0',
+      txNumber: 0
+    },
+    transactions: {
+      confirmed: [],
+      pending: [],
+      loadedPage: 0,
+      allPagesLoaded: false
+    },
+    availableBalance: '0',
+    lockedBalance: '0',
+    lastUsed: 0,
+    tokens: []
   }
-
-  return maxIndexBeforeFirstGap
-}
-
-type AddressIndex = Address['index']
-
-type AddressDiscoveryGroupData = {
-  highestIndex: AddressIndex | undefined
-  gap: number
-}
-
-const initializeAddressDiscoveryGroupsData = (addresses: Address[]): AddressDiscoveryGroupData[] => {
-  const groupsData: AddressDiscoveryGroupData[] = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, () => ({
-    highestIndex: undefined,
-    gap: 0
-  }))
-
-  for (const address of addresses) {
-    const groupData = groupsData[address.group]
-
-    if (groupData.highestIndex === undefined || groupData.highestIndex < address.index) {
-      groupData.highestIndex = address.index
-    }
-  }
-
-  return groupsData
-}
-
-export const activeAddressesDiscovered = createAsyncThunk(
-  `${sliceName}/activeAddressesDiscovered`,
-  async (_, { getState, dispatch }) => {
-    dispatch(addressDiscoveryStarted())
-
-    const minGap = 5
-    const state = getState() as RootState
-    await sleep(1) // Allow execution to continue to not block rendering
-    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, state.activeWallet.mnemonic)
-    const addresses = selectAllAddresses(state)
-    const activeAddressIndexes: AddressIndex[] = addresses.map((address) => address.index)
-    const groupsData = initializeAddressDiscoveryGroupsData(addresses)
-    const derivedDataCache = new Map<AddressIndex, AddressAndKeys & { group: number }>()
-
-    let group = 0
-    let checkedIndexes = Array.from(activeAddressIndexes)
-    let maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(activeAddressIndexes)
-
-    try {
-      while (group < 4) {
-        const groupData = groupsData[group]
-        let newAddressGroup: number | undefined = undefined
-        let index = groupData.highestIndex ?? maxIndexBeforeFirstGap
-        let newAddressData: AddressAndKeys | undefined = undefined
-
-        while (newAddressGroup !== group) {
-          index = findNextAvailableAddressIndex(index, checkedIndexes)
-          checkedIndexes.push(index)
-
-          const cachedData = derivedDataCache.get(index)
-
-          if (cachedData) {
-            if (cachedData.group !== group) {
-              continue
-            }
-
-            newAddressData = cachedData
-            newAddressGroup = cachedData.group
-          } else {
-            await sleep(1)
-            newAddressData = deriveAddressAndKeys(masterKey, index)
-            newAddressGroup = addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS)
-            derivedDataCache.set(index, { ...newAddressData, group: newAddressGroup })
-          }
-        }
-
-        if (!newAddressData) {
-          continue
-        }
-
-        groupData.highestIndex = newAddressData.addressIndex
-
-        const { data } = await client.explorerClient.addressesActive.postAddressesActive([newAddressData.address])
-        const addressIsActive = data.length > 0 && data[0]
-
-        if (addressIsActive) {
-          groupData.gap = 0
-          activeAddressIndexes.push(newAddressData.addressIndex)
-          maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(activeAddressIndexes)
-          dispatch(addressDiscovered(newAddressData))
-        } else {
-          groupData.gap += 1
-        }
-
-        if (groupData.gap === minGap) {
-          group += 1
-          checkedIndexes = Array.from(activeAddressIndexes)
-        }
-
-        const state = getState() as RootState
-        if (!state.addresses.addressDiscoveryLoading) {
-          break
-        }
-      }
-    } catch (e) {
-      console.error(e)
-    }
-
-    dispatch(addressDiscoveryFinished())
-  }
-)
+})
 
 const addressesSlice = createSlice({
   name: sliceName,
@@ -356,10 +239,11 @@ const addressesSlice = createSlice({
   reducers: {
     addressesAdded: (state, action: PayloadAction<AddressPartial[]>) => {
       const addresses = action.payload
+      const newMainAddress = addresses.find((address) => address.settings?.isMain)
 
-      const newMainAddress = addresses.find((address) => address.settings.isMain)
       if (newMainAddress) {
         const previousMainAddress = state.entities[state.mainAddress]
+
         if (previousMainAddress) {
           previousMainAddress.settings.isMain = false
         }
@@ -367,30 +251,7 @@ const addressesSlice = createSlice({
         state.mainAddress = newMainAddress.hash
       }
 
-      addressesAdapter.addMany(
-        state,
-        addresses.map((address) => ({
-          ...address,
-          group: addressToGroup(address.hash, TOTAL_NUMBER_OF_GROUPS),
-          networkData: {
-            details: {
-              balance: '0',
-              lockedBalance: '0',
-              txNumber: 0
-            },
-            transactions: {
-              confirmed: [],
-              pending: [],
-              loadedPage: 0,
-              allPagesLoaded: false
-            },
-            availableBalance: '0',
-            lockedBalance: '0',
-            lastUsed: 0,
-            tokens: []
-          }
-        }))
-      )
+      addressesAdapter.addMany(state, addresses.map(getInitialAddressState))
     },
     addPendingTransactionToAddress: (state, action: PayloadAction<PendingTransaction>) => {
       const pendingTransaction = action.payload
@@ -415,15 +276,6 @@ const addressesSlice = createSlice({
     },
     loadingFinished: (state) => {
       state.loading = false
-    },
-    addressDiscoveryStarted: (state) => {
-      state.addressDiscoveryLoading = true
-    },
-    addressDiscoveryFinished: (state) => {
-      state.addressDiscoveryLoading = false
-    },
-    addressDiscovered: (state, action: PayloadAction<AddressAndKeys>) => {
-      state.discoveredAddresses.push(action.payload)
     }
   },
   extraReducers: (builder) => {
@@ -491,6 +343,11 @@ const addressesSlice = createSlice({
           id: newMainAddress.hash,
           changes: { settings: { ...newMainAddress.settings, isMain: true } }
         })
+      })
+      .addCase(addressesImported, (state, action) => {
+        const discoveredAddresses = action.payload
+
+        addressesAdapter.upsertMany(state, discoveredAddresses.map(getInitialAddressState))
       })
   }
 })
@@ -563,10 +420,7 @@ export const {
   addressesFlushed,
   loadingStarted,
   loadingFinished,
-  addressSettingsUpdated,
-  addressDiscoveryStarted,
-  addressDiscoveryFinished,
-  addressDiscovered
+  addressSettingsUpdated
 } = addressesSlice.actions
 
 export default addressesSlice

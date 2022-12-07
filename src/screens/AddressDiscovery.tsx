@@ -17,19 +17,25 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { Search, X } from 'lucide-react-native'
+import { Import, Search, X } from 'lucide-react-native'
 import { ActivityIndicator, ScrollView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
+import ButtonsRow from '../components/buttons/ButtonsRow'
 import HighlightRow from '../components/HighlightRow'
 import Screen, { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { activeAddressesDiscovered, addressDiscoveryFinished, selectAllAddresses } from '../store/addressesSlice'
+import {
+  addressDiscoveryStopped,
+  addressesDiscovered,
+  selectAllDiscoveredAddresses
+} from '../store/addressDiscoverySlice'
+import { selectAllAddresses } from '../store/addressesSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>
 
@@ -37,13 +43,15 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const addresses = useAppSelector(selectAllAddresses)
-  const [discoveredAddresses, addressDiscoveryLoading] = useAppSelector((s) => [
-    s.addresses.discoveredAddresses,
-    s.addresses.addressDiscoveryLoading
-  ])
+  const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
+  const { loading, status } = useAppSelector((state) => state.addressDiscovery)
 
-  const startScan = () => dispatch(activeAddressesDiscovered())
-  const stopScan = () => dispatch(addressDiscoveryFinished())
+  const startScan = () => dispatch(addressesDiscovered())
+  const stopScan = () => dispatch(addressDiscoveryStopped())
+
+  const importAddresses = () => {
+    console.log('TODO')
+  }
 
   return (
     <Screen>
@@ -66,23 +74,23 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
             </HighlightRow>
           ))}
         </ScreenSection>
-        {(addressDiscoveryLoading || discoveredAddresses.length > 0) && (
+        {(loading || discoveredAddresses.length > 0) && (
           <ScreenSection>
             <NewDiscoveredAddressesTitle>
               <ScreenSectionTitle>Newly discovered addresses</ScreenSectionTitle>
             </NewDiscoveredAddressesTitle>
 
-            {addressDiscoveryLoading && (
+            {loading && (
               <ScanningIndication>
                 <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
                 <AppText color={theme.font.secondary}>Scanning...</AppText>
               </ScanningIndication>
             )}
 
-            {discoveredAddresses.map((address, index) => (
+            {discoveredAddresses.map(({ hash }, index) => (
               <HighlightRow
-                key={address.address}
-                title={address.address}
+                key={hash}
+                title={hash}
                 truncate
                 isTopRounded={index === 0}
                 isBottomRounded={index === discoveredAddresses.length - 1}
@@ -94,11 +102,25 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
         )}
       </ScrollView>
       <BottomScreenSection>
-        {!addressDiscoveryLoading ? (
-          <Button icon={<Search size={24} color={theme.font.contrast} />} title="Start scanning" onPress={startScan} />
-        ) : (
-          <Button icon={<X size={24} color={theme.font.contrast} />} title="Stop scanning" onPress={stopScan} />
-        )}
+        <ButtonsRow>
+          {(status === 'idle' || status === 'stopped') && (
+            <Button
+              icon={<Search size={24} color={theme.font.contrast} />}
+              title="Start scanning"
+              onPress={startScan}
+            />
+          )}
+          {status === 'started' && (
+            <Button icon={<X size={24} color={theme.font.contrast} />} title="Stop scanning" onPress={stopScan} />
+          )}
+          {(status === 'stopped' || status === 'finished') && (
+            <Button
+              icon={<Import size={24} color={theme.font.contrast} />}
+              title="Import addresses"
+              onPress={importAddresses}
+            />
+          )}
+        </ButtonsRow>
       </BottomScreenSection>
     </Screen>
   )

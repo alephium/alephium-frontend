@@ -18,6 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 export type AddressHash = string
 
+export type AddressIndex = number
+
 export type AddressSettings = {
   isMain: boolean
   label?: string
@@ -25,5 +27,5 @@ export type AddressSettings = {
 }
 
 export type AddressMetadata = AddressSettings & {
-  index: number
+  index: AddressIndex
 }

@@ -69,3 +69,27 @@ export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
 
   return results
 }
+
+export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+  let nextAvailableAddressIndex = startIndex
+
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
+}
+
+export const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
+  let maxIndexBeforeFirstGap = indexes[0]
+
+  for (let index = indexes[1]; index < indexes.length; index++) {
+    if (index - maxIndexBeforeFirstGap > 1) {
+      break
+    } else {
+      maxIndexBeforeFirstGap = index
+    }
+  }
+
+  return maxIndexBeforeFirstGap
+}

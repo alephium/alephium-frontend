@@ -29,13 +29,7 @@ import {
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
-import {
-  activeAddressesDiscovered,
-  addressesAdded,
-  addressesDataFetched,
-  addressesFlushed,
-  AddressPartial
-} from './addressesSlice'
+import { addressesAdded, addressesDataFetched, addressesFlushed, AddressPartial } from './addressesSlice'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
