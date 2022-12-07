@@ -27,16 +27,15 @@ import { AddressInfo } from '@alephium/sdk/api/explorer'
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
 import client from '../api/client'
-import { AddressIndex } from '../types/addresses'
+import { Address, AddressIndex } from '../types/addresses'
 import { findMaxIndexBeforeFirstGap, findNextAvailableAddressIndex } from '../utils/addresses'
 import { mnemonicToSeed } from '../utils/crypto'
 import { sleep } from '../utils/misc'
-import { Address, selectAllAddresses } from './addressesSlice'
 import { RootState } from './store'
 
 const sliceName = 'addressDiscovery'
 
-type DiscoveredAddress = AddressKeyPair & { balance: AddressInfo['balance'] }
+export type DiscoveredAddress = AddressKeyPair & { balance: AddressInfo['balance'] }
 
 interface AddressDiscoveryState extends EntityState<DiscoveredAddress> {
   loading: boolean
@@ -81,9 +80,9 @@ export const addressesDiscovered = createAsyncThunk(
 
     const minGap = 5
     const state = getState() as RootState
-    await sleep(1) // Allow execution to continue to not block rendering
+    // await sleep(1) // Allow execution to continue to not block rendering
     const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, state.activeWallet.mnemonic)
-    const addresses = selectAllAddresses(state)
+    const addresses = Object.values(state.addresses.entities) as Address[]
     const activeAddressIndexes: AddressIndex[] = addresses.map((address) => address.index)
     const groupsData = initializeAddressDiscoveryGroupsData(addresses)
     const derivedDataCache = new Map<AddressIndex, AddressKeyPair & { group: number }>()
@@ -149,15 +148,17 @@ export const addressesDiscovered = createAsyncThunk(
         }
 
         const state = getState() as RootState
-        if (!state.addresses.addressDiscoveryLoading) {
-          break
+        if (state.addressDiscovery.status === 'stopped') {
+          return
         }
       }
     } catch (e) {
       console.error(e)
     }
 
-    dispatch(addressDiscoveryFinished())
+    if (state.addressDiscovery.status !== 'stopped') {
+      dispatch(addressDiscoveryFinished())
+    }
   }
 )
 

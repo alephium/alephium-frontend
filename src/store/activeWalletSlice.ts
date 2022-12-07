@@ -68,15 +68,11 @@ export const walletGeneratedAndStoredWithPin = createAsyncThunk(
     if (!name) return rejectWithValue('Could not store wallet, wallet name is not set')
 
     try {
-      console.log('creating wallet...')
       const wallet = mnemonicToImport
         ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
         : await walletGenerateAsyncUnsafe(mnemonicToSeed)
-      console.log('created wallet.')
       const isMnemonicBackedUp = !!mnemonicToImport
-      console.log('storing wallet...')
       const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
-      console.log('stored wallet.')
 
       const initialWalletAddress: AddressPartial = {
         index: 0,

@@ -23,7 +23,7 @@ import {
   TOTAL_NUMBER_OF_GROUPS,
   walletImportAsyncUnsafe
 } from '@alephium/sdk'
-import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
+import { Transaction } from '@alephium/sdk/api/explorer'
 import {
   createAsyncThunk,
   createEntityAdapter,
@@ -35,8 +35,7 @@ import {
 
 import client from '../api/client'
 import { getAddressesMetadataByWalletId, storeAddressMetadata } from '../storage/wallets'
-import { AddressHash, AddressSettings } from '../types/addresses'
-import { TimeInMs } from '../types/numbers'
+import { Address, AddressHash, AddressSettings } from '../types/addresses'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
 import { fetchAddressesData } from '../utils/addresses'
@@ -47,23 +46,6 @@ import { addressesImported } from './addressDiscoverySlice'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
-
-export type Address = AddressKeyPair & {
-  group: number
-  settings: AddressSettings
-  networkData: {
-    details: AddressInfo
-    transactions: {
-      confirmed: Transaction[]
-      pending: PendingTransaction[]
-      loadedPage: number
-      allPagesLoaded: boolean
-    }
-    availableBalance: string
-    lastUsed: TimeInMs
-    tokens: AddressToken[]
-  }
-}
 
 export type AddressPartial = AddressKeyPair & { settings?: AddressSettings }
 

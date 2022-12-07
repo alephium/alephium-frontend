@@ -63,38 +63,22 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     setLoading(true)
 
     const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
-    const addressSettings = {
-      label,
-      color,
-      isMain
-    }
+    const addressSettings = { label, color, isMain }
 
-    dispatch(
-      addressesAdded([
-        {
-          hash: newAddressData.address,
-          publicKey: newAddressData.publicKey,
-          privateKey: newAddressData.privateKey,
-          index: newAddressData.addressIndex,
-          settings: addressSettings
-        }
-      ])
-    )
-    dispatch(addressesDataFetched([newAddressData.address]))
+    dispatch(addressesAdded([{ ...newAddressData, settings: addressSettings }]))
+    dispatch(addressesDataFetched([newAddressData.hash]))
 
-    if (activeWallet.metadataId) {
+    await storeAddressMetadata(activeWallet.metadataId, {
+      index: newAddressData.index,
+      ...addressSettings
+    })
+
+    if (isMain && mainAddress) {
       await storeAddressMetadata(activeWallet.metadataId, {
-        index: newAddressData.addressIndex,
-        ...addressSettings
+        index: mainAddress.index,
+        ...mainAddress.settings,
+        isMain: false
       })
-
-      if (isMain && mainAddress) {
-        await storeAddressMetadata(activeWallet.metadataId, {
-          index: mainAddress.index,
-          ...mainAddress.settings,
-          isMain: false
-        })
-      }
     }
 
     setLoading(false)
