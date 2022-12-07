@@ -18,13 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { randomBytes, createCipheriv, createDecipheriv, pbkdf2Sync, CipherKey, BinaryLike } from 'crypto'
 
-type Digest = 'sha256' | 'sha512'
-
 const saltByteLength = 64
 const ivByteLength = 64
 const authTagLength = 16
 
+type Digest = 'sha256' | 'sha512'
+
 export type Pbkdf2Function = (password: string, salt: Buffer) => Promise<Buffer>
+
+// Export a polyfilled version of createHash
+export { createHash } from 'crypto'
 
 export const encrypt = (password: string, dataRaw: string, digest: Digest = 'sha256'): string => {
   const data = Buffer.from(dataRaw, 'utf8')
@@ -96,9 +99,6 @@ export const decryptAsync = async (
 
   return _decrypt(iv, encrypted, derivedKey)
 }
-
-// Export a polyfilled version of createHash
-export { createHash } from 'crypto'
 
 const _decrypt = (iv: Buffer, encrypted: Buffer, derivedKey: Buffer): string => {
   const decipher = createDecipher(derivedKey, iv)
