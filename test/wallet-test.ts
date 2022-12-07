@@ -99,13 +99,13 @@ describe('Wallet', function () {
 
   describe('should derive a new address', () => {
     const masterKey = walletUtils.walletImport(wallets.wallets[0].mnemonic).masterKey
-    const { address: existingAddress, addressIndex: existingAddressIndex } = walletUtils.deriveNewAddressData(masterKey)
+    const { hash: existingAddress, index: existingAddressIndex } = walletUtils.deriveNewAddressData(masterKey)
 
     it('in a random group', () => {
       let newAddressData = walletUtils.deriveNewAddressData(masterKey)
-      expect(newAddressData.address).toEqual(existingAddress)
+      expect(newAddressData.hash).toEqual(existingAddress)
       newAddressData = walletUtils.deriveNewAddressData(masterKey, undefined, undefined, [existingAddressIndex])
-      expect(newAddressData.address).not.toEqual(existingAddress)
+      expect(newAddressData.hash).not.toEqual(existingAddress)
     })
 
     it('in a specific group', () => {
@@ -114,9 +114,9 @@ describe('Wallet', function () {
         const newAddressData = walletUtils.deriveNewAddressData(masterKey, validGroup, undefined, [
           existingAddressIndex
         ])
-        const groupOfNewAddress = addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS)
+        const groupOfNewAddress = addressToGroup(newAddressData.hash, TOTAL_NUMBER_OF_GROUPS)
         expect(groupOfNewAddress).toEqual(validGroup)
-        expect(newAddressData.address).not.toEqual(existingAddress)
+        expect(newAddressData.hash).not.toEqual(existingAddress)
       })
 
       const invalidGroups = [-1, TOTAL_NUMBER_OF_GROUPS, TOTAL_NUMBER_OF_GROUPS + 1, -0.1, 0.1, 1e18, -1e18]
