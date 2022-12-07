@@ -97,6 +97,9 @@ export const decryptAsync = async (
   return _decrypt(iv, encrypted, derivedKey)
 }
 
+// Export a polyfilled version of createHash
+export { createHash } from 'crypto'
+
 const _decrypt = (iv: Buffer, encrypted: Buffer, derivedKey: Buffer): string => {
   const decipher = createDecipher(derivedKey, iv)
   const data = encrypted.slice(0, encrypted.length - authTagLength)
