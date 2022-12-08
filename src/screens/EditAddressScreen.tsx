@@ -17,11 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { useState } from 'react'
 
+import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { storeAddressMetadata } from '../storage/wallets'
-import { addressSettingsUpdated, mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
+import { addressSettingsUpdated, selectAddressByHash } from '../store/addressesSlice'
 import { AddressSettings } from '../types/addresses'
 import AddressFormScreen from './AddressFormScreen'
 
@@ -34,47 +35,31 @@ const EditAddressScreen = ({
   }
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const [address, activeWallet, mainAddress] = useAppSelector((s) => [
-    selectAddressByHash(s, addressHash),
-    s.activeWallet,
-    s.addresses.mainAddress
-  ])
+  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
+  const [loading, setLoading] = useState(false)
 
   if (!address) return null
 
-  const initialValues = {
-    label: address.settings.label,
-    color: address.settings.color,
-    isMain: address.settings.isMain,
-    group: address.group
-  }
+  const initialValues = { ...address.settings, group: address.group }
 
-  const handleSavePress = async (addressSettings: AddressSettings) => {
-    dispatch(
-      addressSettingsUpdated({
-        hash: address.hash,
-        settings: addressSettings
-      })
-    )
-    if (activeWallet.metadataId)
-      await storeAddressMetadata(activeWallet.metadataId, {
-        index: address.index,
-        ...addressSettings
-      })
+  const handleSavePress = async (settings: AddressSettings) => {
+    setLoading(true)
+    await dispatch(addressSettingsUpdated({ address, settings }))
+    setLoading(false)
 
-    if (addressSettings.isMain && mainAddress !== addressHash) {
-      await dispatch(mainAddressChanged(address))
-    }
     navigation.goBack()
   }
 
   return (
-    <AddressFormScreen
-      initialValues={initialValues}
-      onSubmit={handleSavePress}
-      buttonText="Save"
-      disableIsMainToggle={initialValues.isMain}
-    />
+    <>
+      <AddressFormScreen
+        initialValues={initialValues}
+        onSubmit={handleSavePress}
+        buttonText="Save"
+        disableIsMainToggle={initialValues.isMain}
+      />
+      <SpinnerModal isActive={loading} text="Saving address..." />
+    </>
   )
 }
 

@@ -31,6 +31,7 @@ import { Address, AddressIndex } from '../types/addresses'
 import { findMaxIndexBeforeFirstGap, findNextAvailableAddressIndex } from '../utils/addresses'
 import { mnemonicToSeed } from '../utils/crypto'
 import { sleep } from '../utils/misc'
+import { addressesAdded } from './addressesSlice'
 import { RootState } from './store'
 
 const sliceName = 'addressDiscovery'
@@ -80,7 +81,7 @@ export const addressesDiscovered = createAsyncThunk(
 
     const minGap = 5
     const state = getState() as RootState
-    // await sleep(1) // Allow execution to continue to not block rendering
+    await sleep(1) // Allow execution to continue to not block rendering
     const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, state.activeWallet.mnemonic)
     const addresses = Object.values(state.addresses.entities) as Address[]
     const activeAddressIndexes: AddressIndex[] = addresses.map((address) => address.index)
@@ -180,15 +181,17 @@ const addressDiscoverySlice = createSlice({
     },
     addressDiscovered: (state, action: PayloadAction<DiscoveredAddress>) => {
       addressDiscoveryAdapter.upsertOne(state, action.payload)
-    },
-    addressesImported: (state, action: PayloadAction<DiscoveredAddress[]>) => {
+    }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(addressesAdded, (state, action) => {
       const addresses = action.payload
 
       addressDiscoveryAdapter.removeMany(
         state,
         addresses.map((address) => address.hash)
       )
-    }
+    })
   }
 })
 
@@ -198,12 +201,7 @@ export const {
   selectIds: selectDiscoveredAddressIds
 } = addressDiscoveryAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const {
-  addressDiscoveryStarted,
-  addressDiscoveryStopped,
-  addressDiscoveryFinished,
-  addressDiscovered,
-  addressesImported
-} = addressDiscoverySlice.actions
+export const { addressDiscoveryStarted, addressDiscoveryStopped, addressDiscoveryFinished, addressDiscovered } =
+  addressDiscoverySlice.actions
 
 export default addressDiscoverySlice

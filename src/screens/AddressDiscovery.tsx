@@ -20,25 +20,25 @@ import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'
 import { Import, Search, X } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { ActivityIndicator, ScrollView } from 'react-native'
+import { ActivityIndicator, ScrollView, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
-import ButtonsRow from '../components/buttons/ButtonsRow'
 import HighlightRow from '../components/HighlightRow'
 import Screen, { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
+import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import {
   addressDiscoveryStopped,
   addressesDiscovered,
-  addressesImported,
   DiscoveredAddress,
   selectAllDiscoveredAddresses
 } from '../store/addressDiscoverySlice'
-import { addressesDataFetched, selectAllAddresses } from '../store/addressesSlice'
+import { newAddressesStoredAndInitialized, selectAllAddresses } from '../store/addressesSlice'
+import { getRandomLabelColor } from '../utils/colors'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>
 
@@ -49,19 +49,19 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
   const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
   const { loading, status } = useAppSelector((state) => state.addressDiscovery)
   const [selectedAddressesToImport, setSelectedAddressesToImport] = useState<DiscoveredAddress[]>([])
+  const [importLoading, setImportLoading] = useState(false)
 
   const startScan = () => dispatch(addressesDiscovered())
   const stopScan = () => dispatch(addressDiscoveryStopped())
 
-  const importAddresses = () => {
-    dispatch(addressesImported(selectedAddressesToImport))
-    dispatch(addressesDataFetched(selectedAddressesToImport.map((address) => address.hash)))
-    // TODO
-    // create an async thunk to:
-    // - addressesAdded
-    // - addressesDataFetched
-    // - store address metadata
-    // Also, DRY: src/screens/NewAddressScreen.tsx
+  const importAddresses = async () => {
+    setImportLoading(true)
+    const newAddresses = selectedAddressesToImport.map((address) => ({
+      ...address,
+      settings: { isMain: false, color: getRandomLabelColor() }
+    }))
+    await dispatch(newAddressesStoredAndInitialized(newAddresses))
+    setImportLoading(false)
   }
 
   const toggleAddressSelection = (address: DiscoveredAddress) => {
@@ -83,7 +83,7 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
   return (
     <Screen>
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}>
-        <FullHeight>
+        <View>
           <ScreenSection>
             <AppText bold>Scan the blockchain to find your active addresses. This process might take a while.</AppText>
           </ScreenSection>
@@ -104,9 +104,7 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
           </ScreenSection>
           {(loading || discoveredAddresses.length > 0) && (
             <ScreenSection>
-              <NewDiscoveredAddressesTitle>
-                <ScreenSectionTitle>Newly discovered addresses</ScreenSectionTitle>
-              </NewDiscoveredAddressesTitle>
+              <ScreenSectionTitle>Newly discovered addresses</ScreenSectionTitle>
 
               {loading && (
                 <ScanningIndication>
@@ -124,19 +122,19 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
                   isBottomRounded={index === discoveredAddresses.length - 1}
                   onPress={() => toggleAddressSelection(address)}
                 >
-                  <RowRightContent>
+                  <Row>
                     <AmountStyled value={BigInt(address.balance)} color={theme.font.secondary} fadeDecimals />
                     <Checkbox
                       value={selectedAddressesToImport.findIndex((a) => a.hash === address.hash) > -1}
                       disabled={loading}
                       onValueChange={() => toggleAddressSelection(address)}
                     />
-                  </RowRightContent>
+                  </Row>
                 </HighlightRow>
               ))}
             </ScreenSection>
           )}
-        </FullHeight>
+        </View>
         <BottomScreenSection>
           {status === 'idle' && (
             <ButtonStyled
@@ -170,23 +168,19 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
           )}
         </BottomScreenSection>
       </ScrollView>
+      <SpinnerModal isActive={importLoading} text="Importing addresses..." />
     </Screen>
   )
 }
 
 export default AddressDiscoveryScreen
 
-const ScanningIndication = styled.View`
+const Row = styled.View`
   flex-direction: row;
+`
+
+const ScanningIndication = styled(Row)`
   margin-bottom: 20px;
-`
-
-const NewDiscoveredAddressesTitle = styled.View`
-  flex-direction: row;
-`
-
-const RowRightContent = styled.View`
-  flex-direction: row;
 `
 
 const AmountStyled = styled(Amount)`
@@ -200,5 +194,3 @@ const ButtonStyled = styled(Button)`
 const ContinueButton = styled(ButtonStyled)`
   margin-bottom: 24px;
 `
-
-const FullHeight = styled.View``

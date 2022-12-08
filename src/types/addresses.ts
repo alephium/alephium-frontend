@@ -53,3 +53,5 @@ export type Address = AddressKeyPair & {
     tokens: AddressToken[]
   }
 }
+
+export type AddressPartial = AddressKeyPair & { settings: AddressSettings }

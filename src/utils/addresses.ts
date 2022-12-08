@@ -20,8 +20,8 @@ import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-root-toast'
 
 import client from '../api/client'
-import { Address } from '../store/addressesSlice'
-import { AddressHash } from '../types/addresses'
+import { storeAddressMetadata } from '../storage/wallets'
+import { Address, AddressHash, AddressPartial, AddressSettings } from '../types/addresses'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
@@ -92,4 +92,21 @@ export const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
   }
 
   return maxIndexBeforeFirstGap
+}
+
+export const storeAddressSettings = async (
+  address: AddressPartial,
+  settings: AddressSettings,
+  metadataId: string,
+  oldDefaultAddress?: Address
+) => {
+  await storeAddressMetadata(metadataId, { index: address.index, ...settings })
+
+  if (settings.isMain && oldDefaultAddress && oldDefaultAddress.hash !== address.hash) {
+    await storeAddressMetadata(metadataId, {
+      index: oldDefaultAddress.index,
+      ...oldDefaultAddress.settings,
+      isMain: false
+    })
+  }
 }
