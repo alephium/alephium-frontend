@@ -81,9 +81,9 @@ export const getPath = (addressIndex?: number) => {
 
 export const getWalletFromSeed = (seed: Buffer, mnemonic: string): Wallet => {
   const masterKey = bip32.fromSeed(seed)
-  const { address, publicKey, privateKey } = deriveAddressAndKeys(masterKey)
+  const { hash, publicKey, privateKey } = deriveAddressAndKeys(masterKey)
 
-  return new Wallet({ seed, address, publicKey, privateKey, mnemonic, masterKey })
+  return new Wallet({ seed, address: hash, publicKey, privateKey, mnemonic, masterKey })
 }
 
 export const getWalletFromMnemonic = (mnemonic: string, passphrase = ''): Wallet => {
@@ -102,14 +102,14 @@ export const getWalletFromMnemonicAsyncUnsafe = async (
   return getWalletFromSeed(seed, mnemonic)
 }
 
-export type AddressAndKeys = {
-  address: string
+export type AddressKeyPair = {
+  hash: string
+  index: number
   publicKey: string
   privateKey: string
-  addressIndex: number
 }
 
-const deriveAddressAndKeys = (masterKey: bip32.BIP32Interface, addressIndex?: number): AddressAndKeys => {
+export const deriveAddressAndKeys = (masterKey: bip32.BIP32Interface, addressIndex?: number): AddressKeyPair => {
   const keyPair = masterKey.derivePath(getPath(addressIndex))
 
   if (!keyPair.privateKey) throw new Error('Missing private key')
@@ -122,7 +122,7 @@ const deriveAddressAndKeys = (masterKey: bip32.BIP32Interface, addressIndex?: nu
   const bytes = Buffer.concat([type, pkhash])
   const address = bs58.encode(bytes)
 
-  return { address, publicKey, privateKey, addressIndex: addressIndex || 0 }
+  return { hash: address, publicKey, privateKey, index: addressIndex || 0 }
 }
 
 const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
@@ -140,7 +140,7 @@ export const deriveNewAddressData = (
   forGroup?: number,
   addressIndex?: number,
   skipAddressIndexes: number[] = []
-): AddressAndKeys => {
+): AddressKeyPair => {
   if (forGroup !== undefined && (forGroup >= TOTAL_NUMBER_OF_GROUPS || forGroup < 0 || !Number.isInteger(forGroup))) {
     throw new Error('Invalid group number')
   }
@@ -152,8 +152,8 @@ export const deriveNewAddressData = (
     : initialAddressIndex
   let newAddressData = deriveAddressAndKeys(masterKey, nextAddressIndex)
 
-  while (forGroup !== undefined && addressToGroup(newAddressData.address, TOTAL_NUMBER_OF_GROUPS) !== forGroup) {
-    nextAddressIndex = findNextAvailableAddressIndex(newAddressData.addressIndex, skipAddressIndexes)
+  while (forGroup !== undefined && addressToGroup(newAddressData.hash, TOTAL_NUMBER_OF_GROUPS) !== forGroup) {
+    nextAddressIndex = findNextAvailableAddressIndex(newAddressData.index, skipAddressIndexes)
     newAddressData = deriveAddressAndKeys(masterKey, nextAddressIndex)
   }
 
