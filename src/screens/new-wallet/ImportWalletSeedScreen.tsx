@@ -49,7 +49,7 @@ type SelectedWord = {
   timestamp: Date
 }
 
-const enablePasteForDevelopment = false
+const enablePasteForDevelopment = true
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
