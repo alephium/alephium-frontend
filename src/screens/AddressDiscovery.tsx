@@ -34,10 +34,10 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 import {
   addressDiscoveryStopped,
   addressesDiscovered,
-  DiscoveredAddress,
   selectAllDiscoveredAddresses
 } from '../store/addressDiscoverySlice'
 import { newAddressesStoredAndInitialized, selectAllAddresses } from '../store/addressesSlice'
+import { AddressHash } from '../types/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>
@@ -48,36 +48,45 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
   const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
   const { loading, status } = useAppSelector((state) => state.addressDiscovery)
-  const [selectedAddressesToImport, setSelectedAddressesToImport] = useState<DiscoveredAddress[]>([])
+
+  const [addressSelections, setAddressSelections] = useState<Record<AddressHash, boolean>>({})
   const [importLoading, setImportLoading] = useState(false)
+
+  const selectedAddressesToImport = discoveredAddresses.filter(({ hash }) => addressSelections[hash])
 
   const startScan = () => dispatch(addressesDiscovered())
   const stopScan = () => dispatch(addressDiscoveryStopped())
 
   const importAddresses = async () => {
     setImportLoading(true)
+
     const newAddresses = selectedAddressesToImport.map((address) => ({
       ...address,
       settings: { isMain: false, color: getRandomLabelColor() }
     }))
+
     await dispatch(newAddressesStoredAndInitialized(newAddresses))
+
     setImportLoading(false)
   }
 
-  const toggleAddressSelection = (address: DiscoveredAddress) => {
+  const toggleAddressSelection = (hash: AddressHash) => {
     if (loading) return
 
-    const selectedAddressIndex = selectedAddressesToImport.findIndex((a) => a.hash === address.hash)
-
-    setSelectedAddressesToImport(
-      selectedAddressIndex > -1
-        ? selectedAddressesToImport.filter((a) => a.hash !== address.hash)
-        : [...selectedAddressesToImport, address]
-    )
+    setAddressSelections({
+      ...addressSelections,
+      [hash]: !addressSelections[hash]
+    })
   }
 
   useEffect(() => {
-    setSelectedAddressesToImport(discoveredAddresses.filter((address) => BigInt(address.balance) > 0))
+    discoveredAddresses.forEach(({ hash }) => {
+      if (addressSelections[hash] === undefined) {
+        setAddressSelections({ ...addressSelections, [hash]: true })
+      }
+    })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discoveredAddresses])
 
   return (
@@ -113,21 +122,21 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
                 </ScanningIndication>
               )}
 
-              {discoveredAddresses.map((address, index) => (
+              {discoveredAddresses.map(({ hash, balance }, index) => (
                 <HighlightRow
-                  key={address.hash}
-                  title={address.hash}
+                  key={hash}
+                  title={hash}
                   truncate
                   isTopRounded={index === 0}
                   isBottomRounded={index === discoveredAddresses.length - 1}
-                  onPress={() => toggleAddressSelection(address)}
+                  onPress={() => toggleAddressSelection(hash)}
                 >
                   <Row>
-                    <AmountStyled value={BigInt(address.balance)} color={theme.font.secondary} fadeDecimals />
+                    <AmountStyled value={BigInt(balance)} color={theme.font.secondary} fadeDecimals />
                     <Checkbox
-                      value={selectedAddressesToImport.findIndex((a) => a.hash === address.hash) > -1}
+                      value={addressSelections[hash]}
                       disabled={loading}
-                      onValueChange={() => toggleAddressSelection(address)}
+                      onValueChange={() => toggleAddressSelection(hash)}
                     />
                   </Row>
                 </HighlightRow>
