@@ -16,9 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 
 import { fetchLatestPrice } from '../api/price'
+import { selectTotalBalance } from './addressesSlice'
 import { appReset } from './appSlice'
 import { currencySelected } from './settingsSlice'
 import { RootState } from './store'
@@ -33,7 +34,7 @@ interface PriceState {
 }
 
 const initialState: PriceState = {
-  value: undefined,
+  value: 0,
   status: 'uninitialized'
 }
 
@@ -66,6 +67,11 @@ const priceSlice = createSlice({
       .addCase(appReset, resetPrice)
   }
 })
+
+export const selectIsPriceUninitialized = createSelector(
+  [(state: RootState) => state.price.status, selectTotalBalance],
+  (priceStatus, totalBalance) => priceStatus === 'uninitialized' && totalBalance > BigInt(0)
+)
 
 export default priceSlice
 

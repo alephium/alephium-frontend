@@ -364,6 +364,10 @@ export const selectDefaultAddress = createSelector(selectAllAddresses, (addresse
   addresses.find((address) => address.settings.isMain)
 )
 
+export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>
+  addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
+)
+
 export const {
   newAddressGenerated,
   addPendingTransactionToAddress,

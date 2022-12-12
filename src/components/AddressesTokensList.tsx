@@ -24,6 +24,7 @@ import styled from 'styled-components/native'
 import { useAppSelector } from '../hooks/redux'
 import useTokenMetadata from '../hooks/useTokenMetadata'
 import { selectAllAddresses, selectTokens } from '../store/addressesSlice'
+import { selectIsPriceUninitialized } from '../store/priceSlice'
 import { Address } from '../types/addresses'
 import { AddressToken, ALEPHIUM_TOKEN_ID, TokenMetadata } from '../types/tokens'
 import Carousel from './Carousel'
@@ -39,6 +40,7 @@ interface AddressesTokensListProps {
 
 const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListProps) => {
   const allAddresses = useAppSelector(selectAllAddresses)
+  const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
   const addresses = addressesParam ?? allAddresses
   const [price, addressDataStatus, fiatCurrency, tokens] = useAppSelector((s) => [
     s.price,
@@ -52,7 +54,7 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
   const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
   const [tokensChunked, setTokensChunked] = useState<AddressToken[][]>([])
 
-  const isLoading = price.status === 'uninitialized' || addressDataStatus === 'uninitialized'
+  const isLoading = isPriceUninitialized || addressDataStatus === 'uninitialized'
 
   tokens.forEach((token) => {
     token.worth = {

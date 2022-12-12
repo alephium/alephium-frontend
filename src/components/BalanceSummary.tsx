@@ -21,7 +21,8 @@ import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
-import { selectAllAddresses } from '../store/addressesSlice'
+import { selectTotalBalance } from '../store/addressesSlice'
+import { selectIsPriceUninitialized } from '../store/priceSlice'
 import { currencies } from '../utils/currencies'
 import Amount from './Amount'
 
@@ -31,12 +32,12 @@ interface BalanceSummaryProps {
 
 const BalanceSummary = ({ style }: BalanceSummaryProps) => {
   const [price, currency, addressDataStatus] = useAppSelector((s) => [s.price, s.settings.currency, s.addresses.status])
-  const addresses = useAppSelector(selectAllAddresses)
+  const totalBalance = useAppSelector(selectTotalBalance)
+  const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
   const theme = useTheme()
 
-  const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
   const balance = convertSetToFiat(totalBalance, price.value ?? 0)
-  const showActivityIndicator = price.status === 'uninitialized' || addressDataStatus === 'uninitialized'
+  const showActivityIndicator = isPriceUninitialized || addressDataStatus === 'uninitialized'
 
   return (
     <View style={style}>

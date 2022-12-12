@@ -18,22 +18,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useEffect } from 'react'
 
-import { updatePrice } from '../store/priceSlice'
+import { selectIsPriceUninitialized, updatePrice } from '../store/priceSlice'
 import { useAppDispatch, useAppSelector } from './redux'
 
 const useRefreshALPHPrice = () => {
   const dispatch = useAppDispatch()
+  const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
   const priceStatus = useAppSelector((state) => state.price.status)
 
   useEffect(() => {
-    if (priceStatus === 'uninitialized') dispatch(updatePrice())
-  }, [dispatch, priceStatus])
-
-  useEffect(() => {
-    setInterval(() => {
+    if (isPriceUninitialized) {
       dispatch(updatePrice())
-    }, 60 * 1000)
-  }, [dispatch])
+    } else if (priceStatus === 'updated') {
+      const interval = setInterval(() => dispatch(updatePrice()), 60 * 1000) // 1min
+
+      return () => clearInterval(interval)
+    }
+  }, [dispatch, isPriceUninitialized, priceStatus])
 }
 
 export default useRefreshALPHPrice
