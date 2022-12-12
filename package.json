@@ -35,8 +35,8 @@
   },
   "author": "Alephium dev <dev@alephium.org>",
   "config": {
-    "alephium_version": "1.5.4",
-    "explorer_backend_version": "1.10.0"
+    "alephium_version": "1.5.5",
+    "explorer_backend_version": "1.11.0"
   },
   "scripts": {
     "build": "rm -rf dist && npx tsc --build . && webpack",
