@@ -144,7 +144,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       setLoading(false)
 
-      navigation.navigate('NewWalletSuccessPage')
+      navigation.navigate('ImportWalletAddressDiscoveryScreen')
     },
     [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, selectedWords, typedInput]
   )

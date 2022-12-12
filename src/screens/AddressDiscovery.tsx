@@ -16,11 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'
 import { Import, Search, X } from 'lucide-react-native'
-import { useEffect, useState } from 'react'
-import { ActivityIndicator, ScrollView, View } from 'react-native'
+import { useCallback, useEffect, useState } from 'react'
+import { ActivityIndicator, BackHandler, ScrollView, View } from 'react-native'
+import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '../components/Amount'
@@ -42,19 +44,21 @@ import { getRandomLabelColor } from '../utils/colors'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>
 
-const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
+const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const addresses = useAppSelector(selectAllAddresses)
   const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
-  const { loading, status } = useAppSelector((state) => state.addressDiscovery)
+  const { loading, status, progress } = useAppSelector((state) => state.addressDiscovery)
 
   const [addressSelections, setAddressSelections] = useState<Record<AddressHash, boolean>>({})
   const [importLoading, setImportLoading] = useState(false)
 
+  const isImporting = params?.isImporting
   const selectedAddressesToImport = discoveredAddresses.filter(({ hash }) => addressSelections[hash])
 
-  const startScan = () => dispatch(addressesDiscovered())
+  const startScan = useCallback(() => dispatch(addressesDiscovered()), [dispatch])
+
   const stopScan = () => dispatch(addressDiscoveryStopped())
 
   const importAddresses = async () => {
@@ -66,6 +70,8 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
     }))
 
     await dispatch(newAddressesStoredAndInitialized(newAddresses))
+
+    navigation.navigate(isImporting ? 'NewWalletSuccessPage' : 'InWalletScreen')
 
     setImportLoading(false)
   }
@@ -88,6 +94,35 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discoveredAddresses])
+
+  const cancelAndGoToWelcomeScreen = useCallback(() => {
+    dispatch(addressDiscoveryStopped())
+    navigation.navigate('NewWalletSuccessPage')
+  }, [dispatch, navigation])
+
+  // Start scanning and override back navigation when in wallet import flow
+  useFocusEffect(
+    useCallback(() => {
+      if (!isImporting) return
+
+      startScan()
+
+      navigation.setOptions({
+        headerLeft: () => null,
+        headerRight: () => (
+          <Button
+            onPress={cancelAndGoToWelcomeScreen}
+            icon={<X size={24} color={theme.font.primary} />}
+            type="transparent"
+          />
+        )
+      })
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', () => true)
+
+      return subscription.remove
+    }, [cancelAndGoToWelcomeScreen, isImporting, navigation, startScan, theme.font.primary])
+  )
 
   return (
     <Screen>
@@ -117,8 +152,11 @@ const AddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
 
               {loading && (
                 <ScanningIndication>
-                  <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
-                  <AppText color={theme.font.secondary}>Scanning...</AppText>
+                  <Row style={{ marginBottom: 10 }}>
+                    <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
+                    <AppText color={theme.font.secondary}>Scanning...</AppText>
+                  </Row>
+                  <ProgressBar progress={progress} color={theme.global.accent} />
                 </ScanningIndication>
               )}
 
@@ -188,8 +226,9 @@ const Row = styled.View`
   flex-direction: row;
 `
 
-const ScanningIndication = styled(Row)`
+const ScanningIndication = styled.View`
   margin-bottom: 20px;
+  align-items: center;
 `
 
 const AmountStyled = styled(Amount)`

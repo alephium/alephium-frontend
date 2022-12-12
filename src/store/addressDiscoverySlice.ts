@@ -21,7 +21,6 @@ import {
   addressToGroup,
   deriveAddressAndKeys,
   TOTAL_NUMBER_OF_GROUPS,
-  Wallet,
   walletImportAsyncUnsafe
 } from '@alephium/sdk'
 import { AddressInfo } from '@alephium/sdk/api/explorer'
@@ -30,10 +29,9 @@ import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, Payloa
 import client from '../api/client'
 import { Address, AddressIndex } from '../types/addresses'
 import { findMaxIndexBeforeFirstGap, findNextAvailableAddressIndex } from '../utils/addresses'
-import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import { sleep } from '../utils/misc'
-import { addressesAdded, newAddressesStoredAndInitialized } from './addressesSlice'
+import { addressesAdded } from './addressesSlice'
 import { RootState } from './store'
 
 const sliceName = 'addressDiscovery'
@@ -80,17 +78,15 @@ const initializeAddressDiscoveryGroupsData = (addresses: Address[]): AddressDisc
 
 export const addressesDiscovered = createAsyncThunk(
   `${sliceName}/addressesDiscovered`,
-  async (payload: { autoImport: boolean; masterKey: Wallet['masterKey'] } | void, { getState, dispatch }) => {
+  async (_, { getState, dispatch }) => {
     dispatch(addressDiscoveryStarted())
 
     const minGap = 5
     const state = getState() as RootState
     await sleep(1) // Allow execution to continue to not block rendering
-    const { masterKey } = payload?.masterKey
-      ? payload
-      : await walletImportAsyncUnsafe(mnemonicToSeed, state.activeWallet.mnemonic)
+    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, state.activeWallet.mnemonic)
     const addresses = Object.values(state.addresses.entities) as Address[]
-    const activeAddressIndexes: AddressIndex[] = payload?.autoImport ? [0] : addresses.map((address) => address.index)
+    const activeAddressIndexes: AddressIndex[] = addresses.map((address) => address.index)
     const groupsData = initializeAddressDiscoveryGroupsData(addresses)
     const derivedDataCache = new Map<AddressIndex, AddressKeyPair & { group: number }>()
 
@@ -138,18 +134,10 @@ export const addressesDiscovered = createAsyncThunk(
         const addressIsActive = data.length > 0 && data[0]
 
         if (addressIsActive) {
-          if (payload?.autoImport) {
-            dispatch(
-              newAddressesStoredAndInitialized([
-                { ...newAddressData, settings: { isMain: false, color: getRandomLabelColor() } }
-              ])
-            )
-          } else {
-            const {
-              data: { balance }
-            } = await client.explorerClient.getAddressDetails(newAddressData.hash)
-            dispatch(addressDiscovered({ ...newAddressData, balance }))
-          }
+          const {
+            data: { balance }
+          } = await client.explorerClient.getAddressDetails(newAddressData.hash)
+          dispatch(addressDiscovered({ ...newAddressData, balance }))
 
           groupData.gap = 0
           activeAddressIndexes.push(newAddressData.index)

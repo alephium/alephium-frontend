@@ -30,7 +30,6 @@ import { AddressPartial } from '../types/addresses'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
-import { addressesDiscovered } from './addressDiscoverySlice'
 import { addressesAdded, addressesDataFetched, addressesFlushed } from './addressesSlice'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
@@ -90,10 +89,6 @@ export const walletGeneratedAndStoredWithPin = createAsyncThunk(
       dispatch(addressesFlushed())
       dispatch(addressesAdded([firstAddress]))
       dispatch(addressesDataFetched([firstAddress.hash]))
-
-      if (mnemonicToImport) {
-        dispatch(addressesDiscovered({ autoImport: true, masterKey: wallet.masterKey }))
-      }
 
       dispatch(loadingFinished())
 
