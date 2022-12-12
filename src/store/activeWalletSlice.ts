@@ -30,6 +30,7 @@ import { AddressPartial } from '../types/addresses'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
+import { addressesDiscovered } from './addressDiscoverySlice'
 import { addressesAdded, addressesDataFetched, addressesFlushed } from './addressesSlice'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
@@ -75,7 +76,7 @@ export const walletGeneratedAndStoredWithPin = createAsyncThunk(
       const isMnemonicBackedUp = !!mnemonicToImport
       const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
 
-      const initialWalletAddress: AddressPartial = {
+      const firstAddress: AddressPartial = {
         index: 0,
         hash: wallet.address,
         publicKey: wallet.publicKey,
@@ -87,18 +88,12 @@ export const walletGeneratedAndStoredWithPin = createAsyncThunk(
       }
 
       dispatch(addressesFlushed())
-      dispatch(addressesAdded([initialWalletAddress]))
-      dispatch(addressesDataFetched([initialWalletAddress.hash]))
+      dispatch(addressesAdded([firstAddress]))
+      dispatch(addressesDataFetched([firstAddress.hash]))
 
-      // TODO: Run address discovery on wallet import
-      // if (mnemonicToImport) {
-      //   dispatch(
-      //     activeAddressesDiscovered({
-      //       masterKey: wallet.masterKey,
-      //       skipIndexes: [initialWalletAddress.index]
-      //     })
-      //   )
-      // }
+      if (mnemonicToImport) {
+        dispatch(addressesDiscovered({ autoImport: true, masterKey: wallet.masterKey }))
+      }
 
       dispatch(loadingFinished())
 

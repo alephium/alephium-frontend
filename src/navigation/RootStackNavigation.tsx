@@ -19,11 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 import { createStackNavigator } from '@react-navigation/stack'
-import { useWindowDimensions } from 'react-native'
+import { ActivityIndicator, useWindowDimensions } from 'react-native'
+import { Bar as ProgressBar } from 'react-native-progress'
 import { useTheme } from 'styled-components'
+import styled from 'styled-components/native'
 
+import AppText from '../components/AppText'
 import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'
-import { useAppDispatch } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import AddressDiscoveryScreen from '../screens/AddressDiscovery'
 import AddressScreen from '../screens/AddressScreen'
 import EditAddressScreen from '../screens/EditAddressScreen'
@@ -57,6 +60,7 @@ const RootStackNavigation = () => {
   const bottomModalOptions = useBottomModalOptions()
   const { height: screenHeight } = useWindowDimensions()
   const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
+  const { loading, progress } = useAppSelector((state) => state.addressDiscovery)
   const dispatch = useAppDispatch()
 
   const handleStateChange = (state?: NavigationState) => {
@@ -135,8 +139,29 @@ const RootStackNavigation = () => {
           options={{ headerTitle: 'Active addresses' }}
         />
       </RootStack.Navigator>
+      {loading && (
+        <BottomNotification>
+          <Row>
+            <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
+            <AppText color={theme.font.secondary}>
+              Scanning the blockchain to find your active addresses. This process might take a while.
+            </AppText>
+          </Row>
+          <ProgressBar progress={progress} color={theme.global.accent} />
+        </BottomNotification>
+      )}
     </NavigationContainer>
   )
 }
 
 export default RootStackNavigation
+
+const BottomNotification = styled.View`
+  padding: 10px 20px;
+  align-items: center;
+`
+
+const Row = styled.View`
+  flex-direction: row;
+  margin-bottom: 10px;
+`
