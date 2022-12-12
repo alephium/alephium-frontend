@@ -17,9 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BarCodeScannedCallback, BarCodeScanner } from 'expo-barcode-scanner'
-import { X } from 'lucide-react-native'
+import { Camera, X } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
+import AppText from './AppText'
+import InfoBox from './InfoBox'
 
 import Screen, { ScreenSection } from './layout/Screen'
 import ModalWithBackdrop from './ModalWithBackdrop'
@@ -50,8 +52,6 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan }: QRCodeScannerModalProps) 
     onClose()
   }
 
-  if (!hasPermission) return null
-
   return (
     <ModalWithBackdrop visible animationType="fade" closeModal={onClose} color={theme.bg.primary}>
       <ScreenStyled>
@@ -60,11 +60,18 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan }: QRCodeScannerModalProps) 
             <X size={32} color={theme.font.primary} />
           </CloseButton>
         </ScreenSection>
-        {!scanned && (
+        {!scanned && hasPermission && (
           <BarCodeScannerStyled
             barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
             onBarCodeScanned={handleBarCodeScanned}
           />
+        )}
+        {hasPermission === false && (
+          <ScreenSection fill>
+            <InfoBox title="Camera permissions required" Icon={Camera}>
+              <AppText>Please, enable access to camera through the settings of your device.</AppText>
+            </InfoBox>
+          </ScreenSection>
         )}
       </ScreenStyled>
     </ModalWithBackdrop>
