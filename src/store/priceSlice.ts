@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { currencySelected } from './settingsSlice'
 import { RootState } from './store'
 
 const sliceName = 'price'
@@ -49,24 +50,24 @@ export const priceUpdated = createAsyncThunk(`${sliceName}/priceUpdated`, async 
   return latestPrice
 })
 
+const resetPrice = () => initialState
+
 const priceSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    priceReset: (state) => initialState,
+    priceReset: resetPrice,
     statusChanged: (state, action: PayloadAction<PriceStatus>) => {
       state.status = action.payload
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(priceUpdated.fulfilled, (state, action) => {
-      const latestPrice = action.payload
-
-      return {
-        value: latestPrice,
+    builder
+      .addCase(priceUpdated.fulfilled, (_, action) => ({
+        value: action.payload,
         status: 'updated'
-      }
-    })
+      }))
+      .addCase(currencySelected, resetPrice)
   }
 })
 

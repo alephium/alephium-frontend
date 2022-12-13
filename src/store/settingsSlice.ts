@@ -20,7 +20,6 @@ import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@
 
 import { defaultGeneralSettings, storeSettings } from '../storage/settings'
 import { GeneralSettings } from '../types/settings'
-import { priceReset } from './priceSlice'
 import { RootState } from './store'
 
 const sliceName = 'settings'
@@ -31,30 +30,28 @@ const settingsSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    generalSettingsChanged: (state, action: PayloadAction<GeneralSettings>) => {
-      return action.payload
-    },
+    storedGeneralSettingsLoaded: (_, action: PayloadAction<GeneralSettings>) => action.payload,
     themeChanged: (state, action: PayloadAction<GeneralSettings['theme']>) => {
       state.theme = action.payload
     },
-    discreetModeChanged: (state, action: PayloadAction<GeneralSettings['discreetMode']>) => {
-      state.discreetMode = action.payload
+    discreetModeToggled: (state) => {
+      state.discreetMode = !state.discreetMode
     },
-    passwordRequirementChanged: (state, action: PayloadAction<GeneralSettings['requireAuth']>) => {
-      state.requireAuth = action.payload
+    passwordRequirementToggled: (state) => {
+      state.requireAuth = !state.requireAuth
     },
-    currencyChanged: (state, action: PayloadAction<GeneralSettings['currency']>) => {
+    currencySelected: (state, action: PayloadAction<GeneralSettings['currency']>) => {
       state.currency = action.payload
     }
   }
 })
 
 export const {
-  generalSettingsChanged,
+  storedGeneralSettingsLoaded,
   themeChanged,
-  discreetModeChanged,
-  passwordRequirementChanged,
-  currencyChanged
+  discreetModeToggled,
+  passwordRequirementToggled,
+  currencySelected
 } = settingsSlice.actions
 
 export const settingsListenerMiddleware = createListenerMiddleware()
@@ -62,23 +59,16 @@ export const settingsListenerMiddleware = createListenerMiddleware()
 // When the settings change, store them in persistent storage
 settingsListenerMiddleware.startListening({
   matcher: isAnyOf(
-    generalSettingsChanged,
+    storedGeneralSettingsLoaded,
     themeChanged,
-    discreetModeChanged,
-    passwordRequirementChanged,
-    currencyChanged
+    discreetModeToggled,
+    passwordRequirementToggled,
+    currencySelected
   ),
-  effect: async (action, { getState }) => {
+  effect: async (_, { getState }) => {
     const state = getState() as RootState
 
     await storeSettings('general', state[sliceName])
-  }
-})
-
-settingsListenerMiddleware.startListening({
-  actionCreator: currencyChanged,
-  effect: async (action, { dispatch }) => {
-    dispatch(priceReset())
   }
 })
 

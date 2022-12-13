@@ -21,7 +21,7 @@ import { useEffect } from 'react'
 import { loadSettings } from '../storage/settings'
 import { addressesFlushed, addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
 import { networkSettingsChanged } from '../store/networkSlice'
-import { generalSettingsChanged } from '../store/settingsSlice'
+import { storedGeneralSettingsLoaded } from '../store/settingsSlice'
 import { GeneralSettings, NetworkSettings } from '../types/settings'
 import { useAppDispatch } from './redux'
 
@@ -31,7 +31,7 @@ const useLoadStoredSettings = () => {
   useEffect(() => {
     const loadStoredSettingsIntoState = async () => {
       const generalSettings = (await loadSettings('general')) as GeneralSettings
-      dispatch(generalSettingsChanged(generalSettings))
+      dispatch(storedGeneralSettingsLoaded(generalSettings))
 
       const networkSettings = (await loadSettings('network')) as NetworkSettings
       dispatch(networkSettingsChanged(networkSettings))

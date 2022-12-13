@@ -32,7 +32,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import useBiometrics from '../hooks/useBiometrics'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { biometricsToggled, deleteActiveWallet } from '../store/activeWalletSlice'
-import { currencyChanged, discreetModeChanged, passwordRequirementChanged, themeChanged } from '../store/settingsSlice'
+import { currencySelected, discreetModeToggled, passwordRequirementToggled, themeChanged } from '../store/settingsSlice'
 import { Currency } from '../types/settings'
 import { currencies } from '../utils/currencies'
 
@@ -57,13 +57,13 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
 
   const toggleBiometrics = async () => await dispatch(biometricsToggled({ enable: !biometricsEnabled }))
 
-  const toggleDiscreetMode = (value: boolean) => dispatch(discreetModeChanged(value))
+  const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
   const toggleTheme = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
 
-  const toggleAuthRequirement = (value: boolean) => dispatch(passwordRequirementChanged(value))
+  const toggleAuthRequirement = () => dispatch(passwordRequirementToggled())
 
-  const handleCurrencyChange = (currency: Currency) => dispatch(currencyChanged(currency))
+  const handleCurrencyChange = (currency: Currency) => dispatch(currencySelected(currency))
 
   const handleDeleteButtonPress = () => {
     if (!currentWalletId) return
