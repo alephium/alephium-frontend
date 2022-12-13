@@ -10,7 +10,7 @@ Install depedencies:
 npm i
 ```
 
-Install the [Development Client app][dev-client] (replacement for Expo Go).
+Install the [Development Client app](development-build.apk) on your Android device (replacement of the Expo Go mobile app).
 
 Start developer tools:
 
@@ -19,5 +19,3 @@ npm start
 ```
 
 Launch the Development Client app on your phone and enter the URL you see on your terminal (you can scan the QR code to get the URL).
-
-[dev-client]: https://expo.dev/accounts/nop33/projects/mobile-wallet/builds/2b937393-122d-4b37-b53a-4985e69a23d3

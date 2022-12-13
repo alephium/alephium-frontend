@@ -16,10 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { decryptAsync } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Pressable, ScrollView } from 'react-native'
+import { ScanLine } from 'lucide-react-native'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Alert, Pressable, ScrollView } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -28,13 +30,17 @@ import Button from '../../components/buttons/Button'
 import ConfirmWithAuthModal from '../../components/ConfirmWithAuthModal'
 import Input from '../../components/inputs/Input'
 import Screen, { ScreenSection, ScreenSectionTitle } from '../../components/layout/Screen'
+import PasswordModal from '../../components/PasswordModal'
+import QRCodeScannerModal from '../../components/QRCodeScannerModal'
 import SpinnerModal from '../../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { biometricsToggled, walletGeneratedAndStoredWithPin } from '../../store/activeWalletSlice'
+import { qrCodeScannerToggled } from '../../store/appMetadataSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '../../style/globalStyle'
 import { bip39Words } from '../../utils/bip39'
+import { pbkdf2 } from '../../utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 
@@ -47,23 +53,40 @@ const enablePasteForDevelopment = false
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const [name, activeWallet, pin] = useAppSelector((s) => [
+  const [name, activeWallet, pin, isQRCodeScannerOpen] = useAppSelector((s) => [
     s.walletGeneration.walletName,
     s.activeWallet,
-    s.credentials.pin
+    s.credentials.pin,
+    s.appMetadata.isQRCodeScannerOpen
   ])
   const hasAvailableBiometrics = useBiometrics()
-  const [typedInput, setTypedInput] = useState('')
-  const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
-  const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const theme = useTheme()
   const scrollRef = useRef<ScrollView>(null)
   const allowedWords = useRef(bip39Words.split(' '))
-  const [loading, setLoading] = useState(false)
-  const [isPinModalVisible, setIsPinModalVisible] = useState(false)
   const lastActiveWallet = useRef(activeWallet)
 
+  const [typedInput, setTypedInput] = useState('')
+  const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
+  const [possibleMatches, setPossibleMatches] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
+  const [isPinModalVisible, setIsPinModalVisible] = useState(false)
+  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false)
+  const [encryptedWalletFromQRCode, setEncryptedWalletFromQRCode] = useState('')
+
   const isAuthenticated = !!activeWallet.mnemonic
+  const openQRCodeScannerModal = () => dispatch(qrCodeScannerToggled(true))
+  const closeQRCodeScannerModal = () => dispatch(qrCodeScannerToggled(false))
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <ScanButton onPress={openQRCodeScannerModal}>
+          <ScanLine size={24} color={theme.global.accent} style={{ marginRight: 10 }} />
+          <ScanText>Scan</ScanText>
+        </ScanButton>
+      )
+    })
+  })
 
   useEffect(() => {
     setPossibleMatches(
@@ -93,7 +116,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const handleEnterPress = () => possibleMatches.length > 0 && selectWord(possibleMatches[0])
 
   const importWallet = useCallback(
-    async (pin?: string) => {
+    async (pin?: string, mnemonic?: string) => {
       if (!name) return
 
       if (!pin) {
@@ -103,7 +126,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       setLoading(true)
 
-      const importedMnemonic = enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' ')
+      const importedMnemonic =
+        mnemonic || (enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' '))
 
       await dispatch(walletGeneratedAndStoredWithPin({ name, pin, mnemonicToImport: importedMnemonic }))
 
@@ -126,6 +150,22 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   )
 
   const handleWalletImport = () => importWallet(pin)
+
+  const handleQRCodeScan = (data: string) => {
+    setEncryptedWalletFromQRCode(data)
+    setIsPasswordModalVisible(true)
+  }
+
+  const decryptAndImportWallet = async (password: string) => {
+    try {
+      const decryptedMnemonic = await decryptAsync(password, encryptedWalletFromQRCode, pbkdf2)
+
+      importWallet(pin, decryptedMnemonic)
+    } catch (e) {
+      console.error(e)
+      Alert.alert('Could not decrypt wallet with the given password.')
+    }
+  }
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isImportButtonVisible = selectedWords.length >= 12 || enablePasteForDevelopment
@@ -192,7 +232,11 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
           placeholder="Type your secret phrase word by word"
         />
       </ScreenSectionBottom>
-      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={importWallet} />}
+      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin)} />}
+      {isQRCodeScannerOpen && <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} />}
+      {isPasswordModalVisible && (
+        <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
+      )}
       <SpinnerModal isActive={loading} text="Importing wallet..." />
     </Screen>
   )
@@ -255,4 +299,16 @@ const PossibleWordBox = styled(WordBox)<{ highlight?: boolean }>`
 
 const SelectedWordBox = styled(WordBox)`
   background-color: ${({ theme }) => theme.bg.secondary};
+`
+
+const ScanButton = styled.Pressable`
+  flex-direction: row;
+  align-items: center;
+`
+
+const ScanText = styled.Text`
+  margin-right: 20px;
+  color: ${({ theme }) => theme.global.accent}
+  font-size: 16px;
+  font-weight: 600;
 `
