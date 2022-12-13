@@ -20,9 +20,9 @@ import { BarCodeScannedCallback, BarCodeScanner } from 'expo-barcode-scanner'
 import { Camera, X } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
+
 import AppText from './AppText'
 import InfoBox from './InfoBox'
-
 import Screen, { ScreenSection } from './layout/Screen'
 import ModalWithBackdrop from './ModalWithBackdrop'
 
