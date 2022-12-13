@@ -32,7 +32,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../storage/wallets'
-import { walletFlushed } from '../store/activeWalletSlice'
+import { appReset } from '../store/actions'
 import { addressesDataFetched, selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
@@ -55,10 +55,10 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   }
 
   // TODO: Delete before release
-  const handleDeleteAllWallets = async () => {
+  const resetApp = async () => {
     await deleteAllWallets()
-    dispatch(walletFlushed())
-    navigation.getParent()?.navigate('LandingScreen')
+    dispatch(appReset())
+    navigation.navigate('LandingScreen')
   }
 
   return (
@@ -71,11 +71,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
         <BalanceSummary />
       </ScreenSection>
       <AddressesTokensList />
-      <Button
-        title="Delete all wallets"
-        onPress={handleDeleteAllWallets}
-        style={{ marginBottom: 120, marginTop: 600 }}
-      />
+      <Button title="Reset app" onPress={resetApp} style={{ marginBottom: 120, marginTop: 600 }} />
     </InWalletScrollScreen>
   )
 }

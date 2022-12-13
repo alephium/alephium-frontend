@@ -16,33 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createAction } from '@reduxjs/toolkit'
 
-import { appBecameInactive } from './actions'
+export const appBecameInactive = createAction('app/becameInactive')
 
-const sliceName = 'credentials'
-
-interface CredentialsState {
-  pin?: string
-}
-
-const initialState: CredentialsState = {
-  pin: undefined
-}
-
-const credentialsSlice = createSlice({
-  name: sliceName,
-  initialState,
-  reducers: {
-    pinEntered: (state, action) => {
-      state.pin = action.payload
-    }
-  },
-  extraReducers(builder) {
-    builder.addCase(appBecameInactive, () => initialState)
-  }
-})
-
-export const { pinEntered } = credentialsSlice.actions
-
-export default credentialsSlice
+export const appReset = createAction('app/reset')

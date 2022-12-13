@@ -21,6 +21,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import {
   changeActiveWallet,
+  deleteWalletById,
   disableBiometrics,
   enableBiometrics,
   storePartialWalletMetadata,
@@ -30,6 +31,7 @@ import { AddressPartial } from '../types/addresses'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
+import { appReset, appBecameInactive } from './actions'
 import { addressesAdded, addressesDataFetched, addressesFlushed } from './addressesSlice'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
@@ -47,7 +49,7 @@ export interface ActiveWalletState {
 const initialState: ActiveWalletState = {
   name: '',
   mnemonic: '',
-  isMnemonicBackedUp: false,
+  isMnemonicBackedUp: false, // TODO: Change to undefined
   metadataId: '',
   authType: undefined
 }
@@ -174,6 +176,24 @@ export const activeWalletChanged = createAsyncThunk(
   }
 )
 
+export const deleteActiveWallet = createAsyncThunk(
+  `${sliceName}/deleteActiveWallet`,
+  async (_, { getState, dispatch }) => {
+    const state = getState() as RootState
+    const metadataId = state.activeWallet.metadataId
+
+    if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
+
+    dispatch(loadingStarted())
+
+    await deleteWalletById(metadataId)
+
+    dispatch(loadingFinished())
+  }
+)
+
+const resetState = () => initialState
+
 const activeWalletSlice = createSlice({
   name: sliceName,
   initialState,
@@ -191,6 +211,9 @@ const activeWalletSlice = createSlice({
         const biometricsEnabled = action.payload
         state.authType = biometricsEnabled ? 'biometrics' : 'pin'
       })
+      .addCase(appBecameInactive, resetState)
+      .addCase(deleteActiveWallet.fulfilled, resetState)
+      .addCase(appReset, resetState)
   }
 })
 

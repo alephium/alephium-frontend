@@ -21,9 +21,9 @@ import { useCallback, useEffect, useRef } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 
 import { areThereOtherWallets, getActiveWalletMetadata, getStoredActiveWallet } from '../storage/wallets'
-import { activeWalletChanged, biometricsToggled, walletFlushed } from '../store/activeWalletSlice'
+import { appBecameInactive } from '../store/actions'
+import { activeWalletChanged, biometricsToggled } from '../store/activeWalletSlice'
 import { addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
-import { pinFlushed } from '../store/credentialsSlice'
 import { navigateRootStack, useRestoreNavigationState } from '../utils/navigation'
 import { useAppDispatch, useAppSelector } from './redux'
 
@@ -92,8 +92,7 @@ export const useAppStateChange = () => {
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isQRCodeScannerOpen) {
-        dispatch(pinFlushed())
-        dispatch(walletFlushed())
+        dispatch(appBecameInactive())
       } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
         unlockWallet()
       }
