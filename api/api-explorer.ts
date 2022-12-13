@@ -133,6 +133,9 @@ export interface Input {
 
   /** @format hex-string */
   unlockScript?: string
+
+  /** @format 32-byte-hash */
+  txHashRef?: string
   address?: string
 
   /** @format uint256 */
