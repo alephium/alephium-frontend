@@ -53,6 +53,45 @@ export class Client {
 
     return data
   }
+
+  async fetchAddressesData(addressHashes: AddressHash[]) {
+    const results = []
+
+    for (const addressHash of addressHashes) {
+      console.log('⬇️ Fetching address details: ', addressHash)
+      const { data } = await this.explorerClient.getAddressDetails(addressHash)
+      const availableBalance = data.balance
+        ? data.lockedBalance
+          ? (BigInt(data.balance) - BigInt(data.lockedBalance)).toString()
+          : data.balance
+        : undefined
+
+      console.log('⬇️ Fetching 1st page of address confirmed transactions: ', addressHash)
+      const { data: transactions } = await this.explorerClient.getAddressTransactions(addressHash, 1)
+
+      console.log('⬇️ Fetching address tokens: ', addressHash)
+      const { data: tokenIds } = await this.explorerClient.addresses.getAddressesAddressTokens(addressHash)
+
+      const tokens = await Promise.all(
+        tokenIds.map((id) =>
+          this.explorerClient.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then(({ data }) => ({
+            id,
+            balances: data
+          }))
+        )
+      )
+
+      results.push({
+        hash: addressHash,
+        details: data,
+        availableBalance: availableBalance,
+        transactions,
+        tokens
+      })
+    }
+
+    return results
+  }
 }
 
 const client = new Client(defaultNetworkSettings)

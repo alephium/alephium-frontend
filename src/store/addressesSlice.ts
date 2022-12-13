@@ -32,7 +32,7 @@ import { getAddressesMetadataByWalletId } from '../storage/wallets'
 import { Address, AddressHash, AddressPartial, AddressSettings } from '../types/addresses'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
-import { fetchAddressesData, storeAddressSettings } from '../utils/addresses'
+import { storeAddressSettings } from '../utils/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
@@ -68,7 +68,7 @@ export const addressesDataFetched = createAsyncThunk(
     dispatch(loadingStarted())
 
     const addresses = payload
-    const results = await fetchAddressesData(addresses)
+    const results = await client.fetchAddressesData(addresses)
 
     dispatch(loadingFinished())
     return results
