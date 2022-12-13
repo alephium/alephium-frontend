@@ -40,6 +40,7 @@ export type DiscoveredAddress = AddressKeyPair & { balance: AddressInfo['balance
 
 interface AddressDiscoveryState extends EntityState<DiscoveredAddress> {
   loading: boolean
+  progress: number
   status: 'idle' | 'started' | 'stopped' | 'finished'
 }
 
@@ -49,6 +50,7 @@ const addressDiscoveryAdapter = createEntityAdapter<DiscoveredAddress>({
 
 const initialState: AddressDiscoveryState = addressDiscoveryAdapter.getInitialState({
   loading: false,
+  progress: 0,
   status: 'idle'
 })
 
@@ -91,6 +93,8 @@ export const addressesDiscovered = createAsyncThunk(
     let group = 0
     let checkedIndexes = Array.from(activeAddressIndexes)
     let maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(activeAddressIndexes)
+
+    dispatch(progressUpdated(0.1))
 
     try {
       while (group < 4) {
@@ -146,6 +150,10 @@ export const addressesDiscovered = createAsyncThunk(
         if (groupData.gap === minGap) {
           group += 1
           checkedIndexes = Array.from(activeAddressIndexes)
+
+          if (group < 5) {
+            dispatch(progressUpdated(group / TOTAL_NUMBER_OF_GROUPS))
+          }
         }
 
         const state = getState() as RootState
@@ -179,6 +187,9 @@ const addressDiscoverySlice = createSlice({
       state.loading = false
       state.status = 'finished'
     },
+    progressUpdated: (state, action: PayloadAction<number>) => {
+      state.progress = action.payload
+    },
     addressDiscovered: (state, action: PayloadAction<DiscoveredAddress>) => {
       addressDiscoveryAdapter.upsertOne(state, action.payload)
     }
@@ -201,7 +212,12 @@ export const {
   selectIds: selectDiscoveredAddressIds
 } = addressDiscoveryAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const { addressDiscoveryStarted, addressDiscoveryStopped, addressDiscoveryFinished, addressDiscovered } =
-  addressDiscoverySlice.actions
+export const {
+  addressDiscoveryStarted,
+  addressDiscoveryStopped,
+  addressDiscoveryFinished,
+  progressUpdated,
+  addressDiscovered
+} = addressDiscoverySlice.actions
 
 export default addressDiscoverySlice

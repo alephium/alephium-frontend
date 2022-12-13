@@ -20,34 +20,43 @@ import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
-import animationSrc from '../../animations/success.json'
-import HighlightButton from '../../components/buttons/HighlightButton'
+import animationSrc from '../../animations/wallet.json'
+import Button from '../../components/buttons/Button'
+import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import AlephiumLogo from '../../images/logos/AlephiumLogo'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletSuccessPage'>
+type ScreenProps = StackScreenProps<RootStackParamList, 'ImportWalletAddressDiscoveryScreen'>
 
 const instructions: Instruction[] = [
-  { text: 'Welcome to Alephium! 🎉', type: 'primary' },
-  { text: 'Enjoy your new wallet!', type: 'secondary' }
+  { text: "Let's take a minute to scan for your active addresses", type: 'primary' },
+  {
+    text: 'Scan the blockchain to find addresses that you used in the past. This should take less than a minute.',
+    type: 'secondary'
+  }
 ]
 
-const NewWalletSuccessPage = ({ navigation }: ScreenProps) => (
-  <Screen style={{ marginTop: 100 }}>
+const ImportWalletAddressDiscoveryScreen = ({ navigation }: ScreenProps) => (
+  <Screen>
     <AnimationContainer>
-      <StyledAlephiumLogo color="rgb(30, 30, 30)" />
-      <StyledAnimation source={animationSrc} autoPlay />
+      <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
     </AnimationContainer>
-    <CenteredInstructions instructions={instructions} stretch fontSize={19} />
+    <CenteredInstructions instructions={instructions} stretch />
     <ActionsContainer>
-      <HighlightButton title="Let's go!" wide onPress={() => navigation.navigate('InWalletScreen')} />
+      <ButtonStack>
+        <Button
+          title="Scan"
+          type="primary"
+          onPress={() => navigation.navigate('AddressDiscoveryScreen', { isImporting: true })}
+        />
+        <Button title="Later" type="secondary" onPress={() => navigation.navigate('NewWalletSuccessPage')} />
+      </ButtonStack>
     </ActionsContainer>
   </Screen>
 )
 
-export default NewWalletSuccessPage
+export default ImportWalletAddressDiscoveryScreen
 
 const AnimationContainer = styled.View`
   flex: 1;
@@ -55,14 +64,8 @@ const AnimationContainer = styled.View`
   align-items: center;
 `
 
-const StyledAlephiumLogo = styled(AlephiumLogo)`
-  position: absolute;
-  width: 60%;
-  height: 60%;
-`
-
 const StyledAnimation = styled(LottieView)`
-  width: 80%;
+  width: 60%;
 `
 
 const ActionsContainer = styled.View`

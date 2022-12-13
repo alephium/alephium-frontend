@@ -75,7 +75,7 @@ export const walletGeneratedAndStoredWithPin = createAsyncThunk(
       const isMnemonicBackedUp = !!mnemonicToImport
       const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
 
-      const initialWalletAddress: AddressPartial = {
+      const firstAddress: AddressPartial = {
         index: 0,
         hash: wallet.address,
         publicKey: wallet.publicKey,
@@ -87,18 +87,8 @@ export const walletGeneratedAndStoredWithPin = createAsyncThunk(
       }
 
       dispatch(addressesFlushed())
-      dispatch(addressesAdded([initialWalletAddress]))
-      dispatch(addressesDataFetched([initialWalletAddress.hash]))
-
-      // TODO: Run address discovery on wallet import
-      // if (mnemonicToImport) {
-      //   dispatch(
-      //     activeAddressesDiscovered({
-      //       masterKey: wallet.masterKey,
-      //       skipIndexes: [initialWalletAddress.index]
-      //     })
-      //   )
-      // }
+      dispatch(addressesAdded([firstAddress]))
+      dispatch(addressesDataFetched([firstAddress.hash]))
 
       dispatch(loadingFinished())
 

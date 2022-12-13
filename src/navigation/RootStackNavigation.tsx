@@ -30,6 +30,7 @@ import EditAddressScreen from '../screens/EditAddressScreen'
 import LandingScreen from '../screens/LandingScreen'
 import LoginScreen from '../screens/LoginScreen'
 import AddBiometricsScreen from '../screens/new-wallet/AddBiometricsScreen'
+import ImportWalletAddressDiscoveryScreen from '../screens/new-wallet/ImportWalletAddressDiscoveryScreen'
 import ImportWalletSeedScreen from '../screens/new-wallet/ImportWalletSeedScreen'
 import NewWalletIntroScreen from '../screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '../screens/new-wallet/NewWalletNameScreen'
@@ -98,9 +99,18 @@ const RootStackNavigation = () => {
           component={ImportWalletSeedScreen}
           options={{ headerTitle: 'Import wallet' }}
         />
+        <RootStack.Screen
+          name="ImportWalletAddressDiscoveryScreen"
+          component={ImportWalletAddressDiscoveryScreen}
+          options={{ headerTitle: 'Active addresses' }}
+        />
         <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
         <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-        <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
+        <RootStack.Screen
+          name="NewWalletSuccessPage"
+          component={NewWalletSuccessPage}
+          options={{ headerShown: false }}
+        />
 
         <RootStack.Screen name="InWalletScreen" component={InWalletTabsNavigation} options={{ headerShown: false }} />
 
