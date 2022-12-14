@@ -31,7 +31,8 @@ import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import useBiometrics from '../hooks/useBiometrics'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { biometricsToggled, deleteActiveWallet } from '../store/activeWalletSlice'
+import { disableBiometrics, enableBiometrics } from '../storage/wallets'
+import { biometricsDisabled, biometricsEnabled, deleteActiveWallet } from '../store/activeWalletSlice'
 import { currencySelected, discreetModeToggled, passwordRequirementToggled, themeChanged } from '../store/settingsSlice'
 import { Currency } from '../types/settings'
 import { currencies } from '../utils/currencies'
@@ -47,15 +48,23 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const hasAvailableBiometrics = useBiometrics()
-
   const [
     { discreetMode, requireAuth, theme: currentTheme, currency: currentCurrency },
     currentNetworkName,
-    { metadataId: currentWalletId, authType }
+    activeWallet
   ] = useAppSelector((s) => [s.settings, s.network.name, s.activeWallet])
-  const biometricsEnabled = authType === 'biometrics'
 
-  const toggleBiometrics = async () => await dispatch(biometricsToggled({ enable: !biometricsEnabled }))
+  const isBiometricsEnabled = activeWallet.authType === 'biometrics'
+
+  const toggleBiometrics = async () => {
+    if (isBiometricsEnabled) {
+      await disableBiometrics(activeWallet.metadataId)
+      dispatch(biometricsDisabled())
+    } else {
+      await enableBiometrics(activeWallet.metadataId, activeWallet.mnemonic)
+      dispatch(biometricsEnabled())
+    }
+  }
 
   const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
@@ -66,7 +75,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const handleCurrencyChange = (currency: Currency) => dispatch(currencySelected(currency))
 
   const handleDeleteButtonPress = () => {
-    if (!currentWalletId) return
+    if (!activeWallet.metadataId) return
 
     Alert.alert(
       'Deleting wallet',
@@ -100,7 +109,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
           </HighlightRow>
           {hasAvailableBiometrics && (
             <HighlightRow title="Biometrics authentication" subtitle="Enhance your security" hasBottomBorder>
-              <Toggle value={biometricsEnabled} onValueChange={toggleBiometrics} />
+              <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
             </HighlightRow>
           )}
           <Select

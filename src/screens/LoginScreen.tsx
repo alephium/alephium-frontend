@@ -23,9 +23,10 @@ import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
+import { activeWalletChanged } from '../store/activeWalletSlice'
 import { addressesFlushed, addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
 import { pinEntered } from '../store/credentialsSlice'
+import { ActiveWalletState } from '../types/wallet'
 import { useRestoreNavigationState } from '../utils/navigation'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>

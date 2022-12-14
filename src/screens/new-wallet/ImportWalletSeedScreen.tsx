@@ -36,8 +36,8 @@ import SpinnerModal from '../../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { generateAndStoreWallet } from '../../storage/wallets'
-import { biometricsToggled, newWalletGenerated } from '../../store/activeWalletSlice'
+import { enableBiometrics, generateAndStoreWallet } from '../../storage/wallets'
+import { biometricsEnabled, newWalletGenerated } from '../../store/activeWalletSlice'
 import { fetchAddressesData } from '../../store/addressesSlice'
 import { qrCodeScannerToggled } from '../../store/appMetadataSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '../../style/globalStyle'
@@ -143,7 +143,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
       if (isAuthenticated && lastActiveWallet.current.authType === 'biometrics' && hasAvailableBiometrics) {
-        await dispatch(biometricsToggled({ enable: true }))
+        await enableBiometrics(wallet.metadataId, wallet.mnemonic)
+        dispatch(biometricsEnabled())
       }
 
       setLoading(false)

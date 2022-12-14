@@ -20,9 +20,14 @@ import { isEnrolledAsync } from 'expo-local-authentication'
 import { useCallback, useEffect, useRef } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 
-import { areThereOtherWallets, getActiveWalletMetadata, getStoredActiveWallet } from '../storage/wallets'
+import {
+  areThereOtherWallets,
+  disableBiometrics,
+  getActiveWalletMetadata,
+  getStoredActiveWallet
+} from '../storage/wallets'
 import { appBecameInactive } from '../store/actions'
-import { activeWalletChanged, biometricsToggled } from '../store/activeWalletSlice'
+import { activeWalletChanged, biometricsDisabled } from '../store/activeWalletSlice'
 import { addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
 import { navigateRootStack, useRestoreNavigationState } from '../utils/navigation'
 import { useAppDispatch, useAppSelector } from './redux'
@@ -46,7 +51,8 @@ export const useAppStateChange = () => {
 
       // Disable biometrics if needed
       if (activeWalletMetadata && activeWalletMetadata.authType === 'biometrics' && !hasAvailableBiometrics) {
-        await dispatch(biometricsToggled({ enable: false, metadataId: activeWalletMetadata.id }))
+        await disableBiometrics(activeWalletMetadata.id)
+        dispatch(biometricsDisabled())
       }
 
       const storedActiveWallet = await getStoredActiveWallet()

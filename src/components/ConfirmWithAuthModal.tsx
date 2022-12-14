@@ -22,7 +22,7 @@ import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
 import { getStoredActiveWallet, getStoredWalletById } from '../storage/wallets'
-import { ActiveWalletState } from '../store/activeWalletSlice'
+import { ActiveWalletState } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 import PinCodeInput from './inputs/PinCodeInput'
 import ModalWithBackdrop from './ModalWithBackdrop'

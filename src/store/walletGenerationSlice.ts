@@ -25,13 +25,11 @@ export type WalletGenerationMethod = 'create' | 'import'
 interface WalletGenerationState {
   method: WalletGenerationMethod | null
   walletName: string
-  loading: boolean
 }
 
 const initialState: WalletGenerationState = {
   method: null,
-  walletName: '',
-  loading: false
+  walletName: ''
 }
 
 const walletGenerationSlice = createSlice({
@@ -44,17 +42,10 @@ const walletGenerationSlice = createSlice({
     newWalletNameChanged: (state, action: PayloadAction<string>) => {
       state.walletName = action.payload
     },
-    flushWalletGenerationState: () => initialState,
-    loadingStarted: (state) => {
-      state.loading = true
-    },
-    loadingFinished: (state) => {
-      state.loading = false
-    }
+    flushWalletGenerationState: () => initialState
   }
 })
 
-export const { methodSelected, flushWalletGenerationState, loadingStarted, loadingFinished, newWalletNameChanged } =
-  walletGenerationSlice.actions
+export const { methodSelected, flushWalletGenerationState, newWalletNameChanged } = walletGenerationSlice.actions
 
 export default walletGenerationSlice

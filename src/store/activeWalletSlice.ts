@@ -18,17 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import {
-  changeActiveWallet,
-  deleteWalletById,
-  disableBiometrics,
-  enableBiometrics,
-  storePartialWalletMetadata
-} from '../storage/wallets'
+import { changeActiveWallet, deleteWalletById, storePartialWalletMetadata } from '../storage/wallets'
 import { ActiveWalletState, GeneratedWallet } from '../types/wallet'
 import { appBecameInactive, appReset } from './actions'
 import { RootState } from './store'
-import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
 const sliceName = 'activeWallet'
 
@@ -40,39 +33,9 @@ const initialState: ActiveWalletState = {
   authType: undefined
 }
 
-export const biometricsToggled = createAsyncThunk(
-  `${sliceName}/biometricsEnabled`,
-  async (
-    payload: {
-      enable: boolean
-      metadataId?: ActiveWalletState['metadataId']
-    },
-    { getState, dispatch }
-  ) => {
-    const { enable, metadataId } = payload
-
-    dispatch(loadingStarted())
-
-    const state = getState() as RootState
-    const id = metadataId || state.activeWallet.metadataId
-
-    if (!id) throw 'Could not enable biometrics, active wallet metadata ID not found'
-
-    if (enable) {
-      await enableBiometrics(id, state.activeWallet.mnemonic)
-    } else {
-      await disableBiometrics(id)
-    }
-
-    dispatch(loadingFinished())
-
-    return enable
-  }
-)
-
 export const mnemonicBackedUp = createAsyncThunk(
   `${sliceName}/mnemonicBackedUp`,
-  async (payload: ActiveWalletState['isMnemonicBackedUp'], { getState, dispatch }) => {
+  async (payload: ActiveWalletState['isMnemonicBackedUp'], { getState }) => {
     const isMnemonicBackedUp = payload
 
     const state = getState() as RootState
@@ -80,11 +43,7 @@ export const mnemonicBackedUp = createAsyncThunk(
 
     if (!metadataId) throw 'Could not store isMnemonicBackedUp, metadataId is not set'
 
-    dispatch(loadingStarted())
-
     await storePartialWalletMetadata(metadataId, { isMnemonicBackedUp })
-
-    dispatch(loadingFinished())
 
     return payload
   }
@@ -92,35 +51,24 @@ export const mnemonicBackedUp = createAsyncThunk(
 
 export const activeWalletChanged = createAsyncThunk(
   `${sliceName}/activeWalletChanged`,
-  async (payload: ActiveWalletState, { dispatch }) => {
+  async (payload: ActiveWalletState) => {
     const { metadataId } = payload
     if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
 
-    dispatch(loadingStarted())
-
     await changeActiveWallet(metadataId)
-
-    dispatch(loadingFinished())
 
     return payload
   }
 )
 
-export const deleteActiveWallet = createAsyncThunk(
-  `${sliceName}/deleteActiveWallet`,
-  async (_, { getState, dispatch }) => {
-    const state = getState() as RootState
-    const metadataId = state.activeWallet.metadataId
+export const deleteActiveWallet = createAsyncThunk(`${sliceName}/deleteActiveWallet`, async (_, { getState }) => {
+  const state = getState() as RootState
+  const metadataId = state.activeWallet.metadataId
 
-    if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
+  if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
 
-    dispatch(loadingStarted())
-
-    await deleteWalletById(metadataId)
-
-    dispatch(loadingFinished())
-  }
-)
+  await deleteWalletById(metadataId)
+})
 
 const resetState = () => initialState
 
@@ -139,6 +87,12 @@ const activeWalletSlice = createSlice({
         metadataId,
         isMnemonicBackedUp
       }
+    },
+    biometricsEnabled: (state) => {
+      state.authType = 'biometrics'
+    },
+    biometricsDisabled: (state) => {
+      state.authType = 'pin'
     }
   },
   extraReducers: (builder) => {
@@ -147,16 +101,12 @@ const activeWalletSlice = createSlice({
       .addCase(mnemonicBackedUp.fulfilled, (state, action) => {
         state.isMnemonicBackedUp = action.payload
       })
-      .addCase(biometricsToggled.fulfilled, (state, action) => {
-        const biometricsEnabled = action.payload
-        state.authType = biometricsEnabled ? 'biometrics' : 'pin'
-      })
       .addCase(appBecameInactive, resetState)
       .addCase(deleteActiveWallet.fulfilled, resetState)
       .addCase(appReset, resetState)
   }
 })
 
-export const { walletFlushed, newWalletGenerated } = activeWalletSlice.actions
+export const { walletFlushed, newWalletGenerated, biometricsEnabled, biometricsDisabled } = activeWalletSlice.actions
 
 export default activeWalletSlice
