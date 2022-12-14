@@ -31,8 +31,8 @@ import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import useBiometrics from '../hooks/useBiometrics'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { disableBiometrics, enableBiometrics } from '../storage/wallets'
-import { biometricsDisabled, biometricsEnabled, deleteActiveWallet } from '../store/activeWalletSlice'
+import { deleteWalletById, disableBiometrics, enableBiometrics } from '../storage/wallets'
+import { biometricsDisabled, biometricsEnabled, walletDeleted } from '../store/activeWalletSlice'
 import { currencySelected, discreetModeToggled, passwordRequirementToggled, themeChanged } from '../store/settingsSlice'
 import { Currency } from '../types/settings'
 import { currencies } from '../utils/currencies'
@@ -74,6 +74,12 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
 
   const handleCurrencyChange = (currency: Currency) => dispatch(currencySelected(currency))
 
+  const deleteWallet = async () => {
+    await deleteWalletById(activeWallet.metadataId)
+    dispatch(walletDeleted())
+    navigation.navigate('SwitchWalletAfterDeletionScreen')
+  }
+
   const handleDeleteButtonPress = () => {
     if (!activeWallet.metadataId) return
 
@@ -84,10 +90,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         { text: 'Cancel' },
         {
           text: 'Delete',
-          onPress: async () => {
-            await dispatch(deleteActiveWallet())
-            navigation.navigate('SwitchWalletAfterDeletionScreen')
-          }
+          onPress: deleteWallet
         }
       ]
     )
