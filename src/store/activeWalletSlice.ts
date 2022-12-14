@@ -16,10 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { changeActiveWallet } from '../storage/wallets'
-import { ActiveWalletState, GeneratedWallet } from '../types/wallet'
+import { ActiveWalletState, GeneratedWallet, WalletUnlockedPayload } from '../types/wallet'
 import { appBecameInactive, appReset } from './actions'
 
 const sliceName = 'activeWallet'
@@ -31,18 +30,6 @@ const initialState: ActiveWalletState = {
   metadataId: '',
   authType: undefined
 }
-
-export const activeWalletChanged = createAsyncThunk(
-  `${sliceName}/activeWalletChanged`,
-  async (payload: ActiveWalletState) => {
-    const { metadataId } = payload
-    if (!metadataId) throw 'Could not change active wallet, metadataId is not set'
-
-    await changeActiveWallet(metadataId)
-
-    return payload
-  }
-)
 
 const resetState = () => initialState
 
@@ -71,13 +58,21 @@ const activeWalletSlice = createSlice({
     mnemonicBackedUp: (state) => {
       state.isMnemonicBackedUp = true
     },
-    walletDeleted: resetState
+    walletDeleted: resetState,
+    walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => {
+      const { name, mnemonic, metadataId, isMnemonicBackedUp, authType } = action.payload
+
+      return {
+        name,
+        mnemonic,
+        authType,
+        metadataId,
+        isMnemonicBackedUp
+      }
+    }
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(activeWalletChanged.fulfilled, (_, action) => action.payload)
-      .addCase(appBecameInactive, resetState)
-      .addCase(appReset, resetState)
+    builder.addCase(appBecameInactive, resetState).addCase(appReset, resetState)
   }
 })
 
@@ -87,7 +82,8 @@ export const {
   biometricsEnabled,
   biometricsDisabled,
   mnemonicBackedUp,
-  walletDeleted
+  walletDeleted,
+  walletUnlocked
 } = activeWalletSlice.actions
 
 export default activeWalletSlice

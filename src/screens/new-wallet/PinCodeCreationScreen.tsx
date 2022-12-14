@@ -30,7 +30,7 @@ import RootStackParamList from '../../navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '../../storage/wallets'
 import { newWalletGenerated } from '../../store/activeWalletSlice'
 import { fetchAddressesData } from '../../store/addressesSlice'
-import { pinEntered } from '../../store/credentialsSlice'
+import { newPinVerified } from '../../store/credentialsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 
@@ -88,7 +88,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
       return
     }
 
-    dispatch(pinEntered(pinCode))
+    dispatch(newPinVerified(pinCode))
 
     if (method === 'import') {
       navigation.navigate('ImportWalletSeedScreen')

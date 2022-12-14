@@ -36,7 +36,7 @@ import { storeAddressSettings } from '../utils/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
-import { newWalletGenerated } from './activeWalletSlice'
+import { newWalletGenerated, walletUnlocked } from './activeWalletSlice'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -255,6 +255,14 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(walletUnlocked, (state, action) => {
+        const { addressesToInitialize } = action.payload
+
+        if (addressesToInitialize && addressesToInitialize.length > 0) {
+          addressesAdapter.setAll(state, [])
+          addressesAdapter.addMany(state, addressesToInitialize.map(getInitialAddressState))
+        }
+      })
       .addCase(newWalletGenerated, (state, action) => {
         const firstWalletAddress = getInitialAddressState({
           ...action.payload.firstAddress,

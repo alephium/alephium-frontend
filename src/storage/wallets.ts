@@ -16,12 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletEncryptAsyncUnsafe, walletGenerateAsyncUnsafe, walletImportAsyncUnsafe } from '@alephium/sdk'
+import {
+  deriveAddressAndKeys,
+  walletEncryptAsyncUnsafe,
+  walletGenerateAsyncUnsafe,
+  walletImportAsyncUnsafe
+} from '@alephium/sdk'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
-import { AddressMetadata } from '../types/addresses'
+import { AddressMetadata, AddressPartial } from '../types/addresses'
 import { ActiveWalletState, GeneratedWallet, Mnemonic, WalletMetadata } from '../types/wallet'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
@@ -59,7 +64,7 @@ export const generateAndStoreWallet = async (
   }
 }
 
-export const storeWallet = async (
+const storeWallet = async (
   walletName: string,
   mnemonic: Mnemonic,
   pin: string,
@@ -275,4 +280,16 @@ const deleteBiometricsEnabledMnemonic = async (id: string, name: string) => {
     ...defaultBiometricsConfig,
     authenticationPrompt: `Please, authenticate to delete the wallet "${name}"`
   })
+}
+
+export const deriveAddressesFromStoredMetadata = async (id: string, mnemonic: Mnemonic): Promise<AddressPartial[]> => {
+  const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
+  const addressesMetadata = await getAddressesMetadataByWalletId(id)
+
+  console.log(`👀 Found ${addressesMetadata.length} addresses metadata in persistent storage`)
+
+  return addressesMetadata.map(({ index, ...settings }) => ({
+    ...deriveAddressAndKeys(masterKey, index),
+    settings
+  }))
 }
