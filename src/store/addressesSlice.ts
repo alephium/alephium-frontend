@@ -36,6 +36,7 @@ import { storeAddressSettings } from '../utils/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
+import { generateWallet } from './activeWalletSlice'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -62,8 +63,8 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
   status: 'uninitialized'
 })
 
-export const addressesDataFetched = createAsyncThunk(
-  `${sliceName}/addressesDataFetched`,
+export const fetchAddressesData = createAsyncThunk(
+  `${sliceName}/fetchAddressesData`,
   async (payload: AddressHash[], { dispatch }) => {
     dispatch(loadingStarted())
 
@@ -132,7 +133,7 @@ export const addressesFromStoredMetadataInitialized = createAsyncThunk(
       }))
 
       dispatch(addressesAdded(addresses))
-      await dispatch(addressesDataFetched(addresses.map((address) => address.hash)))
+      await dispatch(fetchAddressesData(addresses.map((address) => address.hash)))
 
       dispatch(loadingFinished())
     } else {
@@ -154,7 +155,7 @@ export const newAddressesStoredAndInitialized = createAsyncThunk(
     }
 
     dispatch(addressesAdded(newAddresses))
-    await dispatch(addressesDataFetched(newAddresses.map((address) => address.hash)))
+    await dispatch(fetchAddressesData(newAddresses.map((address) => address.hash)))
   }
 )
 
@@ -182,12 +183,17 @@ const getInitialAddressState = (addressData: AddressPartial) => ({
     color: getRandomLabelColor()
   },
   group: addressToGroup(addressData.hash, TOTAL_NUMBER_OF_GROUPS),
+  // 🚨 Anti-pattern: deeply nested store.
+  // TODO: Make it flatter?
   networkData: {
     details: {
       balance: '0',
       lockedBalance: '0',
       txNumber: 0
     },
+    // 🚨 Anti-pattern: state duplication.
+    // Transactions can be repeated amonst different addresses.
+    // TODO: Move to its own slice?
     transactions: {
       confirmed: [],
       pending: [],
@@ -195,7 +201,10 @@ const getInitialAddressState = (addressData: AddressPartial) => ({
       allPagesLoaded: false
     },
     availableBalance: '0',
-    lockedBalance: '0',
+    // 🚨 Anti-pattern: implicit state duplication.
+    // This value could be derived using a transactions selector.
+    // Also, this value is never properly initialized.
+    // TODO: Remove and create a selector?
     lastUsed: 0,
     tokens: []
   }
@@ -244,7 +253,20 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(addressesDataFetched.fulfilled, (state, action) => {
+      .addCase(generateWallet.fulfilled, (state, action) => {
+        const firstWalletAddress = getInitialAddressState({
+          ...action.payload.firstAddress,
+          index: 0,
+          settings: {
+            isMain: true,
+            color: getRandomLabelColor()
+          }
+        })
+
+        addressesAdapter.setAll(state, [])
+        addressesAdapter.addOne(state, firstWalletAddress)
+      })
+      .addCase(fetchAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, details, availableBalance, transactions, tokens } = address
           const addressState = state.entities[hash]

@@ -29,7 +29,8 @@ import CenteredInstructions, { Instruction } from '../../components/text/Centere
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { biometricsToggled, walletGeneratedAndStoredWithPin } from '../../store/activeWalletSlice'
+import { biometricsToggled, generateWallet } from '../../store/activeWalletSlice'
+import { fetchAddressesData } from '../../store/addressesSlice'
 import { newWalletNameChanged } from '../../store/walletGenerationSlice'
 
 const instructions: Instruction[] = [
@@ -63,7 +64,8 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
 
       setLoading(true)
 
-      await dispatch(walletGeneratedAndStoredWithPin({ name, pin }))
+      const { firstAddress } = await dispatch(generateWallet({ name, pin })).unwrap()
+      dispatch(fetchAddressesData([firstAddress.hash]))
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
       if (lastActiveWallet.current.authType === 'biometrics' && hasAvailableBiometrics) {

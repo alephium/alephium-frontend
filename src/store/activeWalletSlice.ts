@@ -27,12 +27,9 @@ import {
   storePartialWalletMetadata,
   storeWallet
 } from '../storage/wallets'
-import { AddressPartial } from '../types/addresses'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
-import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
-import { appReset, appBecameInactive } from './actions'
-import { addressesAdded, addressesDataFetched, addressesFlushed } from './addressesSlice'
+import { appBecameInactive, appReset } from './actions'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
@@ -54,7 +51,7 @@ const initialState: ActiveWalletState = {
   authType: undefined
 }
 
-export const walletGeneratedAndStoredWithPin = createAsyncThunk(
+export const generateWallet = createAsyncThunk(
   `${sliceName}/walletStored`,
   async (
     payload: {
@@ -70,37 +67,28 @@ export const walletGeneratedAndStoredWithPin = createAsyncThunk(
 
     if (!name) return rejectWithValue('Could not store wallet, wallet name is not set')
 
+    const isMnemonicBackedUp = !!mnemonicToImport
+
     try {
       const wallet = mnemonicToImport
         ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
         : await walletGenerateAsyncUnsafe(mnemonicToSeed)
-      const isMnemonicBackedUp = !!mnemonicToImport
+
       const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
-
-      const firstAddress: AddressPartial = {
-        index: 0,
-        hash: wallet.address,
-        publicKey: wallet.publicKey,
-        privateKey: wallet.privateKey,
-        settings: {
-          isMain: true,
-          color: getRandomLabelColor()
-        }
-      }
-
-      dispatch(addressesFlushed())
-      dispatch(addressesAdded([firstAddress]))
-      dispatch(addressesDataFetched([firstAddress.hash]))
 
       dispatch(loadingFinished())
 
       return {
         name,
         mnemonic: wallet.mnemonic,
-        authType: 'pin',
         metadataId,
-        isMnemonicBackedUp
-      } as ActiveWalletState
+        isMnemonicBackedUp,
+        firstAddress: {
+          hash: wallet.address,
+          publicKey: wallet.publicKey,
+          privateKey: wallet.privateKey
+        }
+      }
     } catch (e) {
       console.error(e)
       dispatch(loadingFinished())
@@ -202,7 +190,17 @@ const activeWalletSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(walletGeneratedAndStoredWithPin.fulfilled, (_, action) => action.payload)
+      .addCase(generateWallet.fulfilled, (_, action) => {
+        const { name, mnemonic, metadataId, isMnemonicBackedUp } = action.payload
+
+        return {
+          name,
+          mnemonic,
+          authType: 'pin',
+          metadataId,
+          isMnemonicBackedUp
+        }
+      })
       .addCase(activeWalletChanged.fulfilled, (_, action) => action.payload)
       .addCase(mnemonicBackedUp.fulfilled, (state, action) => {
         state.isMnemonicBackedUp = action.payload
