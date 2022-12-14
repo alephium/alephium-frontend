@@ -42,7 +42,7 @@ const networkSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    networkChanged: (state, action: PayloadAction<NetworkPreset>) => {
+    networkChanged: (_, action: PayloadAction<NetworkPreset>) => {
       const networkName = action.payload
 
       return {
@@ -51,7 +51,7 @@ const networkSlice = createSlice({
         status: 'connecting'
       }
     },
-    networkSettingsChanged: (state, action: PayloadAction<NetworkSettings>) => {
+    networkSettingsChanged: (_, action: PayloadAction<NetworkSettings>) => {
       const networkSettings = action.payload
       const missingNetworkSettings = !networkSettings.nodeHost || !networkSettings.explorerApiHost
 
@@ -61,20 +61,24 @@ const networkSlice = createSlice({
         status: missingNetworkSettings ? 'offline' : 'connecting'
       }
     },
-    networkStatusChanged: (state, action: PayloadAction<NetworkStatus>) => {
-      state.status = action.payload
+    apiClientInitSucceeded: (state) => {
+      state.status = 'online'
+    },
+    apiClientInitFailed: (state) => {
+      state.status = 'offline'
     }
   }
 })
 
-export const { networkChanged, networkSettingsChanged, networkStatusChanged } = networkSlice.actions
+export const { networkChanged, networkSettingsChanged, apiClientInitSucceeded, apiClientInitFailed } =
+  networkSlice.actions
 
 export const networkListenerMiddleware = createListenerMiddleware()
 
 // When the network settings change, store them in persistent storage
 networkListenerMiddleware.startListening({
   matcher: isAnyOf(networkChanged, networkSettingsChanged),
-  effect: async (action, { getState }) => {
+  effect: async (_, { getState }) => {
     const state = getState() as RootState
 
     await storeSettings('network', state[sliceName].settings)

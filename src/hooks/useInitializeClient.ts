@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useCallback, useEffect } from 'react'
 
 import client from '../api/client'
-import { networkStatusChanged } from '../store/networkSlice'
+import { apiClientInitFailed, apiClientInitSucceeded } from '../store/networkSlice'
 import { useAppDispatch, useAppSelector } from './redux'
 import useInterval from './useInterval'
 
@@ -30,12 +30,12 @@ const useInitializeClient = () => {
   const initializeClient = useCallback(async () => {
     try {
       await client.init(network.settings)
-      dispatch(networkStatusChanged('online'))
+      dispatch(apiClientInitSucceeded())
       console.log(`Client initialized. Current network: ${network.name}`)
     } catch (e) {
+      dispatch(apiClientInitFailed())
       console.error('Could not connect to network: ', network.name)
       console.error(e)
-      dispatch(networkStatusChanged('offline'))
     }
   }, [dispatch, network.name, network.settings])
 
