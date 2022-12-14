@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { changeActiveWallet, deleteWalletById, storePartialWalletMetadata } from '../storage/wallets'
+import { changeActiveWallet, deleteWalletById } from '../storage/wallets'
 import { ActiveWalletState, GeneratedWallet } from '../types/wallet'
 import { appBecameInactive, appReset } from './actions'
 import { RootState } from './store'
@@ -32,22 +32,6 @@ const initialState: ActiveWalletState = {
   metadataId: '',
   authType: undefined
 }
-
-export const mnemonicBackedUp = createAsyncThunk(
-  `${sliceName}/mnemonicBackedUp`,
-  async (payload: ActiveWalletState['isMnemonicBackedUp'], { getState }) => {
-    const isMnemonicBackedUp = payload
-
-    const state = getState() as RootState
-    const metadataId = state.activeWallet.metadataId
-
-    if (!metadataId) throw 'Could not store isMnemonicBackedUp, metadataId is not set'
-
-    await storePartialWalletMetadata(metadataId, { isMnemonicBackedUp })
-
-    return payload
-  }
-)
 
 export const activeWalletChanged = createAsyncThunk(
   `${sliceName}/activeWalletChanged`,
@@ -93,20 +77,21 @@ const activeWalletSlice = createSlice({
     },
     biometricsDisabled: (state) => {
       state.authType = 'pin'
+    },
+    mnemonicBackedUp: (state) => {
+      state.isMnemonicBackedUp = true
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(activeWalletChanged.fulfilled, (_, action) => action.payload)
-      .addCase(mnemonicBackedUp.fulfilled, (state, action) => {
-        state.isMnemonicBackedUp = action.payload
-      })
       .addCase(appBecameInactive, resetState)
       .addCase(deleteActiveWallet.fulfilled, resetState)
       .addCase(appReset, resetState)
   }
 })
 
-export const { walletFlushed, newWalletGenerated, biometricsEnabled, biometricsDisabled } = activeWalletSlice.actions
+export const { walletFlushed, newWalletGenerated, biometricsEnabled, biometricsDisabled, mnemonicBackedUp } =
+  activeWalletSlice.actions
 
 export default activeWalletSlice
