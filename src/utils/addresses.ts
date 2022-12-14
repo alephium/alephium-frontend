@@ -16,11 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-root-toast'
 
 import { storeAddressMetadata } from '../storage/wallets'
-import { Address, AddressHash, AddressPartial, AddressSettings } from '../types/addresses'
+import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial, AddressSettings } from '../types/addresses'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
@@ -69,4 +70,21 @@ export const storeAddressSettings = async (
       isMain: false
     })
   }
+}
+
+export const initializeAddressDiscoveryGroupsData = (addresses: Address[]): AddressDiscoveryGroupData[] => {
+  const groupsData: AddressDiscoveryGroupData[] = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, () => ({
+    highestIndex: undefined,
+    gap: 0
+  }))
+
+  for (const address of addresses) {
+    const groupData = groupsData[address.group]
+
+    if (groupData.highestIndex === undefined || groupData.highestIndex < address.index) {
+      groupData.highestIndex = address.index
+    }
+  }
+
+  return groupsData
 }

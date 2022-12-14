@@ -56,3 +56,8 @@ export type Address = AddressKeyPair & {
 }
 
 export type AddressPartial = AddressKeyPair & { settings: AddressSettings }
+
+export type AddressDiscoveryGroupData = {
+  highestIndex: AddressIndex | undefined
+  gap: number
+}

@@ -28,7 +28,11 @@ import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, Payloa
 
 import client from '../api/client'
 import { Address, AddressIndex } from '../types/addresses'
-import { findMaxIndexBeforeFirstGap, findNextAvailableAddressIndex } from '../utils/addresses'
+import {
+  findMaxIndexBeforeFirstGap,
+  findNextAvailableAddressIndex,
+  initializeAddressDiscoveryGroupsData
+} from '../utils/addresses'
 import { mnemonicToSeed } from '../utils/crypto'
 import { sleep } from '../utils/misc'
 import { addressesAdded } from './addressesSlice'
@@ -54,30 +58,8 @@ const initialState: AddressDiscoveryState = addressDiscoveryAdapter.getInitialSt
   status: 'idle'
 })
 
-type AddressDiscoveryGroupData = {
-  highestIndex: AddressIndex | undefined
-  gap: number
-}
-
-const initializeAddressDiscoveryGroupsData = (addresses: Address[]): AddressDiscoveryGroupData[] => {
-  const groupsData: AddressDiscoveryGroupData[] = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, () => ({
-    highestIndex: undefined,
-    gap: 0
-  }))
-
-  for (const address of addresses) {
-    const groupData = groupsData[address.group]
-
-    if (groupData.highestIndex === undefined || groupData.highestIndex < address.index) {
-      groupData.highestIndex = address.index
-    }
-  }
-
-  return groupsData
-}
-
-export const addressesDiscovered = createAsyncThunk(
-  `${sliceName}/addressesDiscovered`,
+export const discoverAddresses = createAsyncThunk(
+  `${sliceName}/discoverAddresses`,
   async (_, { getState, dispatch }) => {
     dispatch(addressDiscoveryStarted())
 
@@ -117,7 +99,7 @@ export const addressesDiscovered = createAsyncThunk(
             newAddressData = cachedData
             newAddressGroup = cachedData.group
           } else {
-            await sleep(1)
+            await sleep(1) // Allow execution to continue to not block rendering
             newAddressData = deriveAddressAndKeys(masterKey, index)
             newAddressGroup = addressToGroup(newAddressData.hash, TOTAL_NUMBER_OF_GROUPS)
             derivedDataCache.set(index, { ...newAddressData, group: newAddressGroup })

@@ -35,7 +35,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import {
   addressDiscoveryStopped,
-  addressesDiscovered,
+  discoverAddresses,
   selectAllDiscoveredAddresses
 } from '../store/addressDiscoverySlice'
 import { newAddressesStoredAndInitialized, selectAllAddresses } from '../store/addressesSlice'
@@ -57,7 +57,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
   const isImporting = params?.isImporting
   const selectedAddressesToImport = discoveredAddresses.filter(({ hash }) => addressSelections[hash])
 
-  const startScan = useCallback(() => dispatch(addressesDiscovered()), [dispatch])
+  const startScan = useCallback(() => dispatch(discoverAddresses()), [dispatch])
 
   const stopScan = () => dispatch(addressDiscoveryStopped())
 
