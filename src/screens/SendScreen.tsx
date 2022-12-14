@@ -56,7 +56,7 @@ import ModalWithBackdrop from '../components/ModalWithBackdrop'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { addPendingTransactionToAddress, selectAddressByHash } from '../store/addressesSlice'
+import { addPendingTransactionToAddress, selectAddressByHash, selectDefaultAddress } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import {
   validateIsAddressValid,
@@ -85,7 +85,8 @@ const SendScreen = ({
   }
 }: ScreenProps) => {
   const theme = useTheme()
-  const [mainAddress, requiresAuth] = useAppSelector((s) => [s.addresses.mainAddress, s.settings.requireAuth])
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
   const [amount, setAmount] = useState(BigInt(0))
   const [fees, setFees] = useState<bigint>(BigInt(0))
   const [unsignedTxId, setUnsignedTxId] = useState('')
@@ -106,7 +107,7 @@ const SendScreen = ({
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: {
-      fromAddressHash: addressHash ?? mainAddress,
+      fromAddressHash: addressHash ?? defaultAddress?.hash,
       toAddressHash: '',
       amountInAlph: '',
       gasAmount: '',

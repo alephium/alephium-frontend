@@ -31,7 +31,7 @@ import Screen, { ScreenSection } from '../components/layout/Screen'
 import QRCodeModal from '../components/QRCodeModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { addressSettingsUpdated, selectAddressByHash } from '../store/addressesSlice'
+import { addressSettingsUpdated, selectAddressByHash, selectDefaultAddress } from '../store/addressesSlice'
 import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressScreen'>
@@ -44,11 +44,8 @@ const AddressScreen = ({
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const [address, mainAddressHash] = useAppSelector((state) => [
-    selectAddressByHash(state, addressHash),
-    state.addresses.mainAddress
-  ])
-  const isCurrentAddressMain = addressHash === mainAddressHash
+  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
+  const defaultAddress = useAppSelector(selectDefaultAddress)
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
 
   if (!address) return null
@@ -58,6 +55,8 @@ const AddressScreen = ({
 
     await dispatch(addressSettingsUpdated({ address, settings: { ...address.settings, isMain: true } }))
   }
+
+  const isCurrentAddressMain = addressHash === defaultAddress?.hash
 
   return (
     <Screen>

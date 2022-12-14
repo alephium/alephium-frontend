@@ -52,15 +52,11 @@ const addressesAdapter = createEntityAdapter<Address>({
 })
 
 interface AddressesState extends EntityState<Address> {
-  // 🚨 Anti-pattern: state duplication
-  // TODO: Delete and use selectDefaultAddress instead
-  mainAddress: string
   loading: boolean
   status: 'uninitialized' | 'initialized'
 }
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
-  mainAddress: '',
   loading: false,
   status: 'uninitialized'
 })
@@ -212,26 +208,26 @@ const getInitialAddressState = (addressData: AddressPartial) => ({
   }
 })
 
+const updateOldDefaultAddress = (state: AddressesState) => {
+  const oldDefaultAddress = (Object.values(state.entities) as Address[]).find((address) => address.settings.isMain)
+
+  if (oldDefaultAddress) {
+    addressesAdapter.updateOne(state, {
+      id: oldDefaultAddress.hash,
+      changes: { settings: { ...oldDefaultAddress.settings, isMain: false } }
+    })
+  }
+}
+
 const addressesSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
     addressesAdded: (state, action: PayloadAction<AddressPartial[]>) => {
       const addresses = action.payload
+
       const newDefaultAddress = addresses.find((address) => address.settings?.isMain)
-
-      if (newDefaultAddress) {
-        const oldDefaultAddress = state.entities[state.mainAddress]
-
-        if (oldDefaultAddress) {
-          addressesAdapter.updateOne(state, {
-            id: oldDefaultAddress.hash,
-            changes: { settings: { ...oldDefaultAddress.settings, isMain: false } }
-          })
-        }
-
-        state.mainAddress = newDefaultAddress.hash
-      }
+      if (newDefaultAddress) updateOldDefaultAddress(state)
 
       addressesAdapter.addMany(state, addresses.map(getInitialAddressState))
     },
@@ -274,7 +270,6 @@ const addressesSlice = createSlice({
 
         addressesAdapter.setAll(state, [])
         addressesAdapter.addOne(state, firstWalletAddress)
-        state.mainAddress = firstWalletAddress.hash // TODO: To delete
       })
       .addCase(fetchAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
@@ -332,18 +327,7 @@ const addressesSlice = createSlice({
           changes: { settings }
         })
 
-        if (settings.isMain) {
-          const oldDefaultAddress = state.entities[state.mainAddress]
-
-          if (oldDefaultAddress) {
-            addressesAdapter.updateOne(state, {
-              id: oldDefaultAddress.hash,
-              changes: { settings: { ...oldDefaultAddress.settings, isMain: false } }
-            })
-          }
-
-          state.mainAddress = address.hash
-        }
+        if (settings.isMain) updateOldDefaultAddress(state)
       })
   }
 })
