@@ -26,7 +26,7 @@ const sliceName = 'activeWallet'
 const initialState: ActiveWalletState = {
   name: '',
   mnemonic: '',
-  isMnemonicBackedUp: false, // TODO: Change to undefined
+  isMnemonicBackedUp: undefined,
   metadataId: '',
   authType: undefined
 }

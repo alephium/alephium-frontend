@@ -35,8 +35,8 @@ export type WalletMetadata = {
 export interface ActiveWalletState {
   name: string
   mnemonic: Mnemonic
-  isMnemonicBackedUp: boolean
   metadataId: string
+  isMnemonicBackedUp?: boolean
   authType?: StoredWalletAuthType
 }
 
