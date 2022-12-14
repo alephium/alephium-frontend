@@ -16,21 +16,47 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletEncryptAsyncUnsafe } from '@alephium/sdk'
+import { walletEncryptAsyncUnsafe, walletGenerateAsyncUnsafe, walletImportAsyncUnsafe } from '@alephium/sdk'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
-import { ActiveWalletState } from '../store/activeWalletSlice'
 import { AddressMetadata } from '../types/addresses'
-import { Mnemonic, WalletMetadata } from '../types/wallet'
+import { ActiveWalletState, GeneratedWallet, Mnemonic, WalletMetadata } from '../types/wallet'
 import { getRandomLabelColor } from '../utils/colors'
-import { pbkdf2 } from '../utils/crypto'
+import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 
 const defaultBiometricsConfig = {
   requireAuthentication: true,
   authenticationPrompt: 'Please authenticate',
   keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY
+}
+
+export const generateAndStoreWallet = async (
+  name: ActiveWalletState['name'],
+  pin: string,
+  mnemonicToImport?: ActiveWalletState['mnemonic']
+): Promise<GeneratedWallet> => {
+  const isMnemonicBackedUp = !!mnemonicToImport
+
+  const wallet = mnemonicToImport
+    ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
+    : await walletGenerateAsyncUnsafe(mnemonicToSeed)
+
+  const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
+
+  return {
+    name,
+    metadataId,
+    mnemonic: wallet.mnemonic,
+    isMnemonicBackedUp,
+    firstAddress: {
+      index: 0,
+      hash: wallet.address,
+      publicKey: wallet.publicKey,
+      privateKey: wallet.privateKey
+    }
+  }
 }
 
 export const storeWallet = async (

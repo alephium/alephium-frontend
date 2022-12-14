@@ -36,7 +36,8 @@ import SpinnerModal from '../../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { biometricsToggled, generateWallet } from '../../store/activeWalletSlice'
+import { generateAndStoreWallet } from '../../storage/wallets'
+import { biometricsToggled, newWalletGenerated } from '../../store/activeWalletSlice'
 import { fetchAddressesData } from '../../store/addressesSlice'
 import { qrCodeScannerToggled } from '../../store/appMetadataSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '../../style/globalStyle'
@@ -130,8 +131,9 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       const mnemonicToImport =
         mnemonic || (enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' '))
 
-      const { firstAddress } = await dispatch(generateWallet({ name, pin, mnemonicToImport })).unwrap()
-      dispatch(fetchAddressesData([firstAddress.hash]))
+      const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
+      dispatch(newWalletGenerated(wallet))
+      dispatch(fetchAddressesData([wallet.firstAddress.hash]))
 
       if (!isAuthenticated) {
         setLoading(false)

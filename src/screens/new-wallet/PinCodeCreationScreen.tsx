@@ -27,7 +27,8 @@ import CenteredInstructions, { Instruction } from '../../components/text/Centere
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { generateWallet } from '../../store/activeWalletSlice'
+import { generateAndStoreWallet } from '../../storage/wallets'
+import { newWalletGenerated } from '../../store/activeWalletSlice'
 import { fetchAddressesData } from '../../store/addressesSlice'
 import { pinEntered } from '../../store/credentialsSlice'
 
@@ -97,8 +98,9 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     if (method === 'create') {
       setLoading(true)
 
-      const { firstAddress } = await dispatch(generateWallet({ name, pin: pinCode })).unwrap()
-      dispatch(fetchAddressesData([firstAddress.hash]))
+      const wallet = await generateAndStoreWallet(name, pinCode)
+      dispatch(newWalletGenerated(wallet))
+      dispatch(fetchAddressesData([wallet.firstAddress.hash]))
 
       setLoading(false)
 

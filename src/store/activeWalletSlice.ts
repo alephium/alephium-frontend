@@ -16,32 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletGenerateAsyncUnsafe, walletImportAsyncUnsafe } from '@alephium/sdk'
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import {
   changeActiveWallet,
   deleteWalletById,
   disableBiometrics,
   enableBiometrics,
-  storePartialWalletMetadata,
-  storeWallet
+  storePartialWalletMetadata
 } from '../storage/wallets'
-import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
-import { mnemonicToSeed } from '../utils/crypto'
+import { ActiveWalletState, GeneratedWallet } from '../types/wallet'
 import { appBecameInactive, appReset } from './actions'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
 const sliceName = 'activeWallet'
-
-export interface ActiveWalletState {
-  name: string
-  mnemonic: Mnemonic
-  isMnemonicBackedUp: boolean
-  metadataId: string
-  authType?: StoredWalletAuthType
-}
 
 const initialState: ActiveWalletState = {
   name: '',
@@ -50,53 +39,6 @@ const initialState: ActiveWalletState = {
   metadataId: '',
   authType: undefined
 }
-
-export const generateWallet = createAsyncThunk(
-  `${sliceName}/walletStored`,
-  async (
-    payload: {
-      name: ActiveWalletState['name']
-      mnemonicToImport?: ActiveWalletState['mnemonic']
-      pin: string
-    },
-    { dispatch, rejectWithValue }
-  ) => {
-    dispatch(loadingStarted())
-
-    const { name, pin, mnemonicToImport } = payload
-
-    if (!name) return rejectWithValue('Could not store wallet, wallet name is not set')
-
-    const isMnemonicBackedUp = !!mnemonicToImport
-
-    try {
-      const wallet = mnemonicToImport
-        ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
-        : await walletGenerateAsyncUnsafe(mnemonicToSeed)
-
-      const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
-
-      dispatch(loadingFinished())
-
-      return {
-        name,
-        mnemonic: wallet.mnemonic,
-        metadataId,
-        isMnemonicBackedUp,
-        firstAddress: {
-          hash: wallet.address,
-          publicKey: wallet.publicKey,
-          privateKey: wallet.privateKey
-        }
-      }
-    } catch (e) {
-      console.error(e)
-      dispatch(loadingFinished())
-
-      return rejectWithValue('Could not generate wallet')
-    }
-  }
-)
 
 export const biometricsToggled = createAsyncThunk(
   `${sliceName}/biometricsEnabled`,
@@ -186,21 +128,21 @@ const activeWalletSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    walletFlushed: () => initialState
+    walletFlushed: () => initialState,
+    newWalletGenerated: (_, action: PayloadAction<GeneratedWallet>) => {
+      const { name, mnemonic, metadataId, isMnemonicBackedUp } = action.payload
+
+      return {
+        name,
+        mnemonic,
+        authType: 'pin',
+        metadataId,
+        isMnemonicBackedUp
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(generateWallet.fulfilled, (_, action) => {
-        const { name, mnemonic, metadataId, isMnemonicBackedUp } = action.payload
-
-        return {
-          name,
-          mnemonic,
-          authType: 'pin',
-          metadataId,
-          isMnemonicBackedUp
-        }
-      })
       .addCase(activeWalletChanged.fulfilled, (_, action) => action.payload)
       .addCase(mnemonicBackedUp.fulfilled, (state, action) => {
         state.isMnemonicBackedUp = action.payload
@@ -215,6 +157,6 @@ const activeWalletSlice = createSlice({
   }
 })
 
-export const { walletFlushed } = activeWalletSlice.actions
+export const { walletFlushed, newWalletGenerated } = activeWalletSlice.actions
 
 export default activeWalletSlice

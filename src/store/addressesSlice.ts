@@ -36,7 +36,7 @@ import { storeAddressSettings } from '../utils/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
-import { generateWallet } from './activeWalletSlice'
+import { newWalletGenerated } from './activeWalletSlice'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -52,6 +52,8 @@ const addressesAdapter = createEntityAdapter<Address>({
 })
 
 interface AddressesState extends EntityState<Address> {
+  // 🚨 Anti-pattern: state duplication
+  // TODO: Delete and use selectDefaultAddress instead
   mainAddress: string
   loading: boolean
   status: 'uninitialized' | 'initialized'
@@ -253,10 +255,9 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(generateWallet.fulfilled, (state, action) => {
+      .addCase(newWalletGenerated, (state, action) => {
         const firstWalletAddress = getInitialAddressState({
           ...action.payload.firstAddress,
-          index: 0,
           settings: {
             isMain: true,
             color: getRandomLabelColor()
@@ -265,6 +266,7 @@ const addressesSlice = createSlice({
 
         addressesAdapter.setAll(state, [])
         addressesAdapter.addOne(state, firstWalletAddress)
+        state.mainAddress = firstWalletAddress.hash // TODO: To delete
       })
       .addCase(fetchAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
