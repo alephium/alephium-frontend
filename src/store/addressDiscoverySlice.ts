@@ -77,7 +77,7 @@ export const discoverAddresses = createAsyncThunk(
     let checkedIndexes = Array.from(activeAddressIndexes)
     let maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(activeAddressIndexes)
 
-    dispatch(progressUpdated(0.1))
+    dispatch(algoDataInitialized())
 
     try {
       while (group < 4) {
@@ -131,12 +131,10 @@ export const discoverAddresses = createAsyncThunk(
         }
 
         if (groupData.gap === minGap) {
+          dispatch(finishedWithGroup(group))
+
           group += 1
           checkedIndexes = Array.from(activeAddressIndexes)
-
-          if (group < 5) {
-            dispatch(progressUpdated(group / TOTAL_NUMBER_OF_GROUPS))
-          }
         }
 
         const state = getState() as RootState
@@ -170,8 +168,13 @@ const addressDiscoverySlice = createSlice({
       state.loading = false
       state.status = 'finished'
     },
-    progressUpdated: (state, action: PayloadAction<number>) => {
-      state.progress = action.payload
+    algoDataInitialized: (state) => {
+      state.progress = 0.1
+    },
+    finishedWithGroup: (state, action: PayloadAction<number>) => {
+      const group = action.payload
+
+      state.progress = (group + 1) / TOTAL_NUMBER_OF_GROUPS
     },
     addressDiscovered: (state, action: PayloadAction<DiscoveredAddress>) => {
       addressDiscoveryAdapter.upsertOne(state, action.payload)
@@ -201,8 +204,9 @@ export const {
   addressDiscoveryStarted,
   addressDiscoveryStopped,
   addressDiscoveryFinished,
-  progressUpdated,
-  addressDiscovered
+  addressDiscovered,
+  algoDataInitialized,
+  finishedWithGroup
 } = addressDiscoverySlice.actions
 
 export default addressDiscoverySlice
