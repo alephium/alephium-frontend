@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NavigationState } from '@react-navigation/routers'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { appReset } from './actions'
+
 const sliceName = 'appMetadata'
 
 export interface AppMetadataState {
@@ -41,6 +43,9 @@ const appMetadataSlice = createSlice({
     qrCodeScannerToggled: (state, action: PayloadAction<AppMetadataState['isQRCodeScannerOpen']>) => {
       state.isQRCodeScannerOpen = action.payload
     }
+  },
+  extraReducers(builder) {
+    builder.addCase(appReset, () => initialState)
   }
 })
 

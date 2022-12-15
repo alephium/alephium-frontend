@@ -18,6 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { appReset } from './actions'
+
 const sliceName = 'walletGeneration'
 
 export type WalletGenerationMethod = 'create' | 'import'
@@ -43,6 +45,9 @@ const walletGenerationSlice = createSlice({
       state.walletName = action.payload
     },
     flushWalletGenerationState: () => initialState
+  },
+  extraReducers(builder) {
+    builder.addCase(appReset, () => initialState)
   }
 })
 

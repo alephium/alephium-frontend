@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { appReset } from './actions'
 import { currencySelected } from './settingsSlice'
 import { RootState } from './store'
 
@@ -68,6 +69,7 @@ const priceSlice = createSlice({
         status: 'updated'
       }))
       .addCase(currencySelected, resetPrice)
+      .addCase(appReset, resetPrice)
   }
 })
 

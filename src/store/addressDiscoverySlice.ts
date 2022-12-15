@@ -35,6 +35,7 @@ import {
 } from '../utils/addresses'
 import { mnemonicToSeed } from '../utils/crypto'
 import { sleep } from '../utils/misc'
+import { appReset } from './actions'
 import { addressesAdded } from './addressesSlice'
 import { RootState } from './store'
 
@@ -177,14 +178,16 @@ const addressDiscoverySlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(addressesAdded, (state, action) => {
-      const addresses = action.payload
+    builder
+      .addCase(addressesAdded, (state, action) => {
+        const addresses = action.payload
 
-      addressDiscoveryAdapter.removeMany(
-        state,
-        addresses.map((address) => address.hash)
-      )
-    })
+        addressDiscoveryAdapter.removeMany(
+          state,
+          addresses.map((address) => address.hash)
+        )
+      })
+      .addCase(appReset, () => initialState)
   }
 })
 

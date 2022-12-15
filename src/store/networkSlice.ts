@@ -22,6 +22,7 @@ import { defaultNetwork, defaultNetworkSettings, networkPresetSettings, storeSet
 import { NetworkName, NetworkPreset, NetworkStatus } from '../types/network'
 import { NetworkSettings } from '../types/settings'
 import { getNetworkName } from '../utils/settings'
+import { appReset } from './actions'
 import { RootState } from './store'
 
 const sliceName = 'network'
@@ -67,6 +68,9 @@ const networkSlice = createSlice({
     apiClientInitFailed: (state) => {
       state.status = 'offline'
     }
+  },
+  extraReducers(builder) {
+    builder.addCase(appReset, () => initialState)
   }
 })
 

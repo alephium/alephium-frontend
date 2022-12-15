@@ -36,6 +36,7 @@ import { storeAddressSettings } from '../utils/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
+import { appReset } from './actions'
 import { newWalletGenerated, walletUnlocked } from './activeWalletSlice'
 import { RootState } from './store'
 
@@ -329,6 +330,7 @@ const addressesSlice = createSlice({
 
         if (settings.isMain) updateOldDefaultAddress(state)
       })
+      .addCase(appReset, () => initialState)
   }
 })
 

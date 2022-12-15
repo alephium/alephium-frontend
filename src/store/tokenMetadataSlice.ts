@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { TokenMetadata } from '../types/tokens'
+import { appReset } from './actions'
 
 const sliceName = 'tokenMetadata'
 
@@ -54,10 +55,12 @@ const tokenMetadataSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(tokenMetadataUpdated.fulfilled, (_, action) => ({
-      metadata: action.payload,
-      status: 'updated'
-    }))
+    builder
+      .addCase(tokenMetadataUpdated.fulfilled, (_, action) => ({
+        metadata: action.payload,
+        status: 'updated'
+      }))
+      .addCase(appReset, () => initialState)
   }
 })
 

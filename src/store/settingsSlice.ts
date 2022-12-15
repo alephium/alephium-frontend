@@ -20,6 +20,7 @@ import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@
 
 import { defaultGeneralSettings, storeSettings } from '../storage/settings'
 import { GeneralSettings } from '../types/settings'
+import { appReset } from './actions'
 import { RootState } from './store'
 
 const sliceName = 'settings'
@@ -43,6 +44,9 @@ const settingsSlice = createSlice({
     currencySelected: (state, action: PayloadAction<GeneralSettings['currency']>) => {
       state.currency = action.payload
     }
+  },
+  extraReducers(builder) {
+    builder.addCase(appReset, () => initialState)
   }
 })
 
