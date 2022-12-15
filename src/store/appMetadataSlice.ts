@@ -25,12 +25,12 @@ const sliceName = 'appMetadata'
 
 export interface AppMetadataState {
   lastNavigationState?: NavigationState
-  isQRCodeScannerOpen: boolean
+  isCameraOpen: boolean
 }
 
 const initialState: AppMetadataState = {
   lastNavigationState: undefined,
-  isQRCodeScannerOpen: false
+  isCameraOpen: false
 }
 
 const appMetadataSlice = createSlice({
@@ -40,8 +40,8 @@ const appMetadataSlice = createSlice({
     routeChanged: (state, action: PayloadAction<AppMetadataState['lastNavigationState']>) => {
       state.lastNavigationState = action.payload
     },
-    qrCodeScannerToggled: (state, action: PayloadAction<AppMetadataState['isQRCodeScannerOpen']>) => {
-      state.isQRCodeScannerOpen = action.payload
+    cameraToggled: (state, action: PayloadAction<AppMetadataState['isCameraOpen']>) => {
+      state.isCameraOpen = action.payload
     }
   },
   extraReducers(builder) {
@@ -49,6 +49,6 @@ const appMetadataSlice = createSlice({
   }
 })
 
-export const { routeChanged, qrCodeScannerToggled } = appMetadataSlice.actions
+export const { routeChanged, cameraToggled } = appMetadataSlice.actions
 
 export default appMetadataSlice

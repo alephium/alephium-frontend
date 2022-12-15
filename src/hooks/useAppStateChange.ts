@@ -35,10 +35,10 @@ import useSwitchWallet from './useSwitchWallet'
 export const useAppStateChange = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
-  const [activeWallet, lastNavigationState, isQRCodeScannerOpen, addressesStatus] = useAppSelector((s) => [
+  const [activeWallet, lastNavigationState, isCameraOpen, addressesStatus] = useAppSelector((s) => [
     s.activeWallet,
     s.appMetadata.lastNavigationState,
-    s.appMetadata.isQRCodeScannerOpen,
+    s.appMetadata.isCameraOpen,
     s.addresses.status
   ])
   const restoreNavigationState = useRestoreNavigationState()
@@ -95,7 +95,7 @@ export const useAppStateChange = () => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isQRCodeScannerOpen) {
+      if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isCameraOpen) {
         dispatch(appBecameInactive())
       } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
         unlockWallet()
@@ -107,5 +107,5 @@ export const useAppStateChange = () => {
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [activeWallet.mnemonic, dispatch, isQRCodeScannerOpen, unlockWallet])
+  }, [activeWallet.mnemonic, dispatch, isCameraOpen, unlockWallet])
 }

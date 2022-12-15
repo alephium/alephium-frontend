@@ -39,7 +39,7 @@ import RootStackParamList from '../../navigation/rootStackRoutes'
 import { enableBiometrics, generateAndStoreWallet } from '../../storage/wallets'
 import { biometricsEnabled, newWalletGenerated } from '../../store/activeWalletSlice'
 import { fetchAddressesData } from '../../store/addressesSlice'
-import { qrCodeScannerToggled } from '../../store/appMetadataSlice'
+import { cameraToggled } from '../../store/appMetadataSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '../../style/globalStyle'
 import { bip39Words } from '../../utils/bip39'
 import { pbkdf2 } from '../../utils/crypto'
@@ -55,11 +55,11 @@ const enablePasteForDevelopment = true
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const [name, activeWallet, pin, isQRCodeScannerOpen] = useAppSelector((s) => [
+  const [name, activeWallet, pin, isCameraOpen] = useAppSelector((s) => [
     s.walletGeneration.walletName,
     s.activeWallet,
     s.credentials.pin,
-    s.appMetadata.isQRCodeScannerOpen
+    s.appMetadata.isCameraOpen
   ])
   const hasAvailableBiometrics = useBiometrics()
   const theme = useTheme()
@@ -76,8 +76,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [encryptedWalletFromQRCode, setEncryptedWalletFromQRCode] = useState('')
 
   const isAuthenticated = !!activeWallet.mnemonic
-  const openQRCodeScannerModal = () => dispatch(qrCodeScannerToggled(true))
-  const closeQRCodeScannerModal = () => dispatch(qrCodeScannerToggled(false))
+  const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
+  const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -238,7 +238,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
         />
       </ScreenSectionBottom>
       {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin)} />}
-      {isQRCodeScannerOpen && <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} />}
+      {isCameraOpen && <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} />}
       {isPasswordModalVisible && (
         <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
       )}
