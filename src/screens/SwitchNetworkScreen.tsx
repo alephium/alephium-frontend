@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { ScrollView } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 import styled from 'styled-components/native'
@@ -27,52 +28,52 @@ import Button from '../components/buttons/Button'
 import Input from '../components/inputs/Input'
 import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
+import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { addressesFlushed, addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
-import { networkChanged, networkSettingsChanged } from '../store/networkSlice'
+import { storeSettings } from '../storage/settings'
+import { addressesFlushed, initializeAddressesFromStoredMetadata } from '../store/addressesSlice'
+import { customNetworkSettingsStored, networkChanged } from '../store/networkSlice'
 import { NetworkName, NetworkPreset } from '../types/network'
+import { NetworkSettings } from '../types/settings'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SwitchNetworkScreen'>
 
 const networkNames = Object.values(NetworkName)
 
 const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
-  const currentNetworkName = useAppSelector((state) => state.network.name)
+  const currentNetwork = useAppSelector((state) => state.network)
   const dispatch = useAppDispatch()
 
-  const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkName.custom)
-  const [nodeHost, setNodeHost] = useState('')
-  const [explorerApiHost, setExplorerApiHost] = useState('')
-  const [explorerUrl, setExplorerUrl] = useState('')
-  const [selectedNetwork, setSelectedNetwork] = useState(currentNetworkName)
+  const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetwork.name === NetworkName.custom)
+  const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetwork.name)
+  const [loading, setLoading] = useState(false)
+
+  const { control, handleSubmit } = useForm<NetworkSettings>({
+    defaultValues: currentNetwork.settings
+  })
 
   const handleNetworkItemPress = (newNetworkName: NetworkPreset | NetworkName.custom) => {
-    setSelectedNetwork(newNetworkName)
+    setSelectedNetworkName(newNetworkName)
 
     if (newNetworkName !== NetworkName.custom) {
       dispatch(networkChanged(newNetworkName))
       // TODO: Update data instead of flushing and re-initializing
       dispatch(addressesFlushed())
-      dispatch(addressesFromStoredMetadataInitialized())
+      dispatch(initializeAddressesFromStoredMetadata())
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
     } else {
       setShowCustomNetworkForm(true)
     }
   }
 
-  const saveCustomNetwork = () => {
-    dispatch(
-      networkSettingsChanged({
-        nodeHost,
-        explorerApiHost,
-        explorerUrl
-      })
-    )
-    // TODO: Update data instead of flushing and re-initializing
-    dispatch(addressesFlushed())
-    dispatch(addressesFromStoredMetadataInitialized())
+  const saveCustomNetwork = async (formData: NetworkSettings) => {
+    setLoading(true)
 
+    await storeSettings('network', formData)
+    dispatch(customNetworkSettingsStored(formData))
+
+    setLoading(false)
     navigation.goBack()
   }
 
@@ -90,26 +91,53 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
               onPress={() => handleNetworkItemPress(networkName)}
               isFirst={index === 0}
               isLast={index === networkNames.length - 1}
-              isActive={networkName === selectedNetwork}
+              isActive={networkName === selectedNetworkName}
             />
           ))}
         </ScreenSection>
         {showCustomNetworkForm && (
           <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
             <ScreenSection>
-              <Input value={nodeHost} onChangeText={setNodeHost} label="Node host" isTopRounded hasBottomBorder />
-              <Input
-                value={explorerApiHost}
-                onChangeText={setExplorerApiHost}
-                label="Explorer API host"
-                hasBottomBorder
+              <Controller
+                name="nodeHost"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Node host"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    isTopRounded
+                    hasBottomBorder
+                  />
+                )}
+                control={control}
               />
-              <Input value={explorerUrl} onChangeText={setExplorerUrl} label="Explorer URL" isBottomRounded />
-              <ButtonStyled centered title="Save custom network" onPress={saveCustomNetwork} />
+              <Controller
+                name="explorerApiHost"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Explorer API host"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    hasBottomBorder
+                  />
+                )}
+                control={control}
+              />
+              <Controller
+                name="explorerUrl"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input label="Explorer URL" value={value} onChangeText={onChange} onBlur={onBlur} isBottomRounded />
+                )}
+                control={control}
+              />
+              <ButtonStyled centered title="Save custom network" onPress={handleSubmit(saveCustomNetwork)} />
             </ScreenSection>
           </Animated.View>
         )}
       </ScrollView>
+      <SpinnerModal isActive={loading} />
     </>
   )
 }

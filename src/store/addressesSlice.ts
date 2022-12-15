@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addressToGroup, deriveAddressAndKeys, TOTAL_NUMBER_OF_GROUPS, walletImportAsyncUnsafe } from '@alephium/sdk'
+import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import { Transaction } from '@alephium/sdk/api/explorer'
 import {
   createAsyncThunk,
@@ -28,16 +28,16 @@ import {
 } from '@reduxjs/toolkit'
 
 import client from '../api/client'
-import { getAddressesMetadataByWalletId } from '../storage/wallets'
+import { deriveAddressesFromStoredMetadata } from '../storage/wallets'
 import { Address, AddressHash, AddressPartial, AddressSettings } from '../types/addresses'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
 import { storeAddressSettings } from '../utils/addresses'
 import { getRandomLabelColor } from '../utils/colors'
-import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
 import { appReset } from './actions'
 import { newWalletGenerated, walletUnlocked } from './activeWalletSlice'
+import { customNetworkSettingsStored } from './networkSlice'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -64,13 +64,13 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
 
 export const fetchAddressesData = createAsyncThunk(
   `${sliceName}/fetchAddressesData`,
-  async (payload: AddressHash[], { dispatch }) => {
+  async (payload: AddressHash[] | undefined, { getState, dispatch }) => {
     dispatch(loadingStarted())
 
-    const addresses = payload
+    const state = getState() as RootState
+    const addresses = payload ?? (state.addresses.ids as AddressHash[])
     const results = await client.fetchAddressesData(addresses)
 
-    dispatch(loadingFinished())
     return results
   }
 )
@@ -106,13 +106,12 @@ export const fetchAddressesTransactionsNextPage = createAsyncThunk(
       })
     }
 
-    dispatch(loadingFinished())
     return results
   }
 )
 
-export const addressesFromStoredMetadataInitialized = createAsyncThunk(
-  `${sliceName}/addressesFromStoredMetadataInitialized`,
+export const initializeAddressesFromStoredMetadata = createAsyncThunk(
+  `${sliceName}/initializeAddressesFromStoredMetadata`,
   async (_, { getState, dispatch, rejectWithValue }) => {
     const state = getState() as RootState
 
@@ -121,15 +120,7 @@ export const addressesFromStoredMetadataInitialized = createAsyncThunk(
     if (metadataId && mnemonic) {
       dispatch(loadingStarted())
 
-      const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
-      const addressesMetadata = await getAddressesMetadataByWalletId(metadataId)
-
-      console.log(`👀 Found ${addressesMetadata.length} addresses metadata in persistent storage`)
-
-      const addresses = addressesMetadata.map(({ index, ...settings }) => ({
-        ...deriveAddressAndKeys(masterKey, index),
-        settings
-      }))
+      const addresses = await deriveAddressesFromStoredMetadata(metadataId, mnemonic)
 
       dispatch(addressesAdded(addresses))
       await dispatch(fetchAddressesData(addresses.map((address) => address.hash)))
@@ -158,8 +149,8 @@ export const newAddressesStoredAndInitialized = createAsyncThunk(
   }
 )
 
-export const addressSettingsUpdated = createAsyncThunk(
-  `${sliceName}/addressSettingsUpdated`,
+export const updateAddressSettings = createAsyncThunk(
+  `${sliceName}/updateAddressSettings`,
   async (payload: { address: Address; settings: AddressSettings }, { getState }) => {
     const { address, settings } = payload
     const state = getState() as RootState
@@ -209,8 +200,10 @@ const getInitialAddressState = (addressData: AddressPartial) => ({
   }
 })
 
+const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]
+
 const updateOldDefaultAddress = (state: AddressesState) => {
-  const oldDefaultAddress = (Object.values(state.entities) as Address[]).find((address) => address.settings.isMain)
+  const oldDefaultAddress = getAddresses(state).find((address) => address.settings.isMain)
 
   if (oldDefaultAddress) {
     addressesAdapter.updateOne(state, {
@@ -258,6 +251,7 @@ const addressesSlice = createSlice({
         if (addressesToInitialize && addressesToInitialize.length > 0) {
           addressesAdapter.setAll(state, [])
           addressesAdapter.addMany(state, addressesToInitialize.map(getInitialAddressState))
+          state.status = 'uninitialized'
         }
       })
       .addCase(newWalletGenerated, (state, action) => {
@@ -301,6 +295,7 @@ const addressesSlice = createSlice({
         }
 
         state.status = 'initialized'
+        state.loading = false
       })
       .addCase(fetchAddressesTransactionsNextPage.fulfilled, (state, action) => {
         for (const address of action.payload) {
@@ -319,8 +314,10 @@ const addressesSlice = createSlice({
             }
           }
         }
+
+        state.loading = false
       })
-      .addCase(addressSettingsUpdated.fulfilled, (state, action) => {
+      .addCase(updateAddressSettings.fulfilled, (state, action) => {
         const { address, settings } = action.payload
 
         addressesAdapter.updateOne(state, {
@@ -329,6 +326,19 @@ const addressesSlice = createSlice({
         })
 
         if (settings.isMain) updateOldDefaultAddress(state)
+      })
+      .addCase(customNetworkSettingsStored, (state) => {
+        const reinitializedAddresses = getAddresses(state).map(getInitialAddressState)
+
+        addressesAdapter.updateMany(
+          state,
+          reinitializedAddresses.map((address) => ({
+            id: address.hash,
+            changes: { networkData: address.networkData }
+          }))
+        )
+
+        state.status = 'uninitialized'
       })
       .addCase(appReset, () => initialState)
   }

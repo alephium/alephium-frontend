@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { changeActiveWallet, deriveAddressesFromStoredMetadata } from '../storage/wallets'
 import { walletUnlocked } from '../store/activeWalletSlice'
-import { fetchAddressesData } from '../store/addressesSlice'
 import { ActiveWalletState } from '../types/wallet'
 import { useAppDispatch } from './redux'
 
@@ -33,10 +32,6 @@ const useSwitchWallet = () => {
       : undefined
 
     dispatch(walletUnlocked({ ...wallet, addressesToInitialize, pin }))
-
-    if (addressesToInitialize) {
-      dispatch(fetchAddressesData(addressesToInitialize.map((address) => address.hash)))
-    }
   }
 
   return switchWallet

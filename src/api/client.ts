@@ -31,7 +31,11 @@ export class Client {
     this.explorerClient = new ExplorerClient({ baseUrl: explorerApiHost })
   }
 
-  async init({ nodeHost, explorerApiHost }: NetworkSettings, isMultiNodesClique = false) {
+  async init(
+    nodeHost: NetworkSettings['nodeHost'],
+    explorerApiHost: NetworkSettings['explorerApiHost'],
+    isMultiNodesClique = false
+  ) {
     this.cliqueClient = new CliqueClient({ baseUrl: nodeHost })
     this.explorerClient = new ExplorerClient({ baseUrl: explorerApiHost })
     await this.cliqueClient.init(isMultiNodesClique)

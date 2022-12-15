@@ -39,6 +39,16 @@ const initialState: NetworkState = {
   status: 'uninitialized'
 }
 
+const parseSettingsUpdate = (settings: NetworkSettings) => {
+  const missingNetworkSettings = !settings.nodeHost || !settings.explorerApiHost
+
+  return {
+    name: getNetworkName(settings),
+    settings,
+    status: missingNetworkSettings ? ('offline' as NetworkStatus) : ('connecting' as NetworkStatus)
+  }
+}
+
 const networkSlice = createSlice({
   name: sliceName,
   initialState,
@@ -52,16 +62,8 @@ const networkSlice = createSlice({
         status: 'connecting'
       }
     },
-    networkSettingsChanged: (_, action: PayloadAction<NetworkSettings>) => {
-      const networkSettings = action.payload
-      const missingNetworkSettings = !networkSettings.nodeHost || !networkSettings.explorerApiHost
-
-      return {
-        name: getNetworkName(networkSettings),
-        settings: networkSettings,
-        status: missingNetworkSettings ? 'offline' : 'connecting'
-      }
-    },
+    storedNetworkSettingsLoaded: (_, action: PayloadAction<NetworkSettings>) => parseSettingsUpdate(action.payload),
+    customNetworkSettingsStored: (_, action: PayloadAction<NetworkSettings>) => parseSettingsUpdate(action.payload),
     apiClientInitSucceeded: (state) => {
       state.status = 'online'
     },
@@ -74,14 +76,19 @@ const networkSlice = createSlice({
   }
 })
 
-export const { networkChanged, networkSettingsChanged, apiClientInitSucceeded, apiClientInitFailed } =
-  networkSlice.actions
+export const {
+  networkChanged,
+  storedNetworkSettingsLoaded,
+  customNetworkSettingsStored,
+  apiClientInitSucceeded,
+  apiClientInitFailed
+} = networkSlice.actions
 
 export const networkListenerMiddleware = createListenerMiddleware()
 
 // When the network settings change, store them in persistent storage
 networkListenerMiddleware.startListening({
-  matcher: isAnyOf(networkChanged, networkSettingsChanged),
+  matcher: isAnyOf(networkChanged, storedNetworkSettingsLoaded),
   effect: async (_, { getState }) => {
     const state = getState() as RootState
 

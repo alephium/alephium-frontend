@@ -22,7 +22,7 @@ import { useState } from 'react'
 import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { addressSettingsUpdated, selectAddressByHash } from '../store/addressesSlice'
+import { updateAddressSettings, selectAddressByHash } from '../store/addressesSlice'
 import { AddressSettings } from '../types/addresses'
 import AddressFormScreen from './AddressFormScreen'
 
@@ -44,7 +44,7 @@ const EditAddressScreen = ({
 
   const handleSavePress = async (settings: AddressSettings) => {
     setLoading(true)
-    await dispatch(addressSettingsUpdated({ address, settings }))
+    await dispatch(updateAddressSettings({ address, settings }))
     setLoading(false)
 
     navigation.goBack()
