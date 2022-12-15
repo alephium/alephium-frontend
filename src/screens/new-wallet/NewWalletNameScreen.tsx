@@ -32,7 +32,7 @@ import RootStackParamList from '../../navigation/rootStackRoutes'
 import { enableBiometrics, generateAndStoreWallet } from '../../storage/wallets'
 import { biometricsEnabled, newWalletGenerated } from '../../store/activeWalletSlice'
 import { fetchAddressesData } from '../../store/addressesSlice'
-import { newWalletNameChanged } from '../../store/walletGenerationSlice'
+import { newWalletNameEntered } from '../../store/walletGenerationSlice'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -85,7 +85,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const handleButtonPress = async () => {
     if (!name) return
 
-    dispatch(newWalletNameChanged(name))
+    dispatch(newWalletNameEntered(name))
 
     if (!isAuthenticated) {
       navigation.navigate('PinCodeCreationScreen')

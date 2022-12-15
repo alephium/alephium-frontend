@@ -41,16 +41,15 @@ const walletGenerationSlice = createSlice({
     methodSelected: (state, action: PayloadAction<WalletGenerationMethod>) => {
       state.method = action.payload
     },
-    newWalletNameChanged: (state, action: PayloadAction<string>) => {
+    newWalletNameEntered: (state, action: PayloadAction<string>) => {
       state.walletName = action.payload
-    },
-    flushWalletGenerationState: () => initialState
+    }
   },
   extraReducers(builder) {
     builder.addCase(appReset, () => initialState)
   }
 })
 
-export const { methodSelected, flushWalletGenerationState, newWalletNameChanged } = walletGenerationSlice.actions
+export const { methodSelected, newWalletNameEntered } = walletGenerationSlice.actions
 
 export default walletGenerationSlice
