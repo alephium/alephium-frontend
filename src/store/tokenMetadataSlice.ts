@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { TokenMetadata } from '../types/tokens'
 import { appReset } from './actions'
@@ -38,9 +38,10 @@ const initialState: TokenMetadataState = {
 export const tokenMetadataUpdated = createAsyncThunk(`${sliceName}/tokenMetadataUpdated`, async (_, { dispatch }) => {
   console.log('⬇️ Fetching latest token metadata')
 
-  dispatch(statusChanged('updating'))
+  dispatch(tokenMetadataUpdateStarted())
 
   // TODO: Use official Alephium tokens-meta repo
+  // TODO: move into /src/api
   const response = await fetch('https://raw.githubusercontent.com/nop33/token-meta/master/tokens.json')
 
   return await response.json()
@@ -50,8 +51,8 @@ const tokenMetadataSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    statusChanged: (state, action: PayloadAction<TokenMetadataStatus>) => {
-      state.status = action.payload
+    tokenMetadataUpdateStarted: (state) => {
+      state.status = 'updating'
     }
   },
   extraReducers: (builder) => {
@@ -66,4 +67,4 @@ const tokenMetadataSlice = createSlice({
 
 export default tokenMetadataSlice
 
-export const { statusChanged } = tokenMetadataSlice.actions
+export const { tokenMetadataUpdateStarted } = tokenMetadataSlice.actions

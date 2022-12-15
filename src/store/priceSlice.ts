@@ -42,6 +42,7 @@ export const updatePrice = createAsyncThunk(`${sliceName}/updatePrice`, async (_
   const state = getState() as RootState
   const currency = state.settings.currency
 
+  // TODO: move into /src/api
   console.log(`⬇️ Fetching latest ${currency} price`)
 
   const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=alephium&vs_currencies=${currency}`)
