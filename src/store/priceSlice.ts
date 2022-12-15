@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { appReset } from './actions'
 import { currencySelected } from './settingsSlice'
@@ -36,8 +36,8 @@ const initialState: PriceState = {
   status: 'uninitialized'
 }
 
-export const priceUpdated = createAsyncThunk(`${sliceName}/priceUpdated`, async (_, { dispatch, getState }) => {
-  dispatch(statusChanged('updating'))
+export const updatePrice = createAsyncThunk(`${sliceName}/updatePrice`, async (_, { dispatch, getState }) => {
+  dispatch(priceUpdateStarted())
 
   const state = getState() as RootState
   const currency = state.settings.currency
@@ -58,13 +58,13 @@ const priceSlice = createSlice({
   initialState,
   reducers: {
     priceReset: resetPrice,
-    statusChanged: (state, action: PayloadAction<PriceStatus>) => {
-      state.status = action.payload
+    priceUpdateStarted: (state) => {
+      state.status = 'updating'
     }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(priceUpdated.fulfilled, (_, action) => ({
+      .addCase(updatePrice.fulfilled, (_, action) => ({
         value: action.payload,
         status: 'updated'
       }))
@@ -75,4 +75,4 @@ const priceSlice = createSlice({
 
 export default priceSlice
 
-export const { priceReset, statusChanged } = priceSlice.actions
+export const { priceReset, priceUpdateStarted } = priceSlice.actions
