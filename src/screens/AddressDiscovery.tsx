@@ -39,7 +39,7 @@ import {
   discoverAddresses,
   selectAllDiscoveredAddresses
 } from '../store/addressDiscoverySlice'
-import { addressesImported, fetchAddressesData, selectAllAddresses } from '../store/addressesSlice'
+import { addressesImported, syncAddressesData, selectAllAddresses } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 
@@ -73,7 +73,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
 
     await persistAddressSettings(newAddresses)
     dispatch(addressesImported(newAddresses))
-    await dispatch(fetchAddressesData(newAddresses.map((address) => address.hash)))
+    await dispatch(syncAddressesData(newAddresses.map((address) => address.hash)))
 
     navigation.navigate(isImporting ? 'NewWalletSuccessPage' : 'InWalletScreen')
 

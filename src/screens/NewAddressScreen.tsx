@@ -24,7 +24,7 @@ import SpinnerModal from '../components/SpinnerModal'
 import usePersistAddressSettings from '../hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { fetchAddressesData, newAddressGenerated, selectAllAddresses } from '../store/addressesSlice'
+import { syncAddressesData, newAddressGenerated, selectAllAddresses } from '../store/addressesSlice'
 import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
 import AddressFormScreen, { AddressFormData } from './AddressFormScreen'
@@ -54,7 +54,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
 
     await persistAddressSettings(newAddress)
     dispatch(newAddressGenerated(newAddress))
-    await dispatch(fetchAddressesData([newAddress.hash]))
+    await dispatch(syncAddressesData([newAddress.hash]))
 
     setLoading(false)
 

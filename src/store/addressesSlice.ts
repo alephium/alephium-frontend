@@ -27,6 +27,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 
+import { fetchAddressesData } from '../api/addresses'
 import client from '../api/client'
 import { Address, AddressHash, AddressPartial } from '../types/addresses'
 import { AddressToken } from '../types/tokens'
@@ -60,21 +61,21 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
   status: 'uninitialized'
 })
 
-export const fetchAddressesData = createAsyncThunk(
-  `${sliceName}/fetchAddressesData`,
+export const syncAddressesData = createAsyncThunk(
+  `${sliceName}/syncAddressesData`,
   async (payload: AddressHash[] | undefined, { getState, dispatch }) => {
     dispatch(loadingStarted())
 
     const state = getState() as RootState
     const addresses = payload ?? (state.addresses.ids as AddressHash[])
-    const results = await client.fetchAddressesData(addresses)
+    const results = await fetchAddressesData(addresses)
 
     return results
   }
 )
 
-export const fetchAddressesTransactionsNextPage = createAsyncThunk(
-  `${sliceName}/fetchAddressesTransactionsNextPage`,
+export const syncAddressesTransactionsNextPage = createAsyncThunk(
+  `${sliceName}/syncAddressesTransactionsNextPage`,
   async (payload: AddressHash[], { getState, dispatch }) => {
     const results = []
     dispatch(loadingStarted())
@@ -160,10 +161,7 @@ const clearAddressesNetworkData = (state: AddressesState) => {
 
   addressesAdapter.updateMany(
     state,
-    reinitializedAddresses.map((address) => ({
-      id: address.hash,
-      changes: { networkData: address.networkData }
-    }))
+    reinitializedAddresses.map((address) => ({ id: address.hash, changes: { networkData: address.networkData } }))
   )
 
   state.status = 'uninitialized'
@@ -243,7 +241,7 @@ const addressesSlice = createSlice({
         addressesAdapter.setAll(state, [])
         addressesAdapter.addOne(state, firstWalletAddress)
       })
-      .addCase(fetchAddressesData.fulfilled, (state, action) => {
+      .addCase(syncAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, details, availableBalance, transactions, tokens } = address
           const addressState = state.entities[hash]
@@ -274,7 +272,7 @@ const addressesSlice = createSlice({
         state.status = 'initialized'
         state.loading = false
       })
-      .addCase(fetchAddressesTransactionsNextPage.fulfilled, (state, action) => {
+      .addCase(syncAddressesTransactionsNextPage.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, transactions, page } = address
           const addressState = state.entities[hash]

@@ -36,6 +36,7 @@ import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
 import client from '../api/client'
+import { buildSweepTransactions, signAndSendTransaction } from '../api/transactions'
 import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
@@ -136,7 +137,7 @@ const SendScreen = ({
     setIsLoading(true)
 
     try {
-      const { unsignedTxs, fees } = await client.buildSweepTransactions(
+      const { unsignedTxs, fees } = await buildSweepTransactions(
         fromAddress.hash,
         fromAddress.publicKey,
         fromAddress.hash
@@ -164,7 +165,7 @@ const SendScreen = ({
       const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : ''
       try {
         if (isSweep) {
-          const { unsignedTxs, fees } = await client.buildSweepTransactions(
+          const { unsignedTxs, fees } = await buildSweepTransactions(
             fromAddress.hash,
             fromAddress.publicKey,
             formData.toAddressHash
@@ -219,7 +220,7 @@ const SendScreen = ({
     try {
       if (isSweeping) {
         for (const { txId, unsignedTx } of sweepUnsignedTxs) {
-          client.signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, txId, unsignedTx)
+          signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, txId, unsignedTx)
 
           dispatch(
             addPendingTransactionToAddress({
@@ -233,7 +234,7 @@ const SendScreen = ({
           )
         }
       } else {
-        client.signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, unsignedTxId, unsignedTransaction)
+        signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, unsignedTxId, unsignedTransaction)
 
         dispatch(
           addPendingTransactionToAddress({

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useCallback, useEffect } from 'react'
 
 import client from '../api/client'
-import { fetchAddressesData, selectAllAddresses } from '../store/addressesSlice'
+import { syncAddressesData, selectAllAddresses } from '../store/addressesSlice'
 import { apiClientInitFailed, apiClientInitSucceeded } from '../store/networkSlice'
 import { useAppDispatch, useAppSelector } from './redux'
 import useInterval from './useInterval'
@@ -60,7 +60,7 @@ const useInitializeClient = () => {
   // Currently we trigger it "magically" by setting the addressesSlice status to 'uninitialized'
   useEffect(() => {
     if (network.status === 'online' && addressesStatus === 'uninitialized' && addresses.length > 0) {
-      dispatch(fetchAddressesData())
+      dispatch(syncAddressesData())
     }
   }, [addresses.length, addressesStatus, dispatch, network.status])
 }

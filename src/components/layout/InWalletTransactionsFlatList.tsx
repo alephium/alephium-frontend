@@ -20,7 +20,7 @@ import { ActivityIndicator, FlatListProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
-import { fetchAddressesData, fetchAddressesTransactionsNextPage } from '../../store/addressesSlice'
+import { syncAddressesData, syncAddressesTransactionsNextPage } from '../../store/addressesSlice'
 import { AddressHash } from '../../types/addresses'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '../../types/transactions'
 import AppText from '../AppText'
@@ -63,14 +63,14 @@ const InWalletTransactionsFlatList = ({
     <TransactionRowStyled key={transactionKeyExtractor(tx)} tx={tx} isFirst={index === 0} isLast={isLast} />
   )
 
-  const fetchNextTransactionsPage = () => {
+  const syncNextTransactionsPage = () => {
     if (!isLoading && !haveAllPagesLoaded) {
-      dispatch(fetchAddressesTransactionsNextPage(addressHashes))
+      dispatch(syncAddressesTransactionsNextPage(addressHashes))
     }
   }
 
   const refreshData = () => {
-    if (!isLoading) dispatch(fetchAddressesData(addressHashes))
+    if (!isLoading) dispatch(syncAddressesData(addressHashes))
   }
 
   return (
@@ -79,7 +79,7 @@ const InWalletTransactionsFlatList = ({
       data={confirmedTransactions}
       renderItem={renderConfirmedTransactionItem}
       keyExtractor={transactionKeyExtractor}
-      onEndReached={fetchNextTransactionsPage}
+      onEndReached={syncNextTransactionsPage}
       onRefresh={refreshData}
       refreshing={isLoading}
       extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
