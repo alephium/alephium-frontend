@@ -21,7 +21,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import activeWalletSlice from './activeWalletSlice'
 import addressDiscoverySlice from './addressDiscoverySlice'
 import addressesSlice from './addressesSlice'
-import appMetadataSlice from './appMetadataSlice'
+import appSlice from './appSlice'
 import credentialsSlice from './credentialsSlice'
 import networkSlice from './networkSlice'
 import priceSlice from './priceSlice'
@@ -38,7 +38,7 @@ export const store = configureStore({
     activeWallet: activeWalletSlice.reducer,
     addresses: addressesSlice.reducer,
     price: priceSlice.reducer,
-    appMetadata: appMetadataSlice.reducer,
+    app: appSlice.reducer,
     tokenMetadata: tokenMetadataSlice.reducer,
     addressDiscovery: addressDiscoverySlice.reducer
   },

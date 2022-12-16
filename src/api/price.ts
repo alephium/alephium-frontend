@@ -15,21 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { Currency } from '../types/settings'
 
-import { useEffect } from 'react'
+export const fetchLatestPrice = async (currency: Currency) => {
+  console.log(`⬇️ Fetching latest ${currency} price`)
 
-import { syncTokenMetadata } from '../store/tokenMetadataSlice'
-import { useAppDispatch, useAppSelector } from './redux'
+  const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=alephium&vs_currencies=${currency}`)
+  const data = await response.json()
+  const latestPrice = data.alephium[currency.toLowerCase()]
 
-const useTokenMetadata = () => {
-  const dispatch = useAppDispatch()
-  const { metadata, status } = useAppSelector((state) => state.tokenMetadata)
-
-  useEffect(() => {
-    if (status === 'uninitialized') dispatch(syncTokenMetadata())
-  }, [dispatch, status])
-
-  return metadata
+  return latestPrice
 }
-
-export default useTokenMetadata

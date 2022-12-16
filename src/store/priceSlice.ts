@@ -18,7 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { appReset } from './actions'
+import { fetchLatestPrice } from '../api/price'
+import { appReset } from './appSlice'
 import { currencySelected } from './settingsSlice'
 import { RootState } from './store'
 
@@ -40,16 +41,8 @@ export const updatePrice = createAsyncThunk(`${sliceName}/updatePrice`, async (_
   dispatch(priceUpdateStarted())
 
   const state = getState() as RootState
-  const currency = state.settings.currency
 
-  // TODO: move into /src/api
-  console.log(`⬇️ Fetching latest ${currency} price`)
-
-  const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=alephium&vs_currencies=${currency}`)
-  const data = await response.json()
-  const latestPrice = data.alephium[currency.toLowerCase()]
-
-  return latestPrice
+  return await fetchLatestPrice(state.settings.currency)
 })
 
 const resetPrice = () => initialState

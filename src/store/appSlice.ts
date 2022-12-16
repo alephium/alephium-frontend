@@ -17,11 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationState } from '@react-navigation/routers'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { appReset } from './actions'
-
-const sliceName = 'appMetadata'
+const sliceName = 'app'
 
 export interface AppMetadataState {
   lastNavigationState?: NavigationState
@@ -33,7 +31,7 @@ const initialState: AppMetadataState = {
   isCameraOpen: false
 }
 
-const appMetadataSlice = createSlice({
+const appSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
@@ -42,13 +40,13 @@ const appMetadataSlice = createSlice({
     },
     cameraToggled: (state, action: PayloadAction<AppMetadataState['isCameraOpen']>) => {
       state.isCameraOpen = action.payload
-    }
-  },
-  extraReducers(builder) {
-    builder.addCase(appReset, () => initialState)
+    },
+    appReset: () => initialState
   }
 })
 
-export const { routeChanged, cameraToggled } = appMetadataSlice.actions
+export const { routeChanged, cameraToggled, appReset } = appSlice.actions
 
-export default appMetadataSlice
+export const appBecameInactive = createAction('app/becameInactive')
+
+export default appSlice

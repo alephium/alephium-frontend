@@ -18,8 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+import { fetchTokenMetadata } from '../api/tokens'
 import { TokenMetadata } from '../types/tokens'
-import { appReset } from './actions'
+import { appReset } from './appSlice'
 
 const sliceName = 'tokenMetadata'
 
@@ -35,16 +36,10 @@ const initialState: TokenMetadataState = {
   status: 'uninitialized'
 }
 
-export const tokenMetadataUpdated = createAsyncThunk(`${sliceName}/tokenMetadataUpdated`, async (_, { dispatch }) => {
-  console.log('⬇️ Fetching latest token metadata')
-
+export const syncTokenMetadata = createAsyncThunk(`${sliceName}/syncTokenMetadata`, async (_, { dispatch }) => {
   dispatch(tokenMetadataUpdateStarted())
 
-  // TODO: Use official Alephium tokens-meta repo
-  // TODO: move into /src/api
-  const response = await fetch('https://raw.githubusercontent.com/nop33/token-meta/master/tokens.json')
-
-  return await response.json()
+  return await fetchTokenMetadata()
 })
 
 const tokenMetadataSlice = createSlice({
@@ -57,7 +52,7 @@ const tokenMetadataSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(tokenMetadataUpdated.fulfilled, (_, action) => ({
+      .addCase(syncTokenMetadata.fulfilled, (_, action) => ({
         metadata: action.payload,
         status: 'updated'
       }))

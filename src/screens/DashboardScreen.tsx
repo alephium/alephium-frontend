@@ -32,8 +32,8 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../persistent-storage/wallets'
-import { appReset } from '../store/actions'
-import { syncAddressesData, selectAddressIds } from '../store/addressesSlice'
+import { selectAddressIds, syncAddressesData } from '../store/addressesSlice'
+import { appReset } from '../store/appSlice'
 import { AddressHash } from '../types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {

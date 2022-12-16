@@ -20,7 +20,7 @@ import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@
 
 import { defaultGeneralSettings, persistSettings } from '../persistent-storage/settings'
 import { GeneralSettings } from '../types/settings'
-import { appReset } from './actions'
+import { appReset } from './appSlice'
 import { RootState } from './store'
 
 const sliceName = 'settings'

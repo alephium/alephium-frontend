@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { ActiveWalletState, GeneratedWallet, WalletUnlockedPayload } from '../types/wallet'
-import { appBecameInactive, appReset } from './actions'
+import { appBecameInactive, appReset } from './appSlice'
 
 const sliceName = 'activeWallet'
 
@@ -37,7 +37,6 @@ const activeWalletSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    walletFlushed: resetState,
     newWalletGenerated: (_, action: PayloadAction<GeneratedWallet>) => {
       const { name, mnemonic, metadataId, isMnemonicBackedUp } = action.payload
 
@@ -77,7 +76,6 @@ const activeWalletSlice = createSlice({
 })
 
 export const {
-  walletFlushed,
   newWalletGenerated,
   biometricsEnabled,
   biometricsDisabled,

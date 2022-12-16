@@ -22,7 +22,7 @@ import { defaultNetwork, defaultNetworkSettings, networkPresetSettings } from '.
 import { NetworkName, NetworkPreset, NetworkStatus } from '../types/network'
 import { NetworkSettings } from '../types/settings'
 import { getNetworkName } from '../utils/settings'
-import { appReset } from './actions'
+import { appReset } from './appSlice'
 
 const sliceName = 'network'
 

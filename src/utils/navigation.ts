@@ -48,7 +48,7 @@ export const isNavStateRestorable = (state: NavigationState) => {
 }
 
 export const useRestoreNavigationState = () => {
-  const lastNavigationState = useAppSelector((state) => state.appMetadata.lastNavigationState)
+  const lastNavigationState = useAppSelector((state) => state.app.lastNavigationState)
 
   const restoreNavigationState = useCallback(
     (reset?: boolean) => {

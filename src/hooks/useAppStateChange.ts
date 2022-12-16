@@ -26,8 +26,8 @@ import {
   getActiveWalletMetadata,
   getStoredActiveWallet
 } from '../persistent-storage/wallets'
-import { appBecameInactive } from '../store/actions'
 import { biometricsDisabled } from '../store/activeWalletSlice'
+import { appBecameInactive } from '../store/appSlice'
 import { navigateRootStack, useRestoreNavigationState } from '../utils/navigation'
 import { useAppDispatch, useAppSelector } from './redux'
 import useSwitchWallet from './useSwitchWallet'
@@ -37,8 +37,8 @@ export const useAppStateChange = () => {
   const appState = useRef(AppState.currentState)
   const [activeWallet, lastNavigationState, isCameraOpen, addressesStatus] = useAppSelector((s) => [
     s.activeWallet,
-    s.appMetadata.lastNavigationState,
-    s.appMetadata.isCameraOpen,
+    s.app.lastNavigationState,
+    s.app.isCameraOpen,
     s.addresses.status
   ])
   const restoreNavigationState = useRestoreNavigationState()

@@ -16,8 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createAction } from '@reduxjs/toolkit'
+export const fetchTokenMetadata = async () => {
+  console.log('⬇️ Fetching latest token metadata')
 
-export const appBecameInactive = createAction('app/becameInactive')
+  // TODO: Use official Alephium tokens-meta repo
+  const result = await fetch('https://raw.githubusercontent.com/nop33/token-meta/master/tokens.json')
 
-export const appReset = createAction('app/reset')
+  return await result.json()
+}

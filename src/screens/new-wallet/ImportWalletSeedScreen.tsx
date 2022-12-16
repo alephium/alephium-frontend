@@ -39,7 +39,7 @@ import RootStackParamList from '../../navigation/rootStackRoutes'
 import { enableBiometrics, generateAndStoreWallet } from '../../persistent-storage/wallets'
 import { biometricsEnabled, newWalletGenerated } from '../../store/activeWalletSlice'
 import { syncAddressesData } from '../../store/addressesSlice'
-import { cameraToggled } from '../../store/appMetadataSlice'
+import { cameraToggled } from '../../store/appSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '../../style/globalStyle'
 import { bip39Words } from '../../utils/bip39'
 import { pbkdf2 } from '../../utils/crypto'
@@ -59,7 +59,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
     s.walletGeneration.walletName,
     s.activeWallet,
     s.credentials.pin,
-    s.appMetadata.isCameraOpen
+    s.app.isCameraOpen
   ])
   const hasAvailableBiometrics = useBiometrics()
   const theme = useTheme()

@@ -35,8 +35,8 @@ import {
 } from '../utils/addresses'
 import { mnemonicToSeed } from '../utils/crypto'
 import { sleep } from '../utils/misc'
-import { appReset } from './actions'
 import { addressesImported } from './addressesSlice'
+import { appReset } from './appSlice'
 import { RootState } from './store'
 
 const sliceName = 'addressDiscovery'
