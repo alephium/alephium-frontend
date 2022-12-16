@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
-import { defaultGeneralSettings, storeSettings } from '../storage/settings'
+import { defaultGeneralSettings, persistSettings } from '../persistent-storage/settings'
 import { GeneralSettings } from '../types/settings'
 import { appReset } from './actions'
 import { RootState } from './store'
@@ -66,7 +66,7 @@ settingsListenerMiddleware.startListening({
   effect: async (_, { getState }) => {
     const state = getState() as RootState
 
-    await storeSettings('general', state[sliceName])
+    await persistSettings('general', state[sliceName])
   }
 })
 

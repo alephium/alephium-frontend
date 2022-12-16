@@ -29,7 +29,7 @@ import CenteredInstructions, { Instruction } from '../../components/text/Centere
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { enableBiometrics, generateAndStoreWallet } from '../../storage/wallets'
+import { enableBiometrics, generateAndStoreWallet } from '../../persistent-storage/wallets'
 import { biometricsEnabled, newWalletGenerated } from '../../store/activeWalletSlice'
 import { fetchAddressesData } from '../../store/addressesSlice'
 import { newWalletNameEntered } from '../../store/walletGenerationSlice'

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { CliqueClient, ExplorerClient } from '@alephium/sdk'
 
-import { defaultNetworkSettings } from '../storage/settings'
+import { defaultNetworkSettings } from '../persistent-storage/settings'
 import { AddressHash } from '../types/addresses'
 import { NetworkSettings } from '../types/settings'
 

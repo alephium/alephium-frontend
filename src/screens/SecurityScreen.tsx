@@ -33,7 +33,7 @@ import OrderedTable from '../components/OrderedTable'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { storePartialWalletMetadata } from '../storage/wallets'
+import { persistWalletMetadata } from '../persistent-storage/wallets'
 import { mnemonicBackedUp } from '../store/activeWalletSlice'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SecurityScreen'> {
@@ -48,7 +48,7 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
 
   const handleBackupConfirmation = useCallback(async () => {
     if (!isMnemonicBackedUp) {
-      await storePartialWalletMetadata(metadataId, { isMnemonicBackedUp: true })
+      await persistWalletMetadata(metadataId, { isMnemonicBackedUp: true })
       dispatch(mnemonicBackedUp())
     }
 

@@ -29,7 +29,7 @@ import SpinnerModal from '../../components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { enableBiometrics } from '../../storage/wallets'
+import { enableBiometrics } from '../../persistent-storage/wallets'
 import { biometricsEnabled } from '../../store/activeWalletSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>

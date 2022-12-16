@@ -48,7 +48,7 @@ export const generateAndStoreWallet = async (
     ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
     : await walletGenerateAsyncUnsafe(mnemonicToSeed)
 
-  const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
+  const metadataId = await persistWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
 
   return {
     name,
@@ -64,7 +64,7 @@ export const generateAndStoreWallet = async (
   }
 }
 
-const storeWallet = async (
+const persistWallet = async (
   walletName: string,
   mnemonic: Mnemonic,
   pin: string,
@@ -92,7 +92,7 @@ const storeWallet = async (
   await SecureStore.setItemAsync(`wallet-${walletId}`, encryptedWithPinMnemonic)
 
   await changeActiveWallet(walletId)
-  await storeWalletsMetadata(walletsMetadata)
+  await persistWalletsMetadata(walletsMetadata)
 
   return walletId
 }
@@ -107,7 +107,7 @@ export const enableBiometrics = async (walletId: string, mnemonic: Mnemonic) => 
     ...defaultBiometricsConfig,
     authenticationPrompt: 'Please authenticate to enable biometrics'
   })
-  await storePartialWalletMetadata(walletId, { authType: 'biometrics' })
+  await persistWalletMetadata(walletId, { authType: 'biometrics' })
 }
 
 export const disableBiometrics = async (walletId: string) => {
@@ -118,7 +118,7 @@ export const disableBiometrics = async (walletId: string) => {
     return
   }
 
-  await storePartialWalletMetadata(walletId, { authType: 'pin' })
+  await persistWalletMetadata(walletId, { authType: 'pin' })
   await deleteBiometricsEnabledMnemonic(walletId, name)
 }
 
@@ -168,7 +168,7 @@ export const deleteWalletById = async (id: string) => {
   const walletMetadata = walletsMetadata[index]
 
   walletsMetadata.splice(index, 1)
-  await storeWalletsMetadata(walletsMetadata)
+  await persistWalletsMetadata(walletsMetadata)
 
   const activeWalletId = await AsyncStorage.getItem('active-wallet-id')
   if (activeWalletId === id) {
@@ -219,7 +219,7 @@ const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
   return metadata
 }
 
-export const storePartialWalletMetadata = async (id: string, partialMetadata: Partial<WalletMetadata>) => {
+export const persistWalletMetadata = async (id: string, partialMetadata: Partial<WalletMetadata>) => {
   const walletsMetadata = await getWalletsMetadata()
   const index = walletsMetadata.findIndex((wallet: WalletMetadata) => wallet.id === id)
 
@@ -228,10 +228,10 @@ export const storePartialWalletMetadata = async (id: string, partialMetadata: Pa
   const updatedWalletMetadata = { ...walletsMetadata[index], ...partialMetadata }
   walletsMetadata.splice(index, 1, updatedWalletMetadata)
 
-  await storeWalletsMetadata(walletsMetadata)
+  await persistWalletsMetadata(walletsMetadata)
 }
 
-export const storeAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadata[]) => {
+export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadata[]) => {
   const walletsMetadata = await getWalletsMetadata()
   const walletIndex = walletsMetadata.findIndex((wallet: WalletMetadata) => wallet.id === walletId)
 
@@ -252,7 +252,7 @@ export const storeAddressesMetadata = async (walletId: string, addressesMetadata
   }
 
   walletsMetadata.splice(walletIndex, 1, walletMetadata)
-  await storeWalletsMetadata(walletsMetadata)
+  await persistWalletsMetadata(walletsMetadata)
 }
 
 export const getAddressesMetadataByWalletId = async (id: string): Promise<AddressMetadata[]> => {
@@ -272,7 +272,7 @@ export const changeActiveWallet = async (walletId: string) => {
   await AsyncStorage.setItem('active-wallet-id', walletId)
 }
 
-const storeWalletsMetadata = async (walletsMetadata: WalletMetadata[]) => {
+const persistWalletsMetadata = async (walletsMetadata: WalletMetadata[]) => {
   console.log('💽 Updating wallets-metadata')
   await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
 }

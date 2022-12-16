@@ -25,7 +25,7 @@ import {
   disableBiometrics,
   getActiveWalletMetadata,
   getStoredActiveWallet
-} from '../storage/wallets'
+} from '../persistent-storage/wallets'
 import { appBecameInactive } from '../store/actions'
 import { biometricsDisabled } from '../store/activeWalletSlice'
 import { navigateRootStack, useRestoreNavigationState } from '../utils/navigation'

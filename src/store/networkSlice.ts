@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { defaultNetwork, defaultNetworkSettings, networkPresetSettings } from '../storage/settings'
+import { defaultNetwork, defaultNetworkSettings, networkPresetSettings } from '../persistent-storage/settings'
 import { NetworkName, NetworkPreset, NetworkStatus } from '../types/network'
 import { NetworkSettings } from '../types/settings'
 import { getNetworkName } from '../utils/settings'

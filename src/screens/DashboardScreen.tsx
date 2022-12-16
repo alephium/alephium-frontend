@@ -31,7 +31,7 @@ import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHead
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { deleteAllWallets } from '../storage/wallets'
+import { deleteAllWallets } from '../persistent-storage/wallets'
 import { appReset } from '../store/actions'
 import { fetchAddressesData, selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'

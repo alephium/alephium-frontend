@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { selectDefaultAddress } from '../../store/addressesSlice'
 import { AddressPartial } from '../../types/addresses'
-import { storeAddressesSettings } from '../../utils/addresses'
+import { persistAddressesSettings } from '../../utils/addresses'
 import { useAppSelector } from '../redux'
 
 const usePersistAddressSettings = () => {
@@ -26,7 +26,7 @@ const usePersistAddressSettings = () => {
   const activeWalletId = useAppSelector((state) => state.activeWallet.metadataId)
 
   return async (addresses: AddressPartial[] | AddressPartial) => {
-    await storeAddressesSettings(Array.isArray(addresses) ? addresses : [addresses], activeWalletId, defaultAddress)
+    await persistAddressesSettings(Array.isArray(addresses) ? addresses : [addresses], activeWalletId, defaultAddress)
   }
 }
 

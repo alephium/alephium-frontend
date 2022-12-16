@@ -30,7 +30,7 @@ import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Scre
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { networkPresetSettings, storeSettings } from '../storage/settings'
+import { networkPresetSettings, persistSettings } from '../persistent-storage/settings'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '../store/networkSlice'
 import { NetworkName, NetworkPreset } from '../types/network'
 import { NetworkSettings } from '../types/settings'
@@ -55,7 +55,7 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
     if (newNetworkName === NetworkName.custom) {
       setShowCustomNetworkForm(true)
     } else {
-      await storeSettings('network', networkPresetSettings[newNetworkName])
+      await persistSettings('network', networkPresetSettings[newNetworkName])
       dispatch(networkPresetSwitched(newNetworkName))
 
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
@@ -63,7 +63,7 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
   }
 
   const saveCustomNetwork = async (formData: NetworkSettings) => {
-    await storeSettings('network', formData)
+    await persistSettings('network', formData)
     dispatch(customNetworkSettingsSaved(formData))
 
     navigation.goBack()

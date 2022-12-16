@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useEffect } from 'react'
 
-import { loadSettings } from '../storage/settings'
+import { loadSettings } from '../persistent-storage/settings'
 import { storedNetworkSettingsLoaded } from '../store/networkSlice'
 import { storedGeneralSettingsLoaded } from '../store/settingsSlice'
 import { GeneralSettings, NetworkSettings } from '../types/settings'

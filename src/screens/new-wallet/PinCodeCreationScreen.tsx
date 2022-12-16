@@ -27,7 +27,7 @@ import CenteredInstructions, { Instruction } from '../../components/text/Centere
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { generateAndStoreWallet } from '../../storage/wallets'
+import { generateAndStoreWallet } from '../../persistent-storage/wallets'
 import { newWalletGenerated } from '../../store/activeWalletSlice'
 import { fetchAddressesData } from '../../store/addressesSlice'
 import { newPinVerified } from '../../store/credentialsSlice'
