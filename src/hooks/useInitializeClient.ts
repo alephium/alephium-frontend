@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useCallback, useEffect } from 'react'
 
 import client from '../api/client'
-import { syncAddressesData, selectAllAddresses } from '../store/addressesSlice'
+import { selectAllAddresses, syncAddressesData } from '../store/addressesSlice'
 import { apiClientInitFailed, apiClientInitSucceeded } from '../store/networkSlice'
 import { useAppDispatch, useAppSelector } from './redux'
 import useInterval from './useInterval'
