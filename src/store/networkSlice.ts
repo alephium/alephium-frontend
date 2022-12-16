@@ -16,14 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { defaultNetwork, defaultNetworkSettings, networkPresetSettings, storeSettings } from '../storage/settings'
+import { defaultNetwork, defaultNetworkSettings, networkPresetSettings } from '../storage/settings'
 import { NetworkName, NetworkPreset, NetworkStatus } from '../types/network'
 import { NetworkSettings } from '../types/settings'
 import { getNetworkName } from '../utils/settings'
 import { appReset } from './actions'
-import { RootState } from './store'
 
 const sliceName = 'network'
 
@@ -83,17 +82,5 @@ export const {
   apiClientInitSucceeded,
   apiClientInitFailed
 } = networkSlice.actions
-
-export const networkListenerMiddleware = createListenerMiddleware()
-
-// When the network settings change, store them in persistent storage
-networkListenerMiddleware.startListening({
-  matcher: isAnyOf(networkPresetSwitched, storedNetworkSettingsLoaded),
-  effect: async (_, { getState }) => {
-    const state = getState() as RootState
-
-    await storeSettings('network', state[sliceName].settings)
-  }
-})
 
 export default networkSlice

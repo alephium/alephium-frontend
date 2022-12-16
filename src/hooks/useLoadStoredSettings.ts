@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useEffect } from 'react'
 
 import { loadSettings } from '../storage/settings'
-import { addressesFlushed, initializeAddressesFromStoredMetadata } from '../store/addressesSlice'
 import { storedNetworkSettingsLoaded } from '../store/networkSlice'
 import { storedGeneralSettingsLoaded } from '../store/settingsSlice'
 import { GeneralSettings, NetworkSettings } from '../types/settings'
@@ -35,10 +34,6 @@ const useLoadStoredSettings = () => {
 
       const networkSettings = (await loadSettings('network')) as NetworkSettings
       dispatch(storedNetworkSettingsLoaded(networkSettings))
-
-      // TODO: Update data instead of flushing and re-initializing
-      dispatch(addressesFlushed())
-      dispatch(initializeAddressesFromStoredMetadata())
     }
 
     loadStoredSettingsIntoState()

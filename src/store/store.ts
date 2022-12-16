@@ -23,7 +23,7 @@ import addressDiscoverySlice from './addressDiscoverySlice'
 import addressesSlice from './addressesSlice'
 import appMetadataSlice from './appMetadataSlice'
 import credentialsSlice from './credentialsSlice'
-import networkSlice, { networkListenerMiddleware } from './networkSlice'
+import networkSlice from './networkSlice'
 import priceSlice from './priceSlice'
 import settingsSlice, { settingsListenerMiddleware } from './settingsSlice'
 import tokenMetadataSlice from './tokenMetadataSlice'
@@ -42,8 +42,7 @@ export const store = configureStore({
     tokenMetadata: tokenMetadataSlice.reducer,
     addressDiscovery: addressDiscoverySlice.reducer
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().prepend(networkListenerMiddleware.middleware).prepend(settingsListenerMiddleware.middleware)
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(settingsListenerMiddleware.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>

@@ -62,13 +62,7 @@ export const settingsListenerMiddleware = createListenerMiddleware()
 
 // When the settings change, store them in persistent storage
 settingsListenerMiddleware.startListening({
-  matcher: isAnyOf(
-    storedGeneralSettingsLoaded,
-    themeChanged,
-    discreetModeToggled,
-    passwordRequirementToggled,
-    currencySelected
-  ),
+  matcher: isAnyOf(themeChanged, discreetModeToggled, passwordRequirementToggled, currencySelected),
   effect: async (_, { getState }) => {
     const state = getState() as RootState
 
