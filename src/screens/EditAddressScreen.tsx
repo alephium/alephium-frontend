@@ -20,9 +20,10 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 
 import SpinnerModal from '../components/SpinnerModal'
+import usePersistAddressSettings from '../hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { updateAddressSettings, selectAddressByHash } from '../store/addressesSlice'
+import { addressSettingsSaved, selectAddressByHash } from '../store/addressesSlice'
 import { AddressSettings } from '../types/addresses'
 import AddressFormScreen from './AddressFormScreen'
 
@@ -36,27 +37,31 @@ const EditAddressScreen = ({
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
+  const persistAddressSettings = usePersistAddressSettings()
+
   const [loading, setLoading] = useState(false)
 
   if (!address) return null
 
-  const initialValues = { ...address.settings, group: address.group }
-
   const handleSavePress = async (settings: AddressSettings) => {
-    setLoading(true)
-    await dispatch(updateAddressSettings({ address, settings }))
-    setLoading(false)
+    if (address.settings.isMain && !settings.isMain) return
 
+    setLoading(true)
+
+    await persistAddressSettings({ ...address, settings })
+    dispatch(addressSettingsSaved({ ...address, settings }))
+
+    setLoading(false)
     navigation.goBack()
   }
 
   return (
     <>
       <AddressFormScreen
-        initialValues={initialValues}
+        initialValues={address.settings}
         onSubmit={handleSavePress}
         buttonText="Save"
-        disableIsMainToggle={initialValues.isMain}
+        disableIsMainToggle={address.settings.isMain}
       />
       <SpinnerModal isActive={loading} text="Saving address..." />
     </>

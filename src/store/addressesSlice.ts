@@ -28,11 +28,9 @@ import {
 } from '@reduxjs/toolkit'
 
 import client from '../api/client'
-import { deriveAddressesFromStoredMetadata } from '../storage/wallets'
-import { Address, AddressHash, AddressPartial, AddressSettings } from '../types/addresses'
+import { Address, AddressHash, AddressPartial } from '../types/addresses'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
-import { storeAddressSettings } from '../utils/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
 import { appReset } from './actions'
@@ -110,62 +108,6 @@ export const fetchAddressesTransactionsNextPage = createAsyncThunk(
   }
 )
 
-export const initializeAddressesFromStoredMetadata = createAsyncThunk(
-  `${sliceName}/initializeAddressesFromStoredMetadata`,
-  async (_, { getState, dispatch, rejectWithValue }) => {
-    const state = getState() as RootState
-
-    const { metadataId, mnemonic } = state.activeWallet
-
-    if (metadataId && mnemonic) {
-      dispatch(loadingStarted())
-
-      const addresses = await deriveAddressesFromStoredMetadata(metadataId, mnemonic)
-
-      dispatch(addressesAdded(addresses))
-      await dispatch(fetchAddressesData(addresses.map((address) => address.hash)))
-
-      dispatch(loadingFinished())
-    } else {
-      rejectWithValue('Could not restore addresses from metadata')
-    }
-  }
-)
-
-export const newAddressesStoredAndInitialized = createAsyncThunk(
-  `${sliceName}/newAddressesStoredAndInitialized`,
-  async (payload: AddressPartial[], { getState, dispatch }) => {
-    const newAddresses = payload
-    const state = getState() as RootState
-    const { metadataId } = state.activeWallet
-    const oldDefaultAddress = selectDefaultAddress(state)
-
-    for (const newAddress of newAddresses) {
-      await storeAddressSettings(newAddress, newAddress.settings, metadataId, oldDefaultAddress)
-    }
-
-    dispatch(addressesAdded(newAddresses))
-    await dispatch(fetchAddressesData(newAddresses.map((address) => address.hash)))
-  }
-)
-
-export const updateAddressSettings = createAsyncThunk(
-  `${sliceName}/updateAddressSettings`,
-  async (payload: { address: Address; settings: AddressSettings }, { getState }) => {
-    const { address, settings } = payload
-    const state = getState() as RootState
-    const { metadataId } = state.activeWallet
-    const oldDefaultAddress = selectDefaultAddress(state)
-
-    await storeAddressSettings(address, settings, metadataId, oldDefaultAddress)
-
-    return {
-      address,
-      settings
-    }
-  }
-)
-
 const getInitialAddressState = (addressData: AddressPartial) => ({
   ...addressData,
   settings: addressData.settings || {
@@ -231,13 +173,40 @@ const addressesSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    addressesAdded: (state, action: PayloadAction<AddressPartial[]>) => {
+    addressesImported: (state, action: PayloadAction<AddressPartial[]>) => {
       const addresses = action.payload
 
       const newDefaultAddress = addresses.find((address) => address.settings?.isMain)
       if (newDefaultAddress) updateOldDefaultAddress(state)
 
       addressesAdapter.addMany(state, addresses.map(getInitialAddressState))
+    },
+    newAddressGenerated: (state, action: PayloadAction<AddressPartial>) => {
+      const address = action.payload
+
+      if (address.settings.isMain) updateOldDefaultAddress(state)
+
+      addressesAdapter.addOne(state, getInitialAddressState(address))
+    },
+    defaultAddressChanged: (state, action: PayloadAction<Address>) => {
+      const address = action.payload
+
+      updateOldDefaultAddress(state)
+
+      addressesAdapter.updateOne(state, {
+        id: address.hash,
+        changes: { settings: { ...address.settings, isMain: true } }
+      })
+    },
+    addressSettingsSaved: (state, action: PayloadAction<AddressPartial>) => {
+      const address = action.payload
+
+      if (address.settings.isMain) updateOldDefaultAddress(state)
+
+      addressesAdapter.updateOne(state, {
+        id: address.hash,
+        changes: { settings: address.settings }
+      })
     },
     addPendingTransactionToAddress: (state, action: PayloadAction<PendingTransaction>) => {
       const pendingTransaction = action.payload
@@ -247,14 +216,8 @@ const addressesSlice = createSlice({
 
       address.networkData.transactions.pending.push(pendingTransaction)
     },
-    addressesFlushed: (state) => {
-      addressesAdapter.setAll(state, [])
-    },
     loadingStarted: (state) => {
       state.loading = true
-    },
-    loadingFinished: (state) => {
-      state.loading = false
     }
   },
   extraReducers: (builder) => {
@@ -331,16 +294,6 @@ const addressesSlice = createSlice({
 
         state.loading = false
       })
-      .addCase(updateAddressSettings.fulfilled, (state, action) => {
-        const { address, settings } = action.payload
-
-        addressesAdapter.updateOne(state, {
-          id: address.hash,
-          changes: { settings }
-        })
-
-        if (settings.isMain) updateOldDefaultAddress(state)
-      })
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
       .addCase(appReset, () => initialState)
@@ -352,11 +305,6 @@ export const {
   selectAll: selectAllAddresses,
   selectIds: selectAddressIds
 } = addressesAdapter.getSelectors<RootState>((state) => state[sliceName])
-
-export const selectMultipleAddresses = createSelector(
-  [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
-  (addresses, addressHashes) => addresses.filter((address) => addressHashes.includes(address.hash))
-)
 
 export const selectConfirmedTransactions = createSelector(
   [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
@@ -413,7 +361,13 @@ export const selectDefaultAddress = createSelector(selectAllAddresses, (addresse
   addresses.find((address) => address.settings.isMain)
 )
 
-export const { addPendingTransactionToAddress, addressesAdded, addressesFlushed, loadingStarted, loadingFinished } =
-  addressesSlice.actions
+export const {
+  newAddressGenerated,
+  addPendingTransactionToAddress,
+  addressesImported,
+  defaultAddressChanged,
+  addressSettingsSaved,
+  loadingStarted
+} = addressesSlice.actions
 
 export default addressesSlice

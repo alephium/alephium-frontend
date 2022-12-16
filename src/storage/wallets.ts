@@ -231,24 +231,27 @@ export const storePartialWalletMetadata = async (id: string, partialMetadata: Pa
   await storeWalletsMetadata(walletsMetadata)
 }
 
-export const storeAddressMetadata = async (walletId: string, addressMetadata: AddressMetadata) => {
+export const storeAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadata[]) => {
   const walletsMetadata = await getWalletsMetadata()
   const walletIndex = walletsMetadata.findIndex((wallet: WalletMetadata) => wallet.id === walletId)
 
   if (walletIndex < 0) throw `Could not find wallet with ID ${walletId}`
 
   const walletMetadata = walletsMetadata[walletIndex]
-  const addressIndex = walletMetadata.addresses.findIndex((data) => data.index === addressMetadata.index)
 
-  if (addressIndex >= 0) {
-    walletMetadata.addresses.splice(addressIndex, 1, addressMetadata)
-  } else {
-    walletMetadata.addresses.push(addressMetadata)
+  for (const metadata of addressesMetadata) {
+    const addressIndex = walletMetadata.addresses.findIndex((data) => data.index === metadata.index)
+
+    if (addressIndex >= 0) {
+      walletMetadata.addresses.splice(addressIndex, 1, metadata)
+    } else {
+      walletMetadata.addresses.push(metadata)
+    }
+
+    console.log(`💽 Storing address index ${metadata.index} metadata in persistent storage`)
   }
 
   walletsMetadata.splice(walletIndex, 1, walletMetadata)
-
-  console.log(`💽 Storing address index ${addressMetadata.index} metadata in persistent storage`)
   await storeWalletsMetadata(walletsMetadata)
 }
 

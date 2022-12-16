@@ -20,8 +20,8 @@ import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-root-toast'
 
-import { storeAddressMetadata } from '../storage/wallets'
-import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial, AddressSettings } from '../types/addresses'
+import { storeAddressesMetadata } from '../storage/wallets'
+import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '../types/addresses'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
@@ -55,20 +55,18 @@ export const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
   return maxIndexBeforeFirstGap
 }
 
-export const storeAddressSettings = async (
-  address: AddressPartial,
-  settings: AddressSettings,
+export const storeAddressesSettings = async (
+  addresses: AddressPartial[],
   metadataId: string,
   oldDefaultAddress?: Address
 ) => {
-  await storeAddressMetadata(metadataId, { index: address.index, ...settings })
+  const addressesMetadata = addresses.map((address) => ({ index: address.index, ...address.settings }))
+  await storeAddressesMetadata(metadataId, addressesMetadata)
 
-  if (settings.isMain && oldDefaultAddress && oldDefaultAddress.hash !== address.hash) {
-    await storeAddressMetadata(metadataId, {
-      index: oldDefaultAddress.index,
-      ...oldDefaultAddress.settings,
-      isMain: false
-    })
+  const newDefaultAddress = addresses.find((address) => address.settings.isMain)
+  if (newDefaultAddress && oldDefaultAddress && oldDefaultAddress.hash !== newDefaultAddress.hash) {
+    const updatedOldDefaultAddress = { index: oldDefaultAddress.index, ...oldDefaultAddress.settings, isMain: false }
+    await storeAddressesMetadata(metadataId, [updatedOldDefaultAddress])
   }
 }
 

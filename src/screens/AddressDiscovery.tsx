@@ -31,6 +31,7 @@ import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Screen, { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
 import SpinnerModal from '../components/SpinnerModal'
+import usePersistAddressSettings from '../hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import {
@@ -38,7 +39,7 @@ import {
   discoverAddresses,
   selectAllDiscoveredAddresses
 } from '../store/addressDiscoverySlice'
-import { newAddressesStoredAndInitialized, selectAllAddresses } from '../store/addressesSlice'
+import { addressesImported, fetchAddressesData, selectAllAddresses } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 
@@ -50,6 +51,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
   const addresses = useAppSelector(selectAllAddresses)
   const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
   const { loading, status, progress } = useAppSelector((state) => state.addressDiscovery)
+  const persistAddressSettings = usePersistAddressSettings()
 
   const [addressSelections, setAddressSelections] = useState<Record<AddressHash, boolean>>({})
   const [importLoading, setImportLoading] = useState(false)
@@ -64,12 +66,14 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
   const importAddresses = async () => {
     setImportLoading(true)
 
-    const newAddresses = selectedAddressesToImport.map((address) => ({
+    const newAddresses = selectedAddressesToImport.map(({ balance, ...address }) => ({
       ...address,
       settings: { isMain: false, color: getRandomLabelColor() }
     }))
 
-    await dispatch(newAddressesStoredAndInitialized(newAddresses))
+    await persistAddressSettings(newAddresses)
+    dispatch(addressesImported(newAddresses))
+    await dispatch(fetchAddressesData(newAddresses.map((address) => address.hash)))
 
     navigation.navigate(isImporting ? 'NewWalletSuccessPage' : 'InWalletScreen')
 
