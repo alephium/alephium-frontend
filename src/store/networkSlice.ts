@@ -53,7 +53,7 @@ const networkSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    networkChanged: (_, action: PayloadAction<NetworkPreset>) => {
+    networkPresetSwitched: (_, action: PayloadAction<NetworkPreset>) => {
       const networkName = action.payload
 
       return {
@@ -63,7 +63,7 @@ const networkSlice = createSlice({
       }
     },
     storedNetworkSettingsLoaded: (_, action: PayloadAction<NetworkSettings>) => parseSettingsUpdate(action.payload),
-    customNetworkSettingsStored: (_, action: PayloadAction<NetworkSettings>) => parseSettingsUpdate(action.payload),
+    customNetworkSettingsSaved: (_, action: PayloadAction<NetworkSettings>) => parseSettingsUpdate(action.payload),
     apiClientInitSucceeded: (state) => {
       state.status = 'online'
     },
@@ -77,9 +77,9 @@ const networkSlice = createSlice({
 })
 
 export const {
-  networkChanged,
+  networkPresetSwitched,
   storedNetworkSettingsLoaded,
-  customNetworkSettingsStored,
+  customNetworkSettingsSaved,
   apiClientInitSucceeded,
   apiClientInitFailed
 } = networkSlice.actions
@@ -88,7 +88,7 @@ export const networkListenerMiddleware = createListenerMiddleware()
 
 // When the network settings change, store them in persistent storage
 networkListenerMiddleware.startListening({
-  matcher: isAnyOf(networkChanged, storedNetworkSettingsLoaded),
+  matcher: isAnyOf(networkPresetSwitched, storedNetworkSettingsLoaded),
   effect: async (_, { getState }) => {
     const state = getState() as RootState
 

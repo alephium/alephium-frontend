@@ -37,7 +37,7 @@ import { getRandomLabelColor } from '../utils/colors'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
 import { appReset } from './actions'
 import { newWalletGenerated, walletUnlocked } from './activeWalletSlice'
-import { customNetworkSettingsStored } from './networkSlice'
+import { customNetworkSettingsSaved, networkPresetSwitched } from './networkSlice'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -213,6 +213,20 @@ const updateOldDefaultAddress = (state: AddressesState) => {
   }
 }
 
+const clearAddressesNetworkData = (state: AddressesState) => {
+  const reinitializedAddresses = getAddresses(state).map(getInitialAddressState)
+
+  addressesAdapter.updateMany(
+    state,
+    reinitializedAddresses.map((address) => ({
+      id: address.hash,
+      changes: { networkData: address.networkData }
+    }))
+  )
+
+  state.status = 'uninitialized'
+}
+
 const addressesSlice = createSlice({
   name: sliceName,
   initialState,
@@ -327,19 +341,8 @@ const addressesSlice = createSlice({
 
         if (settings.isMain) updateOldDefaultAddress(state)
       })
-      .addCase(customNetworkSettingsStored, (state) => {
-        const reinitializedAddresses = getAddresses(state).map(getInitialAddressState)
-
-        addressesAdapter.updateMany(
-          state,
-          reinitializedAddresses.map((address) => ({
-            id: address.hash,
-            changes: { networkData: address.networkData }
-          }))
-        )
-
-        state.status = 'uninitialized'
-      })
+      .addCase(networkPresetSwitched, clearAddressesNetworkData)
+      .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
       .addCase(appReset, () => initialState)
   }
 })

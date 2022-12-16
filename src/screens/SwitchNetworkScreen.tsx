@@ -28,12 +28,10 @@ import Button from '../components/buttons/Button'
 import Input from '../components/inputs/Input'
 import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
-import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { storeSettings } from '../storage/settings'
-import { addressesFlushed, initializeAddressesFromStoredMetadata } from '../store/addressesSlice'
-import { customNetworkSettingsStored, networkChanged } from '../store/networkSlice'
+import { networkPresetSettings, storeSettings } from '../storage/settings'
+import { customNetworkSettingsSaved, networkPresetSwitched } from '../store/networkSlice'
 import { NetworkName, NetworkPreset } from '../types/network'
 import { NetworkSettings } from '../types/settings'
 
@@ -43,37 +41,31 @@ const networkNames = Object.values(NetworkName)
 
 const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
   const currentNetwork = useAppSelector((state) => state.network)
+  const { control, handleSubmit } = useForm<NetworkSettings>({
+    defaultValues: currentNetwork.settings
+  })
   const dispatch = useAppDispatch()
 
   const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetwork.name === NetworkName.custom)
   const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetwork.name)
-  const [loading, setLoading] = useState(false)
 
-  const { control, handleSubmit } = useForm<NetworkSettings>({
-    defaultValues: currentNetwork.settings
-  })
-
-  const handleNetworkItemPress = (newNetworkName: NetworkPreset | NetworkName.custom) => {
+  const handleNetworkItemPress = async (newNetworkName: NetworkPreset | NetworkName.custom) => {
     setSelectedNetworkName(newNetworkName)
 
-    if (newNetworkName !== NetworkName.custom) {
-      dispatch(networkChanged(newNetworkName))
-      // TODO: Update data instead of flushing and re-initializing
-      dispatch(addressesFlushed())
-      dispatch(initializeAddressesFromStoredMetadata())
-      if (showCustomNetworkForm) setShowCustomNetworkForm(false)
-    } else {
+    if (newNetworkName === NetworkName.custom) {
       setShowCustomNetworkForm(true)
+    } else {
+      await storeSettings('network', networkPresetSettings[newNetworkName])
+      dispatch(networkPresetSwitched(newNetworkName))
+
+      if (showCustomNetworkForm) setShowCustomNetworkForm(false)
     }
   }
 
   const saveCustomNetwork = async (formData: NetworkSettings) => {
-    setLoading(true)
-
     await storeSettings('network', formData)
-    dispatch(customNetworkSettingsStored(formData))
+    dispatch(customNetworkSettingsSaved(formData))
 
-    setLoading(false)
     navigation.goBack()
   }
 
@@ -103,6 +95,8 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
                     label="Node host"
+                    keyboardType="url"
+                    textContentType="URL"
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
@@ -117,6 +111,8 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
                     label="Explorer API host"
+                    keyboardType="url"
+                    textContentType="URL"
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
@@ -128,7 +124,15 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
               <Controller
                 name="explorerUrl"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <Input label="Explorer URL" value={value} onChangeText={onChange} onBlur={onBlur} isBottomRounded />
+                  <Input
+                    label="Explorer URL"
+                    keyboardType="url"
+                    textContentType="URL"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    isBottomRounded
+                  />
                 )}
                 control={control}
               />
@@ -137,7 +141,6 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
           </Animated.View>
         )}
       </ScrollView>
-      <SpinnerModal isActive={loading} />
     </>
   )
 }
