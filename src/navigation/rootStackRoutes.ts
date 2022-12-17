@@ -27,10 +27,11 @@ type RootStackParamList = {
   AddBiometricsScreen: undefined
   NewWalletSuccessPage: undefined
   ImportWalletSeedScreen: undefined
+  ImportWalletAddressDiscoveryScreen: undefined
   InWalletScreen: undefined
   LoginScreen: {
     walletIdToLogin?: string
-    resetNavigationOnLogin?: boolean
+    resetWalletOnLogin?: boolean
   }
   SplashScreen: undefined
   SwitchWalletScreen: undefined
@@ -55,6 +56,9 @@ type RootStackParamList = {
     addressHash: AddressHash
   }
   SecurityScreen: undefined
+  AddressDiscoveryScreen?: {
+    isImporting?: boolean
+  }
 }
 
 export default RootStackParamList

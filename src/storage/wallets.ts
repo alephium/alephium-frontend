@@ -24,6 +24,7 @@ import { nanoid } from 'nanoid'
 import { ActiveWalletState } from '../store/activeWalletSlice'
 import { AddressMetadata } from '../types/addresses'
 import { Mnemonic, WalletMetadata } from '../types/wallet'
+import { getRandomLabelColor } from '../utils/colors'
 import { pbkdf2 } from '../utils/crypto'
 
 const defaultBiometricsConfig = {
@@ -49,7 +50,8 @@ export const storeWallet = async (
     addresses: [
       {
         index: 0,
-        isMain: true
+        isMain: true,
+        color: getRandomLabelColor()
       }
     ]
   })

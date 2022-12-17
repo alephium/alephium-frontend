@@ -33,6 +33,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { getStoredWalletById, getWalletsMetadata } from '../storage/wallets'
 import { activeWalletChanged } from '../store/activeWalletSlice'
+import { addressesFlushed, addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
 import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
 import { WalletMetadata } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
@@ -64,14 +65,18 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
       if (storedWallet.authType === 'pin') {
         if (pin) {
           const decryptedWallet = await walletOpenAsyncUnsafe(pin, storedWallet.mnemonic, pbkdf2, mnemonicToSeed)
-          dispatch(activeWalletChanged({ ...storedWallet, mnemonic: decryptedWallet.mnemonic }))
+          await dispatch(activeWalletChanged({ ...storedWallet, mnemonic: decryptedWallet.mnemonic }))
+          dispatch(addressesFlushed())
+          dispatch(addressesFromStoredMetadataInitialized())
           restoreNavigationState(true)
         } else {
-          navigation.navigate('LoginScreen', { walletIdToLogin: walletId, resetNavigationOnLogin: true })
+          navigation.navigate('LoginScreen', { walletIdToLogin: walletId, resetWalletOnLogin: true })
         }
       } else if (storedWallet.authType === 'biometrics') {
-        dispatch(activeWalletChanged(storedWallet))
-        navigation.navigate('InWalletScreen')
+        await dispatch(activeWalletChanged(storedWallet))
+        dispatch(addressesFlushed())
+        dispatch(addressesFromStoredMetadataInitialized())
+        restoreNavigationState(true)
       }
     } catch (e) {
       Alert.alert(getHumanReadableError(e, 'Could not switch wallets'))

@@ -22,6 +22,7 @@ import { Alert, AppState, AppStateStatus } from 'react-native'
 
 import { areThereOtherWallets, getActiveWalletMetadata, getStoredActiveWallet } from '../storage/wallets'
 import { activeWalletChanged, biometricsToggled, walletFlushed } from '../store/activeWalletSlice'
+import { addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
 import { pinFlushed } from '../store/credentialsSlice'
 import { navigateRootStack, useRestoreNavigationState } from '../utils/navigation'
 import { useAppDispatch, useAppSelector } from './redux'
@@ -29,10 +30,11 @@ import { useAppDispatch, useAppSelector } from './redux'
 export const useAppStateChange = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
-  const [activeWallet, lastNavigationState, isQRCodeScannerOpen] = useAppSelector((s) => [
+  const [activeWallet, lastNavigationState, isQRCodeScannerOpen, addressesStatus] = useAppSelector((s) => [
     s.activeWallet,
     s.appMetadata.lastNavigationState,
-    s.appMetadata.isQRCodeScannerOpen
+    s.appMetadata.isQRCodeScannerOpen,
+    s.addresses.status
   ])
   const restoreNavigationState = useRestoreNavigationState()
 
@@ -67,6 +69,11 @@ export const useAppStateChange = () => {
 
       if (storedActiveWallet.authType === 'biometrics') {
         await dispatch(activeWalletChanged(storedActiveWallet))
+
+        if (addressesStatus === 'uninitialized') {
+          dispatch(addressesFromStoredMetadataInitialized())
+        }
+
         restoreNavigationState()
       }
       // TODO: Revisit error handling with proper error codes
@@ -80,7 +87,7 @@ export const useAppStateChange = () => {
         console.error(e)
       }
     }
-  }, [dispatch, lastNavigationState, restoreNavigationState])
+  }, [addressesStatus, dispatch, lastNavigationState, restoreNavigationState])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {

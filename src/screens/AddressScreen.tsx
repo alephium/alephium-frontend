@@ -31,7 +31,7 @@ import Screen, { ScreenSection } from '../components/layout/Screen'
 import QRCodeModal from '../components/QRCodeModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { mainAddressChanged, selectAddressByHash } from '../store/addressesSlice'
+import { addressSettingsUpdated, selectAddressByHash } from '../store/addressesSlice'
 import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressScreen'>
@@ -56,7 +56,7 @@ const AddressScreen = ({
   const makeAddressMain = async () => {
     if (address.settings.isMain) return
 
-    await dispatch(mainAddressChanged(address))
+    await dispatch(addressSettingsUpdated({ address, settings: { ...address.settings, isMain: true } }))
   }
 
   return (

@@ -37,17 +37,24 @@ export interface HighlightRowProps extends BorderOptions {
   subtitle?: string
   onPress?: () => void
   hasRightContent?: boolean
+  truncate?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const HighlightRow = ({ title, subtitle, children, onPress, style }: HighlightRowProps) => {
+const HighlightRow = ({ title, subtitle, children, onPress, truncate, style }: HighlightRowProps) => {
   const theme = useTheme()
 
   const componentContent = title ? (
     <>
       <LeftContent>
-        <AppText color={theme.font.secondary}>{title}</AppText>
-        {subtitle && <Subtitle>{subtitle}</Subtitle>}
+        <AppText color={theme.font.secondary} numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
+          {title}
+        </AppText>
+        {subtitle && (
+          <Subtitle numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
+            {subtitle}
+          </Subtitle>
+        )}
       </LeftContent>
       <RightContent>{children}</RightContent>
     </>

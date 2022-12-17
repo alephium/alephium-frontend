@@ -42,13 +42,13 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
 
-  const navigateToWelcomePage = () => navigation.navigate('NewWalletSuccessPage')
+  const navigateToAddressDiscoveryPage = () => navigation.navigate('ImportWalletAddressDiscoveryScreen')
 
   const enableBiometrics = async () => {
     setLoading(true)
 
     await dispatch(biometricsToggled({ enable: true }))
-    navigateToWelcomePage()
+    navigateToAddressDiscoveryPage()
 
     setLoading(false)
   }
@@ -62,7 +62,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
       <ActionsContainer>
         <ButtonStack>
           <Button title="Activate" type="primary" onPress={enableBiometrics} />
-          <Button title="Later" type="secondary" onPress={navigateToWelcomePage} />
+          <Button title="Later" type="secondary" onPress={navigateToAddressDiscoveryPage} />
         </ButtonStack>
       </ActionsContainer>
       <SpinnerModal isActive={loading} text="Enabling biometrics..." />

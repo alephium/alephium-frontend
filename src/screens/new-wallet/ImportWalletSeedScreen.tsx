@@ -49,7 +49,7 @@ type SelectedWord = {
   timestamp: Date
 }
 
-const enablePasteForDevelopment = false
+const enablePasteForDevelopment = true
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
@@ -144,7 +144,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       setLoading(false)
 
-      navigation.navigate('NewWalletSuccessPage')
+      navigation.navigate('ImportWalletAddressDiscoveryScreen')
     },
     [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, selectedWords, typedInput]
   )

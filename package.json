@@ -16,7 +16,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@alephium/sdk": "0.3.1-rc.1",
+    "@alephium/sdk": "0.4.0-rc.3",
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-navigation/bottom-tabs": "^6.3.2",
     "@react-navigation/native": "^6.0.10",
@@ -28,6 +28,7 @@
     "dayjs": "^1.11.2",
     "expo": "^46.0.0",
     "expo-barcode-scanner": "~11.4.0",
+    "expo-checkbox": "~2.2.0",
     "expo-clipboard": "~3.1.0",
     "expo-dev-client": "~1.1.1",
     "expo-linear-gradient": "~11.4.0",
@@ -47,6 +48,7 @@
     "react-native-aes-crypto": "^2.1.0",
     "react-native-gesture-handler": "~2.5.0",
     "react-native-get-random-values": "~1.8.0",
+    "react-native-progress": "^5.0.0",
     "react-native-reanimated": "~2.9.1",
     "react-native-reanimated-carousel": "^3.0.4",
     "react-native-root-toast": "^3.4.0",

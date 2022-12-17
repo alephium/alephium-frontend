@@ -29,6 +29,7 @@ import { BottomModalScreenTitle, ScreenSection } from '../components/layout/Scre
 import RadioButtonRow from '../components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
+import { addressesFlushed, addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
 import { networkChanged, networkSettingsChanged } from '../store/networkSlice'
 import { NetworkName, NetworkPreset } from '../types/network'
 
@@ -51,6 +52,9 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
 
     if (newNetworkName !== NetworkName.custom) {
       dispatch(networkChanged(newNetworkName))
+      // TODO: Update data instead of flushing and re-initializing
+      dispatch(addressesFlushed())
+      dispatch(addressesFromStoredMetadataInitialized())
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
     } else {
       setShowCustomNetworkForm(true)
@@ -65,6 +69,9 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
         explorerUrl
       })
     )
+    // TODO: Update data instead of flushing and re-initializing
+    dispatch(addressesFlushed())
+    dispatch(addressesFromStoredMetadataInitialized())
 
     navigation.goBack()
   }

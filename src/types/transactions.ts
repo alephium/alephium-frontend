@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Transaction } from '@alephium/sdk/api/explorer'
 
-import { Address } from '../store/addressesSlice'
+import { Address } from './addresses'
 
 export type PendingTransaction = {
   hash: string

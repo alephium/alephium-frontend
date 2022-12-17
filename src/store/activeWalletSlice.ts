@@ -26,8 +26,11 @@ import {
   storePartialWalletMetadata,
   storeWallet
 } from '../storage/wallets'
+import { AddressPartial } from '../types/addresses'
 import { Mnemonic, StoredWalletAuthType } from '../types/wallet'
+import { getRandomLabelColor } from '../utils/colors'
 import { mnemonicToSeed } from '../utils/crypto'
+import { addressesAdded, addressesDataFetched, addressesFlushed } from './addressesSlice'
 import { RootState } from './store'
 import { loadingFinished, loadingStarted } from './walletGenerationSlice'
 
@@ -57,30 +60,51 @@ export const walletGeneratedAndStoredWithPin = createAsyncThunk(
       mnemonicToImport?: ActiveWalletState['mnemonic']
       pin: string
     },
-    { dispatch }
+    { dispatch, rejectWithValue }
   ) => {
     dispatch(loadingStarted())
 
     const { name, pin, mnemonicToImport } = payload
 
-    if (!name) throw 'Could not store wallet, wallet name is not set'
+    if (!name) return rejectWithValue('Could not store wallet, wallet name is not set')
 
-    const wallet = mnemonicToImport
-      ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
-      : await walletGenerateAsyncUnsafe(mnemonicToSeed)
+    try {
+      const wallet = mnemonicToImport
+        ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
+        : await walletGenerateAsyncUnsafe(mnemonicToSeed)
+      const isMnemonicBackedUp = !!mnemonicToImport
+      const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
 
-    const isMnemonicBackedUp = !!mnemonicToImport
-    const metadataId = await storeWallet(name, wallet.mnemonic, pin, isMnemonicBackedUp)
+      const firstAddress: AddressPartial = {
+        index: 0,
+        hash: wallet.address,
+        publicKey: wallet.publicKey,
+        privateKey: wallet.privateKey,
+        settings: {
+          isMain: true,
+          color: getRandomLabelColor()
+        }
+      }
 
-    dispatch(loadingFinished())
+      dispatch(addressesFlushed())
+      dispatch(addressesAdded([firstAddress]))
+      dispatch(addressesDataFetched([firstAddress.hash]))
 
-    return {
-      name,
-      mnemonic: wallet.mnemonic,
-      authType: 'pin',
-      metadataId,
-      isMnemonicBackedUp
-    } as ActiveWalletState
+      dispatch(loadingFinished())
+
+      return {
+        name,
+        mnemonic: wallet.mnemonic,
+        authType: 'pin',
+        metadataId,
+        isMnemonicBackedUp
+      } as ActiveWalletState
+    } catch (e) {
+      console.error(e)
+      dispatch(loadingFinished())
+
+      return rejectWithValue('Could not generate wallet')
+    }
   }
 )
 

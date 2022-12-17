@@ -20,7 +20,7 @@ import { Star as StarIcon } from 'lucide-react-native'
 import { StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { Address } from '../store/addressesSlice'
+import { Address } from '../types/addresses'
 import AppText from './AppText'
 
 interface AddressBadgeProps {

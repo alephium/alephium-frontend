@@ -33,7 +33,7 @@ import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../storage/wallets'
 import { walletFlushed } from '../store/activeWalletSlice'
-import { fetchAddressesData, selectAddressIds } from '../store/addressesSlice'
+import { addressesDataFetched, selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
@@ -51,7 +51,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
 
   const refreshData = () => {
-    if (!isLoading) dispatch(fetchAddressesData(addressHashes))
+    if (!isLoading) dispatch(addressesDataFetched(addressHashes))
   }
 
   // TODO: Delete before release
