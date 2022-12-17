@@ -46,4 +46,7 @@ export interface CredentialsState {
   pin?: string
 }
 
-export type WalletUnlockedPayload = ActiveWalletState & CredentialsState & { addressesToInitialize?: AddressPartial[] }
+export type WalletUnlockedPayload = CredentialsState & {
+  wallet: ActiveWalletState
+  addressesToInitialize?: AddressPartial[]
+}

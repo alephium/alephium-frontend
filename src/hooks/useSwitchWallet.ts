@@ -31,7 +31,7 @@ const useSwitchWallet = () => {
       ? await deriveAddressesFromStoredMetadata(wallet.metadataId, wallet.mnemonic)
       : undefined
 
-    dispatch(walletUnlocked({ ...wallet, addressesToInitialize, pin }))
+    dispatch(walletUnlocked({ wallet, addressesToInitialize, pin }))
   }
 
   return switchWallet

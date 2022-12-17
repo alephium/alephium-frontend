@@ -58,17 +58,7 @@ const activeWalletSlice = createSlice({
       state.isMnemonicBackedUp = true
     },
     walletDeleted: resetState,
-    walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => {
-      const { name, mnemonic, metadataId, isMnemonicBackedUp, authType } = action.payload
-
-      return {
-        name,
-        mnemonic,
-        authType,
-        metadataId,
-        isMnemonicBackedUp
-      }
-    }
+    walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet
   },
   extraReducers: (builder) => {
     builder.addCase(appBecameInactive, resetState).addCase(appReset, resetState)
