@@ -52,9 +52,9 @@ export const useRestoreNavigationState = () => {
 
   const restoreNavigationState = useCallback(
     (reset?: boolean) => {
-      const resetNavigationState = reset || !lastNavigationState || !isNavStateRestorable(lastNavigationState)
+      const resetToInitial = reset || !lastNavigationState || !isNavStateRestorable(lastNavigationState)
 
-      rootStackNavigationRef.resetRoot(resetNavigationState ? initialNavigationState : lastNavigationState)
+      rootStackNavigationRef.resetRoot(resetToInitial ? initialNavigationState : lastNavigationState)
     },
     [lastNavigationState]
   )

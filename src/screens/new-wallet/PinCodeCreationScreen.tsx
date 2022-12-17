@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import PinCodeInput from '../../components/inputs/PinCodeInput'
 import Screen from '../../components/layout/Screen'
@@ -31,6 +31,7 @@ import { generateAndStoreWallet } from '../../persistent-storage/wallets'
 import { newWalletGenerated } from '../../store/activeWalletSlice'
 import { syncAddressesData } from '../../store/addressesSlice'
 import { newPinVerified } from '../../store/credentialsSlice'
+import { ShouldClearPin } from '../../types/misc'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
 
@@ -57,48 +58,44 @@ const errorInstructionSet: Instruction[] = [
 const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const hasAvailableBiometrics = useBiometrics()
-  const [pinCode, setPinCode] = useState('')
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const { method, walletName: name } = useAppSelector((state) => state.walletGeneration)
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState<Step>('enter-pin')
 
-  const isPinCodeFullyEntered = pinCode.length === pinLength
-
   useFocusEffect(
     useCallback(() => {
       setStep('enter-pin')
       setShownInstructions(firstInstructionSet)
-      setPinCode('')
     }, [])
   )
 
-  const handlePinCodeSet = useCallback(() => {
-    setChosenPinCode(pinCode)
+  const handlePinCodeSet = (pin: string): ShouldClearPin => {
+    setChosenPinCode(pin)
     setShownInstructions(secondInstructionSet)
-    setPinCode('')
     setStep('verify-pin')
-  }, [pinCode])
 
-  const handlePinCodeVerification = useCallback(async () => {
-    if (pinCode !== chosenPinCode) {
-      setPinCode('')
+    return true
+  }
+
+  const handlePinCodeVerification = async (pin: string): Promise<ShouldClearPin> => {
+    if (pin !== chosenPinCode) {
       setShownInstructions(errorInstructionSet)
-      return
+      return true
     }
 
-    dispatch(newPinVerified(pinCode))
+    dispatch(newPinVerified(pin))
 
     if (method === 'import') {
       navigation.navigate('ImportWalletSeedScreen')
-      return
+      return true
     }
 
     if (method === 'create') {
       setLoading(true)
 
-      const wallet = await generateAndStoreWallet(name, pinCode)
+      const wallet = await generateAndStoreWallet(name, pin)
       dispatch(newWalletGenerated(wallet))
       dispatch(syncAddressesData([wallet.firstAddress.hash]))
 
@@ -107,23 +104,16 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
       navigation.navigate(hasAvailableBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessPage')
     }
 
-    setPinCode('')
-  }, [chosenPinCode, dispatch, hasAvailableBiometrics, method, name, navigation, pinCode])
+    return true
+  }
 
-  useEffect(() => {
-    if (!isPinCodeFullyEntered) {
-      return
-    } else if (step === 'enter-pin') {
-      handlePinCodeSet()
-    } else if (step === 'verify-pin') {
-      handlePinCodeVerification()
-    }
-  }, [handlePinCodeSet, handlePinCodeVerification, isPinCodeFullyEntered, step])
+  const handleFullPinEntered = (pin: string) =>
+    step === 'enter-pin' ? handlePinCodeSet(pin) : step === 'verify-pin' ? handlePinCodeVerification(pin) : false
 
   return (
     <Screen>
       <CenteredInstructions instructions={shownInstructions} />
-      <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
+      <PinCodeInput pinLength={pinLength} onPinChange={handleFullPinEntered} />
       <SpinnerModal isActive={loading} text="Creating wallet..." />
     </Screen>
   )
