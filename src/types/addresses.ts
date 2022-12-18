@@ -49,7 +49,6 @@ export type Address = AddressKeyPair & {
       loadedPage: number
       allPagesLoaded: boolean
     }
-    availableBalance: string
     lastUsed: TimeInMs
     tokens: AddressToken[]
   }

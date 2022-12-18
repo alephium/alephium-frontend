@@ -86,3 +86,9 @@ export const initializeAddressDiscoveryGroupsData = (addresses: Address[]): Addr
 
   return groupsData
 }
+
+export const getAvailableBalance = (address: Address): bigint => {
+  const { balance, lockedBalance } = address.networkData.details
+
+  return BigInt(balance) - BigInt(lockedBalance)
+}

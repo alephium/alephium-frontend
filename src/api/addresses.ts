@@ -25,11 +25,6 @@ export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
   for (const addressHash of addressHashes) {
     console.log('⬇️ Fetching address details: ', addressHash)
     const { data } = await client.explorerClient.getAddressDetails(addressHash)
-    const availableBalance = data.balance
-      ? data.lockedBalance
-        ? (BigInt(data.balance) - BigInt(data.lockedBalance)).toString()
-        : data.balance
-      : undefined
 
     console.log('⬇️ Fetching 1st page of address confirmed transactions: ', addressHash)
     const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, 1)
@@ -49,7 +44,6 @@ export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
     results.push({
       hash: addressHash,
       details: data,
-      availableBalance: availableBalance,
       transactions,
       tokens
     })

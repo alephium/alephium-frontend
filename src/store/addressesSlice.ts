@@ -133,7 +133,6 @@ const getInitialAddressState = (addressData: AddressPartial) => ({
       loadedPage: 0,
       allPagesLoaded: false
     },
-    availableBalance: '0',
     // 🚨 Anti-pattern: implicit state duplication.
     // This value could be derived using a transactions selector.
     // Also, this value is never properly initialized.
@@ -255,7 +254,6 @@ const addressesSlice = createSlice({
             const networkData = addressState.networkData
             networkData.details = details
             networkData.tokens = tokens
-            if (availableBalance) networkData.availableBalance = availableBalance
 
             const newTxs = extractNewTransactions(transactions, networkData.transactions.confirmed)
 

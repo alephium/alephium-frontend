@@ -59,6 +59,7 @@ import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { addPendingTransactionToAddress, selectAddressByHash, selectDefaultAddress } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
+import { getAvailableBalance } from '../utils/addresses'
 import {
   validateIsAddressValid,
   validateIsNumericStringValid,
@@ -157,7 +158,7 @@ const SendScreen = ({
 
       setIsLoading(true)
       const amountInSet = convertAlphToSet(formData.amountInAlph)
-      const isSweep = amountInSet.toString() === fromAddress.networkData.availableBalance
+      const isSweep = amountInSet === getAvailableBalance(fromAddress)
 
       setAmount(amountInSet)
       setIsSweeping(isSweep)
@@ -203,13 +204,7 @@ const SendScreen = ({
         setIsLoading(false)
       }
     },
-    [
-      buildConsolidationTransactions,
-      fromAddress?.hash,
-      fromAddress?.networkData.availableBalance,
-      fromAddress?.publicKey,
-      isFormValid
-    ]
+    [buildConsolidationTransactions, fromAddress, isFormValid]
   )
 
   const sendTransaction = useCallback(async () => {
@@ -278,7 +273,7 @@ const SendScreen = ({
   const handleUseMaxAmountPress = useCallback(() => {
     if (!fromAddress) return
 
-    setValue('amountInAlph', convertSetToAlph(BigInt(fromAddress.networkData.availableBalance)))
+    setValue('amountInAlph', convertSetToAlph(getAvailableBalance(fromAddress)))
   }, [fromAddress, setValue])
 
   return (
