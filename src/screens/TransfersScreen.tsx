@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isTxMoveDuplicate } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 
 import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
@@ -25,12 +24,9 @@ import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHead
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import {
-  selectAddressIds,
-  selectConfirmedTransactions,
-  selectHaveAllPagesLoaded,
-  selectPendingTransactions
-} from '../store/addressesSlice'
+import { selectAddressIds, selectHaveAllPagesLoaded } from '../store/addressesSlice'
+import { selectAddressesConfirmedTransactions } from '../store/confirmedTransactionsSlice'
+import { selectAddressesPendingTransactions } from '../store/pendingTransactionsSlice'
 import { AddressHash } from '../types/addresses'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
@@ -42,19 +38,15 @@ const TransfersScreenHeader = (props: Partial<DefaultHeaderProps>) => (
 const TransfersScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const [confirmedTransactions, pendingTransactions, haveAllPagesLoaded] = useAppSelector((s) => [
-    selectConfirmedTransactions(s, addressHashes),
-    selectPendingTransactions(s, addressHashes),
+    selectAddressesConfirmedTransactions(s, addressHashes),
+    selectAddressesPendingTransactions(s, addressHashes),
     selectHaveAllPagesLoaded(s)
   ])
   const updateHeader = useInWalletTabScreenHeader(TransfersScreenHeader, navigation)
 
-  const confirmedTransactionRemovedMovedDuplicates = confirmedTransactions.filter(
-    (tx) => !isTxMoveDuplicate(tx, tx.address.hash, addressHashes)
-  )
-
   return (
     <InWalletTransactionsFlatList
-      confirmedTransactions={confirmedTransactionRemovedMovedDuplicates}
+      confirmedTransactions={confirmedTransactions}
       pendingTransactions={pendingTransactions}
       addressHashes={addressHashes}
       haveAllPagesLoaded={haveAllPagesLoaded}

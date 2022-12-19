@@ -38,7 +38,8 @@ import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash, selectAddressIds, selectDefaultAddress } from '../store/addressesSlice'
-import { selectConfirmedTransactions, selectPendingTransactions } from '../store/addressesSlice'
+import { selectAddressesConfirmedTransactions } from '../store/confirmedTransactionsSlice'
+import { selectAddressesPendingTransactions } from '../store/pendingTransactionsSlice'
 import { AddressHash } from '../types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'AddressesScreen'> {
@@ -52,30 +53,33 @@ const AddressesScreenHeader = (props: Partial<DefaultHeaderProps>) => (
 const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const [currentAddressHash, setCurrentAddressHash] = useState(defaultAddress?.hash ?? '')
+  const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
+  const [selectedAddress, selectedAddressConfirmedTransactions, selectedAddressPendingTransactions] = useAppSelector(
+    (s) => [
+      selectAddressByHash(s, selectedAddressHash),
+      selectAddressesConfirmedTransactions(s, [selectedAddressHash]),
+      selectAddressesPendingTransactions(s, [selectedAddressHash])
+    ]
+  )
+  const updateHeader = useInWalletTabScreenHeader(AddressesScreenHeader, navigation)
+  const theme = useTheme()
+
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
-  const theme = useTheme()
-  const updateHeader = useInWalletTabScreenHeader(AddressesScreenHeader, navigation)
-  const [currentAddress, confirmedTransactions, pendingTransactions] = useAppSelector((s) => [
-    selectAddressByHash(s, currentAddressHash),
-    selectConfirmedTransactions(s, [currentAddressHash]),
-    selectPendingTransactions(s, [currentAddressHash])
-  ])
 
   useFocusEffect(
     useCallback(() => {
-      if (currentAddressHash) setAreButtonsDisabled(false)
-    }, [currentAddressHash])
+      if (selectedAddressHash) setAreButtonsDisabled(false)
+    }, [selectedAddressHash])
   )
 
   useEffect(() => {
-    if (defaultAddress) setCurrentAddressHash(defaultAddress.hash)
+    if (defaultAddress) setSelectedAddressHash(defaultAddress.hash)
   }, [defaultAddress])
 
   const onAddressCardsScrollEnd = (index: number) => {
-    if (index < addressHashes.length) setCurrentAddressHash(addressHashes[index])
+    if (index < addressHashes.length) setSelectedAddressHash(addressHashes[index])
     setAreButtonsDisabled(false)
   }
 
@@ -87,16 +91,17 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     </View>
   )
 
-  if (!currentAddress) return null
+  if (!selectedAddress) return null
 
   return (
     <InWalletTransactionsFlatList
-      confirmedTransactions={confirmedTransactions}
-      pendingTransactions={pendingTransactions}
-      addressHashes={[currentAddressHash]}
-      haveAllPagesLoaded={currentAddress.networkData.transactions.allPagesLoaded}
+      confirmedTransactions={selectedAddressConfirmedTransactions}
+      pendingTransactions={selectedAddressPendingTransactions}
+      addressHashes={[selectedAddressHash]}
+      haveAllPagesLoaded={selectedAddress.allTransactionPagesLoaded}
       onScrollYChange={updateHeader}
       initialNumToRender={5}
+      showInternalInflows
       ListHeaderComponent={
         <>
           <Carousel
@@ -113,29 +118,29 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
               <Button
                 title="Send"
                 icon={<ArrowUp size={24} color={theme.font.contrast} />}
-                onPress={() => navigation.navigate('SendScreen', { addressHash: currentAddressHash })}
+                onPress={() => navigation.navigate('SendScreen', { addressHash: selectedAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Receive"
                 icon={<ArrowDown size={24} color={theme.font.contrast} />}
-                onPress={() => navigation.navigate('ReceiveScreen', { addressHash: currentAddressHash })}
+                onPress={() => navigation.navigate('ReceiveScreen', { addressHash: selectedAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Settings"
                 icon={<Settings2 size={24} color={theme.font.contrast} />}
-                onPress={() => navigation.navigate('EditAddressScreen', { addressHash: currentAddressHash })}
+                onPress={() => navigation.navigate('EditAddressScreen', { addressHash: selectedAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
             </ButtonsRowStyled>
           </ScreenSection>
-          {currentAddress && <AddressesTokensList addresses={[currentAddress]} />}
+          {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
           <QRCodeModal
-            addressHash={currentAddressHash}
+            addressHash={selectedAddressHash}
             isOpen={isQrCodeModalOpen}
             onClose={() => setIsQrCodeModalOpen(false)}
           />

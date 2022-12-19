@@ -41,14 +41,11 @@ export type AddressMetadata = AddressSettings & {
 export type Address = AddressKeyPair & {
   group: number
   settings: AddressSettings
+  transactions: (Transaction['hash'] | PendingTransaction['hash'])[]
+  transactionsPageLoaded: number
+  allTransactionPagesLoaded: boolean
   networkData: {
     details: AddressInfo
-    transactions: {
-      confirmed: Transaction[]
-      pending: PendingTransaction[]
-      loadedPage: number
-      allPagesLoaded: boolean
-    }
     lastUsed: TimeInMs
     tokens: AddressToken[]
   }

@@ -57,7 +57,7 @@ import ModalWithBackdrop from '../components/ModalWithBackdrop'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { addPendingTransactionToAddress, selectAddressByHash, selectDefaultAddress } from '../store/addressesSlice'
+import { selectAddressByHash, selectDefaultAddress, transactionSent } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { getAvailableBalance } from '../utils/addresses'
 import {
@@ -89,18 +89,6 @@ const SendScreen = ({
   const theme = useTheme()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
-  const [amount, setAmount] = useState(BigInt(0))
-  const [fees, setFees] = useState<bigint>(BigInt(0))
-  const [unsignedTxId, setUnsignedTxId] = useState('')
-  const [unsignedTransaction, setUnsignedTransaction] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [isConsolidateUTXOsModalVisible, setIsConsolidateUTXOsModalVisible] = useState(false)
-  const [consolidationRequired, setConsolidationRequired] = useState(false)
-  const [isSweeping, setIsSweeping] = useState(false)
-  const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<SweepAddressTransaction[]>([])
-  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
-  const dispatch = useAppDispatch()
-  const [txStep, setTxStep] = useState<TxStep>('build')
   const {
     control,
     watch,
@@ -118,6 +106,19 @@ const SendScreen = ({
   })
   const { fromAddressHash, toAddressHash, gasAmount, amountInAlph, gasPriceInAlph } = watch()
   const fromAddress = useAppSelector((state) => selectAddressByHash(state, fromAddressHash))
+  const dispatch = useAppDispatch()
+
+  const [amount, setAmount] = useState(BigInt(0))
+  const [fees, setFees] = useState<bigint>(BigInt(0))
+  const [unsignedTxId, setUnsignedTxId] = useState('')
+  const [unsignedTransaction, setUnsignedTransaction] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isConsolidateUTXOsModalVisible, setIsConsolidateUTXOsModalVisible] = useState(false)
+  const [consolidationRequired, setConsolidationRequired] = useState(false)
+  const [isSweeping, setIsSweeping] = useState(false)
+  const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<SweepAddressTransaction[]>([])
+  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
+  const [txStep, setTxStep] = useState<TxStep>('build')
 
   const isFormValid = isEmpty(errors)
   const totalAmount = amount + fees
@@ -207,53 +208,39 @@ const SendScreen = ({
     [buildConsolidationTransactions, fromAddress, isFormValid]
   )
 
-  const sendTransaction = useCallback(async () => {
+  const send = useCallback(async () => {
     if (!fromAddress?.hash) return
 
     setIsLoading(true)
 
     try {
-      if (isSweeping) {
-        for (const { txId, unsignedTx } of sweepUnsignedTxs) {
-          signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, txId, unsignedTx)
+      const unsignedTxs = isSweeping ? sweepUnsignedTxs : [{ txId: unsignedTxId, unsignedTx: unsignedTransaction }]
 
-          dispatch(
-            addPendingTransactionToAddress({
-              hash: txId,
-              fromAddress: fromAddressHash,
-              toAddress: consolidationRequired ? fromAddressHash : toAddressHash,
-              timestamp: new Date().getTime(),
-              amount: amount.toString(),
-              status: 'pending'
-            })
-          )
-        }
-      } else {
-        signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, unsignedTxId, unsignedTransaction)
-
+      for (const { txId, unsignedTx } of unsignedTxs) {
+        const data = await signAndSendTransaction(fromAddress, txId, unsignedTx)
         dispatch(
-          addPendingTransactionToAddress({
-            hash: unsignedTxId,
-            fromAddress: fromAddressHash,
-            toAddress: toAddressHash,
+          transactionSent({
+            hash: data.txId,
+            fromAddress: fromAddress.hash,
+            toAddress: consolidationRequired ? fromAddress.hash : toAddressHash,
             timestamp: new Date().getTime(),
             amount: amount.toString(),
             status: 'pending'
           })
         )
       }
+
       navigation.navigate('TransfersScreen')
     } catch (e) {
       Toast.show(getHumanReadableError(e, 'Could not send transaction'))
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }, [
     amount,
     consolidationRequired,
     dispatch,
-    fromAddress?.hash,
-    fromAddress?.privateKey,
-    fromAddressHash,
+    fromAddress,
     isSweeping,
     navigation,
     sweepUnsignedTxs,
@@ -266,9 +253,9 @@ const SendScreen = ({
     if (requiresAuth) {
       setIsAuthenticationModalVisible(true)
     } else {
-      sendTransaction()
+      send()
     }
-  }, [requiresAuth, sendTransaction])
+  }, [requiresAuth, send])
 
   const handleUseMaxAmountPress = useCallback(() => {
     if (!fromAddress) return
@@ -456,7 +443,7 @@ const SendScreen = ({
             </BottomScreenSection>
           </ConsolidationModalContent>
         </ModalWithBackdrop>
-        {isAuthenticationModalVisible && <ConfirmWithAuthModal onConfirm={sendTransaction} />}
+        {isAuthenticationModalVisible && <ConfirmWithAuthModal onConfirm={send} />}
       </ScrollView>
     </Screen>
   )

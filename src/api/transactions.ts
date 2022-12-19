@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '../types/addresses'
+import { Address, AddressHash } from '../types/addresses'
 import client from './client'
 
 export const buildSweepTransactions = async (fromHash: AddressHash, fromPublicKey: string, toHash: AddressHash) => {
@@ -29,14 +29,9 @@ export const buildSweepTransactions = async (fromHash: AddressHash, fromPublicKe
   }
 }
 
-export const signAndSendTransaction = async (
-  fromHash: AddressHash,
-  fromPrivateKey: string,
-  txId: string,
-  unsignedTx: string
-) => {
-  const signature = client.cliqueClient.transactionSign(txId, fromPrivateKey)
-  const { data } = await client.cliqueClient.transactionSend(fromHash, unsignedTx, signature)
+export const signAndSendTransaction = async (fromAddress: Address, txId: string, unsignedTx: string) => {
+  const signature = client.cliqueClient.transactionSign(txId, fromAddress.privateKey)
+  const { data } = await client.cliqueClient.transactionSend(fromAddress.hash, unsignedTx, signature)
 
   return data
 }

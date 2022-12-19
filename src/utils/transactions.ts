@@ -22,9 +22,11 @@ import { AddressPendingTransaction, AddressTransaction, PendingTransaction } fro
 
 export const extractNewTransactions = (
   incomingTransactions: Transaction[],
-  existingTransactions: Transaction[]
-): Transaction[] =>
-  incomingTransactions.filter((newTx) => !existingTransactions.some((existingTx) => existingTx.hash === newTx.hash))
+  existingTransactions: Transaction['hash'][]
+): Transaction['hash'][] =>
+  incomingTransactions
+    .filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
+    .map((tx) => tx.hash)
 
 export const extractRemainingPendingTransactions = (
   existingPendingTransactions: PendingTransaction[],

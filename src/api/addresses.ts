@@ -16,7 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '../types/addresses'
+import { Transaction } from '@alephium/sdk/api/explorer'
+
+import { Address, AddressHash } from '../types/addresses'
 import client from './client'
 
 export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
@@ -24,7 +26,7 @@ export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
 
   for (const addressHash of addressHashes) {
     console.log('⬇️ Fetching address details: ', addressHash)
-    const { data } = await client.explorerClient.getAddressDetails(addressHash)
+    const { data: details } = await client.explorerClient.getAddressDetails(addressHash)
 
     console.log('⬇️ Fetching 1st page of address confirmed transactions: ', addressHash)
     const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, 1)
@@ -43,11 +45,29 @@ export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
 
     results.push({
       hash: addressHash,
-      details: data,
+      details,
       transactions,
       tokens
     })
   }
 
   return results
+}
+
+export const fetchAddressTransactionsNextPage = async (address: Address) => {
+  let nextPage = address.transactionsPageLoaded
+  let nextPageTransactions = [] as Transaction[]
+
+  if (!address.allTransactionPagesLoaded) {
+    nextPage += 1
+    console.log(`⬇️ Fetching page ${nextPage} of address confirmed transactions: `, address.hash)
+    const { data: transactions } = await client.explorerClient.getAddressTransactions(address.hash, nextPage)
+    nextPageTransactions = transactions
+  }
+
+  return {
+    hash: address.hash,
+    transactions: nextPageTransactions,
+    page: nextPage
+  }
 }

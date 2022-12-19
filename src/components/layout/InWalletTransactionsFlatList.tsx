@@ -34,6 +34,7 @@ interface InWalletTransactionsFlatListProps extends Partial<FlatListProps<Addres
   addressHashes: AddressHash[]
   haveAllPagesLoaded: boolean
   onScrollYChange: (scrollY: number) => void
+  showInternalInflows?: boolean
 }
 
 type TransactionItem = {
@@ -50,6 +51,7 @@ const InWalletTransactionsFlatList = ({
   addressHashes,
   haveAllPagesLoaded,
   ListHeaderComponent,
+  showInternalInflows = false,
   ...props
 }: InWalletTransactionsFlatListProps) => {
   const theme = useTheme()
@@ -60,7 +62,13 @@ const InWalletTransactionsFlatList = ({
     renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
 
   const renderTransactionItem = ({ item: tx, index, isLast }: TransactionItem) => (
-    <TransactionRowStyled key={transactionKeyExtractor(tx)} tx={tx} isFirst={index === 0} isLast={isLast} />
+    <TransactionRowStyled
+      key={transactionKeyExtractor(tx)}
+      tx={tx}
+      isFirst={index === 0}
+      isLast={isLast}
+      showInternalInflows
+    />
   )
 
   const syncNextTransactionsPage = () => {

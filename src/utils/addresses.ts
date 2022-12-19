@@ -17,11 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
+import { Transaction } from '@alephium/sdk/api/explorer'
 import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-root-toast'
 
 import { persistAddressesMetadata } from '../persistent-storage/wallets'
 import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '../types/addresses'
+import { AddressTransaction, PendingTransaction } from '../types/transactions'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
@@ -91,4 +93,20 @@ export const getAvailableBalance = (address: Address): bigint => {
   const { balance, lockedBalance } = address.networkData.details
 
   return BigInt(balance) - BigInt(lockedBalance)
+}
+
+export const selectAddressTransactions = (
+  allAddresses: Address[],
+  transactions: (Transaction | PendingTransaction)[],
+  addressHashes: AddressHash[]
+) => {
+  const addresses = allAddresses.filter((address) => addressHashes.includes(address.hash))
+  const addressesTxs = addresses.flatMap((address) => address.transactions.map((txHash) => ({ txHash, address })))
+
+  return transactions.reduce((txs, tx) => {
+    const addressTx = addressesTxs.find(({ txHash }) => txHash === tx.hash)
+    if (addressTx) txs.push({ ...tx, address: addressTx.address })
+
+    return txs
+  }, [] as AddressTransaction[])
 }
