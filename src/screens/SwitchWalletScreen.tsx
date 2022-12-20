@@ -30,9 +30,9 @@ import Screen, { BottomModalScreenTitle, BottomScreenSection, ScreenSection } fr
 import RadioButtonRow from '../components/RadioButtonRow'
 import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import useSwitchWallet from '../hooks/useSwitchWallet'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { getStoredWalletById, getWalletsMetadata } from '../persistent-storage/wallets'
+import { getStoredWalletById, getWalletsMetadata, switchActiveWallet } from '../persistent-storage/wallets'
+import { activeWalletSwitched } from '../store/activeWalletSlice'
 import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
 import { WalletMetadata } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
@@ -48,7 +48,6 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   const theme = useTheme()
   const [activeWalletMetadataId, pin] = useAppSelector((s) => [s.activeWallet.metadataId, s.credentials.pin])
   const restoreNavigationState = useRestoreNavigationState()
-  const switchWallet = useSwitchWallet()
 
   const [loading, setLoading] = useState(false)
 
@@ -75,7 +74,9 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
       }
 
       const wallet = { ...storedWallet, mnemonic }
-      await switchWallet(wallet, true)
+
+      const uninitializedWalletAddresses = await switchActiveWallet(wallet)
+      dispatch(activeWalletSwitched({ wallet, addressesToInitialize: uninitializedWalletAddresses }))
 
       restoreNavigationState(true)
     } catch (e) {

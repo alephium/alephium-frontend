@@ -34,7 +34,7 @@ import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
 import { getRandomLabelColor } from '../utils/colors'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
-import { newWalletGenerated, walletUnlocked } from './activeWalletSlice'
+import { activeWalletSwitched, newWalletGenerated } from './activeWalletSlice'
 import { appReset } from './appSlice'
 import { customNetworkSettingsSaved, networkPresetSwitched } from './networkSlice'
 import { RootState } from './store'
@@ -220,7 +220,7 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(walletUnlocked, (state, action) => {
+      .addCase(activeWalletSwitched, (state, action) => {
         const { addressesToInitialize } = action.payload
 
         if (addressesToInitialize && addressesToInitialize.length > 0) {

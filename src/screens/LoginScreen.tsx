@@ -21,9 +21,10 @@ import { useCallback, useState } from 'react'
 
 import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import Screen from '../components/layout/Screen'
-import { useAppSelector } from '../hooks/redux'
-import useSwitchWallet from '../hooks/useSwitchWallet'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
+import { switchActiveWallet } from '../persistent-storage/wallets'
+import { activeWalletSwitched } from '../store/activeWalletSlice'
 import { ActiveWalletState } from '../types/wallet'
 import { useRestoreNavigationState } from '../utils/navigation'
 
@@ -37,7 +38,7 @@ const LoginScreen = ({
 }: ScreenProps) => {
   const restoreNavigationState = useRestoreNavigationState()
   const addressesStatus = useAppSelector((state) => state.addresses.status)
-  const switchWallet = useSwitchWallet()
+  const dispatch = useAppDispatch()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
@@ -48,11 +49,12 @@ const LoginScreen = ({
       setIsPinModalVisible(false)
 
       const requiresAddressInitialization = resetWalletOnLogin || addressesStatus === 'uninitialized'
-      await switchWallet(wallet, requiresAddressInitialization, pin)
+      const uninitializedWalletAddresses = await switchActiveWallet(wallet, requiresAddressInitialization)
+      dispatch(activeWalletSwitched({ wallet, addressesToInitialize: uninitializedWalletAddresses, pin }))
 
       restoreNavigationState(resetWalletOnLogin)
     },
-    [addressesStatus, resetWalletOnLogin, restoreNavigationState, switchWallet]
+    [addressesStatus, dispatch, resetWalletOnLogin, restoreNavigationState]
   )
 
   return (

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { ActiveWalletState, GeneratedWallet, WalletUnlockedPayload } from '../types/wallet'
+import { ActiveWalletState, GeneratedWallet, WalletSwitchedPayload } from '../types/wallet'
 import { appBecameInactive, appReset } from './appSlice'
 
 const sliceName = 'activeWallet'
@@ -58,7 +58,7 @@ const activeWalletSlice = createSlice({
       state.isMnemonicBackedUp = true
     },
     walletDeleted: resetState,
-    walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet
+    activeWalletSwitched: (_, action: PayloadAction<WalletSwitchedPayload>) => action.payload.wallet
   },
   extraReducers: (builder) => {
     builder.addCase(appBecameInactive, resetState).addCase(appReset, resetState)
@@ -71,7 +71,7 @@ export const {
   biometricsDisabled,
   mnemonicBackedUp,
   walletDeleted,
-  walletUnlocked
+  activeWalletSwitched
 } = activeWalletSlice.actions
 
 export default activeWalletSlice

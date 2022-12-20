@@ -272,6 +272,19 @@ export const changeActiveWallet = async (walletId: string) => {
   await AsyncStorage.setItem('active-wallet-id', walletId)
 }
 
+export const switchActiveWallet = async (
+  wallet: ActiveWalletState,
+  requiresAddressInitialization = true
+): Promise<AddressPartial[]> => {
+  await changeActiveWallet(wallet.metadataId)
+
+  const addressesToInitialize = requiresAddressInitialization
+    ? await deriveAddressesFromStoredMetadata(wallet.metadataId, wallet.mnemonic)
+    : []
+
+  return addressesToInitialize
+}
+
 const persistWalletsMetadata = async (walletsMetadata: WalletMetadata[]) => {
   console.log('💽 Updating wallets-metadata')
   await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
