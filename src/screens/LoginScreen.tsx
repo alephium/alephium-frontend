@@ -24,7 +24,7 @@ import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deriveWalletStoredAddresses, rememberActiveWallet } from '../persistent-storage/wallets'
-import { activeWalletSwitched } from '../store/activeWalletSlice'
+import { walletSwitched, walletUnlocked } from '../store/activeWalletSlice'
 import { AddressPartial } from '../types/addresses'
 import { ActiveWalletState } from '../types/wallet'
 import { useRestoreNavigationState } from '../utils/navigation'
@@ -55,17 +55,17 @@ const LoginScreen = ({
       if (workflow === 'wallet-switch') {
         addressesToInitialize = await deriveWalletStoredAddresses(wallet)
 
-        dispatch(activeWalletSwitched({ wallet, addressesToInitialize, pin }))
+        dispatch(walletSwitched({ wallet, addressesToInitialize, pin }))
         restoreNavigationState(true)
         return
       }
 
-      if (workflow === 'app-login') {
+      if (workflow === 'wallet-unlock') {
         if (addressesStatus === 'uninitialized') {
           addressesToInitialize = await deriveWalletStoredAddresses(wallet)
         }
 
-        dispatch(activeWalletSwitched({ wallet, addressesToInitialize, pin }))
+        dispatch(walletUnlocked({ wallet, addressesToInitialize, pin }))
         restoreNavigationState()
       }
     },

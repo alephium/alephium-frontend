@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { CredentialsState } from '../types/wallet'
-import { activeWalletSwitched } from './activeWalletSlice'
+import { walletSwitched, walletUnlocked } from './activeWalletSlice'
 import { appBecameInactive, appReset } from './appSlice'
 
 const sliceName = 'credentials'
@@ -42,10 +42,11 @@ const credentialsSlice = createSlice({
     builder
       .addCase(appBecameInactive, resetState)
       .addCase(appReset, resetState)
-      .addCase(activeWalletSwitched, (state, action) => {
-        const { pin } = action.payload
-
-        if (pin) state.pin = pin
+      .addCase(walletSwitched, (state, action) => {
+        if (action.payload.pin) state.pin = action.payload.pin
+      })
+      .addCase(walletUnlocked, (state, action) => {
+        if (action.payload.pin) state.pin = action.payload.pin
       })
   }
 })

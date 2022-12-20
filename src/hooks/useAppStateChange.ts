@@ -28,7 +28,7 @@ import {
   getStoredActiveWallet,
   rememberActiveWallet
 } from '../persistent-storage/wallets'
-import { activeWalletSwitched, biometricsDisabled } from '../store/activeWalletSlice'
+import { biometricsDisabled, walletUnlocked } from '../store/activeWalletSlice'
 import { appBecameInactive } from '../store/appSlice'
 import { navigateRootStack, useRestoreNavigationState } from '../utils/navigation'
 import { useAppDispatch, useAppSelector } from './redux'
@@ -70,7 +70,7 @@ export const useAppStateChange = () => {
       }
 
       if (wallet.authType === 'pin') {
-        navigateRootStack('LoginScreen', { walletIdToLogin: wallet.metadataId, workflow: 'app-login' })
+        navigateRootStack('LoginScreen', { walletIdToLogin: wallet.metadataId, workflow: 'wallet-unlock' })
         return
       }
 
@@ -79,7 +79,7 @@ export const useAppStateChange = () => {
 
         const addressesToInitialize =
           addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
-        dispatch(activeWalletSwitched({ wallet, addressesToInitialize }))
+        dispatch(walletUnlocked({ wallet, addressesToInitialize }))
 
         restoreNavigationState()
       }
