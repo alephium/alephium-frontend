@@ -31,7 +31,12 @@ import RadioButtonRow from '../components/RadioButtonRow'
 import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { getStoredWalletById, getWalletsMetadata, switchActiveWallet } from '../persistent-storage/wallets'
+import {
+  deriveWalletStoredAddresses,
+  getStoredWalletById,
+  getWalletsMetadata,
+  rememberActiveWallet
+} from '../persistent-storage/wallets'
 import { activeWalletSwitched } from '../store/activeWalletSlice'
 import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
 import { WalletMetadata } from '../types/wallet'
@@ -68,16 +73,15 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
           const decryptedWallet = await walletOpenAsyncUnsafe(pin, storedWallet.mnemonic, pbkdf2, mnemonicToSeed)
           mnemonic = decryptedWallet.mnemonic
         } else {
-          navigation.navigate('LoginScreen', { walletIdToLogin: walletId, resetWalletOnLogin: true })
+          navigation.navigate('LoginScreen', { walletIdToLogin: walletId, workflow: 'wallet-switch' })
           return
         }
       }
 
       const wallet = { ...storedWallet, mnemonic }
-
-      const uninitializedWalletAddresses = await switchActiveWallet(wallet)
-      dispatch(activeWalletSwitched({ wallet, addressesToInitialize: uninitializedWalletAddresses }))
-
+      await rememberActiveWallet(wallet.metadataId)
+      const addressesToInitialize = await deriveWalletStoredAddresses(wallet)
+      dispatch(activeWalletSwitched({ wallet, addressesToInitialize }))
       restoreNavigationState(true)
     } catch (e) {
       Alert.alert(getHumanReadableError(e, 'Could not switch wallets'))

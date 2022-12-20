@@ -31,7 +31,7 @@ type RootStackParamList = {
   InWalletScreen: undefined
   LoginScreen: {
     walletIdToLogin?: string
-    resetWalletOnLogin?: boolean
+    workflow: 'wallet-switch' | 'app-login'
   }
   SplashScreen: undefined
   SwitchWalletScreen: undefined

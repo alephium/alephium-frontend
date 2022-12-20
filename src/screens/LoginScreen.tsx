@@ -23,8 +23,9 @@ import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { switchActiveWallet } from '../persistent-storage/wallets'
+import { deriveWalletStoredAddresses, rememberActiveWallet } from '../persistent-storage/wallets'
 import { activeWalletSwitched } from '../store/activeWalletSlice'
+import { AddressPartial } from '../types/addresses'
 import { ActiveWalletState } from '../types/wallet'
 import { useRestoreNavigationState } from '../utils/navigation'
 
@@ -33,7 +34,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 const LoginScreen = ({
   navigation,
   route: {
-    params: { walletIdToLogin, resetWalletOnLogin }
+    params: { walletIdToLogin, workflow }
   }
 }: ScreenProps) => {
   const restoreNavigationState = useRestoreNavigationState()
@@ -47,14 +48,28 @@ const LoginScreen = ({
       if (!pin || !wallet) return
 
       setIsPinModalVisible(false)
+      let addressesToInitialize = [] as AddressPartial[]
 
-      const requiresAddressInitialization = resetWalletOnLogin || addressesStatus === 'uninitialized'
-      const uninitializedWalletAddresses = await switchActiveWallet(wallet, requiresAddressInitialization)
-      dispatch(activeWalletSwitched({ wallet, addressesToInitialize: uninitializedWalletAddresses, pin }))
+      await rememberActiveWallet(wallet.metadataId)
 
-      restoreNavigationState(resetWalletOnLogin)
+      if (workflow === 'wallet-switch') {
+        addressesToInitialize = await deriveWalletStoredAddresses(wallet)
+
+        dispatch(activeWalletSwitched({ wallet, addressesToInitialize, pin }))
+        restoreNavigationState(true)
+        return
+      }
+
+      if (workflow === 'app-login') {
+        if (addressesStatus === 'uninitialized') {
+          addressesToInitialize = await deriveWalletStoredAddresses(wallet)
+        }
+
+        dispatch(activeWalletSwitched({ wallet, addressesToInitialize, pin }))
+        restoreNavigationState()
+      }
     },
-    [addressesStatus, dispatch, resetWalletOnLogin, restoreNavigationState]
+    [addressesStatus, dispatch, restoreNavigationState, workflow]
   )
 
   return (

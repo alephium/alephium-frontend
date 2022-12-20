@@ -22,10 +22,11 @@ import { Alert, AppState, AppStateStatus } from 'react-native'
 
 import {
   areThereOtherWallets,
+  deriveWalletStoredAddresses,
   disableBiometrics,
   getActiveWalletMetadata,
   getStoredActiveWallet,
-  switchActiveWallet
+  rememberActiveWallet
 } from '../persistent-storage/wallets'
 import { activeWalletSwitched, biometricsDisabled } from '../store/activeWalletSlice'
 import { appBecameInactive } from '../store/appSlice'
@@ -69,14 +70,16 @@ export const useAppStateChange = () => {
       }
 
       if (wallet.authType === 'pin') {
-        navigateRootStack('LoginScreen', { walletIdToLogin: wallet.metadataId })
+        navigateRootStack('LoginScreen', { walletIdToLogin: wallet.metadataId, workflow: 'app-login' })
         return
       }
 
       if (wallet.authType === 'biometrics') {
-        const requiresAddressInitialization = addressesStatus === 'uninitialized'
-        const uninitializedWalletAddresses = await switchActiveWallet(wallet, requiresAddressInitialization)
-        dispatch(activeWalletSwitched({ wallet, addressesToInitialize: uninitializedWalletAddresses }))
+        await rememberActiveWallet(wallet.metadataId)
+
+        const addressesToInitialize =
+          addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
+        dispatch(activeWalletSwitched({ wallet, addressesToInitialize }))
 
         restoreNavigationState()
       }

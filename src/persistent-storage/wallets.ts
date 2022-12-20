@@ -91,7 +91,7 @@ const persistWallet = async (
   console.log(`💽 Storing pin-encrypted mnemonic of wallet with ID ${walletId}`)
   await SecureStore.setItemAsync(`wallet-${walletId}`, encryptedWithPinMnemonic)
 
-  await changeActiveWallet(walletId)
+  await rememberActiveWallet(walletId)
   await persistWalletsMetadata(walletsMetadata)
 
   return walletId
@@ -267,22 +267,9 @@ export const getWalletsMetadata = async (): Promise<WalletMetadata[]> => {
   return rawWalletsMetadata ? JSON.parse(rawWalletsMetadata) : []
 }
 
-export const changeActiveWallet = async (walletId: string) => {
+export const rememberActiveWallet = async (walletId: string) => {
   console.log(`💽 Updating active-wallet-id to ${walletId}`)
   await AsyncStorage.setItem('active-wallet-id', walletId)
-}
-
-export const switchActiveWallet = async (
-  wallet: ActiveWalletState,
-  requiresAddressInitialization = true
-): Promise<AddressPartial[]> => {
-  await changeActiveWallet(wallet.metadataId)
-
-  const addressesToInitialize = requiresAddressInitialization
-    ? await deriveAddressesFromStoredMetadata(wallet.metadataId, wallet.mnemonic)
-    : []
-
-  return addressesToInitialize
 }
 
 const persistWalletsMetadata = async (walletsMetadata: WalletMetadata[]) => {
@@ -298,9 +285,9 @@ const deleteBiometricsEnabledMnemonic = async (id: string, name: string) => {
   })
 }
 
-export const deriveAddressesFromStoredMetadata = async (id: string, mnemonic: Mnemonic): Promise<AddressPartial[]> => {
-  const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
-  const addressesMetadata = await getAddressesMetadataByWalletId(id)
+export const deriveWalletStoredAddresses = async (wallet: ActiveWalletState): Promise<AddressPartial[]> => {
+  const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, wallet.mnemonic)
+  const addressesMetadata = await getAddressesMetadataByWalletId(wallet.metadataId)
 
   console.log(`👀 Found ${addressesMetadata.length} addresses metadata in persistent storage`)
 
