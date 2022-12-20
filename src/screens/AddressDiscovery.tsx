@@ -147,7 +147,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
                 isTopRounded={index === 0}
                 isBottomRounded={index === addresses.length - 1}
               >
-                <Amount value={BigInt(address.networkData.details.balance)} fadeDecimals bold />
+                <Amount value={BigInt(address.balance)} fadeDecimals bold />
               </HighlightRow>
             ))}
           </ScreenSection>

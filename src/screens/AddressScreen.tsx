@@ -100,14 +100,14 @@ const AddressScreen = ({
             <HighlightRow hasBottomBorder>
               <Label>Number of transactions</Label>
               <View>
-                <NumberOfTxs>{address.networkData.details.txNumber}</NumberOfTxs>
+                <NumberOfTxs>{address.txNumber}</NumberOfTxs>
               </View>
             </HighlightRow>
             <HighlightRow hasBottomBorder>
               <Label>Locked ALPH balance</Label>
               <View>
                 <Badge border light>
-                  <Amount value={BigInt(address.networkData.details.lockedBalance)} fadeDecimals />
+                  <Amount value={BigInt(address.lockedBalance)} fadeDecimals />
                 </Badge>
               </View>
             </HighlightRow>
@@ -115,7 +115,7 @@ const AddressScreen = ({
               <Label>Total ALPH balance</Label>
               <View>
                 <Badge light>
-                  <Amount value={BigInt(address.networkData.details.balance)} fadeDecimals />
+                  <Amount value={BigInt(address.balance)} fadeDecimals />
                 </Badge>
               </View>
             </HighlightRow>

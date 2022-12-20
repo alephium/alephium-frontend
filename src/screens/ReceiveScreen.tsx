@@ -54,7 +54,7 @@ const ReceiveScreen = ({
 
   if (!toAddress) return null
 
-  const balance = convertSetToFiat(BigInt(toAddress.networkData.details.balance), price ?? 0)
+  const balance = convertSetToFiat(BigInt(toAddress.balance), price ?? 0)
 
   return (
     <>

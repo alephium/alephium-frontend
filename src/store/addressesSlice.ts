@@ -31,7 +31,7 @@ import { fetchAddressesData, fetchAddressTransactionsNextPage } from '../api/add
 import { Address, AddressHash, AddressPartial } from '../types/addresses'
 import { AddressToken } from '../types/tokens'
 import { getRandomLabelColor } from '../utils/colors'
-import { extractNewTransactions } from '../utils/transactions'
+import { extractNewTransactionHashes } from '../utils/transactions'
 import { newWalletGenerated, walletSwitched, walletUnlocked } from './activeWalletSlice'
 import { appReset } from './appSlice'
 import { customNetworkSettingsSaved, networkPresetSwitched } from './networkSlice'
@@ -45,7 +45,7 @@ const addressesAdapter = createEntityAdapter<Address>({
     // Always keep main address to the top of the list
     if (a.settings.isMain) return -1
     if (b.settings.isMain) return 1
-    return (b.networkData?.lastUsed ?? 0) - (a.networkData?.lastUsed ?? 0)
+    return (b.lastUsed ?? 0) - (a.lastUsed ?? 0)
   }
 })
 
@@ -163,40 +163,44 @@ const addressesSlice = createSlice({
         addressesAdapter.addOne(state, firstWalletAddress)
       })
       .addCase(syncAddressesData.fulfilled, (state, action) => {
-        for (const addressData of action.payload) {
-          const { hash, details, transactions, tokens } = addressData
-          const address = state.entities[hash]
+        const addressData = action.payload
+        const updatedAddresses = addressData.map(({ hash, details, tokens, transactions }) => {
+          const address = state.entities[hash] as Address
 
-          if (address) {
-            const networkData = address.networkData
-            networkData.details = details
-            networkData.tokens = tokens
-
-            address.transactions = uniq(address.transactions.concat(transactions.map((tx) => tx.hash)))
-
-            if (address.transactionsPageLoaded === 0) address.transactionsPageLoaded = 1
+          return {
+            id: hash,
+            changes: {
+              ...details,
+              ...tokens,
+              transactions: uniq(address.transactions.concat(transactions.map((tx) => tx.hash))),
+              transactionsPageLoaded: address.transactionsPageLoaded === 0 ? 1 : address.transactionsPageLoaded,
+              lastUsed: transactions.length > 0 ? transactions[0].timestamp : address.lastUsed
+            }
           }
-        }
+        })
+
+        addressesAdapter.updateMany(state, updatedAddresses)
 
         state.status = 'initialized'
         state.loading = false
       })
       .addCase(syncAddressesTransactionsNextPage.fulfilled, (state, action) => {
-        for (const address of action.payload) {
-          const { hash, transactions, page } = address
-          const addressState = state.entities[hash]
+        const addressData = action.payload
+        const updatedAddresses = addressData.map(({ hash, transactions, page }) => {
+          const address = state.entities[hash] as Address
+          const newTxHashes = extractNewTransactionHashes(transactions, address.transactions)
 
-          if (addressState) {
-            const newTxs = extractNewTransactions(transactions, addressState.transactions)
-
-            if (newTxs.length > 0) {
-              addressState.transactions = addressState.transactions.concat(newTxs)
-              addressState.transactionsPageLoaded = page
-            } else {
-              addressState.allTransactionPagesLoaded = true
+          return {
+            id: hash,
+            changes: {
+              transactions: address.transactions.concat(newTxHashes),
+              transactionsPageLoaded: newTxHashes.length > 0 ? page : address.transactionsPageLoaded,
+              allTransactionPagesLoaded: newTxHashes.length === 0
             }
           }
-        }
+        })
+
+        addressesAdapter.updateMany(state, updatedAddresses)
 
         state.loading = false
       })
@@ -216,7 +220,7 @@ export const selectTokens = createSelector([(state, addresses: Address[]) => add
   const resultTokens: AddressToken[] = []
 
   addresses.forEach((address) => {
-    address.networkData.tokens.forEach((token) => {
+    address.tokens.forEach((token) => {
       const tokenBalances = resultTokens.find((resultToken) => resultToken.id === token.id)?.balances
 
       if (tokenBalances) {
@@ -242,7 +246,7 @@ export const selectDefaultAddress = createSelector(selectAllAddresses, (addresse
 )
 
 export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>
-  addresses.reduce((acc, address) => acc + BigInt(address.networkData.details.balance), BigInt(0))
+  addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
 )
 
 export const {
@@ -266,21 +270,11 @@ const getInitialAddressState = (addressData: AddressPartial): Address => ({
   transactions: [],
   transactionsPageLoaded: 0,
   allTransactionPagesLoaded: false,
-  // 🚨 Anti-pattern: deeply nested store.
-  // TODO: Make it flatter?
-  networkData: {
-    details: {
-      balance: '0',
-      lockedBalance: '0',
-      txNumber: 0
-    },
-    // 🚨 Anti-pattern: implicit state duplication.
-    // This value could be derived using a transactions selector.
-    // Also, this value is never properly initialized.
-    // TODO: Remove and create a selector?
-    lastUsed: 0,
-    tokens: []
-  }
+  balance: '0',
+  lockedBalance: '0',
+  txNumber: 0,
+  lastUsed: 0,
+  tokens: []
 })
 
 const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]
@@ -301,7 +295,7 @@ const clearAddressesNetworkData = (state: AddressesState) => {
 
   addressesAdapter.updateMany(
     state,
-    reinitializedAddresses.map((address) => ({ id: address.hash, changes: { networkData: address.networkData } }))
+    reinitializedAddresses.map((address) => ({ id: address.hash, changes: address }))
   )
 
   state.status = 'uninitialized'

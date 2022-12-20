@@ -92,10 +92,8 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
     const alephiumToken: AddressToken = {
       id: ALEPHIUM_TOKEN_ID,
       balances: {
-        balance: addresses.reduce((acc, addr) => acc + BigInt(addr.networkData.details.balance), BigInt(0)).toString(),
-        lockedBalance: addresses
-          .reduce((acc, addr) => acc + BigInt(addr.networkData.details.lockedBalance), BigInt(0))
-          .toString()
+        balance: addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0)).toString(),
+        lockedBalance: addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0)).toString()
       },
       worth: {
         price: price.value,

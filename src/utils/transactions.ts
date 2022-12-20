@@ -18,23 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Transaction } from '@alephium/sdk/api/explorer'
 
-import { AddressPendingTransaction, AddressTransaction, PendingTransaction } from '../types/transactions'
+import { AddressPendingTransaction, AddressTransaction } from '../types/transactions'
 
-export const extractNewTransactions = (
+export const extractNewTransactionHashes = (
   incomingTransactions: Transaction[],
   existingTransactions: Transaction['hash'][]
 ): Transaction['hash'][] =>
   incomingTransactions
     .filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
     .map((tx) => tx.hash)
-
-export const extractRemainingPendingTransactions = (
-  existingPendingTransactions: PendingTransaction[],
-  incomingTransactions: Transaction[]
-) =>
-  existingPendingTransactions.filter(
-    (existingPendingTx) => !incomingTransactions.some((newTx) => newTx.hash === existingPendingTx.hash)
-  )
 
 export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
   (tx as AddressPendingTransaction).status === 'pending'
