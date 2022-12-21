@@ -25,26 +25,22 @@ import {
   MINIMAL_GAS_AMOUNT,
   MINIMAL_GAS_PRICE
 } from '@alephium/sdk'
-import { SweepAddressTransaction } from '@alephium/sdk/api/alephium'
+import { BuildTransactionResult, SweepAddressTransaction } from '@alephium/sdk/api/alephium'
 import { StackScreenProps } from '@react-navigation/stack'
 import { isEmpty } from 'lodash'
-import { Codesandbox } from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { ScrollView, View } from 'react-native'
+import { ScrollView } from 'react-native'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
-import client from '../api/client'
-import { buildSweepTransactions, signAndSendTransaction } from '../api/transactions'
+import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '../api/transactions'
 import Amount from '../components/Amount'
-import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
-import ButtonsRow from '../components/buttons/ButtonsRow'
 import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
+import ConsolidationModal from '../components/ConsolidationModal'
 import ExpandableRow from '../components/ExpandableRow'
 import HighlightRow from '../components/HighlightRow'
-import InfoBox from '../components/InfoBox'
 import AddressSelector from '../components/inputs/AddressSelector'
 import Input from '../components/inputs/Input'
 import Screen, {
@@ -53,14 +49,13 @@ import Screen, {
   ScreenSection,
   ScreenSectionTitle
 } from '../components/layout/Screen'
-import ModalWithBackdrop from '../components/ModalWithBackdrop'
 import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash, selectDefaultAddress, transactionSent } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
-import { getAvailableBalance } from '../utils/addresses'
+import { getAddressAvailableBalance } from '../utils/addresses'
 import {
   validateIsAddressValid,
   validateIsNumericStringValid,
@@ -79,6 +74,14 @@ type FormData = {
   gasPriceInAlph: string
 }
 
+type UnsignedTxData = {
+  unsignedTxs: {
+    txId: BuildTransactionResult['txId'] | SweepAddressTransaction['txId']
+    unsignedTx: BuildTransactionResult['unsignedTx'] | SweepAddressTransaction['unsignedTx']
+  }[]
+  fees: bigint
+}
+
 const requiredErrorMessage = 'This field is required'
 
 const SendScreen = ({
@@ -88,42 +91,30 @@ const SendScreen = ({
   }
 }: ScreenProps) => {
   const theme = useTheme()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
   const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
-  const {
-    control,
-    watch,
-    handleSubmit,
-    setValue,
-    formState: { errors }
-  } = useForm<FormData>({
-    defaultValues: {
-      fromAddressHash: addressHash ?? defaultAddress?.hash,
-      toAddressHash: '',
-      amountInAlph: '',
-      gasAmount: '',
-      gasPriceInAlph: ''
-    }
-  })
-  const { fromAddressHash, toAddressHash, gasAmount, amountInAlph, gasPriceInAlph } = watch()
-  const fromAddress = useAppSelector((state) => selectAddressByHash(state, fromAddressHash))
   const dispatch = useAppDispatch()
 
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const fromAddressHash = addressHash ?? defaultAddress?.hash
+  const defaultValues = { fromAddressHash, toAddressHash: '', amountInAlph: '', gasAmount: '', gasPriceInAlph: '' }
+  const { control, watch, handleSubmit, setValue, formState } = useForm<FormData>({ defaultValues })
+  const { fromAddressHash: formFromAddress, toAddressHash, gasAmount, amountInAlph, gasPriceInAlph } = watch()
+  const fromAddress = useAppSelector((state) => selectAddressByHash(state, formFromAddress))
+
   const [amount, setAmount] = useState(BigInt(0))
-  const [fees, setFees] = useState<bigint>(BigInt(0))
-  const [unsignedTxId, setUnsignedTxId] = useState('')
-  const [unsignedTransaction, setUnsignedTransaction] = useState('')
-  const [isConsolidateUTXOsModalVisible, setIsConsolidateUTXOsModalVisible] = useState(false)
   const [consolidationRequired, setConsolidationRequired] = useState(false)
-  const [isSweeping, setIsSweeping] = useState(false)
-  const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<SweepAddressTransaction[]>([])
+  const [isConsolidateModalVisible, setIsConsolidateModalVisible] = useState(false)
   const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const [txStep, setTxStep] = useState<TxStep>('build')
-  const [isBuildingTx, setIsBuildingTx] = useState(false)
-  const [isSendingTx, setIsSendingTx] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({
+    unsignedTxs: [],
+    fees: BigInt(0)
+  })
 
+  const errors = formState.errors
   const isFormValid = isEmpty(errors)
-  const totalAmount = amount + fees
+  const totalAmount = amount + unsignedTxData?.fees
   const loadingMessage = {
     build: 'Calculating fees...',
     send: 'Sending...'
@@ -141,21 +132,15 @@ const SendScreen = ({
   const buildConsolidationTransactions = useCallback(async () => {
     if (!fromAddress) return
 
-    setIsBuildingTx(true)
-    setIsSweeping(true)
+    setIsLoading(true)
 
     try {
-      const { unsignedTxs, fees } = await buildSweepTransactions(
-        fromAddress.hash,
-        fromAddress.publicKey,
-        fromAddress.hash
-      )
-      setSweepUnsignedTxs(unsignedTxs)
-      setFees(fees)
+      const data = await buildSweepTransactions(fromAddress, fromAddress.hash)
+      setUnsignedTxData(data)
     } catch (e) {
       Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
     } finally {
-      setIsBuildingTx(false)
+      setIsLoading(false)
     }
   }, [fromAddress])
 
@@ -163,67 +148,43 @@ const SendScreen = ({
     async (formData: FormData) => {
       if (!fromAddress?.hash || !isFormValid) return
 
-      setIsBuildingTx(true)
+      setIsLoading(true)
+      const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : undefined
       const amountInSet = convertAlphToSet(formData.amountInAlph)
-      const isSweep = amountInSet === getAvailableBalance(fromAddress)
 
       setAmount(amountInSet)
-      setIsSweeping(isSweep)
 
-      const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : ''
       try {
-        if (isSweep) {
-          const { unsignedTxs, fees } = await buildSweepTransactions(
-            fromAddress.hash,
-            fromAddress.publicKey,
-            formData.toAddressHash
-          )
-          setSweepUnsignedTxs(unsignedTxs)
-          setFees(fees)
-        } else {
-          const { data } = await client.cliqueClient.transactionCreate(
-            fromAddress.hash,
-            fromAddress.publicKey,
-            formData.toAddressHash,
-            amountInSet.toString(),
-            undefined,
-            formData.gasAmount ? parseInt(formData.gasAmount) : undefined,
-            gasPriceInSet.toString() || undefined
-          )
-          setUnsignedTransaction(data.unsignedTx)
-          setUnsignedTxId(data.txId)
-          setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))
-        }
-
+        const toAddressHash = formData.toAddressHash
+        const data = await buildUnsignedTransactions(fromAddress, toAddressHash, amountInSet, gasAmount, gasPriceInSet)
+        setUnsignedTxData(data)
         setTxStep('send')
       } catch (e) {
         // TODO: When API error codes are available, replace this substring check with a proper error code check
         const { error } = e as APIError
         if (error?.detail && (error.detail.includes('consolidating') || error.detail.includes('consolidate'))) {
           setConsolidationRequired(true)
-          setIsSweeping(true)
-          setIsConsolidateUTXOsModalVisible(true)
+          setIsConsolidateModalVisible(true)
           await buildConsolidationTransactions()
         } else {
           Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
         }
       } finally {
-        setIsBuildingTx(false)
+        setIsLoading(false)
       }
     },
-    [buildConsolidationTransactions, fromAddress, isFormValid]
+    [buildConsolidationTransactions, fromAddress, gasAmount, isFormValid]
   )
 
   const sendTransaction = useCallback(async () => {
     if (!fromAddress?.hash) return
 
-    setIsSendingTx(true)
+    setIsLoading(true)
 
     try {
-      const unsignedTxs = isSweeping ? sweepUnsignedTxs : [{ txId: unsignedTxId, unsignedTx: unsignedTransaction }]
-
-      for (const { txId, unsignedTx } of unsignedTxs) {
+      for (const { txId, unsignedTx } of unsignedTxData.unsignedTxs) {
         const data = await signAndSendTransaction(fromAddress, txId, unsignedTx)
+
         dispatch(
           transactionSent({
             hash: data.txId,
@@ -240,20 +201,9 @@ const SendScreen = ({
     } catch (e) {
       Toast.show(getHumanReadableError(e, 'Could not send transaction'))
     } finally {
-      setIsSendingTx(false)
+      setIsLoading(false)
     }
-  }, [
-    amount,
-    consolidationRequired,
-    dispatch,
-    fromAddress,
-    isSweeping,
-    navigation,
-    sweepUnsignedTxs,
-    toAddressHash,
-    unsignedTransaction,
-    unsignedTxId
-  ])
+  }, [amount, consolidationRequired, dispatch, fromAddress, navigation, toAddressHash, unsignedTxData.unsignedTxs])
 
   const authenticateAndSend = useCallback(async () => {
     if (requiresAuth) {
@@ -266,7 +216,7 @@ const SendScreen = ({
   const handleUseMaxAmountPress = useCallback(() => {
     if (!fromAddress) return
 
-    setValue('amountInAlph', convertSetToAlph(getAvailableBalance(fromAddress)))
+    setValue('amountInAlph', convertSetToAlph(getAddressAvailableBalance(fromAddress)))
   }, [fromAddress, setValue])
 
   return (
@@ -400,11 +350,11 @@ const SendScreen = ({
                 />
               </ExpandableRow>
             </ScreenSection>
-            {txStep === 'send' && !isBuildingTx && fees && totalAmount && (
+            {txStep === 'send' && !isLoading && unsignedTxData.fees && totalAmount && (
               <ScreenSection>
                 <ScreenSectionTitle>Summary</ScreenSectionTitle>
                 <HighlightRow title="Expected fee" isTopRounded hasBottomBorder isSecondary>
-                  <Amount value={fees} fullPrecision />
+                  <Amount value={unsignedTxData.fees} fullPrecision />
                 </HighlightRow>
                 <HighlightRow title="Total amount" isBottomRounded isSecondary>
                   <Amount value={totalAmount} fullPrecision bold color={theme.global.accent} />
@@ -419,66 +369,31 @@ const SendScreen = ({
             gradient
             onPress={txStep === 'build' ? handleSubmit(buildTransaction) : authenticateAndSend}
             wide
-            disabled={isBuildingTx || isSendingTx || !isFormValid}
+            disabled={isLoading || !isFormValid}
           />
         </BottomScreenSection>
-        <ModalWithBackdrop
-          animationType="fade"
-          visible={isConsolidateUTXOsModalVisible}
-          closeModal={() => setIsConsolidateUTXOsModalVisible(false)}
-        >
-          <ConsolidationModalContent>
-            <ScreenSectionStyled fill>
-              <InfoBox title="Action to take" Icon={Codesandbox} iconColor="#64f6c2">
-                <View>
-                  <AppText>
-                    It appers that the address you use to send funds from has too many UTXOs! Would you like to
-                    consolidate them? This will cost as small fee.
-                  </AppText>
-                  <Fee>
-                    <Amount prefix="Fee:" value={fees} fullPrecision fadeDecimals bold />
-                  </Fee>
-                </View>
-              </InfoBox>
-            </ScreenSectionStyled>
-            <BottomScreenSection>
-              <ButtonsRow>
-                <Button title="Cancel" onPress={() => setIsConsolidateUTXOsModalVisible(false)} />
-                <Button title="Consolidate" onPress={authenticateAndSend} />
-              </ButtonsRow>
-            </BottomScreenSection>
-          </ConsolidationModalContent>
-        </ModalWithBackdrop>
+
+        {isConsolidateModalVisible && (
+          <ConsolidationModal
+            onConsolidate={authenticateAndSend}
+            onCancel={() => setIsConsolidateModalVisible(false)}
+            fees={unsignedTxData.fees}
+          />
+        )}
         {isAuthenticationModalVisible && <ConfirmWithAuthModal onConfirm={sendTransaction} />}
       </ScrollView>
-      <SpinnerModal isActive={isBuildingTx || isSendingTx} text={loadingMessage} />
+      <SpinnerModal isActive={isLoading} text={loadingMessage} />
     </Screen>
   )
 }
 
 export default SendScreen
 
-const ConsolidationModalContent = styled.View`
- flex: 1
- width: 100%;
- background-color: ${({ theme }) => theme.bg.primary};
-`
-
 const MainContent = styled.View`
   flex: 1;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-`
-
-const ScreenSectionStyled = styled(ScreenSection)`
-  align-items: center;
-  justify-content: center;
-`
-
-const Fee = styled(AppText)`
-  display: flex;
-  margin-top: 20px;
 `
 
 const UseMaxButton = styled(Button)`
