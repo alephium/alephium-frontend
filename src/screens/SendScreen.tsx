@@ -54,6 +54,7 @@ import Screen, {
   ScreenSectionTitle
 } from '../components/layout/Screen'
 import ModalWithBackdrop from '../components/ModalWithBackdrop'
+import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -112,16 +113,21 @@ const SendScreen = ({
   const [fees, setFees] = useState<bigint>(BigInt(0))
   const [unsignedTxId, setUnsignedTxId] = useState('')
   const [unsignedTransaction, setUnsignedTransaction] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const [isConsolidateUTXOsModalVisible, setIsConsolidateUTXOsModalVisible] = useState(false)
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isSweeping, setIsSweeping] = useState(false)
   const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<SweepAddressTransaction[]>([])
   const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const [txStep, setTxStep] = useState<TxStep>('build')
+  const [isBuildingTx, setIsBuildingTx] = useState(false)
+  const [isSendingTx, setIsSendingTx] = useState(false)
 
   const isFormValid = isEmpty(errors)
   const totalAmount = amount + fees
+  const loadingMessage = {
+    build: 'Calculating fees...',
+    send: 'Sending...'
+  }[txStep]
 
   const validateOptionalMinGasAmount = (value: string) =>
     !value || parseInt(value) >= MINIMAL_GAS_AMOUNT || `Gas must be at least ${MINIMAL_GAS_AMOUNT}`
@@ -135,8 +141,8 @@ const SendScreen = ({
   const buildConsolidationTransactions = useCallback(async () => {
     if (!fromAddress) return
 
+    setIsBuildingTx(true)
     setIsSweeping(true)
-    setIsLoading(true)
 
     try {
       const { unsignedTxs, fees } = await buildSweepTransactions(
@@ -149,7 +155,7 @@ const SendScreen = ({
     } catch (e) {
       Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
     } finally {
-      setIsLoading(false)
+      setIsBuildingTx(false)
     }
   }, [fromAddress])
 
@@ -157,7 +163,7 @@ const SendScreen = ({
     async (formData: FormData) => {
       if (!fromAddress?.hash || !isFormValid) return
 
-      setIsLoading(true)
+      setIsBuildingTx(true)
       const amountInSet = convertAlphToSet(formData.amountInAlph)
       const isSweep = amountInSet === getAvailableBalance(fromAddress)
 
@@ -202,16 +208,16 @@ const SendScreen = ({
           Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
         }
       } finally {
-        setIsLoading(false)
+        setIsBuildingTx(false)
       }
     },
     [buildConsolidationTransactions, fromAddress, isFormValid]
   )
 
-  const send = useCallback(async () => {
+  const sendTransaction = useCallback(async () => {
     if (!fromAddress?.hash) return
 
-    setIsLoading(true)
+    setIsSendingTx(true)
 
     try {
       const unsignedTxs = isSweeping ? sweepUnsignedTxs : [{ txId: unsignedTxId, unsignedTx: unsignedTransaction }]
@@ -234,7 +240,7 @@ const SendScreen = ({
     } catch (e) {
       Toast.show(getHumanReadableError(e, 'Could not send transaction'))
     } finally {
-      setIsLoading(false)
+      setIsSendingTx(false)
     }
   }, [
     amount,
@@ -253,9 +259,9 @@ const SendScreen = ({
     if (requiresAuth) {
       setIsAuthenticationModalVisible(true)
     } else {
-      send()
+      sendTransaction()
     }
-  }, [requiresAuth, send])
+  }, [requiresAuth, sendTransaction])
 
   const handleUseMaxAmountPress = useCallback(() => {
     if (!fromAddress) return
@@ -394,7 +400,7 @@ const SendScreen = ({
                 />
               </ExpandableRow>
             </ScreenSection>
-            {txStep === 'send' && !isLoading && fees && totalAmount && (
+            {txStep === 'send' && !isBuildingTx && fees && totalAmount && (
               <ScreenSection>
                 <ScreenSectionTitle>Summary</ScreenSectionTitle>
                 <HighlightRow title="Expected fee" isTopRounded hasBottomBorder isSecondary>
@@ -413,7 +419,7 @@ const SendScreen = ({
             gradient
             onPress={txStep === 'build' ? handleSubmit(buildTransaction) : authenticateAndSend}
             wide
-            disabled={isLoading || !isFormValid}
+            disabled={isBuildingTx || isSendingTx || !isFormValid}
           />
         </BottomScreenSection>
         <ModalWithBackdrop
@@ -443,8 +449,9 @@ const SendScreen = ({
             </BottomScreenSection>
           </ConsolidationModalContent>
         </ModalWithBackdrop>
-        {isAuthenticationModalVisible && <ConfirmWithAuthModal onConfirm={send} />}
+        {isAuthenticationModalVisible && <ConfirmWithAuthModal onConfirm={sendTransaction} />}
       </ScrollView>
+      <SpinnerModal isActive={isBuildingTx || isSendingTx} text={loadingMessage} />
     </Screen>
   )
 }
