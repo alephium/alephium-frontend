@@ -24,24 +24,19 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { discreetModeChanged } from '../store/settingsSlice'
+import { discreetModeToggled } from '../store/settingsSlice'
 
 interface DashboardHeaderActionsProps {
   style?: StyleProp<ViewStyle>
 }
 
 const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
-  const [discreetMode, isMnemonicBackedUp] = useAppSelector((s) => [
-    s.settings.discreetMode,
-    s.activeWallet.isMnemonicBackedUp
-  ])
+  const isMnemonicBackedUp = useAppSelector((state) => state.activeWallet.isMnemonicBackedUp)
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
-  const toggleDiscreetMode = () => {
-    dispatch(discreetModeChanged(!discreetMode))
-  }
+  const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
   return (
     <View style={style}>
@@ -51,7 +46,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
         </Icon>
       </Pressable>
       <Pressable onPress={() => navigation.navigate('SecurityScreen')}>
-        <SecurityIcon alert={!isMnemonicBackedUp} />
+        <SecurityIcon alert={isMnemonicBackedUp === false} />
       </Pressable>
       <Pressable onPress={() => navigation.navigate('SettingsScreen')}>
         <Icon>

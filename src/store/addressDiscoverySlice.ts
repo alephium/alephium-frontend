@@ -28,10 +28,15 @@ import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, Payloa
 
 import client from '../api/client'
 import { Address, AddressIndex } from '../types/addresses'
-import { findMaxIndexBeforeFirstGap, findNextAvailableAddressIndex } from '../utils/addresses'
+import {
+  findMaxIndexBeforeFirstGap,
+  findNextAvailableAddressIndex,
+  initializeAddressDiscoveryGroupsData
+} from '../utils/addresses'
 import { mnemonicToSeed } from '../utils/crypto'
 import { sleep } from '../utils/misc'
-import { addressesAdded } from './addressesSlice'
+import { addressesImported } from './addressesSlice'
+import { appReset } from './appSlice'
 import { RootState } from './store'
 
 const sliceName = 'addressDiscovery'
@@ -54,30 +59,8 @@ const initialState: AddressDiscoveryState = addressDiscoveryAdapter.getInitialSt
   status: 'idle'
 })
 
-type AddressDiscoveryGroupData = {
-  highestIndex: AddressIndex | undefined
-  gap: number
-}
-
-const initializeAddressDiscoveryGroupsData = (addresses: Address[]): AddressDiscoveryGroupData[] => {
-  const groupsData: AddressDiscoveryGroupData[] = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, () => ({
-    highestIndex: undefined,
-    gap: 0
-  }))
-
-  for (const address of addresses) {
-    const groupData = groupsData[address.group]
-
-    if (groupData.highestIndex === undefined || groupData.highestIndex < address.index) {
-      groupData.highestIndex = address.index
-    }
-  }
-
-  return groupsData
-}
-
-export const addressesDiscovered = createAsyncThunk(
-  `${sliceName}/addressesDiscovered`,
+export const discoverAddresses = createAsyncThunk(
+  `${sliceName}/discoverAddresses`,
   async (_, { getState, dispatch }) => {
     dispatch(addressDiscoveryStarted())
 
@@ -94,7 +77,7 @@ export const addressesDiscovered = createAsyncThunk(
     let checkedIndexes = Array.from(activeAddressIndexes)
     let maxIndexBeforeFirstGap = findMaxIndexBeforeFirstGap(activeAddressIndexes)
 
-    dispatch(progressUpdated(0.1))
+    dispatch(algoDataInitialized())
 
     try {
       while (group < 4) {
@@ -117,7 +100,7 @@ export const addressesDiscovered = createAsyncThunk(
             newAddressData = cachedData
             newAddressGroup = cachedData.group
           } else {
-            await sleep(1)
+            await sleep(1) // Allow execution to continue to not block rendering
             newAddressData = deriveAddressAndKeys(masterKey, index)
             newAddressGroup = addressToGroup(newAddressData.hash, TOTAL_NUMBER_OF_GROUPS)
             derivedDataCache.set(index, { ...newAddressData, group: newAddressGroup })
@@ -148,12 +131,10 @@ export const addressesDiscovered = createAsyncThunk(
         }
 
         if (groupData.gap === minGap) {
+          dispatch(finishedWithGroup(group))
+
           group += 1
           checkedIndexes = Array.from(activeAddressIndexes)
-
-          if (group < 5) {
-            dispatch(progressUpdated(group / TOTAL_NUMBER_OF_GROUPS))
-          }
         }
 
         const state = getState() as RootState
@@ -187,22 +168,29 @@ const addressDiscoverySlice = createSlice({
       state.loading = false
       state.status = 'finished'
     },
-    progressUpdated: (state, action: PayloadAction<number>) => {
-      state.progress = action.payload
+    algoDataInitialized: (state) => {
+      state.progress = 0.1
+    },
+    finishedWithGroup: (state, action: PayloadAction<number>) => {
+      const group = action.payload
+
+      state.progress = (group + 1) / TOTAL_NUMBER_OF_GROUPS
     },
     addressDiscovered: (state, action: PayloadAction<DiscoveredAddress>) => {
       addressDiscoveryAdapter.upsertOne(state, action.payload)
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(addressesAdded, (state, action) => {
-      const addresses = action.payload
+    builder
+      .addCase(addressesImported, (state, action) => {
+        const addresses = action.payload
 
-      addressDiscoveryAdapter.removeMany(
-        state,
-        addresses.map((address) => address.hash)
-      )
-    })
+        addressDiscoveryAdapter.removeMany(
+          state,
+          addresses.map((address) => address.hash)
+        )
+      })
+      .addCase(appReset, () => initialState)
   }
 })
 
@@ -216,8 +204,9 @@ export const {
   addressDiscoveryStarted,
   addressDiscoveryStopped,
   addressDiscoveryFinished,
-  progressUpdated,
-  addressDiscovered
+  addressDiscovered,
+  algoDataInitialized,
+  finishedWithGroup
 } = addressDiscoverySlice.actions
 
 export default addressDiscoverySlice

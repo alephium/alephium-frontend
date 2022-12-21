@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useEffect } from 'react'
 
-import { tokenMetadataUpdated } from '../store/tokenMetadataSlice'
+import { syncTokenMetadata } from '../store/tokenMetadataSlice'
 import { useAppDispatch, useAppSelector } from './redux'
 
 const useTokenMetadata = () => {
@@ -26,7 +26,7 @@ const useTokenMetadata = () => {
   const { metadata, status } = useAppSelector((state) => state.tokenMetadata)
 
   useEffect(() => {
-    if (status === 'uninitialized') dispatch(tokenMetadataUpdated())
+    if (status === 'uninitialized') dispatch(syncTokenMetadata())
   }, [dispatch, status])
 
   return metadata

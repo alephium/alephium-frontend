@@ -37,6 +37,7 @@ export type AddressMetadata = AddressSettings & {
   index: AddressIndex
 }
 
+// 🚨 See anti-pattern alerts in src/store/addressesSlice.ts
 export type Address = AddressKeyPair & {
   group: number
   settings: AddressSettings
@@ -55,3 +56,8 @@ export type Address = AddressKeyPair & {
 }
 
 export type AddressPartial = AddressKeyPair & { settings: AddressSettings }
+
+export type AddressDiscoveryGroupData = {
+  highestIndex: AddressIndex | undefined
+  gap: number
+}

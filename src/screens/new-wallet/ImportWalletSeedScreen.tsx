@@ -36,8 +36,10 @@ import SpinnerModal from '../../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { biometricsToggled, walletGeneratedAndStoredWithPin } from '../../store/activeWalletSlice'
-import { qrCodeScannerToggled } from '../../store/appMetadataSlice'
+import { enableBiometrics, generateAndStoreWallet } from '../../persistent-storage/wallets'
+import { biometricsEnabled, newWalletGenerated } from '../../store/activeWalletSlice'
+import { syncAddressesData } from '../../store/addressesSlice'
+import { cameraToggled } from '../../store/appSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '../../style/globalStyle'
 import { bip39Words } from '../../utils/bip39'
 import { pbkdf2 } from '../../utils/crypto'
@@ -53,11 +55,11 @@ const enablePasteForDevelopment = true
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const [name, activeWallet, pin, isQRCodeScannerOpen] = useAppSelector((s) => [
+  const [name, activeWallet, pin, isCameraOpen] = useAppSelector((s) => [
     s.walletGeneration.walletName,
     s.activeWallet,
     s.credentials.pin,
-    s.appMetadata.isQRCodeScannerOpen
+    s.app.isCameraOpen
   ])
   const hasAvailableBiometrics = useBiometrics()
   const theme = useTheme()
@@ -74,8 +76,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [encryptedWalletFromQRCode, setEncryptedWalletFromQRCode] = useState('')
 
   const isAuthenticated = !!activeWallet.mnemonic
-  const openQRCodeScannerModal = () => dispatch(qrCodeScannerToggled(true))
-  const closeQRCodeScannerModal = () => dispatch(qrCodeScannerToggled(false))
+  const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
+  const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -126,10 +128,12 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       setLoading(true)
 
-      const importedMnemonic =
+      const mnemonicToImport =
         mnemonic || (enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' '))
 
-      await dispatch(walletGeneratedAndStoredWithPin({ name, pin, mnemonicToImport: importedMnemonic }))
+      const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
+      dispatch(newWalletGenerated(wallet))
+      dispatch(syncAddressesData([wallet.firstAddress.hash]))
 
       if (!isAuthenticated) {
         setLoading(false)
@@ -139,7 +143,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
       if (isAuthenticated && lastActiveWallet.current.authType === 'biometrics' && hasAvailableBiometrics) {
-        await dispatch(biometricsToggled({ enable: true }))
+        await enableBiometrics(wallet.metadataId, wallet.mnemonic)
+        dispatch(biometricsEnabled())
       }
 
       setLoading(false)
@@ -233,7 +238,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
         />
       </ScreenSectionBottom>
       {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin)} />}
-      {isQRCodeScannerOpen && <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} />}
+      {isCameraOpen && <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} />}
       {isPasswordModalVisible && (
         <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
       )}

@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
-import { defaultGeneralSettings, storeSettings } from '../storage/settings'
+import { defaultGeneralSettings, persistSettings } from '../persistent-storage/settings'
 import { GeneralSettings } from '../types/settings'
-import { priceReset } from './priceSlice'
+import { appReset } from './appSlice'
 import { RootState } from './store'
 
 const sliceName = 'settings'
@@ -31,54 +31,42 @@ const settingsSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    generalSettingsChanged: (state, action: PayloadAction<GeneralSettings>) => {
-      return action.payload
-    },
+    storedGeneralSettingsLoaded: (_, action: PayloadAction<GeneralSettings>) => action.payload,
     themeChanged: (state, action: PayloadAction<GeneralSettings['theme']>) => {
       state.theme = action.payload
     },
-    discreetModeChanged: (state, action: PayloadAction<GeneralSettings['discreetMode']>) => {
-      state.discreetMode = action.payload
+    discreetModeToggled: (state) => {
+      state.discreetMode = !state.discreetMode
     },
-    passwordRequirementChanged: (state, action: PayloadAction<GeneralSettings['requireAuth']>) => {
-      state.requireAuth = action.payload
+    passwordRequirementToggled: (state) => {
+      state.requireAuth = !state.requireAuth
     },
-    currencyChanged: (state, action: PayloadAction<GeneralSettings['currency']>) => {
+    currencySelected: (state, action: PayloadAction<GeneralSettings['currency']>) => {
       state.currency = action.payload
     }
+  },
+  extraReducers(builder) {
+    builder.addCase(appReset, () => initialState)
   }
 })
 
 export const {
-  generalSettingsChanged,
+  storedGeneralSettingsLoaded,
   themeChanged,
-  discreetModeChanged,
-  passwordRequirementChanged,
-  currencyChanged
+  discreetModeToggled,
+  passwordRequirementToggled,
+  currencySelected
 } = settingsSlice.actions
 
 export const settingsListenerMiddleware = createListenerMiddleware()
 
 // When the settings change, store them in persistent storage
 settingsListenerMiddleware.startListening({
-  matcher: isAnyOf(
-    generalSettingsChanged,
-    themeChanged,
-    discreetModeChanged,
-    passwordRequirementChanged,
-    currencyChanged
-  ),
-  effect: async (action, { getState }) => {
+  matcher: isAnyOf(themeChanged, discreetModeToggled, passwordRequirementToggled, currencySelected),
+  effect: async (_, { getState }) => {
     const state = getState() as RootState
 
-    await storeSettings('general', state[sliceName])
-  }
-})
-
-settingsListenerMiddleware.startListening({
-  actionCreator: currencyChanged,
-  effect: async (action, { dispatch }) => {
-    dispatch(priceReset())
+    await persistSettings('general', state[sliceName])
   }
 })
 

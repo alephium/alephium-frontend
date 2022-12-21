@@ -39,6 +39,7 @@ interface AddressFormProps {
   onSubmit: (data: AddressFormData) => void
   buttonText?: string
   disableIsMainToggle?: boolean
+  includeGroup?: boolean
 }
 
 const groupSelectOptions: SelectOption<number | undefined>[] = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map(
@@ -59,12 +60,13 @@ const AddressForm = ({
   initialValues,
   onSubmit,
   buttonText = 'Generate',
-  disableIsMainToggle = false
+  disableIsMainToggle = false,
+  includeGroup = false
 }: AddressFormProps) => {
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
   const [isMain, setIsMain] = useState(initialValues.isMain)
-  const [group, setGroup] = useState(initialValues.group)
+  const [group, setGroup] = useState(initialValues?.group)
 
   const toggleIsMain = () => {
     if (!disableIsMainToggle) {
@@ -96,7 +98,7 @@ const AddressForm = ({
             <Toggle onValueChange={toggleIsMain} value={isMain} disabled={disableIsMainToggle} />
           </HighlightRow>
         </ScreenSection>
-        {initialValues.group === undefined && (
+        {includeGroup && (
           <ScreenSection>
             <ExpandableRow expandedHeight={90}>
               <Select

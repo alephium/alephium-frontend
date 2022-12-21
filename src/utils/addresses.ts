@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-root-toast'
 
-import client from '../api/client'
-import { storeAddressMetadata } from '../storage/wallets'
-import { Address, AddressHash, AddressPartial, AddressSettings } from '../types/addresses'
+import { persistAddressesMetadata } from '../persistent-storage/wallets'
+import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '../types/addresses'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
@@ -29,45 +29,6 @@ export const getAddressDisplayName = (address: Address): string =>
 export const copyAddressToClipboard = (addressHash: AddressHash) => {
   Clipboard.setString(addressHash)
   Toast.show('Address copied!')
-}
-
-export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
-  const results = []
-
-  for (const addressHash of addressHashes) {
-    console.log('⬇️ Fetching address details: ', addressHash)
-    const { data } = await client.explorerClient.getAddressDetails(addressHash)
-    const availableBalance = data.balance
-      ? data.lockedBalance
-        ? (BigInt(data.balance) - BigInt(data.lockedBalance)).toString()
-        : data.balance
-      : undefined
-
-    console.log('⬇️ Fetching 1st page of address confirmed transactions: ', addressHash)
-    const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, 1)
-
-    console.log('⬇️ Fetching address tokens: ', addressHash)
-    const { data: tokenIds } = await client.explorerClient.addresses.getAddressesAddressTokens(addressHash)
-
-    const tokens = await Promise.all(
-      tokenIds.map((id) =>
-        client.explorerClient.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then(({ data }) => ({
-          id,
-          balances: data
-        }))
-      )
-    )
-
-    results.push({
-      hash: addressHash,
-      details: data,
-      availableBalance: availableBalance,
-      transactions,
-      tokens
-    })
-  }
-
-  return results
 }
 
 export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
@@ -94,19 +55,34 @@ export const findMaxIndexBeforeFirstGap = (indexes: number[]) => {
   return maxIndexBeforeFirstGap
 }
 
-export const storeAddressSettings = async (
-  address: AddressPartial,
-  settings: AddressSettings,
+export const persistAddressesSettings = async (
+  addresses: AddressPartial[],
   metadataId: string,
   oldDefaultAddress?: Address
 ) => {
-  await storeAddressMetadata(metadataId, { index: address.index, ...settings })
+  const addressesMetadata = addresses.map((address) => ({ index: address.index, ...address.settings }))
+  await persistAddressesMetadata(metadataId, addressesMetadata)
 
-  if (settings.isMain && oldDefaultAddress && oldDefaultAddress.hash !== address.hash) {
-    await storeAddressMetadata(metadataId, {
-      index: oldDefaultAddress.index,
-      ...oldDefaultAddress.settings,
-      isMain: false
-    })
+  const newDefaultAddress = addresses.find((address) => address.settings.isMain)
+  if (newDefaultAddress && oldDefaultAddress && oldDefaultAddress.hash !== newDefaultAddress.hash) {
+    const updatedOldDefaultAddress = { index: oldDefaultAddress.index, ...oldDefaultAddress.settings, isMain: false }
+    await persistAddressesMetadata(metadataId, [updatedOldDefaultAddress])
   }
+}
+
+export const initializeAddressDiscoveryGroupsData = (addresses: Address[]): AddressDiscoveryGroupData[] => {
+  const groupsData: AddressDiscoveryGroupData[] = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, () => ({
+    highestIndex: undefined,
+    gap: 0
+  }))
+
+  for (const address of addresses) {
+    const groupData = groupsData[address.group]
+
+    if (groupData.highestIndex === undefined || groupData.highestIndex < address.index) {
+      groupData.highestIndex = address.index
+    }
+  }
+
+  return groupsData
 }

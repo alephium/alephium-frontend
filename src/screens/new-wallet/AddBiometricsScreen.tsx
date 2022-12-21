@@ -27,9 +27,10 @@ import ButtonStack from '../../components/buttons/ButtonStack'
 import Screen from '../../components/layout/Screen'
 import SpinnerModal from '../../components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import { useAppDispatch } from '../../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
-import { biometricsToggled } from '../../store/activeWalletSlice'
+import { enableBiometrics } from '../../persistent-storage/wallets'
+import { biometricsEnabled } from '../../store/activeWalletSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
 
@@ -39,15 +40,18 @@ const instructions: Instruction[] = [
 ]
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
+  const activeWallet = useAppSelector((state) => state.activeWallet)
   const dispatch = useAppDispatch()
+
   const [loading, setLoading] = useState(false)
 
   const navigateToAddressDiscoveryPage = () => navigation.navigate('ImportWalletAddressDiscoveryScreen')
 
-  const enableBiometrics = async () => {
+  const activateBiometrics = async () => {
     setLoading(true)
 
-    await dispatch(biometricsToggled({ enable: true }))
+    await enableBiometrics(activeWallet.metadataId, activeWallet.mnemonic)
+    dispatch(biometricsEnabled())
     navigateToAddressDiscoveryPage()
 
     setLoading(false)
@@ -61,7 +65,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
       <CenteredInstructions instructions={instructions} stretch />
       <ActionsContainer>
         <ButtonStack>
-          <Button title="Activate" type="primary" onPress={enableBiometrics} />
+          <Button title="Activate" type="primary" onPress={activateBiometrics} />
           <Button title="Later" type="secondary" onPress={navigateToAddressDiscoveryPage} />
         </ButtonStack>
       </ActionsContainer>

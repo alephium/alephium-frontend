@@ -29,9 +29,10 @@ import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Screen, { ScreenSection } from '../components/layout/Screen'
 import QRCodeModal from '../components/QRCodeModal'
+import usePersistAddressSettings from '../hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { addressSettingsUpdated, selectAddressByHash } from '../store/addressesSlice'
+import { defaultAddressChanged, selectAddressByHash, selectDefaultAddress } from '../store/addressesSlice'
 import { copyAddressToClipboard, getAddressDisplayName } from '../utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressScreen'>
@@ -44,11 +45,10 @@ const AddressScreen = ({
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const [address, mainAddressHash] = useAppSelector((state) => [
-    selectAddressByHash(state, addressHash),
-    state.addresses.mainAddress
-  ])
-  const isCurrentAddressMain = addressHash === mainAddressHash
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
+  const persistAddressSettings = usePersistAddressSettings()
+
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
 
   if (!address) return null
@@ -56,8 +56,12 @@ const AddressScreen = ({
   const makeAddressMain = async () => {
     if (address.settings.isMain) return
 
-    await dispatch(addressSettingsUpdated({ address, settings: { ...address.settings, isMain: true } }))
+    const addressMetadata = { ...address, settings: { ...address.settings, isMain: true } }
+    await persistAddressSettings(addressMetadata)
+    dispatch(defaultAddressChanged(address))
   }
+
+  const isCurrentAddressMain = addressHash === defaultAddress?.hash
 
   return (
     <Screen>

@@ -23,9 +23,10 @@ import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { activeWalletChanged, ActiveWalletState } from '../store/activeWalletSlice'
-import { addressesFlushed, addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
-import { pinEntered } from '../store/credentialsSlice'
+import { deriveWalletStoredAddresses, rememberActiveWallet } from '../persistent-storage/wallets'
+import { walletSwitched, walletUnlocked } from '../store/activeWalletSlice'
+import { AddressPartial } from '../types/addresses'
+import { ActiveWalletState } from '../types/wallet'
 import { useRestoreNavigationState } from '../utils/navigation'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
@@ -33,12 +34,12 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 const LoginScreen = ({
   navigation,
   route: {
-    params: { walletIdToLogin, resetWalletOnLogin }
+    params: { walletIdToLogin, workflow }
   }
 }: ScreenProps) => {
-  const dispatch = useAppDispatch()
   const restoreNavigationState = useRestoreNavigationState()
   const addressesStatus = useAppSelector((state) => state.addresses.status)
+  const dispatch = useAppDispatch()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
@@ -47,21 +48,28 @@ const LoginScreen = ({
       if (!pin || !wallet) return
 
       setIsPinModalVisible(false)
+      let addressesToInitialize = [] as AddressPartial[]
 
-      dispatch(pinEntered(pin))
-      await dispatch(activeWalletChanged(wallet))
+      await rememberActiveWallet(wallet.metadataId)
 
-      if (resetWalletOnLogin) {
-        dispatch(addressesFlushed())
+      if (workflow === 'wallet-switch') {
+        addressesToInitialize = await deriveWalletStoredAddresses(wallet)
+
+        dispatch(walletSwitched({ wallet, addressesToInitialize, pin }))
+        restoreNavigationState(true)
+        return
       }
 
-      if (resetWalletOnLogin || addressesStatus === 'uninitialized') {
-        dispatch(addressesFromStoredMetadataInitialized())
-      }
+      if (workflow === 'wallet-unlock') {
+        if (addressesStatus === 'uninitialized') {
+          addressesToInitialize = await deriveWalletStoredAddresses(wallet)
+        }
 
-      restoreNavigationState(resetWalletOnLogin)
+        dispatch(walletUnlocked({ wallet, addressesToInitialize, pin }))
+        restoreNavigationState()
+      }
     },
-    [addressesStatus, dispatch, resetWalletOnLogin, restoreNavigationState]
+    [addressesStatus, dispatch, restoreNavigationState, workflow]
   )
 
   return (

@@ -33,6 +33,7 @@ import OrderedTable from '../components/OrderedTable'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
+import { persistWalletMetadata } from '../persistent-storage/wallets'
 import { mnemonicBackedUp } from '../store/activeWalletSlice'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SecurityScreen'> {
@@ -41,16 +42,18 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'SecurityScre
 
 const SecurityScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const activeWallet = useAppSelector((state) => state.activeWallet)
-  const { isMnemonicBackedUp, mnemonic } = activeWallet
+  const { isMnemonicBackedUp, mnemonic, metadataId } = useAppSelector((state) => state.activeWallet)
   const [isUnderstood, setIsUnderstood] = useState(false)
   const [showMnemonic, setShowMnemonic] = useState(false)
 
   const handleBackupConfirmation = useCallback(async () => {
-    if (!isMnemonicBackedUp) await dispatch(mnemonicBackedUp(true))
+    if (!isMnemonicBackedUp) {
+      await persistWalletMetadata(metadataId, { isMnemonicBackedUp: true })
+      dispatch(mnemonicBackedUp())
+    }
 
     navigation.navigate('InWalletScreen')
-  }, [dispatch, isMnemonicBackedUp, navigation])
+  }, [metadataId, dispatch, isMnemonicBackedUp, navigation])
 
   return (
     <Screen style={style}>

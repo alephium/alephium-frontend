@@ -20,20 +20,26 @@ import { isEnrolledAsync } from 'expo-local-authentication'
 import { useCallback, useEffect, useRef } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 
-import { areThereOtherWallets, getActiveWalletMetadata, getStoredActiveWallet } from '../storage/wallets'
-import { activeWalletChanged, biometricsToggled, walletFlushed } from '../store/activeWalletSlice'
-import { addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
-import { pinFlushed } from '../store/credentialsSlice'
+import {
+  areThereOtherWallets,
+  deriveWalletStoredAddresses,
+  disableBiometrics,
+  getActiveWalletMetadata,
+  getStoredActiveWallet,
+  rememberActiveWallet
+} from '../persistent-storage/wallets'
+import { biometricsDisabled, walletUnlocked } from '../store/activeWalletSlice'
+import { appBecameInactive } from '../store/appSlice'
 import { navigateRootStack, useRestoreNavigationState } from '../utils/navigation'
 import { useAppDispatch, useAppSelector } from './redux'
 
 export const useAppStateChange = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
-  const [activeWallet, lastNavigationState, isQRCodeScannerOpen, addressesStatus] = useAppSelector((s) => [
+  const [activeWallet, lastNavigationState, isCameraOpen, addressesStatus] = useAppSelector((s) => [
     s.activeWallet,
-    s.appMetadata.lastNavigationState,
-    s.appMetadata.isQRCodeScannerOpen,
+    s.app.lastNavigationState,
+    s.app.isCameraOpen,
     s.addresses.status
   ])
   const restoreNavigationState = useRestoreNavigationState()
@@ -46,12 +52,13 @@ export const useAppStateChange = () => {
 
       // Disable biometrics if needed
       if (activeWalletMetadata && activeWalletMetadata.authType === 'biometrics' && !hasAvailableBiometrics) {
-        await dispatch(biometricsToggled({ enable: false, metadataId: activeWalletMetadata.id }))
+        await disableBiometrics(activeWalletMetadata.id)
+        dispatch(biometricsDisabled())
       }
 
-      const storedActiveWallet = await getStoredActiveWallet()
+      const wallet = await getStoredActiveWallet()
 
-      if (!storedActiveWallet) {
+      if (!wallet) {
         if (await areThereOtherWallets()) {
           navigateRootStack('SwitchWalletAfterDeletionScreen')
         } else if (lastNavigationState) {
@@ -62,17 +69,17 @@ export const useAppStateChange = () => {
         return
       }
 
-      if (storedActiveWallet.authType === 'pin') {
-        navigateRootStack('LoginScreen', { walletIdToLogin: storedActiveWallet.metadataId })
+      if (wallet.authType === 'pin') {
+        navigateRootStack('LoginScreen', { walletIdToLogin: wallet.metadataId, workflow: 'wallet-unlock' })
         return
       }
 
-      if (storedActiveWallet.authType === 'biometrics') {
-        await dispatch(activeWalletChanged(storedActiveWallet))
+      if (wallet.authType === 'biometrics') {
+        await rememberActiveWallet(wallet.metadataId)
 
-        if (addressesStatus === 'uninitialized') {
-          dispatch(addressesFromStoredMetadataInitialized())
-        }
+        const addressesToInitialize =
+          addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
+        dispatch(walletUnlocked({ wallet, addressesToInitialize }))
 
         restoreNavigationState()
       }
@@ -91,9 +98,8 @@ export const useAppStateChange = () => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isQRCodeScannerOpen) {
-        dispatch(pinFlushed())
-        dispatch(walletFlushed())
+      if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isCameraOpen) {
+        dispatch(appBecameInactive())
       } else if (nextAppState === 'active' && !activeWallet.mnemonic) {
         unlockWallet()
       }
@@ -104,5 +110,5 @@ export const useAppStateChange = () => {
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [activeWallet.mnemonic, dispatch, isQRCodeScannerOpen, unlockWallet])
+  }, [activeWallet.mnemonic, dispatch, isCameraOpen, unlockWallet])
 }

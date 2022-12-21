@@ -16,9 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+import { fetchTokenMetadata } from '../api/tokens'
 import { TokenMetadata } from '../types/tokens'
+import { appReset } from './appSlice'
 
 const sliceName = 'tokenMetadata'
 
@@ -34,33 +36,30 @@ const initialState: TokenMetadataState = {
   status: 'uninitialized'
 }
 
-export const tokenMetadataUpdated = createAsyncThunk(`${sliceName}/tokenMetadataUpdated`, async (_, { dispatch }) => {
-  console.log('⬇️ Fetching latest token metadata')
+export const syncTokenMetadata = createAsyncThunk(`${sliceName}/syncTokenMetadata`, async (_, { dispatch }) => {
+  dispatch(tokenMetadataUpdateStarted())
 
-  dispatch(statusChanged('updating'))
-
-  // TODO: Use official Alephium tokens-meta repo
-  const response = await fetch('https://raw.githubusercontent.com/nop33/token-meta/master/tokens.json')
-
-  return await response.json()
+  return await fetchTokenMetadata()
 })
 
 const tokenMetadataSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    statusChanged: (state, action: PayloadAction<TokenMetadataStatus>) => {
-      state.status = action.payload
+    tokenMetadataUpdateStarted: (state) => {
+      state.status = 'updating'
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(tokenMetadataUpdated.fulfilled, (_, action) => ({
-      metadata: action.payload,
-      status: 'updated'
-    }))
+    builder
+      .addCase(syncTokenMetadata.fulfilled, (_, action) => ({
+        metadata: action.payload,
+        status: 'updated'
+      }))
+      .addCase(appReset, () => initialState)
   }
 })
 
 export default tokenMetadataSlice
 
-export const { statusChanged } = tokenMetadataSlice.actions
+export const { tokenMetadataUpdateStarted } = tokenMetadataSlice.actions

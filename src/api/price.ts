@@ -15,15 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { Currency } from '../types/settings'
 
-import { isEqual } from 'lodash'
+export const fetchLatestPrice = async (currency: Currency) => {
+  console.log(`⬇️ Fetching latest ${currency} price`)
 
-import { networkPresetSettings } from '../persistent-storage/settings'
-import { NetworkName } from '../types/network'
-import { NetworkSettings } from '../types/settings'
+  const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=alephium&vs_currencies=${currency}`)
+  const data = await response.json()
+  const latestPrice = data.alephium[currency.toLowerCase()]
 
-export const getNetworkName = (settings: NetworkSettings) => {
-  return (Object.entries(networkPresetSettings).find(([, presetSettings]) => {
-    return isEqual(presetSettings, settings)
-  })?.[0] || NetworkName.custom) as NetworkName
+  return latestPrice
 }

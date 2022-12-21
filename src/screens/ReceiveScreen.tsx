@@ -31,7 +31,7 @@ import AddressSelector from '../components/inputs/AddressSelector'
 import { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '../components/layout/Screen'
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { selectAddressByHash } from '../store/addressesSlice'
+import { selectAddressByHash, selectDefaultAddress } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard } from '../utils/addresses'
 import { currencies } from '../utils/currencies'
@@ -43,8 +43,8 @@ const ReceiveScreen = ({
     params: { addressHash }
   }
 }: ScreenProps) => {
-  const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
-  const [toAddressHash, setToAddressHash] = useState<AddressHash>(addressHash ?? mainAddress)
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const [toAddressHash, setToAddressHash] = useState<AddressHash>(addressHash ?? defaultAddress?.hash)
   const [toAddress, price, currency] = useAppSelector((s) => [
     selectAddressByHash(s, toAddressHash),
     s.price.value,

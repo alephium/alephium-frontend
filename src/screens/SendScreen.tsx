@@ -36,6 +36,7 @@ import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
 import client from '../api/client'
+import { buildSweepTransactions, signAndSendTransaction } from '../api/transactions'
 import Amount from '../components/Amount'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
@@ -56,7 +57,7 @@ import ModalWithBackdrop from '../components/ModalWithBackdrop'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { addPendingTransactionToAddress, selectAddressByHash } from '../store/addressesSlice'
+import { addPendingTransactionToAddress, selectAddressByHash, selectDefaultAddress } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import {
   validateIsAddressValid,
@@ -85,7 +86,8 @@ const SendScreen = ({
   }
 }: ScreenProps) => {
   const theme = useTheme()
-  const [mainAddress, requiresAuth] = useAppSelector((s) => [s.addresses.mainAddress, s.settings.requireAuth])
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
   const [amount, setAmount] = useState(BigInt(0))
   const [fees, setFees] = useState<bigint>(BigInt(0))
   const [unsignedTxId, setUnsignedTxId] = useState('')
@@ -106,7 +108,7 @@ const SendScreen = ({
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: {
-      fromAddressHash: addressHash ?? mainAddress,
+      fromAddressHash: addressHash ?? defaultAddress?.hash,
       toAddressHash: '',
       amountInAlph: '',
       gasAmount: '',
@@ -135,7 +137,7 @@ const SendScreen = ({
     setIsLoading(true)
 
     try {
-      const { unsignedTxs, fees } = await client.buildSweepTransactions(
+      const { unsignedTxs, fees } = await buildSweepTransactions(
         fromAddress.hash,
         fromAddress.publicKey,
         fromAddress.hash
@@ -163,7 +165,7 @@ const SendScreen = ({
       const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : ''
       try {
         if (isSweep) {
-          const { unsignedTxs, fees } = await client.buildSweepTransactions(
+          const { unsignedTxs, fees } = await buildSweepTransactions(
             fromAddress.hash,
             fromAddress.publicKey,
             formData.toAddressHash
@@ -218,7 +220,7 @@ const SendScreen = ({
     try {
       if (isSweeping) {
         for (const { txId, unsignedTx } of sweepUnsignedTxs) {
-          client.signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, txId, unsignedTx)
+          signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, txId, unsignedTx)
 
           dispatch(
             addPendingTransactionToAddress({
@@ -232,7 +234,7 @@ const SendScreen = ({
           )
         }
       } else {
-        client.signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, unsignedTxId, unsignedTransaction)
+        signAndSendTransaction(fromAddress.hash, fromAddress.privateKey, unsignedTxId, unsignedTransaction)
 
         dispatch(
           addPendingTransactionToAddress({

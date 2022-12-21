@@ -18,6 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { appReset } from './appSlice'
+
 const sliceName = 'walletGeneration'
 
 export type WalletGenerationMethod = 'create' | 'import'
@@ -25,13 +27,11 @@ export type WalletGenerationMethod = 'create' | 'import'
 interface WalletGenerationState {
   method: WalletGenerationMethod | null
   walletName: string
-  loading: boolean
 }
 
 const initialState: WalletGenerationState = {
   method: null,
-  walletName: '',
-  loading: false
+  walletName: ''
 }
 
 const walletGenerationSlice = createSlice({
@@ -41,20 +41,15 @@ const walletGenerationSlice = createSlice({
     methodSelected: (state, action: PayloadAction<WalletGenerationMethod>) => {
       state.method = action.payload
     },
-    newWalletNameChanged: (state, action: PayloadAction<string>) => {
+    newWalletNameEntered: (state, action: PayloadAction<string>) => {
       state.walletName = action.payload
-    },
-    flushWalletGenerationState: () => initialState,
-    loadingStarted: (state) => {
-      state.loading = true
-    },
-    loadingFinished: (state) => {
-      state.loading = false
     }
+  },
+  extraReducers(builder) {
+    builder.addCase(appReset, () => initialState)
   }
 })
 
-export const { methodSelected, flushWalletGenerationState, loadingStarted, loadingFinished, newWalletNameChanged } =
-  walletGenerationSlice.actions
+export const { methodSelected, newWalletNameEntered } = walletGenerationSlice.actions
 
 export default walletGenerationSlice

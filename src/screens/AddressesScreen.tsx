@@ -37,7 +37,7 @@ import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHead
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { selectAddressByHash, selectAddressIds } from '../store/addressesSlice'
+import { selectAddressByHash, selectAddressIds, selectDefaultAddress } from '../store/addressesSlice'
 import { selectConfirmedTransactions, selectPendingTransactions } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 
@@ -51,8 +51,8 @@ const AddressesScreenHeader = (props: Partial<DefaultHeaderProps>) => (
 
 const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const mainAddress = useAppSelector((state) => state.addresses.mainAddress)
-  const [currentAddressHash, setCurrentAddressHash] = useState(mainAddress)
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const [currentAddressHash, setCurrentAddressHash] = useState(defaultAddress?.hash ?? '')
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
@@ -71,8 +71,8 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
   )
 
   useEffect(() => {
-    if (mainAddress) setCurrentAddressHash(mainAddress)
-  }, [mainAddress])
+    if (defaultAddress) setCurrentAddressHash(defaultAddress.hash)
+  }, [defaultAddress])
 
   const onAddressCardsScrollEnd = (index: number) => {
     if (index < addressHashes.length) setCurrentAddressHash(addressHashes[index])

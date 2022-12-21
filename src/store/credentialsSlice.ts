@@ -16,33 +16,41 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+import { CredentialsState } from '../types/wallet'
+import { walletSwitched, walletUnlocked } from './activeWalletSlice'
+import { appBecameInactive, appReset } from './appSlice'
 
 const sliceName = 'credentials'
-
-interface CredentialsState {
-  pin?: string
-}
 
 const initialState: CredentialsState = {
   pin: undefined
 }
 
+const resetState = () => initialState
+
 const credentialsSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    pinEntered: (state, action) => {
+    newPinVerified: (state, action: PayloadAction<CredentialsState['pin']>) => {
       state.pin = action.payload
-    },
-    pinFlushed: () => {
-      return {
-        ...initialState
-      }
     }
+  },
+  extraReducers(builder) {
+    builder
+      .addCase(appBecameInactive, resetState)
+      .addCase(appReset, resetState)
+      .addCase(walletSwitched, (state, action) => {
+        if (action.payload.pin) state.pin = action.payload.pin
+      })
+      .addCase(walletUnlocked, (state, action) => {
+        if (action.payload.pin) state.pin = action.payload.pin
+      })
   }
 })
 
-export const { pinEntered, pinFlushed } = credentialsSlice.actions
+export const { newPinVerified } = credentialsSlice.actions
 
 export default credentialsSlice

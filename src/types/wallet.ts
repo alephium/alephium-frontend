@@ -16,7 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata } from './addresses'
+import { AddressKeyPair } from '@alephium/sdk'
+
+import { AddressMetadata, AddressPartial } from './addresses'
 
 export type Mnemonic = string
 
@@ -28,4 +30,23 @@ export type WalletMetadata = {
   authType: StoredWalletAuthType
   isMnemonicBackedUp: boolean
   addresses: AddressMetadata[]
+}
+
+export interface ActiveWalletState {
+  name: string
+  mnemonic: Mnemonic
+  metadataId: string
+  isMnemonicBackedUp?: boolean
+  authType?: StoredWalletAuthType
+}
+
+export type GeneratedWallet = ActiveWalletState & { firstAddress: AddressKeyPair }
+
+export interface CredentialsState {
+  pin?: string
+}
+
+export type WalletUnlockedPayload = CredentialsState & {
+  wallet: ActiveWalletState
+  addressesToInitialize: AddressPartial[]
 }

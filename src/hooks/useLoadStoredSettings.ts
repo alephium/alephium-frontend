@@ -18,10 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useEffect } from 'react'
 
-import { loadSettings } from '../storage/settings'
-import { addressesFlushed, addressesFromStoredMetadataInitialized } from '../store/addressesSlice'
-import { networkSettingsChanged } from '../store/networkSlice'
-import { generalSettingsChanged } from '../store/settingsSlice'
+import { loadSettings } from '../persistent-storage/settings'
+import { storedNetworkSettingsLoaded } from '../store/networkSlice'
+import { storedGeneralSettingsLoaded } from '../store/settingsSlice'
 import { GeneralSettings, NetworkSettings } from '../types/settings'
 import { useAppDispatch } from './redux'
 
@@ -31,13 +30,10 @@ const useLoadStoredSettings = () => {
   useEffect(() => {
     const loadStoredSettingsIntoState = async () => {
       const generalSettings = (await loadSettings('general')) as GeneralSettings
-      dispatch(generalSettingsChanged(generalSettings))
+      dispatch(storedGeneralSettingsLoaded(generalSettings))
 
       const networkSettings = (await loadSettings('network')) as NetworkSettings
-      dispatch(networkSettingsChanged(networkSettings))
-      // TODO: Update data instead of flushing and re-initializing
-      dispatch(addressesFlushed())
-      dispatch(addressesFromStoredMetadataInitialized())
+      dispatch(storedNetworkSettingsLoaded(networkSettings))
     }
 
     loadStoredSettingsIntoState()

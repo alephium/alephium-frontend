@@ -72,7 +72,7 @@ export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> =
   }
 }
 
-export const storeSettings = async (key: SettingsKey, settings: SettingsPartial) => {
+export const persistSettings = async (key: SettingsKey, settings: SettingsPartial) => {
   try {
     await AsyncStorage.setItem(constructSettingsStorageKey(key), JSON.stringify(settings))
   } catch (e) {

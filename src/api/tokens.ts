@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isEqual } from 'lodash'
+export const fetchTokenMetadata = async () => {
+  console.log('⬇️ Fetching latest token metadata')
 
-import { networkPresetSettings } from '../persistent-storage/settings'
-import { NetworkName } from '../types/network'
-import { NetworkSettings } from '../types/settings'
+  // TODO: Use official Alephium tokens-meta repo
+  const result = await fetch('https://raw.githubusercontent.com/nop33/token-meta/master/tokens.json')
 
-export const getNetworkName = (settings: NetworkSettings) => {
-  return (Object.entries(networkPresetSettings).find(([, presetSettings]) => {
-    return isEqual(presetSettings, settings)
-  })?.[0] || NetworkName.custom) as NetworkName
+  return await result.json()
 }

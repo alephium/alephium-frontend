@@ -31,14 +31,15 @@ import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Screen, { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
 import SpinnerModal from '../components/SpinnerModal'
+import usePersistAddressSettings from '../hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import {
   addressDiscoveryStopped,
-  addressesDiscovered,
+  discoverAddresses,
   selectAllDiscoveredAddresses
 } from '../store/addressDiscoverySlice'
-import { newAddressesStoredAndInitialized, selectAllAddresses } from '../store/addressesSlice'
+import { addressesImported, selectAllAddresses, syncAddressesData } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
 import { getRandomLabelColor } from '../utils/colors'
 
@@ -50,6 +51,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
   const addresses = useAppSelector(selectAllAddresses)
   const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
   const { loading, status, progress } = useAppSelector((state) => state.addressDiscovery)
+  const persistAddressSettings = usePersistAddressSettings()
 
   const [addressSelections, setAddressSelections] = useState<Record<AddressHash, boolean>>({})
   const [importLoading, setImportLoading] = useState(false)
@@ -57,19 +59,22 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
   const isImporting = params?.isImporting
   const selectedAddressesToImport = discoveredAddresses.filter(({ hash }) => addressSelections[hash])
 
-  const startScan = useCallback(() => dispatch(addressesDiscovered()), [dispatch])
+  const startScan = useCallback(() => dispatch(discoverAddresses()), [dispatch])
 
   const stopScan = () => dispatch(addressDiscoveryStopped())
 
   const importAddresses = async () => {
     setImportLoading(true)
 
-    const newAddresses = selectedAddressesToImport.map((address) => ({
+    const newAddressHashes = selectedAddressesToImport.map((address) => address.hash)
+    const newAddresses = selectedAddressesToImport.map(({ balance, ...address }) => ({
       ...address,
       settings: { isMain: false, color: getRandomLabelColor() }
     }))
 
-    await dispatch(newAddressesStoredAndInitialized(newAddresses))
+    await persistAddressSettings(newAddresses)
+    dispatch(addressesImported(newAddresses))
+    await dispatch(syncAddressesData(newAddressHashes))
 
     navigation.navigate(isImporting ? 'NewWalletSuccessPage' : 'InWalletScreen')
 

@@ -16,8 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+import { fetchLatestPrice } from '../api/price'
+import { appReset } from './appSlice'
+import { currencySelected } from './settingsSlice'
 import { RootState } from './store'
 
 const sliceName = 'price'
@@ -34,42 +37,36 @@ const initialState: PriceState = {
   status: 'uninitialized'
 }
 
-export const priceUpdated = createAsyncThunk(`${sliceName}/priceUpdated`, async (_, { dispatch, getState }) => {
-  dispatch(statusChanged('updating'))
+export const updatePrice = createAsyncThunk(`${sliceName}/updatePrice`, async (_, { dispatch, getState }) => {
+  dispatch(priceUpdateStarted())
 
   const state = getState() as RootState
-  const currency = state.settings.currency
 
-  console.log(`⬇️ Fetching latest ${currency} price`)
-
-  const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=alephium&vs_currencies=${currency}`)
-  const data = await response.json()
-  const latestPrice = data.alephium[currency.toLowerCase()]
-
-  return latestPrice
+  return await fetchLatestPrice(state.settings.currency)
 })
+
+const resetPrice = () => initialState
 
 const priceSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    priceReset: (state) => initialState,
-    statusChanged: (state, action: PayloadAction<PriceStatus>) => {
-      state.status = action.payload
+    priceReset: resetPrice,
+    priceUpdateStarted: (state) => {
+      state.status = 'updating'
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(priceUpdated.fulfilled, (state, action) => {
-      const latestPrice = action.payload
-
-      return {
-        value: latestPrice,
+    builder
+      .addCase(updatePrice.fulfilled, (_, action) => ({
+        value: action.payload,
         status: 'updated'
-      }
-    })
+      }))
+      .addCase(currencySelected, resetPrice)
+      .addCase(appReset, resetPrice)
   }
 })
 
 export default priceSlice
 
-export const { priceReset, statusChanged } = priceSlice.actions
+export const { priceReset, priceUpdateStarted } = priceSlice.actions

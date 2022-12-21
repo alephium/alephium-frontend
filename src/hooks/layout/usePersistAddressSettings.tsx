@@ -16,14 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isEqual } from 'lodash'
+import { selectDefaultAddress } from '../../store/addressesSlice'
+import { AddressPartial } from '../../types/addresses'
+import { persistAddressesSettings } from '../../utils/addresses'
+import { useAppSelector } from '../redux'
 
-import { networkPresetSettings } from '../persistent-storage/settings'
-import { NetworkName } from '../types/network'
-import { NetworkSettings } from '../types/settings'
+const usePersistAddressSettings = () => {
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const activeWalletId = useAppSelector((state) => state.activeWallet.metadataId)
 
-export const getNetworkName = (settings: NetworkSettings) => {
-  return (Object.entries(networkPresetSettings).find(([, presetSettings]) => {
-    return isEqual(presetSettings, settings)
-  })?.[0] || NetworkName.custom) as NetworkName
+  return async (addresses: AddressPartial[] | AddressPartial) => {
+    await persistAddressesSettings(Array.isArray(addresses) ? addresses : [addresses], activeWalletId, defaultAddress)
+  }
 }
+
+export default usePersistAddressSettings

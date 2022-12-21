@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addressToGroup, deriveAddressAndKeys, TOTAL_NUMBER_OF_GROUPS, walletImportAsyncUnsafe } from '@alephium/sdk'
+import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import { Transaction } from '@alephium/sdk/api/explorer'
 import {
   createAsyncThunk,
@@ -27,15 +27,16 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 
+import { fetchAddressesData } from '../api/addresses'
 import client from '../api/client'
-import { getAddressesMetadataByWalletId } from '../storage/wallets'
-import { Address, AddressHash, AddressPartial, AddressSettings } from '../types/addresses'
+import { Address, AddressHash, AddressPartial } from '../types/addresses'
 import { AddressToken } from '../types/tokens'
 import { PendingTransaction } from '../types/transactions'
-import { fetchAddressesData, storeAddressSettings } from '../utils/addresses'
 import { getRandomLabelColor } from '../utils/colors'
-import { mnemonicToSeed } from '../utils/crypto'
 import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
+import { newWalletGenerated, walletSwitched, walletUnlocked } from './activeWalletSlice'
+import { appReset } from './appSlice'
+import { customNetworkSettingsSaved, networkPresetSwitched } from './networkSlice'
 import { RootState } from './store'
 
 const sliceName = 'addresses'
@@ -51,32 +52,30 @@ const addressesAdapter = createEntityAdapter<Address>({
 })
 
 interface AddressesState extends EntityState<Address> {
-  mainAddress: string
   loading: boolean
   status: 'uninitialized' | 'initialized'
 }
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
-  mainAddress: '',
   loading: false,
   status: 'uninitialized'
 })
 
-export const addressesDataFetched = createAsyncThunk(
-  `${sliceName}/addressesDataFetched`,
-  async (payload: AddressHash[], { dispatch }) => {
+export const syncAddressesData = createAsyncThunk(
+  `${sliceName}/syncAddressesData`,
+  async (payload: AddressHash[] | undefined, { getState, dispatch }) => {
     dispatch(loadingStarted())
 
-    const addresses = payload
+    const state = getState() as RootState
+    const addresses = payload ?? (state.addresses.ids as AddressHash[])
     const results = await fetchAddressesData(addresses)
 
-    dispatch(loadingFinished())
     return results
   }
 )
 
-export const fetchAddressesTransactionsNextPage = createAsyncThunk(
-  `${sliceName}/fetchAddressesTransactionsNextPage`,
+export const syncAddressesTransactionsNextPage = createAsyncThunk(
+  `${sliceName}/syncAddressesTransactionsNextPage`,
   async (payload: AddressHash[], { getState, dispatch }) => {
     const results = []
     dispatch(loadingStarted())
@@ -106,72 +105,7 @@ export const fetchAddressesTransactionsNextPage = createAsyncThunk(
       })
     }
 
-    dispatch(loadingFinished())
     return results
-  }
-)
-
-export const addressesFromStoredMetadataInitialized = createAsyncThunk(
-  `${sliceName}/addressesFromStoredMetadataInitialized`,
-  async (_, { getState, dispatch, rejectWithValue }) => {
-    const state = getState() as RootState
-
-    const { metadataId, mnemonic } = state.activeWallet
-
-    if (metadataId && mnemonic) {
-      dispatch(loadingStarted())
-
-      const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
-      const addressesMetadata = await getAddressesMetadataByWalletId(metadataId)
-
-      console.log(`👀 Found ${addressesMetadata.length} addresses metadata in persistent storage`)
-
-      const addresses = addressesMetadata.map(({ index, ...settings }) => ({
-        ...deriveAddressAndKeys(masterKey, index),
-        settings
-      }))
-
-      dispatch(addressesAdded(addresses))
-      await dispatch(addressesDataFetched(addresses.map((address) => address.hash)))
-
-      dispatch(loadingFinished())
-    } else {
-      rejectWithValue('Could not restore addresses from metadata')
-    }
-  }
-)
-
-export const newAddressesStoredAndInitialized = createAsyncThunk(
-  `${sliceName}/newAddressesStoredAndInitialized`,
-  async (payload: AddressPartial[], { getState, dispatch }) => {
-    const newAddresses = payload
-    const state = getState() as RootState
-    const { metadataId } = state.activeWallet
-    const oldDefaultAddress = selectDefaultAddress(state)
-
-    for (const newAddress of newAddresses) {
-      await storeAddressSettings(newAddress, newAddress.settings, metadataId, oldDefaultAddress)
-    }
-
-    dispatch(addressesAdded(newAddresses))
-    await dispatch(addressesDataFetched(newAddresses.map((address) => address.hash)))
-  }
-)
-
-export const addressSettingsUpdated = createAsyncThunk(
-  `${sliceName}/addressSettingsUpdated`,
-  async (payload: { address: Address; settings: AddressSettings }, { getState }) => {
-    const { address, settings } = payload
-    const state = getState() as RootState
-    const { metadataId } = state.activeWallet
-    const oldDefaultAddress = selectDefaultAddress(state)
-
-    await storeAddressSettings(address, settings, metadataId, oldDefaultAddress)
-
-    return {
-      address,
-      settings
-    }
   }
 )
 
@@ -182,12 +116,17 @@ const getInitialAddressState = (addressData: AddressPartial) => ({
     color: getRandomLabelColor()
   },
   group: addressToGroup(addressData.hash, TOTAL_NUMBER_OF_GROUPS),
+  // 🚨 Anti-pattern: deeply nested store.
+  // TODO: Make it flatter?
   networkData: {
     details: {
       balance: '0',
       lockedBalance: '0',
       txNumber: 0
     },
+    // 🚨 Anti-pattern: state duplication.
+    // Transactions can be repeated amonst different addresses.
+    // TODO: Move to its own slice?
     transactions: {
       confirmed: [],
       pending: [],
@@ -195,34 +134,77 @@ const getInitialAddressState = (addressData: AddressPartial) => ({
       allPagesLoaded: false
     },
     availableBalance: '0',
-    lockedBalance: '0',
+    // 🚨 Anti-pattern: implicit state duplication.
+    // This value could be derived using a transactions selector.
+    // Also, this value is never properly initialized.
+    // TODO: Remove and create a selector?
     lastUsed: 0,
     tokens: []
   }
 })
 
+const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]
+
+const updateOldDefaultAddress = (state: AddressesState) => {
+  const oldDefaultAddress = getAddresses(state).find((address) => address.settings.isMain)
+
+  if (oldDefaultAddress) {
+    addressesAdapter.updateOne(state, {
+      id: oldDefaultAddress.hash,
+      changes: { settings: { ...oldDefaultAddress.settings, isMain: false } }
+    })
+  }
+}
+
+const clearAddressesNetworkData = (state: AddressesState) => {
+  const reinitializedAddresses = getAddresses(state).map(getInitialAddressState)
+
+  addressesAdapter.updateMany(
+    state,
+    reinitializedAddresses.map((address) => ({ id: address.hash, changes: { networkData: address.networkData } }))
+  )
+
+  state.status = 'uninitialized'
+}
+
 const addressesSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    addressesAdded: (state, action: PayloadAction<AddressPartial[]>) => {
+    addressesImported: (state, action: PayloadAction<AddressPartial[]>) => {
       const addresses = action.payload
+
       const newDefaultAddress = addresses.find((address) => address.settings?.isMain)
-
-      if (newDefaultAddress) {
-        const oldDefaultAddress = state.entities[state.mainAddress]
-
-        if (oldDefaultAddress) {
-          addressesAdapter.updateOne(state, {
-            id: oldDefaultAddress.hash,
-            changes: { settings: { ...oldDefaultAddress.settings, isMain: false } }
-          })
-        }
-
-        state.mainAddress = newDefaultAddress.hash
-      }
+      if (newDefaultAddress) updateOldDefaultAddress(state)
 
       addressesAdapter.addMany(state, addresses.map(getInitialAddressState))
+    },
+    newAddressGenerated: (state, action: PayloadAction<AddressPartial>) => {
+      const address = action.payload
+
+      if (address.settings.isMain) updateOldDefaultAddress(state)
+
+      addressesAdapter.addOne(state, getInitialAddressState(address))
+    },
+    defaultAddressChanged: (state, action: PayloadAction<Address>) => {
+      const address = action.payload
+
+      updateOldDefaultAddress(state)
+
+      addressesAdapter.updateOne(state, {
+        id: address.hash,
+        changes: { settings: { ...address.settings, isMain: true } }
+      })
+    },
+    addressSettingsSaved: (state, action: PayloadAction<AddressPartial>) => {
+      const address = action.payload
+
+      if (address.settings.isMain) updateOldDefaultAddress(state)
+
+      addressesAdapter.updateOne(state, {
+        id: address.hash,
+        changes: { settings: address.settings }
+      })
     },
     addPendingTransactionToAddress: (state, action: PayloadAction<PendingTransaction>) => {
       const pendingTransaction = action.payload
@@ -232,19 +214,39 @@ const addressesSlice = createSlice({
 
       address.networkData.transactions.pending.push(pendingTransaction)
     },
-    addressesFlushed: (state) => {
-      addressesAdapter.setAll(state, [])
-    },
     loadingStarted: (state) => {
       state.loading = true
-    },
-    loadingFinished: (state) => {
-      state.loading = false
     }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(addressesDataFetched.fulfilled, (state, action) => {
+      .addCase(walletSwitched, (state, action) => {
+        addressesAdapter.setAll(state, [])
+        addressesAdapter.addMany(state, action.payload.addressesToInitialize.map(getInitialAddressState))
+        state.status = 'uninitialized'
+      })
+      .addCase(walletUnlocked, (state, action) => {
+        const { addressesToInitialize } = action.payload
+
+        if (addressesToInitialize.length > 0) {
+          addressesAdapter.setAll(state, [])
+          addressesAdapter.addMany(state, addressesToInitialize.map(getInitialAddressState))
+          state.status = 'uninitialized'
+        }
+      })
+      .addCase(newWalletGenerated, (state, action) => {
+        const firstWalletAddress = getInitialAddressState({
+          ...action.payload.firstAddress,
+          settings: {
+            isMain: true,
+            color: getRandomLabelColor()
+          }
+        })
+
+        addressesAdapter.setAll(state, [])
+        addressesAdapter.addOne(state, firstWalletAddress)
+      })
+      .addCase(syncAddressesData.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, details, availableBalance, transactions, tokens } = address
           const addressState = state.entities[hash]
@@ -273,8 +275,9 @@ const addressesSlice = createSlice({
         }
 
         state.status = 'initialized'
+        state.loading = false
       })
-      .addCase(fetchAddressesTransactionsNextPage.fulfilled, (state, action) => {
+      .addCase(syncAddressesTransactionsNextPage.fulfilled, (state, action) => {
         for (const address of action.payload) {
           const { hash, transactions, page } = address
           const addressState = state.entities[hash]
@@ -291,28 +294,12 @@ const addressesSlice = createSlice({
             }
           }
         }
+
+        state.loading = false
       })
-      .addCase(addressSettingsUpdated.fulfilled, (state, action) => {
-        const { address, settings } = action.payload
-
-        addressesAdapter.updateOne(state, {
-          id: address.hash,
-          changes: { settings }
-        })
-
-        if (settings.isMain) {
-          const oldDefaultAddress = state.entities[state.mainAddress]
-
-          if (oldDefaultAddress) {
-            addressesAdapter.updateOne(state, {
-              id: oldDefaultAddress.hash,
-              changes: { settings: { ...oldDefaultAddress.settings, isMain: false } }
-            })
-          }
-
-          state.mainAddress = address.hash
-        }
-      })
+      .addCase(networkPresetSwitched, clearAddressesNetworkData)
+      .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
+      .addCase(appReset, () => initialState)
   }
 })
 
@@ -321,11 +308,6 @@ export const {
   selectAll: selectAllAddresses,
   selectIds: selectAddressIds
 } = addressesAdapter.getSelectors<RootState>((state) => state[sliceName])
-
-export const selectMultipleAddresses = createSelector(
-  [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
-  (addresses, addressHashes) => addresses.filter((address) => addressHashes.includes(address.hash))
-)
 
 export const selectConfirmedTransactions = createSelector(
   [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
@@ -382,7 +364,13 @@ export const selectDefaultAddress = createSelector(selectAllAddresses, (addresse
   addresses.find((address) => address.settings.isMain)
 )
 
-export const { addPendingTransactionToAddress, addressesAdded, addressesFlushed, loadingStarted, loadingFinished } =
-  addressesSlice.actions
+export const {
+  newAddressGenerated,
+  addPendingTransactionToAddress,
+  addressesImported,
+  defaultAddressChanged,
+  addressSettingsSaved,
+  loadingStarted
+} = addressesSlice.actions
 
 export default addressesSlice

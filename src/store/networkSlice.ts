@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { defaultNetwork, defaultNetworkSettings, networkPresetSettings, storeSettings } from '../storage/settings'
+import { defaultNetwork, defaultNetworkSettings, networkPresetSettings } from '../persistent-storage/settings'
 import { NetworkName, NetworkPreset, NetworkStatus } from '../types/network'
 import { NetworkSettings } from '../types/settings'
 import { getNetworkName } from '../utils/settings'
-import { RootState } from './store'
+import { appReset } from './appSlice'
 
 const sliceName = 'network'
 
@@ -38,11 +38,21 @@ const initialState: NetworkState = {
   status: 'uninitialized'
 }
 
+const parseSettingsUpdate = (settings: NetworkSettings) => {
+  const missingNetworkSettings = !settings.nodeHost || !settings.explorerApiHost
+
+  return {
+    name: getNetworkName(settings),
+    settings,
+    status: missingNetworkSettings ? ('offline' as NetworkStatus) : ('connecting' as NetworkStatus)
+  }
+}
+
 const networkSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    networkChanged: (state, action: PayloadAction<NetworkPreset>) => {
+    networkPresetSwitched: (_, action: PayloadAction<NetworkPreset>) => {
       const networkName = action.payload
 
       return {
@@ -51,34 +61,26 @@ const networkSlice = createSlice({
         status: 'connecting'
       }
     },
-    networkSettingsChanged: (state, action: PayloadAction<NetworkSettings>) => {
-      const networkSettings = action.payload
-      const missingNetworkSettings = !networkSettings.nodeHost || !networkSettings.explorerApiHost
-
-      return {
-        name: getNetworkName(networkSettings),
-        settings: networkSettings,
-        status: missingNetworkSettings ? 'offline' : 'connecting'
-      }
+    storedNetworkSettingsLoaded: (_, action: PayloadAction<NetworkSettings>) => parseSettingsUpdate(action.payload),
+    customNetworkSettingsSaved: (_, action: PayloadAction<NetworkSettings>) => parseSettingsUpdate(action.payload),
+    apiClientInitSucceeded: (state) => {
+      state.status = 'online'
     },
-    networkStatusChanged: (state, action: PayloadAction<NetworkStatus>) => {
-      state.status = action.payload
+    apiClientInitFailed: (state) => {
+      state.status = 'offline'
     }
+  },
+  extraReducers(builder) {
+    builder.addCase(appReset, () => initialState)
   }
 })
 
-export const { networkChanged, networkSettingsChanged, networkStatusChanged } = networkSlice.actions
-
-export const networkListenerMiddleware = createListenerMiddleware()
-
-// When the network settings change, store them in persistent storage
-networkListenerMiddleware.startListening({
-  matcher: isAnyOf(networkChanged, networkSettingsChanged),
-  effect: async (action, { getState }) => {
-    const state = getState() as RootState
-
-    await storeSettings('network', state[sliceName].settings)
-  }
-})
+export const {
+  networkPresetSwitched,
+  storedNetworkSettingsLoaded,
+  customNetworkSettingsSaved,
+  apiClientInitSucceeded,
+  apiClientInitFailed
+} = networkSlice.actions
 
 export default networkSlice
