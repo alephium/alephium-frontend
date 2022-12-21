@@ -24,7 +24,7 @@ import NumberKeyboard, { NumberKeyboardKey } from '../keyboard/NumberKeyboard'
 
 interface PinInputProps {
   pinLength: number
-  onPinChange: (value: string) => Promise<boolean> | boolean
+  onPinEntered: (value: string) => Promise<boolean> | boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -32,7 +32,7 @@ interface SlotProps {
   number?: string
 }
 
-const PinCodeInput = ({ pinLength, onPinChange, style }: PinInputProps) => {
+const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
   const [pin, setPin] = useState('')
 
   const renderSlots = () => {
@@ -44,7 +44,7 @@ const PinCodeInput = ({ pinLength, onPinChange, style }: PinInputProps) => {
     setPin(newPin)
 
     if (newPin.length === pinLength) {
-      const shouldClearPin = await onPinChange(newPin)
+      const shouldClearPin = await onPinEntered(newPin)
 
       if (shouldClearPin) setPin('')
     }

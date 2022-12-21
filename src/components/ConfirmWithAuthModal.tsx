@@ -103,7 +103,7 @@ const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWi
         {encryptedWallet && (
           <ModalContent>
             <CenteredInstructions instructions={shownInstructions} />
-            <PinCodeInput pinLength={pinLength} onPinChange={decryptMnemonic} />
+            <PinCodeInput pinLength={pinLength} onPinEntered={decryptMnemonic} />
           </ModalContent>
         )}
       </ModalWithBackdrop>

@@ -113,7 +113,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   return (
     <Screen>
       <CenteredInstructions instructions={shownInstructions} />
-      <PinCodeInput pinLength={pinLength} onPinChange={handleFullPinEntered} />
+      <PinCodeInput pinLength={pinLength} onPinEntered={handleFullPinEntered} />
       <SpinnerModal isActive={loading} text="Creating wallet..." />
     </Screen>
   )
