@@ -15,7 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-
 import {
   APIError,
   convertAlphToSet,
@@ -114,7 +113,7 @@ const SendScreen = ({
 
   const errors = formState.errors
   const isFormValid = isEmpty(errors)
-  const totalAmount = amount + unsignedTxData?.fees
+  const totalAmount = BigInt(amount + unsignedTxData?.fees) // 🚨 TODO: Operations with BigInt give inaccurate results. Use `.plus` method of 'big-integer' instead
   const loadingMessage = {
     build: 'Calculating fees...',
     send: 'Sending...'
@@ -150,6 +149,7 @@ const SendScreen = ({
 
       setIsLoading(true)
       const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : undefined
+
       const amountInSet = convertAlphToSet(formData.amountInAlph)
 
       setAmount(amountInSet)
@@ -350,7 +350,7 @@ const SendScreen = ({
                 />
               </ExpandableRow>
             </ScreenSection>
-            {txStep === 'send' && !isLoading && unsignedTxData.fees && totalAmount && (
+            {txStep === 'send' && unsignedTxData.fees && totalAmount && (
               <ScreenSection>
                 <ScreenSectionTitle>Summary</ScreenSectionTitle>
                 <HighlightRow title="Expected fee" isTopRounded hasBottomBorder isSecondary>

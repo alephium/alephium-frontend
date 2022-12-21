@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import { Transaction } from '@alephium/sdk/api/explorer'
+import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-root-toast'
 
@@ -90,7 +91,7 @@ export const initializeAddressDiscoveryGroupsData = (addresses: Address[]): Addr
 }
 
 export const getAddressAvailableBalance = (address: Address): bigint =>
-  BigInt(address.balance) - BigInt(address.lockedBalance)
+  BigInt(bigInteger(address.balance).minus(bigInteger(address.lockedBalance)).toString())
 
 export const selectAddressTransactions = (
   allAddresses: Address[],

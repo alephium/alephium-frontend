@@ -40,7 +40,7 @@ export const buildUnsignedTransactions = async (
   gasAmount: string,
   gasPriceInSet?: bigint
 ) => {
-  const isSweep = amountInSet === getAddressAvailableBalance(fromAddress)
+  const isSweep = amountInSet.toString() === getAddressAvailableBalance(fromAddress).toString()
 
   if (isSweep) {
     return await buildSweepTransactions(fromAddress, toAddressHash)
