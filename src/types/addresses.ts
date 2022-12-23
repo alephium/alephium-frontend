@@ -37,23 +37,16 @@ export type AddressMetadata = AddressSettings & {
   index: AddressIndex
 }
 
-// 🚨 See anti-pattern alerts in src/store/addressesSlice.ts
-export type Address = AddressKeyPair & {
-  group: number
-  settings: AddressSettings
-  networkData: {
-    details: AddressInfo
-    transactions: {
-      confirmed: Transaction[]
-      pending: PendingTransaction[]
-      loadedPage: number
-      allPagesLoaded: boolean
-    }
-    availableBalance: string
-    lastUsed: TimeInMs
+export type Address = AddressKeyPair &
+  AddressInfo & {
+    group: number
+    settings: AddressSettings
+    transactions: (Transaction['hash'] | PendingTransaction['hash'])[]
+    transactionsPageLoaded: number
+    allTransactionPagesLoaded: boolean
     tokens: AddressToken[]
+    lastUsed: TimeInMs
   }
-}
 
 export type AddressPartial = AddressKeyPair & { settings: AddressSettings }
 

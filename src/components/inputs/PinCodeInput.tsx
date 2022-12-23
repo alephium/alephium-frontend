@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { memo, useEffect, useState } from 'react'
+import { memo, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -24,8 +24,7 @@ import NumberKeyboard, { NumberKeyboardKey } from '../keyboard/NumberKeyboard'
 
 interface PinInputProps {
   pinLength: number
-  value: string
-  onPinChange: (value: string) => void
+  onPinEntered: (value: string) => Promise<boolean> | boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -33,23 +32,21 @@ interface SlotProps {
   number?: string
 }
 
-const PinCodeInput = ({ pinLength, value, onPinChange, style }: PinInputProps) => {
-  const [pin, setPin] = useState(value)
-
-  useEffect(() => {
-    setPin(value)
-  }, [value])
+const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
+  const [pin, setPin] = useState('')
 
   const renderSlots = () => {
     return [...new Array(pinLength)].map((_, i) => <Slot key={i} number={pin[i]} />)
   }
 
-  const handleKeyboardPress = (key: NumberKeyboardKey) => {
+  const handleKeyboardPress = async (key: NumberKeyboardKey) => {
     const newPin = key === 'delete' ? pin.slice(0, -1) : pin.length < pinLength ? pin + key : pin
     setPin(newPin)
 
     if (newPin.length === pinLength) {
-      onPinChange(newPin)
+      const shouldClearPin = await onPinEntered(newPin)
+
+      if (shouldClearPin) setPin('')
     }
   }
 

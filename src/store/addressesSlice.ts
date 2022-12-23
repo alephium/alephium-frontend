@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
-import { Transaction } from '@alephium/sdk/api/explorer'
 import {
   createAsyncThunk,
   createEntityAdapter,
@@ -26,14 +25,13 @@ import {
   EntityState,
   PayloadAction
 } from '@reduxjs/toolkit'
+import { uniq } from 'lodash'
 
-import { fetchAddressesData } from '../api/addresses'
-import client from '../api/client'
+import { fetchAddressesData, fetchAddressTransactionsNextPage } from '../api/addresses'
 import { Address, AddressHash, AddressPartial } from '../types/addresses'
 import { AddressToken } from '../types/tokens'
-import { PendingTransaction } from '../types/transactions'
 import { getRandomLabelColor } from '../utils/colors'
-import { extractNewTransactions, extractRemainingPendingTransactions } from '../utils/transactions'
+import { extractNewTransactionHashes } from '../utils/transactions'
 import { newWalletGenerated, walletSwitched, walletUnlocked } from './activeWalletSlice'
 import { appReset } from './appSlice'
 import { customNetworkSettingsSaved, networkPresetSwitched } from './networkSlice'
@@ -47,7 +45,7 @@ const addressesAdapter = createEntityAdapter<Address>({
     // Always keep main address to the top of the list
     if (a.settings.isMain) return -1
     if (b.settings.isMain) return 1
-    return (b.networkData?.lastUsed ?? 0) - (a.networkData?.lastUsed ?? 0)
+    return (b.lastUsed ?? 0) - (a.lastUsed ?? 0)
   }
 })
 
@@ -76,96 +74,16 @@ export const syncAddressesData = createAsyncThunk(
 
 export const syncAddressesTransactionsNextPage = createAsyncThunk(
   `${sliceName}/syncAddressesTransactionsNextPage`,
-  async (payload: AddressHash[], { getState, dispatch }) => {
-    const results = []
+  async (payload: AddressHash[] | undefined, { getState, dispatch }) => {
     dispatch(loadingStarted())
 
     const state = getState() as RootState
+    const allAddresses = selectAllAddresses(state)
+    const addresses = payload ? allAddresses.filter((address) => payload.includes(address.hash)) : allAddresses
 
-    const addresses = payload
-
-    for (const addressHash of addresses) {
-      const address = state.addresses.entities[addressHash]
-      const allPagesLoaded = address?.networkData.transactions.allPagesLoaded
-      const latestPage = address?.networkData.transactions.loadedPage ?? 0
-      let nextPage = latestPage
-      let newTransactions = [] as Transaction[]
-
-      if (!allPagesLoaded) {
-        nextPage += 1
-        console.log(`⬇️ Fetching page ${nextPage} of address confirmed transactions: `, addressHash)
-        const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, nextPage)
-        newTransactions = transactions
-      }
-
-      results.push({
-        hash: addressHash,
-        transactions: newTransactions,
-        page: nextPage
-      })
-    }
-
-    return results
+    return await Promise.all(addresses.map((address) => fetchAddressTransactionsNextPage(address)))
   }
 )
-
-const getInitialAddressState = (addressData: AddressPartial) => ({
-  ...addressData,
-  settings: addressData.settings || {
-    isMain: false,
-    color: getRandomLabelColor()
-  },
-  group: addressToGroup(addressData.hash, TOTAL_NUMBER_OF_GROUPS),
-  // 🚨 Anti-pattern: deeply nested store.
-  // TODO: Make it flatter?
-  networkData: {
-    details: {
-      balance: '0',
-      lockedBalance: '0',
-      txNumber: 0
-    },
-    // 🚨 Anti-pattern: state duplication.
-    // Transactions can be repeated amonst different addresses.
-    // TODO: Move to its own slice?
-    transactions: {
-      confirmed: [],
-      pending: [],
-      loadedPage: 0,
-      allPagesLoaded: false
-    },
-    availableBalance: '0',
-    // 🚨 Anti-pattern: implicit state duplication.
-    // This value could be derived using a transactions selector.
-    // Also, this value is never properly initialized.
-    // TODO: Remove and create a selector?
-    lastUsed: 0,
-    tokens: []
-  }
-})
-
-const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]
-
-const updateOldDefaultAddress = (state: AddressesState) => {
-  const oldDefaultAddress = getAddresses(state).find((address) => address.settings.isMain)
-
-  if (oldDefaultAddress) {
-    addressesAdapter.updateOne(state, {
-      id: oldDefaultAddress.hash,
-      changes: { settings: { ...oldDefaultAddress.settings, isMain: false } }
-    })
-  }
-}
-
-const clearAddressesNetworkData = (state: AddressesState) => {
-  const reinitializedAddresses = getAddresses(state).map(getInitialAddressState)
-
-  addressesAdapter.updateMany(
-    state,
-    reinitializedAddresses.map((address) => ({ id: address.hash, changes: { networkData: address.networkData } }))
-  )
-
-  state.status = 'uninitialized'
-}
 
 const addressesSlice = createSlice({
   name: sliceName,
@@ -206,13 +124,11 @@ const addressesSlice = createSlice({
         changes: { settings: address.settings }
       })
     },
-    addPendingTransactionToAddress: (state, action: PayloadAction<PendingTransaction>) => {
+    transactionSent: (state, action) => {
       const pendingTransaction = action.payload
+      const address = state.entities[pendingTransaction.fromAddress] as Address
 
-      const address = state.entities[pendingTransaction.fromAddress]
-      if (!address) return
-
-      address.networkData.transactions.pending.push(pendingTransaction)
+      address.transactions.push(pendingTransaction.hash)
     },
     loadingStarted: (state) => {
       state.loading = true
@@ -247,53 +163,44 @@ const addressesSlice = createSlice({
         addressesAdapter.addOne(state, firstWalletAddress)
       })
       .addCase(syncAddressesData.fulfilled, (state, action) => {
-        for (const address of action.payload) {
-          const { hash, details, availableBalance, transactions, tokens } = address
-          const addressState = state.entities[hash]
+        const addressData = action.payload
+        const updatedAddresses = addressData.map(({ hash, details, tokens, transactions }) => {
+          const address = state.entities[hash] as Address
 
-          if (addressState) {
-            const networkData = addressState.networkData
-            networkData.details = details
-            networkData.tokens = tokens
-            if (availableBalance) networkData.availableBalance = availableBalance
-
-            const newTxs = extractNewTransactions(transactions, networkData.transactions.confirmed)
-
-            if (newTxs.length > 0) {
-              networkData.transactions.confirmed = [...newTxs.concat(networkData.transactions.confirmed)]
-
-              if (networkData.transactions.loadedPage === 0) {
-                networkData.transactions.loadedPage = 1
-              }
-
-              networkData.transactions.pending = extractRemainingPendingTransactions(
-                networkData.transactions.pending,
-                newTxs
-              )
+          return {
+            id: hash,
+            changes: {
+              ...details,
+              ...tokens,
+              transactions: uniq(address.transactions.concat(transactions.map((tx) => tx.hash))),
+              transactionsPageLoaded: address.transactionsPageLoaded === 0 ? 1 : address.transactionsPageLoaded,
+              lastUsed: transactions.length > 0 ? transactions[0].timestamp : address.lastUsed
             }
           }
-        }
+        })
+
+        addressesAdapter.updateMany(state, updatedAddresses)
 
         state.status = 'initialized'
         state.loading = false
       })
       .addCase(syncAddressesTransactionsNextPage.fulfilled, (state, action) => {
-        for (const address of action.payload) {
-          const { hash, transactions, page } = address
-          const addressState = state.entities[hash]
+        const addressData = action.payload
+        const updatedAddresses = addressData.map(({ hash, transactions, page }) => {
+          const address = state.entities[hash] as Address
+          const newTxHashes = extractNewTransactionHashes(transactions, address.transactions)
 
-          if (addressState) {
-            const networkData = addressState.networkData
-            const newTxs = extractNewTransactions(transactions, networkData.transactions.confirmed)
-
-            if (newTxs.length > 0) {
-              networkData.transactions.confirmed = [...networkData.transactions.confirmed.concat(newTxs)]
-              networkData.transactions.loadedPage = page
-            } else {
-              networkData.transactions.allPagesLoaded = true
+          return {
+            id: hash,
+            changes: {
+              transactions: address.transactions.concat(newTxHashes),
+              transactionsPageLoaded: newTxHashes.length > 0 ? page : address.transactionsPageLoaded,
+              allTransactionPagesLoaded: newTxHashes.length === 0
             }
           }
-        }
+        })
+
+        addressesAdapter.updateMany(state, updatedAddresses)
 
         state.loading = false
       })
@@ -309,37 +216,11 @@ export const {
   selectIds: selectAddressIds
 } = addressesAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const selectConfirmedTransactions = createSelector(
-  [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
-  (addresses, addressHashes) =>
-    addresses
-      .filter((address) => addressHashes.includes(address.hash))
-      .map((address) => address.networkData.transactions.confirmed.map((tx) => ({ ...tx, address })))
-      .flat()
-      .sort((a, b) => {
-        const delta = b.timestamp - a.timestamp
-        return delta == 0 ? -1 : delta
-      })
-)
-
-export const selectPendingTransactions = createSelector(
-  [selectAllAddresses, (state, addressHashes: AddressHash[]) => addressHashes],
-  (addresses, addressHashes) =>
-    addresses
-      .filter((address) => addressHashes.includes(address.hash))
-      .map((address) => address.networkData.transactions.pending.map((tx) => ({ ...tx, address })))
-      .flat()
-      .sort((a, b) => {
-        const delta = b.timestamp - a.timestamp
-        return delta == 0 ? -1 : delta
-      })
-)
-
 export const selectTokens = createSelector([(state, addresses: Address[]) => addresses], (addresses) => {
   const resultTokens: AddressToken[] = []
 
   addresses.forEach((address) => {
-    address.networkData.tokens.forEach((token) => {
+    address.tokens.forEach((token) => {
       const tokenBalances = resultTokens.find((resultToken) => resultToken.id === token.id)?.balances
 
       if (tokenBalances) {
@@ -357,20 +238,65 @@ export const selectTokens = createSelector([(state, addresses: Address[]) => add
 })
 
 export const selectHaveAllPagesLoaded = createSelector(selectAllAddresses, (addresses) =>
-  addresses.every((address) => address.networkData.transactions.allPagesLoaded === true)
+  addresses.every((address) => address.allTransactionPagesLoaded)
 )
 
 export const selectDefaultAddress = createSelector(selectAllAddresses, (addresses) =>
   addresses.find((address) => address.settings.isMain)
 )
 
+export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>
+  addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
+)
+
 export const {
   newAddressGenerated,
-  addPendingTransactionToAddress,
   addressesImported,
   defaultAddressChanged,
   addressSettingsSaved,
+  transactionSent,
   loadingStarted
 } = addressesSlice.actions
 
 export default addressesSlice
+
+const getInitialAddressState = (addressData: AddressPartial): Address => ({
+  ...addressData,
+  settings: addressData.settings || {
+    isMain: false,
+    color: getRandomLabelColor()
+  },
+  group: addressToGroup(addressData.hash, TOTAL_NUMBER_OF_GROUPS),
+  transactions: [],
+  transactionsPageLoaded: 0,
+  allTransactionPagesLoaded: false,
+  balance: '0',
+  lockedBalance: '0',
+  txNumber: 0,
+  lastUsed: 0,
+  tokens: []
+})
+
+const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]
+
+const updateOldDefaultAddress = (state: AddressesState) => {
+  const oldDefaultAddress = getAddresses(state).find((address) => address.settings.isMain)
+
+  if (oldDefaultAddress) {
+    addressesAdapter.updateOne(state, {
+      id: oldDefaultAddress.hash,
+      changes: { settings: { ...oldDefaultAddress.settings, isMain: false } }
+    })
+  }
+}
+
+const clearAddressesNetworkData = (state: AddressesState) => {
+  const reinitializedAddresses = getAddresses(state).map(getInitialAddressState)
+
+  addressesAdapter.updateMany(
+    state,
+    reinitializedAddresses.map((address) => ({ id: address.hash, changes: address }))
+  )
+
+  state.status = 'uninitialized'
+}

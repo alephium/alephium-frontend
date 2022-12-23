@@ -22,6 +22,7 @@ import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
 import { getStoredActiveWallet, getStoredWalletById } from '../persistent-storage/wallets'
+import { ShouldClearPin } from '../types/misc'
 import { ActiveWalletState } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 import PinCodeInput from './inputs/PinCodeInput'
@@ -48,7 +49,6 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
-  const [pinCode, setPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [encryptedWallet, setEncryptedWallet] = useState<ActiveWalletState>()
   const [loading, setLoading] = useState(false)
@@ -71,30 +71,29 @@ const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWi
     }
   }, [onConfirm, usePin, walletId])
 
-  const decryptMnemonic = useCallback(async () => {
-    if (!pinCode || !encryptedWallet) return
+  const decryptMnemonic = async (pin: string): Promise<ShouldClearPin> => {
+    if (!pin || !encryptedWallet) return false
 
     setLoading(true)
 
     try {
-      const decryptedWallet = await walletOpenAsyncUnsafe(pinCode, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
-      onConfirm(pinCode, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
+      const decryptedWallet = await walletOpenAsyncUnsafe(pin, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
+      onConfirm(pin, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
       setShouldHideModal(true)
+
+      return false
     } catch (e) {
       setShownInstructions(errorInstructionSet)
-      setPinCode('')
+
+      return true
     } finally {
       setLoading(false)
     }
-  }, [encryptedWallet, onConfirm, pinCode])
+  }
 
   useEffect(() => {
     getStoredWallet()
   }, [getStoredWallet])
-
-  useEffect(() => {
-    if (pinCode) decryptMnemonic()
-  }, [decryptMnemonic, pinCode])
 
   if (shouldHideModal) return null
 
@@ -104,7 +103,7 @@ const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWi
         {encryptedWallet && (
           <ModalContent>
             <CenteredInstructions instructions={shownInstructions} />
-            <PinCodeInput pinLength={pinLength} value={pinCode} onPinChange={setPinCode} />
+            <PinCodeInput pinLength={pinLength} onPinEntered={decryptMnemonic} />
           </ModalContent>
         )}
       </ModalWithBackdrop>

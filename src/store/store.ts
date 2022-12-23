@@ -22,8 +22,10 @@ import activeWalletSlice from './activeWalletSlice'
 import addressDiscoverySlice from './addressDiscoverySlice'
 import addressesSlice from './addressesSlice'
 import appSlice from './appSlice'
+import confirmedTransactionsSlice from './confirmedTransactionsSlice'
 import credentialsSlice from './credentialsSlice'
 import networkSlice from './networkSlice'
+import pendingTransactionsSlice from './pendingTransactionsSlice'
 import priceSlice from './priceSlice'
 import settingsSlice, { settingsListenerMiddleware } from './settingsSlice'
 import tokenMetadataSlice from './tokenMetadataSlice'
@@ -40,7 +42,9 @@ export const store = configureStore({
     price: priceSlice.reducer,
     app: appSlice.reducer,
     tokenMetadata: tokenMetadataSlice.reducer,
-    addressDiscovery: addressDiscoverySlice.reducer
+    addressDiscovery: addressDiscoverySlice.reducer,
+    confirmedTransactions: confirmedTransactionsSlice.reducer,
+    pendingTransactions: pendingTransactionsSlice.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(settingsListenerMiddleware.middleware)
 })

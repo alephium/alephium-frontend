@@ -17,9 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { Eye as EyeIcon, Settings2 as SettingsIcon, ShieldAlert } from 'lucide-react-native'
+import { Eye as EyeIcon, Settings2 as SettingsIcon, ShieldAlert, WifiOff } from 'lucide-react-native'
 import { memo } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
+import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
@@ -31,15 +32,28 @@ interface DashboardHeaderActionsProps {
 }
 
 const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
-  const isMnemonicBackedUp = useAppSelector((state) => state.activeWallet.isMnemonicBackedUp)
+  const [isMnemonicBackedUp, networkStatus] = useAppSelector((s) => [
+    s.activeWallet.isMnemonicBackedUp,
+    s.network.status
+  ])
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
+  const showOfflineMessage = () =>
+    Toast.show('The app is offline and trying to reconnect. Please, check your network settings.')
+
   return (
     <View style={style}>
+      {networkStatus === 'offline' && (
+        <Pressable onPress={showOfflineMessage}>
+          <Icon>
+            <WifiOff size={24} color={theme.global.alert} />
+          </Icon>
+        </Pressable>
+      )}
       <Pressable onPress={toggleDiscreetMode}>
         <Icon>
           <EyeIcon size={24} color={theme.font.primary} />

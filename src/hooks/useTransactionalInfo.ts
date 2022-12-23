@@ -32,7 +32,7 @@ import { AddressTransaction } from '../types/transactions'
 import { isPendingTx } from '../utils/transactions'
 import { useAppSelector } from './redux'
 
-export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressHash) => {
+export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressHash, showInternalInflows?: boolean) => {
   const addressHashes = useAppSelector(selectAddressIds) as string[]
 
   let amount: bigint | undefined = BigInt(0)
@@ -56,7 +56,12 @@ export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressH
       infoType = 'move'
     } else {
       direction = getDirection(tx, addressHash)
-      infoType = direction === 'out' && txHasOnlyInternalAddresses(outputs, addressHashes) ? 'move' : direction
+      const isInternalTransfer = txHasOnlyInternalAddresses(outputs, addressHashes)
+      infoType =
+        (isInternalTransfer && showInternalInflows && direction === 'out') ||
+        (isInternalTransfer && !showInternalInflows)
+          ? 'move'
+          : direction
     }
 
     lockTime = outputs.reduce(

@@ -21,6 +21,7 @@ import { useCallback, useState } from 'react'
 
 import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import Screen from '../components/layout/Screen'
+import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deriveWalletStoredAddresses, rememberActiveWallet } from '../persistent-storage/wallets'
@@ -42,11 +43,13 @@ const LoginScreen = ({
   const dispatch = useAppDispatch()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   const handleSuccessfulLogin = useCallback(
     async (pin?: string, wallet?: ActiveWalletState) => {
       if (!pin || !wallet) return
 
+      setLoading(true)
       setIsPinModalVisible(false)
       let addressesToInitialize = [] as AddressPartial[]
 
@@ -57,10 +60,7 @@ const LoginScreen = ({
 
         dispatch(walletSwitched({ wallet, addressesToInitialize, pin }))
         restoreNavigationState(true)
-        return
-      }
-
-      if (workflow === 'wallet-unlock') {
+      } else if (workflow === 'wallet-unlock') {
         if (addressesStatus === 'uninitialized') {
           addressesToInitialize = await deriveWalletStoredAddresses(wallet)
         }
@@ -68,6 +68,8 @@ const LoginScreen = ({
         dispatch(walletUnlocked({ wallet, addressesToInitialize, pin }))
         restoreNavigationState()
       }
+
+      setLoading(false)
     },
     [addressesStatus, dispatch, restoreNavigationState, workflow]
   )
@@ -77,6 +79,7 @@ const LoginScreen = ({
       {isPinModalVisible && (
         <ConfirmWithAuthModal usePin onConfirm={handleSuccessfulLogin} walletId={walletIdToLogin} />
       )}
+      <SpinnerModal isActive={loading} text="Unlocking wallet..." />
     </Screen>
   )
 }

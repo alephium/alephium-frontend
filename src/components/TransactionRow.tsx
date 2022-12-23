@@ -41,13 +41,14 @@ interface TransactionRowProps {
   tx: AddressTransaction
   isFirst?: boolean
   isLast?: boolean
+  showInternalInflows?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const TransactionRow = ({ tx, isFirst, isLast, style }: TransactionRowProps) => {
+const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, style }: TransactionRowProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const [price, currency] = useAppSelector((s) => [s.price, s.settings.currency])
-  const { amount, infoType } = useTransactionInfo(tx, tx.address.hash)
+  const { amount, infoType } = useTransactionInfo(tx, tx.address.hash, showInternalInflows)
   const { amountSign, Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
   const theme = useTheme()
 
