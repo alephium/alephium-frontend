@@ -26,7 +26,8 @@ export const lightTheme: DefaultTheme = {
     highlight: '#fff',
     primary: '#fafafa',
     secondary: '#f0f0f0',
-    tertiary: '#e3e3e3',
+    back1: '#F0F0F0',
+    back2: '#E8E8E8',
     accent: 'rgba(93, 108, 243, 0.08)',
     contrast: '#212126'
   },
@@ -67,7 +68,8 @@ export const darkTheme: DefaultTheme = {
     highlight: '',
     primary: '#19191E',
     secondary: '#141417',
-    tertiary: '#101012',
+    back1: '#121215',
+    back2: '#101012',
     accent: 'rgba(93, 108, 243, 0.08)',
     contrast: 'white'
   },

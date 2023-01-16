@@ -74,7 +74,7 @@ const Tab = styled.View<{ active: boolean; height: number }>`
   align-items: center;
   justify-content: space-between;
   border-radius: ${BORDER_RADIUS * 0.7}px;
-  background-color: ${({ theme, active }) => (active ? theme.bg.tertiary : 'transparent')};
+  background-color: ${({ theme, active }) => (active ? theme.bg.back1 : 'transparent')};
   height: ${({ height }) => height}px;
   padding: 8px 0 5px 0;
 `

@@ -23,7 +23,6 @@ import styled from 'styled-components/native'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
-import GradientBackground from '../components/GradientBackground'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch } from '../hooks/redux'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
@@ -60,7 +59,6 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
           />
         </ButtonStack>
       </ActionsContainer>
-      <GradientBackground />
     </Screen>
   )
 }

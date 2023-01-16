@@ -34,7 +34,7 @@ const scrollRange = [0, 100]
 
 const DefaultHeader = ({ HeaderRight, HeaderLeft, scrollY, style }: DefaultHeaderProps) => {
   const theme = useTheme()
-  const bgColorRange = [theme.bg.secondary, theme.bg.tertiary]
+  const bgColorRange = [theme.bg.secondary, theme.bg.back1]
 
   const headerStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(scrollY || 0, scrollRange, bgColorRange)
@@ -52,7 +52,7 @@ export default styled(DefaultHeader)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 40px 20px 18px 20px;
+  padding: 60px 20px 18px 20px;
   min-height: 110px;
 `
 

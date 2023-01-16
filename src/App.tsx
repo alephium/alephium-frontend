@@ -24,13 +24,13 @@ import { RootSiblingParent } from 'react-native-root-siblings'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
-import { useAppStateChange } from './src/hooks/useAppStateChange'
-import useInitializeClient from './src/hooks/useInitializeClient'
-import useLoadStoredSettings from './src/hooks/useLoadStoredSettings'
-import useRefreshALPHPrice from './src/hooks/useRefreshALPHPrice'
-import RootStackNavigation from './src/navigation/RootStackNavigation'
-import { store } from './src/store/store'
-import { themes } from './src/style/themes'
+import { useAppStateChange } from './hooks/useAppStateChange'
+import useInitializeClient from './hooks/useInitializeClient'
+import useLoadStoredSettings from './hooks/useLoadStoredSettings'
+import useRefreshALPHPrice from './hooks/useRefreshALPHPrice'
+import RootStackNavigation from './navigation/RootStackNavigation'
+import { store } from './store/store'
+import { themes } from './style/themes'
 
 dayjs.extend(updateLocale)
 dayjs.updateLocale('en', {

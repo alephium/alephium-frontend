@@ -273,7 +273,7 @@ const ActionsContainer = styled.View`
 `
 
 const ScreenSectionBottom = styled(ScreenSection)`
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.back1};
   width: 100%;
   padding-top: 16px;
 `
@@ -313,7 +313,7 @@ const ScanButton = styled.Pressable`
 
 const ScanText = styled.Text`
   margin-right: 20px;
-  color: ${({ theme }) => theme.global.accent}
+  color: ${({ theme }) => theme.global.accent};
   font-size: 16px;
   font-weight: 600;
 `

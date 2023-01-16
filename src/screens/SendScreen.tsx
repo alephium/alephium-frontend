@@ -366,7 +366,6 @@ const SendScreen = ({
         <BottomScreenSection>
           <Button
             title={txStep === 'build' ? 'Continue' : 'Confirm'}
-            gradient
             onPress={txStep === 'build' ? handleSubmit(buildTransaction) : authenticateAndSend}
             wide
             disabled={isLoading || !isFormValid}

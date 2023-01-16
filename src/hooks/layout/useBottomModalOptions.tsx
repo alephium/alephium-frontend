@@ -60,7 +60,7 @@ const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOpt
           alignItems: 'center'
         }}
       >
-        <View style={{ width: '30%', height: '100%', backgroundColor: theme.bg.tertiary, borderRadius: 20 }} />
+        <View style={{ width: '30%', height: '100%', backgroundColor: theme.bg.back1, borderRadius: 20 }} />
       </View>
     )
   }

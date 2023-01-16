@@ -31,8 +31,8 @@ const Toggle = ({ onValueChange, ...props }: ToggleProps) => {
       {...props}
       onValueChange={onValueChange}
       trackColor={{
-        false: props.disabled ? theme.bg.tertiary : theme.font.secondary,
-        true: props.disabled ? theme.bg.tertiary : theme.global.accent
+        false: props.disabled ? theme.bg.back1 : theme.font.secondary,
+        true: props.disabled ? theme.bg.back1 : theme.global.accent
       }}
       thumbColor={theme.font.contrast}
     />

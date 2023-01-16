@@ -20,24 +20,24 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import GradientBackground from '../components/GradientBackground'
 import Screen from '../components/layout/Screen'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { AlephiumLogoStyled } from '../screens/LandingScreen'
+import { darkTheme } from '../style/themes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
 
-const SplashScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => (
-  <Screen>
+const SplashScreen = ({ style }: { style: StyleProp<ViewStyle> } & ScreenProps) => (
+  <Screen style={style}>
     <LogoContainer>
       <AlephiumLogoStyled />
     </LogoContainer>
-    <GradientBackground />
   </Screen>
 )
 
 export default styled(SplashScreen)`
   flex: 1;
+  background-color: ${darkTheme.bg.back2};
 `
 
 const LogoContainer = styled.View`

@@ -111,7 +111,7 @@ PODS:
     - ExpoModulesCore
   - EXSecureStore (11.3.0):
     - ExpoModulesCore
-  - EXSplashScreen (0.16.2):
+  - EXSplashScreen (0.17.5):
     - ExpoModulesCore
     - React-Core
   - EXUpdatesInterface (0.7.0)
@@ -711,7 +711,7 @@ SPEC CHECKSUMS:
   ExpoModulesCore: 1b2f5f91eff132671f6d0642aad2ba7915c6ff41
   ExpoWebBrowser: 5804ac42a8269d0e534bc4461993005f72535649
   EXSecureStore: ac4b3c89dd5810528074d9422d5fed5a9e684467
-  EXSplashScreen: 799bece80089219b2c989c1082d70f3b00995cda
+  EXSplashScreen: 3e989924f61a8dd07ee4ea584c6ba14be9b51949
   EXUpdatesInterface: 2bbc11815dfa2ec3fc02e5534c7592c6b42b5327
   FBLazyVector: 739d2f9719faecb463c7aa191591af31c8c94182
   FBReactNativeSpec: 957de82f66e31f2f14bbec34e37242282fdd26de
