@@ -115,7 +115,7 @@ const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWi
 export default ConfirmWithAuthModal
 
 const ModalContent = styled.View`
-  flex: 1
+  flex: 1;
   width: 100%;
   background-color: ${({ theme }) => theme.bg.secondary};
   padding-top: 40px;
