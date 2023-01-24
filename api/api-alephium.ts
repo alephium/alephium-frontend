@@ -1332,7 +1332,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title Alephium API
- * @version 1.6.0
+ * @version 1.6.1
  * @baseUrl ../
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
