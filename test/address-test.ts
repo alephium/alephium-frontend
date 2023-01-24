@@ -62,7 +62,7 @@ describe('address', function () {
     const masterKey = walletImport(wallets.wallets[0].mnemonic).masterKey
     const client = new ExplorerClient()
     const mockedPostAddressesActive = jest.fn()
-    client.addressesActive.postAddressesActive = mockedPostAddressesActive
+    client.addresses.postAddressesUsed = mockedPostAddressesActive
 
     /*
     // The addresses in fixtures/address-discovery.json were generated using:
@@ -96,7 +96,7 @@ describe('address', function () {
     })
 
     let results = await discoverActiveAddresses(masterKey, client)
-    expect(client.addressesActive.postAddressesActive).toBeCalledTimes(1)
+    expect(client.addresses.postAddressesUsed).toBeCalledTimes(1)
     expect(results).toHaveLength(0)
     mockedPostAddressesActive.mockClear()
 
@@ -118,7 +118,7 @@ describe('address', function () {
       })
 
     results = await discoverActiveAddresses(masterKey, client)
-    expect(client.addressesActive.postAddressesActive).toBeCalledTimes(2)
+    expect(client.addresses.postAddressesUsed).toBeCalledTimes(2)
     expect(results).toHaveLength(1)
     expect(results.map((a) => a.hash)).toContain(derivedAddresses.group0[4])
     mockedPostAddressesActive.mockClear()
@@ -151,7 +151,7 @@ describe('address', function () {
       })
 
     results = await discoverActiveAddresses(masterKey, client)
-    expect(client.addressesActive.postAddressesActive).toBeCalledTimes(4)
+    expect(client.addresses.postAddressesUsed).toBeCalledTimes(4)
     expect(results).toHaveLength(3)
     const addresses = results.map((a) => a.hash)
     expect(addresses).toContain(derivedAddresses.group0[4])

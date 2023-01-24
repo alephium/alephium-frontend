@@ -1,5 +1,6 @@
 {
   "oneInputOneOutput": {
+    "coinbase": false,
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
@@ -37,6 +38,7 @@
     "gasPrice": "100000000000"
   },
   "twoInputsOneOutput": {
+    "coinbase": false,
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
@@ -84,6 +86,7 @@
     "gasPrice": "100000000000"
   },
   "twoInputsZeroOutput": {
+    "coinbase": false,
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
@@ -131,6 +134,7 @@
     "gasPrice": "100000000000"
   },
   "missingInputs": {
+    "coinbase": false,
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
@@ -156,6 +160,7 @@
     "gasPrice": "100000000000"
   },
   "missingOutputs": {
+    "coinbase": false,
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
