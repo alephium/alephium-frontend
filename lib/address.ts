@@ -161,7 +161,7 @@ const getActiveAddressesResults = async (
 
   while (addressesToCheckIfActive.length > results.length) {
     const addressesToQuery = addressesToCheckIfActive.slice(queryPage * QUERY_LIMIT, ++queryPage * QUERY_LIMIT)
-    const response = await client.addressesActive.postAddressesActive(addressesToQuery)
+    const response = await client.addresses.postAddressesUsed(addressesToQuery)
     results.push(...response.data)
   }
 

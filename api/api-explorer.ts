@@ -96,6 +96,7 @@ export interface ConfirmedTransaction {
 
   /** @format uint256 */
   gasPrice: string
+  coinbase: boolean
   type: string
 }
 
@@ -114,6 +115,20 @@ export interface ContractOutput {
   /** @format 32-byte-hash */
   spent?: string
   type: string
+}
+
+export interface Event {
+  /** @format block-hash */
+  blockHash: string
+
+  /** @format 32-byte-hash */
+  txHash: string
+  contractAddress: string
+  inputAddress?: string
+
+  /** @format int32 */
+  eventIndex: number
+  fields?: Val[]
 }
 
 export interface ExplorerInfo {
@@ -145,6 +160,11 @@ export interface Input {
 
 export interface InternalServerError {
   detail: string
+}
+
+export enum IntervalType {
+  Daily = 'daily',
+  Hourly = 'hourly'
 }
 
 export interface ListBlocks {
@@ -275,6 +295,7 @@ export interface Transaction {
 
   /** @format uint256 */
   gasPrice: string
+  coinbase: boolean
 }
 
 export type TransactionLike = ConfirmedTransaction | UnconfirmedTransaction
@@ -303,6 +324,42 @@ export interface UnconfirmedTransaction {
 
   /** @format int64 */
   lastSeen: number
+  type: string
+}
+
+export type Val = ValAddress | ValArray | ValBool | ValByteVec | ValI256 | ValU256
+
+export interface ValAddress {
+  /** @format address */
+  value: string
+  type: string
+}
+
+export interface ValArray {
+  value: Val[]
+  type: string
+}
+
+export interface ValBool {
+  value: boolean
+  type: string
+}
+
+export interface ValByteVec {
+  /** @format hex-string */
+  value: string
+  type: string
+}
+
+export interface ValI256 {
+  /** @format bigint */
+  value: string
+  type: string
+}
+
+export interface ValU256 {
+  /** @format uint256 */
+  value: string
   type: string
 }
 
@@ -587,21 +644,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'GET',
         format: 'json',
         ...params
-      }),
-
-    /**
-     * @description Get a transaction from a output reference key
-     *
-     * @tags Transactions
-     * @name GetTransactionsByOutputRefKeyOutputRefKey
-     * @request GET:/transactions/by/output-ref-key/{output_ref_key}
-     */
-    getTransactionsByOutputRefKeyOutputRefKey: (outputRefKey: string, params: RequestParams = {}) =>
-      this.request<Transaction, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/transactions/by/output-ref-key/${outputRefKey}`,
-        method: 'GET',
-        format: 'json',
-        ...params
       })
   }
   addresses = {
@@ -779,6 +821,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+     * @description Are the addresses used (at least 1 transaction)
+     *
+     * @tags Addresses, Addresses
+     * @name PostAddressesUsed
+     * @request POST:/addresses/used
+     */
+    postAddressesUsed: (data?: string[], params: RequestParams = {}) =>
+      this.request<boolean[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/addresses/used`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params
+      }),
+
+    /**
      * No description
      *
      * @tags Addresses
@@ -794,24 +853,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/addresses/${address}/export-transactions/csv`,
         method: 'GET',
         query: query,
-        ...params
-      })
-  }
-  addressesActive = {
-    /**
-     * @description Are the addresses active (at least 1 transaction)
-     *
-     * @tags Addresses
-     * @name PostAddressesActive
-     * @request POST:/addresses-active
-     */
-    postAddressesActive: (data?: string[], params: RequestParams = {}) =>
-      this.request<boolean[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/addresses-active`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
         ...params
       })
   }
@@ -1016,7 +1057,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/charts/hashrates
      */
     getChartsHashrates: (
-      query: { fromTs: number; toTs: number; 'interval-type': string },
+      query: { fromTs: number; toTs: number; 'interval-type': IntervalType },
       params: RequestParams = {}
     ) =>
       this.request<Hashrate[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -1036,7 +1077,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/charts/transactions-count
      */
     getChartsTransactionsCount: (
-      query: { fromTs: number; toTs: number; 'interval-type': string },
+      query: { fromTs: number; toTs: number; 'interval-type': IntervalType },
       params: RequestParams = {}
     ) =>
       this.request<TimedCount[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -1056,7 +1097,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/charts/transactions-count-per-chain
      */
     getChartsTransactionsCountPerChain: (
-      query: { fromTs: number; toTs: number; 'interval-type': string },
+      query: { fromTs: number; toTs: number; 'interval-type': IntervalType },
       params: RequestParams = {}
     ) =>
       this.request<
@@ -1064,6 +1105,63 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
       >({
         path: `/charts/transactions-count-per-chain`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      })
+  }
+  contractEvents = {
+    /**
+     * @description Get contract events by transaction id
+     *
+     * @tags Contract events
+     * @name GetContractEventsTransactionIdTransactionId
+     * @request GET:/contract-events/transaction-id/{transaction_id}
+     */
+    getContractEventsTransactionIdTransactionId: (transactionId: string, params: RequestParams = {}) =>
+      this.request<Event[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/contract-events/transaction-id/${transactionId}`,
+        method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * @description Get contract events by contract address
+     *
+     * @tags Contract events
+     * @name GetContractEventsContractAddressContractAddress
+     * @request GET:/contract-events/contract-address/{contract_address}
+     */
+    getContractEventsContractAddressContractAddress: (
+      contractAddress: string,
+      query?: { page?: number; limit?: number; reverse?: boolean },
+      params: RequestParams = {}
+    ) =>
+      this.request<Event[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/contract-events/contract-address/${contractAddress}`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * @description Get contract events by contract and input addresses
+     *
+     * @tags Contract events
+     * @name GetContractEventsContractAddressContractAddressInputAddressInputAddress
+     * @request GET:/contract-events/contract-address/{contract_address}/input-address/{input_address}
+     */
+    getContractEventsContractAddressContractAddressInputAddressInputAddress: (
+      contractAddress: string,
+      inputAddress: string,
+      query?: { page?: number; limit?: number; reverse?: boolean },
+      params: RequestParams = {}
+    ) =>
+      this.request<Event[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/contract-events/contract-address/${contractAddress}/input-address/${inputAddress}`,
         method: 'GET',
         query: query,
         format: 'json',
