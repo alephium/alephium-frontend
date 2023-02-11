@@ -23,7 +23,7 @@ import {
   List as ListIcon
 } from 'lucide-react-native'
 
-import FooterMenu from '../components/FooterMenu'
+import FooterMenu from '../components/footers/FooterMenu'
 import { InWalletLayoutContextProvider } from '../contexts/InWalletLayoutContext'
 import AddressesScreen from '../screens/AddressesScreen'
 import DashboardScreen from '../screens/DashboardScreen'

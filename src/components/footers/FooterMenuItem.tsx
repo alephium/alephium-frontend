@@ -21,7 +21,7 @@ import { NavigationHelpers, ParamListBase } from '@react-navigation/native'
 import { TouchableWithoutFeedback } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { BORDER_RADIUS } from '../style/globalStyle'
+import { BORDER_RADIUS } from '../../style/globalStyle'
 
 interface FooterMenuItemProps {
   options: BottomTabNavigationOptions
@@ -29,10 +29,9 @@ interface FooterMenuItemProps {
   routeName: string
   target: string
   navigation: NavigationHelpers<ParamListBase, BottomTabNavigationEventMap>
-  height: number
 }
 
-const FooterMenuItem = ({ options, isFocused, routeName, target, navigation, height }: FooterMenuItemProps) => {
+const FooterMenuItem = ({ options, isFocused, routeName, target, navigation }: FooterMenuItemProps) => {
   const theme = useTheme()
 
   const Icon =
@@ -59,7 +58,7 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation, hei
 
   return (
     <TouchableWithoutFeedback onPress={onPress} key={label}>
-      <Tab active={isFocused} height={height}>
+      <Tab active={isFocused}>
         {Icon}
         <TabText isActive={isFocused}>{label}</TabText>
       </Tab>
@@ -69,14 +68,13 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation, hei
 
 export default FooterMenuItem
 
-const Tab = styled.View<{ active: boolean; height: number }>`
-  flex: 1;
+const Tab = styled.View<{ active: boolean }>`
   align-items: center;
   justify-content: space-between;
   border-radius: ${BORDER_RADIUS * 0.7}px;
   background-color: ${({ theme, active }) => (active ? theme.bg.back1 : 'transparent')};
-  height: ${({ height }) => height}px;
-  padding: 8px 0 5px 0;
+  padding: 5px 15px;
+  margin: 0 5px;
 `
 
 const TabText = styled.Text<{ isActive?: boolean }>`

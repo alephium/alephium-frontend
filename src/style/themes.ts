@@ -38,8 +38,8 @@ export const lightTheme: DefaultTheme = {
     contrast: '#ffffff'
   },
   border: {
-    primary: '#CCCCCC',
-    secondary: '#f1f1f1'
+    primary: 'rgba(36, 34, 32, 0.10)',
+    secondary: 'rgba(36, 34, 32, 0.05)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.03; shadow-radius: 2px; elevation: 2;',
