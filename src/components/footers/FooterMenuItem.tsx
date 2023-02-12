@@ -73,8 +73,7 @@ const Tab = styled.View<{ active: boolean }>`
   justify-content: space-between;
   border-radius: ${BORDER_RADIUS * 0.7}px;
   background-color: ${({ theme, active }) => (active ? theme.bg.back1 : 'transparent')};
-  padding: 5px 15px;
-  margin: 0 5px;
+  padding: 5px 10px;
 `
 
 const TabText = styled.Text<{ isActive?: boolean }>`

@@ -54,4 +54,5 @@ export default styled(FooterMenu)`
   padding: 5px;
   border-top-width: 1px;
   border-top-color: ${({ theme }) => theme.border.primary};
+  gap: 15px;
 `

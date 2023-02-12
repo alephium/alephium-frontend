@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { SafeAreaView } from 'react-native'
-import { SafeAreaViewProps } from 'react-navigation'
+import { SafeAreaViewProps } from 'react-native-safe-area-context'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '../AppText'
@@ -30,7 +30,7 @@ export default styled(Screen)`
 `
 
 export const ScreenSection = styled.View<{ fill?: boolean }>`
-  padding: 22px 20px;
+  padding: 20px 15px;
 
   ${({ fill }) =>
     fill &&
@@ -51,12 +51,13 @@ export const BottomModalScreenTitle = styled(AppText)`
 export let BottomModal = ({ children, style }: SafeAreaViewProps) => (
   <SafeAreaView style={style}>{children}</SafeAreaView>
 )
+
 BottomModal = styled(BottomModal)`
   background-color: ${({ theme }) => theme.bg.secondary};
   top: 400px;
   position: absolute;
-  border-radius-top-left: 20px;
-  border-radius-top-right: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 `
 
 export const ScreenSectionTitle = styled(AppText)`

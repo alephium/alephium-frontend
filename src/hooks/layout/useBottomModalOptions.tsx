@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { CardStyleInterpolators, StackNavigationOptions } from '@react-navigation/stack'
-import { View } from 'react-native'
+import { Dimensions, View } from 'react-native'
 import { useTheme } from 'styled-components'
 
 interface BottomModalOptions {
@@ -27,11 +27,11 @@ interface BottomModalOptions {
 const heights = {
   pullTab: {
     container: 20,
-    bar: 7
+    bar: 4
   }
 }
 
-const borderRadius = 20
+const borderRadius = 10
 
 const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOptions => {
   const theme = useTheme()
@@ -42,11 +42,9 @@ const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOpt
     cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
     gestureEnabled: true,
     gestureDirection: 'vertical',
-    gestureResponseDistance: height ? heights.pullTab.container * 4 + height : undefined,
+    gestureResponseDistance: Dimensions.get('window').height,
     cardStyle: {
-      overflow: 'visible',
       marginTop: heights.pullTab.container + (height ?? 0),
-      top: borderRadius,
       borderRadius,
       backgroundColor: theme.bg.secondary
     },
@@ -55,12 +53,12 @@ const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOpt
         style={{
           position: 'absolute',
           height: heights.pullTab.bar,
-          top: -heights.pullTab.container,
+          top: 10,
           width: '100%',
           alignItems: 'center'
         }}
       >
-        <View style={{ width: '30%', height: '100%', backgroundColor: theme.bg.back1, borderRadius: 20 }} />
+        <View style={{ width: 35, height: '100%', backgroundColor: theme.font.tertiary, borderRadius: 20 }} />
       </View>
     )
   }

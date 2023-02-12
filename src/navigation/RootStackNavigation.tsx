@@ -82,7 +82,7 @@ const RootStackNavigation = () => {
       <RootStack.Navigator
         initialRouteName={'SplashScreen'}
         screenOptions={{
-          headerStyle: { elevation: 0, shadowOpacity: 0, backgroundColor: 'transparent' },
+          headerStyle: { elevation: 0, shadowOpacity: 0 },
           cardStyle: { backgroundColor: theme.bg.secondary },
           headerTitle: ''
         }}

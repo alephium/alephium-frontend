@@ -21,7 +21,6 @@ import { useCallback, useState } from 'react'
 
 import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import Screen from '../components/layout/Screen'
-import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deriveWalletStoredAddresses, rememberActiveWallet } from '../persistent-storage/wallets'
@@ -59,8 +58,7 @@ const LoginScreen = ({
         addressesToInitialize = await deriveWalletStoredAddresses(wallet)
 
         dispatch(walletSwitched({ wallet, addressesToInitialize, pin }))
-        //restoreNavigationState(true)
-        navigation.navigate('LandingScreen')
+        restoreNavigationState(true)
       } else if (workflow === 'wallet-unlock') {
         if (addressesStatus === 'uninitialized') {
           addressesToInitialize = await deriveWalletStoredAddresses(wallet)
