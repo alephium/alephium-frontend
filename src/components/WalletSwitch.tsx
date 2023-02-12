@@ -20,7 +20,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { MoreVertical as DotsIcon } from 'lucide-react-native'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -32,26 +32,26 @@ interface WalletSwitchProps {
 }
 
 const WalletSwitch = ({ style }: WalletSwitchProps) => {
-  const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const activeWallet = useAppSelector((state) => state.activeWallet)
 
   return (
     <Button style={style} variant="contrast" onPress={() => navigation.navigate('SwitchWalletScreen')}>
       {/* TODO: Figure out how to fix the position of the dots to the right, no matter the length of the wallet name */}
-      <WalletName numberOfLines={1}>{activeWallet.name}</WalletName>
-      <DotsIcon size={14} color={theme.font.primary} />
+      <WalletName numberOfLines={1}>{activeWallet.name.slice(0, 2)}</WalletName>
     </Button>
   )
 }
 
 export default memo(styled(WalletSwitch)`
-  width: 50%;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   padding: 0 12px;
-  height: 40px;
+  height: 50px;
+  width: 50px;
   background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `)
 
 const WalletName = styled(AppText)`

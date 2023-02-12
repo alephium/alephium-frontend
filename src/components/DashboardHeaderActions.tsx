@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { Eye as EyeIcon, Settings2 as SettingsIcon, ShieldAlert, WifiOff } from 'lucide-react-native'
+import { Eye as EyeIcon, Settings as SettingsIcon, ShieldAlert, WifiOff } from 'lucide-react-native'
 import { memo } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import Toast from 'react-native-root-toast'
@@ -26,6 +26,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { discreetModeToggled } from '../store/settingsSlice'
+import { BORDER_RADIUS } from '../style/globalStyle'
 
 interface DashboardHeaderActionsProps {
   style?: StyleProp<ViewStyle>
@@ -49,23 +50,23 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
     <View style={style}>
       {networkStatus === 'offline' && (
         <Pressable onPress={showOfflineMessage}>
-          <Icon>
+          <HeaderButton>
             <WifiOff size={24} color={theme.global.alert} />
-          </Icon>
+          </HeaderButton>
         </Pressable>
       )}
       <Pressable onPress={toggleDiscreetMode}>
-        <Icon>
+        <HeaderButton>
           <EyeIcon size={24} color={theme.font.primary} />
-        </Icon>
+        </HeaderButton>
       </Pressable>
       <Pressable onPress={() => navigation.navigate('SecurityScreen')}>
         <SecurityIcon alert={isMnemonicBackedUp === false} />
       </Pressable>
       <Pressable onPress={() => navigation.navigate('SettingsScreen')}>
-        <Icon>
+        <HeaderButton>
           <SettingsIcon size={24} color={theme.font.primary} />
-        </Icon>
+        </HeaderButton>
       </Pressable>
     </View>
   )
@@ -74,11 +75,19 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
 export default memo(styled(DashboardHeaderActions)`
   flex-direction: row;
   align-items: center;
+  gap: 15px;
 `)
 
 // TODO: Create standalone Icon component to allow us to define the size prop
-const Icon = styled.View`
+const HeaderButton = styled.View`
   padding: 18px 12px;
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  width: 50px;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${BORDER_RADIUS}px;
+  background-color: ${({ theme }) => theme.bg.secondary};
 `
 
 interface SecurityIconProps {
@@ -91,8 +100,8 @@ const SecurityIcon = ({ alert }: SecurityIconProps) => {
   const bgColor = alert ? theme.global.alert : 'transparent'
 
   return (
-    <Icon style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: bgColor, justifyContent: 'center' }}>
+    <HeaderButton style={{ backgroundColor: bgColor }}>
       <ShieldAlert size={24} color={fgColor} />
-    </Icon>
+    </HeaderButton>
   )
 }

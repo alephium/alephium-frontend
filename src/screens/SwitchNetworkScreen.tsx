@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { ScrollView } from 'react-native'
+import { View } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
@@ -74,7 +74,7 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
       <ScreenSection>
         <BottomModalScreenTitle>Current network</BottomModalScreenTitle>
       </ScreenSection>
-      <ScrollView>
+      <View>
         <ScreenSection fill>
           {networkNames.map((networkName, index) => (
             <RadioButtonRow
@@ -140,7 +140,7 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
             </ScreenSection>
           </Animated.View>
         )}
-      </ScrollView>
+      </View>
     </>
   )
 }

@@ -24,8 +24,8 @@ export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
     highlight: '#fff',
-    primary: '#fafafa',
-    secondary: '#f0f0f0',
+    primary: '#ffffff',
+    secondary: '#f9f9f9',
     back1: '#F0F0F0',
     back2: '#E8E8E8',
     accent: 'rgba(93, 108, 243, 0.08)',
@@ -66,16 +66,16 @@ export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
     highlight: '',
-    primary: '#19191E',
-    secondary: '#141417',
+    primary: '#1B1B1F',
+    secondary: '#17171A',
     back1: '#121215',
     back2: '#101012',
     accent: 'rgba(93, 108, 243, 0.08)',
     contrast: 'white'
   },
   font: {
-    primary: 'rgba(255, 255, 255, 0.95)',
-    secondary: 'rgba(255, 255, 255, 0.65)',
+    primary: '#E3E3E3',
+    secondary: 'rgba(255, 255, 255, 0.75)',
     tertiary: 'rgba(255, 255, 255, 0.40)',
     contrast: '#19191E'
   },

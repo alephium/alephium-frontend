@@ -50,7 +50,7 @@ export default styled(FooterMenu)`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.secondary};
   padding: 5px;
   border-top-width: 1px;
   border-top-color: ${({ theme }) => theme.border.primary};

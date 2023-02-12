@@ -45,6 +45,7 @@ const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOpt
     gestureResponseDistance: Dimensions.get('window').height,
     cardStyle: {
       marginTop: heights.pullTab.container + (height ?? 0),
+      paddingTop: 15,
       borderRadius,
       backgroundColor: theme.bg.secondary
     },
@@ -53,7 +54,6 @@ const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOpt
         style={{
           position: 'absolute',
           height: heights.pullTab.bar,
-          top: 10,
           width: '100%',
           alignItems: 'center'
         }}
