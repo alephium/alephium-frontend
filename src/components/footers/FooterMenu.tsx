@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { StyleProp, View, ViewStyle } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import FooterMenuItem from './FooterMenuItem'
@@ -27,8 +28,10 @@ interface FooterMenuProps extends BottomTabBarProps {
 }
 
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
+  const insets = useSafeAreaInsets()
+
   return (
-    <View style={style}>
+    <View style={[style, { paddingBottom: insets.bottom }]}>
       {state.routes.map((route, index) => (
         <FooterMenuItem
           options={descriptors[route.key].options}

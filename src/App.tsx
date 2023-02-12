@@ -21,7 +21,7 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 import { StatusBar } from 'expo-status-bar'
 import { ReactNode, useEffect, useState } from 'react'
 import { RootSiblingParent } from 'react-native-root-siblings'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
@@ -63,18 +63,16 @@ const App = () => {
 
   return (
     <RootSiblingParent>
-      <Provider store={store}>
-        <SafeAreaProvider>
+      <SafeAreaProvider>
+        <Provider store={store}>
           <Main>
             <ThemeProvider theme={theme}>
-              <SafeAreaView>
-                <RootStackNavigation />
-              </SafeAreaView>
+              <RootStackNavigation />
               <StatusBar style="dark" />
             </ThemeProvider>
           </Main>
-        </SafeAreaProvider>
-      </Provider>
+        </Provider>
+      </SafeAreaProvider>
     </RootSiblingParent>
   )
 }

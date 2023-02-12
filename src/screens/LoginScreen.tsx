@@ -59,7 +59,8 @@ const LoginScreen = ({
         addressesToInitialize = await deriveWalletStoredAddresses(wallet)
 
         dispatch(walletSwitched({ wallet, addressesToInitialize, pin }))
-        restoreNavigationState(true)
+        //restoreNavigationState(true)
+        navigation.navigate('LandingScreen')
       } else if (workflow === 'wallet-unlock') {
         if (addressesStatus === 'uninitialized') {
           addressesToInitialize = await deriveWalletStoredAddresses(wallet)
