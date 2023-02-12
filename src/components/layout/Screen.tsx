@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { SafeAreaView } from 'react-native'
+import { View } from 'react-native'
 import { SafeAreaViewProps } from 'react-native-safe-area-context'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '../AppText'
 
-const Screen = ({ children, style }: SafeAreaViewProps) => <SafeAreaView style={style}>{children}</SafeAreaView>
+const Screen = ({ children, style }: SafeAreaViewProps) => <View style={style}>{children}</View>
 
 export default styled(Screen)`
   flex: 1;
@@ -48,9 +48,7 @@ export const BottomModalScreenTitle = styled(AppText)`
   font-size: 26px;
 `
 
-export let BottomModal = ({ children, style }: SafeAreaViewProps) => (
-  <SafeAreaView style={style}>{children}</SafeAreaView>
-)
+export let BottomModal = ({ children, style }: SafeAreaViewProps) => <View style={style}>{children}</View>
 
 BottomModal = styled(BottomModal)`
   background-color: ${({ theme }) => theme.bg.secondary};
@@ -65,7 +63,7 @@ export const ScreenSectionTitle = styled(AppText)`
   font-weight: 600;
   color: ${({ theme }) => theme.font.secondary};
   margin-left: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `
 
 export const BottomScreenSection = styled(ScreenSection)`

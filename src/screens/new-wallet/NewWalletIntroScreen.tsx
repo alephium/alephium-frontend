@@ -28,7 +28,7 @@ import CenteredInstructions, { Instruction } from '../../components/text/Centere
 import { useAppSelector } from '../../hooks/redux'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
+type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletIntroScreen'>
 
 const instructionsCreate: Instruction[] = [
   { text: 'You are about to create a wallet 🎉', type: 'primary' },

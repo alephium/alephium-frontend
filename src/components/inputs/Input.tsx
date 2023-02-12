@@ -69,7 +69,7 @@ function Input<T extends InputValue>({
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   const labelStyle = useAnimatedStyle(() => ({
-    top: withTiming(!isActive ? 0 : -35, { duration: 100 })
+    top: withTiming(!isActive ? -10 : -35, { duration: 100 })
   }))
 
   const labelTextStyle = useAnimatedStyle(() => ({
@@ -135,6 +135,7 @@ const InputContainer = styled.View`
 
 const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
   height: 100%;
+  padding-top: 12px;
   color: ${({ theme }) => theme.font.primary};
 
   ${({ hide }) =>
@@ -146,7 +147,7 @@ const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
 
 const Label = styled(Animated.View)`
   position: absolute;
-  bottom: 0;
+  bottom: -10px;
   left: 0;
   justify-content: center;
 `

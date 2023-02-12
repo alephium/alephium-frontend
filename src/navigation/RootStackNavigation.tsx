@@ -83,8 +83,10 @@ const RootStackNavigation = () => {
         initialRouteName={'SplashScreen'}
         screenOptions={{
           headerStyle: { elevation: 0, shadowOpacity: 0 },
-          cardStyle: { backgroundColor: theme.bg.secondary },
-          headerTitle: ''
+          headerTitle: '',
+          cardStyle: {
+            backgroundColor: theme.bg.back1
+          }
         }}
       >
         <RootStack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
