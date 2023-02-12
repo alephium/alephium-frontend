@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { MoreVertical as DotsIcon } from 'lucide-react-native'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
@@ -37,8 +36,7 @@ const WalletSwitch = ({ style }: WalletSwitchProps) => {
 
   return (
     <Button style={style} variant="contrast" onPress={() => navigation.navigate('SwitchWalletScreen')}>
-      {/* TODO: Figure out how to fix the position of the dots to the right, no matter the length of the wallet name */}
-      <WalletName numberOfLines={1}>{activeWallet.name.slice(0, 2)}</WalletName>
+      <WalletName numberOfLines={1}>{activeWallet.name.slice(0, 2).toUpperCase()}</WalletName>
     </Button>
   )
 }
@@ -52,6 +50,7 @@ export default memo(styled(WalletSwitch)`
   width: 50px;
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
+  border-radius: 50px;
 `)
 
 const WalletName = styled(AppText)`

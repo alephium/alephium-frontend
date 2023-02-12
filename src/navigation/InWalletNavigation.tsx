@@ -17,11 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import {
-  ArrowLeftRight as ArrowsIcon,
-  LayoutTemplate as LayoutTemplateIcon,
-  List as ListIcon
-} from 'lucide-react-native'
+import { Album as AddressesIcon, ArrowLeftRight as ArrowsIcon, List as ListIcon } from 'lucide-react-native'
 
 import FooterMenu from '../components/footers/FooterMenu'
 import { InWalletLayoutContextProvider } from '../contexts/InWalletLayoutContext'
@@ -46,7 +42,7 @@ const InWalletTabsNavigation = () => (
         component={DashboardScreen}
         options={{
           title: 'Overview',
-          tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} />
+          tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} strokeWidth={1.5} />
         }}
       />
       <InWalletTabs.Screen
@@ -54,7 +50,7 @@ const InWalletTabsNavigation = () => (
         component={TransfersScreen}
         options={{
           title: 'Transfers',
-          tabBarIcon: ({ color, size }) => <ArrowsIcon color={color} size={size} />
+          tabBarIcon: ({ color, size }) => <ArrowsIcon color={color} size={size} strokeWidth={1.5} />
         }}
       />
       <InWalletTabs.Screen
@@ -62,7 +58,7 @@ const InWalletTabsNavigation = () => (
         component={AddressesScreen}
         options={{
           title: 'Addresses',
-          tabBarIcon: ({ color, size }) => <LayoutTemplateIcon color={color} size={size} />
+          tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />
         }}
       />
     </InWalletTabs.Navigator>

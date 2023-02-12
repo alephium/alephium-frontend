@@ -20,6 +20,8 @@ import styled, { css } from 'styled-components/native'
 
 export interface AppTextProps {
   bold?: boolean
+  semiBold?: boolean
+  medium?: boolean
   color?: string
   size?: number
 }
@@ -31,6 +33,18 @@ export default styled.Text<AppTextProps>`
     bold &&
     css`
       font-weight: 700;
+    `}
+
+  ${({ semiBold }) =>
+    semiBold &&
+    css`
+      font-weight: 600;
+    `}
+
+  ${({ medium }) =>
+    medium &&
+    css`
+      font-weight: 500;
     `}
 
   ${({ size }) =>

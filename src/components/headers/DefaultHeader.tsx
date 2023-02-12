@@ -35,7 +35,7 @@ const scrollRange = [0, 50]
 
 const DefaultHeader = ({ HeaderRight, HeaderLeft, scrollY, style }: DefaultHeaderProps) => {
   const theme = useTheme()
-  const bgColorRange = [theme.bg.secondary, theme.bg.back1]
+  const bgColorRange = [theme.bg.back1, theme.bg.back2]
   const borderColorRange = ['transparent', theme.border.secondary]
   const insets = useSafeAreaInsets()
 
@@ -45,7 +45,7 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, scrollY, style }: DefaultHeade
   }))
 
   return (
-    <Animated.View style={[style, headerStyle, { paddingTop: insets.top }]}>
+    <Animated.View style={[style, headerStyle, { paddingTop: insets.top + 15 }]}>
       {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
       {HeaderRight}
     </Animated.View>
@@ -54,12 +54,11 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, scrollY, style }: DefaultHeade
 
 export default styled(DefaultHeader)`
   flex-direction: row;
-  min-height: 130px;
   justify-content: space-between;
   align-items: center;
   border-bottom-width: 1px;
   background-color: ${({ theme }) => theme.bg.back2};
-  padding: 10px 15px;
+  padding: 15px;
 `
 
 const Title = styled(AppText)`

@@ -108,7 +108,6 @@ export default styled(Button)`
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 30px;
   flex-direction: row;
 
   ${({ centered }) =>

@@ -47,7 +47,7 @@ const HighlightRow = ({ title, subtitle, children, onPress, truncate, style }: H
   const componentContent = title ? (
     <>
       <LeftContent>
-        <AppText color={theme.font.secondary} numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
+        <AppText color={theme.font.primary} medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
           {title}
         </AppText>
         {subtitle && (
@@ -72,7 +72,7 @@ const HighlightRow = ({ title, subtitle, children, onPress, truncate, style }: H
 }
 
 export default styled(HighlightRow)`
-  border: 1px solid ${({ theme }) => theme.border.secondary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
 
   ${({ theme, isInput, isSecondary }) =>
     isInput
@@ -124,6 +124,7 @@ export default styled(HighlightRow)`
 
 const Subtitle = styled(AppText)`
   color: ${({ theme }) => theme.font.tertiary};
+  padding-top: 5px;
 `
 
 const LeftContent = styled.View`

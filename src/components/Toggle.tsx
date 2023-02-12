@@ -34,7 +34,7 @@ const Toggle = ({ onValueChange, ...props }: ToggleProps) => {
         false: props.disabled ? theme.bg.back1 : theme.font.secondary,
         true: props.disabled ? theme.bg.back1 : theme.global.accent
       }}
-      thumbColor={theme.name === 'light' ? theme.font.contrast : theme.font.secondary}
+      thumbColor={theme.name === 'light' ? theme.font.contrast : theme.font.primary}
     />
   )
 }

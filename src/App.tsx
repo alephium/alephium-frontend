@@ -68,7 +68,7 @@ const App = () => {
           <Main>
             <ThemeProvider theme={theme}>
               <RootStackNavigation />
-              <StatusBar style="dark" />
+              <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
             </ThemeProvider>
           </Main>
         </Provider>

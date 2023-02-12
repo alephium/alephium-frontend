@@ -26,11 +26,11 @@ const Screen = ({ children, style }: SafeAreaViewProps) => <SafeAreaView style={
 
 export default styled(Screen)`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.back1};
 `
 
 export const ScreenSection = styled.View<{ fill?: boolean }>`
-  padding: 20px 15px;
+  padding: 20px 15px 10px 15px;
 
   ${({ fill }) =>
     fill &&
@@ -61,11 +61,11 @@ BottomModal = styled(BottomModal)`
 `
 
 export const ScreenSectionTitle = styled(AppText)`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  color: ${({ theme }) => theme.font.tertiary};
+  color: ${({ theme }) => theme.font.secondary};
   margin-left: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 `
 
 export const BottomScreenSection = styled(ScreenSection)`

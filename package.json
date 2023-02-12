@@ -41,7 +41,7 @@
     "lodash": "^4.17.21",
     "lottie-react-native": "5.1.4",
     "lucide-react-native": "^0.112.0",
-    "moti": "^0.18.0",
+    "moti": "^0.23.3",
     "nanoid": "^4.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
