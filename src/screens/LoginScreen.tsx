@@ -79,7 +79,7 @@ const LoginScreen = ({
       {isPinModalVisible && (
         <ConfirmWithAuthModal usePin onConfirm={handleSuccessfulLogin} walletId={walletIdToLogin} />
       )}
-      <SpinnerModal isActive={loading} text="Unlocking wallet..." />
+      {/*<SpinnerModal isActive={loading} text="Unlocking wallet..." /> CANT SHOW 2 MODALS ON IOS*/}
     </Screen>
   )
 }

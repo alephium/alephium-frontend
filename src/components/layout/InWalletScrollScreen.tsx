@@ -45,7 +45,7 @@ const InWalletScrollScreen = ({
 
   return (
     <Screen style={style}>
-      <ScrollView onScroll={handleScroll} onScrollEndDrag={handleScrollEndDrag} {...props}>
+      <ScrollView onScroll={handleScroll} onScrollEndDrag={handleScrollEndDrag} {...props} scrollEventThrottle={20}>
         <Content>{children}</Content>
       </ScrollView>
     </Screen>

@@ -107,7 +107,7 @@ const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWi
           </ModalContent>
         )}
       </ModalWithBackdrop>
-      <SpinnerModal isActive={loading} text="Verifying pin..." />
+      {/*<SpinnerModal isActive={loading} text="Verifying pin..." /> CANT SHOW 2 MODALS ON IOS*/}
     </>
   )
 }
