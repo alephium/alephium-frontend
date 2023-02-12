@@ -21,7 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { ScanLine } from 'lucide-react-native'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Alert, Pressable, ScrollView } from 'react-native'
+import { Alert, Keyboard, Pressable, ScrollView } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -71,6 +71,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+  const [keyboardHeight, setKeyboardHeight] = useState(0)
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false)
   const [encryptedWalletFromQRCode, setEncryptedWalletFromQRCode] = useState('')
@@ -89,6 +90,16 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       )
     })
   })
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardHeight(Keyboard.metrics()?.height || 0)
+    })
+
+    return () => {
+      showSubscription.remove()
+    }
+  }, [])
 
   useEffect(() => {
     setPossibleMatches(
@@ -235,6 +246,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
           autoCorrect={false}
           error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
           placeholder="Type your secret phrase word by word"
+          style={{ bottom: keyboardHeight }}
         />
       </ScreenSectionBottom>
       {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin)} />}

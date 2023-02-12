@@ -80,8 +80,8 @@ export const darkTheme: DefaultTheme = {
     contrast: '#19191E'
   },
   border: {
-    primary: 'rgb(43, 43, 48)',
-    secondary: 'rgb(34, 34, 38)'
+    primary: 'rgba(255, 255, 255, 0.08)',
+    secondary: 'rgba(255, 255, 255, 0.04)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.25; shadow-radius: 2px; elevation: 5;',
@@ -89,7 +89,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#6083FF',
+    accent: '#598BED',
     alert: '#ed4a34',
     valid: '#4ebf08',
     star: '#FFD66D',

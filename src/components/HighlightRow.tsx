@@ -72,6 +72,8 @@ const HighlightRow = ({ title, subtitle, children, onPress, truncate, style }: H
 }
 
 export default styled(HighlightRow)`
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+
   ${({ theme, isInput, isSecondary }) =>
     isInput
       ? css`
