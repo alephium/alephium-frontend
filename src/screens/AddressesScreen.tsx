@@ -24,16 +24,13 @@ import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
-import AddressesScreenHeaderRight from '../components/AddressesScreenHeaderRight'
 import AddressesTokensList from '../components/AddressesTokensList'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import Carousel from '../components/Carousel'
-import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
 import InWalletTransactionsFlatList from '../components/layout/InWalletTransactionsFlatList'
 import { ScreenSection } from '../components/layout/Screen'
 import QRCodeModal from '../components/QRCodeModal'
-import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -46,10 +43,6 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
   style?: StyleProp<ViewStyle>
 }
 
-const AddressesScreenHeader = (props: Partial<DefaultHeaderProps>) => (
-  <DefaultHeader HeaderLeft="Addresses" HeaderRight={<AddressesScreenHeaderRight />} {...props} />
-)
-
 const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -61,7 +54,7 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
       selectAddressesPendingTransactions(s, [selectedAddressHash])
     ]
   )
-  const updateHeader = useInWalletTabScreenHeader(AddressesScreenHeader, navigation)
+
   const theme = useTheme()
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
@@ -99,7 +92,6 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
       pendingTransactions={selectedAddressPendingTransactions}
       addressHashes={[selectedAddressHash]}
       haveAllPagesLoaded={selectedAddress.allTransactionPagesLoaded}
-      onScrollYChange={updateHeader}
       initialNumToRender={5}
       showInternalInflows
       ListHeaderComponent={

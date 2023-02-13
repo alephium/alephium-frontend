@@ -33,7 +33,6 @@ interface InWalletTransactionsFlatListProps extends Partial<FlatListProps<Addres
   pendingTransactions: AddressPendingTransaction[]
   addressHashes: AddressHash[]
   haveAllPagesLoaded: boolean
-  onScrollYChange: (scrollY: number) => void
   showInternalInflows?: boolean
 }
 

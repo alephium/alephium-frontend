@@ -18,9 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 
-import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
 import InWalletTransactionsFlatList from '../components/layout/InWalletTransactionsFlatList'
-import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -31,10 +29,6 @@ import { AddressHash } from '../types/addresses'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
-const TransfersScreenHeader = (props: Partial<DefaultHeaderProps>) => (
-  <DefaultHeader HeaderLeft="Transfers" {...props} />
-)
-
 const TransfersScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const [confirmedTransactions, pendingTransactions, haveAllPagesLoaded] = useAppSelector((s) => [
@@ -42,7 +36,6 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
     selectAddressesPendingTransactions(s, addressHashes),
     selectHaveAllPagesLoaded(s)
   ])
-  const updateHeader = useInWalletTabScreenHeader(TransfersScreenHeader, navigation)
 
   return (
     <InWalletTransactionsFlatList
@@ -50,7 +43,6 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       pendingTransactions={pendingTransactions}
       addressHashes={addressHashes}
       haveAllPagesLoaded={haveAllPagesLoaded}
-      onScrollYChange={updateHeader}
       initialNumToRender={8}
       contentContainerStyle={{ flexGrow: 1 }}
     />

@@ -27,18 +27,18 @@ interface InWalletLayoutContextProps {
   isScrolling?: SharedValue<boolean>
 }
 
-const InWalletLayoutContext = createContext<InWalletLayoutContextProps>({
+const InWalletScrollContext = createContext<InWalletLayoutContextProps>({
   scrollY: undefined,
   isScrolling: undefined
 })
 
-export const InWalletLayoutContextProvider = ({ children }: { children: ReactNode }) => {
+export const InWalletScrollContextProvider = ({ children }: { children: ReactNode }) => {
   const scrollY = useSharedValue(0)
   const isScrolling = useSharedValue(false)
 
-  return <InWalletLayoutContext.Provider value={{ scrollY, isScrolling }}>{children}</InWalletLayoutContext.Provider>
+  return <InWalletScrollContext.Provider value={{ scrollY, isScrolling }}>{children}</InWalletScrollContext.Provider>
 }
 
-export const useInWalletLayoutContext = () => useContext(InWalletLayoutContext)
+export const useInWalletScrollContext = () => useContext(InWalletScrollContext)
 
-export default InWalletLayoutContext
+export default InWalletScrollContext

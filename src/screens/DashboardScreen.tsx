@@ -22,12 +22,8 @@ import { RefreshControl, StyleProp, ViewStyle } from 'react-native'
 import AddressesTokensList from '../components/AddressesTokensList'
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
-import DashboardHeaderActions from '../components/DashboardHeaderActions'
-import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
 import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
-import WalletSwitch from '../components/WalletSwitch'
-import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -40,13 +36,8 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
   style?: StyleProp<ViewStyle>
 }
 
-const DashboardScreenHeader = (props: Partial<DefaultHeaderProps>) => (
-  <DefaultHeader HeaderRight={<DashboardHeaderActions />} HeaderLeft={<WalletSwitch />} {...props} />
-)
-
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const updateHeader = useInWalletTabScreenHeader(DashboardScreenHeader, navigation)
   const isLoading = useAppSelector((state) => state.addresses.loading)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
 
@@ -64,7 +55,6 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   return (
     <InWalletScrollScreen
       style={style}
-      onScrollYChange={updateHeader}
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
     >
       <ScreenSection>

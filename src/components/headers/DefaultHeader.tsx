@@ -22,26 +22,28 @@ import Animated, { interpolateColor, useAnimatedStyle } from 'react-native-reani
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
+import { useInWalletScrollContext } from '../../contexts/InWalletScrollContext'
 import AppText from '../AppText'
 
 export interface DefaultHeaderProps {
   HeaderLeft: ReactNode
   HeaderRight?: ReactNode
   style?: StyleProp<ViewStyle>
-  scrollY?: number
 }
 
 const scrollRange = [0, 50]
 
-const DefaultHeader = ({ HeaderRight, HeaderLeft, scrollY, style }: DefaultHeaderProps) => {
+const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) => {
   const theme = useTheme()
+  const { scrollY } = useInWalletScrollContext()
+
   const bgColorRange = [theme.bg.back1, theme.bg.back2]
   const borderColorRange = ['transparent', theme.border.secondary]
   const insets = useSafeAreaInsets()
 
   const headerStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(scrollY || 0, scrollRange, bgColorRange),
-    borderColor: interpolateColor(scrollY || 0, scrollRange, borderColorRange)
+    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange),
+    borderColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
   }))
 
   return (

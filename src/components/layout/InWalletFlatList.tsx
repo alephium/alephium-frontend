@@ -16,26 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FlatList, FlatListProps, StyleProp, ViewStyle } from 'react-native'
+import { FlatList, FlatListProps, NativeScrollEvent, NativeSyntheticEvent, StyleProp, ViewStyle } from 'react-native'
 
-import useScrollHandling from '../../hooks/layout/useScrollHandling'
+import { useInWalletScrollContext } from '../../contexts/InWalletScrollContext'
 import Screen from './Screen'
 
 interface ScreenProps<T> extends FlatListProps<T> {
-  onScrollYChange: (scrollY: number) => void
   style?: StyleProp<ViewStyle>
 }
 
-function InWalletFlatList<T>({ style, onScroll, onScrollEndDrag, onScrollYChange, ...props }: ScreenProps<T>) {
-  const [handleScroll, handleScrollEndDrag] = useScrollHandling({
-    onScroll,
-    onScrollEndDrag,
-    onScrollYChange
-  })
+function InWalletFlatList<T>({ style, onScroll, onScrollEndDrag, ...props }: ScreenProps<T>) {
+  const { scrollY } = useInWalletScrollContext()
+
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!scrollY) return
+
+    scrollY.value = e.nativeEvent.contentOffset.y
+  }
 
   return (
     <Screen style={style}>
-      <FlatList onScroll={handleScroll} onScrollEndDrag={handleScrollEndDrag} {...props} />
+      <FlatList onScroll={handleScroll} {...props} />
     </Screen>
   )
 }

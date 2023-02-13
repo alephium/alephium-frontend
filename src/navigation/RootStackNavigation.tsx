@@ -22,6 +22,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
+import DefaultHeader from '../components/headers/DefaultHeader'
 import useBottomModalOptions from '../hooks/layout/useBottomModalOptions'
 import { useAppDispatch } from '../hooks/redux'
 import AddressDiscoveryScreen from '../screens/AddressDiscovery'
@@ -126,7 +127,11 @@ const RootStackNavigation = () => {
         />
         <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} options={bottomModalOptions} />
 
-        <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
+        <RootStack.Screen
+          name="SettingsScreen"
+          component={SettingsScreen}
+          options={{ headerTitle: 'Settings', header: () => <DefaultHeader HeaderLeft="Settings" /> }}
+        />
         <RootStack.Screen
           name="SecurityScreen"
           component={SecurityScreen}

@@ -16,36 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
-import { ScrollView, ScrollViewProps, StyleProp, ViewStyle } from 'react-native'
+import { ReactNode, useEffect } from 'react'
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  ScrollViewProps,
+  StyleProp,
+  ViewStyle
+} from 'react-native'
 import styled from 'styled-components/native'
 
-import useScrollHandling from '../../hooks/layout/useScrollHandling'
+import { useInWalletScrollContext } from '../../contexts/InWalletScrollContext'
 import Screen from './Screen'
 
-interface ScreenProps extends ScrollViewProps {
+interface InWalletScrollScreenProps extends ScrollViewProps {
   children: ReactNode | ReactNode[]
-  onScrollYChange: (scrollY: number) => void
   style?: StyleProp<ViewStyle>
 }
 
-const InWalletScrollScreen = ({
-  style,
-  children,
-  onScroll,
-  onScrollEndDrag,
-  onScrollYChange,
-  ...props
-}: ScreenProps) => {
-  const [handleScroll, handleScrollEndDrag] = useScrollHandling({
-    onScroll,
-    onScrollEndDrag,
-    onScrollYChange
-  })
+const InWalletScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) => {
+  const { scrollY } = useInWalletScrollContext()
+
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!scrollY) return
+
+    scrollY.value = e.nativeEvent.contentOffset.y
+  }
 
   return (
     <Screen style={style}>
-      <ScrollView onScroll={handleScroll} onScrollEndDrag={handleScrollEndDrag} {...props} scrollEventThrottle={20}>
+      <ScrollView onScroll={handleScroll} {...props} scrollEventThrottle={20}>
         <Content>{children}</Content>
       </ScrollView>
     </Screen>
