@@ -22,8 +22,8 @@ import { RefreshControl, StyleProp, ViewStyle } from 'react-native'
 import AddressesTokensList from '../components/AddressesTokensList'
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
-import InWalletScrollScreen from '../components/layout/InWalletScrollScreen'
 import { ScreenSection } from '../components/layout/Screen'
+import ScrollScreen from '../components/layout/ScrollScreen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -53,16 +53,13 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   }
 
   return (
-    <InWalletScrollScreen
-      style={style}
-      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
-    >
+    <ScrollScreen style={style} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
       <ScreenSection>
         <BalanceSummary />
       </ScreenSection>
       <AddressesTokensList />
       <Button title="Reset app" onPress={resetApp} style={{ marginBottom: 120, marginTop: 600 }} />
-    </InWalletScrollScreen>
+    </ScrollScreen>
   )
 }
 

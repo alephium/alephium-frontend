@@ -19,26 +19,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createContext, ReactNode, useContext } from 'react'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
-// This is done so that the scrollY position of the screen's ScrollView can be passed to the FooterMenu component so
-// that it can react to scrolling.
-
-interface InWalletLayoutContextProps {
+interface ScrollContextProps {
   scrollY?: SharedValue<number>
   isScrolling?: SharedValue<boolean>
 }
 
-const InWalletScrollContext = createContext<InWalletLayoutContextProps>({
-  scrollY: undefined,
-  isScrolling: undefined
+const ScrollContext = createContext<ScrollContextProps>({
+  scrollY: undefined
 })
 
-export const InWalletScrollContextProvider = ({ children }: { children: ReactNode }) => {
+export const ScrollContextProvider = ({ children }: { children: ReactNode }) => {
   const scrollY = useSharedValue(0)
-  const isScrolling = useSharedValue(false)
 
-  return <InWalletScrollContext.Provider value={{ scrollY, isScrolling }}>{children}</InWalletScrollContext.Provider>
+  return <ScrollContext.Provider value={{ scrollY }}>{children}</ScrollContext.Provider>
 }
 
-export const useInWalletScrollContext = () => useContext(InWalletScrollContext)
+export const useScrollContext = () => useContext(ScrollContext)
 
-export default InWalletScrollContext
+export default ScrollContext

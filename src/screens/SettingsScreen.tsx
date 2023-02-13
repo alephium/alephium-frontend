@@ -19,14 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Search, Trash2 as TrashIcon } from 'lucide-react-native'
-import { Alert, ScrollView } from 'react-native'
+import { Alert } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Select from '../components/inputs/Select'
-import Screen, { ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
+import { ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
+import ScrollScreen from '../components/layout/ScrollScreen'
 import Toggle from '../components/Toggle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import useBiometrics from '../hooks/useBiometrics'
@@ -97,69 +98,67 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   }
 
   return (
-    <Screen>
-      <ScrollView>
-        <ScreenSection>
-          <ScreenSectionTitle>General</ScreenSectionTitle>
-          <HighlightRow title="Discreet mode" subtitle="Hide all amounts" isTopRounded hasBottomBorder>
-            <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
+    <ScrollScreen>
+      <ScreenSection>
+        <ScreenSectionTitle>General</ScreenSectionTitle>
+        <HighlightRow title="Discreet mode" subtitle="Hide all amounts" isTopRounded hasBottomBorder>
+          <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
+        </HighlightRow>
+        <HighlightRow title="Require authentication" subtitle="For important actions" hasBottomBorder>
+          <Toggle value={requireAuth} onValueChange={toggleAuthRequirement} />
+        </HighlightRow>
+        <HighlightRow title="Use dark theme" subtitle="Try it, it's nice" hasBottomBorder>
+          <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
+        </HighlightRow>
+        {hasAvailableBiometrics && (
+          <HighlightRow title="Biometrics authentication" subtitle="Enhance your security" hasBottomBorder>
+            <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
           </HighlightRow>
-          <HighlightRow title="Require authentication" subtitle="For important actions" hasBottomBorder>
-            <Toggle value={requireAuth} onValueChange={toggleAuthRequirement} />
-          </HighlightRow>
-          <HighlightRow title="Use dark theme" subtitle="Try it, it's nice" hasBottomBorder>
-            <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
-          </HighlightRow>
-          {hasAvailableBiometrics && (
-            <HighlightRow title="Biometrics authentication" subtitle="Enhance your security" hasBottomBorder>
-              <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
-            </HighlightRow>
-          )}
-          <Select
-            options={currencyOptions}
-            label="Currency"
-            value={currentCurrency}
-            onValueChange={handleCurrencyChange}
-            isBottomRounded
-          />
-        </ScreenSection>
-        <ScreenSection>
-          <ScreenSectionTitle>Networks</ScreenSectionTitle>
-          <HighlightRow
-            title="Current network"
-            isTopRounded
-            isBottomRounded
-            onPress={() => navigation.navigate('SwitchNetworkScreen')}
-          >
-            <CurrentNetwork>{capitalize(currentNetworkName)}</CurrentNetwork>
-          </HighlightRow>
-        </ScreenSection>
-        <ScreenSection>
-          <ScreenSectionTitle>Addresses</ScreenSectionTitle>
-          <ButtonStyled
-            title="Scan for active addresses"
-            icon={<Search size={24} color={theme.font.contrast} />}
-            variant="accent"
-            onPress={() => navigation.navigate('AddressDiscoveryScreen')}
-          />
-        </ScreenSection>
-        <ScreenSection>
-          <ScreenSectionTitle>Wallets</ScreenSectionTitle>
-          <ButtonStyled
-            title="Add a new wallet"
-            icon={<PlusIcon size={24} color={theme.global.valid} />}
-            variant="valid"
-            onPress={() => navigation.navigate('LandingScreen')}
-          />
-          <ButtonStyled
-            title="Delete this wallet"
-            icon={<TrashIcon size={24} color={theme.global.alert} />}
-            variant="alert"
-            onPress={handleDeleteButtonPress}
-          />
-        </ScreenSection>
-      </ScrollView>
-    </Screen>
+        )}
+        <Select
+          options={currencyOptions}
+          label="Currency"
+          value={currentCurrency}
+          onValueChange={handleCurrencyChange}
+          isBottomRounded
+        />
+      </ScreenSection>
+      <ScreenSection>
+        <ScreenSectionTitle>Networks</ScreenSectionTitle>
+        <HighlightRow
+          title="Current network"
+          isTopRounded
+          isBottomRounded
+          onPress={() => navigation.navigate('SwitchNetworkScreen')}
+        >
+          <CurrentNetwork>{capitalize(currentNetworkName)}</CurrentNetwork>
+        </HighlightRow>
+      </ScreenSection>
+      <ScreenSection>
+        <ScreenSectionTitle>Addresses</ScreenSectionTitle>
+        <ButtonStyled
+          title="Scan for active addresses"
+          icon={<Search size={24} color={theme.font.contrast} />}
+          variant="accent"
+          onPress={() => navigation.navigate('AddressDiscoveryScreen')}
+        />
+      </ScreenSection>
+      <ScreenSection>
+        <ScreenSectionTitle>Wallets</ScreenSectionTitle>
+        <ButtonStyled
+          title="Add a new wallet"
+          icon={<PlusIcon size={24} color={theme.global.valid} />}
+          variant="valid"
+          onPress={() => navigation.navigate('LandingScreen')}
+        />
+        <ButtonStyled
+          title="Delete this wallet"
+          icon={<TrashIcon size={24} color={theme.global.alert} />}
+          variant="alert"
+          onPress={handleDeleteButtonPress}
+        />
+      </ScreenSection>
+    </ScrollScreen>
   )
 }
 

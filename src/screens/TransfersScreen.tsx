@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 
-import InWalletTransactionsFlatList from '../components/layout/InWalletTransactionsFlatList'
+import InWalletTransactionsFlatList from '../components/layout/TransactionsFlatList'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'

@@ -16,17 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FlatList, FlatListProps, NativeScrollEvent, NativeSyntheticEvent, StyleProp, ViewStyle } from 'react-native'
+import { ReactNode } from 'react'
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  ScrollViewProps,
+  StyleProp,
+  ViewStyle
+} from 'react-native'
+import styled from 'styled-components/native'
 
-import { useInWalletScrollContext } from '../../contexts/InWalletScrollContext'
+import { useScrollContext } from '../../contexts/ScrollContext'
 import Screen from './Screen'
 
-interface ScreenProps<T> extends FlatListProps<T> {
+interface InWalletScrollScreenProps extends ScrollViewProps {
+  children: ReactNode | ReactNode[]
   style?: StyleProp<ViewStyle>
 }
 
-function InWalletFlatList<T>({ style, onScroll, onScrollEndDrag, ...props }: ScreenProps<T>) {
-  const { scrollY } = useInWalletScrollContext()
+const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) => {
+  const { scrollY } = useScrollContext()
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!scrollY) return
@@ -36,9 +46,16 @@ function InWalletFlatList<T>({ style, onScroll, onScrollEndDrag, ...props }: Scr
 
   return (
     <Screen style={style}>
-      <FlatList onScroll={handleScroll} {...props} />
+      <ScrollView onScroll={handleScroll} {...props} scrollEventThrottle={1}>
+        <Content>{children}</Content>
+      </ScrollView>
     </Screen>
   )
 }
 
-export default InWalletFlatList
+export default ScrollScreen
+
+// Add extra padding so that content is not hidden by the footer menu
+const Content = styled.View`
+  padding-bottom: 160px;
+`

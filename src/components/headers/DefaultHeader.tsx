@@ -22,7 +22,7 @@ import Animated, { interpolateColor, useAnimatedStyle } from 'react-native-reani
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useInWalletScrollContext } from '../../contexts/InWalletScrollContext'
+import { useScrollContext } from '../../contexts/ScrollContext'
 import AppText from '../AppText'
 
 export interface DefaultHeaderProps {
@@ -35,7 +35,7 @@ const scrollRange = [0, 50]
 
 const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) => {
   const theme = useTheme()
-  const { scrollY } = useInWalletScrollContext()
+  const { scrollY } = useScrollContext()
 
   const bgColorRange = [theme.bg.back1, theme.bg.back2]
   const borderColorRange = ['transparent', theme.border.secondary]

@@ -25,10 +25,10 @@ import { AddressHash } from '../../types/addresses'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '../../types/transactions'
 import AppText from '../AppText'
 import TransactionRow from '../TransactionRow'
-import InWalletFlatList from './InWalletFlatList'
 import { ScreenSectionTitle } from './Screen'
+import InWalletFlatList from './ScrollFlatListScreen'
 
-interface InWalletTransactionsFlatListProps extends Partial<FlatListProps<AddressTransaction>> {
+interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransaction>> {
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
   addressHashes: AddressHash[]
@@ -44,7 +44,7 @@ type TransactionItem = {
 
 const transactionKeyExtractor = (tx: AddressTransaction) => `${tx.hash}-${tx.address.hash}`
 
-const InWalletTransactionsFlatList = ({
+const TransactionsFlatList = ({
   confirmedTransactions,
   pendingTransactions,
   addressHashes,
@@ -52,7 +52,7 @@ const InWalletTransactionsFlatList = ({
   ListHeaderComponent,
   showInternalInflows = false,
   ...props
-}: InWalletTransactionsFlatListProps) => {
+}: TransactionsFlatListProps) => {
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const isLoading = useAppSelector((state) => state.addresses.loading)
@@ -134,7 +134,7 @@ const InWalletTransactionsFlatList = ({
   )
 }
 
-export default InWalletTransactionsFlatList
+export default TransactionsFlatList
 
 const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
   margin-left: 28px;
