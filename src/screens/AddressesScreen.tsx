@@ -109,21 +109,21 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
             <ButtonsRowStyled>
               <Button
                 title="Send"
-                icon={<ArrowUp size={24} color={theme.font.contrast} />}
+                Icon={ArrowUp}
                 onPress={() => navigation.navigate('SendScreen', { addressHash: selectedAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Receive"
-                icon={<ArrowDown size={24} color={theme.font.contrast} />}
+                Icon={ArrowDown}
                 onPress={() => navigation.navigate('ReceiveScreen', { addressHash: selectedAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Settings"
-                icon={<Settings2 size={24} color={theme.font.contrast} />}
+                Icon={Settings2}
                 onPress={() => navigation.navigate('EditAddressScreen', { addressHash: selectedAddressHash })}
                 disabled={areButtonsDisabled}
                 circular

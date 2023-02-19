@@ -17,15 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { Eye as EyeIcon, Settings as SettingsIcon, ShieldAlert, WifiOff } from 'lucide-react-native'
+import { Settings as SettingsIcon, ShieldAlert, WifiOff } from 'lucide-react-native'
 import { memo } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { discreetModeToggled } from '../store/settingsSlice'
 import { BORDER_RADIUS } from '../style/globalStyle'
 
 interface DashboardHeaderActionsProps {
@@ -38,10 +37,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
     s.network.status
   ])
   const theme = useTheme()
-  const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-
-  const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
   const showOfflineMessage = () =>
     Toast.show('The app is offline and trying to reconnect. Please, check your network settings.')
@@ -55,11 +51,6 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           </HeaderButton>
         </Pressable>
       )}
-      <Pressable onPress={toggleDiscreetMode}>
-        <HeaderButton>
-          <EyeIcon size={24} color={theme.font.primary} />
-        </HeaderButton>
-      </Pressable>
       <Pressable onPress={() => navigation.navigate('SecurityScreen')}>
         <SecurityIcon alert={isMnemonicBackedUp === false} />
       </Pressable>

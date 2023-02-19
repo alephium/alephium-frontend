@@ -75,18 +75,14 @@ const AddressScreen = ({
               variant="contrast"
               onPress={makeAddressMain}
               disabled={isCurrentAddressMain}
-              icon={<StarIcon fill={isCurrentAddressMain ? theme.global.star : theme.bg.back1} size={22} />}
+              Icon={StarIcon}
             />
             <ButtonStyled
               variant="contrast"
               onPress={() => copyAddressToClipboard(address.hash)}
-              icon={<ClipboardIcon color={theme.font.primary} size={20} />}
+              Icon={ClipboardIcon}
             />
-            <ButtonStyled
-              variant="contrast"
-              onPress={() => setIsQrCodeModalOpen(true)}
-              icon={<QrCodeIcon color={theme.font.primary} size={20} />}
-            />
+            <ButtonStyled variant="contrast" onPress={() => setIsQrCodeModalOpen(true)} Icon={QrCodeIcon} />
           </Actions>
         </Header>
         <ScreenSection>

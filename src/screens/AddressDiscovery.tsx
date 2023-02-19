@@ -114,19 +114,13 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
 
       navigation.setOptions({
         headerLeft: () => null,
-        headerRight: () => (
-          <Button
-            onPress={cancelAndGoToWelcomeScreen}
-            icon={<X size={24} color={theme.font.primary} />}
-            type="transparent"
-          />
-        )
+        headerRight: () => <Button onPress={cancelAndGoToWelcomeScreen} Icon={X} type="transparent" />
       })
 
       const subscription = BackHandler.addEventListener('hardwareBackPress', () => true)
 
       return subscription.remove
-    }, [cancelAndGoToWelcomeScreen, isImporting, navigation, startScan, theme.font.primary])
+    }, [cancelAndGoToWelcomeScreen, isImporting, navigation, startScan])
   )
 
   return (
@@ -188,31 +182,12 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
           )}
         </View>
         <BottomScreenSection>
-          {status === 'idle' && (
-            <ButtonStyled
-              icon={<Search size={24} color={theme.font.contrast} />}
-              title="Start scanning"
-              onPress={startScan}
-            />
-          )}
-          {status === 'started' && (
-            <ButtonStyled
-              icon={<X size={24} color={theme.font.contrast} />}
-              title="Stop scanning"
-              onPress={stopScan}
-              type="secondary"
-            />
-          )}
-          {status === 'stopped' && (
-            <ContinueButton
-              icon={<Search size={24} color={theme.font.contrast} />}
-              title="Continue scanning"
-              onPress={startScan}
-            />
-          )}
+          {status === 'idle' && <ButtonStyled Icon={Search} title="Start scanning" onPress={startScan} />}
+          {status === 'started' && <ButtonStyled Icon={X} title="Stop scanning" onPress={stopScan} type="secondary" />}
+          {status === 'stopped' && <ContinueButton Icon={Search} title="Continue scanning" onPress={startScan} />}
           {(status === 'stopped' || status === 'finished') && (
             <ButtonStyled
-              icon={<Import size={24} color={theme.font.contrast} />}
+              Icon={Import}
               title="Import addresses"
               onPress={importAddresses}
               disabled={selectedAddressesToImport.length === 0}

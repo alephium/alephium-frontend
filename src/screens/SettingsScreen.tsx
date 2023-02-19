@@ -138,7 +138,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         <ScreenSectionTitle>Addresses</ScreenSectionTitle>
         <ButtonStyled
           title="Scan for active addresses"
-          icon={<Search size={24} color={theme.font.contrast} />}
+          Icon={Search}
           variant="accent"
           onPress={() => navigation.navigate('AddressDiscoveryScreen')}
         />
@@ -147,16 +147,11 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         <ScreenSectionTitle>Wallets</ScreenSectionTitle>
         <ButtonStyled
           title="Add a new wallet"
-          icon={<PlusIcon size={24} color={theme.global.valid} />}
+          Icon={PlusIcon}
           variant="valid"
           onPress={() => navigation.navigate('LandingScreen')}
         />
-        <ButtonStyled
-          title="Delete this wallet"
-          icon={<TrashIcon size={24} color={theme.global.alert} />}
-          variant="alert"
-          onPress={handleDeleteButtonPress}
-        />
+        <ButtonStyled title="Delete this wallet" Icon={PlusIcon} variant="alert" onPress={handleDeleteButtonPress} />
       </ScreenSection>
     </ScrollScreen>
   )

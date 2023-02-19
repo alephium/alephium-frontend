@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect, useNavigation, useScrollToTop } from '@react-navigation/native'
+import { useNavigation, useScrollToTop } from '@react-navigation/native'
 import { ReactNode, useEffect, useRef } from 'react'
 import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 

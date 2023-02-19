@@ -75,11 +75,7 @@ const ReceiveScreen = ({
           <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={toAddressHash} />
         </CenteredScreenSection>
         <CenteredScreenSection>
-          <Button
-            title="Copy address"
-            onPress={() => copyAddressToClipboard(toAddressHash)}
-            icon={<ClipboardIcon color={theme.font.contrast} size={20} />}
-          />
+          <Button title="Copy address" onPress={() => copyAddressToClipboard(toAddressHash)} Icon={ClipboardIcon} />
         </CenteredScreenSection>
         <ScreenSection>
           <HighlightRow title="Address" isTopRounded hasBottomBorder>

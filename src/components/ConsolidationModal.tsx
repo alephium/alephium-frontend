@@ -63,9 +63,9 @@ const ConsolidationModal = ({ onConsolidate, onCancel, fees }: ConsolidationModa
 export default ConsolidationModal
 
 const ConsolidationModalContent = styled.View`
- flex: 1
- width: 100%;
- background-color: ${({ theme }) => theme.bg.primary};
+  flex: 1;
+  width: 100%;
+  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const ScreenSectionStyled = styled(ScreenSection)`

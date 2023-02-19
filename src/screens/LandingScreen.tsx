@@ -51,12 +51,7 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
       <ActionsContainer>
         <ButtonStack>
           <Button title="New wallet" type="primary" variant="contrast" onPress={() => handleButtonPress('create')} />
-          <Button
-            title="Import wallet"
-            type="secondary"
-            variant="contrast"
-            onPress={() => handleButtonPress('import')}
-          />
+          <Button title="Import wallet" onPress={() => handleButtonPress('import')} />
         </ButtonStack>
       </ActionsContainer>
     </Screen>
@@ -87,13 +82,13 @@ const TitleContainer = styled.View`
 
 const TitleFirstLine = styled(AppText)`
   font-size: 18px;
-  color: ${({ theme }) => theme.font.contrast};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const TitleSecondLine = styled(AppText)`
   font-size: 18px;
   font-weight: bold;
-  color: ${({ theme }) => theme.font.contrast};
+  color: ${({ theme }) => theme.font.primary};
 `
 
 const ActionsContainer = styled.View`

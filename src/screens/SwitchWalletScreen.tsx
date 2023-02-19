@@ -113,16 +113,8 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
       </ScrollView>
       <BottomScreenSection>
         <ButtonsRow>
-          <Button
-            title="New wallet"
-            onPress={() => handleButtonPress('create')}
-            icon={<PlusIcon size={24} color={theme.font.contrast} />}
-          />
-          <Button
-            title="Import wallet"
-            onPress={() => handleButtonPress('import')}
-            icon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
-          />
+          <Button title="New wallet" onPress={() => handleButtonPress('create')} Icon={PlusIcon} />
+          <Button title="Import wallet" onPress={() => handleButtonPress('import')} Icon={ArrowDownIcon} />
         </ButtonsRow>
       </BottomScreenSection>
       <SpinnerModal isActive={loading} text="Switching wallets..." />

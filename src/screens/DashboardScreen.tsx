@@ -17,11 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { EyeIcon } from 'lucide-react-native'
+import React from 'react'
 import { RefreshControl, StyleProp, ViewStyle } from 'react-native'
 
 import AddressesTokensList from '../components/AddressesTokensList'
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
+import BoxSurface from '../components/layout/BoxSurface'
 import { ScreenSection } from '../components/layout/Screen'
 import ScrollScreen from '../components/layout/ScrollScreen'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
@@ -30,6 +33,7 @@ import RootStackParamList from '../navigation/rootStackRoutes'
 import { deleteAllWallets } from '../persistent-storage/wallets'
 import { selectAddressIds, syncAddressesData } from '../store/addressesSlice'
 import { appReset } from '../store/appSlice'
+import { discreetModeToggled } from '../store/settingsSlice'
 import { AddressHash } from '../types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
@@ -52,10 +56,15 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     navigation.navigate('LandingScreen')
   }
 
+  const toggleDiscreetMode = () => dispatch(discreetModeToggled())
+
   return (
     <ScrollScreen style={style} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
       <ScreenSection>
-        <BalanceSummary />
+        <BoxSurface>
+          <BalanceSummary />
+          <Button onPress={toggleDiscreetMode} Icon={EyeIcon} />
+        </BoxSurface>
       </ScreenSection>
       <AddressesTokensList />
       <Button title="Reset app" onPress={resetApp} style={{ marginBottom: 120, marginTop: 600 }} />

@@ -46,7 +46,11 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
           disabled={!value}
           style={keyButtonStyle}
         >
-          {value === 'delete' ? <Icon name="delete" size={23} /> : <KeyText>{value}</KeyText>}
+          {value === 'delete' ? (
+            <Icon name="delete" size={23} color={theme.font.primary} />
+          ) : (
+            <KeyText>{value}</KeyText>
+          )}
         </KeyboardButton>
       ))}
     </KeyboardRow>

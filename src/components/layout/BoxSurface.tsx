@@ -16,16 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { Plus as PlusIcon } from 'lucide-react-native'
+import { ReactNode } from 'react'
+import { StyleProp, View, ViewStyle } from 'react-native'
+import styled from 'styled-components'
 
-import RootStackParamList from '../navigation/rootStackRoutes'
-import Button from './buttons/Button'
+import { BORDER_RADIUS } from '../../style/globalStyle'
 
-const AddressesScreenHeaderRight = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-
-  return <Button onPress={() => navigation.navigate('NewAddressScreen')} Icon={PlusIcon} type="transparent" />
+interface BoxSurfaceProps {
+  children: ReactNode
+  style?: StyleProp<ViewStyle>
 }
 
-export default AddressesScreenHeaderRight
+const BoxSurface = ({ style, children }: BoxSurfaceProps) => {
+  return <View style={style}>{children}</View>
+}
+
+export default styled(BoxSurface)`
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.primary};
+  border-radius: ${BORDER_RADIUS}px;
+`

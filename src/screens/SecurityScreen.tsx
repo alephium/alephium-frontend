@@ -87,7 +87,7 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
           <BottomScreenSection>
             <ButtonsRow>
               <Button title="Go back" onPress={() => setShowMnemonic(false)} />
-              <Button title="I wrote it down" onPress={handleBackupConfirmation} gradient />
+              <Button title="I wrote it down" onPress={handleBackupConfirmation} />
             </ButtonsRow>
           </BottomScreenSection>
         </SecretPhraseModalContent>
@@ -134,9 +134,9 @@ const ConsentText = styled(AppText)`
 `
 
 const SecretPhraseModalContent = styled.View`
- flex: 1
- width: 100%;
- background-color: #f7d1b6;
+  flex: 1;
+  width: 100%;
+  background-color: #f7d1b6;
 `
 
 const ScreenSectionStyled = styled(ScreenSection)`
