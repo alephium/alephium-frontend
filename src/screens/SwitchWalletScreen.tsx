@@ -26,6 +26,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
+import BoxSurface from '../components/layout/BoxSurface'
 import Screen, { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import SpinnerModal from '../components/SpinnerModal'
@@ -50,7 +51,6 @@ export interface SwitchWalletScreenProps extends StackScreenProps<RootStackParam
 const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   const dispatch = useAppDispatch()
   const wallets = useSortedWallets()
-  const theme = useTheme()
   const [activeWalletMetadataId, pin] = useAppSelector((s) => [s.activeWallet.metadataId, s.credentials.pin])
   const restoreNavigationState = useRestoreNavigationState()
 
@@ -97,19 +97,17 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
         <Subtitle>Switch to another wallet?</Subtitle>
       </ScreenSection>
       <ScrollView>
-        <ScreenSection>
+        <BoxSurface>
           {wallets.map((wallet, index) => (
             <RadioButtonRow
               key={wallet.id}
               title={wallet.name}
               onPress={() => handleWalletItemPress(wallet.id)}
-              isFirst={index === 0}
-              isLast={index === wallets.length - 1}
               isActive={wallet.id === activeWalletMetadataId}
               isInput
             />
           ))}
-        </ScreenSection>
+        </BoxSurface>
       </ScrollView>
       <BottomScreenSection>
         <ButtonsRow>

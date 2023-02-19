@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
-import { Plus as PlusIcon, Search, Trash2 as TrashIcon } from 'lucide-react-native'
+import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
 import { Alert } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -26,6 +26,7 @@ import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import HighlightRow from '../components/HighlightRow'
 import Select from '../components/inputs/Select'
+import BoxSurface from '../components/layout/BoxSurface'
 import { ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
 import ScrollScreen from '../components/layout/ScrollScreen'
 import Toggle from '../components/Toggle'
@@ -101,45 +102,44 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
     <ScrollScreen>
       <ScreenSection>
         <ScreenSectionTitle>General</ScreenSectionTitle>
-        <HighlightRow title="Discreet mode" subtitle="Hide all amounts" isTopRounded hasBottomBorder>
-          <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
-        </HighlightRow>
-        <HighlightRow title="Require authentication" subtitle="For important actions" hasBottomBorder>
-          <Toggle value={requireAuth} onValueChange={toggleAuthRequirement} />
-        </HighlightRow>
-        <HighlightRow title="Use dark theme" subtitle="Try it, it's nice" hasBottomBorder>
-          <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
-        </HighlightRow>
-        {hasAvailableBiometrics && (
-          <HighlightRow title="Biometrics authentication" subtitle="Enhance your security" hasBottomBorder>
-            <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
+        <BoxSurface>
+          <HighlightRow title="Discreet mode" subtitle="Hide all amounts">
+            <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
           </HighlightRow>
-        )}
-        <Select
-          options={currencyOptions}
-          label="Currency"
-          value={currentCurrency}
-          onValueChange={handleCurrencyChange}
-          isBottomRounded
-        />
+          <HighlightRow title="Require authentication" subtitle="For important actions">
+            <Toggle value={requireAuth} onValueChange={toggleAuthRequirement} />
+          </HighlightRow>
+          <HighlightRow title="Use dark theme" subtitle="Try it, it's nice">
+            <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
+          </HighlightRow>
+          {hasAvailableBiometrics && (
+            <HighlightRow title="Biometrics authentication" subtitle="Enhance your security">
+              <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
+            </HighlightRow>
+          )}
+          <HighlightRow isLast isInput>
+            <Select
+              options={currencyOptions}
+              label="Currency"
+              value={currentCurrency}
+              onValueChange={handleCurrencyChange}
+            />
+          </HighlightRow>
+        </BoxSurface>
       </ScreenSection>
       <ScreenSection>
         <ScreenSectionTitle>Networks</ScreenSectionTitle>
-        <HighlightRow
-          title="Current network"
-          isTopRounded
-          isBottomRounded
-          onPress={() => navigation.navigate('SwitchNetworkScreen')}
-        >
-          <CurrentNetwork>{capitalize(currentNetworkName)}</CurrentNetwork>
-        </HighlightRow>
+        <BoxSurface>
+          <HighlightRow title="Current network" onPress={() => navigation.navigate('SwitchNetworkScreen')} isLast>
+            <CurrentNetwork>{capitalize(currentNetworkName)}</CurrentNetwork>
+          </HighlightRow>
+        </BoxSurface>
       </ScreenSection>
       <ScreenSection>
         <ScreenSectionTitle>Addresses</ScreenSectionTitle>
-        <ButtonStyled
+        <Button
           title="Scan for active addresses"
           Icon={Search}
-          variant="accent"
           onPress={() => navigation.navigate('AddressDiscoveryScreen')}
         />
       </ScreenSection>
@@ -151,7 +151,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
           variant="valid"
           onPress={() => navigation.navigate('LandingScreen')}
         />
-        <ButtonStyled title="Delete this wallet" Icon={PlusIcon} variant="alert" onPress={handleDeleteButtonPress} />
+        <ButtonStyled title="Delete this wallet" Icon={Trash2} variant="alert" onPress={handleDeleteButtonPress} />
       </ScreenSection>
     </ScrollScreen>
   )

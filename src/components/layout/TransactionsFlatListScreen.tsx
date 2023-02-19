@@ -114,18 +114,18 @@ const TransactionsFlatList = ({
       ListFooterComponent={
         <Footer>
           {haveAllPagesLoaded && confirmedTransactions.length > 0 && (
-            <AppText color={theme.font.tertiary} bold>
-              👏 You reached the end of history!
+            <AppText color="tertiary" bold>
+              👏 You reached the end of history.
             </AppText>
           )}
           {!haveAllPagesLoaded && isLoading && (
-            <AppText color={theme.font.tertiary} bold>
+            <AppText color="tertiary" bold>
               Loading more...
             </AppText>
           )}
           {confirmedTransactions.length === 0 && !isLoading && (
-            <AppText color={theme.font.tertiary} bold>
-              No transactions yet!
+            <AppText color="tertiary" bold>
+              No transactions yet
             </AppText>
           )}
         </Footer>

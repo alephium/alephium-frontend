@@ -17,11 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { EyeIcon } from 'lucide-react-native'
+import { EyeIcon, EyeOffIcon } from 'lucide-react-native'
 import React from 'react'
 import { RefreshControl, StyleProp, ViewStyle } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '../components/AddressesTokensList'
+import AppText from '../components/AppText'
 import BalanceSummary from '../components/BalanceSummary'
 import Button from '../components/buttons/Button'
 import BoxSurface from '../components/layout/BoxSurface'
@@ -42,8 +44,14 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
 
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const isLoading = useAppSelector((state) => state.addresses.loading)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
+  const [isLoading, activeWallet, network, discreetMode] = useAppSelector((state) => [
+    state.addresses.loading,
+    state.activeWallet,
+    state.network,
+    state.settings.discreetMode
+  ])
+  const theme = useTheme()
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
@@ -62,8 +70,19 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     <ScrollScreen style={style} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
       <ScreenSection>
         <BoxSurface>
-          <BalanceSummary />
-          <Button onPress={toggleDiscreetMode} Icon={EyeIcon} />
+          <SurfaceHeader>
+            <AppText color="secondary">{activeWallet.name}</AppText>
+            <ActiveNetwork>
+              <NetworkStatusBullet
+                style={{ backgroundColor: network.status === 'online' ? theme.global.valid : theme.global.alert }}
+              />
+              <AppText color="secondary">{network.name}</AppText>
+            </ActiveNetwork>
+          </SurfaceHeader>
+          <BalanceContainer>
+            <BalanceSummary dateLabel="Today" />
+            <Button onPress={toggleDiscreetMode} Icon={discreetMode ? EyeIcon : EyeOffIcon} />
+          </BalanceContainer>
         </BoxSurface>
       </ScreenSection>
       <AddressesTokensList />
@@ -71,5 +90,29 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     </ScrollScreen>
   )
 }
+
+const SurfaceHeader = styled.View`
+  padding: 15px;
+  flex-direction: row;
+  justify-content: space-between;
+`
+
+const ActiveNetwork = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+`
+
+const NetworkStatusBullet = styled.View`
+  height: 7px;
+  width: 7px;
+  border-radius: 10px;
+`
+
+const BalanceContainer = styled.View`
+  padding: 15px;
+  flex-direction: row;
+  gap: 20px;
+`
 
 export default DashboardScreen

@@ -21,7 +21,8 @@ import { ReactNode, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '../AppText'
-import HighlightRow, { BorderOptions } from '../HighlightRow'
+import HighlightRow from '../HighlightRow'
+import BoxSurface from '../layout/BoxSurface'
 import ModalWithBackdrop from '../ModalWithBackdrop'
 import Input, { InputProps, InputValue, RenderValueFunc } from './Input'
 
@@ -30,22 +31,14 @@ export type SelectOption<T extends InputValue> = {
   label: ReactNode
 }
 
-export interface SelectProps<T extends InputValue> extends Omit<InputProps<T>, 'value'>, BorderOptions {
+export interface SelectProps<T extends InputValue> extends Omit<InputProps<T>, 'value'> {
   options: SelectOption<T>[]
   value: T
   onValueChange: (value: T) => void
   renderValue?: RenderValueFunc<T>
 }
 
-function Select<T extends InputValue>({
-  options,
-  onValueChange,
-  value,
-  renderValue,
-  isTopRounded,
-  isBottomRounded,
-  hasBottomBorder
-}: SelectProps<T>) {
+function Select<T extends InputValue>({ options, onValueChange, value, renderValue }: SelectProps<T>) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const theme = useTheme()
 
@@ -61,9 +54,6 @@ function Select<T extends InputValue>({
     <>
       <Input
         editable={false}
-        isTopRounded={isTopRounded}
-        isBottomRounded={isBottomRounded}
-        hasBottomBorder={hasBottomBorder}
         onPress={openModal}
         resetDisabledColor
         RightContent={<ChevronRight size={24} color={theme.font.secondary} />}
@@ -72,27 +62,23 @@ function Select<T extends InputValue>({
         label=""
       />
       <ModalWithBackdrop animationType="fade" visible={isModalOpen} closeModal={closeModal}>
-        {options.map(({ label, value }, index) => (
-          <Option
-            onPress={() => handleOptionPress(value)}
-            key={JSON.stringify(value) + (label ?? '') + index}
-            isTopRounded={index === 0}
-            isBottomRounded={index === options.length - 1}
-            hasBottomBorder={index !== options.length - 1}
-          >
-            {typeof label === 'string' ? <AppText>{label}</AppText> : label}
-          </Option>
-        ))}
+        <BoxSurface>
+          {options.map(({ label, value }, index) => (
+            <HighlightRow
+              onPress={() => handleOptionPress(value)}
+              key={JSON.stringify(value) + (label ?? '') + index}
+              isLast={index === options.length - 1}
+            >
+              {typeof label === 'string' ? <AppText>{label}</AppText> : label}
+            </HighlightRow>
+          ))}
+        </BoxSurface>
       </ModalWithBackdrop>
     </>
   )
 }
 
 export default Select
-
-const Option = styled(HighlightRow)`
-  width: 80%;
-`
 
 const ChevronRight = styled(ChevronDown)`
   transform: rotate(-90deg);

@@ -35,4 +35,5 @@ export default styled(BoxSurface)`
   border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.primary};
   border-radius: ${BORDER_RADIUS}px;
+  overflow: hidden;
 `

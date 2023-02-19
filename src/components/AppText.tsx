@@ -16,18 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { css } from 'styled-components/native'
+import styled, { css, DefaultTheme } from 'styled-components/native'
 
 export interface AppTextProps {
   bold?: boolean
   semiBold?: boolean
   medium?: boolean
-  color?: string
+  color?: keyof DefaultTheme['font']
   size?: number
 }
 
 export default styled.Text<AppTextProps>`
-  color: ${({ color, theme }) => color ?? theme.font.primary};
+  color: ${({ color, theme }) => theme.font[color || 'primary']};
 
   ${({ bold }) =>
     bold &&

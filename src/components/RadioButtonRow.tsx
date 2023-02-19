@@ -24,12 +24,10 @@ import HighlightRow, { HighlightRowProps } from './HighlightRow'
 interface RadioButtonRowProps extends Omit<HighlightRowProps, 'children'> {
   title: string
   isActive: boolean
-  isFirst: boolean
-  isLast: boolean
 }
 
-const RadioButtonRow = ({ title, isActive, isFirst, isLast, ...props }: RadioButtonRowProps) => (
-  <HighlightRow key={title} isTopRounded={isFirst} isBottomRounded={isLast} hasBottomBorder={!isLast} {...props}>
+const RadioButtonRow = ({ title, isActive, ...props }: RadioButtonRowProps) => (
+  <HighlightRow key={title} {...props}>
     <RowContents>
       <RadioButton>{isActive && <RadioButtonChecked />}</RadioButton>
       <Title>{title}</Title>

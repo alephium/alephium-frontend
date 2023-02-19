@@ -21,6 +21,7 @@ import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import NumberKeyboard, { NumberKeyboardKey } from '../keyboard/NumberKeyboard'
+import Screen from '../layout/Screen'
 
 interface PinInputProps {
   pinLength: number
@@ -51,10 +52,10 @@ const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
   }
 
   return (
-    <View style={style}>
+    <Screen style={style}>
       <Slots>{renderSlots()}</Slots>
       <NumberKeyboard onPress={handleKeyboardPress} />
-    </View>
+    </Screen>
   )
 }
 

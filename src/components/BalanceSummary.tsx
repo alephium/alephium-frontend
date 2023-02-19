@@ -25,12 +25,14 @@ import { selectTotalBalance } from '../store/addressesSlice'
 import { selectIsPriceUninitialized } from '../store/priceSlice'
 import { currencies } from '../utils/currencies'
 import Amount from './Amount'
+import AppText from './AppText'
 
 interface BalanceSummaryProps {
+  dateLabel: string
   style?: StyleProp<ViewStyle>
 }
 
-const BalanceSummary = ({ style }: BalanceSummaryProps) => {
+const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
   const [price, currency, addressDataStatus] = useAppSelector((s) => [s.price, s.settings.currency, s.addresses.status])
   const totalBalance = useAppSelector(selectTotalBalance)
   const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
@@ -45,8 +47,8 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
         <ActivityIndicator size="large" color={theme.font.primary} />
       ) : (
         <>
-          <AmountInFiat value={balance} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
-          <Amount value={totalBalance} fadeDecimals bold size={20} />
+          <Amount value={balance} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+          <AppText color="tertiary">{dateLabel}</AppText>
         </>
       )}
     </View>
@@ -54,7 +56,3 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
 }
 
 export default BalanceSummary
-
-const AmountInFiat = styled(Amount)`
-  margin-bottom: 10px;
-`
