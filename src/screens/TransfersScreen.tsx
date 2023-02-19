@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 
-import InWalletTransactionsFlatList from '../components/layout/TransactionsFlatList'
+import TransactionsFlatListScreen from '../components/layout/TransactionsFlatListScreen'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -38,7 +38,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   ])
 
   return (
-    <InWalletTransactionsFlatList
+    <TransactionsFlatListScreen
       confirmedTransactions={confirmedTransactions}
       pendingTransactions={pendingTransactions}
       addressHashes={addressHashes}

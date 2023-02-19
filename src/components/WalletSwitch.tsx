@@ -49,7 +49,7 @@ export default memo(styled(WalletSwitch)`
   height: 50px;
   width: 50px;
   background-color: ${({ theme }) => theme.bg.primary};
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
   border-radius: 50px;
 `)
 

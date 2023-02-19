@@ -81,7 +81,7 @@ export default memo(styled(DashboardHeaderActions)`
 // TODO: Create standalone Icon component to allow us to define the size prop
 const HeaderButton = styled.View`
   padding: 18px 12px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
   width: 50px;
   height: 50px;
   align-items: center;

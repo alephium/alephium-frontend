@@ -58,7 +58,6 @@ export default styled(DefaultHeader)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-bottom-width: 1px;
   background-color: ${({ theme }) => theme.bg.back2};
   padding: 15px;
 `

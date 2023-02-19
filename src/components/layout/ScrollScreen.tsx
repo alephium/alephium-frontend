@@ -16,18 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
-import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  ScrollViewProps,
-  StyleProp,
-  ViewStyle
-} from 'react-native'
-import styled from 'styled-components/native'
+import { useFocusEffect, useNavigation, useScrollToTop } from '@react-navigation/native'
+import { ReactNode, useEffect, useRef } from 'react'
+import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 
-import { useScrollContext } from '../../contexts/ScrollContext'
+import { useScrollEventHandler } from '../../contexts/ScrollContext'
 import Screen from './Screen'
 
 interface InWalletScrollScreenProps extends ScrollViewProps {
@@ -36,26 +29,34 @@ interface InWalletScrollScreenProps extends ScrollViewProps {
 }
 
 const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) => {
-  const { scrollY } = useScrollContext()
+  const viewRef = useRef<ScrollView>(null)
+  const scrollHandler = useScrollEventHandler()
 
-  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!scrollY) return
+  useScrollToTop(viewRef) // Scrolls to top when tapping the active tab
 
-    scrollY.value = e.nativeEvent.contentOffset.y
-  }
+  const navigation = useNavigation()
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      viewRef.current?.scrollTo({ y: 0, animated: false })
+    })
+
+    return unsubscribe
+  })
 
   return (
     <Screen style={style}>
-      <ScrollView onScroll={handleScroll} {...props} scrollEventThrottle={1}>
-        <Content>{children}</Content>
+      <ScrollView
+        contentOffset={{ y: 0, x: 0 }}
+        onScroll={scrollHandler}
+        ref={viewRef}
+        {...props}
+        scrollEventThrottle={16}
+      >
+        <View>{children}</View>
       </ScrollView>
     </Screen>
   )
 }
 
 export default ScrollScreen
-
-// Add extra padding so that content is not hidden by the footer menu
-const Content = styled.View`
-  padding-bottom: 160px;
-`

@@ -28,8 +28,8 @@ import AddressesTokensList from '../components/AddressesTokensList'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import Carousel from '../components/Carousel'
-import InWalletTransactionsFlatList from '../components/layout/TransactionsFlatList'
 import { ScreenSection } from '../components/layout/Screen'
+import TransactionsFlatListScreen from '../components/layout/TransactionsFlatListScreen'
 import QRCodeModal from '../components/QRCodeModal'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
@@ -87,7 +87,7 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
   if (!selectedAddress) return null
 
   return (
-    <InWalletTransactionsFlatList
+    <TransactionsFlatListScreen
       confirmedTransactions={selectedAddressConfirmedTransactions}
       pendingTransactions={selectedAddressPendingTransactions}
       addressHashes={[selectedAddressHash]}

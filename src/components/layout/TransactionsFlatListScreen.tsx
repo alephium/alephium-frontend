@@ -26,7 +26,7 @@ import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransact
 import AppText from '../AppText'
 import TransactionRow from '../TransactionRow'
 import { ScreenSectionTitle } from './Screen'
-import InWalletFlatList from './ScrollFlatListScreen'
+import ScrollFlatListScreen from './ScrollFlatListScreen'
 
 interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransaction>> {
   confirmedTransactions: AddressConfirmedTransaction[]
@@ -81,7 +81,7 @@ const TransactionsFlatList = ({
   }
 
   return (
-    <InWalletFlatList
+    <ScrollFlatListScreen
       {...props}
       data={confirmedTransactions}
       renderItem={renderConfirmedTransactionItem}

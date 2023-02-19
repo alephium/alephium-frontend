@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createContext, ReactNode, useContext } from 'react'
+import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
 interface ScrollContextProps {
@@ -35,5 +36,16 @@ export const ScrollContextProvider = ({ children }: { children: ReactNode }) => 
 }
 
 export const useScrollContext = () => useContext(ScrollContext)
+
+export const useScrollEventHandler = () => {
+  const { scrollY } = useScrollContext()
+
+  const scrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!scrollY) return
+    scrollY.value = e.nativeEvent.contentOffset.y
+  }
+
+  return scrollHandler
+}
 
 export default ScrollContext

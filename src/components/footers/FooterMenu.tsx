@@ -52,7 +52,5 @@ export default styled(FooterMenu)`
   justify-content: center;
   background-color: ${({ theme }) => theme.bg.secondary};
   padding: 5px;
-  border-top-width: 1px;
-  border-top-color: ${({ theme }) => theme.border.primary};
   gap: 15px;
 `

@@ -16,9 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FlatList, FlatListProps, NativeScrollEvent, NativeSyntheticEvent, StyleProp, ViewStyle } from 'react-native'
+import { useFocusEffect, useNavigation, useScrollToTop } from '@react-navigation/native'
+import { useEffect, useRef } from 'react'
+import { FlatList, FlatListProps, StyleProp, ViewStyle } from 'react-native'
 
-import { useScrollContext } from '../../contexts/ScrollContext'
+import { useScrollEventHandler } from '../../contexts/ScrollContext'
 import Screen from './Screen'
 
 interface ScreenProps<T> extends FlatListProps<T> {
@@ -26,17 +28,23 @@ interface ScreenProps<T> extends FlatListProps<T> {
 }
 
 function ScrollFlatListScreen<T>({ style, onScroll, onScrollEndDrag, ...props }: ScreenProps<T>) {
-  const { scrollY } = useScrollContext()
+  const listRef = useRef<FlatList<T>>(null)
+  const scrollHandler = useScrollEventHandler()
+  const navigation = useNavigation()
 
-  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!scrollY) return
+  useScrollToTop(listRef) // Scrolls to top when tapping the active tab
 
-    scrollY.value = e.nativeEvent.contentOffset.y
-  }
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      listRef.current?.scrollToOffset({ offset: 0, animated: false })
+    })
+
+    return unsubscribe
+  })
 
   return (
     <Screen style={style}>
-      <FlatList onScroll={handleScroll} {...props} />
+      <FlatList onScroll={scrollHandler} scrollEventThrottle={16} ref={listRef} {...props} />
     </Screen>
   )
 }
