@@ -16,28 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calcTxAmountDeltaForAddress } from '../lib/transactions'
+import { calcTxAmountsDeltaForAddress } from '../lib/transactions'
 
 import transactions from './fixtures/transactions.json'
 
-const alph = (amount: bigint) => {
-  return amount * BigInt('1000000000000000000')
-}
-
 it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {
   expect(
-    calcTxAmountDeltaForAddress(transactions.oneInputOneOutput, transactions.oneInputOneOutput.inputs[0].address)
-  ).toEqual(alph(BigInt(-50))),
+    calcTxAmountsDeltaForAddress(transactions.oneInputOneOutput, transactions.oneInputOneOutput.inputs[0].address).alph
+  ).toEqual(BigInt('-50000000000000000000')),
     expect(
-      calcTxAmountDeltaForAddress(transactions.twoInputsOneOutput, transactions.twoInputsOneOutput.inputs[0].address)
-    ).toEqual(alph(BigInt(-150))),
+      calcTxAmountsDeltaForAddress(transactions.twoInputsOneOutput, transactions.twoInputsOneOutput.inputs[0].address)
+        .alph
+    ).toEqual(BigInt('-150000000000000000000')),
     expect(
-      calcTxAmountDeltaForAddress(transactions.twoInputsZeroOutput, transactions.twoInputsZeroOutput.inputs[0].address)
-    ).toEqual(alph(BigInt(-200))),
+      calcTxAmountsDeltaForAddress(transactions.twoInputsZeroOutput, transactions.twoInputsZeroOutput.inputs[0].address)
+        .alph
+    ).toEqual(BigInt('-200000000000000000000')),
     expect(() =>
-      calcTxAmountDeltaForAddress(transactions.missingInputs, transactions.missingInputs.outputs[0].address)
+      calcTxAmountsDeltaForAddress(transactions.missingInputs, transactions.missingInputs.outputs[0].address)
     ).toThrowError('Missing transaction details'),
     expect(() =>
-      calcTxAmountDeltaForAddress(transactions.missingOutputs, transactions.missingOutputs.inputs[0].address)
+      calcTxAmountsDeltaForAddress(transactions.missingOutputs, transactions.missingOutputs.inputs[0].address)
     ).toThrowError('Missing transaction details')
 })
