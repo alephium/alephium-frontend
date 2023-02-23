@@ -33,7 +33,7 @@ export type AmountDeltas = {
 }
 
 export const calcTxAmountsDeltaForAddress = (
-  tx: Transaction,
+  tx: Transaction | PendingTransaction,
   address: string,
   skipConsolidationCheck = false
 ): AmountDeltas => {
