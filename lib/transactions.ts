@@ -47,16 +47,16 @@ export const calcTxAmountsDeltaForAddress = (
 
   const tokensDelta = outputAmounts.tokens
   inputAmounts.tokens.forEach((inputToken) => {
-    const tokenDelta = tokensDelta.find((tdelta) => tdelta.id === inputToken.id)
+    const tokenDelta = tokensDelta.find(({ id }) => id === inputToken.id)
 
     tokenDelta
       ? (tokenDelta.amount -= inputToken.amount)
-      : tokensDelta.push({ id: inputToken.id, amount: inputToken.amount * BigInt(-1) })
+      : tokensDelta.push({ ...inputToken, amount: inputToken.amount * BigInt(-1) })
   })
 
   return {
     alph: outputAmounts.alph - inputAmounts.alph,
-    tokens: tokensDelta.filter((delta) => delta.amount !== BigInt(0))
+    tokens: tokensDelta.filter(({ amount }) => amount !== BigInt(0))
   }
 }
 
@@ -101,11 +101,12 @@ export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outp
     ? // If there are multiple outputs, the last one must be the change amount (this is a heuristic and not guaranteed)
       {
         alph: totalOutputs.alph - BigInt(lastOutput.attoAlphAmount),
-        tokens: totalOutputs.tokens.map((token) => {
-          const outputToken = lastOutput.tokens?.find((t) => t.id === token.id)
-
-          return { id: token.id, amount: token.amount - BigInt(outputToken?.amount ?? 0) }
-        })
+        tokens: totalOutputs.tokens
+          .map((token) => ({
+            ...token,
+            amount: token.amount - BigInt(lastOutput.tokens?.find((t) => t.id === token.id)?.amount ?? 0)
+          }))
+          .filter(({ amount }) => amount !== BigInt(0))
       }
     : // otherwise, it's a sweep transaction that consolidates all funds
       totalOutputs
