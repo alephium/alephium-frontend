@@ -12,16 +12,12 @@
 export interface AddressBalance {
   /** @format address */
   address: string
-
   /** @format uint256 */
   balance: string
-
   /** @format x.x ALPH */
   balanceHint: string
-
   /** @format uint256 */
   lockedBalance: string
-
   /** @format x.x ALPH */
   lockedBalanceHint: string
   warning?: string
@@ -30,10 +26,8 @@ export interface AddressBalance {
 export interface AddressInfo {
   /** @format address */
   address: string
-
   /** @format public-key */
   publicKey: string
-
   /** @format group-index */
   group: number
   path: string
@@ -47,7 +41,6 @@ export interface Addresses {
 
 export interface AssetInput {
   outputRef: OutputRef
-
   /** @format hex-string */
   unlockScript: string
 }
@@ -55,20 +48,15 @@ export interface AssetInput {
 export interface AssetOutput {
   /** @format int32 */
   hint: number
-
   /** @format 32-byte-hash */
   key: string
-
   /** @format uint256 */
   attoAlphAmount: string
-
   /** @format address */
   address: string
   tokens: Token[]
-
   /** @format int64 */
   lockTime: number
-
   /** @format hex-string */
   message: string
   type: string
@@ -87,18 +75,14 @@ export interface BadRequest {
 export interface Balance {
   /** @format uint256 */
   balance: string
-
   /** @format x.x ALPH */
   balanceHint: string
-
   /** @format uint256 */
   lockedBalance: string
-
   /** @format x.x ALPH */
   lockedBalanceHint: string
   tokenBalances?: Token[]
   lockedTokenBalances?: Token[]
-
   /** @format int32 */
   utxoNum: number
   warning?: string
@@ -107,7 +91,6 @@ export interface Balance {
 export interface Balances {
   /** @format uint256 */
   totalBalance: string
-
   /** @format x.x ALPH */
   totalBalanceHint: string
   balances: AddressBalance[]
@@ -132,31 +115,23 @@ export interface BlockAndEvents {
 export interface BlockEntry {
   /** @format block-hash */
   hash: string
-
   /** @format int64 */
   timestamp: number
-
   /** @format int32 */
   chainFrom: number
-
   /** @format int32 */
   chainTo: number
-
   /** @format int32 */
   height: number
   deps: string[]
   transactions: Transaction[]
-
   /** @format hex-string */
   nonce: string
   version: number
-
   /** @format 32-byte-hash */
   depStateHash: string
-
   /** @format 32-byte-hash */
   txsHash: string
-
   /** @format hex-string */
   target: string
 }
@@ -164,16 +139,12 @@ export interface BlockEntry {
 export interface BlockHeaderEntry {
   /** @format block-hash */
   hash: string
-
   /** @format int64 */
   timestamp: number
-
   /** @format int32 */
   chainFrom: number
-
   /** @format int32 */
   chainTo: number
-
   /** @format int32 */
   height: number
   deps: string[]
@@ -190,40 +161,34 @@ export interface BlocksPerTimeStampRange {
 export interface BrokerInfo {
   /** @format clique-id */
   cliqueId: string
-
   /** @format int32 */
   brokerId: number
-
   /** @format int32 */
   brokerNum: number
-
   /** @format inet-socket-address */
-  address: { addr: string; port: number }
+  address: {
+    addr: string
+    /** @format int32 */
+    port: number
+  }
 }
 
 export interface BuildDeployContractTx {
   /** @format hex-string */
   fromPublicKey: string
-
   /** @format hex-string */
   fromPublicKeyType?: string
-
   /** @format hex-string */
   bytecode: string
-
   /** @format uint256 */
   initialAttoAlphAmount?: string
   initialTokenAmounts?: Token[]
-
   /** @format uint256 */
   issueTokenAmount?: string
-
   /** @format gas */
   gasAmount?: number
-
   /** @format uint256 */
   gasPrice?: string
-
   /** @format block-hash */
   targetBlockHash?: string
 }
@@ -231,20 +196,15 @@ export interface BuildDeployContractTx {
 export interface BuildDeployContractTxResult {
   /** @format int32 */
   fromGroup: number
-
   /** @format int32 */
   toGroup: number
   unsignedTx: string
-
   /** @format gas */
   gasAmount: number
-
   /** @format uint256 */
   gasPrice: string
-
   /** @format 32-byte-hash */
   txId: string
-
   /** @format address */
   contractAddress: string
 }
@@ -252,23 +212,17 @@ export interface BuildDeployContractTxResult {
 export interface BuildExecuteScriptTx {
   /** @format hex-string */
   fromPublicKey: string
-
   /** @format hex-string */
   fromPublicKeyType?: string
-
   /** @format hex-string */
   bytecode: string
-
   /** @format uint256 */
   attoAlphAmount?: string
   tokens?: Token[]
-
   /** @format gas */
   gasAmount?: number
-
   /** @format uint256 */
   gasPrice?: string
-
   /** @format block-hash */
   targetBlockHash?: string
 }
@@ -276,17 +230,13 @@ export interface BuildExecuteScriptTx {
 export interface BuildExecuteScriptTxResult {
   /** @format int32 */
   fromGroup: number
-
   /** @format int32 */
   toGroup: number
   unsignedTx: string
-
   /** @format gas */
   gasAmount: number
-
   /** @format uint256 */
   gasPrice: string
-
   /** @format 32-byte-hash */
   txId: string
 }
@@ -301,17 +251,14 @@ export interface BuildMultisig {
   fromAddress: string
   fromPublicKeys: string[]
   destinations: Destination[]
-
   /** @format gas */
   gas?: number
-
   /** @format uint256 */
   gasPrice?: string
 }
 
 export interface BuildMultisigAddress {
   keys: string[]
-
   /** @format int32 */
   mrequired: number
 }
@@ -324,29 +271,22 @@ export interface BuildMultisigAddressResult {
 export interface BuildSweepAddressTransactions {
   /** @format public-key */
   fromPublicKey: string
-
   /** @format address */
   toAddress: string
-
   /** @format int64 */
   lockTime?: number
-
   /** @format gas */
   gasAmount?: number
-
   /** @format uint256 */
   gasPrice?: string
-
   /** @format block-hash */
   targetBlockHash?: string
 }
 
 export interface BuildSweepAddressTransactionsResult {
   unsignedTxs: SweepAddressTransaction[]
-
   /** @format int32 */
   fromGroup: number
-
   /** @format int32 */
   toGroup: number
 }
@@ -354,37 +294,28 @@ export interface BuildSweepAddressTransactionsResult {
 export interface BuildTransaction {
   /** @format hex-string */
   fromPublicKey: string
-
   /** @format hex-string */
   fromPublicKeyType?: string
   destinations: Destination[]
   utxos?: OutputRef[]
-
   /** @format gas */
   gasAmount?: number
-
   /** @format uint256 */
   gasPrice?: string
-
   /** @format block-hash */
   targetBlockHash?: string
 }
 
 export interface BuildTransactionResult {
   unsignedTx: string
-
   /** @format gas */
   gasAmount: number
-
   /** @format uint256 */
   gasPrice: string
-
   /** @format 32-byte-hash */
   txId: string
-
   /** @format int32 */
   fromGroup: number
-
   /** @format int32 */
   toGroup: number
 }
@@ -392,16 +323,12 @@ export interface BuildTransactionResult {
 export interface CallContract {
   /** @format int32 */
   group: number
-
   /** @format block-hash */
   worldStateBlockHash?: string
-
   /** @format 32-byte-hash */
   txId?: string
-
   /** @format address */
   address: string
-
   /** @format int32 */
   methodIndex: number
   args?: Val[]
@@ -411,7 +338,6 @@ export interface CallContract {
 
 export interface CallContractResult {
   returns: Val[]
-
   /** @format int32 */
   gasUsed: number
   contracts: ContractState[]
@@ -427,13 +353,10 @@ export interface ChainInfo {
 
 export interface ChainParams {
   networkId: number
-
   /** @format int32 */
   numZerosAtLeastInHash: number
-
   /** @format int32 */
   groupNumPerBroker: number
-
   /** @format int32 */
   groups: number
 }
@@ -448,10 +371,8 @@ export interface CompileContractResult {
   name: string
   bytecode: string
   bytecodeDebugPatch: string
-
   /** @format 32-byte-hash */
   codeHash: string
-
   /** @format 32-byte-hash */
   codeHashDebug: string
   fields: FieldsSig
@@ -487,16 +408,12 @@ export interface CompilerOptions {
 export interface Confirmed {
   /** @format block-hash */
   blockHash: string
-
   /** @format int32 */
   txIndex: number
-
   /** @format int32 */
   chainConfirmations: number
-
   /** @format int32 */
   fromGroupConfirmations: number
-
   /** @format int32 */
   toGroupConfirmations: number
   type: string
@@ -510,10 +427,8 @@ export interface Contract {
 export interface ContractEvent {
   /** @format block-hash */
   blockHash: string
-
   /** @format 32-byte-hash */
   txId: string
-
   /** @format int32 */
   eventIndex: number
   fields: Val[]
@@ -522,10 +437,8 @@ export interface ContractEvent {
 export interface ContractEventByBlockHash {
   /** @format 32-byte-hash */
   txId: string
-
   /** @format address */
   contractAddress: string
-
   /** @format int32 */
   eventIndex: number
   fields: Val[]
@@ -534,10 +447,8 @@ export interface ContractEventByBlockHash {
 export interface ContractEventByTxId {
   /** @format block-hash */
   blockHash: string
-
   /** @format address */
   contractAddress: string
-
   /** @format int32 */
   eventIndex: number
   fields: Val[]
@@ -545,7 +456,6 @@ export interface ContractEventByTxId {
 
 export interface ContractEvents {
   events: ContractEvent[]
-
   /** @format int32 */
   nextStart: number
 }
@@ -561,13 +471,10 @@ export interface ContractEventsByTxId {
 export interface ContractOutput {
   /** @format int32 */
   hint: number
-
   /** @format 32-byte-hash */
   key: string
-
   /** @format uint256 */
   attoAlphAmount: string
-
   /** @format address */
   address: string
   tokens: Token[]
@@ -577,13 +484,10 @@ export interface ContractOutput {
 export interface ContractState {
   /** @format address */
   address: string
-
   /** @format contract */
   bytecode: string
-
   /** @format 32-byte-hash */
   codeHash: string
-
   /** @format 32-byte-hash */
   initialStateHash?: string
   immFields: Val[]
@@ -604,7 +508,6 @@ export interface DecodeUnsignedTx {
 export interface DecodeUnsignedTxResult {
   /** @format int32 */
   fromGroup: number
-
   /** @format int32 */
   toGroup: number
   unsignedTx: UnsignedTx
@@ -613,14 +516,11 @@ export interface DecodeUnsignedTxResult {
 export interface Destination {
   /** @format address */
   address: string
-
   /** @format uint256 */
   attoAlphAmount: string
   tokens?: Token[]
-
   /** @format int64 */
   lockTime?: number
-
   /** @format hex-string */
   message?: string
 }
@@ -642,20 +542,15 @@ export interface FieldsSig {
 export interface FixedAssetOutput {
   /** @format int32 */
   hint: number
-
   /** @format 32-byte-hash */
   key: string
-
   /** @format uint256 */
   attoAlphAmount: string
-
   /** @format address */
   address: string
   tokens: Token[]
-
   /** @format int64 */
   lockTime: number
-
   /** @format hex-string */
   message: string
 }
@@ -683,15 +578,16 @@ export interface HashesAtHeight {
 export interface InterCliquePeerInfo {
   /** @format clique-id */
   cliqueId: string
-
   /** @format int32 */
   brokerId: number
-
   /** @format int32 */
   groupNumPerBroker: number
-
   /** @format inet-socket-address */
-  address: { addr: string; port: number }
+  address: {
+    addr: string
+    /** @format int32 */
+    port: number
+  }
   isSynced: boolean
   clientVersion: string
 }
@@ -707,7 +603,6 @@ export interface MemPooled {
 export interface MempoolTransactions {
   /** @format int32 */
   fromGroup: number
-
   /** @format int32 */
   toGroup: number
   transactions: TransactionTemplate[]
@@ -726,9 +621,12 @@ export type MisbehaviorAction = Ban | Unban
 export interface NodeInfo {
   buildInfo: BuildInfo
   upnp: boolean
-
   /** @format inet-socket-address */
-  externalAddress?: { addr: string; port: number }
+  externalAddress?: {
+    addr: string
+    /** @format int32 */
+    port: number
+  }
 }
 
 export interface NodeVersion {
@@ -745,7 +643,6 @@ export type Output = AssetOutput | ContractOutput
 export interface OutputRef {
   /** @format int32 */
   hint: number
-
   /** @format 32-byte-hash */
   key: string
 }
@@ -753,13 +650,10 @@ export interface OutputRef {
 export interface PeerAddress {
   /** @format inet-address */
   address: string
-
   /** @format int32 */
   restPort: number
-
   /** @format int32 */
   wsPort: number
-
   /** @format int32 */
   minerApiPort: number
 }
@@ -791,10 +685,8 @@ export interface Reachable {
 export interface ReleaseVersion {
   /** @format int32 */
   major: number
-
   /** @format int32 */
   minor: number
-
   /** @format int32 */
   patch: number
 }
@@ -840,7 +732,6 @@ export interface SubmitMultisig {
 
 export interface SubmitTransaction {
   unsignedTx: string
-
   /** @format signature */
   signature: string
 }
@@ -848,10 +739,8 @@ export interface SubmitTransaction {
 export interface SubmitTxResult {
   /** @format 32-byte-hash */
   txId: string
-
   /** @format int32 */
   fromGroup: number
-
   /** @format int32 */
   toGroup: number
 }
@@ -859,19 +748,14 @@ export interface SubmitTxResult {
 export interface Sweep {
   /** @format address */
   toAddress: string
-
   /** @format int64 */
   lockTime?: number
-
   /** @format gas */
   gasAmount?: number
-
   /** @format uint256 */
   gasPrice?: string
-
   /** @format int32 */
   utxosLimit?: number
-
   /** @format block-hash */
   targetBlockHash?: string
 }
@@ -880,10 +764,8 @@ export interface SweepAddressTransaction {
   /** @format 32-byte-hash */
   txId: string
   unsignedTx: string
-
   /** @format gas */
   gasAmount: number
-
   /** @format uint256 */
   gasPrice: string
 }
@@ -891,22 +773,17 @@ export interface SweepAddressTransaction {
 export interface TestContract {
   /** @format int32 */
   group?: number
-
   /** @format block-hash */
   blockHash?: string
-
   /** @format 32-byte-hash */
   txId?: string
-
   /** @format address */
   address?: string
-
   /** @format contract */
   bytecode: string
   initialImmFields?: Val[]
   initialMutFields?: Val[]
   initialAsset?: AssetState
-
   /** @format int32 */
   methodIndex?: number
   args?: Val[]
@@ -917,11 +794,9 @@ export interface TestContract {
 export interface TestContractResult {
   /** @format address */
   address: string
-
   /** @format 32-byte-hash */
   codeHash: string
   returns: Val[]
-
   /** @format int32 */
   gasUsed: number
   contracts: ContractState[]
@@ -940,7 +815,6 @@ export interface TestInputAsset {
 export interface Token {
   /** @format 32-byte-hash */
   id: string
-
   /** @format uint256 */
   amount: string
 }
@@ -962,13 +836,10 @@ export interface TransactionTemplate {
 
 export interface Transfer {
   destinations: Destination[]
-
   /** @format gas */
   gas?: number
-
   /** @format uint256 */
   gasPrice?: string
-
   /** @format int32 */
   utxosLimit?: number
 }
@@ -976,10 +847,8 @@ export interface Transfer {
 export interface TransferResult {
   /** @format 32-byte-hash */
   txId: string
-
   /** @format group-index */
   fromGroup: number
-
   /** @format group-index */
   toGroup: number
 }
@@ -996,14 +865,11 @@ export type TxStatus = Confirmed | MemPooled | TxNotFound
 
 export interface UTXO {
   ref: OutputRef
-
   /** @format uint256 */
   amount: string
   tokens?: Token[]
-
   /** @format int64 */
   lockTime?: number
-
   /** @format hex-string */
   additionalData?: string
 }
@@ -1032,13 +898,10 @@ export interface UnsignedTx {
   txId: string
   version: number
   networkId: number
-
   /** @format script */
   scriptOpt?: string
-
   /** @format int32 */
   gasAmount: number
-
   /** @format uint256 */
   gasPrice: string
   inputs: AssetInput[]
@@ -1084,10 +947,8 @@ export interface ValU256 {
 export interface VerifySignature {
   /** @format hex-string */
   data: string
-
   /** @format signature */
   signature: string
-
   /** @format public-key */
   publicKey: string
 }
@@ -1131,6 +992,8 @@ export interface WalletUnlock {
   mnemonicPassphrase?: string
 }
 
+import 'cross-fetch/polyfill'
+
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
 
@@ -1172,7 +1035,8 @@ type CancelToken = Symbol | string | number
 export enum ContentType {
   Json = 'application/json',
   FormData = 'multipart/form-data',
-  UrlEncoded = 'application/x-www-form-urlencoded'
+  UrlEncoded = 'application/x-www-form-urlencoded',
+  Text = 'text/plain'
 }
 
 export class HttpClient<SecurityDataType = unknown> {
@@ -1197,16 +1061,16 @@ export class HttpClient<SecurityDataType = unknown> {
     this.securityData = data
   }
 
-  private encodeQueryParam(key: string, value: any) {
+  protected encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key)
     return `${encodedKey}=${encodeURIComponent(typeof value === 'number' ? value : `${value}`)}`
   }
 
-  private addQueryParam(query: QueryParamsType, key: string) {
+  protected addQueryParam(query: QueryParamsType, key: string) {
     return this.encodeQueryParam(key, query[key])
   }
 
-  private addArrayQueryParam(query: QueryParamsType, key: string) {
+  protected addArrayQueryParam(query: QueryParamsType, key: string) {
     const value = query[key]
     return value.map((v: any) => this.encodeQueryParam(key, v)).join('&')
   }
@@ -1227,6 +1091,7 @@ export class HttpClient<SecurityDataType = unknown> {
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
       input !== null && (typeof input === 'object' || typeof input === 'string') ? JSON.stringify(input) : input,
+    [ContentType.Text]: (input: any) => (input !== null && typeof input !== 'string' ? JSON.stringify(input) : input),
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key]
@@ -1243,7 +1108,7 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input)
   }
 
-  private mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -1256,7 +1121,7 @@ export class HttpClient<SecurityDataType = unknown> {
     }
   }
 
-  private createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
+  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
       const abortController = this.abortControllers.get(cancelToken)
       if (abortController) {
@@ -1303,10 +1168,10 @@ export class HttpClient<SecurityDataType = unknown> {
     return this.customFetch(`${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`, {
       ...requestParams,
       headers: {
-        ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
-        ...(requestParams.headers || {})
+        ...(requestParams.headers || {}),
+        ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {})
       },
-      signal: cancelToken ? this.createAbortSignal(cancelToken) : void 0,
+      signal: cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal,
       body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body)
     }).then(async (response) => {
       const r = response as HttpResponse<T, E>
@@ -1639,7 +1504,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     postWalletsWalletNameDeriveNextAddress: (
       walletName: string,
-      query?: { group?: number },
+      query?: {
+        /** @format int32 */
+        group?: number
+      },
       params: RequestParams = {}
     ) =>
       this.request<AddressInfo, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -1861,7 +1729,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get history average hashrate on the given time interval
      * @request GET:/infos/history-hashrate
      */
-    getInfosHistoryHashrate: (query: { fromTs: number; toTs?: number }, params: RequestParams = {}) =>
+    getInfosHistoryHashrate: (
+      query: {
+        /**
+         * @format int64
+         * @min 0
+         */
+        fromTs: number
+        /**
+         * @format int64
+         * @min 0
+         */
+        toTs?: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/history-hashrate`,
         method: 'GET',
@@ -1878,7 +1760,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get average hashrate from `now - timespan(millis)` to `now`
      * @request GET:/infos/current-hashrate
      */
-    getInfosCurrentHashrate: (query?: { timespan?: number }, params: RequestParams = {}) =>
+    getInfosCurrentHashrate: (
+      query?: {
+        /**
+         * @format int64
+         * @min 1
+         */
+        timespan?: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/infos/current-hashrate`,
         method: 'GET',
@@ -1896,7 +1787,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary List blocks on the given time interval
      * @request GET:/blockflow/blocks
      */
-    getBlockflowBlocks: (query: { fromTs: number; toTs?: number }, params: RequestParams = {}) =>
+    getBlockflowBlocks: (
+      query: {
+        /**
+         * @format int64
+         * @min 0
+         */
+        fromTs: number
+        /**
+         * @format int64
+         * @min 0
+         */
+        toTs?: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<
         BlocksPerTimeStampRange,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
@@ -1916,7 +1821,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary List blocks with events on the given time interval
      * @request GET:/blockflow/blocks-with-events
      */
-    getBlockflowBlocksWithEvents: (query: { fromTs: number; toTs?: number }, params: RequestParams = {}) =>
+    getBlockflowBlocksWithEvents: (
+      query: {
+        /**
+         * @format int64
+         * @min 0
+         */
+        fromTs: number
+        /**
+         * @format int64
+         * @min 0
+         */
+        toTs?: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<
         BlocksAndEventsPerTimeStampRange,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
@@ -1968,7 +1887,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Check if the block is in main chain
      * @request GET:/blockflow/is-block-in-main-chain
      */
-    getBlockflowIsBlockInMainChain: (query: { blockHash: string }, params: RequestParams = {}) =>
+    getBlockflowIsBlockInMainChain: (
+      query: {
+        blockHash: string
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<boolean, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blockflow/is-block-in-main-chain`,
         method: 'GET',
@@ -1985,7 +1909,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get all block's hashes at given height for given groups
      * @request GET:/blockflow/hashes
      */
-    getBlockflowHashes: (query: { fromGroup: number; toGroup: number; height: number }, params: RequestParams = {}) =>
+    getBlockflowHashes: (
+      query: {
+        /** @format int32 */
+        fromGroup: number
+        /** @format int32 */
+        toGroup: number
+        /** @format int32 */
+        height: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<HashesAtHeight, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blockflow/hashes`,
         method: 'GET',
@@ -2002,7 +1936,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get infos about the chain from the given groups
      * @request GET:/blockflow/chain-info
      */
-    getBlockflowChainInfo: (query: { fromGroup: number; toGroup: number }, params: RequestParams = {}) =>
+    getBlockflowChainInfo: (
+      query: {
+        /** @format int32 */
+        fromGroup: number
+        /** @format int32 */
+        toGroup: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<ChainInfo, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/blockflow/chain-info`,
         method: 'GET',
@@ -2168,7 +2110,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     getTransactionsDetailsTxid: (
       txId: string,
-      query?: { fromGroup?: number; toGroup?: number },
+      query?: {
+        /** @format int32 */
+        fromGroup?: number
+        /** @format int32 */
+        toGroup?: number
+      },
       params: RequestParams = {}
     ) =>
       this.request<Transaction, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -2188,7 +2135,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/transactions/status
      */
     getTransactionsStatus: (
-      query: { txId: string; fromGroup?: number; toGroup?: number },
+      query: {
+        txId: string
+        /** @format int32 */
+        fromGroup?: number
+        /** @format int32 */
+        toGroup?: number
+      },
       params: RequestParams = {}
     ) =>
       this.request<TxStatus, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -2242,7 +2195,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Rebroadcase a mempool transaction to the network
      * @request PUT:/mempool/transactions/rebroadcast
      */
-    putMempoolTransactionsRebroadcast: (query: { txId: string }, params: RequestParams = {}) =>
+    putMempoolTransactionsRebroadcast: (
+      query: {
+        txId: string
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<void, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/mempool/transactions/rebroadcast`,
         method: 'PUT',
@@ -2379,7 +2337,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get contract state
      * @request GET:/contracts/{address}/state
      */
-    getContractsAddressState: (address: string, query: { group: number }, params: RequestParams = {}) =>
+    getContractsAddressState: (
+      address: string,
+      query: {
+        /** @format int32 */
+        group: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<ContractState, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/contracts/${address}/state`,
         method: 'GET',
@@ -2532,7 +2497,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Execute an action on CPU miner. !!! for test only !!!
      * @request POST:/miners/cpu-mining
      */
-    postMinersCpuMining: (query: { action: string }, params: RequestParams = {}) =>
+    postMinersCpuMining: (
+      query: {
+        action: string
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<boolean, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/miners/cpu-mining`,
         method: 'POST',
@@ -2549,7 +2519,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Mine a block on CPU miner. !!! for test only !!!
      * @request POST:/miners/cpu-mining/mine-one-block
      */
-    postMinersCpuMiningMineOneBlock: (query: { fromGroup: number; toGroup: number }, params: RequestParams = {}) =>
+    postMinersCpuMiningMineOneBlock: (
+      query: {
+        /** @format int32 */
+        fromGroup: number
+        /** @format int32 */
+        toGroup: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<boolean, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/miners/cpu-mining/mine-one-block`,
         method: 'POST',
@@ -2602,7 +2580,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     getEventsContractContractaddress: (
       contractAddress: string,
-      query: { start: number; limit?: number; group?: number },
+      query: {
+        /** @format int32 */
+        start: number
+        /** @format int32 */
+        limit?: number
+        /** @format int32 */
+        group?: number
+      },
       params: RequestParams = {}
     ) =>
       this.request<ContractEvents, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
@@ -2637,7 +2622,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get contract events for a transaction
      * @request GET:/events/tx-id/{txId}
      */
-    getEventsTxIdTxid: (txId: string, query?: { group?: number }, params: RequestParams = {}) =>
+    getEventsTxIdTxid: (
+      txId: string,
+      query?: {
+        /** @format int32 */
+        group?: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<
         ContractEventsByTxId,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
@@ -2657,7 +2649,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get contract events for a block
      * @request GET:/events/block-hash/{blockHash}
      */
-    getEventsBlockHashBlockhash: (blockHash: string, query?: { group?: number }, params: RequestParams = {}) =>
+    getEventsBlockHashBlockhash: (
+      blockHash: string,
+      query?: {
+        /** @format int32 */
+        group?: number
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<
         ContractEventsByBlockHash,
         BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
