@@ -66,7 +66,7 @@ describe('Wallet', function () {
   })
 
   it('generate 12-word mnemonic', () => {
-    const myWallet = walletUtils.walletGenerate(128)
+    const myWallet = walletUtils.walletGenerate(12)
     expect(myWallet.mnemonic.split(' ').length).toEqual(12)
   })
 
