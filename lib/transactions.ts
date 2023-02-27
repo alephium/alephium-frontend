@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetOutput, Input, Output, Transaction, PendingTransaction, Token } from '../api/api-explorer'
+import { AssetOutput, Input, Output, Transaction, MempoolTransaction, Token } from '../api/api-explorer'
 import { GENESIS_TIMESTAMP } from './constants'
 import { uniq } from './utils'
 
@@ -33,7 +33,7 @@ export type AmountDeltas = {
 }
 
 export const calcTxAmountsDeltaForAddress = (
-  tx: Transaction | PendingTransaction,
+  tx: Transaction | MempoolTransaction,
   address: string,
   skipConsolidationCheck = false
 ): AmountDeltas => {
@@ -87,7 +87,7 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (Input | Output
 export const getDirection = (tx: Transaction, address: string): TransactionDirection =>
   calcTxAmountsDeltaForAddress(tx, address, true).alph < 0 ? 'out' : 'in'
 
-export const isConsolidationTx = (tx: Transaction | PendingTransaction): boolean => {
+export const isConsolidationTx = (tx: Transaction | MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
   const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
 
