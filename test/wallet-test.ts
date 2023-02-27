@@ -65,6 +65,11 @@ describe('Wallet', function () {
     expect(myWallet.mnemonic.split(' ').length).toEqual(24)
   })
 
+  it('generate 12-word mnemonic', () => {
+    const myWallet = walletUtils.walletGenerate(128)
+    expect(myWallet.mnemonic.split(' ').length).toEqual(12)
+  })
+
   it('should read wallet file', async () => {
     for (const row of wallets.wallets) {
       const imported = walletUtils.walletImport(row.mnemonic)

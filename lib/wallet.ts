@@ -160,14 +160,18 @@ export const deriveNewAddressData = (
   return newAddressData
 }
 
-export const walletGenerate = (passphrase?: string) => {
-  const mnemonic = bip39.generateMnemonic(256)
+export const walletGenerate = (strength?: number, passphrase?: string) => {
+  const mnemonic = bip39.generateMnemonic(strength ?? 256)
 
   return getWalletFromMnemonic(mnemonic, passphrase)
 }
 
-export const walletGenerateAsyncUnsafe = (mnemonicToSeedCustomFunc: MnemonicToSeedFunction, passphrase?: string) => {
-  const mnemonic = bip39.generateMnemonic(256)
+export const walletGenerateAsyncUnsafe = (
+  mnemonicToSeedCustomFunc: MnemonicToSeedFunction,
+  strength?: number,
+  passphrase?: string
+) => {
+  const mnemonic = bip39.generateMnemonic(strength ?? 256)
 
   return getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, mnemonic, passphrase)
 }
