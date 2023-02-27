@@ -28,6 +28,8 @@ import { addressToGroup } from './address'
 
 type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
 
+type MnemonicLength = 12 | 24
+
 class StoredState {
   readonly version = 1
   readonly mnemonic: string
@@ -160,14 +162,20 @@ export const deriveNewAddressData = (
   return newAddressData
 }
 
-export const walletGenerate = (passphrase?: string) => {
-  const mnemonic = bip39.generateMnemonic(256)
+export const walletGenerate = (mnemonicLength: MnemonicLength = 24, passphrase?: string) => {
+  const strength = mnemonicLength === 24 ? 256 : 128
+  const mnemonic = bip39.generateMnemonic(strength)
 
   return getWalletFromMnemonic(mnemonic, passphrase)
 }
 
-export const walletGenerateAsyncUnsafe = (mnemonicToSeedCustomFunc: MnemonicToSeedFunction, passphrase?: string) => {
-  const mnemonic = bip39.generateMnemonic(256)
+export const walletGenerateAsyncUnsafe = (
+  mnemonicToSeedCustomFunc: MnemonicToSeedFunction,
+  mnemonicLength: MnemonicLength = 24,
+  passphrase?: string
+) => {
+  const strength = mnemonicLength === 24 ? 256 : 128
+  const mnemonic = bip39.generateMnemonic(strength)
 
   return getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, mnemonic, passphrase)
 }
