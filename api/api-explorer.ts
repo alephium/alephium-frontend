@@ -395,8 +395,6 @@ export interface ValU256 {
   type: string
 }
 
-import 'cross-fetch/polyfill'
-
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
 

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NUM_OF_ZEROS_IN_QUINTILLION, QUINTILLION } from './constants'
+import { NUM_OF_ZEROS_IN_QUINTILLION } from './constants'
 
 const MAGNITUDE_SYMBOL = ['', 'K', 'M', 'B', 'T']
 
@@ -58,35 +58,43 @@ const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) =>
 }
 
 const appendMagnitudeSymbol = (tier: number, amount: number, numberOfDecimalsToDisplay = 2): string => {
-  const reacthedEndOfMagnitudeSymbols = tier >= MAGNITUDE_SYMBOL.length
-  const adjustedTier = reacthedEndOfMagnitudeSymbols ? tier - 1 : tier
+  const reachedEndOfMagnitudeSymbols = tier >= MAGNITUDE_SYMBOL.length
+  const adjustedTier = reachedEndOfMagnitudeSymbols ? tier - 1 : tier
   const suffix = MAGNITUDE_SYMBOL[adjustedTier]
   const scale = Math.pow(10, adjustedTier * 3)
   const scaled = amount / scale
   const scaledRoundedUp = scaled.toFixed(numberOfDecimalsToDisplay)
 
-  return reacthedEndOfMagnitudeSymbols
+  return reachedEndOfMagnitudeSymbols
     ? addApostrophes(scaledRoundedUp) + suffix
     : parseFloat(scaledRoundedUp) < 1000
     ? scaledRoundedUp + suffix
     : appendMagnitudeSymbol(tier + 1, amount, numberOfDecimalsToDisplay)
 }
 
-export const formatAmountForDisplay = (
-  baseNum: bigint,
-  showFullPrecision = false,
-  nbOfDecimalsToShow?: number
-): string => {
-  if (baseNum < BigInt(0)) return '???'
+interface FormatAmountForDisplayProps {
+  amount: bigint
+  amountDecimals?: number
+  displayDecimals?: number
+  fullPrecision?: boolean
+}
+
+export const formatAmountForDisplay = ({
+  amount,
+  amountDecimals = NUM_OF_ZEROS_IN_QUINTILLION,
+  displayDecimals,
+  fullPrecision = false
+}: FormatAmountForDisplayProps): string => {
+  if (amount < BigInt(0)) return '???'
 
   // For abbreviation, we don't need full precision and can work with number
-  const alphNum = Number(baseNum) / QUINTILLION
+  const alphNum = Number(toHumanReadableAmount(amount, amountDecimals))
   const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
-  const numberOfDecimalsToDisplay = nbOfDecimalsToShow || minNumberOfDecimals
+  const numberOfDecimalsToDisplay = displayDecimals || minNumberOfDecimals
 
-  if (showFullPrecision) {
-    const baseNumString = baseNum.toString()
-    const numNonDecimals = baseNumString.length - NUM_OF_ZEROS_IN_QUINTILLION
+  if (fullPrecision) {
+    const baseNumString = amount.toString()
+    const numNonDecimals = baseNumString.length - amountDecimals
     const alphNumString =
       numNonDecimals > 0
         ? baseNumString.substring(0, numNonDecimals).concat('.', baseNumString.substring(numNonDecimals))
@@ -126,12 +134,15 @@ export const formatFiatAmountForDisplay = (amount: number): string => {
   return appendMagnitudeSymbol(tier, amount)
 }
 
-export const convertAlphToSet = (amount: string): bigint => {
-  if (!isNumber(amount) || Number(amount) < 0) throw 'Invalid Alph amount'
+export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_IN_QUINTILLION): bigint => {
+  if (!isNumber(amount) || Number(amount) < 0) throw 'Invalid displayed amount'
+  if (!isPositiveInt(decimals)) throw 'Invalid decimals number'
   if (amount === '0') return BigInt(0)
 
-  const numberOfDecimals = amount.includes('.') ? amount.length - 1 - amount.indexOf('.') : 0
-  const numberOfZerosToAdd = NUM_OF_ZEROS_IN_QUINTILLION - numberOfDecimals
+  const numberOfDecimals = getNumberOfDecimals(amount)
+  if (numberOfDecimals > decimals) throw 'Cannot convert human readable amount because it has too many decimal points'
+
+  const numberOfZerosToAdd = decimals - numberOfDecimals
   const cleanedAmount = amount.replace('.', '') + produceZeros(numberOfZerosToAdd)
 
   return BigInt(cleanedAmount)
@@ -140,19 +151,26 @@ export const convertAlphToSet = (amount: string): bigint => {
 export const addApostrophes = (numString: string): string => {
   if (!isNumber(numString)) throw 'Invalid number'
 
-  return numString.replace(/\B(?=(\d{3})+(?!\d))/g, "'")
+  const parts = numString.split('.')
+  const wholePart = parts[0]
+  const fractionalPart = parts.length > 1 ? parts[1] : ''
+  const wholePartWithApostrophes = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, "'")
+
+  return `${wholePartWithApostrophes}${fractionalPart ? `.${fractionalPart}` : ''}`
 }
 
-export const convertSetToAlph = (amountInSet: bigint): string => {
-  const amountInSetStr = amountInSet.toString()
+export const toHumanReadableAmount = (amount: bigint, decimals = NUM_OF_ZEROS_IN_QUINTILLION): string => {
+  if (!isPositiveInt(decimals)) throw 'Invalid decimals number'
 
-  if (amountInSetStr === '0') return amountInSetStr
+  const amountStr = amount.toString()
 
-  const positionForDot = amountInSetStr.length - NUM_OF_ZEROS_IN_QUINTILLION
+  if (decimals === 0 || amountStr === '0') return amountStr
+
+  const positionForDot = amountStr.length - decimals
   const withDotAdded =
     positionForDot > 0
-      ? amountInSetStr.substring(0, positionForDot) + '.' + amountInSetStr.substring(positionForDot)
-      : '0.' + produceZeros(NUM_OF_ZEROS_IN_QUINTILLION - amountInSetStr.length) + amountInSetStr
+      ? amountStr.substring(0, positionForDot) + '.' + amountStr.substring(positionForDot)
+      : '0.' + produceZeros(decimals - amountStr.length) + amountStr
 
   return removeTrailingZeros(withDotAdded)
 }
@@ -160,8 +178,17 @@ export const convertSetToAlph = (amountInSet: bigint): string => {
 export const isNumber = (numString: string): boolean =>
   !Number.isNaN(Number(numString)) && numString.length > 0 && !numString.includes('e')
 
-export const convertSetToFiat = (amountInSet: bigint, fiatAlphValue: number): number => {
-  if (fiatAlphValue < 0) throw `Invalid fiat value: ${fiatAlphValue}. Fiat value cannot be negative.`
+export const calculateAmountWorth = (
+  amount: bigint,
+  fiatPrice: number,
+  decimals = NUM_OF_ZEROS_IN_QUINTILLION
+): number => {
+  if (fiatPrice < 0) throw `Invalid fiat price: ${fiatPrice}. Fiat price cannot be negative.`
 
-  return fiatAlphValue * (parseFloat(amountInSet.toString()) / QUINTILLION)
+  return fiatPrice * parseFloat(toHumanReadableAmount(amount, decimals))
 }
+
+const isPositiveInt = (number: number) => Number.isInteger(number) && number >= 0
+
+export const getNumberOfDecimals = (amount: string): number =>
+  amount.includes('.') ? amount.length - 1 - amount.indexOf('.') : 0
