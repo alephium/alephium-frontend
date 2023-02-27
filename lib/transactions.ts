@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetOutput, Input, Output, Transaction, UnconfirmedTransaction } from '../api/api-explorer'
+import { AssetOutput, Input, Output, Transaction, PendingTransaction } from '../api/api-explorer'
 import { GENESIS_TIMESTAMP } from './constants'
 import { uniq } from './utils'
 
@@ -51,7 +51,7 @@ export const calcTxAmountDeltaForAddress = (
 export const getDirection = (tx: Transaction, address: string): TransactionDirection =>
   calcTxAmountDeltaForAddress(tx, address, true) < 0 ? 'out' : 'in'
 
-export const isConsolidationTx = (tx: Transaction | UnconfirmedTransaction): boolean => {
+export const isConsolidationTx = (tx: Transaction | PendingTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
   const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
 

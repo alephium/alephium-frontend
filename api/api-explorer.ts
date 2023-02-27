@@ -9,6 +9,27 @@
  * ---------------------------------------------------------------
  */
 
+export interface AcceptedTransaction {
+  /** @format 32-byte-hash */
+  hash: string
+
+  /** @format block-hash */
+  blockHash: string
+
+  /** @format int64 */
+  timestamp: number
+  inputs?: Input[]
+  outputs?: Output[]
+
+  /** @format int32 */
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
+  coinbase: boolean
+  type: string
+}
+
 export interface AddressBalance {
   /** @format uint256 */
   balance: string
@@ -37,6 +58,8 @@ export interface AssetOutput {
 
   /** @format uint256 */
   attoAlphAmount: string
+
+  /** @format address */
   address: string
   tokens?: Token[]
 
@@ -79,27 +102,6 @@ export interface BlockEntryLite {
   hashRate: string
 }
 
-export interface ConfirmedTransaction {
-  /** @format 32-byte-hash */
-  hash: string
-
-  /** @format block-hash */
-  blockHash: string
-
-  /** @format int64 */
-  timestamp: number
-  inputs?: Input[]
-  outputs?: Output[]
-
-  /** @format int32 */
-  gasAmount: number
-
-  /** @format uint256 */
-  gasPrice: string
-  coinbase: boolean
-  type: string
-}
-
 export interface ContractOutput {
   /** @format int32 */
   hint: number
@@ -109,6 +111,8 @@ export interface ContractOutput {
 
   /** @format uint256 */
   attoAlphAmount: string
+
+  /** @format address */
   address: string
   tokens?: Token[]
 
@@ -123,7 +127,11 @@ export interface Event {
 
   /** @format 32-byte-hash */
   txHash: string
+
+  /** @format address */
   contractAddress: string
+
+  /** @format address */
   inputAddress?: string
 
   /** @format int32 */
@@ -151,6 +159,8 @@ export interface Input {
 
   /** @format 32-byte-hash */
   txHashRef?: string
+
+  /** @format address */
   address?: string
 
   /** @format uint256 */
@@ -178,6 +188,28 @@ export interface LogbackValue {
   level: string
 }
 
+export interface MempoolTransaction {
+  /** @format 32-byte-hash */
+  hash: string
+
+  /** @format int32 */
+  chainFrom: number
+
+  /** @format int32 */
+  chainTo: number
+  inputs?: Input[]
+  outputs?: Output[]
+
+  /** @format int32 */
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
+
+  /** @format int64 */
+  lastSeen: number
+}
+
 export interface NotFound {
   detail: string
   resource: string
@@ -191,6 +223,29 @@ export interface OutputRef {
 
   /** @format 32-byte-hash */
   key: string
+}
+
+export interface PendingTransaction {
+  /** @format 32-byte-hash */
+  hash: string
+
+  /** @format int32 */
+  chainFrom: number
+
+  /** @format int32 */
+  chainTo: number
+  inputs?: Input[]
+  outputs?: Output[]
+
+  /** @format int32 */
+  gasAmount: number
+
+  /** @format uint256 */
+  gasPrice: string
+
+  /** @format int64 */
+  lastSeen: number
+  type: string
 }
 
 export interface PerChainCount {
@@ -298,33 +353,10 @@ export interface Transaction {
   coinbase: boolean
 }
 
-export type TransactionLike = ConfirmedTransaction | UnconfirmedTransaction
+export type TransactionLike = AcceptedTransaction | PendingTransaction
 
 export interface Unauthorized {
   detail: string
-}
-
-export interface UnconfirmedTransaction {
-  /** @format 32-byte-hash */
-  hash: string
-
-  /** @format int32 */
-  chainFrom: number
-
-  /** @format int32 */
-  chainTo: number
-  inputs?: Input[]
-  outputs?: Output[]
-
-  /** @format int32 */
-  gasAmount: number
-
-  /** @format uint256 */
-  gasPrice: string
-
-  /** @format int64 */
-  lastSeen: number
-  type: string
 }
 
 export type Val = ValAddress | ValArray | ValBool | ValByteVec | ValI256 | ValU256
@@ -740,15 +772,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description List unconfirmed transactions of a given address
+     * @description List mempool transactions of a given address
      *
      * @tags Addresses
-     * @name GetAddressesAddressUnconfirmedTransactions
-     * @request GET:/addresses/{address}/unconfirmed-transactions
+     * @name GetAddressesAddressMempoolTransactions
+     * @request GET:/addresses/{address}/mempool/transactions
      */
-    getAddressesAddressUnconfirmedTransactions: (address: string, params: RequestParams = {}) =>
-      this.request<TransactionLike[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/addresses/${address}/unconfirmed-transactions`,
+    getAddressesAddressMempoolTransactions: (address: string, params: RequestParams = {}) =>
+      this.request<
+        MempoolTransaction[],
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/addresses/${address}/mempool/transactions`,
         method: 'GET',
         format: 'json',
         ...params
@@ -990,20 +1025,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         }
       )
   }
-  unconfirmedTransactions = {
+  mempool = {
     /**
-     * @description list unconfirmed transactions
+     * @description list mempool transactions
      *
-     * @tags Transactions
-     * @name GetUnconfirmedTransactions
-     * @request GET:/unconfirmed-transactions
+     * @tags Mempool
+     * @name GetMempoolTransactions
+     * @request GET:/mempool/transactions
      */
-    getUnconfirmedTransactions: (
+    getMempoolTransactions: (
       query?: { page?: number; limit?: number; reverse?: boolean },
       params: RequestParams = {}
     ) =>
-      this.request<TransactionLike[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
-        path: `/unconfirmed-transactions`,
+      this.request<
+        MempoolTransaction[],
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/mempool/transactions`,
         method: 'GET',
         query: query,
         format: 'json',
