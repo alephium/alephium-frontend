@@ -22,6 +22,7 @@ export interface AcceptedTransaction {
   gasAmount: number
   /** @format uint256 */
   gasPrice: string
+  scriptExecutionOk: boolean
   coinbase: boolean
   type: string
 }
@@ -289,6 +290,7 @@ export interface Transaction {
   gasAmount: number
   /** @format uint256 */
   gasPrice: string
+  scriptExecutionOk: boolean
   coinbase: boolean
 }
 

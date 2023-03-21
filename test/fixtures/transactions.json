@@ -4,6 +4,7 @@
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
+    "scriptExecutionOk": true,
     "inputs": [
       {
         "outputRef": {
@@ -42,6 +43,7 @@
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
+    "scriptExecutionOk": true,
     "inputs": [
       {
         "outputRef": {
@@ -90,6 +92,7 @@
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
+    "scriptExecutionOk": true,
     "inputs": [
       {
         "outputRef": {
@@ -138,6 +141,7 @@
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
+    "scriptExecutionOk": true,
     "outputs": [
       {
         "hint": 1770492891,
@@ -164,6 +168,7 @@
     "hash": "c99559da00e05bf967227c452f9dc33904cc8aac9819f71ca9b3382d037317c1",
     "blockHash": "000000000000d3a4088bd4a177dd4c99f8df7642e095dd6f375d99d3a4a2760a",
     "timestamp": 1639679587756,
+    "scriptExecutionOk": true,
     "inputs": [
       {
         "outputRef": {
