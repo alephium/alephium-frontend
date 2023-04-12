@@ -18,10 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ec as EC } from 'elliptic'
 
-import * as api from '../api/api-alephium'
-import { Api, SelfClique } from '../api/api-alephium'
 import { NodeClient } from './node'
 import * as utils from './utils'
+import { node } from '@alephium/web3'
 
 const ec = new EC('secp256k1')
 
@@ -29,8 +28,8 @@ const ec = new EC('secp256k1')
  * Clique Client
  */
 
-export class CliqueClient extends Api<null> {
-  clique!: SelfClique
+export class CliqueClient extends node.Api<null> {
+  clique!: node.SelfClique
   clients!: NodeClient[]
 
   async init(isMultiNodesClique: boolean) {
@@ -39,7 +38,7 @@ export class CliqueClient extends Api<null> {
     const res = await this.selfClique()
 
     if (isMultiNodesClique) {
-      this.clique = res.data
+      this.clique = res
 
       if (this.clique.nodes) {
         for (const node of this.clique.nodes) {
@@ -59,7 +58,7 @@ export class CliqueClient extends Api<null> {
     }
   }
 
-  static convert<T>(response: api.HttpResponse<T, { detail: string }>): T {
+  static convert<T>(response: node.HttpResponse<T, { detail: string }>): T {
     if (response.error) {
       console.log(response.error.detail)
       throw new Error(response.error.detail)
@@ -69,11 +68,7 @@ export class CliqueClient extends Api<null> {
   }
 
   async selfClique() {
-    const res = await this.infos.getInfosSelfClique()
-
-    if (res.error) throw new Error(res.error.detail)
-
-    return res
+    return await this.infos.getInfosSelfClique()
   }
 
   getClientIndex(address: string) {

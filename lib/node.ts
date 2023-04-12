@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Api } from '../api/api-alephium'
+import { node } from '@alephium/web3'
 
 /**
  * Node client
  */
 
-export class NodeClient extends Api<null> {
+export class NodeClient extends node.Api<null> {
   async getBalance(address: string) {
     return await this.addresses.getAddressesAddressBalance(address)
   }

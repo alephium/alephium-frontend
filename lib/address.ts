@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import bs58 from './bs58'
-import djb2 from '../lib/djb2'
+import djb2 from './djb2'
 import { AddressKeyPair, deriveNewAddressData } from './wallet'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import { ExplorerClient } from './explorer'
@@ -156,13 +156,16 @@ const getActiveAddressesResults = async (
   client: ExplorerClient
 ): Promise<boolean[]> => {
   const QUERY_LIMIT = 80
-  const results: boolean[] = []
+  let results: boolean[] = []
   let queryPage = 0
 
   while (addressesToCheckIfActive.length > results.length) {
     const addressesToQuery = addressesToCheckIfActive.slice(queryPage * QUERY_LIMIT, ++queryPage * QUERY_LIMIT)
     const response = await client.addresses.postAddressesUsed(addressesToQuery)
-    results.push(...response.data)
+
+    if (Array.isArray(response)) {
+      results = [...results, ...response]
+    }
   }
 
   return results

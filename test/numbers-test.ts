@@ -400,7 +400,7 @@ it('should produce the right number of zeros', () => {
 })
 
 describe('should test not exported functions', () => {
-  const numberUtils = rewire('../dist/lib/numbers')
+  const numberUtils = rewire('../dist/numbers')
   const removeTrailingZeros = numberUtils.__get__('removeTrailingZeros')
   const isNumber = numberUtils.__get__('isNumber')
 

@@ -3,25 +3,13 @@
   "version": "0.6.4",
   "description": "A JS/TS library to interact with the Alephium platform",
   "license": "GPL",
-  "main": "dist/lib/index.js",
+  "main": "dist/index.js",
   "browser": "dist/alephium.min.js",
-  "types": "dist/lib/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "browser": "./dist/alephium.min.js",
-      "default": "./dist/lib/index.js"
-    },
-    "./api/alephium": "./dist/api/api-alephium.js",
-    "./api/explorer": "./dist/api/api-explorer.js"
-  },
-  "typesVersions": {
-    "*": {
-      "api/alephium": [
-        "dist/api/api-alephium"
-      ],
-      "api/explorer": [
-        "dist/api/api-explorer"
-      ]
+      "default": "./dist/index.js"
     }
   },
   "type": "commonjs",
@@ -34,16 +22,8 @@
     "url": "https://github.com/alephium/js-sdk/issues"
   },
   "author": "Alephium dev <dev@alephium.org>",
-  "config": {
-    "alephium_version": "2.0.4",
-    "explorer_backend_version": "1.13.5"
-  },
   "scripts": {
     "build": "rm -rf dist && npx tsc --build . && webpack",
-    "update-schemas": "npm run update-schema:alephium && npm run update-schema:explorer",
-    "update-schema:alephium": "npx swagger-typescript-api -t ./api -o ./api -n api-alephium.ts -p https://raw.githubusercontent.com/alephium/alephium/v${npm_package_config_alephium_version}/api/src/main/resources/openapi.json",
-    "update-schema:explorer": "npx swagger-typescript-api -t ./api -o ./api -n api-explorer.ts -p https://raw.githubusercontent.com/alephium/explorer-backend/v${npm_package_config_explorer_backend_version}/app/src/main/resources/explorer-backend-openapi.json",
-    "check-versions": "node scripts/check-versions.js ${npm_package_config_alephium_version} ${npm_package_config_explorer_backend_version}",
     "dev": "tsnd --respawn lib/index.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --fix --ext .ts",
@@ -57,6 +37,7 @@
     "devnet:stop": "node scripts/stop-devnet.js"
   },
   "dependencies": {
+    "@alephium/web3": "^0.10.2",
     "base-x": "^4.0.0",
     "bcfg": "~0.1.6",
     "bip32": "^2.0.6",
@@ -88,11 +69,11 @@
     "jest-websocket-mock": "^2.2.1",
     "mock-fs": "^5.1.2",
     "mock-socket": "^9.0.8",
+    "path-browserify": "^1.0.1",
     "prettier": "^2.3.2",
     "rewire": "^6.0.0",
     "shelljs": "^0.8.5",
     "stream-browserify": "^3.0.0",
-    "swagger-typescript-api": "^12.0.3",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.2.1",
     "tslib": "^2.3.1",

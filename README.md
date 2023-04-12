@@ -59,16 +59,6 @@ npm run build
 
 ## Development
 
-### Update schemas
-
-One first needs to update the version number of `alephium` and `explorer-backend` in `package.json`. Kindly note that one needs to check the compatibility of both OpenAPI files manually.
-
-Typings can automatically generated using the following command:
-
-```shell
-npm run update-schemas
-```
-
 ### Release
 
 To release a new version:

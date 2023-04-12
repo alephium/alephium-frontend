@@ -152,7 +152,7 @@ describe('Wallet', function () {
   })
 
   describe('should call custom functions', () => {
-    const walletUtilsRewire = rewire('../dist/lib/wallet')
+    const walletUtilsRewire = rewire('../dist/wallet')
     const _pbkdf2 = walletUtilsRewire.__get__('_pbkdf2')
 
     it('getWalletFromMnemonicAsyncUnsafe should call custom mnemonicToSeed function', async () => {
@@ -205,7 +205,7 @@ describe('Wallet', function () {
     })
   })
   describe('the default pbkdf2 function', () => {
-    const walletUtilsRewire = rewire('../dist/lib/wallet')
+    const walletUtilsRewire = rewire('../dist/wallet')
     const _pbkdf2 = walletUtilsRewire.__get__('_pbkdf2')
 
     it('should reject when giving an error', async () => {

@@ -39,8 +39,7 @@ describe('E2E tests', () => {
   })
 
   it('can create a simple transaction', async () => {
-    const { data, error } = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
-    expect(error).toBeNull()
+    const data = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
     expect(data.txId).toBeDefined()
     expect(data.unsignedTx).toBeDefined()
   })
@@ -49,7 +48,7 @@ describe('E2E tests', () => {
     const gasAmount = 20001
     const gasPrice = '100000010000'
 
-    const { data, error } = await client.transactionCreate(
+    const data = await client.transactionCreate(
       wallet.address,
       wallet.publicKey,
       recipientAddress,
@@ -58,35 +57,32 @@ describe('E2E tests', () => {
       gasAmount,
       gasPrice
     )
-    expect(error).toBeNull()
     expect(data.gasAmount).toEqual(gasAmount)
     expect(data.gasPrice).toEqual(gasPrice)
   })
 
   it('can create sweep/consolidation transactions', async () => {
-    const { data, error } = await client.transactionConsolidateUTXOs(wallet.publicKey, wallet.address, recipientAddress)
-    expect(error).toBeNull()
+    const data = await client.transactionConsolidateUTXOs(wallet.publicKey, wallet.address, recipientAddress)
     expect(data.unsignedTxs.length).toBeGreaterThan(0)
   })
 
   it('can sign transactions', async () => {
-    const { data } = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
+    const data = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
     const signature = client.transactionSign(data.txId, wallet.privateKey)
     expect(signature).toBeDefined()
   })
 
   it('can verify signatures', async () => {
-    const { data } = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
+    const data = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
     const signature = client.transactionSign(data.txId, wallet.privateKey)
     const isValid = client.transactionVerifySignature(data.txId, wallet.publicKey, signature)
     expect(isValid).toBeTruthy()
   })
 
   it('can send transactions', async () => {
-    const { data } = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
+    const data = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
     const signature = client.transactionSign(data.txId, wallet.privateKey)
     const result = await client.transactionSend(wallet.address, data.unsignedTx, signature)
-    expect(result.error).toBeNull()
-    expect(result.data.txId).toEqual(data.txId)
+    expect(result.txId).toEqual(data.txId)
   })
 })

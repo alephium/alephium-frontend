@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetOutput, Input, Output, Transaction, MempoolTransaction, Token } from '../api/api-explorer'
+import { explorer } from '@alephium/web3'
 import { GENESIS_TIMESTAMP } from './constants'
 import { uniq } from './utils'
 
@@ -27,13 +27,13 @@ export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
 export type AmountDeltas = {
   alph: bigint
   tokens: {
-    id: Token['id']
+    id: explorer.Token['id']
     amount: bigint
   }[]
 }
 
 export const calcTxAmountsDeltaForAddress = (
-  tx: Transaction | MempoolTransaction,
+  tx: explorer.Transaction | explorer.MempoolTransaction,
   address: string,
   skipConsolidationCheck = false
 ): AmountDeltas => {
@@ -60,7 +60,7 @@ export const calcTxAmountsDeltaForAddress = (
   }
 }
 
-const summarizeAddressInputOutputAmounts = (address: string, io: (Input | Output)[]) =>
+const summarizeAddressInputOutputAmounts = (address: string, io: (explorer.Input | explorer.Output)[]) =>
   io.reduce(
     (acc, io) => {
       if (io.address !== address) return acc
@@ -84,17 +84,20 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (Input | Output
     { alph: BigInt(0), tokens: [] } as AmountDeltas
   )
 
-export const getDirection = (tx: Transaction, address: string): TransactionDirection =>
+export const getDirection = (tx: explorer.Transaction, address: string): TransactionDirection =>
   calcTxAmountsDeltaForAddress(tx, address, true).alph < 0 ? 'out' : 'in'
 
-export const isConsolidationTx = (tx: Transaction | MempoolTransaction): boolean => {
+export const isConsolidationTx = (tx: explorer.Transaction | explorer.MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
   const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
 
   return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
-export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outputs: AssetOutput[] | Output[]) => {
+export const removeConsolidationChangeAmount = (
+  totalOutputs: AmountDeltas,
+  outputs: explorer.AssetOutput[] | explorer.Output[]
+) => {
   const lastOutput = outputs[outputs.length - 1]
 
   return outputs.length > 1
@@ -112,10 +115,12 @@ export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outp
       totalOutputs
 }
 
-export const txHasOnlyInternalAddresses = (data: (Input | Output)[], internalAddressHashes: string[]): boolean =>
-  data.every((io) => io?.address && internalAddressHashes.some((hash) => hash === io.address))
+export const txHasOnlyInternalAddresses = (
+  data: (explorer.Input | explorer.Output)[],
+  internalAddressHashes: string[]
+): boolean => data.every((io) => io?.address && internalAddressHashes.some((hash) => hash === io.address))
 
-export const isTxMoveDuplicate = (tx: Transaction, addressHash: string, internalAddressHashes: string[]) =>
+export const isTxMoveDuplicate = (tx: explorer.Transaction, addressHash: string, internalAddressHashes: string[]) =>
   tx.inputs &&
   tx.inputs.length > 0 &&
   txHasOnlyInternalAddresses(tx.inputs, internalAddressHashes) &&
