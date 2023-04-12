@@ -32,9 +32,7 @@
     "test:watch": "npm run build && npm run jest -- --watch",
     "prepublishOnly": "npm run build",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "devnet:start": "node scripts/start-devnet.js ${npm_package_config_alephium_version}",
-    "devnet:restart": "npm run devnet:start",
-    "devnet:stop": "node scripts/stop-devnet.js"
+    "devnet:start": "npx @alephium/cli devnet start"
   },
   "dependencies": {
     "@alephium/web3": "^0.10.2",
@@ -48,6 +46,7 @@
     "elliptic": "^6.5.4"
   },
   "devDependencies": {
+    "@alephium/cli": "^0.10.2",
     "@types/crypto-js": "^4.1.1",
     "@types/elliptic": "^6.4.13",
     "@types/jest": "^29.4.0",
@@ -82,7 +81,7 @@
     "webpack-cli": "^5.0.1"
   },
   "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=7.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   }
 }
