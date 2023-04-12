@@ -17,6 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { node } from '@alephium/web3'
+import { ec as EC } from 'elliptic'
+
+import * as utils from './utils'
+
+const ec = new EC('secp256k1')
 
 /**
  * Node client
@@ -52,5 +57,22 @@ export class NodeClient extends node.Api<null> {
 
   async transactionSend(tx: string, signature: string) {
     return await this.transactions.postTransactionsSubmit({ unsignedTx: tx, signature })
+  }
+
+  transactionSign(txHash: string, privateKey: string) {
+    const keyPair = ec.keyFromPrivate(privateKey)
+    const signature = keyPair.sign(txHash)
+
+    return utils.signatureEncode(ec, signature)
+  }
+
+  transactionVerifySignature(txHash: string, publicKey: string, signature: string) {
+    try {
+      const key = ec.keyFromPublic(publicKey, 'hex')
+
+      return key.verify(txHash, utils.signatureDecode(ec, signature))
+    } catch (error) {
+      return false
+    }
   }
 }

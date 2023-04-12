@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { CliqueClient } from '../lib/clique'
+import { NodeClient } from '../lib/node'
 import { walletImport } from '../lib/wallet'
 
 const mnemonic =
@@ -26,12 +26,11 @@ const recipientAddress = '12ngYCQq7QPGEHAZSKQh5Ej9U9HqwkQyYFpVpoqkDpcmM'
 const amount = '1000000000000000000'
 
 describe('E2E tests', () => {
-  let client = new CliqueClient()
+  let client = new NodeClient()
   const wallet = walletImport(mnemonic)
 
   beforeAll(async () => {
-    client = new CliqueClient({ baseUrl })
-    await client.init(false)
+    client = new NodeClient({ baseUrl })
   })
 
   it('can initialize client', () => {
@@ -39,7 +38,7 @@ describe('E2E tests', () => {
   })
 
   it('can create a simple transaction', async () => {
-    const data = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
+    const data = await client.transactionCreate(wallet.publicKey, recipientAddress, amount)
     expect(data.txId).toBeDefined()
     expect(data.unsignedTx).toBeDefined()
   })
@@ -49,7 +48,6 @@ describe('E2E tests', () => {
     const gasPrice = '100000010000'
 
     const data = await client.transactionCreate(
-      wallet.address,
       wallet.publicKey,
       recipientAddress,
       amount,
@@ -62,27 +60,27 @@ describe('E2E tests', () => {
   })
 
   it('can create sweep/consolidation transactions', async () => {
-    const data = await client.transactionConsolidateUTXOs(wallet.publicKey, wallet.address, recipientAddress)
+    const data = await client.transactionConsolidateUTXOs(wallet.publicKey, recipientAddress)
     expect(data.unsignedTxs.length).toBeGreaterThan(0)
   })
 
   it('can sign transactions', async () => {
-    const data = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
+    const data = await client.transactionCreate(wallet.publicKey, recipientAddress, amount)
     const signature = client.transactionSign(data.txId, wallet.privateKey)
     expect(signature).toBeDefined()
   })
 
   it('can verify signatures', async () => {
-    const data = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
+    const data = await client.transactionCreate(wallet.publicKey, recipientAddress, amount)
     const signature = client.transactionSign(data.txId, wallet.privateKey)
     const isValid = client.transactionVerifySignature(data.txId, wallet.publicKey, signature)
     expect(isValid).toBeTruthy()
   })
 
   it('can send transactions', async () => {
-    const data = await client.transactionCreate(wallet.address, wallet.publicKey, recipientAddress, amount)
+    const data = await client.transactionCreate(wallet.publicKey, recipientAddress, amount)
     const signature = client.transactionSign(data.txId, wallet.privateKey)
-    const result = await client.transactionSend(wallet.address, data.unsignedTx, signature)
+    const result = await client.transactionSend(data.unsignedTx, signature)
     expect(result.txId).toEqual(data.txId)
   })
 })

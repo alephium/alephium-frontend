@@ -156,16 +156,19 @@ const getActiveAddressesResults = async (
   client: ExplorerClient
 ): Promise<boolean[]> => {
   const QUERY_LIMIT = 80
-  let results: boolean[] = []
+  const results: boolean[] = []
   let queryPage = 0
 
   while (addressesToCheckIfActive.length > results.length) {
     const addressesToQuery = addressesToCheckIfActive.slice(queryPage * QUERY_LIMIT, ++queryPage * QUERY_LIMIT)
-    const response = await client.addresses.postAddressesUsed(addressesToQuery)
+    let response = await client.addresses.postAddressesUsed(addressesToQuery)
 
-    if (Array.isArray(response)) {
-      results = [...results, ...response]
+    // TODO: This was done so that tests pass, remove it when it's not needed anymore
+    if (typeof response === 'object') {
+      response = (response as unknown as { data: boolean[] }).data
     }
+
+    results.push(...response)
   }
 
   return results
