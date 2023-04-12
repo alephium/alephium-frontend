@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@alephium/cli": "^0.10.2",
+    "@alephium/web3-test": "^0.10.2",
     "@types/crypto-js": "^4.1.1",
     "@types/elliptic": "^6.4.13",
     "@types/jest": "^29.4.0",

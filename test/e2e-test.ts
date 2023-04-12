@@ -18,16 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NodeClient } from '../lib/node'
 import { walletImport } from '../lib/wallet'
+import { testMnemonic } from '@alephium/web3-test'
 
-const mnemonic =
-  'pilot ignore adjust ritual fiscal educate judge paper senior erosion protect expose knife transfer slim stage credit candy menu source maze bonus baby cage'
 const baseUrl = 'http://127.0.0.1:22973'
 const recipientAddress = '12ngYCQq7QPGEHAZSKQh5Ej9U9HqwkQyYFpVpoqkDpcmM'
 const amount = '1000000000000000000'
 
 describe('E2E tests', () => {
   let client = new NodeClient()
-  const wallet = walletImport(mnemonic)
+  const wallet = walletImport(testMnemonic)
 
   beforeAll(async () => {
     client = new NodeClient({ baseUrl })
