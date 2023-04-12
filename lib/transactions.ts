@@ -20,7 +20,7 @@ import { AssetOutput, Input, Output, Transaction, MempoolTransaction, Token } fr
 import { GENESIS_TIMESTAMP } from './constants'
 import { uniq } from './utils'
 
-export type TransactionDirection = 'out' | 'in'
+export type TransactionDirection = 'out' | 'in' | 'swap'
 
 export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
 
