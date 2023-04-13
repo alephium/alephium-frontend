@@ -99,6 +99,11 @@ export interface ContractOutput {
   type: string
 }
 
+export interface ContractParent {
+  /** @format address */
+  parent?: string
+}
+
 export interface Event {
   /** @format block-hash */
   blockHash: string
@@ -246,6 +251,10 @@ export interface PerChainTimedCount {
 
 export interface ServiceUnavailable {
   detail: string
+}
+
+export interface SubContracts {
+  subContracts?: string[]
 }
 
 export interface TimedCount {
@@ -555,7 +564,7 @@ export class HttpClient<SecurityDataType = unknown> {
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   blocks = {
     /**
-     * @description List blocks within time interval
+     * @description List latest blocks
      *
      * @tags Blocks
      * @name GetBlocks
@@ -832,10 +841,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetAddressesAddressTokens
      * @request GET:/addresses/{address}/tokens
      */
-    getAddressesAddressTokens: (address: string, params: RequestParams = {}) =>
+    getAddressesAddressTokens: (
+      address: string,
+      query?: {
+        /**
+         * Page number
+         * @format int32
+         */
+        page?: number
+        /**
+         * Number of items per page
+         * @format int32
+         */
+        limit?: number
+        /** Reverse pagination */
+        reverse?: boolean
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<string[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}/tokens`,
         method: 'GET',
+        query: query,
         format: 'json',
         ...params
       }),
@@ -931,6 +958,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/addresses/${address}/export-transactions/csv`,
+        method: 'GET',
+        query: query,
+        ...params
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Addresses
+     * @name GetAddressesAddressAmountHistory
+     * @request GET:/addresses/{address}/amount-history
+     */
+    getAddressesAddressAmountHistory: (
+      address: string,
+      query: {
+        /**
+         * @format int64
+         * @min 0
+         */
+        fromTs: number
+        /**
+         * @format int64
+         * @min 0
+         */
+        toTs: number
+        'interval-type': IntervalType
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<string, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/addresses/${address}/amount-history`,
         method: 'GET',
         query: query,
         ...params
@@ -1365,6 +1423,55 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<Event[], BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
         path: `/contract-events/contract-address/${contractAddress}/input-address/${inputAddress}`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params
+      })
+  }
+  contracts = {
+    /**
+     * @description Get contract parent address if exist
+     *
+     * @tags Contracts
+     * @name GetContractsContractParent
+     * @request GET:/contracts/{contract}/parent
+     */
+    getContractsContractParent: (contract: string, params: RequestParams = {}) =>
+      this.request<ContractParent, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/contracts/${contract}/parent`,
+        method: 'GET',
+        format: 'json',
+        ...params
+      }),
+
+    /**
+     * @description Get sub contract addresses
+     *
+     * @tags Contracts
+     * @name GetContractsContractSubContracts
+     * @request GET:/contracts/{contract}/sub-contracts
+     */
+    getContractsContractSubContracts: (
+      contract: string,
+      query?: {
+        /**
+         * Page number
+         * @format int32
+         */
+        page?: number
+        /**
+         * Number of items per page
+         * @format int32
+         */
+        limit?: number
+        /** Reverse pagination */
+        reverse?: boolean
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<SubContracts, BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable>({
+        path: `/contracts/${contract}/sub-contracts`,
         method: 'GET',
         query: query,
         format: 'json',
