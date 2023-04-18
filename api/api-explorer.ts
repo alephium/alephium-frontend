@@ -991,6 +991,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/addresses/${address}/amount-history`,
         method: 'GET',
         query: query,
+        format: 'json',
         ...params
       })
   }
