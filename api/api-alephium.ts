@@ -379,6 +379,7 @@ export interface CompileContractResult {
   functions: FunctionSig[]
   events: EventSig[]
   warnings: string[]
+  stdId?: string
 }
 
 export interface CompileProjectResult {
@@ -618,6 +619,14 @@ export interface MinerAddressesInfo {
 
 export type MisbehaviorAction = Ban | Unban
 
+export interface MultipleCallContract {
+  calls: CallContract[]
+}
+
+export interface MultipleCallContractResult {
+  results: CallContractResult[]
+}
+
 export interface NodeInfo {
   buildInfo: BuildInfo
   upnp: boolean
@@ -775,6 +784,8 @@ export interface TestContract {
   group?: number
   /** @format block-hash */
   blockHash?: string
+  /** @format int64 */
+  blockTimeStamp?: number
   /** @format 32-byte-hash */
   txId?: string
   /** @format address */
@@ -1206,7 +1217,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title Alephium API
- * @version 1.7.1
+ * @version 2.0.4
  * @baseUrl ../
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -2045,7 +2056,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Transactions
      * @name PostTransactionsSweepAddressBuild
-     * @summary Build unsigned transactions to send all unlocked balanced of one address to another address
+     * @summary Build unsigned transactions to send all unlocked ALPH and token balances of one address to another address
      * @request POST:/transactions/sweep-address/build
      */
     postTransactionsSweepAddressBuild: (data: BuildSweepAddressTransactions, params: RequestParams = {}) =>
@@ -2391,7 +2402,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           format: 'json',
           ...params
         }
-      )
+      ),
+
+    /**
+     * No description
+     *
+     * @tags Contracts
+     * @name PostContractsMulticallContract
+     * @summary Multiple call contract
+     * @request POST:/contracts/multicall-contract
+     */
+    postContractsMulticallContract: (data: MultipleCallContract, params: RequestParams = {}) =>
+      this.request<
+        MultipleCallContractResult,
+        BadRequest | Unauthorized | NotFound | InternalServerError | ServiceUnavailable
+      >({
+        path: `/contracts/multicall-contract`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params
+      })
   }
   multisig = {
     /**
