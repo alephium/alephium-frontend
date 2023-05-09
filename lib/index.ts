@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 export * from './node'
 export * from './utils'
 export * from './wallet'
-export * from './explorer'
 export * from './address'
 export * from './errors'
 export * from './numbers'

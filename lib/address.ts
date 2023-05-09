@@ -17,16 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressKeyPair, deriveNewAddressData } from './wallet'
-import { ExplorerClient } from './explorer'
 import { BIP32Interface } from 'bip32'
-import { bs58, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { bs58, ExplorerProvider, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 export const isAddressValid = (address: string) =>
   !!address && /^[1-9A-HJ-NP-Za-km-z]+$/.test(address) && bs58.decode(address).slice(1).length >= 32
 
 export const discoverActiveAddresses = async (
   masterKey: BIP32Interface,
-  client: ExplorerClient,
+  client: ExplorerProvider,
   addressIndexesToSkip: number[] = [],
   minGap = 5
 ): Promise<AddressKeyPair[]> => {
@@ -132,7 +131,7 @@ const getGapFromLastActiveAddress = (
 
 const getActiveAddressesResults = async (
   addressesToCheckIfActive: string[],
-  client: ExplorerClient
+  client: ExplorerProvider
 ): Promise<boolean[]> => {
   const QUERY_LIMIT = 80
   const results: boolean[] = []
