@@ -24,7 +24,7 @@ import { pbkdf2 } from 'crypto'
 import bs58 from './bs58'
 import { decrypt, decryptAsync, encrypt, encryptAsync, Pbkdf2Function } from './password-crypto'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
-import { addressToGroup } from './address'
+import { addressToGroup } from '@alephium/web3'
 
 type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
 

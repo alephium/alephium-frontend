@@ -22,11 +22,11 @@ import * as bip39 from 'bip39'
 import rewire from 'rewire'
 
 import * as walletUtils from '../lib/wallet'
-import { addressToGroup } from '../lib/address'
 import { TOTAL_NUMBER_OF_GROUPS } from '../lib/constants'
 
 import wallets from './fixtures/wallets.json'
 import genesis from './fixtures/genesis.json'
+import { addressToGroup } from '@alephium/web3'
 
 describe('Wallet', function () {
   afterEach(() => {

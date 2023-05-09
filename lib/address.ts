@@ -17,33 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import bs58 from './bs58'
-import djb2 from './djb2'
 import { AddressKeyPair, deriveNewAddressData } from './wallet'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import { ExplorerClient } from './explorer'
 import { BIP32Interface } from 'bip32'
 
-export function addressToGroup(address: string, totalNumberOfGroups: number): number {
-  const bytes = bs58.decode(address).slice(1)
-  const value = djb2(bytes) | 1
-  const hash = toPosInt(xorByte(value))
-  const group = hash % totalNumberOfGroups
-
-  return group
-}
-
-function xorByte(value: number): number {
-  const byte0 = value >> 24
-  const byte1 = value >> 16
-  const byte2 = value >> 8
-
-  return byte0 ^ byte1 ^ byte2 ^ value
-}
-
 export const isAddressValid = (address: string) =>
   !!address && /^[1-9A-HJ-NP-Za-km-z]+$/.test(address) && bs58.decode(address).slice(1).length >= 32
-
-const toPosInt = (byte: number): number => byte & 0xff
 
 export const discoverActiveAddresses = async (
   masterKey: BIP32Interface,
