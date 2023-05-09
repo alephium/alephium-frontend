@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import bs58 from './bs58'
 import { AddressKeyPair, deriveNewAddressData } from './wallet'
 import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import { ExplorerClient } from './explorer'
 import { BIP32Interface } from 'bip32'
+import { bs58 } from '@alephium/web3'
 
 export const isAddressValid = (address: string) =>
   !!address && /^[1-9A-HJ-NP-Za-km-z]+$/.test(address) && bs58.decode(address).slice(1).length >= 32
