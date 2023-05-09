@@ -21,9 +21,8 @@ import BN from 'bn.js'
 
 import NodeStorage from './storage-node'
 import BrowserStorage from './storage-browser'
-import { TOTAL_NUMBER_OF_GROUPS } from './constants'
 import djb2 from './djb2'
-import { bs58 } from '@alephium/web3'
+import { bs58, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 export const signatureEncode = (ec: EC.ec, signature: EC.ec.Signature) => {
   let sNormalized = signature.s
