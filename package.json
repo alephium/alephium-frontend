@@ -35,7 +35,7 @@
     "devnet:start": "npx @alephium/cli devnet start"
   },
   "dependencies": {
-    "@alephium/web3": "^0.10.2",
+    "@alephium/web3": "^0.11.3",
     "base-x": "^4.0.0",
     "bcfg": "~0.1.6",
     "bip32": "^2.0.6",
