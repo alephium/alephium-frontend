@@ -18,6 +18,32 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { explorer } from '@alephium/web3'
 import { uniq } from './utils'
+import { TokenInfo } from '@alephium/token-list'
+import { Optional } from '@alephium/web3'
+import { AddressBalance, Token, Output } from '@alephium/web3/dist/src/api/api-explorer'
+
+export type TokenBalances = AddressBalance & { id: Token['id'] }
+
+// Same as TokenBalances, but amounts are in BigInt, useful for display purposes
+export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & {
+  balance: bigint
+  lockedBalance: bigint
+}
+
+export type Asset = TokenDisplayBalances & Optional<TokenInfo, 'symbol' | 'name'>
+
+export type AssetAmount = { id: Asset['id']; amount?: bigint }
+
+export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
+  Required<AssetAmount>
+
+export type TransactionInfo = {
+  assets: TransactionInfoAsset[]
+  direction: TransactionDirection
+  infoType: TransactionInfoType
+  outputs: Output[]
+  lockTime?: Date
+}
 
 export type TransactionDirection = 'out' | 'in' | 'swap'
 
@@ -112,4 +138,12 @@ export const removeConsolidationChangeAmount = (
       }
     : // otherwise, it's a sweep transaction that consolidates all funds
       totalOutputs
+}
+
+export const isSwap = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]) => {
+  const allAmounts = [alphAmout, ...tokensAmount.map((tokenAmount) => tokenAmount.amount)]
+  const allAmountsArePositive = allAmounts.every((amount) => amount >= 0)
+  const allAmountsAreNegative = allAmounts.every((amount) => amount <= 0)
+
+  return !allAmountsArePositive && !allAmountsAreNegative
 }
