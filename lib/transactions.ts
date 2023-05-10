@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { explorer } from '@alephium/web3'
-import { GENESIS_TIMESTAMP } from './constants'
 import { uniq } from './utils'
 
 export type TransactionDirection = 'out' | 'in' | 'swap'
@@ -114,15 +113,3 @@ export const removeConsolidationChangeAmount = (
     : // otherwise, it's a sweep transaction that consolidates all funds
       totalOutputs
 }
-
-export const txHasOnlyInternalAddresses = (
-  data: (explorer.Input | explorer.Output)[],
-  internalAddressHashes: string[]
-): boolean => data.every((io) => io?.address && internalAddressHashes.some((hash) => hash === io.address))
-
-export const isTxMoveDuplicate = (tx: explorer.Transaction, addressHash: string, internalAddressHashes: string[]) =>
-  tx.inputs &&
-  tx.inputs.length > 0 &&
-  txHasOnlyInternalAddresses(tx.inputs, internalAddressHashes) &&
-  getDirection(tx, addressHash) == 'in' &&
-  tx.timestamp !== GENESIS_TIMESTAMP
