@@ -61,14 +61,12 @@ describe('address', function () {
     // All derived addresses are inactive.
     // The API should be queried once.
     // The function should return 0 active addresses.
-    mockedPostAddressesActive.mockResolvedValueOnce({
-      data: [
-        ...[false, false, false, false, false],
-        ...[false, false, false, false, false],
-        ...[false, false, false, false, false],
-        ...[false, false, false, false, false]
-      ]
-    })
+    mockedPostAddressesActive.mockResolvedValueOnce([
+      ...[false, false, false, false, false],
+      ...[false, false, false, false, false],
+      ...[false, false, false, false, false],
+      ...[false, false, false, false, false]
+    ])
 
     let results = await discoverActiveAddresses(masterKey, client)
     expect(client.addresses.postAddressesUsed).toBeCalledTimes(1)
@@ -80,17 +78,13 @@ describe('address', function () {
     // The API should make an additional query to further investigate active addresses of group 0.
     // The function should return the 5th address of group 0.
     mockedPostAddressesActive
-      .mockResolvedValueOnce({
-        data: [
-          ...[false, false, false, false, true],
-          ...[false, false, false, false, false],
-          ...[false, false, false, false, false],
-          ...[false, false, false, false, false]
-        ]
-      })
-      .mockResolvedValueOnce({
-        data: [false, false, false, false, false]
-      })
+      .mockResolvedValueOnce([
+        ...[false, false, false, false, true],
+        ...[false, false, false, false, false],
+        ...[false, false, false, false, false],
+        ...[false, false, false, false, false]
+      ])
+      .mockResolvedValueOnce([false, false, false, false, false])
 
     results = await discoverActiveAddresses(masterKey, client)
     expect(client.addresses.postAddressesUsed).toBeCalledTimes(2)
@@ -103,27 +97,21 @@ describe('address', function () {
     // The API should make 2 additional queries to further investigate active addresses of group 0 and 1 additional for group 2.
     // The function should return the 5th and 8th addresses of group 0.
     mockedPostAddressesActive
-      .mockResolvedValueOnce({
+      .mockResolvedValueOnce(
         // all groups, query 1
-        data: [
+        [
           ...[false, false, false, false, true],
           ...[false, false, false, false, false],
           ...[true, false, false, false, false],
           ...[false, false, false, false, false]
         ]
-      })
+      )
       // group 0, query 2
-      .mockResolvedValueOnce({
-        data: [false, false, true, false, false]
-      })
+      .mockResolvedValueOnce([false, false, true, false, false])
       // group 0, query 3
-      .mockResolvedValueOnce({
-        data: [false, false, false]
-      })
+      .mockResolvedValueOnce([false, false, false])
       // group 2, query 1
-      .mockResolvedValueOnce({
-        data: [false, false, false, false, false]
-      })
+      .mockResolvedValueOnce([false, false, false, false, false])
 
     results = await discoverActiveAddresses(masterKey, client)
     expect(client.addresses.postAddressesUsed).toBeCalledTimes(4)

@@ -139,12 +139,7 @@ const getActiveAddressesResults = async (
 
   while (addressesToCheckIfActive.length > results.length) {
     const addressesToQuery = addressesToCheckIfActive.slice(queryPage * QUERY_LIMIT, ++queryPage * QUERY_LIMIT)
-    let response = await client.addresses.postAddressesUsed(addressesToQuery)
-
-    // TODO: This was done so that tests pass, remove it when it's not needed anymore
-    if (typeof response === 'object') {
-      response = (response as unknown as { data: boolean[] }).data
-    }
+    const response = await client.addresses.postAddressesUsed(addressesToQuery)
 
     results.push(...response)
   }
