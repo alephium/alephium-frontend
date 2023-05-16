@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
-import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback } from 'react'
 
 import { useAppSelector } from '../hooks/redux'
@@ -64,10 +63,11 @@ export const useRestoreNavigationState = () => {
 
 // Navigating without the navigation prop:
 // https://reactnavigation.org/docs/navigating-without-navigation-prop
-export const navigateRootStack = (
-  name: keyof RootStackParamList,
-  params?: StackScreenProps<RootStackParamList>['route']['params']
-) => {
+export function navigateRootStack<RouteName extends keyof RootStackParamList>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  name: any, // TODO: Figure out why we can't use `RouteName` instead
+  params?: RootStackParamList[RouteName]
+) {
   if (rootStackNavigationRef.isReady()) {
     rootStackNavigationRef.navigate(name, params)
   }

@@ -18,18 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 
-import { BORDER_RADIUS, INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
+import { INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
 import AppText from './AppText'
 
-export interface BorderOptions {
-  isTopRounded?: boolean
-  isBottomRounded?: boolean
-  hasBottomBorder?: boolean
-}
-
-export interface HighlightRowProps extends BorderOptions {
+export interface HighlightRowProps {
   children: ReactNode | ReactNode[]
   isInput?: boolean
   isSecondary?: boolean
@@ -38,16 +32,15 @@ export interface HighlightRowProps extends BorderOptions {
   onPress?: () => void
   hasRightContent?: boolean
   truncate?: boolean
+  isLast?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const HighlightRow = ({ title, subtitle, children, onPress, truncate, style }: HighlightRowProps) => {
-  const theme = useTheme()
-
+const HighlightRow = ({ title, subtitle, children, onPress, truncate, isLast = false, style }: HighlightRowProps) => {
   const componentContent = title ? (
     <>
       <LeftContent>
-        <AppText color={theme.font.secondary} numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
+        <AppText medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
           {title}
         </AppText>
         {subtitle && (
@@ -72,6 +65,13 @@ const HighlightRow = ({ title, subtitle, children, onPress, truncate, style }: H
 }
 
 export default styled(HighlightRow)`
+  ${({ theme, isLast }) =>
+    !isLast &&
+    css`
+      border-bottom-width: 1px;
+      border-bottom-color: ${theme.border.secondary};
+    `}
+
   ${({ theme, isInput, isSecondary }) =>
     isInput
       ? css`
@@ -97,31 +97,11 @@ export default styled(HighlightRow)`
       align-items: center;
       justify-content: space-between;
     `}
-
-  ${({ isTopRounded }) =>
-    isTopRounded &&
-    css`
-      border-top-left-radius: ${BORDER_RADIUS}px;
-      border-top-right-radius: ${BORDER_RADIUS}px;
-    `}
-
-  ${({ isBottomRounded }) =>
-    isBottomRounded &&
-    css`
-      border-bottom-left-radius: ${BORDER_RADIUS}px;
-      border-bottom-right-radius: ${BORDER_RADIUS}px;
-    `}
-
-  ${({ hasBottomBorder }) =>
-    hasBottomBorder &&
-    css`
-      border-bottom-width: 1px;
-      border-bottom-color: ${({ theme }) => theme.bg.secondary};
-    `}
 `
 
 const Subtitle = styled(AppText)`
   color: ${({ theme }) => theme.font.tertiary};
+  padding-top: 5px;
 `
 
 const LeftContent = styled.View`

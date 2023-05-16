@@ -16,21 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { SafeAreaView } from 'react-native'
-import { SafeAreaViewProps } from 'react-navigation'
+import { View } from 'react-native'
+import { SafeAreaViewProps } from 'react-native-safe-area-context'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '../AppText'
 
-const Screen = ({ children, style }: SafeAreaViewProps) => <SafeAreaView style={style}>{children}</SafeAreaView>
+const Screen = ({ children, style }: SafeAreaViewProps) => <View style={style}>{children}</View>
 
 export default styled(Screen)`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.back1};
 `
 
 export const ScreenSection = styled.View<{ fill?: boolean }>`
-  padding: 22px 20px;
+  padding: 20px 15px 10px 15px;
 
   ${({ fill }) =>
     fill &&
@@ -48,23 +48,22 @@ export const BottomModalScreenTitle = styled(AppText)`
   font-size: 26px;
 `
 
-export let BottomModal = ({ children, style }: SafeAreaViewProps) => (
-  <SafeAreaView style={style}>{children}</SafeAreaView>
-)
+export let BottomModal = ({ children, style }: SafeAreaViewProps) => <View style={style}>{children}</View>
+
 BottomModal = styled(BottomModal)`
   background-color: ${({ theme }) => theme.bg.secondary};
   top: 400px;
   position: absolute;
-  border-radius-top-left: 20px;
-  border-radius-top-right: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 `
 
 export const ScreenSectionTitle = styled(AppText)`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  color: ${({ theme }) => theme.font.tertiary};
+  color: ${({ theme }) => theme.font.secondary};
   margin-left: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 15px;
 `
 
 export const BottomScreenSection = styled(ScreenSection)`

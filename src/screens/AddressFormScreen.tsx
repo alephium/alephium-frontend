@@ -83,10 +83,9 @@ const AddressForm = ({
       </ScreenSection>
       <ScrollView>
         <ScreenSection>
-          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} isTopRounded hasBottomBorder />
+          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
           <ColorPicker value={color} onChange={setColor} />
           <HighlightRow
-            isBottomRounded
             title="Main address"
             subtitle={`Default address for operations${
               disableIsMainToggle
@@ -106,8 +105,6 @@ const AddressForm = ({
                 label="Group"
                 value={group}
                 onValueChange={setGroup}
-                isTopRounded
-                isBottomRounded
                 renderValue={renderGroupValue}
               />
             </ExpandableRow>

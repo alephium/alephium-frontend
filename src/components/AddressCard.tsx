@@ -60,7 +60,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
           }}
         />
       </Header>
-      <Amount value={BigInt(address.balance)} color={textColor} size={26} bold />
+      <Amount value={BigInt(address.balance)} color="primary" size={26} bold />
     </Pressable>
   )
 }

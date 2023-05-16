@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import animationSrc from '../../animations/success.json'
 import HighlightButton from '../../components/buttons/HighlightButton'
@@ -34,18 +34,22 @@ const instructions: Instruction[] = [
   { text: 'Enjoy your new wallet!', type: 'secondary' }
 ]
 
-const NewWalletSuccessPage = ({ navigation }: ScreenProps) => (
-  <Screen style={{ marginTop: 100 }}>
-    <AnimationContainer>
-      <StyledAlephiumLogo color="rgb(30, 30, 30)" />
-      <StyledAnimation source={animationSrc} autoPlay />
-    </AnimationContainer>
-    <CenteredInstructions instructions={instructions} stretch fontSize={19} />
-    <ActionsContainer>
-      <HighlightButton title="Let's go!" wide onPress={() => navigation.navigate('InWalletScreen')} />
-    </ActionsContainer>
-  </Screen>
-)
+const NewWalletSuccessPage = ({ navigation }: ScreenProps) => {
+  const theme = useTheme()
+
+  return (
+    <Screen style={{ marginTop: 100 }}>
+      <AnimationContainer>
+        <StyledAlephiumLogo color={theme.font.primary} />
+        <StyledAnimation source={animationSrc} autoPlay />
+      </AnimationContainer>
+      <CenteredInstructions instructions={instructions} stretch fontSize={19} />
+      <ActionsContainer>
+        <HighlightButton title="Let's go!" wide onPress={() => navigation.navigate('InWalletScreen')} />
+      </ActionsContainer>
+    </Screen>
+  )
+}
 
 export default NewWalletSuccessPage
 

@@ -26,13 +26,13 @@ const STORAGE_KEY = 'wallet-settings'
 
 export const networkPresetSettings: Record<NetworkPreset, NetworkSettings> = {
   [NetworkName.mainnet]: {
-    nodeHost: 'https://wallet-v15.mainnet.alephium.org',
-    explorerApiHost: 'https://backend-v19.mainnet.alephium.org',
+    nodeHost: 'https://wallet-v20.mainnet.alephium.org',
+    explorerApiHost: 'https://backend-v113.mainnet.alephium.org',
     explorerUrl: 'https://explorer.alephium.org'
   },
   [NetworkName.testnet]: {
-    nodeHost: 'https://wallet-v15.testnet.alephium.org',
-    explorerApiHost: 'https://backend-v19.testnet.alephium.org',
+    nodeHost: 'https://wallet-v20.testnet.alephium.org',
+    explorerApiHost: 'https://backend-v113.testnet.alephium.org',
     explorerUrl: 'https://testnet.alephium.org'
   }
 }

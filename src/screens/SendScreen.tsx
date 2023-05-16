@@ -17,12 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import {
   APIError,
-  convertAlphToSet,
-  convertSetToAlph,
   formatAmountForDisplay,
+  fromHumanReadableAmount,
   getHumanReadableError,
   MINIMAL_GAS_AMOUNT,
-  MINIMAL_GAS_PRICE
+  MINIMAL_GAS_PRICE,
+  toHumanReadableAmount
 } from '@alephium/sdk'
 import { BuildTransactionResult, SweepAddressTransaction } from '@alephium/sdk/api/alephium'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -31,7 +31,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ScrollView } from 'react-native'
 import Toast from 'react-native-root-toast'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '../api/transactions'
 import Amount from '../components/Amount'
@@ -89,7 +89,6 @@ const SendScreen = ({
     params: { addressHash }
   }
 }: ScreenProps) => {
-  const theme = useTheme()
   const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
   const dispatch = useAppDispatch()
 
@@ -123,8 +122,8 @@ const SendScreen = ({
     !value || parseInt(value) >= MINIMAL_GAS_AMOUNT || `Gas must be at least ${MINIMAL_GAS_AMOUNT}`
   const validateOptionalMinGasPrice = (value: string) =>
     !value ||
-    convertAlphToSet(value) >= MINIMAL_GAS_PRICE ||
-    `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
+    fromHumanReadableAmount(value) >= MINIMAL_GAS_PRICE ||
+    `Gas price must be at least ${formatAmountForDisplay({ amount: MINIMAL_GAS_PRICE, fullPrecision: true })}`
 
   useEffect(() => setTxStep('build'), [fromAddress, toAddressHash, amountInAlph, gasAmount, gasPriceInAlph])
 
@@ -148,9 +147,9 @@ const SendScreen = ({
       if (!fromAddress?.hash || !isFormValid) return
 
       setIsLoading(true)
-      const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : undefined
+      const gasPriceInSet = formData.gasPriceInAlph ? fromHumanReadableAmount(formData.gasPriceInAlph) : undefined
 
-      const amountInSet = convertAlphToSet(formData.amountInAlph)
+      const amountInSet = fromHumanReadableAmount(formData.amountInAlph)
 
       setAmount(amountInSet)
 
@@ -216,7 +215,7 @@ const SendScreen = ({
   const handleUseMaxAmountPress = useCallback(() => {
     if (!fromAddress) return
 
-    setValue('amountInAlph', convertSetToAlph(getAddressAvailableBalance(fromAddress)))
+    setValue('amountInAlph', toHumanReadableAmount(getAddressAvailableBalance(fromAddress)))
   }, [fromAddress, setValue])
 
   return (
@@ -236,8 +235,6 @@ const SendScreen = ({
                     value={value}
                     onValueChange={onChange}
                     onBlur={onBlur}
-                    isTopRounded
-                    hasBottomBorder
                     error={
                       errors.fromAddressHash?.type === 'required'
                         ? requiredErrorMessage
@@ -260,7 +257,6 @@ const SendScreen = ({
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    hasBottomBorder
                     error={
                       errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message
                     }
@@ -280,7 +276,6 @@ const SendScreen = ({
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    isBottomRounded
                     keyboardType="number-pad"
                     error={
                       errors.amountInAlph?.type === 'required' ? requiredErrorMessage : errors.amountInAlph?.message
@@ -318,8 +313,6 @@ const SendScreen = ({
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
-                      isTopRounded
-                      hasBottomBorder
                       keyboardType="number-pad"
                       error={errors.gasAmount?.message}
                     />
@@ -340,8 +333,6 @@ const SendScreen = ({
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
-                      isBottomRounded
-                      hasBottomBorder
                       keyboardType="number-pad"
                       error={errors.gasPriceInAlph?.message}
                     />
@@ -353,11 +344,11 @@ const SendScreen = ({
             {txStep === 'send' && unsignedTxData.fees && totalAmount && (
               <ScreenSection>
                 <ScreenSectionTitle>Summary</ScreenSectionTitle>
-                <HighlightRow title="Expected fee" isTopRounded hasBottomBorder isSecondary>
+                <HighlightRow title="Expected fee" isSecondary>
                   <Amount value={unsignedTxData.fees} fullPrecision />
                 </HighlightRow>
-                <HighlightRow title="Total amount" isBottomRounded isSecondary>
-                  <Amount value={totalAmount} fullPrecision bold color={theme.global.accent} />
+                <HighlightRow title="Total amount" isSecondary>
+                  <Amount value={totalAmount} fullPrecision bold color="accent" />
                 </HighlightRow>
               </ScreenSection>
             )}
@@ -366,7 +357,6 @@ const SendScreen = ({
         <BottomScreenSection>
           <Button
             title={txStep === 'build' ? 'Continue' : 'Confirm'}
-            gradient
             onPress={txStep === 'build' ? handleSubmit(buildTransaction) : authenticateAndSend}
             wide
             disabled={isLoading || !isFormValid}

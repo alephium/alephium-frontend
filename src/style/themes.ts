@@ -24,9 +24,10 @@ export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
     highlight: '#fff',
-    primary: '#fafafa',
-    secondary: '#f0f0f0',
-    tertiary: '#e3e3e3',
+    primary: '#ffffff',
+    secondary: '#f9f9f9',
+    back1: '#F0F0F0',
+    back2: '#E8E8E8',
     accent: 'rgba(93, 108, 243, 0.08)',
     contrast: '#212126'
   },
@@ -37,8 +38,8 @@ export const lightTheme: DefaultTheme = {
     contrast: '#ffffff'
   },
   border: {
-    primary: '#CCCCCC',
-    secondary: '#f1f1f1'
+    primary: 'rgba(36, 34, 32, 0.10)',
+    secondary: 'rgba(36, 34, 32, 0.05)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.03; shadow-radius: 2px; elevation: 2;',
@@ -46,7 +47,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#5981f3',
+    accent: '#3A7AF4',
     alert: '#ed4a34',
     valid: '#4ebf08',
     star: '#FFD66D',
@@ -65,21 +66,22 @@ export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
     highlight: '',
-    primary: '#19191E',
-    secondary: '#141417',
-    tertiary: '#101012',
+    primary: '#1B1B1F',
+    secondary: '#17171A',
+    back1: '#121215',
+    back2: '#0E0E10',
     accent: 'rgba(93, 108, 243, 0.08)',
     contrast: 'white'
   },
   font: {
-    primary: 'rgba(255, 255, 255, 0.95)',
-    secondary: 'rgba(255, 255, 255, 0.65)',
+    primary: '#E3E3E3',
+    secondary: 'rgba(255, 255, 255, 0.75)',
     tertiary: 'rgba(255, 255, 255, 0.40)',
     contrast: '#19191E'
   },
   border: {
-    primary: 'rgb(43, 43, 48)',
-    secondary: 'rgb(34, 34, 38)'
+    primary: 'rgba(255, 255, 255, 0.08)',
+    secondary: 'rgba(255, 255, 255, 0.04)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.25; shadow-radius: 2px; elevation: 5;',
@@ -87,7 +89,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#6083FF',
+    accent: '#007AFF',
     alert: '#ed4a34',
     valid: '#4ebf08',
     star: '#FFD66D',

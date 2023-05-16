@@ -23,7 +23,6 @@ import styled from 'styled-components/native'
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonStack from '../components/buttons/ButtonStack'
-import GradientBackground from '../components/GradientBackground'
 import Screen from '../components/layout/Screen'
 import { useAppDispatch } from '../hooks/redux'
 import AlephiumLogo from '../images/logos/AlephiumLogo'
@@ -52,15 +51,9 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
       <ActionsContainer>
         <ButtonStack>
           <Button title="New wallet" type="primary" variant="contrast" onPress={() => handleButtonPress('create')} />
-          <Button
-            title="Import wallet"
-            type="secondary"
-            variant="contrast"
-            onPress={() => handleButtonPress('import')}
-          />
+          <Button title="Import wallet" onPress={() => handleButtonPress('import')} />
         </ButtonStack>
       </ActionsContainer>
-      <GradientBackground />
     </Screen>
   )
 }
@@ -89,13 +82,13 @@ const TitleContainer = styled.View`
 
 const TitleFirstLine = styled(AppText)`
   font-size: 18px;
-  color: ${({ theme }) => theme.font.contrast};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const TitleSecondLine = styled(AppText)`
   font-size: 18px;
   font-weight: bold;
-  color: ${({ theme }) => theme.font.contrast};
+  color: ${({ theme }) => theme.font.primary};
 `
 
 const ActionsContainer = styled.View`

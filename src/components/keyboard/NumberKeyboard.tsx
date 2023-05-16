@@ -33,7 +33,7 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
 
   const keyButtonStyle: PressableProps['style'] = ({ pressed }) => [
     {
-      backgroundColor: pressed ? theme.bg.tertiary : theme.bg.secondary
+      backgroundColor: pressed ? theme.bg.back1 : theme.bg.secondary
     }
   ]
 
@@ -46,7 +46,11 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
           disabled={!value}
           style={keyButtonStyle}
         >
-          {value === 'delete' ? <Icon name="delete" size={23} /> : <KeyText>{value}</KeyText>}
+          {value === 'delete' ? (
+            <Icon name="delete" size={23} color={theme.font.primary} />
+          ) : (
+            <KeyText>{value}</KeyText>
+          )}
         </KeyboardButton>
       ))}
     </KeyboardRow>

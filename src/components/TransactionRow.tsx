@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertSetToFiat } from '@alephium/sdk'
+import { calculateAmountWorth } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { useTransactionInfo } from '../hooks/useTransactionalInfo'
@@ -49,23 +49,16 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const [price, currency] = useAppSelector((s) => [s.price, s.settings.currency])
   const { amount, infoType } = useTransactionInfo(tx, tx.address.hash, showInternalInflows)
-  const { amountSign, Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
-  const theme = useTheme()
+  const { Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
 
-  const fiatValue = price.value !== undefined && amount !== undefined ? convertSetToFiat(amount, price.value) : 0
+  const fiatValue = price.value !== undefined && amount !== undefined ? calculateAmountWorth(amount, price.value) : 0
 
   const handleOnPress = () => {
     if (!isPendingTx(tx)) navigation.navigate('TransactionScreen', { tx })
   }
 
   return (
-    <HighlightRow
-      style={style}
-      hasBottomBorder={!isLast}
-      isBottomRounded={isLast}
-      isTopRounded={isFirst}
-      onPress={handleOnPress}
-    >
+    <HighlightRow style={style} onPress={handleOnPress}>
       <Direction>
         <TransactionIcon color={iconBgColor}>
           <Icon size={16} strokeWidth={3} color={iconColor} />
@@ -73,18 +66,14 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
       </Direction>
       <TokenAndDate>
         <AppText bold>{label} ALPH</AppText>
-        <AppText color={theme.font.tertiary}>{dayjs(tx.timestamp).fromNow()}</AppText>
+        <AppText color="tertiary">{dayjs(tx.timestamp).fromNow()}</AppText>
       </TokenAndDate>
       <AmountColumn>
         <AppText>
-          <AppText bold>{amountSign}</AppText>
           <Amount value={amount} fadeDecimals bold />
         </AppText>
         <FiatValue>
-          <AppText bold color={theme.font.tertiary}>
-            {amountSign}
-          </AppText>
-          <Amount isFiat value={fiatValue} bold suffix={currencies[currency].symbol} color={theme.font.tertiary} />
+          <Amount isFiat value={fiatValue} bold suffix={currencies[currency].symbol} color="tertiary" />
         </FiatValue>
       </AmountColumn>
     </HighlightRow>

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { LucideProps } from 'lucide-react-native'
 import { ReactNode } from 'react'
-import { StyleProp, View, ViewProps } from 'react-native'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from './AppText'
@@ -29,7 +29,7 @@ interface InfoBoxProps {
   iconColor?: string
   bgColor?: string
   children?: ReactNode | ReactNode[]
-  style?: StyleProp<ViewProps>
+  style?: StyleProp<ViewStyle>
 }
 
 const InfoBox = ({ title, Icon, iconColor, children, style }: InfoBoxProps) => {

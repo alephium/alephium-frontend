@@ -59,22 +59,22 @@ const TransactionScreen = ({
           </ExplorerLink>
         </ScreenSectionRow>
         <BottomScreenSection>
-          <HighlightRow title="Amount" isTopRounded hasBottomBorder>
+          <HighlightRow title="Amount">
             <Amount value={amount} fadeDecimals fullPrecision bold />
           </HighlightRow>
-          <HighlightRow title="Timestamp" hasBottomBorder>
+          <HighlightRow title="Timestamp">
             <BoldText>{dayjs(tx.timestamp).fromNow()}</BoldText>
           </HighlightRow>
-          <HighlightRow title="Status" hasBottomBorder>
+          <HighlightRow title="Status">
             <BoldText>{tx.blockHash ? 'Confirmed' : 'Pending'}</BoldText>
           </HighlightRow>
-          <HighlightRow title="From" hasBottomBorder>
+          <HighlightRow title="From">
             {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
           </HighlightRow>
-          <HighlightRow title="To" hasBottomBorder>
+          <HighlightRow title="To">
             {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
           </HighlightRow>
-          <HighlightRow title="Fee" isBottomRounded>
+          <HighlightRow title="Fee">
             <Amount
               value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
               fadeDecimals

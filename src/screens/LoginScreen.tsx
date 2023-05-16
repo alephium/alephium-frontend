@@ -21,7 +21,6 @@ import { useCallback, useState } from 'react'
 
 import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
 import Screen from '../components/layout/Screen'
-import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { deriveWalletStoredAddresses, rememberActiveWallet } from '../persistent-storage/wallets'
@@ -43,6 +42,7 @@ const LoginScreen = ({
   const dispatch = useAppDispatch()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false)
 
   const handleSuccessfulLogin = useCallback(
@@ -79,7 +79,7 @@ const LoginScreen = ({
       {isPinModalVisible && (
         <ConfirmWithAuthModal usePin onConfirm={handleSuccessfulLogin} walletId={walletIdToLogin} />
       )}
-      <SpinnerModal isActive={loading} text="Unlocking wallet..." />
+      {/*<SpinnerModal isActive={loading} text="Unlocking wallet..." /> CANT SHOW 2 MODALS ON IOS*/}
     </Screen>
   )
 }

@@ -27,7 +27,6 @@ import { ActiveWalletState } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 import PinCodeInput from './inputs/PinCodeInput'
 import ModalWithBackdrop from './ModalWithBackdrop'
-import SpinnerModal from './SpinnerModal'
 import CenteredInstructions, { Instruction } from './text/CenteredInstructions'
 
 interface ConfirmWithAuthModalProps {
@@ -51,6 +50,7 @@ const errorInstructionSet: Instruction[] = [
 const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [encryptedWallet, setEncryptedWallet] = useState<ActiveWalletState>()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false)
   const [shouldHideModal, setShouldHideModal] = useState(false)
 
@@ -107,7 +107,7 @@ const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWi
           </ModalContent>
         )}
       </ModalWithBackdrop>
-      <SpinnerModal isActive={loading} text="Verifying pin..." />
+      {/*<SpinnerModal isActive={loading} text="Verifying pin..." /> CANT SHOW 2 MODALS ON IOS*/}
     </>
   )
 }
@@ -115,7 +115,7 @@ const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWi
 export default ConfirmWithAuthModal
 
 const ModalContent = styled.View`
-  flex: 1
+  flex: 1;
   width: 100%;
   background-color: ${({ theme }) => theme.bg.secondary};
   padding-top: 40px;

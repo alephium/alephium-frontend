@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactElement, useState } from 'react'
-import { Dimensions, LayoutChangeEvent, StyleProp, View, ViewProps } from 'react-native'
+import { Dimensions, LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 import RNCarousel from 'react-native-reanimated-carousel'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -100,7 +100,7 @@ interface CarouselPaginationItemProps {
   length: number
   animValue: Animated.SharedValue<number>
   size?: number
-  style?: StyleProp<ViewProps>
+  style?: StyleProp<ViewStyle>
 }
 
 const CarouselPaginationItem = ({ animValue, index, length, size = 12, style }: CarouselPaginationItemProps) => {

@@ -17,13 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
+import { LucideProps } from 'lucide-react-native'
 import { ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '../../style/globalStyle'
 import AppText from '../AppText'
-import GradientBackground from '../GradientBackground'
 
 export interface ButtonProps extends PressableProps {
   title?: string
@@ -32,8 +32,7 @@ export interface ButtonProps extends PressableProps {
   style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
   centered?: boolean
-  icon?: ReactNode
-  gradient?: boolean
+  Icon?: (props: LucideProps) => JSX.Element
   circular?: boolean
   children?: ReactNode
 }
@@ -44,9 +43,8 @@ const Button = ({
   type = 'primary',
   variant = 'default',
   disabled,
-  icon,
+  Icon,
   children,
-  gradient = false,
   circular,
   ...props
 }: ButtonProps) => {
@@ -54,17 +52,17 @@ const Button = ({
 
   const colors = {
     bg: {
-      default: theme.font.primary,
-      contrast: theme.bg.primary,
+      default: theme.bg.primary,
+      contrast: theme.font.primary,
       accent: theme.global.accent,
       valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
       alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
       transparent: 'transparent'
     },
     font: {
-      default: type === 'primary' ? theme.font.contrast : theme.font.primary,
-      contrast: type === 'primary' ? theme.font.primary : theme.font.contrast,
-      accent: type === 'primary' ? theme.font.contrast : theme.global.accent,
+      default: theme.font.secondary,
+      contrast: theme.font.contrast,
+      accent: theme.global.accent,
       valid: theme.global.valid,
       alert: theme.global.alert
     }
@@ -86,22 +84,20 @@ const Button = ({
     style
   ]
 
-  if (!icon && !title && !children)
+  if (!Icon && !title && !children)
     throw new Error('At least one of the following properties is required: icon, title, or children')
 
   return circular ? (
     <View style={{ justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
       <Pressable style={buttonStyle} disabled={disabled} {...props}>
-        {gradient && <GradientBackground style={{ opacity: disabled ? 0.5 : 1 }} />}
-        {icon && <Icon>{icon}</Icon>}
+        {Icon && <Icon color={font} />}
       </Pressable>
       {title && <ButtonText style={{ color: colors.font.contrast }}>{title}</ButtonText>}
       {children}
     </View>
   ) : (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
-      {gradient && <GradientBackground style={{ opacity: disabled ? 0.5 : 1 }} />}
-      {icon && <Icon withSpace={!!title || !!children}>{icon}</Icon>}
+      {Icon && <Icon style={!!title || !!children ? { marginRight: 15 } : undefined} color={font} />}
       {title && <ButtonText style={{ color: font }}>{title}</ButtonText>}
       {children}
     </Pressable>
@@ -113,8 +109,9 @@ export default styled(Button)`
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 30px;
   flex-direction: row;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.border.secondary};
 
   ${({ centered }) =>
     centered &&
@@ -123,7 +120,7 @@ export default styled(Button)`
       margin: 0 auto;
     `}
 
-  ${({ icon, title, children }) =>
+  ${({ Icon: icon, title, children }) =>
     icon && !title && !children
       ? css`
           width: 45px;
@@ -138,12 +135,4 @@ export default styled(Button)`
 const ButtonText = styled(AppText)`
   font-weight: bold;
   text-align: center;
-`
-
-const Icon = styled.View<{ withSpace?: boolean }>`
-  ${({ withSpace }) =>
-    withSpace &&
-    css`
-      margin-right: 15px;
-    `}
 `

@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { ScrollView } from 'react-native'
+import { View } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
@@ -74,15 +74,13 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
       <ScreenSection>
         <BottomModalScreenTitle>Current network</BottomModalScreenTitle>
       </ScreenSection>
-      <ScrollView>
+      <View>
         <ScreenSection fill>
           {networkNames.map((networkName, index) => (
             <RadioButtonRow
               key={networkName}
               title={capitalize(networkName)}
               onPress={() => handleNetworkItemPress(networkName)}
-              isFirst={index === 0}
-              isLast={index === networkNames.length - 1}
               isActive={networkName === selectedNetworkName}
             />
           ))}
@@ -100,8 +98,6 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    isTopRounded
-                    hasBottomBorder
                   />
                 )}
                 control={control}
@@ -116,7 +112,6 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    hasBottomBorder
                   />
                 )}
                 control={control}
@@ -131,7 +126,6 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    isBottomRounded
                   />
                 )}
                 control={control}
@@ -140,7 +134,7 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
             </ScreenSection>
           </Animated.View>
         )}
-      </ScrollView>
+      </View>
     </>
   )
 }

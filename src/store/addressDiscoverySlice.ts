@@ -113,7 +113,7 @@ export const discoverAddresses = createAsyncThunk(
 
         groupData.highestIndex = newAddressData.index
 
-        const { data } = await client.explorerClient.addressesActive.postAddressesActive([newAddressData.hash])
+        const { data } = await client.explorerClient.addresses.postAddressesUsed([newAddressData.hash])
         const addressIsActive = data.length > 0 && data[0]
 
         if (addressIsActive) {

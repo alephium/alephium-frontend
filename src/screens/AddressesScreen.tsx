@@ -21,19 +21,16 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
-import AddressesScreenHeaderRight from '../components/AddressesScreenHeaderRight'
 import AddressesTokensList from '../components/AddressesTokensList'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
 import Carousel from '../components/Carousel'
-import DefaultHeader, { DefaultHeaderProps } from '../components/headers/DefaultHeader'
-import InWalletTransactionsFlatList from '../components/layout/InWalletTransactionsFlatList'
 import { ScreenSection } from '../components/layout/Screen'
+import TransactionsFlatListScreen from '../components/layout/TransactionsFlatListScreen'
 import QRCodeModal from '../components/QRCodeModal'
-import useInWalletTabScreenHeader from '../hooks/layout/useInWalletTabScreenHeader'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
@@ -46,10 +43,6 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
   style?: StyleProp<ViewStyle>
 }
 
-const AddressesScreenHeader = (props: Partial<DefaultHeaderProps>) => (
-  <DefaultHeader HeaderLeft="Addresses" HeaderRight={<AddressesScreenHeaderRight />} {...props} />
-)
-
 const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -61,8 +54,6 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
       selectAddressesPendingTransactions(s, [selectedAddressHash])
     ]
   )
-  const updateHeader = useInWalletTabScreenHeader(AddressesScreenHeader, navigation)
-  const theme = useTheme()
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
@@ -94,12 +85,11 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
   if (!selectedAddress) return null
 
   return (
-    <InWalletTransactionsFlatList
+    <TransactionsFlatListScreen
       confirmedTransactions={selectedAddressConfirmedTransactions}
       pendingTransactions={selectedAddressPendingTransactions}
       addressHashes={[selectedAddressHash]}
       haveAllPagesLoaded={selectedAddress.allTransactionPagesLoaded}
-      onScrollYChange={updateHeader}
       initialNumToRender={5}
       showInternalInflows
       ListHeaderComponent={
@@ -117,21 +107,21 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
             <ButtonsRowStyled>
               <Button
                 title="Send"
-                icon={<ArrowUp size={24} color={theme.font.contrast} />}
+                Icon={ArrowUp}
                 onPress={() => navigation.navigate('SendScreen', { addressHash: selectedAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Receive"
-                icon={<ArrowDown size={24} color={theme.font.contrast} />}
+                Icon={ArrowDown}
                 onPress={() => navigation.navigate('ReceiveScreen', { addressHash: selectedAddressHash })}
                 disabled={areButtonsDisabled}
                 circular
               />
               <Button
                 title="Settings"
-                icon={<Settings2 size={24} color={theme.font.contrast} />}
+                Icon={Settings2}
                 onPress={() => navigation.navigate('EditAddressScreen', { addressHash: selectedAddressHash })}
                 disabled={areButtonsDisabled}
                 circular

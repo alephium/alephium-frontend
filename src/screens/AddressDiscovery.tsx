@@ -114,19 +114,13 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
 
       navigation.setOptions({
         headerLeft: () => null,
-        headerRight: () => (
-          <Button
-            onPress={cancelAndGoToWelcomeScreen}
-            icon={<X size={24} color={theme.font.primary} />}
-            type="transparent"
-          />
-        )
+        headerRight: () => <Button onPress={cancelAndGoToWelcomeScreen} Icon={X} type="transparent" />
       })
 
       const subscription = BackHandler.addEventListener('hardwareBackPress', () => true)
 
       return subscription.remove
-    }, [cancelAndGoToWelcomeScreen, isImporting, navigation, startScan, theme.font.primary])
+    }, [cancelAndGoToWelcomeScreen, isImporting, navigation, startScan])
   )
 
   return (
@@ -144,8 +138,6 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
                 title={address.settings.label || address.hash}
                 subtitle={address.settings.label ? address.hash : undefined}
                 truncate
-                isTopRounded={index === 0}
-                isBottomRounded={index === addresses.length - 1}
               >
                 <Amount value={BigInt(address.balance)} fadeDecimals bold />
               </HighlightRow>
@@ -159,23 +151,16 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
                 <ScanningIndication>
                   <Row style={{ marginBottom: 10 }}>
                     <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
-                    <AppText color={theme.font.secondary}>Scanning...</AppText>
+                    <AppText color="secondary">Scanning...</AppText>
                   </Row>
                   <ProgressBar progress={progress} color={theme.global.accent} />
                 </ScanningIndication>
               )}
 
               {discoveredAddresses.map(({ hash, balance }, index) => (
-                <HighlightRow
-                  key={hash}
-                  title={hash}
-                  truncate
-                  isTopRounded={index === 0}
-                  isBottomRounded={index === discoveredAddresses.length - 1}
-                  onPress={() => toggleAddressSelection(hash)}
-                >
+                <HighlightRow key={hash} title={hash} truncate onPress={() => toggleAddressSelection(hash)}>
                   <Row>
-                    <AmountStyled value={BigInt(balance)} color={theme.font.secondary} fadeDecimals />
+                    <AmountStyled value={BigInt(balance)} color="secondary" fadeDecimals />
                     <Checkbox
                       value={addressSelections[hash]}
                       disabled={loading}
@@ -188,31 +173,12 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
           )}
         </View>
         <BottomScreenSection>
-          {status === 'idle' && (
-            <ButtonStyled
-              icon={<Search size={24} color={theme.font.contrast} />}
-              title="Start scanning"
-              onPress={startScan}
-            />
-          )}
-          {status === 'started' && (
-            <ButtonStyled
-              icon={<X size={24} color={theme.font.contrast} />}
-              title="Stop scanning"
-              onPress={stopScan}
-              type="secondary"
-            />
-          )}
-          {status === 'stopped' && (
-            <ContinueButton
-              icon={<Search size={24} color={theme.font.contrast} />}
-              title="Continue scanning"
-              onPress={startScan}
-            />
-          )}
+          {status === 'idle' && <ButtonStyled Icon={Search} title="Start scanning" onPress={startScan} />}
+          {status === 'started' && <ButtonStyled Icon={X} title="Stop scanning" onPress={stopScan} type="secondary" />}
+          {status === 'stopped' && <ContinueButton Icon={Search} title="Continue scanning" onPress={startScan} />}
           {(status === 'stopped' || status === 'finished') && (
             <ButtonStyled
-              icon={<Import size={24} color={theme.font.contrast} />}
+              Icon={Import}
               title="Import addresses"
               onPress={importAddresses}
               disabled={selectedAddressesToImport.length === 0}

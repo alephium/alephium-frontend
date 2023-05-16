@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertSetToFiat } from '@alephium/sdk'
+import { calculateAmountWorth } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { useState } from 'react'
@@ -54,7 +54,7 @@ const ReceiveScreen = ({
 
   if (!toAddress) return null
 
-  const balance = convertSetToFiat(BigInt(toAddress.balance), price ?? 0)
+  const balance = calculateAmountWorth(BigInt(toAddress.balance), price ?? 0)
 
   return (
     <>
@@ -63,31 +63,21 @@ const ReceiveScreen = ({
       </ScreenSection>
       <ScrollView>
         <ScreenSection>
-          <AddressSelector
-            label="To address"
-            value={toAddressHash}
-            onValueChange={setToAddressHash}
-            isTopRounded
-            isBottomRounded
-          />
+          <AddressSelector label="To address" value={toAddressHash} onValueChange={setToAddressHash} />
         </ScreenSection>
         <CenteredScreenSection>
           <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={toAddressHash} />
         </CenteredScreenSection>
         <CenteredScreenSection>
-          <Button
-            title="Copy address"
-            onPress={() => copyAddressToClipboard(toAddressHash)}
-            icon={<ClipboardIcon color={theme.font.contrast} size={20} />}
-          />
+          <Button title="Copy address" onPress={() => copyAddressToClipboard(toAddressHash)} Icon={ClipboardIcon} />
         </CenteredScreenSection>
         <ScreenSection>
-          <HighlightRow title="Address" isTopRounded hasBottomBorder>
+          <HighlightRow title="Address">
             <Text numberOfLines={1} ellipsizeMode="middle">
               {toAddressHash}
             </Text>
           </HighlightRow>
-          <HighlightRow title="Current estimated value" isBottomRounded>
+          <HighlightRow title="Current estimated value">
             <Amount value={balance} isFiat suffix={currencies[currency].symbol} bold />
           </HighlightRow>
         </ScreenSection>

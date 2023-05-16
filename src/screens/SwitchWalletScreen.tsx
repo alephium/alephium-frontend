@@ -21,11 +21,12 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { Alert, ScrollView, StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
 import ButtonsRow from '../components/buttons/ButtonsRow'
+import BoxSurface from '../components/layout/BoxSurface'
 import Screen, { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '../components/layout/Screen'
 import RadioButtonRow from '../components/RadioButtonRow'
 import SpinnerModal from '../components/SpinnerModal'
@@ -50,7 +51,6 @@ export interface SwitchWalletScreenProps extends StackScreenProps<RootStackParam
 const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   const dispatch = useAppDispatch()
   const wallets = useSortedWallets()
-  const theme = useTheme()
   const [activeWalletMetadataId, pin] = useAppSelector((s) => [s.activeWallet.metadataId, s.credentials.pin])
   const restoreNavigationState = useRestoreNavigationState()
 
@@ -97,32 +97,22 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
         <Subtitle>Switch to another wallet?</Subtitle>
       </ScreenSection>
       <ScrollView>
-        <ScreenSection>
+        <BoxSurface>
           {wallets.map((wallet, index) => (
             <RadioButtonRow
               key={wallet.id}
               title={wallet.name}
               onPress={() => handleWalletItemPress(wallet.id)}
-              isFirst={index === 0}
-              isLast={index === wallets.length - 1}
               isActive={wallet.id === activeWalletMetadataId}
               isInput
             />
           ))}
-        </ScreenSection>
+        </BoxSurface>
       </ScrollView>
       <BottomScreenSection>
         <ButtonsRow>
-          <Button
-            title="New wallet"
-            onPress={() => handleButtonPress('create')}
-            icon={<PlusIcon size={24} color={theme.font.contrast} />}
-          />
-          <Button
-            title="Import wallet"
-            onPress={() => handleButtonPress('import')}
-            icon={<ArrowDownIcon size={24} color={theme.font.contrast} />}
-          />
+          <Button title="New wallet" onPress={() => handleButtonPress('create')} Icon={PlusIcon} />
+          <Button title="Import wallet" onPress={() => handleButtonPress('import')} Icon={ArrowDownIcon} />
         </ButtonsRow>
       </BottomScreenSection>
       <SpinnerModal isActive={loading} text="Switching wallets..." />

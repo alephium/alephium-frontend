@@ -16,27 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertSetToFiat } from '@alephium/sdk'
+import { calculateAmountWorth } from '@alephium/sdk'
 import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { selectTotalBalance } from '../store/addressesSlice'
 import { selectIsPriceUninitialized } from '../store/priceSlice'
 import { currencies } from '../utils/currencies'
 import Amount from './Amount'
+import AppText from './AppText'
 
 interface BalanceSummaryProps {
+  dateLabel: string
   style?: StyleProp<ViewStyle>
 }
 
-const BalanceSummary = ({ style }: BalanceSummaryProps) => {
+const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
   const [price, currency, addressDataStatus] = useAppSelector((s) => [s.price, s.settings.currency, s.addresses.status])
   const totalBalance = useAppSelector(selectTotalBalance)
   const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
   const theme = useTheme()
 
-  const balance = convertSetToFiat(totalBalance, price.value ?? 0)
+  const balance = calculateAmountWorth(totalBalance, price.value ?? 0)
   const showActivityIndicator = isPriceUninitialized || addressDataStatus === 'uninitialized'
 
   return (
@@ -45,8 +47,8 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
         <ActivityIndicator size="large" color={theme.font.primary} />
       ) : (
         <>
-          <AmountInFiat value={balance} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
-          <Amount value={totalBalance} fadeDecimals bold size={20} />
+          <Amount value={balance} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+          <AppText color="tertiary">{dateLabel}</AppText>
         </>
       )}
     </View>
@@ -54,7 +56,3 @@ const BalanceSummary = ({ style }: BalanceSummaryProps) => {
 }
 
 export default BalanceSummary
-
-const AmountInFiat = styled(Amount)`
-  margin-bottom: 10px;
-`

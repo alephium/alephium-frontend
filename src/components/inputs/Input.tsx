@@ -29,12 +29,12 @@ import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '../AppText'
-import HighlightRow, { BorderOptions } from '../HighlightRow'
+import HighlightRow from '../HighlightRow'
 
 export type InputValue = string | number | undefined | unknown
 export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
 
-export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value'>, BorderOptions {
+export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value'> {
   value: T
   label: string
   onPress?: () => void
@@ -49,9 +49,6 @@ function Input<T extends InputValue>({
   label,
   style,
   value,
-  isTopRounded,
-  isBottomRounded,
-  hasBottomBorder,
   onPress,
   onFocus,
   onBlur,
@@ -69,7 +66,7 @@ function Input<T extends InputValue>({
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   const labelStyle = useAnimatedStyle(() => ({
-    top: withTiming(!isActive ? 0 : -35, { duration: 100 })
+    top: withTiming(!isActive ? -10 : -35, { duration: 100 })
   }))
 
   const labelTextStyle = useAnimatedStyle(() => ({
@@ -93,15 +90,7 @@ function Input<T extends InputValue>({
   }
 
   return (
-    <HighlightRow
-      isTopRounded={isTopRounded}
-      isBottomRounded={isBottomRounded}
-      hasBottomBorder={hasBottomBorder}
-      onPress={onPress}
-      isInput
-      hasRightContent={!!RightContent}
-      style={style}
-    >
+    <HighlightRow onPress={onPress} isInput hasRightContent={!!RightContent} style={style}>
       <InputContainer>
         <Label style={labelStyle}>
           <LabelText style={labelTextStyle}>{label}</LabelText>
@@ -135,6 +124,7 @@ const InputContainer = styled.View`
 
 const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
   height: 100%;
+  padding-top: 12px;
   color: ${({ theme }) => theme.font.primary};
 
   ${({ hide }) =>
@@ -146,7 +136,7 @@ const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
 
 const Label = styled(Animated.View)`
   position: absolute;
-  bottom: 0;
+  bottom: -10px;
   left: 0;
   justify-content: center;
 `

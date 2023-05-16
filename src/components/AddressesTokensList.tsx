@@ -116,7 +116,7 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
 
   const renderCarouselItem = ({ item }: { item: AddressToken[] }) => (
     <View onLayout={onLayoutCarouselItem}>
-      {item.map((token, index, arr) => {
+      {item.map((token) => {
         const metadata =
           token.id === ALEPHIUM_TOKEN_ID
             ? ({
@@ -128,12 +128,7 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
             : undefined
 
         return (
-          <HighlightRow
-            key={token.id}
-            isTopRounded={index === 0}
-            isBottomRounded={index === arr.length - 1}
-            hasBottomBorder={arr.length > 1}
-          >
+          <HighlightRow key={token.id}>
             <TokenInfo {...{ ...token, ...metadata }} isLoading={isLoading} />
           </HighlightRow>
         )
