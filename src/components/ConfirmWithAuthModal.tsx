@@ -27,7 +27,6 @@ import { ActiveWalletState } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 import PinCodeInput from './inputs/PinCodeInput'
 import ModalWithBackdrop from './ModalWithBackdrop'
-import SpinnerModal from './SpinnerModal'
 import CenteredInstructions, { Instruction } from './text/CenteredInstructions'
 
 interface ConfirmWithAuthModalProps {
@@ -51,6 +50,7 @@ const errorInstructionSet: Instruction[] = [
 const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [encryptedWallet, setEncryptedWallet] = useState<ActiveWalletState>()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false)
   const [shouldHideModal, setShouldHideModal] = useState(false)
 

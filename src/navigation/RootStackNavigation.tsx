@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 import { createStackNavigator } from '@react-navigation/stack'
-import { useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import DefaultHeader from '../components/headers/DefaultHeader'
@@ -58,8 +57,8 @@ const RootStack = createStackNavigator<RootStackParamList>()
 const RootStackNavigation = () => {
   const theme = useTheme()
   const bottomModalOptions = useBottomModalOptions()
-  const { height: screenHeight } = useWindowDimensions()
-  const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
+  // const { height: screenHeight } = useWindowDimensions()
+  // const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
   const dispatch = useAppDispatch()
 
   const handleStateChange = (state?: NavigationState) => {

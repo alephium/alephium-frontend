@@ -42,6 +42,7 @@ const LoginScreen = ({
   const dispatch = useAppDispatch()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false)
 
   const handleSuccessfulLogin = useCallback(

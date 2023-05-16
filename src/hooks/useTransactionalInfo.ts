@@ -48,7 +48,10 @@ export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressH
     lockTime = tx.lockTime ? new Date(tx.lockTime) : undefined
   } else {
     outputs = tx.outputs ?? outputs
-    const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
+    const {
+      alph: alphAmount
+      // tokens: tokenAmounts
+    } = calcTxAmountsDeltaForAddress(tx, addressHash)
     amount = alphAmount < 0 ? alphAmount * BigInt(-1) : alphAmount
 
     if (isConsolidationTx(tx)) {
