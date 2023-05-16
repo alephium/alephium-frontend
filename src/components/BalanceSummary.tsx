@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertSetToFiat } from '@alephium/sdk'
+import { calculateAmountWorth } from '@alephium/sdk'
 import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { selectTotalBalance } from '../store/addressesSlice'
@@ -38,7 +38,7 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
   const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
   const theme = useTheme()
 
-  const balance = convertSetToFiat(totalBalance, price.value ?? 0)
+  const balance = calculateAmountWorth(totalBalance, price.value ?? 0)
   const showActivityIndicator = isPriceUninitialized || addressDataStatus === 'uninitialized'
 
   return (

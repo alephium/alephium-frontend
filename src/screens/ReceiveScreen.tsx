@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertSetToFiat } from '@alephium/sdk'
+import { calculateAmountWorth } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { useState } from 'react'
@@ -54,7 +54,7 @@ const ReceiveScreen = ({
 
   if (!toAddress) return null
 
-  const balance = convertSetToFiat(BigInt(toAddress.balance), price ?? 0)
+  const balance = calculateAmountWorth(BigInt(toAddress.balance), price ?? 0)
 
   return (
     <>

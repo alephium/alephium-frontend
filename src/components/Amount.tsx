@@ -62,7 +62,7 @@ const Amount = ({
       value !== undefined
         ? isFiat && typeof value === 'number'
           ? formatFiatAmountForDisplay(value)
-          : formatAmountForDisplay(value as bigint, fullPrecision)
+          : formatAmountForDisplay({ amount: value as bigint, fullPrecision })
         : ''
 
     if (amount) {

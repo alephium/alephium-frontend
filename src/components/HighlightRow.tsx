@@ -69,7 +69,7 @@ export default styled(HighlightRow)`
     !isLast &&
     css`
       border-bottom-width: 1px;
-      border-bottom-color: ${theme.border.secondary}};
+      border-bottom-color: ${theme.border.secondary};
     `}
 
   ${({ theme, isInput, isSecondary }) =>

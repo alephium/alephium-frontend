@@ -17,12 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import {
   APIError,
-  convertAlphToSet,
-  convertSetToAlph,
   formatAmountForDisplay,
+  fromHumanReadableAmount,
   getHumanReadableError,
   MINIMAL_GAS_AMOUNT,
-  MINIMAL_GAS_PRICE
+  MINIMAL_GAS_PRICE,
+  toHumanReadableAmount
 } from '@alephium/sdk'
 import { BuildTransactionResult, SweepAddressTransaction } from '@alephium/sdk/api/alephium'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -123,8 +123,8 @@ const SendScreen = ({
     !value || parseInt(value) >= MINIMAL_GAS_AMOUNT || `Gas must be at least ${MINIMAL_GAS_AMOUNT}`
   const validateOptionalMinGasPrice = (value: string) =>
     !value ||
-    convertAlphToSet(value) >= MINIMAL_GAS_PRICE ||
-    `Gas price must be at least ${formatAmountForDisplay(MINIMAL_GAS_PRICE, true)}`
+    fromHumanReadableAmount(value) >= MINIMAL_GAS_PRICE ||
+    `Gas price must be at least ${formatAmountForDisplay({ amount: MINIMAL_GAS_PRICE, fullPrecision: true })}`
 
   useEffect(() => setTxStep('build'), [fromAddress, toAddressHash, amountInAlph, gasAmount, gasPriceInAlph])
 
@@ -148,9 +148,9 @@ const SendScreen = ({
       if (!fromAddress?.hash || !isFormValid) return
 
       setIsLoading(true)
-      const gasPriceInSet = formData.gasPriceInAlph ? convertAlphToSet(formData.gasPriceInAlph) : undefined
+      const gasPriceInSet = formData.gasPriceInAlph ? fromHumanReadableAmount(formData.gasPriceInAlph) : undefined
 
-      const amountInSet = convertAlphToSet(formData.amountInAlph)
+      const amountInSet = fromHumanReadableAmount(formData.amountInAlph)
 
       setAmount(amountInSet)
 
@@ -216,7 +216,7 @@ const SendScreen = ({
   const handleUseMaxAmountPress = useCallback(() => {
     if (!fromAddress) return
 
-    setValue('amountInAlph', convertSetToAlph(getAddressAvailableBalance(fromAddress)))
+    setValue('amountInAlph', toHumanReadableAmount(getAddressAvailableBalance(fromAddress)))
   }, [fromAddress, setValue])
 
   return (

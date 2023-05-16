@@ -15,7 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { convertSetToAlph, NUM_OF_ZEROS_IN_QUINTILLION, produceZeros } from '@alephium/sdk'
+import { NUM_OF_ZEROS_IN_QUINTILLION, produceZeros, toHumanReadableAmount } from '@alephium/sdk'
 import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -37,7 +37,7 @@ const TOKEN_IMAGE_URL = 'https://raw.githubusercontent.com/nop33/token-meta/mast
 const TokenInfo = ({ id, name, balances, worth, isLoading, image, symbol, decimals, style }: TokenInfoProps) => {
   const theme = useTheme()
   const trailingZeros = produceZeros(NUM_OF_ZEROS_IN_QUINTILLION - (decimals ?? 0))
-  const tokenBalance = convertSetToAlph(BigInt(balances.balance + trailingZeros))
+  const tokenBalance = toHumanReadableAmount(BigInt(balances.balance + trailingZeros))
   const fiatValue = worth?.price ? parseFloat(tokenBalance) * worth.price : undefined
   const isAlph = id === ALEPHIUM_TOKEN_ID
 

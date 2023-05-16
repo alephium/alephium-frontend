@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertSetToFiat } from '@alephium/sdk'
+import { calculateAmountWorth } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -52,7 +52,7 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
   const { amountSign, Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
   const theme = useTheme()
 
-  const fiatValue = price.value !== undefined && amount !== undefined ? convertSetToFiat(amount, price.value) : 0
+  const fiatValue = price.value !== undefined && amount !== undefined ? calculateAmountWorth(amount, price.value) : 0
 
   const handleOnPress = () => {
     if (!isPendingTx(tx)) navigation.navigate('TransactionScreen', { tx })
