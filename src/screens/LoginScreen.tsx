@@ -27,19 +27,18 @@ import { deriveWalletStoredAddresses, rememberActiveWallet } from '../persistent
 import { walletSwitched, walletUnlocked } from '../store/activeWalletSlice'
 import { AddressPartial } from '../types/addresses'
 import { ActiveWalletState } from '../types/wallet'
-import { useRestoreNavigationState } from '../utils/navigation'
+import { setNavigationState } from '../utils/navigation'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 
 const LoginScreen = ({
-  navigation,
   route: {
     params: { walletIdToLogin, workflow }
   }
 }: ScreenProps) => {
-  const restoreNavigationState = useRestoreNavigationState()
   const addressesStatus = useAppSelector((state) => state.addresses.status)
   const dispatch = useAppDispatch()
+  const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,19 +58,19 @@ const LoginScreen = ({
         addressesToInitialize = await deriveWalletStoredAddresses(wallet)
 
         dispatch(walletSwitched({ wallet, addressesToInitialize, pin }))
-        restoreNavigationState(true)
+        setNavigationState()
       } else if (workflow === 'wallet-unlock') {
         if (addressesStatus === 'uninitialized') {
           addressesToInitialize = await deriveWalletStoredAddresses(wallet)
         }
 
         dispatch(walletUnlocked({ wallet, addressesToInitialize, pin }))
-        restoreNavigationState()
+        setNavigationState(lastNavigationState)
       }
 
       setLoading(false)
     },
-    [addressesStatus, dispatch, restoreNavigationState, workflow]
+    [addressesStatus, dispatch, lastNavigationState, workflow]
   )
 
   return (
