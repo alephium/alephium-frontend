@@ -49,7 +49,7 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const [price, currency] = useAppSelector((s) => [s.price, s.settings.currency])
   const { amount, infoType } = useTransactionInfo(tx, tx.address.hash, showInternalInflows)
-  const { amountSign, Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
+  const { Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
 
   const fiatValue = price.value !== undefined && amount !== undefined ? calculateAmountWorth(amount, price.value) : 0
 
@@ -70,13 +70,9 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
       </TokenAndDate>
       <AmountColumn>
         <AppText>
-          <AppText bold>{amountSign}</AppText>
           <Amount value={amount} fadeDecimals bold />
         </AppText>
         <FiatValue>
-          <AppText bold color="tertiary">
-            {amountSign}
-          </AppText>
           <Amount isFiat value={fiatValue} bold suffix={currencies[currency].symbol} color="tertiary" />
         </FiatValue>
       </AmountColumn>
