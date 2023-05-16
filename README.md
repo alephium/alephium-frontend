@@ -37,3 +37,7 @@ Build a production preview apk for Android:
 ```shell
 eas build --profile development --platform android
 ```
+
+## Debugging
+
+To be able to inspect the DOM tree as well as the Redux state with React Native Debugger while using a development client, you need to shake the phone, tap on "Open React Native dev menu" and select "Debug".
