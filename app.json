@@ -13,7 +13,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "org.alephium.wallet"
@@ -37,6 +39,11 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a90d8db5-115a-45d1-b947-c504656f18cc"
+      }
+    }
   }
 }
