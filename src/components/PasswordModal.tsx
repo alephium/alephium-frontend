@@ -44,7 +44,7 @@ const PasswordModal = ({ onClose, onPasswordEntered }: PasswordModalProps) => {
     <ModalWithBackdrop visible animationType="fade" closeModal={onClose} color={theme.bg.primary}>
       <ScreenStyled>
         <ScreenSectionStyled fill>
-          <Input label="Password" value={password} onChangeText={setPassword} isTopRounded isBottomRounded />
+          <Input label="Password" value={password} onChangeText={setPassword} />
         </ScreenSectionStyled>
         <BottomScreenSection>
           <ButtonsRow>

@@ -29,12 +29,12 @@ import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '../AppText'
-import HighlightRow, { BorderOptions } from '../HighlightRow'
+import HighlightRow from '../HighlightRow'
 
 export type InputValue = string | number | undefined | unknown
 export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
 
-export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value'>, BorderOptions {
+export interface InputProps<T extends InputValue> extends Omit<TextInputProps, 'value'> {
   value: T
   label: string
   onPress?: () => void
@@ -49,9 +49,6 @@ function Input<T extends InputValue>({
   label,
   style,
   value,
-  isTopRounded,
-  isBottomRounded,
-  hasBottomBorder,
   onPress,
   onFocus,
   onBlur,
@@ -93,15 +90,7 @@ function Input<T extends InputValue>({
   }
 
   return (
-    <HighlightRow
-      isTopRounded={isTopRounded}
-      isBottomRounded={isBottomRounded}
-      hasBottomBorder={hasBottomBorder}
-      onPress={onPress}
-      isInput
-      hasRightContent={!!RightContent}
-      style={style}
-    >
+    <HighlightRow onPress={onPress} isInput hasRightContent={!!RightContent} style={style}>
       <InputContainer>
         <Label style={labelStyle}>
           <LabelText style={labelTextStyle}>{label}</LabelText>

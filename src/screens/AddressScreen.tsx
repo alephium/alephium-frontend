@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon, QrCode as QrCodeIcon, Star as StarIcon } from 'lucide-react-native'
 import { useState } from 'react'
 import { ScrollView, View } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import Amount from '../components/Amount'
 import AppText from '../components/AppText'
@@ -44,7 +44,6 @@ const AddressScreen = ({
   }
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
@@ -87,19 +86,19 @@ const AddressScreen = ({
         </Header>
         <ScreenSection>
           <View>
-            <HighlightRow isTopRounded hasBottomBorder>
+            <HighlightRow>
               <Label>Address</Label>
               <View>
                 <AppText>{address.hash.substring(0, 20)}...</AppText>
               </View>
             </HighlightRow>
-            <HighlightRow hasBottomBorder>
+            <HighlightRow>
               <Label>Number of transactions</Label>
               <View>
                 <NumberOfTxs>{address.txNumber}</NumberOfTxs>
               </View>
             </HighlightRow>
-            <HighlightRow hasBottomBorder>
+            <HighlightRow>
               <Label>Locked ALPH balance</Label>
               <View>
                 <Badge border light>
@@ -107,7 +106,7 @@ const AddressScreen = ({
                 </Badge>
               </View>
             </HighlightRow>
-            <HighlightRow isBottomRounded>
+            <HighlightRow>
               <Label>Total ALPH balance</Label>
               <View>
                 <Badge light>

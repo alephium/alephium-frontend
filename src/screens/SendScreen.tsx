@@ -31,7 +31,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ScrollView } from 'react-native'
 import Toast from 'react-native-root-toast'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '../api/transactions'
 import Amount from '../components/Amount'
@@ -89,7 +89,6 @@ const SendScreen = ({
     params: { addressHash }
   }
 }: ScreenProps) => {
-  const theme = useTheme()
   const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
   const dispatch = useAppDispatch()
 
@@ -236,8 +235,6 @@ const SendScreen = ({
                     value={value}
                     onValueChange={onChange}
                     onBlur={onBlur}
-                    isTopRounded
-                    hasBottomBorder
                     error={
                       errors.fromAddressHash?.type === 'required'
                         ? requiredErrorMessage
@@ -260,7 +257,6 @@ const SendScreen = ({
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    hasBottomBorder
                     error={
                       errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message
                     }
@@ -280,7 +276,6 @@ const SendScreen = ({
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    isBottomRounded
                     keyboardType="number-pad"
                     error={
                       errors.amountInAlph?.type === 'required' ? requiredErrorMessage : errors.amountInAlph?.message
@@ -318,8 +313,6 @@ const SendScreen = ({
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
-                      isTopRounded
-                      hasBottomBorder
                       keyboardType="number-pad"
                       error={errors.gasAmount?.message}
                     />
@@ -340,8 +333,6 @@ const SendScreen = ({
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
-                      isBottomRounded
-                      hasBottomBorder
                       keyboardType="number-pad"
                       error={errors.gasPriceInAlph?.message}
                     />
@@ -353,11 +344,11 @@ const SendScreen = ({
             {txStep === 'send' && unsignedTxData.fees && totalAmount && (
               <ScreenSection>
                 <ScreenSectionTitle>Summary</ScreenSectionTitle>
-                <HighlightRow title="Expected fee" isTopRounded hasBottomBorder isSecondary>
+                <HighlightRow title="Expected fee" isSecondary>
                   <Amount value={unsignedTxData.fees} fullPrecision />
                 </HighlightRow>
-                <HighlightRow title="Total amount" isBottomRounded isSecondary>
-                  <Amount value={totalAmount} fullPrecision bold color={theme.global.accent} />
+                <HighlightRow title="Total amount" isSecondary>
+                  <Amount value={totalAmount} fullPrecision bold color="accent" />
                 </HighlightRow>
               </ScreenSection>
             )}

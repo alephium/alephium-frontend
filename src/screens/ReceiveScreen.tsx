@@ -63,13 +63,7 @@ const ReceiveScreen = ({
       </ScreenSection>
       <ScrollView>
         <ScreenSection>
-          <AddressSelector
-            label="To address"
-            value={toAddressHash}
-            onValueChange={setToAddressHash}
-            isTopRounded
-            isBottomRounded
-          />
+          <AddressSelector label="To address" value={toAddressHash} onValueChange={setToAddressHash} />
         </ScreenSection>
         <CenteredScreenSection>
           <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={toAddressHash} />
@@ -78,12 +72,12 @@ const ReceiveScreen = ({
           <Button title="Copy address" onPress={() => copyAddressToClipboard(toAddressHash)} Icon={ClipboardIcon} />
         </CenteredScreenSection>
         <ScreenSection>
-          <HighlightRow title="Address" isTopRounded hasBottomBorder>
+          <HighlightRow title="Address">
             <Text numberOfLines={1} ellipsizeMode="middle">
               {toAddressHash}
             </Text>
           </HighlightRow>
-          <HighlightRow title="Current estimated value" isBottomRounded>
+          <HighlightRow title="Current estimated value">
             <Amount value={balance} isFiat suffix={currencies[currency].symbol} bold />
           </HighlightRow>
         </ScreenSection>

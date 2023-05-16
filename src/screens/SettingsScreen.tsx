@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
 import { Alert } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'
@@ -48,7 +48,6 @@ const currencyOptions = Object.values(currencies).map((currency) => ({
 
 const SettingsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const hasAvailableBiometrics = useBiometrics()
   const [
     { discreetMode, requireAuth, theme: currentTheme, currency: currentCurrency },

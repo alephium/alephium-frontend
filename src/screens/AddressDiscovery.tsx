@@ -138,8 +138,6 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
                 title={address.settings.label || address.hash}
                 subtitle={address.settings.label ? address.hash : undefined}
                 truncate
-                isTopRounded={index === 0}
-                isBottomRounded={index === addresses.length - 1}
               >
                 <Amount value={BigInt(address.balance)} fadeDecimals bold />
               </HighlightRow>
@@ -153,23 +151,16 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
                 <ScanningIndication>
                   <Row style={{ marginBottom: 10 }}>
                     <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
-                    <AppText color={theme.font.secondary}>Scanning...</AppText>
+                    <AppText color="secondary">Scanning...</AppText>
                   </Row>
                   <ProgressBar progress={progress} color={theme.global.accent} />
                 </ScanningIndication>
               )}
 
               {discoveredAddresses.map(({ hash, balance }, index) => (
-                <HighlightRow
-                  key={hash}
-                  title={hash}
-                  truncate
-                  isTopRounded={index === 0}
-                  isBottomRounded={index === discoveredAddresses.length - 1}
-                  onPress={() => toggleAddressSelection(hash)}
-                >
+                <HighlightRow key={hash} title={hash} truncate onPress={() => toggleAddressSelection(hash)}>
                   <Row>
-                    <AmountStyled value={BigInt(balance)} color={theme.font.secondary} fadeDecimals />
+                    <AmountStyled value={BigInt(balance)} color="secondary" fadeDecimals />
                     <Checkbox
                       value={addressSelections[hash]}
                       disabled={loading}

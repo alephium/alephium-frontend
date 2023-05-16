@@ -21,7 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AddressCard from '../components/AddressCard'
 import AddressesTokensList from '../components/AddressesTokensList'
@@ -54,8 +54,6 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
       selectAddressesPendingTransactions(s, [selectedAddressHash])
     ]
   )
-
-  const theme = useTheme()
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)

@@ -106,7 +106,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
     <Screen>
       <CenteredInstructions instructions={instructions} stretch />
       <InputContainer>
-        <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus isTopRounded isBottomRounded />
+        <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus />
       </InputContainer>
       <ActionsContainer>
         <Button title="Next" type="primary" wide disabled={name.length < 3} onPress={handleButtonPress} />

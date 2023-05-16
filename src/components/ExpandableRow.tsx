@@ -48,7 +48,7 @@ const ExpandableRow = ({ expandedHeight, children, title = 'Advanced options', s
   }))
 
   return (
-    <HighlightRow isTopRounded isBottomRounded style={style}>
+    <HighlightRow style={style}>
       <Header onPress={toggleExpanded}>
         <Title>{title}</Title>
         <Animated.View style={chevronStyle}>

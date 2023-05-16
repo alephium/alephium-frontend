@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { memo, useState } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import NumberKeyboard, { NumberKeyboardKey } from '../keyboard/NumberKeyboard'

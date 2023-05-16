@@ -21,7 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { Alert, ScrollView, StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '../components/AppText'
 import Button from '../components/buttons/Button'

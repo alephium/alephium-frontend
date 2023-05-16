@@ -18,12 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
 import { StyleProp, TextStyle } from 'react-native'
-import { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
-import AppText from './AppText'
+import AppText, { AppTextProps } from './AppText'
 
-interface AmountProps {
+interface AmountProps extends AppTextProps {
   value?: bigint | number
   fadeDecimals?: boolean
   fullPrecision?: boolean
@@ -31,9 +30,6 @@ interface AmountProps {
   suffix?: string
   isFiat?: boolean
   showOnDiscreetMode?: boolean
-  color?: string
-  size?: number
-  bold?: boolean
   style?: StyleProp<TextStyle>
 }
 
@@ -50,8 +46,6 @@ const Amount = ({
   bold,
   style
 }: AmountProps) => {
-  const theme = useTheme()
-
   let integralPart = ''
   let fractionalPart = ''
   let quantitySymbol = ''
@@ -76,7 +70,7 @@ const Amount = ({
     }
   }
 
-  const fadedColor = fadeDecimals ? theme.font.secondary : color
+  const fadedColor = fadeDecimals ? 'secondary' : color
 
   return (
     <AppText {...{ bold, size, color }} style={style}>

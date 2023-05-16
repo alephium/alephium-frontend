@@ -81,8 +81,6 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
               key={networkName}
               title={capitalize(networkName)}
               onPress={() => handleNetworkItemPress(networkName)}
-              isFirst={index === 0}
-              isLast={index === networkNames.length - 1}
               isActive={networkName === selectedNetworkName}
             />
           ))}
@@ -100,8 +98,6 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    isTopRounded
-                    hasBottomBorder
                   />
                 )}
                 control={control}
@@ -116,7 +112,6 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    hasBottomBorder
                   />
                 )}
                 control={control}
@@ -131,7 +126,6 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    isBottomRounded
                   />
                 )}
                 control={control}

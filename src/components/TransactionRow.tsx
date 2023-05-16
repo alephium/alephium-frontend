@@ -22,7 +22,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { useTransactionInfo } from '../hooks/useTransactionalInfo'
@@ -50,7 +50,6 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
   const [price, currency] = useAppSelector((s) => [s.price, s.settings.currency])
   const { amount, infoType } = useTransactionInfo(tx, tx.address.hash, showInternalInflows)
   const { amountSign, Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
-  const theme = useTheme()
 
   const fiatValue = price.value !== undefined && amount !== undefined ? calculateAmountWorth(amount, price.value) : 0
 
@@ -59,13 +58,7 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
   }
 
   return (
-    <HighlightRow
-      style={style}
-      hasBottomBorder={!isLast}
-      isBottomRounded={isLast}
-      isTopRounded={isFirst}
-      onPress={handleOnPress}
-    >
+    <HighlightRow style={style} onPress={handleOnPress}>
       <Direction>
         <TransactionIcon color={iconBgColor}>
           <Icon size={16} strokeWidth={3} color={iconColor} />
@@ -73,7 +66,7 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
       </Direction>
       <TokenAndDate>
         <AppText bold>{label} ALPH</AppText>
-        <AppText color={theme.font.tertiary}>{dayjs(tx.timestamp).fromNow()}</AppText>
+        <AppText color="tertiary">{dayjs(tx.timestamp).fromNow()}</AppText>
       </TokenAndDate>
       <AmountColumn>
         <AppText>
@@ -81,10 +74,10 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
           <Amount value={amount} fadeDecimals bold />
         </AppText>
         <FiatValue>
-          <AppText bold color={theme.font.tertiary}>
+          <AppText bold color="tertiary">
             {amountSign}
           </AppText>
-          <Amount isFiat value={fiatValue} bold suffix={currencies[currency].symbol} color={theme.font.tertiary} />
+          <Amount isFiat value={fiatValue} bold suffix={currencies[currency].symbol} color="tertiary" />
         </FiatValue>
       </AmountColumn>
     </HighlightRow>

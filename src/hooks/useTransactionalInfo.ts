@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  calcTxAmountDeltaForAddress,
+  calcTxAmountsDeltaForAddress,
   getDirection,
   isConsolidationTx,
   TransactionDirection,
@@ -48,8 +48,8 @@ export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressH
     lockTime = tx.lockTime ? new Date(tx.lockTime) : undefined
   } else {
     outputs = tx.outputs ?? outputs
-    amount = calcTxAmountDeltaForAddress(tx, addressHash)
-    amount = amount < 0 ? amount * BigInt(-1) : amount
+    const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
+    amount = alphAmount < 0 ? alphAmount * BigInt(-1) : alphAmount
 
     if (isConsolidationTx(tx)) {
       direction = 'out'

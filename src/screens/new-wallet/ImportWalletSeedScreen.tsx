@@ -198,13 +198,13 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
                       exiting={FadeOut}
                       layout={Layout.duration(200).delay(200)}
                     >
-                      <AppText color={colord(theme.global.accent).darken(0.1).toHex()} bold>
+                      <AppText color="accent" bold>
                         {index + 1}. {word.word}
                       </AppText>
                     </SelectedWordBox>
                   ))
                 ) : (
-                  <AppText color={theme.font.secondary}>Start entering your phrase... 👇</AppText>
+                  <AppText color="secondary">Start entering your phrase... 👇</AppText>
                 )}
               </SecretPhraseWords>
             </ScrollView>
@@ -236,8 +236,6 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
             onChangeText={setTypedInput}
             onSubmitEditing={handleEnterPress}
             autoFocus
-            isTopRounded
-            isBottomRounded
             blurOnSubmit={false}
             autoCorrect={false}
             error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
