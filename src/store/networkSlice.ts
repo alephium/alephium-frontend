@@ -63,7 +63,11 @@ const networkSlice = createSlice({
     },
     storedNetworkSettingsLoaded: (_, action: PayloadAction<NetworkSettings>) => parseSettingsUpdate(action.payload),
     customNetworkSettingsSaved: (_, action: PayloadAction<NetworkSettings>) => parseSettingsUpdate(action.payload),
-    apiClientInitSucceeded: (state) => {
+    apiClientInitSucceeded: (
+      state,
+      action: PayloadAction<{ networkId: NetworkSettings['networkId']; networkName: NetworkName }>
+    ) => {
+      state.settings.networkId = action.payload.networkId
       state.status = 'online'
     },
     apiClientInitFailed: (state) => {

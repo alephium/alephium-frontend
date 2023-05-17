@@ -16,28 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { CliqueClient, ExplorerClient } from '@alephium/sdk'
+import { ExplorerProvider, NodeProvider, throttledFetch } from '@alephium/web3'
 
 import { defaultNetworkSettings } from '../persistent-storage/settings'
 import { NetworkSettings } from '../types/settings'
 
 export class Client {
-  cliqueClient: CliqueClient
-  explorerClient: ExplorerClient
+  node: NodeProvider
+  explorer: ExplorerProvider
 
   constructor({ nodeHost, explorerApiHost }: NetworkSettings) {
-    this.cliqueClient = new CliqueClient({ baseUrl: nodeHost })
-    this.explorerClient = new ExplorerClient({ baseUrl: explorerApiHost })
+    this.node = new NodeProvider(nodeHost, undefined, throttledFetch(5))
+    this.explorer = new ExplorerProvider(explorerApiHost, undefined, throttledFetch(5))
   }
 
-  async init(
-    nodeHost: NetworkSettings['nodeHost'],
-    explorerApiHost: NetworkSettings['explorerApiHost'],
-    isMultiNodesClique = false
-  ) {
-    this.cliqueClient = new CliqueClient({ baseUrl: nodeHost })
-    this.explorerClient = new ExplorerClient({ baseUrl: explorerApiHost })
-    await this.cliqueClient.init(isMultiNodesClique)
+  init(nodeHost: NetworkSettings['nodeHost'], explorerApiHost: NetworkSettings['explorerApiHost']) {
+    this.node = new NodeProvider(nodeHost, undefined, throttledFetch(5))
+    this.explorer = new ExplorerProvider(explorerApiHost, undefined, throttledFetch(5))
   }
 }
 

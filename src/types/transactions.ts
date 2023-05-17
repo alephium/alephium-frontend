@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 
 import { Address } from './addresses'
 
@@ -30,6 +30,6 @@ export type PendingTransaction = {
   status: 'pending'
 }
 
-export type AddressConfirmedTransaction = Transaction & { address: Address }
+export type AddressConfirmedTransaction = explorer.Transaction & { address: Address }
 export type AddressPendingTransaction = PendingTransaction & { address: Address }
 export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction

@@ -28,6 +28,7 @@ export interface GeneralSettings {
 }
 
 export interface NetworkSettings {
+  networkId: number
   nodeHost: string
   explorerApiHost: string
   explorerUrl: string

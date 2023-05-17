@@ -16,14 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressKeyPair,
-  addressToGroup,
-  deriveAddressAndKeys,
-  TOTAL_NUMBER_OF_GROUPS,
-  walletImportAsyncUnsafe
-} from '@alephium/sdk'
-import { AddressInfo } from '@alephium/sdk/api/explorer'
+import { AddressKeyPair, deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/sdk'
+import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
 import client from '../api/client'
@@ -41,7 +35,7 @@ import { RootState } from './store'
 
 const sliceName = 'addressDiscovery'
 
-export type DiscoveredAddress = AddressKeyPair & { balance: AddressInfo['balance'] }
+export type DiscoveredAddress = AddressKeyPair & { balance: explorer.AddressInfo['balance'] }
 
 interface AddressDiscoveryState extends EntityState<DiscoveredAddress> {
   loading: boolean
@@ -113,13 +107,12 @@ export const discoverAddresses = createAsyncThunk(
 
         groupData.highestIndex = newAddressData.index
 
-        const { data } = await client.explorerClient.addresses.postAddressesUsed([newAddressData.hash])
+        const data = await client.explorer.addresses.postAddressesUsed([newAddressData.hash])
         const addressIsActive = data.length > 0 && data[0]
 
         if (addressIsActive) {
-          const {
-            data: { balance }
-          } = await client.explorerClient.getAddressDetails(newAddressData.hash)
+          // TODO: Shouldn't we also show locked balance or at least a sum?
+          const { balance } = await client.explorer.addresses.getAddressesAddressBalance(newAddressData.hash)
           dispatch(addressDiscovered({ ...newAddressData, balance }))
 
           groupData.gap = 0
