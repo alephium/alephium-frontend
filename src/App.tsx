@@ -18,20 +18,33 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import { isEnrolledAsync } from 'expo-local-authentication'
 import { StatusBar } from 'expo-status-bar'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { Alert, AppState, AppStateStatus } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
-import { useAppStateChange } from './hooks/useAppStateChange'
+import { useAppDispatch, useAppSelector } from './hooks/redux'
 import useInitializeClient from './hooks/useInitializeClient'
 import useLoadStoredSettings from './hooks/useLoadStoredSettings'
 import useRefreshALPHPrice from './hooks/useRefreshALPHPrice'
 import RootStackNavigation from './navigation/RootStackNavigation'
+import {
+  areThereOtherWallets,
+  deriveWalletStoredAddresses,
+  disableBiometrics,
+  getActiveWalletMetadata,
+  getStoredActiveWallet,
+  rememberActiveWallet
+} from './persistent-storage/wallets'
+import { biometricsDisabled, walletUnlocked } from './store/activeWalletSlice'
+import { appBecameInactive } from './store/appSlice'
 import { store } from './store/store'
 import { themes } from './style/themes'
+import { navigateRootStack, resetNavigationState, setNavigationState } from './utils/navigation'
 
 dayjs.extend(updateLocale)
 dayjs.updateLocale('en', {
@@ -78,10 +91,101 @@ const App = () => {
 }
 
 const Main = ({ children }: { children: ReactNode }) => {
+  const dispatch = useAppDispatch()
+  const appState = useRef(AppState.currentState)
+  const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
+  const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
+  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
+
   useInitializeClient()
   useLoadStoredSettings()
-  useAppStateChange()
   useRefreshALPHPrice()
+
+  const unlockActiveWallet = useCallback(async () => {
+    if (activeWalletMnemonic) return
+
+    const hasAvailableBiometrics = await isEnrolledAsync()
+
+    try {
+      const activeWalletMetadata = await getActiveWalletMetadata()
+
+      // Disable biometrics if needed
+      if (activeWalletMetadata && activeWalletMetadata.authType === 'biometrics' && !hasAvailableBiometrics) {
+        await disableBiometrics(activeWalletMetadata.id)
+        dispatch(biometricsDisabled())
+      }
+
+      const wallet = await getStoredActiveWallet()
+
+      if (!wallet) {
+        if (await areThereOtherWallets()) {
+          navigateRootStack('SwitchWalletAfterDeletionScreen')
+        } else if (lastNavigationState) {
+          console.log('Running restoreNavigationState()')
+          setNavigationState(lastNavigationState)
+        } else {
+          console.log('Navigating to LandingScreen')
+          navigateRootStack('LandingScreen')
+        }
+        return
+      }
+
+      if (wallet.authType === 'pin') {
+        console.log('Navigating to LoginScreen')
+        navigateRootStack('LoginScreen', { walletIdToLogin: wallet.metadataId, workflow: 'wallet-unlock' })
+        return
+      }
+
+      if (wallet.authType === 'biometrics') {
+        await rememberActiveWallet(wallet.metadataId)
+
+        const addressesToInitialize =
+          addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
+        dispatch(walletUnlocked({ wallet, addressesToInitialize }))
+
+        console.log('Restoring navigation since it is biometrics')
+        lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
+      }
+      // TODO: Revisit error handling with proper error codes
+    } catch (e: unknown) {
+      const error = e as { message?: string }
+      if (error.message === 'User canceled the authentication') {
+        Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
+          { text: 'Try again', onPress: unlockActiveWallet }
+        ])
+      } else {
+        console.error(e)
+      }
+    }
+  }, [activeWalletMnemonic, addressesStatus, dispatch, lastNavigationState])
+
+  useEffect(() => {
+    if (!activeWalletMnemonic) unlockActiveWallet()
+
+    // We want this to only run 1 time and not every time lastNavigationState changes (dep of unlockActiveWallet)
+    // TODO: Revisit this approach.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeWalletMnemonic])
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      console.log('handleAppStateChange runs with: ', nextAppState)
+      if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isCameraOpen) {
+        console.log('App became inactive.')
+        dispatch(appBecameInactive())
+      } else if (nextAppState === 'active' && !activeWalletMnemonic) {
+        console.log('Calling unlockActiveWallet()')
+        unlockActiveWallet()
+      }
+
+      appState.current = nextAppState
+    }
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange)
+
+    return subscription.remove
+  }, [activeWalletMnemonic, dispatch, isCameraOpen, unlockActiveWallet])
 
   return <>{children}</>
 }

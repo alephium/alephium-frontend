@@ -18,9 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
-import { useCallback } from 'react'
 
-import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 
 const initialNavigationState = {
@@ -46,20 +44,10 @@ export const isNavStateRestorable = (state: NavigationState) => {
   return latestRoute && !excludedRoutesFromRestoring.includes(latestRoute)
 }
 
-export const useRestoreNavigationState = () => {
-  const lastNavigationState = useAppSelector((state) => state.app.lastNavigationState)
+export const setNavigationState = (state: NavigationState) =>
+  rootStackNavigationRef.resetRoot(isNavStateRestorable(state) ? state : initialNavigationState)
 
-  const restoreNavigationState = useCallback(
-    (reset?: boolean) => {
-      const resetToInitial = reset || !lastNavigationState || !isNavStateRestorable(lastNavigationState)
-
-      rootStackNavigationRef.resetRoot(resetToInitial ? initialNavigationState : lastNavigationState)
-    },
-    [lastNavigationState]
-  )
-
-  return restoreNavigationState
-}
+export const resetNavigationState = () => rootStackNavigationRef.resetRoot(initialNavigationState)
 
 // Navigating without the navigation prop:
 // https://reactnavigation.org/docs/navigating-without-navigation-prop
