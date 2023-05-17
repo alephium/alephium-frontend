@@ -41,3 +41,15 @@ eas build --profile development --platform android
 ## Debugging
 
 To be able to inspect the DOM tree as well as the Redux state with React Native Debugger while using a development client, you need to shake the phone, tap on "Open React Native dev menu" and select "Debug".
+
+### Running on Android with USB debugging
+
+```shell
+npm run android
+```
+
+If you get an error `SDK location not found.` make sure the `ANDROID_SDK_ROOT` env var has the path to the Android SDK. For example, on macOS, you can run the following:
+
+```shell
+ANDROID_SDK_ROOT=/Users/<USERNAME>/Library/Android/sdk npm run android
+```
