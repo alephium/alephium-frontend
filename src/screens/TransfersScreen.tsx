@@ -17,17 +17,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { useMemo } from 'react'
 
 import TransactionsFlatListScreen from '../components/layout/TransactionsFlatListScreen'
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { selectAddressesConfirmedTransactions } from '../store/confirmedTransactionsSlice'
-import { selectAddressesPendingTransactions } from '../store/pendingTransactionsSlice'
+import { makeSelectAddressesConfirmedTransactions } from '../store/confirmedTransactionsSlice'
+import { makeSelectAddressesPendingTransactions } from '../store/pendingTransactionsSlice'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
+  const selectAddressesConfirmedTransactions = useMemo(makeSelectAddressesConfirmedTransactions, [])
+  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
 

@@ -17,13 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { chunk } from 'lodash'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { LayoutChangeEvent, View } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import useTokenMetadata from '../hooks/useTokenMetadata'
-import { selectAllAddresses, selectTokens } from '../store/addressesSlice'
+import { makeSelectTokens, selectAllAddresses } from '../store/addressesSlice'
 import { selectIsPriceUninitialized } from '../store/priceSlice'
 import { Address } from '../types/addresses'
 import { AddressToken, ALEPHIUM_TOKEN_ID, TokenMetadata } from '../types/tokens'
@@ -44,8 +44,8 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
   const price = useAppSelector((s) => s.price.value)
   const addressDataStatus = useAppSelector((s) => s.addresses.status)
   const fiatCurrency = useAppSelector((s) => s.settings.currency)
-  // TODO: better way?
   const addresses = addressesParam ?? allAddresses
+  const selectTokens = useMemo(makeSelectTokens, [])
   const tokens = useAppSelector((s) => selectTokens(s, addresses))
   const tokenMetadata = useTokenMetadata()
 

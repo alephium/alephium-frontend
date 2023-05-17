@@ -73,15 +73,16 @@ export const { selectAll: selectAllConfirmedTransactions } = confirmedTransactio
   (state) => state[sliceName]
 )
 
-export const selectAddressesConfirmedTransactions = createSelector(
-  [
-    selectAllAddresses,
-    selectAllConfirmedTransactions,
-    (_, addressHashes?: AddressHash | AddressHash[]) => addressHashes
-  ],
-  (allAddresses, confirmedTransactions, addressHashes): AddressConfirmedTransaction[] =>
-    selectAddressTransactions(allAddresses, confirmedTransactions, addressHashes) as AddressConfirmedTransaction[]
-)
+export const makeSelectAddressesConfirmedTransactions = () =>
+  createSelector(
+    [
+      selectAllAddresses,
+      selectAllConfirmedTransactions,
+      (_, addressHashes?: AddressHash | AddressHash[]) => addressHashes
+    ],
+    (allAddresses, confirmedTransactions, addressHashes): AddressConfirmedTransaction[] =>
+      selectAddressTransactions(allAddresses, confirmedTransactions, addressHashes) as AddressConfirmedTransaction[]
+  )
 
 export default confirmedTransactionsSlice
 

@@ -280,26 +280,27 @@ export const {
   selectIds: selectAddressIds
 } = addressesAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const selectTokens = createSelector([(state, addresses: Address[]) => addresses], (addresses) => {
-  const resultTokens: AddressToken[] = []
+export const makeSelectTokens = () =>
+  createSelector([(_, addresses: Address[]) => addresses], (addresses) => {
+    const resultTokens: AddressToken[] = []
 
-  addresses.forEach((address) => {
-    address.tokens.forEach((token) => {
-      const tokenBalances = resultTokens.find((resultToken) => resultToken.id === token.id)?.balances
+    addresses.forEach((address) => {
+      address.tokens.forEach((token) => {
+        const tokenBalances = resultTokens.find((resultToken) => resultToken.id === token.id)?.balances
 
-      if (tokenBalances) {
-        tokenBalances.balance = (BigInt(tokenBalances.balance) + BigInt(token.balances.balance)).toString()
-        tokenBalances.lockedBalance = (
-          BigInt(tokenBalances.lockedBalance) + BigInt(token.balances.lockedBalance)
-        ).toString()
-      } else {
-        resultTokens.push(token)
-      }
+        if (tokenBalances) {
+          tokenBalances.balance = (BigInt(tokenBalances.balance) + BigInt(token.balances.balance)).toString()
+          tokenBalances.lockedBalance = (
+            BigInt(tokenBalances.lockedBalance) + BigInt(token.balances.lockedBalance)
+          ).toString()
+        } else {
+          resultTokens.push(token)
+        }
+      })
     })
-  })
 
-  return resultTokens
-})
+    return resultTokens
+  })
 
 export const selectDefaultAddress = createSelector(selectAllAddresses, (addresses) =>
   addresses.find((address) => address.settings.isMain)
