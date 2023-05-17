@@ -44,6 +44,11 @@ export const generateAndStoreWallet = async (
 ): Promise<GeneratedWallet> => {
   const isMnemonicBackedUp = !!mnemonicToImport
 
+  const wallets = await getWalletsMetadata()
+  const walletNames = wallets.map(({ name }) => name)
+
+  if (walletNames.includes(name)) throw new Error('A wallet with this name already exists')
+
   const wallet = mnemonicToImport
     ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
     : await walletGenerateAsyncUnsafe(mnemonicToSeed)

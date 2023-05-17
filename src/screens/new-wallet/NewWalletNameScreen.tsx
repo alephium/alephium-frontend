@@ -28,6 +28,7 @@ import SpinnerModal from '../../components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import useBiometrics from '../../hooks/useBiometrics'
+import { useSortedWallets } from '../../hooks/useSortedWallets'
 import RootStackParamList from '../../navigation/rootStackRoutes'
 import { enableBiometrics, generateAndStoreWallet } from '../../persistent-storage/wallets'
 import { biometricsEnabled, newWalletGenerated } from '../../store/activeWalletSlice'
@@ -53,6 +54,9 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const hasAvailableBiometrics = useBiometrics()
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
   const lastActiveWallet = useRef(activeWallet)
+  const wallets = useSortedWallets()
+  const walletNames = wallets.map(({ name }) => name)
+  const error = walletNames.includes(name) ? 'A wallet with this name already exists' : ''
 
   const isAuthenticated = !!activeWallet.mnemonic
 
@@ -106,10 +110,10 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
     <Screen>
       <CenteredInstructions instructions={instructions} stretch />
       <InputContainer>
-        <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus />
+        <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus error={error} />
       </InputContainer>
       <ActionsContainer>
-        <Button title="Next" type="primary" wide disabled={name.length < 3} onPress={handleButtonPress} />
+        <Button title="Next" type="primary" wide disabled={name.length < 3 || !!error} onPress={handleButtonPress} />
       </ActionsContainer>
       {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} />}
       <SpinnerModal isActive={loading} text="Creating wallet..." />
