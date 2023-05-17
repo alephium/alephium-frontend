@@ -88,8 +88,7 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     <TransactionsFlatListScreen
       confirmedTransactions={selectedAddressConfirmedTransactions}
       pendingTransactions={selectedAddressPendingTransactions}
-      addressHashes={[selectedAddressHash]}
-      haveAllPagesLoaded={selectedAddress.allTransactionPagesLoaded}
+      addressHash={selectedAddressHash}
       initialNumToRender={5}
       showInternalInflows
       ListHeaderComponent={

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,
   createEntityAdapter,
@@ -25,13 +25,17 @@ import {
   EntityState,
   PayloadAction
 } from '@reduxjs/toolkit'
-import { uniq } from 'lodash'
+import { chunk, uniq } from 'lodash'
 
-import { fetchAddressesData, fetchAddressTransactionsNextPage } from '../api/addresses'
+import {
+  fetchAddressesData,
+  fetchAddressesTransactionsNextPage,
+  fetchAddressTransactionsNextPage
+} from '../api/addresses'
 import { Address, AddressHash, AddressPartial } from '../types/addresses'
 import { AddressToken } from '../types/tokens'
 import { getRandomLabelColor } from '../utils/colors'
-import { extractNewTransactionHashes } from '../utils/transactions'
+import { extractNewTransactionHashes, getTransactionsOfAddress } from '../utils/transactions'
 import { newWalletGenerated, walletSwitched, walletUnlocked } from './activeWalletSlice'
 import { appReset } from './appSlice'
 import { customNetworkSettingsSaved, networkPresetSwitched } from './networkSlice'
@@ -61,27 +65,67 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
 
 export const syncAddressesData = createAsyncThunk(
   `${sliceName}/syncAddressesData`,
-  async (payload: AddressHash[] | undefined, { getState, dispatch }) => {
+  async (payload: AddressHash | AddressHash[] | undefined, { getState, dispatch }) => {
     dispatch(loadingStarted())
 
     const state = getState() as RootState
-    const addresses = payload ?? (state.addresses.ids as AddressHash[])
+    const addresses =
+      payload !== undefined ? (Array.isArray(payload) ? payload : [payload]) : (state.addresses.ids as AddressHash[])
     const results = await fetchAddressesData(addresses)
 
     return results
   }
 )
 
-export const syncAddressesTransactionsNextPage = createAsyncThunk(
-  `${sliceName}/syncAddressesTransactionsNextPage`,
-  async (payload: AddressHash[] | undefined, { getState, dispatch }) => {
+// TODO: Same as in desktop wallet, share state?
+export const syncAddressTransactionsNextPage = createAsyncThunk(
+  'addresses/syncAddressTransactionsNextPage',
+  async (payload: AddressHash, { getState, dispatch }) => {
     dispatch(loadingStarted())
 
     const state = getState() as RootState
-    const allAddresses = selectAllAddresses(state)
-    const addresses = payload ? allAddresses.filter((address) => payload.includes(address.hash)) : allAddresses
+    const address = selectAddressByHash(state, payload)
 
-    return await Promise.all(addresses.map((address) => fetchAddressTransactionsNextPage(address)))
+    if (!address) return
+
+    return await fetchAddressTransactionsNextPage(address)
+  }
+)
+
+// TODO: Same as in desktop wallet, share state?
+export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
+  'addresses/syncAllAddressesTransactionsNextPage',
+  async (_, { getState, dispatch }): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
+    dispatch(loadingStarted())
+
+    const state = getState() as RootState
+    const addresses = selectAllAddresses(state)
+
+    let nextPageToLoad = state.confirmedTransactions.pageLoaded + 1
+    let newTransactionsFound = false
+    let transactions: explorer.Transaction[] = []
+
+    while (!newTransactionsFound) {
+      // NOTE: Explorer backend limits this query to 80 addresses
+      const results = await Promise.all(
+        chunk(addresses, 80).map((addressesChunk) => fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad))
+      )
+
+      transactions = results.flat()
+
+      if (transactions.length === 0) break
+
+      newTransactionsFound = addresses.some((address) => {
+        const transactionsOfAddress = getTransactionsOfAddress(transactions, address)
+        const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
+
+        return newTxHashes.length > 0
+      })
+
+      nextPageToLoad += 1
+    }
+
+    return { pageLoaded: nextPageToLoad - 1, transactions }
   }
 )
 
@@ -184,18 +228,38 @@ const addressesSlice = createSlice({
         state.status = 'initialized'
         state.loading = false
       })
-      .addCase(syncAddressesTransactionsNextPage.fulfilled, (state, action) => {
-        const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, transactions, page }) => {
-          const address = state.entities[hash] as Address
-          const newTxHashes = extractNewTransactionHashes(transactions, address.transactions)
+      .addCase(syncAddressTransactionsNextPage.fulfilled, (state, action) => {
+        const addressTransactionsData = action.payload
+
+        if (!addressTransactionsData) return
+
+        const { hash, transactions, page } = addressTransactionsData
+        const address = state.entities[hash] as Address
+        const newTxHashes = extractNewTransactionHashes(transactions, address.transactions)
+
+        addressesAdapter.updateOne(state, {
+          id: hash,
+          changes: {
+            transactions: address.transactions.concat(newTxHashes),
+            transactionsPageLoaded: newTxHashes.length > 0 ? page : address.transactionsPageLoaded,
+            allTransactionPagesLoaded: transactions.length === 0
+          }
+        })
+
+        state.loading = false
+      })
+      .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, { payload: { transactions } }) => {
+        const addresses = getAddresses(state)
+
+        const updatedAddresses = addresses.map((address) => {
+          const transactionsOfAddress = getTransactionsOfAddress(transactions, address)
+          const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
 
           return {
-            id: hash,
+            id: address.hash,
             changes: {
               transactions: address.transactions.concat(newTxHashes),
-              transactionsPageLoaded: newTxHashes.length > 0 ? page : address.transactionsPageLoaded,
-              allTransactionPagesLoaded: newTxHashes.length === 0
+              allTransactionPagesLoaded: transactions.length === 0
             }
           }
         })
@@ -236,10 +300,6 @@ export const selectTokens = createSelector([(state, addresses: Address[]) => add
 
   return resultTokens
 })
-
-export const selectHaveAllPagesLoaded = createSelector(selectAllAddresses, (addresses) =>
-  addresses.every((address) => address.allTransactionPagesLoaded)
-)
 
 export const selectDefaultAddress = createSelector(selectAllAddresses, (addresses) =>
   addresses.find((address) => address.settings.isMain)

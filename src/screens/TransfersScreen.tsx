@@ -22,27 +22,19 @@ import TransactionsFlatListScreen from '../components/layout/TransactionsFlatLis
 import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import { selectAddressIds, selectHaveAllPagesLoaded } from '../store/addressesSlice'
 import { selectAddressesConfirmedTransactions } from '../store/confirmedTransactionsSlice'
 import { selectAddressesPendingTransactions } from '../store/pendingTransactionsSlice'
-import { AddressHash } from '../types/addresses'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const [confirmedTransactions, pendingTransactions, haveAllPagesLoaded] = useAppSelector((s) => [
-    selectAddressesConfirmedTransactions(s, addressHashes),
-    selectAddressesPendingTransactions(s, addressHashes),
-    selectHaveAllPagesLoaded(s)
-  ])
+  const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
+  const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
 
   return (
     <TransactionsFlatListScreen
       confirmedTransactions={confirmedTransactions}
       pendingTransactions={pendingTransactions}
-      addressHashes={addressHashes}
-      haveAllPagesLoaded={haveAllPagesLoaded}
       initialNumToRender={8}
       contentContainerStyle={{ flexGrow: 1 }}
     />

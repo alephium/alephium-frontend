@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair } from '@alephium/sdk'
+import { AddressKeyPair, TokenBalances } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
 
 import { TimeInMs } from './numbers'
@@ -53,4 +53,12 @@ export type AddressPartial = AddressKeyPair & { settings: AddressSettings }
 export type AddressDiscoveryGroupData = {
   highestIndex: AddressIndex | undefined
   gap: number
+}
+
+export type AddressDataSyncResult = {
+  hash: AddressHash
+  details: explorer.AddressInfo
+  transactions: explorer.Transaction[]
+  mempoolTransactions: explorer.MempoolTransaction[]
+  tokens: TokenBalances[]
 }
