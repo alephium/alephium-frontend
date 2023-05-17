@@ -23,7 +23,7 @@ import { useAppSelector } from '../redux'
 
 const usePersistAddressSettings = () => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const activeWalletId = useAppSelector((state) => state.activeWallet.metadataId)
+  const activeWalletId = useAppSelector((s) => s.activeWallet.metadataId)
 
   return async (addresses: AddressPartial[] | AddressPartial) => {
     await persistAddressesSettings(Array.isArray(addresses) ? addresses : [addresses], activeWalletId, defaultAddress)

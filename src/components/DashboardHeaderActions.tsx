@@ -32,10 +32,8 @@ interface DashboardHeaderActionsProps {
 }
 
 const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
-  const [isMnemonicBackedUp, networkStatus] = useAppSelector((s) => [
-    s.activeWallet.isMnemonicBackedUp,
-    s.network.status
-  ])
+  const isMnemonicBackedUp = useAppSelector((s) => s.activeWallet.isMnemonicBackedUp)
+  const networkStatus = useAppSelector((s) => s.network.status)
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 

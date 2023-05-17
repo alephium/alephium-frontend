@@ -25,7 +25,7 @@ import Select, { SelectProps } from './Select'
 type AddressSelectorProps = Omit<SelectProps<string>, 'options' | 'renderValue'>
 
 const AddressSelector = ({ label = 'Address', ...props }: AddressSelectorProps) => {
-  const addressEntries = useAppSelector((state) => state.addresses.entities)
+  const addressEntries = useAppSelector((s) => s.addresses.entities)
   const addresses = useAppSelector(selectAllAddresses)
 
   const addressesOptions = addresses.map((address) => ({

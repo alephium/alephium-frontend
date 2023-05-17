@@ -46,7 +46,8 @@ export interface SwitchWalletScreenProps extends StackScreenProps<RootStackParam
 const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   const dispatch = useAppDispatch()
   const wallets = useSortedWallets()
-  const [activeWalletMetadataId, pin] = useAppSelector((s) => [s.activeWallet.metadataId, s.credentials.pin])
+  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
+  const pin = useAppSelector((s) => s.credentials.pin)
 
   const [loading, setLoading] = useState(false)
 

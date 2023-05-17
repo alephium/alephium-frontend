@@ -45,20 +45,20 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
 const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const [name, setName] = useState('')
-  const [method, activeWallet, pin] = useAppSelector((s) => [
-    s.walletGeneration.method,
-    s.activeWallet,
-    s.credentials.pin
-  ])
-  const [loading, setLoading] = useState(false)
+  const method = useAppSelector((s) => s.walletGeneration.method)
+  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
+  const pin = useAppSelector((s) => s.credentials.pin)
   const hasAvailableBiometrics = useBiometrics()
-  const [isPinModalVisible, setIsPinModalVisible] = useState(false)
-  const lastActiveWallet = useRef(activeWallet)
   const wallets = useSortedWallets()
+  const lastActiveWalletAuthType = useRef(activeWalletAuthType)
+
+  const [loading, setLoading] = useState(false)
+  const [isPinModalVisible, setIsPinModalVisible] = useState(false)
   const walletNames = wallets.map(({ name }) => name)
   const error = walletNames.includes(name) ? 'A wallet with this name already exists' : ''
 
-  const isAuthenticated = !!activeWallet.mnemonic
+  const isAuthenticated = !!activeWalletMnemonic
 
   const createNewWallet = useCallback(
     async (pin?: string) => {
@@ -74,7 +74,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
       dispatch(syncAddressesData([wallet.firstAddress.hash]))
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
-      if (lastActiveWallet.current.authType === 'biometrics' && hasAvailableBiometrics) {
+      if (lastActiveWalletAuthType.current === 'biometrics' && hasAvailableBiometrics) {
         await enableBiometrics(wallet.metadataId, wallet.mnemonic)
         dispatch(biometricsEnabled())
       }

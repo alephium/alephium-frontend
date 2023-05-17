@@ -41,13 +41,12 @@ interface AddressesTokensListProps {
 const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListProps) => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
+  const price = useAppSelector((s) => s.price.value)
+  const addressDataStatus = useAppSelector((s) => s.addresses.status)
+  const fiatCurrency = useAppSelector((s) => s.settings.currency)
+  // TODO: better way?
   const addresses = addressesParam ?? allAddresses
-  const [price, addressDataStatus, fiatCurrency, tokens] = useAppSelector((s) => [
-    s.price,
-    s.addresses.status,
-    s.settings.currency,
-    selectTokens(s, addresses)
-  ])
+  const tokens = useAppSelector((s) => selectTokens(s, addresses))
   const tokenMetadata = useTokenMetadata()
 
   const [carouselItemHeight, setCarouselItemHeight] = useState(258)
@@ -96,14 +95,14 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
         lockedBalance: addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0)).toString()
       },
       worth: {
-        price: price.value,
+        price,
         currency: fiatCurrency
       }
     }
 
     setTokensChunked(chunk(tokens.concat([alephiumToken]).sort(sortByWorthThenName), PAGE_SIZE))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addressDataStatus, addresses, fiatCurrency, price.value, sortByWorthThenName])
+  }, [addressDataStatus, addresses, fiatCurrency, price, sortByWorthThenName])
 
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
     const newCarouselItemHeight = event.nativeEvent.layout.height

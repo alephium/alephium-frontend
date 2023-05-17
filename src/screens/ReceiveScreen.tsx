@@ -45,11 +45,9 @@ const ReceiveScreen = ({
 }: ScreenProps) => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [toAddressHash, setToAddressHash] = useState<AddressHash>(addressHash ?? defaultAddress?.hash)
-  const [toAddress, price, currency] = useAppSelector((s) => [
-    selectAddressByHash(s, toAddressHash),
-    s.price.value,
-    s.settings.currency
-  ])
+  const toAddress = useAppSelector((s) => selectAddressByHash(s, toAddressHash))
+  const price = useAppSelector((s) => s.price.value)
+  const currency = useAppSelector((s) => s.settings.currency)
   const theme = useTheme()
 
   if (!toAddress) return null

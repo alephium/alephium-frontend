@@ -33,12 +33,14 @@ interface BalanceSummaryProps {
 }
 
 const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
-  const [price, currency, addressDataStatus] = useAppSelector((s) => [s.price, s.settings.currency, s.addresses.status])
+  const price = useAppSelector((s) => s.price.value)
+  const currency = useAppSelector((s) => s.settings.currency)
+  const addressDataStatus = useAppSelector((s) => s.addresses.status)
   const totalBalance = useAppSelector(selectTotalBalance)
   const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
   const theme = useTheme()
 
-  const balance = calculateAmountWorth(totalBalance, price.value ?? 0)
+  const balance = calculateAmountWorth(totalBalance, price ?? 0)
   const showActivityIndicator = isPriceUninitialized || addressDataStatus === 'uninitialized'
 
   return (

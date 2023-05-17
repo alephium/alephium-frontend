@@ -47,12 +47,12 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
-  const [selectedAddress, selectedAddressConfirmedTransactions, selectedAddressPendingTransactions] = useAppSelector(
-    (s) => [
-      selectAddressByHash(s, selectedAddressHash),
-      selectAddressesConfirmedTransactions(s, [selectedAddressHash]),
-      selectAddressesPendingTransactions(s, [selectedAddressHash])
-    ]
+  const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
+  const selectedAddressConfirmedTransactions = useAppSelector((s) =>
+    selectAddressesConfirmedTransactions(s, selectedAddressHash)
+  )
+  const selectedAddressPendingTransactions = useAppSelector((s) =>
+    selectAddressesPendingTransactions(s, selectedAddressHash)
   )
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)

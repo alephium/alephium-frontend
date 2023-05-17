@@ -34,7 +34,7 @@ interface IOListProps {
 
 const IOList = ({ isOut, tx }: IOListProps) => {
   const io = (isOut ? tx.outputs : tx.inputs) as Array<explorer.Output | explorer.Input> | undefined
-  const addresses = useAppSelector((state) => state.addresses.entities)
+  const addresses = useAppSelector((s) => s.addresses.entities)
 
   if (io && io.length > 0) {
     const isAllCurrentAddress = io.every((o) => o.address === tx.address.hash)

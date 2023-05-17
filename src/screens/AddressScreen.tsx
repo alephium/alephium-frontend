@@ -45,7 +45,7 @@ const AddressScreen = ({
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)

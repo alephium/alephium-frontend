@@ -56,16 +56,15 @@ const enablePasteForDevelopment = true
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const [name, activeWallet, pin, isCameraOpen] = useAppSelector((s) => [
-    s.walletGeneration.walletName,
-    s.activeWallet,
-    s.credentials.pin,
-    s.app.isCameraOpen
-  ])
+  const name = useAppSelector((s) => s.walletGeneration.walletName)
+  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
+  const pin = useAppSelector((s) => s.credentials.pin)
+  const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const hasAvailableBiometrics = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
-  const lastActiveWallet = useRef(activeWallet)
+  const lastActiveWalletAuthType = useRef(activeWalletAuthType)
 
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
@@ -75,7 +74,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false)
   const [encryptedWalletFromQRCode, setEncryptedWalletFromQRCode] = useState('')
 
-  const isAuthenticated = !!activeWallet.mnemonic
+  const isAuthenticated = !!activeWalletMnemonic
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
@@ -144,7 +143,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       }
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
-      if (isAuthenticated && lastActiveWallet.current.authType === 'biometrics' && hasAvailableBiometrics) {
+      if (isAuthenticated && lastActiveWalletAuthType.current === 'biometrics' && hasAvailableBiometrics) {
         await enableBiometrics(wallet.metadataId, wallet.mnemonic)
         dispatch(biometricsEnabled())
       }

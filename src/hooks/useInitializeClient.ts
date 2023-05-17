@@ -26,8 +26,8 @@ import useInterval from './useInterval'
 
 const useInitializeClient = () => {
   const dispatch = useAppDispatch()
-  const network = useAppSelector((state) => state.network)
-  const addressesStatus = useAppSelector((state) => state.addresses.status)
+  const network = useAppSelector((s) => s.network)
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const addresses = useAppSelector(selectAllAddresses)
 
   const initializeClient = useCallback(async () => {

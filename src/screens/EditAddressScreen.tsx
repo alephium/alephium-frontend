@@ -36,7 +36,7 @@ const EditAddressScreen = ({
   }
 }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
 
   const [loading, setLoading] = useState(false)

@@ -40,8 +40,9 @@ const instructions: Instruction[] = [
 ]
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
-  const activeWallet = useAppSelector((state) => state.activeWallet)
-  const { method } = useAppSelector((state) => state.walletGeneration)
+  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
+  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()
 
   const [loading, setLoading] = useState(false)
@@ -51,7 +52,7 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   const activateBiometrics = async () => {
     setLoading(true)
 
-    await enableBiometrics(activeWallet.metadataId, activeWallet.mnemonic)
+    await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
     dispatch(biometricsEnabled())
     navigateToAddressDiscoveryPage()
 

@@ -60,7 +60,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
   const hasAvailableBiometrics = useBiometrics()
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const { method, walletName: name } = useAppSelector((state) => state.walletGeneration)
+  const { method, walletName: name } = useAppSelector((s) => s.walletGeneration)
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState<Step>('enter-pin')
 
