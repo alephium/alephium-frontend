@@ -44,8 +44,10 @@ export const isNavStateRestorable = (state: NavigationState) => {
   return latestRoute && !excludedRoutesFromRestoring.includes(latestRoute)
 }
 
-export const setNavigationState = (state?: NavigationState) =>
-  rootStackNavigationRef.resetRoot(!state || !isNavStateRestorable(state) ? initialNavigationState : state)
+export const setNavigationState = (state: NavigationState) =>
+  rootStackNavigationRef.resetRoot(isNavStateRestorable(state) ? state : initialNavigationState)
+
+export const resetNavigationState = () => rootStackNavigationRef.resetRoot(initialNavigationState)
 
 // Navigating without the navigation prop:
 // https://reactnavigation.org/docs/navigating-without-navigation-prop

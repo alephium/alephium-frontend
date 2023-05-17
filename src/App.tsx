@@ -44,7 +44,7 @@ import { biometricsDisabled, walletUnlocked } from './store/activeWalletSlice'
 import { appBecameInactive } from './store/appSlice'
 import { store } from './store/store'
 import { themes } from './style/themes'
-import { navigateRootStack, setNavigationState } from './utils/navigation'
+import { navigateRootStack, resetNavigationState, setNavigationState } from './utils/navigation'
 
 dayjs.extend(updateLocale)
 dayjs.updateLocale('en', {
@@ -145,7 +145,7 @@ const Main = ({ children }: { children: ReactNode }) => {
         dispatch(walletUnlocked({ wallet, addressesToInitialize }))
 
         console.log('Restoring navigation since it is biometrics')
-        setNavigationState(lastNavigationState)
+        lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
       }
       // TODO: Revisit error handling with proper error codes
     } catch (e: unknown) {

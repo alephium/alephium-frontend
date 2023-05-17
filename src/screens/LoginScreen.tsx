@@ -27,7 +27,7 @@ import { deriveWalletStoredAddresses, rememberActiveWallet } from '../persistent
 import { walletSwitched, walletUnlocked } from '../store/activeWalletSlice'
 import { AddressPartial } from '../types/addresses'
 import { ActiveWalletState } from '../types/wallet'
-import { setNavigationState } from '../utils/navigation'
+import { resetNavigationState, setNavigationState } from '../utils/navigation'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 
@@ -58,14 +58,14 @@ const LoginScreen = ({
         addressesToInitialize = await deriveWalletStoredAddresses(wallet)
 
         dispatch(walletSwitched({ wallet, addressesToInitialize, pin }))
-        setNavigationState()
+        resetNavigationState()
       } else if (workflow === 'wallet-unlock') {
         if (addressesStatus === 'uninitialized') {
           addressesToInitialize = await deriveWalletStoredAddresses(wallet)
         }
 
         dispatch(walletUnlocked({ wallet, addressesToInitialize, pin }))
-        setNavigationState(lastNavigationState)
+        lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
       }
 
       setLoading(false)

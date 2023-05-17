@@ -42,7 +42,7 @@ import { walletSwitched } from '../store/activeWalletSlice'
 import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
 import { WalletMetadata } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
-import { setNavigationState } from '../utils/navigation'
+import { resetNavigationState } from '../utils/navigation'
 
 export interface SwitchWalletScreenProps extends StackScreenProps<RootStackParamList, 'SwitchWalletScreen'> {
   style?: StyleProp<ViewStyle>
@@ -81,7 +81,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
       await rememberActiveWallet(wallet.metadataId)
       const addressesToInitialize = await deriveWalletStoredAddresses(wallet)
       dispatch(walletSwitched({ wallet, addressesToInitialize }))
-      setNavigationState()
+      resetNavigationState()
     } catch (e) {
       Alert.alert(getHumanReadableError(e, 'Could not switch wallets'))
     } finally {
