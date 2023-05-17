@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressKeyPair } from '@alephium/sdk'
-import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 
 import { TimeInMs } from './numbers'
 import { AddressToken } from './tokens'
@@ -38,10 +38,10 @@ export type AddressMetadata = AddressSettings & {
 }
 
 export type Address = AddressKeyPair &
-  AddressInfo & {
+  explorer.AddressInfo & {
     group: number
     settings: AddressSettings
-    transactions: (Transaction['hash'] | PendingTransaction['hash'])[]
+    transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
     transactionsPageLoaded: number
     allTransactionPagesLoaded: boolean
     tokens: AddressToken[]

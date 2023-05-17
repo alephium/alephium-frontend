@@ -24,7 +24,7 @@ import {
   MINIMAL_GAS_PRICE,
   toHumanReadableAmount
 } from '@alephium/sdk'
-import { BuildTransactionResult, SweepAddressTransaction } from '@alephium/sdk/api/alephium'
+import { node } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
 import { isEmpty } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
@@ -75,8 +75,8 @@ type FormData = {
 
 type UnsignedTxData = {
   unsignedTxs: {
-    txId: BuildTransactionResult['txId'] | SweepAddressTransaction['txId']
-    unsignedTx: BuildTransactionResult['unsignedTx'] | SweepAddressTransaction['unsignedTx']
+    txId: node.BuildTransactionResult['txId'] | node.SweepAddressTransaction['txId']
+    unsignedTx: node.BuildTransactionResult['unsignedTx'] | node.SweepAddressTransaction['unsignedTx']
   }[]
   fees: bigint
 }
