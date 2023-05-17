@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { GENESIS_TIMESTAMP } from '@alephium/sdk'
-import { Input, Output } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 import _ from 'lodash'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
@@ -33,7 +33,7 @@ interface IOListProps {
 }
 
 const IOList = ({ isOut, tx }: IOListProps) => {
-  const io = (isOut ? tx.outputs : tx.inputs) as Array<Output | Input> | undefined
+  const io = (isOut ? tx.outputs : tx.inputs) as Array<explorer.Output | explorer.Input> | undefined
   const addresses = useAppSelector((state) => state.addresses.entities)
 
   if (io && io.length > 0) {

@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-root-toast'
@@ -95,7 +94,7 @@ export const getAddressAvailableBalance = (address: Address): bigint =>
 
 export const selectAddressTransactions = (
   allAddresses: Address[],
-  transactions: (Transaction | PendingTransaction)[],
+  transactions: (explorer.Transaction | PendingTransaction)[],
   addressHashes: AddressHash[]
 ) => {
   const addresses = allAddresses.filter((address) => addressHashes.includes(address.hash))

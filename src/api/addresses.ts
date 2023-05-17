@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 
 import { Address, AddressHash } from '../types/addresses'
 import client from './client'
@@ -25,28 +25,29 @@ export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
   const results = []
 
   for (const addressHash of addressHashes) {
-    console.log('⬇️ Fetching address details: ', addressHash)
-    const { data: details } = await client.explorerClient.getAddressDetails(addressHash)
-
-    console.log('⬇️ Fetching 1st page of address confirmed transactions: ', addressHash)
-    const { data: transactions } = await client.explorerClient.getAddressTransactions(addressHash, 1)
-
-    console.log('⬇️ Fetching address tokens: ', addressHash)
-    const { data: tokenIds } = await client.explorerClient.addresses.getAddressesAddressTokens(addressHash)
+    const balances = await client.explorer.addresses.getAddressesAddressBalance(addressHash)
+    const txNumber = await client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
+    const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
+    const mempoolTransactions = await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
+    const tokenIds = await client.explorer.addresses.getAddressesAddressTokens(addressHash)
 
     const tokens = await Promise.all(
       tokenIds.map((id) =>
-        client.explorerClient.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then(({ data }) => ({
+        client.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then((data) => ({
           id,
-          balances: data
+          ...data
         }))
       )
     )
 
     results.push({
       hash: addressHash,
-      details,
+      details: {
+        ...balances,
+        txNumber
+      },
       transactions,
+      mempoolTransactions,
       tokens
     })
   }
@@ -56,13 +57,13 @@ export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
 
 export const fetchAddressTransactionsNextPage = async (address: Address) => {
   let nextPage = address.transactionsPageLoaded
-  let nextPageTransactions = [] as Transaction[]
+  let nextPageTransactions = [] as explorer.Transaction[]
 
   if (!address.allTransactionPagesLoaded) {
     nextPage += 1
-    console.log(`⬇️ Fetching page ${nextPage} of address confirmed transactions: `, address.hash)
-    const { data: transactions } = await client.explorerClient.getAddressTransactions(address.hash, nextPage)
-    nextPageTransactions = transactions
+    nextPageTransactions = await client.explorer.addresses.getAddressesAddressTransactions(address.hash, {
+      page: nextPage
+    })
   }
 
   return {
@@ -70,4 +71,11 @@ export const fetchAddressTransactionsNextPage = async (address: Address) => {
     transactions: nextPageTransactions,
     page: nextPage
   }
+}
+
+export const fetchAddressesTransactionsNextPage = async (addresses: Address[], nextPage: number) => {
+  const addressHashes = addresses.filter((address) => !address.allTransactionPagesLoaded).map((address) => address.hash)
+  const transactions = await client.explorer.addresses.postAddressesTransactions({ page: nextPage }, addressHashes)
+
+  return transactions
 }

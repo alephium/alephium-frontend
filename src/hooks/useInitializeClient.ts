@@ -32,8 +32,10 @@ const useInitializeClient = () => {
 
   const initializeClient = useCallback(async () => {
     try {
-      await client.init(network.settings.nodeHost, network.settings.explorerApiHost)
-      dispatch(apiClientInitSucceeded())
+      client.init(network.settings.nodeHost, network.settings.explorerApiHost)
+      const { networkId } = await client.node.infos.getInfosChainParams()
+      // TODO: Check if connection to explorer also works
+      dispatch(apiClientInitSucceeded({ networkId, networkName: network.name }))
       console.log(`Client initialized. Current network: ${network.name}`)
     } catch (e) {
       dispatch(apiClientInitFailed())

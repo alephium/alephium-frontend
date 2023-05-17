@@ -16,14 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 
 import { AddressPendingTransaction, AddressTransaction } from '../types/transactions'
 
 export const extractNewTransactionHashes = (
-  incomingTransactions: Transaction[],
-  existingTransactions: Transaction['hash'][]
-): Transaction['hash'][] =>
+  incomingTransactions: explorer.Transaction[],
+  existingTransactions: explorer.Transaction['hash'][]
+): explorer.Transaction['hash'][] =>
   incomingTransactions
     .filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
     .map((tx) => tx.hash)

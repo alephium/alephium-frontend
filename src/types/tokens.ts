@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressBalance } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 
 import { Currency } from './settings'
 
@@ -29,7 +29,7 @@ export const ALEPHIUM_TOKEN_ID = '0'
 
 export type AddressToken = {
   id: string
-  balances: AddressBalance
+  balances: explorer.AddressBalance
   worth?: TokenWorth
 }
 

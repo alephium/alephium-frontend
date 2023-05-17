@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 import { createEntityAdapter, createSelector, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
 import { AddressHash } from '../types/addresses'
@@ -27,9 +27,9 @@ import { RootState } from './store'
 
 const sliceName = 'confirmedTransactions'
 
-type ConfirmedTransactionsState = EntityState<Transaction>
+type ConfirmedTransactionsState = EntityState<explorer.Transaction>
 
-const confirmedTransactionsAdapter = createEntityAdapter<Transaction>({
+const confirmedTransactionsAdapter = createEntityAdapter<explorer.Transaction>({
   selectId: (transaction) => transaction.hash,
   sortComparer: (a, b) => b.timestamp - a.timestamp
 })
@@ -61,7 +61,7 @@ export default confirmedTransactionsSlice
 
 const addTransactions = (
   state: ConfirmedTransactionsState,
-  action: PayloadAction<{ transactions: Transaction[] }[]>
+  action: PayloadAction<{ transactions: explorer.Transaction[] }[]>
 ) => {
   const addresses = action.payload
   const transactions = addresses.flatMap((address) => address.transactions)

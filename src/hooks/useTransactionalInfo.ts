@@ -21,10 +21,9 @@ import {
   getDirection,
   isConsolidationTx,
   TransactionDirection,
-  TransactionInfoType,
-  txHasOnlyInternalAddresses
+  TransactionInfoType
 } from '@alephium/sdk'
-import { AssetOutput, Output } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 
 import { selectAddressIds } from '../store/addressesSlice'
 import { AddressHash } from '../types/addresses'
@@ -38,7 +37,7 @@ export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressH
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
   let infoType: TransactionInfoType
-  let outputs: Output[] = []
+  let outputs: explorer.Output[] = []
   let lockTime: Date | undefined
 
   if (isPendingTx(tx)) {
@@ -68,7 +67,10 @@ export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressH
     }
 
     lockTime = outputs.reduce(
-      (a, b) => (a > new Date((b as AssetOutput).lockTime ?? 0) ? a : new Date((b as AssetOutput).lockTime ?? 0)),
+      (a, b) =>
+        a > new Date((b as explorer.AssetOutput).lockTime ?? 0)
+          ? a
+          : new Date((b as explorer.AssetOutput).lockTime ?? 0),
       new Date(0)
     )
     lockTime = lockTime.toISOString() === new Date(0).toISOString() ? undefined : lockTime
@@ -82,3 +84,6 @@ export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressH
     lockTime
   }
 }
+
+const txHasOnlyInternalAddresses = (outputs: explorer.Output[], addresses: AddressHash[]): boolean =>
+  outputs.every((o) => o?.address && addresses.indexOf(o.address) >= 0)
