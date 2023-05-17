@@ -41,6 +41,7 @@ const instructions: Instruction[] = [
 
 const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
   const activeWallet = useAppSelector((state) => state.activeWallet)
+  const { method } = useAppSelector((state) => state.walletGeneration)
   const dispatch = useAppDispatch()
 
   const [loading, setLoading] = useState(false)
@@ -66,7 +67,13 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
       <ActionsContainer>
         <ButtonStack>
           <Button title="Activate" type="primary" onPress={activateBiometrics} />
-          <Button title="Later" type="secondary" onPress={navigateToAddressDiscoveryPage} />
+          <Button
+            title="Later"
+            type="secondary"
+            onPress={() =>
+              navigation.navigate(method === 'import' ? 'ImportWalletAddressDiscoveryScreen' : 'NewWalletSuccessPage')
+            }
+          />
         </ButtonStack>
       </ActionsContainer>
       <SpinnerModal isActive={loading} text="Enabling biometrics..." />
