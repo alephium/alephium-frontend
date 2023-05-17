@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Alert, ScrollView, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -31,16 +31,11 @@ import Screen, { BottomModalScreenTitle, BottomScreenSection, ScreenSection } fr
 import RadioButtonRow from '../components/RadioButtonRow'
 import SpinnerModal from '../components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { useSortedWallets } from '../hooks/useSortedWallets'
 import RootStackParamList from '../navigation/rootStackRoutes'
-import {
-  deriveWalletStoredAddresses,
-  getStoredWalletById,
-  getWalletsMetadata,
-  rememberActiveWallet
-} from '../persistent-storage/wallets'
+import { deriveWalletStoredAddresses, getStoredWalletById, rememberActiveWallet } from '../persistent-storage/wallets'
 import { walletSwitched } from '../store/activeWalletSlice'
 import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
-import { WalletMetadata } from '../types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
 import { setNavigationState } from '../utils/navigation'
 
@@ -120,27 +115,6 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
 }
 
 export default SwitchWalletScreen
-
-const useSortedWallets = () => {
-  const [wallets, setWallets] = useState<WalletMetadata[]>([])
-  const activeWalletId = useAppSelector((state) => state.activeWallet.metadataId)
-  const activeWallet = wallets.find((wallet) => wallet.id === activeWalletId)
-
-  const sortedWallets = wallets
-    .filter((wallet) => wallet.id !== activeWalletId)
-    .sort((a, b) => a.name.localeCompare(b.name))
-  if (activeWallet) sortedWallets.unshift(activeWallet)
-
-  useEffect(() => {
-    const getWallets = async () => {
-      const wallets = await getWalletsMetadata()
-      setWallets(wallets)
-    }
-    getWallets()
-  }, [activeWalletId])
-
-  return sortedWallets
-}
 
 const Subtitle = styled(AppText)`
   font-weight: 500;
