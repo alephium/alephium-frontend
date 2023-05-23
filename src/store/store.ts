@@ -22,13 +22,13 @@ import activeWalletSlice from './activeWalletSlice'
 import addressDiscoverySlice from './addressDiscoverySlice'
 import addressesSlice from './addressesSlice'
 import appSlice from './appSlice'
+import assetsInfoSlice from './assets/assetsInfoSlice'
 import confirmedTransactionsSlice from './confirmedTransactionsSlice'
 import credentialsSlice from './credentialsSlice'
 import networkSlice from './networkSlice'
 import pendingTransactionsSlice from './pendingTransactionsSlice'
 import priceSlice from './priceSlice'
 import settingsSlice, { settingsListenerMiddleware } from './settingsSlice'
-import tokenMetadataSlice from './tokenMetadataSlice'
 import walletGenerationSlice from './walletGenerationSlice'
 
 export const store = configureStore({
@@ -41,7 +41,7 @@ export const store = configureStore({
     addresses: addressesSlice.reducer,
     price: priceSlice.reducer,
     app: appSlice.reducer,
-    tokenMetadata: tokenMetadataSlice.reducer,
+    [assetsInfoSlice.name]: assetsInfoSlice.reducer,
     addressDiscovery: addressDiscoverySlice.reducer,
     confirmedTransactions: confirmedTransactionsSlice.reducer,
     pendingTransactions: pendingTransactionsSlice.reducer

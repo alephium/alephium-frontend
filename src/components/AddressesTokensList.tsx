@@ -16,17 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Asset } from '@alephium/sdk'
 import { chunk } from 'lodash'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { LayoutChangeEvent, View } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
-import useTokenMetadata from '../hooks/useTokenMetadata'
-import { makeSelectTokens, selectAllAddresses } from '../store/addressesSlice'
+import { makeSelectAddressesAssets, selectAllAddresses } from '../store/addressesSlice'
 import { selectIsPriceUninitialized } from '../store/priceSlice'
 import { Address } from '../types/addresses'
-import { AddressToken, ALEPHIUM_TOKEN_ID, TokenMetadata } from '../types/tokens'
+import { sortAssetsByName } from '../utils/assets'
 import Carousel from './Carousel'
 import HighlightRow from './HighlightRow'
 import { ScreenSection, ScreenSectionTitle } from './layout/Screen'
@@ -41,68 +41,21 @@ interface AddressesTokensListProps {
 const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListProps) => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
-  const price = useAppSelector((s) => s.price.value)
   const addressDataStatus = useAppSelector((s) => s.addresses.status)
-  const fiatCurrency = useAppSelector((s) => s.settings.currency)
   const addresses = addressesParam ?? allAddresses
-  const selectTokens = useMemo(makeSelectTokens, [])
-  const tokens = useAppSelector((s) => selectTokens(s, addresses))
-  const tokenMetadata = useTokenMetadata()
+  const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
+  const assets = useAppSelector((s) =>
+    selectAddressesAssets(
+      s,
+      addresses.map(({ hash }) => hash)
+    )
+  )
 
   const [carouselItemHeight, setCarouselItemHeight] = useState(258)
   const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
-  const [tokensChunked, setTokensChunked] = useState<AddressToken[][]>([])
 
+  const assetsChunked = chunk(assets.sort(sortAssetsByName), PAGE_SIZE)
   const isLoading = isPriceUninitialized || addressDataStatus === 'uninitialized'
-
-  tokens.forEach((token) => {
-    token.worth = {
-      // TODO: Fetch token prices
-      price: undefined,
-      currency: fiatCurrency
-    }
-  })
-
-  const sortByWorthThenName = useCallback(
-    (tokenA: AddressToken, tokenB: AddressToken) => {
-      if (tokenA.worth?.price !== undefined && tokenB.worth?.price !== undefined) {
-        return (tokenB.worth.price ?? 0) - (tokenA.worth.price ?? 0)
-      }
-
-      if (!tokenMetadata) {
-        return tokenA.id.localeCompare(tokenB.id)
-      }
-
-      const tokenAName = tokenMetadata[tokenA.id]?.name
-      const tokenBName = tokenMetadata[tokenB.id]?.name
-
-      if (!tokenAName || !tokenBName) {
-        return tokenA.id.localeCompare(tokenB.id)
-      }
-
-      return tokenAName.localeCompare(tokenBName)
-    },
-    [tokenMetadata]
-  )
-
-  useEffect(() => {
-    if (addressDataStatus === 'uninitialized') return
-
-    const alephiumToken: AddressToken = {
-      id: ALEPHIUM_TOKEN_ID,
-      balances: {
-        balance: addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0)).toString(),
-        lockedBalance: addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0)).toString()
-      },
-      worth: {
-        price,
-        currency: fiatCurrency
-      }
-    }
-
-    setTokensChunked(chunk(tokens.concat([alephiumToken]).sort(sortByWorthThenName), PAGE_SIZE))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addressDataStatus, addresses, fiatCurrency, price, sortByWorthThenName])
 
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
     const newCarouselItemHeight = event.nativeEvent.layout.height
@@ -113,22 +66,12 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
     }
   }
 
-  const renderCarouselItem = ({ item }: { item: AddressToken[] }) => (
+  const renderCarouselItem = ({ item }: { item: Asset[] }) => (
     <View onLayout={onLayoutCarouselItem}>
-      {item.map((token) => {
-        const metadata =
-          token.id === ALEPHIUM_TOKEN_ID
-            ? ({
-                name: 'Alephium',
-                decimals: 18
-              } as TokenMetadata)
-            : tokenMetadata
-            ? tokenMetadata[token.id]
-            : undefined
-
+      {item.map((asset) => {
         return (
-          <HighlightRow key={token.id}>
-            <TokenInfo {...{ ...token, ...metadata }} isLoading={isLoading} />
+          <HighlightRow key={asset.id}>
+            <TokenInfo asset={asset} isLoading={isLoading} />
           </HighlightRow>
         )
       })}
@@ -137,11 +80,11 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
 
   return (
     <>
-      {tokensChunked.length > 1 && (
+      {assetsChunked.length > 1 && (
         <>
           <ScreenSectionTitleStyled>Assets</ScreenSectionTitleStyled>
           <Carousel
-            data={tokensChunked}
+            data={assetsChunked}
             renderItem={renderCarouselItem}
             padding={20}
             distance={10}
@@ -149,10 +92,10 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
           />
         </>
       )}
-      {tokensChunked.length === 1 && (
+      {assetsChunked.length === 1 && (
         <ScreenSection>
           <ScreenSectionTitle>Assets</ScreenSectionTitle>
-          {renderCarouselItem({ item: tokensChunked[0] })}
+          {renderCarouselItem({ item: assetsChunked[0] })}
         </ScreenSection>
       )}
     </>
