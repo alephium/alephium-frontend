@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -35,8 +35,8 @@ import { useAppSelector } from '../hooks/redux'
 import InWalletTabsParamList from '../navigation/inWalletRoutes'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash, selectAddressIds, selectDefaultAddress } from '../store/addressesSlice'
-import { selectAddressesConfirmedTransactions } from '../store/confirmedTransactionsSlice'
-import { selectAddressesPendingTransactions } from '../store/pendingTransactionsSlice'
+import { makeSelectAddressesConfirmedTransactions } from '../store/confirmedTransactionsSlice'
+import { makeSelectAddressesPendingTransactions } from '../store/pendingTransactionsSlice'
 import { AddressHash } from '../types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'AddressesScreen'> {
@@ -47,12 +47,14 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
-  const [selectedAddress, selectedAddressConfirmedTransactions, selectedAddressPendingTransactions] = useAppSelector(
-    (s) => [
-      selectAddressByHash(s, selectedAddressHash),
-      selectAddressesConfirmedTransactions(s, [selectedAddressHash]),
-      selectAddressesPendingTransactions(s, [selectedAddressHash])
-    ]
+  const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
+  const selectAddressesConfirmedTransactions = useMemo(makeSelectAddressesConfirmedTransactions, [])
+  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
+  const selectedAddressConfirmedTransactions = useAppSelector((s) =>
+    selectAddressesConfirmedTransactions(s, selectedAddressHash)
+  )
+  const selectedAddressPendingTransactions = useAppSelector((s) =>
+    selectAddressesPendingTransactions(s, selectedAddressHash)
   )
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
@@ -88,8 +90,7 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     <TransactionsFlatListScreen
       confirmedTransactions={selectedAddressConfirmedTransactions}
       pendingTransactions={selectedAddressPendingTransactions}
-      addressHashes={[selectedAddressHash]}
-      haveAllPagesLoaded={selectedAddress.allTransactionPagesLoaded}
+      addressHash={selectedAddressHash}
       initialNumToRender={5}
       showInternalInflows
       ListHeaderComponent={

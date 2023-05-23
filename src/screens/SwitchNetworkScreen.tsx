@@ -40,14 +40,15 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'SwitchNetworkScreen'>
 const networkNames = Object.values(NetworkName)
 
 const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
-  const currentNetwork = useAppSelector((state) => state.network)
+  const currentNetworkName = useAppSelector((s) => s.network.name)
+  const currentNetworkSettings = useAppSelector((s) => s.network.settings)
   const { control, handleSubmit } = useForm<NetworkSettings>({
-    defaultValues: currentNetwork.settings
+    defaultValues: currentNetworkSettings
   })
   const dispatch = useAppDispatch()
 
-  const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetwork.name === NetworkName.custom)
-  const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetwork.name)
+  const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkName.custom)
+  const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetworkName)
 
   const handleNetworkItemPress = async (newNetworkName: NetworkPreset | NetworkName.custom) => {
     setSelectedNetworkName(newNetworkName)

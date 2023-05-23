@@ -43,7 +43,7 @@ const TransactionScreen = ({
 }: ScreenProps) => {
   const theme = useTheme()
   const { amount, direction } = useTransactionInfo(tx, tx.address.hash)
-  const explorerBaseUrl = useAppSelector((state) => state.network.settings.explorerUrl)
+  const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   const explorerTxUrl = `${explorerBaseUrl}/#/transactions/${tx.hash}`
   const isOut = direction === 'out'

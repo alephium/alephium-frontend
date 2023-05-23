@@ -50,7 +50,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
   const theme = useTheme()
   const addresses = useAppSelector(selectAllAddresses)
   const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
-  const { loading, status, progress } = useAppSelector((state) => state.addressDiscovery)
+  const { loading, status, progress } = useAppSelector((s) => s.addressDiscovery)
   const persistAddressSettings = usePersistAddressSettings()
 
   const [addressSelections, setAddressSelections] = useState<Record<AddressHash, boolean>>({})

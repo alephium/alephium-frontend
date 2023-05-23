@@ -89,7 +89,7 @@ const SendScreen = ({
     params: { addressHash }
   }
 }: ScreenProps) => {
-  const requiresAuth = useAppSelector((state) => state.settings.requireAuth)
+  const requiresAuth = useAppSelector((s) => s.settings.requireAuth)
   const dispatch = useAppDispatch()
 
   const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -97,7 +97,7 @@ const SendScreen = ({
   const defaultValues = { fromAddressHash, toAddressHash: '', amountInAlph: '', gasAmount: '', gasPriceInAlph: '' }
   const { control, watch, handleSubmit, setValue, formState } = useForm<FormData>({ defaultValues })
   const { fromAddressHash: formFromAddress, toAddressHash, gasAmount, amountInAlph, gasPriceInAlph } = watch()
-  const fromAddress = useAppSelector((state) => selectAddressByHash(state, formFromAddress))
+  const fromAddress = useAppSelector((s) => selectAddressByHash(s, formFromAddress))
 
   const [amount, setAmount] = useState(BigInt(0))
   const [consolidationRequired, setConsolidationRequired] = useState(false)

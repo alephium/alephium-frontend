@@ -45,12 +45,11 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const [isLoading, activeWallet, network, discreetMode] = useAppSelector((state) => [
-    state.addresses.loading,
-    state.activeWallet,
-    state.network,
-    state.settings.discreetMode
-  ])
+  const isLoading = useAppSelector((s) => s.addresses.loading)
+  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
+  const networkStatus = useAppSelector((s) => s.network.status)
+  const networkName = useAppSelector((s) => s.network.name)
+  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const theme = useTheme()
 
   const refreshData = () => {
@@ -71,12 +70,12 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
       <ScreenSection>
         <BoxSurface>
           <SurfaceHeader>
-            <AppText color="secondary">{activeWallet.name}</AppText>
+            <AppText color="secondary">{activeWalletName}</AppText>
             <ActiveNetwork>
               <NetworkStatusBullet
-                style={{ backgroundColor: network.status === 'online' ? theme.global.valid : theme.global.alert }}
+                style={{ backgroundColor: networkStatus === 'online' ? theme.global.valid : theme.global.alert }}
               />
-              <AppText color="secondary">{network.name}</AppText>
+              <AppText color="secondary">{networkName}</AppText>
             </ActiveNetwork>
           </SurfaceHeader>
           <BalanceContainer>

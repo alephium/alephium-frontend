@@ -34,7 +34,7 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
-  const activeWallet = useAppSelector((state) => state.activeWallet)
+  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
 
@@ -48,7 +48,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
 
   const handleGeneratePress = async ({ isMain, label, color, group }: AddressFormData) => {
     setLoading(true)
-    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, activeWallet.mnemonic)
+    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, activeWalletMnemonic)
     const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
     const newAddress = { ...newAddressData, settings: { label, color, isMain } }
 

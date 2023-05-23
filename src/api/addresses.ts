@@ -18,10 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { explorer } from '@alephium/web3'
 
-import { Address, AddressHash } from '../types/addresses'
+import { Address, AddressDataSyncResult, AddressHash } from '../types/addresses'
 import client from './client'
 
-export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
+// TODO: Same as in desktop wallet, move to SDK?
+export const fetchAddressesData = async (addressHashes: AddressHash[]): Promise<AddressDataSyncResult[]> => {
   const results = []
 
   for (const addressHash of addressHashes) {
@@ -55,6 +56,7 @@ export const fetchAddressesData = async (addressHashes: AddressHash[]) => {
   return results
 }
 
+// TODO: Same as in desktop wallet, move to SDK?
 export const fetchAddressTransactionsNextPage = async (address: Address) => {
   let nextPage = address.transactionsPageLoaded
   let nextPageTransactions = [] as explorer.Transaction[]
@@ -73,6 +75,7 @@ export const fetchAddressTransactionsNextPage = async (address: Address) => {
   }
 }
 
+// TODO: Same as in desktop wallet, move to SDK?
 export const fetchAddressesTransactionsNextPage = async (addresses: Address[], nextPage: number) => {
   const addressHashes = addresses.filter((address) => !address.allTransactionPagesLoaded).map((address) => address.hash)
   const transactions = await client.explorer.addresses.postAddressesTransactions({ page: nextPage }, addressHashes)

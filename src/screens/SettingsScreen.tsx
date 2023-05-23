@@ -49,20 +49,23 @@ const currencyOptions = Object.values(currencies).map((currency) => ({
 const SettingsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const hasAvailableBiometrics = useBiometrics()
-  const [
-    { discreetMode, requireAuth, theme: currentTheme, currency: currentCurrency },
-    currentNetworkName,
-    activeWallet
-  ] = useAppSelector((s) => [s.settings, s.network.name, s.activeWallet])
+  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
+  const requireAuth = useAppSelector((s) => s.settings.requireAuth)
+  const currentTheme = useAppSelector((s) => s.settings.theme)
+  const currentCurrency = useAppSelector((s) => s.settings.currency)
+  const currentNetworkName = useAppSelector((s) => s.network.name)
+  const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
+  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
+  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
 
-  const isBiometricsEnabled = activeWallet.authType === 'biometrics'
+  const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
-      await disableBiometrics(activeWallet.metadataId)
+      await disableBiometrics(activeWalletMetadataId)
       dispatch(biometricsDisabled())
     } else {
-      await enableBiometrics(activeWallet.metadataId, activeWallet.mnemonic)
+      await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
       dispatch(biometricsEnabled())
     }
   }
@@ -76,13 +79,13 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const handleCurrencyChange = (currency: Currency) => dispatch(currencySelected(currency))
 
   const deleteWallet = async () => {
-    await deleteWalletById(activeWallet.metadataId)
+    await deleteWalletById(activeWalletMetadataId)
     dispatch(walletDeleted())
     navigation.navigate('SwitchWalletAfterDeletionScreen')
   }
 
   const handleDeleteButtonPress = () => {
-    if (!activeWallet.metadataId) return
+    if (!activeWalletMetadataId) return
 
     Alert.alert(
       'Deleting wallet',

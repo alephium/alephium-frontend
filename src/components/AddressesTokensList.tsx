@@ -17,13 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { chunk } from 'lodash'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { LayoutChangeEvent, View } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import useTokenMetadata from '../hooks/useTokenMetadata'
-import { selectAllAddresses, selectTokens } from '../store/addressesSlice'
+import { makeSelectTokens, selectAllAddresses } from '../store/addressesSlice'
 import { selectIsPriceUninitialized } from '../store/priceSlice'
 import { Address } from '../types/addresses'
 import { AddressToken, ALEPHIUM_TOKEN_ID, TokenMetadata } from '../types/tokens'
@@ -41,13 +41,12 @@ interface AddressesTokensListProps {
 const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListProps) => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
+  const price = useAppSelector((s) => s.price.value)
+  const addressDataStatus = useAppSelector((s) => s.addresses.status)
+  const fiatCurrency = useAppSelector((s) => s.settings.currency)
   const addresses = addressesParam ?? allAddresses
-  const [price, addressDataStatus, fiatCurrency, tokens] = useAppSelector((s) => [
-    s.price,
-    s.addresses.status,
-    s.settings.currency,
-    selectTokens(s, addresses)
-  ])
+  const selectTokens = useMemo(makeSelectTokens, [])
+  const tokens = useAppSelector((s) => selectTokens(s, addresses))
   const tokenMetadata = useTokenMetadata()
 
   const [carouselItemHeight, setCarouselItemHeight] = useState(258)
@@ -96,14 +95,14 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
         lockedBalance: addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0)).toString()
       },
       worth: {
-        price: price.value,
+        price,
         currency: fiatCurrency
       }
     }
 
     setTokensChunked(chunk(tokens.concat([alephiumToken]).sort(sortByWorthThenName), PAGE_SIZE))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addressDataStatus, addresses, fiatCurrency, price.value, sortByWorthThenName])
+  }, [addressDataStatus, addresses, fiatCurrency, price, sortByWorthThenName])
 
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
     const newCarouselItemHeight = event.nativeEvent.layout.height

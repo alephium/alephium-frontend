@@ -37,7 +37,7 @@ interface AddressCardProps {
 const AddressCard = ({ style, addressHash }: AddressCardProps) => {
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   if (!address) return null
 

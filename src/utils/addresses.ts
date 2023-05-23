@@ -95,9 +95,14 @@ export const getAddressAvailableBalance = (address: Address): bigint =>
 export const selectAddressTransactions = (
   allAddresses: Address[],
   transactions: (explorer.Transaction | PendingTransaction)[],
-  addressHashes: AddressHash[]
+  addressHashes?: AddressHash | AddressHash[]
 ) => {
-  const addresses = allAddresses.filter((address) => addressHashes.includes(address.hash))
+  const addresses =
+    addressHashes !== undefined
+      ? Array.isArray(addressHashes)
+        ? allAddresses.filter((address) => addressHashes.includes(address.hash))
+        : allAddresses.filter((address) => addressHashes === address.hash)
+      : allAddresses
   const addressesTxs = addresses.flatMap((address) => address.transactions.map((txHash) => ({ txHash, address })))
 
   return transactions.reduce((txs, tx) => {

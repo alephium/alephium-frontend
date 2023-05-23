@@ -49,7 +49,7 @@ const Amount = ({
   let integralPart = ''
   let fractionalPart = ''
   let quantitySymbol = ''
-  const discreetMode = useAppSelector((state) => state.settings.discreetMode)
+  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
 
   if (!discreetMode || showOnDiscreetMode) {
     let amount =

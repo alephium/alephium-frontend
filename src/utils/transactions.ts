@@ -18,8 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { explorer } from '@alephium/web3'
 
+import { Address } from '../types/addresses'
 import { AddressPendingTransaction, AddressTransaction } from '../types/transactions'
 
+// TODO: Same as in desktop wallet, move to SDK?
 export const extractNewTransactionHashes = (
   incomingTransactions: explorer.Transaction[],
   existingTransactions: explorer.Transaction['hash'][]
@@ -30,3 +32,11 @@ export const extractNewTransactionHashes = (
 
 export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
   (tx as AddressPendingTransaction).status === 'pending'
+
+// TODO: Same as in desktop wallet, move to SDK?
+export const getTransactionsOfAddress = (transactions: explorer.Transaction[], address: Address) =>
+  transactions.filter(
+    (tx) =>
+      tx.inputs?.some((input) => input.address === address.hash) ||
+      tx.outputs?.some((output) => output.address === address.hash)
+  )

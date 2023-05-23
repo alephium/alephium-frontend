@@ -24,7 +24,7 @@ import { useAppDispatch, useAppSelector } from './redux'
 const useRefreshALPHPrice = () => {
   const dispatch = useAppDispatch()
   const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
-  const priceStatus = useAppSelector((state) => state.price.status)
+  const priceStatus = useAppSelector((s) => s.price.status)
 
   useEffect(() => {
     if (isPriceUninitialized) {

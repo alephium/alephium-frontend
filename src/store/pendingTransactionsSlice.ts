@@ -25,7 +25,8 @@ import { selectAddressTransactions } from '../utils/addresses'
 import {
   selectAllAddresses,
   syncAddressesData,
-  syncAddressesTransactionsNextPage,
+  syncAddressTransactionsNextPage,
+  syncAllAddressesTransactionsNextPage,
   transactionSent
 } from './addressesSlice'
 import { RootState } from './store'
@@ -49,7 +50,8 @@ const pendingTransactionsSlice = createSlice({
     builder
       .addCase(transactionSent, pendingTransactionsAdapter.addOne)
       .addCase(syncAddressesData.fulfilled, removeTransactions)
-      .addCase(syncAddressesTransactionsNextPage.fulfilled, removeTransactions)
+      .addCase(syncAddressTransactionsNextPage.fulfilled, removeTransactions)
+      .addCase(syncAllAddressesTransactionsNextPage.fulfilled, removeTransactions)
   }
 })
 
@@ -57,20 +59,34 @@ export const { selectAll: selectAllPendingTransactions } = pendingTransactionsAd
   (state) => state[sliceName]
 )
 
-export const selectAddressesPendingTransactions = createSelector(
-  [selectAllAddresses, selectAllPendingTransactions, (_, addressHashes: AddressHash[]) => addressHashes],
-  (allAddresses, pendingTransactions, addressHashes): AddressPendingTransaction[] =>
-    selectAddressTransactions(allAddresses, pendingTransactions, addressHashes) as AddressPendingTransaction[]
-)
+export const makeSelectAddressesPendingTransactions = () =>
+  createSelector(
+    [
+      selectAllAddresses,
+      selectAllPendingTransactions,
+      (_, addressHashes?: AddressHash | AddressHash[]) => addressHashes
+    ],
+    (allAddresses, pendingTransactions, addressHashes): AddressPendingTransaction[] =>
+      selectAddressTransactions(allAddresses, pendingTransactions, addressHashes) as AddressPendingTransaction[]
+  )
 
 export default pendingTransactionsSlice
 
+// TODO: Same as in desktop wallet, move to SDK?
 const removeTransactions = (
   state: PendingTransactionsState,
-  action: PayloadAction<{ transactions: explorer.Transaction[] }[]>
+  action: PayloadAction<
+    { transactions: explorer.Transaction[] }[] | { transactions: explorer.Transaction[] } | undefined
+  >
 ) => {
-  const addresses = action.payload
-  const transactionHashes = addresses.flatMap((address) => address.transactions).map((tx) => tx.hash)
+  const transactions = Array.isArray(action.payload)
+    ? action.payload.flatMap((address) => address.transactions)
+    : action.payload?.transactions
 
-  pendingTransactionsAdapter.removeMany(state, transactionHashes)
+  if (transactions && transactions.length > 0) {
+    pendingTransactionsAdapter.removeMany(
+      state,
+      transactions.map((tx) => tx.hash)
+    )
+  }
 }

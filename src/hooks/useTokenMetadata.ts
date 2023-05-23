@@ -23,7 +23,7 @@ import { useAppDispatch, useAppSelector } from './redux'
 
 const useTokenMetadata = () => {
   const dispatch = useAppDispatch()
-  const { metadata, status } = useAppSelector((state) => state.tokenMetadata)
+  const { metadata, status } = useAppSelector((s) => s.tokenMetadata)
 
   useEffect(() => {
     if (status === 'uninitialized') dispatch(syncTokenMetadata())

@@ -47,11 +47,12 @@ interface TransactionRowProps {
 
 const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, style }: TransactionRowProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const [price, currency] = useAppSelector((s) => [s.price, s.settings.currency])
+  const price = useAppSelector((s) => s.price.value)
+  const currency = useAppSelector((s) => s.settings.currency)
   const { amount, infoType } = useTransactionInfo(tx, tx.address.hash, showInternalInflows)
   const { Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
 
-  const fiatValue = price.value !== undefined && amount !== undefined ? calculateAmountWorth(amount, price.value) : 0
+  const fiatValue = price !== undefined && amount !== undefined ? calculateAmountWorth(amount, price) : 0
 
   const handleOnPress = () => {
     if (!isPendingTx(tx)) navigation.navigate('TransactionScreen', { tx })

@@ -36,8 +36,8 @@ const LoginScreen = ({
     params: { walletIdToLogin, workflow }
   }
 }: ScreenProps) => {
-  const addressesStatus = useAppSelector((state) => state.addresses.status)
   const dispatch = useAppDispatch()
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)

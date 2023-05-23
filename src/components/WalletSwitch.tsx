@@ -32,11 +32,11 @@ interface WalletSwitchProps {
 
 const WalletSwitch = ({ style }: WalletSwitchProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const activeWallet = useAppSelector((state) => state.activeWallet)
+  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
 
   return (
     <Button style={style} variant="contrast" onPress={() => navigation.navigate('SwitchWalletScreen')}>
-      <WalletName numberOfLines={1}>{activeWallet.name.slice(0, 2).toUpperCase()}</WalletName>
+      <WalletName numberOfLines={1}>{activeWalletName.slice(0, 2).toUpperCase()}</WalletName>
     </Button>
   )
 }

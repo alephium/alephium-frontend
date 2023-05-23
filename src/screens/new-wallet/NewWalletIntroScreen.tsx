@@ -47,7 +47,7 @@ const instructions = {
 }
 
 const NewWalletIntroScreen = ({ navigation }: ScreenProps) => {
-  const method = useAppSelector((state) => state.walletGeneration.method) || 'create'
+  const method = useAppSelector((s) => s.walletGeneration.method) || 'create'
 
   return (
     <Screen>

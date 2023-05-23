@@ -16,11 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useCallback } from 'react'
 import { ActivityIndicator, FlatListProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
-import { syncAddressesData, syncAddressesTransactionsNextPage } from '../../store/addressesSlice'
+import {
+  selectAddressByHash,
+  syncAddressesData,
+  syncAddressTransactionsNextPage,
+  syncAllAddressesTransactionsNextPage
+} from '../../store/addressesSlice'
 import { AddressHash } from '../../types/addresses'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '../../types/transactions'
 import AppText from '../AppText'
@@ -31,8 +37,7 @@ import ScrollFlatListScreen from './ScrollFlatListScreen'
 interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransaction>> {
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
-  addressHashes: AddressHash[]
-  haveAllPagesLoaded: boolean
+  addressHash?: AddressHash
   showInternalInflows?: boolean
 }
 
@@ -47,15 +52,16 @@ const transactionKeyExtractor = (tx: AddressTransaction) => `${tx.hash}-${tx.add
 const TransactionsFlatList = ({
   confirmedTransactions,
   pendingTransactions,
-  addressHashes,
-  haveAllPagesLoaded,
+  addressHash,
   ListHeaderComponent,
   showInternalInflows = false,
   ...props
 }: TransactionsFlatListProps) => {
   const theme = useTheme()
   const dispatch = useAppDispatch()
-  const isLoading = useAppSelector((state) => state.addresses.loading)
+  const isLoading = useAppSelector((s) => s.addresses.loading)
+  const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
 
   const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
     renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
@@ -70,14 +76,20 @@ const TransactionsFlatList = ({
     />
   )
 
-  const syncNextTransactionsPage = () => {
-    if (!isLoading && !haveAllPagesLoaded) {
-      dispatch(syncAddressesTransactionsNextPage(addressHashes))
+  const loadNextTransactionsPage = useCallback(async () => {
+    if (isLoading) return
+
+    if (address) {
+      if (!address.allTransactionPagesLoaded) {
+        dispatch(syncAddressTransactionsNextPage(address.hash))
+      }
+    } else if (!allConfirmedTransactionsLoaded) {
+      dispatch(syncAllAddressesTransactionsNextPage())
     }
-  }
+  }, [address, allConfirmedTransactionsLoaded, dispatch, isLoading])
 
   const refreshData = () => {
-    if (!isLoading) dispatch(syncAddressesData(addressHashes))
+    if (!isLoading) dispatch(syncAddressesData(addressHash))
   }
 
   return (
@@ -86,7 +98,7 @@ const TransactionsFlatList = ({
       data={confirmedTransactions}
       renderItem={renderConfirmedTransactionItem}
       keyExtractor={transactionKeyExtractor}
-      onEndReached={syncNextTransactionsPage}
+      onEndReached={loadNextTransactionsPage}
       onRefresh={refreshData}
       refreshing={isLoading}
       extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
@@ -113,16 +125,18 @@ const TransactionsFlatList = ({
       }
       ListFooterComponent={
         <Footer>
-          {haveAllPagesLoaded && confirmedTransactions.length > 0 && (
-            <AppText color="tertiary" bold>
-              👏 You reached the end of history.
-            </AppText>
-          )}
-          {!haveAllPagesLoaded && isLoading && (
-            <AppText color="tertiary" bold>
-              Loading more...
-            </AppText>
-          )}
+          {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
+            confirmedTransactions.length > 0 && (
+              <AppText color="tertiary" bold>
+                👏 You reached the end of history.
+              </AppText>
+            )}
+          {isLoading &&
+            ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
+              <AppText color="tertiary" bold>
+                Loading more...
+              </AppText>
+            )}
           {confirmedTransactions.length === 0 && !isLoading && (
             <AppText color="tertiary" bold>
               No transactions yet

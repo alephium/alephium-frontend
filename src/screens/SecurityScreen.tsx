@@ -42,7 +42,10 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'SecurityScre
 
 const SecurityScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const { isMnemonicBackedUp, mnemonic, metadataId } = useAppSelector((state) => state.activeWallet)
+  const isMnemonicBackedUp = useAppSelector((s) => s.activeWallet.isMnemonicBackedUp)
+  const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const metadataId = useAppSelector((s) => s.activeWallet.metadataId)
+
   const [isUnderstood, setIsUnderstood] = useState(false)
   const [showMnemonic, setShowMnemonic] = useState(false)
 
