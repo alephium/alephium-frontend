@@ -19,8 +19,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { clone } from 'lodash'
 import { Appearance } from 'react-native'
 
-import { NetworkName, NetworkPreset } from '../types/network'
-import { GeneralSettings, NetworkSettings, SettingsKey, SettingsPartial } from '../types/settings'
+import { NetworkName, NetworkPreset } from '~/types/network'
+import { GeneralSettings, NetworkSettings, SettingsKey, SettingsPartial } from '~/types/settings'
 
 const STORAGE_KEY = 'wallet-settings'
 

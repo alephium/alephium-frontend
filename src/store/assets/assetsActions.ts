@@ -21,7 +21,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TokenList } from '@alephium/token-list'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
-import { RootState } from '../store'
+import { RootState } from '~/store/store'
 
 export const syncNetworkTokensInfo = createAsyncThunk('assets/syncNetworkTokensInfo', async (_, { getState }) => {
   const state = getState() as RootState

@@ -21,8 +21,8 @@ import { MotiView } from 'moti'
 import { useTheme } from 'styled-components'
 import styled, { css } from 'styled-components/native'
 
-import { themes } from '../../style/themes'
-import Button, { ButtonProps } from './Button'
+import Button, { ButtonProps } from '~/components/buttons/Button'
+import { themes } from '~/style/themes'
 
 interface HighlightButtonProps extends ButtonProps {
   title: string

@@ -33,15 +33,15 @@ import {
   fetchAddressesData,
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
-} from '../api/addresses'
-import { Address, AddressHash, AddressPartial } from '../types/addresses'
-import { getRandomLabelColor } from '../utils/colors'
-import { extractNewTransactionHashes, getTransactionsOfAddress } from '../utils/transactions'
-import { newWalletGenerated, walletSwitched, walletUnlocked } from './activeWalletSlice'
-import { appReset } from './appSlice'
-import { selectAllAssetsInfo } from './assets/assetsSelectors'
-import { customNetworkSettingsSaved, networkPresetSwitched } from './networkSlice'
-import { RootState } from './store'
+} from '~/api/addresses'
+import { newWalletGenerated, walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
+import { appReset } from '~/store/appSlice'
+import { selectAllAssetsInfo } from '~/store/assets/assetsSelectors'
+import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
+import { RootState } from '~/store/store'
+import { Address, AddressHash, AddressPartial } from '~/types/addresses'
+import { getRandomLabelColor } from '~/utils/colors'
+import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/utils/transactions'
 
 const sliceName = 'addresses'
 

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 
-import RootStackParamList from '../navigation/rootStackRoutes'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 
 const initialNavigationState = {
   index: 0,

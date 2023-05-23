@@ -19,15 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Album as AddressesIcon, ArrowLeftRight as ArrowsIcon, List as ListIcon } from 'lucide-react-native'
 
-import AddressesScreenHeaderRight from '../components/AddressesScreenHeaderRight'
-import DashboardHeaderActions from '../components/DashboardHeaderActions'
-import FooterMenu from '../components/footers/FooterMenu'
-import DefaultHeader from '../components/headers/DefaultHeader'
-import WalletSwitch from '../components/WalletSwitch'
-import AddressesScreen from '../screens/AddressesScreen'
-import DashboardScreen from '../screens/DashboardScreen'
-import TransfersScreen from '../screens/TransfersScreen'
-import InWalletTabsParamList from './inWalletRoutes'
+import AddressesScreenHeaderRight from '~/components/AddressesScreenHeaderRight'
+import DashboardHeaderActions from '~/components/DashboardHeaderActions'
+import FooterMenu from '~/components/footers/FooterMenu'
+import DefaultHeader from '~/components/headers/DefaultHeader'
+import WalletSwitch from '~/components/WalletSwitch'
+import InWalletTabsParamList from '~/navigation/inWalletRoutes'
+import AddressesScreen from '~/screens/AddressesScreen'
+import DashboardScreen from '~/screens/DashboardScreen'
+import TransfersScreen from '~/screens/TransfersScreen'
 
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 

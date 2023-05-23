@@ -21,13 +21,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
-import { getStoredActiveWallet, getStoredWalletById } from '../persistent-storage/wallets'
-import { ShouldClearPin } from '../types/misc'
-import { ActiveWalletState } from '../types/wallet'
-import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
-import PinCodeInput from './inputs/PinCodeInput'
-import ModalWithBackdrop from './ModalWithBackdrop'
-import CenteredInstructions, { Instruction } from './text/CenteredInstructions'
+import PinCodeInput from '~/components/inputs/PinCodeInput'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
+import { getStoredActiveWallet, getStoredWalletById } from '~/persistent-storage/wallets'
+import { ShouldClearPin } from '~/types/misc'
+import { ActiveWalletState } from '~/types/wallet'
+import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
 interface ConfirmWithAuthModalProps {
   onConfirm: (pin?: string, wallet?: ActiveWalletState) => void

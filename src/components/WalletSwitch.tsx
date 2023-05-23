@@ -21,10 +21,10 @@ import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import { useAppSelector } from '../hooks/redux'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import AppText from './AppText'
-import Button from './buttons/Button'
+import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
+import { useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface WalletSwitchProps {
   style?: StyleProp<ViewStyle>

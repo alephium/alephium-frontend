@@ -20,10 +20,10 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import Screen from '../components/layout/Screen'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import { AlephiumLogoStyled } from '../screens/LandingScreen'
-import { darkTheme } from '../style/themes'
+import Screen from '~/components/layout/Screen'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { AlephiumLogoStyled } from '~/screens/LandingScreen'
+import { darkTheme } from '~/style/themes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
 

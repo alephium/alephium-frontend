@@ -22,8 +22,8 @@ import Animated, { interpolateColor, useAnimatedStyle } from 'react-native-reani
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useScrollContext } from '../../contexts/ScrollContext'
-import AppText from '../AppText'
+import AppText from '~/components/AppText'
+import { useScrollContext } from '~/contexts/ScrollContext'
 
 export interface DefaultHeaderProps {
   HeaderLeft: ReactNode

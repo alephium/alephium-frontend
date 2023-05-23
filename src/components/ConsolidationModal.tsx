@@ -20,13 +20,13 @@ import { Codesandbox } from 'lucide-react-native'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
-import Amount from './Amount'
-import AppText from './AppText'
-import Button from './buttons/Button'
-import ButtonsRow from './buttons/ButtonsRow'
-import InfoBox from './InfoBox'
-import { BottomScreenSection, ScreenSection } from './layout/Screen'
-import ModalWithBackdrop from './ModalWithBackdrop'
+import Amount from '~/components/Amount'
+import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
+import ButtonsRow from '~/components/buttons/ButtonsRow'
+import InfoBox from '~/components/InfoBox'
+import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
 interface ConsolidationModalProps {
   onConsolidate: () => void

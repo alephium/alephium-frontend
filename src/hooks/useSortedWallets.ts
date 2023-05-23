@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useEffect, useState } from 'react'
 
-import { getWalletsMetadata } from '../persistent-storage/wallets'
-import { WalletMetadata } from '../types/wallet'
-import { useAppSelector } from './redux'
+import { useAppSelector } from '~/hooks/redux'
+import { getWalletsMetadata } from '~/persistent-storage/wallets'
+import { WalletMetadata } from '~/types/wallet'
 
 export const useSortedWallets = () => {
   const activeWalletId = useAppSelector((s) => s.activeWallet.metadataId)

@@ -20,7 +20,7 @@ import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components'
 
-import { BORDER_RADIUS } from '../../style/globalStyle'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 interface BoxSurfaceProps {
   children: ReactNode

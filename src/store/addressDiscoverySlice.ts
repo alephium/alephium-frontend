@@ -20,18 +20,18 @@ import { AddressKeyPair, deriveAddressAndKeys, walletImportAsyncUnsafe } from '@
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
-import client from '../api/client'
-import { Address, AddressIndex } from '../types/addresses'
+import client from '~/api/client'
+import { addressesImported } from '~/store/addressesSlice'
+import { appReset } from '~/store/appSlice'
+import { RootState } from '~/store/store'
+import { Address, AddressIndex } from '~/types/addresses'
 import {
   findMaxIndexBeforeFirstGap,
   findNextAvailableAddressIndex,
   initializeAddressDiscoveryGroupsData
-} from '../utils/addresses'
-import { mnemonicToSeed } from '../utils/crypto'
-import { sleep } from '../utils/misc'
-import { addressesImported } from './addressesSlice'
-import { appReset } from './appSlice'
-import { RootState } from './store'
+} from '~/utils/addresses'
+import { mnemonicToSeed } from '~/utils/crypto'
+import { sleep } from '~/utils/misc'
 
 const sliceName = 'addressDiscovery'
 

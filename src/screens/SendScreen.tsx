@@ -33,33 +33,33 @@ import { ScrollView } from 'react-native'
 import Toast from 'react-native-root-toast'
 import styled from 'styled-components/native'
 
-import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '../api/transactions'
-import Amount from '../components/Amount'
-import Button from '../components/buttons/Button'
-import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
-import ConsolidationModal from '../components/ConsolidationModal'
-import ExpandableRow from '../components/ExpandableRow'
-import HighlightRow from '../components/HighlightRow'
-import AddressSelector from '../components/inputs/AddressSelector'
-import Input from '../components/inputs/Input'
+import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
+import Amount from '~/components/Amount'
+import Button from '~/components/buttons/Button'
+import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
+import ConsolidationModal from '~/components/ConsolidationModal'
+import ExpandableRow from '~/components/ExpandableRow'
+import HighlightRow from '~/components/HighlightRow'
+import AddressSelector from '~/components/inputs/AddressSelector'
+import Input from '~/components/inputs/Input'
 import Screen, {
   BottomModalScreenTitle,
   BottomScreenSection,
   ScreenSection,
   ScreenSectionTitle
-} from '../components/layout/Screen'
-import SpinnerModal from '../components/SpinnerModal'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import InWalletTabsParamList from '../navigation/inWalletRoutes'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import { selectAddressByHash, selectDefaultAddress, transactionSent } from '../store/addressesSlice'
-import { AddressHash } from '../types/addresses'
-import { getAddressAvailableBalance } from '../utils/addresses'
+} from '~/components/layout/Screen'
+import SpinnerModal from '~/components/SpinnerModal'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import InWalletTabsParamList from '~/navigation/inWalletRoutes'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { selectAddressByHash, selectDefaultAddress, transactionSent } from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
+import { getAddressAvailableBalance } from '~/utils/addresses'
 import {
   validateIsAddressValid,
   validateIsNumericStringValid,
   validateOptionalIsNumericStringValid
-} from '../utils/forms'
+} from '~/utils/forms'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'SendScreen'>
 

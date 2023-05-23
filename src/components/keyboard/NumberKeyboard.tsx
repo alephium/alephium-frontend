@@ -20,7 +20,7 @@ import Icon from '@expo/vector-icons/Feather'
 import { PressableProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '../AppText'
+import AppText from '~/components/AppText'
 
 interface NumberKeyboardProps {
   onPress: (value: NumberKeyboardKey) => void

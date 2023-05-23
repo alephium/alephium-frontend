@@ -25,11 +25,11 @@ import {
 } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
 
-import { selectAddressIds } from '../store/addressesSlice'
-import { AddressHash } from '../types/addresses'
-import { AddressTransaction } from '../types/transactions'
-import { isPendingTx } from '../utils/transactions'
-import { useAppSelector } from './redux'
+import { useAppSelector } from '~/hooks/redux'
+import { selectAddressIds } from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
+import { AddressTransaction } from '~/types/transactions'
+import { isPendingTx } from '~/utils/transactions'
 
 export const useTransactionInfo = (tx: AddressTransaction, addressHash: AddressHash, showInternalInflows?: boolean) => {
   const addressHashes = useAppSelector(selectAddressIds) as string[]

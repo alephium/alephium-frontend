@@ -27,10 +27,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
-import { useAppDispatch, useAppSelector } from './hooks/redux'
-import useInitializeClient from './hooks/useInitializeClient'
-import useLoadStoredSettings from './hooks/useLoadStoredSettings'
-import RootStackNavigation from './navigation/RootStackNavigation'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useInitializeClient from '~/hooks/useInitializeClient'
+import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
+import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
   areThereOtherWallets,
   deriveWalletStoredAddresses,
@@ -38,12 +38,12 @@ import {
   getActiveWalletMetadata,
   getStoredActiveWallet,
   rememberActiveWallet
-} from './persistent-storage/wallets'
-import { biometricsDisabled, walletUnlocked } from './store/activeWalletSlice'
-import { appBecameInactive } from './store/appSlice'
-import { store } from './store/store'
-import { themes } from './style/themes'
-import { navigateRootStack, resetNavigationState, setNavigationState } from './utils/navigation'
+} from '~/persistent-storage/wallets'
+import { biometricsDisabled, walletUnlocked } from '~/store/activeWalletSlice'
+import { appBecameInactive } from '~/store/appSlice'
+import { store } from '~/store/store'
+import { themes } from '~/style/themes'
+import { navigateRootStack, resetNavigationState, setNavigationState } from '~/utils/navigation'
 
 dayjs.extend(updateLocale)
 dayjs.updateLocale('en', {

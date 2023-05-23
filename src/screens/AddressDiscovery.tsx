@@ -25,23 +25,19 @@ import { ActivityIndicator, BackHandler, ScrollView, View } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
-import Amount from '../components/Amount'
-import AppText from '../components/AppText'
-import Button from '../components/buttons/Button'
-import HighlightRow from '../components/HighlightRow'
-import Screen, { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '../components/layout/Screen'
-import SpinnerModal from '../components/SpinnerModal'
-import usePersistAddressSettings from '../hooks/layout/usePersistAddressSettings'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import {
-  addressDiscoveryStopped,
-  discoverAddresses,
-  selectAllDiscoveredAddresses
-} from '../store/addressDiscoverySlice'
-import { addressesImported, selectAllAddresses, syncAddressesData } from '../store/addressesSlice'
-import { AddressHash } from '../types/addresses'
-import { getRandomLabelColor } from '../utils/colors'
+import Amount from '~/components/Amount'
+import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
+import HighlightRow from '~/components/HighlightRow'
+import Screen, { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import SpinnerModal from '~/components/SpinnerModal'
+import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { addressDiscoveryStopped, discoverAddresses, selectAllDiscoveredAddresses } from '~/store/addressDiscoverySlice'
+import { addressesImported, selectAllAddresses, syncAddressesData } from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
+import { getRandomLabelColor } from '~/utils/colors'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>
 

@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { explorer } from '@alephium/web3'
 
-import { Address, AddressDataSyncResult, AddressHash } from '../types/addresses'
-import client from './client'
+import client from '~/api/client'
+import { Address, AddressDataSyncResult, AddressHash } from '~/types/addresses'
 
 // TODO: Same as in desktop wallet, move to SDK?
 export const fetchAddressesData = async (addressHashes: AddressHash[]): Promise<AddressDataSyncResult[]> => {

@@ -19,16 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { explorer } from '@alephium/web3'
 import { createEntityAdapter, createSelector, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
-import { AddressDataSyncResult, AddressHash } from '../types/addresses'
-import { AddressConfirmedTransaction } from '../types/transactions'
-import { selectAddressTransactions } from '../utils/addresses'
 import {
   selectAllAddresses,
   syncAddressesData,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
-} from './addressesSlice'
-import { RootState } from './store'
+} from '~/store/addressesSlice'
+import { RootState } from '~/store/store'
+import { AddressDataSyncResult, AddressHash } from '~/types/addresses'
+import { AddressConfirmedTransaction } from '~/types/transactions'
+import { selectAddressTransactions } from '~/utils/addresses'
 
 const sliceName = 'confirmedTransactions'
 

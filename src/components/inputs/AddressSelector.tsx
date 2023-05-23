@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useAppSelector } from '../../hooks/redux'
-import { selectAllAddresses } from '../../store/addressesSlice'
-import { AddressHash } from '../../types/addresses'
-import AddressBadge from '../AddressBadge'
-import Select, { SelectProps } from './Select'
+import AddressBadge from '~/components/AddressBadge'
+import Select, { SelectProps } from '~/components/inputs/Select'
+import { useAppSelector } from '~/hooks/redux'
+import { selectAllAddresses } from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
 
 type AddressSelectorProps = Omit<SelectProps<string>, 'options' | 'renderValue'>
 

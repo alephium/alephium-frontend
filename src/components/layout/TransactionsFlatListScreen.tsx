@@ -20,16 +20,17 @@ import { useCallback } from 'react'
 import { ActivityIndicator, FlatListProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import AppText from '~/components/AppText'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import {
   selectAddressByHash,
   syncAddressesData,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
-} from '../../store/addressesSlice'
-import { AddressHash } from '../../types/addresses'
-import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '../../types/transactions'
-import AppText from '../AppText'
+} from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
+import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
+
 import TransactionRow from '../TransactionRow'
 import { ScreenSectionTitle } from './Screen'
 import ScrollFlatListScreen from './ScrollFlatListScreen'

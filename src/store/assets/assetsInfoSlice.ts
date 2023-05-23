@@ -21,9 +21,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH, TokenInfo } from '@alephium/token-list'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { customNetworkSettingsSaved, networkPresetSwitched } from '../networkSlice'
-import { syncNetworkTokensInfo } from './assetsActions'
-import { assetsInfoAdapter } from './assetsAdapter'
+import { syncNetworkTokensInfo } from '~/store/assets/assetsActions'
+import { assetsInfoAdapter } from '~/store/assets/assetsAdapter'
+import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 
 interface AssetsInfoState extends EntityState<TokenInfo> {
   status: 'initialized' | 'uninitialized'

@@ -20,7 +20,7 @@ import { View } from 'react-native'
 import { SafeAreaViewProps } from 'react-native-safe-area-context'
 import styled, { css } from 'styled-components/native'
 
-import AppText from '../AppText'
+import AppText from '~/components/AppText'
 
 const Screen = ({ children, style }: SafeAreaViewProps) => <View style={style}>{children}</View>
 

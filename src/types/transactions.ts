@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { explorer } from '@alephium/web3'
 
-import { Address } from './addresses'
+import { Address } from '~/types/addresses'
 
 export type PendingTransaction = {
   hash: string

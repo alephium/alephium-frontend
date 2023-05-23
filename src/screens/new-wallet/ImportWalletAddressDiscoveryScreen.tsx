@@ -20,12 +20,12 @@ import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
-import animationSrc from '../../animations/wallet.json'
-import Button from '../../components/buttons/Button'
-import ButtonStack from '../../components/buttons/ButtonStack'
-import Screen from '../../components/layout/Screen'
-import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import RootStackParamList from '../../navigation/rootStackRoutes'
+import animationSrc from '~/animations/wallet.json'
+import Button from '~/components/buttons/Button'
+import ButtonStack from '~/components/buttons/ButtonStack'
+import Screen from '~/components/layout/Screen'
+import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'ImportWalletAddressDiscoveryScreen'>
 

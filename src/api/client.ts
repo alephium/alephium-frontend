@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ExplorerProvider, NodeProvider, throttledFetch } from '@alephium/web3'
 
-import { defaultNetworkSettings } from '../persistent-storage/settings'
-import { NetworkSettings } from '../types/settings'
+import { defaultNetworkSettings } from '~/persistent-storage/settings'
+import { NetworkSettings } from '~/types/settings'
 
 export class Client {
   node: NodeProvider

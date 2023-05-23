@@ -21,9 +21,9 @@ import { Ghost } from 'lucide-react-native'
 import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import AlephiumLogo from '../images/logos/AlephiumLogo'
-import Amount from './Amount'
-import AppText from './AppText'
+import Amount from '~/components/Amount'
+import AppText from '~/components/AppText'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
 interface TokenInfoProps {
   asset: Asset
