@@ -30,7 +30,6 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 import { useAppDispatch, useAppSelector } from './hooks/redux'
 import useInitializeClient from './hooks/useInitializeClient'
 import useLoadStoredSettings from './hooks/useLoadStoredSettings'
-import useRefreshALPHPrice from './hooks/useRefreshALPHPrice'
 import RootStackNavigation from './navigation/RootStackNavigation'
 import {
   areThereOtherWallets,
@@ -100,7 +99,6 @@ const Main = ({ children }: { children: ReactNode }) => {
 
   useInitializeClient()
   useLoadStoredSettings()
-  useRefreshALPHPrice()
 
   const unlockActiveWallet = useCallback(async () => {
     if (activeWalletMnemonic) return

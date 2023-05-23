@@ -24,7 +24,6 @@ import styled from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { makeSelectAddressesAssets, selectAllAddresses } from '../store/addressesSlice'
-import { selectIsPriceUninitialized } from '../store/priceSlice'
 import { Address } from '../types/addresses'
 import { sortAssetsByName } from '../utils/assets'
 import Carousel from './Carousel'
@@ -40,7 +39,6 @@ interface AddressesTokensListProps {
 
 const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListProps) => {
   const allAddresses = useAppSelector(selectAllAddresses)
-  const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
   const addressDataStatus = useAppSelector((s) => s.addresses.status)
   const addresses = addressesParam ?? allAddresses
   const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
@@ -55,7 +53,7 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
   const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
 
   const assetsChunked = chunk(assets.sort(sortAssetsByName), PAGE_SIZE)
-  const isLoading = isPriceUninitialized || addressDataStatus === 'uninitialized'
+  const isLoading = addressDataStatus === 'uninitialized'
 
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
     const newCarouselItemHeight = event.nativeEvent.layout.height

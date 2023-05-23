@@ -28,6 +28,7 @@ import { useAppSelector } from '../hooks/redux'
 import { useTransactionInfo } from '../hooks/useTransactionalInfo'
 import { useTransactionUI } from '../hooks/useTransactionUI'
 import RootStackParamList from '../navigation/rootStackRoutes'
+import { useGetPriceQuery } from '../store/assets/priceApiSlice'
 import { AddressTransaction } from '../types/transactions'
 import { currencies } from '../utils/currencies'
 import { isPendingTx } from '../utils/transactions'
@@ -47,9 +48,12 @@ interface TransactionRowProps {
 
 const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, style }: TransactionRowProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const price = useAppSelector((s) => s.price.value)
-  const currency = useAppSelector((s) => s.settings.currency)
   const { amount, infoType } = useTransactionInfo(tx, tx.address.hash, showInternalInflows)
+  const currency = useAppSelector((s) => s.settings.currency)
+  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
+    pollingInterval: 60000,
+    skip: !amount || amount === BigInt(0)
+  })
   const { Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
 
   const fiatValue = price !== undefined && amount !== undefined ? calculateAmountWorth(amount, price) : 0

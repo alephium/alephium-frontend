@@ -32,6 +32,7 @@ import { BottomModalScreenTitle, CenteredScreenSection, ScreenSection } from '..
 import { useAppSelector } from '../hooks/redux'
 import RootStackParamList from '../navigation/rootStackRoutes'
 import { selectAddressByHash, selectDefaultAddress } from '../store/addressesSlice'
+import { useGetPriceQuery } from '../store/assets/priceApiSlice'
 import { AddressHash } from '../types/addresses'
 import { copyAddressToClipboard } from '../utils/addresses'
 import { currencies } from '../utils/currencies'
@@ -46,8 +47,11 @@ const ReceiveScreen = ({
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [toAddressHash, setToAddressHash] = useState<AddressHash>(addressHash ?? defaultAddress?.hash)
   const toAddress = useAppSelector((s) => selectAddressByHash(s, toAddressHash))
-  const price = useAppSelector((s) => s.price.value)
   const currency = useAppSelector((s) => s.settings.currency)
+  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
+    pollingInterval: 60000,
+    skip: !toAddress || BigInt(toAddress.balance) === BigInt(0)
+  })
   const theme = useTheme()
 
   if (!toAddress) return null
