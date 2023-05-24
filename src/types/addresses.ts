@@ -20,7 +20,6 @@ import { AddressKeyPair, TokenBalances } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
 
 import { TimeInMs } from './numbers'
-import { AddressToken } from './tokens'
 import { PendingTransaction } from './transactions'
 
 export type AddressHash = string
@@ -44,7 +43,7 @@ export type Address = AddressKeyPair &
     transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
     transactionsPageLoaded: number
     allTransactionPagesLoaded: boolean
-    tokens: AddressToken[]
+    tokens: TokenBalances[]
     lastUsed: TimeInMs
   }
 

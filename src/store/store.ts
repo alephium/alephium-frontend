@@ -22,13 +22,13 @@ import activeWalletSlice from './activeWalletSlice'
 import addressDiscoverySlice from './addressDiscoverySlice'
 import addressesSlice from './addressesSlice'
 import appSlice from './appSlice'
+import assetsInfoSlice from './assets/assetsInfoSlice'
+import { priceApi } from './assets/priceApiSlice'
 import confirmedTransactionsSlice from './confirmedTransactionsSlice'
 import credentialsSlice from './credentialsSlice'
 import networkSlice from './networkSlice'
 import pendingTransactionsSlice from './pendingTransactionsSlice'
-import priceSlice from './priceSlice'
 import settingsSlice, { settingsListenerMiddleware } from './settingsSlice'
-import tokenMetadataSlice from './tokenMetadataSlice'
 import walletGenerationSlice from './walletGenerationSlice'
 
 export const store = configureStore({
@@ -39,14 +39,15 @@ export const store = configureStore({
     credentials: credentialsSlice.reducer,
     activeWallet: activeWalletSlice.reducer,
     addresses: addressesSlice.reducer,
-    price: priceSlice.reducer,
+    [priceApi.reducerPath]: priceApi.reducer,
     app: appSlice.reducer,
-    tokenMetadata: tokenMetadataSlice.reducer,
+    [assetsInfoSlice.name]: assetsInfoSlice.reducer,
     addressDiscovery: addressDiscoverySlice.reducer,
     confirmedTransactions: confirmedTransactionsSlice.reducer,
     pendingTransactions: pendingTransactionsSlice.reducer
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(settingsListenerMiddleware.middleware)
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().prepend(settingsListenerMiddleware.middleware).prepend(priceApi.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>

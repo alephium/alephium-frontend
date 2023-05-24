@@ -20,6 +20,7 @@ import { useCallback, useEffect } from 'react'
 
 import client from '../api/client'
 import { selectAllAddresses, syncAddressesData } from '../store/addressesSlice'
+import { syncNetworkTokensInfo } from '../store/assets/assetsActions'
 import { apiClientInitFailed, apiClientInitSucceeded } from '../store/networkSlice'
 import { useAppDispatch, useAppSelector } from './redux'
 import useInterval from './useInterval'
@@ -29,6 +30,7 @@ const useInitializeClient = () => {
   const network = useAppSelector((s) => s.network)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const addresses = useAppSelector(selectAllAddresses)
+  const assetsInfo = useAppSelector((s) => s.assetsInfo)
 
   const initializeClient = useCallback(async () => {
     try {
@@ -58,6 +60,12 @@ const useInitializeClient = () => {
       dispatch(syncAddressesData())
     }
   }, [addresses.length, addressesStatus, dispatch, network.status])
+
+  useEffect(() => {
+    if (network.status === 'online' && assetsInfo.status === 'uninitialized') {
+      dispatch(syncNetworkTokensInfo())
+    }
+  }, [dispatch, network.status, assetsInfo.status])
 }
 
 export default useInitializeClient

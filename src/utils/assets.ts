@@ -16,20 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect } from 'react'
+import { Asset } from '@alephium/sdk'
 
-import { syncTokenMetadata } from '../store/tokenMetadataSlice'
-import { useAppDispatch, useAppSelector } from './redux'
-
-const useTokenMetadata = () => {
-  const dispatch = useAppDispatch()
-  const { metadata, status } = useAppSelector((s) => s.tokenMetadata)
-
-  useEffect(() => {
-    if (status === 'uninitialized') dispatch(syncTokenMetadata())
-  }, [dispatch, status])
-
-  return metadata
-}
-
-export default useTokenMetadata
+export const sortAssetsByName = (tokenA: Asset, tokenB: Asset) =>
+  !tokenA.name || !tokenB.name ? tokenA.id.localeCompare(tokenB.id) : tokenA.name.localeCompare(tokenB.name)

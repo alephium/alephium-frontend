@@ -16,17 +16,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Currency } from './settings'
-
-export interface TokenWorth {
-  price?: number
-  currency: Currency
-}
-
-export type TokenMetadata = {
-  name: string
-  description: string
-  image: string
-  symbol: string
-  decimals: number
-}
+export const CHART_DATE_FORMAT = 'YYYY-MM-DD'

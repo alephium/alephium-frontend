@@ -22,7 +22,7 @@ import { useTheme } from 'styled-components/native'
 
 import { useAppSelector } from '../hooks/redux'
 import { selectTotalBalance } from '../store/addressesSlice'
-import { selectIsPriceUninitialized } from '../store/priceSlice'
+import { useGetPriceQuery } from '../store/assets/priceApiSlice'
 import { currencies } from '../utils/currencies'
 import Amount from './Amount'
 import AppText from './AppText'
@@ -33,15 +33,17 @@ interface BalanceSummaryProps {
 }
 
 const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
-  const price = useAppSelector((s) => s.price.value)
   const currency = useAppSelector((s) => s.settings.currency)
-  const addressDataStatus = useAppSelector((s) => s.addresses.status)
   const totalBalance = useAppSelector(selectTotalBalance)
-  const isPriceUninitialized = useAppSelector(selectIsPriceUninitialized)
+  const { data: price, isLoading: isPriceLoading } = useGetPriceQuery(currencies[currency].ticker, {
+    pollingInterval: 60000,
+    skip: totalBalance === BigInt(0)
+  })
+  const addressDataStatus = useAppSelector((s) => s.addresses.status)
   const theme = useTheme()
 
   const balance = calculateAmountWorth(totalBalance, price ?? 0)
-  const showActivityIndicator = isPriceUninitialized || addressDataStatus === 'uninitialized'
+  const showActivityIndicator = isPriceLoading || addressDataStatus === 'uninitialized'
 
   return (
     <View style={style}>

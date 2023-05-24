@@ -92,6 +92,7 @@ export const initializeAddressDiscoveryGroupsData = (addresses: Address[]): Addr
 export const getAddressAvailableBalance = (address: Address): bigint =>
   BigInt(bigInteger(address.balance).minus(bigInteger(address.lockedBalance)).toString())
 
+// TODO: Move into store directory
 export const selectAddressTransactions = (
   allAddresses: Address[],
   transactions: (explorer.Transaction | PendingTransaction)[],

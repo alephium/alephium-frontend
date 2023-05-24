@@ -16,17 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Currency } from './settings'
+// TODO: Same as in desktop wallet
 
-export interface TokenWorth {
-  price?: number
-  currency: Currency
-}
+import { TokenInfo } from '@alephium/token-list'
+import { createEntityAdapter } from '@reduxjs/toolkit'
 
-export type TokenMetadata = {
-  name: string
-  description: string
-  image: string
-  symbol: string
-  decimals: number
-}
+export const assetsInfoAdapter = createEntityAdapter<TokenInfo>({
+  sortComparer: (a, b) => a.name.localeCompare(b.name)
+})

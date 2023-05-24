@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Asset, TokenDisplayBalances } from '@alephium/sdk'
+import { ALPH } from '@alephium/token-list'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,
@@ -33,11 +35,11 @@ import {
   fetchAddressTransactionsNextPage
 } from '../api/addresses'
 import { Address, AddressHash, AddressPartial } from '../types/addresses'
-import { AddressToken } from '../types/tokens'
 import { getRandomLabelColor } from '../utils/colors'
 import { extractNewTransactionHashes, getTransactionsOfAddress } from '../utils/transactions'
 import { newWalletGenerated, walletSwitched, walletUnlocked } from './activeWalletSlice'
 import { appReset } from './appSlice'
+import { selectAllAssetsInfo } from './assets/assetsSelectors'
 import { customNetworkSettingsSaved, networkPresetSwitched } from './networkSlice'
 import { RootState } from './store'
 
@@ -215,7 +217,7 @@ const addressesSlice = createSlice({
             id: hash,
             changes: {
               ...details,
-              ...tokens,
+              tokens,
               transactions: uniq(address.transactions.concat(transactions.map((tx) => tx.hash))),
               transactionsPageLoaded: address.transactionsPageLoaded === 0 ? 1 : address.transactionsPageLoaded,
               lastUsed: transactions.length > 0 ? transactions[0].timestamp : address.lastUsed
@@ -280,27 +282,77 @@ export const {
   selectIds: selectAddressIds
 } = addressesAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const makeSelectTokens = () =>
-  createSelector([(_, addresses: Address[]) => addresses], (addresses) => {
-    const resultTokens: AddressToken[] = []
+// TODO: Same as in desktop wallet
+export const makeSelectAddressesAssets = () =>
+  createSelector(
+    [selectAllAssetsInfo, makeSelectAddressesAlphAsset(), makeSelectAddresses()],
+    (assetsInfo, alphAsset, addresses): Asset[] => {
+      const tokenBalances = addresses.reduce((acc, { tokens }) => {
+        tokens.forEach((token) => {
+          const existingToken = acc.find((t) => t.id === token.id)
 
-    addresses.forEach((address) => {
-      address.tokens.forEach((token) => {
-        const tokenBalances = resultTokens.find((resultToken) => resultToken.id === token.id)?.balances
+          if (!existingToken) {
+            acc.push({
+              id: token.id,
+              balance: BigInt(token.balance),
+              lockedBalance: BigInt(token.lockedBalance)
+            })
+          } else {
+            existingToken.balance = existingToken.balance + BigInt(token.balance)
+            existingToken.lockedBalance = existingToken.lockedBalance + BigInt(token.lockedBalance)
+          }
+        })
 
-        if (tokenBalances) {
-          tokenBalances.balance = (BigInt(tokenBalances.balance) + BigInt(token.balances.balance)).toString()
-          tokenBalances.lockedBalance = (
-            BigInt(tokenBalances.lockedBalance) + BigInt(token.balances.lockedBalance)
-          ).toString()
-        } else {
-          resultTokens.push(token)
+        return acc
+      }, [] as TokenDisplayBalances[])
+
+      const tokenAssets = tokenBalances.map((token) => {
+        const assetInfo = assetsInfo.find((t) => t.id === token.id)
+
+        return {
+          id: token.id,
+          balance: BigInt(token.balance.toString()),
+          lockedBalance: BigInt(token.lockedBalance.toString()),
+          name: assetInfo?.name,
+          symbol: assetInfo?.symbol,
+          description: assetInfo?.description,
+          logoURI: assetInfo?.logoURI,
+          decimals: assetInfo?.decimals ?? 0
         }
       })
-    })
 
-    return resultTokens
+      return [alphAsset, ...tokenAssets]
+    }
+  )
+
+// TODO: Same as in desktop wallet
+export const makeSelectAddressesAlphAsset = () =>
+  createSelector(makeSelectAddresses(), (addresses): Asset => {
+    const alphBalances = addresses.reduce(
+      (acc, { balance, lockedBalance }) => ({
+        balance: acc.balance + BigInt(balance),
+        lockedBalance: acc.lockedBalance + BigInt(lockedBalance)
+      }),
+      { balance: BigInt(0), lockedBalance: BigInt(0) }
+    )
+
+    return {
+      ...ALPH,
+      ...alphBalances
+    }
   })
+
+// TODO: Same as in desktop wallet
+export const makeSelectAddresses = () =>
+  createSelector(
+    [selectAllAddresses, (_, addressHashes?: AddressHash[] | AddressHash) => addressHashes],
+    (allAddresses, addressHashes) =>
+      addressHashes
+        ? allAddresses.filter((address) =>
+            Array.isArray(addressHashes) ? addressHashes.includes(address.hash) : addressHashes === address.hash
+          )
+        : allAddresses
+  )
 
 export const selectDefaultAddress = createSelector(selectAllAddresses, (addresses) =>
   addresses.find((address) => address.settings.isMain)

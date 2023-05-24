@@ -15,44 +15,39 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { NUM_OF_ZEROS_IN_QUINTILLION, produceZeros, toHumanReadableAmount } from '@alephium/sdk'
-import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { Asset } from '@alephium/sdk'
+import { ALPH } from '@alephium/token-list'
+import { Ghost } from 'lucide-react-native'
+import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import AlephiumLogo from '../images/logos/AlephiumLogo'
-import { AddressToken, ALEPHIUM_TOKEN_ID, TokenMetadata } from '../types/tokens'
-import { currencies } from '../utils/currencies'
 import Amount from './Amount'
 import AppText from './AppText'
 
-interface TokenInfoProps extends AddressToken, Partial<TokenMetadata> {
-  id: string
+interface TokenInfoProps {
+  asset: Asset
   isLoading?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-// TODO: Use official Alephium tokens-meta repo
-const TOKEN_IMAGE_URL = 'https://raw.githubusercontent.com/nop33/token-meta/master/images/'
-
-const TokenInfo = ({ id, name, balances, worth, isLoading, image, symbol, decimals, style }: TokenInfoProps) => {
+const TokenInfo = ({ asset, isLoading, style }: TokenInfoProps) => {
   const theme = useTheme()
-  const trailingZeros = produceZeros(NUM_OF_ZEROS_IN_QUINTILLION - (decimals ?? 0))
-  const tokenBalance = toHumanReadableAmount(BigInt(balances.balance + trailingZeros))
-  const fiatValue = worth?.price ? parseFloat(tokenBalance) * worth.price : undefined
-  const isAlph = id === ALEPHIUM_TOKEN_ID
 
   return (
-    <View style={style}>
+    <TokenInfoStyled style={style}>
       <LeftGroup>
-        <TokenIcon>
-          {isAlph ? (
-            <AlephiumLogo color={theme.font.contrast} />
+        <TokenIcon asset={asset}>
+          {asset.logoURI ? (
+            <LogoImage source={{ uri: asset.logoURI }} />
+          ) : asset.id === ALPH.id ? (
+            <AlephiumLogo color={theme.font.tertiary} />
           ) : (
-            image && <TokenLogo source={{ uri: `${TOKEN_IMAGE_URL}${image}` }} />
+            <Ghost size={30} color={theme.font.secondary} />
           )}
         </TokenIcon>
         <AppText bold numberOfLines={1} style={{ flexShrink: 1 }}>
-          {name ?? id}
+          {asset.name ?? asset.id}
         </AppText>
       </LeftGroup>
       <Amounts>
@@ -60,18 +55,17 @@ const TokenInfo = ({ id, name, balances, worth, isLoading, image, symbol, decima
           <ActivityIndicator size="small" color={theme.font.primary} />
         ) : (
           <>
-            <Amount value={BigInt(balances.balance)} fadeDecimals suffix={symbol} bold />
-            {fiatValue !== undefined && worth && (
-              <Amount value={fiatValue} isFiat suffix={currencies[worth.currency].symbol} fadeDecimals />
-            )}
+            <Amount value={BigInt(asset.balance)} fadeDecimals suffix={asset.symbol} bold />
           </>
         )}
       </Amounts>
-    </View>
+    </TokenInfoStyled>
   )
 }
 
-export default styled(TokenInfo)`
+export default TokenInfo
+
+const TokenInfoStyled = styled.View`
   flex-direction: row;
 `
 
@@ -89,17 +83,27 @@ const Amounts = styled.View`
   align-items: flex-end;
 `
 
-const TokenIcon = styled.View`
+const TokenIcon = styled.View<{ asset: Asset }>`
   width: 45px;
   height: 45px;
   border-radius: 45px;
-  border-width: 1px;
-  padding: 7px;
   margin-right: 10px;
-  background-color: ${({ theme }) => theme.bg.contrast};
+  padding: 1px;
+
+  ${({ asset, theme }) =>
+    asset.id === ALPH.id
+      ? css`
+          padding: 8px;
+        `
+      : !asset.logoURI &&
+        css`
+          align-items: center;
+          justify-content: center;
+          background: ${theme.bg.secondary};
+        `}
 `
 
-const TokenLogo = styled.Image`
+const LogoImage = styled.Image`
   width: 100%;
   height: 100%;
 `
