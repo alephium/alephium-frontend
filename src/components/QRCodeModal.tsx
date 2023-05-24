@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import QRCode from 'react-qr-code'
 import { useTheme } from 'styled-components/native'
 
-import { AddressHash } from '../types/addresses'
-import ModalWithBackdrop from './ModalWithBackdrop'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import { AddressHash } from '~/types/addresses'
 
 interface QRCodeModalProps {
   addressHash: AddressHash

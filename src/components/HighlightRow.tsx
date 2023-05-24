@@ -20,8 +20,8 @@ import { ReactNode } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
-import { INPUTS_HEIGHT, INPUTS_PADDING } from '../style/globalStyle'
-import AppText from './AppText'
+import AppText from '~/components/AppText'
+import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
 export interface HighlightRowProps {
   children: ReactNode | ReactNode[]

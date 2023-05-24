@@ -20,10 +20,10 @@ import { memo, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import { labelColorPalette } from '../../utils/colors'
-import AppText from '../AppText'
-import HighlightRow from '../HighlightRow'
-import ModalWithBackdrop from '../ModalWithBackdrop'
+import AppText from '~/components/AppText'
+import HighlightRow from '~/components/HighlightRow'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import { labelColorPalette } from '~/utils/colors'
 
 interface ColorPickerProps {
   onChange: (color: string) => void

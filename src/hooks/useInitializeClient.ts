@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useCallback, useEffect } from 'react'
 
-import client from '../api/client'
-import { selectAllAddresses, syncAddressesData } from '../store/addressesSlice'
-import { syncNetworkTokensInfo } from '../store/assets/assetsActions'
-import { apiClientInitFailed, apiClientInitSucceeded } from '../store/networkSlice'
-import { useAppDispatch, useAppSelector } from './redux'
-import useInterval from './useInterval'
+import client from '~/api/client'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useInterval from '~/hooks/useInterval'
+import { selectAllAddresses, syncAddressesData } from '~/store/addressesSlice'
+import { syncNetworkTokensInfo } from '~/store/assets/assetsActions'
+import { apiClientInitFailed, apiClientInitSucceeded } from '~/store/networkSlice'
 
 const useInitializeClient = () => {
   const dispatch = useAppDispatch()

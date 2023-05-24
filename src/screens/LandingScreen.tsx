@@ -20,14 +20,14 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '../components/AppText'
-import Button from '../components/buttons/Button'
-import ButtonStack from '../components/buttons/ButtonStack'
-import Screen from '../components/layout/Screen'
-import { useAppDispatch } from '../hooks/redux'
-import AlephiumLogo from '../images/logos/AlephiumLogo'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import { methodSelected, WalletGenerationMethod } from '../store/walletGenerationSlice'
+import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
+import ButtonStack from '~/components/buttons/ButtonStack'
+import Screen from '~/components/layout/Screen'
+import { useAppDispatch } from '~/hooks/redux'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 

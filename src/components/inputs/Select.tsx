@@ -20,11 +20,11 @@ import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '../AppText'
-import HighlightRow from '../HighlightRow'
-import BoxSurface from '../layout/BoxSurface'
-import ModalWithBackdrop from '../ModalWithBackdrop'
-import Input, { InputProps, InputValue, RenderValueFunc } from './Input'
+import AppText from '~/components/AppText'
+import HighlightRow from '~/components/HighlightRow'
+import Input, { InputProps, InputValue, RenderValueFunc } from '~/components/inputs/Input'
+import BoxSurface from '~/components/layout/BoxSurface'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
 export type SelectOption<T extends InputValue> = {
   value: T

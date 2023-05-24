@@ -21,13 +21,13 @@ import { colord } from 'colord'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useAppSelector } from '../hooks/redux'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import { selectAddressByHash } from '../store/addressesSlice'
-import { themes } from '../style/themes'
-import { AddressHash } from '../types/addresses'
-import AddressBadge from './AddressBadge'
-import Amount from './Amount'
+import AddressBadge from '~/components/AddressBadge'
+import Amount from '~/components/Amount'
+import { useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { selectAddressByHash } from '~/store/addressesSlice'
+import { themes } from '~/style/themes'
+import { AddressHash } from '~/types/addresses'
 
 interface AddressCardProps {
   addressHash: AddressHash

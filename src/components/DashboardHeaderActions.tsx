@@ -23,9 +23,9 @@ import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useAppSelector } from '../hooks/redux'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import { BORDER_RADIUS } from '../style/globalStyle'
+import { useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 interface DashboardHeaderActionsProps {
   style?: StyleProp<ViewStyle>

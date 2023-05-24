@@ -20,14 +20,14 @@ import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useRef, useState } from 'react'
 
-import SpinnerModal from '../components/SpinnerModal'
-import usePersistAddressSettings from '../hooks/layout/usePersistAddressSettings'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import { newAddressGenerated, selectAllAddresses, syncAddressesData } from '../store/addressesSlice'
-import { getRandomLabelColor } from '../utils/colors'
-import { mnemonicToSeed } from '../utils/crypto'
-import AddressFormScreen, { AddressFormData } from './AddressFormScreen'
+import SpinnerModal from '~/components/SpinnerModal'
+import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import AddressFormScreen, { AddressFormData } from '~/screens/AddressFormScreen'
+import { newAddressGenerated, selectAllAddresses, syncAddressesData } from '~/store/addressesSlice'
+import { getRandomLabelColor } from '~/utils/colors'
+import { mnemonicToSeed } from '~/utils/crypto'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
 

@@ -20,8 +20,8 @@ import { memo, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import NumberKeyboard, { NumberKeyboardKey } from '../keyboard/NumberKeyboard'
-import Screen from '../layout/Screen'
+import NumberKeyboard, { NumberKeyboardKey } from '~/components/keyboard/NumberKeyboard'
+import Screen from '~/components/layout/Screen'
 
 interface PinInputProps {
   pinLength: number

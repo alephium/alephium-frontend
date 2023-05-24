@@ -18,8 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import 'styled-components'
 
-import { ThemeType } from './themes'
-
 declare module 'styled-components' {
   export interface DefaultTheme {
     name: ThemeType

@@ -22,8 +22,8 @@ import { ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import { BORDER_RADIUS } from '../../style/globalStyle'
-import AppText from '../AppText'
+import AppText from '~/components/AppText'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export interface ButtonProps extends PressableProps {
   title?: string

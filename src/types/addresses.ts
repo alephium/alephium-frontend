@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressKeyPair, TokenBalances } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
 
-import { TimeInMs } from './numbers'
-import { PendingTransaction } from './transactions'
+import { TimeInMs } from '~/types/numbers'
+import { PendingTransaction } from '~/types/transactions'
 
 export type AddressHash = string
 

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { appReset } from './appSlice'
+import { appReset } from '~/store/appSlice'
 
 const sliceName = 'walletGeneration'
 

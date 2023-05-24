@@ -19,15 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useState } from 'react'
 
-import ConfirmWithAuthModal from '../components/ConfirmWithAuthModal'
-import Screen from '../components/layout/Screen'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import { deriveWalletStoredAddresses, rememberActiveWallet } from '../persistent-storage/wallets'
-import { walletSwitched, walletUnlocked } from '../store/activeWalletSlice'
-import { AddressPartial } from '../types/addresses'
-import { ActiveWalletState } from '../types/wallet'
-import { resetNavigationState, setNavigationState } from '../utils/navigation'
+import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
+import Screen from '~/components/layout/Screen'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { deriveWalletStoredAddresses, rememberActiveWallet } from '~/persistent-storage/wallets'
+import { walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
+import { AddressPartial } from '~/types/addresses'
+import { ActiveWalletState } from '~/types/wallet'
+import { resetNavigationState, setNavigationState } from '~/utils/navigation'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
 

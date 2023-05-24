@@ -21,10 +21,10 @@ import { Camera, X } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from './AppText'
-import InfoBox from './InfoBox'
-import Screen, { ScreenSection } from './layout/Screen'
-import ModalWithBackdrop from './ModalWithBackdrop'
+import AppText from '~/components/AppText'
+import InfoBox from '~/components/InfoBox'
+import Screen, { ScreenSection } from '~/components/layout/Screen'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
 interface QRCodeScannerModalProps {
   onClose: () => void

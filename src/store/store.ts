@@ -18,18 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { configureStore } from '@reduxjs/toolkit'
 
-import activeWalletSlice from './activeWalletSlice'
-import addressDiscoverySlice from './addressDiscoverySlice'
-import addressesSlice from './addressesSlice'
-import appSlice from './appSlice'
-import assetsInfoSlice from './assets/assetsInfoSlice'
-import { priceApi } from './assets/priceApiSlice'
-import confirmedTransactionsSlice from './confirmedTransactionsSlice'
-import credentialsSlice from './credentialsSlice'
-import networkSlice from './networkSlice'
-import pendingTransactionsSlice from './pendingTransactionsSlice'
-import settingsSlice, { settingsListenerMiddleware } from './settingsSlice'
-import walletGenerationSlice from './walletGenerationSlice'
+import activeWalletSlice from '~/store/activeWalletSlice'
+import addressDiscoverySlice from '~/store/addressDiscoverySlice'
+import addressesSlice from '~/store/addressesSlice'
+import appSlice from '~/store/appSlice'
+import assetsInfoSlice from '~/store/assets/assetsInfoSlice'
+import { priceApi } from '~/store/assets/priceApiSlice'
+import confirmedTransactionsSlice from '~/store/confirmedTransactionsSlice'
+import credentialsSlice from '~/store/credentialsSlice'
+import networkSlice from '~/store/networkSlice'
+import pendingTransactionsSlice from '~/store/pendingTransactionsSlice'
+import settingsSlice, { settingsListenerMiddleware } from '~/store/settingsSlice'
+import walletGenerationSlice from '~/store/walletGenerationSlice'
 
 export const store = configureStore({
   reducer: {

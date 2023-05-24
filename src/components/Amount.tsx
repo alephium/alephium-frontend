@@ -19,7 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
 import { StyleProp, TextStyle } from 'react-native'
 
-import { useAppSelector } from '../hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
+
 import AppText, { AppTextProps } from './AppText'
 
 interface AmountProps extends AppTextProps {

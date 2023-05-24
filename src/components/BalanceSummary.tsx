@@ -20,12 +20,12 @@ import { calculateAmountWorth } from '@alephium/sdk'
 import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
-import { useAppSelector } from '../hooks/redux'
-import { selectTotalBalance } from '../store/addressesSlice'
-import { useGetPriceQuery } from '../store/assets/priceApiSlice'
-import { currencies } from '../utils/currencies'
-import Amount from './Amount'
-import AppText from './AppText'
+import Amount from '~/components/Amount'
+import AppText from '~/components/AppText'
+import { useAppSelector } from '~/hooks/redux'
+import { selectTotalBalance } from '~/store/addressesSlice'
+import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
+import { currencies } from '~/utils/currencies'
 
 interface BalanceSummaryProps {
   dateLabel: string

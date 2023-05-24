@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Plus as PlusIcon } from 'lucide-react-native'
 
-import RootStackParamList from '../navigation/rootStackRoutes'
-import Button from './buttons/Button'
+import Button from '~/components/buttons/Button'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 
 const AddressesScreenHeaderRight = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()

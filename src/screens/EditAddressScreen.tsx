@@ -19,13 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 
-import SpinnerModal from '../components/SpinnerModal'
-import usePersistAddressSettings from '../hooks/layout/usePersistAddressSettings'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import RootStackParamList from '../navigation/rootStackRoutes'
-import { addressSettingsSaved, selectAddressByHash } from '../store/addressesSlice'
-import { AddressSettings } from '../types/addresses'
-import AddressFormScreen from './AddressFormScreen'
+import SpinnerModal from '~/components/SpinnerModal'
+import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import AddressFormScreen from '~/screens/AddressFormScreen'
+import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
+import { AddressSettings } from '~/types/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'EditAddressScreen'>
 

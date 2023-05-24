@@ -19,11 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 
-import Screen, { BottomScreenSection, ScreenSection } from '../components/layout/Screen'
-import Button from './buttons/Button'
-import ButtonsRow from './buttons/ButtonsRow'
-import Input from './inputs/Input'
-import ModalWithBackdrop from './ModalWithBackdrop'
+import Button from '~/components/buttons/Button'
+import ButtonsRow from '~/components/buttons/ButtonsRow'
+import Input from '~/components/inputs/Input'
+import Screen, { ScreenSection } from '~/components/layout/Screen'
+import { BottomScreenSection } from '~/components/layout/Screen'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
 interface PasswordModalProps {
   onClose: () => void

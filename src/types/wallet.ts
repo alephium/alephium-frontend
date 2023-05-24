@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressKeyPair } from '@alephium/sdk'
 
-import { AddressMetadata, AddressPartial } from './addresses'
+import { AddressMetadata, AddressPartial } from '~/types/addresses'
 
 export type Mnemonic = string
 

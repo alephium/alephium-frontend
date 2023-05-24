@@ -20,12 +20,12 @@ import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import animationSrc from '../../animations/success.json'
-import HighlightButton from '../../components/buttons/HighlightButton'
-import Screen from '../../components/layout/Screen'
-import CenteredInstructions, { Instruction } from '../../components/text/CenteredInstructions'
-import AlephiumLogo from '../../images/logos/AlephiumLogo'
-import RootStackParamList from '../../navigation/rootStackRoutes'
+import animationSrc from '~/animations/success.json'
+import HighlightButton from '~/components/buttons/HighlightButton'
+import Screen from '~/components/layout/Screen'
+import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletSuccessPage'>
 

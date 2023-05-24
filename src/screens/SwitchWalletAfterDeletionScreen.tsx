@@ -21,7 +21,7 @@ import { useCallback } from 'react'
 import { Alert, BackHandler } from 'react-native'
 import styled from 'styled-components/native'
 
-import SwitchWalletScreen, { SwitchWalletScreenProps } from './SwitchWalletScreen'
+import SwitchWalletScreen, { SwitchWalletScreenProps } from '~/screens/SwitchWalletScreen'
 
 const SwitchWalletAfterDeletion = (props: SwitchWalletScreenProps) => {
   useFocusEffect(

@@ -19,8 +19,8 @@ import { colord } from 'colord'
 import { ActivityIndicator } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from './AppText'
-import ModalWithBackdrop from './ModalWithBackdrop'
+import AppText from '~/components/AppText'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
 interface SpinnerModalProps {
   isActive: boolean

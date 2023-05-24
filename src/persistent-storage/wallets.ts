@@ -26,10 +26,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
-import { AddressMetadata, AddressPartial } from '../types/addresses'
-import { ActiveWalletState, GeneratedWallet, Mnemonic, WalletMetadata } from '../types/wallet'
-import { getRandomLabelColor } from '../utils/colors'
-import { mnemonicToSeed, pbkdf2 } from '../utils/crypto'
+import { AddressMetadata, AddressPartial } from '~/types/addresses'
+import { ActiveWalletState, GeneratedWallet, Mnemonic, WalletMetadata } from '~/types/wallet'
+import { getRandomLabelColor } from '~/utils/colors'
+import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
 const defaultBiometricsConfig = {
   requireAuthentication: true,

@@ -28,8 +28,8 @@ import {
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import AppText from '../AppText'
-import HighlightRow from '../HighlightRow'
+import AppText from '~/components/AppText'
+import HighlightRow from '~/components/HighlightRow'
 
 export type InputValue = string | number | undefined | unknown
 export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
