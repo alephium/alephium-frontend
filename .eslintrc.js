@@ -27,8 +27,7 @@ module.exports = {
   ],
   plugins: ['react', '@typescript-eslint', 'prettier', 'react-hooks', 'unused-imports', 'simple-import-sort', 'header'],
   rules: {
-    quotes: [1, 'single', { avoidEscape: true }],
-    'jsx-quotes': [2, 'prefer-double'],
+    'arrow-body-style': [2, 'as-needed'],
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -37,11 +36,14 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
     'no-use-before-define': 'off',
     'react/react-in-jsx-scope': 'off',
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
+    'react/jsx-no-useless-fragment': 'warn',
+    'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+    'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
     'unused-imports/no-unused-imports-ts': 'warn',
     'simple-import-sort/imports': 'warn',
     'header/header': [2, './license-header.js'],
+    quotes: [1, 'single', { avoidEscape: true }],
+    'jsx-quotes': [2, 'prefer-double'],
     '@typescript-eslint/member-delimiter-style': [
       'error',
       {

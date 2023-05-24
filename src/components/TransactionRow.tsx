@@ -90,14 +90,14 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
   )
 }
 
-export default memo(TransactionRow, (prevProps, nextProps) => {
-  return (
+export default memo(
+  TransactionRow,
+  (prevProps, nextProps) =>
     prevProps.tx.hash === nextProps.tx.hash &&
     prevProps.tx.address.hash === nextProps.tx.address.hash &&
     prevProps.isFirst === nextProps.isFirst &&
     prevProps.isLast === nextProps.isLast
-  )
-})
+)
 
 const Direction = styled.View`
   align-items: center;

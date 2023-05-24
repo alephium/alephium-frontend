@@ -67,11 +67,13 @@ dayjs.updateLocale('en', {
 const App = () => {
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
-  useEffect(() => {
-    return store.subscribe(() => {
-      setTheme(themes[store.getState().settings.theme])
-    })
-  }, [])
+  useEffect(
+    () =>
+      store.subscribe(() => {
+        setTheme(themes[store.getState().settings.theme])
+      }),
+    []
+  )
 
   return (
     <RootSiblingParent>
@@ -185,7 +187,7 @@ const Main = ({ children }: { children: ReactNode }) => {
     return subscription.remove
   }, [activeWalletMnemonic, dispatch, isCameraOpen, unlockActiveWallet])
 
-  return <>{children}</>
+  return children
 }
 
 export default App

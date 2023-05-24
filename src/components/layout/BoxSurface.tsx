@@ -27,9 +27,7 @@ interface BoxSurfaceProps {
   style?: StyleProp<ViewStyle>
 }
 
-const BoxSurface = ({ style, children }: BoxSurfaceProps) => {
-  return <View style={style}>{children}</View>
-}
+const BoxSurface = ({ style, children }: BoxSurfaceProps) => <View style={style}>{children}</View>
 
 export default styled(BoxSurface)`
   border: 1px solid ${({ theme }) => theme.border.primary};

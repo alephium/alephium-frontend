@@ -67,13 +67,11 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
 
   const renderCarouselItem = ({ item }: { item: Asset[] }) => (
     <View onLayout={onLayoutCarouselItem}>
-      {item.map((asset) => {
-        return (
-          <HighlightRow key={asset.id}>
-            <TokenInfo asset={asset} isLoading={isLoading} />
-          </HighlightRow>
-        )
-      })}
+      {item.map((asset) => (
+        <HighlightRow key={asset.id}>
+          <TokenInfo asset={asset} isLoading={isLoading} />
+        </HighlightRow>
+      ))}
     </View>
   )
 

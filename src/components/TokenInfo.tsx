@@ -44,9 +44,7 @@ const TokenInfo = ({ asset, isLoading, style }: TokenInfoProps) => {
         {isLoading ? (
           <ActivityIndicator size="small" color={theme.font.primary} />
         ) : (
-          <>
-            <Amount value={BigInt(asset.balance)} fadeDecimals suffix={asset.symbol} bold />
-          </>
+          <Amount value={BigInt(asset.balance)} fadeDecimals suffix={asset.symbol} bold />
         )}
       </Amounts>
     </TokenInfoStyled>

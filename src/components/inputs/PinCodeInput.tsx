@@ -36,9 +36,7 @@ interface SlotProps {
 const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
   const [pin, setPin] = useState('')
 
-  const renderSlots = () => {
-    return [...new Array(pinLength)].map((_, i) => <Slot key={i} number={pin[i]} />)
-  }
+  const renderSlots = () => [...new Array(pinLength)].map((_, i) => <Slot key={i} number={pin[i]} />)
 
   const handleKeyboardPress = async (key: NumberKeyboardKey) => {
     const newPin = key === 'delete' ? pin.slice(0, -1) : pin.length < pinLength ? pin + key : pin

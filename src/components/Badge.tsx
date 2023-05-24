@@ -30,13 +30,11 @@ interface BadgeProps {
   style?: StyleProp<ViewStyle>
 }
 
-const Badge = ({ style, color, children }: BadgeProps) => {
-  return (
-    <View style={style}>
-      <BadgeText color={color}>{children}</BadgeText>
-    </View>
-  )
-}
+const Badge = ({ style, color, children }: BadgeProps) => (
+  <View style={style}>
+    <BadgeText color={color}>{children}</BadgeText>
+  </View>
+)
 
 export default styled(Badge)`
   ${({ color, theme, rounded, border, light }) => {
