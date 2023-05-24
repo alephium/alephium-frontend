@@ -22,11 +22,10 @@ import * as bip39 from 'bip39'
 import rewire from 'rewire'
 
 import * as walletUtils from '../lib/wallet'
-import { addressToGroup } from '../lib/address'
-import { TOTAL_NUMBER_OF_GROUPS } from '../lib/constants'
 
 import wallets from './fixtures/wallets.json'
 import genesis from './fixtures/genesis.json'
+import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 describe('Wallet', function () {
   afterEach(() => {
@@ -152,7 +151,7 @@ describe('Wallet', function () {
   })
 
   describe('should call custom functions', () => {
-    const walletUtilsRewire = rewire('../dist/lib/wallet')
+    const walletUtilsRewire = rewire('../dist/wallet')
     const _pbkdf2 = walletUtilsRewire.__get__('_pbkdf2')
 
     it('getWalletFromMnemonicAsyncUnsafe should call custom mnemonicToSeed function', async () => {
@@ -205,7 +204,7 @@ describe('Wallet', function () {
     })
   })
   describe('the default pbkdf2 function', () => {
-    const walletUtilsRewire = rewire('../dist/lib/wallet')
+    const walletUtilsRewire = rewire('../dist/wallet')
     const _pbkdf2 = walletUtilsRewire.__get__('_pbkdf2')
 
     it('should reject when giving an error', async () => {

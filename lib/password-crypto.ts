@@ -16,7 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { randomBytes, createCipheriv, createDecipheriv, pbkdf2Sync, CipherKey, BinaryLike } from 'crypto'
+import {
+  randomBytes,
+  createCipheriv,
+  createDecipheriv,
+  pbkdf2Sync,
+  CipherKey,
+  BinaryLike,
+  CipherGCMTypes,
+  CipherGCM,
+  DecipherGCM
+} from 'crypto'
 
 const saltByteLength = 64
 const ivByteLength = 64
@@ -111,11 +121,11 @@ const _decrypt = (iv: Buffer, encrypted: Buffer, derivedKey: Buffer): string => 
 }
 
 const createCipher = (key: CipherKey, iv: BinaryLike | null) => {
-  return createCipheriv('aes-256-gcm', key, iv)
+  return createCipheriv('aes-256-gcm' as CipherGCMTypes, key, iv) as CipherGCM
 }
 
 const createDecipher = (key: CipherKey, iv: BinaryLike | null) => {
-  return createDecipheriv('aes-256-gcm', key, iv)
+  return createDecipheriv('aes-256-gcm' as CipherGCMTypes, key, iv) as DecipherGCM
 }
 
 const keyFromPassword = (password: BinaryLike, salt: BinaryLike, digest: Digest): Buffer => {

@@ -16,38 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ExplorerClient, walletImport } from '../lib'
-import { addressToGroup, discoverActiveAddresses, isAddressValid } from '../lib/address'
+import { walletImport } from '../lib'
+import { discoverActiveAddresses, isAddressValid } from '../lib/address'
 import wallets from './fixtures/wallets.json'
 import derivedAddresses from './fixtures/address-discovery.json'
+import { ExplorerProvider } from '@alephium/web3'
 
 describe('address', function () {
-  it('should derive group', async () => {
-    function check(address: string, expected: number) {
-      const group = addressToGroup(address, 4)
-      expect(group).toEqual(expected)
-    }
-
-    check('12psscGPMgdqctaeCA37HYAkpVBFX1LbN4dSvjyxbDyKk', 1)
-    check('16TGLiD3fqyuGFRFHffh58BC3okYCbjRH1WHPzeSp39Wi', 2)
-    check('15aTcpJfCX9akQqYuRMMgun6Mv6ek8bigB98VTUFMwKYA', 1)
-    check('164ejvnxGYRPUt3tYwJrMxBLLmeag2WACH4GfcsRUN3W7', 2)
-    check('15p5vK921GnxFSQgXZo8Wceg6EvwcXZ9rCQxE2SeXc1s5', 1)
-    check('1HSLAetSuMTKPHukvXYg6yaDuUJ67vxGashzFLEuu6qV6', 1)
-    check('1HbU1TDiUMAj33Cp5cA2xc9uTqp1bjWa5UvkeGLm4bDbE', 2)
-    check('13zn4s3fb5Q9d8rtszYdmYVpQ3MM9VM2xLBe9rMhcNxjd', 0)
-    check('1DdQwce5ZzFrEYyz1H5KU9v8hRpoTbq5i7zE5Nu5k4ope', 2)
-    check('19hpcUVGzdpWRD8yVUyP9pJwwxD6P5ixGUgSmVPbhBAVX', 2)
-    check('1DpNeY8uutS1FRW7D565WjUgu5HcKSYAMqZNWgUJWggWZ', 0)
-    check('1G1gjpt4mxij7JwP5SpX6ScwQHisWN3V5WBtFfWKtc3vo', 3)
-    check('19XyGb6f1upjvQAG4vexB1EmY3pU8G2VN5gM267Pdhogg', 3)
-    check('1H5YniQrUqxJY9ShTjMeX6DMgjPpYfdFqDvTgBYv6h1iz', 1)
-    check('18Ca9jZDqRcxTfdNr2hq5KBJjf7PJLA5PXMjRoeB83JNv', 3)
-    check('15XyPNJuZ85wyUMs4mwn98LLPMjiwUSCuTmR74NuxpwXT', 0)
-    check('1F6ssQRwH1p1omaoQR3eirFrycHC3mUr3Vw9pLcgEe33W', 1)
-    check('19JtVnQ4YLcA9mWPafnLmtWarAjdaLR3d7R5RAUjxHbe1', 3)
-  })
-
   it('is valid', async () => {
     expect(isAddressValid('16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3')).toBeTruthy()
     expect(isAddressValid('19XWyoWy6DjrRp7erWqPfBnh7HL1Sb2Ub8SVjux2d71Eb')).toBeTruthy()
@@ -60,7 +35,7 @@ describe('address', function () {
 
   it('discovers active addresses', async () => {
     const masterKey = walletImport(wallets.wallets[0].mnemonic).masterKey
-    const client = new ExplorerClient()
+    const client = new ExplorerProvider('')
     const mockedPostAddressesActive = jest.fn()
     client.addresses.postAddressesUsed = mockedPostAddressesActive
 
@@ -86,14 +61,12 @@ describe('address', function () {
     // All derived addresses are inactive.
     // The API should be queried once.
     // The function should return 0 active addresses.
-    mockedPostAddressesActive.mockResolvedValueOnce({
-      data: [
-        ...[false, false, false, false, false],
-        ...[false, false, false, false, false],
-        ...[false, false, false, false, false],
-        ...[false, false, false, false, false]
-      ]
-    })
+    mockedPostAddressesActive.mockResolvedValueOnce([
+      ...[false, false, false, false, false],
+      ...[false, false, false, false, false],
+      ...[false, false, false, false, false],
+      ...[false, false, false, false, false]
+    ])
 
     let results = await discoverActiveAddresses(masterKey, client)
     expect(client.addresses.postAddressesUsed).toBeCalledTimes(1)
@@ -105,17 +78,13 @@ describe('address', function () {
     // The API should make an additional query to further investigate active addresses of group 0.
     // The function should return the 5th address of group 0.
     mockedPostAddressesActive
-      .mockResolvedValueOnce({
-        data: [
-          ...[false, false, false, false, true],
-          ...[false, false, false, false, false],
-          ...[false, false, false, false, false],
-          ...[false, false, false, false, false]
-        ]
-      })
-      .mockResolvedValueOnce({
-        data: [false, false, false, false, false]
-      })
+      .mockResolvedValueOnce([
+        ...[false, false, false, false, true],
+        ...[false, false, false, false, false],
+        ...[false, false, false, false, false],
+        ...[false, false, false, false, false]
+      ])
+      .mockResolvedValueOnce([false, false, false, false, false])
 
     results = await discoverActiveAddresses(masterKey, client)
     expect(client.addresses.postAddressesUsed).toBeCalledTimes(2)
@@ -128,27 +97,21 @@ describe('address', function () {
     // The API should make 2 additional queries to further investigate active addresses of group 0 and 1 additional for group 2.
     // The function should return the 5th and 8th addresses of group 0.
     mockedPostAddressesActive
-      .mockResolvedValueOnce({
+      .mockResolvedValueOnce(
         // all groups, query 1
-        data: [
+        [
           ...[false, false, false, false, true],
           ...[false, false, false, false, false],
           ...[true, false, false, false, false],
           ...[false, false, false, false, false]
         ]
-      })
+      )
       // group 0, query 2
-      .mockResolvedValueOnce({
-        data: [false, false, true, false, false]
-      })
+      .mockResolvedValueOnce([false, false, true, false, false])
       // group 0, query 3
-      .mockResolvedValueOnce({
-        data: [false, false, false]
-      })
+      .mockResolvedValueOnce([false, false, false])
       // group 2, query 1
-      .mockResolvedValueOnce({
-        data: [false, false, false, false, false]
-      })
+      .mockResolvedValueOnce([false, false, false, false, false])
 
     results = await discoverActiveAddresses(masterKey, client)
     expect(client.addresses.postAddressesUsed).toBeCalledTimes(4)

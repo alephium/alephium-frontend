@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14, 16]
+        node-version: [16, 18]
 
     steps:
       - uses: actions/checkout@v2
@@ -20,7 +20,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - run: npm run check-versions
       - run: npm run lint
       - run: npm audit
       - run: npm run devnet:start

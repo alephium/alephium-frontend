@@ -21,7 +21,7 @@ const webpack = require('webpack')
 module.exports = {
   mode: 'production',
   entry: {
-    alephium: './dist/lib/index.js'
+    alephium: './dist/index.js'
   },
   plugins: [
     new webpack.SourceMapDevToolPlugin({ filename: '[file].map' }),
@@ -41,7 +41,8 @@ module.exports = {
       fs: false,
       stream: require.resolve('stream-browserify'),
       crypto: require.resolve('crypto-browserify'),
-      buffer: require.resolve('buffer/')
+      buffer: require.resolve('buffer/'),
+      path: require.resolve('path-browserify')
     }
   },
   output: {

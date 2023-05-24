@@ -16,9 +16,34 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetOutput, Input, Output, Transaction, MempoolTransaction, Token } from '../api/api-explorer'
-import { GENESIS_TIMESTAMP } from './constants'
+import { explorer } from '@alephium/web3'
 import { uniq } from './utils'
+import { TokenInfo } from '@alephium/token-list'
+import { Optional } from '@alephium/web3'
+import { AddressBalance, Token, Output } from '@alephium/web3/dist/src/api/api-explorer'
+
+export type TokenBalances = AddressBalance & { id: Token['id'] }
+
+// Same as TokenBalances, but amounts are in BigInt, useful for display purposes
+export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & {
+  balance: bigint
+  lockedBalance: bigint
+}
+
+export type Asset = TokenDisplayBalances & Optional<TokenInfo, 'symbol' | 'name'>
+
+export type AssetAmount = { id: Asset['id']; amount?: bigint }
+
+export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
+  Required<AssetAmount>
+
+export type TransactionInfo = {
+  assets: TransactionInfoAsset[]
+  direction: TransactionDirection
+  infoType: TransactionInfoType
+  outputs: Output[]
+  lockTime?: Date
+}
 
 export type TransactionDirection = 'out' | 'in' | 'swap'
 
@@ -27,13 +52,13 @@ export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
 export type AmountDeltas = {
   alph: bigint
   tokens: {
-    id: Token['id']
+    id: explorer.Token['id']
     amount: bigint
   }[]
 }
 
 export const calcTxAmountsDeltaForAddress = (
-  tx: Transaction | MempoolTransaction,
+  tx: explorer.Transaction | explorer.MempoolTransaction,
   address: string,
   skipConsolidationCheck = false
 ): AmountDeltas => {
@@ -60,7 +85,7 @@ export const calcTxAmountsDeltaForAddress = (
   }
 }
 
-const summarizeAddressInputOutputAmounts = (address: string, io: (Input | Output)[]) =>
+const summarizeAddressInputOutputAmounts = (address: string, io: (explorer.Input | explorer.Output)[]) =>
   io.reduce(
     (acc, io) => {
       if (io.address !== address) return acc
@@ -84,17 +109,20 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (Input | Output
     { alph: BigInt(0), tokens: [] } as AmountDeltas
   )
 
-export const getDirection = (tx: Transaction, address: string): TransactionDirection =>
+export const getDirection = (tx: explorer.Transaction, address: string): TransactionDirection =>
   calcTxAmountsDeltaForAddress(tx, address, true).alph < 0 ? 'out' : 'in'
 
-export const isConsolidationTx = (tx: Transaction | MempoolTransaction): boolean => {
+export const isConsolidationTx = (tx: explorer.Transaction | explorer.MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
   const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
 
   return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
-export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outputs: AssetOutput[] | Output[]) => {
+export const removeConsolidationChangeAmount = (
+  totalOutputs: AmountDeltas,
+  outputs: explorer.AssetOutput[] | explorer.Output[]
+) => {
   const lastOutput = outputs[outputs.length - 1]
 
   return outputs.length > 1
@@ -112,12 +140,10 @@ export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outp
       totalOutputs
 }
 
-export const txHasOnlyInternalAddresses = (data: (Input | Output)[], internalAddressHashes: string[]): boolean =>
-  data.every((io) => io?.address && internalAddressHashes.some((hash) => hash === io.address))
+export const isSwap = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]) => {
+  const allAmounts = [alphAmout, ...tokensAmount.map((tokenAmount) => tokenAmount.amount)]
+  const allAmountsArePositive = allAmounts.every((amount) => amount >= 0)
+  const allAmountsAreNegative = allAmounts.every((amount) => amount <= 0)
 
-export const isTxMoveDuplicate = (tx: Transaction, addressHash: string, internalAddressHashes: string[]) =>
-  tx.inputs &&
-  tx.inputs.length > 0 &&
-  txHasOnlyInternalAddresses(tx.inputs, internalAddressHashes) &&
-  getDirection(tx, addressHash) == 'in' &&
-  tx.timestamp !== GENESIS_TIMESTAMP
+  return !allAmountsArePositive && !allAmountsAreNegative
+}
