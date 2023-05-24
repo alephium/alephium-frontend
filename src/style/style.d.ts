@@ -35,6 +35,7 @@ declare module 'styled-components' {
       secondary: string
       tertiary: string
       contrast: string
+      highlight: string
     }
     shadow: {
       primary: string
@@ -51,6 +52,7 @@ declare module 'styled-components' {
       valid: string
       star: string
       pale: string
+      complementary
     }
     gradient: {
       yellow: string

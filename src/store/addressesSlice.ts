@@ -39,9 +39,9 @@ import { appReset } from '~/store/appSlice'
 import { selectAllAssetsInfo } from '~/store/assets/assetsSelectors'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 import { RootState } from '~/store/store'
+import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
 import { Address, AddressHash, AddressPartial } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
-import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/utils/transactions'
 
 const sliceName = 'addresses'
 

@@ -20,17 +20,19 @@ import { explorer } from '@alephium/web3'
 
 import { Address } from '~/types/addresses'
 
-export type PendingTransaction = {
-  hash: string
-  fromAddress: string
-  toAddress: string
-  timestamp: number
-  amount?: string
-  tokens?: explorer.Token[]
-  lockTime?: number
-  status: 'pending'
-}
+// TODO: Same as in desktop wallet, move to SDK?
+export const extractNewTransactionHashes = (
+  incomingTransactions: explorer.Transaction[],
+  existingTransactions: explorer.Transaction['hash'][]
+): explorer.Transaction['hash'][] =>
+  incomingTransactions
+    .filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
+    .map((tx) => tx.hash)
 
-export type AddressConfirmedTransaction = explorer.Transaction & { address: Address }
-export type AddressPendingTransaction = PendingTransaction & { address: Address }
-export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction
+// TODO: Same as in desktop wallet, move to SDK?
+export const getTransactionsOfAddress = (transactions: explorer.Transaction[], address: Address) =>
+  transactions.filter(
+    (tx) =>
+      tx.inputs?.some((input) => input.address === address.hash) ||
+      tx.outputs?.some((output) => output.address === address.hash)
+  )
