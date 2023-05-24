@@ -20,7 +20,7 @@ import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { isEnrolledAsync } from 'expo-local-authentication'
 import { StatusBar } from 'expo-status-bar'
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -76,22 +76,18 @@ const App = () => {
   )
 
   return (
-    <RootSiblingParent>
-      <SafeAreaProvider>
-        <Provider store={store}>
-          <Main>
-            <ThemeProvider theme={theme}>
-              <RootStackNavigation />
-              <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
-            </ThemeProvider>
-          </Main>
-        </Provider>
-      </SafeAreaProvider>
-    </RootSiblingParent>
+    <Provider store={store}>
+      <Main>
+        <ThemeProvider theme={theme}>
+          <RootStackNavigation />
+          <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
+        </ThemeProvider>
+      </Main>
+    </Provider>
   )
 }
 
-const Main = ({ children }: { children: ReactNode }) => {
+const Main: FC = ({ children }) => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
@@ -187,7 +183,11 @@ const Main = ({ children }: { children: ReactNode }) => {
     return subscription.remove
   }, [activeWalletMnemonic, dispatch, isCameraOpen, unlockActiveWallet])
 
-  return children
+  return (
+    <RootSiblingParent>
+      <SafeAreaProvider>{children}</SafeAreaProvider>
+    </RootSiblingParent>
+  )
 }
 
 export default App

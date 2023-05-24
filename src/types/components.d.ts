@@ -16,20 +16,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StyleProp, View, ViewStyle } from 'react-native'
-import styled from 'styled-components'
-
-import { BORDER_RADIUS } from '~/style/globalStyle'
-
-interface BoxSurfaceProps {
-  style?: StyleProp<ViewStyle>
-}
-
-const BoxSurface: FC<BoxSurfaceProps> = ({ style, children }) => <View style={style}>{children}</View>
-
-export default styled(BoxSurface)`
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.primary};
-  border-radius: ${BORDER_RADIUS}px;
-  overflow: hidden;
-`
+type FC<P = unknown> = React.FC<React.PropsWithChildren<P>>

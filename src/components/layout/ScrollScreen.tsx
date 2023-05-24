@@ -17,18 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useNavigation, useScrollToTop } from '@react-navigation/native'
-import { ReactNode, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 
 import { useScrollEventHandler } from '../../contexts/ScrollContext'
 import Screen from './Screen'
 
 interface InWalletScrollScreenProps extends ScrollViewProps {
-  children: ReactNode | ReactNode[]
   style?: StyleProp<ViewStyle>
 }
 
-const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) => {
+const ScrollScreen: FC<InWalletScrollScreenProps> = ({ children, style, ...props }) => {
   const viewRef = useRef<ScrollView>(null)
   const scrollHandler = useScrollEventHandler()
 

@@ -16,16 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 interface ListProps {
-  children: ReactNode[]
   style?: StyleProp<ViewStyle>
 }
 
-const List = ({ style, children }: ListProps) => <View style={style}>{children}</View>
+const List: FC<ListProps> = ({ style, children }) => <View style={style}>{children}</View>
 
 export default styled(List)`
   border-radius: 12px;
