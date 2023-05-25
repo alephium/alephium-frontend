@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { useCallback, useEffect, useState } from 'react'
+import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import AddressCard from '~/components/AddressCard'
@@ -29,33 +29,25 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import Carousel from '~/components/Carousel'
 import { ScreenSection } from '~/components/layout/Screen'
-import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeModal from '~/components/QRCodeModal'
-import { useAppSelector } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { selectAddressByHash, selectAddressIds, selectDefaultAddress } from '~/store/addressesSlice'
-import { makeSelectAddressesConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
-import { makeSelectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { selectAddressByHash, selectAddressIds, selectDefaultAddress, syncAddressesData } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'AddressesScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
-const AddressesScreen = ({ navigation }: ScreenProps) => {
+const AddressesScreen = ({ navigation, style }: ScreenProps) => {
+  const dispatch = useAppDispatch()
+  const isLoading = useAppSelector((s) => s.addresses.loading)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
-  const selectAddressesConfirmedTransactions = useMemo(makeSelectAddressesConfirmedTransactions, [])
-  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
-  const selectedAddressConfirmedTransactions = useAppSelector((s) =>
-    selectAddressesConfirmedTransactions(s, selectedAddressHash)
-  )
-  const selectedAddressPendingTransactions = useAppSelector((s) =>
-    selectAddressesPendingTransactions(s, selectedAddressHash)
-  )
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
@@ -84,60 +76,55 @@ const AddressesScreen = ({ navigation }: ScreenProps) => {
     </View>
   )
 
+  const refreshData = () => {
+    if (!isLoading) dispatch(syncAddressesData(addressHashes))
+  }
+
   if (!selectedAddress) return null
 
   return (
-    <TransactionsFlatListScreen
-      confirmedTransactions={selectedAddressConfirmedTransactions}
-      pendingTransactions={selectedAddressPendingTransactions}
-      addressHash={selectedAddressHash}
-      initialNumToRender={5}
-      showInternalInflows
-      ListHeaderComponent={
-        <>
-          <Carousel
-            data={addressHashes}
-            renderItem={renderAddressCard}
-            onScrollStart={onAddressCardsScrollStart}
-            onScrollEnd={onAddressCardsScrollEnd}
-            padding={30}
-            distance={20}
-            height={heightCarouselItem}
+    <ScrollScreen style={style} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
+      <Carousel
+        data={addressHashes}
+        renderItem={renderAddressCard}
+        onScrollStart={onAddressCardsScrollStart}
+        onScrollEnd={onAddressCardsScrollEnd}
+        padding={30}
+        distance={20}
+        height={heightCarouselItem}
+      />
+      <ScreenSection>
+        <ButtonsRowStyled>
+          <Button
+            title="Send"
+            Icon={ArrowUp}
+            onPress={() => navigation.navigate('SendScreen', { addressHash: selectedAddressHash })}
+            disabled={areButtonsDisabled}
+            circular
           />
-          <ScreenSection>
-            <ButtonsRowStyled>
-              <Button
-                title="Send"
-                Icon={ArrowUp}
-                onPress={() => navigation.navigate('SendScreen', { addressHash: selectedAddressHash })}
-                disabled={areButtonsDisabled}
-                circular
-              />
-              <Button
-                title="Receive"
-                Icon={ArrowDown}
-                onPress={() => navigation.navigate('ReceiveScreen', { addressHash: selectedAddressHash })}
-                disabled={areButtonsDisabled}
-                circular
-              />
-              <Button
-                title="Settings"
-                Icon={Settings2}
-                onPress={() => navigation.navigate('EditAddressScreen', { addressHash: selectedAddressHash })}
-                disabled={areButtonsDisabled}
-                circular
-              />
-            </ButtonsRowStyled>
-          </ScreenSection>
-          {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
-          <QRCodeModal
-            addressHash={selectedAddressHash}
-            isOpen={isQrCodeModalOpen}
-            onClose={() => setIsQrCodeModalOpen(false)}
+          <Button
+            title="Receive"
+            Icon={ArrowDown}
+            onPress={() => navigation.navigate('ReceiveScreen', { addressHash: selectedAddressHash })}
+            disabled={areButtonsDisabled}
+            circular
           />
-        </>
-      }
-    />
+          <Button
+            title="Settings"
+            Icon={Settings2}
+            onPress={() => navigation.navigate('EditAddressScreen', { addressHash: selectedAddressHash })}
+            disabled={areButtonsDisabled}
+            circular
+          />
+        </ButtonsRowStyled>
+      </ScreenSection>
+      {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
+      <QRCodeModal
+        addressHash={selectedAddressHash}
+        isOpen={isQrCodeModalOpen}
+        onClose={() => setIsQrCodeModalOpen(false)}
+      />
+    </ScrollScreen>
   )
 }
 

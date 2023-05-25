@@ -121,7 +121,6 @@ const TransactionsFlatList = ({
               )}
             </>
           )}
-          <ScreenSectionTitleStyled>Latest transactions</ScreenSectionTitleStyled>
         </>
       }
       ListFooterComponent={
