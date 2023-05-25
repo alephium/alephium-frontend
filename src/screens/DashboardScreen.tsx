@@ -24,6 +24,7 @@ import styled from 'styled-components/native'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
+import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -64,7 +65,8 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
 
         <BalanceSummaryStyled dateLabel="VALUE TODAY" />
       </ScreenSection>
-      <AddressesTokensListStyled />
+      <HistoricWorthChart />
+      <AddressesTokensList />
     </ScrollScreen>
   )
 }
@@ -90,10 +92,6 @@ const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
 
 const BalanceSummaryStyled = styled(BalanceSummary)`
   padding: 34px 15px 0px;
-`
-
-const AddressesTokensListStyled = styled(AddressesTokensList)`
-  margin-top: 96px;
 `
 
 export default DashboardScreen
