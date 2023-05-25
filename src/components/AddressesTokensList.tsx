@@ -22,6 +22,7 @@ import { useMemo, useState } from 'react'
 import { LayoutChangeEvent, View } from 'react-native'
 import styled from 'styled-components/native'
 
+import BoxSurface from '~/components/layout/BoxSurface'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesAssets, selectAllAddresses } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
@@ -67,11 +68,13 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
 
   const renderCarouselItem = ({ item }: { item: Asset[] }) => (
     <View onLayout={onLayoutCarouselItem}>
-      {item.map((asset) => (
-        <HighlightRow key={asset.id}>
-          <TokenInfo asset={asset} isLoading={isLoading} />
-        </HighlightRow>
-      ))}
+      <BoxSurface>
+        {item.map((asset) => (
+          <HighlightRow key={asset.id}>
+            <TokenInfo asset={asset} isLoading={isLoading} />
+          </HighlightRow>
+        ))}
+      </BoxSurface>
     </View>
   )
 

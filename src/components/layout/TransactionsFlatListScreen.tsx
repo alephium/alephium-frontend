@@ -157,7 +157,7 @@ const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
 `
 
 const TransactionRowStyled = styled(TransactionRow)`
-  margin: 0 20px;
+  margin: 0 15px;
 `
 
 const Footer = styled.View`

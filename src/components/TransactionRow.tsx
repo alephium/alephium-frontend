@@ -21,13 +21,14 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import { useTransactionUI } from '~/hooks/useTransactionUI'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 import { AddressTransaction } from '~/types/transactions'
 import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
 
@@ -56,7 +57,7 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
   const knownAssets = assets.filter((asset) => !!asset.symbol)
 
   return (
-    <HighlightRow style={style} onPress={handleOnPress}>
+    <HighlightRowStyled style={style} onPress={handleOnPress} isFirst={isFirst} isLast={isLast}>
       <Direction>
         <TransactionIcon color={iconBgColor}>
           <Icon size={16} strokeWidth={3} color={iconColor} />
@@ -86,7 +87,7 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
           </AppText>
         ))}
       </AmountColumn>
-    </HighlightRow>
+    </HighlightRowStyled>
   )
 }
 
@@ -98,6 +99,22 @@ export default memo(
     prevProps.isFirst === nextProps.isFirst &&
     prevProps.isLast === nextProps.isLast
 )
+
+const HighlightRowStyled = styled(HighlightRow)<{ isFirst?: boolean; isLast?: boolean }>`
+  ${({ isFirst }) =>
+    isFirst &&
+    css`
+      border-top-left-radius: ${BORDER_RADIUS}px;
+      border-top-right-radius: ${BORDER_RADIUS}px;
+    `}
+
+  ${({ isLast }) =>
+    isLast &&
+    css`
+      border-bottom-left-radius: ${BORDER_RADIUS}px;
+      border-bottom-right-radius: ${BORDER_RADIUS}px;
+    `}
+`
 
 const Direction = styled.View`
   align-items: center;
