@@ -17,26 +17,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { EyeIcon, EyeOffIcon } from 'lucide-react-native'
 import React from 'react'
 import { RefreshControl, StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
-import Button from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { deleteAllWallets } from '~/persistent-storage/wallets'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
-import { appReset } from '~/store/appSlice'
-import { discreetModeToggled } from '~/store/settingsSlice'
 import { AddressHash } from '~/types/addresses'
+import { NetworkStatus } from '~/types/network'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
   style?: StyleProp<ViewStyle>
@@ -49,43 +44,27 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
   const networkStatus = useAppSelector((s) => s.network.status)
   const networkName = useAppSelector((s) => s.network.name)
-  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const theme = useTheme()
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
   }
 
-  // TODO: Delete before release
-  const resetApp = async () => {
-    await deleteAllWallets()
-    dispatch(appReset())
-    navigation.navigate('LandingScreen')
-  }
-
-  const toggleDiscreetMode = () => dispatch(discreetModeToggled())
-
   return (
     <ScrollScreen style={style} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
       <ScreenSection>
-        <BoxSurface>
-          <SurfaceHeader>
-            <AppText color="secondary">{activeWalletName}</AppText>
-            <ActiveNetwork>
-              <NetworkStatusBullet
-                style={{ backgroundColor: networkStatus === 'online' ? theme.global.valid : theme.global.alert }}
-              />
-              <AppText color="secondary">{networkName}</AppText>
-            </ActiveNetwork>
-          </SurfaceHeader>
-          <BalanceContainer>
-            <BalanceSummary dateLabel="Today" />
-            <Button onPress={toggleDiscreetMode} Icon={discreetMode ? EyeIcon : EyeOffIcon} />
-          </BalanceContainer>
-        </BoxSurface>
+        <SurfaceHeader>
+          <AppText color="primary" semiBold size={30}>
+            {activeWalletName}
+          </AppText>
+          <ActiveNetwork>
+            <NetworkStatusBullet status={networkStatus} />
+            <AppText color="secondary">{networkName}</AppText>
+          </ActiveNetwork>
+        </SurfaceHeader>
+
+        <BalanceSummaryStyled dateLabel="VALUE TODAY" />
       </ScreenSection>
-      <AddressesTokensList />
-      <Button title="Reset app" onPress={resetApp} style={{ marginBottom: 120, marginTop: 600 }} />
+      <AddressesTokensListStyled />
     </ScrollScreen>
   )
 }
@@ -102,16 +81,19 @@ const ActiveNetwork = styled.View`
   gap: 5px;
 `
 
-const NetworkStatusBullet = styled.View`
+const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
   height: 7px;
   width: 7px;
   border-radius: 10px;
+  background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
 `
 
-const BalanceContainer = styled.View`
-  padding: 15px;
-  flex-direction: row;
-  gap: 20px;
+const BalanceSummaryStyled = styled(BalanceSummary)`
+  padding: 34px 15px 0px;
+`
+
+const AddressesTokensListStyled = styled(AddressesTokensList)`
+  margin-top: 96px;
 `
 
 export default DashboardScreen

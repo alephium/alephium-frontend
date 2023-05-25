@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset } from '@alephium/sdk'
 import { chunk } from 'lodash'
 import { useMemo, useState } from 'react'
-import { LayoutChangeEvent, View } from 'react-native'
+import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import BoxSurface from '~/components/layout/BoxSurface'
@@ -37,9 +37,10 @@ const PAGE_SIZE = 3
 
 interface AddressesTokensListProps {
   addresses?: Address[]
+  style?: StyleProp<ViewStyle>
 }
 
-const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListProps) => {
+const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesTokensListProps) => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const addressDataStatus = useAppSelector((s) => s.addresses.status)
   const addresses = addressesParam ?? allAddresses
@@ -79,10 +80,10 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
   )
 
   return (
-    <>
+    <View style={style}>
       {assetsChunked.length > 1 && (
         <>
-          <ScreenSectionTitleStyled>Assets</ScreenSectionTitleStyled>
+          <ScreenSectionTitleStyled>Your assets</ScreenSectionTitleStyled>
           <Carousel
             data={assetsChunked}
             renderItem={renderCarouselItem}
@@ -94,11 +95,11 @@ const AddressesTokensList = ({ addresses: addressesParam }: AddressesTokensListP
       )}
       {assetsChunked.length === 1 && (
         <ScreenSection>
-          <ScreenSectionTitle>Assets</ScreenSectionTitle>
+          <ScreenSectionTitle>Your assets</ScreenSectionTitle>
           {renderCarouselItem({ item: assetsChunked[0] })}
         </ScreenSection>
       )}
-    </>
+    </View>
   )
 }
 
