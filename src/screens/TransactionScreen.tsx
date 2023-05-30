@@ -79,7 +79,7 @@ const TransactionScreen = ({
             ))}
           </HighlightRow>
           <HighlightRow title="Timestamp">
-            <AppText semiBold>{dayjs(tx.timestamp).fromNow()}</AppText>
+            <AppTextStyled semiBold>{dayjs(tx.timestamp).toDate().toUTCString()}</AppTextStyled>
           </HighlightRow>
           <HighlightRow title="Status">
             <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
@@ -125,5 +125,9 @@ const ExplorerLinkText = styled(AppText)`
 `
 
 const AmountStyled = styled(Amount)`
+  text-align: right;
+`
+
+const AppTextStyled = styled(AppText)`
   text-align: right;
 `
