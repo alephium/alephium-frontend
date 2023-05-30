@@ -28,10 +28,12 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import HighlightRow from '~/components/HighlightRow'
 import IOList from '~/components/IOList'
-import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import BoxSurface from '~/components/layout/BoxSurface'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { useAppSelector } from '~/hooks/redux'
 import { useTransactionInfo } from '~/hooks/useTransactionalInfo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { getTransactionInfo } from '~/utils/transactions'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'TransactionScreen'>
 
@@ -42,11 +44,13 @@ const TransactionScreen = ({
   }
 }: ScreenProps) => {
   const theme = useTheme()
-  const { amount, direction } = useTransactionInfo(tx, tx.address.hash)
+  const { direction, infoType } = useTransactionInfo(tx, tx.address.hash)
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   const explorerTxUrl = `${explorerBaseUrl}/#/transactions/${tx.hash}`
   const isOut = direction === 'out'
+  const isMoved = infoType === 'move'
+  const { assets } = getTransactionInfo(tx)
 
   return (
     <ScrollView>
@@ -57,41 +61,51 @@ const TransactionScreen = ({
           <ChevronRightIcon size={24} color={theme.global.accent} />
         </ExplorerLink>
       </ScreenSectionRow>
-      <BottomScreenSection>
-        <HighlightRow title="Amount">
-          <Amount value={amount} fadeDecimals fullPrecision bold />
-        </HighlightRow>
-        <HighlightRow title="Timestamp">
-          <BoldText>{dayjs(tx.timestamp).fromNow()}</BoldText>
-        </HighlightRow>
-        <HighlightRow title="Status">
-          <BoldText>{tx.blockHash ? 'Confirmed' : 'Pending'}</BoldText>
-        </HighlightRow>
-        <HighlightRow title="From">
-          {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
-        </HighlightRow>
-        <HighlightRow title="To">
-          {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
-        </HighlightRow>
-        <HighlightRow title="Fee">
-          <Amount
-            value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
-            fadeDecimals
-            fullPrecision
-            bold
-            showOnDiscreetMode
-          />
-        </HighlightRow>
-      </BottomScreenSection>
+      <ScreenSection>
+        <BoxSurface>
+          <HighlightRow title="Amount" noMaxWidth>
+            {assets.map(({ id, amount, decimals, symbol }) => (
+              <AmountStyled
+                key={id}
+                value={amount}
+                decimals={decimals}
+                suffix={symbol}
+                isUnknownToken={!symbol}
+                highlight={!isMoved}
+                showPlusMinus={!isMoved}
+                fullPrecision
+                bold
+              />
+            ))}
+          </HighlightRow>
+          <HighlightRow title="Timestamp">
+            <AppText semiBold>{dayjs(tx.timestamp).fromNow()}</AppText>
+          </HighlightRow>
+          <HighlightRow title="Status">
+            <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
+          </HighlightRow>
+          <HighlightRow title="From">
+            {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
+          </HighlightRow>
+          <HighlightRow title="To">
+            {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
+          </HighlightRow>
+          <HighlightRow title="Fee">
+            <Amount
+              value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
+              fadeDecimals
+              fullPrecision
+              bold
+              showOnDiscreetMode
+            />
+          </HighlightRow>
+        </BoxSurface>
+      </ScreenSection>
     </ScrollView>
   )
 }
 
 export default TransactionScreen
-
-const BoldText = styled(AppText)`
-  font-weight: 600;
-`
 
 const ScreenSectionRow = styled(ScreenSection)`
   flex-direction: row;
@@ -108,4 +122,8 @@ const ExplorerLinkText = styled(AppText)`
   font-size: 16px;
   font-weight: 700;
   margin-right: 10px;
+`
+
+const AmountStyled = styled(Amount)`
+  text-align: right;
 `
