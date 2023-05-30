@@ -32,6 +32,7 @@ export interface ButtonProps extends PressableProps {
   wide?: boolean
   centered?: boolean
   Icon?: (props: LucideProps) => JSX.Element
+  color?: string
   circular?: boolean
 }
 
@@ -44,6 +45,7 @@ const Button: FC<ButtonProps> = ({
   Icon,
   children,
   circular,
+  color,
   ...props
 }) => {
   const theme = useTheme()
@@ -67,7 +69,7 @@ const Button: FC<ButtonProps> = ({
   }
 
   const bg = colors.bg[variant]
-  const font = colors.font[variant]
+  const font = color ?? colors.font[variant]
 
   const buttonStyle: PressableProps['style'] = ({ pressed }) => [
     {
