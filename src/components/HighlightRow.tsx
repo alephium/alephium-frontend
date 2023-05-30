@@ -31,6 +31,7 @@ export interface HighlightRowProps {
   hasRightContent?: boolean
   truncate?: boolean
   isLast?: boolean
+  noMaxWidth?: boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -41,6 +42,7 @@ const HighlightRow: FC<HighlightRowProps> = ({
   onPress,
   truncate,
   isLast = false,
+  noMaxWidth,
   style
 }) => {
   const componentContent = title ? (
@@ -55,7 +57,7 @@ const HighlightRow: FC<HighlightRowProps> = ({
           </Subtitle>
         )}
       </LeftContent>
-      <RightContent>{children}</RightContent>
+      <RightContent noMaxWidth={noMaxWidth}>{children}</RightContent>
     </>
   ) : (
     children
@@ -114,7 +116,12 @@ const LeftContent = styled.View`
   flex: 1;
 `
 
-const RightContent = styled.View`
+const RightContent = styled.View<{ noMaxWidth?: boolean }>`
   padding-left: ${INPUTS_PADDING}px;
-  max-width: 200px;
+
+  ${({ noMaxWidth }) =>
+    !noMaxWidth &&
+    css`
+      max-width: 200px;
+    `}
 `
