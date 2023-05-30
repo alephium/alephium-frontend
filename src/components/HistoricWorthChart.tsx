@@ -16,51 +16,122 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { calculateAmountWorth, toHumanReadableAmount } from '@alephium/sdk'
+import dayjs, { Dayjs } from 'dayjs'
+import { useEffect, useState } from 'react'
 import { Defs, LinearGradient, Stop, Svg } from 'react-native-svg'
 import styled, { useTheme } from 'styled-components/native'
 import { VictoryArea } from 'victory-native'
 
-const HistoricWorthChart = () => {
+import { useAppSelector } from '~/hooks/redux'
+import { selectHaveHistoricBalancesLoaded, selectIsStateUninitialized } from '~/store/addresses/addressesSelectors'
+import { selectAllAddresses, selectTotalBalance } from '~/store/addressesSlice'
+import { useGetHistoricalPriceQuery, useGetPriceQuery } from '~/store/assets/priceApiSlice'
+import { ChartLength, DataPoint, LatestAmountPerAddress } from '~/types/charts'
+import { currencies } from '~/utils/currencies'
+
+interface HistoricWorthChart {
+  length?: ChartLength
+}
+
+const now = dayjs()
+const startingDates: Record<ChartLength, Dayjs> = {
+  '1d': now.subtract(1, 'day'),
+  '1w': now.subtract(1, 'week'),
+  '1m': now.subtract(1, 'month'),
+  '1y': now.subtract(1, 'year')
+}
+
+const HistoricWorthChart = ({ length = '1m' }: HistoricWorthChart) => {
   const theme = useTheme()
+  const currency = useAppSelector((s) => s.settings.currency)
+  const totalBalance = useAppSelector(selectTotalBalance)
+  const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
+  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
+    pollingInterval: 60000,
+    skip: totalBalance === BigInt(0)
+  })
+  const addresses = useAppSelector(selectAllAddresses)
+  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
+  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
-  const data = [
-    { x: 1, y: 0 },
-    { x: 2, y: 10 },
-    { x: 3, y: 8 },
-    { x: 4, y: 58 },
-    { x: 5, y: 56 },
-    { x: 6, y: 78 },
-    { x: 7, y: 74 },
-    { x: 8, y: 98 },
-    { x: 9, y: 98 },
-    { x: 10, y: 98 }
-  ]
+  const [chartData, setChartData] = useState<DataPoint[]>([])
 
-  const maxY = Math.max(...data.map(({ y }) => y))
+  const latestWorth = calculateAmountWorth(totalBalance, price ?? 0)
+  const startingDate = startingDates[length].format('YYYY-MM-DD')
+  const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
+  const filteredChartData = getFilteredChartData(chartData, startingDate)
+  const firstItem = filteredChartData.at(0)
+
+  useEffect(() => {
+    if (!isDataAvailable) {
+      setChartData([])
+      return
+    }
+
+    const computeChartDataPoints = (): DataPoint[] => {
+      const addressesLatestAmount: LatestAmountPerAddress = {}
+
+      return alphPriceHistory.map(({ date, price }) => {
+        let totalAmountPerDate = BigInt(0)
+
+        addresses.forEach(({ hash, balanceHistory }) => {
+          const amountOnDate = balanceHistory.entities[date]?.balance
+
+          if (amountOnDate !== undefined) {
+            const amount = BigInt(amountOnDate)
+            totalAmountPerDate += amount
+            addressesLatestAmount[hash] = amount
+          } else {
+            totalAmountPerDate += addressesLatestAmount[hash] ?? BigInt(0)
+          }
+        })
+
+        return {
+          date,
+          worth: price * parseFloat(toHumanReadableAmount(totalAmountPerDate))
+        }
+      })
+    }
+
+    const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
+
+    let dataPoints = computeChartDataPoints()
+    dataPoints = trimInitialZeroDataPoints(dataPoints)
+
+    setChartData(dataPoints)
+  }, [addresses, alphPriceHistory, isDataAvailable])
+
+  if (!isDataAvailable || chartData.length <= 2 || !firstItem) return null
+
+  const worthHasGoneUp = firstItem.worth < latestWorth
+  const chartColor = stateUninitialized ? theme.font.tertiary : worthHasGoneUp ? theme.global.valid : theme.global.alert
+
+  const data = filteredChartData.map(({ date, worth }) => ({
+    x: date,
+    y: worth
+  }))
 
   return (
     <HistoricWorthChartStyled>
       <Svg height={100}>
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor={theme.global.valid} />
+            <Stop offset="0%" stopColor={chartColor} />
             <Stop offset="100%" stopColor={theme.bg.back1} />
           </LinearGradient>
         </Defs>
         <VictoryArea
           data={data}
-          interpolation="natural"
+          interpolation="basis"
           height={100}
           padding={0}
           standalone={false}
-          maxDomain={{
-            y: maxY + 5
-          }}
           style={{
             data: {
               fill: 'url(#gradientBg)',
-              stroke: theme.global.valid,
-              strokeWidth: 3,
+              stroke: chartColor,
+              strokeWidth: 2,
               fillOpacity: 0.4
             }
           }}
@@ -71,5 +142,10 @@ const HistoricWorthChart = () => {
 }
 
 export default HistoricWorthChart
+
+const getFilteredChartData = (chartData: DataPoint[], startingDate: string) => {
+  const startingPoint = chartData.findIndex((point) => point.date === startingDate)
+  return startingPoint > 0 ? chartData.slice(startingPoint) : chartData
+}
 
 const HistoricWorthChartStyled = styled.View``
