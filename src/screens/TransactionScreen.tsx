@@ -47,7 +47,7 @@ const TransactionScreen = ({
   const { direction, infoType } = useTransactionInfo(tx, tx.address.hash)
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
-  const explorerTxUrl = `${explorerBaseUrl}/#/transactions/${tx.hash}`
+  const explorerTxUrl = `${explorerBaseUrl}/transactions/${tx.hash}`
   const isOut = direction === 'out'
   const isMoved = infoType === 'move'
   const { assets } = getTransactionInfo(tx)
