@@ -21,7 +21,7 @@ import { useCallback, useEffect } from 'react'
 import client from '~/api/client'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useInterval from '~/hooks/useInterval'
-import { selectAllAddresses, syncAddressesData } from '~/store/addressesSlice'
+import { selectAllAddresses, syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { syncNetworkTokensInfo } from '~/store/assets/assetsActions'
 import { apiClientInitFailed, apiClientInitSucceeded } from '~/store/networkSlice'
 
@@ -58,6 +58,7 @@ const useInitializeClient = () => {
   useEffect(() => {
     if (network.status === 'online' && addressesStatus === 'uninitialized' && addresses.length > 0) {
       dispatch(syncAddressesData())
+      dispatch(syncAddressesHistoricBalances())
     }
   }, [addresses.length, addressesStatus, dispatch, network.status])
 

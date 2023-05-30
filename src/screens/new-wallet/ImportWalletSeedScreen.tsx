@@ -39,7 +39,7 @@ import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
 import { biometricsEnabled, newWalletGenerated } from '~/store/activeWalletSlice'
-import { syncAddressesData } from '~/store/addressesSlice'
+import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { cameraToggled } from '~/store/appSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
@@ -134,7 +134,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
       dispatch(newWalletGenerated(wallet))
-      dispatch(syncAddressesData([wallet.firstAddress.hash]))
+      dispatch(syncAddressesData(wallet.firstAddress.hash))
+      dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
 
       if (!isAuthenticated) {
         setLoading(false)

@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressKeyPair, TokenBalances } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
+import { EntityState } from '@reduxjs/toolkit'
 
 import { TimeInMs } from '~/types/numbers'
 import { PendingTransaction } from '~/types/transactions'
@@ -45,6 +46,8 @@ export type Address = AddressKeyPair &
     allTransactionPagesLoaded: boolean
     tokens: TokenBalances[]
     lastUsed: TimeInMs
+    balanceHistory: EntityState<BalanceHistory>
+    balanceHistoryInitialized: boolean
   }
 
 export type AddressPartial = AddressKeyPair & { settings: AddressSettings }
@@ -61,3 +64,14 @@ export type AddressDataSyncResult = {
   mempoolTransactions: explorer.MempoolTransaction[]
   tokens: TokenBalances[]
 }
+
+// Same as in desktop wallet
+export type BalanceHistory = {
+  date: string // CHART_DATE_FORMAT
+  balance: string
+}
+
+export type AddressesHistoricalBalanceResult = {
+  address: AddressHash
+  balances: BalanceHistory[]
+}[]

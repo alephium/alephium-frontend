@@ -17,9 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { explorer } from '@alephium/web3'
+import dayjs from 'dayjs'
 
 import client from '~/api/client'
-import { Address, AddressDataSyncResult, AddressHash } from '~/types/addresses'
+import { Address, AddressDataSyncResult, AddressesHistoricalBalanceResult, AddressHash } from '~/types/addresses'
+import { CHART_DATE_FORMAT } from '~/utils/constants'
 
 // TODO: Same as in desktop wallet, move to SDK?
 export const fetchAddressesData = async (addressHashes: AddressHash[]): Promise<AddressDataSyncResult[]> => {
@@ -81,4 +83,42 @@ export const fetchAddressesTransactionsNextPage = async (addresses: Address[], n
   const transactions = await client.explorer.addresses.postAddressesTransactions({ page: nextPage }, addressHashes)
 
   return transactions
+}
+
+export const fetchAddressesHistoricalBalances = async (
+  addresssHashes: AddressHash[]
+): Promise<AddressesHistoricalBalanceResult> => {
+  const addressesBalances = []
+  const now = dayjs()
+  const thisMoment = now.valueOf()
+  const oneYearAgo = now.subtract(12, 'month').valueOf()
+
+  for (const addressHash of addresssHashes) {
+    const balances = []
+    const data = await client.explorer.addresses.getAddressesAddressAmountHistory(
+      addressHash,
+      { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
+      { format: 'text' }
+    )
+
+    try {
+      const { amountHistory } = JSON.parse(data)
+
+      for (const [timestamp, balance] of amountHistory) {
+        balances.push({
+          date: dayjs(timestamp).format(CHART_DATE_FORMAT),
+          balance: BigInt(balance).toString()
+        })
+      }
+    } catch (e) {
+      console.error('Could not parse amount history data', e)
+    }
+
+    addressesBalances.push({
+      address: addressHash,
+      balances
+    })
+  }
+
+  return addressesBalances
 }

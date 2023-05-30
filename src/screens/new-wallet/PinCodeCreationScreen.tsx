@@ -29,7 +29,7 @@ import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallets'
 import { newWalletGenerated } from '~/store/activeWalletSlice'
-import { syncAddressesData } from '~/store/addressesSlice'
+import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { newPinVerified } from '~/store/credentialsSlice'
 import { ShouldClearPin } from '~/types/misc'
 
@@ -97,7 +97,8 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
 
       const wallet = await generateAndStoreWallet(name, pin)
       dispatch(newWalletGenerated(wallet))
-      dispatch(syncAddressesData([wallet.firstAddress.hash]))
+      dispatch(syncAddressesData(wallet.firstAddress.hash))
+      dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
 
       setLoading(false)
 
