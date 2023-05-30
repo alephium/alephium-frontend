@@ -16,51 +16,56 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useWindowDimensions } from 'react-native'
-import { LineChart } from 'react-native-gifted-charts'
+import { Defs, LinearGradient, Stop, Svg } from 'react-native-svg'
 import styled, { useTheme } from 'styled-components/native'
+import { VictoryArea } from 'victory-native'
 
 const HistoricWorthChart = () => {
-  const { width } = useWindowDimensions()
   const theme = useTheme()
 
-  const lineData = [
-    { value: 0 },
-    { value: 10 },
-    { value: 8 },
-    { value: 58 },
-    { value: 56 },
-    { value: 78 },
-    { value: 74 },
-    { value: 98 },
-    { value: 98 },
-    { value: 98 }
+  const data = [
+    { x: 1, y: 0 },
+    { x: 2, y: 10 },
+    { x: 3, y: 8 },
+    { x: 4, y: 58 },
+    { x: 5, y: 56 },
+    { x: 6, y: 78 },
+    { x: 7, y: 74 },
+    { x: 8, y: 98 },
+    { x: 9, y: 98 },
+    { x: 10, y: 98 }
   ]
+
+  const maxY = Math.max(...data.map(({ y }) => y))
 
   return (
     <HistoricWorthChartStyled>
-      <LineChart
-        areaChart
-        curved
-        data={lineData}
-        height={100}
-        width={width}
-        hideRules
-        hideYAxisText
-        adjustToWidth
-        disableScroll
-        initialSpacing={0}
-        thickness={2}
-        color={theme.global.valid}
-        hideDataPoints
-        dataPointsColor={theme.global.valid}
-        startFillColor={theme.global.valid}
-        startOpacity={0.8}
-        endOpacity={0.3}
-        xAxisThickness={0}
-        yAxisThickness={0}
-        yAxisLabelWidth={0}
-      />
+      <Svg height={100}>
+        <Defs>
+          <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
+            <Stop offset="0%" stopColor={theme.global.valid} />
+            <Stop offset="100%" stopColor={theme.bg.back1} />
+          </LinearGradient>
+        </Defs>
+        <VictoryArea
+          data={data}
+          interpolation="natural"
+          height={100}
+          padding={0}
+          standalone={false}
+          maxDomain={{
+            y: maxY + 5
+          }}
+          style={{
+            data: {
+              fill: 'url(#gradientBg)',
+              stroke: theme.global.valid,
+              strokeWidth: 3,
+              fillOpacity: 0.4
+            }
+          }}
+        />
+      </Svg>
     </HistoricWorthChartStyled>
   )
 }
