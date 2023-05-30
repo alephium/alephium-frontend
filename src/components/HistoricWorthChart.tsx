@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth, toHumanReadableAmount } from '@alephium/sdk'
+import { toHumanReadableAmount } from '@alephium/sdk'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
 import { Defs, LinearGradient, Stop, Svg } from 'react-native-svg'
@@ -25,13 +25,15 @@ import { VictoryArea } from 'victory-native'
 
 import { useAppSelector } from '~/hooks/redux'
 import { selectHaveHistoricBalancesLoaded, selectIsStateUninitialized } from '~/store/addresses/addressesSelectors'
-import { selectAllAddresses, selectTotalBalance } from '~/store/addressesSlice'
-import { useGetHistoricalPriceQuery, useGetPriceQuery } from '~/store/assets/priceApiSlice'
+import { selectAllAddresses } from '~/store/addressesSlice'
+import { useGetHistoricalPriceQuery } from '~/store/assets/priceApiSlice'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '~/types/charts'
-import { currencies } from '~/utils/currencies'
+import { Currency } from '~/types/settings'
 
 interface HistoricWorthChart {
   length?: ChartLength
+  latestWorth: number
+  currency: Currency
 }
 
 const now = dayjs()
@@ -42,22 +44,15 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
-const HistoricWorthChart = ({ length = '1m' }: HistoricWorthChart) => {
+const HistoricWorthChart = ({ length = '1m', latestWorth, currency }: HistoricWorthChart) => {
   const theme = useTheme()
-  const currency = useAppSelector((s) => s.settings.currency)
-  const totalBalance = useAppSelector(selectTotalBalance)
   const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
-  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
-    pollingInterval: 60000,
-    skip: totalBalance === BigInt(0)
-  })
   const addresses = useAppSelector(selectAllAddresses)
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
 
-  const latestWorth = calculateAmountWorth(totalBalance, price ?? 0)
   const startingDate = startingDates[length].format('YYYY-MM-DD')
   const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
   const filteredChartData = getFilteredChartData(chartData, startingDate)
@@ -127,6 +122,7 @@ const HistoricWorthChart = ({ length = '1m' }: HistoricWorthChart) => {
           height={100}
           padding={0}
           standalone={false}
+          animate
           style={{
             data: {
               fill: 'url(#gradientBg)',

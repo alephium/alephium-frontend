@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSelector } from '@reduxjs/toolkit'
 
-import { makeSelectAddresses, selectAllAddresses } from '~/store/addressesSlice'
+import { selectAllAddresses } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
 
 // TODO: Same as in desktop wallet
@@ -26,14 +26,12 @@ export const selectHaveHistoricBalancesLoaded = createSelector(selectAllAddresse
   addresses.every((address) => address.balanceHistoryInitialized)
 )
 
-// TODO: Same as in desktop wallet
-export const makeSelectAddressesHaveHistoricBalances = () =>
-  createSelector(
-    makeSelectAddresses(),
-    (addresses) =>
-      addresses.every((address) => address.balanceHistoryInitialized) &&
-      addresses.some((address) => address.balanceHistory.ids.length > 0)
-  )
+export const selectAddressesHaveHistoricBalances = createSelector(
+  selectAllAddresses,
+  (addresses) =>
+    addresses.every((address) => address.balanceHistoryInitialized) &&
+    addresses.some((address) => address.balanceHistory.ids.length > 0)
+)
 
 // TODO: Same as in desktop wallet
 export const selectIsStateUninitialized = createSelector(
