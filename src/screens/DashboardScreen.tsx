@@ -50,8 +50,8 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   }
 
   return (
-    <ScrollScreen style={style} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
-      <ScreenSection>
+    <DashboardScreenStyled refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
+      <ScreenSectionStyled>
         <SurfaceHeader>
           <AppText color="primary" semiBold size={30}>
             {activeWalletName}
@@ -63,11 +63,25 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
         </SurfaceHeader>
 
         <BalanceSummaryStyled dateLabel="VALUE TODAY" />
-      </ScreenSection>
-      <AddressesTokensList />
-    </ScrollScreen>
+      </ScreenSectionStyled>
+      <AddressesTokensListStyled />
+    </DashboardScreenStyled>
   )
 }
+
+export default DashboardScreen
+
+const DashboardScreenStyled = styled(ScrollScreen)`
+  background-color: ${({ theme }) => theme.bg.primary};
+`
+
+const AddressesTokensListStyled = styled(AddressesTokensList)`
+  background-color: ${({ theme }) => theme.bg.back1};
+`
+
+const ScreenSectionStyled = styled(ScreenSection)`
+  padding-bottom: 0;
+`
 
 const SurfaceHeader = styled.View`
   padding: 15px;
@@ -91,5 +105,3 @@ const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
 const BalanceSummaryStyled = styled(BalanceSummary)`
   padding: 34px 15px 0px;
 `
-
-export default DashboardScreen
