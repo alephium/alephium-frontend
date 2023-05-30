@@ -122,7 +122,7 @@ const HistoricWorthChart = ({
       <Svg height={100}>
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor={chartColor} />
+            <Stop offset="0%" stopColor={chartColor} stopOpacity={0.3} />
             <Stop offset="100%" stopColor={theme.bg.back1} />
           </LinearGradient>
         </Defs>
@@ -137,8 +137,7 @@ const HistoricWorthChart = ({
             data: {
               fill: 'url(#gradientBg)',
               stroke: chartColor,
-              strokeWidth: 2,
-              fillOpacity: 0.4
+              strokeWidth: 2
             }
           }}
         />
