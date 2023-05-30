@@ -16,10 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react-native'
-import { useCallback, useEffect, useState } from 'react'
+import { ArrowDown, ArrowUp } from 'lucide-react-native'
+import { useEffect, useState } from 'react'
 import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -50,14 +49,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
-  const [areButtonsDisabled, setAreButtonsDisabled] = useState(false)
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
-
-  useFocusEffect(
-    useCallback(() => {
-      if (selectedAddressHash) setAreButtonsDisabled(false)
-    }, [selectedAddressHash])
-  )
 
   useEffect(() => {
     if (defaultAddress) setSelectedAddressHash(defaultAddress.hash)
@@ -65,10 +57,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
 
   const onAddressCardsScrollEnd = (index: number) => {
     if (index < addressHashes.length) setSelectedAddressHash(addressHashes[index])
-    setAreButtonsDisabled(false)
   }
-
-  const onAddressCardsScrollStart = () => setAreButtonsDisabled(true)
 
   const renderAddressCard = ({ item }: { item: string }) => (
     <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height)} key={item}>
@@ -87,7 +76,6 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
       <Carousel
         data={addressHashes}
         renderItem={renderAddressCard}
-        onScrollStart={onAddressCardsScrollStart}
         onScrollEnd={onAddressCardsScrollEnd}
         padding={30}
         distance={20}
@@ -99,21 +87,12 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
             title="Send"
             Icon={ArrowUp}
             onPress={() => navigation.navigate('SendScreen', { addressHash: selectedAddressHash })}
-            disabled={areButtonsDisabled}
             circular
           />
           <Button
             title="Receive"
             Icon={ArrowDown}
             onPress={() => navigation.navigate('ReceiveScreen', { addressHash: selectedAddressHash })}
-            disabled={areButtonsDisabled}
-            circular
-          />
-          <Button
-            title="Settings"
-            Icon={Settings2}
-            onPress={() => navigation.navigate('EditAddressScreen', { addressHash: selectedAddressHash })}
-            disabled={areButtonsDisabled}
             circular
           />
         </ButtonsRowStyled>

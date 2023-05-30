@@ -22,13 +22,16 @@ export interface AppTextProps {
   bold?: boolean
   semiBold?: boolean
   medium?: boolean
-  color?: keyof DefaultTheme['font'] | keyof DefaultTheme['global']
+  color?: keyof DefaultTheme['font'] | keyof DefaultTheme['global'] | string
+  overrideThemeColor?: string
   size?: number
 }
 
 export default styled.Text<AppTextProps>`
-  color: ${({ color, theme }) =>
-    color
+  color: ${({ color, theme, overrideThemeColor }) =>
+    overrideThemeColor
+      ? overrideThemeColor
+      : color
       ? theme.font[color as keyof DefaultTheme['font']] || theme.global[color as keyof DefaultTheme['global']]
       : theme.font.primary};
 
