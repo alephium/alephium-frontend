@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -24,7 +23,6 @@ import styled, { useTheme } from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import { useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { themes } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
@@ -36,7 +34,6 @@ interface AddressCardProps {
 
 const AddressCard = ({ style, addressHash }: AddressCardProps) => {
   const theme = useTheme()
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   if (!address) return null
@@ -45,10 +42,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
   const textColor = colord(bgColor).isDark() ? themes.dark.font.primary : themes.light.font.primary
 
   return (
-    <Pressable
-      style={[style, { backgroundColor: bgColor }]}
-      onPress={() => navigation.navigate('AddressScreen', { addressHash })}
-    >
+    <Pressable style={[style, { backgroundColor: bgColor }]}>
       <Header>
         <AddressBadgeStyled
           address={address}

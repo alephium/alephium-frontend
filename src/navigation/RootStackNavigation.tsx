@@ -28,7 +28,6 @@ import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressDiscoveryScreen from '~/screens/AddressDiscovery'
-import AddressScreen from '~/screens/AddressScreen'
 import EditAddressScreen from '~/screens/EditAddressScreen'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginScreen from '~/screens/LoginScreen'
@@ -119,7 +118,6 @@ const RootStackNavigation = () => {
           <RootStack.Screen name="InWalletScreen" component={InWalletTabsNavigation} options={{ headerShown: false }} />
 
           <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} options={bottomModalOptions} />
-          <RootStack.Screen name="AddressScreen" component={AddressScreen} />
 
           <RootStack.Screen
             name="NewAddressScreen"
