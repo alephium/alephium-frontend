@@ -34,6 +34,7 @@ interface HistoricWorthChart {
   length?: ChartLength
   latestWorth: number
   currency: Currency
+  onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
 }
 
 const now = dayjs()
@@ -44,7 +45,12 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
-const HistoricWorthChart = ({ length = '1m', latestWorth, currency }: HistoricWorthChart) => {
+const HistoricWorthChart = ({
+  length = '1m',
+  latestWorth,
+  currency,
+  onWorthInBeginningOfChartChange
+}: HistoricWorthChart) => {
   const theme = useTheme()
   const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
   const addresses = useAppSelector(selectAllAddresses)
@@ -57,6 +63,10 @@ const HistoricWorthChart = ({ length = '1m', latestWorth, currency }: HistoricWo
   const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
   const filteredChartData = getFilteredChartData(chartData, startingDate)
   const firstItem = filteredChartData.at(0)
+
+  useEffect(() => {
+    onWorthInBeginningOfChartChange(firstItem?.worth)
+  }, [firstItem?.worth, onWorthInBeginningOfChartChange])
 
   useEffect(() => {
     if (!isDataAvailable) {
