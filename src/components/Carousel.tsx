@@ -34,6 +34,7 @@ interface CarouselProps<T> {
   onScrollStart?: () => void
   onScrollEnd?: (index: number) => void
   FooterComponent?: ReactNode
+  style?: StyleProp<ViewStyle>
 }
 
 function Carousel<T>({
@@ -45,7 +46,8 @@ function Carousel<T>({
   distance = 0,
   onScrollStart,
   onScrollEnd,
-  FooterComponent
+  FooterComponent,
+  style
 }: CarouselProps<T>) {
   const progressValue = useSharedValue<number>(0)
   const theme = useTheme()
@@ -56,7 +58,7 @@ function Carousel<T>({
   }
 
   return (
-    <View onLayout={onLayout}>
+    <View onLayout={onLayout} style={style}>
       <RNCarousel
         style={{ width: '100%', justifyContent: 'center' }}
         width={_width}
