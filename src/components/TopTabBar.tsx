@@ -17,80 +17,118 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
-import { Animated } from 'react-native'
-import styled from 'styled-components/native'
+import { Animated, Pressable } from 'react-native'
+import Reanimated, { interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import styled, { useTheme } from 'styled-components/native'
 
-import { ScreenSection } from '~/components/layout/Screen'
+import { useScrollContext } from '~/contexts/ScrollContext'
+
+const scrollRange = [0, 50]
 
 const TopTabBar = ({ state, descriptors, navigation, position }: MaterialTopTabBarProps) => {
-  const opacityInterpolationInputRange = state.routes.map((_, i) => i)
+  const { scrollY } = useScrollContext()
+  const theme = useTheme()
+
+  const bgColorRange = [theme.bg.primary, theme.bg.back2]
+  const borderColorRange = ['transparent', theme.border.secondary]
+  const insets = useSafeAreaInsets()
+
+  const headerStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange),
+    borderColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
+  }))
 
   return (
-    <ScreenSection>
-      <TopTabBarStyled>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key]
-          const label = options.title !== undefined ? options.title : route.name
+    <Reanimated.View style={[headerStyle, { paddingTop: insets.top + 15 }]}>
+      <TabsRow>
+        {state.routes.map((route, index) => (
+          <TabBarItem
+            key={route.name}
+            descriptors={descriptors}
+            route={route}
+            state={state}
+            index={index}
+            navigation={navigation}
+            position={position}
+          />
+        ))}
+      </TabsRow>
+    </Reanimated.View>
+  )
+}
 
-          const isFocused = state.index === index
+interface TabBarItemProps {
+  state: MaterialTopTabBarProps['state']
+  navigation: MaterialTopTabBarProps['navigation']
+  position: MaterialTopTabBarProps['position']
+  descriptors: MaterialTopTabBarProps['descriptors']
+  route: MaterialTopTabBarProps['state']['routes'][number]
+  index: number
+}
 
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true
-            })
+// Inspired by https://reactnavigation.org/docs/material-top-tab-navigator/#tabbar
+const TabBarItem = ({ descriptors, route, state, index, navigation, position }: TabBarItemProps) => {
+  const { options } = descriptors[route.key]
+  const label = options.title !== undefined ? options.title : route.name
 
-            if (!isFocused && !event.defaultPrevented) {
-              // The `merge: true` option makes sure that the params inside the tab screen are preserved
-              navigation.navigate({ name: route.name, params: route.params, merge: true })
-            }
-          }
+  const isFocused = state.index === index
+  const opacityInterpolationInputRange = state.routes.map((_, i) => i)
 
-          const onLongPress = () => {
-            navigation.emit({
-              type: 'tabLongPress',
-              target: route.key
-            })
-          }
+  const onPress = () => {
+    const event = navigation.emit({
+      type: 'tabPress',
+      target: route.key,
+      canPreventDefault: true
+    })
 
-          const textStyles = {
-            opacity: position.interpolate({
-              inputRange: opacityInterpolationInputRange,
-              outputRange: opacityInterpolationInputRange.map((i) => (i === index ? 1 : 0.3))
-            })
-          }
+    if (!isFocused && !event.defaultPrevented) {
+      // The `merge: true` option makes sure that the params inside the tab screen are preserved
+      navigation.navigate({ name: route.name, params: route.params, merge: true })
+    }
+  }
 
-          return (
-            <TabItem
-              key={route.name}
-              accessibilityRole="button"
-              accessibilityState={isFocused ? { selected: true } : {}}
-              accessibilityLabel={options.tabBarAccessibilityLabel}
-              testID={options.tabBarTestID}
-              onPress={onPress}
-              onLongPress={onLongPress}
-            >
-              <TabItemText style={textStyles}>{label}</TabItemText>
-            </TabItem>
-          )
-        })}
-      </TopTabBarStyled>
-    </ScreenSection>
+  const onLongPress = () => {
+    navigation.emit({
+      type: 'tabLongPress',
+      target: route.key
+    })
+  }
+
+  const textStyles = {
+    opacity: position.interpolate({
+      inputRange: opacityInterpolationInputRange,
+      outputRange: opacityInterpolationInputRange.map((i) => (i === index ? 1 : 0.3))
+    })
+  }
+
+  return (
+    <Pressable
+      key={route.name}
+      accessibilityRole="button"
+      accessibilityState={isFocused ? { selected: true } : {}}
+      accessibilityLabel={options.tabBarAccessibilityLabel}
+      testID={options.tabBarTestID}
+      onPress={onPress}
+      onLongPress={onLongPress}
+    >
+      <TabItemText style={textStyles}>{label}</TabItemText>
+    </Pressable>
   )
 }
 
 export default TopTabBar
 
-const TopTabBarStyled = styled.View`
+const TabsRow = styled.View`
   flex-direction: row;
-  margin-top: 50px;
   gap: 20px;
+  border-bottom-color: ${({ theme }) => theme.border.secondary};
+  border-bottom-width: 1px;
+  padding: 0 20px;
 `
-
-const TabItem = styled.Pressable``
 
 const TabItemText = styled(Animated.Text)`
   font-size: 28px;
   font-weight: 600;
+  padding: 18px 0;
 `
