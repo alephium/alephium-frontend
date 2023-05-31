@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
-import { Upload } from 'lucide-react-native'
+import { PlusIcon, Upload } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -76,7 +76,10 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
 
   return (
     <>
-      <ScrollScreen style={style} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
+      <ScrollScreenStyled
+        style={style}
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
+      >
         <Carousel
           data={addressHashes}
           renderItem={renderAddressCard}
@@ -84,6 +87,15 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
           padding={30}
           distance={20}
           height={heightCarouselItem}
+          FooterComponent={
+            <Button
+              onPress={() => navigation.navigate('NewAddressScreen')}
+              Icon={PlusIcon}
+              title="New address"
+              type="secondary"
+              variant="accent"
+            />
+          }
         />
         {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
         <QRCodeModal
@@ -91,7 +103,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
           isOpen={isQrCodeModalOpen}
           onClose={() => setIsQrCodeModalOpen(false)}
         />
-      </ScrollScreen>
+      </ScrollScreenStyled>
       <FloatingButton
         Icon={Upload}
         round
@@ -104,6 +116,10 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
 }
 
 export default AddressesScreen
+
+const ScrollScreenStyled = styled(ScrollScreen)`
+  background-color: ${({ theme }) => theme.bg.primary};
+`
 
 const FloatingButton = styled(Button)<{ bgColor: string }>`
   position: absolute;
