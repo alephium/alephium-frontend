@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { colord } from 'colord'
 import { LucideProps } from 'lucide-react-native'
 import { ReactNode } from 'react'
-import { Pressable, PressableProps, StyleProp, TextStyle, View, ViewStyle } from 'react-native'
+import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -34,7 +34,7 @@ export interface ButtonProps extends PressableProps {
   centered?: boolean
   Icon?: (props: LucideProps) => JSX.Element
   color?: string
-  circular?: boolean
+  round?: boolean
   children?: ReactNode
 }
 
@@ -46,7 +46,7 @@ const Button = ({
   disabled,
   Icon,
   children,
-  circular,
+  round,
   color,
   ...props
 }: ButtonProps) => {
@@ -79,9 +79,9 @@ const Button = ({
       backgroundColor: { primary: bg, secondary: 'transparent', transparent: 'transparent' }[type],
       borderWidth: { primary: 0, secondary: 2, transparent: 0 }[type],
       borderColor: { primary: 'transparent', secondary: bg, transparent: undefined }[type],
-      width: circular ? 56 : props.wide ? '75%' : 'auto',
-      borderRadius: circular ? 100 : undefined,
-      justifyContent: circular ? 'center' : undefined
+      width: round ? 56 : props.wide ? '75%' : 'auto',
+      borderRadius: round ? 100 : BORDER_RADIUS,
+      justifyContent: round ? 'center' : undefined
     },
     style
   ]
@@ -89,15 +89,7 @@ const Button = ({
   if (!Icon && !title && !children)
     throw new Error('At least one of the following properties is required: icon, title, or children')
 
-  return circular ? (
-    <View style={{ justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-      <Pressable style={buttonStyle} disabled={disabled} {...props}>
-        {Icon && <Icon color={font} />}
-      </Pressable>
-      {title && <ButtonText style={{ color: colors.font.contrast }}>{title}</ButtonText>}
-      {children}
-    </View>
-  ) : (
+  return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
       {Icon && <Icon style={!!title || !!children ? { marginRight: 15 } : undefined} color={font} />}
       {title && <ButtonText style={{ color: font }}>{title}</ButtonText>}
@@ -107,7 +99,6 @@ const Button = ({
 }
 
 export default styled(Button)`
-  border-radius: ${BORDER_RADIUS}px;
   align-items: center;
   justify-content: center;
   overflow: hidden;

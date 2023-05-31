@@ -17,23 +17,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { ArrowDown, ArrowUp } from 'lucide-react-native'
+import { colord } from 'colord'
+import { Upload } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
 import Carousel from '~/components/Carousel'
-import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeModal from '~/components/QRCodeModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressByHash, selectAddressIds, selectDefaultAddress, syncAddressesData } from '~/store/addressesSlice'
+import { themes } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'AddressesScreen'> {
@@ -47,6 +47,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
+  const theme = useTheme()
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
@@ -71,44 +72,42 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
 
   if (!selectedAddress) return null
 
+  const floatingButtonBgColor = selectedAddress.settings.color ?? theme.font.primary
+
   return (
-    <ScrollScreen style={style} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
-      <Carousel
-        data={addressHashes}
-        renderItem={renderAddressCard}
-        onScrollEnd={onAddressCardsScrollEnd}
-        padding={30}
-        distance={20}
-        height={heightCarouselItem}
+    <>
+      <ScrollScreen style={style} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
+        <Carousel
+          data={addressHashes}
+          renderItem={renderAddressCard}
+          onScrollEnd={onAddressCardsScrollEnd}
+          padding={30}
+          distance={20}
+          height={heightCarouselItem}
+        />
+        {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
+        <QRCodeModal
+          addressHash={selectedAddressHash}
+          isOpen={isQrCodeModalOpen}
+          onClose={() => setIsQrCodeModalOpen(false)}
+        />
+      </ScrollScreen>
+      <FloatingButton
+        Icon={Upload}
+        round
+        bgColor={floatingButtonBgColor}
+        color={colord(floatingButtonBgColor).isDark() ? themes.dark.font.primary : themes.light.font.primary}
+        onPress={() => navigation.navigate('SendScreen', { addressHash: selectedAddressHash })}
       />
-      <ScreenSection>
-        <ButtonsRowStyled>
-          <Button
-            title="Send"
-            Icon={ArrowUp}
-            onPress={() => navigation.navigate('SendScreen', { addressHash: selectedAddressHash })}
-            circular
-          />
-          <Button
-            title="Receive"
-            Icon={ArrowDown}
-            onPress={() => navigation.navigate('ReceiveScreen', { addressHash: selectedAddressHash })}
-            circular
-          />
-        </ButtonsRowStyled>
-      </ScreenSection>
-      {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
-      <QRCodeModal
-        addressHash={selectedAddressHash}
-        isOpen={isQrCodeModalOpen}
-        onClose={() => setIsQrCodeModalOpen(false)}
-      />
-    </ScrollScreen>
+    </>
   )
 }
 
 export default AddressesScreen
 
-const ButtonsRowStyled = styled(ButtonsRow)`
-  margin: 0 20px;
+const FloatingButton = styled(Button)<{ bgColor: string }>`
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  background-color: ${({ bgColor }) => bgColor};
 `
