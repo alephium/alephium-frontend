@@ -20,7 +20,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Album as AddressesIcon, ArrowLeftRight as ArrowsIcon, List as ListIcon } from 'lucide-react-native'
 import { useTheme } from 'styled-components/native'
 
-import AddressesScreenHeaderRight from '~/components/AddressesScreenHeaderRight'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
 import DefaultHeader from '~/components/headers/DefaultHeader'
@@ -74,9 +73,7 @@ const InWalletTabsNavigation = () => {
         options={{
           title: 'Addresses',
           tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />,
-          header: (props) => (
-            <DefaultHeader HeaderLeft="Addresses" HeaderRight={<AddressesScreenHeaderRight />} {...props} />
-          )
+          header: (props) => <DefaultHeader HeaderLeft="Addresses" bgColor={theme.bg.primary} {...props} />
         }}
       />
     </InWalletTabs.Navigator>
