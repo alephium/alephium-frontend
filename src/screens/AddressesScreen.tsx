@@ -30,13 +30,13 @@ import Carousel from '~/components/Carousel'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeModal from '~/components/QRCodeModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import InWalletTabsParamList from '~/navigation/inWalletRoutes'
+import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressByHash, selectAddressIds, selectDefaultAddress, syncAddressesData } from '~/store/addressesSlice'
 import { themes } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 
-interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'AddressesScreen'> {
+interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackParamList, 'AddressesScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
@@ -80,29 +80,31 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
         style={style}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
       >
-        <Carousel
-          data={addressHashes}
-          renderItem={renderAddressCard}
-          onScrollEnd={onAddressCardsScrollEnd}
-          padding={30}
-          distance={20}
-          height={heightCarouselItem}
-          FooterComponent={
-            <Button
-              onPress={() => navigation.navigate('NewAddressScreen')}
-              Icon={PlusIcon}
-              title="New address"
-              type="secondary"
-              variant="accent"
-            />
-          }
-        />
-        {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
-        <QRCodeModal
-          addressHash={selectedAddressHash}
-          isOpen={isQrCodeModalOpen}
-          onClose={() => setIsQrCodeModalOpen(false)}
-        />
+        <ScreenContent>
+          <Carousel
+            data={addressHashes}
+            renderItem={renderAddressCard}
+            onScrollEnd={onAddressCardsScrollEnd}
+            padding={30}
+            distance={20}
+            height={heightCarouselItem}
+            FooterComponent={
+              <Button
+                onPress={() => navigation.navigate('NewAddressScreen')}
+                Icon={PlusIcon}
+                title="New address"
+                type="secondary"
+                variant="accent"
+              />
+            }
+          />
+          {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
+          <QRCodeModal
+            addressHash={selectedAddressHash}
+            isOpen={isQrCodeModalOpen}
+            onClose={() => setIsQrCodeModalOpen(false)}
+          />
+        </ScreenContent>
       </ScrollScreenStyled>
       <FloatingButton
         Icon={Upload}
@@ -119,6 +121,10 @@ export default AddressesScreen
 
 const ScrollScreenStyled = styled(ScrollScreen)`
   background-color: ${({ theme }) => theme.bg.primary};
+`
+
+const ScreenContent = styled.View`
+  padding-top: 30px;
 `
 
 const FloatingButton = styled(Button)<{ bgColor: string }>`
