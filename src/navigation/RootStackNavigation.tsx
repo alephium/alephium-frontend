@@ -71,7 +71,7 @@ const RootStackNavigation = () => {
       ...DefaultTheme.colors,
       primary: theme.font.primary,
       background: theme.bg.primary,
-      card: theme.bg.secondary,
+      card: theme.bg.primary,
       text: theme.font.primary,
       border: theme.border.primary
     }
@@ -81,12 +81,12 @@ const RootStackNavigation = () => {
     <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
       <ScrollContextProvider>
         <RootStack.Navigator
-          initialRouteName={'SplashScreen'}
+          initialRouteName="SplashScreen"
           screenOptions={{
             headerStyle: { elevation: 0, shadowOpacity: 0 },
             headerTitle: '',
             cardStyle: {
-              backgroundColor: theme.bg.back1
+              backgroundColor: theme.bg.primary
             }
           }}
         >

@@ -47,7 +47,7 @@ const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOpt
       marginTop: heights.pullTab.container + (height ?? 0),
       paddingTop: 15,
       borderRadius,
-      backgroundColor: theme.bg.back1
+      backgroundColor: theme.bg.primary
     },
     header: () => (
       <View
