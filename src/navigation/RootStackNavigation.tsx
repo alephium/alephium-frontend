@@ -27,6 +27,7 @@ import useBottomModalOptions from '~/hooks/layout/useBottomModalOptions'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import SendNavigation from '~/navigation/SendNavigation'
 import AddressDiscoveryScreen from '~/screens/AddressDiscovery'
 import EditAddressScreen from '~/screens/EditAddressScreen'
 import LandingScreen from '~/screens/LandingScreen'
@@ -41,7 +42,6 @@ import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '~/screens/NewAddressScreen'
 import ReceiveScreen from '~/screens/ReceiveScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
-import SendScreen from '~/screens/SendScreen'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchNetworkScreen from '~/screens/SwitchNetworkScreen'
@@ -144,12 +144,13 @@ const RootStackNavigation = () => {
           />
           <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={bottomModalOptions} />
           <RootStack.Screen name="ReceiveScreen" component={ReceiveScreen} options={bottomModalOptions} />
-          <RootStack.Screen name="SendScreen" component={SendScreen} options={bottomModalOptions} />
           <RootStack.Screen
             name="AddressDiscoveryScreen"
             component={AddressDiscoveryScreen}
             options={{ headerTitle: 'Active addresses' }}
           />
+
+          <RootStack.Screen name="SendNavigation" component={SendNavigation} options={bottomModalOptions} />
         </RootStack.Navigator>
       </ScrollContextProvider>
     </NavigationContainer>

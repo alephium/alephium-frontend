@@ -111,7 +111,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
         round
         bgColor={floatingButtonBgColor}
         color={colord(floatingButtonBgColor).isDark() ? themes.dark.font.primary : themes.light.font.primary}
-        onPress={() => navigation.navigate('SendScreen', { addressHash: selectedAddressHash })}
+        onPress={() => navigation.navigate('SendNavigation', { fromAddressHash: selectedAddressHash })}
       />
     </>
   )

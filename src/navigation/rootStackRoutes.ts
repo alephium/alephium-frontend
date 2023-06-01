@@ -49,8 +49,9 @@ type RootStackParamList = {
   ReceiveScreen: {
     addressHash: AddressHash
   }
-  SendScreen: {
-    addressHash: AddressHash
+  SendNavigation: {
+    fromAddressHash?: AddressHash
+    toAddressHash?: AddressHash
   }
   SecurityScreen: undefined
   AddressDiscoveryScreen?: {
