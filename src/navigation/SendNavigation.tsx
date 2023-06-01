@@ -19,15 +19,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
+import { SendContextProvider } from '~/contexts/SendContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AssetsScreen from '~/screens/Send/AssetsScreen'
 import DestinationScreen from '~/screens/Send/DestinationScreen'
 import OriginScreen from '~/screens/Send/OriginScreen'
+import SendScreenHeader from '~/screens/Send/SendScreenHeader'
 import VerifyScreen from '~/screens/Send/VerifyScreen'
 import { AddressHash } from '~/types/addresses'
 
 export interface SendNavigationParamList extends ParamListBase {
   DestinationScreen: {
+    setOnBack: (cb: () => void) => void
+    setOnContinue: (cb: () => void) => void
     addressHash?: AddressHash
   }
   OriginScreen: {
@@ -45,16 +49,25 @@ const SendNavigation = ({
     params: { fromAddressHash, toAddressHash }
   }
 }: StackScreenProps<RootStackParamList, 'SendNavigation'>) => (
-  <SendStack.Navigator>
-    <SendStack.Screen
-      name="DestinationScreen"
-      component={DestinationScreen}
-      initialParams={{ addressHash: toAddressHash }}
-    />
-    <SendStack.Screen name="OriginScreen" component={OriginScreen} initialParams={{ addressHash: fromAddressHash }} />
-    <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
-    <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
-  </SendStack.Navigator>
+  <SendContextProvider>
+    <SendScreenHeader />
+    <SendStack.Navigator>
+      <SendStack.Screen
+        name="DestinationScreen"
+        component={DestinationScreen}
+        initialParams={{ addressHash: toAddressHash }}
+        options={{ headerShown: false }}
+      />
+      <SendStack.Screen
+        name="OriginScreen"
+        component={OriginScreen}
+        initialParams={{ addressHash: fromAddressHash }}
+        options={{ headerShown: false }}
+      />
+      <SendStack.Screen name="AssetsScreen" component={AssetsScreen} options={{ headerShown: false }} />
+      <SendStack.Screen name="VerifyScreen" component={VerifyScreen} options={{ headerShown: false }} />
+    </SendStack.Navigator>
+  </SendContextProvider>
 )
 
 export default SendNavigation

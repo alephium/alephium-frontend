@@ -16,21 +16,36 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
-import { StyleProp, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
 
-import ScrollScreen from '~/components/layout/ScrollScreen'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import SendScreenIntro from '~/screens/Send/SendScreenIntro'
+import AppText from '~/components/AppText'
+import { ScreenSection } from '~/components/layout/Screen'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'> {
-  style?: StyleProp<ViewStyle>
+interface SendScreenIntroProps {
+  title: string
+  subtitle: string
 }
 
-const OriginScreen = ({ navigation, style }: ScreenProps) => (
-  <ScrollScreen style={style}>
-    <SendScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
-  </ScrollScreen>
+const SendScreenIntro = ({ title, subtitle }: SendScreenIntroProps) => (
+  <ScreenSection>
+    <AppText size={15} semiBold color="secondary">
+      SEND
+    </AppText>
+    <Title size={32} semiBold>
+      {title}
+    </Title>
+    <Subtitle size={15} medium>
+      {subtitle}
+    </Subtitle>
+  </ScreenSection>
 )
 
-export default OriginScreen
+export default SendScreenIntro
+
+const Title = styled(AppText)`
+  margin: 5px 0 22px;
+`
+
+const Subtitle = styled(AppText)`
+  width: 276px;
+`

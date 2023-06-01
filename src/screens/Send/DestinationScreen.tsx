@@ -17,23 +17,35 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { useEffect } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 
-import AppText from '~/components/AppText'
-import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import SendScreenIntro from '~/screens/Send/SendScreenIntro'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'DestinationScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
-const DestinationScreen = ({ navigation, style }: ScreenProps) => (
-  <ScrollScreen style={style}>
-    <ScreenSection>
-      <AppText>DestinationScreen</AppText>
-    </ScreenSection>
-  </ScrollScreen>
-)
+const DestinationScreen = ({ navigation, style }: ScreenProps) => {
+  const { setOnBack, setOnContinue, setIsContinueEnabled } = useSendContext()
+
+  useEffect(() => {
+    setOnBack(() => navigation.goBack())
+    setOnContinue(() => navigation.navigate('OriginScreen'))
+    setIsContinueEnabled(true)
+  }, [navigation, setIsContinueEnabled, setOnBack, setOnContinue])
+
+  return (
+    <ScrollScreen style={style}>
+      <SendScreenIntro
+        title="Destination"
+        subtitle="Send to a custom address, a contact, or one of you other addresses."
+      />
+    </ScrollScreen>
+  )
+}
 
 export default DestinationScreen
