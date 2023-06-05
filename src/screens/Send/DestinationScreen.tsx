@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useEffect } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
 import SendScreenIntro from '~/screens/Send/SendScreenIntro'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'DestinationScreen'> {
@@ -30,13 +30,12 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'Destina
 }
 
 const DestinationScreen = ({ navigation, style }: ScreenProps) => {
-  const { setOnBack, setOnContinue, setIsContinueEnabled } = useSendContext()
-
-  useEffect(() => {
-    setOnBack(() => navigation.goBack())
-    setOnContinue(() => navigation.navigate('OriginScreen'))
-    setIsContinueEnabled(true)
-  }, [navigation, setIsContinueEnabled, setOnBack, setOnContinue])
+  useFocusEffect(() => {
+    navigation.getParent()?.setOptions({
+      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+      headerRight: () => <ContinueButton onPress={() => navigation.navigate('OriginScreen')} />
+    })
+  })
 
   return (
     <ScrollScreen style={style}>

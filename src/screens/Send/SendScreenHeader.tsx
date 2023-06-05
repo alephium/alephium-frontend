@@ -16,41 +16,76 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
+import { StackHeaderProps } from '@react-navigation/stack'
 import { ChevronLeft } from 'lucide-react-native'
+import { useEffect, useState } from 'react'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import BottomModalHeader from '~/components/headers/BottomModalHeader'
 import { ScreenSection } from '~/components/layout/Screen'
-import { useSendContext } from '~/contexts/SendContext'
 
-const SendScreenHeader = () => {
+const sendSteps = ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
+
+const SendScreenHeader = ({ navigation, route, options, back }: StackHeaderProps) => {
   const theme = useTheme()
-  const { isContinueEnabled, onBack, onContinue } = useSendContext()
+
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'DestinationScreen'
+    const currentStepIndex = sendSteps.findIndex((stepName) => stepName === routeName)
+
+    setProgress(currentStepIndex / sendSteps.length)
+  }, [route])
 
   return (
-    <SendScreenHeaderStyled>
-      <BackButton onPress={onBack}>
-        <ChevronLeft size={25} />
-      </BackButton>
-      <ProgressBar
-        progress={0}
-        color={theme.global.accent}
-        unfilledColor={theme.border.secondary}
-        borderWidth={0}
-        height={9}
-        width={120}
-      />
-      <ContinueButton onPress={onContinue} disabled={!isContinueEnabled}>
-        <AppText color="contrast" semiBold size={16}>
-          Continue
-        </AppText>
-      </ContinueButton>
-    </SendScreenHeaderStyled>
+    <BottomModalHeader>
+      <SendScreenHeaderStyled>
+        {options.headerLeft ? options.headerLeft({}) : <BackButton onPress={() => navigation.goBack()} />}
+        <ProgressBar
+          progress={progress}
+          color={theme.global.accent}
+          unfilledColor={theme.border.secondary}
+          borderWidth={0}
+          height={9}
+          width={120}
+        />
+        {options.headerRight ? (
+          options.headerRight({})
+        ) : (
+          <ContinueButton onPress={() => navigation.navigate('OriginScreen')} />
+        )}
+      </SendScreenHeaderStyled>
+    </BottomModalHeader>
   )
 }
 
 export default SendScreenHeader
+
+interface ButtonProps {
+  onPress: () => void
+}
+
+export const BackButton = ({ onPress }: ButtonProps) => (
+  <BackButtonStyled onPress={onPress}>
+    <ChevronLeft size={25} />
+  </BackButtonStyled>
+)
+
+interface ContinueButtonProps extends ButtonProps {
+  text?: string
+}
+
+export const ContinueButton = ({ onPress, text = 'Continue' }: ContinueButtonProps) => (
+  <ContinueButtonStyled onPress={onPress}>
+    <AppText color="contrast" semiBold size={16}>
+      {text}
+    </AppText>
+  </ContinueButtonStyled>
+)
 
 const SendScreenHeaderStyled = styled(ScreenSection)`
   flex-direction: row;
@@ -59,7 +94,7 @@ const SendScreenHeaderStyled = styled(ScreenSection)`
   align-items: center;
 `
 
-const BackButton = styled.Pressable`
+export const BackButtonStyled = styled.Pressable`
   width: 30px;
   height: 30px;
   border-radius: 30px;
@@ -68,8 +103,10 @@ const BackButton = styled.Pressable`
   justify-content: center;
 `
 
-const ContinueButton = styled.Pressable`
+export const ContinueButtonStyled = styled.Pressable`
   padding: 4px 15px;
   background-color: ${({ theme }) => theme.global.accent};
   border-radius: 26px;
+  width: 100px;
+  align-items: center;
 `

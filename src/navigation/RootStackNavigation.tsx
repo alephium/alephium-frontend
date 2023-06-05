@@ -42,6 +42,7 @@ import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '~/screens/NewAddressScreen'
 import ReceiveScreen from '~/screens/ReceiveScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
+import SendScreenHeader from '~/screens/Send/SendScreenHeader'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchNetworkScreen from '~/screens/SwitchNetworkScreen'
@@ -150,7 +151,11 @@ const RootStackNavigation = () => {
             options={{ headerTitle: 'Active addresses' }}
           />
 
-          <RootStack.Screen name="SendNavigation" component={SendNavigation} options={bottomModalOptions} />
+          <RootStack.Screen
+            name="SendNavigation"
+            component={SendNavigation}
+            options={{ ...bottomModalOptions, header: (props) => <SendScreenHeader {...props} /> }}
+          />
         </RootStack.Navigator>
       </ScrollContextProvider>
     </NavigationContainer>

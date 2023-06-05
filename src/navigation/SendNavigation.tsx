@@ -24,19 +24,12 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import AssetsScreen from '~/screens/Send/AssetsScreen'
 import DestinationScreen from '~/screens/Send/DestinationScreen'
 import OriginScreen from '~/screens/Send/OriginScreen'
-import SendScreenHeader from '~/screens/Send/SendScreenHeader'
 import VerifyScreen from '~/screens/Send/VerifyScreen'
 import { AddressHash } from '~/types/addresses'
 
 export interface SendNavigationParamList extends ParamListBase {
-  DestinationScreen: {
-    setOnBack: (cb: () => void) => void
-    setOnContinue: (cb: () => void) => void
-    addressHash?: AddressHash
-  }
-  OriginScreen: {
-    addressHash?: AddressHash
-  }
+  DestinationScreen?: { addressHash?: AddressHash }
+  OriginScreen?: { addressHash?: AddressHash }
   AssetsScreen: undefined
   VerifyScreen: undefined
 }
@@ -50,22 +43,15 @@ const SendNavigation = ({
   }
 }: StackScreenProps<RootStackParamList, 'SendNavigation'>) => (
   <SendContextProvider>
-    <SendScreenHeader />
-    <SendStack.Navigator>
+    <SendStack.Navigator screenOptions={{ headerShown: false }}>
       <SendStack.Screen
         name="DestinationScreen"
         component={DestinationScreen}
         initialParams={{ addressHash: toAddressHash }}
-        options={{ headerShown: false }}
       />
-      <SendStack.Screen
-        name="OriginScreen"
-        component={OriginScreen}
-        initialParams={{ addressHash: fromAddressHash }}
-        options={{ headerShown: false }}
-      />
-      <SendStack.Screen name="AssetsScreen" component={AssetsScreen} options={{ headerShown: false }} />
-      <SendStack.Screen name="VerifyScreen" component={VerifyScreen} options={{ headerShown: false }} />
+      <SendStack.Screen name="OriginScreen" component={OriginScreen} initialParams={{ addressHash: fromAddressHash }} />
+      <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
+      <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
     </SendStack.Navigator>
   </SendContextProvider>
 )

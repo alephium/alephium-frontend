@@ -16,21 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
 import SendScreenIntro from '~/screens/Send/SendScreenIntro'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
-const OriginScreen = ({ navigation, style }: ScreenProps) => (
-  <ScrollScreen style={style}>
-    <SendScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
-  </ScrollScreen>
-)
+const OriginScreen = ({ navigation, style }: ScreenProps) => {
+  useFocusEffect(() => {
+    navigation.getParent()?.setOptions({
+      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+      headerRight: () => <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} />
+    })
+  })
+
+  return (
+    <ScrollScreen style={style}>
+      <SendScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
+    </ScrollScreen>
+  )
+}
 
 export default OriginScreen

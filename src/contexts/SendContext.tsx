@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 interface SendContextProps {
   onBack?: () => void
@@ -42,10 +42,6 @@ export const SendContextProvider: FC = ({ children }) => {
   const [onBack, setOnBack] = useState<SendContextProps['onBack']>()
   const [onContinue, setOnContinue] = useState<SendContextProps['onContinue']>()
   const [isContinueEnabled, setIsContinueEnabled] = useState<SendContextProps['isContinueEnabled']>()
-
-  useEffect(() => {
-    console.log('onContinue', onContinue)
-  }, [onContinue])
 
   return (
     <SendContext.Provider

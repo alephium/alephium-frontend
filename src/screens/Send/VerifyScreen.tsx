@@ -16,24 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 
-import AppText from '~/components/AppText'
-import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
+import SendScreenIntro from '~/screens/Send/SendScreenIntro'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
-const VerifyScreen = ({ navigation, style }: ScreenProps) => (
-  <ScrollScreen style={style}>
-    <ScreenSection>
-      <AppText>VerifyScreen</AppText>
-    </ScreenSection>
-  </ScrollScreen>
-)
+const VerifyScreen = ({ navigation, style }: ScreenProps) => {
+  useFocusEffect(() => {
+    navigation.getParent()?.setOptions({
+      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+      headerRight: () => <ContinueButton onPress={() => navigation.navigate('VerifyScreen')} text="Send" />
+    })
+  })
+
+  return (
+    <ScrollScreen style={style}>
+      <SendScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
+    </ScrollScreen>
+  )
+}
 
 export default VerifyScreen
