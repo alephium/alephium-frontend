@@ -20,6 +20,7 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import { StackHeaderProps } from '@react-navigation/stack'
 import { ChevronLeft } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
+import { PressableProps } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -65,22 +66,18 @@ const SendScreenHeader = ({ navigation, route, options, back }: StackHeaderProps
 
 export default SendScreenHeader
 
-interface ButtonProps {
-  onPress: () => void
-}
-
-export const BackButton = ({ onPress }: ButtonProps) => (
-  <BackButtonStyled onPress={onPress}>
+export const BackButton = (props: PressableProps) => (
+  <BackButtonStyled {...props}>
     <ChevronLeft size={25} />
   </BackButtonStyled>
 )
 
-interface ContinueButtonProps extends ButtonProps {
+interface ContinueButtonProps extends PressableProps {
   text?: string
 }
 
-export const ContinueButton = ({ onPress, text = 'Continue' }: ContinueButtonProps) => (
-  <ContinueButtonStyled onPress={onPress}>
+export const ContinueButton = ({ text = 'Continue', ...props }: ContinueButtonProps) => (
+  <ContinueButtonStyled {...props}>
     <AppText color="contrast" semiBold size={16}>
       {text}
     </AppText>
@@ -103,6 +100,7 @@ export const BackButtonStyled = styled.Pressable`
   justify-content: center;
 `
 
+// TODO: Dry
 export const ContinueButtonStyled = styled.Pressable`
   padding: 4px 15px;
   background-color: ${({ theme }) => theme.global.accent};

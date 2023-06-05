@@ -18,35 +18,30 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createContext, useContext, useState } from 'react'
 
+import { AddressHash } from '~/types/addresses'
+
 interface SendContextProps {
-  onBack?: () => void
-  setOnBack: (cb: () => void) => void
-  onContinue?: () => void
-  setOnContinue: (cb: () => void) => void
-  isContinueEnabled?: boolean
-  setIsContinueEnabled: (value: boolean) => void
+  toAddress?: AddressHash
+  setToAddress: (toAddress: AddressHash) => void
+  fromAddress?: AddressHash
+  setFromAddress: (toAddress: AddressHash) => void
 }
 
 const initialValues: SendContextProps = {
-  onBack: () => null,
-  setOnBack: () => null,
-  onContinue: () => null,
-  setOnContinue: () => null,
-  isContinueEnabled: false,
-  setIsContinueEnabled: () => null
+  toAddress: undefined,
+  setToAddress: () => null,
+  fromAddress: undefined,
+  setFromAddress: () => null
 }
 
 const SendContext = createContext(initialValues)
 
 export const SendContextProvider: FC = ({ children }) => {
-  const [onBack, setOnBack] = useState<SendContextProps['onBack']>()
-  const [onContinue, setOnContinue] = useState<SendContextProps['onContinue']>()
-  const [isContinueEnabled, setIsContinueEnabled] = useState<SendContextProps['isContinueEnabled']>()
+  const [toAddress, setToAddress] = useState<SendContextProps['toAddress']>(initialValues.toAddress)
+  const [fromAddress, setFromAddress] = useState<SendContextProps['fromAddress']>(initialValues.fromAddress)
 
   return (
-    <SendContext.Provider
-      value={{ onBack, setOnBack, onContinue, setOnContinue, isContinueEnabled, setIsContinueEnabled }}
-    >
+    <SendContext.Provider value={{ toAddress, setToAddress, fromAddress, setFromAddress }}>
       {children}
     </SendContext.Provider>
   )

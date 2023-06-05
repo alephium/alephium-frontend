@@ -35,6 +35,7 @@ interface AmountProps extends AppTextProps {
   isUnknownToken?: boolean
   showPlusMinus?: boolean
   showOnDiscreetMode?: boolean
+  fadeSuffix?: boolean
   style?: StyleProp<TextStyle>
 }
 
@@ -45,16 +46,14 @@ const Amount = ({
   suffix = '',
   showOnDiscreetMode = false,
   isFiat = false,
-  color: colorProp,
-  size,
-  bold,
   style,
   isUnknownToken,
   decimals,
   nbOfDecimalsToShow,
   showPlusMinus,
   highlight,
-  overrideThemeColor
+  fadeSuffix,
+  ...props
 }: AmountProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
 
@@ -85,27 +84,23 @@ const Amount = ({
 
   const [integralPart, fractionalPart] = amount.split('.')
 
-  const color = colorProp ?? (highlight && value !== undefined ? (value < 0 ? 'highlight' : 'valid') : 'primary')
+  const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'highlight' : 'valid') : 'primary')
   const fadedColor = fadeDecimals ? 'secondary' : color
 
   return (
-    <AppText {...{ bold, size, color, overrideThemeColor }} style={style}>
+    <AppText {...props} style={style}>
       {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
         <>
-          {showPlusMinus && (
-            <AppText color={color} overrideThemeColor={overrideThemeColor}>
-              {isNegative ? '-' : '+'}
-            </AppText>
+          {showPlusMinus && <AppText {...props}>{isNegative ? '-' : '+'}</AppText>}
+          <AppText {...props}>{integralPart}</AppText>
+          {fractionalPart && (
+            <AppText color={fadedColor} overrideThemeColor={props.overrideThemeColor}>{`.${fractionalPart} `}</AppText>
           )}
-          <AppText color={color} overrideThemeColor={overrideThemeColor}>
-            {integralPart}
-          </AppText>
-          <AppText color={fadedColor} overrideThemeColor={overrideThemeColor}>{`.${fractionalPart} `}</AppText>
           {quantitySymbol && <AppText color={fadedColor}>{`${quantitySymbol} `}</AppText>}
           {!isUnknownToken && (
-            <AppText color={color} overrideThemeColor={overrideThemeColor}>{` ${suffix ?? 'ALPH'}`}</AppText>
+            <AppText {...props} color={fadeSuffix ? 'secondary' : props.color}>{` ${suffix ?? 'ALPH'}`}</AppText>
           )}
         </>
       ) : (

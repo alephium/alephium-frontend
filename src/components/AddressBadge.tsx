@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Star as StarIcon } from 'lucide-react-native'
 import { StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { Address } from '~/types/addresses'
 
 interface AddressBadgeProps {
@@ -44,7 +44,7 @@ const AddressBadge = ({ address, hideSymbol = false, textStyle, style }: Address
           {!hideSymbol && (
             <Symbol>
               {address.settings.isMain ? (
-                <StarIcon size={16} fill={theme.global.star} />
+                <DefaultAddressBadge size={16} color={theme.global.star} />
               ) : (
                 <Dot color={address.settings.color} />
               )}

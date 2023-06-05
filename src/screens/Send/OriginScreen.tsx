@@ -18,30 +18,151 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
+import { Check } from 'lucide-react-native'
+import { useMemo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
+import AddressBadge from '~/components/AddressBadge'
+import Amount from '~/components/Amount'
+import AssetLogo from '~/components/AssetLogo'
+import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import { useSendContext } from '~/contexts/SendContext'
+import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
 import SendScreenIntro from '~/screens/Send/SendScreenIntro'
+import {
+  makeSelectAddressesAssets,
+  selectAddressByHash,
+  selectAllAddresses,
+  selectDefaultAddress
+} from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
 const OriginScreen = ({ navigation, style }: ScreenProps) => {
+  const { fromAddress, setFromAddress } = useSendContext()
+  const addresses = useAppSelector(selectAllAddresses)
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+
   useFocusEffect(() => {
     navigation.getParent()?.setOptions({
       headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
       headerRight: () => <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} />
     })
+
+    if (!fromAddress && defaultAddress) setFromAddress(defaultAddress.hash)
   })
 
   return (
     <ScrollScreen style={style}>
       <SendScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
+      <ScreenSection>
+        <AddressList>
+          {addresses.map((address) => (
+            <AddressBox key={address.hash} addressHash={address.hash} />
+          ))}
+        </AddressList>
+      </ScreenSection>
     </ScrollScreen>
   )
 }
 
 export default OriginScreen
+
+const AddressBox = ({ addressHash }: { addressHash: AddressHash }) => {
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
+  const assets = useAppSelector((s) => selectAddressesAssets(s, address ? [address.hash] : []))
+  const { fromAddress, setFromAddress } = useSendContext()
+  const theme = useTheme()
+
+  if (!address) return null
+
+  const isSelected = address.hash === fromAddress
+
+  return (
+    <AddressBoxStyled onPress={() => setFromAddress(address.hash)}>
+      <AddressBoxTop style={{ backgroundColor: isSelected ? theme.bg.accent : undefined }}>
+        <AddressBadgeStyled address={address} textStyle={{ fontSize: 18 }} />
+        {isSelected && (
+          <Checkmark>
+            <Check color="white" size={15} strokeWidth={3} />
+          </Checkmark>
+        )}
+      </AddressBoxTop>
+      <AddressBoxBottom>
+        <AssetsRow>
+          {assets.map((asset) => (
+            <Asset key={asset.id}>
+              <AssetLogo assetId={asset.id} size={15} />
+              <Amount
+                value={asset.balance + asset.lockedBalance}
+                isUnknownToken={!asset.symbol}
+                suffix={asset.symbol}
+                decimals={asset.decimals}
+                semiBold
+                fadeSuffix
+              />
+            </Asset>
+          ))}
+        </AssetsRow>
+      </AddressBoxBottom>
+    </AddressBoxStyled>
+  )
+}
+
+const AddressList = styled.View`
+  gap: 20px;
+`
+
+const AddressBoxStyled = styled.Pressable`
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-radius: 9px;
+  overflow: hidden;
+`
+
+const AddressBoxTop = styled.View`
+  padding: 15px;
+  flex-direction: row;
+  justify-content: space-between;
+`
+
+const AddressBoxBottom = styled.View`
+  padding: 13px 15px;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border-top-width: 1px;
+  border-top-color: ${({ theme }) => theme.border.secondary};
+`
+
+const AddressBadgeStyled = styled(AddressBadge)`
+  max-width: 80%;
+`
+
+const Checkmark = styled.View`
+  width: 22px;
+  height: 22px;
+  border-radius: 22px;
+  background-color: ${({ theme }) => theme.global.accent};
+  align-items: center;
+  justify-content: center;
+`
+
+const Asset = styled.View`
+  flex-direction: row;
+  gap: 5px;
+  padding: 3px 7px 3px 3px;
+  background-color: ${({ theme }) => theme.bg.secondary};
+  border-radius: 24px;
+`
+
+const AssetsRow = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+`

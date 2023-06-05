@@ -25,6 +25,7 @@ declare module 'styled-components' {
       highlight: string
       primary: string
       secondary: string
+      tertiary: string
       back1: string
       back2: string
       accent: string

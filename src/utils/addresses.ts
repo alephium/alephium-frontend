@@ -28,8 +28,8 @@ import { AddressTransaction, PendingTransaction } from '~/types/transactions'
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
 
-export const copyAddressToClipboard = (addressHash: AddressHash) => {
-  Clipboard.setString(addressHash)
+export const copyAddressToClipboard = async (addressHash: AddressHash) => {
+  await Clipboard.setStringAsync(addressHash)
   Toast.show('Address copied!')
 }
 
