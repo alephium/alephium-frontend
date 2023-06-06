@@ -127,6 +127,10 @@ export const isConsolidationTx = (tx: explorer.Transaction | explorer.MempoolTra
   return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
+export const isMempoolTx = (
+  transaction: explorer.Transaction | explorer.MempoolTransaction
+): transaction is explorer.MempoolTransaction => !('blockHash' in transaction)
+
 export const removeConsolidationChangeAmount = (
   totalOutputs: AmountDeltas,
   outputs: explorer.AssetOutput[] | explorer.Output[]
