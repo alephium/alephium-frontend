@@ -28,7 +28,7 @@ import {
   TransactionInfoType
 } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
+import { DUST_AMOUNT, explorer } from '@alephium/web3'
 
 import { store } from '~/store/store'
 import { Address } from '~/types/addresses'
@@ -103,3 +103,20 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
 
 export const hasOnlyOutputsWith = (outputs: explorer.Output[], addresses: Address[]): boolean =>
   outputs.every((o) => o?.address && addresses.map((a) => a.hash).indexOf(o.address) >= 0)
+
+// TODO: Same as in desktop wallet
+export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
+  const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
+  const tokens = assetAmounts
+    .filter((asset): asset is Required<AssetAmount> => asset.id !== ALPH.id && asset.amount !== undefined)
+    .map((asset) => ({ id: asset.id, amount: asset.amount.toString() }))
+
+  const minAlphAmountRequirement = DUST_AMOUNT * BigInt(tokens.length)
+  const minDiff = minAlphAmountRequirement - alphAmount
+  const totalAlphAmount = minDiff > 0 ? alphAmount + minDiff : alphAmount
+
+  return {
+    attoAlphAmount: totalAlphAmount.toString(),
+    tokens
+  }
+}

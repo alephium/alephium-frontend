@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
@@ -113,3 +114,15 @@ export const selectAddressTransactions = (
     return txs
   }, [] as AddressTransaction[])
 }
+
+// TODO: Same as in desktop wallet
+export const getAddressAssetsAvailableBalance = (address: Address) => [
+  {
+    id: ALPH.id,
+    availableBalance: BigInt(address.balance) - BigInt(address.lockedBalance)
+  },
+  ...address.tokens.map((token) => ({
+    id: token.id,
+    availableBalance: BigInt(token.balance) - BigInt(token.lockedBalance)
+  }))
+]

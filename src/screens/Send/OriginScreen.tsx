@@ -102,7 +102,7 @@ const AddressBox = ({ addressHash }: { addressHash: AddressHash }) => {
             <Asset key={asset.id}>
               <AssetLogo assetId={asset.id} size={15} />
               <Amount
-                value={asset.balance + asset.lockedBalance}
+                value={asset.balance - asset.lockedBalance}
                 isUnknownToken={!asset.symbol}
                 suffix={asset.symbol}
                 decimals={asset.decimals}

@@ -16,11 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AssetAmount } from '@alephium/sdk'
 import { transactionSign } from '@alephium/web3'
 
 import client from '~/api/client'
 import { Address, AddressHash } from '~/types/addresses'
-import { getAddressAvailableBalance } from '~/utils/addresses'
+import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
+import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
   const { unsignedTxs } = await client.node.transactions.postTransactionsSweepAddressBuild({
@@ -37,28 +39,32 @@ export const buildSweepTransactions = async (fromAddress: Address, toAddressHash
 export const buildUnsignedTransactions = async (
   fromAddress: Address,
   toAddressHash: string,
-  amountInSet: bigint,
-  gasAmount: string,
-  gasPriceInSet?: bigint
+  assetAmounts: AssetAmount[]
 ) => {
-  const isSweep = amountInSet.toString() === getAddressAvailableBalance(fromAddress).toString()
+  const assetsWithAvailableBalance = getAddressAssetsAvailableBalance(fromAddress).filter(
+    (asset) => asset.availableBalance > 0
+  )
 
-  if (isSweep) {
+  const shouldSweep =
+    assetsWithAvailableBalance.length === assetAmounts.length &&
+    assetsWithAvailableBalance.every(
+      (asset) => assetAmounts.find((a) => a.id === asset.id)?.amount === asset.availableBalance
+    )
+
+  if (shouldSweep) {
     return await buildSweepTransactions(fromAddress, toAddressHash)
   } else {
-    // TODO: const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+    const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+
     const data = await client.node.transactions.postTransactionsBuild({
       fromPublicKey: fromAddress.publicKey,
       destinations: [
         {
           address: toAddressHash,
-          attoAlphAmount: amountInSet.toString(),
-          tokens: undefined,
-          lockTime: undefined
+          attoAlphAmount,
+          tokens
         }
-      ],
-      gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
-      gasPrice: gasPriceInSet ? gasPriceInSet.toString() : undefined
+      ]
     })
 
     return {
