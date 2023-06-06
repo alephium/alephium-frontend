@@ -30,7 +30,13 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
   lockedBalance: bigint
 }
 
-export type Asset = TokenDisplayBalances & Optional<TokenInfo, 'symbol' | 'name'>
+export type AssetInfo = TokenInfo & { verified?: boolean }
+
+export type Asset = TokenDisplayBalances & Optional<AssetInfo, 'symbol' | 'name'>
+
+export type VerifiedAsset = Required<Asset>
+
+export type UnverifiedAsset = Optional<VerifiedAsset, 'logoURI'>
 
 export type AssetAmount = { id: Asset['id']; amount?: bigint }
 
