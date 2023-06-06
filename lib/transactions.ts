@@ -115,8 +115,10 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (explorer.Input
     { alph: BigInt(0), tokens: [] } as AmountDeltas
   )
 
-export const getDirection = (tx: explorer.Transaction, address: string): TransactionDirection =>
-  calcTxAmountsDeltaForAddress(tx, address, true).alph < 0 ? 'out' : 'in'
+export const getDirection = (
+  tx: explorer.Transaction | explorer.MempoolTransaction,
+  address: string
+): TransactionDirection => (calcTxAmountsDeltaForAddress(tx, address, true).alph < 0 ? 'out' : 'in')
 
 export const isConsolidationTx = (tx: explorer.Transaction | explorer.MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
