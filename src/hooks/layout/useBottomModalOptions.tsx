@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { CardStyleInterpolators, StackNavigationOptions } from '@react-navigation/stack'
-import { Dimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import BottomModalHeader, { bottomModalHeights } from '~/components/headers/BottomModalHeader'
@@ -35,11 +34,11 @@ const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOpt
     cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
     gestureEnabled: true,
     gestureDirection: 'vertical',
-    gestureResponseDistance: Dimensions.get('window').height,
     cardStyle: {
       marginTop: bottomModalHeights.pullTab.container + (options?.height ?? 0),
       paddingTop: 15,
-      borderRadius,
+      borderTopRightRadius: borderRadius,
+      borderTopLeftRadius: borderRadius,
       backgroundColor: theme.bg.primary
     },
     header: () => <BottomModalHeader />
