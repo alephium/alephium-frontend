@@ -21,7 +21,6 @@ import { NavigationState } from '@react-navigation/routers'
 import { createStackNavigator } from '@react-navigation/stack'
 import { useTheme } from 'styled-components'
 
-import DefaultHeader from '~/components/headers/DefaultHeader'
 import { ScrollContextProvider } from '~/contexts/ScrollContext'
 import useBottomModalOptions from '~/hooks/layout/useBottomModalOptions'
 import { useAppDispatch } from '~/hooks/redux'
@@ -57,8 +56,6 @@ const RootStack = createStackNavigator<RootStackParamList>()
 const RootStackNavigation = () => {
   const theme = useTheme()
   const bottomModalOptions = useBottomModalOptions()
-  // const { height: screenHeight } = useWindowDimensions()
-  // const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
   const dispatch = useAppDispatch()
 
   const handleStateChange = (state?: NavigationState) => {
@@ -127,11 +124,7 @@ const RootStackNavigation = () => {
           />
           <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} options={bottomModalOptions} />
 
-          <RootStack.Screen
-            name="SettingsScreen"
-            component={SettingsScreen}
-            options={{ headerTitle: 'Settings', header: () => <DefaultHeader HeaderLeft="Settings" /> }}
-          />
+          <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
           <RootStack.Screen
             name="SecurityScreen"
             component={SecurityScreen}
