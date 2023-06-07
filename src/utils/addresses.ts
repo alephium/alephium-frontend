@@ -106,10 +106,20 @@ export const selectAddressTransactions = (
         : allAddresses.filter((address) => addressHashes === address.hash)
       : allAddresses
   const addressesTxs = addresses.flatMap((address) => address.transactions.map((txHash) => ({ txHash, address })))
+  const processedTxHashes: explorer.Transaction['hash'][] = []
 
   return transactions.reduce((txs, tx) => {
-    const addressTx = addressesTxs.find(({ txHash }) => txHash === tx.hash)
-    if (addressTx) txs.push({ ...tx, address: addressTx.address })
+    const addressTxs = addressesTxs.filter(({ txHash }) => txHash === tx.hash)
+
+    addressTxs.forEach((addressTx) => {
+      if (
+        (!isPendingTransaction(tx) || tx.fromAddress === addressTx.address.hash) &&
+        !processedTxHashes.includes(tx.hash)
+      ) {
+        processedTxHashes.push(tx.hash)
+        txs.push({ ...tx, address: addressTx.address })
+      }
+    })
 
     return txs
   }, [] as AddressTransaction[])
@@ -126,3 +136,7 @@ export const getAddressAssetsAvailableBalance = (address: Address) => [
     availableBalance: BigInt(token.balance) - BigInt(token.lockedBalance)
   }))
 ]
+
+// TODO: Same as in desktop wallet
+const isPendingTransaction = (tx: explorer.Transaction | PendingTransaction): tx is PendingTransaction =>
+  (tx as PendingTransaction).status === 'pending'

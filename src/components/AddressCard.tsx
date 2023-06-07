@@ -63,7 +63,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
       <Header>
         <AddressBadgeContainer>
           <AddressBadgeStyled
-            address={address}
+            addressHash={address.hash}
             hideSymbol
             textStyle={{
               fontSize: 23,

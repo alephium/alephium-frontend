@@ -20,12 +20,11 @@ import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmo
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import { buildUnsignedTransactions } from '~/api/transactions'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
@@ -38,31 +37,34 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
 import SendScreenIntro from '~/screens/Send/SendScreenIntro'
 import { makeSelectAddressesAssets, selectAddressByHash } from '~/store/addressesSlice'
+import { isNumericStringValid } from '~/utils/numbers'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
 const AssetsScreen = ({ navigation, style }: ScreenProps) => {
-  const { fromAddress, toAddress, assetAmounts, setUnsignedTxData } = useSendContext()
+  const { fromAddress, assetAmounts, buildTransaction } = useSendContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
   const assets = useAppSelector((s) => selectAddressesAssets(s, address ? [address.hash] : []))
 
-  const isContinueButtonDisabled = assetAmounts.length === 0
-
-  const buildTransaction = useCallback(async () => {
-    if (!address || !toAddress || isContinueButtonDisabled) return
-
-    const data = await buildUnsignedTransactions(address, toAddress, assetAmounts)
-    setUnsignedTxData(data)
-    navigation.navigate('VerifyScreen')
-  }, [address, assetAmounts, isContinueButtonDisabled, navigation, setUnsignedTxData, toAddress])
+  const isContinueButtonDisabled = assetAmounts.length < 1
 
   useEffect(() => {
     navigation.getParent()?.setOptions({
       headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => <ContinueButton onPress={buildTransaction} disabled={isContinueButtonDisabled} />
+      headerRight: () => (
+        <ContinueButton
+          onPress={() =>
+            buildTransaction({
+              onBuildSuccess: () => navigation.navigate('VerifyScreen'),
+              onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
+            })
+          }
+          disabled={isContinueButtonDisabled}
+        />
+      )
     })
   }, [buildTransaction, isContinueButtonDisabled, navigation])
 
@@ -96,7 +98,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
 
   const assetAmount = assetAmounts.find(({ id }) => id === asset.id)
 
-  const [isSelected, setIsSelected] = useState(false)
+  const [isSelected, setIsSelected] = useState(!!assetAmount)
   const [amount, setAmount] = useState(
     assetAmount && assetAmount.amount ? toHumanReadableAmount(assetAmount.amount) : ''
   )
@@ -105,10 +107,10 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
 
   const handleOnAmountChange = (inputAmount: string) => {
-    console.log(inputAmount)
+    const cleanedAmount = isNumericStringValid(inputAmount, true) ? inputAmount : ''
 
-    const cleanedAmount = inputAmount === '00' ? '0' : inputAmount
     setAmount(cleanedAmount)
+
     const amountValueAsFloat = parseFloat(cleanedAmount)
     const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (asset?.decimals ?? 0)
     const availableAmount = toHumanReadableAmount(asset.balance - asset.lockedBalance, asset.decimals)

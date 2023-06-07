@@ -22,7 +22,7 @@ import * as Clipboard from 'expo-clipboard'
 import { ClipboardIcon, LucideProps, Scan } from 'lucide-react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { PressableProps, StyleProp, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Input from '~/components/inputs/Input'
@@ -117,15 +117,19 @@ interface ButtonProps extends PressableProps {
   Icon?: (props: LucideProps) => JSX.Element
 }
 
-const Button: FC<ButtonProps> = ({ Icon, title, children, ...props }) => (
-  <ButtonStyled {...props}>
-    {Icon && <Icon size={20} />}
-    <AppText semiBold color="accent">
-      {title}
-    </AppText>
-    {children}
-  </ButtonStyled>
-)
+const Button: FC<ButtonProps> = ({ Icon, title, children, ...props }) => {
+  const theme = useTheme()
+
+  return (
+    <ButtonStyled {...props}>
+      {Icon && <Icon size={20} color={theme.global.accent} />}
+      <AppText semiBold color="accent">
+        {title}
+      </AppText>
+      {children}
+    </ButtonStyled>
+  )
+}
 
 const ButtonsRow = styled.View`
   flex-direction: row;

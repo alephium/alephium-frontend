@@ -104,7 +104,7 @@ const Label = styled(AppText)`
 `
 
 const ChartContainer = styled.View`
-  margin: 0 -30px;
+  margin: 0 -35px;
 `
 
 const ChartLengthBadges = styled.View`

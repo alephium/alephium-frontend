@@ -19,13 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
+import AppText, { AppTextProps } from '~/components/AppText'
 import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
 export interface HighlightRowProps {
   isInput?: boolean
   isSecondary?: boolean
   title?: string
+  titleColor?: AppTextProps['color']
   subtitle?: string
   onPress?: () => void
   hasRightContent?: boolean
@@ -41,14 +42,14 @@ const HighlightRow: FC<HighlightRowProps> = ({
   children,
   onPress,
   truncate,
-  isLast = false,
   noMaxWidth,
-  style
+  style,
+  titleColor
 }) => {
   const componentContent = title ? (
     <>
       <LeftContent>
-        <AppText medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
+        <AppText medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle" color={titleColor}>
           {title}
         </AppText>
         {subtitle && (

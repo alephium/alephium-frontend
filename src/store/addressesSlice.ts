@@ -43,6 +43,7 @@ import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/netwo
 import { RootState } from '~/store/store'
 import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
 import { Address, AddressesHistoricalBalanceResult, AddressHash, AddressPartial } from '~/types/addresses'
+import { PendingTransaction } from '~/types/transactions'
 import { getRandomLabelColor } from '~/utils/colors'
 
 const sliceName = 'addresses'
@@ -184,7 +185,7 @@ const addressesSlice = createSlice({
         changes: { settings: address.settings }
       })
     },
-    transactionSent: (state, action) => {
+    transactionSent: (state, action: PayloadAction<PendingTransaction>) => {
       const pendingTransaction = action.payload
       const address = state.entities[pendingTransaction.fromAddress] as Address
 
@@ -330,20 +331,22 @@ export const makeSelectAddressesAssets = () =>
         return acc
       }, [] as TokenDisplayBalances[])
 
-      const tokenAssets = tokenBalances.map((token) => {
-        const assetInfo = assetsInfo.find((t) => t.id === token.id)
+      const tokenAssets = tokenBalances
+        .filter(({ balance, lockedBalance }) => balance > 0 || lockedBalance > 0)
+        .map((token) => {
+          const assetInfo = assetsInfo.find((t) => t.id === token.id)
 
-        return {
-          id: token.id,
-          balance: BigInt(token.balance.toString()),
-          lockedBalance: BigInt(token.lockedBalance.toString()),
-          name: assetInfo?.name,
-          symbol: assetInfo?.symbol,
-          description: assetInfo?.description,
-          logoURI: assetInfo?.logoURI,
-          decimals: assetInfo?.decimals ?? 0
-        }
-      })
+          return {
+            id: token.id,
+            balance: BigInt(token.balance.toString()),
+            lockedBalance: BigInt(token.lockedBalance.toString()),
+            name: assetInfo?.name,
+            symbol: assetInfo?.symbol,
+            description: assetInfo?.description,
+            logoURI: assetInfo?.logoURI,
+            decimals: assetInfo?.decimals ?? 0
+          }
+        })
 
       return [alphAsset, ...tokenAssets]
     }

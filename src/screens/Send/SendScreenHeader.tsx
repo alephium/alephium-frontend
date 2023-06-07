@@ -66,11 +66,15 @@ const SendScreenHeader = ({ navigation, route, options, back }: StackHeaderProps
 
 export default SendScreenHeader
 
-export const BackButton = (props: PressableProps) => (
-  <BackButtonStyled {...props}>
-    <ChevronLeft size={25} />
-  </BackButtonStyled>
-)
+export const BackButton = (props: PressableProps) => {
+  const theme = useTheme()
+
+  return (
+    <BackButtonStyled {...props}>
+      <ChevronLeft size={25} color={theme.global.accent} />
+    </BackButtonStyled>
+  )
+}
 
 interface ContinueButtonProps extends PressableProps {
   text?: string

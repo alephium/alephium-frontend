@@ -24,8 +24,7 @@ import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
-import Amount from '~/components/Amount'
-import AssetLogo from '~/components/AssetLogo'
+import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
@@ -89,7 +88,7 @@ const AddressBox = ({ addressHash }: { addressHash: AddressHash }) => {
   return (
     <AddressBoxStyled onPress={() => setFromAddress(address.hash)}>
       <AddressBoxTop style={{ backgroundColor: isSelected ? theme.bg.accent : undefined }}>
-        <AddressBadgeStyled address={address} textStyle={{ fontSize: 18 }} />
+        <AddressBadgeStyled addressHash={address.hash} textStyle={{ fontSize: 18 }} />
         {isSelected && (
           <Checkmark>
             <Check color="white" size={15} strokeWidth={3} />
@@ -99,17 +98,12 @@ const AddressBox = ({ addressHash }: { addressHash: AddressHash }) => {
       <AddressBoxBottom>
         <AssetsRow>
           {assets.map((asset) => (
-            <Asset key={asset.id}>
-              <AssetLogo assetId={asset.id} size={15} />
-              <Amount
-                value={asset.balance - asset.lockedBalance}
-                isUnknownToken={!asset.symbol}
-                suffix={asset.symbol}
-                decimals={asset.decimals}
-                semiBold
-                fadeSuffix
-              />
-            </Asset>
+            <AssetAmountWithLogo
+              key={asset.id}
+              assetId={asset.id}
+              logoSize={15}
+              amount={asset.balance - asset.lockedBalance}
+            />
           ))}
         </AssetsRow>
       </AddressBoxBottom>
@@ -151,14 +145,6 @@ const Checkmark = styled.View`
   background-color: ${({ theme }) => theme.global.accent};
   align-items: center;
   justify-content: center;
-`
-
-const Asset = styled.View`
-  flex-direction: row;
-  gap: 5px;
-  padding: 3px 7px 3px 3px;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border-radius: 24px;
 `
 
 const AssetsRow = styled.View`

@@ -16,11 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount } from '@alephium/sdk'
+import { APIError, AssetAmount, getHumanReadableError } from '@alephium/sdk'
 import { node } from '@alephium/web3'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useCallback, useContext, useState } from 'react'
+import Toast from 'react-native-root-toast'
 
+import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
+import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
+import ConsolidationModal from '~/components/ConsolidationModal'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
+import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 type UnsignedTxData = {
   unsignedTxs: {
@@ -30,6 +37,11 @@ type UnsignedTxData = {
   fees: bigint
 }
 
+type BuildTransactionCallbacks = {
+  onBuildSuccess: () => void
+  onConsolidationSuccess: () => void
+}
+
 interface SendContextProps {
   toAddress?: AddressHash
   setToAddress: (toAddress: AddressHash) => void
@@ -37,8 +49,9 @@ interface SendContextProps {
   setFromAddress: (toAddress: AddressHash) => void
   assetAmounts: AssetAmount[]
   setAssetAmount: (assetId: string, amount?: bigint) => void
-  unsignedTxData: UnsignedTxData
-  setUnsignedTxData: (data: UnsignedTxData) => void
+  fees: bigint
+  buildTransaction: (callbacks: BuildTransactionCallbacks) => Promise<void>
+  sendTransaction: (onSendSuccess: () => void) => Promise<void>
 }
 
 const initialValues: SendContextProps = {
@@ -48,17 +61,28 @@ const initialValues: SendContextProps = {
   setFromAddress: () => null,
   assetAmounts: [],
   setAssetAmount: () => null,
-  unsignedTxData: { unsignedTxs: [], fees: BigInt(0) },
-  setUnsignedTxData: () => null
+  fees: BigInt(0),
+  buildTransaction: () => Promise.resolve(undefined),
+  sendTransaction: () => Promise.resolve(undefined)
 }
 
 const SendContext = createContext(initialValues)
 
 export const SendContextProvider: FC = ({ children }) => {
+  const requiresAuth = useAppSelector((s) => s.settings.requireAuth)
+  const dispatch = useAppDispatch()
+
   const [toAddress, setToAddress] = useState<SendContextProps['toAddress']>(initialValues.toAddress)
   const [fromAddress, setFromAddress] = useState<SendContextProps['fromAddress']>(initialValues.fromAddress)
   const [assetAmounts, setAssetAmounts] = useState<SendContextProps['assetAmounts']>(initialValues.assetAmounts)
-  const [unsignedTxData, setUnsignedTxData] = useState<SendContextProps['unsignedTxData']>(initialValues.unsignedTxData)
+  const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
+
+  const [consolidationRequired, setConsolidationRequired] = useState(false)
+  const [isConsolidateModalVisible, setIsConsolidateModalVisible] = useState(false)
+  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
+  const [onSendSuccessCallback, setOnSendSuccessCallback] = useState<() => void>(() => () => null)
+
+  const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
 
   const setAssetAmount = (assetId: string, amount?: bigint) => {
     const existingAmountIndex = assetAmounts.findIndex(({ id }) => id === assetId)
@@ -75,6 +99,85 @@ export const SendContextProvider: FC = ({ children }) => {
     setAssetAmounts(newAssetAmounts)
   }
 
+  const buildConsolidationTransactions = useCallback(async () => {
+    if (!address) return
+
+    try {
+      const data = await buildSweepTransactions(address, address.hash)
+      setUnsignedTxData(data)
+    } catch (e) {
+      Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
+    }
+  }, [address, setUnsignedTxData])
+
+  const buildTransaction = useCallback(
+    async (callbacks: BuildTransactionCallbacks) => {
+      if (!address || !toAddress) return
+
+      try {
+        const data = await buildUnsignedTransactions(address, toAddress, assetAmounts)
+        setUnsignedTxData(data)
+
+        callbacks.onBuildSuccess()
+      } catch (e) {
+        // TODO: When API error codes are available, replace this substring check with a proper error code check
+        const { error } = e as APIError
+        if (error?.detail && (error.detail.includes('consolidating') || error.detail.includes('consolidate'))) {
+          setConsolidationRequired(true)
+          setIsConsolidateModalVisible(true)
+          setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
+          await buildConsolidationTransactions()
+        } else {
+          Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
+        }
+      }
+    },
+    [address, assetAmounts, buildConsolidationTransactions, toAddress]
+  )
+
+  const sendTransaction = useCallback(
+    async (onSendSuccess: () => void) => {
+      if (!address || !toAddress) return
+
+      const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+
+      try {
+        for (const { txId, unsignedTx } of unsignedTxData.unsignedTxs) {
+          const data = await signAndSendTransaction(address, txId, unsignedTx)
+
+          dispatch(
+            transactionSent({
+              hash: data.txId,
+              fromAddress: address.hash,
+              toAddress: consolidationRequired ? address.hash : toAddress,
+              amount: attoAlphAmount,
+              tokens,
+              timestamp: new Date().getTime(),
+              status: 'pending'
+            })
+          )
+        }
+
+        onSendSuccess()
+      } catch (e) {
+        Toast.show(getHumanReadableError(e, 'Could not send transaction'))
+      }
+    },
+    [address, assetAmounts, consolidationRequired, dispatch, toAddress, unsignedTxData.unsignedTxs]
+  )
+
+  const authenticateAndSend = useCallback(
+    async (onSendSuccess: () => void) => {
+      if (requiresAuth) {
+        setOnSendSuccessCallback(() => onSendSuccess)
+        setIsAuthenticationModalVisible(true)
+      } else {
+        sendTransaction(onSendSuccess)
+      }
+    },
+    [requiresAuth, sendTransaction]
+  )
+
   return (
     <SendContext.Provider
       value={{
@@ -84,11 +187,22 @@ export const SendContextProvider: FC = ({ children }) => {
         setFromAddress,
         assetAmounts,
         setAssetAmount,
-        unsignedTxData,
-        setUnsignedTxData
+        fees: unsignedTxData.fees,
+        buildTransaction,
+        sendTransaction: authenticateAndSend
       }}
     >
       {children}
+      {isConsolidateModalVisible && (
+        <ConsolidationModal
+          onConsolidate={() => authenticateAndSend(onSendSuccessCallback)}
+          onCancel={() => setIsConsolidateModalVisible(false)}
+          fees={unsignedTxData.fees}
+        />
+      )}
+      {isAuthenticationModalVisible && (
+        <ConfirmWithAuthModal onConfirm={() => sendTransaction(onSendSuccessCallback)} />
+      )}
     </SendContext.Provider>
   )
 }

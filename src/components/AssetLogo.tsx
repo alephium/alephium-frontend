@@ -59,11 +59,10 @@ const AssetLogoStyled = styled.View<AssetLogoProps & { logoURI: TokenInfo['logoU
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   border-radius: ${({ size }) => size}px;
-  margin-right: 10px;
   padding: 1px;
   background: ${({ theme }) => theme.bg.secondary};
 
-  ${({ assetId, logoURI, theme, size }) =>
+  ${({ assetId, logoURI, size }) =>
     assetId === ALPH.id
       ? css`
           padding: ${size * 0.2}px;

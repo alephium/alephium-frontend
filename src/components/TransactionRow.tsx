@@ -74,17 +74,16 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
       </AssetLogos>
       <AmountColumn>
         {knownAssets.map(({ id, amount, decimals, symbol }) => (
-          <AppText key={id}>
-            <Amount
-              value={amount}
-              decimals={decimals}
-              suffix={symbol}
-              isUnknownToken={!symbol}
-              highlight={!isMoved}
-              showPlusMinus={!isMoved}
-              bold
-            />
-          </AppText>
+          <Amount
+            key={id}
+            value={amount}
+            decimals={decimals}
+            suffix={symbol}
+            isUnknownToken={!symbol}
+            highlight={!isMoved}
+            showPlusMinus={!isMoved}
+            bold
+          />
         ))}
       </AmountColumn>
     </HighlightRowStyled>
