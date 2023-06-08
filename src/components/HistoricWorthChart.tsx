@@ -26,7 +26,8 @@ import { VictoryArea } from 'victory-native'
 import { useAppSelector } from '~/hooks/redux'
 import { selectHaveHistoricBalancesLoaded, selectIsStateUninitialized } from '~/store/addresses/addressesSelectors'
 import { selectAllAddresses } from '~/store/addressesSlice'
-import { useGetHistoricalPriceQuery } from '~/store/assets/priceApiSlice'
+import { HistoricalPriceResult, useGetHistoricalPriceQuery } from '~/store/assets/priceApiSlice'
+import { Address } from '~/types/addresses'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '~/types/charts'
 import { Currency } from '~/types/settings'
 
@@ -69,42 +70,7 @@ const HistoricWorthChart = ({
   }, [firstItem?.worth, onWorthInBeginningOfChartChange])
 
   useEffect(() => {
-    if (!isDataAvailable) {
-      setChartData([])
-      return
-    }
-
-    const computeChartDataPoints = (): DataPoint[] => {
-      const addressesLatestAmount: LatestAmountPerAddress = {}
-
-      return alphPriceHistory.map(({ date, price }) => {
-        let totalAmountPerDate = BigInt(0)
-
-        addresses.forEach(({ hash, balanceHistory }) => {
-          const amountOnDate = balanceHistory.entities[date]?.balance
-
-          if (amountOnDate !== undefined) {
-            const amount = BigInt(amountOnDate)
-            totalAmountPerDate += amount
-            addressesLatestAmount[hash] = amount
-          } else {
-            totalAmountPerDate += addressesLatestAmount[hash] ?? BigInt(0)
-          }
-        })
-
-        return {
-          date,
-          worth: price * parseFloat(toHumanReadableAmount(totalAmountPerDate))
-        }
-      })
-    }
-
-    const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
-
-    let dataPoints = computeChartDataPoints()
-    dataPoints = trimInitialZeroDataPoints(dataPoints)
-
-    setChartData(dataPoints)
+    setChartData(isDataAvailable ? trimInitialZeroDataPoints(computeChartDataPoints(alphPriceHistory, addresses)) : [])
   }, [addresses, alphPriceHistory, isDataAvailable])
 
   if (!isDataAvailable || chartData.length <= 2 || !firstItem) return null
@@ -154,3 +120,30 @@ const getFilteredChartData = (chartData: DataPoint[], startingDate: string) => {
 }
 
 const HistoricWorthChartStyled = styled.View``
+
+const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
+
+const computeChartDataPoints = (alphPriceHistory: HistoricalPriceResult[], addresses: Address[]): DataPoint[] => {
+  const addressesLatestAmount: LatestAmountPerAddress = {}
+
+  return alphPriceHistory.map(({ date, price }) => {
+    let totalAmountPerDate = BigInt(0)
+
+    addresses.forEach(({ hash, balanceHistory }) => {
+      const amountOnDate = balanceHistory.entities[date]?.balance
+
+      if (amountOnDate !== undefined) {
+        const amount = BigInt(amountOnDate)
+        totalAmountPerDate += amount
+        addressesLatestAmount[hash] = amount
+      } else {
+        totalAmountPerDate += addressesLatestAmount[hash] ?? BigInt(0)
+      }
+    })
+
+    return {
+      date,
+      worth: price * parseFloat(toHumanReadableAmount(totalAmountPerDate))
+    }
+  })
+}

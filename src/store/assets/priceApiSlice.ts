@@ -29,7 +29,7 @@ type HistoricalPriceQueryParams = {
   days: number
 }
 
-interface HistoricalPriceResult {
+export interface HistoricalPriceResult {
   date: string // CHART_DATE_FORMAT
   price: number
 }
