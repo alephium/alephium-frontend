@@ -19,8 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { toHumanReadableAmount } from '@alephium/sdk'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import { Defs, LinearGradient, Stop, Svg } from 'react-native-svg'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 import { VictoryArea } from 'victory-native'
 
 import { useAppSelector } from '~/hooks/redux'
@@ -36,6 +37,7 @@ interface HistoricWorthChart {
   latestWorth: number
   currency: Currency
   onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
+  style?: StyleProp<ViewStyle>
 }
 
 const now = dayjs()
@@ -50,7 +52,8 @@ const HistoricWorthChart = ({
   length = '1m',
   latestWorth,
   currency,
-  onWorthInBeginningOfChartChange
+  onWorthInBeginningOfChartChange,
+  style
 }: HistoricWorthChart) => {
   const theme = useTheme()
   const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
@@ -84,7 +87,7 @@ const HistoricWorthChart = ({
   }))
 
   return (
-    <HistoricWorthChartStyled>
+    <View style={style}>
       <Svg height={100}>
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -108,7 +111,7 @@ const HistoricWorthChart = ({
           }}
         />
       </Svg>
-    </HistoricWorthChartStyled>
+    </View>
   )
 }
 
@@ -118,8 +121,6 @@ const getFilteredChartData = (chartData: DataPoint[], startingDate: string) => {
   const startingPoint = chartData.findIndex((point) => point.date === startingDate)
   return startingPoint > 0 ? chartData.slice(startingPoint) : chartData
 }
-
-const HistoricWorthChartStyled = styled.View``
 
 const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
 
