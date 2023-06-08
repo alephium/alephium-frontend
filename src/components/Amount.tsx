@@ -54,7 +54,7 @@ const Amount = ({
   nbOfDecimalsToShow,
   showPlusMinus,
   highlight,
-  overrideThemeColor
+  colorTheme
 }: AmountProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
 
@@ -89,24 +89,16 @@ const Amount = ({
   const fadedColor = fadeDecimals ? 'secondary' : color
 
   return (
-    <AppText {...{ bold, size, color, overrideThemeColor }} style={style}>
+    <AppText {...{ bold, size, color, colorTheme }} style={style}>
       {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
         <>
-          {showPlusMinus && (
-            <AppText color={color} overrideThemeColor={overrideThemeColor}>
-              {isNegative ? '-' : '+'}
-            </AppText>
-          )}
-          <AppText color={color} overrideThemeColor={overrideThemeColor}>
-            {integralPart}
-          </AppText>
-          <AppText color={fadedColor} overrideThemeColor={overrideThemeColor}>{`.${fractionalPart} `}</AppText>
-          {quantitySymbol && <AppText color={fadedColor}>{`${quantitySymbol} `}</AppText>}
-          {!isUnknownToken && (
-            <AppText color={color} overrideThemeColor={overrideThemeColor}>{` ${suffix ?? 'ALPH'}`}</AppText>
-          )}
+          {showPlusMinus && <AppText {...{ color, colorTheme }}>{isNegative ? '-' : '+'}</AppText>}
+          <AppText {...{ color, colorTheme }}>{integralPart}</AppText>
+          <AppText color={fadedColor} colorTheme={colorTheme}>{`.${fractionalPart} `}</AppText>
+          {quantitySymbol && <AppText color={fadedColor} colorTheme={colorTheme}>{`${quantitySymbol} `}</AppText>}
+          {!isUnknownToken && <AppText {...{ color, colorTheme }}>{` ${suffix ?? 'ALPH'}`}</AppText>}
         </>
       ) : (
         '-'

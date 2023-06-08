@@ -18,22 +18,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled, { css, DefaultTheme } from 'styled-components/native'
 
-export interface AppTextProps {
+import { themes, ThemeType } from '~/style/themes'
+
+type FontColor = keyof DefaultTheme['font']
+type GlobalColor = keyof DefaultTheme['global']
+
+export type AppTextProps = {
   bold?: boolean
   semiBold?: boolean
   medium?: boolean
-  color?: keyof DefaultTheme['font'] | keyof DefaultTheme['global'] | string
-  overrideThemeColor?: string
+  color?: FontColor | GlobalColor
+  colorTheme?: ThemeType
   size?: number
 }
 
 export default styled.Text<AppTextProps>`
-  color: ${({ color, theme, overrideThemeColor }) =>
-    overrideThemeColor
-      ? overrideThemeColor
-      : color
-      ? theme.font[color as keyof DefaultTheme['font']] || theme.global[color as keyof DefaultTheme['global']]
-      : theme.font.primary};
+  color: ${({ color, theme, colorTheme }) => {
+    const th = colorTheme ? themes[colorTheme] : theme
+
+    return color ? th.font[color as FontColor] || th.global[color as GlobalColor] : th.font.primary
+  }};
 
   ${({ bold }) =>
     bold &&
