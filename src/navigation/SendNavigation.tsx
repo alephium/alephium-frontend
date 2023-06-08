@@ -28,8 +28,8 @@ import VerifyScreen from '~/screens/Send/VerifyScreen'
 import { AddressHash } from '~/types/addresses'
 
 export interface SendNavigationParamList extends ParamListBase {
-  DestinationScreen?: { addressHash?: AddressHash }
-  OriginScreen?: { addressHash?: AddressHash }
+  DestinationScreen?: { fromAddressHash?: AddressHash }
+  OriginScreen?: { toAddressHash?: AddressHash }
   AssetsScreen: undefined
   VerifyScreen: undefined
 }
@@ -43,13 +43,12 @@ const SendNavigation = ({
   }
 }: StackScreenProps<RootStackParamList, 'SendNavigation'>) => (
   <SendContextProvider>
-    <SendStack.Navigator screenOptions={{ headerShown: false }}>
-      <SendStack.Screen
-        name="DestinationScreen"
-        component={DestinationScreen}
-        initialParams={{ addressHash: toAddressHash }}
-      />
-      <SendStack.Screen name="OriginScreen" component={OriginScreen} initialParams={{ addressHash: fromAddressHash }} />
+    <SendStack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName={toAddressHash ? 'OriginScreen' : 'DestinationScreen'}
+    >
+      <SendStack.Screen name="DestinationScreen" component={DestinationScreen} initialParams={{ fromAddressHash }} />
+      <SendStack.Screen name="OriginScreen" component={OriginScreen} initialParams={{ toAddressHash }} />
       <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
       <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
     </SendStack.Navigator>

@@ -20,7 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
 import { ClipboardIcon, LucideProps, Scan } from 'lucide-react-native'
-import { ReactNode } from 'react'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { PressableProps, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -45,33 +45,48 @@ type FormData = {
   toAddressHash: AddressHash
 }
 
+type PossibleNextScreen = 'OriginScreen' | 'AssetsScreen'
+
 const requiredErrorMessage = 'This field is required'
 
-const DestinationScreen = ({ navigation, style }: ScreenProps) => {
+const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
   const {
     control,
     handleSubmit,
     setValue,
     formState: { errors }
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
-  const { setToAddress } = useSendContext()
+  const { setToAddress, setFromAddress } = useSendContext()
 
-  const onContinue = (formData: FormData) => {
-    setToAddress(formData.toAddressHash)
-    navigation.navigate('OriginScreen')
-  }
+  const [nextScreen, setNextScreen] = useState<PossibleNextScreen>('OriginScreen')
 
   const onPasteClick = async () => {
     const text = await Clipboard.getStringAsync()
     setValue('toAddressHash', text)
   }
 
-  useFocusEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => <ContinueButton onPress={handleSubmit(onContinue)} />
-    })
-  })
+  useEffect(() => {
+    if (params?.fromAddressHash) {
+      setFromAddress(params.fromAddressHash)
+      setNextScreen('AssetsScreen')
+    } else {
+      setNextScreen('OriginScreen')
+    }
+  }, [params?.fromAddressHash, setFromAddress, setToAddress])
+
+  useFocusEffect(
+    useCallback(() => {
+      const onContinue = (formData: FormData) => {
+        setToAddress(formData.toAddressHash)
+        navigation.navigate(nextScreen)
+      }
+
+      navigation.getParent()?.setOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        headerRight: () => <ContinueButton onPress={handleSubmit(onContinue)} />
+      })
+    }, [handleSubmit, navigation, nextScreen, setToAddress])
+  )
 
   return (
     <ScrollScreen style={style}>

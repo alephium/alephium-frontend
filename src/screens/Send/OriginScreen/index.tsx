@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
+import { useCallback, useEffect } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -35,19 +36,25 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginS
   style?: StyleProp<ViewStyle>
 }
 
-const OriginScreen = ({ navigation, style }: ScreenProps) => {
-  const { fromAddress, setFromAddress } = useSendContext()
+const OriginScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+  const { fromAddress, setFromAddress, setToAddress } = useSendContext()
   const addresses = useAppSelector(selectAllAddresses)
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
-  useFocusEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} />
-    })
+  useEffect(() => {
+    if (params?.toAddressHash) setToAddress(params.toAddressHash)
+  }, [params?.toAddressHash, setToAddress])
 
-    if (!fromAddress && defaultAddress) setFromAddress(defaultAddress.hash)
-  })
+  useFocusEffect(
+    useCallback(() => {
+      if (!fromAddress && defaultAddress) setFromAddress(defaultAddress.hash)
+
+      navigation.getParent()?.setOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        headerRight: () => <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} />
+      })
+    }, [defaultAddress, fromAddress, navigation, setFromAddress])
+  )
 
   return (
     <ScrollScreen style={style}>
