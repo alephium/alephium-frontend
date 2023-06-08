@@ -49,7 +49,7 @@ type RootStackParamList = {
   ReceiveScreen: {
     addressHash: AddressHash
   }
-  SendNavigation: {
+  SendNavigation?: {
     fromAddressHash?: AddressHash
     toAddressHash?: AddressHash
   }

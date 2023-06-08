@@ -22,27 +22,46 @@ import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
 interface ScrollContextProps {
   scrollY?: SharedValue<number>
-  isScrolling?: SharedValue<boolean>
+  scrollDirection?: SharedValue<ScrollDirection>
 }
 
+const scrollDirectionDeltaThreshold = 10
+
+export type ScrollDirection = 'up' | 'down' | undefined
+
 const ScrollContext = createContext<ScrollContextProps>({
-  scrollY: undefined
+  scrollY: undefined,
+  scrollDirection: undefined
 })
 
 export const ScrollContextProvider = ({ children }: { children: ReactNode }) => {
   const scrollY = useSharedValue(0)
+  const scrollDirection = useSharedValue(undefined as ScrollDirection)
 
-  return <ScrollContext.Provider value={{ scrollY }}>{children}</ScrollContext.Provider>
+  return <ScrollContext.Provider value={{ scrollY, scrollDirection }}>{children}</ScrollContext.Provider>
 }
 
 export const useScrollContext = () => useContext(ScrollContext)
 
 export const useScrollEventHandler = () => {
-  const { scrollY } = useScrollContext()
+  const { scrollY, scrollDirection } = useScrollContext()
 
   const scrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!scrollY) return
-    scrollY.value = e.nativeEvent.contentOffset.y
+    if (!scrollY || !scrollDirection) return
+
+    const newScrollY = e.nativeEvent.contentOffset.y
+    const delta = scrollY.value - newScrollY
+    const direction = delta > 0 ? 'up' : 'down'
+
+    if (newScrollY === 0) {
+      scrollDirection.value = undefined
+    } else if (direction === 'up' && delta > scrollDirectionDeltaThreshold) {
+      scrollDirection.value = 'up'
+    } else if (direction === 'down' && delta < -scrollDirectionDeltaThreshold) {
+      scrollDirection.value = 'down'
+    }
+
+    scrollY.value = newScrollY
   }
 
   return scrollHandler

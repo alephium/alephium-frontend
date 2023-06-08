@@ -27,7 +27,7 @@ export type AppTextProps = {
   bold?: boolean
   semiBold?: boolean
   medium?: boolean
-  color?: FontColor | GlobalColor
+  color?: FontColor | GlobalColor | string
   colorTheme?: ThemeType
   size?: number
 }
@@ -36,7 +36,7 @@ export default styled.Text<AppTextProps>`
   color: ${({ color, theme, colorTheme }) => {
     const th = colorTheme ? themes[colorTheme] : theme
 
-    return color ? th.font[color as FontColor] || th.global[color as GlobalColor] : th.font.primary
+    return color ? th.font[color as FontColor] || th.global[color as GlobalColor] || color : th.font.primary
   }};
 
   ${({ bold }) =>
