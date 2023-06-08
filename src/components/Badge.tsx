@@ -17,10 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
+import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 interface BadgeProps {
+  children: ReactNode
   color?: string
   rounded?: boolean
   border?: boolean
@@ -28,7 +30,7 @@ interface BadgeProps {
   style?: StyleProp<ViewStyle>
 }
 
-const Badge: FC<BadgeProps> = ({ style, color, children }) => (
+const Badge = ({ style, color, children }: BadgeProps) => (
   <View style={style}>
     <BadgeText color={color}>{children}</BadgeText>
   </View>

@@ -27,7 +27,7 @@ interface InWalletScrollScreenProps extends ScrollViewProps {
   style?: StyleProp<ViewStyle>
 }
 
-const ScrollScreen: FC<InWalletScrollScreenProps> = ({ children, style, ...props }) => {
+const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
   const scrollHandler = useScrollEventHandler()
 

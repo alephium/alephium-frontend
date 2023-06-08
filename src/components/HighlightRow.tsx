@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ReactNode } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
@@ -23,6 +24,7 @@ import AppText from '~/components/AppText'
 import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
 export interface HighlightRowProps {
+  children: ReactNode
   isInput?: boolean
   isSecondary?: boolean
   title?: string
@@ -34,15 +36,7 @@ export interface HighlightRowProps {
   style?: StyleProp<ViewStyle>
 }
 
-const HighlightRow: FC<HighlightRowProps> = ({
-  title,
-  subtitle,
-  children,
-  onPress,
-  truncate,
-  isLast = false,
-  style
-}) => {
+const HighlightRow = ({ title, subtitle, children, onPress, truncate, isLast = false, style }: HighlightRowProps) => {
   const componentContent = title ? (
     <>
       <LeftContent>

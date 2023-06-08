@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ChevronDown } from 'lucide-react-native'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -28,11 +28,12 @@ import HighlightRow from '~/components/HighlightRow'
 interface ExpandableRowProps {
   // TODO: Find a better way to measure the height of the collapsable section
   expandedHeight: number
+  children: ReactNode
   title?: string
   style?: StyleProp<ViewStyle>
 }
 
-const ExpandableRow: FC<ExpandableRowProps> = ({ expandedHeight, children, title = 'Advanced options', style }) => {
+const ExpandableRow = ({ expandedHeight, children, title = 'Advanced options', style }: ExpandableRowProps) => {
   const theme = useTheme()
   const [isExpanded, setIsExpanded] = useState(false)
 
