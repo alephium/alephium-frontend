@@ -110,7 +110,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
         Icon={Upload}
         round
         bgColor={floatingButtonBgColor}
-        color={colord(floatingButtonBgColor).isDark() ? themes.dark.font.primary : themes.light.font.primary}
+        color={colord(floatingButtonBgColor).isDark() ? themes.light.font.contrast : themes.light.font.primary}
         onPress={() => navigation.navigate('SendNavigation', { fromAddressHash: selectedAddressHash })}
       />
     </>
@@ -132,4 +132,6 @@ const FloatingButton = styled(Button)<{ bgColor: string }>`
   bottom: 18px;
   right: 18px;
   background-color: ${({ bgColor }) => bgColor};
+  width: 56px;
+  height: 56px;
 `

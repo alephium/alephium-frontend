@@ -18,8 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calculateAmountWorth } from '@alephium/sdk'
 import { colord } from 'colord'
+import { LinearGradient } from 'expo-linear-gradient'
 import { Copy, SettingsIcon } from 'lucide-react-native'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -60,7 +61,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
   const textColor = themes[textColorTheme].font.primary
 
   return (
-    <View style={[style, { backgroundColor: bgColor }]}>
+    <LinearGradient style={style} colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
       <Header>
         <AddressBadgeContainer>
           <AddressBadgeStyled
@@ -103,7 +104,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
           Group {address.group}
         </AppText>
       </BottomRow>
-    </View>
+    </LinearGradient>
   )
 }
 
