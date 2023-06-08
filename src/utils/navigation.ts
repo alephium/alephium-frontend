@@ -51,11 +51,11 @@ export const resetNavigationState = () => rootStackNavigationRef.resetRoot(initi
 
 // Navigating without the navigation prop:
 // https://reactnavigation.org/docs/navigating-without-navigation-prop
-export function navigateRootStack<RouteName extends keyof RootStackParamList>(
+export const navigateRootStack = <RouteName extends keyof RootStackParamList>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   name: any, // TODO: Figure out why we can't use `RouteName` instead
   params?: RootStackParamList[RouteName]
-) {
+) => {
   if (rootStackNavigationRef.isReady()) {
     rootStackNavigationRef.navigate(name, params)
   }

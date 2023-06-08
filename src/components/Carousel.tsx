@@ -37,7 +37,7 @@ interface CarouselProps<T> {
   style?: StyleProp<ViewStyle>
 }
 
-function Carousel<T>({
+const Carousel = <T,>({
   data,
   renderItem,
   width,
@@ -48,7 +48,7 @@ function Carousel<T>({
   onScrollEnd,
   FooterComponent,
   style
-}: CarouselProps<T>) {
+}: CarouselProps<T>) => {
   const progressValue = useSharedValue<number>(0)
   const theme = useTheme()
   const [_width, setWidth] = useState(width ?? Dimensions.get('window').width - padding * 2)
