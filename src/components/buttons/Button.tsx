@@ -60,7 +60,7 @@ const Button = ({
       transparent: 'transparent'
     },
     font: {
-      default: theme.font.secondary,
+      default: theme.font.primary,
       contrast: theme.font.contrast,
       accent: theme.global.accent,
       valid: theme.global.valid,
@@ -110,8 +110,6 @@ export default styled(Button)`
   justify-content: center;
   overflow: hidden;
   flex-direction: row;
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.border.secondary};
 
   ${({ centered }) =>
     centered &&

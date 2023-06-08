@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
+import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
 import { StyleProp, TextStyle } from 'react-native'
 
 import { useAppSelector } from '~/hooks/redux'
@@ -25,11 +25,15 @@ import AppText, { AppTextProps } from './AppText'
 
 interface AmountProps extends AppTextProps {
   value?: bigint | number
+  decimals?: number
+  isFiat?: boolean
   fadeDecimals?: boolean
   fullPrecision?: boolean
-  prefix?: string
+  nbOfDecimalsToShow?: number
   suffix?: string
-  isFiat?: boolean
+  highlight?: boolean
+  isUnknownToken?: boolean
+  showPlusMinus?: boolean
   showOnDiscreetMode?: boolean
   style?: StyleProp<TextStyle>
 }
@@ -38,39 +42,49 @@ const Amount = ({
   value,
   fadeDecimals,
   fullPrecision = false,
-  prefix,
   suffix = '',
   showOnDiscreetMode = false,
   isFiat = false,
-  color,
+  color: colorProp,
   size,
   bold,
-  style
+  style,
+  isUnknownToken,
+  decimals,
+  nbOfDecimalsToShow,
+  showPlusMinus,
+  highlight
 }: AmountProps) => {
-  let integralPart = ''
-  let fractionalPart = ''
+  const discreetMode = useAppSelector((state) => state.settings.discreetMode)
+
   let quantitySymbol = ''
-  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
+  let amount = ''
+  let isNegative = false
 
-  if (!discreetMode || showOnDiscreetMode) {
-    let amount =
-      value !== undefined
-        ? isFiat && typeof value === 'number'
-          ? formatFiatAmountForDisplay(value)
-          : formatAmountForDisplay({ amount: value as bigint, fullPrecision })
-        : ''
+  if (value !== undefined) {
+    if (isFiat && typeof value === 'number') {
+      amount = formatFiatAmountForDisplay(value)
+    } else if (isUnknownToken) {
+      amount = value.toString()
+    } else {
+      isNegative = value < 0
+      amount = formatAmountForDisplay({
+        amount: convertToPositive(value as bigint),
+        amountDecimals: decimals,
+        displayDecimals: nbOfDecimalsToShow,
+        fullPrecision
+      })
+    }
 
-    if (amount) {
-      if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
-        quantitySymbol = amount.slice(-1)
-        amount = amount.slice(0, -1)
-      }
-      const amountParts = amount.split('.')
-      integralPart = amountParts[0]
-      fractionalPart = amountParts[1]
+    if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
+      quantitySymbol = amount.slice(-1)
+      amount = amount.slice(0, -1)
     }
   }
 
+  const [integralPart, fractionalPart] = amount.split('.')
+
+  const color = colorProp ?? (highlight && value !== undefined ? (value < 0 ? 'highlight' : 'valid') : 'primary')
   const fadedColor = fadeDecimals ? 'secondary' : color
 
   return (
@@ -79,11 +93,11 @@ const Amount = ({
         '•••'
       ) : integralPart ? (
         <>
-          {prefix && <AppText color={color}>{`${prefix} `}</AppText>}
+          {showPlusMinus && <AppText color={color}>{isNegative ? '-' : '+'}</AppText>}
           <AppText color={color}>{integralPart}</AppText>
           <AppText color={fadedColor}>{`.${fractionalPart} `}</AppText>
           {quantitySymbol && <AppText color={fadedColor}>{`${quantitySymbol} `}</AppText>}
-          <AppText color={fadedColor}>{!suffix ? 'ℵ' : suffix}</AppText>
+          {!isUnknownToken && <AppText color={color}>{` ${suffix ?? 'ALPH'}`}</AppText>}
         </>
       ) : (
         '-'

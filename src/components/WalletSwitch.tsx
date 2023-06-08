@@ -36,7 +36,9 @@ const WalletSwitch = ({ style }: WalletSwitchProps) => {
 
   return (
     <Button style={style} variant="contrast" onPress={() => navigation.navigate('SwitchWalletScreen')}>
-      <WalletName numberOfLines={1}>{activeWalletName.slice(0, 2).toUpperCase()}</WalletName>
+      <AppText color="contrast" semiBold size={12} numberOfLines={1}>
+        {activeWalletName.slice(0, 2).toUpperCase()}
+      </AppText>
     </Button>
   )
 }
@@ -45,14 +47,9 @@ export default memo(styled(WalletSwitch)`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 0 12px;
-  height: 50px;
-  width: 50px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  padding: 0 8px;
+  height: 40px;
+  width: 40px;
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 50px;
+  border-radius: 40px;
 `)
-
-const WalletName = styled(AppText)`
-  font-weight: 700;
-`

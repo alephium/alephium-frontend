@@ -16,24 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
-import { useAppSelector } from '~/hooks/redux'
-import { useTransactionInfo } from '~/hooks/useTransactionalInfo'
+import AssetLogo from '~/components/AssetLogo'
 import { useTransactionUI } from '~/hooks/useTransactionUI'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 import { AddressTransaction } from '~/types/transactions'
-import { currencies } from '~/utils/currencies'
-import { isPendingTx } from '~/utils/transactions'
+import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
 
 import HighlightRow from './HighlightRow'
 
@@ -49,51 +46,75 @@ interface TransactionRowProps {
 
 const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, style }: TransactionRowProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const { amount, infoType } = useTransactionInfo(tx, tx.address.hash, showInternalInflows)
-  const currency = useAppSelector((s) => s.settings.currency)
-  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
-    pollingInterval: 60000,
-    skip: !amount || amount === BigInt(0)
-  })
+  const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
   const { Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
-
-  const fiatValue = price !== undefined && amount !== undefined ? calculateAmountWorth(amount, price) : 0
 
   const handleOnPress = () => {
     if (!isPendingTx(tx)) navigation.navigate('TransactionScreen', { tx })
   }
 
+  const isMoved = infoType === 'move'
+  const knownAssets = assets.filter((asset) => !!asset.symbol)
+
   return (
-    <HighlightRow style={style} onPress={handleOnPress}>
+    <HighlightRowStyled style={style} onPress={handleOnPress} isFirst={isFirst} isLast={isLast}>
       <Direction>
         <TransactionIcon color={iconBgColor}>
           <Icon size={16} strokeWidth={3} color={iconColor} />
         </TransactionIcon>
       </Direction>
-      <TokenAndDate>
-        <AppText bold>{label} ALPH</AppText>
+      <Date>
+        <AppText bold>{label}</AppText>
         <AppText color="tertiary">{dayjs(tx.timestamp).fromNow()}</AppText>
-      </TokenAndDate>
+      </Date>
+      <AssetLogos>
+        {assets.map((asset) => (
+          <AssetLogo assetId={asset.id} key={asset.id} size={20} />
+        ))}
+      </AssetLogos>
       <AmountColumn>
-        <AppText>
-          <Amount value={amount} fadeDecimals bold />
-        </AppText>
-        <FiatValue>
-          <Amount isFiat value={fiatValue} bold suffix={currencies[currency].symbol} color="tertiary" />
-        </FiatValue>
+        {knownAssets.map(({ id, amount, decimals, symbol }) => (
+          <AppText key={id}>
+            <Amount
+              value={amount}
+              decimals={decimals}
+              suffix={symbol}
+              isUnknownToken={!symbol}
+              highlight={!isMoved}
+              showPlusMinus={!isMoved}
+              bold
+            />
+          </AppText>
+        ))}
       </AmountColumn>
-    </HighlightRow>
+    </HighlightRowStyled>
   )
 }
 
-export default memo(TransactionRow, (prevProps, nextProps) => {
-  return (
+export default memo(
+  TransactionRow,
+  (prevProps, nextProps) =>
     prevProps.tx.hash === nextProps.tx.hash &&
     prevProps.tx.address.hash === nextProps.tx.address.hash &&
     prevProps.isFirst === nextProps.isFirst &&
     prevProps.isLast === nextProps.isLast
-  )
-})
+)
+
+const HighlightRowStyled = styled(HighlightRow)<{ isFirst?: boolean; isLast?: boolean }>`
+  ${({ isFirst }) =>
+    isFirst &&
+    css`
+      border-top-left-radius: ${BORDER_RADIUS}px;
+      border-top-right-radius: ${BORDER_RADIUS}px;
+    `}
+
+  ${({ isLast }) =>
+    isLast &&
+    css`
+      border-bottom-left-radius: ${BORDER_RADIUS}px;
+      border-bottom-right-radius: ${BORDER_RADIUS}px;
+    `}
+`
 
 const Direction = styled.View`
   align-items: center;
@@ -101,7 +122,7 @@ const Direction = styled.View`
   margin-right: 20px;
 `
 
-const TokenAndDate = styled.View`
+const Date = styled.View`
   flex: 1;
   padding-right: 10px;
 `
@@ -118,8 +139,9 @@ const TransactionIcon = styled.View<{ color?: string }>`
 const AmountColumn = styled.View`
   flex: 1;
   align-items: flex-end;
+  flex-shrink: 0;
 `
 
-const FiatValue = styled(AppText)`
-  font-size: 12px;
+const AssetLogos = styled.View`
+  gap: 5px;
 `

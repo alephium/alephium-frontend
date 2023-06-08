@@ -26,6 +26,7 @@ import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
+import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -76,61 +77,66 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
         <BottomModalScreenTitle>Current network</BottomModalScreenTitle>
       </ScreenSection>
       <View>
-        <ScreenSection fill>
-          {networkNames.map((networkName, index) => (
-            <RadioButtonRow
-              key={networkName}
-              title={capitalize(networkName)}
-              onPress={() => handleNetworkItemPress(networkName)}
-              isActive={networkName === selectedNetworkName}
-            />
-          ))}
+        <ScreenSection>
+          <BoxSurface>
+            {networkNames.map((networkName) => (
+              <RadioButtonRow
+                key={networkName}
+                title={capitalize(networkName)}
+                onPress={() => handleNetworkItemPress(networkName)}
+                isActive={networkName === selectedNetworkName}
+              />
+            ))}
+          </BoxSurface>
         </ScreenSection>
+
         {showCustomNetworkForm && (
           <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
             <ScreenSection>
-              <Controller
-                name="nodeHost"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    label="Node host"
-                    keyboardType="url"
-                    textContentType="URL"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-                control={control}
-              />
-              <Controller
-                name="explorerApiHost"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    label="Explorer API host"
-                    keyboardType="url"
-                    textContentType="URL"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-                control={control}
-              />
-              <Controller
-                name="explorerUrl"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    label="Explorer URL"
-                    keyboardType="url"
-                    textContentType="URL"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-                control={control}
-              />
+              <BoxSurface>
+                <Controller
+                  name="nodeHost"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      label="Node host"
+                      keyboardType="url"
+                      textContentType="URL"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                    />
+                  )}
+                  control={control}
+                />
+                <Controller
+                  name="explorerApiHost"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      label="Explorer API host"
+                      keyboardType="url"
+                      textContentType="URL"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                    />
+                  )}
+                  control={control}
+                />
+                <Controller
+                  name="explorerUrl"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      label="Explorer URL"
+                      keyboardType="url"
+                      textContentType="URL"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                    />
+                  )}
+                  control={control}
+                />
+              </BoxSurface>
               <ButtonStyled centered title="Save custom network" onPress={handleSubmit(saveCustomNetwork)} />
             </ScreenSection>
           </Animated.View>

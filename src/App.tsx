@@ -67,25 +67,23 @@ dayjs.updateLocale('en', {
 const App = () => {
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
-  useEffect(() => {
-    return store.subscribe(() => {
-      setTheme(themes[store.getState().settings.theme])
-    })
-  }, [])
+  useEffect(
+    () =>
+      store.subscribe(() => {
+        setTheme(themes[store.getState().settings.theme])
+      }),
+    []
+  )
 
   return (
-    <RootSiblingParent>
-      <SafeAreaProvider>
-        <Provider store={store}>
-          <Main>
-            <ThemeProvider theme={theme}>
-              <RootStackNavigation />
-              <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
-            </ThemeProvider>
-          </Main>
-        </Provider>
-      </SafeAreaProvider>
-    </RootSiblingParent>
+    <Provider store={store}>
+      <Main>
+        <ThemeProvider theme={theme}>
+          <RootStackNavigation />
+          <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
+        </ThemeProvider>
+      </Main>
+    </Provider>
   )
 }
 
@@ -185,7 +183,11 @@ const Main = ({ children }: { children: ReactNode }) => {
     return subscription.remove
   }, [activeWalletMnemonic, dispatch, isCameraOpen, unlockActiveWallet])
 
-  return <>{children}</>
+  return (
+    <RootSiblingParent>
+      <SafeAreaProvider>{children}</SafeAreaProvider>
+    </RootSiblingParent>
+  )
 }
 
 export default App

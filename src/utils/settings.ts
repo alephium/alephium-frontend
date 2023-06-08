@@ -22,8 +22,6 @@ import { networkPresetSettings } from '~/persistent-storage/settings'
 import { NetworkName } from '~/types/network'
 import { NetworkSettings } from '~/types/settings'
 
-export const getNetworkName = (settings: NetworkSettings) => {
-  return (Object.entries(networkPresetSettings).find(([, presetSettings]) => {
-    return isEqual(presetSettings, settings)
-  })?.[0] || NetworkName.custom) as NetworkName
-}
+export const getNetworkName = (settings: NetworkSettings) =>
+  (Object.entries(networkPresetSettings).find(([, presetSettings]) => isEqual(presetSettings, settings))?.[0] ||
+    NetworkName.custom) as NetworkName

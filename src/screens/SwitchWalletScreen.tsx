@@ -92,17 +92,19 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
         <Subtitle>Switch to another wallet?</Subtitle>
       </ScreenSection>
       <ScrollView>
-        <BoxSurface>
-          {wallets.map((wallet, index) => (
-            <RadioButtonRow
-              key={wallet.id}
-              title={wallet.name}
-              onPress={() => handleWalletItemPress(wallet.id)}
-              isActive={wallet.id === activeWalletMetadataId}
-              isInput
-            />
-          ))}
-        </BoxSurface>
+        <ScreenSection>
+          <BoxSurface>
+            {wallets.map((wallet, index) => (
+              <RadioButtonRow
+                key={wallet.id}
+                title={wallet.name}
+                onPress={() => handleWalletItemPress(wallet.id)}
+                isActive={wallet.id === activeWalletMetadataId}
+                isInput
+              />
+            ))}
+          </BoxSurface>
+        </ScreenSection>
       </ScrollView>
       <BottomScreenSection>
         <ButtonsRow>

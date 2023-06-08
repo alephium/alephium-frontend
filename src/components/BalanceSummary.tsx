@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calculateAmountWorth } from '@alephium/sdk'
 import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
@@ -51,8 +51,10 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
         <ActivityIndicator size="large" color={theme.font.primary} />
       ) : (
         <>
+          <Label color="tertiary" semiBold>
+            {dateLabel}
+          </Label>
           <Amount value={balance} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
-          <AppText color="tertiary">{dateLabel}</AppText>
         </>
       )}
     </View>
@@ -60,3 +62,7 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
 }
 
 export default BalanceSummary
+
+const Label = styled(AppText)`
+  margin-bottom: 14px;
+`

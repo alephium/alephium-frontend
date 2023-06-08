@@ -49,43 +49,41 @@ const TransactionScreen = ({
   const isOut = direction === 'out'
 
   return (
-    <>
-      <ScrollView>
-        <ScreenSectionRow>
-          <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
-          <ExplorerLink onPress={() => openBrowserAsync(explorerTxUrl)}>
-            <ExplorerLinkText>See in explorer</ExplorerLinkText>
-            <ChevronRightIcon size={24} color={theme.global.accent} />
-          </ExplorerLink>
-        </ScreenSectionRow>
-        <BottomScreenSection>
-          <HighlightRow title="Amount">
-            <Amount value={amount} fadeDecimals fullPrecision bold />
-          </HighlightRow>
-          <HighlightRow title="Timestamp">
-            <BoldText>{dayjs(tx.timestamp).fromNow()}</BoldText>
-          </HighlightRow>
-          <HighlightRow title="Status">
-            <BoldText>{tx.blockHash ? 'Confirmed' : 'Pending'}</BoldText>
-          </HighlightRow>
-          <HighlightRow title="From">
-            {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
-          </HighlightRow>
-          <HighlightRow title="To">
-            {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
-          </HighlightRow>
-          <HighlightRow title="Fee">
-            <Amount
-              value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
-              fadeDecimals
-              fullPrecision
-              bold
-              showOnDiscreetMode
-            />
-          </HighlightRow>
-        </BottomScreenSection>
-      </ScrollView>
-    </>
+    <ScrollView>
+      <ScreenSectionRow>
+        <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
+        <ExplorerLink onPress={() => openBrowserAsync(explorerTxUrl)}>
+          <ExplorerLinkText>See in explorer</ExplorerLinkText>
+          <ChevronRightIcon size={24} color={theme.global.accent} />
+        </ExplorerLink>
+      </ScreenSectionRow>
+      <BottomScreenSection>
+        <HighlightRow title="Amount">
+          <Amount value={amount} fadeDecimals fullPrecision bold />
+        </HighlightRow>
+        <HighlightRow title="Timestamp">
+          <BoldText>{dayjs(tx.timestamp).fromNow()}</BoldText>
+        </HighlightRow>
+        <HighlightRow title="Status">
+          <BoldText>{tx.blockHash ? 'Confirmed' : 'Pending'}</BoldText>
+        </HighlightRow>
+        <HighlightRow title="From">
+          {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
+        </HighlightRow>
+        <HighlightRow title="To">
+          {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
+        </HighlightRow>
+        <HighlightRow title="Fee">
+          <Amount
+            value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
+            fadeDecimals
+            fullPrecision
+            bold
+            showOnDiscreetMode
+          />
+        </HighlightRow>
+      </BottomScreenSection>
+    </ScrollView>
   )
 }
 

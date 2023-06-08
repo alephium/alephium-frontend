@@ -26,9 +26,9 @@ import AppText from '~/components/AppText'
 interface InfoBoxProps {
   title: string
   Icon: (props: LucideProps) => JSX.Element
+  children: ReactNode
   iconColor?: string
   bgColor?: string
-  children?: ReactNode | ReactNode[]
   style?: StyleProp<ViewStyle>
 }
 

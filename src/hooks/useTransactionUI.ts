@@ -44,14 +44,14 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       out: theme.global.accent,
       move: theme.font.secondary,
       pending: theme.font.secondary,
-      swap: theme.font.secondary
+      swap: theme.global.complementary
     }[infoType],
     iconBgColor: {
       in: colord(theme.global.valid).alpha(0.11).toRgbString(),
       out: colord(theme.global.accent).alpha(0.11).toRgbString(),
       move: colord(theme.font.secondary).alpha(0.11).toRgbString(),
       pending: colord(theme.font.secondary).alpha(0.11).toRgbString(),
-      swap: colord(theme.font.secondary).alpha(0.11).toRgbString()
+      swap: colord(theme.global.complementary).alpha(0.11).toRgbString()
     }[infoType]
   }
 }

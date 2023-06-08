@@ -45,7 +45,8 @@ const ConsolidationModal = ({ onConsolidate, onCancel, fees }: ConsolidationModa
               them? This will cost as small fee.
             </AppText>
             <Fee>
-              <Amount prefix="Fee:" value={fees} fullPrecision fadeDecimals bold />
+              <AppText>Fee:</AppText>
+              <Amount value={fees} fullPrecision fadeDecimals bold />
             </Fee>
           </View>
         </InfoBox>
@@ -75,5 +76,7 @@ const ScreenSectionStyled = styled(ScreenSection)`
 
 const Fee = styled(AppText)`
   display: flex;
+  flex-direction: row;
+  gap: 5px;
   margin-top: 20px;
 `

@@ -16,22 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
-import styled from 'styled-components'
+import styled from 'styled-components/native'
 
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
-interface BoxSurfaceProps {
-  children: ReactNode
-  style?: StyleProp<ViewStyle>
-}
-
-const BoxSurface = ({ style, children }: BoxSurfaceProps) => {
-  return <View style={style}>{children}</View>
-}
-
-export default styled(BoxSurface)`
+export default styled.View`
   border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.primary};
   border-radius: ${BORDER_RADIUS}px;

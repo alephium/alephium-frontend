@@ -24,7 +24,7 @@ import AppText from '~/components/AppText'
 import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
 export interface HighlightRowProps {
-  children: ReactNode | ReactNode[]
+  children: ReactNode
   isInput?: boolean
   isSecondary?: boolean
   title?: string

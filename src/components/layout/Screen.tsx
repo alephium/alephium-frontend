@@ -59,10 +59,9 @@ BottomModal = styled(BottomModal)`
 `
 
 export const ScreenSectionTitle = styled(AppText)`
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
-  color: ${({ theme }) => theme.font.secondary};
-  margin-left: 8px;
+  color: ${({ theme }) => theme.font.primary};
   margin-bottom: 15px;
 `
 
