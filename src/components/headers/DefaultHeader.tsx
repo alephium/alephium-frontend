@@ -28,16 +28,17 @@ import { useScrollContext } from '~/contexts/ScrollContext'
 export interface DefaultHeaderProps {
   HeaderLeft: ReactNode
   HeaderRight?: ReactNode
+  bgColor?: string
   style?: StyleProp<ViewStyle>
 }
 
 const scrollRange = [0, 50]
 
-const DefaultHeader = ({ HeaderRight, HeaderLeft, style }: DefaultHeaderProps) => {
+const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeaderProps) => {
   const theme = useTheme()
   const { scrollY } = useScrollContext()
 
-  const bgColorRange = [theme.bg.back1, theme.bg.back2]
+  const bgColorRange = [bgColor ?? theme.bg.back1, theme.bg.back2]
   const borderColorRange = ['transparent', theme.border.secondary]
   const insets = useSafeAreaInsets()
 
@@ -58,7 +59,6 @@ export default styled(DefaultHeader)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: ${({ theme }) => theme.bg.back2};
   padding: 15px;
 `
 

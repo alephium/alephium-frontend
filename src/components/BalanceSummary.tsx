@@ -17,14 +17,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/sdk'
-import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native'
+import { useState } from 'react'
+import { ActivityIndicator, Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import DeltaPercentage from '~/components/DeltaPercentage'
+import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
+import { selectAddressesHaveHistoricBalances } from '~/store/addresses/addressesSelectors'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
+import { ChartLength, chartLengths, DataPoint } from '~/types/charts'
 import { currencies } from '~/utils/currencies'
 
 interface BalanceSummaryProps {
@@ -40,9 +45,13 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
     skip: totalBalance === BigInt(0)
   })
   const addressDataStatus = useAppSelector((s) => s.addresses.status)
+  const hasHistoricBalances = useAppSelector(selectAddressesHaveHistoricBalances)
   const theme = useTheme()
 
-  const balance = calculateAmountWorth(totalBalance, price ?? 0)
+  const [chartLength, setChartLength] = useState<ChartLength>('1m')
+  const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
+
+  const totalAmountWorth = calculateAmountWorth(totalBalance, price ?? 0)
   const showActivityIndicator = isPriceLoading || addressDataStatus === 'uninitialized'
 
   return (
@@ -54,9 +63,36 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
           <Label color="tertiary" semiBold>
             {dateLabel}
           </Label>
-          <Amount value={balance} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+          <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+          {hasHistoricBalances && worthInBeginningOfChart !== undefined && (
+            <Row>
+              <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={totalAmountWorth} />
+              <ChartLengthBadges>
+                {chartLengths.map((length) => {
+                  const isActive = length === chartLength
+
+                  return (
+                    <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
+                      <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
+                        {length.toUpperCase()}
+                      </AppText>
+                    </ChartLengthButton>
+                  )
+                })}
+              </ChartLengthBadges>
+            </Row>
+          )}
         </>
       )}
+
+      <ChartContainer>
+        <HistoricWorthChart
+          currency={currency}
+          latestWorth={totalAmountWorth}
+          length={chartLength}
+          onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
+        />
+      </ChartContainer>
     </View>
   )
 }
@@ -65,4 +101,28 @@ export default BalanceSummary
 
 const Label = styled(AppText)`
   margin-bottom: 14px;
+`
+
+const ChartContainer = styled.View`
+  margin: 0 -30px;
+`
+
+const ChartLengthBadges = styled.View`
+  flex-direction: row;
+  gap: 12px;
+  margin: 10px 0;
+`
+
+const ChartLengthButton = styled(Pressable)<{ isActive?: boolean }>`
+  width: 32px;
+  height: 23px;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ isActive, theme }) => (isActive ? theme.font.secondary : 'transparent')};
+`
+
+const Row = styled.View`
+  flex-direction: row;
+  gap: 24px;
 `

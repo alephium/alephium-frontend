@@ -32,7 +32,7 @@ import { useSortedWallets } from '~/hooks/useSortedWallets'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
 import { biometricsEnabled, newWalletGenerated } from '~/store/activeWalletSlice'
-import { syncAddressesData } from '~/store/addressesSlice'
+import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 
 const instructions: Instruction[] = [
@@ -71,7 +71,8 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
 
       const wallet = await generateAndStoreWallet(name, pin)
       dispatch(newWalletGenerated(wallet))
-      dispatch(syncAddressesData([wallet.firstAddress.hash]))
+      dispatch(syncAddressesData(wallet.firstAddress.hash))
+      dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
       if (lastActiveWalletAuthType.current === 'biometrics' && hasAvailableBiometrics) {

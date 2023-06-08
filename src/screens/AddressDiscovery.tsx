@@ -35,7 +35,12 @@ import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { addressDiscoveryStopped, discoverAddresses, selectAllDiscoveredAddresses } from '~/store/addressDiscoverySlice'
-import { addressesImported, selectAllAddresses, syncAddressesData } from '~/store/addressesSlice'
+import {
+  addressesImported,
+  selectAllAddresses,
+  syncAddressesData,
+  syncAddressesHistoricBalances
+} from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 
@@ -71,6 +76,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
     await persistAddressSettings(newAddresses)
     dispatch(addressesImported(newAddresses))
     await dispatch(syncAddressesData(newAddressHashes))
+    await dispatch(syncAddressesHistoricBalances(newAddressHashes))
 
     navigation.navigate(isImporting ? 'NewWalletSuccessPage' : 'InWalletScreen')
 

@@ -31,16 +31,18 @@ import { chunk, uniq } from 'lodash'
 
 import {
   fetchAddressesData,
+  fetchAddressesHistoricalBalances,
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
 } from '~/api/addresses'
 import { newWalletGenerated, walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
+import { balanceHistoryAdapter } from '~/store/addresses/addressesAdapter'
 import { appReset } from '~/store/appSlice'
 import { selectAllAssetsInfo } from '~/store/assets/assetsSelectors'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 import { RootState } from '~/store/store'
 import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
-import { Address, AddressHash, AddressPartial } from '~/types/addresses'
+import { Address, AddressesHistoricalBalanceResult, AddressHash, AddressPartial } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 
 const sliceName = 'addresses'
@@ -128,6 +130,18 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
     }
 
     return { pageLoaded: nextPageToLoad - 1, transactions }
+  }
+)
+
+// TODO: Same as in desktop wallet, share state?
+export const syncAddressesHistoricBalances = createAsyncThunk(
+  'addresses/syncAddressesHistoricBalances',
+  async (payload: AddressHash | AddressHash[] | undefined, { getState }): Promise<AddressesHistoricalBalanceResult> => {
+    const state = getState() as RootState
+
+    const addresses =
+      payload !== undefined ? (Array.isArray(payload) ? payload : [payload]) : (state.addresses.ids as AddressHash[])
+    return await fetchAddressesHistoricalBalances(addresses)
   }
 )
 
@@ -273,6 +287,16 @@ const addressesSlice = createSlice({
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
       .addCase(appReset, () => initialState)
+      .addCase(syncAddressesHistoricBalances.fulfilled, (state, { payload: data }) => {
+        data.forEach(({ address, balances }) => {
+          const addressState = state.entities[address]
+
+          if (addressState) {
+            balanceHistoryAdapter.upsertMany(addressState.balanceHistory, balances)
+            addressState.balanceHistoryInitialized = true
+          }
+        })
+      })
   }
 })
 
@@ -387,7 +411,9 @@ const getInitialAddressState = (addressData: AddressPartial): Address => ({
   lockedBalance: '0',
   txNumber: 0,
   lastUsed: 0,
-  tokens: []
+  tokens: [],
+  balanceHistory: balanceHistoryAdapter.getInitialState(),
+  balanceHistoryInitialized: false
 })
 
 const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]
