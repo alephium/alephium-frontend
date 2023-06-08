@@ -19,8 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { StackScreenProps } from '@react-navigation/stack'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -29,62 +28,8 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
-import { useAppSelector } from '~/hooks/redux'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
-import SendScreenIntro from '~/screens/Send/SendScreenIntro'
-import { makeSelectAddressesAssets, selectAddressByHash } from '~/store/addressesSlice'
 import { isNumericStringValid } from '~/utils/numbers'
-
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'> {
-  style?: StyleProp<ViewStyle>
-}
-
-const AssetsScreen = ({ navigation, style }: ScreenProps) => {
-  const { fromAddress, assetAmounts, buildTransaction } = useSendContext()
-  const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
-  const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
-  const assets = useAppSelector((s) => selectAddressesAssets(s, address ? [address.hash] : []))
-
-  const isContinueButtonDisabled = assetAmounts.length < 1
-
-  useEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => (
-        <ContinueButton
-          onPress={() =>
-            buildTransaction({
-              onBuildSuccess: () => navigation.navigate('VerifyScreen'),
-              onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
-            })
-          }
-          disabled={isContinueButtonDisabled}
-        />
-      )
-    })
-  }, [buildTransaction, isContinueButtonDisabled, navigation])
-
-  if (!address) return null
-
-  return (
-    <ScrollScreen style={style}>
-      <SendScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />
-      <ScreenSection>
-        <AssetsList>
-          {assets.map((asset, index) => (
-            <AssetRow key={asset.id} asset={asset} isLast={index === assets.length - 1} />
-          ))}
-        </AssetsList>
-      </ScreenSection>
-    </ScrollScreen>
-  )
-}
-
-export default AssetsScreen
 
 interface AssetRowProps {
   asset: Asset
@@ -125,6 +70,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
         : ''
 
     setError(newError)
+
     if (newError) return
 
     const amount = !cleanedAmount ? undefined : fromHumanReadableAmount(cleanedAmount, asset.decimals)
@@ -201,9 +147,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   )
 }
 
-const AssetsList = styled.View`
-  gap: 20px;
-`
+export default AssetRow
 
 const AssetRowStyled = styled(Animated.View)`
   border-radius: 9px;
