@@ -19,14 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { toHumanReadableAmount } from '@alephium/sdk'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import { Defs, LinearGradient, Stop, Svg } from 'react-native-svg'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 import { VictoryArea } from 'victory-native'
 
 import { useAppSelector } from '~/hooks/redux'
 import { selectHaveHistoricBalancesLoaded, selectIsStateUninitialized } from '~/store/addresses/addressesSelectors'
 import { selectAllAddresses } from '~/store/addressesSlice'
-import { useGetHistoricalPriceQuery } from '~/store/assets/priceApiSlice'
+import { HistoricalPriceResult, useGetHistoricalPriceQuery } from '~/store/assets/priceApiSlice'
+import { Address } from '~/types/addresses'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '~/types/charts'
 import { Currency } from '~/types/settings'
 
@@ -35,6 +37,7 @@ interface HistoricWorthChart {
   latestWorth: number
   currency: Currency
   onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
+  style?: StyleProp<ViewStyle>
 }
 
 const now = dayjs()
@@ -49,7 +52,8 @@ const HistoricWorthChart = ({
   length = '1m',
   latestWorth,
   currency,
-  onWorthInBeginningOfChartChange
+  onWorthInBeginningOfChartChange,
+  style
 }: HistoricWorthChart) => {
   const theme = useTheme()
   const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
@@ -69,42 +73,7 @@ const HistoricWorthChart = ({
   }, [firstItem?.worth, onWorthInBeginningOfChartChange])
 
   useEffect(() => {
-    if (!isDataAvailable) {
-      setChartData([])
-      return
-    }
-
-    const computeChartDataPoints = (): DataPoint[] => {
-      const addressesLatestAmount: LatestAmountPerAddress = {}
-
-      return alphPriceHistory.map(({ date, price }) => {
-        let totalAmountPerDate = BigInt(0)
-
-        addresses.forEach(({ hash, balanceHistory }) => {
-          const amountOnDate = balanceHistory.entities[date]?.balance
-
-          if (amountOnDate !== undefined) {
-            const amount = BigInt(amountOnDate)
-            totalAmountPerDate += amount
-            addressesLatestAmount[hash] = amount
-          } else {
-            totalAmountPerDate += addressesLatestAmount[hash] ?? BigInt(0)
-          }
-        })
-
-        return {
-          date,
-          worth: price * parseFloat(toHumanReadableAmount(totalAmountPerDate))
-        }
-      })
-    }
-
-    const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
-
-    let dataPoints = computeChartDataPoints()
-    dataPoints = trimInitialZeroDataPoints(dataPoints)
-
-    setChartData(dataPoints)
+    setChartData(isDataAvailable ? trimInitialZeroDataPoints(computeChartDataPoints(alphPriceHistory, addresses)) : [])
   }, [addresses, alphPriceHistory, isDataAvailable])
 
   if (!isDataAvailable || chartData.length <= 2 || !firstItem) return null
@@ -118,7 +87,7 @@ const HistoricWorthChart = ({
   }))
 
   return (
-    <HistoricWorthChartStyled>
+    <View style={style}>
       <Svg height={100}>
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -142,7 +111,7 @@ const HistoricWorthChart = ({
           }}
         />
       </Svg>
-    </HistoricWorthChartStyled>
+    </View>
   )
 }
 
@@ -153,4 +122,29 @@ const getFilteredChartData = (chartData: DataPoint[], startingDate: string) => {
   return startingPoint > 0 ? chartData.slice(startingPoint) : chartData
 }
 
-const HistoricWorthChartStyled = styled.View``
+const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
+
+const computeChartDataPoints = (alphPriceHistory: HistoricalPriceResult[], addresses: Address[]): DataPoint[] => {
+  const addressesLatestAmount: LatestAmountPerAddress = {}
+
+  return alphPriceHistory.map(({ date, price }) => {
+    let totalAmountPerDate = BigInt(0)
+
+    addresses.forEach(({ hash, balanceHistory }) => {
+      const amountOnDate = balanceHistory.entities[date]?.balance
+
+      if (amountOnDate !== undefined) {
+        const amount = BigInt(amountOnDate)
+        totalAmountPerDate += amount
+        addressesLatestAmount[hash] = amount
+      } else {
+        totalAmountPerDate += addressesLatestAmount[hash] ?? BigInt(0)
+      }
+    })
+
+    return {
+      date,
+      worth: price * parseFloat(toHumanReadableAmount(totalAmountPerDate))
+    }
+  })
+}

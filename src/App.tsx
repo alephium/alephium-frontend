@@ -20,7 +20,7 @@ import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { isEnrolledAsync } from 'expo-local-authentication'
 import { StatusBar } from 'expo-status-bar'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -87,7 +87,7 @@ const App = () => {
   )
 }
 
-const Main: FC = ({ children }) => {
+const Main = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)

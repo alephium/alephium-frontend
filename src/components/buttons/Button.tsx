@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { LucideProps } from 'lucide-react-native'
+import { ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -34,9 +35,10 @@ export interface ButtonProps extends PressableProps {
   Icon?: (props: LucideProps) => JSX.Element
   color?: string
   round?: boolean
+  children?: ReactNode
 }
 
-const Button: FC<ButtonProps> = ({
+const Button = ({
   style,
   title,
   type = 'primary',
@@ -47,7 +49,7 @@ const Button: FC<ButtonProps> = ({
   round,
   color,
   ...props
-}) => {
+}: ButtonProps) => {
   const theme = useTheme()
 
   const colors = {

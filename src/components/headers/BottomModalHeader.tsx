@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ReactNode } from 'react'
 import { View } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
@@ -26,7 +27,7 @@ export const bottomModalHeights = {
   }
 }
 
-const BottomModalHeader: FC = ({ children }) => {
+const BottomModalHeader = ({ children }: { children?: ReactNode }) => {
   const theme = useTheme()
 
   return (
@@ -41,7 +42,7 @@ const BottomModalHeader: FC = ({ children }) => {
       >
         <View style={{ width: 35, height: '100%', backgroundColor: theme.font.tertiary, borderRadius: 20 }} />
       </View>
-      <View>{children}</View>
+      {children && <View>{children}</View>}
     </View>
   )
 }

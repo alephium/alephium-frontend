@@ -38,7 +38,7 @@ export interface SelectProps<T extends InputValue> extends Omit<InputProps<T>, '
   renderValue?: RenderValueFunc<T>
 }
 
-function Select<T extends InputValue>({ options, onValueChange, value, renderValue }: SelectProps<T>) {
+const Select = <T extends InputValue>({ options, onValueChange, value, renderValue }: SelectProps<T>) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const theme = useTheme()
 

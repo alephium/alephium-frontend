@@ -30,7 +30,7 @@ import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
-import { themes } from '~/style/themes'
+import { themes, ThemeType } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { currencies } from '~/utils/currencies'
@@ -56,7 +56,8 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
   if (!address) return null
 
   const bgColor = address.settings.color ?? theme.font.primary
-  const textColor = colord(bgColor).isDark() ? themes.dark.font.primary : themes.light.font.primary
+  const textColorTheme: ThemeType = colord(bgColor).isDark() ? 'dark' : 'light'
+  const textColor = themes[textColorTheme].font.primary
 
   return (
     <View style={[style, { backgroundColor: bgColor }]}>
@@ -84,21 +85,21 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
         <FiatAmount
           value={totalAmountWorth}
           isFiat
-          overrideThemeColor={textColor}
+          colorTheme={textColorTheme}
           size={30}
           semiBold
           suffix={currencies[currency].symbol}
         />
-        <Amount value={BigInt(address.balance)} overrideThemeColor={textColor} size={15} medium suffix="ALPH" />
+        <Amount value={BigInt(address.balance)} colorTheme={textColorTheme} size={15} medium suffix="ALPH" />
       </Amounts>
       <BottomRow>
         <CopyAddressBadge onPress={() => copyAddressToClipboard(address.hash)}>
-          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" overrideThemeColor={textColor}>
+          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" colorTheme={textColorTheme}>
             {address.hash}
           </HashEllipsed>
           <Copy size={11} color={textColor} />
         </CopyAddressBadge>
-        <AppText size={14} overrideThemeColor={textColor}>
+        <AppText size={14} colorTheme={textColorTheme}>
           Group {address.group}
         </AppText>
       </BottomRow>

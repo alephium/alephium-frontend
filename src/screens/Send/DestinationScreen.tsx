@@ -20,6 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
 import { ClipboardIcon, LucideProps, Scan } from 'lucide-react-native'
+import { ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { PressableProps, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -115,9 +116,10 @@ export default DestinationScreen
 interface ButtonProps extends PressableProps {
   title: string
   Icon?: (props: LucideProps) => JSX.Element
+  children?: ReactNode
 }
 
-const Button: FC<ButtonProps> = ({ Icon, title, children, ...props }) => {
+const Button = ({ Icon, title, children, ...props }: ButtonProps) => {
   const theme = useTheme()
 
   return (

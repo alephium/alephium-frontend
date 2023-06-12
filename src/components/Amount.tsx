@@ -88,7 +88,7 @@ const Amount = ({
   const fadedColor = fadeDecimals ? 'secondary' : color
 
   return (
-    <AppText {...props} color={color} style={style}>
+    <AppText {...props} {...{ color, style }}>
       {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
@@ -101,10 +101,8 @@ const Amount = ({
           <AppText {...props} color={color}>
             {integralPart}
           </AppText>
-          {fractionalPart && (
-            <AppText color={fadedColor} overrideThemeColor={props.overrideThemeColor}>{`.${fractionalPart} `}</AppText>
-          )}
-          {quantitySymbol && <AppText color={fadedColor}>{`${quantitySymbol} `}</AppText>}
+          {fractionalPart && <AppText {...props} color={fadedColor}>{`.${fractionalPart} `}</AppText>}
+          {quantitySymbol && <AppText {...props} color={fadedColor}>{`${quantitySymbol} `}</AppText>}
           {!isUnknownToken && (
             <AppText {...props} color={fadeSuffix ? 'secondary' : color}>{` ${suffix ?? 'ALPH'}`}</AppText>
           )}

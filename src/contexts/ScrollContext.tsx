@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, useContext } from 'react'
+import { createContext, ReactNode, useContext } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
@@ -29,7 +29,7 @@ const ScrollContext = createContext<ScrollContextProps>({
   scrollY: undefined
 })
 
-export const ScrollContextProvider: FC = ({ children }) => {
+export const ScrollContextProvider = ({ children }: { children: ReactNode }) => {
   const scrollY = useSharedValue(0)
 
   return <ScrollContext.Provider value={{ scrollY }}>{children}</ScrollContext.Provider>

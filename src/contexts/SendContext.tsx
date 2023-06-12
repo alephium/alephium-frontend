@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { APIError, AssetAmount, getHumanReadableError } from '@alephium/sdk'
 import { node } from '@alephium/web3'
-import { createContext, useCallback, useContext, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import Toast from 'react-native-root-toast'
 
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
@@ -68,7 +68,7 @@ const initialValues: SendContextProps = {
 
 const SendContext = createContext(initialValues)
 
-export const SendContextProvider: FC = ({ children }) => {
+export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const requiresAuth = useAppSelector((s) => s.settings.requireAuth)
   const dispatch = useAppDispatch()
 
