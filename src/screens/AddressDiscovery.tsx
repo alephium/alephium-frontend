@@ -78,7 +78,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
     await dispatch(syncAddressesData(newAddressHashes))
     await dispatch(syncAddressesHistoricBalances(newAddressHashes))
 
-    navigation.navigate(isImporting ? 'NewWalletSuccessPage' : 'InWalletScreen')
+    navigation.navigate(isImporting ? 'NewWalletSuccessPage' : 'InWalletTabsNavigation')
 
     setImportLoading(false)
   }

@@ -28,7 +28,7 @@ type RootStackParamList = {
   NewWalletSuccessPage: undefined
   ImportWalletSeedScreen: undefined
   ImportWalletAddressDiscoveryScreen: undefined
-  InWalletScreen: undefined
+  InWalletTabsNavigation: undefined
   LoginScreen: {
     walletIdToLogin?: string
     workflow: 'wallet-switch' | 'wallet-unlock'

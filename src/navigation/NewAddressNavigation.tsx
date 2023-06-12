@@ -43,7 +43,11 @@ const NewAddressNavigation = (props: StackScreenProps<RootStackParamList, 'NewAd
           component={NewAddressScreen}
           options={{ headerTitle: 'New address', headerBackTitleVisible: false }}
         />
-        <NewAddressStack.Screen name="GroupSelectScreen" component={GroupSelectScreen} options={bottomModalOptions} />
+        <NewAddressStack.Screen
+          name="GroupSelectScreen"
+          component={GroupSelectScreen}
+          options={{ ...bottomModalOptions, title: 'Address group' }}
+        />
       </NewAddressStack.Navigator>
     </NewAddressContextProvider>
   )

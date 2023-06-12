@@ -26,7 +26,7 @@ const initialNavigationState = {
   index: 0,
   routes: [
     {
-      name: 'InWalletScreen'
+      name: 'InWalletTabsNavigation'
     }
   ]
 }

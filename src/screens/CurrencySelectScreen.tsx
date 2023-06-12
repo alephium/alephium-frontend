@@ -17,11 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { useEffect } from 'react'
+import React from 'react'
 
-import BottomModalHeader from '~/components/headers/BottomModalHeader'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -45,18 +44,6 @@ const CurrencySelectScreen = ({ navigation }: ScreenProps) => {
     dispatch(currencySelected(currency))
     navigation.goBack()
   }
-
-  useEffect(() => {
-    navigation.setOptions({
-      header: () => (
-        <BottomModalHeader>
-          <ScreenSection>
-            <BottomModalScreenTitle>Currency</BottomModalScreenTitle>
-          </ScreenSection>
-        </BottomModalHeader>
-      )
-    })
-  }, [navigation])
 
   return (
     <ScrollScreen>

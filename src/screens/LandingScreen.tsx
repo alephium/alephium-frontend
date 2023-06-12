@@ -17,8 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { useEffect } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -33,16 +34,24 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
 
 const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
     navigation.navigate('NewWalletIntroScreen')
   }
 
+  useEffect(() => {
+    const routesHistory = navigation.getState().routes.map((route) => route.name)
+    const previousRouteName = routesHistory.length > 1 ? routesHistory[routesHistory.length - 2] : undefined
+
+    if (previousRouteName === 'SplashScreen') navigation.setOptions({ headerShown: false })
+  }, [navigation])
+
   return (
     <Screen>
       <LogoContainer>
-        <AlephiumLogoStyled />
+        <AlephiumLogoStyled color={theme.bg.contrast} />
       </LogoContainer>
       <TitleContainer>
         <TitleFirstLine>Welcome to the official</TitleFirstLine>

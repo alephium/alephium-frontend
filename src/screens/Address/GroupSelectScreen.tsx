@@ -18,12 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { useEffect } from 'react'
+import React from 'react'
 
-import BottomModalHeader from '~/components/headers/BottomModalHeader'
 import { SelectOption } from '~/components/inputs/Select'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useNewAddressContext } from '~/contexts/NewAddressContext'
@@ -50,18 +49,6 @@ const GroupSelectScreen = ({ navigation }: ScreenProps) => {
     setGroup(group)
     navigation.goBack()
   }
-
-  useEffect(() => {
-    navigation.setOptions({
-      header: () => (
-        <BottomModalHeader>
-          <ScreenSection>
-            <BottomModalScreenTitle>Address group</BottomModalScreenTitle>
-          </ScreenSection>
-        </BottomModalHeader>
-      )
-    })
-  }, [navigation])
 
   return (
     <ScrollScreen>
