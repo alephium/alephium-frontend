@@ -83,6 +83,7 @@ const RootStackNavigation = () => {
           screenOptions={{
             headerStyle: { elevation: 0, shadowOpacity: 0 },
             headerTitle: '',
+            headerBackTitleVisible: false,
             cardStyle: {
               backgroundColor: theme.bg.primary
             }
