@@ -30,13 +30,13 @@ const AddressSelector = ({ label = 'Address', ...props }: AddressSelectorProps) 
 
   const addressesOptions = addresses.map((address) => ({
     value: address.hash,
-    label: <AddressBadge address={address} />
+    label: <AddressBadge addressHash={address.hash} />
   }))
 
   const renderValue = (addressHash: AddressHash) => {
     const address = addressEntries[addressHash]
 
-    return address ? <AddressBadge address={address} /> : null
+    return address ? <AddressBadge addressHash={address.hash} /> : null
   }
 
   return <Select label={label} options={addressesOptions} renderValue={renderValue} {...props} />

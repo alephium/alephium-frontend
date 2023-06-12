@@ -17,18 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { CardStyleInterpolators, StackNavigationOptions } from '@react-navigation/stack'
-import { Dimensions, View } from 'react-native'
 import { useTheme } from 'styled-components'
+
+import BottomModalHeader, { bottomModalHeights } from '~/components/headers/BottomModalHeader'
 
 interface BottomModalOptions {
   height: number
-}
-
-const heights = {
-  pullTab: {
-    container: 20,
-    bar: 4
-  }
 }
 
 const borderRadius = 10
@@ -36,31 +30,18 @@ const borderRadius = 10
 const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOptions => {
   const theme = useTheme()
 
-  const { height } = options ?? {}
-
   return {
     cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
     gestureEnabled: true,
     gestureDirection: 'vertical',
-    gestureResponseDistance: Dimensions.get('window').height,
     cardStyle: {
-      marginTop: heights.pullTab.container + (height ?? 0),
+      marginTop: bottomModalHeights.pullTab.container + (options?.height ?? 0),
       paddingTop: 15,
-      borderRadius,
-      backgroundColor: theme.bg.back1
+      borderTopRightRadius: borderRadius,
+      borderTopLeftRadius: borderRadius,
+      backgroundColor: theme.bg.primary
     },
-    header: () => (
-      <View
-        style={{
-          position: 'absolute',
-          height: heights.pullTab.bar,
-          width: '100%',
-          alignItems: 'center'
-        }}
-      >
-        <View style={{ width: 35, height: '100%', backgroundColor: theme.font.tertiary, borderRadius: 20 }} />
-      </View>
-    )
+    header: () => <BottomModalHeader />
   }
 }
 

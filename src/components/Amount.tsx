@@ -35,6 +35,7 @@ interface AmountProps extends AppTextProps {
   isUnknownToken?: boolean
   showPlusMinus?: boolean
   showOnDiscreetMode?: boolean
+  fadeSuffix?: boolean
   style?: StyleProp<TextStyle>
 }
 
@@ -45,16 +46,14 @@ const Amount = ({
   suffix = '',
   showOnDiscreetMode = false,
   isFiat = false,
-  color: colorProp,
-  size,
-  bold,
   style,
   isUnknownToken,
   decimals,
   nbOfDecimalsToShow,
   showPlusMinus,
   highlight,
-  colorTheme
+  fadeSuffix,
+  ...props
 }: AmountProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
 
@@ -85,20 +84,28 @@ const Amount = ({
 
   const [integralPart, fractionalPart] = amount.split('.')
 
-  const color = colorProp ?? (highlight && value !== undefined ? (value < 0 ? 'highlight' : 'valid') : 'primary')
+  const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'highlight' : 'valid') : 'primary')
   const fadedColor = fadeDecimals ? 'secondary' : color
 
   return (
-    <AppText {...{ bold, size, color, colorTheme }} style={style}>
+    <AppText {...props} {...{ color, style }}>
       {discreetMode && !showOnDiscreetMode ? (
         '•••'
       ) : integralPart ? (
         <>
-          {showPlusMinus && <AppText {...{ color, colorTheme }}>{isNegative ? '-' : '+'}</AppText>}
-          <AppText {...{ color, colorTheme }}>{integralPart}</AppText>
-          <AppText color={fadedColor} colorTheme={colorTheme}>{`.${fractionalPart} `}</AppText>
-          {quantitySymbol && <AppText color={fadedColor} colorTheme={colorTheme}>{`${quantitySymbol} `}</AppText>}
-          {!isUnknownToken && <AppText {...{ color, colorTheme }}>{` ${suffix ?? 'ALPH'}`}</AppText>}
+          {showPlusMinus && (
+            <AppText {...props} color={color}>
+              {isNegative ? '-' : '+'}
+            </AppText>
+          )}
+          <AppText {...props} color={color}>
+            {integralPart}
+          </AppText>
+          {fractionalPart && <AppText {...props} color={fadedColor}>{`.${fractionalPart} `}</AppText>}
+          {quantitySymbol && <AppText {...props} color={fadedColor}>{`${quantitySymbol} `}</AppText>}
+          {!isUnknownToken && (
+            <AppText {...props} color={fadeSuffix ? 'secondary' : color}>{` ${suffix ?? 'ALPH'}`}</AppText>
+          )}
         </>
       ) : (
         '-'

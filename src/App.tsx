@@ -118,17 +118,14 @@ const Main = ({ children }: { children: ReactNode }) => {
         if (await areThereOtherWallets()) {
           navigateRootStack('SwitchWalletAfterDeletionScreen')
         } else if (lastNavigationState) {
-          console.log('Running restoreNavigationState()')
           setNavigationState(lastNavigationState)
         } else {
-          console.log('Navigating to LandingScreen')
           navigateRootStack('LandingScreen')
         }
         return
       }
 
       if (wallet.authType === 'pin') {
-        console.log('Navigating to LoginScreen')
         navigateRootStack('LoginScreen', { walletIdToLogin: wallet.metadataId, workflow: 'wallet-unlock' })
         return
       }
@@ -140,7 +137,6 @@ const Main = ({ children }: { children: ReactNode }) => {
           addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
         dispatch(walletUnlocked({ wallet, addressesToInitialize }))
 
-        console.log('Restoring navigation since it is biometrics')
         lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
       }
       // TODO: Revisit error handling with proper error codes
@@ -166,12 +162,9 @@ const Main = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      console.log('handleAppStateChange runs with: ', nextAppState)
       if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isCameraOpen) {
-        console.log('App became inactive.')
         dispatch(appBecameInactive())
       } else if (nextAppState === 'active' && !activeWalletMnemonic) {
-        console.log('Calling unlockActiveWallet()')
         unlockActiveWallet()
       }
 

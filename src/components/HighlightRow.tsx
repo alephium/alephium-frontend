@@ -20,7 +20,7 @@ import { ReactNode } from 'react'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
+import AppText, { AppTextProps } from '~/components/AppText'
 import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
 export interface HighlightRowProps {
@@ -28,6 +28,7 @@ export interface HighlightRowProps {
   isInput?: boolean
   isSecondary?: boolean
   title?: string
+  titleColor?: AppTextProps['color']
   subtitle?: string
   onPress?: () => void
   hasRightContent?: boolean
@@ -43,14 +44,14 @@ const HighlightRow = ({
   children,
   onPress,
   truncate,
-  isLast = false,
   noMaxWidth,
-  style
+  style,
+  titleColor
 }: HighlightRowProps) => {
   const componentContent = title ? (
     <>
       <LeftContent>
-        <AppText medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
+        <AppText medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle" color={titleColor}>
           {title}
         </AppText>
         {subtitle && (

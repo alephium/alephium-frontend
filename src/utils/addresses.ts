@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
@@ -28,8 +29,8 @@ import { AddressTransaction, PendingTransaction } from '~/types/transactions'
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
 
-export const copyAddressToClipboard = (addressHash: AddressHash) => {
-  Clipboard.setString(addressHash)
+export const copyAddressToClipboard = async (addressHash: AddressHash) => {
+  await Clipboard.setStringAsync(addressHash)
   Toast.show('Address copied!')
 }
 
@@ -105,11 +106,37 @@ export const selectAddressTransactions = (
         : allAddresses.filter((address) => addressHashes === address.hash)
       : allAddresses
   const addressesTxs = addresses.flatMap((address) => address.transactions.map((txHash) => ({ txHash, address })))
+  const processedTxHashes: explorer.Transaction['hash'][] = []
 
   return transactions.reduce((txs, tx) => {
-    const addressTx = addressesTxs.find(({ txHash }) => txHash === tx.hash)
-    if (addressTx) txs.push({ ...tx, address: addressTx.address })
+    const addressTxs = addressesTxs.filter(({ txHash }) => txHash === tx.hash)
+
+    addressTxs.forEach((addressTx) => {
+      if (
+        (!isPendingTransaction(tx) || tx.fromAddress === addressTx.address.hash) &&
+        !processedTxHashes.includes(tx.hash)
+      ) {
+        processedTxHashes.push(tx.hash)
+        txs.push({ ...tx, address: addressTx.address })
+      }
+    })
 
     return txs
   }, [] as AddressTransaction[])
 }
+
+// TODO: Same as in desktop wallet
+export const getAddressAssetsAvailableBalance = (address: Address) => [
+  {
+    id: ALPH.id,
+    availableBalance: BigInt(address.balance) - BigInt(address.lockedBalance)
+  },
+  ...address.tokens.map((token) => ({
+    id: token.id,
+    availableBalance: BigInt(token.balance) - BigInt(token.lockedBalance)
+  }))
+]
+
+// TODO: Same as in desktop wallet
+const isPendingTransaction = (tx: explorer.Transaction | PendingTransaction): tx is PendingTransaction =>
+  (tx as PendingTransaction).status === 'pending'

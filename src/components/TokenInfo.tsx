@@ -62,6 +62,7 @@ const LeftGroup = styled.View`
   align-items: center;
   flex-direction: row;
   margin-right: 10px;
+  gap: 15px;
 `
 
 const Amounts = styled.View`

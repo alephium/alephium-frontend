@@ -68,13 +68,7 @@ const TransactionsFlatList = ({
     renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
 
   const renderTransactionItem = ({ item: tx, index, isLast }: TransactionItem) => (
-    <TransactionRowStyled
-      key={transactionKeyExtractor(tx)}
-      tx={tx}
-      isFirst={index === 0}
-      isLast={isLast}
-      showInternalInflows
-    />
+    <TransactionRowStyled key={transactionKeyExtractor(tx)} tx={tx} isFirst={index === 0} isLast={isLast} />
   )
 
   const loadNextTransactionsPage = useCallback(async () => {
@@ -119,6 +113,7 @@ const TransactionsFlatList = ({
                   isLast: index === pendingTransactions.length - 1
                 })
               )}
+              <ScreenSectionTitleStyled>Confirmed transactions</ScreenSectionTitleStyled>
             </>
           )}
         </>

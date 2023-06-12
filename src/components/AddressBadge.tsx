@@ -16,35 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Star as StarIcon } from 'lucide-react-native'
 import { StyleProp, TextStyle, View, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { Address } from '~/types/addresses'
+import { useAppSelector } from '~/hooks/redux'
+import DefaultAddressBadge from '~/images/DefaultAddressBadge'
+import { selectAddressByHash } from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
 
 interface AddressBadgeProps {
-  address: Address | string
+  addressHash: AddressHash
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
   style?: StyleProp<ViewStyle>
 }
 
-const AddressBadge = ({ address, hideSymbol = false, textStyle, style }: AddressBadgeProps) => {
-  const theme = useTheme()
+const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, style }: AddressBadgeProps) => {
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   return (
     <View style={style}>
-      {typeof address === 'string' ? (
+      {!address ? (
         <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
-          {address}
+          {addressHash}
         </Label>
       ) : (
         <>
           {!hideSymbol && (
             <Symbol>
               {address.settings.isMain ? (
-                <StarIcon size={16} fill={theme.global.star} />
+                <DefaultAddressBadge size={16} color={address.settings.color} />
               ) : (
                 <Dot color={address.settings.color} />
               )}

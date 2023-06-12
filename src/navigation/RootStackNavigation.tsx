@@ -21,12 +21,12 @@ import { NavigationState } from '@react-navigation/routers'
 import { createStackNavigator } from '@react-navigation/stack'
 import { useTheme } from 'styled-components'
 
-import DefaultHeader from '~/components/headers/DefaultHeader'
 import { ScrollContextProvider } from '~/contexts/ScrollContext'
 import useBottomModalOptions from '~/hooks/layout/useBottomModalOptions'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import SendNavigation from '~/navigation/SendNavigation'
 import AddressDiscoveryScreen from '~/screens/AddressDiscovery'
 import EditAddressScreen from '~/screens/EditAddressScreen'
 import LandingScreen from '~/screens/LandingScreen'
@@ -41,7 +41,7 @@ import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import NewAddressScreen from '~/screens/NewAddressScreen'
 import ReceiveScreen from '~/screens/ReceiveScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
-import SendScreen from '~/screens/SendScreen'
+import SendScreenHeader from '~/screens/Send/SendScreenHeader'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchNetworkScreen from '~/screens/SwitchNetworkScreen'
@@ -56,8 +56,6 @@ const RootStack = createStackNavigator<RootStackParamList>()
 const RootStackNavigation = () => {
   const theme = useTheme()
   const bottomModalOptions = useBottomModalOptions()
-  // const { height: screenHeight } = useWindowDimensions()
-  // const smallBottomModalOptions = useBottomModalOptions({ height: screenHeight - 460 })
   const dispatch = useAppDispatch()
 
   const handleStateChange = (state?: NavigationState) => {
@@ -71,7 +69,7 @@ const RootStackNavigation = () => {
       ...DefaultTheme.colors,
       primary: theme.font.primary,
       background: theme.bg.primary,
-      card: theme.bg.secondary,
+      card: theme.bg.primary,
       text: theme.font.primary,
       border: theme.border.primary
     }
@@ -81,12 +79,12 @@ const RootStackNavigation = () => {
     <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
       <ScrollContextProvider>
         <RootStack.Navigator
-          initialRouteName={'SplashScreen'}
+          initialRouteName="SplashScreen"
           screenOptions={{
             headerStyle: { elevation: 0, shadowOpacity: 0 },
             headerTitle: '',
             cardStyle: {
-              backgroundColor: theme.bg.back1
+              backgroundColor: theme.bg.primary
             }
           }}
         >
@@ -126,11 +124,7 @@ const RootStackNavigation = () => {
           />
           <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} options={bottomModalOptions} />
 
-          <RootStack.Screen
-            name="SettingsScreen"
-            component={SettingsScreen}
-            options={{ headerTitle: 'Settings', header: () => <DefaultHeader HeaderLeft="Settings" /> }}
-          />
+          <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
           <RootStack.Screen
             name="SecurityScreen"
             component={SecurityScreen}
@@ -144,11 +138,16 @@ const RootStackNavigation = () => {
           />
           <RootStack.Screen name="TransactionScreen" component={TransactionScreen} options={bottomModalOptions} />
           <RootStack.Screen name="ReceiveScreen" component={ReceiveScreen} options={bottomModalOptions} />
-          <RootStack.Screen name="SendScreen" component={SendScreen} options={bottomModalOptions} />
           <RootStack.Screen
             name="AddressDiscoveryScreen"
             component={AddressDiscoveryScreen}
             options={{ headerTitle: 'Active addresses' }}
+          />
+
+          <RootStack.Screen
+            name="SendNavigation"
+            component={SendNavigation}
+            options={{ ...bottomModalOptions, header: (props) => <SendScreenHeader {...props} /> }}
           />
         </RootStack.Navigator>
       </ScrollContextProvider>

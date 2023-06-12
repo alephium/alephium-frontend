@@ -31,7 +31,6 @@ import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { useAppSelector } from '~/hooks/redux'
-import { useTransactionInfo } from '~/hooks/useTransactionalInfo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getTransactionInfo } from '~/utils/transactions'
 
@@ -44,7 +43,7 @@ const TransactionScreen = ({
   }
 }: ScreenProps) => {
   const theme = useTheme()
-  const { direction, infoType } = useTransactionInfo(tx, tx.address.hash)
+  const { direction, infoType } = getTransactionInfo(tx)
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   const explorerTxUrl = `${explorerBaseUrl}/transactions/${tx.hash}`
@@ -85,10 +84,10 @@ const TransactionScreen = ({
             <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
           </HighlightRow>
           <HighlightRow title="From">
-            {isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
+            {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
           </HighlightRow>
           <HighlightRow title="To">
-            {!isOut ? <AddressBadge address={tx.address} /> : <IOList isOut={isOut} tx={tx} />}
+            {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
           </HighlightRow>
           <HighlightRow title="Fee">
             <Amount
