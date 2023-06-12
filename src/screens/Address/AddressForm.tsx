@@ -19,9 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { useState } from 'react'
 import { ScrollView } from 'react-native'
-import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ExpandableRow from '~/components/ExpandableRow'
 import HighlightRow from '~/components/HighlightRow'
@@ -29,7 +27,7 @@ import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
 import Select, { SelectOption } from '~/components/inputs/Select'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
 import Toggle from '~/components/Toggle'
 import { AddressHash, AddressSettings } from '~/types/addresses'
 
@@ -65,8 +63,7 @@ const AddressForm = ({
   onSubmit,
   buttonText = 'Generate',
   disableIsMainToggle = false,
-  includeGroup = false,
-  addressHash
+  includeGroup = false
 }: AddressFormProps) => {
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
@@ -83,14 +80,6 @@ const AddressForm = ({
 
   return (
     <>
-      <ScreenSection>
-        <BottomModalScreenTitle>Address settings</BottomModalScreenTitle>
-        {addressHash && (
-          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
-            {addressHash}
-          </HashEllipsed>
-        )}
-      </ScreenSection>
       <ScrollView>
         <ScreenSection>
           <BoxSurface>
@@ -131,8 +120,3 @@ const AddressForm = ({
 }
 
 export default AddressForm
-
-const HashEllipsed = styled(AppText)`
-  max-width: 50%;
-  margin-top: 8px;
-`

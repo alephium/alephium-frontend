@@ -27,8 +27,9 @@ import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
+import EditAddressScreen from '~/screens/Address/EditAddressScreen'
+import NewAddressScreen from '~/screens/Address/NewAddressScreen'
 import AddressDiscoveryScreen from '~/screens/AddressDiscovery'
-import EditAddressScreen from '~/screens/EditAddressScreen'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginScreen from '~/screens/LoginScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
@@ -38,7 +39,6 @@ import NewWalletIntroScreen from '~/screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessPage from '~/screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
-import NewAddressScreen from '~/screens/NewAddressScreen'
 import ReceiveScreen from '~/screens/ReceiveScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
 import SendScreenHeader from '~/screens/Send/SendScreenHeader'
@@ -123,7 +123,11 @@ const RootStackNavigation = () => {
             component={NewAddressScreen}
             options={{ headerTitle: 'New address' }}
           />
-          <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} options={bottomModalOptions} />
+          <RootStack.Screen
+            name="EditAddressScreen"
+            component={EditAddressScreen}
+            options={{ ...bottomModalOptions }}
+          />
 
           <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
           <RootStack.Screen
