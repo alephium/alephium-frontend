@@ -90,7 +90,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
             height={heightCarouselItem}
             FooterComponent={
               <Button
-                onPress={() => navigation.navigate('NewAddressScreen')}
+                onPress={() => navigation.navigate('NewAddressNavigation')}
                 Icon={PlusIcon}
                 title="New address"
                 type="secondary"

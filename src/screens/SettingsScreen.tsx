@@ -25,7 +25,6 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import HighlightRow from '~/components/HighlightRow'
-import Select from '~/components/inputs/Select'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
@@ -35,16 +34,9 @@ import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deleteWalletById, disableBiometrics, enableBiometrics } from '~/persistent-storage/wallets'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
-import { currencySelected, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
-import { Currency } from '~/types/settings'
-import { currencies } from '~/utils/currencies'
+import { discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SettingsScreen'>
-
-const currencyOptions = Object.values(currencies).map((currency) => ({
-  label: `${currency.name} (${currency.ticker})`,
-  value: currency.ticker
-}))
 
 const SettingsScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
@@ -75,8 +67,6 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const toggleTheme = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
 
   const toggleAuthRequirement = () => dispatch(passwordRequirementToggled())
-
-  const handleCurrencyChange = (currency: Currency) => dispatch(currencySelected(currency))
 
   const deleteWallet = async () => {
     await deleteWalletById(activeWalletMetadataId)
@@ -119,13 +109,8 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
               <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
             </HighlightRow>
           )}
-          <HighlightRow isLast isInput>
-            <Select
-              options={currencyOptions}
-              label="Currency"
-              value={currentCurrency}
-              onValueChange={handleCurrencyChange}
-            />
+          <HighlightRow onPress={() => navigation.navigate('CurrencySelectScreen')} title="Currency">
+            <AppText bold>{currentCurrency}</AppText>
           </HighlightRow>
         </BoxSurface>
       </ScreenSection>
@@ -133,7 +118,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
         <ScreenSectionTitle>Networks</ScreenSectionTitle>
         <BoxSurface>
           <HighlightRow title="Current network" onPress={() => navigation.navigate('SwitchNetworkScreen')} isLast>
-            <CurrentNetwork>{capitalize(currentNetworkName)}</CurrentNetwork>
+            <AppText bold>{capitalize(currentNetworkName)}</AppText>
           </HighlightRow>
         </BoxSurface>
       </ScreenSection>
@@ -160,10 +145,6 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
 }
 
 export default SettingsScreen
-
-const CurrentNetwork = styled(AppText)`
-  font-weight: bold;
-`
 
 const ButtonStyled = styled(Button)`
   margin-bottom: 24px;

@@ -23,7 +23,7 @@ import { useRef, useState } from 'react'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import { NewAddressNavigationParamList } from '~/navigation/NewAddressNavigation'
 import AddressForm, { AddressFormData } from '~/screens/Address/AddressForm'
 import {
   newAddressGenerated,
@@ -34,7 +34,7 @@ import {
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed } from '~/utils/crypto'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'NewAddressScreen'>
+type ScreenProps = StackScreenProps<NewAddressNavigationParamList, 'NewAddressScreen'>
 
 const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const dispatch = useAppDispatch()
@@ -69,7 +69,11 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <>
-      <AddressForm initialValues={initialValues} includeGroup onSubmit={handleGeneratePress} />
+      <AddressForm
+        initialValues={initialValues}
+        onSubmit={handleGeneratePress}
+        onGroupPress={() => navigation.navigate('GroupSelectScreen')}
+      />
       <SpinnerModal isActive={loading} text="Generating address..." />
     </>
   )

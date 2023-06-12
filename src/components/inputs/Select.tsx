@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ChevronDown } from 'lucide-react-native'
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -28,7 +28,7 @@ import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
 export type SelectOption<T extends InputValue> = {
   value: T
-  label: ReactNode
+  label: string
 }
 
 export interface SelectProps<T extends InputValue> extends Omit<InputProps<T>, 'value'> {

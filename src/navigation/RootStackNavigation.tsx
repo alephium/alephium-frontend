@@ -25,11 +25,12 @@ import { ScrollContextProvider } from '~/contexts/ScrollContext'
 import useBottomModalOptions from '~/hooks/layout/useBottomModalOptions'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
+import NewAddressNavigation from '~/navigation/NewAddressNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import EditAddressScreen from '~/screens/Address/EditAddressScreen'
-import NewAddressScreen from '~/screens/Address/NewAddressScreen'
 import AddressDiscoveryScreen from '~/screens/AddressDiscovery'
+import CurrencySelectScreen from '~/screens/CurrencySelectScreen'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginScreen from '~/screens/LoginScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
@@ -119,9 +120,9 @@ const RootStackNavigation = () => {
           <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} options={bottomModalOptions} />
 
           <RootStack.Screen
-            name="NewAddressScreen"
-            component={NewAddressScreen}
-            options={{ headerTitle: 'New address' }}
+            name="NewAddressNavigation"
+            component={NewAddressNavigation}
+            options={{ headerShown: false }}
           />
           <RootStack.Screen
             name="EditAddressScreen"
@@ -130,6 +131,11 @@ const RootStackNavigation = () => {
           />
 
           <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
+          <RootStack.Screen
+            name="CurrencySelectScreen"
+            component={CurrencySelectScreen}
+            options={{ ...bottomModalOptions }}
+          />
           <RootStack.Screen
             name="SecurityScreen"
             component={SecurityScreen}

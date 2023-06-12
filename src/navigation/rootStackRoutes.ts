@@ -35,7 +35,7 @@ type RootStackParamList = {
   }
   SplashScreen: undefined
   SwitchWalletScreen: undefined
-  NewAddressScreen: undefined
+  NewAddressNavigation: undefined
   EditAddressScreen: {
     addressHash: AddressHash
   }
@@ -57,6 +57,7 @@ type RootStackParamList = {
   AddressDiscoveryScreen?: {
     isImporting?: boolean
   }
+  CurrencySelectScreen: undefined
 }
 
 export default RootStackParamList
