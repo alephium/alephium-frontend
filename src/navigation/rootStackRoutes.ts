@@ -35,9 +35,6 @@ type RootStackParamList = {
   }
   SplashScreen: undefined
   SwitchWalletScreen: undefined
-  AddressScreen: {
-    addressHash: AddressHash
-  }
   NewAddressScreen: undefined
   EditAddressScreen: {
     addressHash: AddressHash

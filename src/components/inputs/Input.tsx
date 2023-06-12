@@ -45,7 +45,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   style?: StyleProp<ViewStyle>
 }
 
-function Input<T extends InputValue>({
+const Input = <T extends InputValue>({
   label,
   style,
   value,
@@ -57,7 +57,7 @@ function Input<T extends InputValue>({
   renderValue,
   error,
   ...props
-}: InputProps<T>) {
+}: InputProps<T>) => {
   const theme = useTheme()
   const [isActive, setIsActive] = useState(false)
   const inputRef = useRef<TextInput>(null)

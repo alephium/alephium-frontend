@@ -62,6 +62,7 @@ const EditAddressScreen = ({
         onSubmit={handleSavePress}
         buttonText="Save"
         disableIsMainToggle={address.settings.isMain}
+        addressHash={address.hash}
       />
       <SpinnerModal isActive={loading} text="Saving address..." />
     </>

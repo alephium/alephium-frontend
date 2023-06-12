@@ -16,18 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { calculateAmountWorth } from '@alephium/sdk'
 import { colord } from 'colord'
-import { Pressable, StyleProp, ViewStyle } from 'react-native'
+import { Copy, SettingsIcon } from 'lucide-react-native'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
+import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
-import { themes } from '~/style/themes'
+import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
+import { themes, ThemeType } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
+import { copyAddressToClipboard } from '~/utils/addresses'
+import { currencies } from '~/utils/currencies'
+import { navigateRootStack } from '~/utils/navigation'
 
 interface AddressCardProps {
   addressHash: AddressHash
@@ -36,39 +43,74 @@ interface AddressCardProps {
 
 const AddressCard = ({ style, addressHash }: AddressCardProps) => {
   const theme = useTheme()
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const currency = useAppSelector((s) => s.settings.currency)
+  const totalAddressBalance = BigInt(address?.balance ?? 0) + BigInt(address?.lockedBalance ?? 0)
+  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
+    pollingInterval: 60000,
+    skip: totalAddressBalance === BigInt(0)
+  })
+
+  const totalAmountWorth = calculateAmountWorth(totalAddressBalance, price ?? 0)
 
   if (!address) return null
 
   const bgColor = address.settings.color ?? theme.font.primary
-  const textColor = colord(bgColor).isDark() ? themes.dark.font.primary : themes.light.font.primary
+  const textColorTheme: ThemeType = colord(bgColor).isDark() ? 'dark' : 'light'
+  const textColor = themes[textColorTheme].font.primary
 
   return (
-    <Pressable
-      style={[style, { backgroundColor: bgColor }]}
-      onPress={() => navigation.navigate('AddressScreen', { addressHash })}
-    >
+    <View style={[style, { backgroundColor: bgColor }]}>
       <Header>
-        <AddressBadgeStyled
-          address={address}
-          hideSymbol
-          textStyle={{
-            fontSize: 23,
-            fontWeight: '700',
-            color: textColor
-          }}
+        <AddressBadgeContainer>
+          <AddressBadgeStyled
+            address={address}
+            hideSymbol
+            textStyle={{
+              fontSize: 23,
+              fontWeight: '700',
+              color: textColor
+            }}
+          />
+          {address.settings.isMain && <DefaultAddressBadge size={18} color={textColor} />}
+        </AddressBadgeContainer>
+        <Button
+          Icon={SettingsIcon}
+          type="transparent"
+          color={textColor}
+          onPress={() => navigateRootStack('EditAddressScreen', { addressHash })}
         />
       </Header>
-      <Amount value={BigInt(address.balance)} color="primary" size={26} bold />
-    </Pressable>
+      <Amounts>
+        <FiatAmount
+          value={totalAmountWorth}
+          isFiat
+          colorTheme={textColorTheme}
+          size={30}
+          semiBold
+          suffix={currencies[currency].symbol}
+        />
+        <Amount value={BigInt(address.balance)} colorTheme={textColorTheme} size={15} medium suffix="ALPH" />
+      </Amounts>
+      <BottomRow>
+        <CopyAddressBadge onPress={() => copyAddressToClipboard(address.hash)}>
+          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" colorTheme={textColorTheme}>
+            {address.hash}
+          </HashEllipsed>
+          <Copy size={11} color={textColor} />
+        </CopyAddressBadge>
+        <AppText size={14} colorTheme={textColorTheme}>
+          Group {address.group}
+        </AppText>
+      </BottomRow>
+    </View>
   )
 }
 
 export default styled(AddressCard)`
   border-radius: 16px;
-  height: 165px;
-  padding: 18px;
+  height: 200px;
+  padding: 16px 19px 16px 23px;
   justify-content: space-between;
 `
 
@@ -77,9 +119,43 @@ const Header = styled.View`
   justify-content: space-between;
   max-width: 100%;
   align-items: center;
+  gap: 18px;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
   flex-shrink: 1;
-  margin-right: 18px;
+`
+
+const AddressBadgeContainer = styled.View`
+  flex-direction: row;
+  flex-shrink: 1;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+`
+
+const Amounts = styled.View``
+
+const FiatAmount = styled(Amount)`
+  margin-bottom: 5px;
+`
+
+const HashEllipsed = styled(AppText)`
+  flex-shrink: 1;
+`
+
+const CopyAddressBadge = styled.Pressable`
+  flex-direction: row;
+  align-items: center;
+  padding: 5px 10px;
+  gap: 10px;
+  max-width: 158px;
+  border-radius: 22px;
+  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.14).toHex()};
+`
+
+const BottomRow = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `

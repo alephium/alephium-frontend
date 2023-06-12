@@ -16,11 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactElement, useState } from 'react'
+import { ReactElement, ReactNode, useState } from 'react'
 import { Dimensions, LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 import RNCarousel from 'react-native-reanimated-carousel'
 import styled, { css, useTheme } from 'styled-components/native'
+
+import { ScreenSection } from '~/components/layout/Screen'
 
 interface CarouselProps<T> {
   data: Array<T>
@@ -31,9 +33,11 @@ interface CarouselProps<T> {
   distance?: number
   onScrollStart?: () => void
   onScrollEnd?: (index: number) => void
+  FooterComponent?: ReactNode
+  style?: StyleProp<ViewStyle>
 }
 
-function Carousel<T>({
+const Carousel = <T,>({
   data,
   renderItem,
   width,
@@ -41,8 +45,10 @@ function Carousel<T>({
   padding = 0,
   distance = 0,
   onScrollStart,
-  onScrollEnd
-}: CarouselProps<T>) {
+  onScrollEnd,
+  FooterComponent,
+  style
+}: CarouselProps<T>) => {
   const progressValue = useSharedValue<number>(0)
   const theme = useTheme()
   const [_width, setWidth] = useState(width ?? Dimensions.get('window').width - padding * 2)
@@ -52,7 +58,7 @@ function Carousel<T>({
   }
 
   return (
-    <View onLayout={onLayout}>
+    <View onLayout={onLayout} style={style}>
       <RNCarousel
         style={{ width: '100%', justifyContent: 'center' }}
         width={_width}
@@ -69,19 +75,23 @@ function Carousel<T>({
         onScrollBegin={onScrollStart}
         onScrollEnd={onScrollEnd}
       />
-      {!!progressValue && data.length > 1 && (
-        <CarouselPagination>
-          {data.map((_, index) => (
-            <CarouselPaginationItem
-              backgroundColor={theme.font.primary}
-              animValue={progressValue}
-              index={index}
-              key={`pagination-${index}`}
-              length={data.length}
-            />
-          ))}
-        </CarouselPagination>
-      )}
+      <CarouselFooter centered={!FooterComponent}>
+        {!!progressValue && data.length > 1 && (
+          <CarouselPagination>
+            {data.map((_, index) => (
+              <CarouselPaginationItem
+                backgroundColor={theme.font.primary}
+                animValue={progressValue}
+                index={index}
+                key={`pagination-${index}`}
+                length={data.length}
+                size={6}
+              />
+            ))}
+          </CarouselPagination>
+        )}
+        {FooterComponent}
+      </CarouselFooter>
     </View>
   )
 }
@@ -91,7 +101,15 @@ export default Carousel
 const CarouselPagination = styled.View`
   flex-direction: row;
   align-self: center;
-  margin-top: 36px;
+  background-color: ${({ theme }) => theme.bg.secondary};
+  padding: 11px 14px;
+  border-radius: 100px;
+`
+
+const CarouselFooter = styled(ScreenSection)<{ centered?: boolean }>`
+  flex-direction: row;
+  align-items: center;
+  justify-content: ${({ centered }) => (centered ? 'center' : 'space-between')};
 `
 
 interface CarouselPaginationItemProps {
@@ -124,17 +142,16 @@ const CarouselPaginationItem = ({ animValue, index, length, size = 12, style }: 
 
   return (
     <Circle style={style} size={size} isLast={index === length - 1}>
-      <Dot style={animStyle} size={size - 3} />
+      <Dot style={animStyle} size={size} />
     </Circle>
   )
 }
 
 const Circle = styled.View<{ size: number; isLast: boolean }>`
-  background-color: ${({ theme }) => theme.font.contrast};
+  background-color: ${({ theme }) => theme.font.tertiary};
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   border-radius: ${({ size }) => size}px;
-  border-width: 1px;
   border-color: ${({ theme }) => theme.font.tertiary};
   overflow: hidden;
   align-items: center;
@@ -143,7 +160,7 @@ const Circle = styled.View<{ size: number; isLast: boolean }>`
   ${({ isLast }) =>
     !isLast &&
     css`
-      margin-right: 8px;
+      margin-right: 9px;
     `}
 `
 

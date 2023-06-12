@@ -20,13 +20,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Album as AddressesIcon, ArrowLeftRight as ArrowsIcon, List as ListIcon } from 'lucide-react-native'
 import { useTheme } from 'styled-components/native'
 
-import AddressesScreenHeaderRight from '~/components/AddressesScreenHeaderRight'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
 import DefaultHeader from '~/components/headers/DefaultHeader'
 import WalletSwitch from '~/components/WalletSwitch'
+import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
-import AddressesScreen from '~/screens/AddressesScreen'
 import DashboardScreen from '~/screens/DashboardScreen'
 import TransfersScreen from '~/screens/TransfersScreen'
 
@@ -69,14 +68,12 @@ const InWalletTabsNavigation = () => {
         }}
       />
       <InWalletTabs.Screen
-        name="AddressesScreen"
-        component={AddressesScreen}
+        name="AddressesTabNavigation"
+        component={AddressesTabNavigation}
         options={{
           title: 'Addresses',
           tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />,
-          header: (props) => (
-            <DefaultHeader HeaderLeft="Addresses" HeaderRight={<AddressesScreenHeaderRight />} {...props} />
-          )
+          headerShown: false
         }}
       />
     </InWalletTabs.Navigator>

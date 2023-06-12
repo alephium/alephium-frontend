@@ -27,7 +27,7 @@ interface ScreenProps<T> extends FlatListProps<T> {
   style?: StyleProp<ViewStyle>
 }
 
-function ScrollFlatListScreen<T>({ style, onScroll, onScrollEndDrag, ...props }: ScreenProps<T>) {
+const ScrollFlatListScreen = <T,>({ style, onScroll, onScrollEndDrag, ...props }: ScreenProps<T>) => {
   const listRef = useRef<FlatList<T>>(null)
   const scrollHandler = useScrollEventHandler()
   const navigation = useNavigation()

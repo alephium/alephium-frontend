@@ -19,16 +19,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { useState } from 'react'
 import { ScrollView } from 'react-native'
+import styled from 'styled-components/native'
 
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ExpandableRow from '~/components/ExpandableRow'
 import HighlightRow from '~/components/HighlightRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
 import Select, { SelectOption } from '~/components/inputs/Select'
+import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
 import Toggle from '~/components/Toggle'
-import { AddressSettings } from '~/types/addresses'
+import { AddressHash, AddressSettings } from '~/types/addresses'
 
 export type AddressFormData = AddressSettings & {
   group?: number
@@ -40,6 +43,7 @@ interface AddressFormProps {
   buttonText?: string
   disableIsMainToggle?: boolean
   includeGroup?: boolean
+  addressHash?: AddressHash
 }
 
 const groupSelectOptions: SelectOption<number | undefined>[] = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map(
@@ -61,7 +65,8 @@ const AddressForm = ({
   onSubmit,
   buttonText = 'Generate',
   disableIsMainToggle = false,
-  includeGroup = false
+  includeGroup = false,
+  addressHash
 }: AddressFormProps) => {
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
@@ -79,23 +84,30 @@ const AddressForm = ({
   return (
     <>
       <ScreenSection>
-        <BottomModalScreenTitle>Settings</BottomModalScreenTitle>
+        <BottomModalScreenTitle>Address settings</BottomModalScreenTitle>
+        {addressHash && (
+          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
+            {addressHash}
+          </HashEllipsed>
+        )}
       </ScreenSection>
       <ScrollView>
         <ScreenSection>
-          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
-          <ColorPicker value={color} onChange={setColor} />
-          <HighlightRow
-            title="Main address"
-            subtitle={`Default address for operations${
-              disableIsMainToggle
-                ? '. To remove this address from being the main address, you must set another one as main first.'
-                : ''
-            }`}
-            onPress={toggleIsMain}
-          >
-            <Toggle onValueChange={toggleIsMain} value={isMain} disabled={disableIsMainToggle} />
-          </HighlightRow>
+          <BoxSurface>
+            <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
+            <ColorPicker value={color} onChange={setColor} />
+            <HighlightRow
+              title="Default address"
+              subtitle={`Default address for operations${
+                disableIsMainToggle
+                  ? '. To remove this address from being the default address, you must set another one as main first.'
+                  : ''
+              }`}
+              onPress={toggleIsMain}
+            >
+              <Toggle onValueChange={toggleIsMain} value={isMain} disabled={disableIsMainToggle} />
+            </HighlightRow>
+          </BoxSurface>
         </ScreenSection>
         {includeGroup && (
           <ScreenSection>
@@ -119,3 +131,8 @@ const AddressForm = ({
 }
 
 export default AddressForm
+
+const HashEllipsed = styled(AppText)`
+  max-width: 50%;
+  margin-top: 8px;
+`

@@ -58,7 +58,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
           </AppText>
           <ActiveNetwork>
             <NetworkStatusBullet status={networkStatus} />
-            <AppText color="secondary">{networkName}</AppText>
+            <AppText color="primary">{networkName}</AppText>
           </ActiveNetwork>
         </SurfaceHeader>
 
@@ -87,12 +87,16 @@ const SurfaceHeader = styled.View`
   padding: 15px;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 `
 
 const ActiveNetwork = styled.View`
   flex-direction: row;
   align-items: center;
   gap: 5px;
+  padding: 6px 8px;
+  border-radius: 33px;
+  background-color: ${({ theme }) => theme.bg.back1};
 `
 
 const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
