@@ -23,17 +23,23 @@ import { ScrollView, Text } from 'react-native'
 import QRCode from 'react-qr-code'
 import { useTheme } from 'styled-components/native'
 
+import AddressBadge from '~/components/AddressBadge'
 import Button from '~/components/buttons/Button'
 import HighlightRow from '~/components/HighlightRow'
+import BoxSurface from '~/components/layout/BoxSurface'
 import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { BackButton } from '~/screens/SendReceive/ScreenHeader'
+import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
+import { selectAddressByHash } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'QRCodeScreen'>
 
 const QRCodeScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const theme = useTheme()
+  const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
 
   useEffect(() => {
     navigation.getParent()?.setOptions({
@@ -43,6 +49,7 @@ const QRCodeScreen = ({ navigation, route: { params } }: ScreenProps) => {
 
   return (
     <ScrollView>
+      <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." surtitle="RECEIVE" />
       <CenteredScreenSection>
         <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={params.addressHash} />
       </CenteredScreenSection>
@@ -50,11 +57,19 @@ const QRCodeScreen = ({ navigation, route: { params } }: ScreenProps) => {
         <Button title="Copy address" onPress={() => copyAddressToClipboard(params.addressHash)} Icon={ClipboardIcon} />
       </CenteredScreenSection>
       <ScreenSection>
-        <HighlightRow title="Address">
-          <Text numberOfLines={1} ellipsizeMode="middle">
-            {params.addressHash}
-          </Text>
-        </HighlightRow>
+        <BoxSurface>
+          <HighlightRow title="Address">
+            <AddressBadge addressHash={params.addressHash} />
+          </HighlightRow>
+
+          {address?.settings.label && (
+            <HighlightRow>
+              <Text numberOfLines={1} ellipsizeMode="middle">
+                {params.addressHash}
+              </Text>
+            </HighlightRow>
+          )}
+        </BoxSurface>
       </ScreenSection>
     </ScrollView>
   )
