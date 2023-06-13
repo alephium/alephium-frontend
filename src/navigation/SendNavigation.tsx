@@ -21,10 +21,10 @@ import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
 import { SendContextProvider } from '~/contexts/SendContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import AssetsScreen from '~/screens/Send/AssetsScreen'
-import DestinationScreen from '~/screens/Send/DestinationScreen'
-import OriginScreen from '~/screens/Send/OriginScreen'
-import VerifyScreen from '~/screens/Send/VerifyScreen'
+import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
+import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
+import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
+import VerifyScreen from '~/screens/SendReceive/Send/VerifyScreen'
 import { AddressHash } from '~/types/addresses'
 
 export interface SendNavigationParamList extends ParamListBase {

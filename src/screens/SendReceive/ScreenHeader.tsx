@@ -27,24 +27,38 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import BottomModalHeader from '~/components/headers/BottomModalHeader'
 import { ScreenSection } from '~/components/layout/Screen'
+import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-const sendSteps = ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
+interface ScreenHeaderProps extends StackHeaderProps {
+  workflow: 'send' | 'receive'
+}
 
-const SendScreenHeader = ({ navigation, route, options, back }: StackHeaderProps) => {
+const workflowSteps: Record<
+  ScreenHeaderProps['workflow'],
+  (keyof ReceiveNavigationParamList)[] | (keyof SendNavigationParamList)[]
+> = {
+  receive: ['AddressScreen', 'QRCodeScreen'],
+  send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
+}
+
+const ScreenHeader = ({ navigation, route, options, workflow }: ScreenHeaderProps) => {
   const theme = useTheme()
 
   const [progress, setProgress] = useState(0)
 
-  useEffect(() => {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? 'DestinationScreen'
-    const currentStepIndex = sendSteps.findIndex((stepName) => stepName === routeName)
+  const steps = workflowSteps[workflow]
 
-    setProgress(currentStepIndex / sendSteps.length)
-  }, [route])
+  useEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? steps[0]
+    const currentStepIndex = steps.findIndex((step) => step === routeName) + 1
+
+    setProgress(currentStepIndex / steps.length)
+  }, [route, steps])
 
   return (
     <BottomModalHeader>
-      <SendScreenHeaderStyled>
+      <ScreenHeaderStyled>
         {options.headerLeft ? options.headerLeft({}) : <BackButton onPress={() => navigation.goBack()} />}
         <ProgressBar
           progress={progress}
@@ -54,17 +68,13 @@ const SendScreenHeader = ({ navigation, route, options, back }: StackHeaderProps
           height={9}
           width={120}
         />
-        {options.headerRight ? (
-          options.headerRight({})
-        ) : (
-          <ContinueButton onPress={() => navigation.navigate('OriginScreen')} />
-        )}
-      </SendScreenHeaderStyled>
+        {options.headerRight ? options.headerRight({}) : <Hidden />}
+      </ScreenHeaderStyled>
     </BottomModalHeader>
   )
 }
 
-export default SendScreenHeader
+export default ScreenHeader
 
 export const BackButton = (props: PressableProps) => {
   const theme = useTheme()
@@ -88,7 +98,7 @@ export const ContinueButton = ({ text = 'Continue', ...props }: ContinueButtonPr
   </ContinueButtonStyled>
 )
 
-const SendScreenHeaderStyled = styled(ScreenSection)`
+const ScreenHeaderStyled = styled(ScreenSection)`
   flex-direction: row;
   justify-content: space-between;
   padding-bottom: 16px;
@@ -111,4 +121,9 @@ export const ContinueButtonStyled = styled.Pressable`
   border-radius: 26px;
   width: 100px;
   align-items: center;
+`
+
+// To keep the progress bar in the center
+const Hidden = styled(BackButton)`
+  opacity: 0;
 `

@@ -27,9 +27,9 @@ import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import AddressBox from '~/screens/Send/OriginScreen/AddressBox'
-import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
-import SendScreenIntro from '~/screens/Send/SendScreenIntro'
+import AddressBox from '~/screens/SendReceive/AddressBox'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'> {
@@ -58,11 +58,16 @@ const OriginScreen = ({ navigation, style, route: { params } }: ScreenProps) => 
 
   return (
     <ScrollScreen style={style}>
-      <SendScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
+      <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." surtitle="SEND" />
       <ScreenSection>
         <AddressList>
           {addresses.map((address) => (
-            <AddressBox key={address.hash} addressHash={address.hash} />
+            <AddressBox
+              key={address.hash}
+              addressHash={address.hash}
+              isSelected={address.hash === fromAddress}
+              onPress={() => setFromAddress(address.hash)}
+            />
           ))}
         </AddressList>
       </ScreenSection>

@@ -46,13 +46,14 @@ type RootStackParamList = {
     // TODO: Make all params serializable to help with state persistance
     tx: AddressConfirmedTransaction
   }
-  ReceiveScreen: {
+  QRCodeScreen: {
     addressHash: AddressHash
   }
   SendNavigation?: {
     fromAddressHash?: AddressHash
     toAddressHash?: AddressHash
   }
+  ReceiveNavigation: undefined
   SecurityScreen: undefined
   AddressDiscoveryScreen?: {
     isImporting?: boolean

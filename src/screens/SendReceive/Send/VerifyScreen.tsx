@@ -32,8 +32,8 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
-import SendScreenIntro from '~/screens/Send/SendScreenIntro'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'> {
@@ -59,7 +59,11 @@ const VerifyScreen = ({ navigation, style }: ScreenProps) => {
 
   return (
     <ScrollScreen style={style}>
-      <SendScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
+      <ScreenIntro
+        title="Verify"
+        subtitle="Please, double check that everything is correct before sending."
+        surtitle="SEND"
+      />
       <ScreenSection>
         <BoxSurface>
           <HighlightRow title="Sending" titleColor="secondary">

@@ -32,8 +32,8 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
-import SendScreenIntro from '~/screens/Send/SendScreenIntro'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { AddressHash } from '~/types/addresses'
 import { validateIsAddressValid } from '~/utils/forms'
 
@@ -90,9 +90,10 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
 
   return (
     <ScrollScreen style={style}>
-      <SendScreenIntro
+      <ScreenIntro
         title="Destination"
         subtitle="Send to a custom address, a contact, or one of you other addresses."
+        surtitle="SEND"
       />
       <ScreenSection>
         <BoxSurface>

@@ -26,6 +26,7 @@ import useBottomModalOptions from '~/hooks/layout/useBottomModalOptions'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import NewAddressNavigation from '~/navigation/NewAddressNavigation'
+import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import EditAddressScreen from '~/screens/Address/EditAddressScreen'
@@ -40,9 +41,9 @@ import NewWalletIntroScreen from '~/screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessPage from '~/screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
-import ReceiveScreen from '~/screens/ReceiveScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
-import SendScreenHeader from '~/screens/Send/SendScreenHeader'
+import QRCodeScreen from '~/screens/SendReceive/Receive/QRCodeScreen'
+import ScreenHeader from '~/screens/SendReceive/ScreenHeader'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchNetworkScreen from '~/screens/SwitchNetworkScreen'
@@ -130,7 +131,7 @@ const RootStackNavigation = () => {
           {/* Bottom modal screens */}
           <RootStack.Group screenOptions={bottomModalOptions}>
             <RootStack.Screen name="TransactionScreen" component={TransactionScreen} />
-            <RootStack.Screen name="ReceiveScreen" component={ReceiveScreen} />
+            <RootStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
             <RootStack.Screen name="SwitchNetworkScreen" component={SwitchNetworkScreen} />
             <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} />
             <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
@@ -142,7 +143,12 @@ const RootStackNavigation = () => {
             <RootStack.Screen
               name="SendNavigation"
               component={SendNavigation}
-              options={{ header: (props) => <SendScreenHeader {...props} /> }}
+              options={{ header: (props) => <ScreenHeader {...props} workflow="send" /> }}
+            />
+            <RootStack.Screen
+              name="ReceiveNavigation"
+              component={ReceiveNavigation}
+              options={{ header: (props) => <ScreenHeader {...props} workflow="receive" /> }}
             />
           </RootStack.Group>
         </RootStack.Navigator>

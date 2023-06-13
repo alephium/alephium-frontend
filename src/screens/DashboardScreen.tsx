@@ -81,7 +81,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
         <AddressesTokensListStyled />
       </DashboardScreenStyled>
       <AnimatedFloatingButton style={animatedButtonStyle}>
-        <FloatingButton Icon={ArrowUpDown} round color="white" onPress={() => navigation.navigate('SendNavigation')}>
+        <FloatingButton Icon={ArrowUpDown} round color="white" onPress={() => navigation.navigate('ReceiveNavigation')}>
           <Animated.View style={animatedTextStyle}>
             <AppText semiBold size={15} color="white" numberOfLines={1} ellipsizeMode="clip">
               Send/Receive
