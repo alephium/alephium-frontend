@@ -28,7 +28,6 @@ import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import QRCodeModal from '~/components/QRCodeModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -49,7 +48,6 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
   const theme = useTheme()
 
-  const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
 
   useEffect(() => {
@@ -99,11 +97,6 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
             }
           />
           {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
-          <QRCodeModal
-            addressHash={selectedAddressHash}
-            isOpen={isQrCodeModalOpen}
-            onClose={() => setIsQrCodeModalOpen(false)}
-          />
         </ScreenContent>
       </ScrollScreenStyled>
       <FloatingButton
