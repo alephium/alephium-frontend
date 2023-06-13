@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
+import { map } from 'lodash'
 import React from 'react'
 
-import { SelectOption } from '~/components/inputs/Select'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
@@ -30,17 +30,10 @@ import { NewAddressNavigationParamList } from '~/navigation/NewAddressNavigation
 
 type ScreenProps = StackScreenProps<NewAddressNavigationParamList, 'GroupSelectScreen'>
 
-const groupSelectOptions: SelectOption<number | undefined>[] = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map(
-  (_, index) => ({
-    value: index,
-    label: `Group ${index}`
-  })
-)
-
-groupSelectOptions.unshift({
-  value: undefined,
-  label: 'Default'
-} as SelectOption<undefined>)
+const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
+  value: i === 0 ? undefined : i - 1,
+  label: i === 0 ? 'Default' : `Group ${i - 1}`
+}))
 
 const GroupSelectScreen = ({ navigation }: ScreenProps) => {
   const { group, setGroup } = useNewAddressContext()
