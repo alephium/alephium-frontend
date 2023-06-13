@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createContext, ReactNode, useContext, useState } from 'react'
 
-interface NewAddressContextProps {
+interface NewAddressContextValue {
   group?: number
   setGroup: (group?: number) => void
 }
 
-const initialValues: NewAddressContextProps = {
+const initialValues: NewAddressContextValue = {
   group: undefined,
   setGroup: () => null
 }
@@ -31,7 +31,7 @@ const initialValues: NewAddressContextProps = {
 const NewAddressContext = createContext(initialValues)
 
 export const NewAddressContextProvider = ({ children }: { children: ReactNode }) => {
-  const [group, setGroup] = useState<NewAddressContextProps['group']>(initialValues.group)
+  const [group, setGroup] = useState<NewAddressContextValue['group']>(initialValues.group)
 
   return <NewAddressContext.Provider value={{ group, setGroup }}>{children}</NewAddressContext.Provider>
 }

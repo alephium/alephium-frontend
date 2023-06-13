@@ -20,7 +20,7 @@ import { createContext, ReactNode, useContext } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
-interface ScrollContextProps {
+interface ScrollContextValue {
   scrollY?: SharedValue<number>
   scrollDirection?: SharedValue<ScrollDirection>
 }
@@ -29,7 +29,7 @@ const scrollDirectionDeltaThreshold = 10
 
 export type ScrollDirection = 'up' | 'down' | undefined
 
-const ScrollContext = createContext<ScrollContextProps>({
+const ScrollContext = createContext<ScrollContextValue>({
   scrollY: undefined,
   scrollDirection: undefined
 })
