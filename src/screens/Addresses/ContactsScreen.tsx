@@ -53,7 +53,7 @@ const ContactsScreen = ({ navigation, style }: ScreenProps) => (
           return (
             <ListItem
               key={contact.id}
-              onPress={() => console.log('Navigate to contact screen')}
+              onPress={() => navigation.navigate('ContactScreen', { contactId: contact.id })}
               title={contact.name}
               subtitle={contact.address}
               icon={

@@ -31,6 +31,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import EditAddressScreen from '~/screens/Address/EditAddressScreen'
 import AddressDiscoveryScreen from '~/screens/AddressDiscovery'
+import ContactScreen from '~/screens/Addresses/ContactScreen'
 import CurrencySelectScreen from '~/screens/CurrencySelectScreen'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginScreen from '~/screens/LoginScreen'
@@ -95,6 +96,7 @@ const RootStackNavigation = () => {
             <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
             <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
             <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
+            <RootStack.Screen name="ContactScreen" component={ContactScreen} />
             <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
             <RootStack.Screen
               name="ImportWalletSeedScreen"
