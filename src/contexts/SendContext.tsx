@@ -201,7 +201,10 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         />
       )}
       {isAuthenticationModalVisible && (
-        <ConfirmWithAuthModal onConfirm={() => sendTransaction(onSendSuccessCallback)} />
+        <ConfirmWithAuthModal
+          onConfirm={() => sendTransaction(onSendSuccessCallback)}
+          onClose={() => setIsAuthenticationModalVisible(false)}
+        />
       )}
     </SendContext.Provider>
   )
