@@ -78,7 +78,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
 
           <BalanceSummaryStyled dateLabel="VALUE TODAY" />
         </ScreenSectionStyled>
-        <AddressesTokensListStyled />
+        <AddressesTokensList />
       </DashboardScreenStyled>
       <AnimatedFloatingButton style={animatedButtonStyle}>
         <FloatingButton Icon={ArrowUpDown} round color="white" onPress={() => navigation.navigate('ReceiveNavigation')}>
@@ -97,10 +97,6 @@ export default DashboardScreen
 
 const DashboardScreenStyled = styled(ScrollScreen)`
   background-color: ${({ theme }) => theme.bg.primary};
-`
-
-const AddressesTokensListStyled = styled(AddressesTokensList)`
-  background-color: ${({ theme }) => theme.bg.back1};
 `
 
 const ScreenSectionStyled = styled(ScreenSection)`
