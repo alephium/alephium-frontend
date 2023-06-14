@@ -86,7 +86,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   }
 
   return (
-    <Screen style={style}>
+    <SwitchWalletScreenStyled style={style}>
       <ScreenSection>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <Subtitle>Switch to another wallet?</Subtitle>
@@ -113,11 +113,15 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
         </ButtonsRow>
       </BottomScreenSection>
       <SpinnerModal isActive={loading} text="Switching wallets..." />
-    </Screen>
+    </SwitchWalletScreenStyled>
   )
 }
 
 export default SwitchWalletScreen
+
+const SwitchWalletScreenStyled = styled(Screen)`
+  padding-top: 20px;
+`
 
 const Subtitle = styled(AppText)`
   font-weight: 500;

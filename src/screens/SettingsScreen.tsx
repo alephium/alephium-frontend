@@ -32,9 +32,15 @@ import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { deleteWalletById, disableBiometrics, enableBiometrics } from '~/persistent-storage/wallets'
+import {
+  areThereOtherWallets,
+  deleteWalletById,
+  disableBiometrics,
+  enableBiometrics
+} from '~/persistent-storage/wallets'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
 import { discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
+import { resetNavigationState } from '~/utils/navigation'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SettingsScreen'>
 
@@ -70,8 +76,14 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
 
   const deleteWallet = async () => {
     await deleteWalletById(activeWalletMetadataId)
+
+    if (await areThereOtherWallets()) {
+      navigation.navigate('SwitchWalletAfterDeletionScreen')
+    } else {
+      resetNavigationState('LandingScreen')
+    }
+
     dispatch(walletDeleted())
-    navigation.navigate('SwitchWalletAfterDeletionScreen')
   }
 
   const handleDeleteButtonPress = () => {

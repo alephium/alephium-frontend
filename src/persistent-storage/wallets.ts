@@ -198,7 +198,7 @@ export const deleteAllWallets = async () => {
 
 const deleteWallet = async ({ id, name, authType }: WalletMetadata) => {
   if (authType === 'biometrics') {
-    deleteBiometricsEnabledMnemonic(id, name)
+    await deleteBiometricsEnabledMnemonic(id, name)
   }
 
   console.log(`🗑️ Deleting pin-encrypted mnemonic for wallet with ID ${id}`)
