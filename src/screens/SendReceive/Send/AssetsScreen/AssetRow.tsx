@@ -20,14 +20,15 @@ import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmo
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useState } from 'react'
-import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
+import { StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withTiming } from 'react-native-reanimated'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
+import ListItem from '~/components/ListItem'
 import { useSendContext } from '~/contexts/SendContext'
 import { isNumericStringValid } from '~/utils/numbers'
 
@@ -98,89 +99,56 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   }))
 
   return (
-    <Pressable onPress={handleOnPress}>
-      <AssetRowStyled style={[style, animatedStyle]}>
-        <TopRow style={topRowAnimatedStyle}>
-          <AssetLogoStyled assetId={asset.id} size={38} />
-          <AssetDetails showSeparator={!isLast && !isSelected}>
-            <AssetName semiBold size={17} numberOfLines={1} ellipsizeMode="middle">
-              {asset.name || asset.id}
-            </AssetName>
-            <Amount
-              value={asset.balance - asset.lockedBalance}
-              suffix={asset.symbol}
-              isUnknownToken={!asset.symbol}
-              medium
-              color="secondary"
-            />
-          </AssetDetails>
-        </TopRow>
-        {isSelected && (
-          <BottomRow entering={FadeIn}>
-            <AmountInputRow>
-              <AppText semiBold size={15}>
-                Amount
+    <ListItem
+      style={[style, animatedStyle]}
+      innerStyle={topRowAnimatedStyle}
+      onPress={handleOnPress}
+      isLast={isLast}
+      hideSeparator={isSelected}
+      title={asset.name || asset.id}
+      subtitle={
+        <Amount
+          value={asset.balance - asset.lockedBalance}
+          suffix={asset.symbol}
+          isUnknownToken={!asset.symbol}
+          medium
+          color="secondary"
+        />
+      }
+      icon={<AssetLogo assetId={asset.id} size={38} />}
+    >
+      {isSelected && (
+        <BottomRow entering={FadeIn}>
+          <AmountInputRow>
+            <AppText semiBold size={15}>
+              Amount
+            </AppText>
+            <AmountInputValue>
+              <AmountTextInput
+                value={amount}
+                onChangeText={handleOnAmountChange}
+                keyboardType="number-pad"
+                inputMode="numeric"
+                autoFocus={true}
+              />
+              <AppText semiBold size={23} color="secondary">
+                {asset.symbol}
               </AppText>
-              <AmountInputValue>
-                <AmountTextInput
-                  value={amount}
-                  onChangeText={handleOnAmountChange}
-                  keyboardType="number-pad"
-                  inputMode="numeric"
-                  autoFocus={true}
-                />
-                <AppText semiBold size={23} color="secondary">
-                  {asset.symbol}
-                </AppText>
-              </AmountInputValue>
-            </AmountInputRow>
-            <Row>
-              <AppText color="alert" size={11}>
-                {error}
-              </AppText>
-              <UseMaxButton title="Use max" onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
-            </Row>
-          </BottomRow>
-        )}
-      </AssetRowStyled>
-    </Pressable>
+            </AmountInputValue>
+          </AmountInputRow>
+          <Row>
+            <AppText color="alert" size={11}>
+              {error}
+            </AppText>
+            <UseMaxButton title="Use max" onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+          </Row>
+        </BottomRow>
+      )}
+    </ListItem>
   )
 }
 
 export default AssetRow
-
-const AssetRowStyled = styled(Animated.View)`
-  border-radius: 9px;
-  border-color: ${({ theme }) => theme.border.primary};
-  overflow: hidden;
-`
-
-const AssetDetails = styled.View<{ showSeparator: boolean }>`
-  gap: 10px;
-  flex-grow: 1;
-  padding-bottom: 20px;
-
-  ${({ showSeparator }) =>
-    showSeparator &&
-    css`
-      border-bottom-width: 1px;
-      border-bottom-color: ${({ theme }) => theme.border.secondary};
-    `}
-`
-
-const AssetName = styled(AppText)`
-  max-width: 80%;
-`
-
-const AssetLogoStyled = styled(AssetLogo)`
-  margin-bottom: 20px;
-`
-
-const TopRow = styled(Animated.View)`
-  flex-direction: row;
-  gap: 15px;
-  align-items: center;
-`
 
 const BottomRow = styled(Animated.View)`
   padding: 14px 17px 11px;

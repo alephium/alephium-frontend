@@ -21,30 +21,26 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
-import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
+import ListItem from '~/components/ListItem'
 import { useTransactionUI } from '~/hooks/useTransactionUI'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { BORDER_RADIUS } from '~/style/globalStyle'
 import { AddressTransaction } from '~/types/transactions'
 import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
-
-import HighlightRow from './HighlightRow'
 
 dayjs.extend(relativeTime)
 
 interface TransactionRowProps {
   tx: AddressTransaction
-  isFirst?: boolean
   isLast?: boolean
   showInternalInflows?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, style }: TransactionRowProps) => {
+const TransactionRow = ({ tx, isLast, showInternalInflows = false, style }: TransactionRowProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
   const { Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
@@ -57,36 +53,41 @@ const TransactionRow = ({ tx, isFirst, isLast, showInternalInflows = false, styl
   const knownAssets = assets.filter((asset) => !!asset.symbol)
 
   return (
-    <HighlightRowStyled style={style} onPress={handleOnPress} isFirst={isFirst} isLast={isLast}>
-      <Direction>
+    <ListItem
+      style={style}
+      onPress={handleOnPress}
+      isLast={isLast}
+      title={label}
+      subtitle={dayjs(tx.timestamp).fromNow()}
+      icon={
         <TransactionIcon color={iconBgColor}>
           <Icon size={16} strokeWidth={3} color={iconColor} />
         </TransactionIcon>
-      </Direction>
-      <Date>
-        <AppText bold>{label}</AppText>
-        <AppText color="tertiary">{dayjs(tx.timestamp).fromNow()}</AppText>
-      </Date>
-      <AssetLogos>
-        {assets.map((asset) => (
-          <AssetLogo assetId={asset.id} key={asset.id} size={20} />
-        ))}
-      </AssetLogos>
-      <AmountColumn>
-        {knownAssets.map(({ id, amount, decimals, symbol }) => (
-          <Amount
-            key={id}
-            value={amount}
-            decimals={decimals}
-            suffix={symbol}
-            isUnknownToken={!symbol}
-            highlight={!isMoved}
-            showPlusMinus={!isMoved}
-            bold
-          />
-        ))}
-      </AmountColumn>
-    </HighlightRowStyled>
+      }
+      rightSideContent={
+        <>
+          <AssetLogos>
+            {assets.map((asset) => (
+              <AssetLogo assetId={asset.id} key={asset.id} size={20} />
+            ))}
+          </AssetLogos>
+          <AmountColumn>
+            {knownAssets.map(({ id, amount, decimals, symbol }) => (
+              <Amount
+                key={id}
+                value={amount}
+                decimals={decimals}
+                suffix={symbol}
+                isUnknownToken={!symbol}
+                highlight={!isMoved}
+                showPlusMinus={!isMoved}
+                bold
+              />
+            ))}
+          </AmountColumn>
+        </>
+      }
+    />
   )
 }
 
@@ -95,43 +96,15 @@ export default memo(
   (prevProps, nextProps) =>
     prevProps.tx.hash === nextProps.tx.hash &&
     prevProps.tx.address.hash === nextProps.tx.address.hash &&
-    prevProps.isFirst === nextProps.isFirst &&
     prevProps.isLast === nextProps.isLast
 )
-
-const HighlightRowStyled = styled(HighlightRow)<{ isFirst?: boolean; isLast?: boolean }>`
-  ${({ isFirst }) =>
-    isFirst &&
-    css`
-      border-top-left-radius: ${BORDER_RADIUS}px;
-      border-top-right-radius: ${BORDER_RADIUS}px;
-    `}
-
-  ${({ isLast }) =>
-    isLast &&
-    css`
-      border-bottom-left-radius: ${BORDER_RADIUS}px;
-      border-bottom-right-radius: ${BORDER_RADIUS}px;
-    `}
-`
-
-const Direction = styled.View`
-  align-items: center;
-  flex-direction: column;
-  margin-right: 20px;
-`
-
-const Date = styled.View`
-  flex: 1;
-  padding-right: 10px;
-`
 
 const TransactionIcon = styled.View<{ color?: string }>`
   justify-content: center;
   align-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 30px;
+  width: 34px;
+  height: 34px;
+  border-radius: 34px;
   background-color: ${({ color, theme }) => color || theme.font.primary};
 `
 
