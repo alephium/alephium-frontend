@@ -56,7 +56,13 @@ const ListItem = ({
             <Title semiBold size={16} numberOfLines={1}>
               {title}
             </Title>
-            {typeof subtitle === 'string' ? <AppText color="secondary">{subtitle}</AppText> : subtitle}
+            {typeof subtitle === 'string' ? (
+              <Subtitle color="secondary" numberOfLines={1} ellipsizeMode="middle">
+                {subtitle}
+              </Subtitle>
+            ) : (
+              subtitle
+            )}
           </LeftSideContent>
           {rightSideContent}
         </ContentRow>
@@ -92,6 +98,10 @@ const Title = styled(AppText)`
   max-width: 80%;
   flex-shrink: 1;
   margin-bottom: 2px;
+`
+
+const Subtitle = styled(AppText)`
+  max-width: 80%;
 `
 
 const Icon = styled.View`
