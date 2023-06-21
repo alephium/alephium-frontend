@@ -31,7 +31,8 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import EditAddressScreen from '~/screens/Address/EditAddressScreen'
 import AddressDiscoveryScreen from '~/screens/AddressDiscovery'
-import ContactScreen from '~/screens/Addresses/ContactScreen'
+import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
+import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import CurrencySelectScreen from '~/screens/CurrencySelectScreen'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginScreen from '~/screens/LoginScreen'
@@ -117,6 +118,11 @@ const RootStackNavigation = () => {
               name="AddressDiscoveryScreen"
               component={AddressDiscoveryScreen}
               options={{ headerTitle: 'Active addresses' }}
+            />
+            <RootStack.Screen
+              name="NewContactScreen"
+              component={NewContactScreen}
+              options={{ headerTitle: 'New contact' }}
             />
           </RootStack.Group>
 

@@ -33,7 +33,6 @@ export interface HighlightRowProps {
   onPress?: () => void
   hasRightContent?: boolean
   truncate?: boolean
-  isLast?: boolean
   noMaxWidth?: boolean
   style?: StyleProp<ViewStyle>
 }
@@ -76,13 +75,6 @@ const HighlightRow = ({
 }
 
 export default styled(HighlightRow)`
-  ${({ theme, isLast }) =>
-    !isLast &&
-    css`
-      border-bottom-width: 1px;
-      border-bottom-color: ${theme.border.secondary};
-    `}
-
   ${({ theme, isInput, isSecondary }) =>
     isInput
       ? css`
