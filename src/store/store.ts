@@ -20,6 +20,7 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import activeWalletSlice from '~/store/activeWalletSlice'
 import addressDiscoverySlice from '~/store/addressDiscoverySlice'
+import contactsSlice from '~/store/addresses/contactsSlice'
 import addressesSlice from '~/store/addressesSlice'
 import appSlice from '~/store/appSlice'
 import assetsInfoSlice from '~/store/assets/assetsInfoSlice'
@@ -44,7 +45,8 @@ export const store = configureStore({
     [assetsInfoSlice.name]: assetsInfoSlice.reducer,
     addressDiscovery: addressDiscoverySlice.reducer,
     confirmedTransactions: confirmedTransactionsSlice.reducer,
-    pendingTransactions: pendingTransactionsSlice.reducer
+    pendingTransactions: pendingTransactionsSlice.reducer,
+    [contactsSlice.name]: contactsSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(settingsListenerMiddleware.middleware).prepend(priceApi.middleware)

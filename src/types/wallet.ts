@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressKeyPair } from '@alephium/sdk'
 
 import { AddressMetadata, AddressPartial } from '~/types/addresses'
+import { Contact } from '~/types/contacts'
 
 export type Mnemonic = string
 
@@ -49,4 +50,5 @@ export interface CredentialsState {
 export type WalletUnlockedPayload = CredentialsState & {
   wallet: ActiveWalletState
   addressesToInitialize: AddressPartial[]
+  contacts: Contact[]
 }

@@ -29,8 +29,10 @@ import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
+import { useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { themes } from '~/style/themes'
 import { stringToColour } from '~/utils/colors'
 
@@ -38,14 +40,9 @@ interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackP
   style?: StyleProp<ViewStyle>
 }
 
-const contacts = [
-  { id: '1', name: 'John Doe', address: '14hNXtwvFtdiawc16gYpXytcoUwkh6Ap9XARRBoa1S6tb' },
-  { id: '2', name: 'Mary Poppins', address: '125orKZtvWeoWqbrHy7vHZQvpLfAaGkU5Tn91KzZqQzot' },
-  { id: '3', name: 'Feta min', address: '1B6fZTrzmszem8WsHFt2jsH6paANFZv4TFp3Lv1FuP1UL' },
-  { id: '4', name: 'James Brown', address: '13QNhnQcveVYD8zpinyRd4yfkTXBMANs4fzGdY8BoaA2J' }
-]
-
 const ContactsScreen = ({ navigation, style }: ScreenProps) => {
+  const contacts = useAppSelector(selectAllContacts)
+
   const [searchTerm, setSearchTerm] = useState('')
 
   return (

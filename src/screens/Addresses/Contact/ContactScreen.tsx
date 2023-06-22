@@ -27,8 +27,10 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import { useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { themes } from '~/style/themes'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { stringToColour } from '~/utils/colors'
@@ -37,24 +39,26 @@ interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackP
   style?: StyleProp<ViewStyle>
 }
 
-const contact = { id: '2', name: 'Mary Poppins', address: '125orKZtvWeoWqbrHy7vHZQvpLfAaGkU5Tn91KzZqQzot' }
-
 const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) => {
-  const iconBgColor = stringToColour(contact.address)
-  const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
+  const contact = useAppSelector((s) => selectContactById(s, params.contactId))
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Button
           title="Edit"
-          onPress={() => console.log('navigate to edit screen')}
+          onPress={() => navigation.navigate('EditContactScreen', { contactId: params.contactId })}
           type="transparent"
           variant="accent"
         />
       )
     })
-  }, [navigation])
+  }, [navigation, params.contactId])
+
+  if (!contact) return null
+
+  const iconBgColor = stringToColour(contact.address)
+  const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
   return (
     <ScrollScreen style={style}>

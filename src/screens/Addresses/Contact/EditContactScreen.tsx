@@ -22,33 +22,31 @@ import { useState } from 'react'
 import Toast from 'react-native-root-toast'
 
 import SpinnerModal from '~/components/SpinnerModal'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
 import ContactForm from '~/screens/Addresses/Contact/ContactForm'
 import { contactStoredInPersistentStorage } from '~/store/addresses/addressesActions'
-import { ContactFormData } from '~/types/contacts'
+import { selectContactById } from '~/store/addresses/addressesSelectors'
+import { Contact, ContactFormData } from '~/types/contacts'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'NewContactScreen'>
+type ScreenProps = StackScreenProps<RootStackParamList, 'EditContactScreen'>
 
-const NewContactScreen = ({ navigation }: ScreenProps) => {
+const EditContactScreen = ({ navigation, route: { params } }: ScreenProps) => {
+  const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const dispatch = useAppDispatch()
 
   const [loading, setLoading] = useState(false)
 
-  const initialValues = {
-    id: undefined,
-    name: '',
-    address: ''
-  }
+  if (!contact) return null
 
   const handleSavePress = async (formData: ContactFormData) => {
     setLoading(true)
 
     try {
-      const id = await persistContact(formData)
+      await persistContact(formData)
 
-      dispatch(contactStoredInPersistentStorage({ ...formData, id }))
+      dispatch(contactStoredInPersistentStorage(formData as Contact))
     } catch (e) {
       Toast.show(getHumanReadableError(e, 'Could not save contact.'))
     }
@@ -60,10 +58,10 @@ const NewContactScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <>
-      <ContactForm initialValues={initialValues} onSubmit={handleSavePress} />
+      <ContactForm initialValues={contact} onSubmit={handleSavePress} />
       <SpinnerModal isActive={loading} text="Saving contact..." />
     </>
   )
 }
 
-export default NewContactScreen
+export default EditContactScreen

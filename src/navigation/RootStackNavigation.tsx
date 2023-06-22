@@ -32,6 +32,7 @@ import SendNavigation from '~/navigation/SendNavigation'
 import EditAddressScreen from '~/screens/Address/EditAddressScreen'
 import AddressDiscoveryScreen from '~/screens/AddressDiscovery'
 import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
+import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import CurrencySelectScreen from '~/screens/CurrencySelectScreen'
 import LandingScreen from '~/screens/LandingScreen'
@@ -123,6 +124,11 @@ const RootStackNavigation = () => {
               name="NewContactScreen"
               component={NewContactScreen}
               options={{ headerTitle: 'New contact' }}
+            />
+            <RootStack.Screen
+              name="EditContactScreen"
+              component={EditContactScreen}
+              options={{ headerTitle: 'Edit contact' }}
             />
           </RootStack.Group>
 

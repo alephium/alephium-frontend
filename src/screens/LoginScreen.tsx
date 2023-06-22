@@ -23,6 +23,7 @@ import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Screen from '~/components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { loadContacts } from '~/persistent-storage/contacts'
 import { deriveWalletStoredAddresses, rememberActiveWallet } from '~/persistent-storage/wallets'
 import { walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
 import { AddressPartial } from '~/types/addresses'
@@ -54,17 +55,19 @@ const LoginScreen = ({
 
       await rememberActiveWallet(wallet.metadataId)
 
+      const contacts = await loadContacts()
+
       if (workflow === 'wallet-switch') {
         addressesToInitialize = await deriveWalletStoredAddresses(wallet)
 
-        dispatch(walletSwitched({ wallet, addressesToInitialize, pin }))
+        dispatch(walletSwitched({ wallet, addressesToInitialize, pin, contacts }))
         resetNavigationState()
       } else if (workflow === 'wallet-unlock') {
         if (addressesStatus === 'uninitialized') {
           addressesToInitialize = await deriveWalletStoredAddresses(wallet)
         }
 
-        dispatch(walletUnlocked({ wallet, addressesToInitialize, pin }))
+        dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts }))
         lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
       }
 
