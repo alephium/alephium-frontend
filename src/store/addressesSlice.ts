@@ -121,7 +121,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
       if (transactions.length === 0) break
 
       newTransactionsFound = addresses.some((address) => {
-        const transactionsOfAddress = getTransactionsOfAddress(transactions, address)
+        const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
         const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
 
         return newTxHashes.length > 0
@@ -269,7 +269,7 @@ const addressesSlice = createSlice({
         const addresses = getAddresses(state)
 
         const updatedAddresses = addresses.map((address) => {
-          const transactionsOfAddress = getTransactionsOfAddress(transactions, address)
+          const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
           const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
 
           return {

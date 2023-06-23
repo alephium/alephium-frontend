@@ -28,7 +28,7 @@ import {
 import { RootState } from '~/store/store'
 import { AddressDataSyncResult, AddressHash } from '~/types/addresses'
 import { AddressConfirmedTransaction } from '~/types/transactions'
-import { selectAddressTransactions } from '~/utils/addresses'
+import { selectAddressTransactions, selectContactConfirmedTransactions } from '~/utils/addresses'
 
 const sliceName = 'confirmedTransactions'
 
@@ -82,6 +82,17 @@ export const makeSelectAddressesConfirmedTransactions = () =>
     ],
     (allAddresses, confirmedTransactions, addressHashes): AddressConfirmedTransaction[] =>
       selectAddressTransactions(allAddresses, confirmedTransactions, addressHashes) as AddressConfirmedTransaction[]
+  )
+
+export const makeSelectContactConfirmedTransactions = () =>
+  createSelector(
+    [selectAllAddresses, selectAllConfirmedTransactions, (_, contactAddressHash: AddressHash) => contactAddressHash],
+    (allAddresses, confirmedTransactions, contactAddressHash): AddressConfirmedTransaction[] =>
+      selectContactConfirmedTransactions(
+        allAddresses,
+        confirmedTransactions,
+        contactAddressHash
+      ) as AddressConfirmedTransaction[]
   )
 
 export default confirmedTransactionsSlice

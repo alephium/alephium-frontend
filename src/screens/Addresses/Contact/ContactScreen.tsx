@@ -19,18 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { PressableProps, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
+import { makeSelectContactConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
+import { makeSelectContactPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { themes } from '~/style/themes'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { stringToColour } from '~/utils/colors'
@@ -41,6 +43,11 @@ interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackP
 
 const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) => {
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
+  const contactAddressHash = contact?.address ?? ''
+  const selectContactConfirmedTransactions = useMemo(makeSelectContactConfirmedTransactions, [])
+  const selectContactPendingTransactions = useMemo(makeSelectContactPendingTransactions, [])
+  const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
+  const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
 
   useEffect(() => {
     navigation.setOptions({
@@ -61,34 +68,49 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
   const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
   return (
-    <ScrollScreen style={style}>
-      <CenteredSection>
-        <ContactIcon color={iconBgColor}>
-          <AppText semiBold size={32} color={textColor}>
-            {contact.name[0].toUpperCase()}
-          </AppText>
-        </ContactIcon>
-        <ContactName semiBold size={28}>
-          {contact.name}
-        </ContactName>
-        <ContactAddress medium size={16} color="secondary" numberOfLines={1} ellipsizeMode="middle">
-          {contact.address}
-        </ContactAddress>
-        <ButtonsRow>
-          <ContactButton
-            Icon={Upload}
-            title={'Send funds'}
-            onPress={() => navigation.navigate('SendNavigation', { toAddressHash: contact.address })}
-          />
-          <ContactButton
-            Icon={Clipboard}
-            title="Copy address"
-            onPress={() => copyAddressToClipboard(contact.address)}
-          />
-          <ContactButton Icon={Share2Icon} title="Share" />
-        </ButtonsRow>
-      </CenteredSection>
-    </ScrollScreen>
+    <TransactionsFlatListScreen
+      confirmedTransactions={confirmedTransactions}
+      pendingTransactions={pendingTransactions}
+      initialNumToRender={8}
+      contentContainerStyle={{ flexGrow: 1 }}
+      ListHeaderComponent={
+        <>
+          <CenteredSection>
+            <ContactIcon color={iconBgColor}>
+              <AppText semiBold size={32} color={textColor}>
+                {contact.name[0].toUpperCase()}
+              </AppText>
+            </ContactIcon>
+            <ContactName semiBold size={28}>
+              {contact.name}
+            </ContactName>
+            <ContactAddress medium size={16} color="secondary" numberOfLines={1} ellipsizeMode="middle">
+              {contact.address}
+            </ContactAddress>
+            <ButtonsRow>
+              <ContactButton
+                Icon={Upload}
+                title={'Send funds'}
+                onPress={() => navigation.navigate('SendNavigation', { toAddressHash: contact.address })}
+              />
+              <ContactButton
+                Icon={Clipboard}
+                title="Copy address"
+                onPress={() => copyAddressToClipboard(contact.address)}
+              />
+              <ContactButton Icon={Share2Icon} title="Share" />
+            </ButtonsRow>
+          </CenteredSection>
+          <TransactionsHeaderRow>
+            <ScreenSection>
+              <AppText size={18} semiBold>
+                Transactions
+              </AppText>
+            </ScreenSection>
+          </TransactionsHeaderRow>
+        </>
+      }
+    />
   )
 }
 
@@ -156,4 +178,10 @@ const ButtonStyled = styled.Pressable`
 
 const ButtonText = styled(AppText)`
   text-align: center;
+`
+
+const TransactionsHeaderRow = styled.View`
+  border-bottom-width: 1px;
+  border-color: ${({ theme }) => theme.border.secondary};
+  margin-bottom: 7px;
 `

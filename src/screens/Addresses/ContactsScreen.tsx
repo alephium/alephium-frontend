@@ -18,9 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
-import { sortBy } from 'lodash'
 import { Plus } from 'lucide-react-native'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StyleProp, TextInput, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -35,6 +34,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { themes } from '~/style/themes'
 import { stringToColour } from '~/utils/colors'
+import { filterContacts } from '~/utils/contacts'
 
 interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackParamList, 'ContactsScreen'> {
   style?: StyleProp<ViewStyle>
@@ -43,7 +43,12 @@ interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackP
 const ContactsScreen = ({ navigation, style }: ScreenProps) => {
   const contacts = useAppSelector(selectAllContacts)
 
+  const [filteredContacts, setFilteredContacts] = useState(contacts)
   const [searchTerm, setSearchTerm] = useState('')
+
+  useEffect(() => {
+    setFilteredContacts(filterContacts(contacts, searchTerm.toLowerCase()))
+  }, [contacts, searchTerm])
 
   return (
     <ScrollScreenStyled style={style}>
@@ -58,7 +63,7 @@ const ContactsScreen = ({ navigation, style }: ScreenProps) => {
       </HeaderScreenSection>
       <ScreenSection>
         <ContactList>
-          {sortBy(contacts, ({ name }) => name.toLowerCase()).map((contact) => {
+          {filteredContacts.map((contact) => {
             const iconBgColor = stringToColour(contact.address)
             const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 

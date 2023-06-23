@@ -23,6 +23,7 @@ import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-root-toast'
 
 import { persistAddressesMetadata } from '~/persistent-storage/wallets'
+import { getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
 import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '~/types/addresses'
 import { AddressTransaction, PendingTransaction } from '~/types/transactions'
 
@@ -125,6 +126,22 @@ export const selectAddressTransactions = (
   }, [] as AddressTransaction[])
 }
 
+export const selectContactConfirmedTransactions = (
+  allAddresses: Address[],
+  transactions: explorer.Transaction[],
+  contactAddressHash: AddressHash
+) => associateTxsWithAddresses(getTransactionsOfAddress(transactions, contactAddressHash), allAddresses)
+
+export const selectContactPendingTransactions = (
+  allAddresses: Address[],
+  transactions: PendingTransaction[],
+  contactAddressHash: AddressHash
+) =>
+  associateTxsWithAddresses(
+    transactions.filter((tx) => tx.fromAddress === contactAddressHash || tx.toAddress === contactAddressHash),
+    allAddresses
+  )
+
 // TODO: Same as in desktop wallet
 export const getAddressAssetsAvailableBalance = (address: Address) => [
   {
@@ -140,3 +157,12 @@ export const getAddressAssetsAvailableBalance = (address: Address) => [
 // TODO: Same as in desktop wallet
 const isPendingTransaction = (tx: explorer.Transaction | PendingTransaction): tx is PendingTransaction =>
   (tx as PendingTransaction).status === 'pending'
+
+const associateTxsWithAddresses = (transactions: (explorer.Transaction | PendingTransaction)[], addresses: Address[]) =>
+  transactions.reduce((txs, tx) => {
+    const address = addresses.find((address) => address.transactions.includes(tx.hash))
+
+    if (address) txs.push({ ...tx, address })
+
+    return txs
+  }, [] as AddressTransaction[])
