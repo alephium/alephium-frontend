@@ -129,7 +129,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
       <ScreenSection>
         <ScreenSectionTitle>Networks</ScreenSectionTitle>
         <BoxSurface>
-          <HighlightRow title="Current network" onPress={() => navigation.navigate('SwitchNetworkScreen')} isLast>
+          <HighlightRow title="Current network" onPress={() => navigation.navigate('SwitchNetworkScreen')}>
             <AppText bold>{capitalize(currentNetworkName)}</AppText>
           </HighlightRow>
         </BoxSurface>

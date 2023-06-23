@@ -79,6 +79,7 @@ export default styled(HighlightRow)`
     isInput
       ? css`
           justify-content: center;
+          min-height: ${INPUTS_HEIGHT}px;
           height: ${INPUTS_HEIGHT}px;
           padding: 0 ${INPUTS_PADDING}px;
           background-color: ${isSecondary ? theme.bg.accent : theme.bg.highlight};

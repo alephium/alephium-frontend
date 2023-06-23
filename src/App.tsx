@@ -135,7 +135,7 @@ const Main = ({ children }: { children: ReactNode }) => {
 
         const addressesToInitialize =
           addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
-        dispatch(walletUnlocked({ wallet, addressesToInitialize }))
+        dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: activeWalletMetadata?.contacts ?? [] }))
 
         lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
       }

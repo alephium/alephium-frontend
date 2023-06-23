@@ -31,6 +31,7 @@ export type WalletMetadata = {
   authType: StoredWalletAuthType
   isMnemonicBackedUp: boolean
   addresses: AddressMetadata[]
+  contacts: Contact[]
 }
 
 export interface ActiveWalletState {

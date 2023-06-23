@@ -33,7 +33,12 @@ import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useSortedWallets } from '~/hooks/useSortedWallets'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { deriveWalletStoredAddresses, getStoredWalletById, rememberActiveWallet } from '~/persistent-storage/wallets'
+import {
+  deriveWalletStoredAddresses,
+  getActiveWalletMetadata,
+  getStoredWalletById,
+  rememberActiveWallet
+} from '~/persistent-storage/wallets'
 import { walletSwitched } from '~/store/activeWalletSlice'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
@@ -76,7 +81,9 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
       const wallet = { ...storedWallet, mnemonic }
       await rememberActiveWallet(wallet.metadataId)
       const addressesToInitialize = await deriveWalletStoredAddresses(wallet)
-      dispatch(walletSwitched({ wallet, addressesToInitialize }))
+      const activeWalletMetadata = await getActiveWalletMetadata()
+
+      dispatch(walletSwitched({ wallet, addressesToInitialize, contacts: activeWalletMetadata?.contacts ?? [] }))
       resetNavigationState()
     } catch (e) {
       Alert.alert(getHumanReadableError(e, 'Could not switch wallets'))
