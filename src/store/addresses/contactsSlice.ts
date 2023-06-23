@@ -19,7 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { walletDeleted, walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
-import { contactStoredInPersistentStorage } from '~/store/addresses/addressesActions'
+import {
+  contactDeletedFromPersistentStorage,
+  contactStoredInPersistentStorage
+} from '~/store/addresses/addressesActions'
 import { contactsAdapter } from '~/store/addresses/addressesAdapter'
 import { Contact } from '~/types/contacts'
 
@@ -36,8 +39,8 @@ export const contactsSlice = createSlice({
       .addCase(walletSwitched, (state, action) => contactsAdapter.setAll(state, action.payload.contacts))
       .addCase(walletUnlocked, (state, action) => contactsAdapter.setAll(state, action.payload.contacts))
       .addCase(contactStoredInPersistentStorage, contactsAdapter.upsertOne)
+      .addCase(contactDeletedFromPersistentStorage, contactsAdapter.removeOne)
       .addCase(walletDeleted, resetState)
-    // .addCase(contactDeletedFromPeristentStorage, contactsAdapter.removeOne)
   }
 })
 

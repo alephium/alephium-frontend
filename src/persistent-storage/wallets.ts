@@ -306,6 +306,26 @@ export const persistContact = async (contactData: ContactFormData) => {
   return contactId
 }
 
+export const deleteContact = async (contactId: Contact['id']) => {
+  const walletId = await AsyncStorage.getItem('active-wallet-id')
+  const walletsMetadata = await getWalletsMetadata()
+  const walletIndex = walletsMetadata.findIndex((wallet: WalletMetadata) => wallet.id === walletId)
+
+  if (walletIndex < 0) throw `Could not find wallet with ID ${walletId}`
+
+  const walletMetadata = walletsMetadata[walletIndex]
+  const contacts = walletMetadata.contacts
+
+  const storedContactIndex = contacts.findIndex((c) => c.id === contactId)
+
+  if (storedContactIndex < 0) throw new Error('Could not find a contact with this ID')
+
+  contacts.splice(storedContactIndex, 1)
+  walletsMetadata.splice(walletIndex, 1, walletMetadata)
+
+  await persistWalletsMetadata(walletsMetadata)
+}
+
 export const getAddressesMetadataByWalletId = async (id: string): Promise<AddressMetadata[]> => {
   const walletMetadata = await getWalletMetadataById(id)
 

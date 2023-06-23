@@ -18,15 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getHumanReadableError } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Alert } from 'react-native'
 import Toast from 'react-native-root-toast'
 
+import Button from '~/components/buttons/Button'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { persistContact } from '~/persistent-storage/wallets'
+import { deleteContact, persistContact } from '~/persistent-storage/wallets'
 import ContactForm from '~/screens/Addresses/Contact/ContactForm'
-import { contactStoredInPersistentStorage } from '~/store/addresses/addressesActions'
+import {
+  contactDeletedFromPersistentStorage,
+  contactStoredInPersistentStorage
+} from '~/store/addresses/addressesActions'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { Contact, ContactFormData } from '~/types/contacts'
 
@@ -37,6 +42,41 @@ const EditContactScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const dispatch = useAppDispatch()
 
   const [loading, setLoading] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button
+          title="Delete"
+          type="transparent"
+          variant="alert"
+          onPress={() => {
+            Alert.alert('Deleting contact', 'Are you sure you want to delete this contact?', [
+              { text: 'Cancel' },
+              {
+                text: 'Delete',
+                onPress: async () => {
+                  setIsDeleting(true)
+
+                  try {
+                    await deleteContact(params.contactId)
+                    dispatch(contactDeletedFromPersistentStorage(params.contactId))
+                  } catch (e) {
+                    Toast.show(getHumanReadableError(e, 'Could not delete contact.'))
+                  } finally {
+                    setIsDeleting(false)
+                  }
+
+                  navigation.pop(3)
+                }
+              }
+            ])
+          }}
+        />
+      )
+    })
+  }, [dispatch, navigation, params.contactId])
 
   if (!contact) return null
 
@@ -59,7 +99,10 @@ const EditContactScreen = ({ navigation, route: { params } }: ScreenProps) => {
   return (
     <>
       <ContactForm initialValues={contact} onSubmit={handleSavePress} />
-      <SpinnerModal isActive={loading} text="Saving contact..." />
+      <SpinnerModal
+        isActive={loading || isDeleting}
+        text={loading ? 'Saving contact...' : isDeleting ? 'Deleting contact...' : ''}
+      />
     </>
   )
 }

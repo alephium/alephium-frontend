@@ -22,3 +22,8 @@ import { Contact } from '~/types/contacts'
 
 // TODO: Same as in desktop wallet
 export const contactStoredInPersistentStorage = createAction<Contact>('contacts/contactStoredInPersistentStorage')
+
+// TODO: Same as in desktop wallet
+export const contactDeletedFromPersistentStorage = createAction<Contact['id']>(
+  'contacts/contactDeletedFromPersistentStorage'
+)
