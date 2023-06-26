@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
 import { useEffect, useMemo } from 'react'
-import { PressableProps, StyleProp, ViewStyle } from 'react-native'
+import { PressableProps, Share, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -64,6 +64,13 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
 
   if (!contact) return null
 
+  const shareContact = () => {
+    Share.share({
+      title: 'Share contact',
+      message: `${contact.name}\n${contact.address}`
+    })
+  }
+
   const iconBgColor = stringToColour(contact.address)
   const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
@@ -98,7 +105,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
                 title="Copy address"
                 onPress={() => copyAddressToClipboard(contact.address)}
               />
-              <ContactButton Icon={Share2Icon} title="Share" />
+              <ContactButton Icon={Share2Icon} title="Share" onPress={shareContact} />
             </ButtonsRow>
           </CenteredSection>
           <TransactionsHeaderRow>
