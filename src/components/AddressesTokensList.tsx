@@ -16,9 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useMemo } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { Asset } from '@alephium/sdk'
+import { chunk } from 'lodash'
+import { useMemo, useState } from 'react'
+import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
 
+import AppText from '~/components/AppText'
+import Carousel from '~/components/Carousel'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesAssets, selectAllAddresses } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
@@ -31,6 +36,8 @@ interface AddressesTokensListProps {
   style?: StyleProp<ViewStyle>
 }
 
+const PAGE_SIZE = 3
+
 const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesTokensListProps) => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const addresses = addressesParam ?? allAddresses
@@ -42,15 +49,67 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
     )
   )
 
+  const [carouselItemHeight, setCarouselItemHeight] = useState(258)
+  const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
+
+  const assetsChunked = chunk(assets, PAGE_SIZE)
+
+  const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
+    const newCarouselItemHeight = event.nativeEvent.layout.height
+
+    if (!isCarouselItemHeightAdapted || (isCarouselItemHeightAdapted && newCarouselItemHeight > carouselItemHeight)) {
+      setCarouselItemHeight(newCarouselItemHeight)
+      setIsCarouselItemHeightAdapted(true)
+    }
+  }
+
+  const renderCarouselItem = ({ item }: { item: Asset[] }) => (
+    <View onLayout={onLayoutCarouselItem}>
+      {item.map((asset, index) => (
+        <TokenInfo key={asset.id} asset={asset} hideSeparator={index === assets.length - 1 || (index + 1) % 3 === 0} />
+      ))}
+    </View>
+  )
+
   return (
     <View style={style}>
-      <ScreenSection>
-        {assets.map((asset, index) => (
-          <TokenInfo asset={asset} key={asset.id} isLast={index === assets.length - 1} />
-        ))}
-      </ScreenSection>
+      {assetsChunked.length > 1 && (
+        <>
+          <ScreenSection>
+            <TitleRow>
+              <AppText semiBold size={18}>
+                Tokens
+              </AppText>
+            </TitleRow>
+          </ScreenSection>
+          <Carousel
+            data={assetsChunked}
+            renderItem={renderCarouselItem}
+            padding={20}
+            distance={10}
+            height={carouselItemHeight}
+          />
+        </>
+      )}
+      {assetsChunked.length === 1 && (
+        <ScreenSection>
+          <TitleRow>
+            <AppText semiBold size={18}>
+              Tokens
+            </AppText>
+          </TitleRow>
+
+          {renderCarouselItem({ item: assetsChunked[0] })}
+        </ScreenSection>
+      )}
     </View>
   )
 }
 
 export default AddressesTokensList
+
+const TitleRow = styled.View`
+  padding-bottom: 12px;
+  border-bottom-width: 1px;
+  border-color: ${({ theme }) => theme.border.secondary};
+`
