@@ -149,7 +149,11 @@ export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_
 }
 
 export const addApostrophes = (numString: string): string => {
-  if (!isNumber(numString)) throw 'Invalid number'
+  if (!isNumber(numString)) {
+    console.error('Invalid number', numString)
+
+    return numString
+  }
 
   const parts = numString.split('.')
   const wholePart = parts[0]
