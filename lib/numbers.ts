@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NUM_OF_ZEROS_IN_QUINTILLION } from './constants'
 
-const MAGNITUDE_SYMBOL = ['', 'K', 'M', 'B', 'T']
+const MAGNITUDE_SYMBOL = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y', 'R', 'Q']
 
 export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
@@ -149,7 +149,11 @@ export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_
 }
 
 export const addApostrophes = (numString: string): string => {
-  if (!isNumber(numString)) throw 'Invalid number'
+  if (!isNumber(numString)) {
+    console.error('Invalid number', numString)
+
+    return numString
+  }
 
   const parts = numString.split('.')
   const wholePart = parts[0]
