@@ -24,7 +24,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesAssets } from '~/store/addressesSlice'
+import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
 interface AddressBoxProps extends PressableProps {
@@ -33,8 +33,8 @@ interface AddressBoxProps extends PressableProps {
 }
 
 const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
-  const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
-  const assets = useAppSelector((s) => selectAddressesAssets(s, [addressHash]))
+  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const theme = useTheme()
 
   return (
@@ -49,7 +49,7 @@ const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
       </AddressBoxTop>
       <AddressBoxBottom>
         <AssetsRow>
-          {assets.map((asset) => (
+          {knownFungibleTokens.map((asset) => (
             <AssetAmountWithLogo
               key={asset.id}
               assetId={asset.id}
