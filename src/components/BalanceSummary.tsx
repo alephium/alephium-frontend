@@ -17,8 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/sdk'
+import { Skeleton } from 'moti/skeleton'
 import { useState } from 'react'
-import { ActivityIndicator, Pressable, StyleProp, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -56,33 +57,31 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
 
   return (
     <View style={style}>
-      {showActivityIndicator ? (
-        <ActivityIndicator size="large" color={theme.font.primary} />
-      ) : (
-        <>
-          <Label color="tertiary" semiBold>
-            {dateLabel}
-          </Label>
-          <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
-          {hasHistoricBalances && worthInBeginningOfChart !== undefined && (
-            <Row>
-              <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={totalAmountWorth} />
-              <ChartLengthBadges>
-                {chartLengths.map((length) => {
-                  const isActive = length === chartLength
+      <Label color="tertiary" semiBold>
+        {dateLabel}
+      </Label>
+      <Skeleton show={showActivityIndicator} colorMode={theme.name} width={150}>
+        <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+      </Skeleton>
+      {hasHistoricBalances && worthInBeginningOfChart !== undefined && (
+        <Row>
+          <Skeleton show={showActivityIndicator} colorMode={theme.name}>
+            <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={totalAmountWorth} />
+          </Skeleton>
+          <ChartLengthBadges>
+            {chartLengths.map((length) => {
+              const isActive = length === chartLength
 
-                  return (
-                    <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
-                      <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
-                        {length.toUpperCase()}
-                      </AppText>
-                    </ChartLengthButton>
-                  )
-                })}
-              </ChartLengthBadges>
-            </Row>
-          )}
-        </>
+              return (
+                <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
+                  <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
+                    {length.toUpperCase()}
+                  </AppText>
+                </ChartLengthButton>
+              )
+            })}
+          </ChartLengthBadges>
+        </Row>
       )}
 
       <ChartContainer>
@@ -110,7 +109,6 @@ const ChartContainer = styled.View`
 const ChartLengthBadges = styled.View`
   flex-direction: row;
   gap: 12px;
-  margin: 10px 0;
 `
 
 const ChartLengthButton = styled(Pressable)<{ isActive?: boolean }>`
@@ -125,4 +123,5 @@ const ChartLengthButton = styled(Pressable)<{ isActive?: boolean }>`
 const Row = styled.View`
   flex-direction: row;
   gap: 24px;
+  margin: 10px 0;
 `
