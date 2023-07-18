@@ -43,6 +43,7 @@ const UnknownTokensListItem = ({ entry }: UnknownTokensListItemProps) => {
     <ListItem
       title="Unknown tokens"
       icon={<AssetLogo assetId="" size={38} />}
+      hideSeparator
       rightSideContent={<AppText bold>{entry.numberOfUnknownTokens}</AppText>}
       subtitle={
         entry.addressHash ? (

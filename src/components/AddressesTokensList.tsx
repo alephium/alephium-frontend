@@ -87,7 +87,9 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
           <TokenListItem
             key={entry.id}
             asset={entry}
-            hideSeparator={index === knownFungibleTokens.length - 1 || (index + 1) % 3 === 0}
+            hideSeparator={
+              (index === knownFungibleTokens.length - 1 && unknownTokens.length === 0) || (index + 1) % 3 === 0
+            }
           />
         ) : (
           <UnknownTokensListItem entry={entry} key="unknown-tokens" />

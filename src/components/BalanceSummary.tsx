@@ -31,6 +31,7 @@ import { selectAddressesHaveHistoricBalances } from '~/store/addresses/addresses
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { ChartLength, chartLengths, DataPoint } from '~/types/charts'
+import { NetworkStatus } from '~/types/network'
 import { currencies } from '~/utils/currencies'
 
 interface BalanceSummaryProps {
@@ -41,6 +42,8 @@ interface BalanceSummaryProps {
 const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
+  const networkStatus = useAppSelector((s) => s.network.status)
+  const networkName = useAppSelector((s) => s.network.name)
   const { data: price, isLoading: isPriceLoading } = useGetPriceQuery(currencies[currency].ticker, {
     pollingInterval: 60000,
     skip: totalBalance === BigInt(0)
@@ -57,9 +60,15 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
 
   return (
     <View style={style}>
-      <Label color="tertiary" semiBold>
-        {dateLabel}
-      </Label>
+      <SurfaceHeader>
+        <AppText color="tertiary" semiBold>
+          {dateLabel}
+        </AppText>
+        <ActiveNetwork>
+          <NetworkStatusBullet status={networkStatus} />
+          <AppText color="primary">{networkName}</AppText>
+        </ActiveNetwork>
+      </SurfaceHeader>
       <Skeleton show={showActivityIndicator} colorMode={theme.name} width={150}>
         <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
       </Skeleton>
@@ -98,10 +107,6 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
 
 export default BalanceSummary
 
-const Label = styled(AppText)`
-  margin-bottom: 14px;
-`
-
 const ChartContainer = styled.View`
   margin: 0 -35px;
 `
@@ -124,4 +129,27 @@ const Row = styled.View`
   flex-direction: row;
   gap: 24px;
   margin: 10px 0;
+`
+
+const SurfaceHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 9px;
+`
+
+const ActiveNetwork = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border-radius: 33px;
+  background-color: ${({ theme }) => theme.bg.back1};
+`
+
+const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
+  height: 7px;
+  width: 7px;
+  border-radius: 10px;
+  background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
 `

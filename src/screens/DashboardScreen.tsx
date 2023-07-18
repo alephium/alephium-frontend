@@ -33,7 +33,6 @@ import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
-import { NetworkStatus } from '~/types/network'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
   style?: StyleProp<ViewStyle>
@@ -44,9 +43,6 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const theme = useTheme()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loading)
-  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-  const networkStatus = useAppSelector((s) => s.network.status)
-  const networkName = useAppSelector((s) => s.network.name)
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
@@ -55,16 +51,6 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   return (
     <DashboardScreenStyled refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
       <ScreenSectionStyled>
-        <SurfaceHeader>
-          <WalletName color="primary" semiBold size={30} numberOfLines={1}>
-            {activeWalletName}
-          </WalletName>
-          <ActiveNetwork>
-            <NetworkStatusBullet status={networkStatus} />
-            <AppText color="primary">{networkName}</AppText>
-          </ActiveNetwork>
-        </SurfaceHeader>
-
         <BalanceSummaryStyled dateLabel="VALUE TODAY" />
       </ScreenSectionStyled>
       <ScreenSection>
@@ -96,37 +82,11 @@ const DashboardScreenStyled = styled(ScrollScreen)`
 
 const ScreenSectionStyled = styled(ScreenSection)`
   padding-bottom: 0;
-`
-
-const SurfaceHeader = styled.View`
-  padding: 15px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`
-
-const ActiveNetwork = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 8px;
-  border-radius: 33px;
-  background-color: ${({ theme }) => theme.bg.back1};
-`
-
-const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
-  height: 7px;
-  width: 7px;
-  border-radius: 10px;
-  background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
+  padding-top: 0;
 `
 
 const BalanceSummaryStyled = styled(BalanceSummary)`
-  padding: 34px 15px 0px;
-`
-
-const WalletName = styled(AppText)`
-  max-width: 70%;
+  padding: 0px 15px 0px;
 `
 
 const ButtonsRow = styled.View`

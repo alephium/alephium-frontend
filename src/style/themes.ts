@@ -51,7 +51,7 @@ export const lightTheme: DefaultTheme = {
   global: {
     accent: '#3A7AF4',
     alert: '#ed4a34',
-    valid: '#19b660',
+    valid: '#2DA023',
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#b07dcb'
