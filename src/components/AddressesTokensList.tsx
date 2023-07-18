@@ -24,12 +24,17 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Carousel from '~/components/Carousel'
+import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesAssets, selectAllAddresses } from '~/store/addressesSlice'
+import {
+  makeSelectAddressesCheckedUnknownTokens,
+  makeSelectAddressesKnownFungibleTokens,
+  selectAllAddresses
+} from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 
 import { ScreenSection } from './layout/Screen'
-import TokenInfo from './TokenInfo'
+import TokenListItem from './TokenListItem'
 
 interface AddressesTokensListProps {
   addresses?: Address[]
@@ -41,18 +46,26 @@ const PAGE_SIZE = 3
 const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesTokensListProps) => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const addresses = addressesParam ?? allAddresses
-  const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
-  const assets = useAppSelector((s) =>
-    selectAddressesAssets(
-      s,
-      addresses.map(({ hash }) => hash)
-    )
-  )
+  const addressHashes = addresses.map(({ hash }) => hash)
+  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
+  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
+  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHashes))
 
   const [carouselItemHeight, setCarouselItemHeight] = useState(258)
   const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
 
-  const assetsChunked = chunk(assets, PAGE_SIZE)
+  const entries =
+    unknownTokens.length > 0
+      ? [
+          ...knownFungibleTokens,
+          {
+            numberOfUnknownTokens: unknownTokens.length,
+            addressHash: addresses.length === 1 ? addresses[0].hash : undefined
+          }
+        ]
+      : knownFungibleTokens
+  const entriesChunked = chunk(entries, PAGE_SIZE)
 
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
     const newCarouselItemHeight = event.nativeEvent.layout.height
@@ -63,17 +76,25 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
     }
   }
 
-  const renderCarouselItem = ({ item }: { item: Asset[] }) => (
+  const renderCarouselItem = ({ item }: { item: (Asset | UnknownTokensEntry)[] }) => (
     <View onLayout={onLayoutCarouselItem}>
-      {item.map((asset, index) => (
-        <TokenInfo key={asset.id} asset={asset} hideSeparator={index === assets.length - 1 || (index + 1) % 3 === 0} />
-      ))}
+      {item.map((entry, index) =>
+        isAsset(entry) ? (
+          <TokenListItem
+            key={entry.id}
+            asset={entry}
+            hideSeparator={index === knownFungibleTokens.length - 1 || (index + 1) % 3 === 0}
+          />
+        ) : (
+          <UnknownTokensListItem entry={entry} key="unknown-tokens" />
+        )
+      )}
     </View>
   )
 
   return (
     <View style={style}>
-      {assetsChunked.length > 1 && (
+      {entriesChunked.length > 1 && (
         <>
           <ScreenSection>
             <TitleRow>
@@ -83,7 +104,7 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
             </TitleRow>
           </ScreenSection>
           <Carousel
-            data={assetsChunked}
+            data={entriesChunked}
             renderItem={renderCarouselItem}
             padding={20}
             distance={10}
@@ -91,7 +112,7 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
           />
         </>
       )}
-      {assetsChunked.length === 1 && (
+      {entriesChunked.length === 1 && (
         <ScreenSection>
           <TitleRow>
             <AppText semiBold size={18}>
@@ -99,7 +120,7 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
             </AppText>
           </TitleRow>
 
-          {renderCarouselItem({ item: assetsChunked[0] })}
+          {renderCarouselItem({ item: entriesChunked[0] })}
         </ScreenSection>
       )}
     </View>
@@ -113,3 +134,5 @@ const TitleRow = styled.View`
   border-bottom-width: 1px;
   border-color: ${({ theme }) => theme.border.secondary};
 `
+
+const isAsset = (item: Asset | UnknownTokensEntry): item is Asset => !!(item as Asset).id

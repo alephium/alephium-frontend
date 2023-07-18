@@ -20,15 +20,17 @@ import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { isEnrolledAsync } from 'expo-local-authentication'
 import { StatusBar } from 'expo-status-bar'
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { difference } from 'lodash'
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
+import client from '~/api/client'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import useInitializeClient from '~/hooks/useInitializeClient'
+import useInterval from '~/hooks/useInterval'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
@@ -40,7 +42,16 @@ import {
   rememberActiveWallet
 } from '~/persistent-storage/wallets'
 import { biometricsDisabled, walletUnlocked } from '~/store/activeWalletSlice'
+import {
+  makeSelectAddressesUnknownTokens,
+  selectAllAddresses,
+  syncAddressesData,
+  syncAddressesHistoricBalances
+} from '~/store/addressesSlice'
 import { appBecameInactive } from '~/store/appSlice'
+import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
+import { selectIsTokensMetadataUninitialized } from '~/store/assets/assetsSelectors'
+import { apiClientInitFailed, apiClientInitSucceeded } from '~/store/networkSlice'
 import { store } from '~/store/store'
 import { themes } from '~/style/themes'
 import { navigateRootStack, resetNavigationState, setNavigationState } from '~/utils/navigation'
@@ -94,9 +105,71 @@ const Main = ({ children }: { children: ReactNode }) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
+  const network = useAppSelector((s) => s.network)
+  const addresses = useAppSelector(selectAllAddresses)
+  const assetsInfo = useAppSelector((s) => s.assetsInfo)
+  const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
+  const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
 
-  useInitializeClient()
+  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
+  const unknownTokens = useAppSelector(selectAddressesUnknownTokens)
+  const checkedUnknownTokenIds = useAppSelector((s) => s.assetsInfo.checkedUnknownTokenIds)
+  const unknownTokenIds = unknownTokens.map((token) => token.id)
+  const newUnknownTokens = difference(unknownTokenIds, checkedUnknownTokenIds)
+
   useLoadStoredSettings()
+
+  const initializeClient = useCallback(async () => {
+    try {
+      client.init(network.settings.nodeHost, network.settings.explorerApiHost)
+      const { networkId } = await client.node.infos.getInfosChainParams()
+      // TODO: Check if connection to explorer also works
+      dispatch(apiClientInitSucceeded({ networkId, networkName: network.name }))
+      console.log(`Client initialized. Current network: ${network.name}`)
+    } catch (e) {
+      dispatch(apiClientInitFailed())
+      console.error('Could not connect to network: ', network.name)
+      console.error(e)
+    }
+  }, [network.settings.nodeHost, network.settings.explorerApiHost, network.name, dispatch])
+
+  useEffect(() => {
+    if (network.status === 'connecting') {
+      initializeClient()
+    }
+  }, [initializeClient, network.status])
+
+  const shouldInitialize = network.status === 'offline'
+  useInterval(initializeClient, 2000, !shouldInitialize)
+
+  useEffect(() => {
+    if (network.status === 'online') {
+      if (assetsInfo.status === 'uninitialized' && !isLoadingTokensMetadata) {
+        dispatch(syncNetworkTokensInfo())
+      }
+      if (addressesStatus === 'uninitialized') {
+        if (!isSyncingAddressData && addresses.length > 0) {
+          dispatch(syncAddressesData())
+          dispatch(syncAddressesHistoricBalances())
+        }
+      } else if (addressesStatus === 'initialized') {
+        if (!isTokensMetadataUninitialized && !isLoadingTokensMetadata && newUnknownTokens.length > 0) {
+          dispatch(syncUnknownTokensInfo(newUnknownTokens))
+        }
+      }
+    }
+  }, [
+    addresses.length,
+    addressesStatus,
+    assetsInfo.status,
+    dispatch,
+    isLoadingTokensMetadata,
+    isSyncingAddressData,
+    isTokensMetadataUninitialized,
+    network.status,
+    newUnknownTokens
+  ])
 
   const unlockActiveWallet = useCallback(async () => {
     if (activeWalletMnemonic) return

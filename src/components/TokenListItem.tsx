@@ -23,14 +23,14 @@ import Amount from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
 import ListItem from '~/components/ListItem'
 
-interface TokenInfoProps {
+interface TokenListItemProps {
   asset: Asset
   isLast?: boolean
   style?: StyleProp<ViewStyle>
   hideSeparator?: boolean
 }
 
-const TokenInfo = ({ asset, isLast, style, hideSeparator }: TokenInfoProps) => (
+const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemProps) => (
   <ListItem
     style={style}
     isLast={isLast}
@@ -42,7 +42,7 @@ const TokenInfo = ({ asset, isLast, style, hideSeparator }: TokenInfoProps) => (
   />
 )
 
-export default TokenInfo
+export default TokenListItem
 
 const AmountStyled = styled(Amount)`
   flex-shrink: 0;

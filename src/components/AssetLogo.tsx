@@ -17,10 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH, TokenInfo } from '@alephium/token-list'
-import { Ghost } from 'lucide-react-native'
+import { HelpCircle } from 'lucide-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
+import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import { selectAssetInfoById } from '~/store/assets/assetsSelectors'
@@ -33,21 +34,18 @@ interface AssetLogoProps {
 
 const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
   const theme = useTheme()
-  const asset = useAppSelector((state) => selectAssetInfoById(state, assetId)) ?? {
-    id: assetId,
-    symbol: undefined,
-    name: undefined,
-    logoURI: undefined
-  }
+  const asset = useAppSelector((state) => selectAssetInfoById(state, assetId))
 
   return (
-    <AssetLogoStyled {...{ assetId, style, size }} logoURI={asset.logoURI}>
-      {asset.logoURI ? (
-        <LogoImage source={{ uri: asset.logoURI }} />
-      ) : asset.id === ALPH.id ? (
+    <AssetLogoStyled {...{ assetId, style, size }} logoURI={asset?.logoURI}>
+      {asset?.logoURI ? (
+        <LogoImage source={{ uri: asset?.logoURI }} />
+      ) : asset?.id === ALPH.id ? (
         <AlephiumLogo color={theme.font.tertiary} />
+      ) : asset?.name ? (
+        <Initials size={size * 0.45}>{asset.name.slice(0, 2)}</Initials>
       ) : (
-        <Ghost size={size * 0.7} color={theme.font.secondary} />
+        <HelpCircle size={size * 0.7} color={theme.font.secondary} />
       )}
     </AssetLogoStyled>
   )
@@ -77,4 +75,8 @@ const AssetLogoStyled = styled.View<AssetLogoProps & { logoURI: TokenInfo['logoU
 const LogoImage = styled.Image`
   width: 100%;
   height: 100%;
+`
+
+const Initials = styled(AppText)<{ size: number }>`
+  text-transform: uppercase;
 `
