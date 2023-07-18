@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset } from '@alephium/sdk'
 import { chunk } from 'lodash'
 import { useMemo, useState } from 'react'
-import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { FlatList, LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
+import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Carousel from '~/components/Carousel'
@@ -29,8 +29,10 @@ import { useAppSelector } from '~/hooks/redux'
 import {
   makeSelectAddressesCheckedUnknownTokens,
   makeSelectAddressesKnownFungibleTokens,
+  makeSelectAddressesNFTs,
   selectAllAddresses
 } from '~/store/addressesSlice'
+import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 
 import { ScreenSection } from './layout/Screen'
@@ -51,6 +53,8 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
   const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHashes))
+  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHashes))
 
   const [carouselItemHeight, setCarouselItemHeight] = useState(258)
   const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
@@ -123,6 +127,25 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
           {renderCarouselItem({ item: entriesChunked[0] })}
         </ScreenSection>
       )}
+
+      {nfts.length > 0 && (
+        <>
+          <ScreenSection>
+            <TitleRow>
+              <AppText semiBold size={18}>
+                NFTs
+              </AppText>
+            </TitleRow>
+          </ScreenSection>
+          <FlatList
+            horizontal
+            data={nfts}
+            renderItem={({ item: nft, index }) => (
+              <NFTThumbnail source={{ uri: nft.image }} isFirst={index === 0} isLast={index === nfts.length - 1} />
+            )}
+          />
+        </>
+      )}
     </View>
   )
 }
@@ -133,6 +156,25 @@ const TitleRow = styled.View`
   padding-bottom: 12px;
   border-bottom-width: 1px;
   border-color: ${({ theme }) => theme.border.secondary};
+`
+
+const NFTThumbnail = styled.Image<{ isFirst: boolean; isLast: boolean }>`
+  width: 100px;
+  height: 100px;
+  border-radius: ${BORDER_RADIUS_SMALL}px;
+  margin: 16px 10px 16px 0;
+
+  ${({ isFirst }) =>
+    isFirst &&
+    css`
+      margin-left: 20px;
+    `}
+
+  ${({ isLast }) =>
+    isLast &&
+    css`
+      margin-right: 20px;
+    `}
 `
 
 const isAsset = (item: Asset | UnknownTokensEntry): item is Asset => !!(item as Asset).id
