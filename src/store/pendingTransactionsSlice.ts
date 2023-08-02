@@ -21,7 +21,7 @@ import { createEntityAdapter, createSelector, createSlice, EntityState, PayloadA
 
 import {
   selectAllAddresses,
-  syncAddressesData,
+  syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage,
   transactionSent
@@ -49,7 +49,7 @@ const pendingTransactionsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(transactionSent, pendingTransactionsAdapter.addOne)
-      .addCase(syncAddressesData.fulfilled, removeTransactions)
+      .addCase(syncAddressesTransactions.fulfilled, removeTransactions)
       .addCase(syncAddressTransactionsNextPage.fulfilled, removeTransactions)
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, removeTransactions)
   }

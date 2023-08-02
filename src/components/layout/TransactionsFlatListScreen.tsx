@@ -60,7 +60,7 @@ const TransactionsFlatList = ({
 }: TransactionsFlatListProps) => {
   const theme = useTheme()
   const dispatch = useAppDispatch()
-  const isLoading = useAppSelector((s) => s.addresses.loading)
+  const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
 

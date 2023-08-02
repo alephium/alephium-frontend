@@ -21,12 +21,12 @@ import { createEntityAdapter, createSelector, createSlice, EntityState, PayloadA
 
 import {
   selectAllAddresses,
-  syncAddressesData,
+  syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
-import { AddressDataSyncResult, AddressHash } from '~/types/addresses'
+import { AddressHash, AddressTransactionsSyncResult } from '~/types/addresses'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { selectAddressTransactions, selectContactConfirmedTransactions } from '~/utils/addresses'
 
@@ -53,7 +53,7 @@ const confirmedTransactionsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncAddressesData.fulfilled, addTransactions)
+      .addCase(syncAddressesTransactions.fulfilled, addTransactions)
       .addCase(syncAddressTransactionsNextPage.fulfilled, addTransactions)
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, action) => {
         const { transactions, pageLoaded } = action.payload
@@ -100,7 +100,7 @@ export default confirmedTransactionsSlice
 // TODO: Same as in desktop wallet, move to SDK?
 const addTransactions = (
   state: ConfirmedTransactionsState,
-  action: PayloadAction<AddressDataSyncResult[] | { transactions: explorer.Transaction[] } | undefined>
+  action: PayloadAction<AddressTransactionsSyncResult[] | { transactions: explorer.Transaction[] } | undefined>
 ) => {
   const transactions = Array.isArray(action.payload)
     ? action.payload.flatMap((address) => address.transactions)

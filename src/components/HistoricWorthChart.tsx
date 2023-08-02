@@ -25,7 +25,7 @@ import { useTheme } from 'styled-components/native'
 import { VictoryArea } from 'victory-native'
 
 import { useAppSelector } from '~/hooks/redux'
-import { selectHaveHistoricBalancesLoaded, selectIsStateUninitialized } from '~/store/addresses/addressesSelectors'
+import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { HistoricalPriceResult, useGetHistoricalPriceQuery } from '~/store/assets/priceApiSlice'
 import { Address } from '~/types/addresses'
@@ -59,14 +59,13 @@ const HistoricWorthChart = ({
   const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
   const addresses = useAppSelector(selectAllAddresses)
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
 
   const startingDate = startingDates[length].format('YYYY-MM-DD')
   const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
   const filteredChartData = getFilteredChartData(chartData, startingDate)
-  const firstItem = filteredChartData.at(0)
+  const firstItem = filteredChartData.length > 0 ? filteredChartData[0] : undefined
 
   useEffect(() => {
     onWorthInBeginningOfChartChange(firstItem?.worth)
@@ -79,7 +78,7 @@ const HistoricWorthChart = ({
   if (!isDataAvailable || chartData.length <= 2 || !firstItem) return null
 
   const worthHasGoneUp = firstItem.worth < latestWorth
-  const chartColor = stateUninitialized ? theme.font.tertiary : worthHasGoneUp ? theme.global.valid : theme.global.alert
+  const chartColor = worthHasGoneUp ? theme.global.valid : theme.global.alert
 
   const data = filteredChartData.map(({ date, worth }) => ({
     x: date,

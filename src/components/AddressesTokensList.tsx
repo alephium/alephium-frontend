@@ -18,9 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Asset } from '@alephium/sdk'
 import { chunk } from 'lodash'
-import { useMemo, useState } from 'react'
+import { Skeleton } from 'moti/skeleton'
+import { useEffect, useMemo, useState } from 'react'
 import { FlatList, LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Carousel from '~/components/Carousel'
@@ -29,47 +30,60 @@ import { useAppSelector } from '~/hooks/redux'
 import {
   makeSelectAddressesCheckedUnknownTokens,
   makeSelectAddressesKnownFungibleTokens,
-  makeSelectAddressesNFTs,
-  selectAllAddresses
+  makeSelectAddressesNFTs
 } from '~/store/addressesSlice'
 import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
-import { Address } from '~/types/addresses'
+import { AddressHash } from '~/types/addresses'
 
 import { ScreenSection } from './layout/Screen'
 import TokenListItem from './TokenListItem'
 
 interface AddressesTokensListProps {
-  addresses?: Address[]
+  address?: AddressHash
   style?: StyleProp<ViewStyle>
 }
 
+type LoadingIndicator = {
+  isLoadingTokens: boolean
+}
+
+type CarouselPageEntry = Asset | UnknownTokensEntry | LoadingIndicator
+
 const PAGE_SIZE = 3
 
-const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesTokensListProps) => {
-  const allAddresses = useAppSelector(selectAllAddresses)
-  const addresses = addressesParam ?? allAddresses
-  const addressHashes = addresses.map(({ hash }) => hash)
+const AddressesTokensList = ({ address: addressParam, style }: AddressesTokensListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressParam))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHashes))
+  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressParam))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHashes))
+  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressParam))
+  const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
+  const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const theme = useTheme()
 
   const [carouselItemHeight, setCarouselItemHeight] = useState(258)
   const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
+  const [carouselData, setCarouselData] = useState<CarouselPageEntry[][]>([])
 
-  const entries =
-    unknownTokens.length > 0
-      ? [
-          ...knownFungibleTokens,
-          {
-            numberOfUnknownTokens: unknownTokens.length,
-            addressHash: addresses.length === 1 ? addresses[0].hash : undefined
-          }
-        ]
-      : knownFungibleTokens
-  const entriesChunked = chunk(entries, PAGE_SIZE)
+  useEffect(() => {
+    const entries: CarouselPageEntry[] = [
+      ...knownFungibleTokens,
+      ...(unknownTokens.length > 0
+        ? [
+            {
+              numberOfUnknownTokens: unknownTokens.length,
+              addressHash: addressParam
+            }
+          ]
+        : []),
+      ...(isLoadingTokenBalances || isLoadingTokensMetadata ? [{ isLoadingTokens: true }] : [])
+    ]
+
+    const entriesChunked = chunk(entries, PAGE_SIZE)
+
+    setCarouselData(entriesChunked)
+  }, [addressParam, isLoadingTokenBalances, isLoadingTokensMetadata, knownFungibleTokens, unknownTokens.length])
 
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
     const newCarouselItemHeight = event.nativeEvent.layout.height
@@ -80,7 +94,7 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
     }
   }
 
-  const renderCarouselItem = ({ item }: { item: (Asset | UnknownTokensEntry)[] }) => (
+  const renderCarouselItem = ({ item }: { item: CarouselPageEntry[] }) => (
     <View onLayout={onLayoutCarouselItem}>
       {item.map((entry, index) =>
         isAsset(entry) ? (
@@ -91,8 +105,13 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
               (index === knownFungibleTokens.length - 1 && unknownTokens.length === 0) || (index + 1) % 3 === 0
             }
           />
-        ) : (
+        ) : isUnknownTokens(entry) ? (
           <UnknownTokensListItem entry={entry} key="unknown-tokens" />
+        ) : (
+          <LoadingRow key="loading">
+            <Skeleton show colorMode={theme.name} width={36} height={36} radius="round" />
+            <Skeleton show colorMode={theme.name} width={200} height={36} />
+          </LoadingRow>
         )
       )}
     </View>
@@ -100,7 +119,7 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
 
   return (
     <View style={style}>
-      {entriesChunked.length > 1 && (
+      {carouselData.length > 1 && (
         <>
           <ScreenSection>
             <TitleRow>
@@ -110,7 +129,7 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
             </TitleRow>
           </ScreenSection>
           <Carousel
-            data={entriesChunked}
+            data={carouselData}
             renderItem={renderCarouselItem}
             padding={20}
             distance={10}
@@ -118,7 +137,7 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
           />
         </>
       )}
-      {entriesChunked.length === 1 && (
+      {carouselData.length === 1 && (
         <ScreenSection>
           <TitleRow>
             <AppText semiBold size={18}>
@@ -126,7 +145,7 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
             </AppText>
           </TitleRow>
 
-          {renderCarouselItem({ item: entriesChunked[0] })}
+          {renderCarouselItem({ item: carouselData[0] })}
         </ScreenSection>
       )}
 
@@ -179,4 +198,14 @@ const NFTThumbnail = styled.Image<{ isFirst: boolean; isLast: boolean }>`
     `}
 `
 
-const isAsset = (item: Asset | UnknownTokensEntry): item is Asset => !!(item as Asset).id
+const LoadingRow = styled.View`
+  flex-direction: row;
+  gap: 15px;
+  align-items: flex-start;
+  padding-top: 16px;
+`
+
+const isAsset = (item: CarouselPageEntry): item is Asset => !!(item as Asset).id
+
+const isUnknownTokens = (item: CarouselPageEntry): item is UnknownTokensEntry =>
+  !!(item as UnknownTokensEntry).numberOfUnknownTokens

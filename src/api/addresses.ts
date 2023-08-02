@@ -20,18 +20,20 @@ import { explorer } from '@alephium/web3'
 import dayjs from 'dayjs'
 
 import client from '~/api/client'
-import { Address, AddressDataSyncResult, AddressesHistoricalBalanceResult, AddressHash } from '~/types/addresses'
+import {
+  Address,
+  AddressBalancesSyncResult,
+  AddressesHistoricalBalanceResult,
+  AddressHash,
+  AddressTokensSyncResult,
+  AddressTransactionsSyncResult
+} from '~/types/addresses'
 import { CHART_DATE_FORMAT } from '~/utils/constants'
 
-// TODO: Same as in desktop wallet, move to SDK?
-export const fetchAddressesData = async (addressHashes: AddressHash[]): Promise<AddressDataSyncResult[]> => {
+export const fetchAddressesTokens = async (addressHashes: AddressHash[]): Promise<AddressTokensSyncResult[]> => {
   const results = []
 
   for (const addressHash of addressHashes) {
-    const balances = await client.explorer.addresses.getAddressesAddressBalance(addressHash)
-    const txNumber = await client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
-    const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
-    const mempoolTransactions = await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
     const tokenIds = await client.explorer.addresses.getAddressesAddressTokens(addressHash)
 
     const tokens = await Promise.all(
@@ -45,13 +47,43 @@ export const fetchAddressesData = async (addressHashes: AddressHash[]): Promise<
 
     results.push({
       hash: addressHash,
-      details: {
-        ...balances,
-        txNumber
-      },
-      transactions,
-      mempoolTransactions,
       tokens
+    })
+  }
+
+  return results
+}
+
+export const fetchAddressesTransactions = async (
+  addressHashes: AddressHash[]
+): Promise<AddressTransactionsSyncResult[]> => {
+  const results = []
+
+  for (const addressHash of addressHashes) {
+    const txNumber = await client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
+    const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
+    const mempoolTransactions = await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
+
+    results.push({
+      hash: addressHash,
+      txNumber,
+      transactions,
+      mempoolTransactions
+    })
+  }
+
+  return results
+}
+
+export const fetchAddressesBalances = async (addressHashes: AddressHash[]): Promise<AddressBalancesSyncResult[]> => {
+  const results = []
+
+  for (const addressHash of addressHashes) {
+    const balances = await client.explorer.addresses.getAddressesAddressBalance(addressHash)
+
+    results.push({
+      hash: addressHash,
+      ...balances
     })
   }
 

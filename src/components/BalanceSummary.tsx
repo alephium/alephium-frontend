@@ -27,7 +27,10 @@ import AppText from '~/components/AppText'
 import DeltaPercentage from '~/components/DeltaPercentage'
 import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
-import { selectAddressesHaveHistoricBalances } from '~/store/addresses/addressesSelectors'
+import {
+  selectAddressesHaveHistoricBalances,
+  selectHaveHistoricBalancesLoaded
+} from '~/store/addresses/addressesSelectors'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { ChartLength, chartLengths, DataPoint } from '~/types/charts'
@@ -48,7 +51,8 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
     pollingInterval: 60000,
     skip: totalBalance === BigInt(0)
   })
-  const addressDataStatus = useAppSelector((s) => s.addresses.status)
+  const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
+  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const hasHistoricBalances = useAppSelector(selectAddressesHaveHistoricBalances)
   const theme = useTheme()
 
@@ -56,7 +60,6 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
 
   const totalAmountWorth = calculateAmountWorth(totalBalance, price ?? 0)
-  const showActivityIndicator = isPriceLoading || addressDataStatus === 'uninitialized'
 
   return (
     <View style={style}>
@@ -69,13 +72,13 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
           <AppText color="primary">{networkName}</AppText>
         </ActiveNetwork>
       </SurfaceHeader>
-      <Skeleton show={showActivityIndicator} colorMode={theme.name} width={150}>
+      <Skeleton show={isPriceLoading || isLoadingBalances} colorMode={theme.name} width={150}>
         <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
       </Skeleton>
-      {hasHistoricBalances && worthInBeginningOfChart !== undefined && (
+      {(!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart !== undefined)) && (
         <Row>
-          <Skeleton show={showActivityIndicator} colorMode={theme.name}>
-            <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={totalAmountWorth} />
+          <Skeleton show={!haveHistoricBalancesLoaded} colorMode={theme.name}>
+            <DeltaPercentage initialValue={worthInBeginningOfChart || 0} latestValue={totalAmountWorth} />
           </Skeleton>
           <ChartLengthBadges>
             {chartLengths.map((length) => {

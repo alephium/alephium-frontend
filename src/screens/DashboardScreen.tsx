@@ -42,7 +42,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const isLoading = useAppSelector((s) => s.addresses.loading)
+  const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))

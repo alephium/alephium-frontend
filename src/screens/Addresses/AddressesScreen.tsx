@@ -41,7 +41,7 @@ interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackP
 
 const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const isLoading = useAppSelector((s) => s.addresses.loading)
+  const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
@@ -96,7 +96,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
               />
             }
           />
-          {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
+          {selectedAddress && <AddressesTokensList address={selectedAddress.hash} />}
         </ScreenContent>
       </ScrollScreenStyled>
       <FloatingButton
