@@ -53,6 +53,7 @@ import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '~/store/assets/ass
 import { selectIsTokensMetadataUninitialized } from '~/store/assets/assetsSelectors'
 import { apiClientInitFailed, apiClientInitSucceeded } from '~/store/networkSlice'
 import { store } from '~/store/store'
+import { makeSelectAddressesHashesWithPendingTransactions } from '~/store/transactions/transactionSelectors'
 import { themes } from '~/style/themes'
 import { navigateRootStack, resetNavigationState, setNavigationState } from '~/utils/navigation'
 
@@ -111,6 +112,8 @@ const Main = ({ children }: { children: ReactNode }) => {
   const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
   const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
+  const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
+  const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const unknownTokens = useAppSelector(selectAddressesUnknownTokens)
@@ -170,6 +173,12 @@ const Main = ({ children }: { children: ReactNode }) => {
     network.status,
     newUnknownTokens
   ])
+
+  const refreshAddressesData = useCallback(() => {
+    dispatch(syncAddressesData(addressesWithPendingTxs))
+  }, [dispatch, addressesWithPendingTxs])
+
+  useInterval(refreshAddressesData, 5000, addressesWithPendingTxs.length === 0 || isSyncingAddressData)
 
   const unlockActiveWallet = useCallback(async () => {
     if (activeWalletMnemonic) return

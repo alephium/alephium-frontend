@@ -112,7 +112,7 @@ export const syncAddressesTokens = createAsyncThunk(
 export const syncAddressTransactionsNextPage = createAsyncThunk(
   'addresses/syncAddressTransactionsNextPage',
   async (payload: AddressHash, { getState, dispatch }) => {
-    dispatch(loadingStarted())
+    dispatch(transactionsLoadingStarted())
 
     const state = getState() as RootState
     const address = selectAddressByHash(state, payload)
@@ -127,7 +127,7 @@ export const syncAddressTransactionsNextPage = createAsyncThunk(
 export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   'addresses/syncAllAddressesTransactionsNextPage',
   async (_, { getState, dispatch }): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
-    dispatch(loadingStarted())
+    dispatch(transactionsLoadingStarted())
 
     const state = getState() as RootState
     const addresses = selectAllAddresses(state)
@@ -217,10 +217,8 @@ const addressesSlice = createSlice({
 
       address.transactions.push(pendingTransaction.hash)
     },
-    loadingStarted: (state) => {
-      state.loadingBalances = true
+    transactionsLoadingStarted: (state) => {
       state.loadingTransactions = true
-      state.loadingTokens = true
     }
   },
   extraReducers: (builder) => {
@@ -515,7 +513,7 @@ export const {
   defaultAddressChanged,
   addressSettingsSaved,
   transactionSent,
-  loadingStarted
+  transactionsLoadingStarted
 } = addressesSlice.actions
 
 export default addressesSlice
