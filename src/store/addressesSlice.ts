@@ -75,7 +75,7 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
 export const syncAddressesData = createAsyncThunk(
   `${sliceName}/syncAddressesData`,
   async (payload: AddressHash | AddressHash[] | undefined, { getState, dispatch }) => {
-    dispatch(loadingStarted())
+    dispatch(syncingAddressDataStarted())
 
     const state = getState() as RootState
     const addresses =
