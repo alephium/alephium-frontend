@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
-import { SendContextProvider } from '~/contexts/SendContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressScreen from '~/screens/SendReceive/Receive/AddressScreen'
 import QRCodeScreen from '~/screens/SendReceive/Receive/QRCodeScreen'
@@ -33,12 +32,10 @@ export interface ReceiveNavigationParamList extends ParamListBase {
 const ReceiveStack = createStackNavigator<ReceiveNavigationParamList>()
 
 const ReceiveNavigation = ({ navigation }: StackScreenProps<RootStackParamList, 'ReceiveNavigation'>) => (
-  <SendContextProvider>
-    <ReceiveStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="AddressScreen">
-      <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
-      <ReceiveStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
-    </ReceiveStack.Navigator>
-  </SendContextProvider>
+  <ReceiveStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="AddressScreen">
+    <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
+    <ReceiveStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
+  </ReceiveStack.Navigator>
 )
 
 export default ReceiveNavigation
