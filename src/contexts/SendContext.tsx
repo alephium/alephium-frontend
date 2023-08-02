@@ -42,7 +42,7 @@ type BuildTransactionCallbacks = {
   onConsolidationSuccess: () => void
 }
 
-interface SendContextProps {
+interface SendContextValue {
   toAddress?: AddressHash
   setToAddress: (toAddress: AddressHash) => void
   fromAddress?: AddressHash
@@ -54,7 +54,7 @@ interface SendContextProps {
   sendTransaction: (onSendSuccess: () => void) => Promise<void>
 }
 
-const initialValues: SendContextProps = {
+const initialValues: SendContextValue = {
   toAddress: undefined,
   setToAddress: () => null,
   fromAddress: undefined,
@@ -72,9 +72,9 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const requiresAuth = useAppSelector((s) => s.settings.requireAuth)
   const dispatch = useAppDispatch()
 
-  const [toAddress, setToAddress] = useState<SendContextProps['toAddress']>(initialValues.toAddress)
-  const [fromAddress, setFromAddress] = useState<SendContextProps['fromAddress']>(initialValues.fromAddress)
-  const [assetAmounts, setAssetAmounts] = useState<SendContextProps['assetAmounts']>(initialValues.assetAmounts)
+  const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
+  const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(initialValues.fromAddress)
+  const [assetAmounts, setAssetAmounts] = useState<SendContextValue['assetAmounts']>(initialValues.assetAmounts)
   const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
 
   const [consolidationRequired, setConsolidationRequired] = useState(false)
@@ -201,7 +201,10 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         />
       )}
       {isAuthenticationModalVisible && (
-        <ConfirmWithAuthModal onConfirm={() => sendTransaction(onSendSuccessCallback)} />
+        <ConfirmWithAuthModal
+          onConfirm={() => sendTransaction(onSendSuccessCallback)}
+          onClose={() => setIsAuthenticationModalVisible(false)}
+        />
       )}
     </SendContext.Provider>
   )

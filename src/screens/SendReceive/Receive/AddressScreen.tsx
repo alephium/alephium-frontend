@@ -16,46 +16,40 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import AddressBox from '~/screens/Send/OriginScreen/AddressBox'
-import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
-import SendScreenIntro from '~/screens/Send/SendScreenIntro'
-import { selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
+import AddressBox from '~/screens/SendReceive/AddressBox'
+import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
+import { selectAllAddresses } from '~/store/addressesSlice'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'> {
+interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
-const OriginScreen = ({ navigation, style }: ScreenProps) => {
-  const { fromAddress, setFromAddress } = useSendContext()
+const AddressScreen = ({ navigation, style }: ScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
-  const defaultAddress = useAppSelector(selectDefaultAddress)
-
-  useFocusEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} />
-    })
-
-    if (!fromAddress && defaultAddress) setFromAddress(defaultAddress.hash)
-  })
 
   return (
     <ScrollScreen style={style}>
-      <SendScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
+      <ScreenIntro
+        title="Your addresses"
+        subtitle="Select the address which you want to receive funds to."
+        surtitle="RECEIVE"
+      />
       <ScreenSection>
         <AddressList>
           {addresses.map((address) => (
-            <AddressBox key={address.hash} addressHash={address.hash} />
+            <AddressBox
+              key={address.hash}
+              addressHash={address.hash}
+              onPress={() => navigation.navigate('QRCodeScreen', { addressHash: address.hash })}
+            />
           ))}
         </AddressList>
       </ScreenSection>
@@ -63,7 +57,7 @@ const OriginScreen = ({ navigation, style }: ScreenProps) => {
   )
 }
 
-export default OriginScreen
+export default AddressScreen
 
 const AddressList = styled.View`
   gap: 20px;

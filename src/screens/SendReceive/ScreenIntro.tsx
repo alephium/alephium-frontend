@@ -21,15 +21,16 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
 
-interface SendScreenIntroProps {
+interface ScreenIntroProps {
+  surtitle: 'SEND' | 'RECEIVE'
   title: string
   subtitle: string
 }
 
-const SendScreenIntro = ({ title, subtitle }: SendScreenIntroProps) => (
+const ScreenIntro = ({ surtitle, title, subtitle }: ScreenIntroProps) => (
   <ScreenSection>
     <AppText size={15} semiBold color="secondary">
-      SEND
+      {surtitle}
     </AppText>
     <Title size={32} semiBold>
       {title}
@@ -40,7 +41,7 @@ const SendScreenIntro = ({ title, subtitle }: SendScreenIntroProps) => (
   </ScreenSection>
 )
 
-export default SendScreenIntro
+export default ScreenIntro
 
 const Title = styled(AppText)`
   margin: 5px 0 22px;

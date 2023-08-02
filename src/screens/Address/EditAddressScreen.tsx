@@ -17,13 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components/native'
 
+import AppText from '~/components/AppText'
+import BottomModalHeader from '~/components/headers/BottomModalHeader'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import AddressFormScreen from '~/screens/AddressFormScreen'
+import AddressForm from '~/screens/Address/AddressForm'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { AddressSettings } from '~/types/addresses'
 
@@ -41,6 +45,21 @@ const EditAddressScreen = ({
 
   const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <BottomModalHeader>
+          <ScreenSection>
+            <BottomModalScreenTitle>Address settings</BottomModalScreenTitle>
+            <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
+              {addressHash}
+            </HashEllipsed>
+          </ScreenSection>
+        </BottomModalHeader>
+      )
+    })
+  }, [addressHash, navigation])
+
   if (!address) return null
 
   const handleSavePress = async (settings: AddressSettings) => {
@@ -57,7 +76,7 @@ const EditAddressScreen = ({
 
   return (
     <>
-      <AddressFormScreen
+      <AddressForm
         initialValues={address.settings}
         onSubmit={handleSavePress}
         buttonText="Save"
@@ -70,3 +89,8 @@ const EditAddressScreen = ({
 }
 
 export default EditAddressScreen
+
+const HashEllipsed = styled(AppText)`
+  max-width: 50%;
+  margin-top: 8px;
+`

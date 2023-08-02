@@ -26,9 +26,9 @@ import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import AssetRow from '~/screens/Send/AssetsScreen/AssetRow'
-import { BackButton, ContinueButton } from '~/screens/Send/SendScreenHeader'
-import SendScreenIntro from '~/screens/Send/SendScreenIntro'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
+import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
 import { makeSelectAddressesAssets, selectAddressByHash } from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'> {
@@ -64,7 +64,11 @@ const AssetsScreen = ({ navigation, style }: ScreenProps) => {
 
   return (
     <ScrollScreen style={style}>
-      <SendScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />
+      <ScreenIntro
+        title="Assets"
+        subtitle="With Alephium, you can send multiple assets in one transaction."
+        surtitle="SEND"
+      />
       <ScreenSection>
         <AssetsList>
           {assets.map((asset, index) => (

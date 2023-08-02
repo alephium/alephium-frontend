@@ -26,6 +26,7 @@ import Screen from '~/components/layout/Screen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { resetNavigationState } from '~/utils/navigation'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletSuccessPage'>
 
@@ -45,7 +46,7 @@ const NewWalletSuccessPage = ({ navigation }: ScreenProps) => {
       </AnimationContainer>
       <CenteredInstructions instructions={instructions} stretch fontSize={19} />
       <ActionsContainer>
-        <HighlightButton title="Let's go!" wide onPress={() => navigation.navigate('InWalletScreen')} />
+        <HighlightButton title="Let's go!" wide onPress={() => resetNavigationState()} />
       </ActionsContainer>
     </Screen>
   )

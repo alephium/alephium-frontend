@@ -41,7 +41,7 @@ const useBottomModalOptions = (options?: BottomModalOptions): StackNavigationOpt
       borderTopLeftRadius: borderRadius,
       backgroundColor: theme.bg.primary
     },
-    header: () => <BottomModalHeader />
+    header: ({ options }) => <BottomModalHeader title={options.title} />
   }
 }
 

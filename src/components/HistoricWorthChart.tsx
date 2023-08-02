@@ -92,7 +92,7 @@ const HistoricWorthChart = ({
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
             <Stop offset="0%" stopColor={chartColor} stopOpacity={0.3} />
-            <Stop offset="100%" stopColor={theme.bg.back1} />
+            <Stop offset="100%" stopColor={theme.bg.primary} />
           </LinearGradient>
         </Defs>
         <VictoryArea

@@ -18,29 +18,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import HighlightRow from '~/components/HighlightRow'
 
 interface ExpandableRowProps {
-  // TODO: Find a better way to measure the height of the collapsable section
-  expandedHeight: number
   children: ReactNode
   title?: string
   style?: StyleProp<ViewStyle>
 }
 
-const ExpandableRow = ({ expandedHeight, children, title = 'Advanced options', style }: ExpandableRowProps) => {
+const ExpandableRow = ({ children, title = 'Advanced options', style }: ExpandableRowProps) => {
   const theme = useTheme()
   const [isExpanded, setIsExpanded] = useState(false)
 
   const toggleExpanded = () => setIsExpanded(!isExpanded)
 
   const collapsableSectionStyle = useAnimatedStyle(() => ({
-    height: withTiming(isExpanded ? expandedHeight : 0)
+    opacity: withTiming(isExpanded ? 1 : 0)
   }))
 
   const chevronStyle = useAnimatedStyle(() => ({
@@ -48,20 +45,19 @@ const ExpandableRow = ({ expandedHeight, children, title = 'Advanced options', s
   }))
 
   return (
-    <HighlightRow style={style}>
+    <View style={style}>
       <Header onPress={toggleExpanded}>
         <Title>{title}</Title>
         <Animated.View style={chevronStyle}>
           <ChevronDownStyled size={20} color={theme.font.primary} />
         </Animated.View>
       </Header>
-      <CollapsableSection style={collapsableSectionStyle}>{children}</CollapsableSection>
-    </HighlightRow>
+      <Animated.View style={collapsableSectionStyle}>{children}</Animated.View>
+    </View>
   )
 }
 
 export default styled(ExpandableRow)`
-  background-color: ${({ theme }) => theme.bg.secondary};
   flex-direction: column;
   justify-content: center;
   padding-top: 0;
@@ -83,10 +79,4 @@ const Header = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
   padding: 25px 0 25px 6px;
-`
-
-const CollapsableSection = styled(Animated.View)`
-  width: 100%;
-  height: 0;
-  overflow: hidden;
 `

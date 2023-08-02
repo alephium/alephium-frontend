@@ -55,7 +55,7 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
       dispatch(mnemonicBackedUp())
     }
 
-    navigation.navigate('InWalletScreen')
+    navigation.navigate('InWalletTabsNavigation')
   }, [metadataId, dispatch, isMnemonicBackedUp, navigation])
 
   return (

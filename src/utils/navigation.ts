@@ -22,14 +22,14 @@ import { NavigationState } from '@react-navigation/routers'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-const initialNavigationState = {
+const getInitialNavigationState = (initialRouteName?: string) => ({
   index: 0,
   routes: [
     {
-      name: 'InWalletScreen'
+      name: initialRouteName || 'InWalletTabsNavigation'
     }
   ]
-}
+})
 
 // To avoid circular imports, the navigator ref is defined and exported here instead of the RootStackNavigation.tsx file
 // since the following util functions (that are used in screens imported by the RootStackNavigation) need the ref as
@@ -46,9 +46,10 @@ export const isNavStateRestorable = (state: NavigationState) => {
 }
 
 export const setNavigationState = (state: NavigationState) =>
-  rootStackNavigationRef.resetRoot(isNavStateRestorable(state) ? state : initialNavigationState)
+  rootStackNavigationRef.resetRoot(isNavStateRestorable(state) ? state : getInitialNavigationState())
 
-export const resetNavigationState = () => rootStackNavigationRef.resetRoot(initialNavigationState)
+export const resetNavigationState = (initialRouteName?: string) =>
+  rootStackNavigationRef.resetRoot(getInitialNavigationState(initialRouteName))
 
 // Navigating without the navigation prop:
 // https://reactnavigation.org/docs/navigating-without-navigation-prop

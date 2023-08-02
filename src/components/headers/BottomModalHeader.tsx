@@ -16,9 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { StackHeaderProps } from '@react-navigation/stack'
 import { ReactNode } from 'react'
 import { View } from 'react-native'
 import { useTheme } from 'styled-components/native'
+
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+
+interface BottomModalHeaderProps {
+  title?: StackHeaderProps['options']['title']
+  children?: ReactNode
+}
 
 export const bottomModalHeights = {
   pullTab: {
@@ -27,7 +35,7 @@ export const bottomModalHeights = {
   }
 }
 
-const BottomModalHeader = ({ children }: { children?: ReactNode }) => {
+const BottomModalHeader = ({ children, title }: BottomModalHeaderProps) => {
   const theme = useTheme()
 
   return (
@@ -42,6 +50,11 @@ const BottomModalHeader = ({ children }: { children?: ReactNode }) => {
       >
         <View style={{ width: 35, height: '100%', backgroundColor: theme.font.tertiary, borderRadius: 20 }} />
       </View>
+      {title && (
+        <ScreenSection>
+          <BottomModalScreenTitle>{title}</BottomModalScreenTitle>
+        </ScreenSection>
+      )}
       {children && <View>{children}</View>}
     </View>
   )

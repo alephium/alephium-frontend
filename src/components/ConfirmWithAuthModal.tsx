@@ -17,11 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
+import { XIcon } from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
+import Button from '~/components/buttons/Button'
 import PinCodeInput from '~/components/inputs/PinCodeInput'
+import { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { getStoredActiveWallet, getStoredWalletById } from '~/persistent-storage/wallets'
@@ -31,6 +34,7 @@ import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
 interface ConfirmWithAuthModalProps {
   onConfirm: (pin?: string, wallet?: ActiveWalletState) => void
+  onClose?: () => void
   usePin?: boolean
   walletId?: string
 }
@@ -47,7 +51,7 @@ const errorInstructionSet: Instruction[] = [
   { text: 'Please try again 💪', type: 'secondary' }
 ]
 
-const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
+const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [encryptedWallet, setEncryptedWallet] = useState<ActiveWalletState>()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -99,9 +103,14 @@ const ConfirmWithAuthModal = ({ onConfirm, walletId, usePin = false }: ConfirmWi
 
   return (
     <>
-      <ModalWithBackdrop animationType="fade" visible>
+      <ModalWithBackdrop animationType="fade" visible closeModal={onClose}>
         {encryptedWallet && (
           <ModalContent>
+            {onClose && (
+              <HeaderSection>
+                <Button type="transparent" Icon={XIcon} onPress={onClose} />
+              </HeaderSection>
+            )}
             <CenteredInstructions instructions={shownInstructions} />
             <PinCodeInput pinLength={pinLength} onPinEntered={decryptMnemonic} />
           </ModalContent>
@@ -119,4 +128,8 @@ const ModalContent = styled.View`
   width: 100%;
   background-color: ${({ theme }) => theme.bg.secondary};
   padding-top: 40px;
+`
+
+const HeaderSection = styled(ScreenSection)`
+  align-items: flex-end;
 `

@@ -16,10 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { useState } from 'react'
 import { ScrollView } from 'react-native'
-import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -27,10 +25,10 @@ import ExpandableRow from '~/components/ExpandableRow'
 import HighlightRow from '~/components/HighlightRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
-import Select, { SelectOption } from '~/components/inputs/Select'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
 import Toggle from '~/components/Toggle'
+import { useNewAddressContext } from '~/contexts/NewAddressContext'
 import { AddressHash, AddressSettings } from '~/types/addresses'
 
 export type AddressFormData = AddressSettings & {
@@ -40,38 +38,24 @@ export type AddressFormData = AddressSettings & {
 interface AddressFormProps {
   initialValues: AddressFormData
   onSubmit: (data: AddressFormData) => void
+  onGroupPress?: () => void
   buttonText?: string
   disableIsMainToggle?: boolean
-  includeGroup?: boolean
   addressHash?: AddressHash
 }
-
-const groupSelectOptions: SelectOption<number | undefined>[] = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map(
-  (_, index) => ({
-    value: index,
-    label: `Group ${index}`
-  })
-)
-
-const emptyOption = {
-  value: undefined,
-  label: ''
-} as SelectOption<undefined>
-
-groupSelectOptions.unshift(emptyOption)
 
 const AddressForm = ({
   initialValues,
   onSubmit,
+  onGroupPress,
   buttonText = 'Generate',
-  disableIsMainToggle = false,
-  includeGroup = false,
-  addressHash
+  disableIsMainToggle = false
 }: AddressFormProps) => {
+  const { group } = useNewAddressContext()
+
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
   const [isMain, setIsMain] = useState(initialValues.isMain)
-  const [group, setGroup] = useState(initialValues?.group)
 
   const toggleIsMain = () => {
     if (!disableIsMainToggle) {
@@ -79,18 +63,8 @@ const AddressForm = ({
     }
   }
 
-  const renderGroupValue = (group?: number) => (group !== undefined ? `Group ${group}` : undefined)
-
   return (
     <>
-      <ScreenSection>
-        <BottomModalScreenTitle>Address settings</BottomModalScreenTitle>
-        {addressHash && (
-          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
-            {addressHash}
-          </HashEllipsed>
-        )}
-      </ScreenSection>
       <ScrollView>
         <ScreenSection>
           <BoxSurface>
@@ -109,16 +83,14 @@ const AddressForm = ({
             </HighlightRow>
           </BoxSurface>
         </ScreenSection>
-        {includeGroup && (
+        {onGroupPress && (
           <ScreenSection>
-            <ExpandableRow expandedHeight={90}>
-              <Select
-                options={groupSelectOptions}
-                label="Group"
-                value={group}
-                onValueChange={setGroup}
-                renderValue={renderGroupValue}
-              />
+            <ExpandableRow>
+              <BoxSurface>
+                <HighlightRow title="Address group" onPress={onGroupPress}>
+                  <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
+                </HighlightRow>
+              </BoxSurface>
             </ExpandableRow>
           </ScreenSection>
         )}
@@ -131,8 +103,3 @@ const AddressForm = ({
 }
 
 export default AddressForm
-
-const HashEllipsed = styled(AppText)`
-  max-width: 50%;
-  margin-top: 8px;
-`

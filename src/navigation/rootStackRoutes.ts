@@ -28,14 +28,14 @@ type RootStackParamList = {
   NewWalletSuccessPage: undefined
   ImportWalletSeedScreen: undefined
   ImportWalletAddressDiscoveryScreen: undefined
-  InWalletScreen: undefined
+  InWalletTabsNavigation: undefined
   LoginScreen: {
     walletIdToLogin?: string
     workflow: 'wallet-switch' | 'wallet-unlock'
   }
   SplashScreen: undefined
   SwitchWalletScreen: undefined
-  NewAddressScreen: undefined
+  NewAddressNavigation: undefined
   EditAddressScreen: {
     addressHash: AddressHash
   }
@@ -46,17 +46,16 @@ type RootStackParamList = {
     // TODO: Make all params serializable to help with state persistance
     tx: AddressConfirmedTransaction
   }
-  ReceiveScreen: {
-    addressHash: AddressHash
-  }
-  SendNavigation: {
+  SendNavigation?: {
     fromAddressHash?: AddressHash
     toAddressHash?: AddressHash
   }
+  ReceiveNavigation: undefined
   SecurityScreen: undefined
   AddressDiscoveryScreen?: {
     isImporting?: boolean
   }
+  CurrencySelectScreen: undefined
 }
 
 export default RootStackParamList

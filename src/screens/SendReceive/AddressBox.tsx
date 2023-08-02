@@ -18,30 +18,29 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Check } from 'lucide-react-native'
 import { useMemo } from 'react'
+import { PressableProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
-import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesAssets, selectAddressByHash } from '~/store/addressesSlice'
+import { makeSelectAddressesAssets } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
-const AddressBox = ({ addressHash }: { addressHash: AddressHash }) => {
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+interface AddressBoxProps extends PressableProps {
+  addressHash: AddressHash
+  isSelected?: boolean
+}
+
+const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
   const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
-  const assets = useAppSelector((s) => selectAddressesAssets(s, address ? [address.hash] : []))
-  const { fromAddress, setFromAddress } = useSendContext()
+  const assets = useAppSelector((s) => selectAddressesAssets(s, [addressHash]))
   const theme = useTheme()
 
-  if (!address) return null
-
-  const isSelected = address.hash === fromAddress
-
   return (
-    <AddressBoxStyled onPress={() => setFromAddress(address.hash)}>
+    <AddressBoxStyled {...props}>
       <AddressBoxTop style={{ backgroundColor: isSelected ? theme.bg.accent : undefined }}>
-        <AddressBadgeStyled addressHash={address.hash} textStyle={{ fontSize: 18 }} />
+        <AddressBadgeStyled addressHash={addressHash} textStyle={{ fontSize: 18 }} />
         {isSelected && (
           <Checkmark>
             <Check color="white" size={15} strokeWidth={3} />

@@ -28,7 +28,6 @@ import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import QRCodeModal from '~/components/QRCodeModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -49,7 +48,6 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
   const theme = useTheme()
 
-  const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState(false)
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
 
   useEffect(() => {
@@ -90,7 +88,7 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
             height={heightCarouselItem}
             FooterComponent={
               <Button
-                onPress={() => navigation.navigate('NewAddressScreen')}
+                onPress={() => navigation.navigate('NewAddressNavigation')}
                 Icon={PlusIcon}
                 title="New address"
                 type="secondary"
@@ -99,18 +97,13 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
             }
           />
           {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
-          <QRCodeModal
-            addressHash={selectedAddressHash}
-            isOpen={isQrCodeModalOpen}
-            onClose={() => setIsQrCodeModalOpen(false)}
-          />
         </ScreenContent>
       </ScrollScreenStyled>
       <FloatingButton
         Icon={Upload}
         round
         bgColor={floatingButtonBgColor}
-        color={colord(floatingButtonBgColor).isDark() ? themes.dark.font.primary : themes.light.font.primary}
+        color={colord(floatingButtonBgColor).isDark() ? themes.light.font.contrast : themes.light.font.primary}
         onPress={() => navigation.navigate('SendNavigation', { fromAddressHash: selectedAddressHash })}
       />
     </>
@@ -132,4 +125,6 @@ const FloatingButton = styled(Button)<{ bgColor: string }>`
   bottom: 18px;
   right: 18px;
   background-color: ${({ bgColor }) => bgColor};
+  width: 56px;
+  height: 56px;
 `

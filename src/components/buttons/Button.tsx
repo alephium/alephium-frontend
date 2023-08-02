@@ -54,7 +54,7 @@ const Button = ({
 
   const colors = {
     bg: {
-      default: theme.bg.primary,
+      default: theme.bg.secondary,
       contrast: theme.font.primary,
       accent: theme.global.accent,
       valid: colord(theme.global.valid).alpha(0.1).toRgbString(),

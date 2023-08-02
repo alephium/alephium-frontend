@@ -21,35 +21,37 @@ import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
 import { SendContextProvider } from '~/contexts/SendContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import AssetsScreen from '~/screens/Send/AssetsScreen'
-import DestinationScreen from '~/screens/Send/DestinationScreen'
-import OriginScreen from '~/screens/Send/OriginScreen'
-import VerifyScreen from '~/screens/Send/VerifyScreen'
+import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
+import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
+import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
+import VerifyScreen from '~/screens/SendReceive/Send/VerifyScreen'
 import { AddressHash } from '~/types/addresses'
 
 export interface SendNavigationParamList extends ParamListBase {
-  DestinationScreen?: { addressHash?: AddressHash }
-  OriginScreen?: { addressHash?: AddressHash }
+  DestinationScreen?: { fromAddressHash?: AddressHash }
+  OriginScreen?: { toAddressHash?: AddressHash }
   AssetsScreen: undefined
   VerifyScreen: undefined
 }
 
 const SendStack = createStackNavigator<SendNavigationParamList>()
 
-const SendNavigation = ({
-  navigation,
-  route: {
-    params: { fromAddressHash, toAddressHash }
-  }
-}: StackScreenProps<RootStackParamList, 'SendNavigation'>) => (
+const SendNavigation = ({ navigation, route: { params } }: StackScreenProps<RootStackParamList, 'SendNavigation'>) => (
   <SendContextProvider>
-    <SendStack.Navigator screenOptions={{ headerShown: false }}>
+    <SendStack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName={params?.toAddressHash ? 'OriginScreen' : 'DestinationScreen'}
+    >
       <SendStack.Screen
         name="DestinationScreen"
         component={DestinationScreen}
-        initialParams={{ addressHash: toAddressHash }}
+        initialParams={params?.fromAddressHash ? { fromAddressHash: params.fromAddressHash } : undefined}
       />
-      <SendStack.Screen name="OriginScreen" component={OriginScreen} initialParams={{ addressHash: fromAddressHash }} />
+      <SendStack.Screen
+        name="OriginScreen"
+        component={OriginScreen}
+        initialParams={params?.toAddressHash ? { toAddressHash: params.toAddressHash } : undefined}
+      />
       <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
       <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
     </SendStack.Navigator>
