@@ -46,9 +46,6 @@ type RootStackParamList = {
     // TODO: Make all params serializable to help with state persistance
     tx: AddressConfirmedTransaction
   }
-  QRCodeScreen: {
-    addressHash: AddressHash
-  }
   SendNavigation?: {
     fromAddressHash?: AddressHash
     toAddressHash?: AddressHash

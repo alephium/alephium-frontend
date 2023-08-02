@@ -29,13 +29,13 @@ import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen'
 import { useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { BackButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'QRCodeScreen'>
+type ScreenProps = StackScreenProps<ReceiveNavigationParamList, 'QRCodeScreen'>
 
 const QRCodeScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const theme = useTheme()

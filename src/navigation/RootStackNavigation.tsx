@@ -42,7 +42,6 @@ import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessPage from '~/screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
-import QRCodeScreen from '~/screens/SendReceive/Receive/QRCodeScreen'
 import ScreenHeader from '~/screens/SendReceive/ScreenHeader'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
@@ -131,7 +130,6 @@ const RootStackNavigation = () => {
           {/* Bottom modal screens */}
           <RootStack.Group screenOptions={bottomModalOptions}>
             <RootStack.Screen name="TransactionScreen" component={TransactionScreen} />
-            <RootStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
             <RootStack.Screen name="SwitchNetworkScreen" component={SwitchNetworkScreen} />
             <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} />
             <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
