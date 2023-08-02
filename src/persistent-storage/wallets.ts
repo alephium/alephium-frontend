@@ -271,7 +271,7 @@ export const persistContact = async (contactData: ContactFormData) => {
 
   const walletMetadata = walletsMetadata[walletIndex]
 
-  const contacts = walletMetadata.contacts
+  const contacts = walletMetadata.contacts ?? []
 
   let contactId = contactData.id
 
@@ -300,6 +300,7 @@ export const persistContact = async (contactData: ContactFormData) => {
 
   console.log('💽 Storing contact in persistent storage')
 
+  walletMetadata.contacts = contacts
   walletsMetadata.splice(walletIndex, 1, walletMetadata)
   await persistWalletsMetadata(walletsMetadata)
 
