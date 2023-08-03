@@ -20,7 +20,7 @@ import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { Dimensions, LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 import RNCarousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
 
@@ -111,10 +111,13 @@ export default Carousel
 
 const CarouselPagination = styled.View`
   flex-direction: row;
+  flex-wrap: wrap;
+  flex-shrink: 1;
   align-self: center;
   background-color: ${({ theme }) => theme.bg.secondary};
   padding: 11px 14px;
   border-radius: 100px;
+  gap: 9px;
 `
 
 const CarouselFooter = styled(ScreenSection)<{ centered?: boolean }>`
@@ -167,12 +170,6 @@ const Circle = styled.View<{ size: number; isLast: boolean }>`
   overflow: hidden;
   align-items: center;
   justify-content: center;
-
-  ${({ isLast }) =>
-    !isLast &&
-    css`
-      margin-right: 9px;
-    `}
 `
 
 const Dot = styled(Animated.View)<{ size: number }>`
