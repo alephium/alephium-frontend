@@ -51,8 +51,6 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
 
-  console.log(params?.addressHash)
-
   useEffect(() => {
     if (params?.addressHash) {
       setSelectedAddressHash(params.addressHash)
