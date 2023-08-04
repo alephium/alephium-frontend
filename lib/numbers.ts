@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NUM_OF_ZEROS_IN_QUINTILLION } from './constants'
 
-export const MAGNITUDE_SYMBOL = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y', 'R', 'Q']
+export const MAGNITUDE_SYMBOL = ['', 'K', 'M', 'B', 'T']
 
 export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
@@ -129,7 +129,11 @@ export const formatFiatAmountForDisplay = (amount: number): string => {
     if (parseFloat(roundedUp) < 1000000) return addApostrophes(roundedUp)
   }
 
-  const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : 4
+  const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : amount < 1000000000000000 ? 4 : 5
+
+  if (tier === 5) {
+    return amount.toExponential()
+  }
 
   return appendMagnitudeSymbol(tier, amount)
 }
@@ -139,19 +143,24 @@ export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_
   if (!isPositiveInt(decimals)) throw 'Invalid decimals number'
   if (amount === '0') return BigInt(0)
 
-  const numberOfDecimals = getNumberOfDecimals(amount)
+  const amountToProcess = isScientificNotation(amount) ? expToNonExpString(amount) : amount
+
+  const numberOfDecimals = getNumberOfDecimals(amountToProcess)
   if (numberOfDecimals > decimals) throw 'Cannot convert human readable amount because it has too many decimal points'
 
   const numberOfZerosToAdd = decimals - numberOfDecimals
-  const cleanedAmount = amount.replace('.', '') + produceZeros(numberOfZerosToAdd)
+
+  const cleanedAmount = amountToProcess.replace('.', '') + produceZeros(numberOfZerosToAdd)
 
   return BigInt(cleanedAmount)
 }
 
 export const addApostrophes = (numString: string): string => {
   if (!isNumber(numString)) {
-    console.error('Invalid number', numString)
+    throw new Error('Invalid number')
+  }
 
+  if (isScientificNotation(numString)) {
     return numString
   }
 
@@ -179,8 +188,73 @@ export const toHumanReadableAmount = (amount: bigint, decimals = NUM_OF_ZEROS_IN
   return removeTrailingZeros(withDotAdded)
 }
 
-export const isNumber = (numString: string): boolean =>
-  !Number.isNaN(Number(numString)) && numString.length > 0 && !numString.includes('e')
+export const expToNonExpString = (str: string): string => {
+  const [base, exponent] = str.split('e')
+  let response = ''
+
+  // If there's no base or no exponent part, return original string
+  if (!base || !exponent) {
+    return str
+  }
+
+  if (exponent.includes('-')) {
+    const e = Number(exponent.slice(1))
+    response = base.split('.')[0] + (base.split('.')[1] || '').substring(0, e)
+    response = '0.' + '0'.repeat(e - 1) + response.replace('.', '')
+  } else {
+    const e = Number(exponent)
+    const decimal = base.split('.')[1] || ''
+    response = base.split('.')[0] + decimal.substring(0, e)
+    if (decimal.length > e) {
+      response += '.' + decimal.substring(e)
+    } else if (e > decimal.length) {
+      response += '0'.repeat(e - decimal.length)
+    }
+  }
+
+  return response
+}
+
+export const aboveThousandTrillions = (str: string): boolean => {
+  const baseStr = '1000000000000000' // 1,000 trillion
+  const [base, exponent] = str.toLowerCase().split('e')
+
+  if (!exponent) {
+    const numStr = str.replace('.', '')
+    if (numStr.length > baseStr.length) {
+      return true
+    } else if (numStr.length === baseStr.length) {
+      return numStr >= baseStr
+    } else {
+      return false
+    }
+  }
+
+  const isNegativeExponent = exponent.startsWith('-')
+  const exponentValue = Number(exponent.replace('-', ''))
+
+  if (isNegativeExponent) {
+    // If the exponent part is negative, the number is less than 1
+    return false
+  } else {
+    // If the exponent part is positive, compare with the length of 1,000 trillion
+    const comparisonLength = base.split('.')[0].length + exponentValue
+    if (comparisonLength > baseStr.length) {
+      return true
+    } else if (comparisonLength === baseStr.length) {
+      // If lengths are equal, convert the number to non-exponential form and compare
+      const nonExpNumber = expToNonExpString(str)
+
+      return nonExpNumber.replace('.', '') >= baseStr
+    } else {
+      return false
+    }
+  }
+}
+
+export const isScientificNotation = (numString: string) => numString.includes('e')
+
+export const isNumber = (numString: string): boolean => !Number.isNaN(Number(numString)) && numString.length > 0
 
 export const calculateAmountWorth = (
   amount: bigint,

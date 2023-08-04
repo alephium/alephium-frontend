@@ -24,7 +24,9 @@ import {
   produceZeros,
   toHumanReadableAmount,
   formatFiatAmountForDisplay,
-  calculateAmountWorth
+  calculateAmountWorth,
+  expToNonExpString,
+  aboveThousandTrillions
 } from '../lib/numbers'
 
 const minDigits = 3
@@ -265,36 +267,8 @@ it('should convert amount to human readable amount', () => {
     expect(fromHumanReadableAmount('0.01')).toEqual(BigInt('10000000000000000')),
     expect(fromHumanReadableAmount('0.00000009')).toEqual(BigInt('90000000000')),
     expect(fromHumanReadableAmount('0.000000000000000001')).toEqual(BigInt('1')),
-    expect(() => fromHumanReadableAmount('1e-1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1e-2')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1e-17')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1e-18')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1.1e-1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1.11e-1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1.99999999999999999e-1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1e+1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1e+2')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1e+17')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1e+18')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1.1e+1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('1.99999999999999999e+1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('123.45678e+2')).toThrow('Invalid displayed amount'),
     expect(() => fromHumanReadableAmount('-1')).toThrow('Invalid displayed amount'),
     expect(() => fromHumanReadableAmount('-0.000000000000000001')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1e-1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1e-2')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1e-17')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1e-18')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1.1e-1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1.11e-1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1.99999999999999999e-1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1e+1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1e+2')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1e+17')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1e+18')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1.1e+1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-1.99999999999999999e+1')).toThrow('Invalid displayed amount'),
-    expect(() => fromHumanReadableAmount('-123.45678e+2')).toThrow('Invalid displayed amount'),
     expect(fromHumanReadableAmount('0', 0)).toEqual(BigInt('0')),
     expect(fromHumanReadableAmount('1', 0)).toEqual(BigInt('1')),
     expect(fromHumanReadableAmount('10', 0)).toEqual(BigInt('10')),
@@ -307,6 +281,28 @@ it('should convert amount to human readable amount', () => {
     expect(() => fromHumanReadableAmount('1.12', 1)).toThrow(
       'Cannot convert human readable amount because it has too many decimal points'
     )
+})
+
+it('should convert exponential notation string to litteral string amount', () => {
+  expect(expToNonExpString('1e-1')).toEqual('0.1'),
+    expect(expToNonExpString('1.1e-2')).toEqual('0.011'),
+    expect(expToNonExpString('1e+1')).toEqual('10'),
+    expect(expToNonExpString('1e+2')).toEqual('100'),
+    expect(expToNonExpString('1.7e+2')).toEqual('170'),
+    expect(expToNonExpString('1.3e+12')).toEqual('1300000000000')
+})
+
+it('should detect if string number is above 1000 trillions', () => {
+  expect(aboveThousandTrillions('10000000000000000')).toBeTruthy(),
+    expect(aboveThousandTrillions('1000000000000000')).toBeTruthy(),
+    expect(aboveThousandTrillions('999999999999999')).toBeFalsy(),
+    expect(aboveThousandTrillions('100000000000000')).toBeFalsy(),
+    expect(aboveThousandTrillions('1')).toBeFalsy(),
+    expect(aboveThousandTrillions('0.01')).toBeFalsy(),
+    expect(aboveThousandTrillions('1e+16')).toBeTruthy(),
+    expect(aboveThousandTrillions('1e+15')).toBeTruthy(),
+    expect(aboveThousandTrillions('9.99e+14')).toBeFalsy(),
+    expect(aboveThousandTrillions('1e+14')).toBeFalsy()
 })
 
 it('should convert Set amount to Alph amount', () => {
@@ -386,7 +382,7 @@ it('should add apostrophes', () => {
     expect(addApostrophes('10000000.01')).toEqual("10'000'000.01"),
     expect(addApostrophes('100000000.01')).toEqual("100'000'000.01"),
     expect(addApostrophes('1000000000.01')).toEqual("1'000'000'000.01"),
-    expect(() => addApostrophes('1.01e+1')).toThrow('Invalid number'),
+    expect(addApostrophes('1.01e+1')).toEqual('1.01e+1'),
     expect(() => addApostrophes('asdf')).toThrow('Invalid number'),
     expect(() => addApostrophes('')).toThrow('Invalid number')
 })
@@ -421,8 +417,8 @@ describe('should test not exported functions', () => {
       expect(isNumber('1')).toBeTruthy(),
       expect(isNumber('10000000')).toBeTruthy(),
       expect(isNumber('010000000')).toBeTruthy(),
+      expect(isNumber('1.01e+1')).toBeTruthy(),
       expect(isNumber('')).toBeFalsy(),
-      expect(isNumber('1.01e+1')).toBeFalsy(),
       expect(isNumber('1a')).toBeFalsy()
   })
 })
