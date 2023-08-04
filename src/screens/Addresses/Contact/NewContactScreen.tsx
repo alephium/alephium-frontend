@@ -23,7 +23,7 @@ import Toast from 'react-native-root-toast'
 
 import SpinnerModal from '~/components/SpinnerModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { persistContact } from '~/persistent-storage/wallets'
+import { persistContact } from '~/persistent-storage/contacts'
 import ContactForm from '~/screens/Addresses/Contact/ContactForm'
 import { ContactFormData } from '~/types/contacts'
 
