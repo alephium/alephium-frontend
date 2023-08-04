@@ -22,18 +22,14 @@ import { useState } from 'react'
 import Toast from 'react-native-root-toast'
 
 import SpinnerModal from '~/components/SpinnerModal'
-import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/wallets'
 import ContactForm from '~/screens/Addresses/Contact/ContactForm'
-import { contactStoredInPersistentStorage } from '~/store/addresses/addressesActions'
 import { ContactFormData } from '~/types/contacts'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'NewContactScreen'>
 
 const NewContactScreen = ({ navigation }: ScreenProps) => {
-  const dispatch = useAppDispatch()
-
   const [loading, setLoading] = useState(false)
 
   const initialValues = {
@@ -46,9 +42,7 @@ const NewContactScreen = ({ navigation }: ScreenProps) => {
     setLoading(true)
 
     try {
-      const id = await persistContact(formData)
-
-      dispatch(contactStoredInPersistentStorage({ ...formData, id }))
+      await persistContact(formData)
     } catch (e) {
       Toast.show(getHumanReadableError(e, 'Could not save contact.'))
     }

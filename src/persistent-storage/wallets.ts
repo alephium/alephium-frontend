@@ -26,6 +26,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
+import {
+  contactDeletedFromPersistentStorage,
+  contactStoredInPersistentStorage
+} from '~/store/addresses/addressesActions'
+import { store } from '~/store/store'
 import { AddressMetadata, AddressPartial } from '~/types/addresses'
 import { Contact, ContactFormData } from '~/types/contacts'
 import { ActiveWalletState, GeneratedWallet, Mnemonic, WalletMetadata } from '~/types/wallet'
@@ -304,6 +309,8 @@ export const persistContact = async (contactData: ContactFormData) => {
   walletsMetadata.splice(walletIndex, 1, walletMetadata)
   await persistWalletsMetadata(walletsMetadata)
 
+  store.dispatch(contactStoredInPersistentStorage({ ...contactData, id: contactId }))
+
   return contactId
 }
 
@@ -325,6 +332,8 @@ export const deleteContact = async (contactId: Contact['id']) => {
   walletsMetadata.splice(walletIndex, 1, walletMetadata)
 
   await persistWalletsMetadata(walletsMetadata)
+
+  store.dispatch(contactDeletedFromPersistentStorage(contactId))
 }
 
 export const getAddressesMetadataByWalletId = async (id: string): Promise<AddressMetadata[]> => {

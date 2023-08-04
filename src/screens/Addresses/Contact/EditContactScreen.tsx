@@ -28,12 +28,8 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deleteContact, persistContact } from '~/persistent-storage/wallets'
 import ContactForm from '~/screens/Addresses/Contact/ContactForm'
-import {
-  contactDeletedFromPersistentStorage,
-  contactStoredInPersistentStorage
-} from '~/store/addresses/addressesActions'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
-import { Contact, ContactFormData } from '~/types/contacts'
+import { ContactFormData } from '~/types/contacts'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'EditContactScreen'>
 
@@ -61,7 +57,6 @@ const EditContactScreen = ({ navigation, route: { params } }: ScreenProps) => {
 
                   try {
                     await deleteContact(params.contactId)
-                    dispatch(contactDeletedFromPersistentStorage(params.contactId))
                   } catch (e) {
                     Toast.show(getHumanReadableError(e, 'Could not delete contact.'))
                   } finally {
@@ -85,8 +80,6 @@ const EditContactScreen = ({ navigation, route: { params } }: ScreenProps) => {
 
     try {
       await persistContact(formData)
-
-      dispatch(contactStoredInPersistentStorage(formData as Contact))
     } catch (e) {
       Toast.show(getHumanReadableError(e, 'Could not save contact.'))
     }
