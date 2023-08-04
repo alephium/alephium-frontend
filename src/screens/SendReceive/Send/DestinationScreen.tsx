@@ -30,6 +30,7 @@ import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import TabBar from '~/components/TabBar'
 import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
@@ -49,6 +50,21 @@ type PossibleNextScreen = 'OriginScreen' | 'AssetsScreen'
 
 const requiredErrorMessage = 'This field is required'
 
+const tabItems = [
+  {
+    value: 'custom',
+    label: 'Custom'
+  },
+  {
+    value: 'contacts',
+    label: 'Contacts'
+  },
+  {
+    value: 'addresses',
+    label: 'My addresses'
+  }
+]
+
 const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
   const {
     control,
@@ -59,6 +75,7 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
   const { setToAddress, setFromAddress } = useSendContext()
 
   const [nextScreen, setNextScreen] = useState<PossibleNextScreen>('OriginScreen')
+  const [activeTab, setActiveTab] = useState(tabItems[0])
 
   const onPasteClick = async () => {
     const text = await Clipboard.getStringAsync()
@@ -95,6 +112,9 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
         subtitle="Send to a custom address, a contact, or one of you other addresses."
         surtitle="SEND"
       />
+
+      <TabBar items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
+
       <ScreenSection>
         <BoxSurface>
           <Controller
