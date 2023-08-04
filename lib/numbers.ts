@@ -88,9 +88,14 @@ export const formatAmountForDisplay = ({
   if (amount < BigInt(0)) return '???'
 
   // For abbreviation, we don't need full precision and can work with number
-  const alphNum = Number(toHumanReadableAmount(amount, amountDecimals))
+  const alphString = toHumanReadableAmount(amount, amountDecimals)
+  const alphNum = Number(alphString)
   const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
   const numberOfDecimalsToDisplay = displayDecimals || minNumberOfDecimals
+
+  if (aboveExpLimit(alphString)) {
+    return toExponentialTruncated(alphString, numberOfDecimalsToDisplay)
+  }
 
   if (fullPrecision) {
     const baseNumString = amount.toString()
@@ -117,10 +122,6 @@ export const formatAmountForDisplay = ({
   }
 
   const tier = alphNum < 1000000000 ? 2 : alphNum < 1000000000000 ? 3 : 4
-
-  if (aboveThousandTrillions(alphNum)) {
-    return toExponentialTruncated(alphNum, numberOfDecimalsToDisplay)
-  }
 
   return appendMagnitudeSymbol(tier, alphNum, numberOfDecimalsToDisplay)
 }
@@ -219,8 +220,14 @@ export const expToNonExpString = (str: string): string => {
   return response
 }
 
-export const toExponentialTruncated = (num: number, fractionDigits: number): string => {
-  const expStr = num.toExponential()
+export const toExponentialTruncated = (num: number | string, fractionDigits: number): string => {
+  const numValue = typeof num === 'string' ? Number(num) : num
+
+  if (isNaN(numValue)) {
+    throw new Error('Invalid input: input cannot be converted to a number.')
+  }
+
+  const expStr = numValue.toExponential()
 
   const [base, exponent] = expStr.split('e')
 
@@ -235,13 +242,13 @@ export const toExponentialTruncated = (num: number, fractionDigits: number): str
   return returnedBase + 'e' + exponent
 }
 
-export const aboveThousandTrillions = (num: number | string): boolean => {
-  const baseStr = '1000000000000000' // 1,000 trillion
-  const str = num.toString() // Convert the input to string if it's a number
+export const aboveExpLimit = (num: number | string): boolean => {
+  const baseStr = '1000000000000000000' // 1'000'000 trillion
+  const str = num.toString()
   const [base, exponent] = str.toLowerCase().split('e')
 
   if (!exponent) {
-    const numStr = str.replace('.', '')
+    const numStr = str.split('.')[0]
     if (numStr.length > baseStr.length) {
       return true
     } else if (numStr.length === baseStr.length) {
@@ -257,15 +264,13 @@ export const aboveThousandTrillions = (num: number | string): boolean => {
   if (isNegativeExponent) {
     return false
   } else {
-    // If the exponent part is positive, compare with the length of 1,000 trillion
-    const comparisonLength = base.split('.')[0].length + exponentValue
+    const baseWithoutDecimal = base.split('.')[0]
+    const comparisonLength = baseWithoutDecimal.length + exponentValue
+
     if (comparisonLength > baseStr.length) {
       return true
     } else if (comparisonLength === baseStr.length) {
-      // If lengths are equal, convert the number to non-exponential form and compare
-      const nonExpNumber = expToNonExpString(str)
-
-      return nonExpNumber.replace('.', '') >= baseStr
+      return baseWithoutDecimal >= baseStr.slice(0, baseWithoutDecimal.length)
     } else {
       return false
     }

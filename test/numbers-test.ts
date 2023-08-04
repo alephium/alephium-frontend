@@ -26,7 +26,7 @@ import {
   formatFiatAmountForDisplay,
   calculateAmountWorth,
   expToNonExpString,
-  aboveThousandTrillions
+  aboveExpLimit
 } from '../lib/numbers'
 
 const minDigits = 3
@@ -59,7 +59,7 @@ it('Should abbreviate ALPH amount', () => {
     expect(formatAmountForDisplay({ amount: BigInt('1235000000000000000000000000') })).toEqual('1.24B'),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000') })).toEqual('1.23T'),
     expect(formatAmountForDisplay({ amount: BigInt('1237000000000000000000000000000') })).toEqual('1.24T'),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000') })).toEqual('1.23e+15'),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000') })).toEqual("1'230.00T"),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000000') })).toEqual('1.23e+18'),
     expect(formatAmountForDisplay({ amount: BigInt('999999999990000000000000000000000000000') })).toEqual('9.99e+20'),
     expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000') })).toEqual('1.00'),
@@ -135,7 +135,23 @@ it('Should abbreviate token amount', () => {
     ),
     expect(
       formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000'), amountDecimals: 17 })
-    ).toEqual('1.23e+16'),
+    ).toEqual("12'300.00T"),
+    expect(
+      formatAmountForDisplay({
+        amount: BigInt('10000000000000000000000000000000000'),
+        amountDecimals: 17
+      })
+    ).toEqual("100'000.00T"),
+    expect(
+      formatAmountForDisplay({
+        amount: BigInt('99999999999999999999999999999999999'),
+        amountDecimals: 17,
+        displayDecimals: 2
+      })
+    ).toEqual("1'000'000.00T"), // TODO: Fix edge case. This should ideally output 999'999.99T
+    expect(
+      formatAmountForDisplay({ amount: BigInt('100000000000000000000000000000000000'), amountDecimals: 17 })
+    ).toEqual('1e+18'),
     expect(
       formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000000'), amountDecimals: 17 })
     ).toEqual('1.23e+19'),
@@ -292,17 +308,19 @@ it('should convert exponential notation string to litteral string amount', () =>
     expect(expToNonExpString('1.3e+12')).toEqual('1300000000000')
 })
 
-it('should detect if string number is above 1000 trillions', () => {
-  expect(aboveThousandTrillions('10000000000000000')).toBeTruthy(),
-    expect(aboveThousandTrillions('1000000000000000')).toBeTruthy(),
-    expect(aboveThousandTrillions('999999999999999')).toBeFalsy(),
-    expect(aboveThousandTrillions('100000000000000')).toBeFalsy(),
-    expect(aboveThousandTrillions('1')).toBeFalsy(),
-    expect(aboveThousandTrillions('0.01')).toBeFalsy(),
-    expect(aboveThousandTrillions('1e+16')).toBeTruthy(),
-    expect(aboveThousandTrillions('1e+15')).toBeTruthy(),
-    expect(aboveThousandTrillions('9.99e+14')).toBeFalsy(),
-    expect(aboveThousandTrillions('1e+14')).toBeFalsy()
+it('should detect if string number is equal or above 1000000 trillions', () => {
+  expect(aboveExpLimit('10000000000000000000')).toBeTruthy(),
+    expect(aboveExpLimit('1000000000000000000')).toBeTruthy(),
+    expect(aboveExpLimit('999999999999999999')).toBeFalsy(),
+    expect(aboveExpLimit('100000000000000')).toBeFalsy(),
+    expect(aboveExpLimit('1')).toBeFalsy(),
+    expect(aboveExpLimit('0.01')).toBeFalsy(),
+    expect(aboveExpLimit('1e+18')).toBeTruthy(),
+    expect(aboveExpLimit('9.99e+17')).toBeFalsy(),
+    expect(aboveExpLimit('1e+16')).toBeFalsy(),
+    expect(aboveExpLimit('1e+15')).toBeFalsy(),
+    expect(aboveExpLimit('9.99e+14')).toBeFalsy(),
+    expect(aboveExpLimit('1e+14')).toBeFalsy()
 })
 
 it('should convert Set amount to Alph amount', () => {
