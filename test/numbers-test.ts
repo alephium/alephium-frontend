@@ -59,13 +59,9 @@ it('Should abbreviate ALPH amount', () => {
     expect(formatAmountForDisplay({ amount: BigInt('1235000000000000000000000000') })).toEqual('1.24B'),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000') })).toEqual('1.23T'),
     expect(formatAmountForDisplay({ amount: BigInt('1237000000000000000000000000000') })).toEqual('1.24T'),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000') })).toEqual("1'230.00T"),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000000') })).toEqual(
-      "1'230'000.00T"
-    ),
-    expect(formatAmountForDisplay({ amount: BigInt('999999999990000000000000000000000000000') })).toEqual(
-      "999'999'999.99T"
-    ),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000') })).toEqual('1.23e+15'),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000000') })).toEqual('1.23e+18'),
+    expect(formatAmountForDisplay({ amount: BigInt('999999999990000000000000000000000000000') })).toEqual('9.99e+20'),
     expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000') })).toEqual('1.00'),
     expect(formatAmountForDisplay({ amount: BigInt('-1000000000000000000') })).toEqual('???')
 })
@@ -139,13 +135,17 @@ it('Should abbreviate token amount', () => {
     ),
     expect(
       formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000'), amountDecimals: 17 })
-    ).toEqual("12'300.00T"),
+    ).toEqual('1.23e+16'),
     expect(
       formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000000'), amountDecimals: 17 })
-    ).toEqual("12'300'000.00T"),
+    ).toEqual('1.23e+19'),
     expect(
-      formatAmountForDisplay({ amount: BigInt('999999999990000000000000000000000000000'), amountDecimals: 17 })
-    ).toEqual("9'999'999'999.90T"),
+      formatAmountForDisplay({
+        amount: BigInt('999999999990000000000000000000000000000'),
+        amountDecimals: 17,
+        displayDecimals: 2
+      })
+    ).toEqual('9.99e+21'),
     expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000'), amountDecimals: 17 })).toEqual('10.00'),
     expect(formatAmountForDisplay({ amount: BigInt('-1000000000000000000'), amountDecimals: 17 })).toEqual('???'),
     expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000000000000000'), amountDecimals: 30 })).toEqual(
@@ -210,7 +210,7 @@ it('Should display a defined number of decimals', () => {
     ).toEqual('200.53549'),
     expect(
       formatAmountForDisplay({ amount: BigInt('20053549281751930708'), displayDecimals: 5, amountDecimals: 0 })
-    ).toEqual("20'053'549.28175T"),
+    ).toEqual('2.00535e+19'),
     expect(
       formatAmountForDisplay({ amount: BigInt('20053549281751930708'), displayDecimals: 5, amountDecimals: 17 })
     ).toEqual('200.53549')

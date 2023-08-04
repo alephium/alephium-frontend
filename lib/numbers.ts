@@ -118,6 +118,10 @@ export const formatAmountForDisplay = ({
 
   const tier = alphNum < 1000000000 ? 2 : alphNum < 1000000000000 ? 3 : 4
 
+  if (aboveThousandTrillions(alphNum)) {
+    return toExponentialTruncated(alphNum, numberOfDecimalsToDisplay)
+  }
+
   return appendMagnitudeSymbol(tier, alphNum, numberOfDecimalsToDisplay)
 }
 
@@ -143,7 +147,7 @@ export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_
   if (!isPositiveInt(decimals)) throw 'Invalid decimals number'
   if (amount === '0') return BigInt(0)
 
-  const amountToProcess = isScientificNotation(amount) ? expToNonExpString(amount) : amount
+  const amountToProcess = isExponentialNotation(amount) ? expToNonExpString(amount) : amount
 
   const numberOfDecimals = getNumberOfDecimals(amountToProcess)
   if (numberOfDecimals > decimals) throw 'Cannot convert human readable amount because it has too many decimal points'
@@ -160,7 +164,7 @@ export const addApostrophes = (numString: string): string => {
     throw new Error('Invalid number')
   }
 
-  if (isScientificNotation(numString)) {
+  if (isExponentialNotation(numString)) {
     return numString
   }
 
@@ -215,8 +219,25 @@ export const expToNonExpString = (str: string): string => {
   return response
 }
 
-export const aboveThousandTrillions = (str: string): boolean => {
+export const toExponentialTruncated = (num: number, fractionDigits: number): string => {
+  const expStr = num.toExponential()
+
+  const [base, exponent] = expStr.split('e')
+
+  const decimalIndex = base.indexOf('.')
+
+  let returnedBase = base
+
+  if (decimalIndex !== -1) {
+    returnedBase = base.slice(0, decimalIndex + fractionDigits + 1)
+  }
+
+  return returnedBase + 'e' + exponent
+}
+
+export const aboveThousandTrillions = (num: number | string): boolean => {
   const baseStr = '1000000000000000' // 1,000 trillion
+  const str = num.toString() // Convert the input to string if it's a number
   const [base, exponent] = str.toLowerCase().split('e')
 
   if (!exponent) {
@@ -234,7 +255,6 @@ export const aboveThousandTrillions = (str: string): boolean => {
   const exponentValue = Number(exponent.replace('-', ''))
 
   if (isNegativeExponent) {
-    // If the exponent part is negative, the number is less than 1
     return false
   } else {
     // If the exponent part is positive, compare with the length of 1,000 trillion
@@ -252,7 +272,7 @@ export const aboveThousandTrillions = (str: string): boolean => {
   }
 }
 
-export const isScientificNotation = (numString: string) => numString.includes('e')
+export const isExponentialNotation = (numString: string) => numString.includes('e')
 
 export const isNumber = (numString: string): boolean => !Number.isNaN(Number(numString)) && numString.length > 0
 
