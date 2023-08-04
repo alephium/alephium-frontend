@@ -183,6 +183,7 @@ export const deleteWalletById = async (id: string) => {
   await persistWalletsMetadata(walletsMetadata)
 
   const activeWalletId = await AsyncStorage.getItem('active-wallet-id')
+
   if (activeWalletId === id) {
     await AsyncStorage.removeItem('active-wallet-id')
   }
@@ -287,6 +288,7 @@ export const persistContact = async (contactData: ContactFormData) => {
 
   if (contactId === undefined) {
     if (indexOfContactWithSameAddress >= 0) throw new Error('A contact with this address already exists')
+
     if (indexOfContactWithSameName >= 0) throw new Error('A contact with this name already exists')
 
     contactId = nanoid()
@@ -295,8 +297,10 @@ export const persistContact = async (contactData: ContactFormData) => {
     const indexOfContactWithSameId = contacts.findIndex((c: Contact) => c.id === contactData.id)
 
     if (indexOfContactWithSameId < 0) throw new Error('Could not find a contact with this ID')
+
     if (indexOfContactWithSameAddress >= 0 && indexOfContactWithSameAddress !== indexOfContactWithSameId)
       throw new Error('A contact with this address already exists')
+
     if (indexOfContactWithSameName >= 0 && indexOfContactWithSameName !== indexOfContactWithSameId)
       throw new Error('A contact with this name already exists')
 
