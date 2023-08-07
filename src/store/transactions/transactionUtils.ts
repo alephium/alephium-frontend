@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { explorer } from '@alephium/web3'
 
-import { Address } from '~/types/addresses'
+import { AddressHash } from '~/types/addresses'
 
 // TODO: Same as in desktop wallet, move to SDK?
 export const extractNewTransactionHashes = (
@@ -30,9 +30,9 @@ export const extractNewTransactionHashes = (
     .map((tx) => tx.hash)
 
 // TODO: Same as in desktop wallet, move to SDK?
-export const getTransactionsOfAddress = (transactions: explorer.Transaction[], address: Address) =>
+export const getTransactionsOfAddress = (transactions: explorer.Transaction[], addressHash: AddressHash) =>
   transactions.filter(
     (tx) =>
-      tx.inputs?.some((input) => input.address === address.hash) ||
-      tx.outputs?.some((output) => output.address === address.hash)
+      tx.inputs?.some((input) => input.address === addressHash) ||
+      tx.outputs?.some((output) => output.address === addressHash)
   )

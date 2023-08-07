@@ -29,7 +29,7 @@ import {
 import { RootState } from '~/store/store'
 import { AddressHash } from '~/types/addresses'
 import { AddressPendingTransaction, PendingTransaction } from '~/types/transactions'
-import { selectAddressTransactions } from '~/utils/addresses'
+import { selectAddressTransactions, selectContactPendingTransactions } from '~/utils/addresses'
 
 const sliceName = 'pendingTransactions'
 
@@ -68,6 +68,17 @@ export const makeSelectAddressesPendingTransactions = () =>
     ],
     (allAddresses, pendingTransactions, addressHashes): AddressPendingTransaction[] =>
       selectAddressTransactions(allAddresses, pendingTransactions, addressHashes) as AddressPendingTransaction[]
+  )
+
+export const makeSelectContactPendingTransactions = () =>
+  createSelector(
+    [selectAllAddresses, selectAllPendingTransactions, (_, contactAddressHash: AddressHash) => contactAddressHash],
+    (allAddresses, pendingTransactions, contactAddressHash): AddressPendingTransaction[] =>
+      selectContactPendingTransactions(
+        allAddresses,
+        pendingTransactions,
+        contactAddressHash
+      ) as AddressPendingTransaction[]
   )
 
 export default pendingTransactionsSlice

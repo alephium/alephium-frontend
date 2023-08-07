@@ -67,8 +67,8 @@ const TransactionsFlatList = ({
   const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
     renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
 
-  const renderTransactionItem = ({ item: tx, index, isLast }: TransactionItem) => (
-    <TransactionRowStyled key={transactionKeyExtractor(tx)} tx={tx} isFirst={index === 0} isLast={isLast} />
+  const renderTransactionItem = ({ item: tx, isLast }: TransactionItem) => (
+    <TransactionRowStyled key={transactionKeyExtractor(tx)} tx={tx} isLast={isLast} />
   )
 
   const loadNextTransactionsPage = useCallback(async () => {
@@ -151,7 +151,7 @@ const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
 `
 
 const TransactionRowStyled = styled(TransactionRow)`
-  margin: 0 15px;
+  margin: 0 20px;
 `
 
 const Footer = styled.View`

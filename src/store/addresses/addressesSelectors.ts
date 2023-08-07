@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSelector } from '@reduxjs/toolkit'
 
+import { contactsAdapter } from '~/store/addresses/addressesAdapter'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
 
@@ -37,4 +38,9 @@ export const selectAddressesHaveHistoricBalances = createSelector(
 export const selectIsStateUninitialized = createSelector(
   (state: RootState) => state.addresses.status,
   (status) => status === 'uninitialized'
+)
+
+// TODO: Same as in desktop wallet
+export const { selectAll: selectAllContacts, selectById: selectContactById } = contactsAdapter.getSelectors<RootState>(
+  (state) => state.contacts
 )

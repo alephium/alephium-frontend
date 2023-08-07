@@ -56,6 +56,13 @@ type RootStackParamList = {
     isImporting?: boolean
   }
   CurrencySelectScreen: undefined
+  ContactScreen: {
+    contactId: string
+  }
+  NewContactScreen: undefined
+  EditContactScreen: {
+    contactId: string
+  }
 }
 
 export default RootStackParamList

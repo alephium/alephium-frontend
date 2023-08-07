@@ -16,18 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createEntityAdapter } from '@reduxjs/toolkit'
-
-import { BalanceHistory } from '~/types/addresses'
 import { Contact } from '~/types/contacts'
 
 // TODO: Same as in desktop wallet
-export const contactsAdapter = createEntityAdapter<Contact>({
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
-})
-
-// TODO: Same as in desktop wallet
-export const balanceHistoryAdapter = createEntityAdapter<BalanceHistory>({
-  selectId: ({ date }) => date,
-  sortComparer: (a, b) => a.date.localeCompare(b.date)
-})
+export const filterContacts = (contacts: Contact[], text: string) =>
+  text.length < 2
+    ? contacts
+    : contacts.filter(
+        (contact) => contact.name.toLowerCase().includes(text) || contact.address.toLowerCase().includes(text)
+      )

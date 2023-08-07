@@ -16,58 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { Asset } from '@alephium/sdk'
-import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { StyleProp, ViewStyle } from 'react-native'
 
 import Amount from '~/components/Amount'
-import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
+import ListItem from '~/components/ListItem'
 
 interface TokenInfoProps {
   asset: Asset
-  isLoading?: boolean
+  isLast?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const TokenInfo = ({ asset, isLoading, style }: TokenInfoProps) => {
-  const theme = useTheme()
-
-  return (
-    <TokenInfoStyled style={style}>
-      <LeftGroup>
-        <AssetLogo assetId={asset.id} size={45} />
-        <AppText bold numberOfLines={1} style={{ flexShrink: 1 }}>
-          {asset.name ?? asset.id}
-        </AppText>
-      </LeftGroup>
-      <Amounts>
-        {isLoading ? (
-          <ActivityIndicator size="small" color={theme.font.primary} />
-        ) : (
-          <Amount value={BigInt(asset.balance)} fadeDecimals suffix={asset.symbol} bold />
-        )}
-      </Amounts>
-    </TokenInfoStyled>
-  )
-}
+const TokenInfo = ({ asset, isLast, style }: TokenInfoProps) => (
+  <ListItem
+    style={style}
+    isLast={isLast}
+    title={asset.name || asset.id}
+    subtitle={<Amount value={BigInt(asset.balance)} medium color="secondary" suffix={asset.symbol} />}
+    icon={<AssetLogo assetId={asset.id} size={38} />}
+    rightSideContent={<Amount value={BigInt(asset.balance)} fadeDecimals suffix={asset.symbol} bold />}
+  />
+)
 
 export default TokenInfo
-
-const TokenInfoStyled = styled.View`
-  flex-direction: row;
-`
-
-const LeftGroup = styled.View`
-  flex: 1;
-  align-items: center;
-  flex-direction: row;
-  margin-right: 10px;
-  gap: 15px;
-`
-
-const Amounts = styled.View`
-  flex-direction: column;
-  justify-content: center;
-  text-align: right;
-  align-items: flex-end;
-`

@@ -19,12 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useMemo } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 
-import BoxSurface from '~/components/layout/BoxSurface'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesAssets, selectAllAddresses } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 
-import HighlightRow from './HighlightRow'
 import { ScreenSection } from './layout/Screen'
 import TokenInfo from './TokenInfo'
 
@@ -35,7 +33,6 @@ interface AddressesTokensListProps {
 
 const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesTokensListProps) => {
   const allAddresses = useAppSelector(selectAllAddresses)
-  const addressDataStatus = useAppSelector((s) => s.addresses.status)
   const addresses = addressesParam ?? allAddresses
   const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
   const assets = useAppSelector((s) =>
@@ -45,18 +42,12 @@ const AddressesTokensList = ({ addresses: addressesParam, style }: AddressesToke
     )
   )
 
-  const isLoading = addressDataStatus === 'uninitialized'
-
   return (
     <View style={style}>
       <ScreenSection>
-        <BoxSurface>
-          {assets.map((asset) => (
-            <HighlightRow key={asset.id}>
-              <TokenInfo asset={asset} isLoading={isLoading} />
-            </HighlightRow>
-          ))}
-        </BoxSurface>
+        {assets.map((asset, index) => (
+          <TokenInfo asset={asset} key={asset.id} isLast={index === assets.length - 1} />
+        ))}
       </ScreenSection>
     </View>
   )

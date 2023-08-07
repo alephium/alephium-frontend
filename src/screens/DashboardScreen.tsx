@@ -67,9 +67,9 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
       <DashboardScreenStyled refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
         <ScreenSectionStyled>
           <SurfaceHeader>
-            <AppText color="primary" semiBold size={30}>
+            <WalletName color="primary" semiBold size={30} numberOfLines={1}>
               {activeWalletName}
-            </AppText>
+            </WalletName>
             <ActiveNetwork>
               <NetworkStatusBullet status={networkStatus} />
               <AppText color="primary">{networkName}</AppText>
@@ -144,4 +144,8 @@ const AnimatedFloatingButton = styled(Animated.View)`
   position: absolute;
   bottom: 18px;
   right: 18px;
+`
+
+const WalletName = styled(AppText)`
+  max-width: 70%;
 `

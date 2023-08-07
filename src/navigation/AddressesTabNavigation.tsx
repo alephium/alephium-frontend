@@ -20,8 +20,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { ParamListBase } from '@react-navigation/native'
 
 import TopTabBar from '~/components/TopTabBar'
-import AddressesScreen from '~/screens/AddressesScreen'
-import ContactsScreen from '~/screens/ContactsScreen'
+import AddressesScreen from '~/screens/Addresses/AddressesScreen'
+import ContactsScreen from '~/screens/Addresses/ContactsScreen'
 
 export interface AddressTabsParamList extends ParamListBase {
   AddressesScreen: undefined
