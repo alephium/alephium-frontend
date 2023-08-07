@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
-import { ClipboardIcon, LucideProps, Scan } from 'lucide-react-native'
+import { Book, ClipboardIcon, Contact2, LucideProps, Scan } from 'lucide-react-native'
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { PressableProps, StyleProp, ViewStyle } from 'react-native'
@@ -30,9 +30,8 @@ import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import TabBar from '~/components/TabBar'
 import { useSendContext } from '~/contexts/SendContext'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { AddressHash } from '~/types/addresses'
@@ -46,24 +45,7 @@ type FormData = {
   toAddressHash: AddressHash
 }
 
-type PossibleNextScreen = 'OriginScreen' | 'AssetsScreen'
-
 const requiredErrorMessage = 'This field is required'
-
-const tabItems = [
-  {
-    value: 'custom',
-    label: 'Custom'
-  },
-  {
-    value: 'contacts',
-    label: 'Contacts'
-  },
-  {
-    value: 'addresses',
-    label: 'My addresses'
-  }
-]
 
 const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
   const {
@@ -72,10 +54,9 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
     setValue,
     formState: { errors }
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
-  const { setToAddress, setFromAddress } = useSendContext()
+  const { setToAddress, setFromAddress, toAddress } = useSendContext()
 
-  const [nextScreen, setNextScreen] = useState<PossibleNextScreen>('OriginScreen')
-  const [activeTab, setActiveTab] = useState(tabItems[0])
+  const [nextScreen, setNextScreen] = useState<PossibleNextScreenAfterDestination>('OriginScreen')
 
   const onPasteClick = async () => {
     const text = await Clipboard.getStringAsync()
@@ -105,6 +86,12 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
     }, [handleSubmit, navigation, nextScreen, setToAddress])
   )
 
+  useEffect(() => {
+    if (toAddress) {
+      setValue('toAddressHash', toAddress)
+    }
+  }, [setValue, toAddress])
+
   return (
     <ScrollScreen style={style}>
       <ScreenIntro
@@ -112,9 +99,6 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
         subtitle="Send to a custom address, a contact, or one of you other addresses."
         surtitle="SEND"
       />
-
-      <TabBar items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
-
       <ScreenSection>
         <BoxSurface>
           <Controller
@@ -140,6 +124,12 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
         <ButtonsRow>
           <Button Icon={Scan} title="Scan" />
           <Button Icon={ClipboardIcon} title="Paste" onPress={onPasteClick} />
+          <Button
+            Icon={Contact2}
+            title="Contacts"
+            onPress={() => navigation.navigate('SelectContactScreen', { nextScreen })}
+          />
+          <Button Icon={Book} title="Addresses" onPress={onPasteClick} />
         </ButtonsRow>
       </ScreenSection>
     </ScrollScreen>
@@ -172,6 +162,7 @@ const Button = ({ Icon, title, children, ...props }: ButtonProps) => {
 const ButtonsRow = styled.View`
   flex-direction: row;
   gap: 15px;
+  flex-wrap: wrap;
 `
 
 const ButtonStyled = styled.Pressable`

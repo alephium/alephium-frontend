@@ -30,12 +30,12 @@ import Carousel from '~/components/Carousel'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { selectAddressByHash, selectAddressIds, selectDefaultAddress, syncAddressesData } from '~/store/addressesSlice'
 import { themes } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 
-interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackParamList, 'AddressesScreen'> {
+interface ScreenProps extends StackScreenProps<AddressTabsParamList & SendNavigationParamList, 'AddressesScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
@@ -114,7 +114,12 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
         round
         bgColor={floatingButtonBgColor}
         color={colord(floatingButtonBgColor).isDark() ? themes.light.font.contrast : themes.light.font.primary}
-        onPress={() => navigation.navigate('SendNavigation', { fromAddressHash: selectedAddressHash })}
+        onPress={() =>
+          navigation.navigate('SendNavigation', {
+            screen: 'DestinationScreen',
+            params: { fromAddressHash: selectedAddressHash }
+          })
+        }
       />
     </>
   )

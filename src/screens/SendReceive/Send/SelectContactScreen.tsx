@@ -19,21 +19,33 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 
-import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
+import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import ContactListScreen from '~/screens/ContactListScreen'
+import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { Contact } from '~/types/contacts'
 
-interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackParamList, 'ContactsScreen'> {
-  style?: StyleProp<ViewStyle>
+type ScreenProps = StackScreenProps<RootStackParamList, 'SelectContactScreen'> &
+  StackScreenProps<SendNavigationParamList, 'SelectContactScreen'> & {
+    style?: StyleProp<ViewStyle>
+  }
+
+const SelectContactScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+  const contacts = useAppSelector(selectAllContacts)
+
+  const handleContactPress = (contactId: Contact['id']) => {
+    const contact = contacts.find((c) => c.id === contactId)
+
+    if (contact) {
+      navigation.navigate('SendNavigation', {
+        screen: params.nextScreen,
+        params: { toAddressHash: contact.address }
+      })
+    }
+  }
+
+  return <ContactListScreen style={style} onContactPress={handleContactPress} />
 }
 
-const ContactsScreen = ({ navigation, style }: ScreenProps) => (
-  <ContactListScreen
-    style={style}
-    onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
-    onNewContactPress={() => navigation.navigate('NewContactScreen')}
-  />
-)
-
-export default ContactsScreen
+export default SelectContactScreen

@@ -28,8 +28,8 @@ import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
 import { useAppSelector } from '~/hooks/redux'
-import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { makeSelectContactConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { makeSelectContactPendingTransactions } from '~/store/pendingTransactionsSlice'
@@ -37,9 +37,10 @@ import { themes } from '~/style/themes'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { stringToColour } from '~/utils/colors'
 
-interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackParamList, 'ContactScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+type ScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
+  StackScreenProps<RootStackParamList, 'ContactScreen'> & {
+    style?: StyleProp<ViewStyle>
+  }
 
 const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) => {
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
@@ -98,7 +99,12 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
               <ContactButton
                 Icon={Upload}
                 title={'Send funds'}
-                onPress={() => navigation.navigate('SendNavigation', { toAddressHash: contact.address })}
+                onPress={() =>
+                  navigation.navigate('SendNavigation', {
+                    screen: 'OriginScreen',
+                    params: { toAddressHash: contact.address }
+                  })
+                }
               />
               <ContactButton
                 Icon={Clipboard}
