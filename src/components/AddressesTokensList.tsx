@@ -17,14 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Asset } from '@alephium/sdk'
-import { chunk } from 'lodash'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
-import { FlatList, LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
+import { FlatList, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Carousel from '~/components/Carousel'
+import TabBar from '~/components/TabBar'
 import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
 import { useAppSelector } from '~/hooks/redux'
 import {
@@ -47,9 +46,18 @@ type LoadingIndicator = {
   isLoadingTokens: boolean
 }
 
-type CarouselPageEntry = Asset | UnknownTokensEntry | LoadingIndicator
+type TokensRow = Asset | UnknownTokensEntry | LoadingIndicator
 
-const PAGE_SIZE = 3
+const tabItems = [
+  {
+    value: 'tokens',
+    label: 'Tokens'
+  },
+  {
+    value: 'nfts',
+    label: 'NFTs'
+  }
+]
 
 const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
@@ -62,12 +70,13 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
   const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
   const theme = useTheme()
 
-  const [carouselItemHeight, setCarouselItemHeight] = useState(258)
-  const [isCarouselItemHeightAdapted, setIsCarouselItemHeightAdapted] = useState(false)
-  const [carouselData, setCarouselData] = useState<CarouselPageEntry[][]>([])
+  const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
+  const [activeTab, setActiveTab] = useState(tabItems[0])
+
+  const isLoading = isLoadingTokenBalances || isLoadingTokensMetadata
 
   useEffect(() => {
-    const entries: CarouselPageEntry[] = [
+    const entries: TokensRow[] = [
       ...knownFungibleTokens,
       ...(unknownTokens.length > 0
         ? [
@@ -77,107 +86,65 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
             }
           ]
         : []),
-      ...(isLoadingTokenBalances || isLoadingTokensMetadata ? [{ isLoadingTokens: true }] : [])
+      ...(isLoading ? [{ isLoadingTokens: true }] : [])
     ]
 
-    const entriesChunked = chunk(entries, PAGE_SIZE)
-
-    setCarouselData(entriesChunked)
-  }, [addressHash, isLoadingTokenBalances, isLoadingTokensMetadata, knownFungibleTokens, unknownTokens.length])
-
-  const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
-    const newCarouselItemHeight = event.nativeEvent.layout.height
-
-    if (!isCarouselItemHeightAdapted || (isCarouselItemHeightAdapted && newCarouselItemHeight > carouselItemHeight)) {
-      setCarouselItemHeight(newCarouselItemHeight)
-      setIsCarouselItemHeightAdapted(true)
-    }
-  }
-
-  const renderCarouselItem = ({ item }: { item: CarouselPageEntry[] }) => (
-    <View onLayout={onLayoutCarouselItem}>
-      {item.map((entry, index) =>
-        isAsset(entry) ? (
-          <TokenListItem
-            key={entry.id}
-            asset={entry}
-            hideSeparator={
-              (index === knownFungibleTokens.length - 1 && unknownTokens.length === 0) || (index + 1) % 3 === 0
-            }
-          />
-        ) : isUnknownTokens(entry) ? (
-          <UnknownTokensListItem entry={entry} key="unknown-tokens" />
-        ) : (
-          <LoadingRow key="loading">
-            <Skeleton show colorMode={theme.name} width={36} height={36} radius="round" />
-            <Skeleton show colorMode={theme.name} width={200} height={36} />
-          </LoadingRow>
-        )
-      )}
-    </View>
-  )
+    setTokenRows(entries)
+  }, [addressHash, isLoading, knownFungibleTokens, unknownTokens.length])
 
   return (
     <View style={style}>
-      {carouselData.length > 1 && (
-        <>
-          <ScreenSection>
-            <TitleRow>
-              <AppText semiBold size={18}>
-                Tokens
-              </AppText>
-            </TitleRow>
-          </ScreenSection>
-          <Carousel
-            data={carouselData}
-            renderItem={renderCarouselItem}
-            padding={20}
-            distance={10}
-            height={carouselItemHeight}
-          />
-        </>
-      )}
-      {carouselData.length === 1 && (
-        <ScreenSection>
-          <TitleRow>
-            <AppText semiBold size={18}>
-              Tokens
-            </AppText>
-          </TitleRow>
-
-          {renderCarouselItem({ item: carouselData[0] })}
-        </ScreenSection>
-      )}
-
-      {nfts.length > 0 && (
-        <>
-          <ScreenSection>
-            <TitleRow>
-              <AppText semiBold size={18}>
-                NFTs
-              </AppText>
-            </TitleRow>
-          </ScreenSection>
-          <FlatList
-            horizontal
-            data={nfts}
-            renderItem={({ item: nft, index }) => (
-              <NFTThumbnail source={{ uri: nft.image }} isFirst={index === 0} isLast={index === nfts.length - 1} />
-            )}
-          />
-        </>
-      )}
+      <TabBar items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
+      {
+        {
+          tokens: (
+            <ScreenSection>
+              {tokenRows.map((entry, index) =>
+                isAsset(entry) ? (
+                  <TokenListItem
+                    key={entry.id}
+                    asset={entry}
+                    hideSeparator={index === knownFungibleTokens.length - 1 && unknownTokens.length === 0}
+                  />
+                ) : isUnknownTokens(entry) ? (
+                  <UnknownTokensListItem entry={entry} key="unknown-tokens" />
+                ) : (
+                  <LoadingRow key="loading">
+                    <Skeleton show colorMode={theme.name} width={36} height={36} radius="round" />
+                    <Skeleton show colorMode={theme.name} width={200} height={36} />
+                  </LoadingRow>
+                )
+              )}
+            </ScreenSection>
+          ),
+          nfts: (
+            <>
+              <FlatList
+                horizontal
+                data={nfts}
+                renderItem={({ item: nft, index }) => (
+                  <NFTThumbnail source={{ uri: nft.image }} isFirst={index === 0} isLast={index === nfts.length - 1} />
+                )}
+              />
+              {isLoading && (
+                <ScreenSection>
+                  <Skeleton show colorMode={theme.name} width={100} height={100} />
+                </ScreenSection>
+              )}
+              {!isLoading && nfts.length === 0 && (
+                <NoNFTsMessage>
+                  <AppText color={theme.font.tertiary}>No NFTs yet.</AppText>
+                </NoNFTsMessage>
+              )}
+            </>
+          )
+        }[activeTab.value]
+      }
     </View>
   )
 }
 
 export default AddressesTokensList
-
-const TitleRow = styled.View`
-  padding-bottom: 12px;
-  border-bottom-width: 1px;
-  border-color: ${({ theme }) => theme.border.secondary};
-`
 
 const NFTThumbnail = styled.Image<{ isFirst: boolean; isLast: boolean }>`
   width: 100px;
@@ -205,7 +172,17 @@ const LoadingRow = styled.View`
   padding-top: 16px;
 `
 
-const isAsset = (item: CarouselPageEntry): item is Asset => (item as Asset).id !== undefined
+const NoNFTsMessage = styled.View`
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 9px;
+  border: 2px dashed ${({ theme }) => theme.border.primary};
+`
 
-const isUnknownTokens = (item: CarouselPageEntry): item is UnknownTokensEntry =>
+const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined
+
+const isUnknownTokens = (item: TokensRow): item is UnknownTokensEntry =>
   (item as UnknownTokensEntry).numberOfUnknownTokens !== undefined

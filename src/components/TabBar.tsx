@@ -59,14 +59,13 @@ export default TabBar
 
 const TabBarStyled = styled.View`
   flex-direction: row;
-  justify-content: space-between;
   border-bottom-width: 1px;
   border-bottom-color: ${({ theme }) => theme.border.secondary};
   padding: 0 20px;
+  gap: 35px;
 `
 
 export const Tab = styled.View<{ isActive: boolean }>`
-  flex: 1;
   text-align: center;
   justify-content: center;
   align-items: center;
