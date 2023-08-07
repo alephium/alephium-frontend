@@ -19,13 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
-import { Book, ClipboardIcon, Contact2, LucideProps, Scan } from 'lucide-react-native'
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { Book, ClipboardIcon, Contact2, Scan } from 'lucide-react-native'
+import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { PressableProps, StyleProp, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -54,6 +54,7 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
     setValue,
     formState: { errors }
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
+  const theme = useTheme()
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
 
   const [nextScreen, setNextScreen] = useState<PossibleNextScreenAfterDestination>('OriginScreen')
@@ -122,14 +123,18 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
       </ScreenSection>
       <ScreenSection>
         <ButtonsRow>
-          <Button Icon={Scan} title="Scan" />
-          <Button Icon={ClipboardIcon} title="Paste" onPress={onPasteClick} />
+          <Button color={theme.global.accent} compact Icon={Scan} title="Scan" />
+          <Button color={theme.global.accent} compact Icon={ClipboardIcon} title="Paste" onPress={onPasteClick} />
           <Button
+            color={theme.global.accent}
+            compact
             Icon={Contact2}
             title="Contacts"
             onPress={() => navigation.navigate('SelectContactScreen', { nextScreen })}
           />
           <Button
+            color={theme.global.accent}
+            compact
             Icon={Book}
             title="Addresses"
             onPress={() => navigation.navigate('SelectAddressScreen', { nextScreen })}
@@ -142,38 +147,8 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
 
 export default DestinationScreen
 
-// TODO: Move to new cleaned-up Buttons component
-interface ButtonProps extends PressableProps {
-  title: string
-  Icon?: (props: LucideProps) => JSX.Element
-  children?: ReactNode
-}
-
-const Button = ({ Icon, title, children, ...props }: ButtonProps) => {
-  const theme = useTheme()
-
-  return (
-    <ButtonStyled {...props}>
-      {Icon && <Icon size={20} color={theme.global.accent} />}
-      <AppText semiBold color="accent">
-        {title}
-      </AppText>
-      {children}
-    </ButtonStyled>
-  )
-}
-
 const ButtonsRow = styled.View`
   flex-direction: row;
   gap: 15px;
   flex-wrap: wrap;
-`
-
-const ButtonStyled = styled.Pressable`
-  padding: 7px 20px;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border-radius: 26px;
-  align-items: center;
-  flex-direction: row;
-  gap: 5px;
 `

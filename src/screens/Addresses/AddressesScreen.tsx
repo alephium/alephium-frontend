@@ -35,9 +35,10 @@ import { selectAddressByHash, selectAddressIds, selectDefaultAddress, syncAddres
 import { themes } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 
-interface ScreenProps extends StackScreenProps<AddressTabsParamList & SendNavigationParamList, 'AddressesScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+type ScreenProps = StackScreenProps<AddressTabsParamList, 'AddressesScreen'> &
+  StackScreenProps<SendNavigationParamList, 'AddressesScreen'> & {
+    style?: StyleProp<ViewStyle>
+  }
 
 const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
   const dispatch = useAppDispatch()
@@ -95,13 +96,17 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
             scrollTo={scrollToCarouselPage}
             FooterComponent={
               <>
-                <Button onPress={() => navigation.navigate('AddressesListScreen')} Icon={ListIcon} type="transparent" />
+                <Button
+                  onPress={() => navigation.navigate('AddressQuickNavigationScreen')}
+                  Icon={ListIcon}
+                  type="transparent"
+                />
                 <Button
                   onPress={() => navigation.navigate('NewAddressNavigation')}
                   Icon={PlusIcon}
                   title="New address"
-                  type="secondary"
-                  variant="accent"
+                  color={theme.global.accent}
+                  compact
                 />
               </>
             }

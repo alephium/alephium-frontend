@@ -25,7 +25,7 @@ import ContactsScreen from '~/screens/Addresses/ContactsScreen'
 import { AddressHash } from '~/types/addresses'
 
 export interface AddressTabsParamList extends ParamListBase {
-  AddressesScreen?: {
+  AddressesScreen: {
     addressHash?: AddressHash
   }
   ContactsScreen: undefined
