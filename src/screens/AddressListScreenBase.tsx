@@ -16,22 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import AddressBox from '~/screens/SendReceive/AddressBox'
 import { selectAllAddresses } from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressesListScreen'> {
+interface AddressListScreenBaseProps {
+  onAddressPress: (addressHash: AddressHash) => void
   style?: StyleProp<ViewStyle>
 }
 
-const AddressesListScreen = ({ navigation, style }: ScreenProps) => {
+const AddressListScreenBase = ({ onAddressPress, style }: AddressListScreenBaseProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
   return (
@@ -39,16 +39,7 @@ const AddressesListScreen = ({ navigation, style }: ScreenProps) => {
       <ScreenSection>
         <AddressList>
           {addresses.map((address) => (
-            <AddressBox
-              key={address.hash}
-              addressHash={address.hash}
-              onPress={() =>
-                navigation.navigate('AddressesTabNavigation', {
-                  screen: 'AddressesScreen',
-                  params: { addressHash: address.hash }
-                })
-              }
-            />
+            <AddressBox key={address.hash} addressHash={address.hash} onPress={() => onAddressPress(address.hash)} />
           ))}
         </AddressList>
       </ScreenSection>
@@ -56,7 +47,7 @@ const AddressesListScreen = ({ navigation, style }: ScreenProps) => {
   )
 }
 
-export default AddressesListScreen
+export default AddressListScreenBase
 
 const AddressList = styled.View`
   gap: 20px;

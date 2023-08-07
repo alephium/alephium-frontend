@@ -22,7 +22,7 @@ import { StyleProp, ViewStyle } from 'react-native'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import ContactListScreen from '~/screens/ContactListScreen'
+import ContactListScreenBase from '~/screens/ContactListScreenBase'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { Contact } from '~/types/contacts'
 
@@ -45,7 +45,7 @@ const SelectContactScreen = ({ navigation, style, route: { params } }: ScreenPro
     }
   }
 
-  return <ContactListScreen style={style} onContactPress={handleContactPress} />
+  return <ContactListScreenBase style={style} onContactPress={handleContactPress} />
 }
 
 export default SelectContactScreen

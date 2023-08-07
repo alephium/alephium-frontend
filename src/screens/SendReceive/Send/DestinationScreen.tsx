@@ -129,7 +129,11 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
             title="Contacts"
             onPress={() => navigation.navigate('SelectContactScreen', { nextScreen })}
           />
-          <Button Icon={Book} title="Addresses" onPress={onPasteClick} />
+          <Button
+            Icon={Book}
+            title="Addresses"
+            onPress={() => navigation.navigate('SelectAddressScreen', { nextScreen })}
+          />
         </ButtonsRow>
       </ScreenSection>
     </ScrollScreen>
