@@ -36,7 +36,7 @@ export const syncNetworkTokensInfo = createAsyncThunk(
 
     dispatch(loadingStarted())
 
-    let metadata = undefined
+    let metadata
     const network =
       state.network.settings.networkId === 0
         ? 'mainnet'
