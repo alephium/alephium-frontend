@@ -55,11 +55,11 @@ const AddressForm = ({
 
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
-  const [isMain, setIsMain] = useState(initialValues.isMain)
+  const [isDefault, setIsDefault] = useState(initialValues.isDefault)
 
   const toggleIsMain = () => {
     if (!disableIsMainToggle) {
-      setIsMain(!isMain)
+      setIsDefault(!isDefault)
     }
   }
 
@@ -79,7 +79,7 @@ const AddressForm = ({
               }`}
               onPress={toggleIsMain}
             >
-              <Toggle onValueChange={toggleIsMain} value={isMain} disabled={disableIsMainToggle} />
+              <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
             </HighlightRow>
           </BoxSurface>
         </ScreenSection>
@@ -96,7 +96,7 @@ const AddressForm = ({
         )}
       </ScrollView>
       <BottomScreenSection>
-        <Button title={buttonText} centered onPress={() => onSubmit({ isMain, label, color, group })} />
+        <Button title={buttonText} centered onPress={() => onSubmit({ isDefault, label, color, group })} />
       </BottomScreenSection>
     </>
   )

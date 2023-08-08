@@ -63,7 +63,7 @@ const EditAddressScreen = ({
   if (!address) return null
 
   const handleSavePress = async (settings: AddressSettings) => {
-    if (address.settings.isMain && !settings.isMain) return
+    if (address.settings.isDefault && !settings.isDefault) return
 
     setLoading(true)
 
@@ -80,7 +80,7 @@ const EditAddressScreen = ({
         initialValues={address.settings}
         onSubmit={handleSavePress}
         buttonText="Save"
-        disableIsMainToggle={address.settings.isMain}
+        disableIsMainToggle={address.settings.isDefault}
         addressHash={address.hash}
       />
       <SpinnerModal isActive={loading} text="Saving address..." />

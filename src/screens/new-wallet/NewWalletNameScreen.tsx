@@ -31,8 +31,9 @@ import useBiometrics from '~/hooks/useBiometrics'
 import { useSortedWallets } from '~/hooks/useSortedWallets'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
-import { biometricsEnabled, newWalletGenerated } from '~/store/activeWalletSlice'
+import { biometricsEnabled } from '~/store/activeWalletSlice'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
+import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 
 const instructions: Instruction[] = [

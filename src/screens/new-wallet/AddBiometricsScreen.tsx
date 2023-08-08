@@ -39,7 +39,7 @@ const instructions: Instruction[] = [
   { text: 'Use fingerprint or face recognition instead of the pin to unlock the wallet', type: 'secondary' }
 ]
 
-const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
+const AddBiometricsScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const method = useAppSelector((s) => s.walletGeneration.method)
@@ -54,7 +54,12 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
 
     await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
     dispatch(biometricsEnabled())
-    navigateToAddressDiscoveryPage()
+
+    if (params?.skipAddressDiscovery) {
+      navigation.navigate('NewWalletSuccessPage')
+    } else {
+      navigateToAddressDiscoveryPage()
+    }
 
     setLoading(false)
   }
@@ -72,7 +77,11 @@ const AddBiometricsScreen = ({ navigation }: ScreenProps) => {
             title="Later"
             type="secondary"
             onPress={() =>
-              navigation.navigate(method === 'import' ? 'ImportWalletAddressDiscoveryScreen' : 'NewWalletSuccessPage')
+              navigation.navigate(
+                method === 'import' && !params?.skipAddressDiscovery
+                  ? 'ImportWalletAddressDiscoveryScreen'
+                  : 'NewWalletSuccessPage'
+              )
             }
           />
         </ButtonStack>

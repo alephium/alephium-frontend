@@ -28,7 +28,7 @@ export type AddressHash = string
 export type AddressIndex = number
 
 export type AddressSettings = {
-  isMain: boolean
+  isDefault: boolean
   label?: string
   color?: string
 }

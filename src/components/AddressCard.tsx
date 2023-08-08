@@ -73,7 +73,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
               color: textColor
             }}
           />
-          {address.settings.isMain && <DefaultAddressBadge size={18} color={textColor} />}
+          {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
         </AddressBadgeContainer>
         <Button
           Icon={SettingsIcon}

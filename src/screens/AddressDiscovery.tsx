@@ -70,7 +70,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
     const newAddressHashes = selectedAddressesToImport.map((address) => address.hash)
     const newAddresses = selectedAddressesToImport.map(({ balance, ...address }) => ({
       ...address,
-      settings: { isMain: false, color: getRandomLabelColor() }
+      settings: { isDefault: false, color: getRandomLabelColor() }
     }))
 
     await persistAddressSettings(newAddresses)

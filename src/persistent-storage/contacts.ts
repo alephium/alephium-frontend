@@ -99,3 +99,9 @@ export const deleteContact = async (contactId: Contact['id']) => {
 
   store.dispatch(contactDeletedFromPersistentStorage(contactId))
 }
+
+export const importContacts = async (contacts: ContactFormData[]) => {
+  for (const contact of contacts) {
+    await persistContact(contact)
+  }
+}

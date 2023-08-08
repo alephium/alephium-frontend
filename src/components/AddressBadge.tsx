@@ -45,7 +45,7 @@ const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, style }: Add
         <>
           {!hideSymbol && (
             <Symbol>
-              {address.settings.isMain ? (
+              {address.settings.isDefault ? (
                 <DefaultAddressBadge size={16} color={address.settings.color} />
               ) : (
                 <Dot color={address.settings.color} />

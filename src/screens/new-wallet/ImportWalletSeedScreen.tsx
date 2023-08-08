@@ -37,11 +37,15 @@ import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { importContacts } from '~/persistent-storage/contacts'
 import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
-import { biometricsEnabled, newWalletGenerated } from '~/store/activeWalletSlice'
+import { biometricsEnabled } from '~/store/activeWalletSlice'
+import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { cameraToggled } from '~/store/appSlice'
+import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '~/style/globalStyle'
+import { WalletImportData } from '~/types/wallet'
 import { bip39Words } from '~/utils/bip39'
 import { pbkdf2 } from '~/utils/crypto'
 
@@ -119,7 +123,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const handleEnterPress = () => possibleMatches.length > 0 && selectWord(possibleMatches[0])
 
   const importWallet = useCallback(
-    async (pin?: string, mnemonic?: string) => {
+    async (pin?: string, importedData?: WalletImportData) => {
       if (!name) return
 
       if (!pin) {
@@ -130,16 +134,27 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       setLoading(true)
 
       const mnemonicToImport =
-        mnemonic || (enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' '))
+        importedData?.mnemonic ||
+        (enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' '))
 
       const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
-      dispatch(newWalletGenerated(wallet))
-      dispatch(syncAddressesData(wallet.firstAddress.hash))
-      dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
+
+      if (importedData?.addresses) {
+        importAddresses(wallet.mnemonic, wallet.metadataId, importedData.addresses)
+        dispatch(newWalletImportedWithMetadata(wallet))
+      } else {
+        dispatch(newWalletGenerated(wallet))
+        dispatch(syncAddressesData(wallet.firstAddress.hash))
+        dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
+      }
+
+      if (importedData?.contacts) {
+        importContacts(importedData.contacts)
+      }
 
       if (!isAuthenticated) {
         setLoading(false)
-        navigation.navigate('AddBiometricsScreen')
+        navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
         return
       }
 
@@ -151,7 +166,11 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       setLoading(false)
 
-      navigation.navigate('ImportWalletAddressDiscoveryScreen')
+      if (!importedData?.addresses) {
+        navigation.navigate('ImportWalletAddressDiscoveryScreen')
+      } else {
+        navigation.navigate('NewWalletSuccessPage')
+      }
     },
     [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, selectedWords, typedInput]
   )
@@ -165,9 +184,10 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
   const decryptAndImportWallet = async (password: string) => {
     try {
-      const decryptedMnemonic = await decryptAsync(password, encryptedWalletFromQRCode, pbkdf2)
+      const decryptedData = await decryptAsync(password, encryptedWalletFromQRCode, pbkdf2)
+      const parsedDecryptedData = JSON.parse(decryptedData) as WalletImportData
 
-      importWallet(pin, decryptedMnemonic)
+      importWallet(pin, parsedDecryptedData)
     } catch (e) {
       console.error(e)
       Alert.alert('Could not decrypt wallet with the given password.')
