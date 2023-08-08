@@ -72,7 +72,7 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
           <AppText color="primary">{networkName}</AppText>
         </ActiveNetwork>
       </SurfaceHeader>
-      <Skeleton show={isPriceLoading || isLoadingBalances} colorMode={theme.name} width={150}>
+      <Skeleton show={isPriceLoading || isLoadingBalances} colorMode={theme.name}>
         <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
       </Skeleton>
       {(!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart !== undefined)) && (
