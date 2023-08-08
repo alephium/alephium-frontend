@@ -19,10 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset } from '@alephium/sdk'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
-import { FlatList, StyleProp, View, ViewStyle } from 'react-native'
-import styled, { css, useTheme } from 'styled-components/native'
+import { StyleProp, View, ViewStyle } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
+import NFTsGrid from '~/components/NFTsGrid'
 import TabBar from '~/components/TabBar'
 import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
 import { useAppSelector } from '~/hooks/redux'
@@ -31,7 +31,6 @@ import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs
 } from '~/store/addressesSlice'
-import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 import { ScreenSection } from './layout/Screen'
@@ -117,27 +116,7 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
               )}
             </ScreenSection>
           ),
-          nfts: (
-            <>
-              <FlatList
-                horizontal
-                data={nfts}
-                renderItem={({ item: nft, index }) => (
-                  <NFTThumbnail source={{ uri: nft.image }} isFirst={index === 0} isLast={index === nfts.length - 1} />
-                )}
-              />
-              {isLoading && (
-                <ScreenSection>
-                  <Skeleton show colorMode={theme.name} width={100} height={100} />
-                </ScreenSection>
-              )}
-              {!isLoading && nfts.length === 0 && (
-                <NoNFTsMessage>
-                  <AppText color={theme.font.tertiary}>No NFTs yet.</AppText>
-                </NoNFTsMessage>
-              )}
-            </>
-          )
+          nfts: <NFTsGrid nfts={nfts} isLoading={isLoading} />
         }[activeTab.value]
       }
     </View>
@@ -146,40 +125,11 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
 
 export default AddressesTokensList
 
-const NFTThumbnail = styled.Image<{ isFirst: boolean; isLast: boolean }>`
-  width: 100px;
-  height: 100px;
-  border-radius: ${BORDER_RADIUS_SMALL}px;
-  margin: 16px 10px 16px 0;
-
-  ${({ isFirst }) =>
-    isFirst &&
-    css`
-      margin-left: 20px;
-    `}
-
-  ${({ isLast }) =>
-    isLast &&
-    css`
-      margin-right: 20px;
-    `}
-`
-
 const LoadingRow = styled.View`
   flex-direction: row;
   gap: 15px;
   align-items: flex-start;
   padding-top: 16px;
-`
-
-const NoNFTsMessage = styled.View`
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  margin: 20px auto;
-  padding: 20px;
-  border-radius: 9px;
-  border: 2px dashed ${({ theme }) => theme.border.primary};
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined
