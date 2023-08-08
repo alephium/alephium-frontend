@@ -205,7 +205,7 @@ const LoadingRow = styled.View`
   padding-top: 16px;
 `
 
-const isAsset = (item: CarouselPageEntry): item is Asset => !!(item as Asset).id
+const isAsset = (item: CarouselPageEntry): item is Asset => (item as Asset).id !== undefined
 
 const isUnknownTokens = (item: CarouselPageEntry): item is UnknownTokensEntry =>
-  !!(item as UnknownTokensEntry).numberOfUnknownTokens
+  (item as UnknownTokensEntry).numberOfUnknownTokens !== undefined
