@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ThemeType } from '~/style/themes'
 
-export type Currency = 'CHF' | 'GBP' | 'EUR' | 'USD' | 'TRY' | 'VND' | 'RUB' | 'IDR
+export type Currency = 'CHF' | 'GBP' | 'EUR' | 'USD' | 'TRY' | 'VND' | 'RUB' | 'IDR' 
 
 export interface GeneralSettings {
   theme: ThemeType
