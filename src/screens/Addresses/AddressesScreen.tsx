@@ -106,7 +106,7 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
               </>
             }
           />
-          {selectedAddress && <AddressesTokensList address={selectedAddress.hash} />}
+          {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} />}
         </ScreenContent>
       </ScrollScreenStyled>
       <FloatingButton

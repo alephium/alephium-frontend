@@ -39,7 +39,7 @@ import { ScreenSection } from './layout/Screen'
 import TokenListItem from './TokenListItem'
 
 interface AddressesTokensListProps {
-  address?: AddressHash
+  addressHash?: AddressHash
   style?: StyleProp<ViewStyle>
 }
 
@@ -51,13 +51,13 @@ type CarouselPageEntry = Asset | UnknownTokensEntry | LoadingIndicator
 
 const PAGE_SIZE = 3
 
-const AddressesTokensList = ({ address: addressParam, style }: AddressesTokensListProps) => {
+const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressParam))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressParam))
+  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressParam))
+  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
   const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
   const theme = useTheme()
@@ -73,7 +73,7 @@ const AddressesTokensList = ({ address: addressParam, style }: AddressesTokensLi
         ? [
             {
               numberOfUnknownTokens: unknownTokens.length,
-              addressHash: addressParam
+              addressHash
             }
           ]
         : []),
@@ -83,7 +83,7 @@ const AddressesTokensList = ({ address: addressParam, style }: AddressesTokensLi
     const entriesChunked = chunk(entries, PAGE_SIZE)
 
     setCarouselData(entriesChunked)
-  }, [addressParam, isLoadingTokenBalances, isLoadingTokensMetadata, knownFungibleTokens, unknownTokens.length])
+  }, [addressHash, isLoadingTokenBalances, isLoadingTokensMetadata, knownFungibleTokens, unknownTokens.length])
 
   const onLayoutCarouselItem = (event: LayoutChangeEvent) => {
     const newCarouselItemHeight = event.nativeEvent.layout.height
