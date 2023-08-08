@@ -21,6 +21,9 @@ import { createAction } from '@reduxjs/toolkit'
 import { Contact } from '~/types/contacts'
 
 // TODO: Same as in desktop wallet
+export const syncingAddressDataStarted = createAction('addresses/syncingAddressDataStarted')
+
+// TODO: Same as in desktop wallet
 export const contactStoredInPersistentStorage = createAction<Contact>('contacts/contactStoredInPersistentStorage')
 
 // TODO: Same as in desktop wallet

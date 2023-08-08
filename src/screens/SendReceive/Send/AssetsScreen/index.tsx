@@ -29,7 +29,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
-import { makeSelectAddressesAssets, selectAddressByHash } from '~/store/addressesSlice'
+import { makeSelectAddressesKnownFungibleTokens, selectAddressByHash } from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'> {
   style?: StyleProp<ViewStyle>
@@ -38,8 +38,8 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsS
 const AssetsScreen = ({ navigation, style }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction } = useSendContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
-  const selectAddressesAssets = useMemo(makeSelectAddressesAssets, [])
-  const assets = useAppSelector((s) => selectAddressesAssets(s, address ? [address.hash] : []))
+  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
 
   const isContinueButtonDisabled = assetAmounts.length < 1
 
@@ -71,8 +71,8 @@ const AssetsScreen = ({ navigation, style }: ScreenProps) => {
       />
       <ScreenSection>
         <AssetsList>
-          {assets.map((asset, index) => (
-            <AssetRow key={asset.id} asset={asset} isLast={index === assets.length - 1} />
+          {knownFungibleTokens.map((asset, index) => (
+            <AssetRow key={asset.id} asset={asset} isLast={index === knownFungibleTokens.length - 1} />
           ))}
         </AssetsList>
       </ScreenSection>

@@ -101,8 +101,8 @@ const Amount = ({
           <AppText {...props} color={color}>
             {integralPart}
           </AppText>
-          {fractionalPart && <AppText {...props} color={fadedColor}>{`.${fractionalPart} `}</AppText>}
-          {quantitySymbol && <AppText {...props} color={fadedColor}>{`${quantitySymbol} `}</AppText>}
+          {fractionalPart && <AppText {...props} color={fadedColor}>{`.${fractionalPart}`}</AppText>}
+          {quantitySymbol && <AppText {...props} color={fadedColor}>{` ${quantitySymbol} `}</AppText>}
           {!isUnknownToken && (
             <AppText {...props} color={fadeSuffix ? 'secondary' : color}>{` ${suffix ?? 'ALPH'}`}</AppText>
           )}

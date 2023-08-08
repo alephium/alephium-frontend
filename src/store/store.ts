@@ -24,6 +24,7 @@ import contactsSlice from '~/store/addresses/contactsSlice'
 import addressesSlice from '~/store/addressesSlice'
 import appSlice from '~/store/appSlice'
 import assetsInfoSlice from '~/store/assets/assetsInfoSlice'
+import nftsSlice from '~/store/assets/nftsSlice'
 import { priceApi } from '~/store/assets/priceApiSlice'
 import confirmedTransactionsSlice from '~/store/confirmedTransactionsSlice'
 import credentialsSlice from '~/store/credentialsSlice'
@@ -46,7 +47,8 @@ export const store = configureStore({
     addressDiscovery: addressDiscoverySlice.reducer,
     confirmedTransactions: confirmedTransactionsSlice.reducer,
     pendingTransactions: pendingTransactionsSlice.reducer,
-    [contactsSlice.name]: contactsSlice.reducer
+    [contactsSlice.name]: contactsSlice.reducer,
+    [nftsSlice.name]: nftsSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(settingsListenerMiddleware.middleware).prepend(priceApi.middleware)

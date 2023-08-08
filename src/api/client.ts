@@ -16,23 +16,30 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ExplorerProvider, NodeProvider, throttledFetch } from '@alephium/web3'
+import { ExplorerProvider, NodeProvider } from '@alephium/web3'
+import fetchRetry, { RequestInitWithRetry } from 'fetch-retry'
 
 import { defaultNetworkSettings } from '~/persistent-storage/settings'
 import { NetworkSettings } from '~/types/settings'
+
+export const exponentialBackoffFetchRetry = fetchRetry(fetch, {
+  retryOn: [429],
+  retries: 10,
+  retryDelay: (attempt) => Math.pow(2, attempt) * 1000
+}) as (input: RequestInfo | URL, init?: RequestInitWithRetry | undefined) => Promise<Response>
 
 export class Client {
   node: NodeProvider
   explorer: ExplorerProvider
 
   constructor({ nodeHost, explorerApiHost }: NetworkSettings) {
-    this.node = new NodeProvider(nodeHost, undefined, throttledFetch(5))
-    this.explorer = new ExplorerProvider(explorerApiHost, undefined, throttledFetch(5))
+    this.node = new NodeProvider(nodeHost, undefined, exponentialBackoffFetchRetry)
+    this.explorer = new ExplorerProvider(explorerApiHost, undefined, exponentialBackoffFetchRetry)
   }
 
   init(nodeHost: NetworkSettings['nodeHost'], explorerApiHost: NetworkSettings['explorerApiHost']) {
-    this.node = new NodeProvider(nodeHost, undefined, throttledFetch(5))
-    this.explorer = new ExplorerProvider(explorerApiHost, undefined, throttledFetch(5))
+    this.node = new NodeProvider(nodeHost, undefined, exponentialBackoffFetchRetry)
+    this.explorer = new ExplorerProvider(explorerApiHost, undefined, exponentialBackoffFetchRetry)
   }
 }
 

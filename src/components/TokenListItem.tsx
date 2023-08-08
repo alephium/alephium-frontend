@@ -17,26 +17,33 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { Asset } from '@alephium/sdk'
 import { StyleProp, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
 import ListItem from '~/components/ListItem'
 
-interface TokenInfoProps {
+interface TokenListItemProps {
   asset: Asset
   isLast?: boolean
   style?: StyleProp<ViewStyle>
+  hideSeparator?: boolean
 }
 
-const TokenInfo = ({ asset, isLast, style }: TokenInfoProps) => (
+const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemProps) => (
   <ListItem
     style={style}
     isLast={isLast}
     title={asset.name || asset.id}
     subtitle={<Amount value={BigInt(asset.balance)} medium color="secondary" suffix={asset.symbol} />}
     icon={<AssetLogo assetId={asset.id} size={38} />}
-    rightSideContent={<Amount value={BigInt(asset.balance)} fadeDecimals suffix={asset.symbol} bold />}
+    rightSideContent={<AmountStyled value={BigInt(asset.balance)} fadeDecimals suffix={asset.symbol} bold />}
+    hideSeparator={hideSeparator}
   />
 )
 
-export default TokenInfo
+export default TokenListItem
+
+const AmountStyled = styled(Amount)`
+  flex-shrink: 0;
+`

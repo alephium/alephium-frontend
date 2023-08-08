@@ -16,17 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TODO: Same as in desktop wallet
+import { Asset, AssetAmount } from '@alephium/sdk'
+import { FungibleTokenMetaData, NFTMetaData } from '@alephium/web3'
 
-import { AssetInfo } from '@alephium/sdk'
-import { createEntityAdapter } from '@reduxjs/toolkit'
+export type AssetAmountInputType = AssetAmount & { amountInput?: string }
 
-import { NFT } from '~/types/assets'
+export type FungibleTokenBasicMetadata = Omit<FungibleTokenMetaData, 'totalSupply'> & { id: Asset['id'] }
 
-export const assetsInfoAdapter = createEntityAdapter<AssetInfo>({
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
-})
+export type NFT = {
+  id: Asset['id']
+  collectionAddress: NFTMetaData['collectionAddress']
+  name?: string
+  description?: string
+  image?: string
+}
 
-export const nftsAdapter = createEntityAdapter<NFT>({
-  sortComparer: (a, b) => (a.name && b.name ? a.name.localeCompare(b.name) : a.id.localeCompare(b.id))
-})
+export type SyncUnknownTokensInfoResult = {
+  tokens: FungibleTokenBasicMetadata[]
+  nfts: NFT[]
+}

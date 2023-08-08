@@ -27,7 +27,7 @@ import {
   EntityState,
   PayloadAction
 } from '@reduxjs/toolkit'
-import { chunk, uniq } from 'lodash'
+import { chunk, sortBy, uniq } from 'lodash'
 
 import {
   fetchAddressesData,
@@ -36,13 +36,15 @@ import {
   fetchAddressTransactionsNextPage
 } from '~/api/addresses'
 import { newWalletGenerated, walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
+import { syncingAddressDataStarted } from '~/store/addresses/addressesActions'
 import { balanceHistoryAdapter } from '~/store/addresses/addressesAdapter'
 import { appReset } from '~/store/appSlice'
-import { selectAllAssetsInfo } from '~/store/assets/assetsSelectors'
+import { selectAllAssetsInfo, selectAllNFTs, selectNFTIds } from '~/store/assets/assetsSelectors'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 import { RootState } from '~/store/store'
 import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
 import { Address, AddressesHistoricalBalanceResult, AddressHash, AddressPartial } from '~/types/addresses'
+import { NFT } from '~/types/assets'
 import { PendingTransaction } from '~/types/transactions'
 import { getRandomLabelColor } from '~/utils/colors'
 
@@ -60,11 +62,13 @@ const addressesAdapter = createEntityAdapter<Address>({
 
 interface AddressesState extends EntityState<Address> {
   loading: boolean
+  syncingAddressData: boolean
   status: 'uninitialized' | 'initialized'
 }
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
   loading: false,
+  syncingAddressData: false,
   status: 'uninitialized'
 })
 
@@ -197,6 +201,10 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(syncingAddressDataStarted, (state) => {
+        state.syncingAddressData = true
+        state.loading = true
+      })
       .addCase(walletSwitched, (state, action) => {
         addressesAdapter.setAll(state, [])
         addressesAdapter.addMany(state, action.payload.addressesToInitialize.map(getInitialAddressState))
@@ -244,6 +252,11 @@ const addressesSlice = createSlice({
 
         state.status = 'initialized'
         state.loading = false
+        state.syncingAddressData = false
+      })
+      .addCase(syncAddressesData.rejected, (state) => {
+        state.loading = false
+        state.syncingAddressData = false
       })
       .addCase(syncAddressTransactionsNextPage.fulfilled, (state, action) => {
         const addressTransactionsData = action.payload
@@ -307,52 +320,7 @@ export const {
   selectIds: selectAddressIds
 } = addressesAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-// TODO: Same as in desktop wallet
-export const makeSelectAddressesAssets = () =>
-  createSelector(
-    [selectAllAssetsInfo, makeSelectAddressesAlphAsset(), makeSelectAddresses()],
-    (assetsInfo, alphAsset, addresses): Asset[] => {
-      const tokenBalances = addresses.reduce((acc, { tokens }) => {
-        tokens.forEach((token) => {
-          const existingToken = acc.find((t) => t.id === token.id)
-
-          if (!existingToken) {
-            acc.push({
-              id: token.id,
-              balance: BigInt(token.balance),
-              lockedBalance: BigInt(token.lockedBalance)
-            })
-          } else {
-            existingToken.balance = existingToken.balance + BigInt(token.balance)
-            existingToken.lockedBalance = existingToken.lockedBalance + BigInt(token.lockedBalance)
-          }
-        })
-
-        return acc
-      }, [] as TokenDisplayBalances[])
-
-      const tokenAssets = tokenBalances
-        .filter(({ balance, lockedBalance }) => balance > 0 || lockedBalance > 0)
-        .map((token) => {
-          const assetInfo = assetsInfo.find((t) => t.id === token.id)
-
-          return {
-            id: token.id,
-            balance: BigInt(token.balance.toString()),
-            lockedBalance: BigInt(token.lockedBalance.toString()),
-            name: assetInfo?.name,
-            symbol: assetInfo?.symbol,
-            description: assetInfo?.description,
-            logoURI: assetInfo?.logoURI,
-            decimals: assetInfo?.decimals ?? 0
-          }
-        })
-
-      return [alphAsset, ...tokenAssets]
-    }
-  )
-
-// TODO: Same as in desktop wallet
+// TODO: Same as in desktop walelt
 export const makeSelectAddressesAlphAsset = () =>
   createSelector(makeSelectAddresses(), (addresses): Asset => {
     const alphBalances = addresses.reduce(
@@ -365,8 +333,85 @@ export const makeSelectAddressesAlphAsset = () =>
 
     return {
       ...ALPH,
-      ...alphBalances
+      ...alphBalances,
+      verified: true
     }
+  })
+
+// TODO: Same as in desktop walelt
+export const makeSelectAddressesTokens = () =>
+  createSelector(
+    [selectAllAssetsInfo, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses()],
+    (assetsInfo, nfts, alphAsset, addresses): Asset[] => {
+      const tokens = getAddressesTokenBalances(addresses).reduce((acc, token) => {
+        const assetInfo = assetsInfo.find((t) => t.id === token.id)
+        const nftInfo = nfts.find((nft) => nft.id === token.id)
+
+        acc.push({
+          id: token.id,
+          balance: BigInt(token.balance.toString()),
+          lockedBalance: BigInt(token.lockedBalance.toString()),
+          name: assetInfo?.name ?? nftInfo?.name,
+          symbol: assetInfo?.symbol,
+          description: assetInfo?.description ?? nftInfo?.description,
+          logoURI: assetInfo?.logoURI ?? nftInfo?.image,
+          decimals: assetInfo?.decimals ?? 0,
+          verified: assetInfo?.verified
+        })
+
+        return acc
+      }, [] as Asset[])
+
+      return [
+        alphAsset,
+        ...sortBy(tokens, [(a) => !a.verified, (a) => a.verified === undefined, (a) => a.name?.toLowerCase(), 'id'])
+      ]
+    }
+  )
+
+// TODO: Same as in desktop walelt
+export const makeSelectAddressesKnownFungibleTokens = () =>
+  createSelector([makeSelectAddressesTokens()], (tokens): Asset[] => tokens.filter((token) => !!token?.symbol))
+
+// TODO: Same as in desktop walelt
+export const makeSelectAddressesUnknownTokens = () =>
+  createSelector(
+    [selectAllAssetsInfo, selectNFTIds, makeSelectAddresses()],
+    (assetsInfo, nftIds, addresses): Asset[] => {
+      const tokensWithoutMetadata = getAddressesTokenBalances(addresses).reduce((acc, token) => {
+        const hasTokenMetadata = !!assetsInfo.find((t) => t.id === token.id)
+        const hasNFTMetadata = nftIds.includes(token.id)
+
+        if (!hasTokenMetadata && !hasNFTMetadata) {
+          acc.push({
+            id: token.id,
+            balance: BigInt(token.balance.toString()),
+            lockedBalance: BigInt(token.lockedBalance.toString()),
+            decimals: 0
+          })
+        }
+
+        return acc
+      }, [] as Asset[])
+
+      return tokensWithoutMetadata
+    }
+  )
+
+// TODO: Same as in desktop walelt
+export const makeSelectAddressesCheckedUnknownTokens = () =>
+  createSelector(
+    [makeSelectAddressesUnknownTokens(), (state: RootState) => state.assetsInfo.checkedUnknownTokenIds],
+    (tokensWithoutMetadata, checkedUnknownTokenIds) =>
+      tokensWithoutMetadata.filter((token) => checkedUnknownTokenIds.includes(token.id))
+  )
+
+// TODO: Same as in desktop walelt
+export const makeSelectAddressesNFTs = () =>
+  createSelector([selectAllNFTs, makeSelectAddresses()], (nfts, addresses): NFT[] => {
+    const addressesTokenIds = addresses.flatMap(({ tokens }) => tokens.map(({ id }) => id))
+
+    return nfts.filter((nft) => addressesTokenIds.includes(nft.id))
   })
 
 // TODO: Same as in desktop wallet
@@ -442,3 +487,24 @@ const clearAddressesNetworkData = (state: AddressesState) => {
 
   state.status = 'uninitialized'
 }
+
+// TODO: Same as in desktop wallet
+const getAddressesTokenBalances = (addresses: Address[]) =>
+  addresses.reduce((acc, { tokens }) => {
+    tokens.forEach((token) => {
+      const existingToken = acc.find((t) => t.id === token.id)
+
+      if (!existingToken) {
+        acc.push({
+          id: token.id,
+          balance: BigInt(token.balance),
+          lockedBalance: BigInt(token.lockedBalance)
+        })
+      } else {
+        existingToken.balance = existingToken.balance + BigInt(token.balance)
+        existingToken.lockedBalance = existingToken.lockedBalance + BigInt(token.lockedBalance)
+      }
+    })
+
+    return acc
+  }, [] as TokenDisplayBalances[])
