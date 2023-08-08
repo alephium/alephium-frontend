@@ -76,6 +76,7 @@ interface FormatAmountForDisplayProps {
   amount: bigint
   amountDecimals?: number
   displayDecimals?: number
+  truncate?: boolean
   fullPrecision?: boolean
 }
 
@@ -83,6 +84,7 @@ export const formatAmountForDisplay = ({
   amount,
   amountDecimals = NUM_OF_ZEROS_IN_QUINTILLION,
   displayDecimals,
+  truncate,
   fullPrecision = false
 }: FormatAmountForDisplayProps): string => {
   if (amount < BigInt(0)) return '???'
@@ -91,10 +93,10 @@ export const formatAmountForDisplay = ({
   const alphString = toHumanReadableAmount(amount, amountDecimals)
   const alphNum = Number(alphString)
   const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
-  const numberOfDecimalsToDisplay = displayDecimals || minNumberOfDecimals
+  const numberOfDecimalsToDisplay = displayDecimals ?? minNumberOfDecimals
 
   if (aboveExpLimit(alphString)) {
-    return toExponentialTruncated(alphString, numberOfDecimalsToDisplay)
+    return toExponential(alphString, numberOfDecimalsToDisplay, truncate)
   }
 
   if (fullPrecision) {
@@ -148,7 +150,7 @@ export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_
   if (!isPositiveInt(decimals)) throw 'Invalid decimals number'
   if (amount === '0') return BigInt(0)
 
-  const amountToProcess = isExponentialNotation(amount) ? expToNonExpString(amount) : amount
+  const amountToProcess = isExponentialNotation(amount) ? exponentialToLiteral(amount) : amount
 
   const numberOfDecimals = getNumberOfDecimals(amountToProcess)
   if (numberOfDecimals > decimals) throw 'Cannot convert human readable amount because it has too many decimal points'
@@ -193,22 +195,23 @@ export const toHumanReadableAmount = (amount: bigint, decimals = NUM_OF_ZEROS_IN
   return removeTrailingZeros(withDotAdded)
 }
 
-export const expToNonExpString = (str: string): string => {
+export const exponentialToLiteral = (str: string): string => {
   const [base, exponent] = str.split('e')
   let response = ''
 
-  // If there's no base or no exponent part, return original string
   if (!base || !exponent) {
     return str
   }
 
   if (exponent.includes('-')) {
     const e = Number(exponent.slice(1))
+
     response = base.split('.')[0] + (base.split('.')[1] || '').substring(0, e)
     response = '0.' + '0'.repeat(e - 1) + response.replace('.', '')
   } else {
     const e = Number(exponent)
     const decimal = base.split('.')[1] || ''
+
     response = base.split('.')[0] + decimal.substring(0, e)
     if (decimal.length > e) {
       response += '.' + decimal.substring(e)
@@ -220,17 +223,19 @@ export const expToNonExpString = (str: string): string => {
   return response
 }
 
-export const toExponentialTruncated = (num: number | string, fractionDigits: number): string => {
+export const toExponential = (num: number | string, fractionDigits = 0, truncate?: boolean): string => {
   const numValue = typeof num === 'string' ? Number(num) : num
 
   if (isNaN(numValue)) {
     throw new Error('Invalid input: input cannot be converted to a number.')
   }
 
+  if (!truncate) {
+    return numValue.toExponential(fractionDigits)
+  }
+
   const expStr = numValue.toExponential()
-
   const [base, exponent] = expStr.split('e')
-
   const decimalIndex = base.indexOf('.')
 
   let returnedBase = base
@@ -243,7 +248,7 @@ export const toExponentialTruncated = (num: number | string, fractionDigits: num
 }
 
 export const aboveExpLimit = (num: number | string): boolean => {
-  const baseStr = '1000000000000000000' // 1'000'000 trillion
+  const baseStr = '1000000000000000000' // 1'000'000 trillions
   const str = num.toString()
   const [base, exponent] = str.toLowerCase().split('e')
 
