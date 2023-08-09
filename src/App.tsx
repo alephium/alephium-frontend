@@ -121,6 +121,8 @@ const Main = ({ children }: { children: ReactNode }) => {
   const unknownTokenIds = unknownTokens.map((token) => token.id)
   const newUnknownTokens = difference(unknownTokenIds, checkedUnknownTokenIds)
 
+  const [isUnlockingWallet, setIsUnlockingWallet] = useState(false)
+
   useLoadStoredSettings()
 
   const initializeClient = useCallback(async () => {
@@ -183,6 +185,8 @@ const Main = ({ children }: { children: ReactNode }) => {
   const unlockActiveWallet = useCallback(async () => {
     if (activeWalletMnemonic) return
 
+    setIsUnlockingWallet(true)
+
     const hasAvailableBiometrics = await isEnrolledAsync()
 
     try {
@@ -231,11 +235,13 @@ const Main = ({ children }: { children: ReactNode }) => {
       } else {
         console.error(e)
       }
+    } finally {
+      setIsUnlockingWallet(false)
     }
   }, [activeWalletMnemonic, addressesStatus, dispatch, lastNavigationState])
 
   useEffect(() => {
-    if (!activeWalletMnemonic) unlockActiveWallet()
+    if (!activeWalletMnemonic && appState.current === 'active' && !isUnlockingWallet) unlockActiveWallet()
 
     // We want this to only run 1 time and not every time lastNavigationState changes (dep of unlockActiveWallet)
     // TODO: Revisit this approach.
@@ -246,7 +252,7 @@ const Main = ({ children }: { children: ReactNode }) => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isCameraOpen) {
         dispatch(appBecameInactive())
-      } else if (nextAppState === 'active' && !activeWalletMnemonic) {
+      } else if (nextAppState === 'active' && !activeWalletMnemonic && !isUnlockingWallet) {
         unlockActiveWallet()
       }
 
@@ -256,7 +262,7 @@ const Main = ({ children }: { children: ReactNode }) => {
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [activeWalletMnemonic, dispatch, isCameraOpen, unlockActiveWallet])
+  }, [activeWalletMnemonic, dispatch, isCameraOpen, isUnlockingWallet, unlockActiveWallet])
 
   return (
     <RootSiblingParent>
