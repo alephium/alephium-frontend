@@ -273,10 +273,10 @@ const addressesSlice = createSlice({
       })
       .addCase(syncAddressesTokens.fulfilled, (state, action) => {
         const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, tokens }) => ({
+        const updatedAddresses = addressData.map(({ hash, tokenBalances }) => ({
           id: hash,
           changes: {
-            tokens
+            tokens: tokenBalances
           }
         }))
 
@@ -483,7 +483,7 @@ export const makeSelectAddressesCheckedUnknownTokens = () =>
 // TODO: Same as in desktop walelt
 export const makeSelectAddressesNFTs = () =>
   createSelector([selectAllNFTs, makeSelectAddresses()], (nfts, addresses): NFT[] => {
-    const addressesTokenIds = addresses.flatMap(({ tokens }) => tokens.map(({ id }) => id))
+    const addressesTokenIds = addresses.flatMap(({ tokens }) => tokens.map(({ tokenId }) => tokenId))
 
     return nfts.filter((nft) => addressesTokenIds.includes(nft.id))
   })
@@ -566,11 +566,11 @@ const clearAddressesNetworkData = (state: AddressesState) => {
 const getAddressesTokenBalances = (addresses: Address[]) =>
   addresses.reduce((acc, { tokens }) => {
     tokens.forEach((token) => {
-      const existingToken = acc.find((t) => t.id === token.id)
+      const existingToken = acc.find((t) => t.id === token.tokenId)
 
       if (!existingToken) {
         acc.push({
-          id: token.id,
+          id: token.tokenId,
           balance: BigInt(token.balance),
           lockedBalance: BigInt(token.lockedBalance)
         })

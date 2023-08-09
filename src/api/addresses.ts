@@ -32,22 +32,24 @@ import { CHART_DATE_FORMAT } from '~/utils/constants'
 
 export const fetchAddressesTokens = async (addressHashes: AddressHash[]): Promise<AddressTokensSyncResult[]> => {
   const results = []
+  let pageTotalResults
+  let page = 1
 
-  for (const addressHash of addressHashes) {
-    const tokenIds = await client.explorer.addresses.getAddressesAddressTokens(addressHash)
+  for (const hash of addressHashes) {
+    const tokenBalances = []
 
-    const tokens = await Promise.all(
-      tokenIds.map((id) =>
-        client.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then((data) => ({
-          id,
-          ...data
-        }))
-      )
-    )
+    while (pageTotalResults === undefined || pageTotalResults === 100) {
+      const pageResults = await client.explorer.addresses.getAddressesAddressTokensBalance(hash, { limit: 100, page })
+
+      tokenBalances.push(...pageResults)
+
+      pageTotalResults = pageResults.length
+      page += 1
+    }
 
     results.push({
-      hash: addressHash,
-      tokens
+      hash,
+      tokenBalances
     })
   }
 

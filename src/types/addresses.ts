@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair, TokenBalances } from '@alephium/sdk'
+import { AddressKeyPair } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
+import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { TimeInMs } from '~/types/numbers'
@@ -44,7 +45,7 @@ export type Address = AddressKeyPair &
     transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
     transactionsPageLoaded: number
     allTransactionPagesLoaded: boolean
-    tokens: TokenBalances[]
+    tokens: AddressTokenBalance[]
     lastUsed: TimeInMs
     balanceHistory: EntityState<BalanceHistory>
     balanceHistoryInitialized: boolean
@@ -66,7 +67,7 @@ export type AddressTransactionsSyncResult = {
 
 export type AddressTokensSyncResult = {
   hash: AddressHash
-  tokens: TokenBalances[]
+  tokenBalances: AddressTokenBalance[]
 }
 
 export type AddressBalancesSyncResult = Omit<explorer.AddressInfo, 'txNumber'> & {
