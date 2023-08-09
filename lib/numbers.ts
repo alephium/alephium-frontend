@@ -248,12 +248,13 @@ export const toExponential = (num: number | string, fractionDigits = 0, truncate
 }
 
 export const aboveExpLimit = (num: number | string): boolean => {
-  const baseStr = '1000000000000000000' // 1'000'000 trillions
+  const baseStr = '999999999999999999' // 999'999 trillions
   const str = num.toString()
   const [base, exponent] = str.toLowerCase().split('e')
 
   if (!exponent) {
     const numStr = str.split('.')[0]
+
     if (numStr.length > baseStr.length) {
       return true
     } else if (numStr.length === baseStr.length) {

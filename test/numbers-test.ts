@@ -150,7 +150,7 @@ it('Should abbreviate token amount', () => {
         amount: BigInt('99999999999999999999999999999999999'),
         amountDecimals: 17
       })
-    ).toEqual("1'000'000.00T"), // TODO: Fix edge case. This should ideally output 999'999.99T
+    ).toEqual('1.00e+18'),
     expect(
       formatAmountForDisplay({ amount: BigInt('100000000000000000000000000000000000'), amountDecimals: 17 })
     ).toEqual('1.00e+18'),
@@ -332,15 +332,16 @@ it('should convert exponential notation string to literal string amount', () => 
     expect(exponentialToLiteral('1.3e+12')).toEqual('1300000000000')
 })
 
-it('should detect if string number is equal or above 1000000 trillions', () => {
+it('should detect if string number is equal or above 999999 trillions', () => {
   expect(aboveExpLimit('10000000000000000000')).toBeTruthy(),
     expect(aboveExpLimit('1000000000000000000')).toBeTruthy(),
-    expect(aboveExpLimit('999999999999999999')).toBeFalsy(),
+    expect(aboveExpLimit('999999999999999999')).toBeTruthy(),
+    expect(aboveExpLimit('9.99e+17')).toBeTruthy(),
+    expect(aboveExpLimit('1.00e+18')).toBeTruthy(),
     expect(aboveExpLimit('100000000000000')).toBeFalsy(),
     expect(aboveExpLimit('1')).toBeFalsy(),
     expect(aboveExpLimit('0.01')).toBeFalsy(),
     expect(aboveExpLimit('1e+18')).toBeTruthy(),
-    expect(aboveExpLimit('9.99e+17')).toBeFalsy(),
     expect(aboveExpLimit('1e+16')).toBeFalsy(),
     expect(aboveExpLimit('1e+15')).toBeFalsy(),
     expect(aboveExpLimit('9.99e+14')).toBeFalsy(),
