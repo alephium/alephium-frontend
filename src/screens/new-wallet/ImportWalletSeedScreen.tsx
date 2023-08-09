@@ -77,6 +77,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false)
   const [encryptedWalletFromQRCode, setEncryptedWalletFromQRCode] = useState('')
+  const [decryptedWalletFromQRCode, setDecryptedWalletFromQRCode] = useState<WalletImportData>()
 
   const isAuthenticated = !!activeWalletMnemonic
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
@@ -171,6 +172,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       } else {
         navigation.navigate('NewWalletSuccessPage')
       }
+
+      setDecryptedWalletFromQRCode(undefined)
     },
     [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, selectedWords, typedInput]
   )
@@ -187,6 +190,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       const decryptedData = await decryptAsync(password, encryptedWalletFromQRCode, pbkdf2)
       const parsedDecryptedData = JSON.parse(decryptedData) as WalletImportData
 
+      setDecryptedWalletFromQRCode(parsedDecryptedData)
       importWallet(pin, parsedDecryptedData)
     } catch (e) {
       console.error(e)
@@ -262,7 +266,9 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
             label="Type your secret phrase word by word"
           />
         </ScreenSectionBottom>
-        {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin)} />}
+        {isPinModalVisible && (
+          <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin, decryptedWalletFromQRCode)} />
+        )}
         {isCameraOpen && <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} />}
         {isPasswordModalVisible && (
           <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
