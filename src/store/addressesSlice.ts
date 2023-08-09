@@ -286,15 +286,21 @@ const addressesSlice = createSlice({
       })
       .addCase(syncAddressesTransactions.fulfilled, (state, action) => {
         const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, transactions }) => {
+        const updatedAddresses = addressData.map(({ hash, transactions, mempoolTransactions }) => {
           const address = state.entities[hash] as Address
+          const lastUsed =
+            mempoolTransactions.length > 0
+              ? mempoolTransactions[0].lastSeen
+              : transactions.length > 0
+              ? transactions[0].timestamp
+              : address.lastUsed
 
           return {
             id: hash,
             changes: {
               transactions: uniq(address.transactions.concat(transactions.map((tx) => tx.hash))),
               transactionsPageLoaded: address.transactionsPageLoaded === 0 ? 1 : address.transactionsPageLoaded,
-              lastUsed: transactions.length > 0 ? transactions[0].timestamp : address.lastUsed
+              lastUsed
             }
           }
         })
