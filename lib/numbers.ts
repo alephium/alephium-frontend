@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NUM_OF_ZEROS_IN_QUINTILLION } from './constants'
 
-const MAGNITUDE_SYMBOL = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y', 'R', 'Q']
+export const MAGNITUDE_SYMBOL = ['', 'K', 'M', 'B', 'T']
 
 export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
@@ -76,6 +76,7 @@ interface FormatAmountForDisplayProps {
   amount: bigint
   amountDecimals?: number
   displayDecimals?: number
+  truncate?: boolean
   fullPrecision?: boolean
 }
 
@@ -83,14 +84,20 @@ export const formatAmountForDisplay = ({
   amount,
   amountDecimals = NUM_OF_ZEROS_IN_QUINTILLION,
   displayDecimals,
+  truncate,
   fullPrecision = false
 }: FormatAmountForDisplayProps): string => {
   if (amount < BigInt(0)) return '???'
 
   // For abbreviation, we don't need full precision and can work with number
-  const alphNum = Number(toHumanReadableAmount(amount, amountDecimals))
+  const alphString = toHumanReadableAmount(amount, amountDecimals)
+  const alphNum = Number(alphString)
   const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
-  const numberOfDecimalsToDisplay = displayDecimals || minNumberOfDecimals
+  const numberOfDecimalsToDisplay = displayDecimals ?? minNumberOfDecimals
+
+  if (aboveExpLimit(alphString)) {
+    return toExponential(alphString, numberOfDecimalsToDisplay, truncate)
+  }
 
   if (fullPrecision) {
     const baseNumString = amount.toString()
@@ -129,7 +136,11 @@ export const formatFiatAmountForDisplay = (amount: number): string => {
     if (parseFloat(roundedUp) < 1000000) return addApostrophes(roundedUp)
   }
 
-  const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : 4
+  const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : amount < 1000000000000000 ? 4 : 5
+
+  if (tier === 5) {
+    return amount.toExponential()
+  }
 
   return appendMagnitudeSymbol(tier, amount)
 }
@@ -139,19 +150,24 @@ export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_
   if (!isPositiveInt(decimals)) throw 'Invalid decimals number'
   if (amount === '0') return BigInt(0)
 
-  const numberOfDecimals = getNumberOfDecimals(amount)
+  const amountToProcess = isExponentialNotation(amount) ? exponentialToLiteral(amount) : amount
+
+  const numberOfDecimals = getNumberOfDecimals(amountToProcess)
   if (numberOfDecimals > decimals) throw 'Cannot convert human readable amount because it has too many decimal points'
 
   const numberOfZerosToAdd = decimals - numberOfDecimals
-  const cleanedAmount = amount.replace('.', '') + produceZeros(numberOfZerosToAdd)
+
+  const cleanedAmount = amountToProcess.replace('.', '') + produceZeros(numberOfZerosToAdd)
 
   return BigInt(cleanedAmount)
 }
 
 export const addApostrophes = (numString: string): string => {
   if (!isNumber(numString)) {
-    console.error('Invalid number', numString)
+    throw new Error('Invalid number')
+  }
 
+  if (isExponentialNotation(numString)) {
     return numString
   }
 
@@ -179,8 +195,97 @@ export const toHumanReadableAmount = (amount: bigint, decimals = NUM_OF_ZEROS_IN
   return removeTrailingZeros(withDotAdded)
 }
 
-export const isNumber = (numString: string): boolean =>
-  !Number.isNaN(Number(numString)) && numString.length > 0 && !numString.includes('e')
+export const exponentialToLiteral = (str: string): string => {
+  const [base, exponent] = str.split('e')
+  let response = ''
+
+  if (!base || !exponent) {
+    return str
+  }
+
+  if (exponent.includes('-')) {
+    const e = Number(exponent.slice(1))
+
+    response = base.split('.')[0] + (base.split('.')[1] || '').substring(0, e)
+    response = '0.' + '0'.repeat(e - 1) + response.replace('.', '')
+  } else {
+    const e = Number(exponent)
+    const decimal = base.split('.')[1] || ''
+
+    response = base.split('.')[0] + decimal.substring(0, e)
+    if (decimal.length > e) {
+      response += '.' + decimal.substring(e)
+    } else if (e > decimal.length) {
+      response += '0'.repeat(e - decimal.length)
+    }
+  }
+
+  return response
+}
+
+export const toExponential = (num: number | string, fractionDigits = 0, truncate?: boolean): string => {
+  const numValue = typeof num === 'string' ? Number(num) : num
+
+  if (isNaN(numValue)) {
+    throw new Error('Invalid input: input cannot be converted to a number.')
+  }
+
+  if (!truncate) {
+    return numValue.toExponential(fractionDigits)
+  }
+
+  const expStr = numValue.toExponential()
+  const [base, exponent] = expStr.split('e')
+  const decimalIndex = base.indexOf('.')
+
+  let returnedBase = base
+
+  if (decimalIndex !== -1) {
+    returnedBase = base.slice(0, decimalIndex + fractionDigits + 1)
+  }
+
+  return returnedBase + 'e' + exponent
+}
+
+export const aboveExpLimit = (num: number | string): boolean => {
+  const baseStr = '999999999999999999' // 999'999 trillions
+  const str = num.toString()
+  const [base, exponent] = str.toLowerCase().split('e')
+
+  if (!exponent) {
+    const numStr = str.split('.')[0]
+
+    if (numStr.length > baseStr.length) {
+      return true
+    } else if (numStr.length === baseStr.length) {
+      return numStr >= baseStr
+    } else {
+      return false
+    }
+  }
+
+  const isNegativeExponent = exponent.startsWith('-')
+  const exponentValue = Number(exponent.replace('-', ''))
+
+  if (isNegativeExponent) {
+    return false
+  } else {
+    const baseWithoutDecimal = base.split('.')[0]
+    const comparisonLength = baseWithoutDecimal.length + exponentValue
+
+    if (comparisonLength > baseStr.length) {
+      return true
+    } else if (comparisonLength === baseStr.length) {
+      return baseWithoutDecimal >= baseStr.slice(0, baseWithoutDecimal.length)
+    } else {
+      return false
+    }
+  }
+}
+
+export const isExponentialNotation = (numString: string) => numString.includes('e')
+
+export const isNumber = (numString: string): boolean => !Number.isNaN(Number(numString)) && numString.length > 0
 
 export const calculateAmountWorth = (
   amount: bigint,
