@@ -18,7 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NUM_OF_ZEROS_IN_QUINTILLION } from './constants'
 
-export const MAGNITUDE_SYMBOL = ['', 'K', 'M', 'B', 'T']
+export const MAGNITUDE_SYMBOL = ['K', 'M', 'B', 'T']
+
+const AMOUNT_SUFFIXES = ['', ...MAGNITUDE_SYMBOL]
 
 export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
@@ -58,9 +60,9 @@ const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) =>
 }
 
 const appendMagnitudeSymbol = (tier: number, amount: number, numberOfDecimalsToDisplay = 2): string => {
-  const reachedEndOfMagnitudeSymbols = tier >= MAGNITUDE_SYMBOL.length
+  const reachedEndOfMagnitudeSymbols = tier >= AMOUNT_SUFFIXES.length
   const adjustedTier = reachedEndOfMagnitudeSymbols ? tier - 1 : tier
-  const suffix = MAGNITUDE_SYMBOL[adjustedTier]
+  const suffix = AMOUNT_SUFFIXES[adjustedTier]
   const scale = Math.pow(10, adjustedTier * 3)
   const scaled = amount / scale
   const scaledRoundedUp = scaled.toFixed(numberOfDecimalsToDisplay)
