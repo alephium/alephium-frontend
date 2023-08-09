@@ -250,7 +250,7 @@ const Main = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (appState.current === 'active' && nextAppState.match(/inactive|background/) && !isCameraOpen) {
+      if (nextAppState === 'background' && !isCameraOpen) {
         dispatch(appBecameInactive())
       } else if (nextAppState === 'active' && !activeWalletMnemonic && !isUnlockingWallet) {
         unlockActiveWallet()
