@@ -20,7 +20,6 @@ import { useNavigation, useScrollToTop } from '@react-navigation/native'
 import { useEffect, useRef } from 'react'
 import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 
-import { useScrollEventHandler } from '../../contexts/ScrollContext'
 import Screen from './Screen'
 
 interface InWalletScrollScreenProps extends ScrollViewProps {
@@ -29,7 +28,6 @@ interface InWalletScrollScreenProps extends ScrollViewProps {
 
 const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
-  const scrollHandler = useScrollEventHandler()
 
   useScrollToTop(viewRef) // Scrolls to top when tapping the active tab
 
@@ -47,7 +45,7 @@ const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) 
     <Screen style={style}>
       <ScrollView
         contentOffset={{ y: 0, x: 0 }}
-        onScroll={scrollHandler}
+        onScroll={props.onScroll}
         ref={viewRef}
         {...props}
         scrollEventThrottle={16}

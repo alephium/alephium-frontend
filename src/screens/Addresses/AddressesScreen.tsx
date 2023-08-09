@@ -28,6 +28,7 @@ import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -48,6 +49,7 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
   const theme = useTheme()
+  const scrollHandler = useScrollEventHandler()
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
@@ -84,6 +86,7 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
       <ScrollScreenStyled
         style={style}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
+        onScroll={scrollHandler}
       >
         <ScreenContent>
           <Carousel
