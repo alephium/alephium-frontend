@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { colord } from 'colord'
 import { Plus } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { StyleProp, TextInput, ViewStyle } from 'react-native'
+import { ScrollViewProps, StyleProp, TextInput, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -34,13 +34,13 @@ import { Contact } from '~/types/contacts'
 import { stringToColour } from '~/utils/colors'
 import { filterContacts } from '~/utils/contacts'
 
-interface ContactListScreenBaseProps {
+interface ContactListScreenBaseProps extends ScrollViewProps {
   onContactPress: (contactId: Contact['id']) => void
   onNewContactPress?: () => void
   style?: StyleProp<ViewStyle>
 }
 
-const ContactListScreenBase = ({ onContactPress, onNewContactPress, style }: ContactListScreenBaseProps) => {
+const ContactListScreenBase = ({ onContactPress, onNewContactPress, style, ...props }: ContactListScreenBaseProps) => {
   const contacts = useAppSelector(selectAllContacts)
 
   const [filteredContacts, setFilteredContacts] = useState(contacts)
@@ -51,7 +51,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, style }: Con
   }, [contacts, searchTerm])
 
   return (
-    <ScrollScreenStyled style={style}>
+    <ScrollScreenStyled style={style} {...props}>
       <HeaderScreenSection>
         <SearchInput placeholder="Search" value={searchTerm} onChangeText={setSearchTerm} />
         {onNewContactPress && <Button Icon={Plus} type="transparent" variant="accent" onPress={onNewContactPress} />}

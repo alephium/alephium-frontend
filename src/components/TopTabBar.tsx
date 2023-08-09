@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
-import { Animated, Pressable } from 'react-native'
-import Reanimated, { interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
+import { Pressable } from 'react-native'
+import Reanimated, { Extrapolate, interpolate, interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -30,7 +30,7 @@ const TopTabBar = ({ state, descriptors, navigation, position }: MaterialTopTabB
   const { scrollY } = useScrollContext()
   const theme = useTheme()
 
-  const bgColorRange = [theme.bg.primary, theme.bg.back2]
+  const bgColorRange = [theme.bg.primary, theme.bg.secondary]
   const borderColorRange = ['transparent', theme.border.secondary]
   const insets = useSafeAreaInsets()
 
@@ -69,11 +69,12 @@ interface TabBarItemProps {
 
 // Inspired by https://reactnavigation.org/docs/material-top-tab-navigator/#tabbar
 const TabBarItem = ({ descriptors, route, state, index, navigation, position }: TabBarItemProps) => {
+  const { scrollY } = useScrollContext()
+  const theme = useTheme()
+
   const { options } = descriptors[route.key]
   const label = options.title !== undefined ? options.title : route.name
-
   const isFocused = state.index === index
-  const opacityInterpolationInputRange = state.routes.map((_, i) => i)
 
   const onPress = () => {
     const event = navigation.emit({
@@ -95,12 +96,11 @@ const TabBarItem = ({ descriptors, route, state, index, navigation, position }: 
     })
   }
 
-  const textStyles = {
-    opacity: position.interpolate({
-      inputRange: opacityInterpolationInputRange,
-      outputRange: opacityInterpolationInputRange.map((i) => (i === index ? 1 : 0.3))
-    })
-  }
+  const textStyle = useAnimatedStyle(() => ({
+    fontSize: interpolate(scrollY?.value || 0, scrollRange, [28, 18], Extrapolate.CLAMP),
+    opacity: isFocused ? 1 : 0.3,
+    borderBottomColor: isFocused ? theme.font.primary : 'transparent'
+  }))
 
   return (
     <Pressable
@@ -112,7 +112,7 @@ const TabBarItem = ({ descriptors, route, state, index, navigation, position }: 
       onPress={onPress}
       onLongPress={onLongPress}
     >
-      <TabItemText style={textStyles}>{label}</TabItemText>
+      <ReanimatedText style={textStyle}>{label}</ReanimatedText>
     </Pressable>
   )
 }
@@ -127,8 +127,9 @@ const TabsRow = styled.View`
   padding: 0 20px;
 `
 
-const TabItemText = styled(Animated.Text)`
-  font-size: 28px;
-  font-weight: 600;
+const ReanimatedText = styled(Reanimated.Text)`
   padding: 18px 0;
+  font-weight: 600;
+  border-bottom-width: 1px;
+  margin-bottom: -1px;
 `

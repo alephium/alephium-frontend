@@ -17,23 +17,31 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { StyleProp, ViewStyle } from 'react-native'
+import { ScrollViewProps, StyleProp, ViewStyle } from 'react-native'
 
+import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 import { Contact } from '~/types/contacts'
 
-interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackParamList, 'ContactsScreen'> {
+interface ScreenProps
+  extends ScrollViewProps,
+    StackScreenProps<AddressTabsParamList & RootStackParamList, 'ContactsScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
-const ContactsScreen = ({ navigation, style }: ScreenProps) => (
-  <ContactListScreenBase
-    style={style}
-    onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
-    onNewContactPress={() => navigation.navigate('NewContactScreen')}
-  />
-)
+const ContactsScreen = ({ navigation, style, ...props }: ScreenProps) => {
+  const scrollHandler = useScrollEventHandler()
+
+  return (
+    <ContactListScreenBase
+      style={style}
+      onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
+      onNewContactPress={() => navigation.navigate('NewContactScreen')}
+      onScroll={scrollHandler}
+    />
+  )
+}
 
 export default ContactsScreen
