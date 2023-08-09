@@ -154,7 +154,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       if (!isAuthenticated) {
         setLoading(false)
-        navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
+        navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: !!importedData?.addresses })
         return
       }
 
