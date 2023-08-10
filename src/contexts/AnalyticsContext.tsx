@@ -18,9 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { nanoid } from 'nanoid'
 import { PostHogProvider, usePostHog } from 'posthog-react-native'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useCallback, useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { getWalletsMetadata } from '~/persistent-storage/wallets'
 import { analyticsIdGenerated } from '~/store/settingsSlice'
 
 const PUBLIC_POSTHOG_KEY = 'phc_CGYfA9jfoeMKXW629pQs1vwI1hxD3icXgnTDezOhaGz'
@@ -31,7 +32,14 @@ const AnalyticsSetup = ({ children }: { children: ReactNode }) => {
   const analytics = useAppSelector((s) => s.settings.analytics)
   const analyticsId = useAppSelector((s) => s.settings.analyticsId)
   const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
+  const requireAuth = useAppSelector((s) => s.settings.requireAuth)
+  const theme = useAppSelector((s) => s.settings.theme)
+  const currency = useAppSelector((s) => s.settings.currency)
+  const networkName = useAppSelector((s) => s.network.name)
+  const authType = useAppSelector((s) => s.activeWallet.authType)
   const dispatch = useAppDispatch()
+
+  const canCaptureUserProperties = settingsLoadedFromStorage && analytics && !!analyticsId
 
   useEffect(() => {
     if (!settingsLoadedFromStorage) {
@@ -49,6 +57,27 @@ const AnalyticsSetup = ({ children }: { children: ReactNode }) => {
       dispatch(analyticsIdGenerated(newAnalyticsId))
     }
   }, [analytics, analyticsId, dispatch, posthog, settingsLoadedFromStorage])
+
+  const captureUserProperties = useCallback(async () => {
+    if (!canCaptureUserProperties) return
+
+    const wallets = await getWalletsMetadata()
+
+    posthog?.capture('User identified', {
+      $set: {
+        wallets: wallets.length,
+        requireAuth,
+        theme,
+        currency,
+        networkName,
+        authType
+      }
+    })
+  }, [authType, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme])
+
+  useEffect(() => {
+    if (canCaptureUserProperties) captureUserProperties()
+  })
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>
