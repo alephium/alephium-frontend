@@ -95,7 +95,8 @@ const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
       options={{
         host: PUBLIC_POSTHOG_HOST,
         disableGeoip: true,
-        enable: settingsLoadedFromStorage && analytics && !!analyticsId
+        enable: settingsLoadedFromStorage && analytics && !!analyticsId,
+        customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' })
       }}
       autocapture={{
         captureTouches: false,
