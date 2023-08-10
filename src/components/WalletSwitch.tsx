@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { usePostHog } from 'posthog-react-native'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'

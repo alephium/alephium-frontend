@@ -25,13 +25,21 @@ import { GeneralSettings } from '~/types/settings'
 
 const sliceName = 'settings'
 
-const initialState: GeneralSettings = defaultGeneralSettings
+const initialState: GeneralSettings & {
+  loadedFromStorage: boolean
+} = {
+  ...defaultGeneralSettings,
+  loadedFromStorage: false
+}
 
 const settingsSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    storedGeneralSettingsLoaded: (_, action: PayloadAction<GeneralSettings>) => action.payload,
+    storedGeneralSettingsLoaded: (_, action: PayloadAction<GeneralSettings>) => ({
+      ...action.payload,
+      loadedFromStorage: true
+    }),
     themeChanged: (state, action: PayloadAction<GeneralSettings['theme']>) => {
       state.theme = action.payload
     },
@@ -43,6 +51,12 @@ const settingsSlice = createSlice({
     },
     currencySelected: (state, action: PayloadAction<GeneralSettings['currency']>) => {
       state.currency = action.payload
+    },
+    analyticsIdGenerated: (state, action: PayloadAction<GeneralSettings['analyticsId']>) => {
+      state.analyticsId = action.payload
+    },
+    analyticsToggled: (state) => {
+      state.analytics = !state.analytics
     }
   },
   extraReducers(builder) {
@@ -55,14 +69,23 @@ export const {
   themeChanged,
   discreetModeToggled,
   passwordRequirementToggled,
-  currencySelected
+  currencySelected,
+  analyticsIdGenerated,
+  analyticsToggled
 } = settingsSlice.actions
 
 export const settingsListenerMiddleware = createListenerMiddleware()
 
 // When the settings change, store them in persistent storage
 settingsListenerMiddleware.startListening({
-  matcher: isAnyOf(themeChanged, discreetModeToggled, passwordRequirementToggled, currencySelected),
+  matcher: isAnyOf(
+    themeChanged,
+    discreetModeToggled,
+    passwordRequirementToggled,
+    currencySelected,
+    analyticsIdGenerated,
+    analyticsToggled
+  ),
   effect: async (_, { getState }) => {
     const state = getState() as RootState
 

@@ -39,7 +39,7 @@ import {
   enableBiometrics
 } from '~/persistent-storage/wallets'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
-import { discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
+import { analyticsToggled, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
 import { resetNavigationState } from '~/utils/navigation'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SettingsScreen'>
@@ -55,6 +55,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const analytics = useAppSelector((s) => s.settings.analytics)
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
@@ -73,6 +74,8 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const toggleTheme = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
 
   const toggleAuthRequirement = () => dispatch(passwordRequirementToggled())
+
+  const toggleAnalytics = () => dispatch(analyticsToggled())
 
   const deleteWallet = async () => {
     await deleteWalletById(activeWalletMetadataId)
@@ -121,6 +124,9 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
               <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
             </HighlightRow>
           )}
+          <HighlightRow title="Analytics" subtitle="Help us improve your experience!">
+            <Toggle value={analytics} onValueChange={toggleAnalytics} />
+          </HighlightRow>
           <HighlightRow onPress={() => navigation.navigate('CurrencySelectScreen')} title="Currency">
             <AppText bold>{currentCurrency}</AppText>
           </HighlightRow>
