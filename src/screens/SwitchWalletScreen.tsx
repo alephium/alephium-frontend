@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { Alert, ScrollView, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
@@ -53,6 +54,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
   const wallets = useSortedWallets()
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
   const pin = useAppSelector((s) => s.credentials.pin)
+  const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
 
@@ -85,8 +87,12 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
 
       dispatch(walletSwitched({ wallet, addressesToInitialize, contacts: activeWalletMetadata?.contacts ?? [] }))
       resetNavigationState()
+
+      posthog?.capture('Switched wallet')
     } catch (e) {
       Alert.alert(getHumanReadableError(e, 'Could not switch wallets'))
+
+      posthog?.capture('Error', { message: 'Could not switch wallets' })
     } finally {
       setLoading(false)
     }

@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { ListIcon, PlusIcon, Upload } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -50,6 +51,7 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
   const theme = useTheme()
   const scrollHandler = useScrollEventHandler()
+  const posthog = usePostHog()
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
@@ -78,6 +80,15 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
   }
 
   if (!selectedAddress) return null
+
+  const handleSendFromPress = () => {
+    posthog?.capture('Send: Selected address to send funds from')
+
+    navigation.navigate('SendNavigation', {
+      screen: 'DestinationScreen',
+      params: { fromAddressHash: selectedAddressHash }
+    })
+  }
 
   const floatingButtonBgColor = selectedAddress.settings.color ?? theme.font.primary
 
@@ -122,12 +133,7 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
         round
         bgColor={floatingButtonBgColor}
         color={colord(floatingButtonBgColor).isDark() ? themes.light.font.contrast : themes.light.font.primary}
-        onPress={() =>
-          navigation.navigate('SendNavigation', {
-            screen: 'DestinationScreen',
-            params: { fromAddressHash: selectedAddressHash }
-          })
-        }
+        onPress={handleSendFromPress}
       />
     </>
   )

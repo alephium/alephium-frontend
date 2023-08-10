@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { usePostHog } from 'posthog-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -27,6 +28,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import AddressBox from '~/screens/SendReceive/AddressBox'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAllAddresses } from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'> {
   style?: StyleProp<ViewStyle>
@@ -34,6 +36,13 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'Address
 
 const AddressScreen = ({ navigation, style }: ScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
+  const posthog = usePostHog()
+
+  const handleAddressPress = (addressHash: AddressHash) => {
+    posthog?.capture('Pressed on address to see QR code to receive funds')
+
+    navigation.navigate('QRCodeScreen', { addressHash })
+  }
 
   return (
     <ScrollScreen style={style}>
@@ -44,12 +53,8 @@ const AddressScreen = ({ navigation, style }: ScreenProps) => {
       />
       <ScreenSection>
         <AddressList>
-          {addresses.map((address) => (
-            <AddressBox
-              key={address.hash}
-              addressHash={address.hash}
-              onPress={() => navigation.navigate('QRCodeScreen', { addressHash: address.hash })}
-            />
+          {addresses.map(({ hash }) => (
+            <AddressBox key={hash} addressHash={hash} onPress={() => handleAddressPress(hash)} />
           ))}
         </AddressList>
       </ScreenSection>

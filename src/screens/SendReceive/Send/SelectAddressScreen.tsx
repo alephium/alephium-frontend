@@ -17,27 +17,32 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { usePostHog } from 'posthog-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import AddressListScreenBase from '~/screens/AddressListScreenBase'
+import { AddressHash } from '~/types/addresses'
 
 type ScreenProps = StackScreenProps<SendNavigationParamList, 'SelectAddressScreen'> &
   StackScreenProps<RootStackParamList, 'SelectAddressScreen'> & {
     style?: StyleProp<ViewStyle>
   }
 
-const SelectAddressScreen = ({ navigation, style, route: { params } }: ScreenProps) => (
-  <AddressListScreenBase
-    style={style}
-    onAddressPress={(toAddressHash) =>
-      navigation.navigate('SendNavigation', {
-        screen: params.nextScreen,
-        params: { toAddressHash }
-      })
-    }
-  />
-)
+const SelectAddressScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+  const posthog = usePostHog()
+
+  const handleAddressPress = (toAddressHash: AddressHash) => {
+    posthog?.capture('Send: Selected own address to send funds to')
+
+    navigation.navigate('SendNavigation', {
+      screen: params.nextScreen,
+      params: { toAddressHash }
+    })
+  }
+
+  return <AddressListScreenBase style={style} onAddressPress={handleAddressPress} />
+}
 
 export default SelectAddressScreen

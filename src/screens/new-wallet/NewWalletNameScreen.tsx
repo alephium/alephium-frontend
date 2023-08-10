@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { usePostHog } from 'posthog-react-native'
 import { useCallback, useRef, useState } from 'react'
 import styled from 'styled-components/native'
 
@@ -53,12 +54,13 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   const hasAvailableBiometrics = useBiometrics()
   const wallets = useSortedWallets()
   const lastActiveWalletAuthType = useRef(activeWalletAuthType)
+  const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
+
   const walletNames = wallets.map(({ name }) => name)
   const error = walletNames.includes(name) ? 'A wallet with this name already exists' : ''
-
   const isAuthenticated = !!activeWalletMnemonic
 
   const createNewWallet = useCallback(
@@ -75,6 +77,8 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
       dispatch(syncAddressesData(wallet.firstAddress.hash))
       dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
 
+      posthog?.capture('Generated new wallet', { note: 'With existing pin' })
+
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
       if (lastActiveWalletAuthType.current === 'biometrics' && hasAvailableBiometrics) {
         await enableBiometrics(wallet.metadataId, wallet.mnemonic)
@@ -85,7 +89,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
 
       navigation.navigate('NewWalletSuccessPage')
     },
-    [dispatch, hasAvailableBiometrics, name, navigation]
+    [dispatch, hasAvailableBiometrics, name, navigation, posthog]
   )
 
   const handleButtonPress = async () => {

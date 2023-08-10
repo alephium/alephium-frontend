@@ -70,10 +70,11 @@ const AnalyticsSetup = ({ children }: { children: ReactNode }) => {
         theme,
         currency,
         networkName,
-        authType
+        authType,
+        analytics
       }
     })
-  }, [authType, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme])
+  }, [analytics, authType, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme])
 
   useEffect(() => {
     if (canCaptureUserProperties) captureUserProperties()
@@ -97,7 +98,9 @@ const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
         enable: settingsLoadedFromStorage && analytics && !!analyticsId
       }}
       autocapture={{
-        captureTouches: false
+        captureTouches: false,
+        captureLifecycleEvents: false,
+        captureScreens: false
       }}
     >
       <AnalyticsSetup>{children}</AnalyticsSetup>

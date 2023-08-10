@@ -102,6 +102,10 @@ export const deleteContact = async (contactId: Contact['id']) => {
 
 export const importContacts = async (contacts: ContactFormData[]) => {
   for (const contact of contacts) {
-    await persistContact(contact)
+    try {
+      await persistContact(contact)
+    } catch (e) {
+      console.warn(e)
+    }
   }
 }

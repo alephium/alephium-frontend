@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { usePostHog } from 'posthog-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 
 import { useAppSelector } from '~/hooks/redux'
@@ -33,11 +34,14 @@ type ScreenProps = StackScreenProps<RootStackParamList, 'SelectContactScreen'> &
 
 const SelectContactScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
   const contacts = useAppSelector(selectAllContacts)
+  const posthog = usePostHog()
 
   const handleContactPress = (contactId: Contact['id']) => {
     const contact = contacts.find((c) => c.id === contactId)
 
     if (contact) {
+      posthog?.capture('Send: Selected contact to send funds to')
+
       navigation.navigate('SendNavigation', {
         screen: params.nextScreen,
         params: { toAddressHash: contact.address }

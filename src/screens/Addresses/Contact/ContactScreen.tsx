@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { useEffect, useMemo } from 'react'
 import { PressableProps, Share, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -49,6 +50,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
   const selectContactPendingTransactions = useMemo(makeSelectContactPendingTransactions, [])
   const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
   const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
+  const posthog = usePostHog()
 
   useEffect(() => {
     navigation.setOptions({
@@ -65,11 +67,28 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
 
   if (!contact) return null
 
-  const shareContact = () => {
+  const handleShareContactPress = () => {
     Share.share({
       title: 'Share contact',
       message: `${contact.name}\n${contact.address}`
     })
+
+    posthog?.capture('Contact: Shared contact')
+  }
+
+  const handleSendFundsPress = () => {
+    posthog?.capture('Contact: Pressed send funds')
+
+    navigation.navigate('SendNavigation', {
+      screen: 'OriginScreen',
+      params: { toAddressHash: contact.address }
+    })
+  }
+
+  const handleCopyAddressPress = () => {
+    posthog?.capture('Copied address', { note: 'Contact' })
+
+    copyAddressToClipboard(contact.address)
   }
 
   const iconBgColor = stringToColour(contact.address)
@@ -96,22 +115,9 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
               {contact.address}
             </ContactAddress>
             <ButtonsRow>
-              <ContactButton
-                Icon={Upload}
-                title={'Send funds'}
-                onPress={() =>
-                  navigation.navigate('SendNavigation', {
-                    screen: 'OriginScreen',
-                    params: { toAddressHash: contact.address }
-                  })
-                }
-              />
-              <ContactButton
-                Icon={Clipboard}
-                title="Copy address"
-                onPress={() => copyAddressToClipboard(contact.address)}
-              />
-              <ContactButton Icon={Share2Icon} title="Share" onPress={shareContact} />
+              <ContactButton Icon={Upload} title={'Send funds'} onPress={handleSendFundsPress} />
+              <ContactButton Icon={Clipboard} title="Copy address" onPress={handleCopyAddressPress} />
+              <ContactButton Icon={Share2Icon} title="Share" onPress={handleShareContactPress} />
             </ButtonsRow>
           </CenteredSection>
           <TransactionsHeaderRow>

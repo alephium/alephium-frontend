@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { useEffect } from 'react'
 import { ScrollView, Text } from 'react-native'
 import QRCode from 'react-qr-code'
@@ -40,12 +41,19 @@ type ScreenProps = StackScreenProps<ReceiveNavigationParamList, 'QRCodeScreen'>
 const QRCodeScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
+  const posthog = usePostHog()
 
   useEffect(() => {
     navigation.getParent()?.setOptions({
       headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
     })
   }, [navigation])
+
+  const handleCopyAddressPress = () => {
+    posthog?.capture('Copied address', { note: 'Receive screen' })
+
+    copyAddressToClipboard(params.addressHash)
+  }
 
   return (
     <ScrollView>
@@ -54,7 +62,7 @@ const QRCodeScreen = ({ navigation, route: { params } }: ScreenProps) => {
         <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={params.addressHash} />
       </CenteredScreenSection>
       <CenteredScreenSection>
-        <Button title="Copy address" onPress={() => copyAddressToClipboard(params.addressHash)} Icon={ClipboardIcon} />
+        <Button title="Copy address" onPress={handleCopyAddressPress} Icon={ClipboardIcon} />
       </CenteredScreenSection>
       <ScreenSection>
         <BoxSurface>

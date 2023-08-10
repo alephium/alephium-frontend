@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import styled from 'styled-components/native'
 
@@ -44,6 +45,7 @@ const AddBiometricsScreen = ({ navigation, route: { params } }: ScreenProps) => 
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()
+  const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
 
@@ -55,6 +57,8 @@ const AddBiometricsScreen = ({ navigation, route: { params } }: ScreenProps) => 
     await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
     dispatch(biometricsEnabled())
 
+    posthog?.capture('Activated biometrics from wallet creation flow')
+
     if (params?.skipAddressDiscovery) {
       navigation.navigate('NewWalletSuccessPage')
     } else {
@@ -62,6 +66,16 @@ const AddBiometricsScreen = ({ navigation, route: { params } }: ScreenProps) => 
     }
 
     setLoading(false)
+  }
+
+  const handleLaterPress = () => {
+    posthog?.capture('Skipped biometrics activation from wallet creation flow')
+
+    navigation.navigate(
+      method === 'import' && !params?.skipAddressDiscovery
+        ? 'ImportWalletAddressDiscoveryScreen'
+        : 'NewWalletSuccessPage'
+    )
   }
 
   return (
@@ -73,17 +87,7 @@ const AddBiometricsScreen = ({ navigation, route: { params } }: ScreenProps) => 
       <ActionsContainer>
         <ButtonStack>
           <Button title="Activate" type="primary" onPress={activateBiometrics} />
-          <Button
-            title="Later"
-            type="secondary"
-            onPress={() =>
-              navigation.navigate(
-                method === 'import' && !params?.skipAddressDiscovery
-                  ? 'ImportWalletAddressDiscoveryScreen'
-                  : 'NewWalletSuccessPage'
-              )
-            }
-          />
+          <Button title="Later" type="secondary" onPress={handleLaterPress} />
         </ButtonStack>
       </ActionsContainer>
       <SpinnerModal isActive={loading} text="Enabling biometrics..." />

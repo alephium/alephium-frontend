@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
+import { usePostHog } from 'posthog-react-native'
 import styled from 'styled-components/native'
 
 import animationSrc from '~/animations/wallet.json'
@@ -37,24 +38,34 @@ const instructions: Instruction[] = [
   }
 ]
 
-const ImportWalletAddressDiscoveryScreen = ({ navigation }: ScreenProps) => (
-  <Screen>
-    <AnimationContainer>
-      <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
-    </AnimationContainer>
-    <CenteredInstructions instructions={instructions} stretch />
-    <ActionsContainer>
-      <ButtonStack>
-        <Button
-          title="Scan"
-          type="primary"
-          onPress={() => navigation.navigate('AddressDiscoveryScreen', { isImporting: true })}
-        />
-        <Button title="Later" type="secondary" onPress={() => navigation.navigate('NewWalletSuccessPage')} />
-      </ButtonStack>
-    </ActionsContainer>
-  </Screen>
-)
+const ImportWalletAddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
+  const posthog = usePostHog()
+
+  const handleLaterPress = () => {
+    posthog?.capture('Skipped address discovery')
+
+    navigation.navigate('NewWalletSuccessPage')
+  }
+
+  return (
+    <Screen>
+      <AnimationContainer>
+        <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
+      </AnimationContainer>
+      <CenteredInstructions instructions={instructions} stretch />
+      <ActionsContainer>
+        <ButtonStack>
+          <Button
+            title="Scan"
+            type="primary"
+            onPress={() => navigation.navigate('AddressDiscoveryScreen', { isImporting: true })}
+          />
+          <Button title="Later" type="secondary" onPress={handleLaterPress} />
+        </ButtonStack>
+      </ActionsContainer>
+    </Screen>
+  )
+}
 
 export default ImportWalletAddressDiscoveryScreen
 
