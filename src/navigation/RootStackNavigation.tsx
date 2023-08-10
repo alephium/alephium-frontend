@@ -31,7 +31,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import EditAddressScreen from '~/screens/Address/EditAddressScreen'
 import AddressDiscoveryScreen from '~/screens/AddressDiscovery'
-import AddressesListScreen from '~/screens/Addresses/AddressesListScreen'
+import AddressQuickNavigationScreen from '~/screens/Addresses/AddressQuickNavigationScreen'
 import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
@@ -47,6 +47,8 @@ import NewWalletSuccessPage from '~/screens/new-wallet/NewWalletSuccessPage'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
 import ScreenHeader from '~/screens/SendReceive/ScreenHeader'
+import SelectAddressScreen from '~/screens/SendReceive/Send/SelectAddressScreen'
+import SelectContactScreen from '~/screens/SendReceive/Send/SelectContactScreen'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchNetworkScreen from '~/screens/SwitchNetworkScreen'
@@ -163,7 +165,18 @@ const RootStackNavigation = () => {
               component={ReceiveNavigation}
               options={{ header: (props) => <ScreenHeader {...props} workflow="receive" /> }}
             />
-            <RootStack.Screen name="AddressesListScreen" component={AddressesListScreen} />
+            <RootStack.Screen name="AddressQuickNavigationScreen" component={AddressQuickNavigationScreen} />
+
+            <RootStack.Screen
+              name="SelectContactScreen"
+              component={SelectContactScreen}
+              initialParams={{ nextScreen: 'OriginScreen' }}
+            />
+            <RootStack.Screen
+              name="SelectAddressScreen"
+              component={SelectAddressScreen}
+              initialParams={{ nextScreen: 'OriginScreen' }}
+            />
           </RootStack.Group>
         </RootStack.Navigator>
       </ScrollContextProvider>

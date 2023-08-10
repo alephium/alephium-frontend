@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { PossibleNextScreenAfterDestination } from '~/navigation/SendNavigation'
 import { AddressHash } from '~/types/addresses'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 
@@ -46,10 +47,7 @@ type RootStackParamList = {
     // TODO: Make all params serializable to help with state persistance
     tx: AddressConfirmedTransaction
   }
-  SendNavigation?: {
-    fromAddressHash?: AddressHash
-    toAddressHash?: AddressHash
-  }
+  SendNavigation: undefined
   ReceiveNavigation: undefined
   SecurityScreen: undefined
   AddressDiscoveryScreen?: {
@@ -63,7 +61,13 @@ type RootStackParamList = {
   EditContactScreen: {
     contactId: string
   }
-  AddressesListScreen: undefined
+  SelectContactScreen: {
+    nextScreen: PossibleNextScreenAfterDestination
+  }
+  SelectAddressScreen: {
+    nextScreen: PossibleNextScreenAfterDestination
+  }
+  AddressQuickNavigationScreen: undefined
 }
 
 export default RootStackParamList

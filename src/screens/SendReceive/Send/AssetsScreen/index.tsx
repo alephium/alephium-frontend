@@ -35,13 +35,17 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsS
   style?: StyleProp<ViewStyle>
 }
 
-const AssetsScreen = ({ navigation, style }: ScreenProps) => {
-  const { fromAddress, assetAmounts, buildTransaction } = useSendContext()
+const AssetsScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+  const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
 
   const isContinueButtonDisabled = assetAmounts.length < 1
+
+  useEffect(() => {
+    if (params?.toAddressHash) setToAddress(params.toAddressHash)
+  }, [params?.toAddressHash, setToAddress])
 
   useEffect(() => {
     navigation.getParent()?.setOptions({

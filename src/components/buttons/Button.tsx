@@ -20,7 +20,7 @@ import { colord } from 'colord'
 import { LucideProps } from 'lucide-react-native'
 import { ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS } from '~/style/globalStyle'
@@ -36,6 +36,7 @@ export interface ButtonProps extends PressableProps {
   color?: string
   round?: boolean
   children?: ReactNode
+  compact?: boolean
 }
 
 const Button = ({
@@ -48,40 +49,61 @@ const Button = ({
   children,
   round,
   color,
+  centered,
+  compact,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
 
-  const colors = {
-    bg: {
-      default: theme.bg.secondary,
-      contrast: theme.font.primary,
-      accent: theme.global.accent,
-      valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
-      alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
-      transparent: 'transparent'
-    },
-    font: {
+  const hasOnlyIcon = !!Icon && !title && !children
+
+  const bg = {
+    default: theme.bg.secondary,
+    contrast: theme.font.primary,
+    accent: theme.global.accent,
+    valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
+    alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
+    transparent: 'transparent'
+  }[variant]
+
+  const font =
+    color ??
+    {
       default: theme.font.primary,
       contrast: theme.font.contrast,
       accent: theme.global.accent,
       valid: theme.global.valid,
       alert: theme.global.alert
-    }
-  }
-
-  const bg = colors.bg[variant]
-  const font = color ?? colors.font[variant]
+    }[variant]
 
   const buttonStyle: PressableProps['style'] = ({ pressed }) => [
     {
       opacity: pressed || disabled ? 0.5 : 1,
-      backgroundColor: { primary: bg, secondary: 'transparent', transparent: 'transparent' }[type],
-      borderWidth: { primary: 0, secondary: 2, transparent: 0 }[type],
-      borderColor: { primary: 'transparent', secondary: bg, transparent: undefined }[type],
-      width: round ? 56 : props.wide ? '75%' : 'auto',
+      backgroundColor: {
+        primary: bg,
+        secondary: 'transparent',
+        transparent: 'transparent'
+      }[type],
+      borderWidth: {
+        primary: 0,
+        secondary: 2,
+        transparent: 0
+      }[type],
+      borderColor: {
+        primary: 'transparent',
+        secondary: bg,
+        transparent: undefined
+      }[type],
+      width: round ? 56 : props.wide ? '75%' : hasOnlyIcon ? 45 : 'auto',
+      height: compact ? 'auto' : hasOnlyIcon ? 45 : 55,
       borderRadius: round ? 100 : BORDER_RADIUS,
-      justifyContent: round ? 'center' : undefined
+      justifyContent: round ? 'center' : undefined,
+      minWidth: centered ? 200 : undefined,
+      marginVertical: centered ? 0 : undefined,
+      marginHorizontal: centered ? 'auto' : undefined,
+      paddingVertical: compact ? 7 : !hasOnlyIcon ? 0 : undefined,
+      paddingHorizontal: compact ? 20 : !hasOnlyIcon ? 25 : undefined,
+      gap: compact ? 5 : undefined
     },
     style
   ]
@@ -91,8 +113,18 @@ const Button = ({
 
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
-      {Icon && <Icon style={!!title || !!children ? { marginRight: 15 } : undefined} color={font} />}
-      {title && <ButtonText style={{ color: font }}>{title}</ButtonText>}
+      {Icon && (
+        <Icon
+          style={!hasOnlyIcon && !compact ? { marginRight: 15 } : undefined}
+          color={font}
+          size={compact ? 20 : undefined}
+        />
+      )}
+      {title && (
+        <ButtonText style={{ color: font }} semiBold>
+          {title}
+        </ButtonText>
+      )}
       {children}
     </Pressable>
   )
@@ -103,27 +135,8 @@ export default styled(Button)`
   justify-content: center;
   overflow: hidden;
   flex-direction: row;
-
-  ${({ centered }) =>
-    centered &&
-    css`
-      min-width: 200px;
-      margin: 0 auto;
-    `}
-
-  ${({ Icon: icon, title, children }) =>
-    icon && !title && !children
-      ? css`
-          width: 45px;
-          height: 45px;
-        `
-      : css`
-          padding: 0 25px;
-          height: 55px;
-        `};
 `
 
 const ButtonText = styled(AppText)`
-  font-weight: bold;
   text-align: center;
 `

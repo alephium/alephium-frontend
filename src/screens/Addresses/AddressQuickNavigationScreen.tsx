@@ -19,21 +19,22 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 
-import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import ContactListScreenBase from '~/screens/ContactListScreenBase'
-import { Contact } from '~/types/contacts'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import AddressListScreenBase from '~/screens/AddressListScreenBase'
 
-interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackParamList, 'ContactsScreen'> {
+interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressQuickNavigationScreen'> {
   style?: StyleProp<ViewStyle>
 }
 
-const ContactsScreen = ({ navigation, style }: ScreenProps) => (
-  <ContactListScreenBase
-    style={style}
-    onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
-    onNewContactPress={() => navigation.navigate('NewContactScreen')}
+const AddressQuickNavigationScreen = ({ navigation, style }: ScreenProps) => (
+  <AddressListScreenBase
+    onAddressPress={(addressHash) =>
+      navigation.navigate('AddressesTabNavigation', {
+        screen: 'AddressesScreen',
+        params: { addressHash }
+      })
+    }
   />
 )
 
-export default ContactsScreen
+export default AddressQuickNavigationScreen

@@ -19,21 +19,25 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { StyleProp, ViewStyle } from 'react-native'
 
-import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import ContactListScreenBase from '~/screens/ContactListScreenBase'
-import { Contact } from '~/types/contacts'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import AddressListScreenBase from '~/screens/AddressListScreenBase'
 
-interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackParamList, 'ContactsScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+type ScreenProps = StackScreenProps<SendNavigationParamList, 'SelectAddressScreen'> &
+  StackScreenProps<RootStackParamList, 'SelectAddressScreen'> & {
+    style?: StyleProp<ViewStyle>
+  }
 
-const ContactsScreen = ({ navigation, style }: ScreenProps) => (
-  <ContactListScreenBase
+const SelectAddressScreen = ({ navigation, style, route: { params } }: ScreenProps) => (
+  <AddressListScreenBase
     style={style}
-    onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
-    onNewContactPress={() => navigation.navigate('NewContactScreen')}
+    onAddressPress={(toAddressHash) =>
+      navigation.navigate('SendNavigation', {
+        screen: params.nextScreen,
+        params: { toAddressHash }
+      })
+    }
   />
 )
 
-export default ContactsScreen
+export default SelectAddressScreen

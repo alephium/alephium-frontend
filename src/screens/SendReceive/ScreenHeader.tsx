@@ -51,9 +51,9 @@ const ScreenHeader = ({ navigation, route, options, workflow }: ScreenHeaderProp
 
   useEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? steps[0]
-    const currentStepIndex = steps.findIndex((step) => step === routeName) + 1
+    const currentStepIndex = steps.findIndex((step) => step === routeName)
 
-    setProgress(currentStepIndex / steps.length)
+    if (currentStepIndex !== -1) setProgress((currentStepIndex + 1) / steps.length)
   }, [route, steps])
 
   return (

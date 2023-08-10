@@ -37,7 +37,7 @@ const NewAddressNavigation = (props: StackScreenProps<RootStackParamList, 'NewAd
 
   return (
     <NewAddressContextProvider>
-      <NewAddressStack.Navigator initialRouteName={'NewAddressScreen'}>
+      <NewAddressStack.Navigator initialRouteName="NewAddressScreen">
         <NewAddressStack.Screen
           name="NewAddressScreen"
           component={NewAddressScreen}
