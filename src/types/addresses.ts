@@ -57,12 +57,20 @@ export type AddressDiscoveryGroupData = {
   gap: number
 }
 
-export type AddressDataSyncResult = {
+export type AddressTransactionsSyncResult = {
   hash: AddressHash
-  details: explorer.AddressInfo
+  txNumber: explorer.AddressInfo['txNumber']
   transactions: explorer.Transaction[]
   mempoolTransactions: explorer.MempoolTransaction[]
+}
+
+export type AddressTokensSyncResult = {
+  hash: AddressHash
   tokens: TokenBalances[]
+}
+
+export type AddressBalancesSyncResult = Omit<explorer.AddressInfo, 'txNumber'> & {
+  hash: AddressHash
 }
 
 // Same as in desktop wallet

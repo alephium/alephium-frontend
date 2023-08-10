@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
-import { PlusIcon, Upload } from 'lucide-react-native'
+import { ListIcon, PlusIcon, Upload } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -39,9 +39,9 @@ interface ScreenProps extends StackScreenProps<AddressTabsParamList & RootStackP
   style?: StyleProp<ViewStyle>
 }
 
-const AddressesScreen = ({ navigation, style }: ScreenProps) => {
+const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const isLoading = useAppSelector((s) => s.addresses.loading)
+  const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
@@ -49,10 +49,16 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
   const theme = useTheme()
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
+  const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
 
   useEffect(() => {
-    if (defaultAddress) setSelectedAddressHash(defaultAddress.hash)
-  }, [defaultAddress])
+    if (params?.addressHash) {
+      setSelectedAddressHash(params.addressHash)
+      setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === params.addressHash))
+    } else if (defaultAddress) {
+      setSelectedAddressHash(defaultAddress.hash)
+    }
+  }, [addressHashes, defaultAddress, params?.addressHash])
 
   const onAddressCardsScrollEnd = (index: number) => {
     if (index < addressHashes.length) setSelectedAddressHash(addressHashes[index])
@@ -86,17 +92,21 @@ const AddressesScreen = ({ navigation, style }: ScreenProps) => {
             padding={30}
             distance={20}
             height={heightCarouselItem}
+            scrollTo={scrollToCarouselPage}
             FooterComponent={
-              <Button
-                onPress={() => navigation.navigate('NewAddressNavigation')}
-                Icon={PlusIcon}
-                title="New address"
-                type="secondary"
-                variant="accent"
-              />
+              <>
+                <Button onPress={() => navigation.navigate('AddressesListScreen')} Icon={ListIcon} type="transparent" />
+                <Button
+                  onPress={() => navigation.navigate('NewAddressNavigation')}
+                  Icon={PlusIcon}
+                  title="New address"
+                  type="secondary"
+                  variant="accent"
+                />
+              </>
             }
           />
-          {selectedAddress && <AddressesTokensList addresses={[selectedAddress]} />}
+          {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} />}
         </ScreenContent>
       </ScrollScreenStyled>
       <FloatingButton

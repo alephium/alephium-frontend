@@ -22,9 +22,12 @@ import { ParamListBase } from '@react-navigation/native'
 import TopTabBar from '~/components/TopTabBar'
 import AddressesScreen from '~/screens/Addresses/AddressesScreen'
 import ContactsScreen from '~/screens/Addresses/ContactsScreen'
+import { AddressHash } from '~/types/addresses'
 
 export interface AddressTabsParamList extends ParamListBase {
-  AddressesScreen: undefined
+  AddressesScreen?: {
+    addressHash?: AddressHash
+  }
   ContactsScreen: undefined
 }
 

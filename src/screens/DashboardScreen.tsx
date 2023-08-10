@@ -17,11 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { ArrowUpDown } from 'lucide-react-native'
+import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
 import { RefreshControl, StyleProp, ViewStyle } from 'react-native'
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
 import AppText from '~/components/AppText'
@@ -29,13 +28,11 @@ import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import { useScrollContext } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
-import { NetworkStatus } from '~/types/network'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
   style?: StyleProp<ViewStyle>
@@ -43,53 +40,37 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
 
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const isLoading = useAppSelector((s) => s.addresses.loading)
-  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-  const networkStatus = useAppSelector((s) => s.network.status)
-  const networkName = useAppSelector((s) => s.network.name)
-  const { scrollDirection } = useScrollContext()
+  const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
   }
 
-  const animatedButtonStyle = useAnimatedStyle(() => ({
-    width: withTiming(scrollDirection?.value === 'down' ? 56 : 170)
-  }))
-
-  const animatedTextStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(scrollDirection?.value === 'down' ? 0 : 1)
-  }))
-
   return (
-    <>
-      <DashboardScreenStyled refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
-        <ScreenSectionStyled>
-          <SurfaceHeader>
-            <WalletName color="primary" semiBold size={30} numberOfLines={1}>
-              {activeWalletName}
-            </WalletName>
-            <ActiveNetwork>
-              <NetworkStatusBullet status={networkStatus} />
-              <AppText color="primary">{networkName}</AppText>
-            </ActiveNetwork>
-          </SurfaceHeader>
-
-          <BalanceSummaryStyled dateLabel="VALUE TODAY" />
-        </ScreenSectionStyled>
-        <AddressesTokensList />
-      </DashboardScreenStyled>
-      <AnimatedFloatingButton style={animatedButtonStyle}>
-        <FloatingButton Icon={ArrowUpDown} round color="white" onPress={() => navigation.navigate('ReceiveNavigation')}>
-          <Animated.View style={animatedTextStyle}>
-            <AppText semiBold size={15} color="white" numberOfLines={1} ellipsizeMode="clip">
-              Send/Receive
-            </AppText>
-          </Animated.View>
-        </FloatingButton>
-      </AnimatedFloatingButton>
-    </>
+    <DashboardScreenStyled refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
+      <ScreenSectionStyled>
+        <BalanceSummaryStyled dateLabel="VALUE TODAY" />
+      </ScreenSectionStyled>
+      <ScreenSection>
+        <ButtonsRow>
+          <SendReceiveButton type="transparent" round onPress={() => navigation.navigate('SendNavigation')}>
+            <ButtonText semiBold>Send</ButtonText>
+            <Icon>
+              <ArrowUp color={theme.font.secondary} size={20} />
+            </Icon>
+          </SendReceiveButton>
+          <SendReceiveButton type="transparent" round onPress={() => navigation.navigate('ReceiveNavigation')}>
+            <ButtonText semiBold>Receive</ButtonText>
+            <Icon>
+              <ArrowDown color={theme.font.secondary} size={20} />
+            </Icon>
+          </SendReceiveButton>
+        </ButtonsRow>
+      </ScreenSection>
+      <AddressesTokensList />
+    </DashboardScreenStyled>
   )
 }
 
@@ -101,51 +82,34 @@ const DashboardScreenStyled = styled(ScrollScreen)`
 
 const ScreenSectionStyled = styled(ScreenSection)`
   padding-bottom: 0;
-`
-
-const SurfaceHeader = styled.View`
-  padding: 15px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`
-
-const ActiveNetwork = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 8px;
-  border-radius: 33px;
-  background-color: ${({ theme }) => theme.bg.back1};
-`
-
-const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
-  height: 7px;
-  width: 7px;
-  border-radius: 10px;
-  background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
+  padding-top: 0;
 `
 
 const BalanceSummaryStyled = styled(BalanceSummary)`
-  padding: 34px 15px 0px;
+  padding: 0px 15px 0px;
 `
 
-// TODO: Dry
-const FloatingButton = styled(Button)`
-  background-color: ${({ theme }) => theme.global.accent};
-  width: auto;
-  height: 56px;
+const ButtonsRow = styled.View`
+  flex-direction: row;
+  gap: 15px;
+`
+
+const SendReceiveButton = styled(Button)`
+  flex: 1;
   border-width: 1px;
-  justify-content: flex-start;
-  padding: 0 15px;
+  border-color: ${({ theme }) => theme.border.primary};
+  padding: 8.5px 10px;
+  height: auto;
 `
 
-const AnimatedFloatingButton = styled(Animated.View)`
-  position: absolute;
-  bottom: 18px;
-  right: 18px;
+const Icon = styled.View`
+  background-color: ${({ theme }) => theme.bg.secondary};
+  border-radius: 100px;
+  padding: 6px;
+  margin-left: auto;
 `
 
-const WalletName = styled(AppText)`
-  max-width: 70%;
+const ButtonText = styled(AppText)`
+  flex: 1;
+  text-align: center;
 `

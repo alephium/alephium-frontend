@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactElement, ReactNode, useState } from 'react'
+import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { Dimensions, LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
-import RNCarousel from 'react-native-reanimated-carousel'
+import RNCarousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
@@ -35,6 +35,7 @@ interface CarouselProps<T> {
   onScrollEnd?: (index: number) => void
   FooterComponent?: ReactNode
   style?: StyleProp<ViewStyle>
+  scrollTo?: number
 }
 
 const Carousel = <T,>({
@@ -47,19 +48,29 @@ const Carousel = <T,>({
   onScrollStart,
   onScrollEnd,
   FooterComponent,
-  style
+  style,
+  scrollTo
 }: CarouselProps<T>) => {
   const progressValue = useSharedValue<number>(0)
   const theme = useTheme()
+  const ref = useRef<ICarouselInstance>(null)
+
   const [_width, setWidth] = useState(width ?? Dimensions.get('window').width - padding * 2)
 
   const onLayout = (event: LayoutChangeEvent) => {
     setWidth(width ?? event.nativeEvent.layout.width - padding * 2)
   }
 
+  useEffect(() => {
+    if (scrollTo !== undefined) {
+      ref.current?.scrollTo({ index: scrollTo })
+    }
+  }, [scrollTo])
+
   return (
     <View onLayout={onLayout} style={style}>
       <RNCarousel
+        ref={ref}
         style={{ width: '100%', justifyContent: 'center' }}
         width={_width}
         height={height}

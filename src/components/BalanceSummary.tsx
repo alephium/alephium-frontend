@@ -17,8 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/sdk'
+import { Skeleton } from 'moti/skeleton'
 import { useState } from 'react'
-import { ActivityIndicator, Pressable, StyleProp, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -26,10 +27,14 @@ import AppText from '~/components/AppText'
 import DeltaPercentage from '~/components/DeltaPercentage'
 import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
-import { selectAddressesHaveHistoricBalances } from '~/store/addresses/addressesSelectors'
+import {
+  selectAddressesHaveHistoricBalances,
+  selectHaveHistoricBalancesLoaded
+} from '~/store/addresses/addressesSelectors'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { ChartLength, chartLengths, DataPoint } from '~/types/charts'
+import { NetworkStatus } from '~/types/network'
 import { currencies } from '~/utils/currencies'
 
 interface BalanceSummaryProps {
@@ -40,11 +45,14 @@ interface BalanceSummaryProps {
 const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
+  const networkStatus = useAppSelector((s) => s.network.status)
+  const networkName = useAppSelector((s) => s.network.name)
   const { data: price, isLoading: isPriceLoading } = useGetPriceQuery(currencies[currency].ticker, {
     pollingInterval: 60000,
     skip: totalBalance === BigInt(0)
   })
-  const addressDataStatus = useAppSelector((s) => s.addresses.status)
+  const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
+  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const hasHistoricBalances = useAppSelector(selectAddressesHaveHistoricBalances)
   const theme = useTheme()
 
@@ -52,37 +60,40 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
 
   const totalAmountWorth = calculateAmountWorth(totalBalance, price ?? 0)
-  const showActivityIndicator = isPriceLoading || addressDataStatus === 'uninitialized'
 
   return (
     <View style={style}>
-      {showActivityIndicator ? (
-        <ActivityIndicator size="large" color={theme.font.primary} />
-      ) : (
-        <>
-          <Label color="tertiary" semiBold>
-            {dateLabel}
-          </Label>
-          <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
-          {hasHistoricBalances && worthInBeginningOfChart !== undefined && (
-            <Row>
-              <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={totalAmountWorth} />
-              <ChartLengthBadges>
-                {chartLengths.map((length) => {
-                  const isActive = length === chartLength
+      <SurfaceHeader>
+        <AppText color="tertiary" semiBold>
+          {dateLabel}
+        </AppText>
+        <ActiveNetwork>
+          <NetworkStatusBullet status={networkStatus} />
+          <AppText color="primary">{networkName}</AppText>
+        </ActiveNetwork>
+      </SurfaceHeader>
+      <Skeleton show={isPriceLoading || isLoadingBalances} colorMode={theme.name}>
+        <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+      </Skeleton>
+      {(!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart !== undefined)) && (
+        <Row>
+          <Skeleton show={!haveHistoricBalancesLoaded} colorMode={theme.name}>
+            <DeltaPercentage initialValue={worthInBeginningOfChart || 0} latestValue={totalAmountWorth} />
+          </Skeleton>
+          <ChartLengthBadges>
+            {chartLengths.map((length) => {
+              const isActive = length === chartLength
 
-                  return (
-                    <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
-                      <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
-                        {length.toUpperCase()}
-                      </AppText>
-                    </ChartLengthButton>
-                  )
-                })}
-              </ChartLengthBadges>
-            </Row>
-          )}
-        </>
+              return (
+                <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
+                  <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
+                    {length.toUpperCase()}
+                  </AppText>
+                </ChartLengthButton>
+              )
+            })}
+          </ChartLengthBadges>
+        </Row>
       )}
 
       <ChartContainer>
@@ -99,10 +110,6 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
 
 export default BalanceSummary
 
-const Label = styled(AppText)`
-  margin-bottom: 14px;
-`
-
 const ChartContainer = styled.View`
   margin: 0 -35px;
 `
@@ -110,7 +117,6 @@ const ChartContainer = styled.View`
 const ChartLengthBadges = styled.View`
   flex-direction: row;
   gap: 12px;
-  margin: 10px 0;
 `
 
 const ChartLengthButton = styled(Pressable)<{ isActive?: boolean }>`
@@ -125,4 +131,28 @@ const ChartLengthButton = styled(Pressable)<{ isActive?: boolean }>`
 const Row = styled.View`
   flex-direction: row;
   gap: 24px;
+  margin: 10px 0;
+`
+
+const SurfaceHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 9px;
+`
+
+const ActiveNetwork = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border-radius: 33px;
+  background-color: ${({ theme }) => theme.bg.back1};
+`
+
+const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
+  height: 7px;
+  width: 7px;
+  border-radius: 10px;
+  background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
 `
