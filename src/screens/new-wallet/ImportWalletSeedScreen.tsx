@@ -287,7 +287,14 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
         {isPinModalVisible && (
           <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin, decryptedWalletFromQRCode)} />
         )}
-        {isCameraOpen && <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} />}
+        {isCameraOpen && (
+          <QRCodeScannerModal
+            onClose={closeQRCodeScannerModal}
+            onQRCodeScan={handleQRCodeScan}
+            text="Scan the animated QR code from the desktop wallet"
+            qrCodeMode="animated"
+          />
+        )}
         {isPasswordModalVisible && (
           <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
         )}
