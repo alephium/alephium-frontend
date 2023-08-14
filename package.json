@@ -74,7 +74,8 @@
     "react-qr-code": "^2.0.7",
     "react-redux": "^8.0.1",
     "styled-components": "^5.3.5",
-    "victory-native": "^36.6.10"
+    "victory-native": "^36.6.10",
+    "expo-constants": "~14.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
