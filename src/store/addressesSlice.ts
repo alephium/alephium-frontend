@@ -37,7 +37,7 @@ import {
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
 } from '~/api/addresses'
-import { newWalletGenerated, walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
+import { walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
 import { syncingAddressDataStarted } from '~/store/addresses/addressesActions'
 import { balanceHistoryAdapter } from '~/store/addresses/addressesAdapter'
 import { appReset } from '~/store/appSlice'
@@ -45,6 +45,7 @@ import { selectAllAssetsInfo, selectAllNFTs, selectNFTIds } from '~/store/assets
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 import { RootState } from '~/store/store'
 import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
+import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { Address, AddressesHistoricalBalanceResult, AddressHash, AddressPartial } from '~/types/addresses'
 import { NFT } from '~/types/assets'
 import { PendingTransaction } from '~/types/transactions'
@@ -56,8 +57,8 @@ const addressesAdapter = createEntityAdapter<Address>({
   selectId: (address) => address.hash,
   sortComparer: (a, b) => {
     // Always keep main address to the top of the list
-    if (a.settings.isMain) return -1
-    if (b.settings.isMain) return 1
+    if (a.settings.isDefault) return -1
+    if (b.settings.isDefault) return 1
     return (b.lastUsed ?? 0) - (a.lastUsed ?? 0)
   }
 })
@@ -179,7 +180,7 @@ const addressesSlice = createSlice({
     addressesImported: (state, action: PayloadAction<AddressPartial[]>) => {
       const addresses = action.payload
 
-      const newDefaultAddress = addresses.find((address) => address.settings?.isMain)
+      const newDefaultAddress = addresses.find((address) => address.settings?.isDefault)
       if (newDefaultAddress) updateOldDefaultAddress(state)
 
       addressesAdapter.addMany(state, addresses.map(getInitialAddressState))
@@ -187,7 +188,7 @@ const addressesSlice = createSlice({
     newAddressGenerated: (state, action: PayloadAction<AddressPartial>) => {
       const address = action.payload
 
-      if (address.settings.isMain) updateOldDefaultAddress(state)
+      if (address.settings.isDefault) updateOldDefaultAddress(state)
 
       addressesAdapter.addOne(state, getInitialAddressState(address))
     },
@@ -198,13 +199,13 @@ const addressesSlice = createSlice({
 
       addressesAdapter.updateOne(state, {
         id: address.hash,
-        changes: { settings: { ...address.settings, isMain: true } }
+        changes: { settings: { ...address.settings, isDefault: true } }
       })
     },
     addressSettingsSaved: (state, action: PayloadAction<AddressPartial>) => {
       const address = action.payload
 
-      if (address.settings.isMain) updateOldDefaultAddress(state)
+      if (address.settings.isDefault) updateOldDefaultAddress(state)
 
       addressesAdapter.updateOne(state, {
         id: address.hash,
@@ -255,7 +256,7 @@ const addressesSlice = createSlice({
         const firstWalletAddress = getInitialAddressState({
           ...action.payload.firstAddress,
           settings: {
-            isMain: true,
+            isDefault: true,
             color: getRandomLabelColor()
           }
         })
@@ -500,7 +501,7 @@ export const makeSelectAddresses = () =>
   )
 
 export const selectDefaultAddress = createSelector(selectAllAddresses, (addresses) =>
-  addresses.find((address) => address.settings.isMain)
+  addresses.find((address) => address.settings.isDefault)
 )
 
 export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>
@@ -521,7 +522,7 @@ export default addressesSlice
 const getInitialAddressState = (addressData: AddressPartial): Address => ({
   ...addressData,
   settings: addressData.settings || {
-    isMain: false,
+    isDefault: false,
     color: getRandomLabelColor()
   },
   group: addressToGroup(addressData.hash, TOTAL_NUMBER_OF_GROUPS),
@@ -540,12 +541,12 @@ const getInitialAddressState = (addressData: AddressPartial): Address => ({
 const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]
 
 const updateOldDefaultAddress = (state: AddressesState) => {
-  const oldDefaultAddress = getAddresses(state).find((address) => address.settings.isMain)
+  const oldDefaultAddress = getAddresses(state).find((address) => address.settings.isDefault)
 
   if (oldDefaultAddress) {
     addressesAdapter.updateOne(state, {
       id: oldDefaultAddress.hash,
-      changes: { settings: { ...oldDefaultAddress.settings, isMain: false } }
+      changes: { settings: { ...oldDefaultAddress.settings, isDefault: false } }
     })
   }
 }

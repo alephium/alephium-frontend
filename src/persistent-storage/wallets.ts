@@ -86,7 +86,7 @@ const persistWallet = async (
     addresses: [
       {
         index: 0,
-        isMain: true,
+        isDefault: true,
         color: getRandomLabelColor()
       }
     ],

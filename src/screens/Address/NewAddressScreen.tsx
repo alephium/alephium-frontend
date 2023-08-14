@@ -48,14 +48,14 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const initialValues = {
     label: '',
     color: getRandomLabelColor(),
-    isMain: false
+    isDefault: false
   }
 
-  const handleGeneratePress = async ({ isMain, label, color, group }: AddressFormData) => {
+  const handleGeneratePress = async ({ isDefault, label, color, group }: AddressFormData) => {
     setLoading(true)
     const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, activeWalletMnemonic)
     const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
-    const newAddress = { ...newAddressData, settings: { label, color, isMain } }
+    const newAddress = { ...newAddressData, settings: { label, color, isDefault } }
 
     await persistAddressSettings(newAddress)
     dispatch(newAddressGenerated(newAddress))
