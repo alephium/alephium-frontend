@@ -24,7 +24,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getWalletsMetadata } from '~/persistent-storage/wallets'
 import { analyticsIdGenerated } from '~/store/settingsSlice'
 
-const PUBLIC_POSTHOG_KEY = 'phc_CGYfA9jfoeMKXW629pQs1vwI1hxD3icXgnTDezOhaGz'
+const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
 
 const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
