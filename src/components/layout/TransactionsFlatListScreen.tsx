@@ -35,7 +35,7 @@ import TransactionRow from '../TransactionRow'
 import { ScreenSectionTitle } from './Screen'
 import ScrollFlatListScreen from './ScrollFlatListScreen'
 
-interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransaction>> {
+interface TransactionsFlatListScreenProps extends Partial<FlatListProps<AddressTransaction>> {
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
   addressHash?: AddressHash
@@ -50,14 +50,14 @@ type TransactionItem = {
 
 const transactionKeyExtractor = (tx: AddressTransaction) => `${tx.hash}-${tx.address.hash}`
 
-const TransactionsFlatList = ({
+const TransactionsFlatListScreen = ({
   confirmedTransactions,
   pendingTransactions,
   addressHash,
   ListHeaderComponent,
   showInternalInflows = false,
   ...props
-}: TransactionsFlatListProps) => {
+}: TransactionsFlatListScreenProps) => {
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
@@ -143,7 +143,7 @@ const TransactionsFlatList = ({
   )
 }
 
-export default TransactionsFlatList
+export default TransactionsFlatListScreen
 
 const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
   margin-left: 28px;

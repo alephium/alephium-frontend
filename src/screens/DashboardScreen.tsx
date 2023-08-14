@@ -28,6 +28,7 @@ import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -43,13 +44,17 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const theme = useTheme()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
+  const scrollHandler = useScrollEventHandler()
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
   }
 
   return (
-    <DashboardScreenStyled refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}>
+    <DashboardScreenStyled
+      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
+      onScroll={scrollHandler}
+    >
       <ScreenSectionStyled>
         <BalanceSummaryStyled dateLabel="VALUE TODAY" />
       </ScreenSectionStyled>

@@ -24,6 +24,7 @@ import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
 import DefaultHeader from '~/components/headers/DefaultHeader'
 import WalletSwitch from '~/components/WalletSwitch'
+import { ScrollContextProvider } from '~/contexts/ScrollContext'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import DashboardScreen from '~/screens/DashboardScreen'
@@ -35,48 +36,50 @@ const InWalletTabsNavigation = () => {
   const theme = useTheme()
 
   return (
-    <InWalletTabs.Navigator
-      screenOptions={{
-        headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
-        headerTitle: ''
-      }}
-      tabBar={(props) => <FooterMenu {...props} />}
-    >
-      <InWalletTabs.Screen
-        name="DashboardScreen"
-        component={DashboardScreen}
-        options={{
-          title: 'Overview',
-          tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} strokeWidth={1.5} />,
-          header: (props) => (
-            <DefaultHeader
-              HeaderRight={<DashboardHeaderActions />}
-              HeaderLeft={<WalletSwitch />}
-              bgColor={theme.bg.primary}
-              {...props}
-            />
-          )
+    <ScrollContextProvider>
+      <InWalletTabs.Navigator
+        screenOptions={{
+          headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
+          headerTitle: ''
         }}
-      />
-      <InWalletTabs.Screen
-        name="TransfersScreen"
-        component={TransfersScreen}
-        options={{
-          title: 'Transfers',
-          tabBarIcon: ({ color, size }) => <ArrowsIcon color={color} size={size} strokeWidth={1.5} />,
-          header: (props) => <DefaultHeader HeaderLeft="Transfers" {...props} />
-        }}
-      />
-      <InWalletTabs.Screen
-        name="AddressesTabNavigation"
-        component={AddressesTabNavigation}
-        options={{
-          title: 'Addresses',
-          tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />,
-          headerShown: false
-        }}
-      />
-    </InWalletTabs.Navigator>
+        tabBar={(props) => <FooterMenu {...props} />}
+      >
+        <InWalletTabs.Screen
+          name="DashboardScreen"
+          component={DashboardScreen}
+          options={{
+            title: 'Overview',
+            tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} strokeWidth={1.5} />,
+            header: (props) => (
+              <DefaultHeader
+                HeaderRight={<DashboardHeaderActions />}
+                HeaderLeft={<WalletSwitch />}
+                bgColor={theme.bg.primary}
+                {...props}
+              />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="TransfersScreen"
+          component={TransfersScreen}
+          options={{
+            title: 'Transfers',
+            tabBarIcon: ({ color, size }) => <ArrowsIcon color={color} size={size} strokeWidth={1.5} />,
+            header: (props) => <DefaultHeader HeaderLeft="Transfers" {...props} />
+          }}
+        />
+        <InWalletTabs.Screen
+          name="AddressesTabNavigation"
+          component={AddressesTabNavigation}
+          options={{
+            title: 'Addresses',
+            tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />,
+            headerShown: false
+          }}
+        />
+      </InWalletTabs.Navigator>
+    </ScrollContextProvider>
   )
 }
 

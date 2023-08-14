@@ -38,7 +38,7 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeade
   const theme = useTheme()
   const { scrollY } = useScrollContext()
 
-  const bgColorRange = [bgColor ?? theme.bg.primary, theme.bg.back2]
+  const bgColorRange = [bgColor ?? theme.bg.primary, theme.bg.secondary]
   const borderColorRange = ['transparent', theme.border.secondary]
   const insets = useSafeAreaInsets()
 

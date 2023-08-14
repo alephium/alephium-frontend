@@ -20,6 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useMemo } from 'react'
 
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
+import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -33,6 +34,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
+  const scrollHandler = useScrollEventHandler()
 
   return (
     <TransactionsFlatListScreen
@@ -40,6 +42,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       pendingTransactions={pendingTransactions}
       initialNumToRender={8}
       contentContainerStyle={{ flexGrow: 1 }}
+      onScroll={scrollHandler}
     />
   )
 }

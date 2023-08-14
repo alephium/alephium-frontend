@@ -20,16 +20,14 @@ import { useNavigation, useScrollToTop } from '@react-navigation/native'
 import { useEffect, useRef } from 'react'
 import { FlatList, FlatListProps, StyleProp, ViewStyle } from 'react-native'
 
-import { useScrollEventHandler } from '../../contexts/ScrollContext'
 import Screen from './Screen'
 
 interface ScreenProps<T> extends FlatListProps<T> {
   style?: StyleProp<ViewStyle>
 }
 
-const ScrollFlatListScreen = <T,>({ style, onScroll, onScrollEndDrag, ...props }: ScreenProps<T>) => {
+const ScrollFlatListScreen = <T,>({ style, onScrollEndDrag, ...props }: ScreenProps<T>) => {
   const listRef = useRef<FlatList<T>>(null)
-  const scrollHandler = useScrollEventHandler()
   const navigation = useNavigation()
 
   useScrollToTop(listRef) // Scrolls to top when tapping the active tab
@@ -44,7 +42,7 @@ const ScrollFlatListScreen = <T,>({ style, onScroll, onScrollEndDrag, ...props }
 
   return (
     <Screen style={style}>
-      <FlatList onScroll={scrollHandler} scrollEventThrottle={16} ref={listRef} {...props} />
+      <FlatList scrollEventThrottle={16} ref={listRef} {...props} />
     </Screen>
   )
 }

@@ -149,7 +149,7 @@ export const getAddressAssetsAvailableBalance = (address: Address) => [
     availableBalance: BigInt(address.balance) - BigInt(address.lockedBalance)
   },
   ...address.tokens.map((token) => ({
-    id: token.id,
+    id: token.tokenId,
     availableBalance: BigInt(token.balance) - BigInt(token.lockedBalance)
   }))
 ]

@@ -60,6 +60,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan }: QRCodeScannerModalProps) 
 
       if (areFramesComplete(frames)) {
         onQRCodeScan(framesToData(frames).toString())
+        frames = undefined
         setScanned(true)
         onClose()
       } else {
