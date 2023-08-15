@@ -23,6 +23,7 @@ import { useTheme } from 'styled-components/native'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
 import DefaultHeader from '~/components/headers/DefaultHeader'
+import TopTabBar from '~/components/TopTabBar'
 import WalletSwitch from '~/components/WalletSwitch'
 import { ScrollContextProvider } from '~/contexts/ScrollContext'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
@@ -75,7 +76,7 @@ const InWalletTabsNavigation = () => {
           options={{
             title: 'Addresses',
             tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />,
-            headerShown: false
+            header: (props) => <TopTabBar {...props} />
           }}
         />
       </InWalletTabs.Navigator>

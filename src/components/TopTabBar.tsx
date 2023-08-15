@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
+import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
+import { useState } from 'react'
 import { Pressable } from 'react-native'
 import Reanimated, { Extrapolate, interpolate, interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -26,9 +27,27 @@ import { useScrollContext } from '~/contexts/ScrollContext'
 
 const scrollRange = [0, 50]
 
-const TopTabBar = ({ state, descriptors, navigation, position }: MaterialTopTabBarProps) => {
+type Tab = {
+  label: string
+  screen: string
+}
+
+const tabs: Tab[] = [
+  {
+    label: 'Addresses',
+    screen: 'AddressesScreen'
+  },
+  {
+    label: 'Contacts',
+    screen: 'ContactsScreen'
+  }
+]
+
+const TopTabBar = ({ navigation }: BottomTabHeaderProps) => {
   const { scrollY } = useScrollContext()
   const theme = useTheme()
+
+  const [activeTab, setActiveTab] = useState(tabs[0])
 
   const bgColorRange = [theme.bg.primary, theme.bg.secondary]
   const borderColorRange = ['transparent', theme.border.secondary]
@@ -39,18 +58,21 @@ const TopTabBar = ({ state, descriptors, navigation, position }: MaterialTopTabB
     borderColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
   }))
 
+  const handleOnTabPress = (tab: Tab) => {
+    setActiveTab(tab)
+    navigation.navigate(tab.screen)
+  }
+
   return (
-    <Reanimated.View style={[headerStyle, { paddingTop: insets.top + 15 }]}>
+    <Reanimated.View style={[headerStyle, { paddingTop: insets.top }]}>
       <TabsRow>
-        {state.routes.map((route, index) => (
+        {tabs.map((tab) => (
           <TabBarItem
-            key={route.name}
-            descriptors={descriptors}
-            route={route}
-            state={state}
-            index={index}
+            key={tab.label}
+            isActive={activeTab.label === tab.label}
+            label={tab.label}
             navigation={navigation}
-            position={position}
+            onPress={() => handleOnTabPress(tab)}
           />
         ))}
       </TabsRow>
@@ -59,58 +81,27 @@ const TopTabBar = ({ state, descriptors, navigation, position }: MaterialTopTabB
 }
 
 interface TabBarItemProps {
-  state: MaterialTopTabBarProps['state']
-  navigation: MaterialTopTabBarProps['navigation']
-  position: MaterialTopTabBarProps['position']
-  descriptors: MaterialTopTabBarProps['descriptors']
-  route: MaterialTopTabBarProps['state']['routes'][number]
-  index: number
+  label: string
+  navigation: BottomTabHeaderProps['navigation']
+  onPress: () => void
+  isActive: boolean
 }
 
-// Inspired by https://reactnavigation.org/docs/material-top-tab-navigator/#tabbar
-const TabBarItem = ({ descriptors, route, state, index, navigation, position }: TabBarItemProps) => {
+const TabBarItem = ({ label, isActive, onPress }: TabBarItemProps) => {
   const { scrollY } = useScrollContext()
   const theme = useTheme()
 
-  const { options } = descriptors[route.key]
-  const label = options.title !== undefined ? options.title : route.name
-  const isFocused = state.index === index
-
-  const onPress = () => {
-    const event = navigation.emit({
-      type: 'tabPress',
-      target: route.key,
-      canPreventDefault: true
-    })
-
-    if (!isFocused && !event.defaultPrevented) {
-      // The `merge: true` option makes sure that the params inside the tab screen are preserved
-      navigation.navigate({ name: route.name, params: route.params, merge: true })
-    }
-  }
-
-  const onLongPress = () => {
-    navigation.emit({
-      type: 'tabLongPress',
-      target: route.key
-    })
-  }
-
   const textStyle = useAnimatedStyle(() => ({
     fontSize: interpolate(scrollY?.value || 0, scrollRange, [28, 18], Extrapolate.CLAMP),
-    opacity: isFocused ? 1 : 0.3
+    opacity: isActive ? 1 : 0.3
   }))
 
   return (
     <PressableStyled
-      key={route.name}
+      key={label}
       accessibilityRole="button"
-      accessibilityState={isFocused ? { selected: true } : {}}
-      accessibilityLabel={options.tabBarAccessibilityLabel}
-      testID={options.tabBarTestID}
       onPress={onPress}
-      onLongPress={onLongPress}
-      style={{ borderColor: isFocused ? theme.font.primary : 'transparent' }}
+      style={{ borderColor: isActive ? theme.font.primary : 'transparent' }}
     >
       <ReanimatedText style={textStyle}>{label}</ReanimatedText>
     </PressableStyled>

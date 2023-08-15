@@ -98,6 +98,7 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
         style={style}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
         onScroll={scrollHandler}
+        alwaysBounceVertical={false}
       >
         <ScreenContent>
           <Carousel
