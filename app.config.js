@@ -41,7 +41,7 @@ export default {
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#ffffff'
+        backgroundColor: '#000000'
       },
       package: IS_DEV ? 'org.alephium.wallet.dev' : 'org.alephium.wallet'
     },
