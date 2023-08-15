@@ -98,12 +98,11 @@ const TabBarItem = ({ descriptors, route, state, index, navigation, position }: 
 
   const textStyle = useAnimatedStyle(() => ({
     fontSize: interpolate(scrollY?.value || 0, scrollRange, [28, 18], Extrapolate.CLAMP),
-    opacity: isFocused ? 1 : 0.3,
-    borderBottomColor: isFocused ? theme.font.primary : 'transparent'
+    opacity: isFocused ? 1 : 0.3
   }))
 
   return (
-    <Pressable
+    <PressableStyled
       key={route.name}
       accessibilityRole="button"
       accessibilityState={isFocused ? { selected: true } : {}}
@@ -111,9 +110,10 @@ const TabBarItem = ({ descriptors, route, state, index, navigation, position }: 
       testID={options.tabBarTestID}
       onPress={onPress}
       onLongPress={onLongPress}
+      style={{ borderColor: isFocused ? theme.font.primary : 'transparent' }}
     >
       <ReanimatedText style={textStyle}>{label}</ReanimatedText>
-    </Pressable>
+    </PressableStyled>
   )
 }
 
@@ -127,9 +127,12 @@ const TabsRow = styled.View`
   padding: 0 20px;
 `
 
+const PressableStyled = styled(Pressable)`
+  border-bottom-width: 1px;
+  margin-bottom: -1px;
+`
+
 const ReanimatedText = styled(Reanimated.Text)`
   padding: 18px 0;
   font-weight: 600;
-  border-bottom-width: 1px;
-  margin-bottom: -1px;
 `
