@@ -25,6 +25,8 @@ export interface GeneralSettings {
   discreetMode: boolean
   requireAuth: boolean
   currency: Currency
+  analytics: boolean
+  analyticsId?: string
 }
 
 export interface NetworkSettings {

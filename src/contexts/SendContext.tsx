@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { APIError, AssetAmount, getHumanReadableError } from '@alephium/sdk'
 import { node } from '@alephium/web3'
+import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import Toast from 'react-native-root-toast'
 
@@ -71,6 +72,7 @@ const SendContext = createContext(initialValues)
 export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const requiresAuth = useAppSelector((s) => s.settings.requireAuth)
   const dispatch = useAppDispatch()
+  const posthog = usePostHog()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
   const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(initialValues.fromAddress)
@@ -107,8 +109,10 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       setUnsignedTxData(data)
     } catch (e) {
       Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
+
+      posthog?.capture('Error', { message: 'Could not build consolidation transactions' })
     }
-  }, [address, setUnsignedTxData])
+  }, [address, posthog])
 
   const buildTransaction = useCallback(
     async (callbacks: BuildTransactionCallbacks) => {
@@ -129,10 +133,12 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           await buildConsolidationTransactions()
         } else {
           Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
+
+          posthog?.capture('Error', { message: 'Could not build transaction' })
         }
       }
     },
-    [address, assetAmounts, buildConsolidationTransactions, toAddress]
+    [address, assetAmounts, buildConsolidationTransactions, posthog, toAddress]
   )
 
   const sendTransaction = useCallback(
@@ -159,11 +165,15 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         }
 
         onSendSuccess()
+
+        posthog?.capture('Send: Sent transaction', { tokens: tokens.length })
       } catch (e) {
         Toast.show(getHumanReadableError(e, 'Could not send transaction'))
+
+        posthog?.capture('Error', { message: 'Could not send transaction' })
       }
     },
-    [address, assetAmounts, consolidationRequired, dispatch, toAddress, unsignedTxData.unsignedTxs]
+    [address, assetAmounts, consolidationRequired, dispatch, posthog, toAddress, unsignedTxData.unsignedTxs]
   )
 
   const authenticateAndSend = useCallback(

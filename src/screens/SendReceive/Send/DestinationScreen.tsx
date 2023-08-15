@@ -20,6 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
 import { Book, ClipboardIcon, Contact2, Scan } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { StyleProp, ViewStyle } from 'react-native'
@@ -56,12 +57,15 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
   const theme = useTheme()
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
+  const posthog = usePostHog()
 
   const [nextScreen, setNextScreen] = useState<PossibleNextScreenAfterDestination>('OriginScreen')
 
-  const onPasteClick = async () => {
+  const handlePastePress = async () => {
     const text = await Clipboard.getStringAsync()
     setValue('toAddressHash', text)
+
+    posthog?.capture('Send: Pasted destination address')
   }
 
   useEffect(() => {
@@ -97,7 +101,7 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
     <ScrollScreen style={style}>
       <ScreenIntro
         title="Destination"
-        subtitle="Send to a custom address, a contact, or one of you other addresses."
+        subtitle="Send to an address, a contact, or one of your other addresses."
         surtitle="SEND"
       />
       <ScreenSection>
@@ -124,7 +128,7 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
       <ScreenSection>
         <ButtonsRow>
           <Button color={theme.global.accent} compact Icon={Scan} title="Scan" />
-          <Button color={theme.global.accent} compact Icon={ClipboardIcon} title="Paste" onPress={onPasteClick} />
+          <Button color={theme.global.accent} compact Icon={ClipboardIcon} title="Paste" onPress={handlePastePress} />
           <Button
             color={theme.global.accent}
             compact

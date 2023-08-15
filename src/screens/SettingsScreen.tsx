@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -39,7 +40,7 @@ import {
   enableBiometrics
 } from '~/persistent-storage/wallets'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
-import { discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
+import { analyticsToggled, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
 import { resetNavigationState } from '~/utils/navigation'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SettingsScreen'>
@@ -55,6 +56,8 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const analytics = useAppSelector((s) => s.settings.analytics)
+  const posthog = usePostHog()
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
@@ -62,9 +65,13 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
     if (isBiometricsEnabled) {
       await disableBiometrics(activeWalletMetadataId)
       dispatch(biometricsDisabled())
+
+      posthog?.capture('Deactivated biometrics')
     } else {
       await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
       dispatch(biometricsEnabled())
+
+      posthog?.capture('Manually activated biometrics')
     }
   }
 
@@ -74,8 +81,12 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
 
   const toggleAuthRequirement = () => dispatch(passwordRequirementToggled())
 
+  const toggleAnalytics = () => dispatch(analyticsToggled())
+
   const deleteWallet = async () => {
     await deleteWalletById(activeWalletMetadataId)
+
+    posthog?.capture('Deleted wallet')
 
     if (await areThereOtherWallets()) {
       navigation.navigate('SwitchWalletAfterDeletionScreen')
@@ -121,6 +132,9 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
               <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
             </HighlightRow>
           )}
+          <HighlightRow title="Analytics" subtitle="Help us improve your experience!">
+            <Toggle value={analytics} onValueChange={toggleAnalytics} />
+          </HighlightRow>
           <HighlightRow onPress={() => navigation.navigate('CurrencySelectScreen')} title="Currency">
             <AppText bold>{currentCurrency}</AppText>
           </HighlightRow>

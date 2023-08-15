@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
+import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
 
 import SpinnerModal from '~/components/SpinnerModal'
@@ -42,6 +43,7 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
+  const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
 
@@ -57,10 +59,20 @@ const NewAddressScreen = ({ navigation }: ScreenProps) => {
     const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
     const newAddress = { ...newAddressData, settings: { label, color, isDefault } }
 
-    await persistAddressSettings(newAddress)
-    dispatch(newAddressGenerated(newAddress))
-    await dispatch(syncAddressesData(newAddress.hash))
-    await dispatch(syncAddressesHistoricBalances(newAddress.hash))
+    try {
+      await persistAddressSettings(newAddress)
+      dispatch(newAddressGenerated(newAddress))
+      await dispatch(syncAddressesData(newAddress.hash))
+      await dispatch(syncAddressesHistoricBalances(newAddress.hash))
+
+      posthog?.capture('Address: Generated new address', {
+        note: group === undefined ? 'In default group' : 'In specific group'
+      })
+    } catch (e) {
+      console.error(e)
+
+      posthog?.capture('Error', { message: 'Could not save new address' })
+    }
 
     setLoading(false)
 

@@ -21,6 +21,7 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { ScanLine } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
@@ -56,6 +57,7 @@ type SelectedWord = {
   timestamp: Date
 }
 
+// TODO: Set this to false before creating production build
 const enablePasteForDevelopment = true
 
 const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
@@ -69,6 +71,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
   const lastActiveWalletAuthType = useRef(activeWalletAuthType)
+  const posthog = usePostHog()
 
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
@@ -141,12 +144,23 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
 
       if (importedData?.addresses) {
-        importAddresses(wallet.mnemonic, wallet.metadataId, importedData.addresses)
+        try {
+          importAddresses(wallet.mnemonic, wallet.metadataId, importedData.addresses)
+        } catch (e) {
+          console.error(e)
+
+          posthog?.capture('Error', { message: 'Could not import addresses from QR code scan' })
+        }
+
         dispatch(newWalletImportedWithMetadata(wallet))
+
+        posthog?.capture('Imported wallet', { note: 'Scanned desktop wallet QR code' })
       } else {
         dispatch(newWalletGenerated(wallet))
         dispatch(syncAddressesData(wallet.firstAddress.hash))
         dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
+
+        posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
       }
 
       if (importedData?.contacts) {
@@ -175,12 +189,14 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
 
       setDecryptedWalletFromQRCode(undefined)
     },
-    [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, selectedWords, typedInput]
+    [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, posthog, selectedWords, typedInput]
   )
 
   const handleWalletImport = () => importWallet(pin)
 
   const handleQRCodeScan = (data: string) => {
+    posthog?.capture('Scanned QR code from desktop wallet')
+
     setEncryptedWalletFromQRCode(data)
     setIsPasswordModalVisible(true)
   }
@@ -189,6 +205,8 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
     try {
       const decryptedData = await decryptAsync(password, encryptedWalletFromQRCode, pbkdf2)
       const parsedDecryptedData = JSON.parse(decryptedData) as WalletImportData
+
+      posthog?.capture('Decrypted desktop wallet QR code')
 
       setDecryptedWalletFromQRCode(parsedDecryptedData)
       importWallet(pin, parsedDecryptedData)

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { usePostHog } from 'posthog-react-native'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components/native'
 
@@ -42,6 +43,7 @@ const EditAddressScreen = ({
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
+  const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
 
@@ -67,8 +69,16 @@ const EditAddressScreen = ({
 
     setLoading(true)
 
-    await persistAddressSettings({ ...address, settings })
-    dispatch(addressSettingsSaved({ ...address, settings }))
+    try {
+      await persistAddressSettings({ ...address, settings })
+      dispatch(addressSettingsSaved({ ...address, settings }))
+
+      posthog?.capture('Address: Editted address settings')
+    } catch (e) {
+      console.error(e)
+
+      posthog?.capture('Error', { message: 'Could not edit address settings' })
+    }
 
     setLoading(false)
     navigation.goBack()

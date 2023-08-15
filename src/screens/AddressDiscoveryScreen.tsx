@@ -20,6 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'
 import { Import, Search, X } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, BackHandler, ScrollView, View } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
@@ -53,6 +54,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
   const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
   const { loading, status, progress } = useAppSelector((s) => s.addressDiscovery)
   const persistAddressSettings = usePersistAddressSettings()
+  const posthog = usePostHog()
 
   const [addressSelections, setAddressSelections] = useState<Record<AddressHash, boolean>>({})
   const [importLoading, setImportLoading] = useState(false)
@@ -73,10 +75,19 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
       settings: { isDefault: false, color: getRandomLabelColor() }
     }))
 
-    await persistAddressSettings(newAddresses)
-    dispatch(addressesImported(newAddresses))
-    await dispatch(syncAddressesData(newAddressHashes))
-    await dispatch(syncAddressesHistoricBalances(newAddressHashes))
+    try {
+      await persistAddressSettings(newAddresses)
+      dispatch(addressesImported(newAddresses))
+
+      posthog?.capture('Imported discovered addresses')
+
+      await dispatch(syncAddressesData(newAddressHashes))
+      await dispatch(syncAddressesHistoricBalances(newAddressHashes))
+    } catch (e) {
+      console.error(e)
+
+      posthog?.capture('Error', { message: 'Could not import addresses from address discovery' })
+    }
 
     navigation.navigate(isImporting ? 'NewWalletSuccessPage' : 'InWalletTabsNavigation')
 
@@ -112,6 +123,8 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
     useCallback(() => {
       if (!isImporting) return
 
+      posthog?.capture('Started address discovery from import flow')
+
       startScan()
 
       navigation.setOptions({
@@ -122,8 +135,26 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
       const subscription = BackHandler.addEventListener('hardwareBackPress', () => true)
 
       return subscription.remove
-    }, [cancelAndGoToWelcomeScreen, isImporting, navigation, startScan])
+    }, [cancelAndGoToWelcomeScreen, isImporting, navigation, posthog, startScan])
   )
+
+  const handleStartScanPress = () => {
+    posthog?.capture('Started address discovery from settings')
+
+    startScan()
+  }
+
+  const handleStopScanPress = () => {
+    posthog?.capture('Stopped address discovery')
+
+    stopScan()
+  }
+
+  const handleContinueScanPress = () => {
+    posthog?.capture('Continued address discovery')
+
+    startScan()
+  }
 
   return (
     <Screen>
@@ -175,9 +206,13 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
           )}
         </View>
         <BottomScreenSection>
-          {status === 'idle' && <ButtonStyled Icon={Search} title="Start scanning" onPress={startScan} />}
-          {status === 'started' && <ButtonStyled Icon={X} title="Stop scanning" onPress={stopScan} type="secondary" />}
-          {status === 'stopped' && <ContinueButton Icon={Search} title="Continue scanning" onPress={startScan} />}
+          {status === 'idle' && <ButtonStyled Icon={Search} title="Start scanning" onPress={handleStartScanPress} />}
+          {status === 'started' && (
+            <ButtonStyled Icon={X} title="Stop scanning" onPress={handleStopScanPress} type="secondary" />
+          )}
+          {status === 'stopped' && (
+            <ContinueButton Icon={Search} title="Continue scanning" onPress={handleContinueScanPress} />
+          )}
           {(status === 'stopped' || status === 'finished') && (
             <ButtonStyled
               Icon={Import}

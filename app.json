@@ -38,7 +38,8 @@
             "deploymentTarget": "13.0"
           }
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "extra": {
       "eas": {

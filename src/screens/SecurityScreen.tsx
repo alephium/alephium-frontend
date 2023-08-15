@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { AlertTriangle } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
@@ -45,6 +46,7 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
   const isMnemonicBackedUp = useAppSelector((s) => s.activeWallet.isMnemonicBackedUp)
   const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const metadataId = useAppSelector((s) => s.activeWallet.metadataId)
+  const posthog = usePostHog()
 
   const [isUnderstood, setIsUnderstood] = useState(false)
   const [showMnemonic, setShowMnemonic] = useState(false)
@@ -53,10 +55,12 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
     if (!isMnemonicBackedUp) {
       await persistWalletMetadata(metadataId, { isMnemonicBackedUp: true })
       dispatch(mnemonicBackedUp())
+
+      posthog?.capture('Backed-up mnemonic')
     }
 
     navigation.navigate('InWalletTabsNavigation')
-  }, [metadataId, dispatch, isMnemonicBackedUp, navigation])
+  }, [isMnemonicBackedUp, navigation, metadataId, dispatch, posthog])
 
   return (
     <Screen style={style}>

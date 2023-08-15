@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
 
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
@@ -43,6 +44,7 @@ const LoginScreen = ({
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
+  const posthog = usePostHog()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -66,6 +68,8 @@ const LoginScreen = ({
 
         dispatch(walletSwitched({ wallet, addressesToInitialize, pin, contacts }))
         resetNavigationState()
+
+        posthog?.capture('Switched wallet')
       } else if (workflow === 'wallet-unlock') {
         if (addressesStatus === 'uninitialized') {
           addressesToInitialize = await deriveWalletStoredAddresses(wallet)
@@ -73,11 +77,13 @@ const LoginScreen = ({
 
         dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts }))
         lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
+
+        posthog?.capture('Unlocked wallet')
       }
 
       setLoading(false)
     },
-    [addressesStatus, dispatch, lastNavigationState, workflow]
+    [addressesStatus, dispatch, lastNavigationState, posthog, workflow]
   )
 
   return (

@@ -45,7 +45,9 @@ export const defaultGeneralSettings: GeneralSettings = {
   theme: Appearance.getColorScheme() === 'dark' ? 'dark' : 'light',
   discreetMode: false,
   requireAuth: false,
-  currency: 'USD'
+  currency: 'USD',
+  analytics: true,
+  analyticsId: undefined
 }
 
 export const defaultNetworkSettings: NetworkSettings = clone(networkPresetSettings[defaultNetwork])
