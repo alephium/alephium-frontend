@@ -3,19 +3,40 @@
     "version": ">= 0.57.0"
   },
   "build": {
+    "production": {
+      "node": "16.15.1"
+    },
     "development": {
+      "extends": "production",
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "APP_VARIANT": "development"
+      }
     },
     "preview": {
+      "extends": "production",
+      "distribution": "internal",
       "android": {
         "buildType": "apk"
-      },
-      "distribution": "internal"
-    },
-    "production": {}
+      }
+    }
   },
   "submit": {
+    "preview": {
+      "android": {
+        "serviceAccountKeyPath": "",
+        "track": "alpha"
+      },
+      "ios": {
+        "appleId": "",
+        "appleTeamId": "",
+        "companyName": "",
+        "ascApiKeyId": "",
+        "ascApiKeyIssuerId": "",
+        "ascApiKeyPath": ""
+      }
+    },
     "production": {}
   }
 }
