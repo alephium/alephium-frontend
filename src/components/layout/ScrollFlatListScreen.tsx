@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation, useScrollToTop } from '@react-navigation/native'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { FlatList, FlatListProps, StyleProp, ViewStyle } from 'react-native'
 
 import Screen from './Screen'
@@ -28,17 +27,6 @@ interface ScreenProps<T> extends FlatListProps<T> {
 
 const ScrollFlatListScreen = <T,>({ style, onScrollEndDrag, ...props }: ScreenProps<T>) => {
   const listRef = useRef<FlatList<T>>(null)
-  const navigation = useNavigation()
-
-  useScrollToTop(listRef) // Scrolls to top when tapping the active tab
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('blur', () => {
-      listRef.current?.scrollToOffset({ offset: 0, animated: false })
-    })
-
-    return unsubscribe
-  })
 
   return (
     <Screen style={style}>
