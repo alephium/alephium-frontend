@@ -160,6 +160,8 @@ const Footer = styled.View`
 
 const PendingTransactionsSectionTitle = styled.View`
   flex-direction: row;
+  gap: 10px;
+  align-items: center;
 `
 
 const ActivityIndicatorStyled = styled(ActivityIndicator)`
