@@ -40,6 +40,7 @@ const ContactsScreen = ({ navigation, style, ...props }: ScreenProps) => {
       onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
       onNewContactPress={() => navigation.navigate('NewContactScreen')}
       onScroll={scrollHandler}
+      alwaysBounceVertical={false}
     />
   )
 }
