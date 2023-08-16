@@ -128,9 +128,7 @@ const TransactionsFlatListScreen = ({
             )}
           {isLoading &&
             ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
-              <AppText color="tertiary" bold>
-                Loading more...
-              </AppText>
+              <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
             )}
           {confirmedTransactions.length === 0 && !isLoading && (
             <AppText color="tertiary" bold>
