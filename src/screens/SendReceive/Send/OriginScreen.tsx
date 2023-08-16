@@ -19,24 +19,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
+import AddressBox from '~/components/AddressBox'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import AddressBox from '~/screens/SendReceive/AddressBox'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}
 
-const OriginScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+// TODO: Should be converted to a FlatList
+
+const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, setFromAddress, setToAddress } = useSendContext()
   const addresses = useAppSelector(selectAllAddresses)
   const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -57,7 +56,7 @@ const OriginScreen = ({ navigation, style, route: { params } }: ScreenProps) => 
   )
 
   return (
-    <ScrollScreen style={style}>
+    <ScrollScreen {...props}>
       <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." surtitle="SEND" />
       <ScreenSection>
         <AddressList>

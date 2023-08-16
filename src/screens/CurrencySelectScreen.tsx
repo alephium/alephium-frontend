@@ -21,7 +21,7 @@ import React from 'react'
 
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -29,14 +29,14 @@ import { currencySelected } from '~/store/settingsSlice'
 import { Currency } from '~/types/settings'
 import { currencies } from '~/utils/currencies'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'CurrencySelectScreen'>
+interface ScreenProps extends StackScreenProps<RootStackParamList, 'CurrencySelectScreen'>, ScrollScreenProps {}
 
 const currencyOptions = Object.values(currencies).map((currency) => ({
   label: `${currency.name} (${currency.ticker})`,
   value: currency.ticker
 }))
 
-const CurrencySelectScreen = ({ navigation }: ScreenProps) => {
+const CurrencySelectScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const currentCurrency = useAppSelector((s) => s.settings.currency)
 
@@ -46,7 +46,7 @@ const CurrencySelectScreen = ({ navigation }: ScreenProps) => {
   }
 
   return (
-    <ScrollScreen>
+    <ScrollScreen {...props}>
       <ScreenSection>
         <BoxSurface>
           {currencyOptions.map((currencyOption) => (

@@ -24,15 +24,13 @@ import { Book, ClipboardIcon, Contact2, Scan } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { StyleProp, ViewStyle } from 'react-native'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -43,9 +41,7 @@ import { cameraToggled } from '~/store/appSlice'
 import { AddressHash } from '~/types/addresses'
 import { validateIsAddressValid } from '~/utils/forms'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'DestinationScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface DestinationScreenProps extends StackScreenProps<SendNavigationParamList, 'DestinationScreen'>, ScreenProps {}
 
 type FormData = {
   toAddressHash: AddressHash
@@ -53,7 +49,7 @@ type FormData = {
 
 const requiredErrorMessage = 'This field is required'
 
-const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+const DestinationScreen = ({ navigation, route: { params }, ...props }: DestinationScreenProps) => {
   const {
     control,
     handleSubmit,
@@ -118,7 +114,7 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
   }, [setValue, toAddress])
 
   return (
-    <ScrollScreen style={style}>
+    <Screen {...props}>
       <ScreenIntro
         title="Destination"
         subtitle="Send to an address, a contact, or one of your other addresses."
@@ -172,7 +168,7 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
           text="Scan an Alephium address QR code"
         />
       )}
-    </ScrollScreen>
+    </Screen>
   )
 }
 

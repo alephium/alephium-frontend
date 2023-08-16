@@ -22,25 +22,27 @@ import styled, { useTheme } from 'styled-components/native'
 
 import animationSrc from '~/animations/success.json'
 import HighlightButton from '~/components/buttons/HighlightButton'
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { resetNavigationState } from '~/utils/navigation'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletSuccessPage'>
+interface NewWalletSuccessScreenProps
+  extends StackScreenProps<RootStackParamList, 'NewWalletSuccessScreen'>,
+    ScreenProps {}
 
 const instructions: Instruction[] = [
   { text: 'Welcome to Alephium! 🎉', type: 'primary' },
   { text: 'Enjoy your new wallet!', type: 'secondary' }
 ]
 
-const NewWalletSuccessPage = ({ navigation }: ScreenProps) => {
+const NewWalletSuccessScreenProps = ({ navigation, ...props }: NewWalletSuccessScreenProps) => {
   const theme = useTheme()
 
   return (
-    <Screen style={{ marginTop: 100 }}>
-      <AnimationContainer>
+    <Screen {...props}>
+      <AnimationContainer style={{ marginTop: 100 }}>
         <StyledAlephiumLogo color={theme.font.primary} />
         <StyledAnimation source={animationSrc} autoPlay />
       </AnimationContainer>
@@ -52,7 +54,7 @@ const NewWalletSuccessPage = ({ navigation }: ScreenProps) => {
   )
 }
 
-export default NewWalletSuccessPage
+export default NewWalletSuccessScreenProps
 
 const AnimationContainer = styled.View`
   flex: 1;

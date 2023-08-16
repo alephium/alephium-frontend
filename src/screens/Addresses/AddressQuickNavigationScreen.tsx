@@ -18,17 +18,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
-import { StyleProp, ViewStyle } from 'react-native'
 
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import AddressListScreenBase from '~/screens/AddressListScreenBase'
 import { AddressHash } from '~/types/addresses'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressQuickNavigationScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface ScreenProps
+  extends StackScreenProps<SendNavigationParamList, 'AddressQuickNavigationScreen'>,
+    ScrollScreenProps {}
 
-const AddressQuickNavigationScreen = ({ navigation, style }: ScreenProps) => {
+const AddressQuickNavigationScreen = ({ navigation, ...props }: ScreenProps) => {
   const posthog = usePostHog()
 
   const handleAddressPress = (addressHash: AddressHash) => {
@@ -40,7 +40,7 @@ const AddressQuickNavigationScreen = ({ navigation, style }: ScreenProps) => {
     })
   }
 
-  return <AddressListScreenBase onAddressPress={handleAddressPress} />
+  return <AddressListScreenBase onAddressPress={handleAddressPress} {...props} />
 }
 
 export default AddressQuickNavigationScreen

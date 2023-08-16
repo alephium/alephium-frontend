@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
-import { StyleProp, ViewStyle } from 'react-native'
 
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -28,11 +28,11 @@ import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { Contact } from '~/types/contacts'
 
 type ScreenProps = StackScreenProps<RootStackParamList, 'SelectContactScreen'> &
-  StackScreenProps<SendNavigationParamList, 'SelectContactScreen'> & {
-    style?: StyleProp<ViewStyle>
-  }
+  StackScreenProps<SendNavigationParamList, 'SelectContactScreen'>
 
-const SelectContactScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+interface SelectContactScreenProps extends ScreenProps, ScrollScreenProps {}
+
+const SelectContactScreen = ({ navigation, route: { params }, ...props }: SelectContactScreenProps) => {
   const contacts = useAppSelector(selectAllContacts)
   const posthog = usePostHog()
 
@@ -49,7 +49,7 @@ const SelectContactScreen = ({ navigation, style, route: { params } }: ScreenPro
     }
   }
 
-  return <ContactListScreenBase style={style} onContactPress={handleContactPress} />
+  return <ContactListScreenBase onContactPress={handleContactPress} {...props} />
 }
 
 export default SelectContactScreen

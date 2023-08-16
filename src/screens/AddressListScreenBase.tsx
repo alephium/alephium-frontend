@@ -16,26 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ScrollViewProps, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
+import AddressBox from '~/components/AddressBox'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
-import AddressBox from '~/screens/SendReceive/AddressBox'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
-interface AddressListScreenBaseProps extends ScrollViewProps {
+interface AddressListScreenBaseProps extends ScrollScreenProps {
   onAddressPress: (addressHash: AddressHash) => void
-  style?: StyleProp<ViewStyle>
 }
 
-const AddressListScreenBase = ({ onAddressPress, style, ...props }: AddressListScreenBaseProps) => {
+// TODO: Should be converted to a FlatList
+
+const AddressListScreenBase = ({ onAddressPress, ...props }: AddressListScreenBaseProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
   return (
-    <ScrollScreen style={style} {...props}>
+    <ScrollScreen {...props}>
       <ScreenSection>
         <AddressList>
           {addresses.map((address) => (

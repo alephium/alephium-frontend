@@ -43,7 +43,7 @@ import ImportWalletAddressDiscoveryScreen from '~/screens/new-wallet/ImportWalle
 import ImportWalletSeedScreen from '~/screens/new-wallet/ImportWalletSeedScreen'
 import NewWalletIntroScreen from '~/screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
-import NewWalletSuccessPage from '~/screens/new-wallet/NewWalletSuccessPage'
+import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
 import ScreenHeader from '~/screens/SendReceive/ScreenHeader'
@@ -52,7 +52,6 @@ import SelectContactScreen from '~/screens/SendReceive/Send/SelectContactScreen'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchNetworkScreen from '~/screens/SwitchNetworkScreen'
-import SwitchWalletAfterDeletionScreen from '~/screens/SwitchWalletAfterDeletionScreen'
 import SwitchWalletScreen from '~/screens/SwitchWalletScreen'
 import TransactionScreen from '~/screens/TransactionScreen'
 import { routeChanged } from '~/store/appSlice'
@@ -138,10 +137,9 @@ const RootStackNavigation = () => {
           <RootStack.Group screenOptions={{ headerShown: false }}>
             <RootStack.Screen name="SplashScreen" component={SplashScreen} />
             <RootStack.Screen name="LoginScreen" component={LoginScreen} />
-            <RootStack.Screen name="NewWalletSuccessPage" component={NewWalletSuccessPage} />
+            <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
             <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
             <RootStack.Screen name="NewAddressNavigation" component={NewAddressNavigation} />
-            <RootStack.Screen name="SwitchWalletAfterDeletionScreen" component={SwitchWalletAfterDeletionScreen} />
           </RootStack.Group>
 
           {/* Bottom modal screens */}

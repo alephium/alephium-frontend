@@ -28,7 +28,7 @@ import Button from '~/components/buttons/Button'
 import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
@@ -43,9 +43,9 @@ import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/ac
 import { analyticsToggled, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
 import { resetNavigationState } from '~/utils/navigation'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'SettingsScreen'>
+interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
 
-const SettingsScreen = ({ navigation }: ScreenProps) => {
+const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const hasAvailableBiometrics = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
@@ -89,7 +89,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
     posthog?.capture('Deleted wallet')
 
     if (await areThereOtherWallets()) {
-      navigation.navigate('SwitchWalletAfterDeletionScreen')
+      navigation.navigate('SwitchWalletScreen', { disableBack: true })
     } else {
       resetNavigationState('LandingScreen')
     }
@@ -114,7 +114,7 @@ const SettingsScreen = ({ navigation }: ScreenProps) => {
   }
 
   return (
-    <ScrollScreen>
+    <ScrollScreen {...props}>
       <ScreenSection>
         <ScreenSectionTitle>General</ScreenSectionTitle>
         <BoxSurface>

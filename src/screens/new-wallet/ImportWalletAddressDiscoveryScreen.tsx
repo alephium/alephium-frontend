@@ -24,11 +24,13 @@ import styled from 'styled-components/native'
 import animationSrc from '~/animations/wallet.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'ImportWalletAddressDiscoveryScreen'>
+interface ImportWalletAddressDiscoveryScreenProps
+  extends StackScreenProps<RootStackParamList, 'ImportWalletAddressDiscoveryScreen'>,
+    ScreenProps {}
 
 const instructions: Instruction[] = [
   { text: "Let's take a minute to scan for your active addresses", type: 'primary' },
@@ -38,17 +40,17 @@ const instructions: Instruction[] = [
   }
 ]
 
-const ImportWalletAddressDiscoveryScreen = ({ navigation }: ScreenProps) => {
+const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWalletAddressDiscoveryScreenProps) => {
   const posthog = usePostHog()
 
   const handleLaterPress = () => {
     posthog?.capture('Skipped address discovery')
 
-    navigation.navigate('NewWalletSuccessPage')
+    navigation.navigate('NewWalletSuccessScreen')
   }
 
   return (
-    <Screen>
+    <Screen {...props}>
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
       </AnimationContainer>

@@ -20,14 +20,13 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { AlertTriangle } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
-import Screen, { BottomScreenSection } from '~/components/layout/Screen'
+import Screen, { BottomScreenSection, ScreenProps } from '~/components/layout/Screen'
 import { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import OrderedTable from '~/components/OrderedTable'
@@ -37,11 +36,9 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistWalletMetadata } from '~/persistent-storage/wallets'
 import { mnemonicBackedUp } from '~/store/activeWalletSlice'
 
-interface ScreenProps extends StackScreenProps<RootStackParamList, 'SecurityScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface SecurityScreenProps extends StackScreenProps<RootStackParamList, 'SecurityScreen'>, ScreenProps {}
 
-const SecurityScreen = ({ navigation, style }: ScreenProps) => {
+const SecurityScreen = ({ navigation, ...props }: SecurityScreenProps) => {
   const dispatch = useAppDispatch()
   const isMnemonicBackedUp = useAppSelector((s) => s.activeWallet.isMnemonicBackedUp)
   const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
@@ -63,7 +60,7 @@ const SecurityScreen = ({ navigation, style }: ScreenProps) => {
   }, [isMnemonicBackedUp, navigation, metadataId, dispatch, posthog])
 
   return (
-    <Screen style={style}>
+    <Screen {...props}>
       <ScreenSection fill>
         <Messages>
           {!isMnemonicBackedUp && (

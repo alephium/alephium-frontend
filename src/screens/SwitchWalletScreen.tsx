@@ -17,18 +17,24 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
-import { StackScreenProps } from '@react-navigation/stack'
+import { useFocusEffect } from '@react-navigation/native'
+import { CardStyleInterpolators, StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useState } from 'react'
-import { Alert, ScrollView, StyleProp, ViewStyle } from 'react-native'
+import { useCallback, useState } from 'react'
+import { Alert, BackHandler, ScrollView } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import BoxSurface from '~/components/layout/BoxSurface'
-import Screen, { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import Screen, {
+  BottomModalScreenTitle,
+  BottomScreenSection,
+  ScreenProps,
+  ScreenSection
+} from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -45,11 +51,11 @@ import { methodSelected, WalletGenerationMethod } from '~/store/walletGeneration
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 import { resetNavigationState } from '~/utils/navigation'
 
-export interface SwitchWalletScreenProps extends StackScreenProps<RootStackParamList, 'SwitchWalletScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+export interface SwitchWalletScreenProps
+  extends StackScreenProps<RootStackParamList, 'SwitchWalletScreen'>,
+    ScreenProps {}
 
-const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
+const SwitchWalletScreen = ({ navigation, route: { params }, ...props }: SwitchWalletScreenProps) => {
   const dispatch = useAppDispatch()
   const wallets = useSortedWallets()
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
@@ -98,13 +104,36 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
     }
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      if (params?.disableBack) {
+        navigation.setOptions({
+          headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forNoAnimation,
+          gestureEnabled: false
+        })
+
+        const subscription = BackHandler.addEventListener('hardwareBackPress', handleBackButton)
+
+        return subscription.remove
+      }
+    }, [navigation, params?.disableBack])
+  )
+
+  const handleBackButton = () => {
+    Alert.alert('Select a wallet', 'Please, select a wallet to continue')
+
+    return true
+  }
+
   return (
-    <SwitchWalletScreenStyled style={style}>
+    <Screen {...props}>
       <ScreenSection>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <Subtitle>Switch to another wallet?</Subtitle>
       </ScreenSection>
-      <ScrollView>
+
+      <ScrollView alwaysBounceVertical={false}>
         <ScreenSection>
           <BoxSurface>
             {wallets.map((wallet, index) => (
@@ -119,6 +148,7 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
           </BoxSurface>
         </ScreenSection>
       </ScrollView>
+
       <BottomScreenSection>
         <ButtonsRow>
           <Button title="New wallet" onPress={() => handleButtonPress('create')} Icon={PlusIcon} />
@@ -126,15 +156,11 @@ const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
         </ButtonsRow>
       </BottomScreenSection>
       <SpinnerModal isActive={loading} text="Switching wallets..." />
-    </SwitchWalletScreenStyled>
+    </Screen>
   )
 }
 
 export default SwitchWalletScreen
-
-const SwitchWalletScreenStyled = styled(Screen)`
-  padding-top: 20px;
-`
 
 const Subtitle = styled(AppText)`
   font-weight: 500;

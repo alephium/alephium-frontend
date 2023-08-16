@@ -18,19 +18,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
-import { StyleProp, ViewStyle } from 'react-native'
 
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import AddressListScreenBase from '~/screens/AddressListScreenBase'
 import { AddressHash } from '~/types/addresses'
 
 type ScreenProps = StackScreenProps<SendNavigationParamList, 'SelectAddressScreen'> &
-  StackScreenProps<RootStackParamList, 'SelectAddressScreen'> & {
-    style?: StyleProp<ViewStyle>
-  }
+  StackScreenProps<RootStackParamList, 'SelectAddressScreen'>
 
-const SelectAddressScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+interface SelectAddressScreenProps extends ScreenProps, ScrollScreenProps {}
+
+const SelectAddressScreen = ({ navigation, route: { params }, ...props }: SelectAddressScreenProps) => {
   const posthog = usePostHog()
 
   const handleAddressPress = (toAddressHash: AddressHash) => {
@@ -42,7 +42,7 @@ const SelectAddressScreen = ({ navigation, style, route: { params } }: ScreenPro
     })
   }
 
-  return <AddressListScreenBase style={style} onAddressPress={handleAddressPress} />
+  return <AddressListScreenBase onAddressPress={handleAddressPress} {...props} />
 }
 
 export default SelectAddressScreen

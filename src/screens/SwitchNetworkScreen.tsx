@@ -28,6 +28,7 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -36,11 +37,11 @@ import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/netwo
 import { NetworkName, NetworkPreset } from '~/types/network'
 import { NetworkSettings } from '~/types/settings'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'SwitchNetworkScreen'>
+interface ScreenProps extends StackScreenProps<RootStackParamList, 'SwitchNetworkScreen'>, ScrollScreenProps {}
 
 const networkNames = Object.values(NetworkName)
 
-const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
+const SwitchNetworkScreen = ({ navigation, ...props }: ScreenProps) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const currentNetworkSettings = useAppSelector((s) => s.network.settings)
   const { control, handleSubmit } = useForm<NetworkSettings>({
@@ -72,7 +73,7 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
   }
 
   return (
-    <>
+    <ScrollScreen {...props}>
       <ScreenSection>
         <BottomModalScreenTitle>Current network</BottomModalScreenTitle>
       </ScreenSection>
@@ -142,7 +143,7 @@ const SwitchNetworkScreen = ({ navigation }: ScreenProps) => {
           </Animated.View>
         )}
       </View>
-    </>
+    </ScrollScreen>
   )
 }
 

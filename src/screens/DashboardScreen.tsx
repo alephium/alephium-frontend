@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
-import { RefreshControl, StyleProp, ViewStyle } from 'react-native'
+import { RefreshControl } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
@@ -27,7 +27,7 @@ import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
@@ -35,11 +35,11 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
-interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface ScreenProps
+  extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'>,
+    ScrollScreenProps {}
 
-const DashboardScreen = ({ navigation, style }: ScreenProps) => {
+const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
@@ -51,9 +51,10 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   }
 
   return (
-    <DashboardScreenStyled
+    <ScrollScreen
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
       onScroll={scrollHandler}
+      {...props}
     >
       <ScreenSectionStyled>
         <BalanceSummaryStyled dateLabel="VALUE TODAY" />
@@ -75,15 +76,11 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
         </ButtonsRow>
       </ScreenSection>
       <AddressesTokensList />
-    </DashboardScreenStyled>
+    </ScrollScreen>
   )
 }
 
 export default DashboardScreen
-
-const DashboardScreenStyled = styled(ScrollScreen)`
-  background-color: ${({ theme }) => theme.bg.primary};
-`
 
 const ScreenSectionStyled = styled(ScreenSection)`
   padding-bottom: 0;

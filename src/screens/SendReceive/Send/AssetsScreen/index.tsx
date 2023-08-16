@@ -18,11 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useMemo } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -31,11 +30,9 @@ import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
 import { makeSelectAddressesKnownFungibleTokens, selectAddressByHash } from '~/store/addressesSlice'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>, ScrollScreenProps {}
 
-const AssetsScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
@@ -67,7 +64,7 @@ const AssetsScreen = ({ navigation, style, route: { params } }: ScreenProps) => 
   if (!address) return null
 
   return (
-    <ScrollScreen style={style}>
+    <ScrollScreen {...props}>
       <ScreenIntro
         title="Assets"
         subtitle="With Alephium, you can send multiple assets in one transaction."

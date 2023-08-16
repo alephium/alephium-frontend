@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect } from 'react'
-import { ScrollView, Text } from 'react-native'
+import { Text } from 'react-native'
 import QRCode from 'react-qr-code'
 import { useTheme } from 'styled-components/native'
 
@@ -29,6 +29,7 @@ import Button from '~/components/buttons/Button'
 import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { BackButton } from '~/screens/SendReceive/ScreenHeader'
@@ -36,9 +37,9 @@ import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'
 
-type ScreenProps = StackScreenProps<ReceiveNavigationParamList, 'QRCodeScreen'>
+interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCodeScreen'>, ScrollScreenProps {}
 
-const QRCodeScreen = ({ navigation, route: { params } }: ScreenProps) => {
+const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
   const posthog = usePostHog()
@@ -56,7 +57,7 @@ const QRCodeScreen = ({ navigation, route: { params } }: ScreenProps) => {
   }
 
   return (
-    <ScrollView>
+    <ScrollScreen {...props}>
       <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." surtitle="RECEIVE" />
       <CenteredScreenSection>
         <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={params.addressHash} />
@@ -79,7 +80,7 @@ const QRCodeScreen = ({ navigation, route: { params } }: ScreenProps) => {
           )}
         </BoxSurface>
       </ScreenSection>
-    </ScrollView>
+    </ScrollScreen>
   )
 }
 

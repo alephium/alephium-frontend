@@ -20,7 +20,6 @@ import { StackScreenProps } from '@react-navigation/stack'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
 import { ChevronRight as ChevronRightIcon } from 'lucide-react-native'
-import { ScrollView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -30,17 +29,19 @@ import HighlightRow from '~/components/HighlightRow'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getTransactionInfo } from '~/utils/transactions'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'TransactionScreen'>
+interface ScreenProps extends StackScreenProps<RootStackParamList, 'TransactionScreen'>, ScrollScreenProps {}
 
 const TransactionScreen = ({
   navigation,
   route: {
     params: { tx }
-  }
+  },
+  ...props
 }: ScreenProps) => {
   const theme = useTheme()
   const { direction, infoType, assets } = getTransactionInfo(tx)
@@ -51,7 +52,7 @@ const TransactionScreen = ({
   const isMoved = infoType === 'move'
 
   return (
-    <ScrollView>
+    <ScrollScreen {...props}>
       <ScreenSectionRow>
         <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
         <ExplorerLink onPress={() => openBrowserAsync(explorerTxUrl)}>
@@ -99,7 +100,7 @@ const TransactionScreen = ({
           </HighlightRow>
         </BoxSurface>
       </ScreenSection>
-    </ScrollView>
+    </ScrollScreen>
   )
 }
 

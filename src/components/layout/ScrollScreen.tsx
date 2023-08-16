@@ -18,15 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useNavigation, useScrollToTop } from '@react-navigation/native'
 import { useEffect, useRef } from 'react'
-import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+import { ScrollView, ScrollViewProps, View } from 'react-native'
 
 import Screen from './Screen'
 
-interface InWalletScrollScreenProps extends ScrollViewProps {
-  style?: StyleProp<ViewStyle>
-}
+export type ScrollScreenProps = ScrollViewProps
 
-const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) => {
+const ScrollScreen = ({ children, style, ...props }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
 
   useScrollToTop(viewRef) // Scrolls to top when tapping the active tab
@@ -45,7 +43,6 @@ const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) 
     <Screen style={style}>
       <ScrollView
         contentOffset={{ y: 0, x: 0 }}
-        onScroll={props.onScroll}
         ref={viewRef}
         scrollEventThrottle={16}
         alwaysBounceVertical={false}

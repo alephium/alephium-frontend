@@ -23,19 +23,19 @@ import React from 'react'
 
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useNewAddressContext } from '~/contexts/NewAddressContext'
 import { NewAddressNavigationParamList } from '~/navigation/NewAddressNavigation'
 
-type ScreenProps = StackScreenProps<NewAddressNavigationParamList, 'GroupSelectScreen'>
+interface ScreenProps extends StackScreenProps<NewAddressNavigationParamList, 'GroupSelectScreen'>, ScrollScreenProps {}
 
 const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
   value: i === 0 ? undefined : i - 1,
   label: i === 0 ? 'Default' : `Group ${i - 1}`
 }))
 
-const GroupSelectScreen = ({ navigation }: ScreenProps) => {
+const GroupSelectScreen = ({ navigation, ...props }: ScreenProps) => {
   const { group, setGroup } = useNewAddressContext()
 
   const onGroupSelect = (group?: number) => {
@@ -44,7 +44,7 @@ const GroupSelectScreen = ({ navigation }: ScreenProps) => {
   }
 
   return (
-    <ScrollScreen>
+    <ScrollScreen {...props}>
       <ScreenSection>
         <BoxSurface>
           {groupSelectOptions.map((groupOption) => (

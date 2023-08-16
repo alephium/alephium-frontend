@@ -21,14 +21,14 @@ import { colord } from 'colord'
 import { ListIcon, PlusIcon, Upload } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
-import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
+import { RefreshControl, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
@@ -38,11 +38,11 @@ import { themes } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 
 type ScreenProps = StackScreenProps<AddressTabsParamList, 'AddressesScreen'> &
-  StackScreenProps<SendNavigationParamList, 'AddressesScreen'> & {
-    style?: StyleProp<ViewStyle>
-  }
+  StackScreenProps<SendNavigationParamList, 'AddressesScreen'>
 
-const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+interface AddressesScreenProps extends ScreenProps, ScrollScreenProps {}
+
+const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesScreenProps) => {
   const dispatch = useAppDispatch()
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
@@ -94,10 +94,11 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
 
   return (
     <>
-      <ScrollScreenStyled
-        style={style}
+      <ScrollScreen
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
         onScroll={scrollHandler}
+        bounces={false}
+        {...props}
       >
         <ScreenContent>
           <Carousel
@@ -127,7 +128,7 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
           />
           {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} style={{ paddingBottom: 50 }} />}
         </ScreenContent>
-      </ScrollScreenStyled>
+      </ScrollScreen>
       <FloatingButton
         Icon={Upload}
         round
@@ -140,10 +141,6 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
 }
 
 export default AddressesScreen
-
-const ScrollScreenStyled = styled(ScrollScreen)`
-  background-color: ${({ theme }) => theme.bg.primary};
-`
 
 const ScreenContent = styled.View`
   padding-top: 30px;

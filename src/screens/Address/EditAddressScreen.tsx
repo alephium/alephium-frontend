@@ -23,7 +23,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import BottomModalHeader from '~/components/headers/BottomModalHeader'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import Screen, { BottomModalScreenTitle, ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -32,14 +32,15 @@ import AddressForm from '~/screens/Address/AddressForm'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { AddressSettings } from '~/types/addresses'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'EditAddressScreen'>
+interface EditAddressScreenProps extends StackScreenProps<RootStackParamList, 'EditAddressScreen'>, ScreenProps {}
 
 const EditAddressScreen = ({
   navigation,
   route: {
     params: { addressHash }
-  }
-}: ScreenProps) => {
+  },
+  ...props
+}: EditAddressScreenProps) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
@@ -85,7 +86,7 @@ const EditAddressScreen = ({
   }
 
   return (
-    <>
+    <Screen {...props}>
       <AddressForm
         initialValues={address.settings}
         onSubmit={handleSavePress}
@@ -94,7 +95,7 @@ const EditAddressScreen = ({
         addressHash={address.hash}
       />
       <SpinnerModal isActive={loading} text="Saving address..." />
-    </>
+    </Screen>
   )
 }
 

@@ -28,7 +28,7 @@ type RootStackParamList = {
   AddBiometricsScreen?: {
     skipAddressDiscovery?: boolean
   }
-  NewWalletSuccessPage: undefined
+  NewWalletSuccessScreen: undefined
   ImportWalletSeedScreen: undefined
   ImportWalletAddressDiscoveryScreen: undefined
   InWalletTabsNavigation: undefined
@@ -37,14 +37,15 @@ type RootStackParamList = {
     workflow: 'wallet-switch' | 'wallet-unlock'
   }
   SplashScreen: undefined
-  SwitchWalletScreen: undefined
+  SwitchWalletScreen?: {
+    disableBack?: boolean
+  }
   NewAddressNavigation: undefined
   EditAddressScreen: {
     addressHash: AddressHash
   }
   SettingsScreen: undefined
   SwitchNetworkScreen: undefined
-  SwitchWalletAfterDeletionScreen: undefined
   TransactionScreen: {
     // TODO: Make all params serializable to help with state persistance
     tx: AddressConfirmedTransaction

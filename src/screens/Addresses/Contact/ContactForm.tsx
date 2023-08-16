@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Controller, useForm } from 'react-hook-form'
-import { ScrollView } from 'react-native'
+import { View } from 'react-native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
@@ -47,7 +47,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save' }: ContactFo
 
   return (
     <>
-      <ScrollView>
+      <View style={{ flexGrow: 1 }}>
         <ScreenSection>
           <BoxSurface>
             <Controller
@@ -89,7 +89,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save' }: ContactFo
             />
           </BoxSurface>
         </ScreenSection>
-      </ScrollView>
+      </View>
       <BottomScreenSection>
         <Button title={buttonText} centered onPress={handleSubmit(onSubmit)} />
       </BottomScreenSection>

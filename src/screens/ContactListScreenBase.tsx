@@ -19,13 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { colord } from 'colord'
 import { Plus } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { ScrollViewProps, StyleProp, TextInput, ViewStyle } from 'react-native'
+import { TextInput } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
@@ -34,13 +34,14 @@ import { Contact } from '~/types/contacts'
 import { stringToColour } from '~/utils/colors'
 import { filterContacts } from '~/utils/contacts'
 
-interface ContactListScreenBaseProps extends ScrollViewProps {
+interface ContactListScreenBaseProps extends ScrollScreenProps {
   onContactPress: (contactId: Contact['id']) => void
   onNewContactPress?: () => void
-  style?: StyleProp<ViewStyle>
 }
 
-const ContactListScreenBase = ({ onContactPress, onNewContactPress, style, ...props }: ContactListScreenBaseProps) => {
+// TODO: Should be converted to a FlatList
+
+const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: ContactListScreenBaseProps) => {
   const contacts = useAppSelector(selectAllContacts)
 
   const [filteredContacts, setFilteredContacts] = useState(contacts)
@@ -51,7 +52,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, style, ...pr
   }, [contacts, searchTerm])
 
   return (
-    <ScrollScreenStyled style={style} {...props}>
+    <ScrollScreen {...props}>
       <HeaderScreenSection>
         <SearchInput placeholder="Search" value={searchTerm} onChangeText={setSearchTerm} />
         {onNewContactPress && <Button Icon={Plus} type="transparent" variant="accent" onPress={onNewContactPress} />}
@@ -80,15 +81,11 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, style, ...pr
           })}
         </ContactList>
       </ScreenSection>
-    </ScrollScreenStyled>
+    </ScrollScreen>
   )
 }
 
 export default ContactListScreenBase
-
-const ScrollScreenStyled = styled(ScrollScreen)`
-  background-color: ${({ theme }) => theme.bg.primary};
-`
 
 const ContactList = styled.View``
 
