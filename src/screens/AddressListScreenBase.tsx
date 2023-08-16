@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StyleProp, ViewStyle } from 'react-native'
+import { ScrollViewProps, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
@@ -26,16 +26,16 @@ import AddressBox from '~/screens/SendReceive/AddressBox'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
-interface AddressListScreenBaseProps {
+interface AddressListScreenBaseProps extends ScrollViewProps {
   onAddressPress: (addressHash: AddressHash) => void
   style?: StyleProp<ViewStyle>
 }
 
-const AddressListScreenBase = ({ onAddressPress, style }: AddressListScreenBaseProps) => {
+const AddressListScreenBase = ({ onAddressPress, style, ...props }: AddressListScreenBaseProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
   return (
-    <ScrollScreen style={style}>
+    <ScrollScreen style={style} {...props}>
       <ScreenSection>
         <AddressList>
           {addresses.map((address) => (

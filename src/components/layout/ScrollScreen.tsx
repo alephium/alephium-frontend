@@ -47,8 +47,9 @@ const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) 
         contentOffset={{ y: 0, x: 0 }}
         onScroll={props.onScroll}
         ref={viewRef}
-        {...props}
         scrollEventThrottle={16}
+        alwaysBounceVertical={false}
+        {...props}
       >
         <View>{children}</View>
       </ScrollView>
