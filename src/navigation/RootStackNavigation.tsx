@@ -31,7 +31,6 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import EditAddressScreen from '~/screens/Address/EditAddressScreen'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
-import AddressQuickNavigationScreen from '~/screens/Addresses/AddressQuickNavigationScreen'
 import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
@@ -163,8 +162,6 @@ const RootStackNavigation = () => {
               component={ReceiveNavigation}
               options={{ header: (props) => <ScreenHeader {...props} workflow="receive" /> }}
             />
-            <RootStack.Screen name="AddressQuickNavigationScreen" component={AddressQuickNavigationScreen} />
-
             <RootStack.Screen
               name="SelectContactScreen"
               component={SelectContactScreen}

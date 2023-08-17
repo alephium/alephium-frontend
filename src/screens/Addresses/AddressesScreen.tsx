@@ -20,10 +20,14 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { ListIcon, PlusIcon, Upload } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { RefreshControl, View } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { Modalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import styled, { css, useTheme } from 'styled-components/native'
 
+import AddressBox from '~/components/AddressBox'
 import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
@@ -33,7 +37,13 @@ import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { selectAddressByHash, selectAddressIds, selectDefaultAddress, syncAddressesData } from '~/store/addressesSlice'
+import {
+  selectAddressByHash,
+  selectAddressIds,
+  selectAllAddresses,
+  selectDefaultAddress,
+  syncAddressesData
+} from '~/store/addressesSlice'
 import { themes } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 
@@ -45,6 +55,7 @@ interface AddressesScreenProps extends ScreenProps, ScrollScreenProps {}
 const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesScreenProps) => {
   const dispatch = useAppDispatch()
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
+  const addresses = useAppSelector(selectAllAddresses)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
@@ -52,18 +63,17 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
   const theme = useTheme()
   const scrollHandler = useScrollEventHandler()
   const posthog = usePostHog()
+  const addressQuickSelectionModalRef = useRef<Modalize>(null)
+  const insets = useSafeAreaInsets()
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
 
   useEffect(() => {
-    if (params?.addressHash) {
-      setSelectedAddressHash(params.addressHash)
-      setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === params.addressHash))
-    } else if (defaultAddress) {
+    if (defaultAddress) {
       setSelectedAddressHash(defaultAddress.hash)
     }
-  }, [addressHashes, defaultAddress, params?.addressHash])
+  }, [defaultAddress])
 
   const onAddressCardsScrollEnd = (index: number) => {
     if (index < addressHashes.length) setSelectedAddressHash(addressHashes[index])
@@ -111,8 +121,9 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
             scrollTo={scrollToCarouselPage}
             FooterComponent={
               <>
+                {/* TODO: Do we need this button if we only have 1 or 2 addresses?   */}
                 <Button
-                  onPress={() => navigation.navigate('AddressQuickNavigationScreen')}
+                  onPress={() => addressQuickSelectionModalRef.current?.open()}
                   Icon={ListIcon}
                   type="transparent"
                 />
@@ -136,6 +147,30 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
         color={colord(floatingButtonBgColor).isDark() ? themes.light.font.contrast : themes.light.font.primary}
         onPress={handleSendFromPress}
       />
+      <Portal>
+        <Modalize
+          ref={addressQuickSelectionModalRef}
+          modalTopOffset={insets.top}
+          flatListProps={{
+            data: addresses,
+            keyExtractor: (item) => item.hash,
+            renderItem: ({ item: address, index }) => (
+              <AddressBoxStyled
+                key={address.hash}
+                addressHash={address.hash}
+                isFirst={index === 0}
+                isLast={index === addresses.length - 1}
+                onPress={() => {
+                  setSelectedAddressHash(address.hash)
+                  setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
+                  addressQuickSelectionModalRef.current?.close()
+                  posthog?.capture('Used address quick navigation')
+                }}
+              />
+            )
+          }}
+        />
+      </Portal>
     </>
   )
 }
@@ -153,4 +188,20 @@ const FloatingButton = styled(Button)<{ bgColor: string }>`
   background-color: ${({ bgColor }) => bgColor};
   width: 56px;
   height: 56px;
+`
+
+const AddressBoxStyled = styled(AddressBox)`
+  margin: 10px 20px;
+
+  ${({ isFirst }) =>
+    isFirst &&
+    css`
+      margin-top: 20px;
+    `}
+
+  ${({ isLast }) =>
+    isLast &&
+    css`
+      margin-bottom: 40px;
+    `}
 `

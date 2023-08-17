@@ -70,7 +70,6 @@ type RootStackParamList = {
   SelectAddressScreen: {
     nextScreen: PossibleNextScreenAfterDestination
   }
-  AddressQuickNavigationScreen: undefined
 }
 
 export default RootStackParamList

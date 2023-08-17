@@ -30,6 +30,8 @@ import { AddressHash } from '~/types/addresses'
 interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash
   isSelected?: boolean
+  isFirst?: boolean
+  isLast?: boolean
 }
 
 const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
