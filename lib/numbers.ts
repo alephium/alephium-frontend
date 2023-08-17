@@ -80,6 +80,7 @@ interface FormatAmountForDisplayProps {
   displayDecimals?: number
   truncate?: boolean
   fullPrecision?: boolean
+  smartRounding?: boolean
 }
 
 export const formatAmountForDisplay = ({
@@ -87,14 +88,21 @@ export const formatAmountForDisplay = ({
   amountDecimals = NUM_OF_ZEROS_IN_QUINTILLION,
   displayDecimals,
   truncate,
-  fullPrecision = false
+  fullPrecision = false,
+  smartRounding = false
 }: FormatAmountForDisplayProps): string => {
   if (amount < BigInt(0)) return '???'
 
   const amountString = toHumanReadableAmount(amount, amountDecimals)
   const amountNumber = Number(amountString)
 
-  if (amountNumber < 0.0001) fullPrecision = true
+  if (amountNumber < 0.0001) {
+    if (smartRounding) {
+      return smartRound(amountString)
+    } else {
+      fullPrecision = true
+    }
+  }
 
   const minNumberOfDecimals = getMinNumberOfDecimals(amountNumber)
   const numberOfDecimalsToDisplay = displayDecimals ?? minNumberOfDecimals
@@ -143,6 +151,25 @@ const formatRegularPrecision = (
   const tier = getTier(amountNumber)
 
   return appendMagnitudeSymbol(tier, amountNumber, numberOfDecimalsToDisplay)
+}
+
+const smartRound = (amountString: string) => {
+  const match = amountString.match(/[1-9]/)
+  if (!match) return amountString
+
+  const indexOfFirstNonZero = amountString.indexOf(match[0])
+
+  const firstSignificantDigit = parseInt(match[0])
+  const secondSignigicantDigit = parseInt(amountString.charAt(indexOfFirstNonZero + 1))
+
+  if (secondSignigicantDigit >= 5) {
+    return (
+      amountString.slice(0, indexOfFirstNonZero - 1) +
+      (firstSignificantDigit === 9 ? '1' : (firstSignificantDigit + 1).toString())
+    )
+  }
+
+  return amountString.slice(0, indexOfFirstNonZero + 1)
 }
 
 const getTier = (amountNumber: number): number => {

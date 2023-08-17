@@ -200,7 +200,25 @@ it('Should abbreviate token amount', () => {
         amountDecimals: 90
       })
     ).toEqual('2.00'),
-    expect(formatAmountForDisplay({ amount: BigInt('1'), amountDecimals: 0 })).toEqual('1.00')
+    expect(formatAmountForDisplay({ amount: BigInt('1'), amountDecimals: 0 })).toEqual('1.00'),
+    expect(formatAmountForDisplay({ amount: BigInt('12'), amountDecimals: 17, smartRounding: false })).toEqual(
+      '0.00000000000000012'
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('12'), amountDecimals: 17, smartRounding: true })).toEqual(
+      '0.0000000000000001'
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('15'), amountDecimals: 17, smartRounding: true })).toEqual(
+      '0.000000000000002'
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('99100000'), amountDecimals: 17, smartRounding: true })).toEqual(
+      '0.000000001'
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('4590000000'), amountDecimals: 17, smartRounding: true })).toEqual(
+      '0.0000005'
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('4110000000'), amountDecimals: 17, smartRounding: true })).toEqual(
+      '0.00000004'
+    )
 })
 
 it('Should keep full amount precision', () => {
