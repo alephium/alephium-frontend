@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
 import { ChevronRight as ChevronRightIcon } from 'lucide-react-native'
@@ -31,28 +30,24 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import { AddressConfirmedTransaction } from '~/types/transactions'
 import { getTransactionInfo } from '~/utils/transactions'
 
-interface ScreenProps extends StackScreenProps<RootStackParamList, 'TransactionScreen'>, ScrollScreenProps {}
+interface ScreenProps extends ScrollScreenProps {
+  tx: AddressConfirmedTransaction
+}
 
-const TransactionScreen = ({
-  navigation,
-  route: {
-    params: { tx }
-  },
-  ...props
-}: ScreenProps) => {
+const TransactionScreen = ({ tx, ...props }: ScreenProps) => {
   const theme = useTheme()
-  const { direction, infoType, assets } = getTransactionInfo(tx)
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
+  const { direction, infoType, assets } = getTransactionInfo(tx)
   const explorerTxUrl = `${explorerBaseUrl}/transactions/${tx.hash}`
   const isOut = direction === 'out'
   const isMoved = infoType === 'move'
 
   return (
-    <ScrollScreen {...props}>
+    <ScrollScreenStyled {...props}>
       <ScreenSectionRow>
         <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
         <ExplorerLink onPress={() => openBrowserAsync(explorerTxUrl)}>
@@ -100,11 +95,15 @@ const TransactionScreen = ({
           </HighlightRow>
         </BoxSurface>
       </ScreenSection>
-    </ScrollScreen>
+    </ScrollScreenStyled>
   )
 }
 
 export default TransactionScreen
+
+const ScrollScreenStyled = styled(ScrollScreen)`
+  padding-bottom: 20px;
+`
 
 const ScreenSectionRow = styled(ScreenSection)`
   flex-direction: row;

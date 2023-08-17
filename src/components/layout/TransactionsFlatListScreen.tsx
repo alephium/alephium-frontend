@@ -16,12 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { ActivityIndicator, FlatListProps } from 'react-native'
+import { Modalize, useModalize } from 'react-native-modalize'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import TransactionScreen from '~/screens/TransactionScreen'
 import {
   selectAddressByHash,
   syncAddressesData,
@@ -30,8 +33,9 @@ import {
 } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
+import { isPendingTx } from '~/utils/transactions'
 
-import TransactionRow from '../TransactionRow'
+import TransactionListItem from '../TransactionListItem'
 import { ScreenSectionTitle } from './Screen'
 import ScrollFlatListScreen from './ScrollFlatListScreen'
 
@@ -63,12 +67,26 @@ const TransactionsFlatListScreen = ({
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
+  const { ref, open } = useModalize()
+  const insets = useSafeAreaInsets()
+
+  const [selectedTx, setSelectedTx] = useState<AddressConfirmedTransaction>()
 
   const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
     renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
 
   const renderTransactionItem = ({ item: tx, isLast }: TransactionItem) => (
-    <TransactionRowStyled key={transactionKeyExtractor(tx)} tx={tx} isLast={isLast} />
+    <TransactionListItemStyled
+      key={transactionKeyExtractor(tx)}
+      tx={tx}
+      isLast={isLast}
+      onPress={() => {
+        if (!isPendingTx(tx)) {
+          setSelectedTx(tx)
+          open()
+        }
+      }}
+    />
   )
 
   const loadNextTransactionsPage = useCallback(async () => {
@@ -88,56 +106,62 @@ const TransactionsFlatListScreen = ({
   }
 
   return (
-    <ScrollFlatListScreen
-      {...props}
-      data={confirmedTransactions}
-      renderItem={renderConfirmedTransactionItem}
-      keyExtractor={transactionKeyExtractor}
-      onEndReached={loadNextTransactionsPage}
-      onRefresh={refreshData}
-      refreshing={pendingTransactions.length > 0}
-      extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
-      ListHeaderComponent={
-        <>
-          {ListHeaderComponent}
-          {pendingTransactions.length > 0 && (
-            <>
-              <PendingTransactionsSectionTitle>
-                <ScreenSectionTitleStyled>Pending transactions</ScreenSectionTitleStyled>
-                <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
-              </PendingTransactionsSectionTitle>
-              {pendingTransactions.map((pendingTransaction, index) =>
-                renderTransactionItem({
-                  item: pendingTransaction,
-                  index,
-                  isLast: index === pendingTransactions.length - 1
-                })
+    <>
+      <ScrollFlatListScreen
+        {...props}
+        data={confirmedTransactions}
+        renderItem={renderConfirmedTransactionItem}
+        keyExtractor={transactionKeyExtractor}
+        onEndReached={loadNextTransactionsPage}
+        onRefresh={refreshData}
+        refreshing={pendingTransactions.length > 0}
+        extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
+        ListHeaderComponent={
+          <>
+            {ListHeaderComponent}
+            {pendingTransactions.length > 0 && (
+              <>
+                <PendingTransactionsSectionTitle>
+                  <ScreenSectionTitleStyled>Pending transactions</ScreenSectionTitleStyled>
+                  <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
+                </PendingTransactionsSectionTitle>
+                {pendingTransactions.map((pendingTransaction, index) =>
+                  renderTransactionItem({
+                    item: pendingTransaction,
+                    index,
+                    isLast: index === pendingTransactions.length - 1
+                  })
+                )}
+                <ScreenSectionTitleStyled>Confirmed transactions</ScreenSectionTitleStyled>
+              </>
+            )}
+          </>
+        }
+        ListFooterComponent={
+          <Footer>
+            {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
+              confirmedTransactions.length > 0 && (
+                <AppText color="tertiary" bold>
+                  👏 You reached the end of history.
+                </AppText>
               )}
-              <ScreenSectionTitleStyled>Confirmed transactions</ScreenSectionTitleStyled>
-            </>
-          )}
-        </>
-      }
-      ListFooterComponent={
-        <Footer>
-          {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
-            confirmedTransactions.length > 0 && (
+            {isLoading &&
+              ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
+                <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
+              )}
+            {confirmedTransactions.length === 0 && !isLoading && (
               <AppText color="tertiary" bold>
-                👏 You reached the end of history.
+                No transactions yet
               </AppText>
             )}
-          {isLoading &&
-            ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
-              <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
-            )}
-          {confirmedTransactions.length === 0 && !isLoading && (
-            <AppText color="tertiary" bold>
-              No transactions yet
-            </AppText>
-          )}
-        </Footer>
-      }
-    />
+          </Footer>
+        }
+      />
+
+      <Modalize ref={ref} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+        {selectedTx && <TransactionScreen tx={selectedTx} />}
+      </Modalize>
+    </>
   )
 }
 
@@ -148,7 +172,7 @@ const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
   margin-top: 22px;
 `
 
-const TransactionRowStyled = styled(TransactionRow)`
+const TransactionListItemStyled = styled(TransactionListItem)`
   margin: 0 20px;
 `
 

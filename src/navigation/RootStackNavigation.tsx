@@ -52,7 +52,6 @@ import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchNetworkScreen from '~/screens/SwitchNetworkScreen'
 import SwitchWalletScreen from '~/screens/SwitchWalletScreen'
-import TransactionScreen from '~/screens/TransactionScreen'
 import { routeChanged } from '~/store/appSlice'
 import { isNavStateRestorable, rootStackNavigationRef } from '~/utils/navigation'
 
@@ -98,7 +97,6 @@ const RootStackNavigation = () => {
             <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
             <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
             <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-            <RootStack.Screen name="ContactScreen" component={ContactScreen} />
             <RootStack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
             <RootStack.Screen
               name="ImportWalletSeedScreen"
@@ -130,8 +128,8 @@ const RootStackNavigation = () => {
               component={EditContactScreen}
               options={{ headerTitle: 'Edit contact' }}
             />
+            <RootStack.Screen name="ContactScreen" component={ContactScreen} />
           </RootStack.Group>
-
           {/* Screens without header */}
           <RootStack.Group screenOptions={{ headerShown: false }}>
             <RootStack.Screen name="SplashScreen" component={SplashScreen} />
@@ -143,7 +141,6 @@ const RootStackNavigation = () => {
 
           {/* Bottom modal screens */}
           <RootStack.Group screenOptions={bottomModalOptions}>
-            <RootStack.Screen name="TransactionScreen" component={TransactionScreen} />
             <RootStack.Screen name="SwitchNetworkScreen" component={SwitchNetworkScreen} />
             <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} />
             <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />

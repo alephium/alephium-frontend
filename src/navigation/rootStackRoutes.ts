@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { PossibleNextScreenAfterDestination } from '~/navigation/SendNavigation'
 import { AddressHash } from '~/types/addresses'
-import { AddressConfirmedTransaction } from '~/types/transactions'
 
 type RootStackParamList = {
   LandingScreen: undefined
@@ -46,20 +45,16 @@ type RootStackParamList = {
   }
   SettingsScreen: undefined
   SwitchNetworkScreen: undefined
-  TransactionScreen: {
-    // TODO: Make all params serializable to help with state persistance
-    tx: AddressConfirmedTransaction
-  }
   SendNavigation: undefined
   ReceiveNavigation: undefined
+  ContactScreen: {
+    contactId: string
+  }
   SecurityScreen: undefined
   AddressDiscoveryScreen?: {
     isImporting?: boolean
   }
   CurrencySelectScreen: undefined
-  ContactScreen: {
-    contactId: string
-  }
   NewContactScreen: undefined
   EditContactScreen: {
     contactId: string

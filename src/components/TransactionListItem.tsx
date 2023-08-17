@@ -16,47 +16,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
-import ListItem from '~/components/ListItem'
+import ListItem, { ListItemProps } from '~/components/ListItem'
 import { useTransactionUI } from '~/hooks/useTransactionUI'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import { AddressTransaction } from '~/types/transactions'
-import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
+import { getTransactionInfo } from '~/utils/transactions'
 
 dayjs.extend(relativeTime)
 
-interface TransactionRowProps {
+interface TransactionListItemProps extends Partial<ListItemProps> {
   tx: AddressTransaction
-  isLast?: boolean
   showInternalInflows?: boolean
-  style?: StyleProp<ViewStyle>
 }
 
-const TransactionRow = ({ tx, isLast, showInternalInflows = false, style }: TransactionRowProps) => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+const TransactionListItem = ({ tx, showInternalInflows = false, ...props }: TransactionListItemProps) => {
   const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
   const { Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
-
-  const handleOnPress = () => {
-    if (!isPendingTx(tx)) navigation.navigate('TransactionScreen', { tx })
-  }
 
   const isMoved = infoType === 'move'
   const knownAssets = assets.filter((asset) => !!asset.symbol)
 
   return (
     <ListItem
-      style={style}
-      onPress={handleOnPress}
-      isLast={isLast}
+      {...props}
       title={label}
       subtitle={dayjs(tx.timestamp).fromNow()}
       icon={
@@ -92,7 +80,7 @@ const TransactionRow = ({ tx, isLast, showInternalInflows = false, style }: Tran
 }
 
 export default memo(
-  TransactionRow,
+  TransactionListItem,
   (prevProps, nextProps) =>
     prevProps.tx.hash === nextProps.tx.hash &&
     prevProps.tx.address.hash === nextProps.tx.address.hash &&

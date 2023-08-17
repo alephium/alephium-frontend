@@ -23,7 +23,7 @@ import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 
-interface ListItemProps extends PressableProps {
+export interface ListItemProps extends PressableProps {
   title: string
   subtitle: string | ReactNode
   icon: ReactNode
