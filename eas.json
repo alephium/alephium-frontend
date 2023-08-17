@@ -25,17 +25,9 @@
   "submit": {
     "preview": {
       "android": {
-        "serviceAccountKeyPath": "",
         "track": "alpha"
       },
-      "ios": {
-        "appleId": "",
-        "appleTeamId": "",
-        "companyName": "",
-        "ascApiKeyId": "",
-        "ascApiKeyIssuerId": "",
-        "ascApiKeyPath": ""
-      }
+      "ios": {}
     },
     "production": {}
   }
