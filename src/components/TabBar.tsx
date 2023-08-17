@@ -20,6 +20,7 @@ import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export interface TabItem {
   value: string
@@ -62,15 +63,15 @@ const TabBarStyled = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: ${({ theme }) => theme.border.secondary};
   padding: 0 20px;
-  gap: 35px;
+  gap: 20px;
 `
 
 export const Tab = styled.View<{ isActive: boolean }>`
   text-align: center;
   justify-content: center;
   align-items: center;
-  border-bottom-width: 1px;
-  border-bottom-color: ${({ isActive, theme }) => (isActive ? theme.font.primary : 'transparent')};
-  padding: 13px 0;
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : 'transparent')};
+  padding: 8px 10px;
+  border-radius: ${BORDER_RADIUS}px;
   margin-bottom: -1px;
 `

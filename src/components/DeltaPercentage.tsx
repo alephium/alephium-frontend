@@ -23,15 +23,13 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 
 interface DeltaPercentageProps {
-  initialValue: number
-  latestValue: number
+  percentage: number
   style?: StyleProp<ViewStyle>
 }
 
-const DeltaPercentage = ({ initialValue, latestValue, style }: DeltaPercentageProps) => {
+const DeltaPercentage = ({ percentage, style }: DeltaPercentageProps) => {
   const theme = useTheme()
 
-  const percentage = Math.round(((latestValue - initialValue) / initialValue) * 10000) / 100
   const isUp = percentage >= 0
   const color = isUp ? theme.global.valid : theme.global.alert
   const textColor = isUp ? 'valid' : 'alert'

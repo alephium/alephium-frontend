@@ -33,6 +33,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
+import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
@@ -55,9 +56,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
       onScroll={scrollHandler}
     >
-      <ScreenSectionStyled>
-        <BalanceSummaryStyled dateLabel="VALUE TODAY" />
-      </ScreenSectionStyled>
+      <BalanceSummary dateLabel="VALUE TODAY" />
       <ScreenSection>
         <ButtonsRow>
           <SendReceiveButton type="transparent" round onPress={() => navigation.navigate('SendNavigation')}>
@@ -83,15 +82,7 @@ export default DashboardScreen
 
 const DashboardScreenStyled = styled(ScrollScreen)`
   background-color: ${({ theme }) => theme.bg.primary};
-`
-
-const ScreenSectionStyled = styled(ScreenSection)`
-  padding-bottom: 0;
-  padding-top: 0;
-`
-
-const BalanceSummaryStyled = styled(BalanceSummary)`
-  padding: 0px 15px 0px;
+  gap: 25px;
 `
 
 const ButtonsRow = styled.View`

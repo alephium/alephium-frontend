@@ -42,7 +42,7 @@ const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) 
   })
 
   return (
-    <Screen style={style}>
+    <Screen>
       <ScrollView
         contentOffset={{ y: 0, x: 0 }}
         onScroll={props.onScroll}
@@ -50,7 +50,7 @@ const ScrollScreen = ({ children, style, ...props }: InWalletScrollScreenProps) 
         {...props}
         scrollEventThrottle={16}
       >
-        <View>{children}</View>
+        <View style={style}>{children}</View>
       </ScrollView>
     </Screen>
   )

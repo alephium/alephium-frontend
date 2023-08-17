@@ -68,7 +68,7 @@ export const lightTheme: DefaultTheme = {
 export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
-    highlight: '',
+    highlight: '#353539',
     primary: '#1B1B1F',
     secondary: '#17171A',
     tertiary: '#17171A',
