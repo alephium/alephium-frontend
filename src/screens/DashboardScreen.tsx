@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
@@ -33,7 +34,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
-import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
@@ -43,9 +44,10 @@ interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStack
 const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
+  const scrollHandler = useScrollEventHandler()
+  const headerheight = useHeaderHeight()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
-  const scrollHandler = useScrollEventHandler()
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
@@ -55,6 +57,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     <DashboardScreenStyled
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
       onScroll={scrollHandler}
+      style={{ marginTop: headerheight + HORIZONTAL_MARGIN }}
     >
       <BalanceSummary dateLabel="VALUE TODAY" />
       <ScreenSection>
@@ -81,7 +84,6 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
 export default DashboardScreen
 
 const DashboardScreenStyled = styled(ScrollScreen)`
-  background-color: ${({ theme }) => theme.bg.primary};
   gap: 25px;
 `
 

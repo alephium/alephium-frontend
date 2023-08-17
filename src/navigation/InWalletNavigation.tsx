@@ -51,6 +51,7 @@ const InWalletTabsNavigation = () => {
           options={{
             title: 'Overview',
             tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} strokeWidth={1.5} />,
+            headerTransparent: true,
             header: (props) => (
               <DefaultHeader
                 HeaderRight={<DashboardHeaderActions />}

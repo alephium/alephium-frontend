@@ -50,14 +50,14 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeade
 
   if (Platform.OS === 'android') {
     return (
-      <Animated.View style={[style, headerStyle, { paddingTop: insets.top + 15 }]}>
+      <Animated.View style={[style, headerStyle, { paddingTop: insets.top }]}>
         {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
         {HeaderRight}
       </Animated.View>
     )
   } else {
     return (
-      <BlurView style={[style, { paddingTop: insets.top + 15 }]}>
+      <BlurView style={[style, { paddingTop: insets.top }]} intensity={90} tint="dark">
         {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
         {HeaderRight}
       </BlurView>
