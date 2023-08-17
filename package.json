@@ -1,6 +1,6 @@
 {
   "name": "@alephium/sdk",
-  "version": "0.7.6-rc.0",
+  "version": "0.7.6-rc.1",
   "description": "A JS/TS library to interact with the Alephium platform",
   "license": "GPL",
   "main": "dist/index.js",
