@@ -97,7 +97,7 @@ export const formatAmountForDisplay = ({
   const amountNumber = Number(amountString)
 
   if (amountNumber < 0.0001) {
-    if (smartRounding) {
+    if (smartRounding && !fullPrecision) {
       return smartRound(amountString)
     } else {
       fullPrecision = true
