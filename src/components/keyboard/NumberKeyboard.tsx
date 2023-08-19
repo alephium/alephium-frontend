@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Icon from '@expo/vector-icons/Feather'
 import { PressableProps } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -30,6 +31,7 @@ export type NumberKeyboardKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | 
 
 const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
   const theme = useTheme()
+  const insets = useSafeAreaInsets()
 
   const keyButtonStyle: PressableProps['style'] = ({ pressed }) => [
     {
@@ -57,7 +59,7 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
   )
 
   return (
-    <KeyboardContainer>
+    <KeyboardContainer style={{ paddingBottom: insets.bottom }}>
       {renderRow(['1', '2', '3'])}
       {renderRow(['4', '5', '6'])}
       {renderRow(['7', '8', '9'])}
