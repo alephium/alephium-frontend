@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { useHeaderHeight } from '@react-navigation/elements'
 import { useCallback } from 'react'
 import { ActivityIndicator, FlatListProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -60,6 +62,8 @@ const TransactionsFlatListScreen = ({
 }: TransactionsFlatListScreenProps) => {
   const theme = useTheme()
   const dispatch = useAppDispatch()
+  const headerheight = useHeaderHeight()
+
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
@@ -97,6 +101,7 @@ const TransactionsFlatListScreen = ({
       onRefresh={refreshData}
       refreshing={pendingTransactions.length > 0}
       extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
+      contentContainerStyle={{ paddingTop: headerheight }}
       ListHeaderComponent={
         <>
           {ListHeaderComponent}

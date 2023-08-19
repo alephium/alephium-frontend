@@ -72,7 +72,8 @@ const InWalletTabsNavigation = () => {
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
             ),
-            header: (props) => <DefaultHeader HeaderLeft="Transfers" {...props} />
+            header: (props) => <DefaultHeader HeaderLeft="Transfers" {...props} />,
+            headerTransparent: true
           }}
         />
         <InWalletTabs.Screen
@@ -83,7 +84,8 @@ const InWalletTabsNavigation = () => {
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
             ),
-            header: (props) => <DefaultHeader HeaderLeft={<TopTabBar {...props} />} {...props} />
+            header: (props) => <DefaultHeader HeaderLeft={<TopTabBar {...props} />} {...props} />,
+            headerTransparent: true
           }}
         />
       </InWalletTabs.Navigator>

@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
-import { colord } from 'colord'
-import { ListIcon, PlusIcon, Upload } from 'lucide-react-native'
-import { usePostHog } from 'posthog-react-native'
+import { ListIcon, PlusIcon } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -34,7 +34,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { selectAddressByHash, selectAddressIds, selectDefaultAddress, syncAddressesData } from '~/store/addressesSlice'
-import { themes } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 
 type ScreenProps = StackScreenProps<AddressTabsParamList, 'AddressesScreen'> &
@@ -44,14 +43,16 @@ type ScreenProps = StackScreenProps<AddressTabsParamList, 'AddressesScreen'> &
 
 const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
+  const scrollHandler = useScrollEventHandler()
+  const headerHeight = useHeaderHeight()
+  const bottomTabBarHeight = useBottomTabBarHeight()
+
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
-  const theme = useTheme()
-  const scrollHandler = useScrollEventHandler()
-  const posthog = usePostHog()
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
@@ -81,62 +82,42 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
 
   if (!selectedAddress) return null
 
-  const handleSendFromPress = () => {
-    posthog?.capture('Send: Selected address to send funds from')
-
-    navigation.navigate('SendNavigation', {
-      screen: 'DestinationScreen',
-      params: { fromAddressHash: selectedAddressHash }
-    })
-  }
-
-  const floatingButtonBgColor = selectedAddress.settings.color ?? theme.font.primary
-
   return (
-    <>
-      <ScrollScreenStyled
-        style={style}
-        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
-        onScroll={scrollHandler}
-        alwaysBounceVertical={false}
-      >
-        <ScreenContent>
-          <Carousel
-            data={addressHashes}
-            renderItem={renderAddressCard}
-            onScrollEnd={onAddressCardsScrollEnd}
-            padding={30}
-            distance={20}
-            height={heightCarouselItem}
-            scrollTo={scrollToCarouselPage}
-            FooterComponent={
-              <>
-                <Button
-                  onPress={() => navigation.navigate('AddressQuickNavigationScreen')}
-                  Icon={ListIcon}
-                  type="transparent"
-                />
-                <Button
-                  onPress={() => navigation.navigate('NewAddressNavigation')}
-                  Icon={PlusIcon}
-                  title="New address"
-                  color={theme.global.accent}
-                  compact
-                />
-              </>
-            }
-          />
-          {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} style={{ paddingBottom: 50 }} />}
-        </ScreenContent>
-      </ScrollScreenStyled>
-      <FloatingButton
-        Icon={Upload}
-        round
-        bgColor={floatingButtonBgColor}
-        color={colord(floatingButtonBgColor).isDark() ? themes.light.font.contrast : themes.light.font.primary}
-        onPress={handleSendFromPress}
-      />
-    </>
+    <ScrollScreenStyled
+      style={[style, { paddingTop: headerHeight, paddingBottom: bottomTabBarHeight }]}
+      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
+      onScroll={scrollHandler}
+      alwaysBounceVertical={false}
+    >
+      <ScreenContent>
+        <Carousel
+          data={addressHashes}
+          renderItem={renderAddressCard}
+          onScrollEnd={onAddressCardsScrollEnd}
+          padding={30}
+          distance={20}
+          height={heightCarouselItem}
+          scrollTo={scrollToCarouselPage}
+          FooterComponent={
+            <>
+              <Button
+                onPress={() => navigation.navigate('AddressQuickNavigationScreen')}
+                Icon={ListIcon}
+                type="transparent"
+              />
+              <Button
+                onPress={() => navigation.navigate('NewAddressNavigation')}
+                Icon={PlusIcon}
+                title="New address"
+                color={theme.global.accent}
+                compact
+              />
+            </>
+          }
+        />
+        {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} style={{ paddingBottom: 50 }} />}
+      </ScreenContent>
+    </ScrollScreenStyled>
   )
 }
 
@@ -145,14 +126,5 @@ export default AddressesScreen
 const ScrollScreenStyled = styled(ScrollScreen)``
 
 const ScreenContent = styled.View`
-  padding-top: 30px;
-`
-
-const FloatingButton = styled(Button)<{ bgColor: string }>`
-  position: absolute;
-  bottom: 18px;
-  right: 18px;
-  background-color: ${({ bgColor }) => bgColor};
-  width: 56px;
-  height: 56px;
+  padding-top: 15px;
 `

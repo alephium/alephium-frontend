@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BlurView } from 'expo-blur'
-import { ReactNode } from 'react'
-import { Platform, StyleProp, ViewStyle } from 'react-native'
+import { ReactNode, useEffect } from 'react'
+import { Platform, StyleProp, ViewStyle, useAnimatedValue } from 'react-native'
 import Animated, {
   Extrapolate,
   interpolate,

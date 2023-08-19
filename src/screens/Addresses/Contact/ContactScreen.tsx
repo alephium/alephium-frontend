@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
@@ -44,13 +46,16 @@ type ScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
   }
 
 const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) => {
+  const headerHeight = useHeaderHeight()
+  const bottomTabBarHeight = useBottomTabBarHeight()
+  const posthog = usePostHog()
+
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const contactAddressHash = contact?.address ?? ''
   const selectContactConfirmedTransactions = useMemo(makeSelectContactConfirmedTransactions, [])
   const selectContactPendingTransactions = useMemo(makeSelectContactPendingTransactions, [])
   const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
   const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
-  const posthog = usePostHog()
 
   useEffect(() => {
     navigation.setOptions({
@@ -99,7 +104,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
       confirmedTransactions={confirmedTransactions}
       pendingTransactions={pendingTransactions}
       initialNumToRender={8}
-      contentContainerStyle={{ flexGrow: 1 }}
+      contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight, paddingBottom: bottomTabBarHeight }}
       ListHeaderComponent={
         <>
           <CenteredSection>
