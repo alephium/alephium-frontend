@@ -75,13 +75,7 @@ interface TabBarItemProps {
 }
 
 const TabBarItem = ({ label, isActive, onPress }: TabBarItemProps) => {
-  const { scrollY } = useScrollContext()
   const theme = useTheme()
-
-  const textStyle = useAnimatedStyle(() => ({
-    fontSize: interpolate(scrollY?.value || 0, scrollRange, [28, 18], Extrapolate.CLAMP),
-    opacity: isActive ? 1 : 0.3
-  }))
 
   return (
     <PressableStyled
@@ -90,7 +84,7 @@ const TabBarItem = ({ label, isActive, onPress }: TabBarItemProps) => {
       onPress={onPress}
       style={{ backgroundColor: isActive ? theme.bg.primary : 'transparent' }}
     >
-      <ReanimatedText style={textStyle}>{label}</ReanimatedText>
+      <ReanimatedText>{label}</ReanimatedText>
     </PressableStyled>
   )
 }
