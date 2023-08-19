@@ -142,9 +142,7 @@ const AddressesScreen = ({ navigation, style, route: { params } }: ScreenProps) 
 
 export default AddressesScreen
 
-const ScrollScreenStyled = styled(ScrollScreen)`
-  background-color: ${({ theme }) => theme.bg.primary};
-`
+const ScrollScreenStyled = styled(ScrollScreen)``
 
 const ScreenContent = styled.View`
   padding-top: 30px;

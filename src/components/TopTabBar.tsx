@@ -24,6 +24,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useScrollContext } from '~/contexts/ScrollContext'
+import { BORDER_RADIUS, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 const scrollRange = [0, 50]
 
@@ -44,19 +45,7 @@ const tabs: Tab[] = [
 ]
 
 const TopTabBar = ({ navigation }: BottomTabHeaderProps) => {
-  const { scrollY } = useScrollContext()
-  const theme = useTheme()
-
   const [activeTab, setActiveTab] = useState(tabs[0])
-
-  const bgColorRange = [theme.bg.primary, theme.bg.secondary]
-  const borderColorRange = ['transparent', theme.border.secondary]
-  const insets = useSafeAreaInsets()
-
-  const headerStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange),
-    borderColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
-  }))
 
   const handleOnTabPress = (tab: Tab) => {
     setActiveTab(tab)
@@ -64,19 +53,17 @@ const TopTabBar = ({ navigation }: BottomTabHeaderProps) => {
   }
 
   return (
-    <Reanimated.View style={[headerStyle, { paddingTop: insets.top }]}>
-      <TabsRow>
-        {tabs.map((tab) => (
-          <TabBarItem
-            key={tab.label}
-            isActive={activeTab.label === tab.label}
-            label={tab.label}
-            navigation={navigation}
-            onPress={() => handleOnTabPress(tab)}
-          />
-        ))}
-      </TabsRow>
-    </Reanimated.View>
+    <TabsRow>
+      {tabs.map((tab) => (
+        <TabBarItem
+          key={tab.label}
+          isActive={activeTab.label === tab.label}
+          label={tab.label}
+          navigation={navigation}
+          onPress={() => handleOnTabPress(tab)}
+        />
+      ))}
+    </TabsRow>
   )
 }
 
@@ -101,7 +88,7 @@ const TabBarItem = ({ label, isActive, onPress }: TabBarItemProps) => {
       key={label}
       accessibilityRole="button"
       onPress={onPress}
-      style={{ borderColor: isActive ? theme.font.primary : 'transparent' }}
+      style={{ backgroundColor: isActive ? theme.bg.primary : 'transparent' }}
     >
       <ReanimatedText style={textStyle}>{label}</ReanimatedText>
     </PressableStyled>
@@ -113,17 +100,14 @@ export default TopTabBar
 const TabsRow = styled.View`
   flex-direction: row;
   gap: 20px;
-  border-bottom-color: ${({ theme }) => theme.border.secondary};
-  border-bottom-width: 1px;
-  padding: 0 20px;
 `
 
 const PressableStyled = styled(Pressable)`
-  border-bottom-width: 1px;
-  margin-bottom: -1px;
+  padding: 10px;
+  border-radius: ${BORDER_RADIUS}px;
 `
 
 const ReanimatedText = styled(Reanimated.Text)`
-  padding: 18px 0;
   font-weight: 600;
+  color: ${({ theme }) => theme.font.primary};
 `

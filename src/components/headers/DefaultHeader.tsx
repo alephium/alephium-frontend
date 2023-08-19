@@ -48,7 +48,7 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeade
   const { scrollY } = useScrollContext()
   const insets = useSafeAreaInsets()
 
-  const bgColorRange = [bgColor ?? 'tranparent', theme.bg.secondary]
+  const bgColorRange = [bgColor ?? theme.bg.secondary, theme.bg.primary]
   const borderColorRange = ['transparent', theme.border.secondary]
 
   const androidHeaderColor = useAnimatedStyle(() =>
