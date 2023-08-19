@@ -45,7 +45,7 @@ const TabBar = ({ items, onTabChange, activeTab, style }: TabBarProps) => {
         return (
           <Pressable key={item.value} onPress={() => onTabChange(item)}>
             <Tab isActive={isActive}>
-              <AppText semiBold size={18} color={isActive ? theme.font.primary : theme.font.tertiary}>
+              <AppText semiBold size={16} color={isActive ? theme.font.primary : theme.font.tertiary}>
                 {item.label}
               </AppText>
             </Tab>
