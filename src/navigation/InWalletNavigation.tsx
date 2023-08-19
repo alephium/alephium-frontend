@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Album as AddressesIcon, ArrowLeftRight as ArrowsIcon, List as ListIcon } from 'lucide-react-native'
 import { useTheme } from 'styled-components/native'
@@ -50,7 +51,9 @@ const InWalletTabsNavigation = () => {
           component={DashboardScreen}
           options={{
             title: 'Overview',
-            tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} strokeWidth={1.5} />,
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
+            ),
             headerTransparent: true,
             header: (props) => (
               <DefaultHeader
@@ -67,7 +70,9 @@ const InWalletTabsNavigation = () => {
           component={TransfersScreen}
           options={{
             title: 'Transfers',
-            tabBarIcon: ({ color, size }) => <ArrowsIcon color={color} size={size} strokeWidth={1.5} />,
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
+            ),
             header: (props) => <DefaultHeader HeaderLeft="Transfers" {...props} />
           }}
         />
@@ -76,7 +81,9 @@ const InWalletTabsNavigation = () => {
           component={AddressesTabNavigation}
           options={{
             title: 'Addresses',
-            tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />,
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
+            ),
             header: (props) => <TopTabBar {...props} />
           }}
         />
