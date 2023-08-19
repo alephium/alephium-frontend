@@ -48,31 +48,35 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeade
   const { scrollY } = useScrollContext()
   const insets = useSafeAreaInsets()
 
-  const bgColorRange = [bgColor ?? theme.bg.primary, theme.bg.secondary]
+  const bgColorRange = [bgColor ?? 'tranparent', theme.bg.secondary]
   const borderColorRange = ['transparent', theme.border.secondary]
 
-  const androidHeaderColors = useAnimatedStyle(() =>
+  const androidHeaderColor = useAnimatedStyle(() =>
     Platform.OS === 'android'
       ? {
-          backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange),
-          borderColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
+          backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange)
         }
       : {}
   )
 
+  const bottomBorderColor = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
+  }))
+
   const animatedBlurViewProps = useAnimatedProps(() =>
     Platform.OS === 'ios'
       ? {
-          intensity: interpolate(scrollY?.value || 0, scrollRange, [0, 80], Extrapolate.CLAMP)
+          intensity: interpolate(scrollY?.value || 0, scrollRange, [0, 100], Extrapolate.CLAMP)
         }
       : {}
   )
 
   if (Platform.OS === 'android') {
     return (
-      <Animated.View style={[style, androidHeaderColors, { paddingTop: insets.top }]}>
+      <Animated.View style={[style, androidHeaderColor, { paddingTop: insets.top }]}>
         {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
         {HeaderRight}
+        <BottomBorder style={bottomBorderColor} />
       </Animated.View>
     )
   } else {
@@ -84,6 +88,7 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeade
       >
         {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
         {HeaderRight}
+        <BottomBorder style={bottomBorderColor} />
       </AnimatedBlurView>
     )
   }
@@ -100,4 +105,12 @@ const Title = styled(AppText)`
   font-size: 28px;
   font-weight: 700;
   color: ${({ theme }) => theme.font.primary};
+`
+
+const BottomBorder = styled(Animated.View)`
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  left: 0;
+  height: 1px;
 `

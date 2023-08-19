@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
@@ -46,6 +47,8 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
   const theme = useTheme()
   const scrollHandler = useScrollEventHandler()
   const headerheight = useHeaderHeight()
+  const bottomBarHeight = useBottomTabBarHeight()
+
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
 
@@ -57,7 +60,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     <DashboardScreenStyled
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
       onScroll={scrollHandler}
-      style={{ marginTop: headerheight + HORIZONTAL_MARGIN }}
+      style={{ marginTop: headerheight + HORIZONTAL_MARGIN, marginBottom: bottomBarHeight + HORIZONTAL_MARGIN }}
     >
       <BalanceSummary dateLabel="VALUE TODAY" />
       <ScreenSection>

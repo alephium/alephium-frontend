@@ -38,7 +38,7 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation }: F
     options.tabBarIcon &&
     options.tabBarIcon({
       focused: isFocused,
-      color: isFocused ? theme.global.accent : theme.font.tertiary,
+      color: isFocused ? theme.font.primary : theme.font.tertiary,
       size: 24
     })
 
@@ -72,12 +72,12 @@ const Tab = styled.View<{ active: boolean }>`
   align-items: center;
   justify-content: space-between;
   border-radius: ${BORDER_RADIUS * 0.7}px;
-  padding: 5px 10px;
+  width: 90px;
 `
 
 const TabText = styled.Text<{ isActive?: boolean }>`
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
-  color: ${({ theme, isActive }) => (isActive ? theme.global.accent : theme.font.tertiary)};
-  padding: 3px 0px;
+  color: ${({ theme, isActive }) => (isActive ? theme.font.primary : theme.font.tertiary)};
+  margin-top: 3px;
 `
