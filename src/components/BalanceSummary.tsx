@@ -20,7 +20,7 @@ import { calculateAmountWorth } from '@alephium/sdk'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Skeleton } from 'moti/skeleton'
 import { useState } from 'react'
-import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -67,9 +67,14 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
   const latestValue = totalAmountWorth
 
   const deltaPercentage = Math.round(((latestValue - initialValue) / initialValue) * 10000) / 100
+  const deltaColor = !deltaPercentage
+    ? theme.bg.tertiary
+    : deltaPercentage < 0
+    ? theme.global.alert
+    : theme.global.valid
 
   return (
-    <BalanceSummaryContainer colors={['transparent', deltaPercentage < 0 ? theme.global.alert : theme.global.valid]}>
+    <BalanceSummaryContainer colors={['transparent', deltaColor]}>
       <TextContainer>
         <SurfaceHeader>
           <AppText color="tertiary" semiBold>

@@ -19,7 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { BlurView } from 'expo-blur'
 import { ReactNode } from 'react'
 import { Platform, StyleProp, ViewStyle } from 'react-native'
-import Animated, { interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
+import Animated, {
+  Extrapolate,
+  interpolate,
+  interpolateColor,
+  useAnimatedProps,
+  useAnimatedStyle
+} from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -35,6 +41,8 @@ export interface DefaultHeaderProps {
 
 const scrollRange = [0, 50]
 
+const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
+
 const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeaderProps) => {
   const theme = useTheme()
   const { scrollY } = useScrollContext()
@@ -43,24 +51,40 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeade
   const bgColorRange = [bgColor ?? theme.bg.primary, theme.bg.secondary]
   const borderColorRange = ['transparent', theme.border.secondary]
 
-  const headerStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange),
-    borderColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
-  }))
+  const androidHeaderColors = useAnimatedStyle(() =>
+    Platform.OS === 'android'
+      ? {
+          backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange),
+          borderColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
+        }
+      : {}
+  )
+
+  const animatedBlurViewProps = useAnimatedProps(() =>
+    Platform.OS === 'ios'
+      ? {
+          intensity: interpolate(scrollY?.value || 0, scrollRange, [0, 80], Extrapolate.CLAMP)
+        }
+      : {}
+  )
 
   if (Platform.OS === 'android') {
     return (
-      <Animated.View style={[style, headerStyle, { paddingTop: insets.top }]}>
+      <Animated.View style={[style, androidHeaderColors, { paddingTop: insets.top }]}>
         {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
         {HeaderRight}
       </Animated.View>
     )
   } else {
     return (
-      <BlurView style={[style, { paddingTop: insets.top }]} intensity={90} tint="dark">
+      <AnimatedBlurView
+        style={[style, { paddingTop: insets.top }]}
+        animatedProps={animatedBlurViewProps}
+        tint={theme.name}
+      >
         {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
         {HeaderRight}
-      </BlurView>
+      </AnimatedBlurView>
     )
   }
 }
@@ -69,7 +93,7 @@ export default styled(DefaultHeader)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  padding: 10px 15px;
 `
 
 const Title = styled(AppText)`

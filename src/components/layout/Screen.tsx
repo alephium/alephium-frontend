@@ -21,6 +21,7 @@ import { SafeAreaViewProps } from 'react-native-safe-area-context'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 const Screen = ({ children, style }: SafeAreaViewProps) => <View style={style}>{children}</View>
 
@@ -30,7 +31,7 @@ export default styled(Screen)`
 `
 
 export const ScreenSection = styled.View<{ fill?: boolean }>`
-  padding: 20px 20px 10px;
+  margin: 0 ${HORIZONTAL_MARGIN}px;
 
   ${({ fill }) =>
     fill &&

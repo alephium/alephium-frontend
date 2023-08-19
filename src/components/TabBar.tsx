@@ -60,8 +60,6 @@ export default TabBar
 
 const TabBarStyled = styled.View`
   flex-direction: row;
-  border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.border.secondary};
   padding: 0 20px;
   gap: 20px;
 `

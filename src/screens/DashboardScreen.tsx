@@ -62,13 +62,13 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
       <BalanceSummary dateLabel="VALUE TODAY" />
       <ScreenSection>
         <ButtonsRow>
-          <SendReceiveButton type="transparent" round onPress={() => navigation.navigate('SendNavigation')}>
+          <SendReceiveButton onPress={() => navigation.navigate('SendNavigation')}>
             <ButtonText semiBold>Send</ButtonText>
             <Icon>
               <ArrowUp color={theme.font.secondary} size={20} />
             </Icon>
           </SendReceiveButton>
-          <SendReceiveButton type="transparent" round onPress={() => navigation.navigate('ReceiveNavigation')}>
+          <SendReceiveButton onPress={() => navigation.navigate('ReceiveNavigation')}>
             <ButtonText semiBold>Receive</ButtonText>
             <Icon>
               <ArrowDown color={theme.font.secondary} size={20} />
