@@ -49,7 +49,6 @@ type RootStackParamList = {
   AddressDiscoveryScreen?: {
     isImporting?: boolean
   }
-  CurrencySelectScreen: undefined
   NewContactScreen: undefined
   EditContactScreen: {
     contactId: string

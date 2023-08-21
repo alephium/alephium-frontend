@@ -41,6 +41,7 @@ import {
   disableBiometrics,
   enableBiometrics
 } from '~/persistent-storage/wallets'
+import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
 import { analyticsToggled, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
@@ -61,7 +62,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const posthog = usePostHog()
-  const { ref, open, close } = useModalize()
+  const { ref: switchNetworkModalRef, open: openSwitchNetworkModal, close: closeSwitchNetworkModal } = useModalize()
+  const { ref: currencySelectModalRef, open: openCurrencySelectModal, close: closeCurrencySelectModal } = useModalize()
   const insets = useSafeAreaInsets()
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
@@ -141,7 +143,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <HighlightRow title="Analytics" subtitle="Help us improve your experience!">
               <Toggle value={analytics} onValueChange={toggleAnalytics} />
             </HighlightRow>
-            <HighlightRow onPress={() => navigation.navigate('CurrencySelectScreen')} title="Currency">
+            <HighlightRow onPress={() => openCurrencySelectModal()} title="Currency">
               <AppText bold>{currentCurrency}</AppText>
             </HighlightRow>
           </BoxSurface>
@@ -149,7 +151,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>Networks</ScreenSectionTitle>
           <BoxSurface>
-            <HighlightRow title="Current network" onPress={open}>
+            <HighlightRow title="Current network" onPress={openSwitchNetworkModal}>
               <AppText bold>{capitalize(currentNetworkName)}</AppText>
             </HighlightRow>
           </BoxSurface>
@@ -173,8 +175,11 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ButtonStyled title="Delete this wallet" Icon={Trash2} variant="alert" onPress={handleDeleteButtonPress} />
         </ScreenSection>
       </ScrollScreen>
-      <Modalize ref={ref} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
-        <SwitchNetworkModal onClose={close} />
+      <Modalize ref={switchNetworkModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+        <SwitchNetworkModal onClose={closeSwitchNetworkModal} />
+      </Modalize>
+      <Modalize ref={currencySelectModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+        <CurrencySelectModal onClose={closeCurrencySelectModal} />
       </Modalize>
     </>
   )

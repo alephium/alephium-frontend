@@ -33,7 +33,6 @@ import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
-import CurrencySelectScreen from '~/screens/CurrencySelectScreen'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginScreen from '~/screens/LoginScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
@@ -140,11 +139,6 @@ const RootStackNavigation = () => {
           {/* Bottom modal screens */}
           <RootStack.Group screenOptions={bottomModalOptions}>
             <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
-            <RootStack.Screen
-              name="CurrencySelectScreen"
-              component={CurrencySelectScreen}
-              options={{ title: 'Currency' }}
-            />
             <RootStack.Screen
               name="SendNavigation"
               component={SendNavigation}

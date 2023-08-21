@@ -16,37 +16,38 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
 import React from 'react'
 
 import BoxSurface from '~/components/layout/BoxSurface'
+import Modal from '~/components/layout/Modal'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import { currencySelected } from '~/store/settingsSlice'
 import { Currency } from '~/types/settings'
 import { currencies } from '~/utils/currencies'
 
-interface ScreenProps extends StackScreenProps<RootStackParamList, 'CurrencySelectScreen'>, ScrollScreenProps {}
+interface CurrencySelectModalProps extends ScrollScreenProps {
+  onClose: () => void
+}
 
 const currencyOptions = Object.values(currencies).map((currency) => ({
   label: `${currency.name} (${currency.ticker})`,
   value: currency.ticker
 }))
 
-const CurrencySelectScreen = ({ navigation, ...props }: ScreenProps) => {
+const CurrencySelectModal = ({ onClose, ...props }: CurrencySelectModalProps) => {
   const dispatch = useAppDispatch()
   const currentCurrency = useAppSelector((s) => s.settings.currency)
 
   const handleCurrencyChange = (currency: Currency) => {
     dispatch(currencySelected(currency))
-    navigation.goBack()
+    onClose()
   }
 
   return (
-    <ScrollScreen {...props}>
+    <Modal {...props}>
       <ScreenSection>
         <BoxSurface>
           {currencyOptions.map((currencyOption) => (
@@ -59,8 +60,8 @@ const CurrencySelectScreen = ({ navigation, ...props }: ScreenProps) => {
           ))}
         </BoxSurface>
       </ScreenSection>
-    </ScrollScreen>
+    </Modal>
   )
 }
 
-export default CurrencySelectScreen
+export default CurrencySelectModal
