@@ -20,6 +20,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { useTheme } from 'styled-components/native'
 
+import AppText from '~/components/AppText'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
 import DefaultHeader from '~/components/headers/DefaultHeader'
@@ -61,6 +62,7 @@ const InWalletTabsNavigation = () => {
                 HeaderRight={<DashboardHeaderActions />}
                 HeaderLeft={<WalletSwitch />}
                 headerTitle={activeWalletName}
+                HeaderCompactContent={<AppText>{activeWalletName}</AppText>}
                 bgColor={theme.bg.primary}
                 {...props}
               />

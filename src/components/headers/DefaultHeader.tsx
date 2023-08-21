@@ -61,11 +61,15 @@ const DefaultHeader = ({
   const bgColorRange = [bgColor ?? theme.bg.secondary, theme.bg.primary]
   const borderColorRange = ['transparent', theme.border.secondary]
 
-  const titleAnimatedStyle = useAnimatedStyle(() =>
-    HeaderCompactContent || headerTitle
+  const titleAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: interpolate(scrollY?.value || 0, scrollRange, [0, -20], Extrapolate.CLAMP) }],
+    opacity: interpolate(scrollY?.value || 0, scrollRange, [1, 0], Extrapolate.CLAMP)
+  }))
+
+  const animatedBlurViewProps = useAnimatedProps(() =>
+    Platform.OS === 'ios'
       ? {
-          transform: [{ translateY: interpolate(scrollY?.value || 0, scrollRange, [0, -20], Extrapolate.CLAMP) }],
-          opacity: interpolate(scrollY?.value || 0, scrollRange, [1, 0])
+          intensity: interpolate(scrollY?.value || 0, scrollRange, [0, 80], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -82,13 +86,14 @@ const DefaultHeader = ({
     backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
   }))
 
-  const animatedBlurViewProps = useAnimatedProps(() =>
-    Platform.OS === 'ios'
-      ? {
-          intensity: interpolate(scrollY?.value || 0, scrollRange, [0, 100], Extrapolate.CLAMP)
-        }
-      : {}
-  )
+  const fullContentAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY?.value || 0, scrollRange, [1, 0], Extrapolate.CLAMP)
+  }))
+
+  const compactContentAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY?.value || 0, [10, 60], [0, 1], Extrapolate.CLAMP),
+    height: interpolate(scrollY?.value || 0, [0, 60], [120, 90], Extrapolate.CLAMP)
+  }))
 
   if (Platform.OS === 'android') {
     return (
@@ -101,23 +106,31 @@ const DefaultHeader = ({
     )
   } else {
     return (
-      <Animated.View>
-        <FullContent>
-          <ActionArea
-            style={[style, { paddingTop: insets.top }]}
-            animatedProps={animatedBlurViewProps}
-            tint={theme.name}
-          >
+      <Animated.View style={style}>
+        <FullContent style={fullContentAnimatedStyle}>
+          <ActionAreaBlurred style={{ paddingTop: insets.top }} animatedProps={animatedBlurViewProps} tint={theme.name}>
             {HeaderLeft}
             {HeaderRight}
             <BottomBorder style={bottomBorderColor} />
-          </ActionArea>
+          </ActionAreaBlurred>
           {headerTitle && (
             <TitleArea style={titleAnimatedStyle}>
               <Title>{headerTitle}</Title>
             </TitleArea>
           )}
         </FullContent>
+        {HeaderCompactContent && (
+          <CompactContent style={compactContentAnimatedStyle}>
+            <ActionAreaBlurred
+              style={{ paddingTop: insets.top, justifyContent: 'center' }}
+              animatedProps={animatedBlurViewProps}
+              tint={theme.name}
+            >
+              {HeaderCompactContent}
+              <BottomBorder style={bottomBorderColor} />
+            </ActionAreaBlurred>
+          </CompactContent>
+        )}
       </Animated.View>
     )
   }
@@ -127,11 +140,11 @@ export default styled(DefaultHeader)`
   position: relative;
 `
 
-const FullContent = styled.View`
+const FullContent = styled(Animated.View)`
   flex-direction: column;
 `
 
-const ActionArea = styled(AnimatedBlurView)`
+const ActionAreaBlurred = styled(AnimatedBlurView)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -156,4 +169,9 @@ const BottomBorder = styled(Animated.View)`
   height: 1px;
 `
 
-const HeaderCompactContentContainer = styled(Animated.View)``
+const CompactContent = styled(Animated.View)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+`
