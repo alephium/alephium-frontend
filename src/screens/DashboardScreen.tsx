@@ -87,7 +87,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
 export default DashboardScreen
 
 const DashboardScreenStyled = styled(ScrollScreen)`
-  gap: 25px;
+  gap: 30px;
 `
 
 const ButtonsRow = styled.View`
@@ -97,8 +97,6 @@ const ButtonsRow = styled.View`
 
 const SendReceiveButton = styled(Button)`
   flex: 1;
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.border.primary};
   padding: 8.5px 10px;
   height: auto;
 `

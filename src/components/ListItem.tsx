@@ -25,7 +25,7 @@ import AppText from '~/components/AppText'
 
 interface ListItemProps extends PressableProps {
   title: string
-  subtitle: string | ReactNode
+  subtitle?: string | ReactNode
   icon: ReactNode
   isLast?: boolean
   style?: StyleProp<ViewStyle>
@@ -57,7 +57,7 @@ const ListItem = ({
               {title}
             </Title>
             {typeof subtitle === 'string' ? (
-              <Subtitle color="secondary" numberOfLines={1} ellipsizeMode="middle">
+              <Subtitle color="tertiary" numberOfLines={1} ellipsizeMode="middle">
                 {subtitle}
               </Subtitle>
             ) : (
@@ -96,7 +96,6 @@ const ContentRow = styled.View<{ showSeparator: boolean }>`
 
 const Title = styled(AppText)`
   max-width: 80%;
-  flex-shrink: 1;
   margin-bottom: 2px;
 `
 
@@ -118,4 +117,5 @@ const Row = styled(Animated.View)`
 
 const LeftSideContent = styled.View`
   flex: 1;
+  justify-content: center;
 `

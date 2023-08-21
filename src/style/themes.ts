@@ -39,6 +39,11 @@ export const lightTheme: DefaultTheme = {
     contrast: '#ffffff',
     highlight: '#d4a10d'
   },
+  button: {
+    primary: '#1d1d1d',
+    secondary: '#353539',
+    tertiary: '#353539'
+  },
   border: {
     primary: 'rgba(36, 34, 32, 0.10)',
     secondary: 'rgba(36, 34, 32, 0.05)'
@@ -83,6 +88,11 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'rgba(255, 255, 255, 0.40)',
     contrast: '#19191E',
     highlight: '#f0d590'
+  },
+  button: {
+    primary: '#2C2C34',
+    secondary: '#353539',
+    tertiary: '#353539'
   },
   border: {
     primary: 'rgba(255, 255, 255, 0.10)',

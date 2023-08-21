@@ -35,6 +35,7 @@ import { AddressHash } from '~/types/addresses'
 
 import { ScreenSection } from './layout/Screen'
 import TokenListItem from './TokenListItem'
+import { BORDER_RADIUS, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 interface AddressesTokensListProps {
   addressHash?: AddressHash
@@ -92,7 +93,7 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
   }, [addressHash, isLoading, knownFungibleTokens, unknownTokens.length])
 
   return (
-    <View style={style}>
+    <ListContainer style={style}>
       <TabBar items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
       {
         {
@@ -100,11 +101,7 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
             <ScreenSection>
               {tokenRows.map((entry, index) =>
                 isAsset(entry) ? (
-                  <TokenListItem
-                    key={entry.id}
-                    asset={entry}
-                    hideSeparator={index === knownFungibleTokens.length - 1 && unknownTokens.length === 0}
-                  />
+                  <TokenListItem key={entry.id} asset={entry} hideSeparator={true} />
                 ) : isUnknownTokens(entry) ? (
                   <UnknownTokensListItem entry={entry} key="unknown-tokens" />
                 ) : (
@@ -119,7 +116,7 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
           nfts: <NFTsGrid nfts={nfts} isLoading={isLoading} />
         }[activeTab.value]
       }
-    </View>
+    </ListContainer>
   )
 }
 
@@ -129,6 +126,14 @@ const LoadingRow = styled.View`
   flex-direction: row;
   gap: 15px;
   align-items: flex-start;
+  padding-top: 16px;
+`
+
+const ListContainer = styled.View`
+  gap: 20px;
+  background-color: ${({ theme }) => theme.bg.secondary};
+  margin: 0 ${HORIZONTAL_MARGIN}px;
+  border-radius: ${BORDER_RADIUS}px;
   padding-top: 16px;
 `
 

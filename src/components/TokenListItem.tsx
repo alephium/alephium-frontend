@@ -35,7 +35,6 @@ const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemPro
     style={style}
     isLast={isLast}
     title={asset.name || asset.id}
-    subtitle={<Amount value={BigInt(asset.balance)} medium color="secondary" suffix={asset.symbol} />}
     icon={<AssetLogo assetId={asset.id} size={38} />}
     rightSideContent={<AmountStyled value={BigInt(asset.balance)} fadeDecimals suffix={asset.symbol} bold />}
     hideSeparator={hideSeparator}
@@ -46,4 +45,5 @@ export default TokenListItem
 
 const AmountStyled = styled(Amount)`
   flex-shrink: 0;
+  align-self: center;
 `

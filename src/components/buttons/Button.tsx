@@ -58,7 +58,7 @@ const Button = ({
   const hasOnlyIcon = !!Icon && !title && !children
 
   const bg = {
-    default: theme.bg.secondary,
+    default: theme.button.primary,
     contrast: theme.font.primary,
     accent: theme.global.accent,
     valid: colord(theme.global.valid).alpha(0.1).toRgbString(),

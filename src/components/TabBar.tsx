@@ -68,7 +68,7 @@ export const Tab = styled.View<{ isActive: boolean }>`
   text-align: center;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : 'transparent')};
+  background-color: ${({ isActive, theme }) => (isActive ? theme.button.primary : 'transparent')};
   padding: 8px 10px;
   border-radius: ${BORDER_RADIUS}px;
   margin-bottom: -1px;
