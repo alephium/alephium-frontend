@@ -42,7 +42,7 @@ export interface DefaultHeaderProps {
   style?: StyleProp<ViewStyle>
 }
 
-const scrollRange = [0, 50]
+const scrollRange = [0, 60]
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 
@@ -61,10 +61,15 @@ const DefaultHeader = ({
   const bgColorRange = [bgColor ?? theme.bg.secondary, theme.bg.primary]
   const borderColorRange = ['transparent', theme.border.secondary]
 
-  const titleAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: interpolate(scrollY?.value || 0, scrollRange, [0, -20], Extrapolate.CLAMP) }],
-    opacity: interpolate(scrollY?.value || 0, scrollRange, [1, 0], Extrapolate.CLAMP)
-  }))
+  const hasCompactHeader = HeaderCompactContent !== undefined
+
+  const titleAnimatedStyle = useAnimatedStyle(() =>
+    hasCompactHeader || headerTitle
+      ? {
+          transform: [{ translateY: interpolate(scrollY?.value || 0, scrollRange, [0, -30], Extrapolate.CLAMP) }]
+        }
+      : {}
+  )
 
   const animatedBlurViewProps = useAnimatedProps(() =>
     Platform.OS === 'ios'
@@ -86,14 +91,23 @@ const DefaultHeader = ({
     backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
   }))
 
-  const fullContentAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY?.value || 0, scrollRange, [1, 0], Extrapolate.CLAMP)
-  }))
+  const fullContentAnimatedStyle = useAnimatedStyle(() =>
+    hasCompactHeader
+      ? {
+          transform: [{ translateY: interpolate(scrollY?.value || 0, [30, 50], [0, -10], Extrapolate.CLAMP) }],
+          opacity: interpolate(scrollY?.value || 0, [30, 50], [1, 0], Extrapolate.CLAMP)
+        }
+      : {}
+  )
 
-  const compactContentAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY?.value || 0, [10, 60], [0, 1], Extrapolate.CLAMP),
-    height: interpolate(scrollY?.value || 0, [0, 60], [120, 90], Extrapolate.CLAMP)
-  }))
+  const compactContentAnimatedStyle = useAnimatedStyle(() =>
+    hasCompactHeader
+      ? {
+          opacity: interpolate(scrollY?.value || 0, [30, 60], [0, 1], Extrapolate.CLAMP),
+          height: interpolate(scrollY?.value || 0, [20, 60], [130, 90], Extrapolate.CLAMP)
+        }
+      : {}
+  )
 
   if (Platform.OS === 'android') {
     return (
@@ -122,7 +136,7 @@ const DefaultHeader = ({
         {HeaderCompactContent && (
           <CompactContent style={compactContentAnimatedStyle}>
             <ActionAreaBlurred
-              style={{ paddingTop: insets.top, justifyContent: 'center' }}
+              style={{ paddingTop: insets.top, justifyContent: 'center', height: '100%' }}
               animatedProps={animatedBlurViewProps}
               tint={theme.name}
             >

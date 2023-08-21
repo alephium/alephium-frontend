@@ -77,7 +77,13 @@ const InWalletTabsNavigation = () => {
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
             ),
-            header: (props) => <DefaultHeader headerTitle="Transfers" {...props} />,
+            header: (props) => (
+              <DefaultHeader
+                headerTitle="Transfers"
+                {...props}
+                HeaderCompactContent={<AppText>{'Transfers'}</AppText>}
+              />
+            ),
             headerTransparent: true
           }}
         />
