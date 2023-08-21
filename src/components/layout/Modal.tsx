@@ -16,10 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components/native'
+import { ReactNode } from 'react'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Screen from '~/components/layout/Screen'
 
-export default styled(Screen)`
-  padding-bottom: 20px;
-`
+const Modal = ({ children }: { children: ReactNode }) => {
+  const insets = useSafeAreaInsets()
+
+  return <Screen style={{ paddingBottom: insets.bottom }}>{children}</Screen>
+}
+
+export default Modal

@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import React from 'react'
 
 import BoxSurface from '~/components/layout/BoxSurface'
-import Modal from '~/components/layout/Modal'
 import { ScreenSection } from '~/components/layout/Screen'
+import ScrollModal from '~/components/layout/ScrollModal'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -47,7 +47,7 @@ const CurrencySelectModal = ({ onClose, ...props }: CurrencySelectModalProps) =>
   }
 
   return (
-    <Modal {...props}>
+    <ScrollModal {...props}>
       <ScreenSection>
         <BoxSurface>
           {currencyOptions.map((currencyOption) => (
@@ -60,7 +60,7 @@ const CurrencySelectModal = ({ onClose, ...props }: CurrencySelectModalProps) =>
           ))}
         </BoxSurface>
       </ScreenSection>
-    </Modal>
+    </ScrollModal>
   )
 }
 

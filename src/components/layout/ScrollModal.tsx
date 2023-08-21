@@ -16,10 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components/native'
+import { ReactNode } from 'react'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import ScrollScreen from '~/components/layout/ScrollScreen'
 
-export default styled(ScrollScreen)`
-  padding-bottom: 20px;
-`
+const ScrollModal = ({ children }: { children: ReactNode }) => {
+  const insets = useSafeAreaInsets()
+
+  return <ScrollScreen style={{ paddingBottom: insets.bottom }}>{children}</ScrollScreen>
+}
+
+export default ScrollModal
