@@ -128,6 +128,16 @@ const RootStackNavigation = () => {
               component={NewAddressScreen}
               options={{ headerTitle: 'New address' }}
             />
+            <RootStack.Screen
+              name="SendNavigation"
+              component={SendNavigation}
+              options={{ header: (props) => <ScreenHeader {...props} workflow="send" /> }}
+            />
+            <RootStack.Screen
+              name="ReceiveNavigation"
+              component={ReceiveNavigation}
+              options={{ header: (props) => <ScreenHeader {...props} workflow="receive" /> }}
+            />
             <RootStack.Screen name="ContactScreen" component={ContactScreen} />
           </RootStack.Group>
           {/* Screens without header */}
@@ -141,16 +151,6 @@ const RootStackNavigation = () => {
           {/* Bottom modal screens */}
           <RootStack.Group screenOptions={bottomModalOptions}>
             <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
-            <RootStack.Screen
-              name="SendNavigation"
-              component={SendNavigation}
-              options={{ header: (props) => <ScreenHeader {...props} workflow="send" /> }}
-            />
-            <RootStack.Screen
-              name="ReceiveNavigation"
-              component={ReceiveNavigation}
-              options={{ header: (props) => <ScreenHeader {...props} workflow="receive" /> }}
-            />
           </RootStack.Group>
         </RootStack.Navigator>
       </AnalyticsProvider>

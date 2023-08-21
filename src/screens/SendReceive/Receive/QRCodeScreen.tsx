@@ -32,7 +32,7 @@ import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import { BackButton } from '~/screens/SendReceive/ScreenHeader'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'
@@ -46,7 +46,16 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   useEffect(() => {
     navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
+      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+      headerRight: () => (
+        <ContinueButton
+          onPress={() => {
+            navigation.goBack()
+            navigation.goBack()
+          }}
+          text="Cancel"
+        />
+      )
     })
   }, [navigation])
 

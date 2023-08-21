@@ -16,8 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
+import { useCallback } from 'react'
 import styled from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
@@ -25,6 +27,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
@@ -40,6 +43,14 @@ const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
 
     navigation.navigate('QRCodeScreen', { addressHash })
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      navigation.getParent()?.setOptions({
+        headerRight: () => <ContinueButton onPress={() => navigation.goBack()} text="Cancel" />
+      })
+    }, [navigation])
+  )
 
   return (
     <ScrollScreen {...props}>

@@ -20,12 +20,12 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import { StackHeaderProps } from '@react-navigation/stack'
 import { ChevronLeft } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { PressableProps } from 'react-native'
+import { PressableProps, View } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import BottomModalHeader from '~/components/headers/BottomModalHeader'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -44,6 +44,7 @@ const workflowSteps: Record<
 
 const ScreenHeader = ({ navigation, route, options, workflow }: ScreenHeaderProps) => {
   const theme = useTheme()
+  const insets = useSafeAreaInsets()
 
   const [progress, setProgress] = useState(0)
 
@@ -57,7 +58,7 @@ const ScreenHeader = ({ navigation, route, options, workflow }: ScreenHeaderProp
   }, [route, steps])
 
   return (
-    <BottomModalHeader>
+    <View style={{ paddingTop: insets.top }}>
       <ScreenHeaderStyled>
         {options.headerLeft ? options.headerLeft({}) : <BackButton onPress={() => navigation.goBack()} />}
         <ProgressBar
@@ -70,7 +71,7 @@ const ScreenHeader = ({ navigation, route, options, workflow }: ScreenHeaderProp
         />
         {options.headerRight ? options.headerRight({}) : <Hidden />}
       </ScreenHeaderStyled>
-    </BottomModalHeader>
+    </View>
   )
 }
 
