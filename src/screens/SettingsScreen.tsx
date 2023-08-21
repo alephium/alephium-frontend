@@ -21,14 +21,14 @@ import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { Alert } from 'react-native'
-import { Modalize, useModalize } from 'react-native-modalize'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useModalize } from 'react-native-modalize'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
+import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Toggle from '~/components/Toggle'
@@ -64,7 +64,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const posthog = usePostHog()
   const { ref: switchNetworkModalRef, open: openSwitchNetworkModal, close: closeSwitchNetworkModal } = useModalize()
   const { ref: currencySelectModalRef, open: openCurrencySelectModal, close: closeCurrencySelectModal } = useModalize()
-  const insets = useSafeAreaInsets()
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
@@ -175,10 +174,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ButtonStyled title="Delete this wallet" Icon={Trash2} variant="alert" onPress={handleDeleteButtonPress} />
         </ScreenSection>
       </ScrollScreen>
-      <Modalize ref={switchNetworkModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+      <Modalize ref={switchNetworkModalRef}>
         <SwitchNetworkModal onClose={closeSwitchNetworkModal} />
       </Modalize>
-      <Modalize ref={currencySelectModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+      <Modalize ref={currencySelectModalRef}>
         <CurrencySelectModal onClose={closeCurrencySelectModal} />
       </Modalize>
     </>

@@ -24,14 +24,14 @@ import { Book, ClipboardIcon, Contact2, Scan } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Modalize, useModalize } from 'react-native-modalize'
+import { useModalize } from 'react-native-modalize'
 import Toast from 'react-native-root-toast'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
+import Modalize from '~/components/layout/Modalize'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useSendContext } from '~/contexts/SendContext'
@@ -71,7 +71,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const { ref: contactSelectModalRef, open: openContactSelectModal, close: closeContactSelectModal } = useModalize()
   const { ref: addressSelectModalRef, open: openAddressSelectModal, close: closeAddressSelectModal } = useModalize()
 
-  const insets = useSafeAreaInsets()
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
@@ -204,10 +203,10 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           text="Scan an Alephium address QR code"
         />
       )}
-      <Modalize ref={contactSelectModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+      <Modalize ref={contactSelectModalRef}>
         <SelectContactModal onContactPress={handleContactPress} />
       </Modalize>
-      <Modalize ref={addressSelectModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+      <Modalize ref={addressSelectModalRef}>
         <SelectAddressModal onAddressPress={handleAddressPress} />
       </Modalize>
     </Screen>

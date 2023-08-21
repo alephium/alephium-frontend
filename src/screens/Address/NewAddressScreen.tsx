@@ -20,10 +20,10 @@ import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
-import { Modalize, useModalize } from 'react-native-modalize'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useModalize } from 'react-native-modalize'
 
 import Modal from '~/components/layout/Modal'
+import Modalize from '~/components/layout/Modalize'
 import { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { NewAddressContextProvider } from '~/contexts/NewAddressContext'
@@ -51,7 +51,6 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
   const { ref: groupSelectModalRef, open: openGroupSelectModal, close: closeGroupSelectModal } = useModalize()
-  const insets = useSafeAreaInsets()
 
   const [loading, setLoading] = useState(false)
 
@@ -95,7 +94,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
           onSubmit={handleGeneratePress}
           onGroupPress={() => openGroupSelectModal()}
         />
-        <Modalize ref={groupSelectModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+        <Modalize ref={groupSelectModalRef}>
           <GroupSelectModal onClose={closeGroupSelectModal} />
         </Modalize>
       </NewAddressContextProvider>

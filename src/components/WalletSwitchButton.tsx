@@ -18,13 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import { Modalize, useModalize } from 'react-native-modalize'
+import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import Modalize from '~/components/layout/Modalize'
 import { useAppSelector } from '~/hooks/redux'
 import SwitchWalletModal from '~/screens/SwitchWalletModal'
 
@@ -35,7 +35,6 @@ interface WalletSwitchButtonProps {
 const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
   const { ref: walletSwitchModalRef, open: openWalletSwitchModal, close: closeWalletSwitchModal } = useModalize()
-  const insets = useSafeAreaInsets()
 
   return (
     <>
@@ -45,7 +44,7 @@ const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
         </AppText>
       </Button>
       <Portal>
-        <Modalize ref={walletSwitchModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+        <Modalize ref={walletSwitchModalRef}>
           <SwitchWalletModal onClose={closeWalletSwitchModal} />
         </Modalize>
       </Portal>

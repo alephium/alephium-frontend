@@ -22,9 +22,8 @@ import { ListIcon, PlusIcon, Upload } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { RefreshControl, View } from 'react-native'
-import { Modalize, useModalize } from 'react-native-modalize'
+import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
@@ -32,6 +31,7 @@ import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
+import Modalize from '~/components/layout/Modalize'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -64,7 +64,6 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
   const theme = useTheme()
   const scrollHandler = useScrollEventHandler()
   const posthog = usePostHog()
-  const insets = useSafeAreaInsets()
   const {
     ref: addressQuickSelectionModalRef,
     open: openAddressQuickSelectionModal,
@@ -156,7 +155,6 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
       <Portal>
         <Modalize
           ref={addressQuickSelectionModalRef}
-          modalTopOffset={insets.top}
           flatListProps={{
             data: addresses,
             keyExtractor: (item) => item.hash,
@@ -176,7 +174,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
             )
           }}
         />
-        <Modalize ref={addressSettingsModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+        <Modalize ref={addressSettingsModalRef}>
           {selectedAddress && (
             <EditAddressModal addressHash={selectedAddress.hash} onClose={closeAddressSettingsModal} />
           )}

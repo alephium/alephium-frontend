@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useCallback, useState } from 'react'
 import { ActivityIndicator, FlatListProps } from 'react-native'
-import { Modalize, useModalize } from 'react-native-modalize'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useModalize } from 'react-native-modalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Modalize from '~/components/layout/Modalize'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import TransactionModal from '~/screens/TransactionModal'
 import {
@@ -67,8 +67,7 @@ const TransactionsFlatListScreen = ({
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
-  const { ref, open } = useModalize()
-  const insets = useSafeAreaInsets()
+  const { ref: transactionModalRef, open: openTransactionModal } = useModalize()
 
   const [selectedTx, setSelectedTx] = useState<AddressConfirmedTransaction>()
 
@@ -83,7 +82,7 @@ const TransactionsFlatListScreen = ({
       onPress={() => {
         if (!isPendingTx(tx)) {
           setSelectedTx(tx)
-          open()
+          openTransactionModal()
         }
       }}
     />
@@ -158,9 +157,7 @@ const TransactionsFlatListScreen = ({
         }
       />
 
-      <Modalize ref={ref} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
-        {selectedTx && <TransactionModal tx={selectedTx} />}
-      </Modalize>
+      <Modalize ref={transactionModalRef}>{selectedTx && <TransactionModal tx={selectedTx} />}</Modalize>
     </>
   )
 }
