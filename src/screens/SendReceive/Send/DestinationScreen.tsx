@@ -39,6 +39,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
+import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { cameraToggled } from '~/store/appSlice'
@@ -68,6 +69,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
   const { ref: contactSelectModalRef, open: openContactSelectModal, close: closeContactSelectModal } = useModalize()
+  const { ref: addressSelectModalRef, open: openAddressSelectModal, close: closeAddressSelectModal } = useModalize()
 
   const insets = useSafeAreaInsets()
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
@@ -105,6 +107,17 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
       closeContactSelectModal()
     }
+  }
+
+  const handleAddressPress = (toAddressHash: AddressHash) => {
+    posthog?.capture('Send: Selected own address to send funds to')
+
+    navigation.navigate('SendNavigation', {
+      screen: nextScreen,
+      params: { toAddressHash }
+    })
+
+    closeAddressSelectModal()
   }
 
   useEffect(() => {
@@ -180,7 +193,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             compact
             Icon={Book}
             title="Addresses"
-            onPress={() => navigation.navigate('SelectAddressScreen', { nextScreen })}
+            onPress={() => openAddressSelectModal()}
           />
         </ButtonsRow>
       </ScreenSection>
@@ -193,6 +206,9 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       )}
       <Modalize ref={contactSelectModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
         <SelectContactModal onContactPress={handleContactPress} />
+      </Modalize>
+      <Modalize ref={addressSelectModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+        <SelectAddressModal onAddressPress={handleAddressPress} />
       </Modalize>
     </Screen>
   )

@@ -20,12 +20,12 @@ import styled from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
-interface AddressListScreenBaseProps extends ScrollScreenProps {
+export interface AddressListScreenBaseProps extends ScrollScreenProps {
   onAddressPress: (addressHash: AddressHash) => void
 }
 
@@ -35,15 +35,13 @@ const AddressListScreenBase = ({ onAddressPress, ...props }: AddressListScreenBa
   const addresses = useAppSelector(selectAllAddresses)
 
   return (
-    <ScrollScreen {...props}>
-      <ScreenSection>
-        <AddressList>
-          {addresses.map((address) => (
-            <AddressBox key={address.hash} addressHash={address.hash} onPress={() => onAddressPress(address.hash)} />
-          ))}
-        </AddressList>
-      </ScreenSection>
-    </ScrollScreen>
+    <ScreenSection>
+      <AddressList>
+        {addresses.map((address) => (
+          <AddressBox key={address.hash} addressHash={address.hash} onPress={() => onAddressPress(address.hash)} />
+        ))}
+      </AddressList>
+    </ScreenSection>
   )
 }
 

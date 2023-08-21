@@ -44,7 +44,6 @@ import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
 import ScreenHeader from '~/screens/SendReceive/ScreenHeader'
-import SelectAddressScreen from '~/screens/SendReceive/Send/SelectAddressScreen'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchWalletScreen from '~/screens/SwitchWalletScreen'
@@ -147,11 +146,6 @@ const RootStackNavigation = () => {
               name="ReceiveNavigation"
               component={ReceiveNavigation}
               options={{ header: (props) => <ScreenHeader {...props} workflow="receive" /> }}
-            />
-            <RootStack.Screen
-              name="SelectAddressScreen"
-              component={SelectAddressScreen}
-              initialParams={{ nextScreen: 'OriginScreen' }}
             />
           </RootStack.Group>
         </RootStack.Navigator>
