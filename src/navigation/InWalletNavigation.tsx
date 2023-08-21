@@ -25,7 +25,7 @@ import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
 import DefaultHeader from '~/components/headers/DefaultHeader'
 import TopTabBar from '~/components/TopTabBar'
-import WalletSwitch from '~/components/WalletSwitch'
+import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { ScrollContextProvider } from '~/contexts/ScrollContext'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
@@ -56,7 +56,7 @@ const InWalletTabsNavigation = () => {
               header: (props) => (
                 <DefaultHeader
                   HeaderRight={<DashboardHeaderActions />}
-                  HeaderLeft={<WalletSwitch />}
+                  HeaderLeft={<WalletSwitchButton />}
                   bgColor={theme.bg.primary}
                   {...props}
                 />

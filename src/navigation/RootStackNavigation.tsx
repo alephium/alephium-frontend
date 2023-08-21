@@ -22,7 +22,6 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { useTheme } from 'styled-components'
 
 import AnalyticsProvider from '~/contexts/AnalyticsContext'
-import useBottomModalOptions from '~/hooks/layout/useBottomModalOptions'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
@@ -54,7 +53,6 @@ const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
-  const bottomModalOptions = useBottomModalOptions()
   const dispatch = useAppDispatch()
 
   const handleStateChange = (state?: NavigationState) => {
@@ -146,10 +144,6 @@ const RootStackNavigation = () => {
             <RootStack.Screen name="LoginScreen" component={LoginScreen} />
             <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
             <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
-          </RootStack.Group>
-
-          {/* Bottom modal screens */}
-          <RootStack.Group screenOptions={bottomModalOptions}>
             <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
           </RootStack.Group>
         </RootStack.Navigator>

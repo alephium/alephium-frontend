@@ -16,34 +16,44 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
+import { Modalize, useModalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import SwitchWalletModal from '~/screens/SwitchWalletModal'
 
-interface WalletSwitchProps {
+interface WalletSwitchButtonProps {
   style?: StyleProp<ViewStyle>
 }
 
-const WalletSwitch = ({ style }: WalletSwitchProps) => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
+  const { ref: walletSwitchModalRef, open: openWalletSwitchModal, close: closeWalletSwitchModal } = useModalize()
+  const insets = useSafeAreaInsets()
 
   return (
-    <Button style={style} variant="contrast" onPress={() => navigation.navigate('SwitchWalletScreen')}>
-      <AppText color="contrast" semiBold size={12} numberOfLines={1}>
-        {activeWalletName.slice(0, 2).toUpperCase()}
-      </AppText>
-    </Button>
+    <>
+      <Button style={style} variant="contrast" onPress={() => openWalletSwitchModal()}>
+        <AppText color="contrast" semiBold size={12} numberOfLines={1}>
+          {activeWalletName.slice(0, 2).toUpperCase()}
+        </AppText>
+      </Button>
+      <Portal>
+        <Modalize ref={walletSwitchModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+          <SwitchWalletModal onClose={closeWalletSwitchModal} />
+        </Modalize>
+      </Portal>
+    </>
   )
 }
 
-export default memo(styled(WalletSwitch)`
+export default memo(styled(WalletSwitchButton)`
   flex-direction: row;
   justify-content: center;
   align-items: center;
