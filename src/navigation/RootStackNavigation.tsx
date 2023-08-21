@@ -50,7 +50,6 @@ import SelectAddressScreen from '~/screens/SendReceive/Send/SelectAddressScreen'
 import SelectContactScreen from '~/screens/SendReceive/Send/SelectContactScreen'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
-import SwitchNetworkScreen from '~/screens/SwitchNetworkScreen'
 import SwitchWalletScreen from '~/screens/SwitchWalletScreen'
 import { routeChanged } from '~/store/appSlice'
 import { isNavStateRestorable, rootStackNavigationRef } from '~/utils/navigation'
@@ -141,7 +140,6 @@ const RootStackNavigation = () => {
 
           {/* Bottom modal screens */}
           <RootStack.Group screenOptions={bottomModalOptions}>
-            <RootStack.Screen name="SwitchNetworkScreen" component={SwitchNetworkScreen} />
             <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} />
             <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
             <RootStack.Screen

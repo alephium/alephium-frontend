@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -28,20 +27,22 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import ScrollModal from '~/components/layout/ScrollModal'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 import { NetworkName, NetworkPreset } from '~/types/network'
 import { NetworkSettings } from '~/types/settings'
 
-interface ScreenProps extends StackScreenProps<RootStackParamList, 'SwitchNetworkScreen'>, ScrollScreenProps {}
-
 const networkNames = Object.values(NetworkName)
 
-const SwitchNetworkScreen = ({ navigation, ...props }: ScreenProps) => {
+interface SwitchNetworkModalProps extends ScrollScreenProps {
+  onClose: () => void
+}
+
+const SwitchNetworkModal = ({ onClose, ...props }: SwitchNetworkModalProps) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const currentNetworkSettings = useAppSelector((s) => s.network.settings)
   const { control, handleSubmit } = useForm<NetworkSettings>({
@@ -69,11 +70,11 @@ const SwitchNetworkScreen = ({ navigation, ...props }: ScreenProps) => {
     await persistSettings('network', formData)
     dispatch(customNetworkSettingsSaved(formData))
 
-    navigation.goBack()
+    onClose()
   }
 
   return (
-    <ScrollScreen {...props}>
+    <ScrollModal {...props}>
       <ScreenSection>
         <BottomModalScreenTitle>Current network</BottomModalScreenTitle>
       </ScreenSection>
@@ -143,11 +144,11 @@ const SwitchNetworkScreen = ({ navigation, ...props }: ScreenProps) => {
           </Animated.View>
         )}
       </View>
-    </ScrollScreen>
+    </ScrollModal>
   )
 }
 
-export default SwitchNetworkScreen
+export default SwitchNetworkModal
 
 const ButtonStyled = styled(Button)`
   margin-top: 30px;

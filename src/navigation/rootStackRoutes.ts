@@ -44,7 +44,6 @@ type RootStackParamList = {
     addressHash: AddressHash
   }
   SettingsScreen: undefined
-  SwitchNetworkScreen: undefined
   SendNavigation: undefined
   ReceiveNavigation: undefined
   ContactScreen: {
