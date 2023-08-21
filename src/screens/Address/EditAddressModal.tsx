@@ -16,52 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import BottomModalHeader from '~/components/headers/BottomModalHeader'
-import Screen, { BottomModalScreenTitle, ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import Modal from '~/components/layout/Modal'
+import { BottomModalScreenTitle, ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressForm from '~/screens/Address/AddressForm'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
-import { AddressSettings } from '~/types/addresses'
+import { AddressHash, AddressSettings } from '~/types/addresses'
 
-interface EditAddressScreenProps extends StackScreenProps<RootStackParamList, 'EditAddressScreen'>, ScreenProps {}
+interface EditAddressModalProps extends ScreenProps {
+  addressHash: AddressHash
+  onClose: () => void
+}
 
-const EditAddressScreen = ({
-  navigation,
-  route: {
-    params: { addressHash }
-  },
-  ...props
-}: EditAddressScreenProps) => {
+const EditAddressModal = ({ addressHash, onClose, ...props }: EditAddressModalProps) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    navigation.setOptions({
-      header: () => (
-        <BottomModalHeader>
-          <ScreenSection>
-            <BottomModalScreenTitle>Address settings</BottomModalScreenTitle>
-            <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
-              {addressHash}
-            </HashEllipsed>
-          </ScreenSection>
-        </BottomModalHeader>
-      )
-    })
-  }, [addressHash, navigation])
 
   if (!address) return null
 
@@ -82,11 +62,18 @@ const EditAddressScreen = ({
     }
 
     setLoading(false)
-    navigation.goBack()
+    onClose()
   }
 
   return (
-    <Screen {...props}>
+    <Modal {...props}>
+      <ScreenSection>
+        <BottomModalScreenTitle>Address settings</BottomModalScreenTitle>
+        <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
+          {addressHash}
+        </HashEllipsed>
+      </ScreenSection>
+
       <AddressForm
         initialValues={address.settings}
         onSubmit={handleSavePress}
@@ -95,11 +82,11 @@ const EditAddressScreen = ({
         addressHash={address.hash}
       />
       <SpinnerModal isActive={loading} text="Saving address..." />
-    </Screen>
+    </Modal>
   )
 }
 
-export default EditAddressScreen
+export default EditAddressModal
 
 const HashEllipsed = styled(AppText)`
   max-width: 50%;

@@ -20,9 +20,9 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { ListIcon, PlusIcon, Upload } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RefreshControl, View } from 'react-native'
-import { Modalize } from 'react-native-modalize'
+import { Modalize, useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -37,6 +37,7 @@ import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import EditAddressModal from '~/screens/Address/EditAddressModal'
 import {
   selectAddressByHash,
   selectAddressIds,
@@ -63,8 +64,17 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
   const theme = useTheme()
   const scrollHandler = useScrollEventHandler()
   const posthog = usePostHog()
-  const addressQuickSelectionModalRef = useRef<Modalize>(null)
   const insets = useSafeAreaInsets()
+  const {
+    ref: addressQuickSelectionModalRef,
+    open: openAddressQuickSelectionModal,
+    close: closeAddressQuickSelectionModal
+  } = useModalize()
+  const {
+    ref: addressSettingsModalRef,
+    open: openAddressSettingsModal,
+    close: closeAddressSettingsModal
+  } = useModalize()
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
@@ -81,7 +91,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
 
   const renderAddressCard = ({ item }: { item: string }) => (
     <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height)} key={item}>
-      <AddressCard addressHash={item} />
+      <AddressCard addressHash={item} onSettingsPress={openAddressSettingsModal} />
     </View>
   )
 
@@ -122,11 +132,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
             FooterComponent={
               <>
                 {/* TODO: Do we need this button if we only have 1 or 2 addresses?   */}
-                <Button
-                  onPress={() => addressQuickSelectionModalRef.current?.open()}
-                  Icon={ListIcon}
-                  type="transparent"
-                />
+                <Button onPress={() => openAddressQuickSelectionModal()} Icon={ListIcon} type="transparent" />
                 <Button
                   onPress={() => navigation.navigate('NewAddressNavigation')}
                   Icon={PlusIcon}
@@ -163,13 +169,18 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
                 onPress={() => {
                   setSelectedAddressHash(address.hash)
                   setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
-                  addressQuickSelectionModalRef.current?.close()
+                  closeAddressQuickSelectionModal()
                   posthog?.capture('Used address quick navigation')
                 }}
               />
             )
           }}
         />
+        <Modalize ref={addressSettingsModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+          {selectedAddress && (
+            <EditAddressModal addressHash={selectedAddress.hash} onClose={closeAddressSettingsModal} />
+          )}
+        </Modalize>
       </Portal>
     </>
   )

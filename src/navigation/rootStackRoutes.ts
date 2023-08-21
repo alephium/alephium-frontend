@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { PossibleNextScreenAfterDestination } from '~/navigation/SendNavigation'
-import { AddressHash } from '~/types/addresses'
 
 type RootStackParamList = {
   LandingScreen: undefined
@@ -40,9 +39,6 @@ type RootStackParamList = {
     disableBack?: boolean
   }
   NewAddressNavigation: undefined
-  EditAddressScreen: {
-    addressHash: AddressHash
-  }
   SettingsScreen: undefined
   SendNavigation: undefined
   ReceiveNavigation: undefined

@@ -29,7 +29,6 @@ import NewAddressNavigation from '~/navigation/NewAddressNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
-import EditAddressScreen from '~/screens/Address/EditAddressScreen'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
@@ -140,7 +139,6 @@ const RootStackNavigation = () => {
 
           {/* Bottom modal screens */}
           <RootStack.Group screenOptions={bottomModalOptions}>
-            <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} />
             <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
             <RootStack.Screen
               name="CurrencySelectScreen"
