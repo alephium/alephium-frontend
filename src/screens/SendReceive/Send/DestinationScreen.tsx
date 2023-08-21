@@ -24,7 +24,9 @@ import { Book, ClipboardIcon, Contact2, Scan } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { Modalize, useModalize } from 'react-native-modalize'
 import Toast from 'react-native-root-toast'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
@@ -37,8 +39,11 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
+import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
+import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { cameraToggled } from '~/store/appSlice'
 import { AddressHash } from '~/types/addresses'
+import { Contact } from '~/types/contacts'
 import { validateIsAddressValid } from '~/utils/forms'
 
 interface DestinationScreenProps extends StackScreenProps<SendNavigationParamList, 'DestinationScreen'>, ScreenProps {}
@@ -60,8 +65,11 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
   const posthog = usePostHog()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
+  const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
+  const { ref: contactSelectModalRef, open: openContactSelectModal, close: closeContactSelectModal } = useModalize()
 
+  const insets = useSafeAreaInsets()
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
@@ -81,6 +89,21 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       posthog?.capture('Send: Captured destination address by scanning QR code')
     } else {
       Toast.show('This is not a valid Alephium address.')
+    }
+  }
+
+  const handleContactPress = (contactId: Contact['id']) => {
+    const contact = contacts.find((c) => c.id === contactId)
+
+    if (contact) {
+      posthog?.capture('Send: Selected contact to send funds to')
+
+      navigation.navigate('SendNavigation', {
+        screen: nextScreen,
+        params: { toAddressHash: contact.address }
+      })
+
+      closeContactSelectModal()
     }
   }
 
@@ -150,7 +173,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             compact
             Icon={Contact2}
             title="Contacts"
-            onPress={() => navigation.navigate('SelectContactScreen', { nextScreen })}
+            onPress={() => openContactSelectModal()}
           />
           <Button
             color={theme.global.accent}
@@ -168,6 +191,9 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           text="Scan an Alephium address QR code"
         />
       )}
+      <Modalize ref={contactSelectModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+        <SelectContactModal onContactPress={handleContactPress} />
+      </Modalize>
     </Screen>
   )
 }

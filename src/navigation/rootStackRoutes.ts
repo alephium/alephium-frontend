@@ -53,9 +53,6 @@ type RootStackParamList = {
   EditContactScreen: {
     contactId: string
   }
-  SelectContactScreen: {
-    nextScreen: PossibleNextScreenAfterDestination
-  }
   SelectAddressScreen: {
     nextScreen: PossibleNextScreenAfterDestination
   }

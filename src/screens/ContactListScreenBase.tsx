@@ -25,7 +25,7 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
@@ -34,7 +34,7 @@ import { Contact } from '~/types/contacts'
 import { stringToColour } from '~/utils/colors'
 import { filterContacts } from '~/utils/contacts'
 
-interface ContactListScreenBaseProps extends ScrollScreenProps {
+export interface ContactListScreenBaseProps extends ScrollScreenProps {
   onContactPress: (contactId: Contact['id']) => void
   onNewContactPress?: () => void
 }
@@ -52,7 +52,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
   }, [contacts, searchTerm])
 
   return (
-    <ScrollScreen {...props}>
+    <>
       <HeaderScreenSection>
         <SearchInput placeholder="Search" value={searchTerm} onChangeText={setSearchTerm} />
         {onNewContactPress && <Button Icon={Plus} type="transparent" variant="accent" onPress={onNewContactPress} />}
@@ -81,7 +81,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
           })}
         </ContactList>
       </ScreenSection>
-    </ScrollScreen>
+    </>
   )
 }
 
