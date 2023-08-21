@@ -121,18 +121,6 @@ const DefaultHeader = ({
   } else {
     return (
       <Animated.View style={style}>
-        <FullContent style={fullContentAnimatedStyle}>
-          <ActionAreaBlurred style={{ paddingTop: insets.top }} animatedProps={animatedBlurViewProps} tint={theme.name}>
-            {HeaderLeft}
-            {HeaderRight}
-            <BottomBorder style={bottomBorderColor} />
-          </ActionAreaBlurred>
-          {headerTitle && (
-            <TitleArea style={titleAnimatedStyle}>
-              <Title>{headerTitle}</Title>
-            </TitleArea>
-          )}
-        </FullContent>
         {HeaderCompactContent && (
           <CompactContent style={compactContentAnimatedStyle}>
             <ActionAreaBlurred
@@ -145,6 +133,18 @@ const DefaultHeader = ({
             </ActionAreaBlurred>
           </CompactContent>
         )}
+        <FullContent style={fullContentAnimatedStyle}>
+          <ActionAreaBlurred style={{ paddingTop: insets.top }} animatedProps={animatedBlurViewProps} tint={theme.name}>
+            {HeaderLeft}
+            {HeaderRight}
+            <BottomBorder style={bottomBorderColor} />
+          </ActionAreaBlurred>
+          {headerTitle && (
+            <TitleArea style={titleAnimatedStyle}>
+              <Title>{headerTitle}</Title>
+            </TitleArea>
+          )}
+        </FullContent>
       </Animated.View>
     )
   }
