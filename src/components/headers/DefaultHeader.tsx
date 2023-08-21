@@ -42,7 +42,7 @@ export interface DefaultHeaderProps {
   style?: StyleProp<ViewStyle>
 }
 
-const scrollRange = [0, 60]
+const scrollRange = [0, 90]
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 
@@ -66,7 +66,8 @@ const DefaultHeader = ({
   const titleAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader || headerTitle
       ? {
-          transform: [{ translateY: interpolate(scrollY?.value || 0, scrollRange, [0, -30], Extrapolate.CLAMP) }]
+          transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }],
+          opacity: interpolate(scrollY?.value || 0, [0, 70], [1, 0], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -94,8 +95,8 @@ const DefaultHeader = ({
   const fullContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
       ? {
-          transform: [{ translateY: interpolate(scrollY?.value || 0, [30, 50], [0, -10], Extrapolate.CLAMP) }],
-          opacity: interpolate(scrollY?.value || 0, [30, 50], [1, 0], Extrapolate.CLAMP)
+          transform: [{ translateY: interpolate(scrollY?.value || 0, [20, 90], [0, -15], Extrapolate.CLAMP) }],
+          opacity: interpolate(scrollY?.value || 0, [20, 90], [1, 0], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -103,8 +104,8 @@ const DefaultHeader = ({
   const compactContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
       ? {
-          opacity: interpolate(scrollY?.value || 0, [30, 60], [0, 1], Extrapolate.CLAMP),
-          height: interpolate(scrollY?.value || 0, [20, 60], [130, 90], Extrapolate.CLAMP)
+          opacity: interpolate(scrollY?.value || 0, [60, 90], [0, 1], Extrapolate.CLAMP),
+          height: interpolate(scrollY?.value || 0, [60, 90], [130, 90], Extrapolate.CLAMP)
         }
       : {}
   )
