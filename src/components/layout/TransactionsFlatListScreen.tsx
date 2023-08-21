@@ -24,7 +24,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import TransactionScreen from '~/screens/TransactionScreen'
+import TransactionModal from '~/screens/TransactionModal'
 import {
   selectAddressByHash,
   syncAddressesData,
@@ -159,7 +159,7 @@ const TransactionsFlatListScreen = ({
       />
 
       <Modalize ref={ref} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
-        {selectedTx && <TransactionScreen tx={selectedTx} />}
+        {selectedTx && <TransactionModal tx={selectedTx} />}
       </Modalize>
     </>
   )

@@ -28,7 +28,8 @@ import HighlightRow from '~/components/HighlightRow'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import ScrollModal from '~/components/layout/ScrollModal'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { getTransactionInfo } from '~/utils/transactions'
@@ -37,7 +38,7 @@ interface ScreenProps extends ScrollScreenProps {
   tx: AddressConfirmedTransaction
 }
 
-const TransactionScreen = ({ tx, ...props }: ScreenProps) => {
+const TransactionModal = ({ tx, ...props }: ScreenProps) => {
   const theme = useTheme()
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
@@ -47,7 +48,7 @@ const TransactionScreen = ({ tx, ...props }: ScreenProps) => {
   const isMoved = infoType === 'move'
 
   return (
-    <ScrollScreenStyled {...props}>
+    <ScrollModal {...props}>
       <ScreenSectionRow>
         <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
         <ExplorerLink onPress={() => openBrowserAsync(explorerTxUrl)}>
@@ -95,15 +96,11 @@ const TransactionScreen = ({ tx, ...props }: ScreenProps) => {
           </HighlightRow>
         </BoxSurface>
       </ScreenSection>
-    </ScrollScreenStyled>
+    </ScrollModal>
   )
 }
 
-export default TransactionScreen
-
-const ScrollScreenStyled = styled(ScrollScreen)`
-  padding-bottom: 20px;
-`
+export default TransactionModal
 
 const ScreenSectionRow = styled(ScreenSection)`
   flex-direction: row;
