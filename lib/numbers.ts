@@ -88,8 +88,8 @@ export const formatAmountForDisplay = ({
   amountDecimals = NUM_OF_ZEROS_IN_QUINTILLION,
   displayDecimals,
   truncate,
-  fullPrecision = false,
-  smartRounding = false
+  smartRounding = true,
+  fullPrecision = false
 }: FormatAmountForDisplayProps): string => {
   if (amount < BigInt(0)) return '???'
 
