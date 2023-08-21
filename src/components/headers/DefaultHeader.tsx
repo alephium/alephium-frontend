@@ -31,10 +31,13 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { useScrollContext } from '~/contexts/ScrollContext'
+import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 export interface DefaultHeaderProps {
-  HeaderLeft: ReactNode
+  HeaderLeft?: ReactNode
   HeaderRight?: ReactNode
+  headerTitle?: string
+  HeaderCompactContent?: ReactNode
   bgColor?: string
   style?: StyleProp<ViewStyle>
 }
@@ -43,13 +46,29 @@ const scrollRange = [0, 50]
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 
-const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeaderProps) => {
+const DefaultHeader = ({
+  HeaderRight,
+  HeaderLeft,
+  headerTitle,
+  HeaderCompactContent,
+  bgColor,
+  style
+}: DefaultHeaderProps) => {
   const theme = useTheme()
   const { scrollY } = useScrollContext()
   const insets = useSafeAreaInsets()
 
   const bgColorRange = [bgColor ?? theme.bg.secondary, theme.bg.primary]
   const borderColorRange = ['transparent', theme.border.secondary]
+
+  const titleAnimatedStyle = useAnimatedStyle(() =>
+    HeaderCompactContent || headerTitle
+      ? {
+          transform: [{ translateY: interpolate(scrollY?.value || 0, scrollRange, [0, -20], Extrapolate.CLAMP) }],
+          opacity: interpolate(scrollY?.value || 0, scrollRange, [1, 0])
+        }
+      : {}
+  )
 
   const androidHeaderColor = useAnimatedStyle(() =>
     Platform.OS === 'android'
@@ -74,35 +93,57 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeade
   if (Platform.OS === 'android') {
     return (
       <Animated.View style={[style, androidHeaderColor, { paddingTop: insets.top }]}>
-        {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
+        {HeaderLeft}
         {HeaderRight}
+        {headerTitle && <Title>{headerTitle}</Title>}
         <BottomBorder style={bottomBorderColor} />
       </Animated.View>
     )
   } else {
     return (
-      <AnimatedBlurView
-        style={[style, { paddingTop: insets.top }]}
-        animatedProps={animatedBlurViewProps}
-        tint={theme.name}
-      >
-        {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
-        {HeaderRight}
-        <BottomBorder style={bottomBorderColor} />
-      </AnimatedBlurView>
+      <Animated.View>
+        <FullContent>
+          <ActionArea
+            style={[style, { paddingTop: insets.top }]}
+            animatedProps={animatedBlurViewProps}
+            tint={theme.name}
+          >
+            {HeaderLeft}
+            {HeaderRight}
+            <BottomBorder style={bottomBorderColor} />
+          </ActionArea>
+          {headerTitle && (
+            <TitleArea style={titleAnimatedStyle}>
+              <Title>{headerTitle}</Title>
+            </TitleArea>
+          )}
+        </FullContent>
+      </Animated.View>
     )
   }
 }
 
 export default styled(DefaultHeader)`
+  position: relative;
+`
+
+const FullContent = styled.View`
+  flex-direction: column;
+`
+
+const ActionArea = styled(AnimatedBlurView)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
+  padding: 10px ${HORIZONTAL_MARGIN}px;
+`
+
+const TitleArea = styled(Animated.View)`
+  padding: 10px ${HORIZONTAL_MARGIN}px;
 `
 
 const Title = styled(AppText)`
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 700;
   color: ${({ theme }) => theme.font.primary};
 `
@@ -114,3 +155,5 @@ const BottomBorder = styled(Animated.View)`
   left: 0;
   height: 1px;
 `
+
+const HeaderCompactContentContainer = styled(Animated.View)``

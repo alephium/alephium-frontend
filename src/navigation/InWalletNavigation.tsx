@@ -26,6 +26,7 @@ import DefaultHeader from '~/components/headers/DefaultHeader'
 import TopTabBar from '~/components/TopTabBar'
 import WalletSwitch from '~/components/WalletSwitch'
 import { ScrollContextProvider } from '~/contexts/ScrollContext'
+import { useAppSelector } from '~/hooks/redux'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import DashboardScreen from '~/screens/DashboardScreen'
@@ -35,6 +36,7 @@ const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 
 const InWalletTabsNavigation = () => {
   const theme = useTheme()
+  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
 
   return (
     <ScrollContextProvider>
@@ -58,6 +60,7 @@ const InWalletTabsNavigation = () => {
               <DefaultHeader
                 HeaderRight={<DashboardHeaderActions />}
                 HeaderLeft={<WalletSwitch />}
+                headerTitle={activeWalletName}
                 bgColor={theme.bg.primary}
                 {...props}
               />
@@ -72,7 +75,7 @@ const InWalletTabsNavigation = () => {
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
             ),
-            header: (props) => <DefaultHeader HeaderLeft="Transfers" {...props} />,
+            header: (props) => <DefaultHeader headerTitle="Transfers" {...props} />,
             headerTransparent: true
           }}
         />

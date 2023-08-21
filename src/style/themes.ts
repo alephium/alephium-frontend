@@ -70,7 +70,7 @@ export const darkTheme: DefaultTheme = {
   bg: {
     highlight: '#353539',
     primary: '#1B1B1F',
-    secondary: '#17171A',
+    secondary: '#18181B',
     tertiary: '#17171A',
     back1: '#121215',
     back2: '#0E0E10',
