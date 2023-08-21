@@ -20,13 +20,18 @@ import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
+import { Modalize, useModalize } from 'react-native-modalize'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import Modal from '~/components/layout/Modal'
+import { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
+import { NewAddressContextProvider } from '~/contexts/NewAddressContext'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { NewAddressNavigationParamList } from '~/navigation/NewAddressNavigation'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressForm, { AddressFormData } from '~/screens/Address/AddressForm'
+import GroupSelectModal from '~/screens/Address/GroupSelectModal'
 import {
   newAddressGenerated,
   selectAllAddresses,
@@ -36,9 +41,7 @@ import {
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed } from '~/utils/crypto'
 
-interface NewAddressScreenProps
-  extends StackScreenProps<NewAddressNavigationParamList, 'NewAddressScreen'>,
-    ScreenProps {}
+interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'NewAddressScreen'>, ScreenProps {}
 
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
@@ -47,6 +50,8 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
+  const { ref: groupSelectModalRef, open: openGroupSelectModal, close: closeGroupSelectModal } = useModalize()
+  const insets = useSafeAreaInsets()
 
   const [loading, setLoading] = useState(false)
 
@@ -83,14 +88,19 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <Screen {...props}>
-      <AddressForm
-        initialValues={initialValues}
-        onSubmit={handleGeneratePress}
-        onGroupPress={() => navigation.navigate('GroupSelectScreen')}
-      />
+    <Modal {...props}>
+      <NewAddressContextProvider>
+        <AddressForm
+          initialValues={initialValues}
+          onSubmit={handleGeneratePress}
+          onGroupPress={() => openGroupSelectModal()}
+        />
+        <Modalize ref={groupSelectModalRef} modalTopOffset={insets.top} adjustToContentHeight withReactModal>
+          <GroupSelectModal onClose={closeGroupSelectModal} />
+        </Modalize>
+      </NewAddressContextProvider>
       <SpinnerModal isActive={loading} text="Generating address..." />
-    </Screen>
+    </Modal>
   )
 }
 

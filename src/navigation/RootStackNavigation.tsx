@@ -25,10 +25,10 @@ import AnalyticsProvider from '~/contexts/AnalyticsContext'
 import useBottomModalOptions from '~/hooks/layout/useBottomModalOptions'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
-import NewAddressNavigation from '~/navigation/NewAddressNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
+import NewAddressScreen from '~/screens/Address/NewAddressScreen'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
@@ -123,6 +123,11 @@ const RootStackNavigation = () => {
               component={EditContactScreen}
               options={{ headerTitle: 'Edit contact' }}
             />
+            <RootStack.Screen
+              name="NewAddressScreen"
+              component={NewAddressScreen}
+              options={{ headerTitle: 'New address' }}
+            />
             <RootStack.Screen name="ContactScreen" component={ContactScreen} />
           </RootStack.Group>
           {/* Screens without header */}
@@ -131,7 +136,6 @@ const RootStackNavigation = () => {
             <RootStack.Screen name="LoginScreen" component={LoginScreen} />
             <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
             <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
-            <RootStack.Screen name="NewAddressNavigation" component={NewAddressNavigation} />
           </RootStack.Group>
 
           {/* Bottom modal screens */}

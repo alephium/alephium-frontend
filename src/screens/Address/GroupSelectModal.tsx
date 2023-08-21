@@ -17,34 +17,35 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
-import { StackScreenProps } from '@react-navigation/stack'
 import { map } from 'lodash'
 import React from 'react'
 
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import ScrollModal from '~/components/layout/ScrollModal'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useNewAddressContext } from '~/contexts/NewAddressContext'
-import { NewAddressNavigationParamList } from '~/navigation/NewAddressNavigation'
 
-interface ScreenProps extends StackScreenProps<NewAddressNavigationParamList, 'GroupSelectScreen'>, ScrollScreenProps {}
+interface GroupSelectModalProps extends ScrollScreenProps {
+  onClose: () => void
+}
 
 const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
   value: i === 0 ? undefined : i - 1,
   label: i === 0 ? 'Default' : `Group ${i - 1}`
 }))
 
-const GroupSelectScreen = ({ navigation, ...props }: ScreenProps) => {
+const GroupSelectModal = ({ onClose, ...props }: GroupSelectModalProps) => {
   const { group, setGroup } = useNewAddressContext()
 
   const onGroupSelect = (group?: number) => {
     setGroup(group)
-    navigation.goBack()
+    onClose()
   }
 
   return (
-    <ScrollScreen {...props}>
+    <ScrollModal {...props}>
       <ScreenSection>
         <BoxSurface>
           {groupSelectOptions.map((groupOption) => (
@@ -57,8 +58,8 @@ const GroupSelectScreen = ({ navigation, ...props }: ScreenProps) => {
           ))}
         </BoxSurface>
       </ScreenSection>
-    </ScrollScreen>
+    </ScrollModal>
   )
 }
 
-export default GroupSelectScreen
+export default GroupSelectModal

@@ -134,7 +134,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
                 {/* TODO: Do we need this button if we only have 1 or 2 addresses?   */}
                 <Button onPress={() => openAddressQuickSelectionModal()} Icon={ListIcon} type="transparent" />
                 <Button
-                  onPress={() => navigation.navigate('NewAddressNavigation')}
+                  onPress={() => navigation.navigate('NewAddressScreen')}
                   Icon={PlusIcon}
                   title="New address"
                   color={theme.global.accent}

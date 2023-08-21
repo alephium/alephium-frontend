@@ -36,7 +36,7 @@ type RootStackParamList = {
   SwitchWalletScreen?: {
     disableBack?: boolean
   }
-  NewAddressNavigation: undefined
+  NewAddressScreen: undefined
   SettingsScreen: undefined
   SendNavigation: undefined
   ReceiveNavigation: undefined
