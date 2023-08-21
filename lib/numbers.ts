@@ -80,6 +80,7 @@ interface FormatAmountForDisplayProps {
   displayDecimals?: number
   truncate?: boolean
   fullPrecision?: boolean
+  smartRounding?: boolean
 }
 
 export const formatAmountForDisplay = ({
@@ -87,47 +88,95 @@ export const formatAmountForDisplay = ({
   amountDecimals = NUM_OF_ZEROS_IN_QUINTILLION,
   displayDecimals,
   truncate,
+  smartRounding = true,
   fullPrecision = false
 }: FormatAmountForDisplayProps): string => {
   if (amount < BigInt(0)) return '???'
 
-  // For abbreviation, we don't need full precision and can work with number
-  const alphString = toHumanReadableAmount(amount, amountDecimals)
-  const alphNum = Number(alphString)
-  const minNumberOfDecimals = alphNum >= 0.000005 && alphNum < 0.01 ? 3 : 2
+  const amountString = toHumanReadableAmount(amount, amountDecimals)
+  const amountNumber = Number(amountString)
+
+  if (amountNumber < 0.0001) {
+    if (smartRounding && !fullPrecision) {
+      return smartRound(amountString)
+    } else {
+      fullPrecision = true
+    }
+  }
+
+  const minNumberOfDecimals = getMinNumberOfDecimals(amountNumber)
   const numberOfDecimalsToDisplay = displayDecimals ?? minNumberOfDecimals
 
-  if (aboveExpLimit(alphString)) {
-    return toExponential(alphString, numberOfDecimalsToDisplay, truncate)
+  if (aboveExpLimit(amountString)) {
+    return toExponential(amountString, numberOfDecimalsToDisplay, truncate)
   }
 
   if (fullPrecision) {
-    const baseNumString = amount.toString()
-    const numNonDecimals = baseNumString.length - amountDecimals
-    const alphNumString =
-      numNonDecimals > 0
-        ? baseNumString.substring(0, numNonDecimals).concat('.', baseNumString.substring(numNonDecimals))
-        : '0.'.concat(produceZeros(-numNonDecimals), baseNumString)
-
-    return removeTrailingZeros(alphNumString, numberOfDecimalsToDisplay)
+    return formatFullPrecision(amount, amountDecimals, numberOfDecimalsToDisplay)
   }
 
-  if (alphNum < 0.001) {
-    const tinyAmountsMaxNumberDecimals = 5
+  return formatRegularPrecision(amountNumber, numberOfDecimalsToDisplay, minNumberOfDecimals)
+}
 
-    return removeTrailingZeros(alphNum.toFixed(tinyAmountsMaxNumberDecimals), minNumberOfDecimals)
-  } else if (alphNum < 1000000 && parseFloat(alphNum.toFixed(numberOfDecimalsToDisplay)) < 1000000) {
-    const amountWithRemovedTrailingZeros = removeTrailingZeros(
-      alphNum.toFixed(numberOfDecimalsToDisplay),
-      minNumberOfDecimals
+const getMinNumberOfDecimals = (amountNumber: number): number => {
+  return amountNumber <= 0 ? 0 : amountNumber < 0.01 && amountNumber >= 0.001 ? 3 : amountNumber < 0.001 ? 4 : 2
+}
+
+const formatFullPrecision = (amount: bigint, amountDecimals: number, numberOfDecimalsToDisplay: number): string => {
+  const baseNumString = amount.toString()
+  const numNonDecimals = baseNumString.length - amountDecimals
+  const amountNumberString =
+    numNonDecimals > 0
+      ? baseNumString.substring(0, numNonDecimals) + '.' + baseNumString.substring(numNonDecimals)
+      : '0.' + produceZeros(-numNonDecimals) + baseNumString
+
+  return removeTrailingZeros(amountNumberString, numberOfDecimalsToDisplay)
+}
+
+const formatRegularPrecision = (
+  amountNumber: number,
+  numberOfDecimalsToDisplay: number,
+  minNumberOfDecimals: number
+): string => {
+  if (amountNumber < 0.001) {
+    return removeTrailingZeros(amountNumber.toFixed(5), minNumberOfDecimals)
+  }
+
+  if (amountNumber < 1000000 && parseFloat(amountNumber.toFixed(numberOfDecimalsToDisplay)) < 1000000) {
+    const formattedAmount = removeTrailingZeros(amountNumber.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals)
+
+    return amountNumber >= 1000 ? addApostrophes(formattedAmount) : formattedAmount
+  }
+
+  const tier = getTier(amountNumber)
+
+  return appendMagnitudeSymbol(tier, amountNumber, numberOfDecimalsToDisplay)
+}
+
+const smartRound = (amountString: string) => {
+  const match = amountString.match(/[1-9]/)
+  if (!match) return amountString
+
+  const indexOfFirstNonZero = amountString.indexOf(match[0])
+
+  const firstSignificantDigit = parseInt(match[0])
+  const secondSignigicantDigit = parseInt(amountString.charAt(indexOfFirstNonZero + 1))
+
+  if (secondSignigicantDigit >= 5) {
+    return (
+      amountString.slice(0, indexOfFirstNonZero - 1) +
+      (firstSignificantDigit === 9 ? '1' : (firstSignificantDigit + 1).toString())
     )
-
-    return alphNum >= 1000 ? addApostrophes(amountWithRemovedTrailingZeros) : amountWithRemovedTrailingZeros
   }
 
-  const tier = alphNum < 1000000000 ? 2 : alphNum < 1000000000000 ? 3 : 4
+  return amountString.slice(0, indexOfFirstNonZero + 1)
+}
 
-  return appendMagnitudeSymbol(tier, alphNum, numberOfDecimalsToDisplay)
+const getTier = (amountNumber: number): number => {
+  if (amountNumber < 1000000000) return 2
+  if (amountNumber < 1000000000000) return 3
+
+  return 4
 }
 
 export const formatFiatAmountForDisplay = (amount: number): string => {
