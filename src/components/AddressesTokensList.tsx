@@ -101,7 +101,11 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
             <ScreenSection>
               {tokenRows.map((entry, index) =>
                 isAsset(entry) ? (
-                  <TokenListItem key={entry.id} asset={entry} hideSeparator={true} />
+                  <TokenListItem
+                    key={entry.id}
+                    asset={entry}
+                    hideSeparator={index === knownFungibleTokens.length - 1 && unknownTokens.length === 0}
+                  />
                 ) : isUnknownTokens(entry) ? (
                   <UnknownTokensListItem entry={entry} key="unknown-tokens" />
                 ) : (
@@ -126,15 +130,13 @@ const LoadingRow = styled.View`
   flex-direction: row;
   gap: 15px;
   align-items: flex-start;
-  padding-top: 16px;
+  padding-top: 15px;
 `
 
 const ListContainer = styled.View`
   gap: 20px;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  margin: 0 ${HORIZONTAL_MARGIN}px;
   border-radius: ${BORDER_RADIUS}px;
-  padding-top: 16px;
+  padding-top: 15px;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

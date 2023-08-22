@@ -67,15 +67,13 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
         <ButtonsRow>
           <SendReceiveButton onPress={() => navigation.navigate('SendNavigation')}>
             <ButtonText semiBold>Send</ButtonText>
-            <Icon>
-              <ArrowUp color={theme.font.secondary} size={20} />
-            </Icon>
+
+            <ArrowUp color={theme.font.secondary} size={20} />
           </SendReceiveButton>
           <SendReceiveButton onPress={() => navigation.navigate('ReceiveNavigation')}>
             <ButtonText semiBold>Receive</ButtonText>
-            <Icon>
-              <ArrowDown color={theme.font.secondary} size={20} />
-            </Icon>
+
+            <ArrowDown color={theme.font.secondary} size={20} />
           </SendReceiveButton>
         </ButtonsRow>
       </ScreenSection>
@@ -99,13 +97,6 @@ const SendReceiveButton = styled(Button)`
   flex: 1;
   padding: 8.5px 10px;
   height: auto;
-`
-
-const Icon = styled.View`
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border-radius: 100px;
-  padding: 6px;
-  margin-left: auto;
 `
 
 const ButtonText = styled(AppText)`

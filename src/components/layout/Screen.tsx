@@ -27,7 +27,7 @@ const Screen = ({ children, style }: SafeAreaViewProps) => <View style={style}>{
 
 export default styled(Screen)`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.back1};
+  background-color: ${({ theme }) => theme.bg.back2};
 `
 
 export const ScreenSection = styled.View<{ fill?: boolean }>`

@@ -22,6 +22,7 @@ import Animated from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 interface ListItemProps extends PressableProps {
   title: string
@@ -51,7 +52,7 @@ const ListItem = ({
     <ListItemStyled style={style}>
       <Row style={innerStyle}>
         <Icon>{icon}</Icon>
-        <ContentRow showSeparator={!isLast && !hideSeparator}>
+        <RowContent showSeparator={!isLast && !hideSeparator}>
           <LeftSideContent>
             <Title semiBold size={16} numberOfLines={1}>
               {title}
@@ -65,7 +66,7 @@ const ListItem = ({
             )}
           </LeftSideContent>
           {rightSideContent}
-        </ContentRow>
+        </RowContent>
       </Row>
       {children}
     </ListItemStyled>
@@ -75,16 +76,23 @@ const ListItem = ({
 export default ListItem
 
 const ListItemStyled = styled(Animated.View)`
-  border-radius: 9px;
+  border-radius: ${BORDER_RADIUS}px;
   border-color: ${({ theme }) => theme.border.primary};
   overflow: hidden;
 `
 
-const ContentRow = styled.View<{ showSeparator: boolean }>`
+const Row = styled(Animated.View)`
+  height: 60px;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+`
+
+const RowContent = styled.View<{ showSeparator: boolean }>`
   flex-direction: row;
   gap: 10px;
+  height: 100%;
   flex: 1;
-  padding-bottom: 16px;
 
   ${({ showSeparator }) =>
     showSeparator &&
@@ -96,24 +104,13 @@ const ContentRow = styled.View<{ showSeparator: boolean }>`
 
 const Title = styled(AppText)`
   max-width: 80%;
-  margin-bottom: 2px;
 `
 
 const Subtitle = styled(AppText)`
   max-width: 80%;
 `
 
-const Icon = styled.View`
-  margin-bottom: 16px;
-  margin-top: 2px;
-`
-
-const Row = styled(Animated.View)`
-  flex-direction: row;
-  gap: 15px;
-  align-items: flex-start;
-  padding-top: 16px;
-`
+const Icon = styled.View``
 
 const LeftSideContent = styled.View`
   flex: 1;

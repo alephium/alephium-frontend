@@ -130,6 +130,7 @@ const BalanceSummaryContainer = styled(LinearGradient)`
   border-radius: ${BORDER_RADIUS_BIG}px;
   border-width: 1px;
   border-color: ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const TextContainer = styled.View`
@@ -166,16 +167,18 @@ const SurfaceHeader = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 9px;
+  margin-top: 15px;
+  margin-bottom: 10px;
 `
 
 const ActiveNetwork = styled.View`
+  position: absolute;
+  right: 0px;
+  top: -10px;
   flex-direction: row;
   align-items: center;
   gap: 5px;
-  padding: 6px 8px;
   border-radius: 33px;
-  background-color: ${({ theme }) => theme.bg.back1};
 `
 
 const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`

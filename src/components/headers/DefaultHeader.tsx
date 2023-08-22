@@ -66,7 +66,7 @@ const DefaultHeader = ({
   const titleAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader || headerTitle
       ? {
-          transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }],
+          transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50]) }],
           opacity: interpolate(scrollY?.value || 0, [0, 70], [1, 0], Extrapolate.CLAMP)
         }
       : {}
