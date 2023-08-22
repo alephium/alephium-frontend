@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset } from '@alephium/sdk'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import NFTsGrid from '~/components/NFTsGrid'
@@ -31,11 +31,11 @@ import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs
 } from '~/store/addressesSlice'
+import { BORDER_RADIUS, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 import { ScreenSection } from './layout/Screen'
 import TokenListItem from './TokenListItem'
-import { BORDER_RADIUS, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 interface AddressesTokensListProps {
   addressHash?: AddressHash

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/sdk'
+import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Skeleton } from 'moti/skeleton'
 import { useState } from 'react'
@@ -74,7 +75,7 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
     : theme.global.valid
 
   return (
-    <BalanceSummaryContainer colors={['transparent', deltaColor]}>
+    <BalanceSummaryContainer colors={['transparent', colord(deltaColor).alpha(0.2).toHex()]} locations={[0, 0.6]}>
       <TextContainer>
         <SurfaceHeader>
           <AppText color="tertiary" semiBold>

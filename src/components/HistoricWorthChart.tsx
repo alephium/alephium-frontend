@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { toHumanReadableAmount } from '@alephium/sdk'
+import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
@@ -78,7 +79,7 @@ const HistoricWorthChart = ({
   if (!isDataAvailable || chartData.length <= 2 || !firstItem) return null
 
   const worthHasGoneUp = firstItem.worth < latestWorth
-  const chartColor = worthHasGoneUp ? theme.global.valid : theme.global.alert
+  const chartColor = colord(worthHasGoneUp ? theme.global.valid : theme.global.alert)
 
   const data = filteredChartData.map(({ date, worth }) => ({
     x: date,
@@ -90,8 +91,8 @@ const HistoricWorthChart = ({
       <Svg height={100}>
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor={chartColor} stopOpacity={0.3} />
-            <Stop offset="100%" stopColor={theme.bg.primary} />
+            <Stop offset="0%" stopColor={chartColor.toHex()} stopOpacity={0.4} />
+            <Stop offset="75%" stopColor={chartColor.toHex()} stopOpacity={0} />
           </LinearGradient>
         </Defs>
         <VictoryArea
@@ -104,7 +105,7 @@ const HistoricWorthChart = ({
           style={{
             data: {
               fill: 'url(#gradientBg)',
-              stroke: chartColor,
+              stroke: chartColor.alpha(0.5).toHex(),
               strokeWidth: 2
             }
           }}
