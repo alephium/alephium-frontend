@@ -16,18 +16,39 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useNavigation } from '@react-navigation/native'
+import { useEffect, useRef } from 'react'
 import { ScrollView, ScrollViewProps, View } from 'react-native'
 
 import Screen from './Screen'
 
 export type ScrollScreenProps = ScrollViewProps
 
-const ScrollScreen = ({ children, style, ...props }: ScrollScreenProps) => (
-  <Screen style={style}>
-    <ScrollView contentOffset={{ y: 0, x: 0 }} scrollEventThrottle={16} alwaysBounceVertical={false} {...props}>
-      <View>{children}</View>
-    </ScrollView>
-  </Screen>
-)
+const TabScrollScreen = ({ children, style, ...props }: ScrollScreenProps) => {
+  const viewRef = useRef<ScrollView>(null)
+  const navigation = useNavigation()
 
-export default ScrollScreen
+  useEffect(
+    () =>
+      navigation.addListener('blur', () => {
+        viewRef.current?.scrollTo({ y: 0, animated: false })
+      }),
+    [navigation]
+  )
+
+  return (
+    <Screen style={style}>
+      <ScrollView
+        contentOffset={{ y: 0, x: 0 }}
+        ref={viewRef}
+        scrollEventThrottle={16}
+        alwaysBounceVertical={false}
+        {...props}
+      >
+        <View>{children}</View>
+      </ScrollView>
+    </Screen>
+  )
+}
+
+export default TabScrollScreen

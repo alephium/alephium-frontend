@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useCallback, useState } from 'react'
 import { ActivityIndicator, FlatListProps } from 'react-native'
 import { useModalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -156,8 +157,9 @@ const TransactionsFlatListScreen = ({
           </Footer>
         }
       />
-
-      <Modalize ref={transactionModalRef}>{selectedTx && <TransactionModal tx={selectedTx} />}</Modalize>
+      <Portal>
+        <Modalize ref={transactionModalRef}>{selectedTx && <TransactionModal tx={selectedTx} />}</Modalize>
+      </Portal>
     </>
   )
 }

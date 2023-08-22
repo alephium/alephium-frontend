@@ -27,7 +27,8 @@ import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import TabScrollScreen from '~/components/layout/TabScrollScreen'
 import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
@@ -51,7 +52,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   return (
-    <ScrollScreen
+    <TabScrollScreen
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
       onScroll={scrollHandler}
       {...props}
@@ -76,7 +77,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         </ButtonsRow>
       </ScreenSection>
       <AddressesTokensList />
-    </ScrollScreen>
+    </TabScrollScreen>
   )
 }
 

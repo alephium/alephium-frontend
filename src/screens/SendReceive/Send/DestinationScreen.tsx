@@ -25,6 +25,7 @@ import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useModalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -203,12 +204,14 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           text="Scan an Alephium address QR code"
         />
       )}
-      <Modalize ref={contactSelectModalRef}>
-        <SelectContactModal onContactPress={handleContactPress} />
-      </Modalize>
-      <Modalize ref={addressSelectModalRef}>
-        <SelectAddressModal onAddressPress={handleAddressPress} />
-      </Modalize>
+      <Portal>
+        <Modalize ref={contactSelectModalRef}>
+          <SelectContactModal onContactPress={handleContactPress} />
+        </Modalize>
+        <Modalize ref={addressSelectModalRef}>
+          <SelectAddressModal onAddressPress={handleAddressPress} />
+        </Modalize>
+      </Portal>
     </Screen>
   )
 }

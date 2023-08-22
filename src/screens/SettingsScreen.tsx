@@ -22,6 +22,7 @@ import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { Alert } from 'react-native'
 import { useModalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -174,12 +175,14 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ButtonStyled title="Delete this wallet" Icon={Trash2} variant="alert" onPress={handleDeleteButtonPress} />
         </ScreenSection>
       </ScrollScreen>
-      <Modalize ref={switchNetworkModalRef}>
-        <SwitchNetworkModal onClose={closeSwitchNetworkModal} />
-      </Modalize>
-      <Modalize ref={currencySelectModalRef}>
-        <CurrencySelectModal onClose={closeCurrencySelectModal} />
-      </Modalize>
+      <Portal>
+        <Modalize ref={switchNetworkModalRef}>
+          <SwitchNetworkModal onClose={closeSwitchNetworkModal} />
+        </Modalize>
+        <Modalize ref={currencySelectModalRef}>
+          <CurrencySelectModal onClose={closeCurrencySelectModal} />
+        </Modalize>
+      </Portal>
     </>
   )
 }
