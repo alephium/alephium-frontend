@@ -27,6 +27,7 @@ import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
+import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { cameraToggled } from '~/store/appSlice'
@@ -42,6 +43,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
+  const { walletConnectClient } = useWalletConnectContext()
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -49,7 +51,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const showOfflineMessage = () =>
     Toast.show('The app is offline and trying to reconnect. Please, check your network settings.')
 
-  const handleQRCodeScan = (text: string) => {
+  const handleQRCodeScan = async (text: string) => {
     if (isAddressValid(text)) {
       navigation.navigate('SendNavigation', {
         screen: 'OriginScreen',
@@ -57,10 +59,19 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
       })
 
       posthog?.capture('Send: Captured destination address by scanning QR code from Dashboard')
+    } else if (text.startsWith('wc:')) {
+      console.log(text)
+      if (!walletConnectClient) return
+
+      try {
+        const pairingResult = await walletConnectClient.pair({ uri: text })
+        console.log(pairingResult)
+
+        return pairingResult
+      } catch (e) {
+        console.error('Could not pair with WalletConnect', e)
+      }
     }
-    //  else if (is valid WC URI) {
-    // TODO: Handle WC URI scan
-    // }
   }
 
   return (

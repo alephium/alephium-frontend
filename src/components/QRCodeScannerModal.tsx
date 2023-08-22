@@ -89,19 +89,21 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
   const CameraContents = (
     <ScreenSectionCentered fill>
       {text && (
-        <AppTextCentered size={16} semiBold color="white">
-          {text}
-        </AppTextCentered>
+        <TextContainer>
+          <AppText size={16} semiBold color="white">
+            {text}
+          </AppText>
+        </TextContainer>
       )}
       <QRCodePlaceholder />
 
       {qrCodeMode === 'animated' && (
-        <>
+        <TextContainer>
           <AppTextCentered size={16} semiBold color="white">
             Scan progress: {(progress * 100).toFixed(0)}%
           </AppTextCentered>
           <ProgressBar progress={progress} color="white" />
-        </>
+        </TextContainer>
       )}
     </ScreenSectionCentered>
   )
@@ -174,7 +176,11 @@ const ScreenSectionCentered = styled(ScreenSection)`
   align-items: center;
 `
 
+const TextContainer = styled.View`
+  width: 80%;
+  border: 0px solid transparent; // This is a hack cause I don't freaking understand why the text doesn't expand
+`
+
 const AppTextCentered = styled(AppText)`
   text-align: center;
-  width: 80%;
 `
