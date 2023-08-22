@@ -176,4 +176,5 @@ const ScreenSectionCentered = styled(ScreenSection)`
 
 const AppTextCentered = styled(AppText)`
   text-align: center;
+  width: 80%;
 `
