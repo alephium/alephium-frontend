@@ -24,7 +24,16 @@ const Modalize = forwardRef(function Modalize({ children, ...props }: ComponentP
   const insets = useSafeAreaInsets()
 
   return (
-    <RNModalize ref={ref} modalTopOffset={insets.top} adjustToContentHeight {...props}>
+    <RNModalize
+      ref={ref}
+      modalTopOffset={insets.top}
+      adjustToContentHeight
+      openAnimationConfig={{
+        timing: { duration: 360 },
+        spring: { stiffness: 140, damping: 30 }
+      }}
+      {...props}
+    >
       {children}
     </RNModalize>
   )
