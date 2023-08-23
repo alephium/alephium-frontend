@@ -21,7 +21,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Modal from '~/components/layout/Modal'
+import { Modal, ModalProps } from '~/components/layout/Modals'
 import { BottomModalScreenTitle, ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
@@ -30,9 +30,8 @@ import AddressForm from '~/screens/Address/AddressForm'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { AddressHash, AddressSettings } from '~/types/addresses'
 
-interface EditAddressModalProps extends ScreenProps {
+interface EditAddressModalProps extends ModalProps<ScreenProps> {
   addressHash: AddressHash
-  onClose: () => void
 }
 
 const EditAddressModal = ({ addressHash, onClose, ...props }: EditAddressModalProps) => {
@@ -62,7 +61,7 @@ const EditAddressModal = ({ addressHash, onClose, ...props }: EditAddressModalPr
     }
 
     setLoading(false)
-    onClose()
+    onClose && onClose()
   }
 
   return (

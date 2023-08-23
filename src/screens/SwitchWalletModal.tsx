@@ -16,13 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Modal from '~/components/layout/Modal'
+import { Modal, ModalProps } from '~/components/layout/Modals'
 import { ScreenProps } from '~/components/layout/Screen'
 import SwitchWalletBase from '~/screens/SwitchWalletBase'
 
-export interface SwitchWalletModalProps extends ScreenProps {
-  onClose: () => void
-}
+export type SwitchWalletModalProps = ModalProps<ScreenProps>
 
 const SwitchWalletModal = ({ onClose, ...props }: SwitchWalletModalProps) => (
   <Modal {...props}>

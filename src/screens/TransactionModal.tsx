@@ -27,18 +27,18 @@ import AppText from '~/components/AppText'
 import HighlightRow from '~/components/HighlightRow'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
+import { ModalProps, ScrollModal } from '~/components/layout/Modals'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import ScrollModal from '~/components/layout/ScrollModal'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { getTransactionInfo } from '~/utils/transactions'
 
-interface ScreenProps extends ScrollScreenProps {
+interface TransactionModalProps extends ModalProps<ScrollScreenProps> {
   tx: AddressConfirmedTransaction
 }
 
-const TransactionModal = ({ tx, ...props }: ScreenProps) => {
+const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   const theme = useTheme()
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 

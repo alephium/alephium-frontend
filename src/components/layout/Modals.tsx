@@ -16,15 +16,31 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 
-const ScrollModal = ({ children }: { children: ReactNode }) => {
-  const insets = useSafeAreaInsets()
-
-  return <ScrollScreen style={{ paddingBottom: insets.bottom }}>{children}</ScrollScreen>
+export type ModalProps<ScreenType = ScreenProps | ScrollScreenProps> = ScreenType & {
+  onClose?: () => void
 }
 
-export default ScrollModal
+export const Modal = ({ children, style, ...props }: ScreenProps) => {
+  const insets = useSafeAreaInsets()
+
+  return (
+    <Screen style={[style, { paddingBottom: insets.bottom }]} {...props}>
+      {children}
+    </Screen>
+  )
+}
+
+export const ScrollModal = ({ children, style, ...props }: ScrollScreenProps) => {
+  const insets = useSafeAreaInsets()
+
+  return (
+    <ScrollScreen style={[style, { paddingBottom: insets.bottom }]} {...props}>
+      {children}
+    </ScrollScreen>
+  )
+}

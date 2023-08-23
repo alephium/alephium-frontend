@@ -21,10 +21,10 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
 import { useModalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
 
-import Modal from '~/components/layout/Modal'
 import Modalize from '~/components/layout/Modalize'
-import { ScreenProps } from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { NewAddressContextProvider } from '~/contexts/NewAddressContext'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
@@ -87,19 +87,21 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <Modal {...props}>
+    <Screen {...props}>
       <NewAddressContextProvider>
         <AddressForm
           initialValues={initialValues}
           onSubmit={handleGeneratePress}
           onGroupPress={() => openGroupSelectModal()}
         />
-        <Modalize ref={groupSelectModalRef}>
-          <GroupSelectModal onClose={closeGroupSelectModal} />
-        </Modalize>
+        <Portal>
+          <Modalize ref={groupSelectModalRef}>
+            <GroupSelectModal onClose={closeGroupSelectModal} />
+          </Modalize>
+        </Portal>
       </NewAddressContextProvider>
       <SpinnerModal isActive={loading} text="Generating address..." />
-    </Modal>
+    </Screen>
   )
 }
 

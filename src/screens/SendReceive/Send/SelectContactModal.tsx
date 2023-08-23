@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import ScrollModal from '~/components/layout/ScrollModal'
+import { ModalProps, ScrollModal } from '~/components/layout/Modals'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
 
-type SelectContactModalProps = ScrollScreenProps & Pick<ContactListScreenBaseProps, 'onContactPress'>
+type SelectContactModalProps = ModalProps<ScrollScreenProps> & Pick<ContactListScreenBaseProps, 'onContactPress'>
 
 const SelectContactModal = ({ onContactPress, ...props }: SelectContactModalProps) => (
   <ScrollModal {...props}>
