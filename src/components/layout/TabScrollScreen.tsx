@@ -16,9 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
-import { useEffect, useRef } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useCallback, useEffect, useRef } from 'react'
 import { ScrollView, ScrollViewProps, View } from 'react-native'
+
+import { useScrollContext } from '~/contexts/ScrollContext'
 
 import Screen from './Screen'
 
@@ -27,13 +29,14 @@ export type ScrollScreenProps = ScrollViewProps
 const TabScrollScreen = ({ children, style, ...props }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
   const navigation = useNavigation()
+  const { setScrollToTop } = useScrollContext()
 
-  useEffect(
-    () =>
-      navigation.addListener('blur', () => {
-        viewRef.current?.scrollTo({ y: 0, animated: false })
-      }),
-    [navigation]
+  useEffect(() => {
+    navigation.addListener('blur', () => viewRef.current?.scrollTo({ y: 0, animated: false }))
+  }, [navigation])
+
+  useFocusEffect(
+    useCallback(() => setScrollToTop(() => () => viewRef.current?.scrollTo({ y: 0, animated: true })), [setScrollToTop])
   )
 
   return (

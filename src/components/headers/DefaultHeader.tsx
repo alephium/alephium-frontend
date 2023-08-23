@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import Animated, { interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
@@ -36,7 +36,7 @@ const scrollRange = [0, 50]
 
 const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeaderProps) => {
   const theme = useTheme()
-  const { scrollY } = useScrollContext()
+  const { scrollY, scrollToTop } = useScrollContext()
 
   const bgColorRange = [bgColor ?? theme.bg.primary, theme.bg.secondary]
   const borderColorRange = ['transparent', theme.border.secondary]
@@ -48,10 +48,12 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeade
   }))
 
   return (
-    <Animated.View style={[style, headerStyle, { paddingTop: insets.top + 15 }]}>
-      {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
-      {HeaderRight}
-    </Animated.View>
+    <Pressable onPress={() => scrollToTop && scrollToTop()}>
+      <Animated.View style={[style, headerStyle, { paddingTop: insets.top + 15 }]}>
+        {typeof HeaderLeft === 'string' ? <Title>{HeaderLeft}</Title> : HeaderLeft}
+        {HeaderRight}
+      </Animated.View>
+    </Pressable>
   )
 }
 
