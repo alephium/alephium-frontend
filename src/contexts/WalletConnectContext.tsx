@@ -40,6 +40,8 @@ interface WalletConnectContextValue {
   proposalEvent?: ProposalEvent
   requiredChainInfo?: ChainInfo
   wcSessionState: WalletConnectSessionState
+  onSessionDelete: () => void
+  sessionTopic?: string
 }
 
 const initialValues: WalletConnectContextValue = {
@@ -47,7 +49,9 @@ const initialValues: WalletConnectContextValue = {
   requestEvent: undefined,
   proposalEvent: undefined,
   requiredChainInfo: undefined,
-  wcSessionState: 'uninitialized'
+  wcSessionState: 'uninitialized',
+  onSessionDelete: () => null,
+  sessionTopic: undefined
 }
 
 const WalletConnectContext = createContext(initialValues)
@@ -58,6 +62,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [wcSessionState, setWcSessionState] = useState(initialValues.wcSessionState)
   const [proposalEvent, setProposalEvent] = useState(initialValues.proposalEvent)
   const [requiredChainInfo, setRequiredChainInfo] = useState(initialValues.requiredChainInfo)
+  const [sessionTopic, setSessionTopic] = useState(initialValues.sessionTopic)
 
   const initializeWalletConnectClient = useCallback(async () => {
     try {
@@ -256,11 +261,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [])
 
   const onSessionDelete = useCallback(() => {
-    console.log('TODO: onSessionDelete')
-    // setRequiredChainInfo(undefined)
-    // setProposalEvent(undefined)
-    // setWcSessionState('uninitialized')
-    // setSessionTopic(undefined)
+    setRequiredChainInfo(undefined)
+    setProposalEvent(undefined)
+    setWcSessionState('uninitialized')
+    setSessionTopic(undefined)
   }, [])
 
   const onProposalApprove = (topic: string) => {
@@ -285,7 +289,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }, [onSessionDelete, onSessionProposal, onSessionRequest, walletConnectClient])
 
-  return <WalletConnectContext.Provider value={{ walletConnectClient }}>{children}</WalletConnectContext.Provider>
+  return (
+    <WalletConnectContext.Provider
+      value={{
+        walletConnectClient,
+        proposalEvent,
+        wcSessionState,
+        requestEvent,
+        requiredChainInfo,
+        sessionTopic,
+        onSessionDelete
+      }}
+    >
+      {children}
+    </WalletConnectContext.Provider>
+  )
 }
 
 export const useWalletConnectContext = () => useContext(WalletConnectContext)

@@ -20,13 +20,14 @@ import { isAddressValid } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { ScanLine, Settings, ShieldAlert, WifiOff } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { memo } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import Toast from 'react-native-root-toast'
 import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
+import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -43,7 +44,8 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
-  const { walletConnectClient } = useWalletConnectContext()
+  const { walletConnectClient, proposalEvent } = useWalletConnectContext()
+  const [connecting, setConnecting] = useState(false)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -60,19 +62,21 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
 
       posthog?.capture('Send: Captured destination address by scanning QR code from Dashboard')
     } else if (text.startsWith('wc:')) {
-      console.log(text)
       if (!walletConnectClient) return
 
-      try {
-        const pairingResult = await walletConnectClient.pair({ uri: text })
-        console.log(pairingResult)
+      setConnecting(true)
 
-        return pairingResult
+      try {
+        return await walletConnectClient.pair({ uri: text })
       } catch (e) {
         console.error('Could not pair with WalletConnect', e)
       }
     }
   }
+
+  useEffect(() => {
+    if (proposalEvent) setConnecting(false)
+  }, [proposalEvent])
 
   return (
     <>
@@ -96,6 +100,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           text="Scan an Alephium address QR code to send funds or a WalletConnect QR code to connect to a dApp."
         />
       )}
+      <SpinnerModal isActive={connecting} text="Fetching dApp info..." />
     </>
   )
 }
