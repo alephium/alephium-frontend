@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { isAddressValid } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { ScanLine, Settings, ShieldAlert, WifiOff } from 'lucide-react-native'
+import { Radio, ScanLine, Settings, ShieldAlert, WifiOff } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { memo, useEffect, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
@@ -44,7 +44,8 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
-  const { walletConnectClient, proposalEvent } = useWalletConnectContext()
+  const { walletConnectClient, proposalEvent, wcSessionState } = useWalletConnectContext()
+
   const [connecting, setConnecting] = useState(false)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
@@ -78,6 +79,12 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
     if (proposalEvent) setConnecting(false)
   }, [proposalEvent])
 
+  useEffect(() => {
+    console.log('')
+    console.log('wcSessionState', wcSessionState)
+    console.log('')
+  }, [wcSessionState])
+
   return (
     <>
       <View style={style}>
@@ -90,6 +97,9 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           type="transparent"
           variant={isMnemonicBackedUp ? 'default' : 'alert'}
         />
+        {wcSessionState === 'initialized' && (
+          <Button onPress={() => console.log('TODO: Open modal')} Icon={Radio} type="transparent" variant="accent" />
+        )}
         <Button onPress={openQRCodeScannerModal} Icon={ScanLine} type="transparent" />
         <Button onPress={() => navigation.navigate('SettingsScreen')} Icon={Settings} type="transparent" />
       </View>

@@ -42,6 +42,8 @@ interface WalletConnectContextValue {
   wcSessionState: WalletConnectSessionState
   onSessionDelete: () => void
   sessionTopic?: string
+  onProposalApprove: (topic: string) => void
+  connectedDAppMetadata?: ProposalEvent['params']['proposer']['metadata']
 }
 
 const initialValues: WalletConnectContextValue = {
@@ -51,7 +53,9 @@ const initialValues: WalletConnectContextValue = {
   requiredChainInfo: undefined,
   wcSessionState: 'uninitialized',
   onSessionDelete: () => null,
-  sessionTopic: undefined
+  sessionTopic: undefined,
+  onProposalApprove: () => null,
+  connectedDAppMetadata: undefined
 }
 
 const WalletConnectContext = createContext(initialValues)
@@ -63,6 +67,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [proposalEvent, setProposalEvent] = useState(initialValues.proposalEvent)
   const [requiredChainInfo, setRequiredChainInfo] = useState(initialValues.requiredChainInfo)
   const [sessionTopic, setSessionTopic] = useState(initialValues.sessionTopic)
+  const [connectedDAppMetadata, setConnectedDappMetadata] = useState(initialValues.connectedDAppMetadata)
 
   const initializeWalletConnectClient = useCallback(async () => {
     try {
@@ -91,10 +96,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     async (event: RequestEvent, response: EngineTypes.RespondParams['response']) => {
       if (!walletConnectClient) return
 
-      console.log('onSessionRequestResponse start')
-      console.log('event', event)
-      console.log('response', response)
-      console.log('onSessionRequestResponse end')
+      console.log('\nonSessionRequestResponse called')
+      console.log('\nonSessionRequestResponse event', event)
+      console.log('\nonSessionRequestResponse response', response)
 
       await walletConnectClient.respond({ topic: event.topic, response })
       setRequestEvent(undefined)
@@ -116,9 +120,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     async (event: RequestEvent) => {
       if (!walletConnectClient) return
 
-      console.log('onSessionRequest start')
-      console.log('event', event)
-      console.log('onSessionRequest end')
+      console.log('')
+      console.log('onSessionRequest called')
+      console.log('onSessionRequestevent', event)
+      console.log('')
 
       setRequestEvent(event)
 
@@ -246,8 +251,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   )
 
   const onSessionProposal = useCallback(async (proposalEvent: ProposalEvent) => {
-    console.log('onSessionProposal start')
-    console.log('proposalEvent', proposalEvent)
+    console.log('')
+    console.log('onSessionProposal called')
+    console.log('onSessionProposal proposalEvent', proposalEvent)
+    console.log('')
 
     const { requiredNamespaces } = proposalEvent.params
     const requiredChains = requiredNamespaces[PROVIDER_NAMESPACE].chains
@@ -256,11 +263,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     setRequiredChainInfo(requiredChainInfo)
     setProposalEvent(proposalEvent)
     setWcSessionState('proposal')
-
-    console.log('onSessionProposal end')
   }, [])
 
   const onSessionDelete = useCallback(() => {
+    console.log('')
+    console.log('onSessionDelete called')
+    console.log('')
+
     setRequiredChainInfo(undefined)
     setProposalEvent(undefined)
     setWcSessionState('uninitialized')
@@ -268,11 +277,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [])
 
   const onProposalApprove = (topic: string) => {
-    console.log('TODO: onProposalApprove')
-    // setSessionTopic(topic)
-    // setConnectedDappMetadata(proposalEvent?.params.proposer.metadata)
-    // setProposalEvent(undefined)
-    // setWcSessionState('initialized')
+    console.log('')
+    console.log('onProposalApprove called, topic:', topic)
+    console.log('')
+
+    setSessionTopic(topic)
+    setConnectedDappMetadata(proposalEvent?.params.proposer.metadata)
+    setProposalEvent(undefined)
+    setWcSessionState('initialized')
   }
 
   useEffect(() => {
@@ -298,7 +310,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         requestEvent,
         requiredChainInfo,
         sessionTopic,
-        onSessionDelete
+        onSessionDelete,
+        onProposalApprove,
+        connectedDAppMetadata
       }}
     >
       {children}

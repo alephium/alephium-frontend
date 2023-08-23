@@ -53,7 +53,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
   const scrollHandler = useScrollEventHandler()
-  const { walletConnectClient, proposalEvent, onSessionDelete } = useWalletConnectContext()
+  const { walletConnectClient, proposalEvent, onSessionDelete, wcSessionState } = useWalletConnectContext()
   const { ref: walletConnectModalRef, open: openWalletConnectModal, close: closeWalletConnectModal } = useModalize()
   const posthog = usePostHog()
 
@@ -75,9 +75,10 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   const handleModalClose = async () => {
-    await rejectProposal()
-
-    posthog?.capture('WC: Rejected WalletConnect connection by dismissing modal')
+    if (wcSessionState !== 'initialized') {
+      await rejectProposal()
+      posthog?.capture('WC: Rejected WalletConnect connection by dismissing modal')
+    }
   }
 
   return (
