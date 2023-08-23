@@ -60,7 +60,7 @@ const Button = ({
   const bg = {
     default: theme.bg.secondary,
     contrast: theme.font.primary,
-    accent: theme.global.accent,
+    accent: colord(theme.global.accent).alpha(0.1).toRgbString(),
     valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
     transparent: 'transparent'

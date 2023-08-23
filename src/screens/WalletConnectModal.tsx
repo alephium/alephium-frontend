@@ -18,27 +18,33 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { formatChain, isCompatibleAddressGroup, parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
 import { SessionTypes } from '@walletconnect/types'
+import { AlertTriangle } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
+import { Image } from 'react-native'
+import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import HighlightRow from '~/components/HighlightRow'
+import InfoBox from '~/components/InfoBox'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { Modal, ModalProps } from '~/components/layout/Modals'
-import { BottomModalScreenTitle, BottomScreenSection, ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import { ModalProps, ScrollModal } from '~/components/layout/Modals'
+import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
-import { useAppSelector } from '~/hooks/redux'
-import { networkPresetSettings } from '~/persistent-storage/settings'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
 import { selectAllAddresses } from '~/store/addressesSlice'
+import { networkPresetSwitched } from '~/store/networkSlice'
 import { Address } from '~/types/addresses'
-import { NetworkPreset } from '~/types/network'
+import { NetworkName, NetworkPreset } from '~/types/network'
 import { NetworkSettings } from '~/types/settings'
 
-interface WalletConnectModalProps extends ModalProps<ScreenProps> {
+interface WalletConnectModalProps extends ModalProps<ScrollScreenProps> {
   rejectProposal: () => Promise<void>
 }
 
@@ -47,7 +53,9 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
     useWalletConnectContext()
   const posthog = usePostHog()
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
+  const currentNetworkName = useAppSelector((s) => s.network.name)
   const addresses = useAppSelector(selectAllAddresses)
+  const dispatch = useAppDispatch()
 
   const [rejecting, setRejecting] = useState(false)
   const [approving, setApproving] = useState(false)
@@ -56,6 +64,10 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
 
   const metadata = proposalEvent?.params.proposer.metadata
   const group = requiredChainInfo?.addressGroup
+
+  const showNetworkWarning = requiredChainInfo?.networkId
+    ? !isNetworkValid(requiredChainInfo?.networkId, currentNetworkId)
+    : false
 
   const handleReject = async () => {
     setRejecting(true)
@@ -165,52 +177,75 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
     }
   }
 
+  const handleSwitchNetworkPress = async () => {
+    if (requiredChainInfo?.networkId === 'mainnet' || requiredChainInfo?.networkId === 'testnet') {
+      await persistSettings('network', networkPresetSettings[requiredChainInfo.networkId])
+      dispatch(networkPresetSwitched(NetworkName[requiredChainInfo.networkId]))
+    }
+  }
+
   return (
-    <Modal {...props}>
+    <ScrollModal {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>Connect to dApp</BottomModalScreenTitle>
+        {metadata?.icons && metadata.icons.length > 0 && <DAppIcon source={{ uri: metadata.icons[0] }} />}
+        <BottomModalScreenTitle>
+          {metadata?.name ? `Connect to ${metadata?.name}` : 'Connect to the dApp'}
+        </BottomModalScreenTitle>
+        {metadata?.description && (
+          <AppText color="secondary" size={16}>
+            {metadata.description}
+          </AppText>
+        )}
+        {metadata?.url && (
+          <AppText color="tertiary" size={13}>
+            {metadata.url}
+          </AppText>
+        )}
       </ScreenSection>
-      <ScreenSection>
-        <BoxSurface>
-          <HighlightRow title="Name">
-            <AppText>{metadata?.name}</AppText>
-          </HighlightRow>
-          <HighlightRow title="Description">
-            <AppText>{metadata?.description}</AppText>
-          </HighlightRow>
-          <HighlightRow title="URL">
-            <AppText>{metadata?.url}</AppText>
-          </HighlightRow>
-          <HighlightRow title="Network">
-            <AppText>{requiredChainInfo?.networkId}</AppText>
-          </HighlightRow>
-          <HighlightRow title="Name">
-            <AppText>{metadata?.name}</AppText>
-          </HighlightRow>
-        </BoxSurface>
-      </ScreenSection>
-      <ScreenSection>
-        <BoxSurface>
-          <HighlightRow title="Signer address" onPress={handleSignerAddressPress}>
-            {signerAddress ? (
-              <AddressBadge addressHash={signerAddress?.hash} />
-            ) : (
-              <AppText>Click to create an address in group {group}</AppText>
-            )}
-          </HighlightRow>
-        </BoxSurface>
-      </ScreenSection>
-      <BottomScreenSection>
-        <ButtonsRow>
-          <Button title="Decline" variant="alert" onPress={handleReject} />
-          <Button title="Accept" variant="valid" onPress={handleApprove} />
-        </ButtonsRow>
-      </BottomScreenSection>
+      {showNetworkWarning && (
+        <>
+          <ScreenSection>
+            <InfoBox title="Switch network" Icon={AlertTriangle}>
+              <AppText bold>
+                You are currently connected to <AppText color="accent">{currentNetworkName}</AppText>, but the dApp
+                requires a connection to <AppText color="accent">{requiredChainInfo?.networkId}</AppText>.
+              </AppText>
+            </InfoBox>
+          </ScreenSection>
+          <BottomScreenSection>
+            <ButtonsRow>
+              <Button title="Decline" variant="alert" onPress={handleReject} />
+              <Button title="Switch network" variant="accent" onPress={handleSwitchNetworkPress} />
+            </ButtonsRow>
+          </BottomScreenSection>
+        </>
+      )}
+      {!showNetworkWarning && (
+        <>
+          <ScreenSection>
+            <BoxSurface>
+              <HighlightRow title="Signer address" onPress={handleSignerAddressPress}>
+                {signerAddress ? (
+                  <AddressBadge addressHash={signerAddress?.hash} />
+                ) : (
+                  <AppText>Click to create an address in group {group}</AppText>
+                )}
+              </HighlightRow>
+            </BoxSurface>
+          </ScreenSection>
+          <BottomScreenSection>
+            <ButtonsRow>
+              <Button title="Decline" variant="alert" onPress={handleReject} />
+              <Button title="Accept" variant="valid" onPress={handleApprove} />
+            </ButtonsRow>
+          </BottomScreenSection>
+        </>
+      )}
       <SpinnerModal
         isActive={rejecting || approving}
         text={rejecting ? 'Rejecting connection...' : approving ? 'Approving connection' : ''}
       />
-    </Modal>
+    </ScrollModal>
   )
 }
 
@@ -221,3 +256,8 @@ const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['ne
   (Object.keys(networkPresetSettings) as Array<NetworkPreset>).some(
     (network) => network === networkId && currentNetworkId === networkPresetSettings[network].networkId
   )
+
+const DAppIcon = styled(Image)`
+  width: 50px;
+  height: 50px;
+`
