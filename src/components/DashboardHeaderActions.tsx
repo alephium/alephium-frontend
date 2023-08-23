@@ -22,15 +22,19 @@ import { Radio, ScanLine, Settings, ShieldAlert, WifiOff } from 'lucide-react-na
 import { usePostHog } from 'posthog-react-native'
 import { memo, useEffect, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
+import { useModalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
 import Toast from 'react-native-root-toast'
 import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
+import Modalize from '~/components/layout/Modalize'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import CurrentWalletConnectConnectionsModal from '~/screens/CurrentWalletConnectConnectionsModal'
 import { cameraToggled } from '~/store/appSlice'
 
 interface DashboardHeaderActionsProps {
@@ -45,6 +49,11 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
   const { walletConnectClient, proposalEvent, wcSessionState } = useWalletConnectContext()
+  const {
+    ref: currentConnectionsModalRef,
+    open: openCurrentConnectionsModal,
+    close: closeCurrentConnectionsModal
+  } = useModalize()
 
   const [connecting, setConnecting] = useState(false)
 
@@ -98,7 +107,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           variant={isMnemonicBackedUp ? 'default' : 'alert'}
         />
         {wcSessionState === 'initialized' && (
-          <Button onPress={() => console.log('TODO: Open modal')} Icon={Radio} type="transparent" variant="accent" />
+          <Button onPress={() => openCurrentConnectionsModal()} Icon={Radio} type="transparent" variant="accent" />
         )}
         <Button onPress={openQRCodeScannerModal} Icon={ScanLine} type="transparent" />
         <Button onPress={() => navigation.navigate('SettingsScreen')} Icon={Settings} type="transparent" />
@@ -110,6 +119,12 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           text="Scan an Alephium address QR code to send funds or a WalletConnect QR code to connect to a dApp."
         />
       )}
+
+      <Portal>
+        <Modalize ref={currentConnectionsModalRef}>
+          <CurrentWalletConnectConnectionsModal onClose={closeCurrentConnectionsModal} />
+        </Modalize>
+      </Portal>
       <SpinnerModal isActive={connecting} text="Fetching dApp info..." />
     </>
   )

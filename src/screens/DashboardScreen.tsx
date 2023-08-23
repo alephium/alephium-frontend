@@ -74,7 +74,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     onSessionDelete()
   }
 
-  const handleModalClose = async () => {
+  const handleWalletConnectModalClose = async () => {
     if (wcSessionState !== 'initialized') {
       await rejectProposal()
       posthog?.capture('WC: Rejected WalletConnect connection by dismissing modal')
@@ -108,7 +108,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       </ScreenSection>
       <AddressesTokensList />
       <Portal>
-        <Modalize ref={walletConnectModalRef} onClose={handleModalClose}>
+        <Modalize ref={walletConnectModalRef} onClose={handleWalletConnectModalClose}>
           <WalletConnectModal onClose={closeWalletConnectModal} rejectProposal={rejectProposal} />
         </Modalize>
       </Portal>
