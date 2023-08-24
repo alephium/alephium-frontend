@@ -88,12 +88,6 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
     if (proposalEvent) setConnecting(false)
   }, [proposalEvent])
 
-  useEffect(() => {
-    console.log('')
-    console.log('wcSessionState', wcSessionState)
-    console.log('')
-  }, [wcSessionState])
-
   return (
     <>
       <View style={style}>
