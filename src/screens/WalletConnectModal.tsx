@@ -16,12 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { formatChain, isCompatibleAddressGroup, parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
 import { SessionTypes } from '@walletconnect/types'
-import { AlertTriangle } from 'lucide-react-native'
+import { AlertTriangle, PlusSquare } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Image } from 'react-native'
+import Toast from 'react-native-root-toast'
 import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -36,13 +38,21 @@ import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/co
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
+import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
-import { selectAllAddresses } from '~/store/addressesSlice'
+import {
+  newAddressGenerated,
+  selectAllAddresses,
+  syncAddressesData,
+  syncAddressesHistoricBalances
+} from '~/store/addressesSlice'
 import { networkPresetSwitched } from '~/store/networkSlice'
 import { Address } from '~/types/addresses'
 import { NetworkName, NetworkPreset } from '~/types/network'
 import { NetworkSettings } from '~/types/settings'
+import { getRandomLabelColor } from '~/utils/colors'
+import { mnemonicToSeed } from '~/utils/crypto'
 
 interface WalletConnectModalProps extends ModalProps<ScrollScreenProps> {
   rejectProposal: () => Promise<void>
@@ -56,9 +66,13 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const addresses = useAppSelector(selectAllAddresses)
   const dispatch = useAppDispatch()
+  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
+  const persistAddressSettings = usePersistAddressSettings()
 
   const [rejecting, setRejecting] = useState(false)
   const [approving, setApproving] = useState(false)
+  const [generatingNewAddress, setGeneratingNewAddress] = useState(false)
   const [signerAddress, setSignerAddress] = useState<Address>()
   const [signerAddressOptions, setSignerAddressOptions] = useState<Address[]>([])
 
@@ -88,51 +102,22 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
     const { id, requiredNamespaces, relays } = proposalEvent.params
     const requiredNamespace = requiredNamespaces[PROVIDER_NAMESPACE]
 
-    if (requiredNamespace?.chains?.length !== 1) {
-      // return dispatch(
-      //   walletConnectProposalApprovalFailed(
-      //     t('Too many chains in the WalletConnect proposal, expected 1, got {{ num }}', {
-      //       num: requiredNamespace?.chains?.length
-      //     })
-      //   )
-      // )
-      console.log('ERROR: requiredNamespace?.chains?.length !== 1')
-      return
-    }
+    if (requiredNamespace?.chains?.length !== 1)
+      return Toast.show(
+        `Too many chains in the WalletConnect proposal, expected 1, got ${requiredNamespace?.chains?.length}`
+      )
 
     const requiredChain = parseChain(requiredNamespace.chains[0])
 
-    if (!isNetworkValid(requiredChain.networkId, currentNetworkId)) {
-      // return dispatch(
-      //   walletConnectProposalApprovalFailed(
-      //     t(
-      //       'The current network ({{ currentNetwork }}) does not match the network requested by WalletConnect ({{ walletConnectNetwork }})',
-      //       {
-      //         currentNetwork: currentNetwork.name,
-      //         walletConnectNetwork: requiredChain.networkId
-      //       }
-      //     )
-      //   )
-      // )
-      console.log('ERROR: !isNetworkValid(requiredChain.networkId, currentNetworkId)')
-      return
-    }
+    if (!isNetworkValid(requiredChain.networkId, currentNetworkId))
+      return Toast.show(
+        `The current network (${currentNetworkName}) does not match the network requested by WalletConnect (${requiredChain.networkId})`
+      )
 
-    if (!isCompatibleAddressGroup(signerAddress.group, requiredChain.addressGroup)) {
-      // return dispatch(
-      //   walletConnectProposalApprovalFailed(
-      //     t(
-      //       'The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})',
-      //       {
-      //         addressGroup: signerAddress.group,
-      //         walletConnectGroup: requiredChain.addressGroup
-      //       }
-      //     )
-      //   )
-      // )
-      console.log('ERROR: !isCompatibleAddressGroup(signerAddress.group, requiredChain.addressGroup')
-      return
-    }
+    if (!isCompatibleAddressGroup(signerAddress.group, requiredChain.addressGroup))
+      return Toast.show(
+        `The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChain.addressGroup})`
+      )
 
     const namespaces: SessionTypes.Namespaces = {
       alephium: {
@@ -169,12 +154,8 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
   }, [addresses, group])
 
   const handleSignerAddressPress = () => {
-    if (!signerAddress) {
-      console.log('TODO: Open modal to create address in group', group)
-    } else {
-      // TODO: Use `signerAddressOptions`
-      console.log('TODO: Open modal to select address of group', group)
-    }
+    // TODO: Use `signerAddressOptions`
+    console.log('TODO: Open modal to select address of group', group)
   }
 
   const handleSwitchNetworkPress = async () => {
@@ -182,6 +163,29 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
       await persistSettings('network', networkPresetSettings[requiredChainInfo.networkId])
       dispatch(networkPresetSwitched(NetworkName[requiredChainInfo.networkId]))
     }
+  }
+
+  const handleAddressGeneratePress = async () => {
+    setGeneratingNewAddress(true)
+
+    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, activeWalletMnemonic)
+    const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
+    const newAddress = { ...newAddressData, settings: { label: '', color: getRandomLabelColor(), isDefault: false } }
+
+    try {
+      await persistAddressSettings(newAddress)
+      dispatch(newAddressGenerated(newAddress))
+      await dispatch(syncAddressesData(newAddress.hash))
+      await dispatch(syncAddressesHistoricBalances(newAddress.hash))
+
+      posthog?.capture('WC: Generated new address')
+    } catch (e) {
+      console.error(e)
+
+      posthog?.capture('Error', { message: 'WC: Could not save new address' })
+    }
+
+    setGeneratingNewAddress(false)
   }
 
   return (
@@ -202,11 +206,11 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
           </AppText>
         )}
       </ScreenSection>
-      {showNetworkWarning && (
+      {showNetworkWarning ? (
         <>
           <ScreenSection>
             <InfoBox title="Switch network" Icon={AlertTriangle}>
-              <AppText bold>
+              <AppText>
                 You are currently connected to <AppText color="accent">{currentNetworkName}</AppText>, but the dApp
                 requires a connection to <AppText color="accent">{requiredChainInfo?.networkId}</AppText>.
               </AppText>
@@ -219,31 +223,51 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
             </ButtonsRow>
           </BottomScreenSection>
         </>
-      )}
-      {!showNetworkWarning && (
+      ) : !signerAddress ? (
+        <>
+          <ScreenSection>
+            <InfoBox title="New address needed" Icon={PlusSquare}>
+              <AppText>
+                The dApp asks for an address in group <AppText color="accent">{group}</AppText>. Click below to generate
+                one!
+              </AppText>
+            </InfoBox>
+          </ScreenSection>
+          <BottomScreenSection>
+            <ButtonsRow>
+              <Button title="Decline" variant="alert" onPress={handleReject} />
+              <Button title="Generate new address" variant="accent" onPress={handleAddressGeneratePress} />
+            </ButtonsRow>
+          </BottomScreenSection>
+        </>
+      ) : (
         <>
           <ScreenSection>
             <BoxSurface>
               <HighlightRow title="Signer address" onPress={handleSignerAddressPress}>
-                {signerAddress ? (
-                  <AddressBadge addressHash={signerAddress?.hash} />
-                ) : (
-                  <AppText>Click to create an address in group {group}</AppText>
-                )}
+                <AddressBadge addressHash={signerAddress?.hash} />
               </HighlightRow>
             </BoxSurface>
           </ScreenSection>
           <BottomScreenSection>
             <ButtonsRow>
               <Button title="Decline" variant="alert" onPress={handleReject} />
-              <Button title="Accept" variant="valid" onPress={handleApprove} />
+              <Button title="Accept" variant="valid" onPress={handleApprove} disabled={!signerAddress} />
             </ButtonsRow>
           </BottomScreenSection>
         </>
       )}
       <SpinnerModal
-        isActive={rejecting || approving}
-        text={rejecting ? 'Rejecting connection...' : approving ? 'Approving connection' : ''}
+        isActive={rejecting || approving || generatingNewAddress}
+        text={
+          rejecting
+            ? 'Rejecting connection...'
+            : approving
+            ? 'Approving connection'
+            : generatingNewAddress
+            ? 'Generating new addres...'
+            : ''
+        }
       />
     </ScrollModal>
   )
