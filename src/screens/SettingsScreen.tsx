@@ -175,6 +175,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ButtonStyled title="Delete this wallet" Icon={Trash2} variant="alert" onPress={handleDeleteButtonPress} />
         </ScreenSection>
       </ScrollScreen>
+
       <Portal>
         <Modalize ref={switchNetworkModalRef}>
           <SwitchNetworkModal onClose={closeSwitchNetworkModal} />

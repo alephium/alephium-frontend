@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
-import Animated, { interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
+import Animated, { Easing, interpolateColor, useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -43,7 +43,10 @@ const DefaultHeader = ({ HeaderRight, HeaderLeft, bgColor, style }: DefaultHeade
   const insets = useSafeAreaInsets()
 
   const headerStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange),
+    backgroundColor: withTiming(interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange), {
+      duration: 1000,
+      easing: Easing.ease
+    }),
     borderColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
   }))
 

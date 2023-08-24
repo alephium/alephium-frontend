@@ -162,6 +162,7 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
           </Footer>
         }
       />
+
       <Portal>
         <Modalize ref={transactionModalRef}>{selectedTx && <TransactionModal tx={selectedTx} />}</Modalize>
       </Portal>

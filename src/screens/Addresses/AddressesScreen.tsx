@@ -154,6 +154,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
         color={colord(floatingButtonBgColor).isDark() ? themes.light.font.contrast : themes.light.font.primary}
         onPress={handleSendFromPress}
       />
+
       <Portal>
         <Modalize
           ref={addressQuickSelectionModalRef}
