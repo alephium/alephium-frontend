@@ -25,18 +25,20 @@ import { ModalProps, ScrollModal } from '~/components/layout/Modals'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
-import { useNewAddressContext } from '~/contexts/NewAddressContext'
+
+interface GroupSelectModalProps extends ModalProps<ScrollScreenProps> {
+  selectedGroup?: number
+  onSelect: (group?: number) => void
+}
 
 const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
   value: i === 0 ? undefined : i - 1,
   label: i === 0 ? 'Default' : `Group ${i - 1}`
 }))
 
-const GroupSelectModal = ({ onClose, ...props }: ModalProps<ScrollScreenProps>) => {
-  const { group, setGroup } = useNewAddressContext()
-
+const GroupSelectModal = ({ onClose, onSelect, selectedGroup, ...props }: GroupSelectModalProps) => {
   const onGroupSelect = (group?: number) => {
-    setGroup(group)
+    onSelect(group)
     onClose && onClose()
   }
 
@@ -49,7 +51,7 @@ const GroupSelectModal = ({ onClose, ...props }: ModalProps<ScrollScreenProps>) 
               key={groupOption.label}
               title={groupOption.label}
               onPress={() => onGroupSelect(groupOption.value)}
-              isActive={group === groupOption.value}
+              isActive={selectedGroup === groupOption.value}
             />
           ))}
         </BoxSurface>

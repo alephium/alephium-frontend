@@ -18,6 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useState } from 'react'
 import { View } from 'react-native'
+import { useModalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -26,9 +28,10 @@ import HighlightRow from '~/components/HighlightRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
+import Modalize from '~/components/layout/Modalize'
 import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
 import Toggle from '~/components/Toggle'
-import { useNewAddressContext } from '~/contexts/NewAddressContext'
+import GroupSelectModal from '~/screens/Address/GroupSelectModal'
 import { AddressHash, AddressSettings } from '~/types/addresses'
 
 export type AddressFormData = AddressSettings & {
@@ -38,7 +41,7 @@ export type AddressFormData = AddressSettings & {
 interface AddressFormProps {
   initialValues: AddressFormData
   onSubmit: (data: AddressFormData) => void
-  onGroupPress?: () => void
+  allowGroupSelection?: boolean
   buttonText?: string
   disableIsMainToggle?: boolean
   addressHash?: AddressHash
@@ -47,15 +50,16 @@ interface AddressFormProps {
 const AddressForm = ({
   initialValues,
   onSubmit,
-  onGroupPress,
+  allowGroupSelection,
   buttonText = 'Generate',
   disableIsMainToggle = false
 }: AddressFormProps) => {
-  const { group } = useNewAddressContext()
+  const { ref: groupSelectModalRef, open: openGroupSelectModal, close: closeGroupSelectModal } = useModalize()
 
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
   const [isDefault, setIsDefault] = useState(initialValues.isDefault)
+  const [group, setGroup] = useState<number>()
 
   const toggleIsMain = () => {
     if (!disableIsMainToggle) {
@@ -83,11 +87,11 @@ const AddressForm = ({
             </HighlightRow>
           </BoxSurface>
         </ScreenSection>
-        {onGroupPress && (
+        {allowGroupSelection && (
           <ScreenSection>
             <ExpandableRow>
               <BoxSurface>
-                <HighlightRow title="Address group" onPress={onGroupPress}>
+                <HighlightRow title="Address group" onPress={() => openGroupSelectModal()}>
                   <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
                 </HighlightRow>
               </BoxSurface>
@@ -98,6 +102,12 @@ const AddressForm = ({
       <BottomScreenSection>
         <Button title={buttonText} centered onPress={() => onSubmit({ isDefault, label, color, group })} />
       </BottomScreenSection>
+
+      <Portal>
+        <Modalize ref={groupSelectModalRef}>
+          <GroupSelectModal selectedGroup={group} onSelect={setGroup} onClose={closeGroupSelectModal} />
+        </Modalize>
+      </Portal>
     </>
   )
 }

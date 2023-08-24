@@ -20,18 +20,13 @@ import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
-import { useModalize } from 'react-native-modalize'
-import { Portal } from 'react-native-portalize'
 
-import Modalize from '~/components/layout/Modalize'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
-import { NewAddressContextProvider } from '~/contexts/NewAddressContext'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressForm, { AddressFormData } from '~/screens/Address/AddressForm'
-import GroupSelectModal from '~/screens/Address/GroupSelectModal'
 import {
   newAddressGenerated,
   selectAllAddresses,
@@ -50,7 +45,6 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
-  const { ref: groupSelectModalRef, open: openGroupSelectModal, close: closeGroupSelectModal } = useModalize()
 
   const [loading, setLoading] = useState(false)
 
@@ -88,19 +82,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
 
   return (
     <Screen {...props}>
-      <NewAddressContextProvider>
-        <AddressForm
-          initialValues={initialValues}
-          onSubmit={handleGeneratePress}
-          onGroupPress={() => openGroupSelectModal()}
-        />
-
-        <Portal>
-          <Modalize ref={groupSelectModalRef}>
-            <GroupSelectModal onClose={closeGroupSelectModal} />
-          </Modalize>
-        </Portal>
-      </NewAddressContextProvider>
+      <AddressForm initialValues={initialValues} onSubmit={handleGeneratePress} allowGroupSelection />
       <SpinnerModal isActive={loading} text="Generating address..." />
     </Screen>
   )
