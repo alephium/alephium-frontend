@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -29,18 +28,16 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'>, ScrollScreenProps {}
 
-const VerifyScreen = ({ navigation, style }: ScreenProps) => {
+const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
 
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
@@ -58,7 +55,7 @@ const VerifyScreen = ({ navigation, style }: ScreenProps) => {
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <ScrollScreen style={style}>
+    <ScrollScreen {...props}>
       <ScreenIntro
         title="Verify"
         subtitle="Please, double check that everything is correct before sending."

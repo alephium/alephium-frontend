@@ -17,18 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { AlephiumLogoStyled } from '~/screens/LandingScreen'
 import { darkTheme } from '~/style/themes'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'SplashScreen'>
+interface SplashScreenProps extends StackScreenProps<RootStackParamList, 'SplashScreen'>, ScreenProps {}
 
-const SplashScreen = ({ style }: { style: StyleProp<ViewStyle> } & ScreenProps) => (
-  <Screen style={style}>
+const SplashScreen = (props: SplashScreenProps) => (
+  <Screen {...props}>
     <LogoContainer>
       <AlephiumLogoStyled />
     </LogoContainer>
@@ -36,7 +35,6 @@ const SplashScreen = ({ style }: { style: StyleProp<ViewStyle> } & ScreenProps) 
 )
 
 export default styled(SplashScreen)`
-  flex: 1;
   background-color: ${darkTheme.bg.back2};
 `
 

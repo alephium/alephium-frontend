@@ -16,12 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
-import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
+import { RefreshControl, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
@@ -29,7 +27,8 @@ import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import TabScrollScreen from '~/components/layout/TabScrollScreen'
 import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
@@ -38,16 +37,14 @@ import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
 import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
-interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface ScreenProps
+  extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'>,
+    ScrollScreenProps {}
 
-const DashboardScreen = ({ navigation, style }: ScreenProps) => {
+const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const scrollHandler = useScrollEventHandler()
-  const headerheight = useHeaderHeight()
-  const bottomBarHeight = useBottomTabBarHeight()
 
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
@@ -60,7 +57,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
     <DashboardScreenStyled
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
       onScroll={scrollHandler}
-      style={{ marginTop: headerheight + HORIZONTAL_MARGIN, marginBottom: bottomBarHeight + HORIZONTAL_MARGIN }}
+      {...props}
     >
       <View>
         <BalanceSummary dateLabel="VALUE TODAY" />
@@ -84,7 +81,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
 
 export default DashboardScreen
 
-const DashboardScreenStyled = styled(ScrollScreen)`
+const DashboardScreenStyled = styled(TabScrollScreen)`
   gap: 30px;
 `
 

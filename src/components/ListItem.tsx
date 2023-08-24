@@ -24,7 +24,7 @@ import styled, { css } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
-interface ListItemProps extends PressableProps {
+export interface ListItemProps extends PressableProps {
   title: string
   subtitle?: string | ReactNode
   icon: ReactNode

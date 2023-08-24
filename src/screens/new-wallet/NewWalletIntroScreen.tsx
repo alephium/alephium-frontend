@@ -23,12 +23,12 @@ import styled from 'styled-components/native'
 import animationSrc from '~/animations/wallet.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletIntroScreen'>
+interface NewWalletIntroScreenProps extends StackScreenProps<RootStackParamList, 'NewWalletIntroScreen'>, ScreenProps {}
 
 const instructionsCreate: Instruction[] = [
   { text: 'You are about to create a wallet 🎉', type: 'primary' },
@@ -46,11 +46,11 @@ const instructions = {
   import: instructionsImport
 }
 
-const NewWalletIntroScreen = ({ navigation }: ScreenProps) => {
+const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method) || 'create'
 
   return (
-    <Screen>
+    <Screen {...props}>
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay />
       </AnimationContainer>

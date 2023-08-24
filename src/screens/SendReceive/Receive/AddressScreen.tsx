@@ -16,25 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
-import { StyleProp, ViewStyle } from 'react-native'
+import { useCallback } from 'react'
 import styled from 'styled-components/native'
 
+import AddressBox from '~/components/AddressBox'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import AddressBox from '~/screens/SendReceive/AddressBox'
+import { ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'>, ScrollScreenProps {}
 
-const AddressScreen = ({ navigation, style }: ScreenProps) => {
+const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
   const posthog = usePostHog()
 
@@ -44,8 +44,16 @@ const AddressScreen = ({ navigation, style }: ScreenProps) => {
     navigation.navigate('QRCodeScreen', { addressHash })
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      navigation.getParent()?.setOptions({
+        headerRight: () => <ContinueButton onPress={() => navigation.goBack()} text="Cancel" />
+      })
+    }, [navigation])
+  )
+
   return (
-    <ScrollScreen style={style}>
+    <ScrollScreen {...props}>
       <ScreenIntro
         title="Your addresses"
         subtitle="Select the address which you want to receive funds to."

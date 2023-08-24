@@ -22,7 +22,7 @@ import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
 
 import PinCodeInput from '~/components/inputs/PinCodeInput'
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -34,7 +34,9 @@ import { newPinVerified } from '~/store/credentialsSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { ShouldClearPin } from '~/types/misc'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>
+interface PinCodeCreationScreenProps
+  extends StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>,
+    ScreenProps {}
 
 type Step = 'enter-pin' | 'verify-pin'
 
@@ -56,7 +58,7 @@ const errorInstructionSet: Instruction[] = [
   { text: 'Please try again 💪', type: 'secondary' }
 ]
 
-const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
+const PinCodeCreationScreen = ({ navigation, ...props }: PinCodeCreationScreenProps) => {
   const dispatch = useAppDispatch()
   const hasAvailableBiometrics = useBiometrics()
   const { method, walletName: name } = useAppSelector((s) => s.walletGeneration)
@@ -107,7 +109,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
 
       setLoading(false)
 
-      navigation.navigate(hasAvailableBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessPage')
+      navigation.navigate(hasAvailableBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
     }
 
     return true
@@ -117,7 +119,7 @@ const PinCodeCreationScreen = ({ navigation }: ScreenProps) => {
     step === 'enter-pin' ? handlePinCodeSet(pin) : step === 'verify-pin' ? handlePinCodeVerification(pin) : false
 
   return (
-    <Screen>
+    <Screen {...props}>
       <CenteredInstructions instructions={shownInstructions} />
       <PinCodeInput pinLength={pinLength} onPinEntered={handleFullPinEntered} />
       <SpinnerModal isActive={loading} text="Creating wallet..." />

@@ -51,7 +51,11 @@ export const store = configureStore({
     [nftsSlice.name]: nftsSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().prepend(settingsListenerMiddleware.middleware).prepend(priceApi.middleware)
+    getDefaultMiddleware({
+      serializableCheck: false
+    })
+      .prepend(settingsListenerMiddleware.middleware)
+      .prepend(priceApi.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>

@@ -25,7 +25,7 @@ import styled from 'styled-components/native'
 import animationSrc from '~/animations/fingerprint.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -33,14 +33,14 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { enableBiometrics } from '~/persistent-storage/wallets'
 import { biometricsEnabled } from '~/store/activeWalletSlice'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>
+interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
 
 const instructions: Instruction[] = [
   { text: 'Do you want to activate biometric security? 👆', type: 'primary' },
   { text: 'Use fingerprint or face recognition instead of the pin to unlock the wallet', type: 'secondary' }
 ]
 
-const AddBiometricsScreen = ({ navigation, route: { params } }: ScreenProps) => {
+const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBiometricsScreenProps) => {
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const method = useAppSelector((s) => s.walletGeneration.method)
@@ -60,7 +60,7 @@ const AddBiometricsScreen = ({ navigation, route: { params } }: ScreenProps) => 
     posthog?.capture('Activated biometrics from wallet creation flow')
 
     if (params?.skipAddressDiscovery) {
-      navigation.navigate('NewWalletSuccessPage')
+      navigation.navigate('NewWalletSuccessScreen')
     } else {
       navigateToAddressDiscoveryPage()
     }
@@ -74,12 +74,12 @@ const AddBiometricsScreen = ({ navigation, route: { params } }: ScreenProps) => 
     navigation.navigate(
       method === 'import' && !params?.skipAddressDiscovery
         ? 'ImportWalletAddressDiscoveryScreen'
-        : 'NewWalletSuccessPage'
+        : 'NewWalletSuccessScreen'
     )
   }
 
   return (
-    <Screen>
+    <Screen {...props}>
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
       </AnimationContainer>

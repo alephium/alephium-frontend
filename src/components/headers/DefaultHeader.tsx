@@ -46,6 +46,8 @@ const scrollRange = [0, 90]
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 
+// TODO: Reimplement tap bar to scroll up
+
 const DefaultHeader = ({
   HeaderRight,
   HeaderLeft,

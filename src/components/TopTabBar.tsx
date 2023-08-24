@@ -19,14 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
 import { useState } from 'react'
 import { Pressable } from 'react-native'
-import Reanimated, { Extrapolate, interpolate, interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Reanimated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import { useScrollContext } from '~/contexts/ScrollContext'
-import { BORDER_RADIUS, HORIZONTAL_MARGIN } from '~/style/globalStyle'
-
-const scrollRange = [0, 50]
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 type Tab = {
   label: string
@@ -43,6 +39,8 @@ const tabs: Tab[] = [
     screen: 'ContactsScreen'
   }
 ]
+
+// TODO: Reimplement tap bar to scroll up
 
 const TopTabBar = ({ navigation }: BottomTabHeaderProps) => {
   const [activeTab, setActiveTab] = useState(tabs[0])

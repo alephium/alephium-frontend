@@ -31,7 +31,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
-import Screen, { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import Screen, { ScreenProps, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import PasswordModal from '~/components/PasswordModal'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -50,7 +50,9 @@ import { WalletImportData } from '~/types/wallet'
 import { bip39Words } from '~/utils/bip39'
 import { pbkdf2 } from '~/utils/crypto'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'ImportWalletSeedScreen'>
+interface ImportWalletSeedScreenProps
+  extends StackScreenProps<RootStackParamList, 'ImportWalletSeedScreen'>,
+    ScreenProps {}
 
 type SelectedWord = {
   word: string
@@ -60,7 +62,7 @@ type SelectedWord = {
 // TODO: Set this to false before creating production build
 const enablePasteForDevelopment = true
 
-const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
+const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreenProps) => {
   const dispatch = useAppDispatch()
   const name = useAppSelector((s) => s.walletGeneration.walletName)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
@@ -184,7 +186,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
       if (!importedData?.addresses) {
         navigation.navigate('ImportWalletAddressDiscoveryScreen')
       } else {
-        navigation.navigate('NewWalletSuccessPage')
+        navigation.navigate('NewWalletSuccessScreen')
       }
 
       setDecryptedWalletFromQRCode(undefined)
@@ -220,7 +222,7 @@ const ImportWalletSeedScreen = ({ navigation }: ScreenProps) => {
   const isImportButtonVisible = selectedWords.length >= 12 || enablePasteForDevelopment
 
   return (
-    <Screen>
+    <Screen {...props}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}

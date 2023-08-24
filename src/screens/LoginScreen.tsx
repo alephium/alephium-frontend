@@ -21,7 +21,7 @@ import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
 
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import {
@@ -34,27 +34,25 @@ import { AddressPartial } from '~/types/addresses'
 import { ActiveWalletState } from '~/types/wallet'
 import { resetNavigationState, setNavigationState } from '~/utils/navigation'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'LoginScreen'>
+interface LoginScreenProps extends StackScreenProps<RootStackParamList, 'LoginScreen'>, ScreenProps {}
 
 const LoginScreen = ({
   route: {
     params: { walletIdToLogin, workflow }
-  }
-}: ScreenProps) => {
+  },
+  ...props
+}: LoginScreenProps) => {
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
   const posthog = usePostHog()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loading, setLoading] = useState(false)
 
   const handleSuccessfulLogin = useCallback(
     async (pin?: string, wallet?: ActiveWalletState) => {
       if (!pin || !wallet) return
 
-      setLoading(true)
       setIsPinModalVisible(false)
       let addressesToInitialize = [] as AddressPartial[]
 
@@ -80,18 +78,15 @@ const LoginScreen = ({
 
         posthog?.capture('Unlocked wallet')
       }
-
-      setLoading(false)
     },
     [addressesStatus, dispatch, lastNavigationState, posthog, workflow]
   )
 
   return (
-    <Screen style={{ marginTop: 40 }}>
+    <Screen {...props}>
       {isPinModalVisible && (
         <ConfirmWithAuthModal usePin onConfirm={handleSuccessfulLogin} walletId={walletIdToLogin} />
       )}
-      {/*<SpinnerModal isActive={loading} text="Unlocking wallet..." /> CANT SHOW 2 MODALS ON IOS*/}
     </Screen>
   )
 }

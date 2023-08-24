@@ -16,10 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { PossibleNextScreenAfterDestination } from '~/navigation/SendNavigation'
-import { AddressHash } from '~/types/addresses'
-import { AddressConfirmedTransaction } from '~/types/transactions'
-
 type RootStackParamList = {
   LandingScreen: undefined
   NewWalletIntroScreen: undefined
@@ -28,7 +24,7 @@ type RootStackParamList = {
   AddBiometricsScreen?: {
     skipAddressDiscovery?: boolean
   }
-  NewWalletSuccessPage: undefined
+  NewWalletSuccessScreen: undefined
   ImportWalletSeedScreen: undefined
   ImportWalletAddressDiscoveryScreen: undefined
   InWalletTabsNavigation: undefined
@@ -37,39 +33,24 @@ type RootStackParamList = {
     workflow: 'wallet-switch' | 'wallet-unlock'
   }
   SplashScreen: undefined
-  SwitchWalletScreen: undefined
-  NewAddressNavigation: undefined
-  EditAddressScreen: {
-    addressHash: AddressHash
+  SwitchWalletScreen?: {
+    disableBack?: boolean
   }
+  NewAddressScreen: undefined
   SettingsScreen: undefined
-  SwitchNetworkScreen: undefined
-  SwitchWalletAfterDeletionScreen: undefined
-  TransactionScreen: {
-    // TODO: Make all params serializable to help with state persistance
-    tx: AddressConfirmedTransaction
-  }
   SendNavigation: undefined
   ReceiveNavigation: undefined
+  ContactScreen: {
+    contactId: string
+  }
   SecurityScreen: undefined
   AddressDiscoveryScreen?: {
     isImporting?: boolean
-  }
-  CurrencySelectScreen: undefined
-  ContactScreen: {
-    contactId: string
   }
   NewContactScreen: undefined
   EditContactScreen: {
     contactId: string
   }
-  SelectContactScreen: {
-    nextScreen: PossibleNextScreenAfterDestination
-  }
-  SelectAddressScreen: {
-    nextScreen: PossibleNextScreenAfterDestination
-  }
-  AddressQuickNavigationScreen: undefined
 }
 
 export default RootStackParamList

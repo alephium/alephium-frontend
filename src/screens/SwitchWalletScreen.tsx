@@ -16,128 +16,50 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
-import { StackScreenProps } from '@react-navigation/stack'
-import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
-import { usePostHog } from 'posthog-react-native'
-import { useState } from 'react'
-import { Alert, ScrollView, StyleProp, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { useFocusEffect } from '@react-navigation/native'
+import { CardStyleInterpolators, StackScreenProps } from '@react-navigation/stack'
+import { useCallback } from 'react'
+import { Alert, BackHandler } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
-import BoxSurface from '~/components/layout/BoxSurface'
-import Screen, { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
-import RadioButtonRow from '~/components/RadioButtonRow'
-import SpinnerModal from '~/components/SpinnerModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useSortedWallets } from '~/hooks/useSortedWallets'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import {
-  deriveWalletStoredAddresses,
-  getActiveWalletMetadata,
-  getStoredWalletById,
-  rememberActiveWallet
-} from '~/persistent-storage/wallets'
-import { walletSwitched } from '~/store/activeWalletSlice'
-import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
-import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
-import { resetNavigationState } from '~/utils/navigation'
+import SwitchWalletBase from '~/screens/SwitchWalletBase'
 
-export interface SwitchWalletScreenProps extends StackScreenProps<RootStackParamList, 'SwitchWalletScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+export interface SwitchWalletScreenProps
+  extends StackScreenProps<RootStackParamList, 'SwitchWalletScreen'>,
+    ScreenProps {}
 
-const SwitchWalletScreen = ({ navigation, style }: SwitchWalletScreenProps) => {
-  const dispatch = useAppDispatch()
-  const wallets = useSortedWallets()
-  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
-  const pin = useAppSelector((s) => s.credentials.pin)
-  const posthog = usePostHog()
+const SwitchWalletScreen = ({ navigation, route: { params }, ...props }: SwitchWalletScreenProps) => {
+  const insets = useSafeAreaInsets()
 
-  const [loading, setLoading] = useState(false)
+  useFocusEffect(
+    useCallback(() => {
+      if (params?.disableBack) {
+        navigation.setOptions({
+          headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forNoAnimation,
+          gestureEnabled: false
+        })
 
-  const handleButtonPress = (method: WalletGenerationMethod) => {
-    dispatch(methodSelected(method))
-    navigation.navigate('NewWalletIntroScreen')
-  }
+        const subscription = BackHandler.addEventListener('hardwareBackPress', handleBackButton)
 
-  const handleWalletItemPress = async (walletId: string) => {
-    setLoading(true)
-
-    try {
-      const storedWallet = await getStoredWalletById(walletId)
-      let mnemonic = storedWallet.mnemonic
-
-      if (storedWallet.authType === 'pin') {
-        if (pin) {
-          const decryptedWallet = await walletOpenAsyncUnsafe(pin, storedWallet.mnemonic, pbkdf2, mnemonicToSeed)
-          mnemonic = decryptedWallet.mnemonic
-        } else {
-          navigation.navigate('LoginScreen', { walletIdToLogin: walletId, workflow: 'wallet-switch' })
-          return
-        }
+        return subscription.remove
       }
+    }, [navigation, params?.disableBack])
+  )
 
-      const wallet = { ...storedWallet, mnemonic }
-      await rememberActiveWallet(wallet.metadataId)
-      const addressesToInitialize = await deriveWalletStoredAddresses(wallet)
-      const activeWalletMetadata = await getActiveWalletMetadata()
+  const handleBackButton = () => {
+    Alert.alert('Select a wallet', 'Please, select a wallet to continue')
 
-      dispatch(walletSwitched({ wallet, addressesToInitialize, contacts: activeWalletMetadata?.contacts ?? [] }))
-      resetNavigationState()
-
-      posthog?.capture('Switched wallet')
-    } catch (e) {
-      Alert.alert(getHumanReadableError(e, 'Could not switch wallets'))
-
-      posthog?.capture('Error', { message: 'Could not switch wallets' })
-    } finally {
-      setLoading(false)
-    }
+    return true
   }
 
   return (
-    <SwitchWalletScreenStyled style={style}>
-      <ScreenSection>
-        <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
-        <Subtitle>Switch to another wallet?</Subtitle>
-      </ScreenSection>
-      <ScrollView>
-        <ScreenSection>
-          <BoxSurface>
-            {wallets.map((wallet, index) => (
-              <RadioButtonRow
-                key={wallet.id}
-                title={wallet.name}
-                onPress={() => handleWalletItemPress(wallet.id)}
-                isActive={wallet.id === activeWalletMetadataId}
-                isInput
-              />
-            ))}
-          </BoxSurface>
-        </ScreenSection>
-      </ScrollView>
-      <BottomScreenSection>
-        <ButtonsRow>
-          <Button title="New wallet" onPress={() => handleButtonPress('create')} Icon={PlusIcon} />
-          <Button title="Import wallet" onPress={() => handleButtonPress('import')} Icon={ArrowDownIcon} />
-        </ButtonsRow>
-      </BottomScreenSection>
-      <SpinnerModal isActive={loading} text="Switching wallets..." />
-    </SwitchWalletScreenStyled>
+    <Screen {...props} style={{ paddingTop: insets.top }}>
+      <SwitchWalletBase />
+    </Screen>
   )
 }
 
 export default SwitchWalletScreen
-
-const SwitchWalletScreenStyled = styled(Screen)`
-  padding-top: 20px;
-`
-
-const Subtitle = styled(AppText)`
-  font-weight: 500;
-  font-size: 16px;
-  color: ${({ theme }) => theme.font.secondary};
-`

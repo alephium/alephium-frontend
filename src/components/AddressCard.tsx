@@ -35,14 +35,14 @@ import { themes, ThemeType } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { currencies } from '~/utils/currencies'
-import { navigateRootStack } from '~/utils/navigation'
 
 interface AddressCardProps {
   addressHash: AddressHash
+  onSettingsPress: () => void
   style?: StyleProp<ViewStyle>
 }
 
-const AddressCard = ({ style, addressHash }: AddressCardProps) => {
+const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const currency = useAppSelector((s) => s.settings.currency)
@@ -75,12 +75,7 @@ const AddressCard = ({ style, addressHash }: AddressCardProps) => {
           />
           {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
         </AddressBadgeContainer>
-        <Button
-          Icon={SettingsIcon}
-          type="transparent"
-          color={textColor}
-          onPress={() => navigateRootStack('EditAddressScreen', { addressHash })}
-        />
+        <Button Icon={SettingsIcon} type="transparent" color={textColor} onPress={onSettingsPress} />
       </Header>
       <Amounts>
         <FiatAmount
