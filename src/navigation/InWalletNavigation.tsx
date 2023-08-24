@@ -18,13 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Album as AddressesIcon, ArrowLeftRight as ArrowsIcon, List as ListIcon } from 'lucide-react-native'
+import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
 import DefaultHeader from '~/components/headers/DefaultHeader'
 import TopTabBar from '~/components/TopTabBar'
-import WalletSwitch from '~/components/WalletSwitch'
+import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { ScrollContextProvider } from '~/contexts/ScrollContext'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
@@ -38,48 +39,50 @@ const InWalletTabsNavigation = () => {
 
   return (
     <ScrollContextProvider>
-      <InWalletTabs.Navigator
-        screenOptions={{
-          headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
-          headerTitle: ''
-        }}
-        tabBar={(props) => <FooterMenu {...props} />}
-      >
-        <InWalletTabs.Screen
-          name="DashboardScreen"
-          component={DashboardScreen}
-          options={{
-            title: 'Overview',
-            tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} strokeWidth={1.5} />,
-            header: (props) => (
-              <DefaultHeader
-                HeaderRight={<DashboardHeaderActions />}
-                HeaderLeft={<WalletSwitch />}
-                bgColor={theme.bg.primary}
-                {...props}
-              />
-            )
+      <Host>
+        <InWalletTabs.Navigator
+          screenOptions={{
+            headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
+            headerTitle: ''
           }}
-        />
-        <InWalletTabs.Screen
-          name="TransfersScreen"
-          component={TransfersScreen}
-          options={{
-            title: 'Transfers',
-            tabBarIcon: ({ color, size }) => <ArrowsIcon color={color} size={size} strokeWidth={1.5} />,
-            header: (props) => <DefaultHeader HeaderLeft="Transfers" {...props} />
-          }}
-        />
-        <InWalletTabs.Screen
-          name="AddressesTabNavigation"
-          component={AddressesTabNavigation}
-          options={{
-            title: 'Addresses',
-            tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />,
-            header: (props) => <TopTabBar {...props} />
-          }}
-        />
-      </InWalletTabs.Navigator>
+          tabBar={(props) => <FooterMenu {...props} />}
+        >
+          <InWalletTabs.Screen
+            name="DashboardScreen"
+            component={DashboardScreen}
+            options={{
+              title: 'Overview',
+              tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} strokeWidth={1.5} />,
+              header: (props) => (
+                <DefaultHeader
+                  HeaderRight={<DashboardHeaderActions />}
+                  HeaderLeft={<WalletSwitchButton />}
+                  bgColor={theme.bg.primary}
+                  {...props}
+                />
+              )
+            }}
+          />
+          <InWalletTabs.Screen
+            name="TransfersScreen"
+            component={TransfersScreen}
+            options={{
+              title: 'Transfers',
+              tabBarIcon: ({ color, size }) => <ArrowsIcon color={color} size={size} strokeWidth={1.5} />,
+              header: (props) => <DefaultHeader HeaderLeft="Transfers" {...props} />
+            }}
+          />
+          <InWalletTabs.Screen
+            name="AddressesTabNavigation"
+            component={AddressesTabNavigation}
+            options={{
+              title: 'Addresses',
+              tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />,
+              header: (props) => <TopTabBar {...props} />
+            }}
+          />
+        </InWalletTabs.Navigator>
+      </Host>
     </ScrollContextProvider>
   )
 }

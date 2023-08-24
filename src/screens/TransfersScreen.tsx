@@ -16,16 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { FlatList } from 'react-native'
 
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
-import { useScrollEventHandler } from '~/contexts/ScrollContext'
+import { useScrollContext, useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { makeSelectAddressesConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { makeSelectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { AddressTransaction } from '~/types/transactions'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
@@ -35,6 +38,19 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
   const scrollHandler = useScrollEventHandler()
+  const { setScrollToTop } = useScrollContext()
+  const listRef = useRef<FlatList<AddressTransaction>>(null)
+
+  useEffect(() => {
+    navigation.addListener('blur', () => listRef.current?.scrollToOffset({ offset: 0, animated: false }))
+  }, [navigation])
+
+  useFocusEffect(
+    useCallback(
+      () => setScrollToTop(() => () => listRef.current?.scrollToOffset({ offset: 0, animated: true })),
+      [setScrollToTop]
+    )
+  )
 
   return (
     <TransactionsFlatListScreen
@@ -43,6 +59,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       initialNumToRender={8}
       contentContainerStyle={{ flexGrow: 1 }}
       onScroll={scrollHandler}
+      ref={listRef}
     />
   )
 }

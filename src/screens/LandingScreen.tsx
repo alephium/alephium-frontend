@@ -18,21 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useAppDispatch } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'LandingScreen'>
+interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
-const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenProps) => {
+const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
 
@@ -49,7 +48,7 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
   }, [navigation])
 
   return (
-    <Screen>
+    <Screen {...props}>
       <LogoContainer>
         <AlephiumLogoStyled color={theme.bg.contrast} />
       </LogoContainer>
@@ -67,9 +66,7 @@ const LandingScreen = ({ navigation }: { style: StyleProp<ViewStyle> } & ScreenP
   )
 }
 
-export default styled(LandingScreen)`
-  flex: 1;
-`
+export default LandingScreen
 
 const LogoContainer = styled.View`
   flex: 1.5;

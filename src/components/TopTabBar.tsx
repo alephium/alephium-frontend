@@ -44,7 +44,7 @@ const tabs: Tab[] = [
 ]
 
 const TopTabBar = ({ navigation }: BottomTabHeaderProps) => {
-  const { scrollY } = useScrollContext()
+  const { scrollY, scrollToTop } = useScrollContext()
   const theme = useTheme()
 
   const [activeTab, setActiveTab] = useState(tabs[0])
@@ -64,19 +64,21 @@ const TopTabBar = ({ navigation }: BottomTabHeaderProps) => {
   }
 
   return (
-    <Reanimated.View style={[headerStyle, { paddingTop: insets.top }]}>
-      <TabsRow>
-        {tabs.map((tab) => (
-          <TabBarItem
-            key={tab.label}
-            isActive={activeTab.label === tab.label}
-            label={tab.label}
-            navigation={navigation}
-            onPress={() => handleOnTabPress(tab)}
-          />
-        ))}
-      </TabsRow>
-    </Reanimated.View>
+    <Pressable onPress={() => scrollToTop && scrollToTop()}>
+      <Reanimated.View style={[headerStyle, { paddingTop: insets.top }]}>
+        <TabsRow>
+          {tabs.map((tab) => (
+            <TabBarItem
+              key={tab.label}
+              isActive={activeTab.label === tab.label}
+              label={tab.label}
+              navigation={navigation}
+              onPress={() => handleOnTabPress(tab)}
+            />
+          ))}
+        </TabsRow>
+      </Reanimated.View>
+    </Pressable>
   )
 }
 

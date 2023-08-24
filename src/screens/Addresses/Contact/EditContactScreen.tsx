@@ -24,6 +24,7 @@ import { Alert } from 'react-native'
 import Toast from 'react-native-root-toast'
 
 import Button from '~/components/buttons/Button'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -32,9 +33,9 @@ import ContactForm from '~/screens/Addresses/Contact/ContactForm'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { ContactFormData } from '~/types/contacts'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'EditContactScreen'>
+interface EditContactScreenProps extends StackScreenProps<RootStackParamList, 'EditContactScreen'>, ScreenProps {}
 
-const EditContactScreen = ({ navigation, route: { params } }: ScreenProps) => {
+const EditContactScreen = ({ navigation, route: { params }, ...props }: EditContactScreenProps) => {
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
@@ -100,13 +101,13 @@ const EditContactScreen = ({ navigation, route: { params } }: ScreenProps) => {
   }
 
   return (
-    <>
+    <Screen {...props}>
       <ContactForm initialValues={contact} onSubmit={handleSavePress} />
       <SpinnerModal
         isActive={loading || isDeleting}
         text={loading ? 'Saving contact...' : isDeleting ? 'Deleting contact...' : ''}
       />
-    </>
+    </Screen>
   )
 }
 

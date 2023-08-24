@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
-import { ScrollView } from 'react-native'
+import { View } from 'react-native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -65,7 +65,7 @@ const AddressForm = ({
 
   return (
     <>
-      <ScrollView>
+      <View style={{ flexGrow: 1 }}>
         <ScreenSection>
           <BoxSurface>
             <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
@@ -94,7 +94,7 @@ const AddressForm = ({
             </ExpandableRow>
           </ScreenSection>
         )}
-      </ScrollView>
+      </View>
       <BottomScreenSection>
         <Button title={buttonText} centered onPress={() => onSubmit({ isDefault, label, color, group })} />
       </BottomScreenSection>

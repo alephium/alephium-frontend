@@ -24,7 +24,7 @@ import styled from 'styled-components/native'
 import Button from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -42,9 +42,9 @@ const instructions: Instruction[] = [
   { text: 'How should we call this wallet?', type: 'primary' }
 ]
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>
+interface NewWalletNameScreenProps extends StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>, ScreenProps {}
 
-const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
+const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps) => {
   const dispatch = useAppDispatch()
   const [name, setName] = useState('')
   const method = useAppSelector((s) => s.walletGeneration.method)
@@ -87,7 +87,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
 
       setLoading(false)
 
-      navigation.navigate('NewWalletSuccessPage')
+      navigation.navigate('NewWalletSuccessScreen')
     },
     [dispatch, hasAvailableBiometrics, name, navigation, posthog]
   )
@@ -113,7 +113,7 @@ const NewWalletNameScreen = ({ navigation }: ScreenProps) => {
   }
 
   return (
-    <Screen>
+    <Screen {...props}>
       <CenteredInstructions instructions={instructions} stretch />
       <InputContainer>
         <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus error={error} />

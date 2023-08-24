@@ -16,13 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, ReactNode, useContext } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
 interface ScrollContextValue {
   scrollY?: SharedValue<number>
   scrollDirection?: SharedValue<ScrollDirection>
+  scrollToTop?: () => void
+  setScrollToTop: (scrollToTop: () => void) => void
 }
 
 const scrollDirectionDeltaThreshold = 10
@@ -31,14 +33,21 @@ export type ScrollDirection = 'up' | 'down' | undefined
 
 const ScrollContext = createContext<ScrollContextValue>({
   scrollY: undefined,
-  scrollDirection: undefined
+  scrollDirection: undefined,
+  scrollToTop: undefined,
+  setScrollToTop: () => () => null
 })
 
 export const ScrollContextProvider = ({ children }: { children: ReactNode }) => {
   const scrollY = useSharedValue(0)
   const scrollDirection = useSharedValue(undefined as ScrollDirection)
+  const [scrollToTop, setScrollToTop] = useState<() => void>(() => () => null)
 
-  return <ScrollContext.Provider value={{ scrollY, scrollDirection }}>{children}</ScrollContext.Provider>
+  return (
+    <ScrollContext.Provider value={{ scrollY, scrollDirection, scrollToTop, setScrollToTop }}>
+      {children}
+    </ScrollContext.Provider>
+  )
 }
 
 export const useScrollContext = () => useContext(ScrollContext)

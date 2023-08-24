@@ -16,15 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { View } from 'react-native'
+import { View, ViewProps } from 'react-native'
 import { SafeAreaViewProps } from 'react-native-safe-area-context'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 
-const Screen = ({ children, style }: SafeAreaViewProps) => <View style={style}>{children}</View>
+export type ScreenProps = ViewProps
 
-export default styled(Screen)`
+export default styled.View`
   flex: 1;
   background-color: ${({ theme }) => theme.bg.primary};
 `

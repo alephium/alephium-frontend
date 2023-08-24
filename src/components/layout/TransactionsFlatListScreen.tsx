@@ -16,12 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useCallback } from 'react'
-import { ActivityIndicator, FlatListProps } from 'react-native'
+import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
+import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
+import { useModalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Modalize from '~/components/layout/Modalize'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import TransactionModal from '~/screens/TransactionModal'
 import {
   selectAddressByHash,
   syncAddressesData,
@@ -30,10 +34,10 @@ import {
 } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
+import { isPendingTx } from '~/utils/transactions'
 
-import TransactionRow from '../TransactionRow'
-import { ScreenSectionTitle } from './Screen'
-import ScrollFlatListScreen from './ScrollFlatListScreen'
+import TransactionListItem from '../TransactionListItem'
+import Screen, { ScreenSectionTitle } from './Screen'
 
 interface TransactionsFlatListScreenProps extends Partial<FlatListProps<AddressTransaction>> {
   confirmedTransactions: AddressConfirmedTransaction[]
@@ -50,25 +54,42 @@ type TransactionItem = {
 
 const transactionKeyExtractor = (tx: AddressTransaction) => `${tx.hash}-${tx.address.hash}`
 
-const TransactionsFlatListScreen = ({
-  confirmedTransactions,
-  pendingTransactions,
-  addressHash,
-  ListHeaderComponent,
-  showInternalInflows = false,
-  ...props
-}: TransactionsFlatListScreenProps) => {
+const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScreen(
+  {
+    confirmedTransactions,
+    pendingTransactions,
+    addressHash,
+    ListHeaderComponent,
+    showInternalInflows = false,
+    style,
+    ...props
+  }: TransactionsFlatListScreenProps,
+  ref: ForwardedRef<FlatList<AddressTransaction>>
+) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
+  const { ref: transactionModalRef, open: openTransactionModal } = useModalize()
+
+  const [selectedTx, setSelectedTx] = useState<AddressConfirmedTransaction>()
 
   const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
     renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
 
   const renderTransactionItem = ({ item: tx, isLast }: TransactionItem) => (
-    <TransactionRowStyled key={transactionKeyExtractor(tx)} tx={tx} isLast={isLast} />
+    <TransactionListItemStyled
+      key={transactionKeyExtractor(tx)}
+      tx={tx}
+      isLast={isLast}
+      onPress={() => {
+        if (!isPendingTx(tx)) {
+          setSelectedTx(tx)
+          openTransactionModal()
+        }
+      }}
+    />
   )
 
   const loadNextTransactionsPage = useCallback(async () => {
@@ -88,60 +109,66 @@ const TransactionsFlatListScreen = ({
   }
 
   return (
-    <ScrollFlatListScreen
-      {...props}
-      data={confirmedTransactions}
-      renderItem={renderConfirmedTransactionItem}
-      keyExtractor={transactionKeyExtractor}
-      onEndReached={loadNextTransactionsPage}
-      onRefresh={refreshData}
-      refreshing={pendingTransactions.length > 0}
-      extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
-      ListHeaderComponent={
-        <>
-          {ListHeaderComponent}
-          {pendingTransactions.length > 0 && (
-            <>
-              <PendingTransactionsSectionTitle>
-                <ScreenSectionTitleStyled>Pending transactions</ScreenSectionTitleStyled>
-                <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
-              </PendingTransactionsSectionTitle>
-              {pendingTransactions.map((pendingTransaction, index) =>
-                renderTransactionItem({
-                  item: pendingTransaction,
-                  index,
-                  isLast: index === pendingTransactions.length - 1
-                })
+    <Screen style={style}>
+      <FlatList
+        {...props}
+        scrollEventThrottle={16}
+        ref={ref}
+        data={confirmedTransactions}
+        renderItem={renderConfirmedTransactionItem}
+        keyExtractor={transactionKeyExtractor}
+        onEndReached={loadNextTransactionsPage}
+        onRefresh={refreshData}
+        refreshing={pendingTransactions.length > 0}
+        extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
+        ListHeaderComponent={
+          <>
+            {ListHeaderComponent}
+            {pendingTransactions.length > 0 && (
+              <>
+                <PendingTransactionsSectionTitle>
+                  <ScreenSectionTitleStyled>Pending transactions</ScreenSectionTitleStyled>
+                  <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
+                </PendingTransactionsSectionTitle>
+                {pendingTransactions.map((pendingTransaction, index) =>
+                  renderTransactionItem({
+                    item: pendingTransaction,
+                    index,
+                    isLast: index === pendingTransactions.length - 1
+                  })
+                )}
+                <ScreenSectionTitleStyled>Confirmed transactions</ScreenSectionTitleStyled>
+              </>
+            )}
+          </>
+        }
+        ListFooterComponent={
+          <Footer>
+            {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
+              confirmedTransactions.length > 0 && (
+                <AppText color="tertiary" bold>
+                  👏 You reached the end of history.
+                </AppText>
               )}
-              <ScreenSectionTitleStyled>Confirmed transactions</ScreenSectionTitleStyled>
-            </>
-          )}
-        </>
-      }
-      ListFooterComponent={
-        <Footer>
-          {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
-            confirmedTransactions.length > 0 && (
+            {isLoading &&
+              ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
+                <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
+              )}
+            {confirmedTransactions.length === 0 && !isLoading && (
               <AppText color="tertiary" bold>
-                👏 You reached the end of history.
+                No transactions yet
               </AppText>
             )}
-          {isLoading &&
-            ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
-              <AppText color="tertiary" bold>
-                Loading more...
-              </AppText>
-            )}
-          {confirmedTransactions.length === 0 && !isLoading && (
-            <AppText color="tertiary" bold>
-              No transactions yet
-            </AppText>
-          )}
-        </Footer>
-      }
-    />
+          </Footer>
+        }
+      />
+
+      <Portal>
+        <Modalize ref={transactionModalRef}>{selectedTx && <TransactionModal tx={selectedTx} />}</Modalize>
+      </Portal>
+    </Screen>
   )
-}
+})
 
 export default TransactionsFlatListScreen
 
@@ -150,7 +177,7 @@ const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
   margin-top: 22px;
 `
 
-const TransactionRowStyled = styled(TransactionRow)`
+const TransactionListItemStyled = styled(TransactionListItem)`
   margin: 0 20px;
 `
 
@@ -162,6 +189,8 @@ const Footer = styled.View`
 
 const PendingTransactionsSectionTitle = styled.View`
   flex-direction: row;
+  gap: 10px;
+  align-items: center;
 `
 
 const ActivityIndicatorStyled = styled(ActivityIndicator)`

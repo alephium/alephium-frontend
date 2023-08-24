@@ -24,28 +24,32 @@ import { Book, ClipboardIcon, Contact2, Scan } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { StyleProp, ViewStyle } from 'react-native'
+import { useModalize } from 'react-native-modalize'
+import { Portal } from 'react-native-portalize'
+import { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import Modalize from '~/components/layout/Modalize'
+import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
+import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
+import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
+import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { cameraToggled } from '~/store/appSlice'
 import { AddressHash } from '~/types/addresses'
+import { Contact } from '~/types/contacts'
 import { validateIsAddressValid } from '~/utils/forms'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'DestinationScreen'> {
-  style?: StyleProp<ViewStyle>
-}
+interface DestinationScreenProps extends StackScreenProps<SendNavigationParamList, 'DestinationScreen'>, ScreenProps {}
 
 type FormData = {
   toAddressHash: AddressHash
@@ -53,7 +57,7 @@ type FormData = {
 
 const requiredErrorMessage = 'This field is required'
 
-const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps) => {
+const DestinationScreen = ({ navigation, route: { params }, ...props }: DestinationScreenProps) => {
   const {
     control,
     handleSubmit,
@@ -64,7 +68,11 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
   const posthog = usePostHog()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
+  const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
+  const { ref: contactSelectModalRef, open: openContactSelectModal, close: closeContactSelectModal } = useModalize()
+  const { ref: addressSelectModalRef, open: openAddressSelectModal, close: closeAddressSelectModal } = useModalize()
+  const shouldFlash = useSharedValue(0)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -86,6 +94,31 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
     } else {
       Toast.show('This is not a valid Alephium address.')
     }
+  }
+
+  const flashInputBg = () => {
+    shouldFlash.value = 1
+    setTimeout(() => (shouldFlash.value = 0), 300)
+  }
+
+  const handleContactPress = (contactId: Contact['id']) => {
+    const contact = contacts.find((c) => c.id === contactId)
+
+    if (contact) {
+      setToAddress(contact.address)
+      flashInputBg()
+      closeContactSelectModal()
+
+      posthog?.capture('Send: Selected contact to send funds to')
+    }
+  }
+
+  const handleAddressPress = (addressHash: AddressHash) => {
+    setToAddress(addressHash)
+    flashInputBg()
+    closeAddressSelectModal()
+
+    posthog?.capture('Send: Selected own address to send funds to')
   }
 
   useEffect(() => {
@@ -117,8 +150,14 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
     }
   }, [setValue, toAddress])
 
+  const inputStyle = useAnimatedStyle(() => ({
+    backgroundColor: withTiming(interpolateColor(shouldFlash.value, [0, 1], [theme.bg.primary, theme.global.pale]), {
+      duration: 300
+    })
+  }))
+
   return (
-    <ScrollScreen style={style}>
+    <Screen {...props}>
       <ScreenIntro
         title="Destination"
         subtitle="Send to an address, a contact, or one of your other addresses."
@@ -135,6 +174,7 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
                 onChangeText={onChange}
                 onBlur={onBlur}
                 error={errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message}
+                style={inputStyle}
               />
             )}
             rules={{
@@ -154,14 +194,14 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
             compact
             Icon={Contact2}
             title="Contacts"
-            onPress={() => navigation.navigate('SelectContactScreen', { nextScreen })}
+            onPress={() => openContactSelectModal()}
           />
           <Button
             color={theme.global.accent}
             compact
             Icon={Book}
             title="Addresses"
-            onPress={() => navigation.navigate('SelectAddressScreen', { nextScreen })}
+            onPress={() => openAddressSelectModal()}
           />
         </ButtonsRow>
       </ScreenSection>
@@ -172,7 +212,16 @@ const DestinationScreen = ({ navigation, style, route: { params } }: ScreenProps
           text="Scan an Alephium address QR code"
         />
       )}
-    </ScrollScreen>
+
+      <Portal>
+        <Modalize ref={contactSelectModalRef}>
+          <SelectContactModal onContactPress={handleContactPress} />
+        </Modalize>
+        <Modalize ref={addressSelectModalRef}>
+          <SelectAddressModal onAddressPress={handleAddressPress} />
+        </Modalize>
+      </Portal>
+    </Screen>
   )
 }
 

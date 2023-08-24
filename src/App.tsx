@@ -202,7 +202,7 @@ const Main = ({ children }: { children: ReactNode }) => {
 
       if (!wallet) {
         if (await areThereOtherWallets()) {
-          navigateRootStack('SwitchWalletAfterDeletionScreen')
+          navigateRootStack('SwitchWalletScreen', { disableBack: true })
         } else if (lastNavigationState) {
           setNavigationState(lastNavigationState)
         } else {

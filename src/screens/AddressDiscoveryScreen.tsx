@@ -22,7 +22,7 @@ import Checkbox from 'expo-checkbox'
 import { Import, Search, X } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, BackHandler, ScrollView, View } from 'react-native'
+import { ActivityIndicator, BackHandler, View } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -30,7 +30,8 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import HighlightRow from '~/components/HighlightRow'
-import Screen, { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -45,9 +46,9 @@ import {
 import { AddressHash } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 
-type ScreenProps = StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>
+interface ScreenProps extends StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>, ScrollScreenProps {}
 
-const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) => {
+const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const addresses = useAppSelector(selectAllAddresses)
@@ -89,7 +90,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
       posthog?.capture('Error', { message: 'Could not import addresses from address discovery' })
     }
 
-    navigation.navigate(isImporting ? 'NewWalletSuccessPage' : 'InWalletTabsNavigation')
+    navigation.navigate(isImporting ? 'NewWalletSuccessScreen' : 'InWalletTabsNavigation')
 
     setImportLoading(false)
   }
@@ -115,7 +116,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
 
   const cancelAndGoToWelcomeScreen = useCallback(() => {
     dispatch(addressDiscoveryStopped())
-    navigation.navigate('NewWalletSuccessPage')
+    navigation.navigate('NewWalletSuccessScreen')
   }, [dispatch, navigation])
 
   // Start scanning and override back navigation when in wallet import flow
@@ -157,74 +158,72 @@ const AddressDiscoveryScreen = ({ navigation, route: { params } }: ScreenProps) 
   }
 
   return (
-    <Screen>
-      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}>
-        <View>
+    <ScrollScreen {...props}>
+      <View>
+        <ScreenSection>
+          <AppText bold>Scan the blockchain to find your active addresses. This process might take a while.</AppText>
+        </ScreenSection>
+        <ScreenSection>
+          <ScreenSectionTitle>Current addresses</ScreenSectionTitle>
+          {addresses.map((address, index) => (
+            <HighlightRow
+              key={address.hash}
+              title={address.settings.label || address.hash}
+              subtitle={address.settings.label ? address.hash : undefined}
+              truncate
+            >
+              <Amount value={BigInt(address.balance)} fadeDecimals bold />
+            </HighlightRow>
+          ))}
+        </ScreenSection>
+        {(loading || discoveredAddresses.length > 0) && (
           <ScreenSection>
-            <AppText bold>Scan the blockchain to find your active addresses. This process might take a while.</AppText>
-          </ScreenSection>
-          <ScreenSection>
-            <ScreenSectionTitle>Current addresses</ScreenSectionTitle>
-            {addresses.map((address, index) => (
-              <HighlightRow
-                key={address.hash}
-                title={address.settings.label || address.hash}
-                subtitle={address.settings.label ? address.hash : undefined}
-                truncate
-              >
-                <Amount value={BigInt(address.balance)} fadeDecimals bold />
+            <ScreenSectionTitle>Newly discovered addresses</ScreenSectionTitle>
+
+            {loading && (
+              <ScanningIndication>
+                <Row style={{ marginBottom: 10 }}>
+                  <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
+                  <AppText color="secondary">Scanning...</AppText>
+                </Row>
+                <ProgressBar progress={progress} color={theme.global.accent} />
+              </ScanningIndication>
+            )}
+
+            {discoveredAddresses.map(({ hash, balance }, index) => (
+              <HighlightRow key={hash} title={hash} truncate onPress={() => toggleAddressSelection(hash)}>
+                <Row>
+                  <AmountStyled value={BigInt(balance)} color="secondary" fadeDecimals />
+                  <Checkbox
+                    value={addressSelections[hash]}
+                    disabled={loading}
+                    onValueChange={() => toggleAddressSelection(hash)}
+                  />
+                </Row>
               </HighlightRow>
             ))}
           </ScreenSection>
-          {(loading || discoveredAddresses.length > 0) && (
-            <ScreenSection>
-              <ScreenSectionTitle>Newly discovered addresses</ScreenSectionTitle>
-
-              {loading && (
-                <ScanningIndication>
-                  <Row style={{ marginBottom: 10 }}>
-                    <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
-                    <AppText color="secondary">Scanning...</AppText>
-                  </Row>
-                  <ProgressBar progress={progress} color={theme.global.accent} />
-                </ScanningIndication>
-              )}
-
-              {discoveredAddresses.map(({ hash, balance }, index) => (
-                <HighlightRow key={hash} title={hash} truncate onPress={() => toggleAddressSelection(hash)}>
-                  <Row>
-                    <AmountStyled value={BigInt(balance)} color="secondary" fadeDecimals />
-                    <Checkbox
-                      value={addressSelections[hash]}
-                      disabled={loading}
-                      onValueChange={() => toggleAddressSelection(hash)}
-                    />
-                  </Row>
-                </HighlightRow>
-              ))}
-            </ScreenSection>
-          )}
-        </View>
-        <BottomScreenSection>
-          {status === 'idle' && <ButtonStyled Icon={Search} title="Start scanning" onPress={handleStartScanPress} />}
-          {status === 'started' && (
-            <ButtonStyled Icon={X} title="Stop scanning" onPress={handleStopScanPress} type="secondary" />
-          )}
-          {status === 'stopped' && (
-            <ContinueButton Icon={Search} title="Continue scanning" onPress={handleContinueScanPress} />
-          )}
-          {(status === 'stopped' || status === 'finished') && (
-            <ButtonStyled
-              Icon={Import}
-              title="Import addresses"
-              onPress={importAddresses}
-              disabled={selectedAddressesToImport.length === 0}
-            />
-          )}
-        </BottomScreenSection>
-      </ScrollView>
+        )}
+      </View>
+      <BottomScreenSection>
+        {status === 'idle' && <ButtonStyled Icon={Search} title="Start scanning" onPress={handleStartScanPress} />}
+        {status === 'started' && (
+          <ButtonStyled Icon={X} title="Stop scanning" onPress={handleStopScanPress} type="secondary" />
+        )}
+        {status === 'stopped' && (
+          <ContinueButton Icon={Search} title="Continue scanning" onPress={handleContinueScanPress} />
+        )}
+        {(status === 'stopped' || status === 'finished') && (
+          <ButtonStyled
+            Icon={Import}
+            title="Import addresses"
+            onPress={importAddresses}
+            disabled={selectedAddressesToImport.length === 0}
+          />
+        )}
+      </BottomScreenSection>
       <SpinnerModal isActive={importLoading} text="Importing addresses..." />
-    </Screen>
+    </ScrollScreen>
   )
 }
 
