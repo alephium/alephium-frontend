@@ -94,6 +94,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
           onSubmit={handleGeneratePress}
           onGroupPress={() => openGroupSelectModal()}
         />
+
         <Portal>
           <Modalize ref={groupSelectModalRef}>
             <GroupSelectModal onClose={closeGroupSelectModal} />

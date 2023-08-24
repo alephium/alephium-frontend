@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, ViewStyle } from 'react-native'
+import Animated from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
 
 import AppText, { AppTextProps } from '~/components/AppText'
@@ -36,6 +37,8 @@ export interface HighlightRowProps {
   noMaxWidth?: boolean
   style?: StyleProp<ViewStyle>
 }
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const HighlightRow = ({
   title,
@@ -66,11 +69,11 @@ const HighlightRow = ({
   )
 
   return onPress ? (
-    <Pressable onPress={onPress} style={style}>
+    <AnimatedPressable onPress={onPress} style={style}>
       {componentContent}
-    </Pressable>
+    </AnimatedPressable>
   ) : (
-    <View style={style}>{componentContent}</View>
+    <Animated.View style={style}>{componentContent}</Animated.View>
   )
 }
 

@@ -16,8 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ListIcon, PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
@@ -122,8 +120,9 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
             scrollTo={scrollToCarouselPage}
             FooterComponent={
               <>
-                {/* TODO: Do we need this button if we only have 1 or 2 addresses?   */}
-                <Button onPress={() => openAddressQuickSelectionModal()} Icon={ListIcon} type="transparent" />
+                {addresses.length > 2 && (
+                  <Button onPress={() => openAddressQuickSelectionModal()} Icon={ListIcon} type="transparent" />
+                )}
                 <Button
                   onPress={() => navigation.navigate('NewAddressScreen')}
                   Icon={PlusIcon}

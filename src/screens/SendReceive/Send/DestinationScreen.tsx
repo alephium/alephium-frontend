@@ -26,6 +26,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
+import { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -71,6 +72,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const dispatch = useAppDispatch()
   const { ref: contactSelectModalRef, open: openContactSelectModal, close: closeContactSelectModal } = useModalize()
   const { ref: addressSelectModalRef, open: openAddressSelectModal, close: closeAddressSelectModal } = useModalize()
+  const shouldFlash = useSharedValue(0)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -94,30 +96,29 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     }
   }
 
+  const flashInputBg = () => {
+    shouldFlash.value = 1
+    setTimeout(() => (shouldFlash.value = 0), 300)
+  }
+
   const handleContactPress = (contactId: Contact['id']) => {
     const contact = contacts.find((c) => c.id === contactId)
 
     if (contact) {
-      posthog?.capture('Send: Selected contact to send funds to')
-
-      navigation.navigate('SendNavigation', {
-        screen: nextScreen,
-        params: { toAddressHash: contact.address }
-      })
-
+      setToAddress(contact.address)
+      flashInputBg()
       closeContactSelectModal()
+
+      posthog?.capture('Send: Selected contact to send funds to')
     }
   }
 
-  const handleAddressPress = (toAddressHash: AddressHash) => {
-    posthog?.capture('Send: Selected own address to send funds to')
-
-    navigation.navigate('SendNavigation', {
-      screen: nextScreen,
-      params: { toAddressHash }
-    })
-
+  const handleAddressPress = (addressHash: AddressHash) => {
+    setToAddress(addressHash)
+    flashInputBg()
     closeAddressSelectModal()
+
+    posthog?.capture('Send: Selected own address to send funds to')
   }
 
   useEffect(() => {
@@ -149,6 +150,12 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     }
   }, [setValue, toAddress])
 
+  const inputStyle = useAnimatedStyle(() => ({
+    backgroundColor: withTiming(interpolateColor(shouldFlash.value, [0, 1], [theme.bg.primary, theme.global.pale]), {
+      duration: 300
+    })
+  }))
+
   return (
     <Screen {...props}>
       <ScreenIntro
@@ -167,6 +174,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
                 onChangeText={onChange}
                 onBlur={onBlur}
                 error={errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message}
+                style={inputStyle}
               />
             )}
             rules={{
@@ -204,6 +212,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           text="Scan an Alephium address QR code"
         />
       )}
+
       <Portal>
         <Modalize ref={contactSelectModalRef}>
           <SelectContactModal onContactPress={handleContactPress} />

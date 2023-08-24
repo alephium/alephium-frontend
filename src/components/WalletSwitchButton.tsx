@@ -43,6 +43,7 @@ const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
           {activeWalletName.slice(0, 2).toUpperCase()}
         </AppText>
       </Button>
+
       <Portal>
         <Modalize ref={walletSwitchModalRef}>
           <SwitchWalletModal onClose={closeWalletSwitchModal} />
