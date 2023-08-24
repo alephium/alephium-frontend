@@ -50,9 +50,13 @@ interface SendContextValue {
   setFromAddress: (toAddress: AddressHash) => void
   assetAmounts: AssetAmount[]
   setAssetAmount: (assetId: string, amount?: bigint) => void
+  setAssetAmounts: (assetAmounts: { id: string; amount?: bigint }[]) => void
   fees: bigint
   buildTransaction: (callbacks: BuildTransactionCallbacks) => Promise<void>
   sendTransaction: (onSendSuccess: () => void) => Promise<void>
+  resetSendState: () => void
+  setGasAmount: (gasAmount?: number) => void
+  setGasPrice: (gasPrice?: string) => void
 }
 
 const initialValues: SendContextValue = {
@@ -62,9 +66,13 @@ const initialValues: SendContextValue = {
   setFromAddress: () => null,
   assetAmounts: [],
   setAssetAmount: () => null,
+  setAssetAmounts: () => null,
   fees: BigInt(0),
   buildTransaction: () => Promise.resolve(undefined),
-  sendTransaction: () => Promise.resolve(undefined)
+  sendTransaction: () => Promise.resolve(undefined),
+  resetSendState: () => null,
+  setGasAmount: () => null,
+  setGasPrice: () => null
 }
 
 const SendContext = createContext(initialValues)
@@ -78,6 +86,8 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(initialValues.fromAddress)
   const [assetAmounts, setAssetAmounts] = useState<SendContextValue['assetAmounts']>(initialValues.assetAmounts)
   const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
+  const [gasAmount, setGasAmount] = useState<number>()
+  const [gasPrice, setGasPrice] = useState<string>()
 
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isConsolidateModalVisible, setIsConsolidateModalVisible] = useState(false)
@@ -119,7 +129,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       if (!address || !toAddress) return
 
       try {
-        const data = await buildUnsignedTransactions(address, toAddress, assetAmounts)
+        const data = await buildUnsignedTransactions(address, toAddress, assetAmounts, gasAmount, gasPrice)
         setUnsignedTxData(data)
 
         callbacks.onBuildSuccess()
@@ -138,7 +148,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     },
-    [address, assetAmounts, buildConsolidationTransactions, posthog, toAddress]
+    [address, assetAmounts, buildConsolidationTransactions, gasAmount, gasPrice, posthog, toAddress]
   )
 
   const sendTransaction = useCallback(
@@ -188,6 +198,20 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
     [requiresAuth, sendTransaction]
   )
 
+  const resetSendState = useCallback(() => {
+    setToAddress(initialValues.toAddress)
+    setFromAddress(initialValues.fromAddress)
+    setAssetAmounts(initialValues.assetAmounts)
+    setGasAmount(undefined)
+    setGasPrice(undefined)
+    setUnsignedTxData({ unsignedTxs: [], fees: initialValues.fees })
+
+    setConsolidationRequired(false)
+    setIsConsolidateModalVisible(false)
+    setIsAuthenticationModalVisible(false)
+    setOnSendSuccessCallback(() => () => null)
+  }, [])
+
   return (
     <SendContext.Provider
       value={{
@@ -197,9 +221,13 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         setFromAddress,
         assetAmounts,
         setAssetAmount,
+        setAssetAmounts,
         fees: unsignedTxData.fees,
         buildTransaction,
-        sendTransaction: authenticateAndSend
+        sendTransaction: authenticateAndSend,
+        resetSendState,
+        setGasAmount,
+        setGasPrice
       }}
     >
       {children}

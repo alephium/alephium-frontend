@@ -29,7 +29,6 @@ import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import client from '~/api/client'
-import { WalletConnectContextProvider } from '~/contexts/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useInterval from '~/hooks/useInterval'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
@@ -91,12 +90,10 @@ const App = () => {
   return (
     <Provider store={store}>
       <Main>
-        <WalletConnectContextProvider>
-          <ThemeProvider theme={theme}>
-            <RootStackNavigation />
-            <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
-          </ThemeProvider>
-        </WalletConnectContextProvider>
+        <ThemeProvider theme={theme}>
+          <RootStackNavigation />
+          <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
+        </ThemeProvider>
       </Main>
     </Provider>
   )

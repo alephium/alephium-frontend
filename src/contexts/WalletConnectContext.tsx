@@ -19,14 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import '@walletconnect/react-native-compat'
 
 import { getHumanReadableError } from '@alephium/sdk'
+import { ALPH } from '@alephium/token-list'
 import { ChainInfo, parseChain, PROVIDER_NAMESPACE, RelayMethod } from '@alephium/walletconnect-provider'
-import { ApiRequestArguments, node } from '@alephium/web3'
+import { ApiRequestArguments, SignTransferTxParams } from '@alephium/web3'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import SignClient from '@walletconnect/sign-client'
 import { EngineTypes, SignClientTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
 import client from '~/api/client'
+import { useSendContext } from '~/contexts/SendContext'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
 
 type RequestEvent = SignClientTypes.EventArguments['session_request']
@@ -61,6 +65,10 @@ const initialValues: WalletConnectContextValue = {
 const WalletConnectContext = createContext(initialValues)
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
+  const navigation = useNavigation<NavigationProp<SendNavigationParamList>>()
+  const { setToAddress, setFromAddress, setAssetAmounts, setGasAmount, setGasPrice, buildTransaction } =
+    useSendContext()
+
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [requestEvent, setRequestEvent] = useState(initialValues.requestEvent)
   const [wcSessionState, setWcSessionState] = useState(initialValues.wcSessionState)
@@ -107,8 +115,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     [walletConnectClient]
   )
 
-  const onSessionRequestSuccess = async (event: RequestEvent, result: node.SignResult) =>
-    await onSessionRequestResponse(event, { id: event.id, jsonrpc: '2.0', result })
+  // const onSessionRequestSuccess = async (event: RequestEvent, result: node.SignResult) =>
+  //   await onSessionRequestResponse(event, { id: event.id, jsonrpc: '2.0', result })
 
   const onSessionRequestError = useCallback(
     async (event: RequestEvent, error: ReturnType<typeof getSdkError>) =>
@@ -126,13 +134,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('')
 
       setRequestEvent(event)
-
-      // const getSignerAddressByHash = (hash: string) => {
-      //   const address = addresses.find((a) => a.hash === hash)
-      //   if (!address) throw new Error(`Unknown signer address: ${hash}`)
-
-      //   return address
-      // }
 
       // const setTxDataAndOpenModal = ({ txData, modalType }: TxDataToModalType) => {
       //   setDappTxData(txData)
@@ -153,19 +154,23 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       try {
         switch (request.method as RelayMethod) {
           case 'alph_signAndSubmitTransferTx': {
-            //       const p = request.params as SignTransferTxParams
-            //       const dest = p.destinations[0]
-            //       const txData: TransferTxData = {
-            //         fromAddress: getSignerAddressByHash(p.signerAddress),
-            //         toAddress: p.destinations[0].address,
-            //         assetAmounts: [
-            //           { id: ALPH.id, amount: BigInt(dest.attoAlphAmount) },
-            //           ...(dest.tokens ? dest.tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-            //         ],
-            //         gasAmount: p.gasAmount,
-            //         gasPrice: p.gasPrice?.toString()
-            //       }
-            //       setTxDataAndOpenModal({ txData, modalType: TxType.TRANSFER })
+            const p = request.params as SignTransferTxParams
+            const dest = p.destinations[0]
+
+            setToAddress(p.signerAddress)
+            setFromAddress(p.destinations[0].address)
+            setAssetAmounts([
+              { id: ALPH.id, amount: BigInt(dest.attoAlphAmount) },
+              ...(dest.tokens ? dest.tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
+            ])
+            setGasAmount(p.gasAmount)
+            setGasPrice(p.gasPrice?.toString())
+
+            buildTransaction({
+              onBuildSuccess: () => navigation.navigate('VerifyScreen'),
+              onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
+            })
+
             break
           }
           case 'alph_signAndSubmitDeployContractTx': {
@@ -247,7 +252,17 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         })
       }
     },
-    [onSessionRequestError, walletConnectClient]
+    [
+      buildTransaction,
+      navigation,
+      onSessionRequestError,
+      setAssetAmounts,
+      setFromAddress,
+      setGasAmount,
+      setGasPrice,
+      setToAddress,
+      walletConnectClient
+    ]
   )
 
   const onSessionProposal = useCallback(async (proposalEvent: ProposalEvent) => {

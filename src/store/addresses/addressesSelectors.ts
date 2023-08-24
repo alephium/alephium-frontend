@@ -47,6 +47,6 @@ export const { selectAll: selectAllContacts, selectById: selectContactById } = c
 )
 
 export const selectAddressesInGroup = createSelector(
-  [selectAllAddresses, (_, group: AddressGroup) => group],
-  (addresses, group) => addresses.filter((address) => address.group === group)
+  [selectAllAddresses, (_, group?: AddressGroup) => group],
+  (addresses, group) => (group !== undefined ? addresses.filter((address) => address.group === group) : addresses)
 )
