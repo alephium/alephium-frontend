@@ -21,7 +21,7 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
-import { RefreshControl, StyleProp, ViewStyle } from 'react-native'
+import { RefreshControl, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
@@ -35,7 +35,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
-import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'> {
@@ -62,8 +62,8 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
       onScroll={scrollHandler}
       style={{ marginTop: headerheight + HORIZONTAL_MARGIN, marginBottom: bottomBarHeight + HORIZONTAL_MARGIN }}
     >
-      <BalanceSummary dateLabel="VALUE TODAY" />
-      <ScreenSection>
+      <View>
+        <BalanceSummary dateLabel="VALUE TODAY" />
         <ButtonsRow>
           <SendReceiveButton onPress={() => navigation.navigate('SendNavigation')}>
             <ButtonText semiBold>Send</ButtonText>
@@ -76,7 +76,7 @@ const DashboardScreen = ({ navigation, style }: ScreenProps) => {
             <ArrowDown color={theme.font.secondary} size={20} />
           </SendReceiveButton>
         </ButtonsRow>
-      </ScreenSection>
+      </View>
       <AddressesTokensList />
     </DashboardScreenStyled>
   )
@@ -88,9 +88,16 @@ const DashboardScreenStyled = styled(ScrollScreen)`
   gap: 30px;
 `
 
-const ButtonsRow = styled.View`
+const ButtonsRow = styled(ScreenSection)`
   flex-direction: row;
   gap: 15px;
+  padding: 15px;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border-bottom-left-radius: ${BORDER_RADIUS_BIG}px;
+  border-bottom-right-radius: ${BORDER_RADIUS_BIG}px;
+  margin-top: -10px;
+  padding-top: 25px;
+  z-index: -1;
 `
 
 const SendReceiveButton = styled(Button)`
