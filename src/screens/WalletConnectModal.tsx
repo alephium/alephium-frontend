@@ -26,13 +26,11 @@ import { Image } from 'react-native'
 import Toast from 'react-native-root-toast'
 import styled from 'styled-components/native'
 
-import AddressBadge from '~/components/AddressBadge'
+import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import HighlightRow from '~/components/HighlightRow'
 import InfoBox from '~/components/InfoBox'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalProps, ScrollModal } from '~/components/layout/Modals'
 import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -41,6 +39,7 @@ import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
+import { selectAddressesInGroup } from '~/store/addresses/addressesSelectors'
 import {
   newAddressGenerated,
   selectAllAddresses,
@@ -69,15 +68,16 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
+  const group = requiredChainInfo?.addressGroup
+  const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
 
   const [rejecting, setRejecting] = useState(false)
   const [approving, setApproving] = useState(false)
   const [generatingNewAddress, setGeneratingNewAddress] = useState(false)
   const [signerAddress, setSignerAddress] = useState<Address>()
-  const [signerAddressOptions, setSignerAddressOptions] = useState<Address[]>([])
+  const [showAlternativeSignerAddresses, setShowAlternativeSignerAddresses] = useState(false)
 
   const metadata = proposalEvent?.params.proposer.metadata
-  const group = requiredChainInfo?.addressGroup
 
   const showNetworkWarning = requiredChainInfo?.networkId
     ? !isNetworkValid(requiredChainInfo?.networkId, currentNetworkId)
@@ -145,18 +145,12 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
   }
 
   useEffect(() => {
-    const addressOptions = group === undefined ? addresses : addresses.filter((a) => a.group === group)
-
-    setSignerAddressOptions(addressOptions)
     setSignerAddress(
-      addressOptions.length > 0 ? addressOptions.find((a) => a.settings.isDefault) ?? addressOptions[0] : undefined
+      addressesInGroup.length > 0
+        ? addressesInGroup.find((a) => a.settings.isDefault) ?? addressesInGroup[0]
+        : undefined
     )
-  }, [addresses, group])
-
-  const handleSignerAddressPress = () => {
-    // TODO: Use `signerAddressOptions`
-    console.log('TODO: Open modal to select address of group', group)
-  }
+  }, [addressesInGroup])
 
   const handleSwitchNetworkPress = async () => {
     if (requiredChainInfo?.networkId === 'mainnet' || requiredChainInfo?.networkId === 'testnet') {
@@ -243,11 +237,9 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
       ) : (
         <>
           <ScreenSection>
-            <BoxSurface>
-              <HighlightRow title="Signer address" onPress={handleSignerAddressPress}>
-                <AddressBadge addressHash={signerAddress?.hash} />
-              </HighlightRow>
-            </BoxSurface>
+            <SectionTitle semiBold>Connect with address</SectionTitle>
+            <SectionSubtitle color="secondary">Tap to change the address to connect with.</SectionSubtitle>
+            <AddressBox addressHash={signerAddress.hash} onPress={() => setShowAlternativeSignerAddresses(true)} />
           </ScreenSection>
           <BottomScreenSection>
             <ButtonsRow>
@@ -257,6 +249,32 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
           </BottomScreenSection>
         </>
       )}
+      {showAlternativeSignerAddresses && (
+        <ScreenSection>
+          <SectionTitle semiBold>Addresses in group {group}</SectionTitle>
+          <SectionSubtitle color="secondary">Tap to select another one</SectionSubtitle>
+          <AddressList>
+            {addressesInGroup.map((address, index) => (
+              <AddressBox
+                key={address.hash}
+                addressHash={address.hash}
+                isSelected={address.hash === signerAddress?.hash}
+                onPress={() => {
+                  setSignerAddress(address)
+                  setShowAlternativeSignerAddresses(false)
+                  posthog?.capture('WC: Switched signer address')
+                }}
+              />
+            ))}
+            <PlaceholderBox>
+              <SectionSubtitle>
+                If none of the above addresses fit your needs, you can generate a new one.
+              </SectionSubtitle>
+              <Button title="Generate new address" variant="accent" onPress={handleAddressGeneratePress} />
+            </PlaceholderBox>
+          </AddressList>
+        </ScreenSection>
+      )}
       <SpinnerModal
         isActive={rejecting || approving || generatingNewAddress}
         text={
@@ -265,7 +283,7 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
             : approving
             ? 'Approving connection'
             : generatingNewAddress
-            ? 'Generating new addres...'
+            ? 'Generating new address...'
             : ''
         }
       />
@@ -284,4 +302,21 @@ const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['ne
 const DAppIcon = styled(Image)`
   width: 50px;
   height: 50px;
+`
+
+const SectionTitle = styled(AppText)`
+  font-size: 18px;
+`
+const SectionSubtitle = styled(AppText)`
+  margin-bottom: 8px;
+`
+
+const AddressList = styled.View`
+  gap: 10px;
+`
+
+const PlaceholderBox = styled.View`
+  border: 2px dashed ${({ theme }) => theme.border.primary};
+  border-radius: 9px;
+  padding: 15px;
 `
