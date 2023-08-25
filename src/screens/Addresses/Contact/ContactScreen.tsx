@@ -46,8 +46,6 @@ type ScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
   }
 
 const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) => {
-  const headerHeight = useHeaderHeight()
-  const bottomTabBarHeight = useBottomTabBarHeight()
   const posthog = usePostHog()
 
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
@@ -104,7 +102,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
       confirmedTransactions={confirmedTransactions}
       pendingTransactions={pendingTransactions}
       initialNumToRender={8}
-      contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight, paddingBottom: bottomTabBarHeight }}
+      contentContainerStyle={{ flexGrow: 1 }}
       ListHeaderComponent={
         <>
           <CenteredSection>

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useHeaderHeight } from '@react-navigation/elements'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
@@ -39,6 +40,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
   const scrollHandler = useScrollEventHandler()
   const { setScrollToTop } = useScrollContext()
+  const headerHeight = useHeaderHeight()
   const listRef = useRef<FlatList<AddressTransaction>>(null)
 
   useEffect(() => {
@@ -57,7 +59,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       confirmedTransactions={confirmedTransactions}
       pendingTransactions={pendingTransactions}
       initialNumToRender={8}
-      contentContainerStyle={{ flexGrow: 1 }}
+      contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight }}
       onScroll={scrollHandler}
       ref={listRef}
     />

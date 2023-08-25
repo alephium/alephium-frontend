@@ -124,7 +124,6 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
         onRefresh={refreshData}
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
-        contentContainerStyle={{ paddingTop: headerheight }}
         ListHeaderComponent={
           <>
             {ListHeaderComponent}
