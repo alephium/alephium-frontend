@@ -25,7 +25,7 @@ import { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
-import DefaultHeader from '~/components/headers/DefaultHeader'
+import BaseHeader from '~/components/headers/BaseHeader'
 import TopTabBar from '~/components/TopTabBar'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { ScrollContextProvider } from '~/contexts/ScrollContext'
@@ -44,13 +44,7 @@ const InWalletTabsNavigation = () => {
   return (
     <ScrollContextProvider>
       <Host>
-        <InWalletTabs.Navigator
-          screenOptions={{
-            headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
-            headerTitle: ''
-          }}
-          tabBar={(props) => <FooterMenu {...props} />}
-        >
+        <InWalletTabs.Navigator tabBar={(props) => <FooterMenu {...props} />}>
           <InWalletTabs.Screen
             name="DashboardScreen"
             component={DashboardScreen}
@@ -61,7 +55,7 @@ const InWalletTabsNavigation = () => {
               ),
               headerTransparent: true,
               header: (props) => (
-                <DefaultHeader
+                <BaseHeader
                   HeaderRight={<DashboardHeaderActions />}
                   HeaderLeft={<WalletSwitchButton />}
                   headerTitle={activeWalletName}
@@ -81,7 +75,7 @@ const InWalletTabsNavigation = () => {
                 <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
               ),
               header: (props) => (
-                <DefaultHeader
+                <BaseHeader
                   headerTitle="Transfers"
                   {...props}
                   HeaderCompactContent={<AppText>{'Transfers'}</AppText>}
@@ -98,7 +92,7 @@ const InWalletTabsNavigation = () => {
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
               ),
-              header: (props) => <DefaultHeader HeaderLeft={<TopTabBar {...props} />} {...props} />,
+              header: (props) => <BaseHeader HeaderLeft={<TopTabBar {...props} />} {...props} />,
               headerTransparent: true
             }}
           />

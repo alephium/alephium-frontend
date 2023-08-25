@@ -31,7 +31,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 

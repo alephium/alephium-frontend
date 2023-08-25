@@ -32,7 +32,7 @@ import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'

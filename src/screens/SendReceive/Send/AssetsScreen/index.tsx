@@ -25,7 +25,7 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
 import { makeSelectAddressesKnownFungibleTokens, selectAddressByHash } from '~/store/addressesSlice'

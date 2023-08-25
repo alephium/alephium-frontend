@@ -23,6 +23,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components'
 
+import StackHeader from '~/components/headers/StackHeader'
 import AnalyticsProvider from '~/contexts/AnalyticsContext'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
@@ -44,7 +45,7 @@ import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SecurityScreen from '~/screens/SecurityScreen'
-import ScreenHeader from '~/screens/SendReceive/ScreenHeader'
+import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchWalletScreen from '~/screens/SwitchWalletScreen'
@@ -82,9 +83,8 @@ const RootStackNavigation = () => {
             <RootStack.Navigator
               initialRouteName="SplashScreen"
               screenOptions={{
-                headerStyle: { elevation: 0, shadowOpacity: 0 },
-                headerTitle: '',
-                headerBackTitleVisible: false
+                header: (props) => <StackHeader {...props} />,
+                headerTransparent: true
               }}
             >
               {/* Screens with header */}
@@ -137,12 +137,12 @@ const RootStackNavigation = () => {
                 <RootStack.Screen
                   name="SendNavigation"
                   component={SendNavigation}
-                  options={{ header: (props) => <ScreenHeader {...props} workflow="send" /> }}
+                  options={{ header: (props) => <ProgressHeader {...props} workflow="send" /> }}
                 />
                 <RootStack.Screen
                   name="ReceiveNavigation"
                   component={ReceiveNavigation}
-                  options={{ header: (props) => <ScreenHeader {...props} workflow="receive" /> }}
+                  options={{ header: (props) => <ProgressHeader {...props} workflow="receive" /> }}
                 />
                 <RootStack.Screen name="ContactScreen" component={ContactScreen} />
               </RootStack.Group>

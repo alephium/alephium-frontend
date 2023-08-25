@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import { StackHeaderProps } from '@react-navigation/stack'
-import { ChevronLeft } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { PressableProps, View } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
@@ -42,7 +42,7 @@ const workflowSteps: Record<
   send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
 }
 
-const ScreenHeader = ({ navigation, route, options, workflow }: ScreenHeaderProps) => {
+const ProgressHeader = ({ navigation, route, options, workflow }: ScreenHeaderProps) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
 
@@ -75,14 +75,14 @@ const ScreenHeader = ({ navigation, route, options, workflow }: ScreenHeaderProp
   )
 }
 
-export default ScreenHeader
+export default ProgressHeader
 
 export const BackButton = (props: PressableProps) => {
   const theme = useTheme()
 
   return (
     <BackButtonStyled {...props}>
-      <ChevronLeft size={25} color={theme.global.accent} />
+      <Ionicons name="chevron-back-circle" size={25} color={theme.global.accent} />
     </BackButtonStyled>
   )
 }

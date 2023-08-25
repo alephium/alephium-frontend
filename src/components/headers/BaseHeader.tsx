@@ -33,7 +33,7 @@ import AppText from '~/components/AppText'
 import { useScrollContext } from '~/contexts/ScrollContext'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
-export interface DefaultHeaderProps {
+export interface BaseHeaderProps {
   HeaderLeft?: ReactNode
   HeaderRight?: ReactNode
   headerTitle?: string
@@ -48,14 +48,14 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 
 // TODO: Reimplement tap bar to scroll up
 
-const DefaultHeader = ({
+const BaseHeader = ({
   HeaderRight,
   HeaderLeft,
   headerTitle,
   HeaderCompactContent,
   bgColor,
   style
-}: DefaultHeaderProps) => {
+}: BaseHeaderProps) => {
   const theme = useTheme()
   const { scrollY } = useScrollContext()
   const insets = useSafeAreaInsets()
@@ -153,7 +153,7 @@ const DefaultHeader = ({
   }
 }
 
-export default styled(DefaultHeader)`
+export default styled(BaseHeader)`
   position: relative;
 `
 
