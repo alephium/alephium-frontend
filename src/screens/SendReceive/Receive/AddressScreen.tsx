@@ -24,7 +24,7 @@ import styled from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { ContinueButton } from '~/screens/SendReceive/ProgressHeader'
@@ -53,7 +53,7 @@ const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
   )
 
   return (
-    <ScrollScreen {...props}>
+    <BaseScrollScreen {...props}>
       <ScreenIntro
         title="Your addresses"
         subtitle="Select the address which you want to receive funds to."
@@ -66,7 +66,7 @@ const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
           ))}
         </AddressList>
       </ScreenSection>
-    </ScrollScreen>
+    </BaseScrollScreen>
   )
 }
 

@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { ScrollViewProps } from 'react-native'
 
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import TabScrollScreen from '~/components/layout/TabScrollScreen'
+import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -36,12 +36,12 @@ const ContactsScreen = ({ navigation, style, ...props }: ScreenProps) => {
   const scrollHandler = useScrollEventHandler()
 
   return (
-    <TabScrollScreen {...props} onScroll={scrollHandler}>
+    <ScrollScreen {...props} onScroll={scrollHandler}>
       <ContactListScreenBase
         onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
         onNewContactPress={() => navigation.navigate('NewContactScreen')}
       />
-    </TabScrollScreen>
+    </ScrollScreen>
   )
 }
 

@@ -16,18 +16,50 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ScrollView, ScrollViewProps, View } from 'react-native'
+import { useHeaderHeight } from '@react-navigation/elements'
+import { RefObject } from 'react'
+import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+
+import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 import Screen from './Screen'
 
-export type ScrollScreenProps = ScrollViewProps
+export interface ScrollScreenProps extends ScrollViewProps {
+  hasHeader?: boolean
+  containerStyle?: StyleProp<ViewStyle>
+  contentContainerStyle?: StyleProp<ViewStyle>
+  scrollViewRef?: RefObject<ScrollView>
+}
 
-const ScrollScreen = ({ children, style, ...props }: ScrollScreenProps) => (
-  <Screen>
-    <ScrollView contentOffset={{ y: 0, x: 0 }} scrollEventThrottle={16} alwaysBounceVertical={false} {...props}>
-      <View style={style}>{children}</View>
-    </ScrollView>
-  </Screen>
-)
+const ScrollScreen = ({
+  children,
+  hasHeader,
+  style,
+  containerStyle,
+  contentContainerStyle,
+  scrollViewRef,
+  ...props
+}: ScrollScreenProps) => {
+  const headerheight = useHeaderHeight()
+
+  return (
+    <Screen style={containerStyle}>
+      <ScrollView
+        ref={scrollViewRef}
+        scrollEventThrottle={16}
+        alwaysBounceVertical={false}
+        contentContainerStyle={[
+          contentContainerStyle,
+          {
+            paddingTop: hasHeader ? headerheight + HORIZONTAL_MARGIN : 0
+          }
+        ]}
+        {...props}
+      >
+        <View style={style}>{children}</View>
+      </ScrollView>
+    </Screen>
+  )
+}
 
 export default ScrollScreen

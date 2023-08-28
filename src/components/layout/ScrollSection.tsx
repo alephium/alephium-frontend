@@ -16,21 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Ionicons from '@expo/vector-icons/Ionicons'
-import { StackHeaderProps } from '@react-navigation/stack'
+import { ScrollViewProps, View } from 'react-native'
+import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
-import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
+export type ScrollSectionProps = ScrollViewProps
 
-type StackHeaderCustomProps = StackHeaderProps & BaseHeaderProps
+const ScrollSection = ({ children, style, ...props }: ScrollSectionProps) => (
+  <ScrollSectionStyled scrollEventThrottle={16} alwaysBounceVertical={false} {...props}>
+    <View style={style}>{children}</View>
+  </ScrollSectionStyled>
+)
 
-const StackHeader = (props: StackHeaderCustomProps) => {
-  return (
-    <BaseHeader
-      HeaderLeft={<Ionicons name="arrow-back-outline" color="#ffffff" size={26} />}
-      HeaderCompactContent={<AppText>{props.options.title}</AppText>}
-    />
-  )
-}
+export default ScrollSection
 
-export default StackHeader
+const ScrollSectionStyled = styled.ScrollView`
+  background-color: ${({ theme }) => theme.bg.back1};
+`

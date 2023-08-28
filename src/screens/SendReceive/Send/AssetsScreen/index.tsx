@@ -21,7 +21,7 @@ import React, { useEffect, useMemo } from 'react'
 import styled from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -64,7 +64,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   if (!address) return null
 
   return (
-    <ScrollScreen {...props}>
+    <BaseScrollScreen {...props}>
       <ScreenIntro
         title="Assets"
         subtitle="With Alephium, you can send multiple assets in one transaction."
@@ -77,7 +77,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
           ))}
         </AssetsList>
       </ScreenSection>
-    </ScrollScreen>
+    </BaseScrollScreen>
   )
 }
 

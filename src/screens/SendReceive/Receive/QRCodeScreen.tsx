@@ -29,7 +29,7 @@ import Button from '~/components/buttons/Button'
 import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
@@ -66,7 +66,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   }
 
   return (
-    <ScrollScreen {...props}>
+    <BaseScrollScreen {...props}>
       <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." surtitle="RECEIVE" />
       <CenteredScreenSection>
         <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={params.addressHash} />
@@ -89,7 +89,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
           )}
         </BoxSurface>
       </ScreenSection>
-    </ScrollScreen>
+    </BaseScrollScreen>
   )
 }
 

@@ -29,6 +29,7 @@ import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { makeSelectAddressesConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { makeSelectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressTransaction } from '~/types/transactions'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
@@ -41,6 +42,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const scrollHandler = useScrollEventHandler()
   const { setScrollToTop } = useScrollContext()
   const headerHeight = useHeaderHeight()
+
   const listRef = useRef<FlatList<AddressTransaction>>(null)
 
   useEffect(() => {
@@ -59,7 +61,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       confirmedTransactions={confirmedTransactions}
       pendingTransactions={pendingTransactions}
       initialNumToRender={8}
-      contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight }}
+      contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight + HORIZONTAL_MARGIN }}
       onScroll={scrollHandler}
       ref={listRef}
     />

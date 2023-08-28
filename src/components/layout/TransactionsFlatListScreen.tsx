@@ -69,7 +69,6 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
 ) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
-  const headerheight = useHeaderHeight()
 
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)

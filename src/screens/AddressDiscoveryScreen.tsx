@@ -31,7 +31,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import HighlightRow from '~/components/HighlightRow'
 import { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -158,7 +158,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }
 
   return (
-    <ScrollScreen {...props}>
+    <BaseScrollScreen {...props}>
       <View>
         <ScreenSection>
           <AppText bold>Scan the blockchain to find your active addresses. This process might take a while.</AppText>
@@ -223,7 +223,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         )}
       </BottomScreenSection>
       <SpinnerModal isActive={importLoading} text="Importing addresses..." />
-    </ScrollScreen>
+    </BaseScrollScreen>
   )
 }
 

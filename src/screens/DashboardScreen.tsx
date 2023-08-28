@@ -27,19 +27,18 @@ import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import TabScrollScreen from '~/components/layout/TabScrollScreen'
+import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
-import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
   extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'>,
-    ScrollScreenProps {}
+    BottomBarScrollScreenProps {}
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
@@ -57,6 +56,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     <DashboardScreenStyled
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
       onScroll={scrollHandler}
+      hasHeader
+      hasBottomBar
       {...props}
     >
       <View>
@@ -81,7 +82,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
 export default DashboardScreen
 
-const DashboardScreenStyled = styled(TabScrollScreen)`
+const DashboardScreenStyled = styled(BottomBarScrollScreen)`
   gap: 30px;
 `
 

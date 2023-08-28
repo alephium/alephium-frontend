@@ -20,20 +20,27 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useHeaderHeight } from '@react-navigation/elements'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useCallback, useEffect, useRef } from 'react'
-import { ScrollView, ScrollViewProps, View } from 'react-native'
+import { ScrollView, ScrollViewProps } from 'react-native'
 
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useScrollContext } from '~/contexts/ScrollContext'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
-import Screen from './Screen'
+export interface BottomBarScrollScreenProps extends ScrollViewProps {
+  hasHeader?: boolean
+  hasBottomBar?: boolean
+}
 
-export type ScrollScreenProps = ScrollViewProps
-
-const TabScrollScreen = ({ children, style, ...props }: ScrollScreenProps) => {
+const BottomBarScrollScreen = ({
+  hasHeader = false,
+  hasBottomBar = false,
+  children,
+  style,
+  ...props
+}: BottomBarScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
   const navigation = useNavigation()
   const { setScrollToTop } = useScrollContext()
-  const headerheight = useHeaderHeight()
   const bottomBarHeight = useBottomTabBarHeight()
 
   useEffect(() => {
@@ -45,22 +52,17 @@ const TabScrollScreen = ({ children, style, ...props }: ScrollScreenProps) => {
   )
 
   return (
-    <Screen>
-      <ScrollView
-        contentOffset={{ y: 0, x: 0 }}
-        ref={viewRef}
-        scrollEventThrottle={16}
-        alwaysBounceVertical={false}
-        contentContainerStyle={{
-          paddingTop: headerheight + HORIZONTAL_MARGIN,
-          paddingBottom: bottomBarHeight + HORIZONTAL_MARGIN
-        }}
-        {...props}
-      >
-        <View style={style}>{children}</View>
-      </ScrollView>
-    </Screen>
+    <ScrollScreen
+      contentContainerStyle={{
+        paddingBottom: hasBottomBar ? bottomBarHeight + HORIZONTAL_MARGIN : 0
+      }}
+      hasHeader={hasHeader}
+      scrollViewRef={viewRef}
+      {...props}
+    >
+      {children}
+    </ScrollScreen>
   )
 }
 
-export default TabScrollScreen
+export default BottomBarScrollScreen

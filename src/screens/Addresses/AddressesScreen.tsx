@@ -32,7 +32,7 @@ import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
 import Modalize from '~/components/layout/Modalize'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import TabScrollScreen from '~/components/layout/TabScrollScreen'
+import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
@@ -103,10 +103,12 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
 
   return (
     <>
-      <TabScrollScreen
+      <ScrollScreen
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
         onScroll={scrollHandler}
         bounces={false}
+        hasHeader
+        hasBottomBar
         {...props}
       >
         <ScreenContent>
@@ -135,7 +137,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
           />
           {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} style={{ paddingBottom: 50 }} />}
         </ScreenContent>
-      </TabScrollScreen>
+      </ScrollScreen>
 
       <Portal>
         <Modalize

@@ -28,7 +28,7 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
@@ -55,7 +55,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <ScrollScreen {...props}>
+    <BaseScrollScreen {...props}>
       <ScreenIntro
         title="Verify"
         subtitle="Please, double check that everything is correct before sending."
@@ -86,7 +86,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           <Amount value={fees} suffix="ALPH" medium />
         </FeeBox>
       </ScreenSection>
-    </ScrollScreen>
+    </BaseScrollScreen>
   )
 }
 

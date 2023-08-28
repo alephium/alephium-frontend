@@ -33,6 +33,7 @@ import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Toggle from '~/components/Toggle'
+import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -52,6 +53,7 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScre
 
 const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
+  const scrollHandler = useScrollEventHandler()
   const hasAvailableBiometrics = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const requireAuth = useAppSelector((s) => s.settings.requireAuth)
@@ -122,7 +124,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <ScrollScreen {...props}>
+      <ScrollScreen onScroll={scrollHandler} hasHeader {...props}>
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>

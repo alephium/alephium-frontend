@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
@@ -36,6 +35,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { makeSelectContactConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { makeSelectContactPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { stringToColour } from '~/utils/colors'
@@ -47,6 +47,7 @@ type ScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
 
 const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) => {
   const posthog = usePostHog()
+  const headerHeight = useHeaderHeight()
 
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const contactAddressHash = contact?.address ?? ''
@@ -102,7 +103,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
       confirmedTransactions={confirmedTransactions}
       pendingTransactions={pendingTransactions}
       initialNumToRender={8}
-      contentContainerStyle={{ flexGrow: 1 }}
+      contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight + HORIZONTAL_MARGIN }}
       ListHeaderComponent={
         <>
           <CenteredSection>

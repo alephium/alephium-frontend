@@ -92,7 +92,7 @@ const InWalletTabsNavigation = () => {
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
               ),
-              header: (props) => <BaseHeader HeaderLeft={<TopTabBar {...props} />} {...props} />,
+              header: (props) => <BaseHeader HeaderLeft={<TopTabBar {...props} />} />,
               headerTransparent: true
             }}
           />
