@@ -57,12 +57,16 @@ interface SendContextValue {
   setAssetAmounts: (assetAmounts: { id: string; amount?: bigint }[]) => void
   fees: bigint
   buildTransaction: (txType: TxType, callbacks: BuildTransactionCallbacks) => Promise<void>
-  sendTransaction: (onSendSuccess: () => void) => Promise<void>
+  sendTransaction: (onSendSuccess: (signature?: string) => void) => Promise<void>
   resetSendState: () => void
   setGasAmount: (gasAmount?: number) => void
   setGasPrice: (gasPrice?: string) => void
   setBuildTxCallbacks: (callbacks: BuildTransactionCallbacks) => void
   setSendWorkflowType: (txType: TxType) => void
+  initialAlphAmount?: AssetAmount
+  setInitialAlphAmount: (alph?: AssetAmount) => void
+  issueTokenAmount?: string
+  setIssueTokenAmount: (tokenAmount?: string) => void
 }
 
 const initialValues: SendContextValue = {
@@ -82,7 +86,11 @@ const initialValues: SendContextValue = {
   setGasAmount: () => null,
   setGasPrice: () => null,
   setBuildTxCallbacks: () => null,
-  setSendWorkflowType: () => null
+  setSendWorkflowType: () => null,
+  initialAlphAmount: undefined,
+  setInitialAlphAmount: () => null,
+  issueTokenAmount: undefined,
+  setIssueTokenAmount: () => null
 }
 
 const SendContext = createContext(initialValues)
@@ -100,6 +108,12 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const [gasAmount, setGasAmount] = useState<number>()
   const [gasPrice, setGasPrice] = useState<string>()
   const [buildTxCallbacks, setBuildTxCallbacks] = useState<BuildTransactionCallbacks>()
+  const [initialAlphAmount, setInitialAlphAmount] = useState<SendContextValue['initialAlphAmount']>(
+    initialValues.initialAlphAmount
+  )
+  const [issueTokenAmount, setIssueTokenAmount] = useState<SendContextValue['issueTokenAmount']>(
+    initialValues.issueTokenAmount
+  )
 
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isConsolidateModalVisible, setIsConsolidateModalVisible] = useState(false)
@@ -120,6 +134,8 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
     setBytecode(undefined)
     setBuildTxCallbacks(undefined)
     setSendWorkflowType(undefined)
+    setInitialAlphAmount(undefined)
+    setIssueTokenAmount(undefined)
 
     setConsolidationRequired(false)
     setIsConsolidateModalVisible(false)
@@ -198,8 +214,24 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
             }
             break
           }
-          case TxType.DEPLOY_CONTRACT:
+          case TxType.DEPLOY_CONTRACT: {
+            if (!bytecode) throw new Error('Bytecode not set')
+
+            const result = await client.node.contracts.postContractsUnsignedTxDeployContract({
+              fromPublicKey: address.publicKey,
+              bytecode,
+              initialAttoAlphAmount: initialAlphAmount !== undefined ? initialAlphAmount.amount?.toString() : undefined,
+              issueTokenAmount: issueTokenAmount?.toString(),
+              gasAmount: gasAmount,
+              gasPrice: gasPrice?.toString()
+            })
+
+            data = {
+              unsignedTxs: [{ txId: result.txId, unsignedTx: result.unsignedTx }],
+              fees: BigInt(result.gasAmount) * BigInt(result.gasPrice)
+            }
             break
+          }
         }
 
         if (data) {
@@ -229,13 +261,15 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       fromAddress,
       gasAmount,
       gasPrice,
+      initialAlphAmount,
+      issueTokenAmount,
       posthog,
       toAddress
     ]
   )
 
   const sendTransaction = useCallback(
-    async (onSendSuccess: () => void) => {
+    async (onSendSuccess: (signature?: string) => void) => {
       console.log('SENDING TRANSACTION WITH STATE:')
 
       console.log('address', address)
@@ -245,10 +279,12 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       if (!address) return
 
       const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+      let signature
 
       try {
         for (const { txId, unsignedTx } of unsignedTxData.unsignedTxs) {
           const data = await signAndSendTransaction(address, txId, unsignedTx)
+          signature = data.signature
 
           dispatch(
             transactionSent({
@@ -265,7 +301,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
         console.log('SUCCESS SENDING')
 
-        onSendSuccess()
+        onSendSuccess(signature)
         resetSendState()
 
         posthog?.capture('Send: Sent transaction', { tokens: tokens.length })
@@ -296,7 +332,8 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
       buildTransaction(sendWorkflowType, buildTxCallbacks)
     }
-  }, [buildTransaction, buildTxCallbacks, sendWorkflowType])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buildTxCallbacks, sendWorkflowType])
 
   return (
     <SendContext.Provider
@@ -317,7 +354,11 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         setGasAmount,
         setGasPrice,
         setBuildTxCallbacks,
-        setSendWorkflowType
+        setSendWorkflowType,
+        initialAlphAmount,
+        setInitialAlphAmount,
+        issueTokenAmount,
+        setIssueTokenAmount
       }}
     >
       {children}

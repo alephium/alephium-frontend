@@ -21,7 +21,14 @@ import '@walletconnect/react-native-compat'
 import { AssetAmount, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { ChainInfo, parseChain, PROVIDER_NAMESPACE, RelayMethod } from '@alephium/walletconnect-provider'
-import { ApiRequestArguments, SignExecuteScriptTxParams, SignTransferTxParams } from '@alephium/web3'
+import {
+  ApiRequestArguments,
+  node,
+  SignDeployContractTxParams,
+  SignExecuteScriptTxParams,
+  SignTransferTxParams
+} from '@alephium/web3'
+import { SignResult } from '@alephium/web3/dist/src/api/api-alephium'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import SignClient from '@walletconnect/sign-client'
 import { EngineTypes, SignClientTypes } from '@walletconnect/types'
@@ -46,6 +53,7 @@ interface WalletConnectContextValue {
   proposalEvent?: ProposalEvent
   requiredChainInfo?: ChainInfo
   wcSessionState: WalletConnectSessionState
+  onSessionRequestSuccess: (event: RequestEvent, result: node.SignResult) => Promise<void>
   onSessionDelete: () => void
   sessionTopic?: string
   onProposalApprove: (topic: string) => void
@@ -58,6 +66,7 @@ const initialValues: WalletConnectContextValue = {
   proposalEvent: undefined,
   requiredChainInfo: undefined,
   wcSessionState: 'uninitialized',
+  onSessionRequestSuccess: () => Promise.resolve(),
   onSessionDelete: () => null,
   sessionTopic: undefined,
   onProposalApprove: () => null,
@@ -75,9 +84,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     setGasAmount,
     setGasPrice,
     setBytecode,
-    buildTransaction,
     setBuildTxCallbacks,
-    setSendWorkflowType
+    setSendWorkflowType,
+    setInitialAlphAmount,
+    setIssueTokenAmount
   } = useSendContext()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
@@ -103,6 +113,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       })
 
       setWalletConnectClient(client)
+
       console.log('initialized client')
     } catch (e) {
       console.error('Could not initialize WalletConnect client', e)
@@ -117,19 +128,23 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     async (event: RequestEvent, response: EngineTypes.RespondParams['response']) => {
       if (!walletConnectClient) return
 
-      console.log('\nonSessionRequestResponse called')
-      console.log('\nonSessionRequestResponse event', event)
-      console.log('\nonSessionRequestResponse response', response)
+      console.log('onSessionRequestResponse called')
+      console.log('onSessionRequestResponse event', event)
+      console.log('onSessionRequestResponse response', response)
 
       await walletConnectClient.respond({ topic: event.topic, response })
       setRequestEvent(undefined)
-      // setDappTxData(undefined)
     },
     [walletConnectClient]
   )
 
-  // const onSessionRequestSuccess = async (event: RequestEvent, result: node.SignResult) =>
-  //   await onSessionRequestResponse(event, { id: event.id, jsonrpc: '2.0', result })
+  const onSessionRequestSuccess = async (event: RequestEvent, result: SignResult) => {
+    console.log('onSessionRequestSuccess called')
+    console.log('onSessionRequestSuccess event', event)
+    console.log('onSessionRequestSuccess result', result)
+
+    await onSessionRequestResponse(event, { id: event.id, jsonrpc: '2.0', result })
+  }
 
   const onSessionRequestError = useCallback(
     async (event: RequestEvent, error: ReturnType<typeof getSdkError>) =>
@@ -147,18 +162,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('')
 
       setRequestEvent(event)
-
-      // const setTxDataAndOpenModal = ({ txData, modalType }: TxDataToModalType) => {
-      //   setDappTxData(txData)
-
-      //   if (modalType === TxType.DEPLOY_CONTRACT) {
-      //     setIsDeployContractSendModalOpen(true)
-      //   } else if (modalType === TxType.SCRIPT) {
-      //     setIsCallScriptSendModalOpen(true)
-      //   }
-
-      //   electron?.app.show()
-      // }
+      setBuildTxCallbacks({
+        onBuildSuccess: () => navigation.navigate('SendNavigation', { screen: 'VerifyScreen' }),
+        onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
+      })
 
       const {
         params: { request }
@@ -179,29 +186,27 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             setGasAmount(p.gasAmount)
             setGasPrice(p.gasPrice?.toString())
 
-            // buildTransaction(TxType.TRANSFER, {
-            //   onBuildSuccess: () => navigation.navigate('VerifyScreen'),
-            //   onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
-            // })
+            console.log('SETTING SEND WORKFLOW TYPE TO OPEN MODAL TO TRANSFER')
+            setSendWorkflowType(TxType.TRANSFER)
 
             break
           }
           case 'alph_signAndSubmitDeployContractTx': {
-            // const { initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice, signerAddress } =
-            //   request.params as SignDeployContractTxParams
-            // const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
-            //   ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
-            //   : undefined
+            const { initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice, signerAddress } =
+              request.params as SignDeployContractTxParams
+            const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
+              ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
+              : undefined
 
-            // setFromAddress(signerAddress)
-            // setGasAmount(gasAmount)
-            // setGasPrice(gasPrice?.toString())
+            setFromAddress(signerAddress)
+            setGasAmount(gasAmount)
+            setGasPrice(gasPrice?.toString())
+            setBytecode(bytecode)
+            setInitialAlphAmount(initialAlphAmount)
+            setIssueTokenAmount(issueTokenAmount?.toString())
 
-            // const txData: DeployContractTxData = {
-            //   bytecode,
-            //   initialAlphAmount,
-            //   issueTokenAmount: issueTokenAmount?.toString()
-            // }
+            console.log('SETTING SEND WORKFLOW TYPE TO OPEN MODAL TO DEPLOY_CONTRACT')
+            setSendWorkflowType(TxType.DEPLOY_CONTRACT)
 
             break
           }
@@ -236,12 +241,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             setGasAmount(gasAmount)
             setGasPrice(gasPrice?.toString())
             setBytecode(bytecode)
-            setBuildTxCallbacks({
-              onBuildSuccess: () => navigation.navigate('SendNavigation', { screen: 'VerifyScreen' }),
-              onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
-            })
 
-            console.log('SETTING SEND WORKFLOW TYPE TO OPEN MODAL')
+            console.log('SETTING SEND WORKFLOW TYPE TO OPEN MODAL TO SCRIPT')
             setSendWorkflowType(TxType.SCRIPT)
 
             break
@@ -282,7 +283,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       }
     },
     [
-      buildTransaction,
       navigation,
       onSessionRequestError,
       setAssetAmounts,
@@ -291,6 +291,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setFromAddress,
       setGasAmount,
       setGasPrice,
+      setInitialAlphAmount,
+      setIssueTokenAmount,
       setSendWorkflowType,
       setToAddress,
       walletConnectClient
@@ -342,9 +344,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     walletConnectClient.on('session_delete', onSessionDelete)
 
     return () => {
-      walletConnectClient.removeListener('session_request', onSessionRequest)
-      walletConnectClient.removeListener('session_proposal', onSessionProposal)
-      walletConnectClient.removeListener('session_delete', onSessionDelete)
+      walletConnectClient.off('session_request', onSessionRequest)
+      walletConnectClient.off('session_proposal', onSessionProposal)
+      walletConnectClient.off('session_delete', onSessionDelete)
     }
   }, [onSessionDelete, onSessionProposal, onSessionRequest, walletConnectClient])
 
@@ -359,7 +361,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         sessionTopic,
         onSessionDelete,
         onProposalApprove,
-        connectedDAppMetadata
+        connectedDAppMetadata,
+        onSessionRequestSuccess
       }}
     >
       {children}

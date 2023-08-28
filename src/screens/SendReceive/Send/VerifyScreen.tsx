@@ -30,6 +30,7 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
+import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
@@ -38,7 +39,9 @@ import { getTransactionAssetAmounts } from '~/utils/transactions'
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'>, ScrollScreenProps {}
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
-  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction, bytecode } = useSendContext()
+  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction, bytecode, initialAlphAmount, issueTokenAmount } =
+    useSendContext()
+  const { walletConnectClient, requestEvent, onSessionRequestSuccess } = useWalletConnectContext()
 
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]
@@ -47,7 +50,17 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
     navigation.getParent()?.setOptions({
       headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
       headerRight: () => (
-        <ContinueButton text="Send" onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))} />
+        <ContinueButton
+          text="Send"
+          onPress={async () =>
+            sendTransaction((signature?: string) => {
+              if (signature && walletConnectClient && requestEvent) {
+                onSessionRequestSuccess(requestEvent, { signature })
+              }
+              navigation.navigate('TransfersScreen')
+            })
+          }
+        />
       )
     })
   })
@@ -57,6 +70,8 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   console.log('toAddress', toAddress)
   console.log('assetAmounts', assetAmounts)
   console.log('bytecode', bytecode)
+  console.log('issueTokenAmount', issueTokenAmount)
+  console.log('initialAlphAmount', initialAlphAmount)
 
   if (!fromAddress) return null
 
@@ -78,6 +93,11 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
               </AssetAmounts>
             </HighlightRow>
           )}
+          {initialAlphAmount?.amount !== undefined && (
+            <HighlightRow title="Sending" titleColor="secondary">
+              <AssetAmountWithLogo assetId={ALPH.id} logoSize={18} amount={BigInt(initialAlphAmount.amount)} />
+            </HighlightRow>
+          )}
           {toAddress && (
             <HighlightRow title="To" titleColor="secondary">
               <AddressBadge addressHash={toAddress} />
@@ -89,6 +109,11 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           {bytecode && (
             <HighlightRow title="Bytecode" titleColor="secondary">
               <AppText>{bytecode}</AppText>
+            </HighlightRow>
+          )}
+          {issueTokenAmount && (
+            <HighlightRow title="Issue token amount" titleColor="secondary">
+              <AppText>{issueTokenAmount}</AppText>
             </HighlightRow>
           )}
         </BoxSurface>
