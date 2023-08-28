@@ -19,13 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { StackHeaderProps } from '@react-navigation/stack'
 
-import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
 
 type StackHeaderCustomProps = StackHeaderProps & BaseHeaderProps
 
-const StackHeader = ({ navigation, options, ...props }: StackHeaderCustomProps) => {
+const StackHeader = ({ navigation, options, headerTitle, ...props }: StackHeaderCustomProps) => {
   let HeaderLeft = null
 
   if (navigation.canGoBack()) {
@@ -38,7 +37,7 @@ const StackHeader = ({ navigation, options, ...props }: StackHeaderCustomProps) 
     )
   }
 
-  return <BaseHeader HeaderLeft={HeaderLeft} HeaderCompactContent={<AppText>{options.title}</AppText>} {...props} />
+  return <BaseHeader HeaderLeft={HeaderLeft} headerTitle={headerTitle} {...props} />
 }
 
 export default StackHeader

@@ -31,7 +31,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { useScrollContext } from '~/contexts/ScrollContext'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 export interface BaseHeaderProps {
@@ -65,7 +64,7 @@ const BaseHeader = ({
   const bgColorRange = [bgColor ?? theme.bg.secondary, theme.bg.primary]
   const borderColorRange = ['transparent', theme.border.secondary]
 
-  const hasCompactHeader = HeaderCompactContent !== undefined
+  const hasCompactHeader = HeaderCompactContent !== undefined || headerTitle
 
   const titleAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader || headerTitle
@@ -126,14 +125,14 @@ const BaseHeader = ({
   } else {
     return (
       <Animated.View style={style}>
-        {HeaderCompactContent && (
+        {(HeaderCompactContent || headerTitle) && (
           <CompactContent style={compactContentAnimatedStyle}>
             <ActionAreaBlurred
               style={{ paddingTop: insets.top, justifyContent: 'center', height: '100%' }}
               animatedProps={animatedBlurViewProps}
               tint={theme.name}
             >
-              {HeaderCompactContent}
+              {HeaderCompactContent || <AppText>{headerTitle}</AppText>}
               <BottomBorder style={bottomBorderColor} />
             </ActionAreaBlurred>
           </CompactContent>

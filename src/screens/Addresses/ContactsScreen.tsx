@@ -19,13 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { ScrollViewProps } from 'react-native'
 
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import BaseHeader from '~/components/headers/BaseHeader'
 import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
-import { useScrollEventHandler } from '~/contexts/ScrollContext'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import TopTabBar from '~/components/TopTabBar'
+import useCustomHeader from '~/hooks/layout/useCustomHeader'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 import { Contact } from '~/types/contacts'
+import { useScroll } from '~/utils/scroll'
 
 interface ScreenProps
   extends ScrollViewProps,
@@ -33,10 +36,15 @@ interface ScreenProps
     ScrollScreenProps {}
 
 const ContactsScreen = ({ navigation, style, ...props }: ScreenProps) => {
-  const scrollHandler = useScrollEventHandler()
+  const { handleScroll, scrollY } = useScroll()
+
+  useCustomHeader({
+    Header: (props) => <BaseHeader scrollY={scrollY} HeaderLeft={<TopTabBar {...props} />} />,
+    navigation
+  })
 
   return (
-    <ScrollScreen {...props} onScroll={scrollHandler}>
+    <ScrollScreen {...props} onScroll={handleScroll}>
       <ContactListScreenBase
         onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
         onNewContactPress={() => navigation.navigate('NewContactScreen')}

@@ -30,10 +30,12 @@ import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
+import BaseHeader from '~/components/headers/BaseHeader'
+import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import Modalize from '~/components/layout/Modalize'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
-import { useScrollEventHandler } from '~/contexts/ScrollContext'
+import TopTabBar from '~/components/TopTabBar'
+import useCustomHeader from '~/hooks/layout/useCustomHeader'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -46,6 +48,7 @@ import {
   syncAddressesData
 } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
+import { useScroll } from '~/utils/scroll'
 
 type ScreenProps = StackScreenProps<AddressTabsParamList, 'AddressesScreen'> &
   StackScreenProps<SendNavigationParamList, 'AddressesScreen'>
@@ -55,7 +58,7 @@ interface AddressesScreenProps extends ScreenProps, ScrollScreenProps {}
 const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const scrollHandler = useScrollEventHandler()
+  const { handleScroll, scrollY } = useScroll()
   const posthog = usePostHog()
 
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
@@ -78,6 +81,11 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
+
+  useCustomHeader({
+    Header: (props) => <BaseHeader scrollY={scrollY} HeaderLeft={<TopTabBar {...props} />} />,
+    navigation
+  })
 
   useEffect(() => {
     if (defaultAddress) {
@@ -105,7 +113,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
     <>
       <ScrollScreen
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
-        onScroll={scrollHandler}
+        onScroll={handleScroll}
         bounces={false}
         hasHeader
         hasBottomBar

@@ -22,8 +22,11 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { FlatList } from 'react-native'
 
+import AppText from '~/components/AppText'
+import BaseHeader from '~/components/headers/BaseHeader'
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
-import { useScrollContext, useScrollEventHandler } from '~/contexts/ScrollContext'
+import { useScrollContext } from '~/contexts/ScrollContext'
+import useCustomHeader from '~/hooks/layout/useCustomHeader'
 import { useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -31,6 +34,7 @@ import { makeSelectAddressesConfirmedTransactions } from '~/store/confirmedTrans
 import { makeSelectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressTransaction } from '~/types/transactions'
+import { useScroll } from '~/utils/scroll'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
@@ -39,11 +43,24 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
-  const scrollHandler = useScrollEventHandler()
+
+  const { handleScroll, scrollY } = useScroll()
   const { setScrollToTop } = useScrollContext()
   const headerHeight = useHeaderHeight()
 
   const listRef = useRef<FlatList<AddressTransaction>>(null)
+
+  useCustomHeader({
+    Header: (props) => (
+      <BaseHeader
+        scrollY={scrollY}
+        headerTitle="Transfers"
+        HeaderCompactContent={<AppText>{'Transfers'}</AppText>}
+        {...props}
+      />
+    ),
+    navigation
+  })
 
   useEffect(() => {
     navigation.addListener('blur', () => listRef.current?.scrollToOffset({ offset: 0, animated: false }))
@@ -62,7 +79,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       pendingTransactions={pendingTransactions}
       initialNumToRender={8}
       contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight + HORIZONTAL_MARGIN }}
-      onScroll={scrollHandler}
+      onScroll={handleScroll}
       ref={listRef}
     />
   )

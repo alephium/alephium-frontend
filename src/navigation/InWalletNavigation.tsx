@@ -20,16 +20,9 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { Host } from 'react-native-portalize'
-import { useTheme } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
-import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
-import BaseHeader from '~/components/headers/BaseHeader'
-import TopTabBar from '~/components/TopTabBar'
-import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { ScrollContextProvider } from '~/contexts/ScrollContext'
-import { useAppSelector } from '~/hooks/redux'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import DashboardScreen from '~/screens/DashboardScreen'
@@ -37,69 +30,44 @@ import TransfersScreen from '~/screens/TransfersScreen'
 
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 
-const InWalletTabsNavigation = () => {
-  const theme = useTheme()
-  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-
-  return (
-    <ScrollContextProvider>
-      <Host>
-        <InWalletTabs.Navigator tabBar={(props) => <FooterMenu {...props} />}>
-          <InWalletTabs.Screen
-            name="DashboardScreen"
-            component={DashboardScreen}
-            options={{
-              title: 'Overview',
-              tabBarIcon: ({ color, size, focused }) => (
-                <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
-              ),
-              headerTransparent: true,
-              header: (props) => (
-                <BaseHeader
-                  HeaderRight={<DashboardHeaderActions />}
-                  HeaderLeft={<WalletSwitchButton />}
-                  headerTitle={activeWalletName}
-                  HeaderCompactContent={<AppText>{activeWalletName}</AppText>}
-                  bgColor={theme.bg.primary}
-                  {...props}
-                />
-              )
-            }}
-          />
-          <InWalletTabs.Screen
-            name="TransfersScreen"
-            component={TransfersScreen}
-            options={{
-              title: 'Transfers',
-              tabBarIcon: ({ color, size, focused }) => (
-                <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
-              ),
-              header: (props) => (
-                <BaseHeader
-                  headerTitle="Transfers"
-                  {...props}
-                  HeaderCompactContent={<AppText>{'Transfers'}</AppText>}
-                />
-              ),
-              headerTransparent: true
-            }}
-          />
-          <InWalletTabs.Screen
-            name="AddressesTabNavigation"
-            component={AddressesTabNavigation}
-            options={{
-              title: 'Addresses',
-              tabBarIcon: ({ color, size, focused }) => (
-                <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
-              ),
-              header: (props) => <BaseHeader HeaderLeft={<TopTabBar {...props} />} />,
-              headerTransparent: true
-            }}
-          />
-        </InWalletTabs.Navigator>
-      </Host>
-    </ScrollContextProvider>
-  )
-}
+const InWalletTabsNavigation = () => (
+  <ScrollContextProvider>
+    <Host>
+      <InWalletTabs.Navigator tabBar={(props) => <FooterMenu {...props} />}>
+        <InWalletTabs.Screen
+          name="DashboardScreen"
+          component={DashboardScreen}
+          options={{
+            title: 'Overview',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="TransfersScreen"
+          component={TransfersScreen}
+          options={{
+            title: 'Transfers',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="AddressesTabNavigation"
+          component={AddressesTabNavigation}
+          options={{
+            title: 'Addresses',
+            headerShown: false,
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
+            )
+          }}
+        />
+      </InWalletTabs.Navigator>
+    </Host>
+  </ScrollContextProvider>
+)
 
 export default InWalletTabsNavigation

@@ -23,7 +23,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components'
 
-import StackHeader from '~/components/headers/StackHeader'
 import AnalyticsProvider from '~/contexts/AnalyticsContext'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
@@ -80,13 +79,7 @@ const RootStackNavigation = () => {
       <Host>
         <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
           <AnalyticsProvider>
-            <RootStack.Navigator
-              initialRouteName="SplashScreen"
-              screenOptions={{
-                header: (props) => <StackHeader {...props} />,
-                headerTransparent: true
-              }}
-            >
+            <RootStack.Navigator initialRouteName="SplashScreen">
               {/* Screens with header */}
               <RootStack.Group>
                 <RootStack.Screen name="LandingScreen" component={LandingScreen} />

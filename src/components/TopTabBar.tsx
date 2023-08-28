@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
+import { StackHeaderProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import { Pressable } from 'react-native'
 import Reanimated from 'react-native-reanimated'
@@ -42,7 +42,7 @@ const tabs: Tab[] = [
 
 // TODO: Reimplement tap bar to scroll up
 
-const TopTabBar = ({ navigation }: BottomTabHeaderProps) => {
+const TopTabBar = ({ navigation }: StackHeaderProps) => {
   const [activeTab, setActiveTab] = useState(tabs[0])
 
   const handleOnTabPress = (tab: Tab) => {
@@ -67,7 +67,7 @@ const TopTabBar = ({ navigation }: BottomTabHeaderProps) => {
 
 interface TabBarItemProps {
   label: string
-  navigation: BottomTabHeaderProps['navigation']
+  navigation: StackHeaderProps['navigation']
   onPress: () => void
   isActive: boolean
 }

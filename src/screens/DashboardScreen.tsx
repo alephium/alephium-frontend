@@ -26,15 +26,19 @@ import AddressesTokensList from '~/components/AddressesTokensList'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
+import DashboardHeaderActions from '~/components/DashboardHeaderActions'
+import BaseHeader from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
-import { useScrollEventHandler } from '~/contexts/ScrollContext'
+import { ScreenSection } from '~/components/layout/Screen'
+import WalletSwitchButton from '~/components/WalletSwitchButton'
+import useCustomHeader from '~/hooks/layout/useCustomHeader'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
 import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
+import { useScroll } from '~/utils/scroll'
 
 interface ScreenProps
   extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'>,
@@ -43,10 +47,26 @@ interface ScreenProps
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const scrollHandler = useScrollEventHandler()
+  const { handleScroll, scrollY } = useScroll()
 
+  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
+
+  useCustomHeader({
+    Header: (props) => (
+      <BaseHeader
+        scrollY={scrollY}
+        HeaderRight={<DashboardHeaderActions />}
+        HeaderLeft={<WalletSwitchButton />}
+        headerTitle={activeWalletName}
+        HeaderCompactContent={<AppText>{activeWalletName}</AppText>}
+        bgColor={theme.bg.primary}
+        {...props}
+      />
+    ),
+    navigation
+  })
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
@@ -55,7 +75,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   return (
     <DashboardScreenStyled
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
-      onScroll={scrollHandler}
+      onScroll={handleScroll}
       hasHeader
       hasBottomBar
       {...props}

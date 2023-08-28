@@ -33,7 +33,7 @@ export interface AddressTabsParamList extends ParamListBase {
 const TopTab = createStackNavigator<AddressTabsParamList>()
 
 const AddressesTabNavigation = () => (
-  <TopTab.Navigator screenOptions={{ headerShown: false }} initialRouteName="AddressesScreen">
+  <TopTab.Navigator initialRouteName="AddressesScreen">
     <TopTab.Screen name="AddressesScreen" component={AddressesScreen} options={{ title: 'Addresses' }} />
     <TopTab.Screen name="ContactsScreen" component={ContactsScreen} options={{ title: 'Contacts' }} />
   </TopTab.Navigator>

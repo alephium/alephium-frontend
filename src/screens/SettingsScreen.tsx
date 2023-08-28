@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { Alert } from 'react-native'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
@@ -35,6 +35,7 @@ import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Toggle from '~/components/Toggle'
+import useCustomHeader from '~/hooks/layout/useCustomHeader'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -72,11 +73,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
-  useEffect(() => {
-    navigation.setOptions({
-      header: (props) => <StackHeader scrollY={scrollY} {...props} />
-    })
-  }, [navigation, scrollY])
+  useCustomHeader({
+    Header: (props) => <StackHeader scrollY={scrollY} headerTitle="Settings" {...props} />,
+    navigation
+  })
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
