@@ -16,19 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError, AssetAmount, getHumanReadableError } from '@alephium/sdk'
+import { APIError, AssetAmount, fromHumanReadableAmount, getHumanReadableError } from '@alephium/sdk'
 import { node } from '@alephium/web3'
 import { usePostHog } from 'posthog-react-native'
-import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import Toast from 'react-native-root-toast'
 
+import client from '~/api/client'
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
-import { getTransactionAssetAmounts } from '~/utils/transactions'
+import { TxType } from '~/types/transactions'
+import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 type UnsignedTxData = {
   unsignedTxs: {
@@ -49,14 +51,18 @@ interface SendContextValue {
   fromAddress?: AddressHash
   setFromAddress: (toAddress: AddressHash) => void
   assetAmounts: AssetAmount[]
+  bytecode?: string
+  setBytecode: (bytecode: string) => void
   setAssetAmount: (assetId: string, amount?: bigint) => void
   setAssetAmounts: (assetAmounts: { id: string; amount?: bigint }[]) => void
   fees: bigint
-  buildTransaction: (callbacks: BuildTransactionCallbacks) => Promise<void>
+  buildTransaction: (txType: TxType, callbacks: BuildTransactionCallbacks) => Promise<void>
   sendTransaction: (onSendSuccess: () => void) => Promise<void>
   resetSendState: () => void
   setGasAmount: (gasAmount?: number) => void
   setGasPrice: (gasPrice?: string) => void
+  setBuildTxCallbacks: (callbacks: BuildTransactionCallbacks) => void
+  setSendWorkflowType: (txType: TxType) => void
 }
 
 const initialValues: SendContextValue = {
@@ -65,6 +71,8 @@ const initialValues: SendContextValue = {
   fromAddress: undefined,
   setFromAddress: () => null,
   assetAmounts: [],
+  bytecode: undefined,
+  setBytecode: () => null,
   setAssetAmount: () => null,
   setAssetAmounts: () => null,
   fees: BigInt(0),
@@ -72,7 +80,9 @@ const initialValues: SendContextValue = {
   sendTransaction: () => Promise.resolve(undefined),
   resetSendState: () => null,
   setGasAmount: () => null,
-  setGasPrice: () => null
+  setGasPrice: () => null,
+  setBuildTxCallbacks: () => null,
+  setSendWorkflowType: () => null
 }
 
 const SendContext = createContext(initialValues)
@@ -85,16 +95,37 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
   const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(initialValues.fromAddress)
   const [assetAmounts, setAssetAmounts] = useState<SendContextValue['assetAmounts']>(initialValues.assetAmounts)
+  const [bytecode, setBytecode] = useState<SendContextValue['bytecode']>(initialValues.bytecode)
   const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
   const [gasAmount, setGasAmount] = useState<number>()
   const [gasPrice, setGasPrice] = useState<string>()
+  const [buildTxCallbacks, setBuildTxCallbacks] = useState<BuildTransactionCallbacks>()
 
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isConsolidateModalVisible, setIsConsolidateModalVisible] = useState(false)
   const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const [onSendSuccessCallback, setOnSendSuccessCallback] = useState<() => void>(() => () => null)
 
+  const [sendWorkflowType, setSendWorkflowType] = useState<TxType>()
+
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
+
+  const resetSendState = useCallback(() => {
+    setToAddress(initialValues.toAddress)
+    setFromAddress(initialValues.fromAddress)
+    setAssetAmounts(initialValues.assetAmounts)
+    setGasAmount(undefined)
+    setGasPrice(undefined)
+    setUnsignedTxData({ unsignedTxs: [], fees: initialValues.fees })
+    setBytecode(undefined)
+    setBuildTxCallbacks(undefined)
+    setSendWorkflowType(undefined)
+
+    setConsolidationRequired(false)
+    setIsConsolidateModalVisible(false)
+    setIsAuthenticationModalVisible(false)
+    setOnSendSuccessCallback(() => () => null)
+  }, [])
 
   const setAssetAmount = (assetId: string, amount?: bigint) => {
     const existingAmountIndex = assetAmounts.findIndex(({ id }) => id === assetId)
@@ -125,14 +156,56 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   }, [address, posthog])
 
   const buildTransaction = useCallback(
-    async (callbacks: BuildTransactionCallbacks) => {
-      if (!address || !toAddress) return
+    async (txType: TxType, callbacks: BuildTransactionCallbacks) => {
+      console.log('SEND CONTEXT BUILD TX IS CALLED WITH STATE:')
+      console.log('fromAddress', fromAddress)
+      console.log('assetAmounts', assetAmounts)
+      console.log('gasAmount', gasAmount)
+      console.log('gasPrice', gasPrice)
+      console.log('bytecode', bytecode)
+
+      if (!address) return
 
       try {
-        const data = await buildUnsignedTransactions(address, toAddress, assetAmounts, gasAmount, gasPrice)
-        setUnsignedTxData(data)
+        let data
 
-        callbacks.onBuildSuccess()
+        switch (txType) {
+          case TxType.TRANSFER:
+            if (!toAddress) throw new Error('Destination address not set')
+
+            data = await buildUnsignedTransactions(address, toAddress, assetAmounts, gasAmount, gasPrice)
+            break
+          case TxType.SCRIPT: {
+            console.log('SEND CONTEXT CAPTURED SCRIPT EVENT, BUILDING TX...')
+
+            if (!bytecode) throw new Error('Bytecode not set')
+
+            const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
+            const result = await client.node.contracts.postContractsUnsignedTxExecuteScript({
+              fromPublicKey: address.publicKey,
+              bytecode,
+              attoAlphAmount,
+              tokens,
+              gasAmount: gasAmount,
+              gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
+            })
+
+            console.log('SEND CONTEXT RESULT FROM BUILDING SCRIPT TX:', result)
+
+            data = {
+              unsignedTxs: [{ txId: result.txId, unsignedTx: result.unsignedTx }],
+              fees: BigInt(result.gasAmount) * BigInt(result.gasPrice)
+            }
+            break
+          }
+          case TxType.DEPLOY_CONTRACT:
+            break
+        }
+
+        if (data) {
+          setUnsignedTxData(data)
+          callbacks.onBuildSuccess()
+        }
       } catch (e) {
         // TODO: When API error codes are available, replace this substring check with a proper error code check
         const { error } = e as APIError
@@ -148,12 +221,28 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     },
-    [address, assetAmounts, buildConsolidationTransactions, gasAmount, gasPrice, posthog, toAddress]
+    [
+      address,
+      assetAmounts,
+      buildConsolidationTransactions,
+      bytecode,
+      fromAddress,
+      gasAmount,
+      gasPrice,
+      posthog,
+      toAddress
+    ]
   )
 
   const sendTransaction = useCallback(
     async (onSendSuccess: () => void) => {
-      if (!address || !toAddress) return
+      console.log('SENDING TRANSACTION WITH STATE:')
+
+      console.log('address', address)
+      console.log('assetAmounts', assetAmounts)
+      console.log('unsignedTxData', unsignedTxData)
+
+      if (!address) return
 
       const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
@@ -165,7 +254,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
             transactionSent({
               hash: data.txId,
               fromAddress: address.hash,
-              toAddress: consolidationRequired ? address.hash : toAddress,
+              toAddress: consolidationRequired ? address.hash : toAddress ?? '',
               amount: attoAlphAmount,
               tokens,
               timestamp: new Date().getTime(),
@@ -174,7 +263,10 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           )
         }
 
+        console.log('SUCCESS SENDING')
+
         onSendSuccess()
+        resetSendState()
 
         posthog?.capture('Send: Sent transaction', { tokens: tokens.length })
       } catch (e) {
@@ -183,7 +275,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         posthog?.capture('Error', { message: 'Could not send transaction' })
       }
     },
-    [address, assetAmounts, consolidationRequired, dispatch, posthog, toAddress, unsignedTxData.unsignedTxs]
+    [address, assetAmounts, consolidationRequired, dispatch, posthog, resetSendState, toAddress, unsignedTxData]
   )
 
   const authenticateAndSend = useCallback(
@@ -198,19 +290,13 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
     [requiresAuth, sendTransaction]
   )
 
-  const resetSendState = useCallback(() => {
-    setToAddress(initialValues.toAddress)
-    setFromAddress(initialValues.fromAddress)
-    setAssetAmounts(initialValues.assetAmounts)
-    setGasAmount(undefined)
-    setGasPrice(undefined)
-    setUnsignedTxData({ unsignedTxs: [], fees: initialValues.fees })
+  useEffect(() => {
+    if (sendWorkflowType && buildTxCallbacks) {
+      console.log('USE EFFECT OF SEND CONTEXT GETS TRIGGERED TO OPEN MODAL')
 
-    setConsolidationRequired(false)
-    setIsConsolidateModalVisible(false)
-    setIsAuthenticationModalVisible(false)
-    setOnSendSuccessCallback(() => () => null)
-  }, [])
+      buildTransaction(sendWorkflowType, buildTxCallbacks)
+    }
+  }, [buildTransaction, buildTxCallbacks, sendWorkflowType])
 
   return (
     <SendContext.Provider
@@ -220,6 +306,8 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         fromAddress,
         setFromAddress,
         assetAmounts,
+        bytecode,
+        setBytecode,
         setAssetAmount,
         setAssetAmounts,
         fees: unsignedTxData.fees,
@@ -227,7 +315,9 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         sendTransaction: authenticateAndSend,
         resetSendState,
         setGasAmount,
-        setGasPrice
+        setGasPrice,
+        setBuildTxCallbacks,
+        setSendWorkflowType
       }}
     >
       {children}

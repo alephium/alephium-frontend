@@ -77,7 +77,9 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
       setConnecting(true)
 
       try {
-        return await walletConnectClient.pair({ uri: text })
+        console.log('pairing')
+        await walletConnectClient.pair({ uri: text })
+        console.log('finished pairing')
       } catch (e) {
         console.error('Could not pair with WalletConnect', e)
       }

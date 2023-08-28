@@ -131,17 +131,26 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
 
     setApproving(true)
 
-    const { topic, acknowledged } = await walletConnectClient.approve({
-      id,
-      relayProtocol: relays[0].protocol,
-      namespaces
-    })
-    onProposalApprove(topic)
-    await acknowledged()
-    setApproving(false)
-    onClose && onClose()
+    try {
+      console.log('approving...')
+      const { topic, acknowledged } = await walletConnectClient.approve({
+        id,
+        relayProtocol: relays[0].protocol,
+        namespaces
+      })
+      console.log('approved.')
+      onProposalApprove(topic)
+      console.log('acknowledging...')
+      const res = await acknowledged()
+      console.log('acknowledged.')
+      console.log('acknow result:', res)
 
-    posthog?.capture('WC: Approved connection')
+      setApproving(false)
+      posthog?.capture('WC: Approved connection')
+    } catch (e) {
+      console.error('WC: Error while approving and acknowledging', e)
+    }
+    onClose && onClose()
   }
 
   useEffect(() => {
@@ -174,7 +183,7 @@ const WalletConnectModal = ({ onClose, rejectProposal, ...props }: WalletConnect
 
       posthog?.capture('WC: Generated new address')
     } catch (e) {
-      console.error(e)
+      console.error('WC: Could not save new address', e)
 
       posthog?.capture('Error', { message: 'WC: Could not save new address' })
     }

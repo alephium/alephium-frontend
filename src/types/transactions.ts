@@ -34,3 +34,9 @@ export type PendingTransaction = {
 export type AddressConfirmedTransaction = explorer.Transaction & { address: Address }
 export type AddressPendingTransaction = PendingTransaction & { address: Address }
 export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction
+
+export enum TxType {
+  TRANSFER,
+  DEPLOY_CONTRACT,
+  SCRIPT
+}

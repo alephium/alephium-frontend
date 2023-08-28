@@ -18,19 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { getHumanReadableError } from '@alephium/sdk'
+import { AssetAmount, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { ChainInfo, parseChain, PROVIDER_NAMESPACE, RelayMethod } from '@alephium/walletconnect-provider'
-import { ApiRequestArguments, SignTransferTxParams } from '@alephium/web3'
+import { ApiRequestArguments, SignExecuteScriptTxParams, SignTransferTxParams } from '@alephium/web3'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import SignClient from '@walletconnect/sign-client'
 import { EngineTypes, SignClientTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
+import { partition } from 'lodash'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
 import client from '~/api/client'
 import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { TxType } from '~/types/transactions'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
 
 type RequestEvent = SignClientTypes.EventArguments['session_request']
@@ -66,8 +68,17 @@ const WalletConnectContext = createContext(initialValues)
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigation<NavigationProp<SendNavigationParamList>>()
-  const { setToAddress, setFromAddress, setAssetAmounts, setGasAmount, setGasPrice, buildTransaction } =
-    useSendContext()
+  const {
+    setToAddress,
+    setFromAddress,
+    setAssetAmounts,
+    setGasAmount,
+    setGasPrice,
+    setBytecode,
+    buildTransaction,
+    setBuildTxCallbacks,
+    setSendWorkflowType
+  } = useSendContext()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [requestEvent, setRequestEvent] = useState(initialValues.requestEvent)
@@ -79,6 +90,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   const initializeWalletConnectClient = useCallback(async () => {
     try {
+      console.log('initializing client')
       const client = await SignClient.init({
         projectId: '6e2562e43678dd68a9070a62b6d52207',
         relayUrl: 'wss://relay.walletconnect.com',
@@ -91,6 +103,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       })
 
       setWalletConnectClient(client)
+      console.log('initialized client')
     } catch (e) {
       console.error('Could not initialize WalletConnect client', e)
     }
@@ -166,55 +179,71 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             setGasAmount(p.gasAmount)
             setGasPrice(p.gasPrice?.toString())
 
-            buildTransaction({
-              onBuildSuccess: () => navigation.navigate('VerifyScreen'),
-              onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
-            })
+            // buildTransaction(TxType.TRANSFER, {
+            //   onBuildSuccess: () => navigation.navigate('VerifyScreen'),
+            //   onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
+            // })
 
             break
           }
           case 'alph_signAndSubmitDeployContractTx': {
-            //       const { initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice, signerAddress } =
-            //         request.params as SignDeployContractTxParams
-            //       const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
-            //         ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
-            //         : undefined
-            //       const txData: DeployContractTxData = {
-            //         fromAddress: getSignerAddressByHash(signerAddress),
-            //         bytecode,
-            //         initialAlphAmount,
-            //         issueTokenAmount: issueTokenAmount?.toString(),
-            //         gasAmount,
-            //         gasPrice: gasPrice?.toString()
-            //       }
-            //       setTxDataAndOpenModal({ txData, modalType: TxType.DEPLOY_CONTRACT })
+            // const { initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice, signerAddress } =
+            //   request.params as SignDeployContractTxParams
+            // const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
+            //   ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
+            //   : undefined
+
+            // setFromAddress(signerAddress)
+            // setGasAmount(gasAmount)
+            // setGasPrice(gasPrice?.toString())
+
+            // const txData: DeployContractTxData = {
+            //   bytecode,
+            //   initialAlphAmount,
+            //   issueTokenAmount: issueTokenAmount?.toString()
+            // }
+
             break
           }
           case 'alph_signAndSubmitExecuteScriptTx': {
-            //       const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } =
-            //         request.params as SignExecuteScriptTxParams
-            //       let assetAmounts: AssetAmount[] = []
-            //       let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
-            //       if (tokens) {
-            //         const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
-            //         const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
-            //         assetAmounts = tokenAssets
-            //         allAlphAssets = [...allAlphAssets, ...alphAssets]
-            //       }
-            //       if (allAlphAssets.length > 0) {
-            //         assetAmounts.push({
-            //           id: ALPH.id,
-            //           amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
-            //         })
-            //       }
-            //       const txData: CallContractTxData = {
-            //         fromAddress: getSignerAddressByHash(signerAddress),
-            //         bytecode,
-            //         assetAmounts,
-            //         gasAmount,
-            //         gasPrice: gasPrice?.toString()
-            //       }
-            //       setTxDataAndOpenModal({ txData, modalType: TxType.SCRIPT })
+            const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } =
+              request.params as SignExecuteScriptTxParams
+            let assetAmounts: AssetAmount[] = []
+            let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
+            if (tokens) {
+              const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
+              const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
+              assetAmounts = tokenAssets
+              allAlphAssets = [...allAlphAssets, ...alphAssets]
+            }
+            if (allAlphAssets.length > 0) {
+              assetAmounts.push({
+                id: ALPH.id,
+                amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
+              })
+            }
+
+            console.log('BUILDING FROM WC CONTEXT AFTER PARSING EVENT')
+            console.log('fromAddress', signerAddress)
+            console.log('assetAmounts', assetAmounts)
+            console.log('assetAmounts', assetAmounts)
+            console.log('gasAmount', gasAmount)
+            console.log('gasPrice', gasPrice)
+            console.log('bytecode', bytecode)
+
+            setFromAddress(signerAddress)
+            setAssetAmounts(assetAmounts)
+            setGasAmount(gasAmount)
+            setGasPrice(gasPrice?.toString())
+            setBytecode(bytecode)
+            setBuildTxCallbacks({
+              onBuildSuccess: () => navigation.navigate('SendNavigation', { screen: 'VerifyScreen' }),
+              onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
+            })
+
+            console.log('SETTING SEND WORKFLOW TYPE TO OPEN MODAL')
+            setSendWorkflowType(TxType.SCRIPT)
+
             break
           }
           case 'alph_requestNodeApi': {
@@ -257,9 +286,12 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       navigation,
       onSessionRequestError,
       setAssetAmounts,
+      setBuildTxCallbacks,
+      setBytecode,
       setFromAddress,
       setGasAmount,
       setGasPrice,
+      setSendWorkflowType,
       setToAddress,
       walletConnectClient
     ]

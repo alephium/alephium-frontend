@@ -44,7 +44,9 @@ const CurrentWalletConnectConnectionsModal = ({ onClose, ...props }: CurrentWall
 
     setDisconnecting(true)
 
+    console.log('disconecting...')
     await walletConnectClient.disconnect({ topic: sessionTopic, reason: getSdkError('USER_DISCONNECTED') })
+    console.log('disconected.')
     onSessionDelete()
     onClose && onClose()
 

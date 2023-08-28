@@ -38,7 +38,7 @@ import { getTransactionAssetAmounts } from '~/utils/transactions'
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'>, ScrollScreenProps {}
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
-  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
+  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction, bytecode } = useSendContext()
 
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]
@@ -52,7 +52,13 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
     })
   })
 
-  if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
+  console.log('VERIFY SCREEN:')
+  console.log('fromAddress', fromAddress)
+  console.log('toAddress', toAddress)
+  console.log('assetAmounts', assetAmounts)
+  console.log('bytecode', bytecode)
+
+  if (!fromAddress) return null
 
   return (
     <ScrollScreen {...props}>
@@ -63,19 +69,28 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       />
       <ScreenSection>
         <BoxSurface>
-          <HighlightRow title="Sending" titleColor="secondary">
-            <AssetAmounts>
-              {assets.map(({ id, amount }) =>
-                amount ? <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} /> : null
-              )}
-            </AssetAmounts>
-          </HighlightRow>
-          <HighlightRow title="To" titleColor="secondary">
-            <AddressBadge addressHash={toAddress} />
-          </HighlightRow>
+          {assetAmounts.length > 0 && (
+            <HighlightRow title="Sending" titleColor="secondary">
+              <AssetAmounts>
+                {assets.map(({ id, amount }) =>
+                  amount ? <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} /> : null
+                )}
+              </AssetAmounts>
+            </HighlightRow>
+          )}
+          {toAddress && (
+            <HighlightRow title="To" titleColor="secondary">
+              <AddressBadge addressHash={toAddress} />
+            </HighlightRow>
+          )}
           <HighlightRow title="From" titleColor="secondary">
             <AddressBadge addressHash={fromAddress} />
           </HighlightRow>
+          {bytecode && (
+            <HighlightRow title="Bytecode" titleColor="secondary">
+              <AppText>{bytecode}</AppText>
+            </HighlightRow>
+          )}
         </BoxSurface>
       </ScreenSection>
       <ScreenSection>
