@@ -94,7 +94,7 @@ const Button = ({
         secondary: bg,
         transparent: undefined
       }[type],
-      width: round ? 56 : props.wide ? '75%' : hasOnlyIcon ? 45 : 'auto',
+      width: round ? 45 : props.wide ? '75%' : hasOnlyIcon ? 45 : 'auto',
       height: compact ? 'auto' : hasOnlyIcon ? 45 : 55,
       borderRadius: round ? 100 : BORDER_RADIUS,
       justifyContent: round ? 'center' : undefined,

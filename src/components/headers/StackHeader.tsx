@@ -20,17 +20,25 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { StackHeaderProps } from '@react-navigation/stack'
 
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
 
 type StackHeaderCustomProps = StackHeaderProps & BaseHeaderProps
 
-const StackHeader = (props: StackHeaderCustomProps) => {
-  return (
-    <BaseHeader
-      HeaderLeft={<Ionicons name="arrow-back-outline" color="#ffffff" size={26} />}
-      HeaderCompactContent={<AppText>{props.options.title}</AppText>}
-    />
-  )
+const StackHeader = ({ navigation, options, ...props }: StackHeaderCustomProps) => {
+  let HeaderLeft = null
+
+  if (navigation.canGoBack()) {
+    HeaderLeft = (
+      <Button
+        onPress={navigation.goBack}
+        Icon={() => <Ionicons name="arrow-back-outline" color="#ffffff" size={26} />}
+        round
+      />
+    )
+  }
+
+  return <BaseHeader HeaderLeft={HeaderLeft} HeaderCompactContent={<AppText>{options.title}</AppText>} {...props} />
 }
 
 export default StackHeader

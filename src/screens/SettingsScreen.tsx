@@ -20,6 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
+import { useEffect } from 'react'
 import { Alert } from 'react-native'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
@@ -27,13 +28,13 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import StackHeader from '~/components/headers/StackHeader'
 import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
 import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Toggle from '~/components/Toggle'
-import { useScrollEventHandler } from '~/contexts/ScrollContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -48,12 +49,13 @@ import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
 import { analyticsToggled, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
 import { resetNavigationState } from '~/utils/navigation'
+import { useScroll } from '~/utils/scroll'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
 
 const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const scrollHandler = useScrollEventHandler()
+  const { handleScroll, scrollY } = useScroll()
   const hasAvailableBiometrics = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const requireAuth = useAppSelector((s) => s.settings.requireAuth)
@@ -69,6 +71,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const { ref: currencySelectModalRef, open: openCurrencySelectModal, close: closeCurrencySelectModal } = useModalize()
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
+
+  useEffect(() => {
+    navigation.setOptions({
+      header: (props) => <StackHeader scrollY={scrollY} {...props} />
+    })
+  }, [navigation, scrollY])
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
@@ -124,7 +132,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <ScrollScreen onScroll={scrollHandler} hasHeader {...props}>
+      <ScrollScreen onScroll={handleScroll} hasHeader {...props}>
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>

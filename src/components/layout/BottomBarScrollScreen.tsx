@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useHeaderHeight } from '@react-navigation/elements'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useCallback, useEffect, useRef } from 'react'
 import { ScrollView, ScrollViewProps } from 'react-native'

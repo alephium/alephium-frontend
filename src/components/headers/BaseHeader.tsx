@@ -23,6 +23,7 @@ import Animated, {
   Extrapolate,
   interpolate,
   interpolateColor,
+  SharedValue,
   useAnimatedProps,
   useAnimatedStyle
 } from 'react-native-reanimated'
@@ -34,6 +35,7 @@ import { useScrollContext } from '~/contexts/ScrollContext'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 export interface BaseHeaderProps {
+  scrollY: SharedValue<number>
   HeaderLeft?: ReactNode
   HeaderRight?: ReactNode
   headerTitle?: string
@@ -49,6 +51,7 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 // TODO: Reimplement tap bar to scroll up
 
 const BaseHeader = ({
+  scrollY,
   HeaderRight,
   HeaderLeft,
   headerTitle,
@@ -57,7 +60,6 @@ const BaseHeader = ({
   style
 }: BaseHeaderProps) => {
   const theme = useTheme()
-  const { scrollY } = useScrollContext()
   const insets = useSafeAreaInsets()
 
   const bgColorRange = [bgColor ?? theme.bg.secondary, theme.bg.primary]
