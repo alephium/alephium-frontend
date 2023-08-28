@@ -40,11 +40,12 @@ const ContactsScreen = ({ navigation, style, ...props }: ScreenProps) => {
 
   useCustomHeader({
     Header: (props) => <BaseHeader scrollY={scrollY} HeaderLeft={<TopTabBar {...props} />} />,
-    navigation
+    navigation,
+    setInParent: true
   })
 
   return (
-    <ScrollScreen {...props} onScroll={handleScroll}>
+    <ScrollScreen {...props} onScroll={handleScroll} hasHeader>
       <ContactListScreenBase
         onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
         onNewContactPress={() => navigation.navigate('NewContactScreen')}

@@ -84,7 +84,8 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
 
   useCustomHeader({
     Header: (props) => <BaseHeader scrollY={scrollY} HeaderLeft={<TopTabBar {...props} />} />,
-    navigation
+    navigation,
+    setInParent: true
   })
 
   useEffect(() => {

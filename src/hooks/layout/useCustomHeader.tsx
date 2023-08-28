@@ -23,15 +23,22 @@ import React, { ReactNode, useLayoutEffect } from 'react'
 type UseStackCustomHeaderProps<T extends ParamListBase> = {
   Header: (props: StackHeaderProps) => ReactNode
   navigation: StackNavigationProp<T>
+  setInParent?: boolean
 }
 
-const useCustomHeader = <T extends ParamListBase>({ Header, navigation }: UseStackCustomHeaderProps<T>) => {
+const useCustomHeader = <T extends ParamListBase>({
+  Header,
+  navigation,
+  setInParent
+}: UseStackCustomHeaderProps<T>) => {
+  const nav = setInParent ? navigation.getParent() : navigation
+
   useLayoutEffect(() => {
-    navigation.setOptions({
+    nav?.setOptions({
       header: (props) => <Header {...props} />,
       headerTransparent: true
     })
-  }, [Header, navigation])
+  }, [Header, nav])
 }
 
 export default useCustomHeader

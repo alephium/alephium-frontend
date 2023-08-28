@@ -59,7 +59,6 @@ const InWalletTabsNavigation = () => (
           component={AddressesTabNavigation}
           options={{
             title: 'Addresses',
-            headerShown: false,
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
             )

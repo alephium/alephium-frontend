@@ -38,7 +38,7 @@ export type PossibleNextScreenAfterDestination = 'OriginScreen' | 'AssetsScreen'
 
 const SendStack = createStackNavigator<SendNavigationParamList>()
 
-const SendNavigation = ({ navigation, route: { params } }: StackScreenProps<RootStackParamList, 'SendNavigation'>) => (
+const SendNavigation = () => (
   <SendContextProvider>
     <SendStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="DestinationScreen">
       <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
