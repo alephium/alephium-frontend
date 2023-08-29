@@ -36,8 +36,6 @@ import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import Modalize from '~/components/layout/Modalize'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import TopTabBar from '~/components/TopTabBar'
-import useCustomTopTabBar from '~/hooks/layout/useConstomTopTabBar'
-import useCustomHeader from '~/hooks/layout/useCustomHeader'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -83,11 +81,6 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
-
-  useCustomTopTabBar({
-    TabBar: (props) => <BaseHeader HeaderLeft={<TopTabBar {...props} />} />,
-    navigation
-  })
 
   useEffect(() => {
     if (defaultAddress) {
