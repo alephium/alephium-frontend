@@ -31,13 +31,22 @@ import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 type WalletConnectPairingsModalProps = ModalProps<ScrollScreenProps>
 
 const WalletConnectPairingsModal = ({ onClose, ...props }: WalletConnectPairingsModalProps) => {
-  const { unpair, walletConnectClient } = useWalletConnectContext()
+  const { unpair, walletConnectClient, activeSessions } = useWalletConnectContext()
+
+  // ActiveSessions.map((p) => console.log(p))
+  // walletConnectClient?.core.history.pending.map((p) => console.log(p))
+  // walletConnectClient?.session.values.map((p) => console.log(p))
 
   useEffect(() => {
-    if (!walletConnectClient || walletConnectClient.core.pairing.pairings.values.length === 0) {
+    if (!walletConnectClient || activeSessions.length === 0) {
       onClose && onClose()
     }
-  }, [onClose, walletConnectClient])
+  }, [activeSessions.length, onClose, walletConnectClient])
+
+  const handleDisconnectPress = async (pairingTopic: string) => {
+    await unpair(pairingTopic)
+    // setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+  }
 
   return (
     <ScrollModal {...props}>
@@ -45,16 +54,17 @@ const WalletConnectPairingsModal = ({ onClose, ...props }: WalletConnectPairings
         <BottomModalScreenTitle>Current connections</BottomModalScreenTitle>
       </ScreenSection>
       <ScreenSection>
-        {walletConnectClient &&
-          walletConnectClient.core.pairing.pairings.values.map(({ topic, peerMetadata }) => (
-            <ListItem
-              key={topic}
-              title={peerMetadata?.name ?? ''}
-              subtitle={peerMetadata?.description}
-              icon={peerMetadata?.icons[0] ? <DAppIcon source={{ uri: peerMetadata?.icons[0] }} /> : undefined}
-              rightSideContent={<Button onPress={() => unpair(topic)} Icon={MinusCircle} type="transparent" />}
-            />
-          ))}
+        {activeSessions.map(({ topic, peer: { metadata } }) => (
+          <ListItem
+            key={topic}
+            title={metadata.name}
+            subtitle={metadata.description}
+            icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
+            rightSideContent={
+              <Button onPress={() => handleDisconnectPress(topic)} Icon={MinusCircle} type="transparent" />
+            }
+          />
+        ))}
       </ScreenSection>
     </ScrollModal>
   )

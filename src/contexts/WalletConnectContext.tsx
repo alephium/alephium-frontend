@@ -50,20 +50,20 @@ import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { ProposalEvent, RequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
-import { isNetworkValid, parseProposalEvent } from '~/utils/walletConnect'
+import { getActiveWalletConnectSessions, isNetworkValid, parseProposalEvent } from '~/utils/walletConnect'
 
 interface WalletConnectContextValue {
   walletConnectClient?: SignClient
-  connectedDAppMetadata?: ProposalEvent['params']['proposer']['metadata']
-  pair: (uri: string) => void
-  unpair: (pairingTopic: string) => void
+  pair: (uri: string) => Promise<void>
+  unpair: (pairingTopic: string) => Promise<void>
+  activeSessions: SessionTypes.Struct[]
 }
 
 const initialValues: WalletConnectContextValue = {
   walletConnectClient: undefined,
-  connectedDAppMetadata: undefined,
-  pair: () => null,
-  unpair: () => null
+  pair: () => Promise.resolve(),
+  unpair: () => Promise.resolve(),
+  activeSessions: []
 }
 
 const WalletConnectContext = createContext(initialValues)
@@ -80,8 +80,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const posthog = usePostHog()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
-  // const [wcSessionState, setWcSessionState] = useState()
-  const [connectedDAppMetadata, setConnectedDappMetadata] = useState(initialValues.connectedDAppMetadata)
+  const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
 
   const [requestEvent, setRequestEvent] = useState<RequestEvent>()
   const [proposalEvent, setProposalEvent] = useState<ProposalEvent>()
@@ -104,61 +103,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       })
 
       setWalletConnectClient(client)
+      setActiveSessions(getActiveWalletConnectSessions(client))
 
       console.log('✅ STEP 1: DONE!')
     } catch (e) {
       console.error('Could not initialize WalletConnect client', e)
     }
   }, [])
-
-  const pair = useCallback(
-    async (uri: string) => {
-      if (!walletConnectClient) return
-
-      const pairingTopic = uri.substring(3, uri.indexOf('@'))
-
-      try {
-        const pairings = walletConnectClient.core.pairing.pairings
-        const existingPairing = pairings.values.find(({ topic }) => topic === pairingTopic)
-
-        if (existingPairing) {
-          console.log('⏳ TRYING TO CONNECT WITH EXISTING PAIRING:', pairingTopic)
-
-          await walletConnectClient.connect({ pairingTopic })
-
-          setConnectedDappMetadata(existingPairing.peerMetadata)
-
-          console.log('✅ CONNECTING: DONE!')
-        } else {
-          console.log('⏳ PAIRING WITH WALLETCONNECT USING URI:', uri)
-
-          await walletConnectClient.core.pairing.pair({ uri })
-
-          console.log('✅ PAIRING: DONE!')
-        }
-      } catch (e) {
-        console.error('❌ COULD NOT PAIR WITH: ', uri, e)
-      }
-    },
-    [walletConnectClient]
-  )
-
-  const unpair = useCallback(
-    async (pairingTopic: string) => {
-      if (!walletConnectClient) return
-
-      setLoading('Disconnecting...')
-
-      console.log('⏳ DISCONNECTING FROM:', pairingTopic)
-      await walletConnectClient.disconnect({ topic: pairingTopic, reason: getSdkError('USER_DISCONNECTED') })
-      console.log('✅ DISCONNECTING: DONE!')
-
-      setLoading('')
-
-      posthog?.capture('WC: Disconnected from dApp')
-    },
-    [posthog, walletConnectClient]
-  )
 
   const onSessionRequestResponse = useCallback(
     async (event: RequestEvent, response: EngineTypes.RespondParams['response']) => {
@@ -339,47 +290,69 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const onSessionProposal = useCallback(
     async (proposalEvent: ProposalEvent) => {
       console.log('📣 RECEIVED EVENT PROPOSAL TO CONNECT TO A DAPP!')
+      console.log('🪵 ARGS:', proposalEvent)
       console.log('⏳ WAITING FOR PROPOSAL APPROVAL OR REJECTION')
 
       setProposalEvent(proposalEvent)
-      // setWcSessionState('proposal')
       openWalletConnectProposalModal()
     },
     [openWalletConnectProposalModal]
   )
 
-  const onSessionDelete = useCallback(() => {
-    console.log('📣 RECEIVED EVENT TO DISCONNECT FROM THE DAPP SESSION.')
-    console.log('🧹 CLEANING UP STATE.')
+  const onSessionDelete = useCallback(
+    async (args: SignClientTypes.EventArguments['session_delete']) => {
+      console.log('📣 RECEIVED EVENT TO DISCONNECT FROM THE DAPP SESSION.')
+      console.log('🪵 ARGS:', args)
+      console.log('🧹 CLEANING UP STATE.')
 
-    setSessionTopic(undefined)
-    setProposalEvent(undefined)
-    // setWcSessionState('uninitialized')
-  }, [])
+      setSessionTopic(undefined)
+      setProposalEvent(undefined)
+      setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+    },
+    [walletConnectClient]
+  )
 
   const onSessionUpdate = useCallback((args: SignClientTypes.EventArguments['session_update']) => {
     console.log('📣 RECEIVED EVENT TO UPDATE SESSION')
+    console.log('🪵 ARGS:', args)
   }, [])
 
   const onSessionEvent = useCallback((args: SignClientTypes.EventArguments['session_event']) => {
     console.log('📣 RECEIVED SESSION EVENT')
+    console.log('🪵 ARGS:', args)
   }, [])
 
   const onSessionPing = useCallback((args: SignClientTypes.EventArguments['session_ping']) => {
     console.log('📣 RECEIVED EVENT TO PING SESSION')
+    console.log('🪵 ARGS:', args)
   }, [])
 
   const onSessionExpire = useCallback((args: SignClientTypes.EventArguments['session_expire']) => {
     console.log('📣 RECEIVED EVENT TO EXPIRE SESSION')
-    console.log('🪵 PROPOSAL TO EXPIRE:', args.topic)
+    console.log('🪵 ARGS:', args)
   }, [])
 
   const onSessionExtend = useCallback((args: SignClientTypes.EventArguments['session_extend']) => {
     console.log('📣 RECEIVED EVENT TO EXTEND SESSION')
+    console.log('🪵 ARGS:', args)
   }, [])
 
   const onProposalExpire = useCallback((args: SignClientTypes.EventArguments['proposal_expire']) => {
     console.log('📣 RECEIVED EVENT TO EXPIRE PROPOSAL')
+    console.log('🪵 ARGS:', args)
+  }, [])
+
+  const onPairingDelete = useCallback((args: any) => {
+    console.log('📣 RECEIVED EVENT TO DELETE PAIRING')
+    console.log('🪵 ARGS:', args)
+  }, [])
+  const onPairingPing = useCallback((args: any) => {
+    console.log('📣 RECEIVED EVENT TO PING PAIRING')
+    console.log('🪵 ARGS:', args)
+  }, [])
+  const onPairingExpire = useCallback((args: any) => {
+    console.log('📣 RECEIVED EVENT TO EXPIRE PAIRING')
+    console.log('🪵 ARGS:', args)
   }, [])
 
   useEffect(() => {
@@ -397,6 +370,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       walletConnectClient.on('session_expire', onSessionExpire)
       walletConnectClient.on('session_extend', onSessionExtend)
       walletConnectClient.on('proposal_expire', onProposalExpire)
+      walletConnectClient.core.pairing.events.on('pairing_delete', onPairingDelete)
+      walletConnectClient.core.pairing.events.on('pairing_ping', onPairingPing)
+      walletConnectClient.core.pairing.events.on('pairing_expire', onPairingExpire)
 
       return () => {
         walletConnectClient.off('session_proposal', onSessionProposal)
@@ -408,10 +384,16 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         walletConnectClient.off('session_expire', onSessionExpire)
         walletConnectClient.off('session_extend', onSessionExtend)
         walletConnectClient.off('proposal_expire', onProposalExpire)
+        walletConnectClient.core.pairing.events.off('pairing_delete', onPairingDelete)
+        walletConnectClient.core.pairing.events.off('pairing_ping', onPairingPing)
+        walletConnectClient.core.pairing.events.off('pairing_expire', onPairingExpire)
       }
     }
   }, [
     initializeWalletConnectClient,
+    onPairingDelete,
+    onPairingExpire,
+    onPairingPing,
     onProposalExpire,
     onSessionDelete,
     onSessionEvent,
@@ -424,6 +406,80 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     walletConnectClient
   ])
 
+  const pair = useCallback(
+    async (uri: string) => {
+      if (!walletConnectClient) return
+
+      const pairingTopic = uri.substring(3, uri.indexOf('@'))
+
+      try {
+        const pairings = walletConnectClient.core.pairing.pairings
+        const existingPairing = pairings.values.find(({ topic }) => topic === pairingTopic)
+
+        if (existingPairing) {
+          console.log('⏳ TRYING TO CONNECT WITH EXISTING PAIRING:', pairingTopic)
+
+          if (!existingPairing.active) {
+            console.log('⏳ EXISTING PAIRING IS INACTIVE, ACTIVATING IT...')
+            // `activate` doesn't trigger the onSessionProposal as the `pair` does (even if we call `pair` or `connect`)
+            // despite what the docs say (https://specs.walletconnect.com/2.0/specs/clients/sign/session-events#session_proposal)
+            // so we manually check for pending requests in the history that match with the pairingTopic and trigger
+            // onSessionProposal.
+            await walletConnectClient.core.pairing.activate({ topic: existingPairing.topic })
+            console.log('✅ ACTIVATING PAIRING: DONE!')
+          }
+          console.log('✅ CONNECTING: DONE!')
+
+          console.log('⏳ LOOKING FOR PENDING PROPOSAL REQUEST...')
+          const pendingProposal = walletConnectClient.core.history.pending.find(
+            ({ topic, request }) => topic === existingPairing.topic && request.method === 'wc_sessionPropose'
+          )
+          if (pendingProposal) {
+            console.log('🪵 FOUND PENDING PROPOSAL REQUEST!')
+            onSessionProposal({
+              ...pendingProposal.request,
+              params: {
+                id: pendingProposal.request.id,
+                ...pendingProposal.request.params
+              }
+            })
+          }
+        } else {
+          console.log('⏳ PAIRING WITH WALLETCONNECT USING URI:', uri)
+
+          await walletConnectClient.core.pairing.pair({ uri })
+
+          console.log('✅ PAIRING: DONE!')
+        }
+      } catch (e) {
+        console.error('❌ COULD NOT PAIR WITH: ', uri, e)
+      }
+    },
+    [onSessionProposal, walletConnectClient]
+  )
+
+  const unpair = useCallback(
+    async (topic: string) => {
+      if (!walletConnectClient) return
+
+      try {
+        setLoading('Disconnecting...')
+
+        console.log('⏳ DISCONNECTING FROM:', topic)
+        await walletConnectClient.disconnect({ topic, reason: getSdkError('USER_DISCONNECTED') })
+        setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+        console.log('✅ DISCONNECTING: DONE!')
+
+        posthog?.capture('WC: Disconnected from dApp')
+      } catch (e) {
+        console.error('❌ COULD NOT DISCONNECT FROM DAPP')
+      } finally {
+        setLoading('')
+      }
+    },
+    [posthog, walletConnectClient]
+  )
+
   const approveProposal = async (signerAddress: Address) => {
     console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
     console.log('⏳ VERIFYING USER PROVIDED DATA...')
@@ -433,7 +489,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       return
     }
 
-    const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
+    const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo } =
       parseProposalEvent(proposalEvent)
 
     if (requiredChains?.length !== 1) {
@@ -486,6 +542,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       const { topic, acknowledged } = await walletConnectClient.approve({ id, relayProtocol, namespaces })
 
+      console.log('⏳ APPROVAL TOPIC RECEIVED:', topic)
+
       console.log('⏳ WAITING FOR DAPP ACKNOWLEDGEMENT...')
 
       const res = await acknowledged()
@@ -493,15 +551,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('🪵 DID DAPP ACTUALLY ACKNOWLEDGE?', res.acknowledged)
       console.log('✅ APPROVING: DONE!')
 
-      // TODO: Push dApp metadata to an array instead
-      setConnectedDappMetadata(metadata)
       setSessionTopic(topic)
       setProposalEvent(undefined)
-      // setWcSessionState('initialized')
+      setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
 
       posthog?.capture('WC: Approved connection')
     } catch (e) {
-      console.error('WC: Error while approving and acknowledging', e)
+      console.error('❌ WC: Error while approving and acknowledging', e)
     } finally {
       setLoading('')
       closeWalletConnectProposalModal()
@@ -511,7 +567,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const rejectProposal = async () => {
     if (!walletConnectClient) return
     if (proposalEvent === undefined) return
-    // if (proposalEvent === undefined) return onSessionDelete()
 
     try {
       setLoading('Rejecting...')
@@ -519,33 +574,22 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('ID: ', proposalEvent.id)
 
       await walletConnectClient.reject({ id: proposalEvent.id, reason: getSdkError('USER_REJECTED') })
+      setProposalEvent(undefined)
 
       console.log('✅ REJECTING: DONE!')
-      // onSessionDelete()
     } catch (e) {
-      console.error('WC: Error while approving and acknowledging', e)
+      console.error('❌ WC: Error while approving and acknowledging', e)
     } finally {
       setLoading('')
       closeWalletConnectProposalModal()
     }
   }
 
-  const handleWalletConnectProposalModalClose = async () => {
-    // if (walletConnectClient?.core.pairing.pairings.values)
-    //   for (const val of walletConnectClient.core.pairing.pairings.values) {
-    //     console.log(val)
-    //   }
-    // if (walletConnectClient?.pendingRequest) {
-    //   await rejectProposal()
-    //   posthog?.capture('WC: Rejected WalletConnect connection by dismissing modal')
-    // }
-  }
-
   return (
-    <WalletConnectContext.Provider value={{ pair, unpair, walletConnectClient, connectedDAppMetadata }}>
+    <WalletConnectContext.Provider value={{ pair, unpair, walletConnectClient, activeSessions }}>
       {children}
       <Portal>
-        <Modalize ref={walletConnectProposalModalRef} onClose={handleWalletConnectProposalModalClose}>
+        <Modalize ref={walletConnectProposalModalRef}>
           {proposalEvent && (
             <WalletConnectProposalModal
               onClose={closeWalletConnectProposalModal}

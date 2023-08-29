@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
+import SignClient from '@walletconnect/sign-client'
 
 import { networkPresetSettings } from '~/persistent-storage/settings'
 import { NetworkPreset } from '~/types/network'
@@ -44,4 +45,14 @@ export const parseProposalEvent = (proposalEvent: ProposalEvent) => {
     requiredChainInfo,
     metadata
   }
+}
+
+export const getActiveWalletConnectSessions = (walletConnectClient?: SignClient) => {
+  if (!walletConnectClient) return []
+
+  const activePairings = walletConnectClient.core.pairing.getPairings().filter((pairing) => pairing.active)
+
+  return walletConnectClient.session.values.filter((session) =>
+    activePairings.some((pairing) => pairing.topic === session.pairingTopic)
+  )
 }

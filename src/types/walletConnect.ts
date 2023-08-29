@@ -19,6 +19,4 @@ import { SignClientTypes } from '@walletconnect/types'
 
 export type RequestEvent = SignClientTypes.EventArguments['session_request']
 
-export type ProposalEvent = SignClientTypes.EventArguments['session_proposal']
-
-export type WalletConnectSessionState = 'uninitialized' | 'proposal' | 'initialized'
+export type ProposalEvent = Pick<SignClientTypes.EventArguments['session_proposal'], 'id' | 'params'>

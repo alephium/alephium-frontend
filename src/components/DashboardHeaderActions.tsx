@@ -33,7 +33,7 @@ import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import CurrentWalletConnectConnectionsModal from '~/screens/CurrentWalletConnectConnectionsModal'
+import WalletConnectPairingsModal from '~/screens/WalletConnectPairingsModal'
 import { cameraToggled } from '~/store/appSlice'
 
 interface DashboardHeaderActionsProps {
@@ -47,7 +47,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
-  const { pair, walletConnectClient } = useWalletConnectContext()
+  const { pair, walletConnectClient, activeSessions } = useWalletConnectContext()
   const {
     ref: currentConnectionsModalRef,
     open: openCurrentConnectionsModal,
@@ -85,7 +85,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           type="transparent"
           variant={isMnemonicBackedUp ? 'default' : 'alert'}
         />
-        {walletConnectClient && walletConnectClient.core.pairing.pairings.values.length > 0 && (
+        {walletConnectClient && activeSessions.length > 0 && (
           <Button onPress={() => openCurrentConnectionsModal()} Icon={Radio} type="transparent" variant="accent" />
         )}
         <Button onPress={openQRCodeScannerModal} Icon={ScanLine} type="transparent" />
@@ -101,7 +101,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
 
       <Portal>
         <Modalize ref={currentConnectionsModalRef}>
-          <CurrentWalletConnectConnectionsModal onClose={closeCurrentConnectionsModal} />
+          <WalletConnectPairingsModal onClose={closeCurrentConnectionsModal} />
         </Modalize>
       </Portal>
     </>
