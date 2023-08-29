@@ -16,29 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
+import { useNavigation } from '@react-navigation/native'
 import { ScrollViewProps } from 'react-native'
 
-import BaseHeader from '~/components/headers/BaseHeader'
 import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import TopTabBar from '~/components/TopTabBar'
-import useCustomHeader from '~/hooks/layout/useCustomHeader'
-import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 import { Contact } from '~/types/contacts'
-import { useScroll } from '~/utils/scroll'
 
-interface ScreenProps
-  extends ScrollViewProps,
-    StackScreenProps<AddressTabsParamList & RootStackParamList, 'ContactsScreen'>,
-    ScrollScreenProps {}
+const ContactsScreen = ({ onScroll }: ScrollViewProps) => {
+  const navigation = useNavigation()
 
-const ContactsScreen = ({ navigation, style, ...props }: ScreenProps) => {
-  const { handleScroll, scrollY } = useScroll()
   return (
-    <ScrollScreen {...props} onScroll={handleScroll} hasHeader>
+    <ScrollScreen onScroll={onScroll}>
       <ContactListScreenBase
         onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
         onNewContactPress={() => navigation.navigate('NewContactScreen')}

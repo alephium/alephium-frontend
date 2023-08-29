@@ -138,15 +138,33 @@ const BaseHeader = ({
           </CompactContent>
         )}
         <FullContent style={fullContentAnimatedStyle}>
-          <ActionAreaBlurred style={{ paddingTop: insets.top }} animatedProps={animatedBlurViewProps} tint={theme.name}>
-            {HeaderLeft}
-            {HeaderRight}
-            <BottomBorder style={bottomBorderColor} />
-          </ActionAreaBlurred>
-          {headerTitle && (
-            <TitleArea style={titleAnimatedStyle}>
-              <Title>{headerTitle}</Title>
-            </TitleArea>
+          {HeaderLeft || HeaderRight ? (
+            <>
+              <ActionAreaBlurred
+                animatedProps={animatedBlurViewProps}
+                tint={theme.name}
+                style={{ paddingTop: insets.top }}
+              >
+                {HeaderLeft}
+                {HeaderRight}
+                <BottomBorder style={bottomBorderColor} />
+              </ActionAreaBlurred>
+              {headerTitle && (
+                <TitleArea style={titleAnimatedStyle}>
+                  <Title>{headerTitle}</Title>
+                </TitleArea>
+              )}
+            </>
+          ) : (
+            <ActionAreaBlurred
+              animatedProps={animatedBlurViewProps}
+              tint={theme.name}
+              style={{ paddingTop: insets.top, paddingLeft: 0, paddingBottom: 0 }}
+            >
+              <TitleArea style={[titleAnimatedStyle]}>
+                <Title>{headerTitle}</Title>
+              </TitleArea>
+            </ActionAreaBlurred>
           )}
         </FullContent>
       </Animated.View>
@@ -154,9 +172,7 @@ const BaseHeader = ({
   }
 }
 
-export default styled(BaseHeader)`
-  position: relative;
-`
+export default styled(BaseHeader)``
 
 const FullContent = styled(Animated.View)`
   flex-direction: column;

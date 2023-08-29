@@ -52,7 +52,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
   }, [contacts, searchTerm])
 
   return (
-    <>
+    <ScreenContent>
       <HeaderScreenSection>
         <SearchInput placeholder="Search" value={searchTerm} onChangeText={setSearchTerm} />
         {onNewContactPress && <Button Icon={Plus} type="transparent" variant="accent" onPress={onNewContactPress} />}
@@ -81,11 +81,15 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
           })}
         </ContactList>
       </ScreenSection>
-    </>
+    </ScreenContent>
   )
 }
 
 export default ContactListScreenBase
+
+const ScreenContent = styled.View`
+  padding-top: 110px;
+`
 
 const ContactList = styled.View``
 

@@ -18,12 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { ParamListBase } from '@react-navigation/native'
+import { View } from 'react-native'
+import PagerView from 'react-native-pager-view'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useTheme } from 'styled-components'
+import styled from 'styled-components/native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import TopTabBar from '~/components/TopTabBar'
 import AddressesScreen from '~/screens/Addresses/AddressesScreen'
 import ContactsScreen from '~/screens/Addresses/ContactsScreen'
 import { AddressHash } from '~/types/addresses'
+import { useScroll } from '~/utils/scroll'
 
 export interface AddressTabsParamList extends ParamListBase {
   AddressesScreen: {
@@ -32,15 +38,27 @@ export interface AddressTabsParamList extends ParamListBase {
   ContactsScreen: undefined
 }
 
-const TopTab = createMaterialTopTabNavigator<AddressTabsParamList>()
+const AddressesTabNavigation = () => {
+  const { handleScroll, scrollY } = useScroll()
+  const theme = useTheme()
 
-const AddressesTabNavigation = () => (
-  <TopTab.Navigator initialRouteName="AddressesScreen">
-    <TopTab.Screen name="AddressesScreen" component={AddressesScreen} options={{ title: 'Addresses' }} />
-    <TopTab.Screen name="ContactsScreen" options={{ title: 'Contacts' }}>
-      {(props) => <ContactsScreen {...props} />}
-    </TopTab.Screen>
-  </TopTab.Navigator>
-)
+  return (
+    <>
+      <PagerView initialPage={0} style={{ flex: 1, backgroundColor: theme.bg.back2 }}>
+        <AddressesScreen key="1" onScroll={handleScroll} />
+        <ContactsScreen key="2" onScroll={handleScroll} />
+      </PagerView>
+      <HeaderContainer>
+        <BaseHeader HeaderLeft={<TopTabBar />} scrollY={scrollY} />
+      </HeaderContainer>
+    </>
+  )
+}
+
+const HeaderContainer = styled.View`
+  position: absolute;
+  right: 0;
+  left: 0;
+`
 
 export default AddressesTabNavigation

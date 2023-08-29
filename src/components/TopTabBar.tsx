@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
+import { useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { Pressable } from 'react-native'
 import Reanimated from 'react-native-reanimated'
@@ -43,7 +44,8 @@ const tabs: Tab[] = [
 
 // TODO: Reimplement tap bar to scroll up
 
-const TopTabBar = ({ navigation }: MaterialTopTabBarProps) => {
+const TopTabBar = () => {
+  const navigation = useNavigation()
   const [activeTab, setActiveTab] = useState(tabs[0])
 
   const currentRouteName = useActiveRouteName()

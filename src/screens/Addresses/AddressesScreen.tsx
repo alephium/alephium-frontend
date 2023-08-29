@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs'
+import { useNavigation } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ListIcon, PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
@@ -31,14 +31,9 @@ import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
-import BaseHeader from '~/components/headers/BaseHeader'
-import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
+import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import Modalize from '~/components/layout/Modalize'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import TopTabBar from '~/components/TopTabBar'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import EditAddressModal from '~/screens/Address/EditAddressModal'
 import {
   selectAddressByHash,
@@ -48,18 +43,12 @@ import {
   syncAddressesData
 } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
-import { useScroll } from '~/utils/scroll'
 
-type ScreenProps = MaterialTopTabScreenProps<AddressTabsParamList, 'AddressesScreen'> &
-  MaterialTopTabScreenProps<SendNavigationParamList, 'AddressesScreen'>
-
-interface AddressesScreenProps extends ScreenProps, ScrollScreenProps {}
-
-const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesScreenProps) => {
+const AddressesScreen = ({ onScroll, ...props }: BottomBarScrollScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const { handleScroll, scrollY } = useScroll()
   const posthog = usePostHog()
+  const navigation = useNavigation()
 
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addresses = useAppSelector(selectAllAddresses)
@@ -106,12 +95,9 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
 
   return (
     <>
-      <ScrollScreen
+      <BottomBarScrollScreen
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
-        onScroll={handleScroll}
-        bounces={false}
-        hasHeader
-        hasBottomBar
+        onScroll={onScroll}
         {...props}
       >
         <ScreenContent>
@@ -140,7 +126,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
           />
           {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} style={{ paddingBottom: 50 }} />}
         </ScreenContent>
-      </ScrollScreen>
+      </BottomBarScrollScreen>
 
       <Portal>
         <Modalize
@@ -177,7 +163,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
 export default AddressesScreen
 
 const ScreenContent = styled.View`
-  padding-top: 15px;
+  padding-top: 120px;
 `
 
 const AddressBoxStyled = styled(AddressBox)`
