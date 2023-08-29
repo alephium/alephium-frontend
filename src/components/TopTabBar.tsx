@@ -16,14 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useRoute } from '@react-navigation/native'
-import { StackHeaderProps } from '@react-navigation/stack'
+import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
 import { useEffect, useState } from 'react'
 import { Pressable } from 'react-native'
 import Reanimated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
-import useActiveRouteName from '~/hooks/useActiveRouteName'
 
+import useActiveRouteName from '~/hooks/useActiveRouteName'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
 type Tab = {
@@ -44,7 +43,7 @@ const tabs: Tab[] = [
 
 // TODO: Reimplement tap bar to scroll up
 
-const TopTabBar = ({ navigation, route }: StackHeaderProps) => {
+const TopTabBar = ({ navigation }: MaterialTopTabBarProps) => {
   const [activeTab, setActiveTab] = useState(tabs[0])
 
   const currentRouteName = useActiveRouteName()
@@ -75,7 +74,7 @@ const TopTabBar = ({ navigation, route }: StackHeaderProps) => {
 
 interface TabBarItemProps {
   label: string
-  navigation: StackHeaderProps['navigation']
+  navigation: MaterialTopTabBarProps['navigation']
   onPress: () => void
   isActive: boolean
 }

@@ -61,7 +61,8 @@ const InWalletTabsNavigation = () => (
             title: 'Addresses',
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
-            )
+            ),
+            headerShown: false
           }}
         />
       </InWalletTabs.Navigator>

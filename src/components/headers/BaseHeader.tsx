@@ -34,11 +34,11 @@ import AppText from '~/components/AppText'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 export interface BaseHeaderProps {
-  scrollY: SharedValue<number>
   HeaderLeft?: ReactNode
   HeaderRight?: ReactNode
   headerTitle?: string
   HeaderCompactContent?: ReactNode
+  scrollY?: SharedValue<number>
   bgColor?: string
   style?: StyleProp<ViewStyle>
 }
@@ -50,11 +50,11 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 // TODO: Reimplement tap bar to scroll up
 
 const BaseHeader = ({
-  scrollY,
   HeaderRight,
   HeaderLeft,
   headerTitle,
   HeaderCompactContent,
+  scrollY,
   bgColor,
   style
 }: BaseHeaderProps) => {

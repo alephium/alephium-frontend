@@ -16,9 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { ParamListBase } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
 
+import BaseHeader from '~/components/headers/BaseHeader'
+import TopTabBar from '~/components/TopTabBar'
 import AddressesScreen from '~/screens/Addresses/AddressesScreen'
 import ContactsScreen from '~/screens/Addresses/ContactsScreen'
 import { AddressHash } from '~/types/addresses'
@@ -30,12 +32,14 @@ export interface AddressTabsParamList extends ParamListBase {
   ContactsScreen: undefined
 }
 
-const TopTab = createStackNavigator<AddressTabsParamList>()
+const TopTab = createMaterialTopTabNavigator<AddressTabsParamList>()
 
 const AddressesTabNavigation = () => (
-  <TopTab.Navigator screenOptions={{ headerShown: false }} initialRouteName="AddressesScreen">
+  <TopTab.Navigator initialRouteName="AddressesScreen">
     <TopTab.Screen name="AddressesScreen" component={AddressesScreen} options={{ title: 'Addresses' }} />
-    <TopTab.Screen name="ContactsScreen" component={ContactsScreen} options={{ title: 'Contacts' }} />
+    <TopTab.Screen name="ContactsScreen" options={{ title: 'Contacts' }}>
+      {(props) => <ContactsScreen {...props} />}
+    </TopTab.Screen>
   </TopTab.Navigator>
 )
 

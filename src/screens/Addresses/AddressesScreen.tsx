@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ListIcon, PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
@@ -35,6 +36,7 @@ import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import Modalize from '~/components/layout/Modalize'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import TopTabBar from '~/components/TopTabBar'
+import useCustomTopTabBar from '~/hooks/layout/useConstomTopTabBar'
 import useCustomHeader from '~/hooks/layout/useCustomHeader'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
@@ -50,8 +52,8 @@ import {
 import { AddressHash } from '~/types/addresses'
 import { useScroll } from '~/utils/scroll'
 
-type ScreenProps = StackScreenProps<AddressTabsParamList, 'AddressesScreen'> &
-  StackScreenProps<SendNavigationParamList, 'AddressesScreen'>
+type ScreenProps = MaterialTopTabScreenProps<AddressTabsParamList, 'AddressesScreen'> &
+  MaterialTopTabScreenProps<SendNavigationParamList, 'AddressesScreen'>
 
 interface AddressesScreenProps extends ScreenProps, ScrollScreenProps {}
 
@@ -82,10 +84,9 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
 
-  useCustomHeader({
-    Header: (props) => <BaseHeader scrollY={scrollY} HeaderLeft={<TopTabBar {...props} />} />,
-    navigation,
-    setInParent: true
+  useCustomTopTabBar({
+    TabBar: (props) => <BaseHeader HeaderLeft={<TopTabBar {...props} />} />,
+    navigation
   })
 
   useEffect(() => {
