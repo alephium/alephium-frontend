@@ -16,10 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getSdkError } from '@walletconnect/utils'
 import { MinusCircle } from 'lucide-react-native'
-import { usePostHog } from 'posthog-react-native'
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -28,32 +26,18 @@ import { ModalProps, ScrollModal } from '~/components/layout/Modals'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
-import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 
-type CurrentWalletConnectConnectionsModalProps = ModalProps<ScrollScreenProps>
+type WalletConnectPairingsModalProps = ModalProps<ScrollScreenProps>
 
-const CurrentWalletConnectConnectionsModal = ({ onClose, ...props }: CurrentWalletConnectConnectionsModalProps) => {
-  const { connectedDAppMetadata, sessionTopic, walletConnectClient, onSessionDelete } = useWalletConnectContext()
-  const posthog = usePostHog()
+const WalletConnectPairingsModal = ({ onClose, ...props }: WalletConnectPairingsModalProps) => {
+  const { unpair, walletConnectClient } = useWalletConnectContext()
 
-  const [disconnecting, setDisconnecting] = useState(false)
-
-  const handleDisconnect = async () => {
-    if (!walletConnectClient || !sessionTopic) return
-
-    setDisconnecting(true)
-
-    console.log('disconecting...')
-    await walletConnectClient.disconnect({ topic: sessionTopic, reason: getSdkError('USER_DISCONNECTED') })
-    console.log('disconected.')
-    onSessionDelete()
-    onClose && onClose()
-
-    setDisconnecting(false)
-
-    posthog?.capture('WC: Disconnected from dApp')
-  }
+  useEffect(() => {
+    if (!walletConnectClient || walletConnectClient.core.pairing.pairings.values.length === 0) {
+      onClose && onClose()
+    }
+  }, [onClose, walletConnectClient])
 
   return (
     <ScrollModal {...props}>
@@ -61,19 +45,22 @@ const CurrentWalletConnectConnectionsModal = ({ onClose, ...props }: CurrentWall
         <BottomModalScreenTitle>Current connections</BottomModalScreenTitle>
       </ScreenSection>
       <ScreenSection>
-        <ListItem
-          title={connectedDAppMetadata?.name ?? ''}
-          subtitle={connectedDAppMetadata?.description}
-          icon={<DAppIcon source={{ uri: connectedDAppMetadata?.icons[0] }} />}
-          rightSideContent={<Button onPress={handleDisconnect} Icon={MinusCircle} type="transparent" />}
-        />
+        {walletConnectClient &&
+          walletConnectClient.core.pairing.pairings.values.map(({ topic, peerMetadata }) => (
+            <ListItem
+              key={topic}
+              title={peerMetadata?.name ?? ''}
+              subtitle={peerMetadata?.description}
+              icon={peerMetadata?.icons[0] ? <DAppIcon source={{ uri: peerMetadata?.icons[0] }} /> : undefined}
+              rightSideContent={<Button onPress={() => unpair(topic)} Icon={MinusCircle} type="transparent" />}
+            />
+          ))}
       </ScreenSection>
-      <SpinnerModal isActive={disconnecting} text={'Disconnecting...'} />
     </ScrollModal>
   )
 }
 
-export default CurrentWalletConnectConnectionsModal
+export default WalletConnectPairingsModal
 
 const DAppIcon = styled(Image)`
   width: 50px;

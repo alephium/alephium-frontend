@@ -17,29 +17,22 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { getSdkError } from '@walletconnect/utils'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
-import { usePostHog } from 'posthog-react-native'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { RefreshControl } from 'react-native'
-import { useModalize } from 'react-native-modalize'
-import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
-import Modalize from '~/components/layout/Modalize'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import TabScrollScreen from '~/components/layout/TabScrollScreen'
 import { useScrollEventHandler } from '~/contexts/ScrollContext'
-import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import WalletConnectModal from '~/screens/WalletConnectModal'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
@@ -53,32 +46,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
   const scrollHandler = useScrollEventHandler()
-  const { walletConnectClient, proposalEvent, onSessionDelete, wcSessionState } = useWalletConnectContext()
-  const { ref: walletConnectModalRef, open: openWalletConnectModal, close: closeWalletConnectModal } = useModalize()
-  const posthog = usePostHog()
-
-  useEffect(() => {
-    console.log('proposalEvent?.id', proposalEvent?.id)
-    if (proposalEvent?.id) openWalletConnectModal()
-  }, [openWalletConnectModal, proposalEvent?.id])
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
-  }
-
-  const rejectProposal = async () => {
-    if (!walletConnectClient) return
-    if (proposalEvent === undefined) return onSessionDelete()
-
-    await walletConnectClient.reject({ id: proposalEvent.id, reason: getSdkError('USER_REJECTED') })
-    onSessionDelete()
-  }
-
-  const handleWalletConnectModalClose = async () => {
-    if (wcSessionState !== 'initialized') {
-      await rejectProposal()
-      posthog?.capture('WC: Rejected WalletConnect connection by dismissing modal')
-    }
   }
 
   return (
@@ -107,11 +77,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         </ButtonsRow>
       </ScreenSection>
       <AddressesTokensList />
-      <Portal>
-        <Modalize ref={walletConnectModalRef} onClose={handleWalletConnectModalClose}>
-          <WalletConnectModal onClose={closeWalletConnectModal} rejectProposal={rejectProposal} />
-        </Modalize>
-      </Portal>
     </TabScrollScreen>
   )
 }

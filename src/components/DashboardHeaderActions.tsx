@@ -20,7 +20,7 @@ import { isAddressValid } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Radio, ScanLine, Settings, ShieldAlert, WifiOff } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { memo, useEffect, useState } from 'react'
+import { memo } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
@@ -30,7 +30,6 @@ import styled from 'styled-components/native'
 import Button from '~/components/buttons/Button'
 import Modalize from '~/components/layout/Modalize'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
-import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -48,14 +47,12 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
-  const { walletConnectClient, proposalEvent, wcSessionState } = useWalletConnectContext()
+  const { pair, walletConnectClient } = useWalletConnectContext()
   const {
     ref: currentConnectionsModalRef,
     open: openCurrentConnectionsModal,
     close: closeCurrentConnectionsModal
   } = useModalize()
-
-  const [connecting, setConnecting] = useState(false)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -72,23 +69,9 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
 
       posthog?.capture('Send: Captured destination address by scanning QR code from Dashboard')
     } else if (text.startsWith('wc:')) {
-      if (!walletConnectClient) return
-
-      setConnecting(true)
-
-      try {
-        console.log('pairing')
-        await walletConnectClient.pair({ uri: text })
-        console.log('finished pairing')
-      } catch (e) {
-        console.error('Could not pair with WalletConnect', e)
-      }
+      pair(text)
     }
   }
-
-  useEffect(() => {
-    if (proposalEvent) setConnecting(false)
-  }, [proposalEvent])
 
   return (
     <>
@@ -102,7 +85,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           type="transparent"
           variant={isMnemonicBackedUp ? 'default' : 'alert'}
         />
-        {wcSessionState === 'initialized' && (
+        {walletConnectClient && walletConnectClient.core.pairing.pairings.values.length > 0 && (
           <Button onPress={() => openCurrentConnectionsModal()} Icon={Radio} type="transparent" variant="accent" />
         )}
         <Button onPress={openQRCodeScannerModal} Icon={ScanLine} type="transparent" />
@@ -121,7 +104,6 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           <CurrentWalletConnectConnectionsModal onClose={closeCurrentConnectionsModal} />
         </Modalize>
       </Portal>
-      <SpinnerModal isActive={connecting} text="Fetching dApp info..." />
     </>
   )
 }
