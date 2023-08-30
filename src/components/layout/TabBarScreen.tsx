@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
+import { ReactNode, useRef } from 'react'
 import PagerView, { PagerViewOnPageScrollEventData, PagerViewProps } from 'react-native-pager-view'
 import Animated, { SharedValue, useSharedValue } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
@@ -35,32 +35,42 @@ interface TabBarScreenProps extends PagerViewProps {
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
 const TabBarScreen = ({ children, scrollY, tabLabels, ...props }: TabBarScreenProps) => {
+  const pagerRef = useRef<PagerView>(null)
+
   const theme = useTheme()
+
   const pagerScrollEvent = useSharedValue<PagerViewOnPageScrollEventData>({
     position: 0,
     offset: 0
   })
 
-  const handler = useTabScrollHandler({
+  const pageScrollHandler = useTabScrollHandler({
     onPageScroll: (e: PagerViewOnPageScrollEventData) => {
       'worklet'
       pagerScrollEvent.value = e
     }
   })
 
+  const handleTabPress = (tabIndex: number) => {
+    pagerRef.current?.setPage(tabIndex)
+  }
+
   return (
     <>
       <AnimatedPagerView
         initialPage={0}
-        onPageScroll={handler}
+        onPageScroll={pageScrollHandler}
         style={{ flex: 1, backgroundColor: theme.bg.back2 }}
+        ref={pagerRef}
         {...props}
       >
         {children}
       </AnimatedPagerView>
       <HeaderContainer>
         <BaseHeader
-          HeaderLeft={<TopTabBar tabLabels={tabLabels} pagerScrollEvent={pagerScrollEvent} />}
+          HeaderLeft={
+            <TopTabBar tabLabels={tabLabels} pagerScrollEvent={pagerScrollEvent} onTabPress={handleTabPress} />
+          }
           scrollY={scrollY}
         />
       </HeaderContainer>

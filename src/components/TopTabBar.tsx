@@ -16,20 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { RefObject, useRef, useState } from 'react'
-import { Dimensions, LayoutChangeEvent, LayoutRectangle, Pressable, PressableProps } from 'react-native'
+import { colord } from 'colord'
+import { useState } from 'react'
+import { LayoutChangeEvent, LayoutRectangle, Pressable, PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
-import Reanimated, {
-  interpolate,
-  SharedValue,
-  useAnimatedRef,
-  useAnimatedStyle,
-  useDerivedValue,
-  useSharedValue
-} from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
-import AppText from '~/components/AppText'
+import Reanimated, { interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
+import styled from 'styled-components/native'
 
+import AppText from '~/components/AppText'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
 type TabsLayout = Record<number, LayoutRectangle>
@@ -37,6 +31,7 @@ type TabsLayout = Record<number, LayoutRectangle>
 interface TopTabBarProps {
   tabLabels: string[]
   pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
+  onTabPress: (index: number) => void
 }
 
 const AnimatedPressable = Reanimated.createAnimatedComponent(Pressable)
@@ -45,7 +40,7 @@ const indicatorXPadding = 10
 
 // TODO: Reimplement tap bar to scroll up
 
-const TopTabBar = ({ tabLabels, pagerScrollEvent }: TopTabBarProps) => {
+const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 
   const indicatorStyle = useAnimatedStyle(() => {
@@ -72,8 +67,8 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent }: TopTabBarProps) => {
     }
   }, [tabLayouts])
 
-  const handleOnTabPress = (tabLabel: string) => {
-    console.log('PRESSED ', tabLabel)
+  const handleOnTabPress = (tabIndex: number) => {
+    onTabPress(tabIndex)
   }
 
   const handleTabLayoutEvent = (tabIndex: number, e: LayoutChangeEvent) => {
@@ -92,7 +87,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent }: TopTabBarProps) => {
         <TabBarItem
           key={label}
           label={label}
-          onPress={() => handleOnTabPress(label)}
+          onPress={() => handleOnTabPress(i)}
           onLayout={(e) => handleTabLayoutEvent(i, e)}
         />
       ))}
@@ -128,5 +123,5 @@ const Indicator = styled(Reanimated.View)`
   position: absolute;
   height: 65%;
   border-radius: ${BORDER_RADIUS}px;
-  background-color: ${({ theme }) => theme.button.primary};
+  background-color: ${({ theme }) => colord(theme.button.primary).alpha(0.8).toHex()};
 `
