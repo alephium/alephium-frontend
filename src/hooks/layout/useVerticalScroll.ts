@@ -23,7 +23,7 @@ const scrollDirectionDeltaThreshold = 10
 
 export type ScrollDirection = 'up' | 'down' | undefined
 
-export const useScroll = () => {
+const useVerticalScroll = () => {
   const scrollY = useSharedValue(0)
   const scrollDirection = useSharedValue<ScrollDirection>(undefined)
 
@@ -45,3 +45,5 @@ export const useScroll = () => {
 
   return { handleScroll, scrollY, scrollDirection }
 }
+
+export default useVerticalScroll

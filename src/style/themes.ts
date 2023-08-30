@@ -90,9 +90,9 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   button: {
-    primary: '#2C2C34',
-    secondary: '#353539',
-    tertiary: '#353539'
+    primary: '#29292c',
+    secondary: '#212125',
+    tertiary: '#28282b'
   },
   border: {
     primary: 'rgba(255, 255, 255, 0.10)',

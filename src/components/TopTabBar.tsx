@@ -16,99 +16,117 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
-import { useNavigation } from '@react-navigation/native'
-import { useEffect, useState } from 'react'
-import { Pressable } from 'react-native'
-import Reanimated from 'react-native-reanimated'
+import { RefObject, useRef, useState } from 'react'
+import { Dimensions, LayoutChangeEvent, LayoutRectangle, Pressable, PressableProps } from 'react-native'
+import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
+import Reanimated, {
+  interpolate,
+  SharedValue,
+  useAnimatedRef,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue
+} from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
+import AppText from '~/components/AppText'
 
-import useActiveRouteName from '~/hooks/useActiveRouteName'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
-type Tab = {
-  label: string
-  screen: string
+type TabsLayout = Record<number, LayoutRectangle>
+
+interface TopTabBarProps {
+  tabLabels: string[]
+  pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
 }
 
-const tabs: Tab[] = [
-  {
-    label: 'Addresses',
-    screen: 'AddressesScreen'
-  },
-  {
-    label: 'Contacts',
-    screen: 'ContactsScreen'
-  }
-]
+const AnimatedPressable = Reanimated.createAnimatedComponent(Pressable)
+
+const indicatorXPadding = 10
 
 // TODO: Reimplement tap bar to scroll up
 
-const TopTabBar = () => {
-  const navigation = useNavigation()
-  const [activeTab, setActiveTab] = useState(tabs[0])
+const TopTabBar = ({ tabLabels, pagerScrollEvent }: TopTabBarProps) => {
+  const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 
-  const currentRouteName = useActiveRouteName()
+  const indicatorStyle = useAnimatedStyle(() => {
+    const positionsArray = [...Array(tabLabels.length).keys()]
+    const tabLayoutValues = Object.values(tabLayouts)
 
-  useEffect(() => {
-    const destinationTab = tabs.find((t) => t.screen === currentRouteName)
-    destinationTab && setActiveTab(destinationTab)
-  }, [currentRouteName])
+    if (tabLayoutValues.length !== positionsArray.length) return {}
 
-  const handleOnTabPress = (tab: Tab) => {
-    navigation.navigate(tab.screen)
+    const x = interpolate(
+      pagerScrollEvent.value.offset + pagerScrollEvent.value.position,
+      positionsArray,
+      Object.values(tabLayouts).map((l) => l.x)
+    )
+
+    const width = interpolate(
+      pagerScrollEvent.value.offset + pagerScrollEvent.value.position,
+      positionsArray,
+      Object.values(tabLayouts).map((l) => l.width)
+    )
+
+    return {
+      left: x - indicatorXPadding,
+      width: width + 2 * indicatorXPadding
+    }
+  }, [tabLayouts])
+
+  const handleOnTabPress = (tabLabel: string) => {
+    console.log('PRESSED ', tabLabel)
+  }
+
+  const handleTabLayoutEvent = (tabIndex: number, e: LayoutChangeEvent) => {
+    e.persist()
+
+    setTabLayouts((s) => ({
+      [tabIndex]: e.nativeEvent.layout,
+      ...s
+    }))
   }
 
   return (
     <TabsRow>
-      {tabs.map((tab) => (
+      <Indicator style={indicatorStyle} />
+      {tabLabels.map((label, i) => (
         <TabBarItem
-          key={tab.label}
-          isActive={activeTab.label === tab.label}
-          label={tab.label}
-          navigation={navigation}
-          onPress={() => handleOnTabPress(tab)}
+          key={label}
+          label={label}
+          onPress={() => handleOnTabPress(label)}
+          onLayout={(e) => handleTabLayoutEvent(i, e)}
         />
       ))}
     </TabsRow>
   )
 }
 
-interface TabBarItemProps {
+interface TabBarItemProps extends PressableProps {
   label: string
-  navigation: MaterialTopTabBarProps['navigation']
   onPress: () => void
-  isActive: boolean
+  onLayout: ((event: LayoutChangeEvent) => void) | undefined
 }
 
-const TabBarItem = ({ label, isActive, onPress }: TabBarItemProps) => {
-  const theme = useTheme()
-
-  return (
-    <PressableStyled
-      key={label}
-      accessibilityRole="button"
-      onPress={onPress}
-      style={{ backgroundColor: isActive ? theme.bg.primary : 'transparent' }}
-    >
-      <ReanimatedText>{label}</ReanimatedText>
-    </PressableStyled>
-  )
-}
+const TabBarItem = ({ label, onPress, onLayout }: TabBarItemProps) => (
+  <AnimatedPressable key={label} accessibilityRole="button" onPress={onPress} onLayout={onLayout}>
+    <AppText semiBold size={16}>
+      {label}
+    </AppText>
+  </AnimatedPressable>
+)
 
 export default TopTabBar
 
 const TabsRow = styled.View`
   flex-direction: row;
-  gap: 20px;
+  gap: 25px;
+  align-items: center;
+  height: 50px;
+  padding: 0 10px;
 `
 
-const PressableStyled = styled(Pressable)`
-  padding: 10px;
+const Indicator = styled(Reanimated.View)`
+  position: absolute;
+  height: 65%;
   border-radius: ${BORDER_RADIUS}px;
-`
-
-const ReanimatedText = styled(Reanimated.Text)`
-  font-weight: 600;
-  color: ${({ theme }) => theme.font.primary};
+  background-color: ${({ theme }) => theme.button.primary};
 `

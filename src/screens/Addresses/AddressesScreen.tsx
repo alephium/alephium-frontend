@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useNavigation } from '@react-navigation/native'
-import { StackScreenProps } from '@react-navigation/stack'
 import { ListIcon, PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'

@@ -27,6 +27,7 @@ import BaseHeader from '~/components/headers/BaseHeader'
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
 import { useScrollContext } from '~/contexts/ScrollContext'
 import useCustomHeader from '~/hooks/layout/useCustomHeader'
+import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -34,7 +35,6 @@ import { makeSelectAddressesConfirmedTransactions } from '~/store/confirmedTrans
 import { makeSelectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressTransaction } from '~/types/transactions'
-import { useScroll } from '~/utils/scroll'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
@@ -44,7 +44,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
 
-  const { handleScroll, scrollY } = useScroll()
+  const { handleScroll, scrollY } = useVerticalScroll()
   const { setScrollToTop } = useScrollContext()
   const headerHeight = useHeaderHeight()
 

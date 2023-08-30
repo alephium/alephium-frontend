@@ -32,13 +32,13 @@ import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/
 import { ScreenSection } from '~/components/layout/Screen'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import useCustomHeader from '~/hooks/layout/useCustomHeader'
+import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
 import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
-import { useScroll } from '~/utils/scroll'
 
 interface ScreenProps
   extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'>,
@@ -47,7 +47,7 @@ interface ScreenProps
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const { handleScroll, scrollY } = useScroll()
+  const { handleScroll, scrollY } = useVerticalScroll()
 
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]

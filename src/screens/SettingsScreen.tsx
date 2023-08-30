@@ -36,6 +36,7 @@ import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Toggle from '~/components/Toggle'
 import useCustomHeader from '~/hooks/layout/useCustomHeader'
+import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -50,13 +51,12 @@ import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
 import { analyticsToggled, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
 import { resetNavigationState } from '~/utils/navigation'
-import { useScroll } from '~/utils/scroll'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
 
 const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const { handleScroll, scrollY } = useScroll()
+  const { handleScroll, scrollY } = useVerticalScroll()
   const hasAvailableBiometrics = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const requireAuth = useAppSelector((s) => s.settings.requireAuth)

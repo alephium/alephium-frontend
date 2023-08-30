@@ -16,13 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// ALL VALUES IN PIXELS
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-export const BORDER_RADIUS_BIG = 12
-export const BORDER_RADIUS = 7
-export const BORDER_RADIUS_SMALL = 4
+import { useEvent, useHandler } from 'react-native-reanimated'
 
-export const INPUTS_HEIGHT = 70
-export const INPUTS_PADDING = 21
+const useTabScrollHandler = (handlers: any, dependencies?: any) => {
+  const { context, doDependenciesDiffer } = useHandler(handlers, dependencies)
+  const subscribeForEvents = ['onPageScroll']
 
-export const HORIZONTAL_MARGIN = 15
+  return useEvent<any>(
+    (event) => {
+      'worklet'
+      const { onPageScroll } = handlers
+      if (onPageScroll && event.eventName.endsWith('onPageScroll')) {
+        onPageScroll(event, context)
+      }
+    },
+    subscribeForEvents,
+    doDependenciesDiffer
+  )
+}
+
+export default useTabScrollHandler

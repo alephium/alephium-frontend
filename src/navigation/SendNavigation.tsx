@@ -17,10 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ParamListBase } from '@react-navigation/native'
-import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
+import { createStackNavigator } from '@react-navigation/stack'
 
 import { SendContextProvider } from '~/contexts/SendContext'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
 import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
 import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
