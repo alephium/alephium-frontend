@@ -69,7 +69,11 @@ const BaseHeader = ({
   const titleAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader || headerTitle
       ? {
-          transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50]) }],
+          transform: [
+            { translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) },
+            { translateX: interpolate(scrollY?.value || 0, [0, -100], [0, 3], Extrapolate.CLAMP) },
+            { scale: interpolate(scrollY?.value || 0, [0, -100], [1, 1.05], Extrapolate.CLAMP) }
+          ],
           opacity: interpolate(scrollY?.value || 0, [0, 70], [1, 0], Extrapolate.CLAMP)
         }
       : {}
@@ -187,12 +191,14 @@ const ActionAreaBlurred = styled(AnimatedBlurView)`
 
 const TitleArea = styled(Animated.View)`
   padding: 10px ${HORIZONTAL_MARGIN}px;
+  align-self: flex-start;
 `
 
 const Title = styled(AppText)`
   font-size: 36px;
   font-weight: 700;
   color: ${({ theme }) => theme.font.primary};
+  align-self: flex-start;
 `
 
 const BottomBorder = styled(Animated.View)`

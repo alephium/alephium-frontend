@@ -121,7 +121,7 @@ const TabsRow = styled.View`
 
 const Indicator = styled(Reanimated.View)`
   position: absolute;
-  height: 65%;
+  height: 70%;
   border-radius: ${BORDER_RADIUS}px;
   background-color: ${({ theme }) => colord(theme.button.primary).alpha(0.8).toHex()};
 `
