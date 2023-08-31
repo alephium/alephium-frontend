@@ -54,11 +54,9 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
     offset: 0
   })
 
-  const pageScrollHandler = useTabScrollHandler({
-    onPageScroll: (e: PagerViewOnPageScrollEventData) => {
-      'worklet'
-      pagerScrollEvent.value = e
-    }
+  const pageScrollHandler = useTabScrollHandler((e: PagerViewOnPageScrollEventData) => {
+    'worklet'
+    pagerScrollEvent.value = e
   })
 
   const handleTabPress = (tabIndex: number) => {

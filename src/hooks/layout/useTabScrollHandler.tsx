@@ -18,18 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import { useEvent, useHandler } from 'react-native-reanimated'
 
-const useTabScrollHandler = (handlers: any, dependencies?: any) => {
-  const { context, doDependenciesDiffer } = useHandler(handlers, dependencies)
+const useTabScrollHandler = (handler: (e: PagerViewOnPageScrollEventData) => void, dependencies?: any) => {
+  const { doDependenciesDiffer } = useHandler({ onPageScroll: handler }, dependencies)
   const subscribeForEvents = ['onPageScroll']
 
   return useEvent<any>(
     (event) => {
       'worklet'
-      const { onPageScroll } = handlers
-      if (onPageScroll && event.eventName.endsWith('onPageScroll')) {
-        onPageScroll(event, context)
+      if (event.eventName.endsWith('onPageScroll')) {
+        handler(event)
       }
     },
     subscribeForEvents,
