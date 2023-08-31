@@ -44,7 +44,8 @@ export interface BaseHeaderProps {
   style?: StyleProp<ViewStyle>
 }
 
-const scrollRange = [0, 90]
+export const scrollEndThreshold = 80
+const defaultScrollRange = [0, scrollEndThreshold]
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 
@@ -85,7 +86,7 @@ const BaseHeader = ({
     HeaderBottomContent !== undefined
       ? {
           transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }],
-          opacity: interpolate(scrollY?.value || 0, [0, 90], [1, 0], Extrapolate.CLAMP)
+          opacity: interpolate(scrollY?.value || 0, defaultScrollRange, [1, 0], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -93,7 +94,7 @@ const BaseHeader = ({
   const animatedBlurViewProps = useAnimatedProps(() =>
     Platform.OS === 'ios'
       ? {
-          intensity: interpolate(scrollY?.value || 0, scrollRange, [0, 80], Extrapolate.CLAMP)
+          intensity: interpolate(scrollY?.value || 0, defaultScrollRange, [0, 80], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -101,20 +102,22 @@ const BaseHeader = ({
   const androidHeaderColor = useAnimatedStyle(() =>
     Platform.OS === 'android'
       ? {
-          backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange)
+          backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, bgColorRange)
         }
       : {}
   )
 
   const bottomBorderColor = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
+    backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
   }))
 
   const fullContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
       ? {
-          transform: [{ translateY: interpolate(scrollY?.value || 0, [20, 90], [0, -15], Extrapolate.CLAMP) }],
-          opacity: interpolate(scrollY?.value || 0, [20, 90], [1, 0], Extrapolate.CLAMP),
+          transform: [
+            { translateY: interpolate(scrollY?.value || 0, [20, scrollEndThreshold], [0, -15], Extrapolate.CLAMP) }
+          ],
+          opacity: interpolate(scrollY?.value || 0, [20, scrollEndThreshold], [1, 0], Extrapolate.CLAMP),
           zIndex: (scrollY?.value || 0) > 90 ? -1 : 0
         }
       : {}
@@ -123,8 +126,8 @@ const BaseHeader = ({
   const compactContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
       ? {
-          opacity: interpolate(scrollY?.value || 0, [60, 90], [0, 1], Extrapolate.CLAMP),
-          height: interpolate(scrollY?.value || 0, [60, 90], [130, 100], Extrapolate.CLAMP)
+          opacity: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [0, 1], Extrapolate.CLAMP),
+          height: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [130, 95], Extrapolate.CLAMP)
         }
       : {}
   )

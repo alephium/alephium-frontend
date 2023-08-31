@@ -18,6 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { RefObject } from 'react'
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView } from 'react-native'
 
+import { scrollEndThreshold } from '~/components/headers/BaseHeader'
+
 type UseAutoScrollReturnedHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => void
 
 type UseAutoScrollOnDragEnd = {
@@ -39,14 +41,14 @@ const useAutoScrollOnDragEnd: UseAutoScrollOnDragEnd = (viewRef) => {
     if (isScrollView) {
       if (contentOffset.y < 60) {
         viewRef.current.scrollTo({ y: 0 })
-      } else if (contentOffset.y < 90) {
-        viewRef.current.scrollTo({ y: 90 })
+      } else if (contentOffset.y < scrollEndThreshold) {
+        viewRef.current.scrollTo({ y: scrollEndThreshold })
       }
     } else {
       if (contentOffset.y < 60) {
         viewRef.current.scrollToOffset({ offset: 0 })
-      } else if (contentOffset.y < 90) {
-        viewRef.current.scrollToOffset({ offset: 90 })
+      } else if (contentOffset.y < scrollEndThreshold) {
+        viewRef.current.scrollToOffset({ offset: scrollEndThreshold })
       }
     }
   }
