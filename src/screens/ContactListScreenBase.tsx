@@ -26,6 +26,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
@@ -34,14 +35,19 @@ import { Contact } from '~/types/contacts'
 import { stringToColour } from '~/utils/colors'
 import { filterContacts } from '~/utils/contacts'
 
-export interface ContactListScreenBaseProps extends ScrollScreenProps {
+export interface ContactListScreenBaseProps extends TabBarPageProps {
   onContactPress: (contactId: Contact['id']) => void
   onNewContactPress?: () => void
 }
 
 // TODO: Should be converted to a FlatList
 
-const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: ContactListScreenBaseProps) => {
+const ContactListScreenBase = ({
+  onContactPress,
+  onNewContactPress,
+  contentStyle,
+  ...props
+}: ContactListScreenBaseProps) => {
   const contacts = useAppSelector(selectAllContacts)
 
   const [filteredContacts, setFilteredContacts] = useState(contacts)
@@ -52,7 +58,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
   }, [contacts, searchTerm])
 
   return (
-    <ScreenContent>
+    <ScreenContent style={contentStyle}>
       <HeaderScreenSection>
         <SearchInput placeholder="Search" value={searchTerm} onChangeText={setSearchTerm} />
         {onNewContactPress && <Button Icon={Plus} type="transparent" variant="accent" onPress={onNewContactPress} />}
@@ -87,9 +93,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
 
 export default ContactListScreenBase
 
-const ScreenContent = styled.View`
-  padding-top: 190px; // TODO: Compute header height automatically
-`
+const ScreenContent = styled.View``
 
 const ContactList = styled.View``
 

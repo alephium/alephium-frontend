@@ -20,7 +20,7 @@ import { RefreshControl, RefreshControlProps } from 'react-native'
 import { useTheme } from 'styled-components'
 
 interface RefreshSpinnerProps extends RefreshControlProps {
-  progressViewOffset: Required<RefreshControlProps['progressViewOffset']>
+  progressViewOffset: Required<RefreshControlProps>['progressViewOffset']
 }
 
 const RefreshSpinner = ({ progressViewOffset, ...props }: RefreshSpinnerProps) => {

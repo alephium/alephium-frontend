@@ -20,7 +20,7 @@ import { useNavigation } from '@react-navigation/native'
 import { ListIcon, PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
-import { RefreshControl, View } from 'react-native'
+import { View } from 'react-native'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -32,6 +32,7 @@ import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import Modalize from '~/components/layout/Modalize'
+import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import EditAddressModal from '~/screens/Address/EditAddressModal'
@@ -44,7 +45,7 @@ import {
 } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
-const AddressesScreen = ({ onScroll, ...props }: BottomBarScrollScreenProps) => {
+const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const posthog = usePostHog()
@@ -100,7 +101,7 @@ const AddressesScreen = ({ onScroll, ...props }: BottomBarScrollScreenProps) => 
         onScroll={onScroll}
         {...props}
       >
-        <ScreenContent>
+        <ScreenContent style={contentStyle}>
           <Carousel
             data={addressHashes}
             renderItem={renderAddressCard}
@@ -162,9 +163,7 @@ const AddressesScreen = ({ onScroll, ...props }: BottomBarScrollScreenProps) => 
 
 export default AddressesScreen
 
-const ScreenContent = styled.View`
-  padding-top: 190px; // TODO: Compute header height automatically
-`
+const ScreenContent = styled.View``
 
 const AddressBoxStyled = styled(AddressBox)`
   margin: 10px 20px;

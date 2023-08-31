@@ -19,8 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ParamListBase } from '@react-navigation/native'
 import { useTheme } from 'styled-components'
 
-import TabBarScreen from '~/components/layout/TabBarScreen'
-import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
+import TabBarPager from '~/components/layout/TabBarPager'
 import AddressesScreen from '~/screens/Addresses/AddressesScreen'
 import ContactsScreen from '~/screens/Addresses/ContactsScreen'
 import { AddressHash } from '~/types/addresses'
@@ -32,22 +31,13 @@ export interface AddressTabsParamList extends ParamListBase {
   ContactsScreen: undefined
 }
 
-const AddressesTabNavigation = () => {
-  const { handleScroll, scrollY } = useVerticalScroll()
-  const theme = useTheme()
-
-  return (
-    <TabBarScreen
-      initialPage={0}
-      headerTitle="Addresses"
-      tabLabels={['Your addresses', 'Contacts']}
-      style={{ flex: 1, backgroundColor: theme.bg.back2 }}
-      scrollY={scrollY}
-    >
-      <AddressesScreen key="1" onScroll={handleScroll} />
-      <ContactsScreen key="2" onScroll={handleScroll} />
-    </TabBarScreen>
-  )
-}
+const AddressesTabNavigation = () => (
+  <TabBarPager
+    initialPage={0}
+    headerTitle="Addresses"
+    tabLabels={['Your addresses', 'Contacts']}
+    pages={[AddressesScreen, ContactsScreen]}
+  />
+)
 
 export default AddressesTabNavigation

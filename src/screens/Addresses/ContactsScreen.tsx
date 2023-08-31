@@ -17,13 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useNavigation } from '@react-navigation/native'
-import { ScrollViewProps } from 'react-native'
 
 import ScrollScreen from '~/components/layout/BottomBarScrollScreen'
+import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 import { Contact } from '~/types/contacts'
 
-const ContactsScreen = ({ onScroll }: ScrollViewProps) => {
+const ContactsScreen = ({ onScroll, contentStyle }: TabBarPageProps) => {
   const navigation = useNavigation()
 
   return (
@@ -31,6 +31,7 @@ const ContactsScreen = ({ onScroll }: ScrollViewProps) => {
       <ContactListScreenBase
         onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
         onNewContactPress={() => navigation.navigate('NewContactScreen')}
+        contentStyle={contentStyle}
       />
     </ScrollScreen>
   )
