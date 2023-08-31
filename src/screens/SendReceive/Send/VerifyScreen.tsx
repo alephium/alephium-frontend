@@ -30,7 +30,6 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
-import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
@@ -41,7 +40,6 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction, bytecode, initialAlphAmount, issueTokenAmount } =
     useSendContext()
-  const { walletConnectClient, requestEvent, onSessionRequestSuccess } = useWalletConnectContext()
 
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]
@@ -52,26 +50,11 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       headerRight: () => (
         <ContinueButton
           text="Send"
-          onPress={async () =>
-            sendTransaction((signature?: string) => {
-              if (signature && walletConnectClient && requestEvent) {
-                onSessionRequestSuccess(requestEvent, { signature })
-              }
-              navigation.navigate('TransfersScreen')
-            })
-          }
+          onPress={async () => sendTransaction(() => navigation.navigate('TransfersScreen'))}
         />
       )
     })
   })
-
-  console.log('VERIFY SCREEN:')
-  console.log('fromAddress', fromAddress)
-  console.log('toAddress', toAddress)
-  console.log('assetAmounts', assetAmounts)
-  console.log('bytecode', bytecode)
-  console.log('issueTokenAmount', issueTokenAmount)
-  console.log('initialAlphAmount', initialAlphAmount)
 
   if (!fromAddress) return null
 

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError, AssetAmount, fromHumanReadableAmount, getHumanReadableError } from '@alephium/sdk'
+import { APIError, AssetAmount, getHumanReadableError } from '@alephium/sdk'
 import { node } from '@alephium/web3'
 import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
@@ -30,7 +30,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 import { TxType } from '~/types/transactions'
-import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
+import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 type UnsignedTxData = {
   unsignedTxs: {
@@ -173,13 +173,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
   const buildTransaction = useCallback(
     async (txType: TxType, callbacks: BuildTransactionCallbacks) => {
-      console.log('SEND CONTEXT BUILD TX IS CALLED WITH STATE:')
-      console.log('fromAddress', fromAddress)
-      console.log('assetAmounts', assetAmounts)
-      console.log('gasAmount', gasAmount)
-      console.log('gasPrice', gasPrice)
-      console.log('bytecode', bytecode)
-
       if (!address) return
 
       try {
@@ -191,29 +184,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
             data = await buildUnsignedTransactions(address, toAddress, assetAmounts, gasAmount, gasPrice)
             break
-          case TxType.SCRIPT: {
-            console.log('SEND CONTEXT CAPTURED SCRIPT EVENT, BUILDING TX...')
-
-            if (!bytecode) throw new Error('Bytecode not set')
-
-            const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
-            const result = await client.node.contracts.postContractsUnsignedTxExecuteScript({
-              fromPublicKey: address.publicKey,
-              bytecode,
-              attoAlphAmount,
-              tokens,
-              gasAmount: gasAmount,
-              gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
-            })
-
-            console.log('SEND CONTEXT RESULT FROM BUILDING SCRIPT TX:', result)
-
-            data = {
-              unsignedTxs: [{ txId: result.txId, unsignedTx: result.unsignedTx }],
-              fees: BigInt(result.gasAmount) * BigInt(result.gasPrice)
-            }
-            break
-          }
           case TxType.DEPLOY_CONTRACT: {
             if (!bytecode) throw new Error('Bytecode not set')
 
@@ -258,7 +228,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       assetAmounts,
       buildConsolidationTransactions,
       bytecode,
-      fromAddress,
       gasAmount,
       gasPrice,
       initialAlphAmount,
@@ -270,12 +239,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
   const sendTransaction = useCallback(
     async (onSendSuccess: (signature?: string) => void) => {
-      console.log('SENDING TRANSACTION WITH STATE:')
-
-      console.log('address', address)
-      console.log('assetAmounts', assetAmounts)
-      console.log('unsignedTxData', unsignedTxData)
-
       if (!address) return
 
       const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
@@ -294,7 +257,8 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
               amount: attoAlphAmount,
               tokens,
               timestamp: new Date().getTime(),
-              status: 'pending'
+              status: 'pending',
+              type: 'transfer'
             })
           )
         }

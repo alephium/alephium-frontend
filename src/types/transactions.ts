@@ -18,19 +18,42 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AssetAmount } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
+import { BuildDeployContractTxResult, BuildTransactionResult } from '@alephium/web3/dist/src/api/api-alephium'
 
-import { Address, AddressHash } from '~/types/addresses'
+import { Address } from '~/types/addresses'
 
-export type PendingTransaction = {
-  hash: string
-  fromAddress: string
-  toAddress: string
-  timestamp: number
-  amount?: string
-  tokens?: explorer.Token[]
-  lockTime?: number
-  status: 'pending'
-}
+export type PendingTransaction =
+  | {
+      hash: string
+      fromAddress: string
+      toAddress: string
+      timestamp: number
+      amount?: string
+      tokens?: explorer.Token[]
+      lockTime?: number
+      status: 'pending'
+      type: 'transfer'
+    }
+  | {
+      hash: string
+      fromAddress: string
+      timestamp: number
+      amount?: string
+      tokens?: explorer.Token[]
+      lockTime?: number
+      status: 'pending'
+      type: 'call-contract'
+    }
+  | {
+      hash: string
+      fromAddress: string
+      timestamp: number
+      amount?: string
+      tokens?: explorer.Token[]
+      lockTime?: number
+      status: 'pending'
+      type: 'deploy-contract'
+    }
 
 export type AddressConfirmedTransaction = explorer.Transaction & { address: Address }
 export type AddressPendingTransaction = PendingTransaction & { address: Address }
@@ -43,7 +66,7 @@ export enum TxType {
 }
 
 export interface TransferTxData {
-  fromAddress: AddressHash
+  fromAddress: Address
   toAddress: string
   assetAmounts: AssetAmount[]
   gasAmount?: number
@@ -52,7 +75,7 @@ export interface TransferTxData {
 }
 
 export interface CallContractTxData {
-  fromAddress: AddressHash
+  fromAddress: Address
   bytecode: string
 
   assetAmounts?: AssetAmount[]
@@ -61,7 +84,7 @@ export interface CallContractTxData {
 }
 
 export interface DeployContractTxData {
-  fromAddress: AddressHash
+  fromAddress: Address
   bytecode: string
 
   initialAlphAmount?: AssetAmount
@@ -69,3 +92,7 @@ export interface DeployContractTxData {
   gasAmount?: number
   gasPrice?: string
 }
+
+export type TransferUnsignedTxData = { unsignedTx: BuildTransactionResult; fees: bigint }
+// export type CallContractUnsignedTxData = { unsignedTx: BuildExecuteScriptTxResult; fees: bigint }
+export type DeployContractUnsignedTxData = { unsignedTx: BuildDeployContractTxResult; fees: bigint }

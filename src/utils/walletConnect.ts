@@ -30,7 +30,7 @@ export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSetti
     (network) => network === networkId && currentNetworkId === networkPresetSettings[network].networkId
   )
 
-export const parseProposalEvent = (proposalEvent: ProposalEvent) => {
+export const parseSessionProposalEvent = (proposalEvent: ProposalEvent) => {
   const { id, requiredNamespaces, relays } = proposalEvent.params
   const { metadata } = proposalEvent.params.proposer
   const requiredNamespace = requiredNamespaces[PROVIDER_NAMESPACE]

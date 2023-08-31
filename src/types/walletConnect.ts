@@ -17,6 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { SignClientTypes } from '@walletconnect/types'
 
-export type RequestEvent = SignClientTypes.EventArguments['session_request']
+export type SessionRequestEvent = SignClientTypes.EventArguments['session_request']
 
-export type ProposalEvent = Pick<SignClientTypes.EventArguments['session_proposal'], 'id' | 'params'>
+export type SessionProposalEvent = Pick<SignClientTypes.EventArguments['session_proposal'], 'id' | 'params'>
