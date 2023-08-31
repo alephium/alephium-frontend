@@ -20,6 +20,7 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { RefObject } from 'react'
 import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 
+import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 import Screen from './Screen'
@@ -41,6 +42,7 @@ const ScrollScreen = ({
   ...props
 }: ScrollScreenProps) => {
   const headerheight = useHeaderHeight()
+  const scrollEndHandler = useAutoScrollOnDragEnd(scrollViewRef)
 
   return (
     <Screen style={containerStyle}>
@@ -48,6 +50,7 @@ const ScrollScreen = ({
         ref={scrollViewRef}
         scrollEventThrottle={16}
         alwaysBounceVertical={false}
+        onScrollEndDrag={scrollEndHandler}
         contentContainerStyle={[
           contentContainerStyle,
           {

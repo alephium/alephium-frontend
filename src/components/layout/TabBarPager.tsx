@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactElement, ReactNode, useRef } from 'react'
+import { ReactNode, useRef } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollViewProps, StyleProp, ViewStyle } from 'react-native'
 import PagerView, { PagerViewOnPageScrollEventData, PagerViewProps } from 'react-native-pager-view'
-import Animated, { SharedValue, useSharedValue } from 'react-native-reanimated'
+import Animated, { useSharedValue } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 

@@ -33,7 +33,7 @@ import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/
 import { ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
-import useCustomHeader from '~/hooks/layout/useCustomHeader'
+import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
 import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
@@ -56,7 +56,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
 
-  useCustomHeader({
+  useCustomNavigationHeader({
     Header: (props) => (
       <BaseHeader
         scrollY={scrollY}

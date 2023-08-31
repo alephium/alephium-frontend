@@ -35,7 +35,7 @@ import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Toggle from '~/components/Toggle'
-import useCustomHeader from '~/hooks/layout/useCustomHeader'
+import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
 import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
@@ -73,7 +73,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
-  useCustomHeader({
+  useCustomNavigationHeader({
     Header: (props) => <StackHeader scrollY={scrollY} headerTitle="Settings" {...props} />,
     navigation
   })

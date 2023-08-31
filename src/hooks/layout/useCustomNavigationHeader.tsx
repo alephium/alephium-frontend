@@ -26,7 +26,7 @@ type UseStackCustomHeaderProps<T extends ParamListBase> = {
   setInParent?: boolean
 }
 
-const useCustomHeader = <T extends ParamListBase>({
+const useCustomNavigationHeader = <T extends ParamListBase>({
   Header,
   navigation,
   setInParent
@@ -41,4 +41,4 @@ const useCustomHeader = <T extends ParamListBase>({
   }, [Header, nav])
 }
 
-export default useCustomHeader
+export default useCustomNavigationHeader

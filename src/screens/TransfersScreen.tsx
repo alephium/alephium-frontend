@@ -22,11 +22,11 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { FlatList } from 'react-native'
 
-import AppText from '~/components/AppText'
 import BaseHeader from '~/components/headers/BaseHeader'
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
 import { useScrollContext } from '~/contexts/ScrollContext'
-import useCustomHeader from '~/hooks/layout/useCustomHeader'
+import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
+import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
 import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
@@ -39,6 +39,8 @@ import { AddressTransaction } from '~/types/transactions'
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
+  const listRef = useRef<FlatList<AddressTransaction>>(null)
+
   const selectAddressesConfirmedTransactions = useMemo(makeSelectAddressesConfirmedTransactions, [])
   const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
@@ -46,11 +48,11 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   const { handleScroll, scrollY } = useVerticalScroll()
   const { setScrollToTop } = useScrollContext()
+  const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
+
   const headerHeight = useHeaderHeight()
 
-  const listRef = useRef<FlatList<AddressTransaction>>(null)
-
-  useCustomHeader({
+  useCustomNavigationHeader({
     Header: (props) => <BaseHeader scrollY={scrollY} headerTitle="Transfers" {...props} />,
     navigation
   })
@@ -73,6 +75,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       initialNumToRender={8}
       contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight + HORIZONTAL_MARGIN }}
       onScroll={handleScroll}
+      onScrollEndDrag={scrollEndHandler}
       ref={listRef}
     />
   )

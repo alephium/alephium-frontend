@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ParamListBase } from '@react-navigation/native'
-import { useTheme } from 'styled-components'
 
 import TabBarPager from '~/components/layout/TabBarPager'
 import AddressesScreen from '~/screens/Addresses/AddressesScreen'

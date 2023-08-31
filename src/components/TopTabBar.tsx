@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { useState } from 'react'
-import { LayoutChangeEvent, LayoutRectangle, Pressable, PressableProps } from 'react-native'
+import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, { interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import styled from 'styled-components/native'
@@ -33,8 +33,6 @@ interface TopTabBarProps {
   pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
   onTabPress: (index: number) => void
 }
-
-const AnimatedPressable = Reanimated.createAnimatedComponent(Pressable)
 
 const indicatorXPadding = 10
 
