@@ -114,7 +114,8 @@ const BaseHeader = ({
     hasCompactHeader
       ? {
           transform: [{ translateY: interpolate(scrollY?.value || 0, [20, 90], [0, -15], Extrapolate.CLAMP) }],
-          opacity: interpolate(scrollY?.value || 0, [20, 90], [1, 0], Extrapolate.CLAMP)
+          opacity: interpolate(scrollY?.value || 0, [20, 90], [1, 0], Extrapolate.CLAMP),
+          zIndex: (scrollY?.value || 0) > 90 ? -1 : 0
         }
       : {}
   )
@@ -141,6 +142,18 @@ const BaseHeader = ({
   } else {
     return (
       <Animated.View style={style}>
+        {(HeaderCompactContent || headerTitle) && (
+          <CompactContent style={compactContentAnimatedStyle}>
+            <ActionAreaBlurred
+              style={{ paddingTop: insets.top, justifyContent: 'center', height: '100%' }}
+              animatedProps={animatedBlurViewProps}
+              tint={theme.name}
+            >
+              {HeaderCompactContent || <CompactTitle>{headerTitle}</CompactTitle>}
+              <BottomBorder style={bottomBorderColor} />
+            </ActionAreaBlurred>
+          </CompactContent>
+        )}
         <FullContent style={fullContentAnimatedStyle}>
           {HeaderLeft || HeaderRight ? (
             <>
@@ -172,18 +185,6 @@ const BaseHeader = ({
           {HeaderBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
           <BottomBorder style={bottomBorderColor} />
         </FullContent>
-        {(HeaderCompactContent || headerTitle) && (
-          <CompactContent style={compactContentAnimatedStyle}>
-            <ActionAreaBlurred
-              style={{ paddingTop: insets.top, justifyContent: 'center', height: '100%' }}
-              animatedProps={animatedBlurViewProps}
-              tint={theme.name}
-            >
-              {HeaderCompactContent || <CompactTitle>{headerTitle}</CompactTitle>}
-              <BottomBorder style={bottomBorderColor} />
-            </ActionAreaBlurred>
-          </CompactContent>
-        )}
       </Animated.View>
     )
   }
