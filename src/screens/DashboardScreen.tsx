@@ -16,10 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
-import { RefreshControl, View } from 'react-native'
+import { View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
@@ -30,6 +31,7 @@ import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import BaseHeader from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import { ScreenSection } from '~/components/layout/Screen'
+import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import useCustomHeader from '~/hooks/layout/useCustomHeader'
 import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
@@ -47,6 +49,7 @@ interface ScreenProps
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
+  const headerHeight = useHeaderHeight()
   const { handleScroll, scrollY } = useVerticalScroll()
 
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
@@ -73,7 +76,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <DashboardScreenStyled
-      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
+      refreshControl={
+        <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
+      }
       onScroll={handleScroll}
       hasHeader
       hasBottomBar

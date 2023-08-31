@@ -32,6 +32,7 @@ import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import Modalize from '~/components/layout/Modalize'
+import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import EditAddressModal from '~/screens/Address/EditAddressModal'
 import {
@@ -95,7 +96,7 @@ const AddressesScreen = ({ onScroll, ...props }: BottomBarScrollScreenProps) => 
   return (
     <>
       <BottomBarScrollScreen
-        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
+        refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={190} />}
         onScroll={onScroll}
         {...props}
       >

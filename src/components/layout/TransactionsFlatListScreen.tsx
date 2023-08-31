@@ -25,6 +25,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Modalize from '~/components/layout/Modalize'
+import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import TransactionModal from '~/screens/TransactionModal'
 import {
@@ -69,6 +70,7 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
 ) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
+  const headerHeight = useHeaderHeight()
 
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
@@ -120,7 +122,9 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
         renderItem={renderConfirmedTransactionItem}
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
-        onRefresh={refreshData}
+        refreshControl={
+          <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
+        }
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         ListHeaderComponent={
