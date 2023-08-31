@@ -51,14 +51,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const listRef = useRef<FlatList<AddressTransaction>>(null)
 
   useCustomHeader({
-    Header: (props) => (
-      <BaseHeader
-        scrollY={scrollY}
-        headerTitle="Transfers"
-        HeaderCompactContent={<AppText>{'Transfers'}</AppText>}
-        {...props}
-      />
-    ),
+    Header: (props) => <BaseHeader scrollY={scrollY} headerTitle="Transfers" {...props} />,
     navigation
   })
 

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { TextProps } from 'react-native'
 import styled, { css, DefaultTheme } from 'styled-components/native'
 
 import { themes, ThemeType } from '~/style/themes'
@@ -23,7 +24,7 @@ import { themes, ThemeType } from '~/style/themes'
 type FontColor = keyof DefaultTheme['font']
 type GlobalColor = keyof DefaultTheme['global']
 
-export type AppTextProps = {
+export interface AppTextProps extends TextProps {
   bold?: boolean
   semiBold?: boolean
   medium?: boolean

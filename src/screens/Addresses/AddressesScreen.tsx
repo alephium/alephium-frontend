@@ -162,7 +162,7 @@ const AddressesScreen = ({ onScroll, ...props }: BottomBarScrollScreenProps) => 
 export default AddressesScreen
 
 const ScreenContent = styled.View`
-  padding-top: 120px;
+  padding-top: 190px; // TODO: Compute header height automatically
 `
 
 const AddressBoxStyled = styled(AddressBox)`

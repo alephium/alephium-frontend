@@ -39,6 +39,7 @@ const AddressesTabNavigation = () => {
   return (
     <TabBarScreen
       initialPage={0}
+      headerTitle="Addresses"
       tabLabels={['Your addresses', 'Contacts']}
       style={{ flex: 1, backgroundColor: theme.bg.back2 }}
       scrollY={scrollY}

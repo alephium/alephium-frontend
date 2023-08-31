@@ -37,6 +37,7 @@ export interface BaseHeaderProps {
   HeaderLeft?: ReactNode
   HeaderRight?: ReactNode
   headerTitle?: string
+  HeaderBottom?: ReactNode
   HeaderCompactContent?: ReactNode
   scrollY?: SharedValue<number>
   bgColor?: string
@@ -53,6 +54,7 @@ const BaseHeader = ({
   HeaderRight,
   HeaderLeft,
   headerTitle,
+  HeaderBottom,
   HeaderCompactContent,
   scrollY,
   bgColor,
@@ -75,6 +77,15 @@ const BaseHeader = ({
             { scale: interpolate(scrollY?.value || 0, [0, -100], [1, 1.05], Extrapolate.CLAMP) }
           ],
           opacity: interpolate(scrollY?.value || 0, [0, 70], [1, 0], Extrapolate.CLAMP)
+        }
+      : {}
+  )
+
+  const bottomContentAnimatedStyle = useAnimatedStyle(() =>
+    HeaderBottomContent !== undefined
+      ? {
+          transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }],
+          opacity: interpolate(scrollY?.value || 0, [0, 90], [1, 0], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -112,7 +123,7 @@ const BaseHeader = ({
     hasCompactHeader
       ? {
           opacity: interpolate(scrollY?.value || 0, [60, 90], [0, 1], Extrapolate.CLAMP),
-          height: interpolate(scrollY?.value || 0, [60, 90], [130, 90], Extrapolate.CLAMP)
+          height: interpolate(scrollY?.value || 0, [60, 90], [130, 100], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -123,24 +134,13 @@ const BaseHeader = ({
         {HeaderLeft}
         {HeaderRight}
         {headerTitle && <Title>{headerTitle}</Title>}
+        {HeaderBottom}
         <BottomBorder style={bottomBorderColor} />
       </Animated.View>
     )
   } else {
     return (
       <Animated.View style={style}>
-        {(HeaderCompactContent || headerTitle) && (
-          <CompactContent style={compactContentAnimatedStyle}>
-            <ActionAreaBlurred
-              style={{ paddingTop: insets.top, justifyContent: 'center', height: '100%' }}
-              animatedProps={animatedBlurViewProps}
-              tint={theme.name}
-            >
-              {HeaderCompactContent || <AppText>{headerTitle}</AppText>}
-              <BottomBorder style={bottomBorderColor} />
-            </ActionAreaBlurred>
-          </CompactContent>
-        )}
         <FullContent style={fullContentAnimatedStyle}>
           {HeaderLeft || HeaderRight ? (
             <>
@@ -151,7 +151,6 @@ const BaseHeader = ({
               >
                 {HeaderLeft}
                 {HeaderRight}
-                <BottomBorder style={bottomBorderColor} />
               </ActionAreaBlurred>
               {headerTitle && (
                 <TitleArea style={titleAnimatedStyle}>
@@ -170,13 +169,27 @@ const BaseHeader = ({
               </TitleArea>
             </ActionAreaBlurred>
           )}
+          {HeaderBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
+          <BottomBorder style={bottomBorderColor} />
         </FullContent>
+        {(HeaderCompactContent || headerTitle) && (
+          <CompactContent style={compactContentAnimatedStyle}>
+            <ActionAreaBlurred
+              style={{ paddingTop: insets.top, justifyContent: 'center', height: '100%' }}
+              animatedProps={animatedBlurViewProps}
+              tint={theme.name}
+            >
+              {HeaderCompactContent || <CompactTitle>{headerTitle}</CompactTitle>}
+              <BottomBorder style={bottomBorderColor} />
+            </ActionAreaBlurred>
+          </CompactContent>
+        )}
       </Animated.View>
     )
   }
 }
 
-export default styled(BaseHeader)``
+export default BaseHeader
 
 const FullContent = styled(Animated.View)`
   flex-direction: column;
@@ -201,6 +214,11 @@ const Title = styled(AppText)`
   align-self: flex-start;
 `
 
+const CompactTitle = styled(AppText)`
+  font-size: 15px;
+  font-weight: 600;
+`
+
 const BottomBorder = styled(Animated.View)`
   position: absolute;
   bottom: -1px;
@@ -214,4 +232,9 @@ const CompactContent = styled(Animated.View)`
   top: 0;
   right: 0;
   left: 0;
+  height: 0px;
+`
+
+const HeaderBottomContent = styled(Animated.View)`
+  height: 0px;
 `

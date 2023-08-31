@@ -27,6 +27,7 @@ import TopTabBar from '~/components/TopTabBar'
 import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
 
 interface TabBarScreenProps extends PagerViewProps {
+  headerTitle: string
   children: ReactNode
   scrollY: SharedValue<number>
   tabLabels: string[]
@@ -34,7 +35,7 @@ interface TabBarScreenProps extends PagerViewProps {
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
-const TabBarScreen = ({ children, scrollY, tabLabels, ...props }: TabBarScreenProps) => {
+const TabBarScreen = ({ children, scrollY, tabLabels, headerTitle, ...props }: TabBarScreenProps) => {
   const pagerRef = useRef<PagerView>(null)
 
   const theme = useTheme()
@@ -68,7 +69,11 @@ const TabBarScreen = ({ children, scrollY, tabLabels, ...props }: TabBarScreenPr
       </AnimatedPagerView>
       <HeaderContainer>
         <BaseHeader
-          HeaderLeft={
+          headerTitle={headerTitle}
+          HeaderBottom={
+            <TopTabBar tabLabels={tabLabels} pagerScrollEvent={pagerScrollEvent} onTabPress={handleTabPress} />
+          }
+          HeaderCompactContent={
             <TopTabBar tabLabels={tabLabels} pagerScrollEvent={pagerScrollEvent} onTabPress={handleTabPress} />
           }
           scrollY={scrollY}

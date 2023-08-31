@@ -60,7 +60,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         HeaderRight={<DashboardHeaderActions />}
         HeaderLeft={<WalletSwitchButton />}
         headerTitle={activeWalletName}
-        HeaderCompactContent={<AppText>{activeWalletName}</AppText>}
         bgColor={theme.bg.primary}
         {...props}
       />

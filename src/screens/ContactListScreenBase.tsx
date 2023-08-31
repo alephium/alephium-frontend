@@ -88,7 +88,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
 export default ContactListScreenBase
 
 const ScreenContent = styled.View`
-  padding-top: 110px;
+  padding-top: 190px; // TODO: Compute header height automatically
 `
 
 const ContactList = styled.View``

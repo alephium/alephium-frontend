@@ -24,7 +24,7 @@ import Reanimated, { interpolate, SharedValue, useAnimatedStyle } from 'react-na
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS } from '~/style/globalStyle'
+import { BORDER_RADIUS, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 type TabsLayout = Record<number, LayoutRectangle>
 
@@ -102,11 +102,11 @@ interface TabBarItemProps extends PressableProps {
 }
 
 const TabBarItem = ({ label, onPress, onLayout }: TabBarItemProps) => (
-  <AnimatedPressable key={label} accessibilityRole="button" onPress={onPress} onLayout={onLayout}>
+  <TabBarItemStyled key={label} accessibilityRole="button" onPress={onPress} onLayout={onLayout}>
     <AppText semiBold size={16}>
       {label}
     </AppText>
-  </AnimatedPressable>
+  </TabBarItemStyled>
 )
 
 export default TopTabBar
@@ -116,7 +116,12 @@ const TabsRow = styled.View`
   gap: 25px;
   align-items: center;
   height: 50px;
-  padding: 0 10px;
+  padding: 0 ${HORIZONTAL_MARGIN + indicatorXPadding}px;
+`
+
+const TabBarItemStyled = styled.Pressable`
+  height: 100%;
+  justify-content: center;
 `
 
 const Indicator = styled(Reanimated.View)`
