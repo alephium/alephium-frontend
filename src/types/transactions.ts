@@ -66,7 +66,7 @@ export enum TxType {
 }
 
 export interface TransferTxData {
-  fromAddress: Address
+  fromAddress: Pick<Address, 'hash' | 'publicKey'>
   toAddress: string
   assetAmounts: AssetAmount[]
   gasAmount?: number
@@ -75,7 +75,7 @@ export interface TransferTxData {
 }
 
 export interface CallContractTxData {
-  fromAddress: Address
+  fromAddress: Pick<Address, 'hash' | 'publicKey'>
   bytecode: string
 
   assetAmounts?: AssetAmount[]
@@ -84,7 +84,7 @@ export interface CallContractTxData {
 }
 
 export interface DeployContractTxData {
-  fromAddress: Address
+  fromAddress: Pick<Address, 'hash' | 'publicKey'>
   bytecode: string
 
   initialAlphAmount?: AssetAmount

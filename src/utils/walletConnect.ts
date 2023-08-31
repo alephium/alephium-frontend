@@ -22,7 +22,7 @@ import SignClient from '@walletconnect/sign-client'
 import { networkPresetSettings } from '~/persistent-storage/settings'
 import { NetworkPreset } from '~/types/network'
 import { NetworkSettings } from '~/types/settings'
-import { ProposalEvent } from '~/types/walletConnect'
+import { SessionProposalEvent } from '~/types/walletConnect'
 
 export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['networkId']) =>
   (networkId === 'devnet' && currentNetworkId === 4) ||
@@ -30,7 +30,7 @@ export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSetti
     (network) => network === networkId && currentNetworkId === networkPresetSettings[network].networkId
   )
 
-export const parseSessionProposalEvent = (proposalEvent: ProposalEvent) => {
+export const parseSessionProposalEvent = (proposalEvent: SessionProposalEvent) => {
   const { id, requiredNamespaces, relays } = proposalEvent.params
   const { metadata } = proposalEvent.params.proposer
   const requiredNamespace = requiredNamespaces[PROVIDER_NAMESPACE]

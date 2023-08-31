@@ -26,7 +26,7 @@ import { ModalProps, ScrollModal } from '~/components/layout/Modals'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
-import { useWalletConnectContext } from '~/contexts/WalletConnectContext'
+import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 
 type WalletConnectPairingsModalProps = ModalProps<ScrollScreenProps>
 

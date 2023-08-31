@@ -25,7 +25,7 @@ import { useTheme } from 'styled-components'
 
 import AnalyticsProvider from '~/contexts/AnalyticsContext'
 import { SendContextProvider } from '~/contexts/SendContext'
-import { WalletConnectContextProvider } from '~/contexts/WalletConnectContext'
+import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'

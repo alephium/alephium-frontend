@@ -138,7 +138,9 @@ export const selectContactPendingTransactions = (
   contactAddressHash: AddressHash
 ) =>
   associateTxsWithAddresses(
-    transactions.filter((tx) => tx.fromAddress === contactAddressHash || tx.toAddress === contactAddressHash),
+    transactions.filter(
+      (tx) => tx.fromAddress === contactAddressHash || (tx.type === 'transfer' && tx.toAddress) === contactAddressHash
+    ),
     allAddresses
   )
 

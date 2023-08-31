@@ -21,7 +21,7 @@ import { transactionSign } from '@alephium/web3'
 
 import client from '~/api/client'
 import { Address, AddressHash } from '~/types/addresses'
-import { CallContractTxData } from '~/types/transactions'
+import { CallContractTxData, DeployContractTxData } from '~/types/transactions'
 import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -96,12 +96,24 @@ export const buildCallContractTransaction = async ({
     gasAmount: gasAmount,
     gasPrice: gasPrice?.toString()
   })
-
-  // return {
-  //   unsignedTx,
-  //   fees: BigInt(unsignedTx.gasAmount) * BigInt(unsignedTx.gasPrice)
-  // }
 }
+
+export const buildDeployContractTransaction = async ({
+  fromAddress,
+  bytecode,
+  initialAlphAmount,
+  issueTokenAmount,
+  gasAmount,
+  gasPrice
+}: DeployContractTxData) =>
+  await client.node.contracts.postContractsUnsignedTxDeployContract({
+    fromPublicKey: fromAddress.publicKey,
+    bytecode: bytecode,
+    initialAttoAlphAmount: initialAlphAmount?.amount?.toString(),
+    issueTokenAmount: issueTokenAmount?.toString(),
+    gasAmount: gasAmount,
+    gasPrice: gasPrice?.toString()
+  })
 
 export const signAndSendTransaction = async (fromAddress: Address, txId: string, unsignedTx: string) => {
   const signature = transactionSign(txId, fromAddress.privateKey)
