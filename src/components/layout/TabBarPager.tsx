@@ -24,6 +24,7 @@ import Animated, {
   AnimateProps,
   measure,
   runOnJS,
+  SharedValue,
   useAnimatedRef,
   useAnimatedStyle,
   useSharedValue
@@ -72,10 +73,6 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
     }
   }
 
-  const pageAnimatedStyle = useAnimatedStyle(() => ({
-    paddingTop: tabBarPageY.value + insets.top + HORIZONTAL_MARGIN
-  }))
-
   const pageScrollHandler = useTabScrollHandler((e: PagerViewOnPageScrollEventData) => {
     'worklet'
 
@@ -108,7 +105,16 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
         ref={pagerRef}
         {...props}
       >
-        {pages.map((Page, i) => wrapPage({ Page, onScroll: handleScroll, style: pageAnimatedStyle, key: i }))}
+        {pages.map((Page, i) => (
+          <WrappedPage
+            index={i}
+            key={i}
+            Page={Page}
+            onScroll={handleScroll}
+            pagerScrollEvent={pagerScrollEvent}
+            tabBarPageY={tabBarPageY}
+          />
+        ))}
       </AnimatedPagerView>
       <HeaderContainer>
         <BaseHeader
@@ -124,25 +130,34 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
 
 export default TabBarPager
 
-const wrapPage = ({
+const WrappedPage = ({
   Page,
   onScroll,
-  style,
-  key
+  index,
+  pagerScrollEvent,
+  tabBarPageY
 }: {
   Page: (props: TabBarPageProps) => ReactNode
   onScroll: Required<TabBarPageProps>['onScroll']
-  style: TabBarPageProps['style']
-  key: string | number
-}) => (
-  <Page
-    key={key}
-    contentStyle={style}
-    onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      onScroll(e)
-    }}
-  />
-)
+  index: number
+  pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
+  tabBarPageY: SharedValue<number>
+}) => {
+  const insets = useSafeAreaInsets()
+
+  const pageAnimatedStyle = useAnimatedStyle(() => ({
+    paddingTop: tabBarPageY.value + insets.top + HORIZONTAL_MARGIN
+  }))
+
+  return (
+    <Page
+      contentStyle={pagerScrollEvent.value.position !== index ? pageAnimatedStyle : [{ paddingTop: 190 }]}
+      onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        onScroll(e)
+      }}
+    />
+  )
+}
 
 const HeaderContainer = styled.View`
   position: absolute;

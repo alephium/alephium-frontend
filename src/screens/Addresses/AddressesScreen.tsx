@@ -100,7 +100,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
         onScroll={onScroll}
         {...props}
       >
-        <Animated.View style={contentStyle}>
+        <Content style={contentStyle}>
           <Carousel
             data={addressHashes}
             renderItem={renderAddressCard}
@@ -119,7 +119,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
             }
           />
           {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} style={{ paddingBottom: 50 }} />}
-        </Animated.View>
+        </Content>
       </BottomBarScrollScreen>
 
       <Portal>
@@ -155,6 +155,10 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
 }
 
 export default AddressesScreen
+
+const Content = styled(Animated.View)`
+  flex: 1;
+`
 
 const AddressBoxStyled = styled(AddressBox)`
   margin: 10px 20px;
