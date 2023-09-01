@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { useState } from 'react'
+import { RefObject, useState } from 'react'
 import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, { interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
@@ -32,13 +32,14 @@ interface TopTabBarProps {
   tabLabels: string[]
   pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
   onTabPress: (index: number) => void
+  tabBarRef?: RefObject<Reanimated.View>
 }
 
 const indicatorXPadding = 10
 
 // TODO: Reimplement tap bar to scroll up
 
-const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress }: TopTabBarProps) => {
+const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 
   const indicatorStyle = useAnimatedStyle(() => {
@@ -79,7 +80,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress }: TopTabBarProps) 
   }
 
   return (
-    <TabsRow>
+    <TabsRow ref={tabBarRef}>
       <Indicator style={indicatorStyle} />
       {tabLabels.map((label, i) => (
         <TabBarItem
@@ -109,7 +110,7 @@ const TabBarItem = ({ label, onPress, onLayout }: TabBarItemProps) => (
 
 export default TopTabBar
 
-const TabsRow = styled.View`
+const TabsRow = styled(Reanimated.View)`
   flex-direction: row;
   gap: 25px;
   align-items: center;

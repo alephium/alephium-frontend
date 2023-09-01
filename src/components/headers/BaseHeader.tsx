@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BlurView } from 'expo-blur'
-import { ReactNode } from 'react'
+import { ReactNode, RefObject } from 'react'
 import { Platform, StyleProp, ViewStyle } from 'react-native'
 import Animated, {
   Extrapolate,
@@ -25,6 +25,7 @@ import Animated, {
   interpolateColor,
   SharedValue,
   useAnimatedProps,
+  useAnimatedRef,
   useAnimatedStyle
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -42,6 +43,7 @@ export interface BaseHeaderProps {
   scrollY?: SharedValue<number>
   bgColor?: string
   style?: StyleProp<ViewStyle>
+  headerRef?: RefObject<Animated.View>
 }
 
 export const scrollEndThreshold = 80
@@ -59,7 +61,8 @@ const BaseHeader = ({
   HeaderCompactContent,
   scrollY,
   bgColor,
-  style
+  style,
+  headerRef
 }: BaseHeaderProps) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
@@ -134,7 +137,7 @@ const BaseHeader = ({
 
   if (Platform.OS === 'android') {
     return (
-      <Animated.View style={[style, androidHeaderColor, { paddingTop: insets.top }]}>
+      <Animated.View style={[style, androidHeaderColor, { paddingTop: insets.top }]} ref={headerRef}>
         {HeaderLeft}
         {HeaderRight}
         {headerTitle && <Title>{headerTitle}</Title>}
@@ -144,7 +147,7 @@ const BaseHeader = ({
     )
   } else {
     return (
-      <Animated.View style={style}>
+      <Animated.View style={style} ref={headerRef}>
         {(HeaderCompactContent || headerTitle) && (
           <CompactContent style={compactContentAnimatedStyle}>
             <ActionAreaBlurred

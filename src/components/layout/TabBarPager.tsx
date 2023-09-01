@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode, useRef } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollViewProps, StyleProp, ViewStyle } from 'react-native'
 import PagerView, { PagerViewOnPageScrollEventData, PagerViewProps } from 'react-native-pager-view'
-import Animated, { useSharedValue } from 'react-native-reanimated'
+import Animated, { measure, useAnimatedRef, useSharedValue } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
@@ -45,7 +45,8 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
   const pagerRef = useRef<PagerView>(null)
   const { handleScroll, scrollY } = useVerticalScroll()
 
-  const hasMeasuredHeader = useRef(false)
+  const tabBarRef = useAnimatedRef()
+  const tabBarPageY = useRef(0)
 
   const theme = useTheme()
 
@@ -57,11 +58,21 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
   const pageScrollHandler = useTabScrollHandler((e: PagerViewOnPageScrollEventData) => {
     'worklet'
     pagerScrollEvent.value = e
+    const headerMeasures = measure(tabBarRef)
   })
 
   const handleTabPress = (tabIndex: number) => {
     pagerRef.current?.setPage(tabIndex)
   }
+
+  const TabBar = () => (
+    <TopTabBar
+      tabLabels={tabLabels}
+      pagerScrollEvent={pagerScrollEvent}
+      onTabPress={handleTabPress}
+      tabBarRef={tabBarRef}
+    />
+  )
 
   return (
     <>
@@ -77,12 +88,8 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
       <HeaderContainer>
         <BaseHeader
           headerTitle={headerTitle}
-          HeaderBottom={
-            <TopTabBar tabLabels={tabLabels} pagerScrollEvent={pagerScrollEvent} onTabPress={handleTabPress} />
-          }
-          HeaderCompactContent={
-            <TopTabBar tabLabels={tabLabels} pagerScrollEvent={pagerScrollEvent} onTabPress={handleTabPress} />
-          }
+          HeaderBottom={<TabBar />}
+          HeaderCompactContent={<TabBar />}
           scrollY={scrollY}
         />
       </HeaderContainer>
