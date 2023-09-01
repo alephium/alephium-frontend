@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AssetAmount } from '@alephium/sdk'
+import { AssetAmount, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -179,180 +179,188 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
       if (!walletConnectClient) return
 
-      switch (requestEvent.params.request.method as RelayMethod) {
-        case 'alph_signAndSubmitTransferTx': {
-          const { destinations, signerAddress, gasAmount, gasPrice } = requestEvent.params.request
-            .params as SignTransferTxParams
-          const { address: toAddress, tokens, attoAlphAmount, lockTime } = destinations[0]
-          const assetAmounts = [
-            { id: ALPH.id, amount: BigInt(attoAlphAmount) },
-            ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-          ]
+      try {
+        switch (requestEvent.params.request.method as RelayMethod) {
+          case 'alph_signAndSubmitTransferTx': {
+            const { destinations, signerAddress, gasAmount, gasPrice } = requestEvent.params.request
+              .params as SignTransferTxParams
+            const { address: toAddress, tokens, attoAlphAmount, lockTime } = destinations[0]
+            const assetAmounts = [
+              { id: ALPH.id, amount: BigInt(attoAlphAmount) },
+              ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
+            ]
 
-          const fromAddress = addresses.find((address) => address.hash === signerAddress)
+            const fromAddress = addresses.find((address) => address.hash === signerAddress)
 
-          if (!fromAddress) {
-            return respondWithError(requestEvent, {
-              message: 'Signer address doesn\t exist',
-              code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+            if (!fromAddress) {
+              return respondWithError(requestEvent, {
+                message: 'Signer address doesn\t exist',
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            const wcTxData: TransferTxData = {
+              fromAddress,
+              toAddress,
+              assetAmounts,
+              gasAmount,
+              gasPrice: gasPrice?.toString(),
+              lockTime: lockTime ? new Date(lockTime) : undefined
+            }
+
+            setTransferTxData(wcTxData)
+
+            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
+
+            setLoading('Responding to WalletConnect')
+
+            const buildTransactionTxResult = await buildTransferTransaction(wcTxData)
+
+            setLoading('')
+
+            console.log('⏳ OPENING MODAL TO APPROVE TX...')
+            setTransferBuildTxResult(buildTransactionTxResult)
+            setSessionRequestEvent(requestEvent)
+            openWalletConnectTransferTxModal()
+
+            break
+          }
+          case 'alph_signAndSubmitDeployContractTx': {
+            console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
+            console.log('🪵 REQUESTED METHOD:', requestEvent.params.request.method)
+
+            const { signerAddress, initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice } =
+              requestEvent.params.request.params as SignDeployContractTxParams
+            const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
+              ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
+              : undefined
+
+            const fromAddress = addresses.find((address) => address.hash === signerAddress)
+
+            if (!fromAddress) {
+              return respondWithError(requestEvent, {
+                message: 'Signer address doesn\t exist',
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            const wcTxData: DeployContractTxData = {
+              fromAddress,
+              bytecode,
+              initialAlphAmount,
+              issueTokenAmount: issueTokenAmount?.toString(),
+              gasAmount,
+              gasPrice: gasPrice?.toString()
+            }
+
+            setDeployContractTxData(wcTxData)
+
+            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
+
+            setLoading('Responding to WalletConnect')
+
+            const buildDeployContractTxResult = await buildDeployContractTransaction(wcTxData)
+
+            setLoading('')
+
+            console.log('⏳ OPENING MODAL TO APPROVE TX...')
+            setDeployContractBuildTxResult(buildDeployContractTxResult)
+            setSessionRequestEvent(requestEvent)
+            openWalletConnectDeployContractTxModal()
+
+            break
+          }
+          case 'alph_signAndSubmitExecuteScriptTx': {
+            console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
+            console.log('🪵 REQUESTED METHOD:', requestEvent.params.request.method)
+
+            const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } = requestEvent.params.request
+              .params as SignExecuteScriptTxParams
+            let assetAmounts: AssetAmount[] = []
+            let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
+
+            const fromAddress = addresses.find((address) => address.hash === signerAddress)
+
+            if (!fromAddress) {
+              return respondWithError(requestEvent, {
+                message: 'Signer address doesn\t exist',
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            if (tokens) {
+              const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
+              const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
+              assetAmounts = tokenAssets
+              allAlphAssets = [...allAlphAssets, ...alphAssets]
+            }
+
+            if (allAlphAssets.length > 0) {
+              assetAmounts.push({
+                id: ALPH.id,
+                amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
+              })
+            }
+
+            const wcTxData: CallContractTxData = {
+              fromAddress,
+              bytecode,
+              assetAmounts,
+              gasAmount,
+              gasPrice: gasPrice?.toString()
+            }
+
+            setCallContractTxData(wcTxData)
+
+            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
+
+            setLoading('Responding to WalletConnect')
+
+            const buildCallContractTxResult = await buildCallContractTransaction(wcTxData)
+
+            setLoading('')
+
+            console.log('⏳ OPENING MODAL TO APPROVE TX...')
+            setCallContractBuildTxResult(buildCallContractTxResult)
+            setSessionRequestEvent(requestEvent)
+            openWalletConnectCallContractTxModal()
+
+            break
+          }
+          case 'alph_requestNodeApi': {
+            const p = requestEvent.params.request.params as ApiRequestArguments
+            const result = await client.node.request(p)
+
+            console.log('⏳ RESPONDING TO WC WITH THE NODE API')
+            await walletConnectClient.respond({
+              topic: requestEvent.topic,
+              response: { id: requestEvent.id, jsonrpc: '2.0', result }
             })
+            console.log('✅ RESPONDING: DONE!')
+            break
           }
+          case 'alph_requestExplorerApi': {
+            const p = requestEvent.params.request.params as ApiRequestArguments
+            const result = await client.explorer.request(p)
 
-          const wcTxData: TransferTxData = {
-            fromAddress,
-            toAddress,
-            assetAmounts,
-            gasAmount,
-            gasPrice: gasPrice?.toString(),
-            lockTime: lockTime ? new Date(lockTime) : undefined
-          }
-
-          setTransferTxData(wcTxData)
-
-          console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-
-          setLoading('Responding to WalletConnect')
-
-          const buildTransactionTxResult = await buildTransferTransaction(wcTxData)
-
-          setLoading('')
-
-          console.log('⏳ OPENING MODAL TO APPROVE TX...')
-          setTransferBuildTxResult(buildTransactionTxResult)
-          setSessionRequestEvent(requestEvent)
-          openWalletConnectTransferTxModal()
-
-          break
-        }
-        case 'alph_signAndSubmitDeployContractTx': {
-          console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
-          console.log('🪵 REQUESTED METHOD:', requestEvent.params.request.method)
-
-          const { signerAddress, initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice } = requestEvent
-            .params.request.params as SignDeployContractTxParams
-          const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
-            ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
-            : undefined
-
-          const fromAddress = addresses.find((address) => address.hash === signerAddress)
-
-          if (!fromAddress) {
-            return respondWithError(requestEvent, {
-              message: 'Signer address doesn\t exist',
-              code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+            console.log('⏳ RESPONDING TO WC WITH THE EXPLORER API')
+            await walletConnectClient.respond({
+              topic: requestEvent.topic,
+              response: { id: requestEvent.id, jsonrpc: '2.0', result }
             })
+            console.log('✅ RESPONDING: DONE!')
+            break
           }
-
-          const wcTxData: DeployContractTxData = {
-            fromAddress,
-            bytecode,
-            initialAlphAmount,
-            issueTokenAmount: issueTokenAmount?.toString(),
-            gasAmount,
-            gasPrice: gasPrice?.toString()
-          }
-
-          setDeployContractTxData(wcTxData)
-
-          console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-
-          setLoading('Responding to WalletConnect')
-
-          const buildDeployContractTxResult = await buildDeployContractTransaction(wcTxData)
-
-          setLoading('')
-
-          console.log('⏳ OPENING MODAL TO APPROVE TX...')
-          setDeployContractBuildTxResult(buildDeployContractTxResult)
-          setSessionRequestEvent(requestEvent)
-          openWalletConnectDeployContractTxModal()
-
-          break
+          default:
+            // TODO: support all of the other SignerProvider methods
+            respondWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
         }
-        case 'alph_signAndSubmitExecuteScriptTx': {
-          console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
-          console.log('🪵 REQUESTED METHOD:', requestEvent.params.request.method)
+      } catch (e) {
+        // TODO: Handle consolidation case
+        // TODO: Handle authentication requirement
+        Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
 
-          const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } = requestEvent.params.request
-            .params as SignExecuteScriptTxParams
-          let assetAmounts: AssetAmount[] = []
-          let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
-
-          const fromAddress = addresses.find((address) => address.hash === signerAddress)
-
-          if (!fromAddress) {
-            return respondWithError(requestEvent, {
-              message: 'Signer address doesn\t exist',
-              code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-            })
-          }
-
-          if (tokens) {
-            const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
-            const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
-            assetAmounts = tokenAssets
-            allAlphAssets = [...allAlphAssets, ...alphAssets]
-          }
-
-          if (allAlphAssets.length > 0) {
-            assetAmounts.push({
-              id: ALPH.id,
-              amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
-            })
-          }
-
-          const wcTxData: CallContractTxData = {
-            fromAddress,
-            bytecode,
-            assetAmounts,
-            gasAmount,
-            gasPrice: gasPrice?.toString()
-          }
-
-          setCallContractTxData(wcTxData)
-
-          console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-
-          setLoading('Responding to WalletConnect')
-
-          const buildCallContractTxResult = await buildCallContractTransaction(wcTxData)
-
-          setLoading('')
-
-          console.log('⏳ OPENING MODAL TO APPROVE TX...')
-          setCallContractBuildTxResult(buildCallContractTxResult)
-          setSessionRequestEvent(requestEvent)
-          openWalletConnectCallContractTxModal()
-
-          break
-        }
-        case 'alph_requestNodeApi': {
-          const p = requestEvent.params.request.params as ApiRequestArguments
-          const result = await client.node.request(p)
-
-          console.log('⏳ RESPONDING TO WC WITH THE NODE API')
-          await walletConnectClient.respond({
-            topic: requestEvent.topic,
-            response: { id: requestEvent.id, jsonrpc: '2.0', result }
-          })
-          console.log('✅ RESPONDING: DONE!')
-          break
-        }
-        case 'alph_requestExplorerApi': {
-          const p = requestEvent.params.request.params as ApiRequestArguments
-          const result = await client.explorer.request(p)
-
-          console.log('⏳ RESPONDING TO WC WITH THE EXPLORER API')
-          await walletConnectClient.respond({
-            topic: requestEvent.topic,
-            response: { id: requestEvent.id, jsonrpc: '2.0', result }
-          })
-          console.log('✅ RESPONDING: DONE!')
-          break
-        }
-        default:
-          // TODO: support all of the other SignerProvider methods
-          respondWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
+        posthog?.capture('Error', { message: 'Could not build transaction' })
       }
     },
     // The `addresses` depedency causes re-rendering when any property of an Address changes, even though we only need
@@ -364,7 +372,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       addresses,
       openWalletConnectTransferTxModal,
       openWalletConnectDeployContractTxModal,
-      openWalletConnectCallContractTxModal
+      openWalletConnectCallContractTxModal,
+      posthog
     ]
   )
 

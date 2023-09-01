@@ -29,7 +29,6 @@ import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
 import { makeSelectAddressesKnownFungibleTokens, selectAddressByHash } from '~/store/addressesSlice'
-import { TxType } from '~/types/transactions'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>, ScrollScreenProps {}
 
@@ -51,7 +50,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       headerRight: () => (
         <ContinueButton
           onPress={() =>
-            buildTransaction(TxType.TRANSFER, {
+            buildTransaction({
               onBuildSuccess: () => navigation.navigate('VerifyScreen'),
               onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
             })

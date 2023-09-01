@@ -16,11 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ParamListBase, useIsFocused } from '@react-navigation/native'
+import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
-import { useEffect } from 'react'
 
-import { useSendContext } from '~/contexts/SendContext'
+import { SendContextProvider } from '~/contexts/SendContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
 import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
@@ -39,22 +38,15 @@ export type PossibleNextScreenAfterDestination = 'OriginScreen' | 'AssetsScreen'
 
 const SendStack = createStackNavigator<SendNavigationParamList>()
 
-const SendNavigation = ({ navigation, route: { params } }: StackScreenProps<RootStackParamList, 'SendNavigation'>) => {
-  const isFocused = useIsFocused()
-  const { resetSendState } = useSendContext()
-
-  useEffect(() => {
-    if (!isFocused) resetSendState()
-  }, [isFocused, resetSendState])
-
-  return (
+const SendNavigation = (props: StackScreenProps<RootStackParamList, 'SendNavigation'>) => (
+  <SendContextProvider>
     <SendStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="DestinationScreen">
       <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
       <SendStack.Screen name="OriginScreen" component={OriginScreen} />
       <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
       <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
     </SendStack.Navigator>
-  )
-}
+  </SendContextProvider>
+)
 
 export default SendNavigation
