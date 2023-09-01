@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode, useRef } from 'react'
+import { ReactNode, useRef, useState } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollViewProps, StyleProp, ViewStyle } from 'react-native'
 import PagerView, { PagerViewOnPageScrollEventData, PagerViewProps } from 'react-native-pager-view'
-import Animated, { measure, useAnimatedRef, useSharedValue } from 'react-native-reanimated'
+import Animated, { measure, runOnJS, useAnimatedRef, useSharedValue } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
@@ -45,8 +45,8 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
   const pagerRef = useRef<PagerView>(null)
   const { handleScroll, scrollY } = useVerticalScroll()
 
-  const tabBarRef = useAnimatedRef()
-  const tabBarPageY = useRef(0)
+  const tabBarRef = useAnimatedRef<Animated.View>()
+  const [tabBarPageY, setTabBarPageY] = useState<number>(120)
 
   const theme = useTheme()
 
@@ -55,10 +55,19 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
     offset: 0
   })
 
+  const updateTabBarY = (newValue?: number) => {
+    if (newValue && tabBarPageY !== newValue) {
+      setTabBarPageY(newValue)
+    }
+  }
+
   const pageScrollHandler = useTabScrollHandler((e: PagerViewOnPageScrollEventData) => {
     'worklet'
     pagerScrollEvent.value = e
-    const headerMeasures = measure(tabBarRef)
+
+    const newTabBarPageY = measure(tabBarRef)?.pageY
+
+    runOnJS(updateTabBarY)(newTabBarPageY)
   })
 
   const handleTabPress = (tabIndex: number) => {
@@ -83,7 +92,7 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
         ref={pagerRef}
         {...props}
       >
-        {pages.map((Page, i) => wrapPage({ Page, onScroll: handleScroll }))}
+        {pages.map((Page, i) => wrapPage({ Page, onScroll: handleScroll, tabBarPageY: tabBarPageY, key: i }))}
       </AnimatedPagerView>
       <HeaderContainer>
         <BaseHeader
@@ -101,13 +110,18 @@ export default TabBarPager
 
 const wrapPage = ({
   Page,
-  onScroll
+  onScroll,
+  tabBarPageY,
+  key
 }: {
   Page: (props: TabBarPageProps) => ReactNode
   onScroll: Required<TabBarPageProps>['onScroll']
+  tabBarPageY: number
+  key: string | number
 }) => (
   <Page
-    contentStyle={[{ paddingTop: 190 }]} // TODO: Dynamic height
+    key={key}
+    contentStyle={[{ paddingTop: tabBarPageY + 70 }]}
     onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) => {
       onScroll(e)
     }}

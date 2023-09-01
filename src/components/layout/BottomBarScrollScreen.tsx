@@ -20,6 +20,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useCallback, useEffect, useRef } from 'react'
 import { ScrollView, ScrollViewProps } from 'react-native'
+import { useTheme } from 'styled-components'
 
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useScrollContext } from '~/contexts/ScrollContext'
@@ -39,6 +40,7 @@ const BottomBarScrollScreen = ({
   ...props
 }: BottomBarScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
+  const theme = useTheme()
   const navigation = useNavigation()
   const { setScrollToTop } = useScrollContext()
   const bottomBarHeight = useBottomTabBarHeight()
@@ -61,6 +63,7 @@ const BottomBarScrollScreen = ({
       hasHeader={hasHeader}
       scrollViewRef={viewRef}
       onScrollEndDrag={scrollEndHandler}
+      indicatorStyle={theme.name === 'dark' ? 'white' : 'black'}
       {...props}
     >
       {children}

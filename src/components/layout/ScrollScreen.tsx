@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useHeaderHeight } from '@react-navigation/elements'
 import { RefObject } from 'react'
 import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+import { useTheme } from 'styled-components'
 
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
@@ -41,6 +42,7 @@ const ScrollScreen = ({
   scrollViewRef,
   ...props
 }: ScrollScreenProps) => {
+  const theme = useTheme()
   const headerheight = useHeaderHeight()
   const scrollEndHandler = useAutoScrollOnDragEnd(scrollViewRef)
 
@@ -51,10 +53,11 @@ const ScrollScreen = ({
         scrollEventThrottle={16}
         alwaysBounceVertical={false}
         onScrollEndDrag={scrollEndHandler}
+        indicatorStyle={theme.name === 'dark' ? 'white' : 'black'}
         contentContainerStyle={[
           contentContainerStyle,
           {
-            paddingTop: hasHeader ? headerheight + HORIZONTAL_MARGIN : 0
+            marginTop: hasHeader ? headerheight + HORIZONTAL_MARGIN : 0
           }
         ]}
         {...props}

@@ -17,10 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { RefObject, useState } from 'react'
+import { useState } from 'react'
 import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
-import Reanimated, { interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
+import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -32,7 +32,7 @@ interface TopTabBarProps {
   tabLabels: string[]
   pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
   onTabPress: (index: number) => void
-  tabBarRef?: RefObject<Reanimated.View>
+  tabBarRef?: AnimatedRef<Reanimated.View>
 }
 
 const indicatorXPadding = 10

@@ -121,7 +121,7 @@ const BaseHeader = ({
             { translateY: interpolate(scrollY?.value || 0, [20, scrollEndThreshold], [0, -15], Extrapolate.CLAMP) }
           ],
           opacity: interpolate(scrollY?.value || 0, [20, scrollEndThreshold], [1, 0], Extrapolate.CLAMP),
-          zIndex: (scrollY?.value || 0) > 90 ? -1 : 0
+          zIndex: (scrollY?.value || 0) > scrollEndThreshold - 10 ? -1 : 0
         }
       : {}
   )
