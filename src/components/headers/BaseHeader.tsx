@@ -25,7 +25,6 @@ import Animated, {
   interpolateColor,
   SharedValue,
   useAnimatedProps,
-  useAnimatedRef,
   useAnimatedStyle
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -130,7 +129,7 @@ const BaseHeader = ({
     hasCompactHeader
       ? {
           opacity: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [0, 1], Extrapolate.CLAMP),
-          height: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [130, 95], Extrapolate.CLAMP)
+          height: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [110, 95], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -163,14 +162,10 @@ const BaseHeader = ({
         <FullContent style={fullContentAnimatedStyle}>
           {HeaderLeft || HeaderRight ? (
             <>
-              <ActionAreaBlurred
-                animatedProps={animatedBlurViewProps}
-                tint={theme.name}
-                style={{ paddingTop: insets.top }}
-              >
+              <ActionArea style={{ paddingTop: insets.top }}>
                 {HeaderLeft}
                 {HeaderRight}
-              </ActionAreaBlurred>
+              </ActionArea>
               {headerTitle && (
                 <TitleArea style={titleAnimatedStyle}>
                   <Title>{headerTitle}</Title>
@@ -178,15 +173,11 @@ const BaseHeader = ({
               )}
             </>
           ) : (
-            <ActionAreaBlurred
-              animatedProps={animatedBlurViewProps}
-              tint={theme.name}
-              style={{ paddingTop: insets.top, paddingLeft: 0, paddingBottom: 0 }}
-            >
+            <ActionArea style={{ paddingTop: insets.top, paddingLeft: 0, paddingBottom: 0 }}>
               <TitleArea style={[titleAnimatedStyle]}>
                 <Title>{headerTitle}</Title>
               </TitleArea>
-            </ActionAreaBlurred>
+            </ActionArea>
           )}
           {HeaderBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
           <BottomBorder style={bottomBorderColor} />
@@ -200,6 +191,13 @@ export default BaseHeader
 
 const FullContent = styled(Animated.View)`
   flex-direction: column;
+`
+
+const ActionArea = styled(Animated.View)`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px ${HORIZONTAL_MARGIN}px;
 `
 
 const ActionAreaBlurred = styled(AnimatedBlurView)`
