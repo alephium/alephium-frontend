@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount } from '@alephium/sdk'
+import { AddressKeyPair, AssetAmount } from '@alephium/sdk'
 import { transactionSign } from '@alephium/web3'
 
 import client from '~/api/client'
 import { Address, AddressHash } from '~/types/addresses'
-import { CallContractTxData, DeployContractTxData } from '~/types/transactions'
+import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -57,17 +57,10 @@ export const buildUnsignedTransactions = async (
   if (shouldSweep) {
     return await buildSweepTransactions(fromAddress, toAddressHash)
   } else {
-    const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
-
-    const data = await client.node.transactions.postTransactionsBuild({
-      fromPublicKey: fromAddress.publicKey,
-      destinations: [
-        {
-          address: toAddressHash,
-          attoAlphAmount,
-          tokens
-        }
-      ],
+    const data = await buildTransferTransaction({
+      fromAddress,
+      toAddress: toAddressHash,
+      assetAmounts,
       gasAmount,
       gasPrice
     })
@@ -77,6 +70,29 @@ export const buildUnsignedTransactions = async (
       fees: BigInt(data.gasAmount) * BigInt(data.gasPrice)
     }
   }
+}
+
+export const buildTransferTransaction = async ({
+  fromAddress,
+  toAddress,
+  assetAmounts,
+  gasAmount,
+  gasPrice
+}: TransferTxData) => {
+  const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+
+  return await client.node.transactions.postTransactionsBuild({
+    fromPublicKey: fromAddress.publicKey,
+    destinations: [
+      {
+        address: toAddress,
+        attoAlphAmount,
+        tokens
+      }
+    ],
+    gasAmount,
+    gasPrice
+  })
 }
 
 export const buildCallContractTransaction = async ({
@@ -115,7 +131,7 @@ export const buildDeployContractTransaction = async ({
     gasPrice: gasPrice?.toString()
   })
 
-export const signAndSendTransaction = async (fromAddress: Address, txId: string, unsignedTx: string) => {
+export const signAndSendTransaction = async (fromAddress: AddressKeyPair, txId: string, unsignedTx: string) => {
   const signature = transactionSign(txId, fromAddress.privateKey)
   const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 

@@ -38,8 +38,7 @@ import { getTransactionAssetAmounts } from '~/utils/transactions'
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'>, ScrollScreenProps {}
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
-  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction, bytecode, initialAlphAmount, issueTokenAmount } =
-    useSendContext()
+  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
 
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]
@@ -76,11 +75,6 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
               </AssetAmounts>
             </HighlightRow>
           )}
-          {initialAlphAmount?.amount !== undefined && (
-            <HighlightRow title="Sending" titleColor="secondary">
-              <AssetAmountWithLogo assetId={ALPH.id} logoSize={18} amount={BigInt(initialAlphAmount.amount)} />
-            </HighlightRow>
-          )}
           {toAddress && (
             <HighlightRow title="To" titleColor="secondary">
               <AddressBadge addressHash={toAddress} />
@@ -89,16 +83,6 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           <HighlightRow title="From" titleColor="secondary">
             <AddressBadge addressHash={fromAddress} />
           </HighlightRow>
-          {bytecode && (
-            <HighlightRow title="Bytecode" titleColor="secondary">
-              <AppText>{bytecode}</AppText>
-            </HighlightRow>
-          )}
-          {issueTokenAmount && (
-            <HighlightRow title="Issue token amount" titleColor="secondary">
-              <AppText>{issueTokenAmount}</AppText>
-            </HighlightRow>
-          )}
         </BoxSurface>
       </ScreenSection>
       <ScreenSection>

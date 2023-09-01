@@ -24,12 +24,16 @@ import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/wa
 import {
   ApiRequestArguments,
   SignDeployContractTxParams,
+  SignDeployContractTxResult,
   SignExecuteScriptTxParams,
-  SignExecuteScriptTxResult
+  SignExecuteScriptTxResult,
+  SignTransferTxParams,
+  SignTransferTxResult
 } from '@alephium/web3'
 import {
   BuildDeployContractTxResult,
   BuildExecuteScriptTxResult,
+  BuildTransactionResult,
   SignResult
 } from '@alephium/web3/dist/src/api/api-alephium'
 import SignClient from '@walletconnect/sign-client'
@@ -44,16 +48,21 @@ import { Portal } from 'react-native-portalize'
 import Toast from 'react-native-root-toast'
 
 import client from '~/api/client'
-import { buildCallContractTransaction, buildDeployContractTransaction } from '~/api/transactions'
+import {
+  buildCallContractTransaction,
+  buildDeployContractTransaction,
+  buildTransferTransaction
+} from '~/api/transactions'
 import Modalize from '~/components/layout/Modalize'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectCallContractTxModal from '~/contexts/walletConnect/WalletConnectCallContractTxModal'
 import WalletConnectDeployContractTxModal from '~/contexts/walletConnect/WalletConnectDeployContractTxModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
+import WalletConnectTransferTxModal from '~/contexts/walletConnect/WalletConnectTransferTxModal'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
-import { CallContractTxData, DeployContractTxData } from '~/types/transactions'
+import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
@@ -81,6 +90,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     close: closeWalletConnectSessionProposalModal
   } = useModalize()
   const {
+    ref: walletConnectTransferTxModalRef,
+    open: openWalletConnectTransferTxModal,
+    close: closeWalletConnectTransferTxModal
+  } = useModalize()
+  const {
     ref: walletConnectDeployContractTxModalRef,
     open: openWalletConnectDeployContractTxModal,
     close: closeWalletConnectDeployContractTxModal
@@ -101,12 +115,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
   const [loading, setLoading] = useState('')
 
-  // const [transferUnsignedTxData, setTransferUnsignedTxData] = useState<TransferUnsignedTxData>()
+  const [transferBuildTxResult, setTransferBuildTxResult] = useState<BuildTransactionResult>()
+  const [transferTxData, setTransferTxData] = useState<TransferTxData>()
   const [callContractBuildTxResult, setCallContractBuildTxResult] = useState<BuildExecuteScriptTxResult>()
   const [callContractTxData, setCallContractTxData] = useState<CallContractTxData>()
   const [deployContractBuildTxResult, setDeployContractBuildTxResult] = useState<BuildDeployContractTxResult>()
   const [deployContractTxData, setDeployContractTxData] = useState<DeployContractTxData>()
 
+  const [isTransferTxModalOpen, setIsTransferTxModalOpen] = useState(false)
   const [isCallContractTxModalOpen, setIsCallContractTxModalOpen] = useState(false)
   const [isDeployContractTxModalOpen, setIsDeployContractTxModalOpen] = useState(false)
 
@@ -164,38 +180,50 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       if (!walletConnectClient) return
 
       switch (requestEvent.params.request.method as RelayMethod) {
-        // case 'alph_signAndSubmitTransferTx': {
-        //   const { destinations, signerAddress, gasAmount, gasPrice } = requestEvent.params.request
-        //     .params as SignTransferTxParams
-        //   const { address: toAddress, tokens, attoAlphAmount } = destinations[0]
-        //   const assetAmounts = [
-        //     { id: ALPH.id, amount: BigInt(attoAlphAmount) },
-        //     ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-        //   ]
+        case 'alph_signAndSubmitTransferTx': {
+          const { destinations, signerAddress, gasAmount, gasPrice } = requestEvent.params.request
+            .params as SignTransferTxParams
+          const { address: toAddress, tokens, attoAlphAmount, lockTime } = destinations[0]
+          const assetAmounts = [
+            { id: ALPH.id, amount: BigInt(attoAlphAmount) },
+            ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
+          ]
 
-        //   const fromAddress = addresses.find((address) => address.hash === signerAddress)
+          const fromAddress = addresses.find((address) => address.hash === signerAddress)
 
-        //   if (!fromAddress) {
-        //     return respondWithError(requestEvent, {
-        //       message: 'Signer address doesn\t exist',
-        //       code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-        //     })
-        //   }
+          if (!fromAddress) {
+            return respondWithError(requestEvent, {
+              message: 'Signer address doesn\t exist',
+              code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+            })
+          }
 
-        //   const txData: TransferTxData = {
-        //     fromAddress,
-        //     toAddress,
-        //     assetAmounts,
-        //     gasAmount,
-        //     gasPrice: gasPrice?.toString()
-        //   }
+          const wcTxData: TransferTxData = {
+            fromAddress,
+            toAddress,
+            assetAmounts,
+            gasAmount,
+            gasPrice: gasPrice?.toString(),
+            lockTime: lockTime ? new Date(lockTime) : undefined
+          }
 
-        //   console.log('🪵 TX DATA TO APPROVE:', txData)
-        //   console.log('⏳ OPENING MODAL...')
-        //   setTransferTxData(txData)
+          setTransferTxData(wcTxData)
 
-        //   break
-        // }
+          console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
+
+          setLoading('Responding to WalletConnect')
+
+          const buildTransactionTxResult = await buildTransferTransaction(wcTxData)
+
+          setLoading('')
+
+          console.log('⏳ OPENING MODAL TO APPROVE TX...')
+          setTransferBuildTxResult(buildTransactionTxResult)
+          setSessionRequestEvent(requestEvent)
+          openWalletConnectTransferTxModal()
+
+          break
+        }
         case 'alph_signAndSubmitDeployContractTx': {
           console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
           console.log('🪵 REQUESTED METHOD:', requestEvent.params.request.method)
@@ -328,12 +356,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       }
     },
     // The `addresses` depedency causes re-rendering when any property of an Address changes, even though we only need
-    // the `hash` and the `publicKey`. Creating a selector that extracts those 2 doesn't help.
+    // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
     // TODO: Figure out a way to avoid re-renders
     [
       walletConnectClient,
       respondWithError,
       addresses,
+      openWalletConnectTransferTxModal,
       openWalletConnectDeployContractTxModal,
       openWalletConnectCallContractTxModal
     ]
@@ -613,7 +642,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }
 
-  const handleApprovePress = async (sendTransaction: () => Promise<SignExecuteScriptTxResult | undefined>) => {
+  const handleApprovePress = async (
+    sendTransaction: () => Promise<
+      SignExecuteScriptTxResult | SignDeployContractTxResult | SignTransferTxResult | undefined
+    >
+  ) => {
     if (!sessionRequestEvent) return
 
     setLoading('Approving...')
@@ -665,6 +698,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }
 
+  const handleTransferTxModalClose = async () => {
+    setIsTransferTxModalOpen(false)
+    onTxModalClose()
+  }
+
   const handleCallContractTxModalClose = async () => {
     setIsCallContractTxModalOpen(false)
     onTxModalClose()
@@ -692,12 +730,17 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       if (isDeployContractTxModalOpen) {
         closeWalletConnectDeployContractTxModal()
       }
+      if (isTransferTxModalOpen) {
+        closeWalletConnectTransferTxModal()
+      }
     }
   }, [
     closeWalletConnectCallContractTxModal,
     closeWalletConnectDeployContractTxModal,
+    closeWalletConnectTransferTxModal,
     isCallContractTxModalOpen,
     isDeployContractTxModalOpen,
+    isTransferTxModalOpen,
     sessionRequestEvent,
     walletConnectClient
   ])
@@ -716,7 +759,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             />
           )}
         </Modalize>
-        {/* {transferTxData && <WalletConnectTransferTxModal />} */}
+        <Modalize
+          ref={walletConnectTransferTxModalRef}
+          onOpen={() => setIsTransferTxModalOpen(true)}
+          onClose={handleTransferTxModalClose}
+        >
+          {transferTxData && transferBuildTxResult && (
+            <WalletConnectTransferTxModal
+              wcTxData={transferTxData}
+              unsignedTxData={transferBuildTxResult}
+              onApprove={handleApprovePress}
+              onReject={handleRejectPress}
+              metadata={activeSessionMetadata}
+            />
+          )}
+        </Modalize>
         <Modalize
           ref={walletConnectDeployContractTxModalRef}
           onOpen={() => setIsDeployContractTxModalOpen(true)}
