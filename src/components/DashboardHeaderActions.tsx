@@ -47,11 +47,11 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
-  const { pair, walletConnectClient, activeSessions } = useWalletConnectContext()
+  const { pairWithDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
   const {
-    ref: currentConnectionsModalRef,
-    open: openCurrentConnectionsModal,
-    close: closeCurrentConnectionsModal
+    ref: currentWalletConnectConnectionsModalRef,
+    open: openCurrentWalletConnectConnectionsModal,
+    close: closeCurrentWalletConnectConnectionsModal
   } = useModalize()
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
@@ -62,14 +62,10 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
 
   const handleQRCodeScan = async (text: string) => {
     if (isAddressValid(text)) {
-      navigation.navigate('SendNavigation', {
-        screen: 'OriginScreen',
-        params: { toAddressHash: text }
-      })
-
+      navigation.navigate('SendNavigation', { screen: 'OriginScreen', params: { toAddressHash: text } })
       posthog?.capture('Send: Captured destination address by scanning QR code from Dashboard')
     } else if (text.startsWith('wc:')) {
-      pair(text)
+      pairWithDapp(text)
     }
   }
 
@@ -86,7 +82,12 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           variant={isMnemonicBackedUp ? 'default' : 'alert'}
         />
         {walletConnectClient && activeSessions.length > 0 && (
-          <Button onPress={() => openCurrentConnectionsModal()} Icon={Radio} type="transparent" variant="accent" />
+          <Button
+            onPress={() => openCurrentWalletConnectConnectionsModal()}
+            Icon={Radio}
+            type="transparent"
+            variant="accent"
+          />
         )}
         <Button onPress={openQRCodeScannerModal} Icon={ScanLine} type="transparent" />
         <Button onPress={() => navigation.navigate('SettingsScreen')} Icon={Settings} type="transparent" />
@@ -100,8 +101,8 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
       )}
 
       <Portal>
-        <Modalize ref={currentConnectionsModalRef}>
-          <WalletConnectPairingsModal onClose={closeCurrentConnectionsModal} />
+        <Modalize ref={currentWalletConnectConnectionsModalRef}>
+          <WalletConnectPairingsModal onClose={closeCurrentWalletConnectConnectionsModal} />
         </Modalize>
       </Portal>
     </>

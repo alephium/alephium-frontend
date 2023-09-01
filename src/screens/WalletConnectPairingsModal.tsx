@@ -28,14 +28,8 @@ import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 
-type WalletConnectPairingsModalProps = ModalProps<ScrollScreenProps>
-
-const WalletConnectPairingsModal = ({ onClose, ...props }: WalletConnectPairingsModalProps) => {
-  const { unpair, walletConnectClient, activeSessions } = useWalletConnectContext()
-
-  // ActiveSessions.map((p) => console.log(p))
-  // walletConnectClient?.core.history.pending.map((p) => console.log(p))
-  // walletConnectClient?.session.values.map((p) => console.log(p))
+const WalletConnectPairingsModal = ({ onClose, ...props }: ModalProps<ScrollScreenProps>) => {
+  const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
 
   useEffect(() => {
     if (!walletConnectClient || activeSessions.length === 0) {
@@ -44,8 +38,7 @@ const WalletConnectPairingsModal = ({ onClose, ...props }: WalletConnectPairings
   }, [activeSessions.length, onClose, walletConnectClient])
 
   const handleDisconnectPress = async (pairingTopic: string) => {
-    await unpair(pairingTopic)
-    // setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+    await unpairFromDapp(pairingTopic)
   }
 
   return (

@@ -51,32 +51,37 @@ import {
 import Modalize from '~/components/layout/Modalize'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
-import WalletConnectTxModal from '~/contexts/walletConnect/WalletConnectTxModal'
+import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
-import { SessionProposalEvent, SessionRequestEvent, TxData } from '~/types/walletConnect'
+import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 interface WalletConnectContextValue {
   walletConnectClient?: SignClient
-  pair: (uri: string) => Promise<void>
-  unpair: (pairingTopic: string) => Promise<void>
+  pairWithDapp: (uri: string) => Promise<void>
+  unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
 }
 
 const initialValues: WalletConnectContextValue = {
   walletConnectClient: undefined,
-  pair: () => Promise.resolve(),
-  unpair: () => Promise.resolve(),
+  pairWithDapp: () => Promise.resolve(),
+  unpairFromDapp: () => Promise.resolve(),
   activeSessions: []
 }
 
 const WalletConnectContext = createContext(initialValues)
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
+  const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
+  const currentNetworkName = useAppSelector((s) => s.network.name)
+  const addresses = useAppSelector(selectAllAddresses)
+  const posthog = usePostHog()
+
   const {
     ref: sessionProposalModalRef,
     open: openSessionProposalModal,
@@ -87,18 +92,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     open: openSessionRequestModal,
     close: closeSessionRequestModal
   } = useModalize()
-  const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
-  const currentNetworkName = useAppSelector((s) => s.network.name)
-  const addresses = useAppSelector(selectAllAddresses)
-  const posthog = usePostHog()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
   const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
-  const [loading, setLoading] = useState('')
-  const [txData, setTxData] = useState<TxData>()
+  const [sessionRequestData, setSessionRequestData] = useState<SessionRequestData>()
   const [isSessionRequestModalOpen, setIsSessionRequestModalOpen] = useState(false)
+  const [loading, setLoading] = useState('')
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
 
@@ -161,6 +162,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             ]
 
             const fromAddress = addresses.find((address) => address.hash === signerAddress)
+
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
                 message: 'Signer address doesn\t exist',
@@ -183,7 +185,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             console.log('✅ BUILDING TX: DONE!')
             setLoading('')
 
-            setTxData({
+            setSessionRequestData({
               type: 'transfer',
               wcData: wcTxData,
               unsignedTxData: buildTransactionTxResult
@@ -229,7 +231,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             console.log('✅ BUILDING TX: DONE!')
             setLoading('')
 
-            setTxData({
+            setSessionRequestData({
               type: 'deploy-contract',
               wcData: wcTxData,
               unsignedTxData: buildDeployContractTxResult
@@ -287,7 +289,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             console.log('✅ BUILDING TX: DONE!')
             setLoading('')
 
-            setTxData({
+            setSessionRequestData({
               type: 'call-contract',
               wcData: wcTxData,
               unsignedTxData: buildCallContractTxResult
@@ -318,7 +320,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           default:
-            // TODO: support all of the other SignerProvider methods
+            // TODO: Support all of the other SignerProvider methods
             respondToWalletConnectWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
         }
       } catch (e) {
@@ -329,7 +331,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         posthog?.capture('Error', { message: 'Could not build transaction' })
       }
     },
-    // The `addresses` depedency causes re-rendering when any property of an Address changes, even though we only need
+    // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
     // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
     // TODO: Figure out a way to avoid re-renders
     [
@@ -438,7 +440,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     walletConnectClient
   ])
 
-  const pair = useCallback(
+  const pairWithDapp = useCallback(
     async (uri: string) => {
       if (!walletConnectClient) return
 
@@ -487,7 +489,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     [onSessionProposal, walletConnectClient]
   )
 
-  const unpair = useCallback(
+  const unpairFromDapp = useCallback(
     async (topic: string) => {
       if (!walletConnectClient) return
 
@@ -569,15 +571,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     try {
       setLoading('Approving...')
       console.log('⏳ APPROVING PROPOSAL...')
-
       const { topic, acknowledged } = await walletConnectClient.approve({ id, relayProtocol, namespaces })
+      console.log('👉 APPROVAL TOPIC RECEIVED:', topic)
+      console.log('✅ APPROVING: DONE!')
 
-      console.log('⏳ APPROVAL TOPIC RECEIVED:', topic)
       console.log('⏳ WAITING FOR DAPP ACKNOWLEDGEMENT...')
       const res = await acknowledged()
       console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', res.acknowledged)
-
-      console.log('✅ APPROVING: DONE!')
 
       setSessionProposalEvent(undefined)
       setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
@@ -592,8 +592,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }
 
   const rejectProposal = async () => {
-    if (!walletConnectClient) return
-    if (sessionProposalEvent === undefined) return
+    if (!walletConnectClient || sessionProposalEvent === undefined) return
 
     try {
       setLoading('Rejecting...')
@@ -639,7 +638,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
       setSessionRequestEvent(undefined)
-      setTxData(undefined)
+      setSessionRequestData(undefined)
       setLoading('')
     }
   }
@@ -656,16 +655,16 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
       setSessionRequestEvent(undefined)
-      setTxData(undefined)
+      setSessionRequestData(undefined)
     }
   }
 
-  const handleTxModalClose = async () => {
+  const handleSessionRequestModalClose = async () => {
     setIsSessionRequestModalOpen(false)
-    onTxModalClose()
+    onSessionRequestModalClose()
   }
 
-  const onTxModalClose = async () => {
+  const onSessionRequestModalClose = async () => {
     console.log('👉 CLOSING MODAL.')
 
     if (sessionRequestEvent && walletConnectClient && walletConnectClient?.getPendingSessionRequests().length > 0) {
@@ -679,7 +678,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [closeSessionRequestModal, isSessionRequestModalOpen, sessionRequestEvent])
 
   return (
-    <WalletConnectContext.Provider value={{ pair, unpair, walletConnectClient, activeSessions }}>
+    <WalletConnectContext.Provider value={{ pairWithDapp, unpairFromDapp, walletConnectClient, activeSessions }}>
       {children}
       <Portal>
         <Modalize ref={sessionProposalModalRef}>
@@ -695,11 +694,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         <Modalize
           ref={walletConnectSessionRequestModalRef}
           onOpen={() => setIsSessionRequestModalOpen(true)}
-          onClose={handleTxModalClose}
+          onClose={handleSessionRequestModalClose}
         >
-          {txData && (
-            <WalletConnectTxModal
-              txData={txData}
+          {sessionRequestData && (
+            <WalletConnectSessionRequestModal
+              requestData={sessionRequestData}
               onApprove={handleApprovePress}
               onReject={handleRejectPress}
               metadata={activeSessionMetadata}

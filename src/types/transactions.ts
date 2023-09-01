@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressKeyPair, AssetAmount } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
-import { BuildDeployContractTxResult, BuildTransactionResult } from '@alephium/web3/dist/src/api/api-alephium'
 
 import { Address } from '~/types/addresses'
 
@@ -92,7 +91,3 @@ export interface DeployContractTxData {
   gasAmount?: number
   gasPrice?: string
 }
-
-export type TransferUnsignedTxData = { unsignedTx: BuildTransactionResult; fees: bigint }
-// export type CallContractUnsignedTxData = { unsignedTx: BuildExecuteScriptTxResult; fees: bigint }
-export type DeployContractUnsignedTxData = { unsignedTx: BuildDeployContractTxResult; fees: bigint }

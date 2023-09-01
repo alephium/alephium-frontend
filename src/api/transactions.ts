@@ -40,9 +40,7 @@ export const buildSweepTransactions = async (fromAddress: Address, toAddressHash
 export const buildUnsignedTransactions = async (
   fromAddress: Address,
   toAddressHash: string,
-  assetAmounts: AssetAmount[],
-  gasAmount?: number,
-  gasPrice?: string
+  assetAmounts: AssetAmount[]
 ) => {
   const assetsWithAvailableBalance = getAddressAssetsAvailableBalance(fromAddress).filter(
     (asset) => asset.availableBalance > 0
@@ -60,9 +58,7 @@ export const buildUnsignedTransactions = async (
     const data = await buildTransferTransaction({
       fromAddress,
       toAddress: toAddressHash,
-      assetAmounts,
-      gasAmount,
-      gasPrice
+      assetAmounts
     })
 
     return {

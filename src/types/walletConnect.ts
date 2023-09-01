@@ -15,6 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+
 import {
   BuildDeployContractTxResult,
   BuildExecuteScriptTxResult,
@@ -28,7 +29,7 @@ export type SessionRequestEvent = SignClientTypes.EventArguments['session_reques
 
 export type SessionProposalEvent = Pick<SignClientTypes.EventArguments['session_proposal'], 'id' | 'params'>
 
-export type TxData =
+export type SessionRequestData =
   | {
       type: 'transfer'
       wcData: TransferTxData

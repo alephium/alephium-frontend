@@ -45,11 +45,11 @@ import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/co
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppDispatch } from '~/hooks/redux'
 import { transactionSent } from '~/store/addressesSlice'
-import { TxData } from '~/types/walletConnect'
+import { SessionRequestData } from '~/types/walletConnect'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
-interface WalletConnectTxModalProps<T extends TxData> extends ModalProps<ScrollScreenProps> {
-  txData: T
+interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> extends ModalProps<ScrollScreenProps> {
+  requestData: T
   onApprove: (
     sendTransaction: () => Promise<
       SignTransferTxResult | SignExecuteScriptTxResult | SignDeployContractTxResult | undefined
@@ -59,37 +59,37 @@ interface WalletConnectTxModalProps<T extends TxData> extends ModalProps<ScrollS
   metadata?: SessionTypes.Struct['peer']['metadata']
 }
 
-const WalletConnectTxModal = <T extends TxData>({
-  txData,
+const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
+  requestData,
   onApprove,
   onReject,
   metadata,
   ...props
-}: WalletConnectTxModalProps<T>) => {
+}: WalletConnectSessionRequestModalProps<T>) => {
   const posthog = usePostHog()
   const dispatch = useAppDispatch()
 
-  const fees = BigInt(txData.unsignedTxData.gasAmount) * BigInt(txData.unsignedTxData.gasPrice)
+  const fees = BigInt(requestData.unsignedTxData.gasAmount) * BigInt(requestData.unsignedTxData.gasPrice)
 
   const handleApprovePress = () => onApprove(sendTransaction)
 
   const sendTransaction = async () => {
     try {
       const data = await signAndSendTransaction(
-        txData.wcData.fromAddress,
-        txData.unsignedTxData.txId,
-        txData.unsignedTxData.unsignedTx
+        requestData.wcData.fromAddress,
+        requestData.unsignedTxData.txId,
+        requestData.unsignedTxData.unsignedTx
       )
 
-      switch (txData.type) {
+      switch (requestData.type) {
         case 'transfer': {
-          const { attoAlphAmount, tokens } = getTransactionAssetAmounts(txData.wcData.assetAmounts)
+          const { attoAlphAmount, tokens } = getTransactionAssetAmounts(requestData.wcData.assetAmounts)
 
           dispatch(
             transactionSent({
               hash: data.txId,
-              fromAddress: txData.wcData.fromAddress.hash,
-              toAddress: txData.wcData.toAddress,
+              fromAddress: requestData.wcData.fromAddress.hash,
+              toAddress: requestData.wcData.toAddress,
               amount: attoAlphAmount,
               tokens,
               timestamp: new Date().getTime(),
@@ -101,24 +101,24 @@ const WalletConnectTxModal = <T extends TxData>({
           posthog?.capture('WC: Approved transfer')
 
           return {
-            fromGroup: txData.unsignedTxData.fromGroup,
-            toGroup: txData.unsignedTxData.toGroup,
-            unsignedTx: txData.unsignedTxData.unsignedTx,
-            txId: txData.unsignedTxData.txId,
+            fromGroup: requestData.unsignedTxData.fromGroup,
+            toGroup: requestData.unsignedTxData.toGroup,
+            unsignedTx: requestData.unsignedTxData.unsignedTx,
+            txId: requestData.unsignedTxData.txId,
             signature: data.signature,
-            gasAmount: txData.unsignedTxData.gasAmount,
-            gasPrice: BigInt(txData.unsignedTxData.gasPrice)
+            gasAmount: requestData.unsignedTxData.gasAmount,
+            gasPrice: BigInt(requestData.unsignedTxData.gasPrice)
           } as SignTransferTxResult
         }
         case 'call-contract': {
-          const { attoAlphAmount, tokens } = txData.wcData.assetAmounts
-            ? getTransactionAssetAmounts(txData.wcData.assetAmounts)
+          const { attoAlphAmount, tokens } = requestData.wcData.assetAmounts
+            ? getTransactionAssetAmounts(requestData.wcData.assetAmounts)
             : { attoAlphAmount: undefined, tokens: undefined }
 
           dispatch(
             transactionSent({
               hash: data.txId,
-              fromAddress: txData.wcData.fromAddress.hash,
+              fromAddress: requestData.wcData.fromAddress.hash,
               amount: attoAlphAmount,
               tokens,
               timestamp: new Date().getTime(),
@@ -130,19 +130,19 @@ const WalletConnectTxModal = <T extends TxData>({
           posthog?.capture('WC: Approved contract call')
 
           return {
-            groupIndex: txData.unsignedTxData.fromGroup,
-            unsignedTx: txData.unsignedTxData.unsignedTx,
-            txId: txData.unsignedTxData.txId,
+            groupIndex: requestData.unsignedTxData.fromGroup,
+            unsignedTx: requestData.unsignedTxData.unsignedTx,
+            txId: requestData.unsignedTxData.txId,
             signature: data.signature,
-            gasAmount: txData.unsignedTxData.gasAmount,
-            gasPrice: BigInt(txData.unsignedTxData.gasPrice)
+            gasAmount: requestData.unsignedTxData.gasAmount,
+            gasPrice: BigInt(requestData.unsignedTxData.gasPrice)
           } as SignExecuteScriptTxResult
         }
         case 'deploy-contract': {
           dispatch(
             transactionSent({
               hash: data.txId,
-              fromAddress: txData.wcData.fromAddress.hash,
+              fromAddress: requestData.wcData.fromAddress.hash,
               timestamp: new Date().getTime(),
               status: 'pending',
               type: 'deploy-contract'
@@ -152,14 +152,14 @@ const WalletConnectTxModal = <T extends TxData>({
           posthog?.capture('WC: Approved contract deployment')
 
           return {
-            groupIndex: txData.unsignedTxData.fromGroup,
-            unsignedTx: txData.unsignedTxData.unsignedTx,
-            txId: txData.unsignedTxData.txId,
+            groupIndex: requestData.unsignedTxData.fromGroup,
+            unsignedTx: requestData.unsignedTxData.unsignedTx,
+            txId: requestData.unsignedTxData.txId,
             signature: data.signature,
-            contractAddress: txData.unsignedTxData.contractAddress,
-            contractId: binToHex(contractIdFromAddress(txData.unsignedTxData.contractAddress)),
-            gasAmount: txData.unsignedTxData.gasAmount,
-            gasPrice: BigInt(txData.unsignedTxData.gasPrice)
+            contractAddress: requestData.unsignedTxData.contractAddress,
+            contractId: binToHex(contractIdFromAddress(requestData.unsignedTxData.contractAddress)),
+            gasAmount: requestData.unsignedTxData.gasAmount,
+            gasPrice: BigInt(requestData.unsignedTxData.gasPrice)
           } as SignDeployContractTxResult
         }
       }
@@ -183,7 +183,7 @@ const WalletConnectTxModal = <T extends TxData>({
                 transfer: 'Transfer request',
                 'call-contract': 'Smart contract request',
                 'deploy-contract': 'Smart contract request'
-              }[txData.type]
+              }[requestData.type]
             }
           </BottomModalScreenTitle>
           {metadata.url && (
@@ -195,22 +195,22 @@ const WalletConnectTxModal = <T extends TxData>({
       )}
       <ScreenSection>
         <BoxSurface>
-          {(txData.type === 'transfer' || txData.type === 'call-contract') &&
-            txData.wcData.assetAmounts &&
-            txData.wcData.assetAmounts.length > 0 && (
+          {(requestData.type === 'transfer' || requestData.type === 'call-contract') &&
+            requestData.wcData.assetAmounts &&
+            requestData.wcData.assetAmounts.length > 0 && (
               <HighlightRow title="Sending" titleColor="secondary">
                 <AssetAmounts>
-                  {txData.wcData.assetAmounts.map(({ id, amount }) =>
+                  {requestData.wcData.assetAmounts.map(({ id, amount }) =>
                     amount ? <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} /> : null
                   )}
                 </AssetAmounts>
               </HighlightRow>
             )}
           <HighlightRow title="From" titleColor="secondary">
-            <AddressBadge addressHash={txData.wcData.fromAddress.hash} />
+            <AddressBadge addressHash={requestData.wcData.fromAddress.hash} />
           </HighlightRow>
 
-          {txData.type === 'deploy-contract' || txData.type === 'call-contract' ? (
+          {requestData.type === 'deploy-contract' || requestData.type === 'call-contract' ? (
             metadata?.name && (
               <HighlightRow title="To" titleColor="secondary">
                 <AppText semiBold>{metadata.name}</AppText>
@@ -218,32 +218,32 @@ const WalletConnectTxModal = <T extends TxData>({
             )
           ) : (
             <HighlightRow title="To" titleColor="secondary">
-              <AddressBadge addressHash={txData.wcData.toAddress} />
+              <AddressBadge addressHash={requestData.wcData.toAddress} />
             </HighlightRow>
           )}
 
-          {txData.type === 'deploy-contract' && (
+          {requestData.type === 'deploy-contract' && (
             <>
-              {!!txData.wcData.initialAlphAmount?.amount && (
+              {!!requestData.wcData.initialAlphAmount?.amount && (
                 <HighlightRow title="Initial amount" titleColor="secondary">
                   <AssetAmountWithLogo
                     assetId={ALPH.id}
                     logoSize={18}
-                    amount={BigInt(txData.wcData.initialAlphAmount.amount)}
+                    amount={BigInt(requestData.wcData.initialAlphAmount.amount)}
                   />
                 </HighlightRow>
               )}
-              {txData.wcData.issueTokenAmount && (
+              {requestData.wcData.issueTokenAmount && (
                 <HighlightRow title="Issue token amount" titleColor="secondary">
-                  <AppText>{txData.wcData.issueTokenAmount}</AppText>
+                  <AppText>{requestData.wcData.issueTokenAmount}</AppText>
                 </HighlightRow>
               )}
             </>
           )}
 
-          {(txData.type === 'deploy-contract' || txData.type === 'call-contract') && (
+          {(requestData.type === 'deploy-contract' || requestData.type === 'call-contract') && (
             <HighlightRow title="Bytecode" titleColor="secondary">
-              <AppText>{txData.wcData.bytecode}</AppText>
+              <AppText>{requestData.wcData.bytecode}</AppText>
             </HighlightRow>
           )}
         </BoxSurface>
@@ -266,7 +266,7 @@ const WalletConnectTxModal = <T extends TxData>({
   )
 }
 
-export default WalletConnectTxModal
+export default WalletConnectSessionRequestModal
 
 const AssetAmounts = styled.View`
   gap: 5px;

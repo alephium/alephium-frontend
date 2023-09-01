@@ -48,11 +48,11 @@ interface SendContextValue {
   setToAddress: (toAddress: AddressHash) => void
   fromAddress?: AddressHash
   setFromAddress: (toAddress: AddressHash) => void
-  setAssetAmount: (assetId: string, amount?: bigint) => void
   assetAmounts: AssetAmount[]
+  setAssetAmount: (assetId: string, amount?: bigint) => void
   fees: bigint
   buildTransaction: (callbacks: BuildTransactionCallbacks) => Promise<void>
-  sendTransaction: (onSendSuccess: (signature?: string) => void) => Promise<void>
+  sendTransaction: (onSendSuccess: () => void) => Promise<void>
 }
 
 const initialValues: SendContextValue = {
@@ -60,8 +60,8 @@ const initialValues: SendContextValue = {
   setToAddress: () => null,
   fromAddress: undefined,
   setFromAddress: () => null,
-  setAssetAmount: () => null,
   assetAmounts: [],
+  setAssetAmount: () => null,
   fees: BigInt(0),
   buildTransaction: () => Promise.resolve(undefined),
   sendTransaction: () => Promise.resolve(undefined)
@@ -116,13 +116,10 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
   const buildTransaction = useCallback(
     async (callbacks: BuildTransactionCallbacks) => {
-      if (!address) return
+      if (!address || !toAddress) return
 
       try {
-        if (!toAddress) throw new Error('Destination address not set')
-
         const data = await buildUnsignedTransactions(address, toAddress, assetAmounts)
-
         setUnsignedTxData(data)
         callbacks.onBuildSuccess()
       } catch (e) {
@@ -144,22 +141,20 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   )
 
   const sendTransaction = useCallback(
-    async (onSendSuccess: (signature?: string) => void) => {
-      if (!address) return
+    async (onSendSuccess: () => void) => {
+      if (!address || !toAddress) return
 
       const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
-      let signature
 
       try {
         for (const { txId, unsignedTx } of unsignedTxData.unsignedTxs) {
           const data = await signAndSendTransaction(address, txId, unsignedTx)
-          signature = data.signature
 
           dispatch(
             transactionSent({
               hash: data.txId,
               fromAddress: address.hash,
-              toAddress: consolidationRequired ? address.hash : toAddress ?? '',
+              toAddress: consolidationRequired ? address.hash : toAddress,
               amount: attoAlphAmount,
               tokens,
               timestamp: new Date().getTime(),
@@ -169,9 +164,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           )
         }
 
-        console.log('SUCCESS SENDING')
-
-        onSendSuccess(signature)
+        onSendSuccess()
 
         posthog?.capture('Send: Sent transaction', { tokens: tokens.length })
       } catch (e) {
@@ -180,7 +173,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         posthog?.capture('Error', { message: 'Could not send transaction' })
       }
     },
-    [address, assetAmounts, consolidationRequired, dispatch, posthog, toAddress, unsignedTxData]
+    [address, assetAmounts, consolidationRequired, dispatch, posthog, toAddress, unsignedTxData.unsignedTxs]
   )
 
   const authenticateAndSend = useCallback(
@@ -202,8 +195,8 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         setToAddress,
         fromAddress,
         setFromAddress,
-        setAssetAmount,
         assetAmounts,
+        setAssetAmount,
         fees: unsignedTxData.fees,
         buildTransaction,
         sendTransaction: authenticateAndSend

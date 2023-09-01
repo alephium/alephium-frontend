@@ -47,15 +47,12 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
     navigation.getParent()?.setOptions({
       headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
       headerRight: () => (
-        <ContinueButton
-          text="Send"
-          onPress={async () => sendTransaction(() => navigation.navigate('TransfersScreen'))}
-        />
+        <ContinueButton text="Send" onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))} />
       )
     })
   })
 
-  if (!fromAddress) return null
+  if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
     <ScrollScreen {...props}>
@@ -66,20 +63,18 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       />
       <ScreenSection>
         <BoxSurface>
-          {assetAmounts.length > 0 && (
-            <HighlightRow title="Sending" titleColor="secondary">
-              <AssetAmounts>
-                {assets.map(({ id, amount }) =>
-                  amount ? <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} /> : null
-                )}
-              </AssetAmounts>
-            </HighlightRow>
-          )}
-          {toAddress && (
-            <HighlightRow title="To" titleColor="secondary">
-              <AddressBadge addressHash={toAddress} />
-            </HighlightRow>
-          )}
+          <HighlightRow title="Sending" titleColor="secondary">
+            <AssetAmounts>
+              {assets.map(({ id, amount }) =>
+                amount ? <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} /> : null
+              )}
+            </AssetAmounts>
+          </HighlightRow>
+
+          <HighlightRow title="To" titleColor="secondary">
+            <AddressBadge addressHash={toAddress} />
+          </HighlightRow>
+
           <HighlightRow title="From" titleColor="secondary">
             <AddressBadge addressHash={fromAddress} />
           </HighlightRow>
