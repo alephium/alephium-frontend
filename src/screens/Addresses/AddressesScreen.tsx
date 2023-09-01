@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
 import { ListIcon, PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
+import Animated from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
@@ -49,7 +49,6 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const posthog = usePostHog()
-  const navigation = useNavigation()
 
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addresses = useAppSelector(selectAllAddresses)
@@ -101,7 +100,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
         onScroll={onScroll}
         {...props}
       >
-        <ScreenContent style={contentStyle}>
+        <Animated.View style={contentStyle}>
           <Carousel
             data={addressHashes}
             renderItem={renderAddressCard}
@@ -115,18 +114,12 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
                 {addresses.length > 2 && (
                   <Button onPress={() => openAddressQuickSelectionModal()} Icon={ListIcon} type="transparent" />
                 )}
-                <Button
-                  onPress={() => navigation.navigate('NewAddressScreen')}
-                  Icon={PlusIcon}
-                  title="New address"
-                  color={theme.global.accent}
-                  compact
-                />
+                <Button Icon={PlusIcon} title="New address" color={theme.global.accent} compact />
               </>
             }
           />
           {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} style={{ paddingBottom: 50 }} />}
-        </ScreenContent>
+        </Animated.View>
       </BottomBarScrollScreen>
 
       <Portal>
@@ -162,8 +155,6 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
 }
 
 export default AddressesScreen
-
-const ScreenContent = styled.View``
 
 const AddressBoxStyled = styled(AddressBox)`
   margin: 10px 20px;

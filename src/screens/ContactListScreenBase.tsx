@@ -20,6 +20,7 @@ import { colord } from 'colord'
 import { Plus } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { TextInput } from 'react-native'
+import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -92,7 +93,7 @@ const ContactListScreenBase = ({
 
 export default ContactListScreenBase
 
-const ScreenContent = styled.View``
+const ScreenContent = styled(Animated.View)``
 
 const ContactList = styled.View``
 
