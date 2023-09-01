@@ -58,7 +58,12 @@ export default memo(styled(CenteredInstructions)`
 
 const Instruction = styled.Text<{ type: Instruction['type'] }>`
   color: ${({ type, theme }) =>
-    ({ primary: theme.font.primary, secondary: theme.font.secondary, error: theme.global.alert, link: '' }[type])};
+    ({
+      primary: theme.font.primary,
+      secondary: theme.font.secondary,
+      error: theme.global.alert,
+      link: ''
+    })[type]};
 
   font-weight: ${({ type }) => (['primary', 'error'].includes(type) ? 'bold' : 'normal')};
   font-size: 16px;

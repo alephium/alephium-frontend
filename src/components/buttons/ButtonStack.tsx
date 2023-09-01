@@ -25,11 +25,7 @@ interface ButtonStackProps extends ViewProps {
 }
 
 const ButtonStack = ({ children, style }: ButtonStackProps) => (
-  <View style={style}>
-    {children?.map((child, i) => (
-      <ButtonContainer key={i}>{child}</ButtonContainer>
-    ))}
-  </View>
+  <View style={style}>{children?.map((child, i) => <ButtonContainer key={i}>{child}</ButtonContainer>)}</View>
 )
 
 export default styled(ButtonStack)`
