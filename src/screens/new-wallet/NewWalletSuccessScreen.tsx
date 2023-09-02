@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import animationSrc from '~/animations/success.json'
+import animationSrc from '~/animations/lottie/success.json'
 import HighlightButton from '~/components/buttons/HighlightButton'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'

@@ -29,10 +29,10 @@ interface ButtonsRowProps {
 const ButtonsRow = ({ children, style }: ButtonsRowProps) => (
   <View style={style}>
     {children.map((c, i) => (
-      <>
+      <ButtonsContainer key={`ButtonsContainer-${i}`}>
         {c}
-        {i !== children.length - 1 && <Divider key={`Divider-${i}`} />}
-      </>
+        {i !== children.length - 1 && <Divider />}
+      </ButtonsContainer>
     ))}
   </View>
 )
@@ -43,8 +43,14 @@ export default styled(ButtonsRow)`
   gap: ${({ sticked }) => (sticked ? 0 : 20)}px;
 `
 
+const ButtonsContainer = styled.View`
+  flex: 1;
+  flex-direction: row;
+`
+
 const Divider = styled.View`
   width: 1px;
+  margin-right: -1px;
   height: 100%;
   background-color: ${({ theme }) => theme.border.primary};
 `

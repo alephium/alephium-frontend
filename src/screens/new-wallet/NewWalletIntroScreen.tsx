@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/wallet.json'
+import animationSrc from '~/animations/lottie/wallet.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
 import Screen, { ScreenProps } from '~/components/layout/Screen'

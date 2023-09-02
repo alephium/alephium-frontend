@@ -20,18 +20,17 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
-import { View } from 'react-native'
+import Animated, { BounceIn } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import SlideFromTop from '~/animations/reanimated/SlideFromTop'
 import AddressesTokensList from '~/components/AddressesTokensList'
-import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import BaseHeader from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
-import { ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
@@ -86,25 +85,27 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <BalanceAndButtons>
+        <ButtonsRowContainer entering={BounceIn}>
+          <ButtonsRow sticked>
+            <Button
+              onPress={() => navigation.navigate('SendNavigation')}
+              Icon={ArrowUp}
+              title="Send"
+              type="transparent"
+              color={theme.global.send}
+              flex
+            />
+            <Button
+              onPress={() => navigation.navigate('ReceiveNavigation')}
+              Icon={ArrowDown}
+              title="Receive"
+              type="transparent"
+              color={theme.global.receive}
+              flex
+            />
+          </ButtonsRow>
+        </ButtonsRowContainer>
         <BalanceSummary dateLabel="VALUE TODAY" />
-        <ButtonsRowStyled sticked>
-          <Button
-            onPress={() => navigation.navigate('SendNavigation')}
-            Icon={ArrowUp}
-            title="Send"
-            type="transparent"
-            color={theme.global.send}
-            flex
-          />
-          <Button
-            onPress={() => navigation.navigate('ReceiveNavigation')}
-            Icon={ArrowDown}
-            title="Receive"
-            type="transparent"
-            color={theme.global.receive}
-            flex
-          />
-        </ButtonsRowStyled>
       </BalanceAndButtons>
       <AddressesTokensList />
     </DashboardScreenStyled>
@@ -121,14 +122,13 @@ const BalanceAndButtons = styled.View`
   flex: 1;
 `
 
-const ButtonsRowStyled = styled(ButtonsRow)`
-  flex-direction: row;
-  margin: 0 ${HORIZONTAL_MARGIN}px;
-  background-color: ${({ theme }) => theme.bg.primary};
-  border-bottom-left-radius: ${BORDER_RADIUS_BIG}px;
-  border-bottom-right-radius: ${BORDER_RADIUS_BIG}px;
+const ButtonsRowContainer = styled(Animated.View)`
   z-index: -1;
+  margin: 0 ${HORIZONTAL_MARGIN}px;
   margin-top: -20px;
   padding-top: 20px;
+  background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
+  border-bottom-left-radius: ${BORDER_RADIUS_BIG}px;
+  border-bottom-right-radius: ${BORDER_RADIUS_BIG}px;
 `

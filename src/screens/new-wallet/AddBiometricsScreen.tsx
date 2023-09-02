@@ -22,7 +22,7 @@ import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/fingerprint.json'
+import animationSrc from '~/animations/lottie/fingerprint.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
