@@ -75,7 +75,16 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
     : theme.global.valid
 
   return (
-    <BalanceSummaryContainer colors={['transparent', colord(deltaColor).alpha(0.2).toHex()]} locations={[0, 0.6]}>
+    <BalanceSummaryContainer
+      colors={['transparent', colord(deltaColor).alpha(0.2).toHex()]}
+      locations={[0, 0.6]}
+      style={{
+        shadowColor: '#ffffff',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3
+      }}
+    >
       <TextContainer>
         <SurfaceHeader>
           <AppText color="tertiary" semiBold>

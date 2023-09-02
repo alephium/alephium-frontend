@@ -27,6 +27,7 @@ import AddressesTokensList from '~/components/AddressesTokensList'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
+import ButtonsRow from '~/components/buttons/ButtonsRow'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import BaseHeader from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
@@ -39,7 +40,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
-import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
@@ -84,21 +85,27 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       {...props}
     >
-      <View>
+      <BalanceAndButtons>
         <BalanceSummary dateLabel="VALUE TODAY" />
-        <ButtonsRow>
-          <SendReceiveButton onPress={() => navigation.navigate('SendNavigation')}>
-            <ButtonText semiBold>Send</ButtonText>
-
-            <ArrowUp color={theme.font.secondary} size={20} />
-          </SendReceiveButton>
-          <SendReceiveButton onPress={() => navigation.navigate('ReceiveNavigation')}>
-            <ButtonText semiBold>Receive</ButtonText>
-
-            <ArrowDown color={theme.font.secondary} size={20} />
-          </SendReceiveButton>
-        </ButtonsRow>
-      </View>
+        <ButtonsRowStyled sticked>
+          <Button
+            onPress={() => navigation.navigate('SendNavigation')}
+            Icon={ArrowUp}
+            title="Send"
+            type="transparent"
+            color={theme.global.send}
+            flex
+          />
+          <Button
+            onPress={() => navigation.navigate('ReceiveNavigation')}
+            Icon={ArrowDown}
+            title="Receive"
+            type="transparent"
+            color={theme.global.receive}
+            flex
+          />
+        </ButtonsRowStyled>
+      </BalanceAndButtons>
       <AddressesTokensList />
     </DashboardScreenStyled>
   )
@@ -107,28 +114,21 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 export default DashboardScreen
 
 const DashboardScreenStyled = styled(BottomBarScrollScreen)`
-  gap: 30px;
+  gap: 15px;
 `
 
-const ButtonsRow = styled(ScreenSection)`
+const BalanceAndButtons = styled.View`
+  flex: 1;
+`
+
+const ButtonsRowStyled = styled(ButtonsRow)`
   flex-direction: row;
-  gap: 15px;
-  padding: 15px;
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  margin: 0 ${HORIZONTAL_MARGIN}px;
+  background-color: ${({ theme }) => theme.bg.primary};
   border-bottom-left-radius: ${BORDER_RADIUS_BIG}px;
   border-bottom-right-radius: ${BORDER_RADIUS_BIG}px;
-  margin-top: -10px;
-  padding-top: 25px;
   z-index: -1;
-`
-
-const SendReceiveButton = styled(Button)`
-  flex: 1;
-  padding: 8.5px 10px;
-  height: auto;
-`
-
-const ButtonText = styled(AppText)`
-  flex: 1;
-  text-align: center;
+  margin-top: -20px;
+  padding-top: 20px;
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `

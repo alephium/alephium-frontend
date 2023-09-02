@@ -27,7 +27,7 @@ import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export interface ButtonProps extends PressableProps {
   title?: string
-  type?: 'primary' | 'secondary' | 'transparent'
+  type?: 'primary' | 'secondary' | 'transparent' | 'tint'
   variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert'
   style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
@@ -35,6 +35,7 @@ export interface ButtonProps extends PressableProps {
   Icon?: (props: LucideProps) => JSX.Element
   color?: string
   round?: boolean
+  flex?: boolean
   children?: ReactNode
   compact?: boolean
 }
@@ -51,6 +52,7 @@ const Button = ({
   color,
   centered,
   compact,
+  flex,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -82,18 +84,22 @@ const Button = ({
       backgroundColor: {
         primary: bg,
         secondary: 'transparent',
-        transparent: 'transparent'
+        transparent: 'transparent',
+        tint: color ? colord(color).alpha(0.05).toHex() : ''
       }[type],
       borderWidth: {
         primary: 0,
         secondary: 2,
-        transparent: 0
+        transparent: 0,
+        tint: 0
       }[type],
       borderColor: {
         primary: 'transparent',
         secondary: bg,
-        transparent: undefined
+        transparent: undefined,
+        tint: undefined
       }[type],
+      flex: flex ? 1 : 0,
       width: round ? 45 : props.wide ? '75%' : hasOnlyIcon ? 45 : 'auto',
       height: compact ? 'auto' : hasOnlyIcon ? 45 : 55,
       borderRadius: round ? 100 : BORDER_RADIUS,
@@ -113,19 +119,13 @@ const Button = ({
 
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
-      {Icon && (
-        <Icon
-          style={!hasOnlyIcon && !compact ? { marginRight: 15 } : undefined}
-          color={font}
-          size={compact ? 20 : undefined}
-        />
-      )}
       {title && (
-        <ButtonText style={{ color: font }} semiBold>
+        <AppText style={{ flexGrow: 1, color: font, textAlign: 'center' }} semiBold size={16}>
           {title}
-        </ButtonText>
+        </AppText>
       )}
       {children}
+      {Icon && <Icon color={font} size={compact ? 16 : 20} />}
     </Pressable>
   )
 }
@@ -135,8 +135,4 @@ export default styled(Button)`
   justify-content: center;
   overflow: hidden;
   flex-direction: row;
-`
-
-const ButtonText = styled(AppText)`
-  text-align: center;
 `

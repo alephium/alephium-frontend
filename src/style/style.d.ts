@@ -59,6 +59,8 @@ declare module 'styled-components' {
       star: string
       pale: string
       complementary: string
+      send: string
+      receive: string
     }
     gradient: {
       yellow: string

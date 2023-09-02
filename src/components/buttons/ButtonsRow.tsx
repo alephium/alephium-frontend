@@ -18,33 +18,33 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 interface ButtonsRowProps {
   children: ReactNode[]
+  sticked?: boolean
   style?: StyleProp<ViewStyle>
 }
 
 const ButtonsRow = ({ children, style }: ButtonsRowProps) => (
   <View style={style}>
-    {children.map((button, index) => (
-      <ButtonContainer key={index} isFirst={index === 0}>
-        {button}
-      </ButtonContainer>
+    {children.map((c, i) => (
+      <>
+        {c}
+        {i !== children.length - 1 && <Divider key={`Divider-${i}`} />}
+      </>
     ))}
   </View>
 )
 
 export default styled(ButtonsRow)`
+  flex: 1;
   flex-direction: row;
+  gap: ${({ sticked }) => (sticked ? 0 : 20)}px;
 `
 
-const ButtonContainer = styled.View<{ isFirst: boolean }>`
-  flex: 1;
-  margin-left: 10px;
-  ${({ isFirst }) =>
-    isFirst &&
-    css`
-      margin-left: 0;
-    `}
+const Divider = styled.View`
+  width: 1px;
+  height: 100%;
+  background-color: ${({ theme }) => theme.border.primary};
 `

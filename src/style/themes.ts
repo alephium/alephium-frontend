@@ -59,7 +59,9 @@ export const lightTheme: DefaultTheme = {
     valid: '#2DA023',
     star: '#FFD66D',
     pale: '#f7d1b6',
-    complementary: '#b07dcb'
+    complementary: '#b07dcb',
+    send: '#F7B789',
+    receive: '#8DD3FA'
   },
   gradient: {
     yellow: '#FFCD82',
@@ -109,7 +111,9 @@ export const darkTheme: DefaultTheme = {
     valid: '#3ed282',
     star: '#FFD66D',
     pale: '#f7d1b6',
-    complementary: '#d488eb'
+    complementary: '#d488eb',
+    send: '#F7B789',
+    receive: '#8DD3FA'
   },
   gradient: {
     yellow: '#FFCD82',

@@ -36,7 +36,6 @@ const BottomBarScrollScreen = ({
   hasHeader = false,
   hasBottomBar = false,
   children,
-  style,
   ...props
 }: BottomBarScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
