@@ -21,7 +21,7 @@ import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Skeleton } from 'moti/skeleton'
 import { useState } from 'react'
-import { Pressable, StyleProp, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -76,70 +76,74 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
 
   return (
     <BalanceSummaryContainer
-      colors={['transparent', colord(deltaColor).alpha(0.2).toHex()]}
-      locations={[0, 0.6]}
       style={{
-        shadowColor: '#ffffff',
-        shadowOffset: { width: -2, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 3
+        shadowColor: 'black',
+        shadowOffset: { height: 5, width: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10
       }}
     >
-      <TextContainer>
-        <SurfaceHeader>
-          <AppText color="tertiary" semiBold>
-            {dateLabel}
-          </AppText>
-          <ActiveNetwork>
-            <NetworkStatusBullet status={networkStatus} />
-            <AppText color="primary">{networkName}</AppText>
-          </ActiveNetwork>
-        </SurfaceHeader>
-        <Skeleton show={isPriceLoading || isLoadingBalances} colorMode={theme.name}>
-          <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
-        </Skeleton>
-        {(!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart !== undefined)) && (
-          <Row>
-            <Skeleton show={!haveHistoricBalancesLoaded} colorMode={theme.name}>
-              <DeltaPercentage percentage={deltaPercentage} />
-            </Skeleton>
-            <ChartLengthBadges>
-              {chartLengths.map((length) => {
-                const isActive = length === chartLength
+      <GradientContainer colors={['transparent', colord(deltaColor).alpha(0.2).toHex()]} locations={[0, 0.6]}>
+        <TextContainer>
+          <SurfaceHeader>
+            <AppText color="tertiary" semiBold>
+              {dateLabel}
+            </AppText>
+            <ActiveNetwork>
+              <NetworkStatusBullet status={networkStatus} />
+              <AppText color="primary">{networkName}</AppText>
+            </ActiveNetwork>
+          </SurfaceHeader>
+          <Skeleton show={isPriceLoading || isLoadingBalances} colorMode={theme.name}>
+            <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+          </Skeleton>
+          {(!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart !== undefined)) && (
+            <Row>
+              <Skeleton show={!haveHistoricBalancesLoaded} colorMode={theme.name}>
+                <DeltaPercentage percentage={deltaPercentage} />
+              </Skeleton>
+              <ChartLengthBadges>
+                {chartLengths.map((length) => {
+                  const isActive = length === chartLength
 
-                return (
-                  <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
-                    <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
-                      {length.toUpperCase()}
-                    </AppText>
-                  </ChartLengthButton>
-                )
-              })}
-            </ChartLengthBadges>
-          </Row>
-        )}
-      </TextContainer>
+                  return (
+                    <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
+                      <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
+                        {length.toUpperCase()}
+                      </AppText>
+                    </ChartLengthButton>
+                  )
+                })}
+              </ChartLengthBadges>
+            </Row>
+          )}
+        </TextContainer>
 
-      <ChartContainer>
-        <HistoricWorthChart
-          currency={currency}
-          latestWorth={totalAmountWorth}
-          length={chartLength}
-          onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-        />
-      </ChartContainer>
+        <ChartContainer>
+          <HistoricWorthChart
+            currency={currency}
+            latestWorth={totalAmountWorth}
+            length={chartLength}
+            onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
+          />
+        </ChartContainer>
+      </GradientContainer>
     </BalanceSummaryContainer>
   )
 }
 
 export default BalanceSummary
 
-const BalanceSummaryContainer = styled(LinearGradient)`
+const BalanceSummaryContainer = styled.View`
   margin: 0 ${HORIZONTAL_MARGIN}px;
   border-radius: ${BORDER_RADIUS_BIG}px;
   border-width: 1px;
   border-color: ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.primary};
+`
+
+const GradientContainer = styled(LinearGradient)`
+  border-radius: ${BORDER_RADIUS_BIG}px;
 `
 
 const TextContainer = styled.View`

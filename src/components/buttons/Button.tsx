@@ -125,7 +125,7 @@ const Button = ({
         </AppText>
       )}
       {children}
-      {Icon && <Icon color={font} size={compact ? 16 : 20} />}
+      {Icon && <Icon color={font} size={compact ? 16 : hasOnlyIcon ? 23 : 20} />}
     </Pressable>
   )
 }
