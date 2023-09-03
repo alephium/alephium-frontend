@@ -51,7 +51,7 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
-const chartHeight = 100
+const chartHeight = 70
 
 const HistoricWorthChart = ({
   length = '1m',

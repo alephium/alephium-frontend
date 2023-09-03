@@ -64,7 +64,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
       left: x - indicatorXPadding,
       width: width + 2 * indicatorXPadding
     }
-  }, [tabLayouts])
+  }, [tabLayouts, tabLabels.length])
 
   const handleOnTabPress = (tabIndex: number) => {
     onTabPress(tabIndex)
