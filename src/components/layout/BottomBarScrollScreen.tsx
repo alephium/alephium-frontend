@@ -62,7 +62,7 @@ const BottomBarScrollScreen = ({
       hasHeader={hasHeader}
       scrollViewRef={viewRef}
       onScrollEndDrag={scrollEndHandler}
-      indicatorStyle={theme.name === 'dark' ? 'white' : 'black'}
+      showsHorizontalScrollIndicator={false}
       {...props}
     >
       {children}

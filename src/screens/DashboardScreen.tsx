@@ -20,7 +20,7 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
@@ -57,7 +57,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
 
   const buttonsRowStyle = useAnimatedStyle(() => ({
-    height: withSpring(isLoading ? 0 : 75, defaultSpringConfiguration)
+    height: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 75, defaultSpringConfiguration))
   }))
 
   useCustomNavigationHeader({
@@ -119,7 +119,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 export default DashboardScreen
 
 const DashboardScreenStyled = styled(BottomBarScrollScreen)`
-  gap: 15px;
+  gap: 25px;
 `
 
 const BalanceAndButtons = styled.View`

@@ -53,7 +53,7 @@ const ScrollScreen = ({
         scrollEventThrottle={16}
         alwaysBounceVertical={false}
         onScrollEndDrag={scrollEndHandler}
-        indicatorStyle={theme.name === 'dark' ? 'white' : 'black'}
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={[
           contentContainerStyle,
           {

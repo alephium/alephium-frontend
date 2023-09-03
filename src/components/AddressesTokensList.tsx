@@ -31,7 +31,7 @@ import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs
 } from '~/store/addressesSlice'
-import { BORDER_RADIUS, HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS, BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 import { ScreenSection } from './layout/Screen'
@@ -94,11 +94,11 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
 
   return (
     <ListContainer style={style}>
-      <TabBar items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
+      <TabBarStyled items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
       {
         {
           tokens: (
-            <ScreenSection>
+            <>
               {tokenRows.map((entry, index) =>
                 isAsset(entry) ? (
                   <TokenListItem
@@ -115,7 +115,7 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
                   </LoadingRow>
                 )
               )}
-            </ScreenSection>
+            </>
           ),
           nfts: <NFTsGrid nfts={nfts} isLoading={isLoading} />
         }[activeTab.value]
@@ -133,10 +133,17 @@ const LoadingRow = styled.View`
   padding-top: 15px;
 `
 
+const TabBarStyled = styled(TabBar)`
+  padding: 0 5px;
+  margin-bottom: 15px;
+`
+
 const ListContainer = styled.View`
-  gap: 20px;
-  border-radius: ${BORDER_RADIUS}px;
+  border-radius: ${BORDER_RADIUS_BIG}px;
+  padding: 0 15px;
   padding-top: 15px;
+  margin: 0 ${HORIZONTAL_MARGIN}px;
+  background-color: ${({ theme }) => theme.bg.secondary};
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

@@ -41,16 +41,14 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
 
   return (
     <View style={style}>
-      {networkStatus === 'offline' && (
-        <Button onPress={showOfflineMessage} Icon={WifiOff} type="transparent" variant="alert" />
-      )}
+      {networkStatus === 'offline' && <Button onPress={showOfflineMessage} Icon={WifiOff} variant="alert" round />}
       <Button
         onPress={() => navigation.navigate('SecurityScreen')}
         Icon={ShieldAlert}
-        type="transparent"
         variant={isMnemonicBackedUp ? 'default' : 'alert'}
+        round
       />
-      <Button onPress={() => navigation.navigate('SettingsScreen')} Icon={Settings} type="transparent" />
+      <Button onPress={() => navigation.navigate('SettingsScreen')} Icon={Settings} round />
     </View>
   )
 }
