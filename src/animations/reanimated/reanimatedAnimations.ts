@@ -16,31 +16,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ViewStyle } from 'react-native'
-import { AnimatedStyle, EntryAnimationsValues, withDelay, withTiming } from 'react-native-reanimated'
-
-const SlideFromTop = (values: EntryAnimationsValues) => {
-  'worklet'
-  const animations: AnimatedStyle<ViewStyle> = {
-    transform: [
-      {
-        translateY: withDelay(4000, withTiming(0, { duration: 2000 }))
-      }
-    ],
-    opacity: withDelay(4000, withTiming(1, { duration: 2000 }))
-  }
-  const initialValues = {
-    transform: [
-      {
-        translateY: -50
-      }
-    ],
-    opacity: 0
-  }
-  return {
-    initialValues,
-    animations
-  }
-}
-
-export default SlideFromTop
+// TODO: compile custom reanimated animations here.

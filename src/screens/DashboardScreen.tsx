@@ -20,10 +20,9 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
-import Animated, { BounceIn } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import SlideFromTop from '~/animations/reanimated/SlideFromTop'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
@@ -56,6 +55,10 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
 
+  const buttonsRowStyle = useAnimatedStyle(() => ({
+    height: isLoading ? 0 : withSpring(75, { duration: 2000 })
+  }))
+
   useCustomNavigationHeader({
     Header: (props) => (
       <BaseHeader
@@ -85,7 +88,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <BalanceAndButtons>
-        <ButtonsRowContainer entering={BounceIn}>
+        <BalanceSummary dateLabel="VALUE TODAY" />
+        <ButtonsRowContainer style={buttonsRowStyle}>
           <ButtonsRow sticked>
             <Button
               onPress={() => navigation.navigate('SendNavigation')}
@@ -105,7 +109,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
             />
           </ButtonsRow>
         </ButtonsRowContainer>
-        <BalanceSummary dateLabel="VALUE TODAY" />
       </BalanceAndButtons>
       <AddressesTokensList />
     </DashboardScreenStyled>
@@ -131,4 +134,5 @@ const ButtonsRowContainer = styled(Animated.View)`
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-bottom-left-radius: ${BORDER_RADIUS_BIG}px;
   border-bottom-right-radius: ${BORDER_RADIUS_BIG}px;
+  overflow: hidden;
 `
