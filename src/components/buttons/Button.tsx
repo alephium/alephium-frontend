@@ -85,7 +85,7 @@ const Button = ({
         primary: bg,
         secondary: 'transparent',
         transparent: 'transparent',
-        tint: color ? colord(color).alpha(0.05).toHex() : ''
+        tint: color ? colord(color).alpha(0.02).toHex() : ''
       }[type],
       borderWidth: {
         primary: 0,

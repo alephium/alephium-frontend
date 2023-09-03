@@ -16,4 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TODO: compile custom reanimated animations here.
+import { SpringConfig } from 'react-native-reanimated/lib/typescript/reanimated2/animation/springUtils'
+
+export const defaultSpringConfiguration: SpringConfig = {
+  stiffness: 100,
+  damping: 50
+}

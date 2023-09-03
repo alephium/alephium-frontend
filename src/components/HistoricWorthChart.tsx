@@ -20,10 +20,12 @@ import { toHumanReadableAmount } from '@alephium/sdk'
 import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import { Defs, LinearGradient, Stop, Svg } from 'react-native-svg'
 import { useTheme } from 'styled-components/native'
 import { VictoryArea } from 'victory-native'
+import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 
 import { useAppSelector } from '~/hooks/redux'
 import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
@@ -49,6 +51,8 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
+const chartHeight = 100
+
 const HistoricWorthChart = ({
   length = '1m',
   latestWorth,
@@ -68,6 +72,12 @@ const HistoricWorthChart = ({
   const filteredChartData = getFilteredChartData(chartData, startingDate)
   const firstItem = filteredChartData.length > 0 ? filteredChartData[0] : undefined
 
+  const isLoading = filteredChartData.length === 0
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    height: isLoading ? 0 : withSpring(chartHeight, defaultSpringConfiguration)
+  }))
+
   useEffect(() => {
     onWorthInBeginningOfChartChange(firstItem?.worth)
   }, [firstItem?.worth, onWorthInBeginningOfChartChange])
@@ -76,42 +86,48 @@ const HistoricWorthChart = ({
     setChartData(isDataAvailable ? trimInitialZeroDataPoints(computeChartDataPoints(alphPriceHistory, addresses)) : [])
   }, [addresses, alphPriceHistory, isDataAvailable])
 
-  if (!isDataAvailable || chartData.length <= 2 || !firstItem) return null
+  const worthHasGoneUp = firstItem?.worth ? firstItem.worth < latestWorth : undefined
 
-  const worthHasGoneUp = firstItem.worth < latestWorth
-  const chartColor = colord(worthHasGoneUp ? theme.global.valid : theme.global.alert)
+  const chartColor = colord(
+    worthHasGoneUp === undefined ? theme.font.tertiary : worthHasGoneUp ? theme.global.valid : theme.global.alert
+  )
 
-  const data = filteredChartData.map(({ date, worth }) => ({
-    x: date,
-    y: worth
-  }))
+  const data =
+    filteredChartData.length > 0
+      ? filteredChartData.map(({ date, worth }) => ({
+          x: date,
+          y: worth
+        }))
+      : undefined
 
   return (
-    <View style={style}>
-      <Svg height={100}>
+    <Animated.View style={[style, animatedStyle]}>
+      <Svg height={chartHeight}>
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
             <Stop offset="0%" stopColor={chartColor.toHex()} stopOpacity={0.4} />
             <Stop offset="75%" stopColor={chartColor.toHex()} stopOpacity={0} />
           </LinearGradient>
         </Defs>
-        <VictoryArea
-          data={data}
-          interpolation="basis"
-          height={100}
-          padding={0}
-          standalone={false}
-          animate
-          style={{
-            data: {
-              fill: 'url(#gradientBg)',
-              stroke: chartColor.alpha(0.5).toHex(),
-              strokeWidth: 2
-            }
-          }}
-        />
+        {data && (
+          <VictoryArea
+            data={data}
+            interpolation="basis"
+            height={chartHeight}
+            padding={0}
+            standalone={false}
+            animate
+            style={{
+              data: {
+                fill: 'url(#gradientBg)',
+                stroke: chartColor.alpha(0.5).toHex(),
+                strokeWidth: 2
+              }
+            }}
+          />
+        )}
       </Svg>
-    </View>
+    </Animated.View>
   )
 }
 

@@ -21,7 +21,7 @@ import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Skeleton } from 'moti/skeleton'
 import { useState } from 'react'
-import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -94,29 +94,29 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
               <AppText color="primary">{networkName}</AppText>
             </ActiveNetwork>
           </SurfaceHeader>
-          <Skeleton show={isPriceLoading || isLoadingBalances} colorMode={theme.name}>
-            <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
-          </Skeleton>
-          {(!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart !== undefined)) && (
-            <Row>
-              <Skeleton show={!haveHistoricBalancesLoaded} colorMode={theme.name}>
-                <DeltaPercentage percentage={deltaPercentage} />
-              </Skeleton>
-              <ChartLengthBadges>
-                {chartLengths.map((length) => {
-                  const isActive = length === chartLength
 
-                  return (
-                    <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
-                      <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
-                        {length.toUpperCase()}
-                      </AppText>
-                    </ChartLengthButton>
-                  )
-                })}
-              </ChartLengthBadges>
-            </Row>
-          )}
+          <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+
+          <Row>
+            {haveHistoricBalancesLoaded && (
+              <>
+                <DeltaPercentage percentage={deltaPercentage} />
+                <ChartLengthBadges>
+                  {chartLengths.map((length) => {
+                    const isActive = length === chartLength
+
+                    return (
+                      <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
+                        <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
+                          {length.toUpperCase()}
+                        </AppText>
+                      </ChartLengthButton>
+                    )
+                  })}
+                </ChartLengthBadges>
+              </>
+            )}
+          </Row>
         </TextContainer>
 
         <ChartContainer>
@@ -174,6 +174,7 @@ const Row = styled.View`
   flex-direction: row;
   gap: 24px;
   margin: 10px 0;
+  height: 30px;
 `
 
 const SurfaceHeader = styled.View`

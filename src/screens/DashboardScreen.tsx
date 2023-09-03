@@ -23,6 +23,7 @@ import React from 'react'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
@@ -56,7 +57,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
 
   const buttonsRowStyle = useAnimatedStyle(() => ({
-    height: isLoading ? 0 : withSpring(75, { duration: 2000 })
+    height: withSpring(isLoading ? 0 : 75, defaultSpringConfiguration)
   }))
 
   useCustomNavigationHeader({
@@ -95,7 +96,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               onPress={() => navigation.navigate('SendNavigation')}
               Icon={ArrowUp}
               title="Send"
-              type="transparent"
+              type="tint"
               color={theme.global.send}
               flex
             />
@@ -103,7 +104,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               onPress={() => navigation.navigate('ReceiveNavigation')}
               Icon={ArrowDown}
               title="Receive"
-              type="transparent"
+              type="tint"
               color={theme.global.receive}
               flex
             />
