@@ -24,7 +24,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import Modalize from '~/components/layout/Modalize'
+import BottomModal from '~/components/layout/BottomModal'
 import { useAppSelector } from '~/hooks/redux'
 import SwitchWalletModal from '~/screens/SwitchWalletModal'
 
@@ -45,9 +45,7 @@ const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
       </Button>
 
       <Portal>
-        <Modalize ref={walletSwitchModalRef}>
-          <SwitchWalletModal onClose={closeWalletSwitchModal} />
-        </Modalize>
+        <BottomModal Content={SwitchWalletModal} />
       </Portal>
     </>
   )

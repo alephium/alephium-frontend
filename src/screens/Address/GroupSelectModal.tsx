@@ -21,7 +21,7 @@ import { map } from 'lodash'
 import React from 'react'
 
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalProps, ScrollModal } from '~/components/layout/Modals'
+import { ModalProps, ScrollModal } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'

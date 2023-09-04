@@ -21,7 +21,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { Modal, ModalProps } from '~/components/layout/Modals'
+import { Modal, ModalProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'

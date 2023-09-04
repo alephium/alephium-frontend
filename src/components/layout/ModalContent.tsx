@@ -17,14 +17,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import styled from 'styled-components/native'
 
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ScrollSection, { ScrollSectionProps } from '~/components/layout/ScrollSection'
 
-export type ModalProps<ScreenType = ScreenProps | ScrollScreenProps> = ScreenType & {
+export type ModalContentProps<ScreenType = ScreenProps | ScrollScreenProps> = ScreenType & {
   onClose?: () => void
+  isScrollable?: boolean
 }
+
+export const ModalContent = ({ children, ...props }: ModalContentProps) => (
+  <ModalContentStyled {...props}>{children}</ModalContentStyled>
+)
 
 export const Modal = ({ children, style, ...props }: ScreenProps) => {
   const insets = useSafeAreaInsets()
@@ -45,3 +51,5 @@ export const ScrollModal = ({ children, style, ...props }: ScrollSectionProps) =
     </ScrollSection>
   )
 }
+
+const ModalContentStyled = styled.View``

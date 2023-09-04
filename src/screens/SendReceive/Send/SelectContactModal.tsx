@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalProps, ScrollModal } from '~/components/layout/Modals'
+import { ModalProps, ScrollModal } from '~/components/layout/ModalContent'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
 

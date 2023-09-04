@@ -18,29 +18,46 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
-import Ionicons from '@expo/vector-icons/Ionicons'
 import { X } from 'lucide-react-native'
 import React, { ReactNode, useEffect, useState } from 'react'
-import { Dimensions, SafeAreaView, TouchableOpacity, View } from 'react-native'
-import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler'
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, WithSpringConfig } from 'react-native-reanimated'
+import { Dimensions, LayoutChangeEvent } from 'react-native'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import Animated, {
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  WithSpringConfig
+} from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
-import Button from '~/components/buttons/Button'
 
-type ModalPositions = 'minimised' | 'maximised' | 'expanded'
+import Button from '~/components/buttons/Button'
+import { ModalContentProps } from '~/components/layout/ModalContent'
+
+type ModalPositions = 'minimised' | 'maximised'
 
 const NAV_HEIGHT = 48
 const DRAG_BUFFER = 40
 
-interface BottomModalProps {
-  children: ReactNode
-  minHeight?: number
-  maxHeight?: number
-  expandedHeight?: number
+const springConfig: WithSpringConfig = {
+  damping: 50,
+  mass: 0.3,
+  stiffness: 120,
+  overshootClamping: true,
+  restSpeedThreshold: 0.3,
+  restDisplacementThreshold: 0.3
 }
 
-const BottomModal = (props: BottomModalProps) => {
+interface BottomModalProps {
+  Content: (props: ModalContentProps) => ReactNode
+  isOpen: boolean
+  isScrollable?: boolean
+}
+
+const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
+  const insets = useSafeAreaInsets()
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -49,75 +66,70 @@ const BottomModal = (props: BottomModalProps) => {
     return () => subscription?.remove()
   }, [])
 
-  const minHeight = props.minHeight || 120
-  const maxHeight = props.maxHeight || dimensions.height
-  const expandedHeight = props.expandedHeight || dimensions.height * 0.6
+  const contentHeight = useSharedValue(0)
 
+  const maxHeight = dimensions.height
+
+  const minHeight = useSharedValue(contentHeight.value + NAV_HEIGHT)
+
+  const modalHeight = useSharedValue(0)
   const position = useSharedValue<ModalPositions>('minimised')
-  const sheetHeight = useSharedValue(-minHeight)
   const navHeight = useSharedValue(0)
   const offsetY = useSharedValue(0)
 
-  const springConfig: WithSpringConfig = {
-    damping: 50,
-    mass: 0.3,
-    stiffness: 120,
-    overshootClamping: true,
-    restSpeedThreshold: 0.3,
-    restDisplacementThreshold: 0.3
-  }
-
-  const panGesture = Gesture.Pan()
-    .onStart((e) => {
-      offsetY.value = sheetHeight.value
-    })
-    .onChange((e) => {
-      sheetHeight.value = offsetY.value + e.translationY
-    })
-    .onEnd(() => {
-      'worklet'
-
-      const shouldExpand =
-        (position.value === 'maximised' && -sheetHeight.value < maxHeight - DRAG_BUFFER) ||
-        (position.value === 'minimised' && -sheetHeight.value > minHeight + DRAG_BUFFER)
-
-      const shouldMinimise = position.value === 'expanded' && -sheetHeight.value < expandedHeight - DRAG_BUFFER
-
-      const shouldMaximise = position.value === 'expanded' && -sheetHeight.value > expandedHeight + DRAG_BUFFER
-
-      if (shouldExpand) {
-        navHeight.value = withSpring(0, springConfig)
-        sheetHeight.value = withSpring(-expandedHeight, springConfig)
-        position.value = 'expanded'
-      } else if (shouldMaximise) {
-        navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)
-        sheetHeight.value = withSpring(-maxHeight, springConfig)
-        position.value = 'maximised'
-      } else if (shouldMinimise) {
-        navHeight.value = withSpring(0, springConfig)
-        sheetHeight.value = withSpring(-minHeight, springConfig)
-        position.value = 'minimised'
-      } else {
-        sheetHeight.value = withSpring(
-          position.value === 'expanded' ? -expandedHeight : position.value === 'maximised' ? -maxHeight : -minHeight,
-          springConfig
-        )
+  useAnimatedReaction(
+    () => contentHeight.value,
+    (currentValue, previousValue) => {
+      // React to children component height change
+      if (previousValue === null || previousValue < currentValue) {
+        minHeight.value = currentValue + NAV_HEIGHT
+        modalHeight.value = minHeight.value
       }
-    })
+    }
+  )
 
   const sheetHeightAnimatedStyle = useAnimatedStyle(() => ({
-    height: -sheetHeight.value
-  }))
-
-  const sheetContentAnimatedStyle = useAnimatedStyle(() => ({
-    paddingBottom: position.value === 'maximised' ? 180 : 0,
-    paddingTop: position.value === 'maximised' ? 40 : 20
+    height: -modalHeight.value,
+    paddingTop: position.value === 'maximised' ? insets.top : 20
   }))
 
   const sheetNavigationAnimatedStyle = useAnimatedStyle(() => ({
     height: navHeight.value,
     overflow: 'hidden'
   }))
+
+  const handleContentLayout = (e: LayoutChangeEvent) => {
+    if (e.nativeEvent.layout.height > contentHeight.value) {
+      contentHeight.value = e.nativeEvent.layout.height
+    }
+  }
+
+  const panGesture = Gesture.Pan()
+    .onStart((e) => {
+      offsetY.value = modalHeight.value
+    })
+    .onChange((e) => {
+      modalHeight.value = offsetY.value + e.translationY
+    })
+    .onEnd(() => {
+      'worklet'
+
+      const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
+
+      const shouldMaximise = position.value === 'minimised' && -modalHeight.value > contentHeight.value + DRAG_BUFFER
+
+      if (shouldMaximise) {
+        navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)
+        modalHeight.value = withSpring(-maxHeight, springConfig)
+        position.value = 'maximised'
+      } else if (shouldMinimise) {
+        navHeight.value = withSpring(0, springConfig)
+        modalHeight.value = withSpring(-minHeight.value, springConfig)
+        position.value = 'minimised'
+      } else {
+        modalHeight.value = withSpring(position.value === 'maximised' ? -maxHeight : -minHeight.value, springConfig)
+      }
+    })
 
   return (
     <GestureDetector gesture={panGesture}>
@@ -128,20 +140,20 @@ const BottomModal = (props: BottomModalProps) => {
             <HandleContainer>
               <Handle />
             </HandleContainer>
-            <Content style={sheetContentAnimatedStyle}>
+            <ContentContainer>
               <Navigation style={sheetNavigationAnimatedStyle}>
                 <Button
                   onPress={() => {
                     navHeight.value = withSpring(0, springConfig)
-                    sheetHeight.value = withSpring(-expandedHeight, springConfig)
-                    position.value = 'expanded'
+                    modalHeight.value = withSpring(-minHeight, springConfig)
+                    position.value = 'minimised'
                   }}
                   Icon={X}
                   round
                 />
               </Navigation>
-              {props.children}
-            </Content>
+              <Content onLayout={handleContentLayout} />
+            </ContentContainer>
           </BottomModalStyled>
         </Container>
       </Animated.View>
@@ -190,10 +202,9 @@ const Handle = styled.View`
 
 const Navigation = styled(Animated.View)`
   align-items: flex-end;
-  padding-top: 15px;
 `
 
-const Content = styled(Animated.View)`
+const ContentContainer = styled(Animated.View)`
   flex: 1;
   padding: 0 20px;
 `
