@@ -19,32 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ComponentProps, forwardRef } from 'react'
 import { Modalize as RNModalize } from 'react-native-modalize'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Modal from '~/components/layout/Modal'
 
 const Modalize = forwardRef(function Modalize({ children, ...props }: ComponentProps<typeof RNModalize>, ref) {
   const insets = useSafeAreaInsets()
 
   return (
-    <RNModalize
-      ref={ref}
-      modalTopOffset={insets.top}
-      adjustToContentHeight
-      openAnimationConfig={{
-        timing: { duration: 200 },
-        spring: { stiffness: 200, damping: 30 }
-      }}
-      closeAnimationConfig={{
-        timing: { duration: 200 },
-        spring: { stiffness: 50, damping: 10 }
-      }}
-      handlePosition="inside"
-      modalStyle={{
-        margin: 5,
-        borderRadius: 50
-      }}
-      {...props}
-    >
+    <Modal ref={ref} {...props}>
       {children}
-    </RNModalize>
+    </Modal>
   )
 })
 

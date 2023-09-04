@@ -29,6 +29,4 @@ const ScrollSection = ({ children, style, ...props }: ScrollSectionProps) => (
 
 export default ScrollSection
 
-const ScrollSectionStyled = styled.ScrollView`
-  background-color: ${({ theme }) => theme.bg.back1};
-`
+const ScrollSectionStyled = styled.ScrollView``
