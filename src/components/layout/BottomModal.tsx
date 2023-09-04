@@ -23,10 +23,8 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import { Dimensions, LayoutChangeEvent } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
-  runOnUI,
-  SharedValue,
+  runOnJS,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withSpring,
   WithSpringConfig
@@ -55,10 +53,11 @@ const springConfig: WithSpringConfig = {
 interface BottomModalProps {
   Content: (props: ModalContentProps) => ReactNode
   isOpen: boolean
+  onClose: () => void
   isScrollable?: boolean
 }
 
-const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
+const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProps) => {
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
   const insets = useSafeAreaInsets()
 
@@ -80,7 +79,7 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
   const offsetY = useSharedValue(0)
 
   const sheetHeightAnimatedStyle = useAnimatedStyle(() => ({
-    height: -modalHeight.value,
+    height: isOpen ? -modalHeight.value : withSpring(0, springConfig),
     paddingTop: position.value === 'maximised' ? insets.top : 20
   }))
 
@@ -90,12 +89,21 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
   }))
 
   const handleContentLayout = (e: LayoutChangeEvent) => {
-    const newHeight = e.nativeEvent.layout.height
+    const newContentHeight = e.nativeEvent.layout.height
 
-    if (newHeight > contentHeight.value) {
-      contentHeight.value = newHeight
+    if (!modalHeight.value || newContentHeight > contentHeight.value) {
+      contentHeight.value = newContentHeight
       minHeight.value = contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
+      modalHeight.value = -minHeight.value
+      position.value = 'minimised'
     }
+  }
+
+  const handleClose = () => {
+    navHeight.value = withSpring(0, springConfig)
+    modalHeight.value = withSpring(0, springConfig)
+    position.value = 'minimised'
+    onClose()
   }
 
   const panGesture = Gesture.Pan()
@@ -108,7 +116,9 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
     .onEnd(() => {
       const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
 
-      const shouldMaximise = position.value === 'minimised' && -modalHeight.value > contentHeight.value + DRAG_BUFFER
+      const shouldMaximise = position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
+
+      const shouldClose = position.value === 'minimised' && -modalHeight.value < minHeight.value - DRAG_BUFFER
 
       if (shouldMaximise) {
         navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)
@@ -118,12 +128,16 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
         navHeight.value = withSpring(0, springConfig)
         modalHeight.value = withSpring(-minHeight.value, springConfig)
         position.value = 'minimised'
+      } else if (shouldClose) {
+        runOnJS(handleClose)()
       } else {
-        modalHeight.value = withSpring(position.value === 'maximised' ? -maxHeight : -minHeight.value, springConfig)
+        if (position.value === 'maximised') {
+          modalHeight.value = withSpring(-maxHeight, springConfig)
+        }
       }
     })
 
-  return (
+  return isOpen ? (
     <GestureDetector gesture={panGesture}>
       <Animated.View style={{ flex: 1 }}>
         <Backdrop />
@@ -134,15 +148,7 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
             </HandleContainer>
             <ContentContainer>
               <Navigation style={sheetNavigationAnimatedStyle}>
-                <Button
-                  onPress={() => {
-                    navHeight.value = withSpring(0, springConfig)
-                    modalHeight.value = withSpring(-minHeight, springConfig)
-                    position.value = 'minimised'
-                  }}
-                  Icon={X}
-                  round
-                />
+                <Button onPress={handleClose} Icon={X} round />
               </Navigation>
               <Content onLayout={handleContentLayout} />
             </ContentContainer>
@@ -150,7 +156,7 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
         </Container>
       </Animated.View>
     </GestureDetector>
-  )
+  ) : null
 }
 
 export default BottomModal

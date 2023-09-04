@@ -16,17 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { LayoutChangeEvent } from 'react-native'
-
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import SwitchWalletBase from '~/screens/SwitchWalletBase'
 
-const SwitchWalletModal = ({ onClose, ...props }: ModalContentProps) => {
-  return (
-    <ModalContent {...props}>
-      <SwitchWalletBase onClose={onClose} />
-    </ModalContent>
-  )
-}
+const SwitchWalletModal = ({ onClose, ...props }: ModalContentProps) => (
+  <ModalContent {...props}>
+    <SwitchWalletBase onClose={onClose} />
+  </ModalContent>
+)
 
 export default SwitchWalletModal
