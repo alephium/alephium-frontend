@@ -23,8 +23,10 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import { Dimensions, LayoutChangeEvent } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
-  useAnimatedReaction,
+  runOnUI,
+  SharedValue,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
   WithSpringConfig
@@ -34,6 +36,7 @@ import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import { ModalContentProps } from '~/components/layout/ModalContent'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised'
 
@@ -70,23 +73,11 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
 
   const maxHeight = dimensions.height
 
-  const minHeight = useSharedValue(contentHeight.value + NAV_HEIGHT)
-
+  const minHeight = useSharedValue(0)
   const modalHeight = useSharedValue(0)
   const position = useSharedValue<ModalPositions>('minimised')
   const navHeight = useSharedValue(0)
   const offsetY = useSharedValue(0)
-
-  useAnimatedReaction(
-    () => contentHeight.value,
-    (currentValue, previousValue) => {
-      // React to children component height change
-      if (previousValue === null || previousValue < currentValue) {
-        minHeight.value = currentValue + NAV_HEIGHT
-        modalHeight.value = minHeight.value
-      }
-    }
-  )
 
   const sheetHeightAnimatedStyle = useAnimatedStyle(() => ({
     height: -modalHeight.value,
@@ -99,8 +90,11 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
   }))
 
   const handleContentLayout = (e: LayoutChangeEvent) => {
-    if (e.nativeEvent.layout.height > contentHeight.value) {
-      contentHeight.value = e.nativeEvent.layout.height
+    const newHeight = e.nativeEvent.layout.height
+
+    if (newHeight > contentHeight.value) {
+      contentHeight.value = newHeight
+      minHeight.value = contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
     }
   }
 
@@ -112,8 +106,6 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
       modalHeight.value = offsetY.value + e.translationY
     })
     .onEnd(() => {
-      'worklet'
-
       const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
 
       const shouldMaximise = position.value === 'minimised' && -modalHeight.value > contentHeight.value + DRAG_BUFFER
@@ -136,7 +128,7 @@ const BottomModal = ({ Content, isOpen, isScrollable }: BottomModalProps) => {
       <Animated.View style={{ flex: 1 }}>
         <Backdrop />
         <Container>
-          <BottomModalStyled style={sheetHeightAnimatedStyle}>
+          <BottomModalStyled style={[sheetHeightAnimatedStyle]}>
             <HandleContainer>
               <Handle />
             </HandleContainer>
