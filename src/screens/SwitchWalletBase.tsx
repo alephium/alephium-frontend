@@ -21,7 +21,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
-import { Alert, ScrollView } from 'react-native'
+import { Alert, ScrollView, View } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -103,26 +103,26 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
 
   return (
     <>
-      <ScreenSection>
+      <Content>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <Subtitle>Switch to another wallet?</Subtitle>
-      </ScreenSection>
 
-      <ScrollView alwaysBounceVertical={false}>
-        <ScreenSection>
-          <BoxSurface>
-            {wallets.map((wallet) => (
-              <RadioButtonRow
-                key={wallet.id}
-                title={wallet.name}
-                onPress={() => handleWalletItemPress(wallet.id)}
-                isActive={wallet.id === activeWalletMetadataId}
-                isInput
-              />
-            ))}
-          </BoxSurface>
-        </ScreenSection>
-      </ScrollView>
+        <ScrollView alwaysBounceVertical={false}>
+          <ScreenSection>
+            <BoxSurface>
+              {wallets.map((wallet) => (
+                <RadioButtonRow
+                  key={wallet.id}
+                  title={wallet.name}
+                  onPress={() => handleWalletItemPress(wallet.id)}
+                  isActive={wallet.id === activeWalletMetadataId}
+                  isInput
+                />
+              ))}
+            </BoxSurface>
+          </ScreenSection>
+        </ScrollView>
+      </Content>
 
       <BottomScreenSection>
         <ButtonsRow>
@@ -142,3 +142,5 @@ const Subtitle = styled(AppText)`
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
 `
+
+const Content = styled.View``

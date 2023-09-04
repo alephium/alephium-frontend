@@ -18,11 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { X } from 'lucide-react-native'
 import React, { ReactNode, useEffect, useState } from 'react'
-import { Dimensions, SafeAreaView, Text, TouchableOpacity } from 'react-native'
+import { Dimensions, SafeAreaView, TouchableOpacity, View } from 'react-native'
 import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, WithSpringConfig } from 'react-native-reanimated'
 import styled from 'styled-components/native'
+import Button from '~/components/buttons/Button'
 
 type ModalPositions = 'minimised' | 'maximised' | 'expanded'
 
@@ -108,8 +111,7 @@ const BottomModal = (props: BottomModalProps) => {
 
   const sheetContentAnimatedStyle = useAnimatedStyle(() => ({
     paddingBottom: position.value === 'maximised' ? 180 : 0,
-    paddingTop: position.value === 'maximised' ? 40 : 20,
-    paddingHorizontal: 20
+    paddingTop: position.value === 'maximised' ? 40 : 20
   }))
 
   const sheetNavigationAnimatedStyle = useAnimatedStyle(() => ({
@@ -126,22 +128,20 @@ const BottomModal = (props: BottomModalProps) => {
             <HandleContainer>
               <Handle />
             </HandleContainer>
-            <Animated.View style={sheetContentAnimatedStyle}>
-              <Animated.View style={sheetNavigationAnimatedStyle}>
-                <CloseButton
+            <Content style={sheetContentAnimatedStyle}>
+              <Navigation style={sheetNavigationAnimatedStyle}>
+                <Button
                   onPress={() => {
                     navHeight.value = withSpring(0, springConfig)
                     sheetHeight.value = withSpring(-expandedHeight, springConfig)
                     position.value = 'expanded'
                   }}
-                >
-                  <Text>{'❌'}</Text>
-                </CloseButton>
-              </Animated.View>
-              <SafeAreaView>
-                <ScrollView>{props.children}</ScrollView>
-              </SafeAreaView>
-            </Animated.View>
+                  Icon={X}
+                  round
+                />
+              </Navigation>
+              {props.children}
+            </Content>
           </BottomModalStyled>
         </Container>
       </Animated.View>
@@ -188,12 +188,12 @@ const Handle = styled.View`
   background-color: #cccccc;
 `
 
-const CloseButton = styled(TouchableOpacity)`
-  width: 48px;
-  height: 48px;
-  border-radius: 48px;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-start;
-  margin-bottom: 10px;
+const Navigation = styled(Animated.View)`
+  align-items: flex-end;
+  padding-top: 15px;
+`
+
+const Content = styled(Animated.View)`
+  flex: 1;
+  padding: 0 20px;
 `
