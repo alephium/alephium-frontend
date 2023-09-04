@@ -115,15 +115,17 @@ const CarouselPagination = styled.View`
   flex-shrink: 1;
   align-self: center;
   background-color: ${({ theme }) => theme.bg.secondary};
-  padding: 11px 14px;
+  padding: 10px;
   border-radius: 100px;
   gap: 9px;
 `
 
 const CarouselFooter = styled(ScreenSection)<{ centered?: boolean }>`
+  height: 60px;
   flex-direction: row;
   align-items: center;
   justify-content: ${({ centered }) => (centered ? 'center' : 'space-between')};
+  padding: 0 15px;
 `
 
 interface CarouselPaginationItemProps {

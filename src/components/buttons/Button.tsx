@@ -101,14 +101,14 @@ const Button = ({
       }[type],
       flex: flex ? 1 : 0,
       width: round ? 45 : props.wide ? '75%' : hasOnlyIcon ? 45 : 'auto',
-      height: compact ? 'auto' : hasOnlyIcon ? 45 : 55,
-      borderRadius: round ? 100 : BORDER_RADIUS,
+      height: compact ? 30 : hasOnlyIcon ? 45 : 55,
+      borderRadius: round || compact ? 100 : BORDER_RADIUS,
       justifyContent: round ? 'center' : undefined,
       minWidth: centered ? 200 : undefined,
       marginVertical: centered ? 0 : undefined,
       marginHorizontal: centered ? 'auto' : undefined,
-      paddingVertical: compact ? 7 : !hasOnlyIcon ? 0 : undefined,
-      paddingHorizontal: compact ? 20 : !hasOnlyIcon ? 25 : undefined,
+      paddingVertical: compact ? 5 : !hasOnlyIcon ? 0 : undefined,
+      paddingHorizontal: compact ? 10 : !hasOnlyIcon ? 25 : undefined,
       gap: compact ? 5 : undefined
     },
     style
@@ -120,7 +120,7 @@ const Button = ({
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
       {title && (
-        <AppText style={{ flexGrow: 1, color: font, textAlign: 'center' }} semiBold size={16}>
+        <AppText style={{ flexGrow: 1, color: font, textAlign: 'center' }} semiBold size={compact ? 14 : 16}>
           {title}
         </AppText>
       )}

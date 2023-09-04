@@ -43,6 +43,7 @@ import {
   selectDefaultAddress,
   syncAddressesData
 } from '~/store/addressesSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
@@ -98,6 +99,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
       <BottomBarScrollScreen
         refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={190} />}
         onScroll={onScroll}
+        hasBottomBar
         {...props}
       >
         <Content style={contentStyle}>
@@ -158,6 +160,7 @@ export default AddressesScreen
 
 const Content = styled(Animated.View)`
   flex: 1;
+  gap: ${VERTICAL_GAP}px;
 `
 
 const AddressBoxStyled = styled(AddressBox)`

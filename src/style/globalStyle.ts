@@ -22,8 +22,8 @@ export const BORDER_RADIUS_BIG = 16
 export const BORDER_RADIUS = 9
 export const BORDER_RADIUS_SMALL = 6
 
-export const INPUTS_HEIGHT = 70
-export const INPUTS_PADDING = 21
+export const INPUTS_HEIGHT = 60
+export const INPUTS_PADDING = 16
 
 export const HORIZONTAL_MARGIN = 15
 export const VERTICAL_GAP = 25

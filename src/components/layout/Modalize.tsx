@@ -29,8 +29,17 @@ const Modalize = forwardRef(function Modalize({ children, ...props }: ComponentP
       modalTopOffset={insets.top}
       adjustToContentHeight
       openAnimationConfig={{
-        timing: { duration: 360 },
-        spring: { stiffness: 140, damping: 30 }
+        timing: { duration: 200 },
+        spring: { stiffness: 200, damping: 30 }
+      }}
+      closeAnimationConfig={{
+        timing: { duration: 200 },
+        spring: { stiffness: 50, damping: 10 }
+      }}
+      handlePosition="inside"
+      modalStyle={{
+        margin: 5,
+        borderRadius: 50
       }}
       {...props}
     >
