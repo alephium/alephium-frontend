@@ -24,6 +24,7 @@ import { Dimensions, LayoutChangeEvent } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   runOnJS,
+  runOnUI,
   SlideInDown,
   SlideOutDown,
   useAnimatedStyle,
@@ -95,13 +96,13 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
 
     if (!modalHeight.value || newContentHeight > contentHeight.value + 1) {
       // 👆 Add one to avoid floating point issues
-      console.log('LAYOUT')
-      console.log(newContentHeight, contentHeight.value)
 
-      contentHeight.value = newContentHeight
-      minHeight.value = contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
-      modalHeight.value = -minHeight.value
-      position.value = 'minimised'
+      runOnUI(() => {
+        contentHeight.value = newContentHeight
+        minHeight.value = contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
+        modalHeight.value = withSpring(-minHeight.value, springConfig)
+        position.value = 'minimised'
+      })()
     }
   }
 
@@ -118,7 +119,6 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
     })
     .onChange((e) => {
       modalHeight.value = offsetY.value + e.translationY
-      console.log('Change')
     })
     .onEnd(() => {
       const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
@@ -128,28 +128,21 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
       const shouldClose = position.value === 'minimised' && -modalHeight.value < minHeight.value - DRAG_BUFFER
 
       if (shouldMaximise) {
-        console.log('SHOULD Maxi')
         navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)
         modalHeight.value = withSpring(-maxHeight, springConfig)
         position.value = 'maximised'
       } else if (shouldMinimise) {
-        console.log('SHOULD MINIMIZE')
         navHeight.value = withSpring(0, springConfig)
         modalHeight.value = withSpring(-minHeight.value, springConfig)
         position.value = 'minimised'
       } else if (shouldClose) {
-        console.log('CLose')
         runOnJS(handleClose)()
       } else {
-        console.log('ELSE')
-        console.log(position.value)
         modalHeight.value =
           position.value === 'maximised'
             ? withSpring(-maxHeight, springConfig)
             : withSpring(-minHeight.value, springConfig)
       }
-      console.log(modalHeight.value)
-      console.log('---')
     })
 
   return isOpen ? (
