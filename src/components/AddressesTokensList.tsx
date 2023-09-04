@@ -134,14 +134,12 @@ const LoadingRow = styled.View`
 `
 
 const TabBarStyled = styled(TabBar)`
-  padding: 0 5px;
-  margin-bottom: 15px;
+  padding: 15px;
+  border-bottom: 1px solid black;
 `
 
 const ListContainer = styled.View`
   border-radius: ${BORDER_RADIUS_BIG}px;
-  padding: 0 15px;
-  padding-top: 15px;
   margin: 0 ${HORIZONTAL_MARGIN}px;
   background-color: ${({ theme }) => theme.bg.secondary};
 `

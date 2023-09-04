@@ -78,7 +78,6 @@ export default ListItem
 const ListItemStyled = styled(Animated.View)`
   border-radius: ${BORDER_RADIUS}px;
   border-color: ${({ theme }) => theme.border.primary};
-  overflow: hidden;
 `
 
 const Row = styled(Animated.View)`
@@ -86,6 +85,7 @@ const Row = styled(Animated.View)`
   flex-direction: row;
   gap: 15px;
   align-items: center;
+  padding-left: 15px;
 `
 
 const RowContent = styled.View<{ showSeparator: boolean }>`
@@ -93,6 +93,7 @@ const RowContent = styled.View<{ showSeparator: boolean }>`
   gap: 10px;
   height: 100%;
   flex: 1;
+  padding-right: 15px;
 
   ${({ showSeparator }) =>
     showSeparator &&

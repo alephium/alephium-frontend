@@ -97,7 +97,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: '#28282b'
   },
   border: {
-    primary: 'rgba(255, 255, 255, 0.10)',
+    primary: 'rgba(255, 255, 255, 0.12)',
     secondary: 'rgba(255, 255, 255, 0.06)'
   },
   shadow: {
