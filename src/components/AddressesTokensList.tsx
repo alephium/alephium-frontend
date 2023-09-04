@@ -31,10 +31,9 @@ import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs
 } from '~/store/addressesSlice'
-import { BORDER_RADIUS, BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
-import { ScreenSection } from './layout/Screen'
 import TokenListItem from './TokenListItem'
 
 interface AddressesTokensListProps {

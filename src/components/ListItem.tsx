@@ -81,7 +81,7 @@ const ListItemStyled = styled(Animated.View)`
 `
 
 const Row = styled(Animated.View)`
-  height: 60px;
+  min-height: 60px;
   flex-direction: row;
   gap: 15px;
   align-items: center;
@@ -94,6 +94,7 @@ const RowContent = styled.View<{ showSeparator: boolean }>`
   height: 100%;
   flex: 1;
   padding-right: 15px;
+  align-items: center;
 
   ${({ showSeparator }) =>
     showSeparator &&

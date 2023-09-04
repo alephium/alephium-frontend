@@ -183,9 +183,7 @@ const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
   margin-top: 22px;
 `
 
-const TransactionListItemStyled = styled(TransactionListItem)`
-  margin: 0 20px;
-`
+const TransactionListItemStyled = styled(TransactionListItem)``
 
 const Footer = styled.View`
   padding-top: 40px;

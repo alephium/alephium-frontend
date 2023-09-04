@@ -112,8 +112,8 @@ export const darkTheme: DefaultTheme = {
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#d488eb',
-    send: '#F7B789',
-    receive: '#8DD3FA'
+    send: '#fd9166',
+    receive: '#7fcef8'
   },
   gradient: {
     yellow: '#FFCD82',
