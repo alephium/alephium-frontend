@@ -23,10 +23,9 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import { Dimensions, LayoutChangeEvent } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
+  interpolate,
   runOnJS,
   runOnUI,
-  SlideInDown,
-  SlideOutDown,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -39,7 +38,7 @@ import Button from '~/components/buttons/Button'
 import { ModalContentProps } from '~/components/layout/ModalContent'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
-type ModalPositions = 'minimised' | 'maximised'
+type ModalPositions = 'minimised' | 'maximised' | 'closing'
 
 const NAV_HEIGHT = 48
 const DRAG_BUFFER = 40
@@ -81,14 +80,20 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
   const navHeight = useSharedValue(0)
   const offsetY = useSharedValue(0)
 
-  const sheetHeightAnimatedStyle = useAnimatedStyle(() => ({
-    height: -modalHeight.value, //isOpen ? -modalHeight.value : withSpring(0, springConfig)
-    paddingTop: position.value === 'maximised' ? insets.top : 20
+  const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
+    height: -modalHeight.value,
+    paddingTop:
+      position.value === 'maximised' ? insets.top : position.value === 'closing' ? withSpring(0, springConfig) : 20
   }))
 
-  const sheetNavigationAnimatedStyle = useAnimatedStyle(() => ({
+  const modalNavigationAnimatedStyle = useAnimatedStyle(() => ({
     height: navHeight.value,
     overflow: 'hidden'
+  }))
+
+  const backdropAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(-modalHeight.value, [0, dimensions.height], [0, 1]),
+    pointerEvents: position.value === 'closing' ? 'none' : 'auto'
   }))
 
   const handleContentLayout = (e: LayoutChangeEvent) => {
@@ -107,9 +112,9 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
   }
 
   const handleClose = () => {
+    position.value = 'closing'
     navHeight.value = withSpring(0, springConfig)
     modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(onClose)())
-    position.value = 'minimised'
   }
 
   const panGesture = Gesture.Pan()
@@ -147,14 +152,14 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
   return isOpen ? (
     <GestureDetector gesture={panGesture}>
       <Animated.View style={{ flex: 1 }}>
-        <Backdrop />
+        <Backdrop style={backdropAnimatedStyle} />
         <Container>
-          <BottomModalStyled style={sheetHeightAnimatedStyle}>
+          <BottomModalStyled style={modalHeightAnimatedStyle}>
             <HandleContainer>
               <Handle />
             </HandleContainer>
             <ContentContainer>
-              <Navigation style={sheetNavigationAnimatedStyle}>
+              <Navigation style={modalNavigationAnimatedStyle}>
                 <Button onPress={handleClose} Icon={X} round />
               </Navigation>
               <Content onLayout={handleContentLayout} />
@@ -181,12 +186,12 @@ const Backdrop = styled(Animated.View)`
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.8);
 `
 
 const BottomModalStyled = styled(Animated.View)`
   justify-content: flex-start;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.highlight};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;
