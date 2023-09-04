@@ -108,9 +108,8 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
 
   const handleClose = () => {
     navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(0, springConfig)
+    modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(onClose)())
     position.value = 'minimised'
-    onClose()
   }
 
   const panGesture = Gesture.Pan()
