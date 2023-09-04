@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ComponentProps, forwardRef } from 'react'
 import { Modalize as RNModalize } from 'react-native-modalize'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Modal from '~/components/layout/Modal'
+import Modal from '~/components/layout/BottomModal'
 
 const Modalize = forwardRef(function Modalize({ children, ...props }: ComponentProps<typeof RNModalize>, ref) {
   const insets = useSafeAreaInsets()

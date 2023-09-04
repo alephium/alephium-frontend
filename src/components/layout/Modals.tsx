@@ -30,7 +30,7 @@ export const Modal = ({ children, style, ...props }: ScreenProps) => {
   const insets = useSafeAreaInsets()
 
   return (
-    <Screen style={[style, { paddingBottom: insets.bottom }]} {...props}>
+    <Screen style={[style, { paddingBottom: insets.bottom, backgroundColor: 'transparent' }]} {...props}>
       {children}
     </Screen>
   )
@@ -40,7 +40,7 @@ export const ScrollModal = ({ children, style, ...props }: ScrollSectionProps) =
   const insets = useSafeAreaInsets()
 
   return (
-    <ScrollSection style={[style, { paddingBottom: insets.bottom }]} {...props}>
+    <ScrollSection style={[style, { paddingBottom: insets.bottom, backgroundColor: 'transparent' }]} {...props}>
       {children}
     </ScrollSection>
   )

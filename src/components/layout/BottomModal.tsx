@@ -20,29 +20,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import React, { ReactNode, useEffect, useState } from 'react'
 import { Dimensions, SafeAreaView, Text, TouchableOpacity } from 'react-native'
-import { PanGestureHandler, ScrollView } from 'react-native-gesture-handler'
-import Animated, {
-  useAnimatedGestureHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  WithSpringConfig
-} from 'react-native-reanimated'
+import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler'
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, WithSpringConfig } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
-interface SheetProps {
+type ModalPositions = 'minimised' | 'maximised' | 'expanded'
+
+const NAV_HEIGHT = 48
+const DRAG_BUFFER = 40
+
+interface BottomModalProps {
   children: ReactNode
   minHeight?: number
   maxHeight?: number
   expandedHeight?: number
 }
 
-type SheetPositions = 'minimised' | 'maximised' | 'expanded'
-
-const NAV_HEIGHT = 48
-const DRAG_BUFFER = 40
-
-const Sheet: React.FC<SheetProps> = (props) => {
+const BottomModal = (props: BottomModalProps) => {
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
 
   useEffect(() => {
@@ -56,9 +50,10 @@ const Sheet: React.FC<SheetProps> = (props) => {
   const maxHeight = props.maxHeight || dimensions.height
   const expandedHeight = props.expandedHeight || dimensions.height * 0.6
 
-  const position = useSharedValue<SheetPositions>('minimised')
+  const position = useSharedValue<ModalPositions>('minimised')
   const sheetHeight = useSharedValue(-minHeight)
   const navHeight = useSharedValue(0)
+  const offsetY = useSharedValue(0)
 
   const springConfig: WithSpringConfig = {
     damping: 50,
@@ -69,14 +64,14 @@ const Sheet: React.FC<SheetProps> = (props) => {
     restDisplacementThreshold: 0.3
   }
 
-  const onGestureEvent = useAnimatedGestureHandler({
-    onStart: (_ev, ctx: any) => {
-      ctx.offsetY = sheetHeight.value
-    },
-    onActive: (ev, ctx: any) => {
-      sheetHeight.value = ctx.offsetY + ev.translationY
-    },
-    onEnd: () => {
+  const panGesture = Gesture.Pan()
+    .onStart((e) => {
+      offsetY.value = sheetHeight.value
+    })
+    .onChange((e) => {
+      sheetHeight.value = offsetY.value + e.translationY
+    })
+    .onEnd(() => {
       'worklet'
 
       const shouldExpand =
@@ -105,8 +100,7 @@ const Sheet: React.FC<SheetProps> = (props) => {
           springConfig
         )
       }
-    }
-  })
+    })
 
   const sheetHeightAnimatedStyle = useAnimatedStyle(() => ({
     height: -sheetHeight.value
@@ -124,11 +118,11 @@ const Sheet: React.FC<SheetProps> = (props) => {
   }))
 
   return (
-    <>
-      <Backdrop />
-      <Container>
-        <PanGestureHandler onGestureEvent={onGestureEvent}>
-          <SheetStyled style={sheetHeightAnimatedStyle}>
+    <GestureDetector gesture={panGesture}>
+      <Animated.View style={{ flex: 1 }}>
+        <Backdrop />
+        <Container>
+          <BottomModalStyled style={sheetHeightAnimatedStyle}>
             <HandleContainer>
               <Handle />
             </HandleContainer>
@@ -141,21 +135,21 @@ const Sheet: React.FC<SheetProps> = (props) => {
                     position.value = 'expanded'
                   }}
                 >
-                  <Text>{`❌`}</Text>
+                  <Text>{'❌'}</Text>
                 </CloseButton>
               </Animated.View>
               <SafeAreaView>
                 <ScrollView>{props.children}</ScrollView>
               </SafeAreaView>
             </Animated.View>
-          </SheetStyled>
-        </PanGestureHandler>
-      </Container>
-    </>
+          </BottomModalStyled>
+        </Container>
+      </Animated.View>
+    </GestureDetector>
   )
 }
 
-export default Sheet
+export default BottomModal
 
 const Container = styled.View`
   position: absolute;
@@ -173,9 +167,9 @@ const Backdrop = styled(Animated.View)`
   background-color: rgba(0, 0, 0, 0.2);
 `
 
-const SheetStyled = styled(Animated.View)`
+const BottomModalStyled = styled(Animated.View)`
   justify-content: flex-start;
-  background-color: #ffffff;
+  background-color: ${({ theme }) => theme.bg.secondary};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;
