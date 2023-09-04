@@ -21,8 +21,7 @@ import styled from 'styled-components/native'
 import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
 export default styled.View`
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.secondary};
   border-radius: ${BORDER_RADIUS_BIG}px;
   overflow: hidden;
 `

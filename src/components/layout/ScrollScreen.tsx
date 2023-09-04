@@ -57,7 +57,7 @@ const ScrollScreen = ({
         contentContainerStyle={[
           contentContainerStyle,
           {
-            marginTop: hasHeader ? headerheight + HORIZONTAL_MARGIN : 0
+            paddingTop: hasHeader ? headerheight + HORIZONTAL_MARGIN : 0
           }
         ]}
         {...props}

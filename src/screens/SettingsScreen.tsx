@@ -20,7 +20,6 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useLayoutEffect } from 'react'
 import { Alert } from 'react-native'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
@@ -50,6 +49,7 @@ import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
 import { analyticsToggled, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { resetNavigationState } from '~/utils/navigation'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
@@ -132,7 +132,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <ScrollScreen onScroll={handleScroll} hasHeader {...props}>
+      <SettingsScreenStyled onScroll={handleScroll} hasHeader {...props}>
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>
@@ -184,7 +184,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           />
           <ButtonStyled title="Delete this wallet" Icon={Trash2} variant="alert" onPress={handleDeleteButtonPress} />
         </ScreenSection>
-      </ScrollScreen>
+      </SettingsScreenStyled>
 
       <Portal>
         <Modalize ref={switchNetworkModalRef}>
@@ -199,6 +199,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 }
 
 export default SettingsScreen
+
+const SettingsScreenStyled = styled(ScrollScreen)`
+  gap: ${VERTICAL_GAP}px;
+`
 
 const ButtonStyled = styled(Button)`
   margin-bottom: 24px;

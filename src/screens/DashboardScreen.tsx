@@ -20,7 +20,7 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
-import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
@@ -39,7 +39,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
-import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
@@ -119,7 +119,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 export default DashboardScreen
 
 const DashboardScreenStyled = styled(BottomBarScrollScreen)`
-  gap: 25px;
+  gap: ${VERTICAL_GAP}px;
 `
 
 const BalanceAndButtons = styled.View`

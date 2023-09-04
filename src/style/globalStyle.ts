@@ -26,3 +26,4 @@ export const INPUTS_HEIGHT = 70
 export const INPUTS_PADDING = 21
 
 export const HORIZONTAL_MARGIN = 15
+export const VERTICAL_GAP = 25
