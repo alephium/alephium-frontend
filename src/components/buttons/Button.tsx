@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { colord } from 'colord'
-import { LucideProps } from 'lucide-react-native'
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -32,7 +32,7 @@ export interface ButtonProps extends PressableProps {
   style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
   centered?: boolean
-  Icon?: (props: LucideProps) => JSX.Element
+  iconProps?: ComponentProps<typeof Ionicons>
   color?: string
   round?: boolean
   flex?: boolean
@@ -46,7 +46,7 @@ const Button = ({
   type = 'primary',
   variant = 'default',
   disabled,
-  Icon,
+  iconProps,
   children,
   round,
   color,
@@ -57,7 +57,7 @@ const Button = ({
 }: ButtonProps) => {
   const theme = useTheme()
 
-  const hasOnlyIcon = !!Icon && !title && !children
+  const hasOnlyIcon = !!iconProps && !title && !children
 
   const bg = {
     default: theme.button.primary,
@@ -100,8 +100,8 @@ const Button = ({
         tint: undefined
       }[type],
       flex: flex ? 1 : 0,
-      width: round ? 45 : props.wide ? '75%' : hasOnlyIcon ? 45 : 'auto',
-      height: compact ? 30 : hasOnlyIcon ? 45 : 55,
+      width: round ? 43 : props.wide ? '75%' : hasOnlyIcon ? 43 : 'auto',
+      height: compact ? 30 : hasOnlyIcon ? 43 : 55,
       borderRadius: round || compact ? 100 : BORDER_RADIUS,
       justifyContent: round ? 'center' : undefined,
       minWidth: centered ? 200 : undefined,
@@ -114,7 +114,7 @@ const Button = ({
     style
   ]
 
-  if (!Icon && !title && !children)
+  if (!iconProps && !title && !children)
     throw new Error('At least one of the following properties is required: icon, title, or children')
 
   return (
@@ -125,7 +125,7 @@ const Button = ({
         </AppText>
       )}
       {children}
-      {Icon && <Icon color={font} size={compact ? 16 : hasOnlyIcon ? 23 : 20} />}
+      {iconProps && <Ionicons color={font} size={compact ? 16 : hasOnlyIcon ? 22 : 20} {...iconProps} />}
     </Pressable>
   )
 }

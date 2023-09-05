@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { Alert, ScrollView } from 'react-native'
@@ -126,8 +125,12 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
 
       <BottomScreenSection>
         <ButtonsRow>
-          <Button title="New wallet" onPress={() => handleButtonPress('create')} Icon={PlusIcon} />
-          <Button title="Import wallet" onPress={() => handleButtonPress('import')} Icon={ArrowDownIcon} />
+          <Button title="New wallet" onPress={() => handleButtonPress('create')} iconProps={{ name: 'add-outline' }} />
+          <Button
+            title="Import wallet"
+            onPress={() => handleButtonPress('import')}
+            iconProps={{ name: 'arrow-down-outline' }}
+          />
         </ButtonsRow>
       </BottomScreenSection>
       <SpinnerModal isActive={loading} text="Switching wallets..." />

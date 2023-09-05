@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
-import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { Alert } from 'react-native'
 import { useModalize } from 'react-native-modalize'
@@ -28,11 +27,11 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
-import HighlightRow from '~/components/Row'
 import BoxSurface from '~/components/layout/BoxSurface'
 import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import HighlightRow from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
 import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
@@ -170,7 +169,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ScreenSectionTitle>Addresses</ScreenSectionTitle>
           <Button
             title="Scan for active addresses"
-            Icon={Search}
+            iconProps={{ name: 'search-outline' }}
             onPress={() => navigation.navigate('AddressDiscoveryScreen')}
           />
         </ScreenSection>
@@ -178,11 +177,16 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ScreenSectionTitle>Wallets</ScreenSectionTitle>
           <ButtonStyled
             title="Add a new wallet"
-            Icon={PlusIcon}
+            iconProps={{ name: 'add-outline' }}
             variant="valid"
             onPress={() => navigation.navigate('LandingScreen')}
           />
-          <ButtonStyled title="Delete this wallet" Icon={Trash2} variant="alert" onPress={handleDeleteButtonPress} />
+          <ButtonStyled
+            title="Delete this wallet"
+            iconProps={{ name: 'trash-outline' }}
+            variant="alert"
+            onPress={handleDeleteButtonPress}
+          />
         </ScreenSection>
       </SettingsScreenStyled>
 

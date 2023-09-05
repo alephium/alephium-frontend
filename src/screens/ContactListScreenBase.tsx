@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { Plus } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { TextInput } from 'react-native'
 import Animated from 'react-native-reanimated'
@@ -61,7 +60,9 @@ const ContactListScreenBase = ({
     <ScreenContent style={contentStyle}>
       <HeaderScreenSection>
         <SearchInput placeholder="Search" value={searchTerm} onChangeText={setSearchTerm} />
-        {onNewContactPress && <Button Icon={Plus} type="transparent" variant="accent" onPress={onNewContactPress} />}
+        {onNewContactPress && (
+          <Button iconProps={{ name: 'add-outline' }} type="transparent" variant="accent" onPress={onNewContactPress} />
+        )}
       </HeaderScreenSection>
       <ScreenSection>
         <ContactList>

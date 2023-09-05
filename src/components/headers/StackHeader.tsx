@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Ionicons from '@expo/vector-icons/Ionicons'
 import { StackHeaderProps } from '@react-navigation/stack'
 
 import Button from '~/components/buttons/Button'
@@ -25,17 +24,9 @@ import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
 type StackHeaderCustomProps = StackHeaderProps & BaseHeaderProps
 
 const StackHeader = ({ navigation, headerTitle, ...props }: StackHeaderCustomProps) => {
-  let HeaderLeft = null
-
-  if (navigation.canGoBack()) {
-    HeaderLeft = (
-      <Button
-        onPress={navigation.goBack}
-        Icon={() => <Ionicons name="arrow-back-outline" color="#ffffff" size={26} />}
-        round
-      />
-    )
-  }
+  const HeaderLeft = navigation.canGoBack() ? (
+    <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-back-outline' }} round />
+  ) : null
 
   return <BaseHeader HeaderLeft={HeaderLeft} headerTitle={headerTitle} {...props} />
 }

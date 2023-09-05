@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { calculateAmountWorth } from '@alephium/sdk'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Copy, SettingsIcon } from 'lucide-react-native'
+import { Copy } from 'lucide-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -75,7 +75,12 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           />
           {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
         </AddressBadgeContainer>
-        <Button Icon={SettingsIcon} type="transparent" color={textColor} onPress={onSettingsPress} />
+        <Button
+          iconProps={{ name: 'settings-outline' }}
+          type="transparent"
+          color={textColor}
+          onPress={onSettingsPress}
+        />
       </Header>
       <Amounts>
         <FiatAmount

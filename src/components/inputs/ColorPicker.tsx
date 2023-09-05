@@ -21,8 +21,8 @@ import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import HighlightRow from '~/components/Row'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import HighlightRow from '~/components/Row'
 import { labelColorPalette } from '~/utils/colors'
 
 interface ColorPickerProps {

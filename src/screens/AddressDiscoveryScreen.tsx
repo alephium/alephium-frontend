@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'
-import { Import, Search, X } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, BackHandler, View } from 'react-native'
@@ -29,9 +28,9 @@ import styled, { useTheme } from 'styled-components/native'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import HighlightRow from '~/components/Row'
 import { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import HighlightRow from '~/components/Row'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -130,7 +129,9 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
 
       navigation.setOptions({
         headerLeft: () => null,
-        headerRight: () => <Button onPress={cancelAndGoToWelcomeScreen} Icon={X} type="transparent" />
+        headerRight: () => (
+          <Button onPress={cancelAndGoToWelcomeScreen} iconProps={{ name: 'close-outline' }} type="transparent" />
+        )
       })
 
       const subscription = BackHandler.addEventListener('hardwareBackPress', () => true)
@@ -206,16 +207,27 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         )}
       </View>
       <BottomScreenSection>
-        {status === 'idle' && <ButtonStyled Icon={Search} title="Start scanning" onPress={handleStartScanPress} />}
+        {status === 'idle' && (
+          <ButtonStyled iconProps={{ name: 'search-outline' }} title="Start scanning" onPress={handleStartScanPress} />
+        )}
         {status === 'started' && (
-          <ButtonStyled Icon={X} title="Stop scanning" onPress={handleStopScanPress} type="secondary" />
+          <ButtonStyled
+            iconProps={{ name: 'close-outline' }}
+            title="Stop scanning"
+            onPress={handleStopScanPress}
+            type="secondary"
+          />
         )}
         {status === 'stopped' && (
-          <ContinueButton Icon={Search} title="Continue scanning" onPress={handleContinueScanPress} />
+          <ContinueButton
+            iconProps={{ name: 'search-outline' }}
+            title="Continue scanning"
+            onPress={handleContinueScanPress}
+          />
         )}
         {(status === 'stopped' || status === 'finished') && (
           <ButtonStyled
-            Icon={Import}
+            iconProps={{ name: 'download-outline' }}
             title="Import addresses"
             onPress={importAddresses}
             disabled={selectedAddressesToImport.length === 0}

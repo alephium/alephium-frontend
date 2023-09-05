@@ -16,12 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ListIcon, PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -34,7 +32,6 @@ import Carousel from '~/components/Carousel'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import BottomModal from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
-import Modalize from '~/components/layout/Modalize'
 import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -109,9 +106,13 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
             FooterComponent={
               <>
                 {addresses.length > 2 && (
-                  <Button onPress={() => setQuickSelectronModalOpen(true)} Icon={ListIcon} type="transparent" />
+                  <Button
+                    onPress={() => setQuickSelectronModalOpen(true)}
+                    iconProps={{ name: 'list-outline' }}
+                    type="transparent"
+                  />
                 )}
-                <Button Icon={PlusIcon} title="New address" color={theme.global.accent} compact />
+                <Button iconProps={{ name: 'add-outline' }} title="New address" color={theme.global.accent} compact />
               </>
             }
           />

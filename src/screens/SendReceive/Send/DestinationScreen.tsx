@@ -20,7 +20,6 @@ import { isAddressValid } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
-import { Book, ClipboardIcon, Contact2, Scan } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -187,19 +186,31 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       </ScreenSection>
       <ScreenSection>
         <ButtonsRow>
-          <Button color={theme.global.accent} compact Icon={Scan} title="Scan" onPress={openQRCodeScannerModal} />
-          <Button color={theme.global.accent} compact Icon={ClipboardIcon} title="Paste" onPress={handlePastePress} />
           <Button
             color={theme.global.accent}
             compact
-            Icon={Contact2}
+            iconProps={{ name: 'qr-code-outline' }}
+            title="Scan"
+            onPress={openQRCodeScannerModal}
+          />
+          <Button
+            color={theme.global.accent}
+            compact
+            iconProps={{ name: 'copy-outline' }}
+            title="Paste"
+            onPress={handlePastePress}
+          />
+          <Button
+            color={theme.global.accent}
+            compact
+            iconProps={{ name: 'person-outline' }}
             title="Contacts"
             onPress={() => openContactSelectModal()}
           />
           <Button
             color={theme.global.accent}
             compact
-            Icon={Book}
+            iconProps={{ name: 'bookmarks-outline' }}
             title="Addresses"
             onPress={() => openAddressSelectModal()}
           />

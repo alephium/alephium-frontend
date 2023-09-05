@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
-import { XIcon } from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
@@ -108,7 +107,7 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: 
           <ModalContent>
             {onClose && (
               <HeaderSection>
-                <Button type="transparent" Icon={XIcon} onPress={onClose} />
+                <Button type="transparent" iconProps={{ name: 'close-outline' }} onPress={onClose} />
               </HeaderSection>
             )}
             <CenteredInstructions instructions={shownInstructions} />

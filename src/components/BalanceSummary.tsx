@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { calculateAmountWorth } from '@alephium/sdk'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Skeleton } from 'moti/skeleton'
 import { useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'

@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
-import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
 import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -94,7 +93,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           <ButtonsRow sticked>
             <Button
               onPress={() => navigation.navigate('SendNavigation')}
-              Icon={ArrowUp}
+              iconProps={{ name: 'arrow-up-outline' }}
               title="Send"
               type="tint"
               color={theme.global.send}
@@ -102,7 +101,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
             />
             <Button
               onPress={() => navigation.navigate('ReceiveNavigation')}
-              Icon={ArrowDown}
+              iconProps={{ name: 'arrow-down-outline' }}
               title="Receive"
               type="tint"
               color={theme.global.receive}

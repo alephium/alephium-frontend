@@ -26,30 +26,35 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import BaseHeader from '~/components/headers/BaseHeader'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-interface ScreenHeaderProps extends StackHeaderProps {
+interface ProgressHeaderProps extends StackHeaderProps {
   workflow: 'send' | 'receive'
 }
 
 const workflowSteps: Record<
-  ScreenHeaderProps['workflow'],
+  ProgressHeaderProps['workflow'],
   (keyof ReceiveNavigationParamList)[] | (keyof SendNavigationParamList)[]
 > = {
   receive: ['AddressScreen', 'QRCodeScreen'],
   send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
 }
 
-const ProgressHeader = ({ navigation, route, options, workflow }: ScreenHeaderProps) => {
+const ProgressHeader = ({ navigation, route, options, workflow }: ProgressHeaderProps) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
 
   const [progress, setProgress] = useState(0)
 
   const steps = workflowSteps[workflow]
+
+  const HeaderRight = navigation.canGoBack() ? (
+    <Button onPress={navigation.goBack} iconProps={{ name: 'close-outline' }} round />
+  ) : null
 
   useEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? steps[0]
@@ -61,7 +66,7 @@ const ProgressHeader = ({ navigation, route, options, workflow }: ScreenHeaderPr
   return (
     <View style={{ paddingTop: insets.top }}>
       <BaseHeader
-        HeaderCompactContent={
+        HeaderLeft={
           <ProgressBar
             progress={progress}
             color={theme.global.accent}
@@ -71,6 +76,7 @@ const ProgressHeader = ({ navigation, route, options, workflow }: ScreenHeaderPr
             width={120}
           />
         }
+        HeaderRight={HeaderRight}
       />
     </View>
   )

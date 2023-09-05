@@ -39,7 +39,6 @@ const BottomBarScrollScreen = ({
   ...props
 }: BottomBarScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
-  const theme = useTheme()
   const navigation = useNavigation()
   const { setScrollToTop } = useScrollContext()
   const bottomBarHeight = useBottomTabBarHeight()
