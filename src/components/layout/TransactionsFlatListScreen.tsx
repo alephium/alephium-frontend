@@ -19,12 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useHeaderHeight } from '@react-navigation/elements'
 import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
 import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Modalize from '~/components/layout/Modalize'
+import BottomModal from '~/components/layout/BottomModal'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import TransactionModal from '~/screens/TransactionModal'
@@ -75,7 +74,8 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
-  const { ref: transactionModalRef, open: openTransactionModal } = useModalize()
+
+  const [txModalOpen, setTxModalOpen] = useState(false)
 
   const [selectedTx, setSelectedTx] = useState<AddressConfirmedTransaction>()
 
@@ -90,7 +90,7 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
       onPress={() => {
         if (!isPendingTx(tx)) {
           setSelectedTx(tx)
-          openTransactionModal()
+          setTxModalOpen(true)
         }
       }}
     />
@@ -170,7 +170,11 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
       />
 
       <Portal>
-        <Modalize ref={transactionModalRef}>{selectedTx && <TransactionModal tx={selectedTx} />}</Modalize>
+        <BottomModal
+          Content={(props) => selectedTx && <TransactionModal {...props} tx={selectedTx} />}
+          isOpen={txModalOpen}
+          onClose={() => setTxModalOpen(false)}
+        />
       </Portal>
     </Screen>
   )

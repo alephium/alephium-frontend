@@ -113,9 +113,9 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
       // 👇 This is where we initiate the layout main values based on children height
       runOnUI(() => {
         contentHeight.value = newContentHeight
-        canMaximize.value = contentHeight.value > 0.5 * dimensions.height
+        canMaximize.value = contentHeight.value > 0.3 * dimensions.height
         minHeight.value = canMaximize.value
-          ? dimensions.height * 0.5
+          ? dimensions.height * 0.3
           : contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
         modalHeight.value = withSpring(-minHeight.value, springConfig)
         position.value = 'minimised'
@@ -124,9 +124,9 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
   }
 
   const handleClose = () => {
-    position.value = 'closing'
     navHeight.value = withSpring(0, springConfig)
     modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(onClose)())
+    position.value = 'closing'
   }
 
   const panGesture = Gesture.Pan()
@@ -134,7 +134,9 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
       offsetY.value = modalHeight.value
     })
     .onChange((e) => {
-      modalHeight.value = offsetY.value + e.translationY
+      if (position.value !== 'closing') {
+        modalHeight.value = offsetY.value + e.translationY
+      }
     })
     .onEnd(() => {
       const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
@@ -142,7 +144,8 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
       const shouldMaximise =
         canMaximize.value && position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
 
-      const shouldClose = position.value === 'minimised' && -modalHeight.value < minHeight.value - DRAG_BUFFER
+      const shouldClose =
+        ['minimised', 'closing'].includes(position.value) && -modalHeight.value < minHeight.value - DRAG_BUFFER
 
       if (shouldMaximise) {
         navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)

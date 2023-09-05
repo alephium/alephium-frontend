@@ -16,16 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ReactNode } from 'react'
+import { View, ViewProps } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import Screen, { ScreenProps } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ScrollSection, { ScrollSectionProps } from '~/components/layout/ScrollSection'
 
-export type ModalContentProps<ScreenType = ScreenProps | ScrollScreenProps> = ScreenType & {
+export interface ModalContentProps extends ViewProps {
   onClose?: () => void
   isScrollable?: boolean
+  children?: ReactNode
 }
 
 export const ModalContent = ({ children, ...props }: ModalContentProps) => (

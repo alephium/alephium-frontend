@@ -26,7 +26,7 @@ import { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import Button from '~/components/buttons/Button'
-import HighlightRow from '~/components/HighlightRow'
+import HighlightRow from '~/components/Row'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen'
 import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'

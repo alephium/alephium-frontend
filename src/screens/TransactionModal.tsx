@@ -24,17 +24,16 @@ import styled, { useTheme } from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
-import HighlightRow from '~/components/HighlightRow'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalProps, ScrollModal } from '~/components/layout/ModalContent'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import HighlightRow from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { getTransactionInfo } from '~/utils/transactions'
 
-interface TransactionModalProps extends ModalProps<ScrollScreenProps> {
+interface TransactionModalProps extends ModalContentProps {
   tx: AddressConfirmedTransaction
 }
 
@@ -48,7 +47,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   const isMoved = infoType === 'move'
 
   return (
-    <ScrollModal {...props}>
+    <ModalContent {...props}>
       <ScreenSectionRow>
         <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
         <ExplorerLink onPress={() => openBrowserAsync(explorerTxUrl)}>
@@ -56,47 +55,46 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           <ChevronRightIcon size={24} color={theme.global.accent} />
         </ExplorerLink>
       </ScreenSectionRow>
-      <ScreenSection>
-        <BoxSurface>
-          <HighlightRow title="Amount" noMaxWidth>
-            {assets.map(({ id, amount, decimals, symbol }) => (
-              <AmountStyled
-                key={id}
-                value={amount}
-                decimals={decimals}
-                suffix={symbol}
-                isUnknownToken={!symbol}
-                highlight={!isMoved}
-                showPlusMinus={!isMoved}
-                fullPrecision
-                bold
-              />
-            ))}
-          </HighlightRow>
-          <HighlightRow title="Timestamp">
-            <AppTextStyled semiBold>{dayjs(tx.timestamp).toDate().toUTCString()}</AppTextStyled>
-          </HighlightRow>
-          <HighlightRow title="Status">
-            <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
-          </HighlightRow>
-          <HighlightRow title="From">
-            {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-          </HighlightRow>
-          <HighlightRow title="To">
-            {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-          </HighlightRow>
-          <HighlightRow title="Fee">
-            <Amount
-              value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
-              fadeDecimals
+
+      <BoxSurface type="highlight">
+        <HighlightRow title="Amount" noMaxWidth transparent>
+          {assets.map(({ id, amount, decimals, symbol }) => (
+            <AmountStyled
+              key={id}
+              value={amount}
+              decimals={decimals}
+              suffix={symbol}
+              isUnknownToken={!symbol}
+              highlight={!isMoved}
+              showPlusMinus={!isMoved}
               fullPrecision
               bold
-              showOnDiscreetMode
             />
-          </HighlightRow>
-        </BoxSurface>
-      </ScreenSection>
-    </ScrollModal>
+          ))}
+        </HighlightRow>
+        <HighlightRow title="Timestamp" transparent>
+          <AppTextStyled semiBold>{dayjs(tx.timestamp).toDate().toUTCString()}</AppTextStyled>
+        </HighlightRow>
+        <HighlightRow title="Status" transparent>
+          <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
+        </HighlightRow>
+        <HighlightRow title="From" transparent>
+          {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
+        </HighlightRow>
+        <HighlightRow title="To" transparent>
+          {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
+        </HighlightRow>
+        <HighlightRow title="Fee" transparent>
+          <Amount
+            value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
+            fadeDecimals
+            fullPrecision
+            bold
+            showOnDiscreetMode
+          />
+        </HighlightRow>
+      </BoxSurface>
+    </ModalContent>
   )
 }
 

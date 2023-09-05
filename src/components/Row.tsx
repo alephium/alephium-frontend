@@ -24,7 +24,7 @@ import styled, { css } from 'styled-components/native'
 import AppText, { AppTextProps } from '~/components/AppText'
 import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
-export interface HighlightRowProps {
+export interface RowProps {
   children: ReactNode
   isInput?: boolean
   isSecondary?: boolean
@@ -35,12 +35,13 @@ export interface HighlightRowProps {
   hasRightContent?: boolean
   truncate?: boolean
   noMaxWidth?: boolean
+  transparent?: boolean
   style?: StyleProp<ViewStyle>
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const HighlightRow = ({
+const Row = ({
   title,
   subtitle,
   children,
@@ -48,8 +49,9 @@ const HighlightRow = ({
   truncate,
   noMaxWidth,
   style,
+  transparent,
   titleColor
-}: HighlightRowProps) => {
+}: RowProps) => {
   const componentContent = title ? (
     <>
       <LeftContent>
@@ -77,15 +79,15 @@ const HighlightRow = ({
   )
 }
 
-export default styled(HighlightRow)`
-  ${({ theme, isInput, isSecondary }) =>
+export default styled(Row)`
+  ${({ theme, isInput, isSecondary, transparent }) =>
     isInput
       ? css`
           justify-content: center;
           min-height: ${INPUTS_HEIGHT}px;
           height: ${INPUTS_HEIGHT}px;
           padding: 0 ${INPUTS_PADDING}px;
-          background-color: ${isSecondary ? theme.bg.accent : theme.bg.highlight};
+          background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.highlight};
         `
       : css`
           flex-direction: row;
@@ -93,7 +95,7 @@ export default styled(HighlightRow)`
           justify-content: space-between;
           min-height: ${INPUTS_HEIGHT}px;
           padding: 20px;
-          background-color: ${isSecondary ? theme.bg.accent : theme.bg.primary};
+          background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.primary};
         `}
 
   ${({ isInput, hasRightContent }) =>
