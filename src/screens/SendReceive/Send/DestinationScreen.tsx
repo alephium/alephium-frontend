@@ -138,7 +138,9 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
       navigation.getParent()?.setOptions({
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => <ContinueButton onPress={handleSubmit(onContinue)} />
+        headerRight: () => (
+          <Button onPress={handleSubmit(onContinue)} iconProps={{ name: 'arrow-forward-outline' }} round />
+        )
       })
     }, [handleSubmit, navigation, nextScreen, setToAddress])
   )

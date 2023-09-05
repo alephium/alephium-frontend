@@ -20,8 +20,8 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import { StackHeaderProps } from '@react-navigation/stack'
 import { useEffect, useState } from 'react'
-import { PressableProps, View } from 'react-native'
-import { Bar as ProgressBar } from 'react-native-progress'
+import { Pressable, PressableProps, View } from 'react-native'
+import { Circle as ProgressBar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -44,9 +44,8 @@ const workflowSteps: Record<
   send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
 }
 
-const ProgressHeader = ({ navigation, route, options, workflow }: ProgressHeaderProps) => {
+const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeaderProps) => {
   const theme = useTheme()
-  const insets = useSafeAreaInsets()
 
   const [progress, setProgress] = useState(0)
 
@@ -64,21 +63,24 @@ const ProgressHeader = ({ navigation, route, options, workflow }: ProgressHeader
   }, [route, steps])
 
   return (
-    <View style={{ paddingTop: insets.top }}>
-      <BaseHeader
-        HeaderLeft={
+    <BaseHeader
+      HeaderRight={
+        <View>
+          {options.headerRight && <HeaderRightOptionWrapper>{options.headerRight({})}</HeaderRightOptionWrapper>}
           <ProgressBar
             progress={progress}
             color={theme.global.accent}
             unfilledColor={theme.border.secondary}
+            fill="transparent"
+            strokeCap="round"
             borderWidth={0}
-            height={9}
-            width={120}
+            size={43}
+            pointerEvents="none"
           />
-        }
-        HeaderRight={HeaderRight}
-      />
-    </View>
+        </View>
+      }
+      HeaderLeft={HeaderRight}
+    />
   )
 }
 
@@ -87,11 +89,7 @@ export default ProgressHeader
 export const BackButton = (props: PressableProps) => {
   const theme = useTheme()
 
-  return (
-    <BackButtonStyled {...props}>
-      <Ionicons name="chevron-back-circle" size={25} color={theme.global.accent} />
-    </BackButtonStyled>
-  )
+  return <Button onPress={navigation.goBack} iconProps={{ name: 'close-outline' }} round />
 }
 
 interface ContinueButtonProps extends PressableProps {
@@ -120,6 +118,14 @@ export const BackButtonStyled = styled.Pressable`
   background-color: ${({ theme }) => theme.bg.secondary};
   align-items: center;
   justify-content: center;
+`
+
+const HeaderRightOptionWrapper = styled.View`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
 `
 
 // TODO: Dry
