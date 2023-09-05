@@ -21,8 +21,8 @@ import React, { useState } from 'react'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { Modal, ModalProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -30,7 +30,7 @@ import AddressForm from '~/screens/Address/AddressForm'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { AddressHash, AddressSettings } from '~/types/addresses'
 
-interface EditAddressModalProps extends ModalProps<ScreenProps> {
+interface EditAddressModalProps extends ModalContentProps {
   addressHash: AddressHash
 }
 
@@ -65,7 +65,7 @@ const EditAddressModal = ({ addressHash, onClose, ...props }: EditAddressModalPr
   }
 
   return (
-    <Modal {...props}>
+    <ModalContent {...props}>
       <ScreenSection>
         <BottomModalScreenTitle>Address settings</BottomModalScreenTitle>
         <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
@@ -81,7 +81,7 @@ const EditAddressModal = ({ addressHash, onClose, ...props }: EditAddressModalPr
         addressHash={address.hash}
       />
       <SpinnerModal isActive={loading} text="Saving address..." />
-    </Modal>
+    </ModalContent>
   )
 }
 

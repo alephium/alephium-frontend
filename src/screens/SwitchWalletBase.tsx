@@ -21,7 +21,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
-import { Alert, ScrollView, View } from 'react-native'
+import { Alert, ScrollView } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'

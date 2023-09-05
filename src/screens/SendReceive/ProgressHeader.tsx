@@ -26,6 +26,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import BaseHeader from '~/components/headers/BaseHeader'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -59,18 +60,18 @@ const ProgressHeader = ({ navigation, route, options, workflow }: ScreenHeaderPr
 
   return (
     <View style={{ paddingTop: insets.top }}>
-      <ScreenHeaderStyled>
-        {options.headerLeft ? options.headerLeft({}) : <BackButton onPress={() => navigation.goBack()} />}
-        <ProgressBar
-          progress={progress}
-          color={theme.global.accent}
-          unfilledColor={theme.border.secondary}
-          borderWidth={0}
-          height={9}
-          width={120}
-        />
-        {options.headerRight ? options.headerRight({}) : <Hidden />}
-      </ScreenHeaderStyled>
+      <BaseHeader
+        HeaderCompactContent={
+          <ProgressBar
+            progress={progress}
+            color={theme.global.accent}
+            unfilledColor={theme.border.secondary}
+            borderWidth={0}
+            height={9}
+            width={120}
+          />
+        }
+      />
     </View>
   )
 }

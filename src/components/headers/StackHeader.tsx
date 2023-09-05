@@ -24,7 +24,7 @@ import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
 
 type StackHeaderCustomProps = StackHeaderProps & BaseHeaderProps
 
-const StackHeader = ({ navigation, options, headerTitle, ...props }: StackHeaderCustomProps) => {
+const StackHeader = ({ navigation, headerTitle, ...props }: StackHeaderCustomProps) => {
   let HeaderLeft = null
 
   if (navigation.canGoBack()) {

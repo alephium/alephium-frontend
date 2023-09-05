@@ -61,18 +61,8 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
 
-  const {
-    ref: addressQuickSelectionModalRef,
-    open: openAddressQuickSelectionModal,
-    close: closeAddressQuickSelectionModal
-  } = useModalize()
-  const {
-    ref: addressSettingsModalRef,
-    open: openAddressSettingsModal,
-    close: closeAddressSettingsModal
-  } = useModalize()
-
   const [quickSelectionModalOpen, setQuickSelectronModalOpen] = useState(false)
+  const [addressSettingsModalOpen, setAddressSettingsModalOpen] = useState(false)
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
@@ -89,7 +79,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
 
   const renderAddressCard = ({ item }: { item: string }) => (
     <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height)} key={item}>
-      <AddressCard addressHash={item} onSettingsPress={openAddressSettingsModal} />
+      <AddressCard addressHash={item} onSettingsPress={() => setAddressSettingsModalOpen(true)} />
     </View>
   )
 
@@ -149,7 +139,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
                       onPress={() => {
                         setSelectedAddressHash(address.hash)
                         setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
-                        closeAddressQuickSelectionModal()
+                        setQuickSelectronModalOpen(false)
                         posthog?.capture('Used address quick navigation')
                       }}
                     />
@@ -158,33 +148,14 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
               />
             </ModalContent>
           )}
-        ></BottomModal>
-        <Modalize
-          ref={addressQuickSelectionModalRef}
-          flatListProps={{
-            data: addresses,
-            keyExtractor: (item) => item.hash,
-            renderItem: ({ item: address, index }) => (
-              <AddressBoxStyled
-                key={address.hash}
-                addressHash={address.hash}
-                isFirst={index === 0}
-                isLast={index === addresses.length - 1}
-                onPress={() => {
-                  setSelectedAddressHash(address.hash)
-                  setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
-                  closeAddressQuickSelectionModal()
-                  posthog?.capture('Used address quick navigation')
-                }}
-              />
-            )
-          }}
         />
-        <Modalize ref={addressSettingsModalRef}>
-          {selectedAddress && (
-            <EditAddressModal addressHash={selectedAddress.hash} onClose={closeAddressSettingsModal} />
-          )}
-        </Modalize>
+
+        <BottomModal
+          isOpen={addressSettingsModalOpen}
+          onClose={() => setAddressSettingsModalOpen(false)}
+          scrollableContent
+          Content={(props) => <EditAddressModal addressHash={selectedAddress.hash} {...props} />}
+        />
       </Portal>
     </>
   )

@@ -171,6 +171,10 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent }: BottomModa
       if (shouldMaximise) {
         handleMaximize()
       } else if (shouldMinimise) {
+        if (scrollableContent) {
+          handleClose()
+          return
+        }
         handleMinimize()
       } else if (shouldClose) {
         handleClose()
