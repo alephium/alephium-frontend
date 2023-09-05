@@ -20,7 +20,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { X } from 'lucide-react-native'
 import React, { ReactNode, useEffect, useState } from 'react'
-import { Dimensions, LayoutChangeEvent } from 'react-native'
+import { Dimensions, LayoutChangeEvent, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   interpolate,
@@ -58,6 +58,8 @@ interface BottomModalProps {
   onClose: () => void
   isScrollable?: boolean
 }
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProps) => {
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
@@ -163,7 +165,7 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
   return isOpen ? (
     <GestureDetector gesture={panGesture}>
       <Animated.View style={{ flex: 1 }}>
-        <Backdrop style={backdropAnimatedStyle} />
+        <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
         <Container>
           <BottomModalStyled style={modalHeightAnimatedStyle}>
             <HandleContainer>
@@ -191,7 +193,7 @@ const Container = styled.View`
   right: 0;
 `
 
-const Backdrop = styled(Animated.View)`
+const Backdrop = styled(AnimatedPressable)`
   position: absolute;
   top: 0;
   bottom: 0;
