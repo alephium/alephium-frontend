@@ -52,7 +52,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
           {renderMenuItems()}
         </AndroidFooterMenuContent>
       ) : (
-        <IOSFooterMenuContent tint={theme.name} intensity={80} style={{ paddingBottom: insets.bottom }}>
+        <IOSFooterMenuContent tint={theme.name} intensity={100} style={{ paddingBottom: insets.bottom }}>
           {renderMenuItems()}
         </IOSFooterMenuContent>
       )}

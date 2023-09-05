@@ -33,12 +33,15 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
 import Modalize from '~/components/layout/Modalize'
-import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useSendContext } from '~/contexts/SendContext'
+import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
+import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
+import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
@@ -72,6 +75,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const { ref: contactSelectModalRef, open: openContactSelectModal, close: closeContactSelectModal } = useModalize()
   const { ref: addressSelectModalRef, open: openAddressSelectModal, close: closeAddressSelectModal } = useModalize()
   const shouldFlash = useSharedValue(0)
+  const { handleScroll, scrollY } = useVerticalScroll()
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -129,21 +133,26 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     }
   }, [params?.fromAddressHash, setFromAddress, setToAddress])
 
-  useFocusEffect(
-    useCallback(() => {
-      const onContinue = (formData: FormData) => {
-        setToAddress(formData.toAddressHash)
-        navigation.navigate(nextScreen)
-      }
+  console.log(navigation)
 
-      navigation.getParent()?.setOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => (
-          <Button onPress={handleSubmit(onContinue)} iconProps={{ name: 'arrow-forward-outline' }} round />
-        )
-      })
-    }, [handleSubmit, navigation, nextScreen, setToAddress])
-  )
+  const onContinue = (formData: FormData) => {
+    setToAddress(formData.toAddressHash)
+    navigation.navigate(nextScreen)
+  }
+
+  useCustomNavigationHeader({
+    Header: (props) => (
+      <ProgressHeader
+        key="progress-header"
+        workflow="send"
+        {...props}
+        scrollY={scrollY}
+        HeaderRight={<Button onPress={handleSubmit(onContinue)} iconProps={{ name: 'arrow-forward-outline' }} round />}
+      />
+    ),
+    navigation,
+    setInParent: true
+  })
 
   useEffect(() => {
     if (toAddress) {
@@ -158,7 +167,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   }))
 
   return (
-    <Screen {...props}>
+    <ScrollScreen onScroll={handleScroll} hasHeader {...props}>
       <ScreenIntro
         title="Destination"
         subtitle="Send to an address, a contact, or one of your other addresses."
@@ -234,7 +243,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           <SelectAddressModal onAddressPress={handleAddressPress} />
         </Modalize>
       </Portal>
-    </Screen>
+    </ScrollScreen>
   )
 }
 

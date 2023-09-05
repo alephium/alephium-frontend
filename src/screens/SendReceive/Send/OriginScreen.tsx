@@ -19,15 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect } from 'react'
+
 import styled from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
+import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
+import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
+import ProgressHeader, { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
 
@@ -44,16 +47,24 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
   }, [params?.toAddressHash, setToAddress])
 
-  useFocusEffect(
-    useCallback(() => {
-      if (!fromAddress && defaultAddress) setFromAddress(defaultAddress.hash)
-
-      navigation.getParent()?.setOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} />
-      })
-    }, [defaultAddress, fromAddress, navigation, setFromAddress])
-  )
+  useCustomNavigationHeader({
+    Header: (props) => (
+      <ProgressHeader
+        key="progress-header"
+        workflow="send"
+        {...props}
+        HeaderRight={
+          <Button
+            onPress={() => navigation.navigate('AssetsScreen')}
+            iconProps={{ name: 'arrow-forward-outline' }}
+            round
+          />
+        }
+      />
+    ),
+    navigation,
+    setInParent: true
+  })
 
   return (
     <BaseScrollScreen {...props}>

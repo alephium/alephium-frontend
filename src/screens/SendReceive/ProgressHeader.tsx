@@ -28,11 +28,12 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BaseHeader from '~/components/headers/BaseHeader'
+import { StackHeaderCustomProps } from '~/components/headers/StackHeader'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-interface ProgressHeaderProps extends StackHeaderProps {
+interface ProgressHeaderProps extends StackHeaderCustomProps {
   workflow: 'send' | 'receive'
 }
 
@@ -44,14 +45,14 @@ const workflowSteps: Record<
   send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
 }
 
-const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeaderProps) => {
+const ProgressHeader = ({ navigation, route, workflow, HeaderRight }: ProgressHeaderProps) => {
   const theme = useTheme()
 
   const [progress, setProgress] = useState(0)
 
   const steps = workflowSteps[workflow]
 
-  const HeaderRight = navigation.canGoBack() ? (
+  const HeaderLeft = navigation.canGoBack() ? (
     <Button onPress={navigation.goBack} iconProps={{ name: 'close-outline' }} round />
   ) : null
 
@@ -64,9 +65,10 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
 
   return (
     <BaseHeader
+      headerTitle="send"
       HeaderRight={
         <View>
-          {options.headerRight && <HeaderRightOptionWrapper>{options.headerRight({})}</HeaderRightOptionWrapper>}
+          {HeaderRight && <HeaderRightOptionWrapper>{HeaderRight}</HeaderRightOptionWrapper>}
           <ProgressBar
             progress={progress}
             color={theme.global.accent}
@@ -79,18 +81,12 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
           />
         </View>
       }
-      HeaderLeft={HeaderRight}
+      HeaderLeft={HeaderLeft}
     />
   )
 }
 
 export default ProgressHeader
-
-export const BackButton = (props: PressableProps) => {
-  const theme = useTheme()
-
-  return <Button onPress={navigation.goBack} iconProps={{ name: 'close-outline' }} round />
-}
 
 interface ContinueButtonProps extends PressableProps {
   text?: string
@@ -135,9 +131,4 @@ export const ContinueButtonStyled = styled.Pressable`
   border-radius: 26px;
   width: 100px;
   align-items: center;
-`
-
-// To keep the progress bar in the center
-const Hidden = styled(BackButton)`
-  opacity: 0;
 `

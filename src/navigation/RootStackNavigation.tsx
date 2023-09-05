@@ -127,11 +127,7 @@ const RootStackNavigation = () => {
                   component={NewAddressScreen}
                   options={{ headerTitle: 'New address' }}
                 />
-                <RootStack.Screen
-                  name="SendNavigation"
-                  component={SendNavigation}
-                  options={{ header: (props) => <ProgressHeader {...props} workflow="send" /> }}
-                />
+                <RootStack.Screen name="SendNavigation" component={SendNavigation} />
                 <RootStack.Screen
                   name="ReceiveNavigation"
                   component={ReceiveNavigation}
