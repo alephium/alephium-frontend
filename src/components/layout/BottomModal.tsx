@@ -56,12 +56,12 @@ interface BottomModalProps {
   Content: (props: ModalContentProps) => ReactNode
   isOpen: boolean
   onClose: () => void
-  isScrollable?: boolean
+  scrollableContent?: boolean
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProps) => {
+const BottomModal = ({ Content, isOpen, onClose, scrollableContent }: BottomModalProps) => {
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
   const insets = useSafeAreaInsets()
 
@@ -96,7 +96,7 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(-modalHeight.value, [0, minHeight.value, dimensions.height], [0, 1, 0])
+    opacity: scrollableContent ? 0 : interpolate(-modalHeight.value, [0, minHeight.value, dimensions.height], [0, 1, 0])
   }))
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
@@ -114,19 +114,40 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
       runOnUI(() => {
         contentHeight.value = newContentHeight
         canMaximize.value = contentHeight.value > 0.3 * dimensions.height
-        minHeight.value = canMaximize.value
+
+        minHeight.value = scrollableContent
+          ? maxHeight
+          : canMaximize.value
           ? dimensions.height * 0.3
           : contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
-        modalHeight.value = withSpring(-minHeight.value, springConfig)
-        position.value = 'minimised'
+
+        scrollableContent ? handleMaximize() : handleMinimize()
       })()
     }
   }
 
   const handleClose = () => {
+    'worklet'
+
     navHeight.value = withSpring(0, springConfig)
     modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(onClose)())
     position.value = 'closing'
+  }
+
+  const handleMaximize = () => {
+    'worklet'
+
+    navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)
+    modalHeight.value = withSpring(-maxHeight, springConfig)
+    position.value = 'maximised'
+  }
+
+  const handleMinimize = () => {
+    'worklet'
+
+    navHeight.value = withSpring(0, springConfig)
+    modalHeight.value = withSpring(-minHeight.value, springConfig)
+    position.value = 'minimised'
   }
 
   const panGesture = Gesture.Pan()
@@ -148,15 +169,11 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
         ['minimised', 'closing'].includes(position.value) && -modalHeight.value < minHeight.value - DRAG_BUFFER
 
       if (shouldMaximise) {
-        navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)
-        modalHeight.value = withSpring(-maxHeight, springConfig)
-        position.value = 'maximised'
+        handleMaximize()
       } else if (shouldMinimise) {
-        navHeight.value = withSpring(0, springConfig)
-        modalHeight.value = withSpring(-minHeight.value, springConfig)
-        position.value = 'minimised'
+        handleMinimize()
       } else if (shouldClose) {
-        runOnJS(handleClose)()
+        handleClose()
       } else {
         modalHeight.value =
           position.value === 'maximised'
@@ -207,7 +224,7 @@ const Backdrop = styled(AnimatedPressable)`
 
 const BottomModalStyled = styled(Animated.View)`
   justify-content: flex-start;
-  background-color: ${({ theme }) => theme.bg.highlight};
+  background-color: ${({ theme }) => theme.bg.primary};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;

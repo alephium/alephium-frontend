@@ -20,6 +20,7 @@ import { ListIcon, PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
+import { FlatList } from 'react-native-gesture-handler'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
@@ -31,6 +32,8 @@ import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
+import BottomModal from '~/components/layout/BottomModal'
+import { ModalContent } from '~/components/layout/ModalContent'
 import Modalize from '~/components/layout/Modalize'
 import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
@@ -68,6 +71,8 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
     open: openAddressSettingsModal,
     close: closeAddressSettingsModal
   } = useModalize()
+
+  const [quickSelectionModalOpen, setQuickSelectronModalOpen] = useState(false)
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
@@ -114,7 +119,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
             FooterComponent={
               <>
                 {addresses.length > 2 && (
-                  <Button onPress={() => openAddressQuickSelectionModal()} Icon={ListIcon} type="transparent" />
+                  <Button onPress={() => setQuickSelectronModalOpen(true)} Icon={ListIcon} type="transparent" />
                 )}
                 <Button Icon={PlusIcon} title="New address" color={theme.global.accent} compact />
               </>
@@ -125,6 +130,35 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
       </BottomBarScrollScreen>
 
       <Portal>
+        <BottomModal
+          isOpen={quickSelectionModalOpen}
+          onClose={() => setQuickSelectronModalOpen(false)}
+          scrollableContent
+          Content={(props) => (
+            <ModalContent {...props}>
+              <FlatList
+                {...{
+                  data: addresses,
+                  keyExtractor: (item) => item.hash,
+                  renderItem: ({ item: address, index }) => (
+                    <AddressBoxStyled
+                      key={address.hash}
+                      addressHash={address.hash}
+                      isFirst={index === 0}
+                      isLast={index === addresses.length - 1}
+                      onPress={() => {
+                        setSelectedAddressHash(address.hash)
+                        setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
+                        closeAddressQuickSelectionModal()
+                        posthog?.capture('Used address quick navigation')
+                      }}
+                    />
+                  )
+                }}
+              />
+            </ModalContent>
+          )}
+        ></BottomModal>
         <Modalize
           ref={addressQuickSelectionModalRef}
           flatListProps={{
