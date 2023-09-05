@@ -91,6 +91,10 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
     overflow: 'hidden'
   }))
 
+  const handleAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(-modalHeight.value, [0, dimensions.height], [1, 0])
+  }))
+
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(-modalHeight.value, [0, dimensions.height], [0, 1]),
     pointerEvents: position.value === 'closing' ? 'none' : 'auto'
@@ -156,13 +160,13 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
         <Container>
           <BottomModalStyled style={modalHeightAnimatedStyle}>
             <HandleContainer>
-              <Handle />
+              <Handle style={handleAnimatedStyle} />
             </HandleContainer>
             <ContentContainer>
               <Navigation style={modalNavigationAnimatedStyle}>
                 <Button onPress={handleClose} Icon={X} round />
               </Navigation>
-              <Content onLayout={handleContentLayout} />
+              <Content onLayout={handleContentLayout} onClose={handleClose} />
             </ContentContainer>
           </BottomModalStyled>
         </Container>
@@ -200,14 +204,15 @@ const BottomModalStyled = styled(Animated.View)`
 const HandleContainer = styled.View`
   align-items: center;
   justify-content: center;
-  padding-top: 10px;
+  padding-top: 5px;
 `
 
-const Handle = styled.View`
+const Handle = styled(Animated.View)`
   width: 15%;
   height: 4px;
   border-radius: 8px;
-  background-color: #cccccc;
+  background-color: ${({ theme }) => theme.font.tertiary};
+  margin-top: -15px;
 `
 
 const Navigation = styled(Animated.View)`

@@ -55,7 +55,6 @@ const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenProps) => {
   const pagerRef = useRef<PagerView>(null)
   const { handleScroll, scrollY } = useVerticalScroll()
-  const insets = useSafeAreaInsets()
 
   const tabBarRef = useAnimatedRef<Animated.View>()
   const tabBarPageY = useSharedValue<number>(120)
