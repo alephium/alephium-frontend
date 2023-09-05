@@ -80,6 +80,8 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
   const navHeight = useSharedValue(0)
   const offsetY = useSharedValue(0)
 
+  const canMaximize = useSharedValue(false)
+
   const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
     height: -modalHeight.value,
     paddingTop:
@@ -92,7 +94,7 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(-modalHeight.value, [0, dimensions.height], [1, 0])
+    opacity: interpolate(-modalHeight.value, [0, minHeight.value, dimensions.height], [0, 1, 0])
   }))
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
@@ -106,9 +108,13 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
     if (!modalHeight.value || newContentHeight > contentHeight.value + 1) {
       // 👆 Add one to avoid floating point issues
 
+      // 👇 This is where we initiate the layout main values based on children height
       runOnUI(() => {
         contentHeight.value = newContentHeight
-        minHeight.value = contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
+        canMaximize.value = contentHeight.value > 0.5 * dimensions.height
+        minHeight.value = canMaximize.value
+          ? dimensions.height * 0.5
+          : contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
         modalHeight.value = withSpring(-minHeight.value, springConfig)
         position.value = 'minimised'
       })()
@@ -131,7 +137,8 @@ const BottomModal = ({ Content, isOpen, onClose, isScrollable }: BottomModalProp
     .onEnd(() => {
       const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
 
-      const shouldMaximise = position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
+      const shouldMaximise =
+        canMaximize.value && position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
 
       const shouldClose = position.value === 'minimised' && -modalHeight.value < minHeight.value - DRAG_BUFFER
 
