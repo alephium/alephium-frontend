@@ -27,13 +27,8 @@ import AddressesTokensList from '~/components/AddressesTokensList'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import DashboardHeaderActions from '~/components/DashboardHeaderActions'
-import BaseHeader from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import WalletSwitchButton from '~/components/WalletSwitchButton'
-import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
-import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -49,29 +44,13 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const headerHeight = useHeaderHeight()
-  const { handleScroll, scrollY } = useVerticalScroll()
 
-  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
 
   const buttonsRowStyle = useAnimatedStyle(() => ({
     height: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 75, defaultSpringConfiguration))
   }))
-
-  useCustomNavigationHeader({
-    Header: (props) => (
-      <BaseHeader
-        scrollY={scrollY}
-        HeaderRight={<DashboardHeaderActions />}
-        HeaderLeft={<WalletSwitchButton />}
-        headerTitle={activeWalletName}
-        bgColor={theme.bg.primary}
-        {...props}
-      />
-    ),
-    navigation
-  })
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
@@ -82,7 +61,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       refreshControl={
         <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
       }
-      onScroll={handleScroll}
       hasHeader
       hasBottomBar
       {...props}

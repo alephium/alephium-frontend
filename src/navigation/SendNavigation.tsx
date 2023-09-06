@@ -20,6 +20,7 @@ import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { SendContextProvider } from '~/contexts/SendContext'
+import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
 import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
 import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
@@ -39,7 +40,19 @@ const SendStack = createStackNavigator<SendNavigationParamList>()
 
 const SendNavigation = () => (
   <SendContextProvider>
-    <SendStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="DestinationScreen">
+    <SendStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        header: (props) => (
+          <ProgressHeader
+            associatedScreens={['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']}
+            workflow="send"
+            {...props}
+          />
+        )
+      }}
+      initialRouteName="DestinationScreen"
+    >
       <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
       <SendStack.Screen name="OriginScreen" component={OriginScreen} />
       <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />

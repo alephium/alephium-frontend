@@ -23,6 +23,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components'
 
+import StackHeader from '~/components/headers/StackHeader'
 import AnalyticsProvider from '~/contexts/AnalyticsContext'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
@@ -90,7 +91,12 @@ const RootStackNavigation = () => {
                 <RootStack.Screen
                   name="SettingsScreen"
                   component={SettingsScreen}
-                  options={{ headerTitle: 'Settings' }}
+                  options={{
+                    header: (props) => (
+                      <StackHeader associatedScreens={['SettingsScreen']} headerTitle="Settings" {...props} />
+                    ),
+                    headerTransparent: true
+                  }}
                 />
                 <RootStack.Screen
                   name="ImportWalletSeedScreen"
@@ -131,7 +137,11 @@ const RootStackNavigation = () => {
                 <RootStack.Screen
                   name="ReceiveNavigation"
                   component={ReceiveNavigation}
-                  options={{ header: (props) => <ProgressHeader {...props} workflow="receive" /> }}
+                  options={{
+                    header: (props) => (
+                      <ProgressHeader associatedScreens={['ReceiveNavigation']} workflow="receive" {...props} />
+                    )
+                  }}
                 />
                 <RootStack.Screen name="ContactScreen" component={ContactScreen} />
               </RootStack.Group>

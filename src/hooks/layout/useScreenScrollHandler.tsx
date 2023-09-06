@@ -17,17 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
-import { useSharedValue } from 'react-native-reanimated'
+
+import { useScrollContext } from '~/contexts/ScrollContext'
 
 const scrollDirectionDeltaThreshold = 10
 
-export type ScrollDirection = 'up' | 'down' | undefined
+const useScreenScrollHandler = () => {
+  const { scrollY, scrollDirection } = useScrollContext()
 
-const useVerticalScroll = () => {
-  const scrollY = useSharedValue(0)
-  const scrollDirection = useSharedValue<ScrollDirection>(undefined)
+  const scrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!scrollY || !scrollDirection) return
 
-  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const newScrollY = e.nativeEvent.contentOffset.y
     const delta = scrollY.value - newScrollY
     const direction = delta > 0 ? 'up' : 'down'
@@ -43,7 +43,7 @@ const useVerticalScroll = () => {
     scrollY.value = newScrollY
   }
 
-  return { handleScroll, scrollY, scrollDirection }
+  return scrollHandler
 }
 
-export default useVerticalScroll
+export default useScreenScrollHandler

@@ -22,12 +22,10 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { FlatList } from 'react-native'
 
-import BaseHeader from '~/components/headers/BaseHeader'
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
 import { useScrollContext } from '~/contexts/ScrollContext'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
-import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -46,16 +44,11 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
 
-  const { handleScroll, scrollY } = useVerticalScroll()
+  const handleScroll = useScreenScrollHandler()
   const { setScrollToTop } = useScrollContext()
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
   const headerHeight = useHeaderHeight()
-
-  useCustomNavigationHeader({
-    Header: (props) => <BaseHeader scrollY={scrollY} headerTitle="Transfers" {...props} />,
-    navigation
-  })
 
   useEffect(() => {
     navigation.addListener('blur', () => listRef.current?.scrollToOffset({ offset: 0, animated: false }))

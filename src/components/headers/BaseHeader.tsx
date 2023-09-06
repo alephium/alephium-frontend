@@ -23,7 +23,6 @@ import Animated, {
   Extrapolate,
   interpolate,
   interpolateColor,
-  SharedValue,
   useAnimatedProps,
   useAnimatedStyle
 } from 'react-native-reanimated'
@@ -31,16 +30,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { useScrollContext } from '~/contexts/ScrollContext'
+import useActiveRouteName from '~/hooks/useActiveRouteName'
+import AllRouteNames from '~/navigation/allRoutes'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 export interface BaseHeaderProps {
+  associatedScreens: AllRouteNames[]
   HeaderLeft?: ReactNode
   HeaderRight?: ReactNode
   headerTitle?: string
   HeaderBottom?: ReactNode
   HeaderCompactContent?: ReactNode
-  scrollY?: SharedValue<number>
-  bgColor?: string
   style?: StyleProp<ViewStyle>
   headerRef?: RefObject<Animated.View>
 }
@@ -53,26 +54,29 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 // TODO: Reimplement tap bar to scroll up
 
 const BaseHeader = ({
+  associatedScreens,
   HeaderRight,
   HeaderLeft,
   headerTitle,
   HeaderBottom,
   HeaderCompactContent,
-  scrollY,
-  bgColor,
   style,
   headerRef
 }: BaseHeaderProps) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const currentRouteName = useActiveRouteName()
+  const { scrollY } = useScrollContext()
 
-  const bgColorRange = [bgColor ?? theme.bg.secondary, theme.bg.primary]
+  const isHeaderVisible = associatedScreens.includes(currentRouteName)
+
+  const bgColorRange = [theme.bg.secondary, theme.bg.primary]
   const borderColorRange = ['transparent', theme.border.secondary]
 
   const hasCompactHeader = HeaderCompactContent !== undefined || headerTitle
 
   const titleAnimatedStyle = useAnimatedStyle(() =>
-    hasCompactHeader || headerTitle
+    isHeaderVisible && (hasCompactHeader || headerTitle)
       ? {
           transform: [
             { translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) },
@@ -85,7 +89,7 @@ const BaseHeader = ({
   )
 
   const bottomContentAnimatedStyle = useAnimatedStyle(() =>
-    HeaderBottomContent !== undefined
+    isHeaderVisible && HeaderBottomContent !== undefined
       ? {
           transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }],
           opacity: interpolate(scrollY?.value || 0, defaultScrollRange, [1, 0], Extrapolate.CLAMP)
@@ -94,7 +98,7 @@ const BaseHeader = ({
   )
 
   const animatedBlurViewProps = useAnimatedProps(() =>
-    Platform.OS === 'ios'
+    isHeaderVisible && Platform.OS === 'ios'
       ? {
           intensity: interpolate(scrollY?.value || 0, defaultScrollRange, [0, 100], Extrapolate.CLAMP)
         }
@@ -102,19 +106,23 @@ const BaseHeader = ({
   )
 
   const androidHeaderColor = useAnimatedStyle(() =>
-    Platform.OS === 'android'
+    isHeaderVisible && Platform.OS === 'android'
       ? {
           backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, bgColorRange)
         }
       : {}
   )
 
-  const bottomBorderColor = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
-  }))
+  const bottomBorderColor = useAnimatedStyle(() =>
+    isHeaderVisible
+      ? {
+          backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
+        }
+      : {}
+  )
 
   const fullContentAnimatedStyle = useAnimatedStyle(() =>
-    hasCompactHeader
+    isHeaderVisible && hasCompactHeader
       ? {
           transform: [
             { translateY: interpolate(scrollY?.value || 0, [20, scrollEndThreshold], [0, -15], Extrapolate.CLAMP) }
@@ -126,7 +134,7 @@ const BaseHeader = ({
   )
 
   const compactContentAnimatedStyle = useAnimatedStyle(() =>
-    hasCompactHeader
+    isHeaderVisible && hasCompactHeader
       ? {
           opacity: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [0, 1], Extrapolate.CLAMP),
           height: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [110, 95], Extrapolate.CLAMP)

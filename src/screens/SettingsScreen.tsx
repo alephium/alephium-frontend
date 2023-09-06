@@ -26,15 +26,12 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import StackHeader from '~/components/headers/StackHeader'
 import BoxSurface from '~/components/layout/BoxSurface'
 import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import HighlightRow from '~/components/Row'
 import Toggle from '~/components/Toggle'
-import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
-import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -55,7 +52,6 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScre
 
 const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const { handleScroll, scrollY } = useVerticalScroll()
   const hasAvailableBiometrics = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const requireAuth = useAppSelector((s) => s.settings.requireAuth)
@@ -71,11 +67,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const { ref: currencySelectModalRef, open: openCurrencySelectModal, close: closeCurrencySelectModal } = useModalize()
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
-
-  useCustomNavigationHeader({
-    Header: (props) => <StackHeader scrollY={scrollY} headerTitle="Settings" {...props} />,
-    navigation
-  })
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
@@ -131,7 +122,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <SettingsScreenStyled onScroll={handleScroll} hasHeader {...props}>
+      <SettingsScreenStyled hasHeader {...props}>
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>

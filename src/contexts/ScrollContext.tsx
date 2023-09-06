@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createContext, ReactNode, useContext, useState } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
 interface ScrollContextValue {
@@ -26,8 +25,6 @@ interface ScrollContextValue {
   scrollToTop?: () => void
   setScrollToTop: (scrollToTop: () => void) => void
 }
-
-const scrollDirectionDeltaThreshold = 10
 
 export type ScrollDirection = 'up' | 'down' | undefined
 
@@ -50,30 +47,14 @@ export const ScrollContextProvider = ({ children }: { children: ReactNode }) => 
   )
 }
 
-export const useScrollContext = () => useContext(ScrollContext)
+export const useScrollContext = () => {
+  const context = useContext(ScrollContext)
 
-export const useScrollEventHandler = () => {
-  const { scrollY, scrollDirection } = useScrollContext()
-
-  const scrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!scrollY || !scrollDirection) return
-
-    const newScrollY = e.nativeEvent.contentOffset.y
-    const delta = scrollY.value - newScrollY
-    const direction = delta > 0 ? 'up' : 'down'
-
-    if (newScrollY === 0) {
-      scrollDirection.value = undefined
-    } else if (direction === 'up' && delta > scrollDirectionDeltaThreshold) {
-      scrollDirection.value = 'up'
-    } else if (direction === 'down' && delta < -scrollDirectionDeltaThreshold) {
-      scrollDirection.value = 'down'
-    }
-
-    scrollY.value = newScrollY
+  if (!context) {
+    throw new Error('useScrollContext must be used within ScrollContextProvider')
   }
 
-  return scrollHandler
+  return context
 }
 
 export default ScrollContext

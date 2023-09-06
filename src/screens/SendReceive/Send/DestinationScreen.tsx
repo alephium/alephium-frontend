@@ -17,11 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { isAddressValid } from '@alephium/sdk'
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
 import { usePostHog } from 'posthog-react-native'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
@@ -37,11 +36,8 @@ import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useSendContext } from '~/contexts/SendContext'
-import useCustomNavigationHeader from '~/hooks/layout/useCustomNavigationHeader'
-import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
-import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
@@ -75,7 +71,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const { ref: contactSelectModalRef, open: openContactSelectModal, close: closeContactSelectModal } = useModalize()
   const { ref: addressSelectModalRef, open: openAddressSelectModal, close: closeAddressSelectModal } = useModalize()
   const shouldFlash = useSharedValue(0)
-  const { handleScroll, scrollY } = useVerticalScroll()
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -140,20 +135,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     navigation.navigate(nextScreen)
   }
 
-  useCustomNavigationHeader({
-    Header: (props) => (
-      <ProgressHeader
-        key="progress-header"
-        workflow="send"
-        {...props}
-        scrollY={scrollY}
-        HeaderRight={<Button onPress={handleSubmit(onContinue)} iconProps={{ name: 'arrow-forward-outline' }} round />}
-      />
-    ),
-    navigation,
-    setInParent: true
-  })
-
   useEffect(() => {
     if (toAddress) {
       setValue('toAddressHash', toAddress)
@@ -167,7 +148,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   }))
 
   return (
-    <ScrollScreen onScroll={handleScroll} hasHeader {...props}>
+    <ScrollScreen hasHeader {...props}>
       <ScreenIntro
         title="Destination"
         subtitle="Send to an address, a contact, or one of your other addresses."

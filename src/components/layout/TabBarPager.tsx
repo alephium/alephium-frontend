@@ -35,8 +35,9 @@ import styled from 'styled-components/native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import TopTabBar from '~/components/TopTabBar'
+import useVerticalScroll from '~/hooks/layout/useScreenScroll'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
-import useVerticalScroll from '~/hooks/layout/useVerticalScroll'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 export interface TabBarPageProps extends AnimatedScrollViewProps {
@@ -54,7 +55,8 @@ const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
 const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenProps) => {
   const pagerRef = useRef<PagerView>(null)
-  const { handleScroll, scrollY } = useVerticalScroll()
+
+  const handleScroll = useScreenScrollHandler()
 
   const tabBarRef = useAnimatedRef<Animated.View>()
   const tabBarPageY = useSharedValue<number>(120)
@@ -115,14 +117,6 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
           />
         ))}
       </AnimatedPagerView>
-      <HeaderContainer>
-        <BaseHeader
-          headerTitle={headerTitle}
-          HeaderBottom={<TabBar />}
-          HeaderCompactContent={<TabBar />}
-          scrollY={scrollY}
-        />
-      </HeaderContainer>
     </>
   )
 }
