@@ -19,6 +19,7 @@ import { RefObject } from 'react'
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView } from 'react-native'
 
 import { scrollEndThreshold } from '~/components/headers/BaseHeader'
+import { scrollScreenTo } from '~/utils/layout'
 
 type UseAutoScrollReturnedHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => void
 
@@ -27,29 +28,17 @@ type UseAutoScrollOnDragEnd = {
   (flatListRef?: RefObject<FlatList>): UseAutoScrollReturnedHandler
 }
 
-const checkIfScrollView = (view: ScrollView | FlatList): view is ScrollView => 'scrollTo' in view
-
 const useAutoScrollOnDragEnd: UseAutoScrollOnDragEnd = (viewRef) => {
   const scrollDragEndHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!viewRef?.current) return
     if (e.nativeEvent.velocity && Math.abs(e.nativeEvent.velocity.y) > 0.6) return
 
-    const isScrollView = checkIfScrollView(viewRef.current)
-
     const contentOffset = e.nativeEvent.contentOffset
 
-    if (isScrollView) {
-      if (contentOffset.y < 60) {
-        viewRef.current.scrollTo({ y: 0 })
-      } else if (contentOffset.y < scrollEndThreshold) {
-        viewRef.current.scrollTo({ y: scrollEndThreshold })
-      }
-    } else {
-      if (contentOffset.y < 60) {
-        viewRef.current.scrollToOffset({ offset: 0 })
-      } else if (contentOffset.y < scrollEndThreshold) {
-        viewRef.current.scrollToOffset({ offset: scrollEndThreshold })
-      }
+    if (contentOffset.y < 60) {
+      scrollScreenTo(0, viewRef)
+    } else if (contentOffset.y < scrollEndThreshold) {
+      scrollScreenTo(scrollEndThreshold, viewRef)
     }
   }
 

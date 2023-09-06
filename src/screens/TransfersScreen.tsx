@@ -26,6 +26,7 @@ import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatList
 import { useScrollContext } from '~/contexts/ScrollContext'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
+import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -46,6 +47,8 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   const handleScroll = useScreenScrollHandler()
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
+
+  useScrollToTopOnFocus(listRef)
 
   const headerHeight = useHeaderHeight()
 
