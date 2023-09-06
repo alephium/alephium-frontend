@@ -35,7 +35,6 @@ import styled from 'styled-components/native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import TopTabBar from '~/components/TopTabBar'
-import useVerticalScroll from '~/hooks/layout/useScreenScroll'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
@@ -117,6 +116,15 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
           />
         ))}
       </AnimatedPagerView>
+      <HeaderContainer>
+        <BaseHeader
+          options={{
+            headerTitle
+          }}
+          headerBottom={() => <TabBar />}
+          headerCompactContent={() => <TabBar />}
+        />
+      </HeaderContainer>
     </>
   )
 }

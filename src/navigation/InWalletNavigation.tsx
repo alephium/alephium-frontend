@@ -24,9 +24,7 @@ import { Host } from 'react-native-portalize'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
 import BaseHeader from '~/components/headers/BaseHeader'
-import TabBar from '~/components/TabBar'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
-import { ScrollContextProvider } from '~/contexts/ScrollContext'
 import { useAppSelector } from '~/hooks/redux'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
@@ -39,53 +37,51 @@ const InWalletTabsNavigation = () => {
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
 
   return (
-    <ScrollContextProvider>
-      <Host>
-        <InWalletTabs.Navigator
-          tabBar={(props) => <FooterMenu {...props} />}
-          screenOptions={{
-            header: (props) => <BaseHeader associatedScreens={['DashboardScreen', 'TransfersScreen']} {...props} />,
-            headerTransparent: true
+    <Host>
+      <InWalletTabs.Navigator
+        tabBar={(props) => <FooterMenu {...props} />}
+        screenOptions={{
+          header: (props) => <BaseHeader {...props} />,
+          headerTransparent: true
+        }}
+      >
+        <InWalletTabs.Screen
+          name="DashboardScreen"
+          component={DashboardScreen}
+          options={{
+            title: 'Overview',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
+            ),
+            headerRight: () => <DashboardHeaderActions />,
+            headerLeft: () => <WalletSwitchButton />,
+            headerTitle: activeWalletName
           }}
-        >
-          <InWalletTabs.Screen
-            name="DashboardScreen"
-            component={DashboardScreen}
-            options={{
-              title: 'Overview',
-              tabBarIcon: ({ color, size, focused }) => (
-                <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
-              ),
-              headerRight: () => <DashboardHeaderActions />,
-              headerLeft: () => <WalletSwitchButton />,
-              headerTitle: activeWalletName
-            }}
-          />
-          <InWalletTabs.Screen
-            name="TransfersScreen"
-            component={TransfersScreen}
-            options={{
-              title: 'Transfers',
-              tabBarIcon: ({ color, size, focused }) => (
-                <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
-              ),
-              headerTitle: 'Transfers'
-            }}
-          />
-          <InWalletTabs.Screen
-            name="AddressesTabNavigation"
-            component={AddressesTabNavigation}
-            options={{
-              title: 'Addresses',
-              tabBarIcon: ({ color, size, focused }) => (
-                <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
-              ),
-              header: (props) => <BaseHeader associatedScreens={['AddressesTabNavigation']} {...props} />
-            }}
-          />
-        </InWalletTabs.Navigator>
-      </Host>
-    </ScrollContextProvider>
+        />
+        <InWalletTabs.Screen
+          name="TransfersScreen"
+          component={TransfersScreen}
+          options={{
+            title: 'Transfers',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
+            ),
+            headerTitle: 'Transfers'
+          }}
+        />
+        <InWalletTabs.Screen
+          name="AddressesTabNavigation"
+          component={AddressesTabNavigation}
+          options={{
+            title: 'Addresses',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
+            ),
+            headerShown: false
+          }}
+        />
+      </InWalletTabs.Navigator>
+    </Host>
   )
 }
 

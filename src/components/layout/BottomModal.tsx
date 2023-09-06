@@ -197,7 +197,7 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent }: BottomModa
             </HandleContainer>
             <ContentContainer>
               <Navigation style={modalNavigationAnimatedStyle}>
-                <Button onPress={handleClose} Icon={X} round />
+                <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
               </Navigation>
               <Content onLayout={handleContentLayout} onClose={handleClose} />
             </ContentContainer>

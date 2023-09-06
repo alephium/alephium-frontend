@@ -32,7 +32,7 @@ import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollS
 import HighlightRow from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
+import { ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'
@@ -43,21 +43,6 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
   const posthog = usePostHog()
-
-  useEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => (
-        <ContinueButton
-          onPress={() => {
-            navigation.goBack()
-            navigation.goBack()
-          }}
-          text="Cancel"
-        />
-      )
-    })
-  }, [navigation])
 
   const handleCopyAddressPress = () => {
     posthog?.capture('Copied address', { note: 'Receive screen' })
@@ -72,7 +57,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={params.addressHash} />
       </CenteredScreenSection>
       <CenteredScreenSection>
-        <Button title="Copy address" onPress={handleCopyAddressPress} Icon={ClipboardIcon} />
+        <Button title="Copy address" onPress={handleCopyAddressPress} iconProps={{ name: 'copy-outline' }} />
       </CenteredScreenSection>
       <ScreenSection>
         <BoxSurface>

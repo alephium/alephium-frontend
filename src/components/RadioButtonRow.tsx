@@ -19,20 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import HighlightRow, { HighlightRowProps } from '~/components/Row'
+import Row, { RowProps } from '~/components/Row'
 
-interface RadioButtonRowProps extends Omit<HighlightRowProps, 'children'> {
+interface RadioButtonRowProps extends Omit<RowProps, 'children'> {
   title: string
   isActive: boolean
 }
 
 const RadioButtonRow = ({ title, isActive, ...props }: RadioButtonRowProps) => (
-  <HighlightRow key={title} {...props}>
+  <Row key={title} {...props}>
     <RowContents>
       <RadioButton>{isActive && <RadioButtonChecked />}</RadioButton>
       <Title>{title}</Title>
     </RowContents>
-  </HighlightRow>
+  </Row>
 )
 
 export default RadioButtonRow

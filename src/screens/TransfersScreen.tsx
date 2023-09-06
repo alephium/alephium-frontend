@@ -45,21 +45,9 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
 
   const handleScroll = useScreenScrollHandler()
-  const { setScrollToTop } = useScrollContext()
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
   const headerHeight = useHeaderHeight()
-
-  useEffect(() => {
-    navigation.addListener('blur', () => listRef.current?.scrollToOffset({ offset: 0, animated: false }))
-  }, [navigation])
-
-  useFocusEffect(
-    useCallback(
-      () => setScrollToTop(() => () => listRef.current?.scrollToOffset({ offset: 0, animated: true })),
-      [setScrollToTop]
-    )
-  )
 
   return (
     <TransactionsFlatListScreen

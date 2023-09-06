@@ -17,9 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useHeaderHeight } from '@react-navigation/elements'
-import { RefObject } from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { RefObject, useEffect, useRef } from 'react'
 import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 
+import { useScrollContext } from '~/contexts/ScrollContext'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
@@ -39,17 +41,28 @@ const ScrollScreen = ({
   style,
   containerStyle,
   contentContainerStyle,
-  scrollViewRef,
   ...props
 }: ScrollScreenProps) => {
+  const viewRef = useRef<ScrollView>(null)
+
+  const navigation = useNavigation()
   const headerheight = useHeaderHeight()
   const scrollHandler = useScreenScrollHandler()
-  const scrollEndHandler = useAutoScrollOnDragEnd(scrollViewRef)
+  const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
+  const { scrollY } = useScrollContext()
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      viewRef.current?.scrollTo({ y: 0, animated: false })
+    })
+
+    return unsubscribe
+  }, [navigation, scrollY])
 
   return (
     <Screen style={containerStyle}>
       <ScrollView
-        ref={scrollViewRef}
+        ref={viewRef}
         scrollEventThrottle={16}
         alwaysBounceVertical={false}
         onScroll={scrollHandler}

@@ -20,9 +20,12 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useCallback, useEffect, useRef } from 'react'
 import { ScrollView, ScrollViewProps } from 'react-native'
+import { useTheme } from 'styled-components'
 
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useScrollContext } from '~/contexts/ScrollContext'
+import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 export interface BottomBarScrollScreenProps extends ScrollViewProps {
@@ -36,18 +39,7 @@ const BottomBarScrollScreen = ({
   children,
   ...props
 }: BottomBarScrollScreenProps) => {
-  const viewRef = useRef<ScrollView>(null)
-  const navigation = useNavigation()
-  const { setScrollToTop } = useScrollContext()
   const bottomBarHeight = useBottomTabBarHeight()
-
-  useEffect(() => {
-    navigation.addListener('blur', () => viewRef.current?.scrollTo({ y: 0, animated: false }))
-  }, [navigation])
-
-  useFocusEffect(
-    useCallback(() => setScrollToTop(() => () => viewRef.current?.scrollTo({ y: 0, animated: true })), [setScrollToTop])
-  )
 
   return (
     <ScrollScreen
@@ -55,7 +47,6 @@ const BottomBarScrollScreen = ({
         paddingBottom: hasBottomBar ? bottomBarHeight + HORIZONTAL_MARGIN : 0
       }}
       hasHeader={hasHeader}
-      scrollViewRef={viewRef}
       showsHorizontalScrollIndicator={false}
       {...props}
     >

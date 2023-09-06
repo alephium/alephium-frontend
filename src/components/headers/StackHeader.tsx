@@ -23,12 +23,12 @@ import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
 
 export type StackHeaderCustomProps = StackHeaderProps & BaseHeaderProps
 
-const StackHeader = ({ navigation, headerTitle, ...props }: StackHeaderCustomProps) => {
+const StackHeader = ({ navigation, options, ...props }: StackHeaderCustomProps) => {
   const HeaderLeft = navigation.canGoBack() ? (
     <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-back-outline' }} round />
   ) : null
 
-  return <BaseHeader HeaderLeft={HeaderLeft} headerTitle={headerTitle} {...props} />
+  return <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} {...props} />
 }
 
 export default StackHeader

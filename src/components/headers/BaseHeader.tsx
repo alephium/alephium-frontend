@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
+import { useNavigation } from '@react-navigation/native'
 import { StackHeaderProps } from '@react-navigation/stack'
 import { BlurView } from 'expo-blur'
-import { ReactNode, RefObject } from 'react'
+import { ReactNode, RefObject, useEffect } from 'react'
 import { Platform, StyleProp, ViewStyle } from 'react-native'
 import Animated, {
   Extrapolate,
@@ -33,17 +33,14 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { useScrollContext } from '~/contexts/ScrollContext'
-import useActiveRouteName from '~/hooks/useActiveRouteName'
-import AllRouteNames from '~/navigation/allRoutes'
 import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 export interface BaseHeaderProps {
-  associatedScreens: AllRouteNames[]
   headerBottom?: () => ReactNode
-  headerCompactContent?: ReactNode
+  headerCompactContent?: () => ReactNode
   style?: StyleProp<ViewStyle>
   headerRef?: RefObject<Animated.View>
-  options: Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft'> & { headerTitle: 'string' }
+  options: Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'>
 }
 
 export const scrollEndThreshold = 80
@@ -54,7 +51,6 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 // TODO: Reimplement tap bar to scroll up
 
 const BaseHeader = ({
-  associatedScreens,
   options: { headerRight, headerLeft, headerTitle },
   headerBottom,
   headerCompactContent,
@@ -63,10 +59,8 @@ const BaseHeader = ({
 }: BaseHeaderProps) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
-  const currentRouteName = useActiveRouteName()
   const { scrollY } = useScrollContext()
-
-  const isHeaderVisible = associatedScreens.includes(currentRouteName)
+  const navigation = useNavigation()
 
   const bgColorRange = [theme.bg.secondary, theme.bg.primary]
   const borderColorRange = ['transparent', theme.border.secondary]
@@ -76,9 +70,18 @@ const BaseHeader = ({
   const HeaderRight = headerRight && headerRight({})
   const HeaderLeft = headerLeft && headerLeft({})
   const HeaderBottom = headerBottom && headerBottom()
+  const HeaderTitle = headerTitle && (typeof headerTitle === 'string' ? headerTitle : headerTitle.arguments['children'])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      if (scrollY) scrollY.value = 0
+    })
+
+    return unsubscribe
+  }, [navigation, scrollY])
 
   const titleAnimatedStyle = useAnimatedStyle(() =>
-    isHeaderVisible && (hasCompactHeader || headerTitle)
+    hasCompactHeader || headerTitle
       ? {
           transform: [
             { translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) },
@@ -91,7 +94,7 @@ const BaseHeader = ({
   )
 
   const bottomContentAnimatedStyle = useAnimatedStyle(() =>
-    isHeaderVisible && HeaderBottomContent !== undefined
+    HeaderBottomContent !== undefined
       ? {
           transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }],
           opacity: interpolate(scrollY?.value || 0, defaultScrollRange, [1, 0], Extrapolate.CLAMP)
@@ -100,7 +103,7 @@ const BaseHeader = ({
   )
 
   const animatedBlurViewProps = useAnimatedProps(() =>
-    isHeaderVisible && Platform.OS === 'ios'
+    Platform.OS === 'ios'
       ? {
           intensity: interpolate(scrollY?.value || 0, defaultScrollRange, [0, 100], Extrapolate.CLAMP)
         }
@@ -108,23 +111,19 @@ const BaseHeader = ({
   )
 
   const androidHeaderColor = useAnimatedStyle(() =>
-    isHeaderVisible && Platform.OS === 'android'
+    Platform.OS === 'android'
       ? {
           backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, bgColorRange)
         }
       : {}
   )
 
-  const bottomBorderColor = useAnimatedStyle(() =>
-    isHeaderVisible
-      ? {
-          backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
-        }
-      : {}
-  )
+  const bottomBorderColor = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
+  }))
 
   const fullContentAnimatedStyle = useAnimatedStyle(() =>
-    isHeaderVisible && hasCompactHeader
+    hasCompactHeader
       ? {
           transform: [
             { translateY: interpolate(scrollY?.value || 0, [20, scrollEndThreshold], [0, -15], Extrapolate.CLAMP) }
@@ -136,7 +135,7 @@ const BaseHeader = ({
   )
 
   const compactContentAnimatedStyle = useAnimatedStyle(() =>
-    isHeaderVisible && hasCompactHeader
+    hasCompactHeader
       ? {
           opacity: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [0, 1], Extrapolate.CLAMP),
           height: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [110, 95], Extrapolate.CLAMP)
@@ -149,7 +148,7 @@ const BaseHeader = ({
       <Animated.View style={[style, androidHeaderColor, { paddingTop: insets.top }]} ref={headerRef}>
         {HeaderLeft}
         {HeaderRight}
-        {headerTitle && <Title>{headerTitle}</Title>}
+        {HeaderTitle && <Title>{HeaderTitle}</Title>}
         {HeaderBottom}
         <BottomBorder style={bottomBorderColor} />
       </Animated.View>
@@ -164,7 +163,7 @@ const BaseHeader = ({
               animatedProps={animatedBlurViewProps}
               tint={theme.name}
             >
-              {headerCompactContent || <CompactTitle>{headerTitle}</CompactTitle>}
+              {(headerCompactContent && headerCompactContent()) || <CompactTitle>{HeaderTitle}</CompactTitle>}
               <BottomBorder style={bottomBorderColor} />
             </ActionAreaBlurred>
           </CompactContent>
@@ -178,14 +177,14 @@ const BaseHeader = ({
               </ActionArea>
               {headerTitle && (
                 <TitleArea style={titleAnimatedStyle}>
-                  <Title>{headerTitle}</Title>
+                  <Title>{HeaderTitle}</Title>
                 </TitleArea>
               )}
             </>
           ) : (
             <ActionArea style={{ paddingTop: insets.top, paddingLeft: 0, paddingBottom: 0 }}>
               <TitleArea style={[titleAnimatedStyle]}>
-                <Title>{headerTitle}</Title>
+                <Title>{HeaderTitle}</Title>
               </TitleArea>
             </ActionArea>
           )}

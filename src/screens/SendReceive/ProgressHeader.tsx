@@ -16,13 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Ionicons from '@expo/vector-icons/Ionicons'
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
-import { StackHeaderProps } from '@react-navigation/stack'
 import { useEffect, useState } from 'react'
-import { Pressable, PressableProps, View } from 'react-native'
+import { PressableProps, View } from 'react-native'
 import { Circle as ProgressBar } from 'react-native-progress'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -45,7 +42,7 @@ const workflowSteps: Record<
   send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
 }
 
-const ProgressHeader = ({ navigation, route, workflow, HeaderRight }: ProgressHeaderProps) => {
+const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeaderProps) => {
   const theme = useTheme()
 
   const [progress, setProgress] = useState(0)
@@ -65,23 +62,24 @@ const ProgressHeader = ({ navigation, route, workflow, HeaderRight }: ProgressHe
 
   return (
     <BaseHeader
-      headerTitle="send"
-      HeaderRight={
-        <View>
-          {HeaderRight && <HeaderRightOptionWrapper>{HeaderRight}</HeaderRightOptionWrapper>}
-          <ProgressBar
-            progress={progress}
-            color={theme.global.accent}
-            unfilledColor={theme.border.secondary}
-            fill="transparent"
-            strokeCap="round"
-            borderWidth={0}
-            size={43}
-            pointerEvents="none"
-          />
-        </View>
-      }
-      HeaderLeft={HeaderLeft}
+      options={{
+        headerRight: () => (
+          <View>
+            {options.headerRight && <HeaderRightOptionWrapper>{options.headerRight({})}</HeaderRightOptionWrapper>}
+            <ProgressBar
+              progress={progress}
+              color={theme.global.accent}
+              unfilledColor={theme.border.secondary}
+              fill="transparent"
+              strokeCap="round"
+              borderWidth={0}
+              size={43}
+              pointerEvents="none"
+            />
+          </View>
+        ),
+        ...options
+      }}
     />
   )
 }

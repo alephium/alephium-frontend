@@ -43,13 +43,7 @@ const SendNavigation = () => (
     <SendStack.Navigator
       screenOptions={{
         headerShown: false,
-        header: (props) => (
-          <ProgressHeader
-            associatedScreens={['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']}
-            workflow="send"
-            {...props}
-          />
-        )
+        header: (props) => <ProgressHeader workflow="send" {...props} />
       }}
       initialRouteName="DestinationScreen"
     >

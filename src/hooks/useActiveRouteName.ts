@@ -22,6 +22,7 @@ import { useNavigationState } from '@react-navigation/native'
 
 const useActiveRouteName = () =>
   useNavigationState((state) => {
+    if (!state) return
     let route: any = state.routes[state.index]
     while (route.state && route.state.index !== undefined) {
       route = route.state.routes[route.state.index]
