@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
+import { StackHeaderProps } from '@react-navigation/stack'
 import { BlurView } from 'expo-blur'
 import { ReactNode, RefObject } from 'react'
 import { Platform, StyleProp, ViewStyle } from 'react-native'
@@ -37,13 +39,11 @@ import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
 
 export interface BaseHeaderProps {
   associatedScreens: AllRouteNames[]
-  HeaderLeft?: ReactNode
-  HeaderRight?: ReactNode
-  headerTitle?: string
-  HeaderBottom?: ReactNode
-  HeaderCompactContent?: ReactNode
+  headerBottom?: () => ReactNode
+  headerCompactContent?: ReactNode
   style?: StyleProp<ViewStyle>
   headerRef?: RefObject<Animated.View>
+  options: Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft'> & { headerTitle: 'string' }
 }
 
 export const scrollEndThreshold = 80
@@ -55,11 +55,9 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 
 const BaseHeader = ({
   associatedScreens,
-  HeaderRight,
-  HeaderLeft,
-  headerTitle,
-  HeaderBottom,
-  HeaderCompactContent,
+  options: { headerRight, headerLeft, headerTitle },
+  headerBottom,
+  headerCompactContent,
   style,
   headerRef
 }: BaseHeaderProps) => {
@@ -73,7 +71,11 @@ const BaseHeader = ({
   const bgColorRange = [theme.bg.secondary, theme.bg.primary]
   const borderColorRange = ['transparent', theme.border.secondary]
 
-  const hasCompactHeader = HeaderCompactContent !== undefined || headerTitle
+  const hasCompactHeader = headerCompactContent !== undefined || headerTitle
+
+  const HeaderRight = headerRight && headerRight({})
+  const HeaderLeft = headerLeft && headerLeft({})
+  const HeaderBottom = headerBottom && headerBottom()
 
   const titleAnimatedStyle = useAnimatedStyle(() =>
     isHeaderVisible && (hasCompactHeader || headerTitle)
@@ -155,20 +157,20 @@ const BaseHeader = ({
   } else {
     return (
       <Animated.View style={style} ref={headerRef}>
-        {(HeaderCompactContent || headerTitle) && (
+        {(headerCompactContent || headerTitle) && (
           <CompactContent style={compactContentAnimatedStyle}>
             <ActionAreaBlurred
               style={{ paddingTop: insets.top, justifyContent: 'center', height: '100%' }}
               animatedProps={animatedBlurViewProps}
               tint={theme.name}
             >
-              {HeaderCompactContent || <CompactTitle>{headerTitle}</CompactTitle>}
+              {headerCompactContent || <CompactTitle>{headerTitle}</CompactTitle>}
               <BottomBorder style={bottomBorderColor} />
             </ActionAreaBlurred>
           </CompactContent>
         )}
         <FullContent style={fullContentAnimatedStyle}>
-          {HeaderLeft || HeaderRight ? (
+          {headerLeft || headerRight ? (
             <>
               <ActionArea style={{ paddingTop: insets.top }}>
                 {HeaderLeft}
@@ -187,7 +189,7 @@ const BaseHeader = ({
               </TitleArea>
             </ActionArea>
           )}
-          {HeaderBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
+          {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
           <BottomBorder style={bottomBorderColor} />
         </FullContent>
       </Animated.View>

@@ -44,9 +44,7 @@ const InWalletTabsNavigation = () => {
         <InWalletTabs.Navigator
           tabBar={(props) => <FooterMenu {...props} />}
           screenOptions={{
-            header: (props) => (
-              <BaseHeader headerTitle="TEST" associatedScreens={['DashboardScreen', 'TransfersScreen']} {...props} />
-            ),
+            header: (props) => <BaseHeader associatedScreens={['DashboardScreen', 'TransfersScreen']} {...props} />,
             headerTransparent: true
           }}
         >
@@ -57,7 +55,10 @@ const InWalletTabsNavigation = () => {
               title: 'Overview',
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
-              )
+              ),
+              headerRight: () => <DashboardHeaderActions />,
+              headerLeft: () => <WalletSwitchButton />,
+              headerTitle: activeWalletName
             }}
           />
           <InWalletTabs.Screen
@@ -67,7 +68,8 @@ const InWalletTabsNavigation = () => {
               title: 'Transfers',
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
-              )
+              ),
+              headerTitle: 'Transfers'
             }}
           />
           <InWalletTabs.Screen
@@ -78,7 +80,7 @@ const InWalletTabsNavigation = () => {
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
               ),
-              header: (props) => <BaseHeader associatedScreens={['AddressesTabNavigation']} />
+              header: (props) => <BaseHeader associatedScreens={['AddressesTabNavigation']} {...props} />
             }}
           />
         </InWalletTabs.Navigator>
