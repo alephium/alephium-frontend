@@ -21,14 +21,18 @@ import { FlatList, ScrollView } from 'react-native'
 
 export const checkIfScrollView = (view: ScrollView | FlatList): view is ScrollView => 'scrollTo' in view
 
-export const scrollScreenTo = (position: number, viewRef: RefObject<ScrollView> | RefObject<FlatList>) => {
+export const scrollScreenTo = (
+  position: number,
+  viewRef: RefObject<ScrollView> | RefObject<FlatList>,
+  animated = false
+) => {
   if (!viewRef?.current) return
 
   const isScrollView = checkIfScrollView(viewRef.current)
 
   if (isScrollView) {
-    viewRef.current.scrollTo({ y: position })
+    viewRef.current.scrollTo({ y: position, animated })
   } else {
-    viewRef.current.scrollToOffset({ offset: position })
+    viewRef.current.scrollToOffset({ offset: position, animated })
   }
 }

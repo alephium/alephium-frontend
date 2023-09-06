@@ -44,6 +44,7 @@ const workflowSteps: Record<
 
 const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeaderProps) => {
   const theme = useTheme()
+  console.log('YO')
 
   const [progress, setProgress] = useState(0)
 
@@ -78,6 +79,7 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
             />
           </View>
         ),
+        headerLeft: () => HeaderLeft,
         ...options
       }}
     />

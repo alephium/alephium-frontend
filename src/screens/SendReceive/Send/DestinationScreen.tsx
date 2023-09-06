@@ -17,10 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { isAddressValid } from '@alephium/sdk'
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
 import { usePostHog } from 'posthog-react-native'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
@@ -128,13 +129,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     }
   }, [params?.fromAddressHash, setFromAddress, setToAddress])
 
-  console.log(navigation)
-
-  const onContinue = (formData: FormData) => {
-    setToAddress(formData.toAddressHash)
-    navigation.navigate(nextScreen)
-  }
-
   useEffect(() => {
     if (toAddress) {
       setValue('toAddressHash', toAddress)
@@ -146,6 +140,20 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       duration: 300
     })
   }))
+
+  useFocusEffect(
+    useCallback(() => {
+      const onContinue = (formData: FormData) => {
+        setToAddress(formData.toAddressHash)
+        navigation.navigate(nextScreen)
+      }
+      navigation.getParent()?.setOptions({
+        headerRight: () => (
+          <Button onPress={handleSubmit(onContinue)} iconProps={{ name: 'arrow-forward-outline' }} round />
+        )
+      })
+    }, [handleSubmit, navigation, nextScreen, setToAddress])
+  )
 
   return (
     <ScrollScreen hasHeader {...props}>

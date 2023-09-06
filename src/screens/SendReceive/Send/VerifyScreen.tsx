@@ -31,7 +31,7 @@ import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollS
 import HighlightRow from '~/components/Row'
 import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
+import { ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -45,7 +45,6 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
 
   useFocusEffect(() => {
     navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
       headerRight: () => (
         <ContinueButton text="Send" onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))} />
       )

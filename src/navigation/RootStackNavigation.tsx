@@ -82,15 +82,14 @@ const RootStackNavigation = () => {
         <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
           <ScrollContextProvider>
             <AnalyticsProvider>
-              <RootStack.Navigator
-                initialRouteName="SplashScreen"
-                screenOptions={{
-                  header: (props) => <StackHeader {...props} />,
-                  headerTransparent: true
-                }}
-              >
-                {/* Screens with header */}
-                <RootStack.Group>
+              <RootStack.Navigator initialRouteName="SplashScreen">
+                {/* Screens with default header */}
+                <RootStack.Group
+                  screenOptions={{
+                    header: (props) => <StackHeader {...props} />,
+                    headerTransparent: true
+                  }}
+                >
                   <RootStack.Screen name="LandingScreen" component={LandingScreen} />
                   <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
                   <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
@@ -138,7 +137,6 @@ const RootStackNavigation = () => {
                     component={NewAddressScreen}
                     options={{ headerTitle: 'New address' }}
                   />
-                  <RootStack.Screen name="SendNavigation" component={SendNavigation} />
                   <RootStack.Screen
                     name="ReceiveNavigation"
                     component={ReceiveNavigation}
@@ -147,6 +145,10 @@ const RootStackNavigation = () => {
                     }}
                   />
                   <RootStack.Screen name="ContactScreen" component={ContactScreen} />
+                </RootStack.Group>
+                <RootStack.Group screenOptions={{ headerShown: false }}>
+                  {/* Sub-navigation with custom header */}
+                  <RootStack.Screen name="SendNavigation" component={SendNavigation} />
                 </RootStack.Group>
                 {/* Screens without header */}
                 <RootStack.Group screenOptions={{ headerShown: false }}>

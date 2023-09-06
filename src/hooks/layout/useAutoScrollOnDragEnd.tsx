@@ -36,9 +36,9 @@ const useAutoScrollOnDragEnd: UseAutoScrollOnDragEnd = (viewRef) => {
     const contentOffset = e.nativeEvent.contentOffset
 
     if (contentOffset.y < 60) {
-      scrollScreenTo(0, viewRef)
+      scrollScreenTo(0, viewRef, true)
     } else if (contentOffset.y < scrollEndThreshold) {
-      scrollScreenTo(scrollEndThreshold, viewRef)
+      scrollScreenTo(scrollEndThreshold, viewRef, true)
     }
   }
 
