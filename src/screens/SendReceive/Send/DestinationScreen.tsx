@@ -188,32 +188,32 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
         <ScreenSection>
           <ButtonsRow>
             <Button
-              color={theme.global.accent}
               compact
               iconProps={{ name: 'qr-code-outline' }}
               title="Scan"
               onPress={openQRCodeScannerModal}
+              variant="accent"
             />
             <Button
-              color={theme.global.accent}
               compact
               iconProps={{ name: 'copy-outline' }}
               title="Paste"
               onPress={handlePastePress}
+              variant="accent"
             />
             <Button
-              color={theme.global.accent}
               compact
               iconProps={{ name: 'person-outline' }}
               title="Contacts"
               onPress={() => setContactSelectModalOpen(true)}
+              variant="accent"
             />
             <Button
-              color={theme.global.accent}
               compact
               iconProps={{ name: 'bookmarks-outline' }}
               title="Addresses"
               onPress={() => setAddressSelectModalOpen(true)}
+              variant="accent"
             />
           </ButtonsRow>
         </ScreenSection>

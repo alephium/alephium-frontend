@@ -22,3 +22,8 @@ export const defaultSpringConfiguration: SpringConfig = {
   stiffness: 100,
   damping: 50
 }
+
+export const fastSpringConfiguration: SpringConfig = {
+  stiffness: 200,
+  damping: 30
+}

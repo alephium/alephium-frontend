@@ -174,6 +174,7 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
           Content={(props) => selectedTx && <TransactionModal {...props} tx={selectedTx} />}
           isOpen={txModalOpen}
           onClose={() => setTxModalOpen(false)}
+          customMinHeight={300}
         />
       </Portal>
     </Screen>

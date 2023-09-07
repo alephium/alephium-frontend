@@ -40,6 +40,8 @@ export default styled.Text<AppTextProps>`
     return color ? th.font[color as FontColor] || th.global[color as GlobalColor] || color : th.font.primary
   }};
 
+  font-weight: 400;
+
   ${({ bold }) =>
     bold &&
     css`
@@ -58,7 +60,7 @@ export default styled.Text<AppTextProps>`
       font-weight: 500;
     `}
 
-  ${({ size }) =>
+  ${({ size = 15 }) =>
     size &&
     css`
       font-size: ${size}px;

@@ -36,22 +36,13 @@ export interface RowProps {
   truncate?: boolean
   noMaxWidth?: boolean
   transparent?: boolean
+  isLast?: boolean
   style?: StyleProp<ViewStyle>
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const Row = ({
-  title,
-  subtitle,
-  children,
-  onPress,
-  truncate,
-  noMaxWidth,
-  style,
-  transparent,
-  titleColor
-}: RowProps) => {
+const Row = ({ title, subtitle, children, onPress, truncate, noMaxWidth, style, titleColor }: RowProps) => {
   const componentContent = title ? (
     <>
       <LeftContent>
@@ -80,7 +71,7 @@ const Row = ({
 }
 
 export default styled(Row)`
-  ${({ theme, isInput, isSecondary, transparent }) =>
+  ${({ theme, isInput, isSecondary, transparent, isLast }) =>
     isInput
       ? css`
           justify-content: center;
@@ -96,6 +87,8 @@ export default styled(Row)`
           min-height: ${INPUTS_HEIGHT}px;
           padding: 20px;
           background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.primary};
+          border-bottom-width: ${isLast ? 0 : 1}px;
+          border-bottom-color: ${theme.border.secondary};
         `}
 
   ${({ isInput, hasRightContent }) =>

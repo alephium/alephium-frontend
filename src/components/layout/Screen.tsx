@@ -29,8 +29,8 @@ export default styled.View`
   background-color: ${({ theme }) => theme.bg.back2};
 `
 
-export const ScreenSection = styled.View<{ fill?: boolean }>`
-  margin: 0 ${DEFAULT_MARGIN}px;
+export const ScreenSection = styled.View<{ fill?: boolean; noMargin?: boolean }>`
+  margin: 0 ${({ noMargin }) => (noMargin ? 0 : DEFAULT_MARGIN)}px;
 
   ${({ fill }) =>
     fill &&

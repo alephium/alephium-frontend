@@ -25,11 +25,12 @@ import {
   TextInputProps,
   ViewStyle
 } from 'react-native'
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
+import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
-import HighlightRow from '~/components/Row'
+import Row from '~/components/Row'
 
 export type InputValue = string | number | undefined | unknown
 export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
@@ -66,11 +67,11 @@ const Input = <T extends InputValue>({
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   const labelStyle = useAnimatedStyle(() => ({
-    top: withTiming(!isActive ? -10 : -35, { duration: 100 })
+    top: withSpring(!isActive ? -10 : -40, fastSpringConfiguration)
   }))
 
   const labelTextStyle = useAnimatedStyle(() => ({
-    fontSize: withTiming(!isActive ? 14 : 11, { duration: 100 })
+    fontSize: withSpring(!isActive ? 15 : 11, fastSpringConfiguration)
   }))
 
   useEffect(() => {
@@ -90,7 +91,7 @@ const Input = <T extends InputValue>({
   }
 
   return (
-    <HighlightRow onPress={onPress} isInput hasRightContent={!!RightContent} style={style}>
+    <Row onPress={onPress} isInput hasRightContent={!!RightContent} style={style}>
       <InputContainer>
         <Label style={labelStyle}>
           <LabelText style={labelTextStyle}>{label}</LabelText>
@@ -109,7 +110,7 @@ const Input = <T extends InputValue>({
         {error && <Error>{error}</Error>}
       </InputContainer>
       {RightContent}
-    </HighlightRow>
+    </Row>
   )
 }
 
@@ -126,6 +127,7 @@ const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
   height: 100%;
   padding-top: 12px;
   color: ${({ theme }) => theme.font.primary};
+  font-size: 15px;
 
   ${({ hide }) =>
     hide &&

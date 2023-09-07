@@ -23,6 +23,7 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import { Dimensions, LayoutChangeEvent, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
+  Extrapolate,
   interpolate,
   runOnJS,
   runOnUI,
@@ -36,7 +37,7 @@ import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import { ModalContentProps } from '~/components/layout/ModalContent'
-import { VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
 
@@ -57,11 +58,12 @@ interface BottomModalProps {
   isOpen: boolean
   onClose: () => void
   scrollableContent?: boolean
+  customMinHeight?: number
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const BottomModal = ({ Content, isOpen, onClose, scrollableContent }: BottomModalProps) => {
+const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHeight }: BottomModalProps) => {
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
   const insets = useSafeAreaInsets()
 
@@ -76,7 +78,7 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent }: BottomModa
 
   const maxHeight = dimensions.height
 
-  const minHeight = useSharedValue(0)
+  const minHeight = useSharedValue(customMinHeight || 0)
   const modalHeight = useSharedValue(0)
   const position = useSharedValue<ModalPositions>('minimised')
   const navHeight = useSharedValue(0)
@@ -87,7 +89,9 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent }: BottomModa
   const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
     height: -modalHeight.value,
     paddingTop:
-      position.value === 'maximised' ? insets.top : position.value === 'closing' ? withSpring(0, springConfig) : 20
+      position.value === 'maximised' ? insets.top : position.value === 'closing' ? withSpring(0, springConfig) : 20,
+    marginRight: interpolate(-modalHeight.value, [minHeight.value, dimensions.height], [5, 0], Extrapolate.CLAMP),
+    marginLeft: interpolate(-modalHeight.value, [minHeight.value, dimensions.height], [5, 0], Extrapolate.CLAMP)
   }))
 
   const modalNavigationAnimatedStyle = useAnimatedStyle(() => ({
@@ -115,7 +119,9 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent }: BottomModa
         contentHeight.value = newContentHeight
         canMaximize.value = contentHeight.value > 0.3 * dimensions.height
 
-        minHeight.value = scrollableContent
+        minHeight.value = customMinHeight
+          ? customMinHeight
+          : scrollableContent
           ? maxHeight
           : canMaximize.value
           ? dimensions.height * 0.3
@@ -244,7 +250,7 @@ const Handle = styled(Animated.View)`
   width: 15%;
   height: 4px;
   border-radius: 8px;
-  background-color: ${({ theme }) => theme.font.tertiary};
+  background-color: ${({ theme }) => theme.border.primary};
   margin-top: -15px;
 `
 
@@ -254,5 +260,5 @@ const Navigation = styled(Animated.View)`
 
 const ContentContainer = styled(Animated.View)`
   flex: 1;
-  padding: 0 20px;
+  padding: 0 ${DEFAULT_MARGIN}px;
 `

@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
-import { ChevronRight as ChevronRightIcon } from 'lucide-react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
@@ -38,7 +38,6 @@ interface TransactionModalProps extends ModalContentProps {
 }
 
 const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
-  const theme = useTheme()
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   const { direction, infoType, assets } = getTransactionInfo(tx)
@@ -48,12 +47,14 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
 
   return (
     <ModalContent {...props} verticalGap>
-      <ScreenSectionRow>
+      <ScreenSectionRow noMargin>
         <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
-        <ExplorerLink onPress={() => openBrowserAsync(explorerTxUrl)}>
-          <ExplorerLinkText>See in explorer</ExplorerLinkText>
-          <ChevronRightIcon size={20} color={theme.global.accent} />
-        </ExplorerLink>
+        <Button
+          iconProps={{ name: 'exit-outline' }}
+          onPress={() => openBrowserAsync(explorerTxUrl)}
+          round
+          variant="accent"
+        />
       </ScreenSectionRow>
 
       <BoxSurface type="highlight">
@@ -84,7 +85,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
         <Row title="To" transparent>
           {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
         </Row>
-        <Row title="Fee" transparent>
+        <Row title="Fee" transparent isLast>
           <Amount
             value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
             fadeDecimals
@@ -104,18 +105,6 @@ const ScreenSectionRow = styled(ScreenSection)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-`
-
-const ExplorerLink = styled.Pressable`
-  flex-direction: row;
-  align-items: center;
-`
-
-const ExplorerLinkText = styled(AppText)`
-  color: ${({ theme }) => theme.global.accent};
-  font-size: 16px;
-  font-weight: 700;
-  margin-right: 10px;
 `
 
 const AmountStyled = styled(Amount)`

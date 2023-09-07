@@ -62,7 +62,7 @@ const Button = ({
   const bg = {
     default: theme.button.primary,
     contrast: theme.font.primary,
-    accent: theme.global.accent,
+    accent: theme.button.primary,
     valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
     transparent: 'transparent'
@@ -120,7 +120,7 @@ const Button = ({
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
       {title && (
-        <AppText style={{ flexGrow: 1, color: font, textAlign: 'center' }} semiBold size={compact ? 14 : 16}>
+        <AppText style={{ flexGrow: 1, color: font, textAlign: 'center' }} medium size={compact ? 14 : 16}>
           {title}
         </AppText>
       )}
