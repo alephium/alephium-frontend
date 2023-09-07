@@ -27,6 +27,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import BoxSurface from '~/components/layout/BoxSurface'
+import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -41,6 +42,7 @@ import {
 } from '~/persistent-storage/wallets'
 import { walletSwitched } from '~/store/activeWalletSlice'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 import { resetNavigationState } from '~/utils/navigation'
 
@@ -101,40 +103,37 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
   }
 
   return (
-    <>
+    <ModalContent>
       <Content>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
-        <Subtitle>Switch to another wallet?</Subtitle>
+        <Subtitle>Select a wallet to switch to.</Subtitle>
 
         <ScrollView alwaysBounceVertical={false}>
-          <ScreenSection>
-            <BoxSurface>
-              {wallets.map((wallet) => (
-                <RadioButtonRow
-                  key={wallet.id}
-                  title={wallet.name}
-                  onPress={() => handleWalletItemPress(wallet.id)}
-                  isActive={wallet.id === activeWalletMetadataId}
-                  isInput
-                />
-              ))}
-            </BoxSurface>
-          </ScreenSection>
+          <BoxSurface>
+            {wallets.map((wallet) => (
+              <RadioButtonRow
+                key={wallet.id}
+                title={wallet.name}
+                onPress={() => handleWalletItemPress(wallet.id)}
+                isActive={wallet.id === activeWalletMetadataId}
+                isInput
+              />
+            ))}
+          </BoxSurface>
         </ScrollView>
       </Content>
 
-      <BottomScreenSection>
-        <ButtonsRow>
-          <Button title="New wallet" onPress={() => handleButtonPress('create')} iconProps={{ name: 'add-outline' }} />
-          <Button
-            title="Import wallet"
-            onPress={() => handleButtonPress('import')}
-            iconProps={{ name: 'arrow-down-outline' }}
-          />
-        </ButtonsRow>
-      </BottomScreenSection>
+      <ButtonsRow>
+        <Button title="New wallet" onPress={() => handleButtonPress('create')} iconProps={{ name: 'add-outline' }} />
+        <Button
+          title="Import wallet"
+          onPress={() => handleButtonPress('import')}
+          iconProps={{ name: 'arrow-down-outline' }}
+        />
+      </ButtonsRow>
+
       <SpinnerModal isActive={loading} text="Switching wallets..." />
-    </>
+    </ModalContent>
   )
 }
 
@@ -146,4 +145,7 @@ const Subtitle = styled(AppText)`
   color: ${({ theme }) => theme.font.secondary};
 `
 
-const Content = styled.View``
+const Content = styled.View`
+  gap: ${VERTICAL_GAP}px;
+  margin-bottom: ${VERTICAL_GAP}px;
+`

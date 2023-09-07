@@ -23,15 +23,22 @@ import styled from 'styled-components/native'
 
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import ScrollSection, { ScrollSectionProps } from '~/components/layout/ScrollSection'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ModalContentProps extends ViewProps {
   onClose?: () => void
   isScrollable?: boolean
   children?: ReactNode
+  verticalGap?: number | boolean
 }
 
-export const ModalContent = ({ children, ...props }: ModalContentProps) => (
-  <ModalContentStyled {...props}>{children}</ModalContentStyled>
+export const ModalContent = ({ children, verticalGap, ...props }: ModalContentProps) => (
+  <ModalContentStyled
+    {...props}
+    style={{ gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0 }}
+  >
+    {children}
+  </ModalContentStyled>
 )
 
 export const Modal = ({ children, style, ...props }: ScreenProps) => {
@@ -54,4 +61,6 @@ export const ScrollModal = ({ children, style, ...props }: ScrollSectionProps) =
   )
 }
 
-const ModalContentStyled = styled.View``
+const ModalContentStyled = styled.View`
+  padding-top: 5px;
+`

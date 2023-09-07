@@ -122,7 +122,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <SettingsScreenStyled hasHeader {...props}>
+      <SettingsScreenStyled hasHeader verticalGap {...props}>
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>

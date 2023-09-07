@@ -44,7 +44,6 @@ const workflowSteps: Record<
 
 const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeaderProps) => {
   const theme = useTheme()
-  console.log('YO')
 
   const [progress, setProgress] = useState(0)
 
@@ -64,6 +63,7 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
   return (
     <BaseHeader
       options={{
+        ...options,
         headerRight: () => (
           <View>
             {options.headerRight && <HeaderRightOptionWrapper>{options.headerRight({})}</HeaderRightOptionWrapper>}
@@ -79,8 +79,7 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
             />
           </View>
         ),
-        headerLeft: () => HeaderLeft,
-        ...options
+        headerLeft: () => HeaderLeft
       }}
     />
   )
@@ -99,13 +98,6 @@ export const ContinueButton = ({ text = 'Continue', ...props }: ContinueButtonPr
     </AppText>
   </ContinueButtonStyled>
 )
-
-const ScreenHeaderStyled = styled(ScreenSection)`
-  flex-direction: row;
-  justify-content: space-between;
-  padding-bottom: 16px;
-  align-items: center;
-`
 
 export const BackButtonStyled = styled.Pressable`
   width: 30px;

@@ -37,11 +37,11 @@ import BaseHeader from '~/components/headers/BaseHeader'
 import TopTabBar from '~/components/TopTabBar'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
-import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface TabBarPageProps extends AnimatedScrollViewProps {
-  contentStyle: AnimateProps<ScrollViewProps>['style']
-  onScroll: Required<ScrollViewProps>['onScroll']
+  contentStyle?: AnimateProps<ScrollViewProps>['style']
+  onScroll?: Required<ScrollViewProps>['onScroll']
 }
 
 interface TabBarScreenProps extends Omit<PagerViewProps, 'children'> {
@@ -147,7 +147,7 @@ const WrappedPage = ({
   const insets = useSafeAreaInsets()
 
   const pageAnimatedStyle = useAnimatedStyle(() => ({
-    paddingTop: tabBarPageY.value + insets.top + HORIZONTAL_MARGIN
+    paddingTop: tabBarPageY.value + insets.top + DEFAULT_MARGIN
   }))
 
   return (

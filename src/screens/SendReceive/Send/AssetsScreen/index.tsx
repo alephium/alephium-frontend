@@ -44,7 +44,6 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
   }, [params?.toAddressHash, setToAddress])
 
-  /*
   useEffect(() => {
     navigation.getParent()?.setOptions({
       headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
@@ -61,7 +60,6 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       )
     })
   }, [buildTransaction, isContinueButtonDisabled, navigation])
-  */
 
   if (!address) return null
 

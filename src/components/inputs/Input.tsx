@@ -114,7 +114,7 @@ const Input = <T extends InputValue>({
 }
 
 export default styled(Input)`
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.button.primary};
 `
 
 const InputContainer = styled.View`

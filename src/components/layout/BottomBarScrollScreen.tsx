@@ -17,18 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { useCallback, useEffect, useRef } from 'react'
-import { ScrollView, ScrollViewProps } from 'react-native'
-import { useTheme } from 'styled-components'
+import { ScrollViewProps } from 'react-native'
 
-import ScrollScreen from '~/components/layout/ScrollScreen'
-import { useScrollContext } from '~/contexts/ScrollContext'
-import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-export interface BottomBarScrollScreenProps extends ScrollViewProps {
+export interface BottomBarScrollScreenProps extends ScrollScreenProps {
   hasHeader?: boolean
   hasBottomBar?: boolean
 }
@@ -44,7 +38,7 @@ const BottomBarScrollScreen = ({
   return (
     <ScrollScreen
       contentContainerStyle={{
-        paddingBottom: hasBottomBar ? bottomBarHeight + HORIZONTAL_MARGIN : 0
+        paddingBottom: hasBottomBar ? bottomBarHeight + DEFAULT_MARGIN : 0
       }}
       hasHeader={hasHeader}
       showsHorizontalScrollIndicator={false}

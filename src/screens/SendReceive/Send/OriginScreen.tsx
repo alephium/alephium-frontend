@@ -22,7 +22,7 @@ import styled from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
 import { ScreenSection } from '~/components/layout/Screen'
-import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -43,8 +43,8 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   }, [params?.toAddressHash, setToAddress])
 
   return (
-    <BaseScrollScreen {...props}>
-      <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." surtitle="SEND" />
+    <ScrollScreen hasHeader verticalGap {...props}>
+      <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
       <ScreenSection>
         <AddressList>
           {addresses.map((address) => (
@@ -57,7 +57,7 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
           ))}
         </AddressList>
       </ScreenSection>
-    </BaseScrollScreen>
+    </ScrollScreen>
   )
 }
 

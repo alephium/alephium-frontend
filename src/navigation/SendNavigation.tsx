@@ -42,8 +42,7 @@ const SendNavigation = () => (
   <SendContextProvider>
     <SendStack.Navigator
       screenOptions={{
-        header: (props) => <ProgressHeader workflow="send" {...props} />,
-        headerTransparent: true
+        headerShown: false // Header is in parent above
       }}
       initialRouteName="DestinationScreen"
     >

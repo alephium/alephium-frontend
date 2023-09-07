@@ -24,7 +24,7 @@ import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } f
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS, HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 type TabsLayout = Record<number, LayoutRectangle>
 
@@ -115,7 +115,7 @@ const TabsRow = styled(Reanimated.View)`
   gap: 25px;
   align-items: center;
   height: 50px;
-  padding: 0 ${HORIZONTAL_MARGIN + indicatorXPadding}px;
+  padding: 0 ${DEFAULT_MARGIN + indicatorXPadding}px;
 `
 
 const TabBarItemStyled = styled.Pressable`

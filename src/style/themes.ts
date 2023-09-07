@@ -92,7 +92,7 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   button: {
-    primary: '#29292c',
+    primary: '#212124',
     secondary: '#212125',
     tertiary: '#28282b'
   },
@@ -106,7 +106,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#007AFF',
+    accent: '#2f8cef',
     alert: '#ed4a34',
     valid: '#3ed282',
     star: '#FFD66D',

@@ -33,7 +33,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { useScrollContext } from '~/contexts/ScrollContext'
-import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface BaseHeaderProps {
   headerBottom?: () => ReactNode
@@ -206,18 +206,18 @@ const ActionArea = styled(Animated.View)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px ${HORIZONTAL_MARGIN}px;
+  padding: 10px ${DEFAULT_MARGIN}px;
 `
 
 const ActionAreaBlurred = styled(AnimatedBlurView)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px ${HORIZONTAL_MARGIN}px;
+  padding: 10px ${DEFAULT_MARGIN}px;
 `
 
 const TitleArea = styled(Animated.View)`
-  padding: 10px ${HORIZONTAL_MARGIN}px;
+  padding: 10px ${DEFAULT_MARGIN}px;
   align-self: flex-start;
 `
 

@@ -23,7 +23,7 @@ import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-n
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
-import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 import Screen from './Screen'
 
@@ -32,6 +32,7 @@ export interface ScrollScreenProps extends ScrollViewProps {
   containerStyle?: StyleProp<ViewStyle>
   contentContainerStyle?: StyleProp<ViewStyle>
   scrollViewRef?: RefObject<ScrollView>
+  verticalGap?: number | boolean
 }
 
 const ScrollScreen = ({
@@ -40,6 +41,7 @@ const ScrollScreen = ({
   style,
   containerStyle,
   contentContainerStyle,
+  verticalGap,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
@@ -55,19 +57,26 @@ const ScrollScreen = ({
       <ScrollView
         ref={viewRef}
         scrollEventThrottle={16}
-        alwaysBounceVertical={false}
+        alwaysBounceVertical={true}
         onScroll={scrollHandler}
         onScrollEndDrag={scrollEndHandler}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={[
           contentContainerStyle,
           {
-            paddingTop: hasHeader ? headerheight + HORIZONTAL_MARGIN : 0
+            paddingTop: hasHeader ? headerheight + DEFAULT_MARGIN : 0
           }
         ]}
         {...props}
       >
-        <View style={style}>{children}</View>
+        <View
+          style={[
+            style,
+            { gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0 }
+          ]}
+        >
+          {children}
+        </View>
       </ScrollView>
     </Screen>
   )

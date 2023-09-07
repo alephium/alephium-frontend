@@ -31,7 +31,7 @@ import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs
 } from '~/store/addressesSlice'
-import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 import TokenListItem from './TokenListItem'
@@ -139,7 +139,7 @@ const TabBarStyled = styled(TabBar)`
 
 const ListContainer = styled.View`
   border-radius: ${BORDER_RADIUS_BIG}px;
-  margin: 0 ${HORIZONTAL_MARGIN}px;
+  margin: 0 ${DEFAULT_MARGIN}px;
   background-color: ${({ theme }) => theme.bg.secondary};
 `
 

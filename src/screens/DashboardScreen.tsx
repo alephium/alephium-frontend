@@ -33,7 +33,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
-import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
@@ -63,6 +63,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       }
       hasHeader
       hasBottomBar
+      verticalGap
       {...props}
     >
       <BalanceAndButtons>
@@ -105,7 +106,7 @@ const BalanceAndButtons = styled.View`
 
 const ButtonsRowContainer = styled(Animated.View)`
   z-index: -1;
-  margin: 0 ${HORIZONTAL_MARGIN}px;
+  margin: 0 ${DEFAULT_MARGIN}px;
   margin-top: -20px;
   padding-top: 20px;
   background-color: ${({ theme }) => theme.bg.primary};

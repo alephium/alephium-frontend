@@ -137,18 +137,36 @@ const RootStackNavigation = () => {
                     component={NewAddressScreen}
                     options={{ headerTitle: 'New address' }}
                   />
+                  <RootStack.Screen name="ContactScreen" component={ContactScreen} />
+                </RootStack.Group>
+                <RootStack.Group screenOptions={{ headerTransparent: true }}>
+                  {/* Sub-navigation with custom header */}
+                  <RootStack.Screen
+                    name="SendNavigation"
+                    component={SendNavigation}
+                    options={{
+                      header: (props) => (
+                        <ProgressHeader
+                          workflow="send"
+                          {...props}
+                          options={{ ...props.options, headerTitle: 'Send' }}
+                        />
+                      )
+                    }}
+                  />
                   <RootStack.Screen
                     name="ReceiveNavigation"
                     component={ReceiveNavigation}
                     options={{
-                      header: (props) => <ProgressHeader workflow="receive" {...props} />
+                      header: (props) => (
+                        <ProgressHeader
+                          workflow="receive"
+                          {...props}
+                          options={{ ...props.options, headerTitle: 'Receive' }}
+                        />
+                      )
                     }}
                   />
-                  <RootStack.Screen name="ContactScreen" component={ContactScreen} />
-                </RootStack.Group>
-                <RootStack.Group screenOptions={{ headerShown: false }}>
-                  {/* Sub-navigation with custom header */}
-                  <RootStack.Screen name="SendNavigation" component={SendNavigation} />
                 </RootStack.Group>
                 {/* Screens without header */}
                 <RootStack.Group screenOptions={{ headerShown: false }}>

@@ -20,7 +20,7 @@ import { ViewProps } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export type ScreenProps = ViewProps
 
@@ -30,7 +30,7 @@ export default styled.View`
 `
 
 export const ScreenSection = styled.View<{ fill?: boolean }>`
-  margin: 0 ${HORIZONTAL_MARGIN}px;
+  margin: 0 ${DEFAULT_MARGIN}px;
 
   ${({ fill }) =>
     fill &&

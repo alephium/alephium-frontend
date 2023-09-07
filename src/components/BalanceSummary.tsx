@@ -34,7 +34,7 @@ import {
 } from '~/store/addresses/addressesSelectors'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
-import { BORDER_RADIUS_BIG, HORIZONTAL_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
 import { ChartLength, chartLengths, DataPoint } from '~/types/charts'
 import { NetworkStatus } from '~/types/network'
 import { currencies } from '~/utils/currencies'
@@ -134,7 +134,7 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
 export default BalanceSummary
 
 const BalanceSummaryContainer = styled.View`
-  margin: 0 ${HORIZONTAL_MARGIN}px;
+  margin: 0 ${DEFAULT_MARGIN}px;
   border-radius: ${BORDER_RADIUS_BIG}px;
   border-width: 1px;
   border-color: ${({ theme }) => theme.border.primary};
@@ -146,7 +146,7 @@ const GradientContainer = styled(LinearGradient)`
 `
 
 const TextContainer = styled.View`
-  margin: 5px ${HORIZONTAL_MARGIN}px;
+  margin: 5px ${DEFAULT_MARGIN}px;
 `
 
 const ChartContainer = styled.View`
