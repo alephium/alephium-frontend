@@ -121,7 +121,7 @@ const CarouselPagination = styled.View`
 `
 
 const CarouselFooter = styled(ScreenSection)<{ centered?: boolean }>`
-  height: 60px;
+  height: 70px;
   flex-direction: row;
   align-items: center;
   justify-content: ${({ centered }) => (centered ? 'center' : 'space-between')};

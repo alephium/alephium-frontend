@@ -43,6 +43,12 @@ export const CenteredScreenSection = styled(ScreenSection)`
   align-items: center;
 `
 
+export const BottomModalScreenHeader = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+`
+
 export const BottomModalScreenTitle = styled(AppText)`
   font-weight: 600;
   font-size: 26px;

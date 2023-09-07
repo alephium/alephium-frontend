@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
@@ -27,7 +27,7 @@ import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { BottomModalScreenHeader, BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
@@ -47,15 +47,16 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
 
   return (
     <ModalContent {...props} verticalGap>
-      <ScreenSectionRow noMargin>
+      <BottomModalScreenHeader>
         <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
         <Button
           iconProps={{ name: 'exit-outline' }}
           onPress={() => openBrowserAsync(explorerTxUrl)}
           round
           variant="accent"
+          compact
         />
-      </ScreenSectionRow>
+      </BottomModalScreenHeader>
 
       <BoxSurface type="highlight">
         <Row title="Amount" noMaxWidth transparent>

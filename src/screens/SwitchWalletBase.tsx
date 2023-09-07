@@ -103,7 +103,7 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
   }
 
   return (
-    <ModalContent>
+    <>
       <Content>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <Subtitle>Select a wallet to switch to.</Subtitle>
@@ -133,7 +133,7 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
       </ButtonsRow>
 
       <SpinnerModal isActive={loading} text="Switching wallets..." />
-    </ModalContent>
+    </>
   )
 }
 

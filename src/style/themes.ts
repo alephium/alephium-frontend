@@ -76,9 +76,9 @@ export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
     highlight: '#353539',
-    primary: '#1B1B1F',
+    primary: '#19191b',
     secondary: '#18181B',
-    tertiary: '#17171A',
+    tertiary: '#131315',
     back1: '#121215',
     back2: '#0E0E10',
     accent: 'rgba(93, 108, 243, 0.08)',
@@ -92,8 +92,8 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   button: {
-    primary: '#212124',
-    secondary: '#212125',
+    primary: '#2e2e33',
+    secondary: '#1d1d20',
     tertiary: '#28282b'
   },
   border: {

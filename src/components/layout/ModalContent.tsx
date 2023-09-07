@@ -63,4 +63,5 @@ export const ScrollModal = ({ children, style, ...props }: ScrollSectionProps) =
 
 const ModalContentStyled = styled.View`
   padding-top: 10px;
+  padding-bottom: 10px;
 `

@@ -50,7 +50,7 @@ type TokensRow = Asset | UnknownTokensEntry | LoadingIndicator
 const tabItems = [
   {
     value: 'tokens',
-    label: 'Tokens'
+    label: 'Tokens '
   },
   {
     value: 'nfts',
@@ -123,7 +123,10 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
   )
 }
 
-export default AddressesTokensList
+export default styled(AddressesTokensList)`
+  padding-top: 5px;
+  padding-bottom: 10px;
+`
 
 const LoadingRow = styled.View`
   flex-direction: row;
@@ -133,14 +136,14 @@ const LoadingRow = styled.View`
 `
 
 const TabBarStyled = styled(TabBar)`
-  padding: 15px;
-  border-bottom: 1px solid black;
+  padding: 10px 15px 10px;
 `
 
 const ListContainer = styled.View`
   border-radius: ${BORDER_RADIUS_BIG}px;
   margin: 0 ${DEFAULT_MARGIN}px;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.primary};
+  overflow: hidden;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

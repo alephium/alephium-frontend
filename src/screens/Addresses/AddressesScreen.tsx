@@ -99,8 +99,8 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
             data={addressHashes}
             renderItem={renderAddressCard}
             onScrollEnd={onAddressCardsScrollEnd}
-            padding={30}
-            distance={20}
+            padding={15}
+            distance={10}
             height={heightCarouselItem}
             scrollTo={scrollToCarouselPage}
             FooterComponent={
@@ -109,7 +109,8 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
                   <Button
                     onPress={() => setQuickSelectronModalOpen(true)}
                     iconProps={{ name: 'list-outline' }}
-                    type="transparent"
+                    round
+                    compact
                   />
                 )}
                 <Button iconProps={{ name: 'add-outline' }} title="New address" color={theme.global.accent} compact />
@@ -166,7 +167,7 @@ export default AddressesScreen
 
 const Content = styled(Animated.View)`
   flex: 1;
-  gap: ${VERTICAL_GAP}px;
+  gap: 10px;
 `
 
 const AddressBoxStyled = styled(AddressBox)`

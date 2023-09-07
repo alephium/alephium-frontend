@@ -27,10 +27,13 @@ import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import ButtonStack from '~/components/buttons/ButtonStack'
+import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
+import { BORDER_RADIUS, BORDER_RADIUS_BIG } from '~/style/globalStyle'
 import { themes, ThemeType } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 import { copyAddressToClipboard } from '~/utils/addresses'
@@ -74,6 +77,9 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             }}
           />
           {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
+          <AppText size={14} colorTheme={textColorTheme}>
+            Group {address.group}
+          </AppText>
         </AddressBadgeContainer>
         <Button
           iconProps={{ name: 'settings-outline' }}
@@ -94,15 +100,10 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
         <Amount value={BigInt(address.balance)} colorTheme={textColorTheme} size={15} medium suffix="ALPH" />
       </Amounts>
       <BottomRow>
-        <CopyAddressBadge onPress={() => copyAddressToClipboard(address.hash)}>
-          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" colorTheme={textColorTheme}>
-            {address.hash}
-          </HashEllipsed>
-          <Copy size={11} color={textColor} />
-        </CopyAddressBadge>
-        <AppText size={14} colorTheme={textColorTheme}>
-          Group {address.group}
-        </AppText>
+        <ButtonsRow sticked>
+          <Button iconProps={{ name: 'arrow-up-outline' }} title="Send" flex type="transparent" />
+          <Button iconProps={{ name: 'arrow-down-outline' }} title="Receive" flex type="transparent" />
+        </ButtonsRow>
       </BottomRow>
     </LinearGradient>
   )
@@ -110,8 +111,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
 export default styled(AddressCard)`
   border-radius: 16px;
-  height: 200px;
-  padding: 16px 19px 16px 23px;
+  height: 220px;
   justify-content: space-between;
 `
 
@@ -121,6 +121,7 @@ const Header = styled.View`
   max-width: 100%;
   align-items: center;
   gap: 18px;
+  padding: 15px 15px 0px 15px;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
@@ -135,7 +136,9 @@ const AddressBadgeContainer = styled.View`
   gap: 18px;
 `
 
-const Amounts = styled.View``
+const Amounts = styled.View`
+  padding: 15px;
+`
 
 const FiatAmount = styled(Amount)`
   margin-bottom: 5px;
@@ -151,7 +154,7 @@ const CopyAddressBadge = styled.Pressable`
   padding: 5px 10px;
   gap: 10px;
   max-width: 158px;
-  border-radius: 22px;
+  border-radius: ${BORDER_RADIUS}px;
   background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.14).toHex()};
 `
 
@@ -159,4 +162,7 @@ const BottomRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  height: 50px;
+
+  background-color: rgba(0, 0, 0, 0.2);
 `

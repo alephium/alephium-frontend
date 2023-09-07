@@ -100,15 +100,16 @@ const Button = ({
         tint: undefined
       }[type],
       flex: flex ? 1 : 0,
-      width: round ? 43 : props.wide ? '75%' : hasOnlyIcon ? 43 : 'auto',
+      width: round ? (compact ? 30 : 43) : props.wide ? '75%' : hasOnlyIcon ? 43 : 'auto',
       height: compact ? 30 : hasOnlyIcon ? 43 : 55,
       borderRadius: round || compact ? 100 : BORDER_RADIUS,
       justifyContent: round ? 'center' : undefined,
+      alignItems: round ? 'center' : undefined,
       minWidth: centered ? 200 : undefined,
       marginVertical: centered ? 0 : undefined,
       marginHorizontal: centered ? 'auto' : undefined,
-      paddingVertical: compact ? 5 : !hasOnlyIcon ? 0 : undefined,
-      paddingHorizontal: compact ? 10 : !hasOnlyIcon ? 25 : undefined,
+      paddingVertical: round ? 0 : compact ? 5 : !hasOnlyIcon ? 0 : undefined,
+      paddingHorizontal: round ? 0 : compact ? 10 : !hasOnlyIcon ? 25 : undefined,
       gap: compact ? 5 : undefined
     },
     style
@@ -125,7 +126,7 @@ const Button = ({
         </AppText>
       )}
       {children}
-      {iconProps && <Ionicons color={font} size={compact ? 16 : hasOnlyIcon ? 22 : 20} {...iconProps} />}
+      {iconProps && <Ionicons color={font} size={compact ? 18 : hasOnlyIcon ? 22 : 20} {...iconProps} />}
     </Pressable>
   )
 }
