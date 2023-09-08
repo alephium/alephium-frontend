@@ -92,7 +92,7 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   button: {
-    primary: '#2e2e33',
+    primary: '#252529',
     secondary: '#1d1d20',
     tertiary: '#28282b'
   },

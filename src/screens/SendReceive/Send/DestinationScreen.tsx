@@ -135,12 +135,9 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   }, [setValue, toAddress])
 
   const inputStyle = useAnimatedStyle(() => ({
-    backgroundColor: withTiming(
-      interpolateColor(shouldFlash.value, [0, 1], [theme.button.primary, theme.global.pale]),
-      {
-        duration: 300
-      }
-    )
+    backgroundColor: withTiming(interpolateColor(shouldFlash.value, [0, 1], [theme.bg.highlight, theme.global.pale]), {
+      duration: 300
+    })
   }))
 
   useFocusEffect(
@@ -162,28 +159,24 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       <ScrollScreen hasHeader verticalGap {...props}>
         <ScreenIntro title="Destination" subtitle="Send to an address, a contact, or one of your other addresses." />
         <ScreenSection>
-          <BoxSurface>
-            <Controller
-              name="toAddressHash"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label="Destination address"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={
-                    errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message
-                  }
-                  style={inputStyle}
-                />
-              )}
-              rules={{
-                required: true,
-                validate: validateIsAddressValid
-              }}
-              control={control}
-            />
-          </BoxSurface>
+          <Controller
+            name="toAddressHash"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Destination address"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message}
+                style={inputStyle}
+              />
+            )}
+            rules={{
+              required: true,
+              validate: validateIsAddressValid
+            }}
+            control={control}
+          />
         </ScreenSection>
         <ScreenSection>
           <ButtonsRow>
@@ -193,6 +186,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
               title="Scan"
               onPress={openQRCodeScannerModal}
               variant="accent"
+              type="secondary"
             />
             <Button
               compact
@@ -200,6 +194,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
               title="Paste"
               onPress={handlePastePress}
               variant="accent"
+              type="secondary"
             />
             <Button
               compact
@@ -207,6 +202,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
               title="Contacts"
               onPress={() => setContactSelectModalOpen(true)}
               variant="accent"
+              type="secondary"
             />
             <Button
               compact
@@ -214,6 +210,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
               title="Addresses"
               onPress={() => setAddressSelectModalOpen(true)}
               variant="accent"
+              type="secondary"
             />
           </ButtonsRow>
         </ScreenSection>

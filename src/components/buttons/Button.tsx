@@ -62,7 +62,7 @@ const Button = ({
   const bg = {
     default: theme.button.primary,
     contrast: theme.font.primary,
-    accent: theme.button.primary,
+    accent: type === 'primary' ? theme.button.primary : theme.button.secondary,
     valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
     transparent: 'transparent'
@@ -83,13 +83,13 @@ const Button = ({
       opacity: pressed || disabled ? 0.5 : 1,
       backgroundColor: {
         primary: bg,
-        secondary: 'transparent',
+        secondary: bg,
         transparent: 'transparent',
         tint: color ? colord(color).alpha(0.05).toHex() : ''
       }[type],
       borderWidth: {
         primary: 0,
-        secondary: 2,
+        secondary: 0,
         transparent: 0,
         tint: 0
       }[type],
