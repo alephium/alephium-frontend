@@ -33,6 +33,7 @@ export interface ListItemProps extends PressableProps {
   innerStyle?: StyleProp<ViewStyle>
   hideSeparator?: boolean
   rightSideContent?: ReactNode
+  height?: number
   children?: ReactNode
 }
 
@@ -45,12 +46,13 @@ const ListItem = ({
   isLast,
   hideSeparator,
   rightSideContent,
+  height = 60,
   children,
   ...props
 }: ListItemProps) => (
   <Pressable {...props}>
     <ListItemStyled style={style}>
-      <Row style={innerStyle}>
+      <Row style={[{ height }, innerStyle]}>
         <Icon>{icon}</Icon>
         <RowContent showSeparator={!isLast && !hideSeparator}>
           <LeftSideContent>
@@ -78,23 +80,22 @@ export default ListItem
 const ListItemStyled = styled(Animated.View)`
   border-radius: ${BORDER_RADIUS}px;
   border-color: ${({ theme }) => theme.border.primary};
+  overflow: hidden;
 `
 
 const Row = styled(Animated.View)`
-  min-height: 60px;
   flex-direction: row;
-  gap: 15px;
   align-items: center;
-  padding-left: 15px;
+  padding-left: 10px;
+  gap: 15px;
 `
 
 const RowContent = styled.View<{ showSeparator: boolean }>`
   flex-direction: row;
   gap: 10px;
   height: 100%;
-  flex: 1;
   padding-right: 15px;
-  align-items: center;
+  flex: 1;
 
   ${({ showSeparator }) =>
     showSeparator &&

@@ -23,7 +23,7 @@ import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
+import Button, { ButtonProps } from '~/components/buttons/Button'
 import BaseHeader from '~/components/headers/BaseHeader'
 import { StackHeaderCustomProps } from '~/components/headers/StackHeader'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -48,10 +48,6 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
   const [progress, setProgress] = useState(0)
 
   const steps = workflowSteps[workflow]
-
-  const HeaderLeft = navigation.canGoBack() ? (
-    <Button onPress={navigation.goBack} iconProps={{ name: 'close-outline' }} round />
-  ) : null
 
   useEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? steps[0]
@@ -79,7 +75,7 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
             />
           </View>
         ),
-        headerLeft: () => HeaderLeft
+        headerLeft: () => options.headerLeft && options.headerLeft({})
       }}
     />
   )
@@ -87,16 +83,16 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
 
 export default ProgressHeader
 
-interface ContinueButtonProps extends PressableProps {
-  text?: string
-}
+export const CloseButton = (props: ButtonProps) => (
+  <Button onPress={props.onPress} iconProps={{ name: 'close-outline' }} round {...props} />
+)
 
-export const ContinueButton = ({ text = 'Continue', ...props }: ContinueButtonProps) => (
-  <ContinueButtonStyled {...props}>
-    <AppText color="contrast" semiBold size={16}>
-      {text}
-    </AppText>
-  </ContinueButtonStyled>
+export const ContinueButton = (props: ButtonProps) => (
+  <Button onPress={props.onPress} iconProps={{ name: 'arrow-forward-outline' }} round {...props} />
+)
+
+export const BackButton = (props: ButtonProps) => (
+  <Button onPress={props.onPress} iconProps={{ name: 'arrow-back-outline' }} round {...props} />
 )
 
 export const BackButtonStyled = styled.Pressable`

@@ -26,9 +26,8 @@ import styled from 'styled-components/native'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalProps, ScrollModal } from '~/components/layout/ModalContent'
+import { ModalContentProps, ScrollModal } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
@@ -38,7 +37,7 @@ import { NetworkSettings } from '~/types/settings'
 
 const networkNames = Object.values(NetworkName)
 
-const SwitchNetworkModal = ({ onClose, ...props }: ModalProps<ScrollScreenProps>) => {
+const SwitchNetworkModal = ({ onClose, ...props }: ModalContentProps) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const currentNetworkSettings = useAppSelector((s) => s.network.settings)
   const { control, handleSubmit } = useForm<NetworkSettings>({

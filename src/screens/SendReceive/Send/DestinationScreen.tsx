@@ -38,6 +38,7 @@ import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
+import { CloseButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
@@ -147,11 +148,12 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
         navigation.navigate(nextScreen)
       }
       navigation.getParent()?.setOptions({
+        headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
-          <Button onPress={handleSubmit(onContinue)} iconProps={{ name: 'arrow-forward-outline' }} round />
+          <ContinueButton onPress={handleSubmit(onContinue)} disabled={!!errors.toAddressHash?.message} />
         )
       })
-    }, [handleSubmit, navigation, nextScreen, setToAddress])
+    }, [errors.toAddressHash?.message, handleSubmit, navigation, nextScreen, setToAddress])
   )
 
   return (
@@ -228,12 +230,14 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           isOpen={contactSelectModalOpen}
           Content={() => <SelectContactModal onContactPress={handleContactPress} />}
           onClose={() => setContactSelectModalOpen(false)}
+          customMinHeight={300}
         ></BottomModal>
 
         <BottomModal
           isOpen={addressSelectModalOpen}
           Content={() => <SelectAddressModal onAddressPress={handleAddressPress} />}
           onClose={() => setAddressSelectModalOpen(false)}
+          customMinHeight={300}
         ></BottomModal>
       </Portal>
     </>

@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import styled from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
@@ -26,6 +27,7 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
 
@@ -41,6 +43,19 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   useEffect(() => {
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
   }, [params?.toAddressHash, setToAddress])
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!fromAddress && defaultAddress) setFromAddress(defaultAddress.hash)
+
+      navigation.getParent()?.setOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        headerRight: () => (
+          <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} disabled={!fromAddress} />
+        )
+      })
+    }, [defaultAddress, fromAddress, navigation, setFromAddress])
+  )
 
   return (
     <ScrollScreen hasHeader verticalGap {...props}>

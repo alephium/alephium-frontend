@@ -19,15 +19,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { StyleProp, TextInput, ViewStyle } from 'react-native'
-import Animated, { FadeIn, useAnimatedStyle, withTiming } from 'react-native-reanimated'
+import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
+import Checkmark from '~/components/Checkmark'
 import ListItem from '~/components/ListItem'
 import { useSendContext } from '~/contexts/SendContext'
 import { isNumericStringValid } from '~/utils/numbers'
@@ -40,6 +42,8 @@ interface AssetRowProps {
 
 const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const theme = useTheme()
+  const inputRef = useRef<TextInput>(null)
+
   const { assetAmounts, setAssetAmount } = useSendContext()
 
   const assetAmount = assetAmounts.find(({ id }) => id === asset.id)
@@ -82,30 +86,47 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     setAmount(toHumanReadableAmount(asset.balance - asset.lockedBalance))
   }
 
-  const handleOnPress = () => {
+  const handleOnRowPress = () => {
+    if (!isSelected) {
+      setIsSelected(true)
+      inputRef.current?.focus()
+    }
+  }
+
+  const handleOnCheckmarkPress = () => {
     setAmount('')
     setError('')
     setIsSelected(!isSelected)
   }
 
   const animatedStyle = useAnimatedStyle(() => ({
-    borderWidth: withTiming(isSelected ? 1 : 0)
+    borderWidth: withSpring(isSelected ? 2 : 0, fastSpringConfiguration),
+    borderColor: withSpring(isSelected ? theme.global.accent : theme.border.secondary, fastSpringConfiguration),
+    marginBottom: withSpring(isSelected ? 15 : 0, fastSpringConfiguration)
   }))
 
   const topRowAnimatedStyle = useAnimatedStyle(() => ({
-    paddingTop: withTiming(isSelected ? 18 : 0),
-    paddingLeft: withTiming(isSelected ? 11 : 0),
-    backgroundColor: isSelected ? theme.bg.accent : 'transparent'
+    paddingLeft: withSpring(isSelected ? 11 : 0, fastSpringConfiguration),
+    backgroundColor: isSelected ? theme.bg.primary : 'transparent'
+  }))
+
+  const bottomRowAnimatedStyle = useAnimatedStyle(() => ({
+    height: withSpring(isSelected ? 100 : 0, fastSpringConfiguration),
+    opacity: withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
   }))
 
   return (
     <ListItem
       style={[style, animatedStyle]}
       innerStyle={topRowAnimatedStyle}
-      onPress={handleOnPress}
       isLast={isLast}
       hideSeparator={isSelected}
       title={asset.name || asset.id}
+      onPress={handleOnRowPress}
+      height={64}
+      rightSideContent={
+        <CheckmarkContainer onPress={handleOnCheckmarkPress}>{isSelected && <Checkmark />}</CheckmarkContainer>
+      }
       subtitle={
         <Amount
           value={asset.balance - asset.lockedBalance}
@@ -117,52 +138,52 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       }
       icon={<AssetLogo assetId={asset.id} size={38} />}
     >
-      {isSelected && (
-        <BottomRow entering={FadeIn}>
-          <AmountInputRow>
-            <AppText semiBold size={15}>
-              Amount
+      <BottomRow entering={FadeIn} style={bottomRowAnimatedStyle}>
+        <AmountInputRow>
+          <AppText semiBold size={15}>
+            Amount
+          </AppText>
+          <AmountInputValue>
+            <AmountTextInput
+              value={amount}
+              onChangeText={handleOnAmountChange}
+              keyboardType="number-pad"
+              inputMode="numeric"
+              autoFocus={true}
+              ref={inputRef}
+            />
+            <AppText semiBold size={23} color="secondary">
+              {asset.symbol}
             </AppText>
-            <AmountInputValue>
-              <AmountTextInput
-                value={amount}
-                onChangeText={handleOnAmountChange}
-                keyboardType="number-pad"
-                inputMode="numeric"
-                autoFocus={true}
-              />
-              <AppText semiBold size={23} color="secondary">
-                {asset.symbol}
-              </AppText>
-            </AmountInputValue>
-          </AmountInputRow>
-          <Row>
-            <AppText color="alert" size={11}>
-              {error}
-            </AppText>
-            <UseMaxButton title="Use max" onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
-          </Row>
-        </BottomRow>
-      )}
+          </AmountInputValue>
+        </AmountInputRow>
+        <Row>
+          <AppText color="alert" size={11}>
+            {error}
+          </AppText>
+          <UseMaxButton title="Use max" onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+        </Row>
+      </BottomRow>
     </ListItem>
   )
 }
 
-export default AssetRow
+export default styled(AssetRow)``
 
 const BottomRow = styled(Animated.View)`
-  padding: 14px 17px 11px;
+  padding: 0 15px;
+  justify-content: center;
 `
 
 const AmountInputRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 `
 
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 10px;
 `
 
 const UseMaxButton = styled(Button)`
@@ -176,6 +197,14 @@ const AmountInputValue = styled.View`
 `
 
 const AmountTextInput = styled(TextInput)`
+  color: ${({ theme }) => theme.font.primary};
   font-weight: 600;
   font-size: 23px;
+`
+
+const CheckmarkContainer = styled.Pressable`
+  height: 100%;
+  width: 30px;
+  align-items: center;
+  justify-content: center;
 `
