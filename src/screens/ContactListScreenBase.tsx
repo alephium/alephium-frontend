@@ -20,6 +20,7 @@ import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { TextInput } from 'react-native'
 import Animated from 'react-native-reanimated'
+import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -47,6 +48,8 @@ const ContactListScreenBase = ({
   contentStyle,
   ...props
 }: ContactListScreenBaseProps) => {
+  const theme = useTheme()
+
   const contacts = useAppSelector(selectAllContacts)
 
   const [filteredContacts, setFilteredContacts] = useState(contacts)
@@ -59,7 +62,12 @@ const ContactListScreenBase = ({
   return (
     <ScreenContent style={contentStyle}>
       <HeaderScreenSection>
-        <SearchInput placeholder="Search" value={searchTerm} onChangeText={setSearchTerm} />
+        <SearchInput
+          placeholder="Search"
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+          placeholderTextColor={theme.font.tertiary}
+        />
         {onNewContactPress && (
           <Button iconProps={{ name: 'add-outline' }} type="transparent" variant="accent" onPress={onNewContactPress} />
         )}
@@ -115,7 +123,8 @@ const HeaderScreenSection = styled(ScreenSection)`
 
 const SearchInput = styled(TextInput)`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.highlight};
   padding: 9px 12px;
   border-radius: 9px;
+  color: ${({ theme }) => theme.font.primary};
 `

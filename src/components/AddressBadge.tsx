@@ -16,23 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface AddressBadgeProps {
   addressHash: AddressHash
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
+  allowCopy?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, style }: AddressBadgeProps) => {
+const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, allowCopy, style }: AddressBadgeProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   return (
@@ -63,6 +67,7 @@ const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, style }: Add
           )}
         </>
       )}
+      {allowCopy && <CopyAddressButton iconProps={{ name: 'copy-outline' }} type="transparent" round compact />}
     </View>
   )
 }
@@ -87,3 +92,5 @@ const Label = styled(AppText)`
   font-weight: 600;
   flex-shrink: 1;
 `
+
+const CopyAddressButton = styled(Button)``

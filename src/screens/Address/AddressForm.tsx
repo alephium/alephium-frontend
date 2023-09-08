@@ -26,7 +26,7 @@ import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
-import HighlightRow from '~/components/Row'
+import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useNewAddressContext } from '~/contexts/NewAddressContext'
 import { AddressHash, AddressSettings } from '~/types/addresses'
@@ -66,30 +66,28 @@ const AddressForm = ({
   return (
     <>
       <View style={{ flexGrow: 1 }}>
-        <ScreenSection>
-          <BoxSurface>
-            <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
-            <ColorPicker value={color} onChange={setColor} />
-            <HighlightRow
-              title="Default address"
-              subtitle={`Default address for operations${
-                disableIsMainToggle
-                  ? '. To remove this address from being the default address, you must set another one as main first.'
-                  : ''
-              }`}
-              onPress={toggleIsMain}
-            >
-              <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
-            </HighlightRow>
-          </BoxSurface>
+        <ScreenSection verticalGap>
+          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
+          <ColorPicker value={color} onChange={setColor} />
+          <Row
+            title="Default address"
+            subtitle={`Default address for operations${
+              disableIsMainToggle
+                ? '. To remove this address from being the default address, you must set another one as main first.'
+                : ''
+            }`}
+            onPress={toggleIsMain}
+          >
+            <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
+          </Row>
         </ScreenSection>
         {onGroupPress && (
           <ScreenSection>
             <ExpandableRow>
               <BoxSurface>
-                <HighlightRow title="Address group" onPress={onGroupPress}>
+                <Row title="Address group" onPress={onGroupPress}>
                   <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
-                </HighlightRow>
+                </Row>
               </BoxSurface>
             </ExpandableRow>
           </ScreenSection>

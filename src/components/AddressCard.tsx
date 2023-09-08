@@ -31,7 +31,6 @@ import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
-import { BORDER_RADIUS } from '~/style/globalStyle'
 import { themes, ThemeType } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 import { currencies } from '~/utils/currencies'
@@ -64,6 +63,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
     <LinearGradient style={style} colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
       <Header>
         <AddressBadgeContainer>
+          {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
           <AddressBadgeStyled
             addressHash={address.hash}
             hideSymbol
@@ -72,8 +72,8 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
               fontWeight: '700',
               color: textColor
             }}
+            allowCopy
           />
-          {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
           <AppText size={14} colorTheme={textColorTheme}>
             Group {address.group}
           </AppText>
@@ -139,20 +139,6 @@ const Amounts = styled.View`
 
 const FiatAmount = styled(Amount)`
   margin-bottom: 5px;
-`
-
-const HashEllipsed = styled(AppText)`
-  flex-shrink: 1;
-`
-
-const CopyAddressBadge = styled.Pressable`
-  flex-direction: row;
-  align-items: center;
-  padding: 5px 10px;
-  gap: 10px;
-  max-width: 158px;
-  border-radius: ${BORDER_RADIUS}px;
-  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.14).toHex()};
 `
 
 const BottomRow = styled.View`

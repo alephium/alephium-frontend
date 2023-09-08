@@ -20,7 +20,7 @@ import { ViewProps } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export type ScreenProps = ViewProps
 
@@ -29,8 +29,11 @@ export default styled.View`
   background-color: ${({ theme }) => theme.bg.back2};
 `
 
-export const ScreenSection = styled.View<{ fill?: boolean; noMargin?: boolean }>`
+export const ScreenSection = styled.View<{ fill?: boolean; noMargin?: boolean; verticalGap?: number | boolean }>`
   margin: 0 ${({ noMargin }) => (noMargin ? 0 : DEFAULT_MARGIN)}px;
+
+  gap: ${({ verticalGap }) =>
+    verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0}px;
 
   ${({ fill }) =>
     fill &&
@@ -51,7 +54,7 @@ export const BottomModalScreenHeader = styled.View`
 
 export const BottomModalScreenTitle = styled(AppText)`
   font-weight: 600;
-  font-size: 26px;
+  font-size: 28px;
 `
 
 export const ScreenSectionTitle = styled(AppText)`

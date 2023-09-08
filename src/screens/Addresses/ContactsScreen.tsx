@@ -16,14 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 
 import { TabBarPageProps } from '~/components/layout/TabBarPager'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 import { Contact } from '~/types/contacts'
 
 const ContactsScreen = ({ onScroll, contentStyle }: TabBarPageProps) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   return (
     <ContactListScreenBase

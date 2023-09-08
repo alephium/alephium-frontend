@@ -35,7 +35,7 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
 
   const keyButtonStyle: PressableProps['style'] = ({ pressed }) => [
     {
-      backgroundColor: pressed ? theme.bg.primary : 'transparent'
+      backgroundColor: pressed ? theme.bg.highlight : 'transparent'
     }
   ]
 

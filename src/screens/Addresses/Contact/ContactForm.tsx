@@ -48,46 +48,44 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save' }: ContactFo
   return (
     <>
       <View style={{ flexGrow: 1 }}>
-        <ScreenSection>
-          <BoxSurface>
-            <Controller
-              name="name"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label="Contact name"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={errors.name?.type === 'required' ? requiredErrorMessage : errors.name?.message}
-                />
-              )}
-              rules={{
-                required: true,
-                validate: (name) => isContactNameValid({ name, id: initialValues?.id })
-              }}
-              control={control}
-            />
-            <Controller
-              name="address"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label="Contact address"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={errors.address?.type === 'required' ? requiredErrorMessage : errors.address?.message}
-                />
-              )}
-              rules={{
-                required: true,
-                validate: {
-                  isAddressValid: validateIsAddressValid,
-                  isContactAddressValid: (address) => isContactAddressValid({ address, id: initialValues?.id })
-                }
-              }}
-              control={control}
-            />
-          </BoxSurface>
+        <ScreenSection verticalGap>
+          <Controller
+            name="name"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Contact name"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.name?.type === 'required' ? requiredErrorMessage : errors.name?.message}
+              />
+            )}
+            rules={{
+              required: true,
+              validate: (name) => isContactNameValid({ name, id: initialValues?.id })
+            }}
+            control={control}
+          />
+          <Controller
+            name="address"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Contact address"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.address?.type === 'required' ? requiredErrorMessage : errors.address?.message}
+              />
+            )}
+            rules={{
+              required: true,
+              validate: {
+                isAddressValid: validateIsAddressValid,
+                isContactAddressValid: (address) => isContactAddressValid({ address, id: initialValues?.id })
+              }
+            }}
+            control={control}
+          />
         </ScreenSection>
       </View>
       <BottomScreenSection>

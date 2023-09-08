@@ -20,10 +20,10 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
-import { PopIn } from '~/animations/reanimated/reanimatedAnimations'
+import { PopIn, PopOut } from '~/animations/reanimated/reanimatedAnimations'
 
 const Checkmark = () => (
-  <CheckmarkStyled entering={PopIn}>
+  <CheckmarkStyled entering={PopIn} exiting={PopOut}>
     <Ionicons name="checkmark-sharp" color="white" size={16} />
   </CheckmarkStyled>
 )
