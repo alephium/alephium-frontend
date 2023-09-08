@@ -30,7 +30,7 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import HighlightRow from '~/components/Row'
+import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
@@ -126,34 +126,34 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>
-            <HighlightRow title="Discreet mode" subtitle="Hide all amounts">
+            <Row title="Discreet mode" subtitle="Hide all amounts">
               <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
-            </HighlightRow>
-            <HighlightRow title="Require authentication" subtitle="For important actions">
+            </Row>
+            <Row title="Require authentication" subtitle="For important actions">
               <Toggle value={requireAuth} onValueChange={toggleAuthRequirement} />
-            </HighlightRow>
-            <HighlightRow title="Use dark theme" subtitle="Try it, it's nice">
+            </Row>
+            <Row title="Use dark theme" subtitle="Try it, it's nice">
               <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
-            </HighlightRow>
+            </Row>
             {hasAvailableBiometrics && (
-              <HighlightRow title="Biometrics authentication" subtitle="Enhance your security">
+              <Row title="Biometrics authentication" subtitle="Enhance your security">
                 <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
-              </HighlightRow>
+              </Row>
             )}
-            <HighlightRow title="Analytics" subtitle="Help us improve your experience!">
+            <Row title="Analytics" subtitle="Help us improve your experience!">
               <Toggle value={analytics} onValueChange={toggleAnalytics} />
-            </HighlightRow>
-            <HighlightRow onPress={() => openCurrencySelectModal()} title="Currency">
+            </Row>
+            <Row onPress={() => openCurrencySelectModal()} title="Currency" isLast>
               <AppText bold>{currentCurrency}</AppText>
-            </HighlightRow>
+            </Row>
           </BoxSurface>
         </ScreenSection>
         <ScreenSection>
           <ScreenSectionTitle>Networks</ScreenSectionTitle>
           <BoxSurface>
-            <HighlightRow title="Current network" onPress={openSwitchNetworkModal}>
+            <Row title="Current network" onPress={openSwitchNetworkModal} isLast>
               <AppText bold>{capitalize(currentNetworkName)}</AppText>
-            </HighlightRow>
+            </Row>
           </BoxSurface>
         </ScreenSection>
         <ScreenSection>

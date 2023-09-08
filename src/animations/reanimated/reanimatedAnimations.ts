@@ -27,19 +27,33 @@ export const defaultSpringConfiguration: SpringConfig = {
 }
 
 export const fastSpringConfiguration: SpringConfig = {
-  stiffness: 250,
-  damping: 30
+  stiffness: 260,
+  damping: 30,
+  overshootClamping: true
 }
 
 export const PopIn = (targetValues: EntryAnimationsValues) => {
   'worklet'
   const animations: StyleProp<ViewStyle> = {
-    transform: [{ scale: withSpring(1, fastSpringConfiguration) }],
-    opacity: withSpring(1, fastSpringConfiguration)
+    transform: [{ scale: withSpring(1, fastSpringConfiguration) }]
   }
   const initialValues = {
-    transform: [{ scale: 0.4 }],
-    opacity: 0
+    transform: [{ scale: 0 }]
+  }
+
+  return {
+    initialValues,
+    animations
+  }
+}
+
+export const PopOut = (targetValues: EntryAnimationsValues) => {
+  'worklet'
+  const animations: StyleProp<ViewStyle> = {
+    transform: [{ scale: withSpring(0, fastSpringConfiguration) }]
+  }
+  const initialValues = {
+    transform: [{ scale: 1 }]
   }
   const callback = (finished: boolean) => {
     // optional callback that will fire when layout animation ends

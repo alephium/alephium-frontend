@@ -35,7 +35,7 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
 
   const keyButtonStyle: PressableProps['style'] = ({ pressed }) => [
     {
-      backgroundColor: pressed ? theme.bg.back1 : theme.bg.secondary
+      backgroundColor: pressed ? theme.bg.primary : 'transparent'
     }
   ]
 
@@ -74,6 +74,7 @@ const KeyboardContainer = styled.View`
   width: 100%;
   border-top-color: ${({ theme }) => theme.border.secondary};
   border-top-width: 1px;
+  background-color: ${({ theme }) => theme.bg.tertiary};
 `
 
 const KeyboardRow = styled.View`
@@ -85,7 +86,7 @@ const KeyboardButton = styled.Pressable`
   flex: 1;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  border-radius: 100px;
 `
 
 const KeyText = styled(AppText)`
