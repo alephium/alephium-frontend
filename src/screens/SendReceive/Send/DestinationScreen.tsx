@@ -228,16 +228,17 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       <Portal>
         <BottomModal
           isOpen={contactSelectModalOpen}
-          Content={() => <SelectContactModal onContactPress={handleContactPress} />}
+          Content={(props) => <SelectContactModal onContactPress={handleContactPress} {...props} />}
           onClose={() => setContactSelectModalOpen(false)}
           customMinHeight={300}
         ></BottomModal>
 
         <BottomModal
           isOpen={addressSelectModalOpen}
-          Content={() => <SelectAddressModal onAddressPress={handleAddressPress} />}
+          Content={(props) => <SelectAddressModal onAddressPress={handleAddressPress} {...props} />}
           onClose={() => setAddressSelectModalOpen(false)}
           customMinHeight={300}
+          scrollableContent
         ></BottomModal>
       </Portal>
     </>

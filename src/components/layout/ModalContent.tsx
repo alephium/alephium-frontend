@@ -23,9 +23,10 @@ import styled from 'styled-components/native'
 
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import ScrollSection, { ScrollSectionProps } from '~/components/layout/ScrollSection'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ModalContentProps extends ViewProps {
+  onLayout: ViewProps['onLayout']
   onClose?: () => void
   isScrollable?: boolean
   children?: ReactNode

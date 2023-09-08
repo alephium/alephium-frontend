@@ -95,6 +95,7 @@ const RowContent = styled.View<{ showSeparator: boolean }>`
   gap: 10px;
   height: 100%;
   padding-right: 15px;
+  align-items: center;
   flex: 1;
 
   ${({ showSeparator }) =>

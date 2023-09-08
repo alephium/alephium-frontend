@@ -20,8 +20,8 @@ import { memo, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
-import { PopIn, PopOut } from '~/animations/reanimated/reanimatedAnimations'
 
+import { PopIn, PopOut } from '~/animations/reanimated/reanimatedAnimations'
 import NumberKeyboard, { NumberKeyboardKey } from '~/components/keyboard/NumberKeyboard'
 
 interface PinInputProps {
