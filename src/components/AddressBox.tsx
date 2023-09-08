@@ -18,9 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Check } from 'lucide-react-native'
 import { useMemo } from 'react'
-import { PressableProps } from 'react-native'
+import { Pressable, PressableProps } from 'react-native'
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressBadge from '~/components/AddressBadge'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import { useAppSelector } from '~/hooks/redux'
@@ -34,14 +36,21 @@ interface AddressBoxProps extends PressableProps {
   isLast?: boolean
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+
 const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const theme = useTheme()
 
+  const boxAnimatedStyle = useAnimatedStyle(() => ({
+    borderColor: withSpring(isSelected ? theme.global.accent : theme.border.primary, fastSpringConfiguration),
+    borderWidth: 2
+  }))
+
   return (
-    <AddressBoxStyled {...props}>
-      <AddressBoxTop style={{ backgroundColor: isSelected ? theme.bg.accent : undefined }}>
+    <AddressBoxStyled {...props} style={boxAnimatedStyle}>
+      <AddressBoxTop>
         <AddressBadgeStyled addressHash={addressHash} textStyle={{ fontSize: 18 }} />
         {isSelected && (
           <Checkmark>
@@ -67,8 +76,7 @@ const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
 
 export default AddressBox
 
-const AddressBoxStyled = styled.Pressable`
-  border: 1px solid ${({ theme }) => theme.border.primary};
+const AddressBoxStyled = styled(AnimatedPressable)`
   border-radius: 9px;
   overflow: hidden;
 `
