@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled, { DefaultTheme } from 'styled-components/native'
 
-import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export default styled.View<{ type?: keyof DefaultTheme['bg'] }>`
   background-color: ${({ theme, type }) => theme.bg[type || 'secondary']};
-  border-radius: ${BORDER_RADIUS_BIG}px;
+  border-radius: ${BORDER_RADIUS}px;
   overflow: hidden;
 `

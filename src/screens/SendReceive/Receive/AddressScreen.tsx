@@ -27,7 +27,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { ContinueButton } from '~/screens/SendReceive/ProgressHeader'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
@@ -47,14 +47,14 @@ const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
   useFocusEffect(
     useCallback(() => {
       navigation.getParent()?.setOptions({
-        headerLeft: () => <ContinueButton onPress={() => navigation.goBack()} text="Cancel" />
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
       })
     }, [navigation])
   )
 
   return (
     <ScrollScreen hasHeader verticalGap {...props}>
-      <ScreenIntro title="To address(es)" subtitle="Select the address which you want to receive funds to." />
+      <ScreenIntro title="To address" subtitle="Select the address which you want to receive funds to." />
       <ScreenSection>
         <AddressList>
           {addresses.map(({ hash }) => (

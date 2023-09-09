@@ -74,7 +74,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               onPress={() => navigation.navigate('SendNavigation')}
               iconProps={{ name: 'arrow-up-outline' }}
               title="Send"
-              type="tint"
+              type="transparent"
               color={theme.global.send}
               flex
             />
@@ -82,7 +82,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               onPress={() => navigation.navigate('ReceiveNavigation')}
               iconProps={{ name: 'arrow-down-outline' }}
               title="Receive"
-              type="tint"
+              type="transparent"
               color={theme.global.receive}
               flex
             />
