@@ -105,7 +105,7 @@ const HistoricWorthChart = ({
       <Svg height={chartHeight}>
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor={chartColor.toHex()} stopOpacity={0.4} />
+            <Stop offset="0%" stopColor={chartColor.toHex()} stopOpacity={0.2} />
             <Stop offset="75%" stopColor={chartColor.toHex()} stopOpacity={0} />
           </LinearGradient>
         </Defs>

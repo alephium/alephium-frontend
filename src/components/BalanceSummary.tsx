@@ -82,7 +82,7 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
         shadowRadius: 10
       }}
     >
-      <GradientContainer colors={['transparent', colord(deltaColor).alpha(0.1).toHex()]} locations={[0, 0.6]}>
+      <GradientContainer colors={['transparent', colord(deltaColor).alpha(0.03).toHex()]} locations={[0, 0.6]}>
         <TextContainer>
           <SurfaceHeader>
             <AppText color="tertiary" semiBold>

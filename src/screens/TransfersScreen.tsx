@@ -58,6 +58,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
       contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight + DEFAULT_MARGIN }}
       onScroll={handleScroll}
       onScrollEndDrag={scrollEndHandler}
+      hasHeader
       ref={listRef}
     />
   )
