@@ -33,6 +33,7 @@ import {
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '~/store/addressesSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
 import { isPendingTx } from '~/utils/transactions'
@@ -44,6 +45,7 @@ interface TransactionsFlatListScreenProps extends Partial<FlatListProps<AddressT
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
   addressHash?: AddressHash
+  hasHeader?: boolean
   showInternalInflows?: boolean
 }
 
@@ -61,6 +63,7 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
     pendingTransactions,
     addressHash,
     ListHeaderComponent,
+    hasHeader,
     showInternalInflows = false,
     style,
     ...props
@@ -116,6 +119,10 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
     <Screen style={style}>
       <FlatList
         {...props}
+        contentContainerStyle={[
+          props.contentContainerStyle,
+          { paddingTop: hasHeader ? headerHeight + DEFAULT_MARGIN : 0 }
+        ]}
         scrollEventThrottle={16}
         ref={ref}
         data={confirmedTransactions}

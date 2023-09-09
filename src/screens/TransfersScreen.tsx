@@ -17,13 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useHeaderHeight } from '@react-navigation/elements'
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { FlatList } from 'react-native'
 
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
-import { useScrollContext } from '~/contexts/ScrollContext'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'

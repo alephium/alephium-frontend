@@ -28,6 +28,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -43,8 +44,9 @@ type ScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
     style?: StyleProp<ViewStyle>
   }
 
-const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) => {
+const ContactScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const posthog = usePostHog()
+  const handleScroll = useScreenScrollHandler()
 
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const contactAddressHash = contact?.address ?? ''
@@ -101,6 +103,8 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
       pendingTransactions={pendingTransactions}
       initialNumToRender={8}
       contentContainerStyle={{ flexGrow: 1 }}
+      hasHeader
+      onScroll={handleScroll}
       ListHeaderComponent={
         <>
           <CenteredSection>
@@ -138,6 +142,7 @@ export default ContactScreen
 
 const CenteredSection = styled(ScreenSection)`
   align-items: center;
+  margin-bottom: 25px;
 `
 
 // TODO: DRY
@@ -202,6 +207,5 @@ const ButtonText = styled(AppText)`
 
 const TransactionsHeaderRow = styled.View`
   border-bottom-width: 1px;
-  border-color: ${({ theme }) => theme.border.secondary};
-  margin-bottom: 7px;
+  margin-bottom: 15px;
 `
