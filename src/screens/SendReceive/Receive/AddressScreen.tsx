@@ -47,7 +47,8 @@ const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
   useFocusEffect(
     useCallback(() => {
       navigation.getParent()?.setOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        headerRight: () => null
       })
     }, [navigation])
   )

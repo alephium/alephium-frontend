@@ -27,8 +27,8 @@ import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
-import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import HighlightRow from '~/components/Row'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Row from '~/components/Row'
 import { useSendContext } from '~/contexts/SendContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { ContinueButton } from '~/screens/SendReceive/ProgressHeader'
@@ -46,7 +46,10 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   useFocusEffect(() => {
     navigation.getParent()?.setOptions({
       headerRight: () => (
-        <ContinueButton text="Send" onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))} />
+        <ContinueButton
+          onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
+          iconProps={{ name: 'send-outline' }}
+        />
       )
     })
   })
@@ -54,27 +57,23 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <BaseScrollScreen {...props}>
-      <ScreenIntro
-        title="Verify"
-        subtitle="Please, double check that everything is correct before sending."
-        surtitle="SEND"
-      />
+    <ScrollScreen hasHeader verticalGap {...props}>
+      <ScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
       <ScreenSection>
         <BoxSurface>
-          <HighlightRow title="Sending" titleColor="secondary">
+          <Row title="Sending" titleColor="secondary">
             <AssetAmounts>
               {assets.map(({ id, amount }) =>
                 amount ? <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} /> : null
               )}
             </AssetAmounts>
-          </HighlightRow>
-          <HighlightRow title="To" titleColor="secondary">
+          </Row>
+          <Row title="To" titleColor="secondary">
             <AddressBadge addressHash={toAddress} />
-          </HighlightRow>
-          <HighlightRow title="From" titleColor="secondary">
+          </Row>
+          <Row title="From" titleColor="secondary" isLast>
             <AddressBadge addressHash={fromAddress} />
-          </HighlightRow>
+          </Row>
         </BoxSurface>
       </ScreenSection>
       <ScreenSection>
@@ -85,7 +84,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           <Amount value={fees} suffix="ALPH" medium />
         </FeeBox>
       </ScreenSection>
-    </BaseScrollScreen>
+    </ScrollScreen>
   )
 }
 

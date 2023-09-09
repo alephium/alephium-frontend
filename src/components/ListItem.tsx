@@ -86,7 +86,7 @@ const ListItemStyled = styled(Animated.View)`
 const Row = styled(Animated.View)`
   flex-direction: row;
   align-items: center;
-  padding-left: 10px;
+  padding-left: 15px;
   gap: 15px;
 `
 

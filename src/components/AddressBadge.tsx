@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { StyleProp, TextStyle, TouchableNativeFeedback, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -25,7 +24,6 @@ import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
-import { BORDER_RADIUS } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { copyAddressToClipboard } from '~/utils/addresses'
 
@@ -33,11 +31,12 @@ interface AddressBadgeProps {
   addressHash: AddressHash
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
+  color?: string
   showCopyBtn?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, showCopyBtn, style }: AddressBadgeProps) => {
+const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, color, showCopyBtn, style }: AddressBadgeProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   return (
@@ -59,11 +58,11 @@ const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, showCopyBtn,
               </Symbol>
             )}
             {address.settings.label ? (
-              <Label numberOfLines={1} style={textStyle}>
+              <Label numberOfLines={1} style={textStyle} color={color}>
                 {address.settings.label}
               </Label>
             ) : (
-              <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
+              <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={color}>
                 {address.hash}
               </Label>
             )}
@@ -74,6 +73,7 @@ const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, showCopyBtn,
             onPress={() => copyAddressToClipboard(address?.hash)}
             iconProps={{ name: 'copy-outline' }}
             type="transparent"
+            color={color}
             round
             compact
           />
@@ -89,7 +89,7 @@ export default styled(AddressBadge)`
 `
 
 const Symbol = styled.View`
-  margin-right: 10px;
+  margin-right: 5px;
 `
 
 const Dot = styled.View<{ color?: string }>`

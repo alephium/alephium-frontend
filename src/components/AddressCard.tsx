@@ -67,10 +67,10 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           <AddressBadgeStyled
             addressHash={address.hash}
             hideSymbol
+            color={textColor}
             textStyle={{
               fontSize: 23,
-              fontWeight: '700',
-              color: textColor
+              fontWeight: '700'
             }}
             showCopyBtn
           />

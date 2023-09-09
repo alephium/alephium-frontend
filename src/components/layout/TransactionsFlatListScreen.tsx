@@ -191,7 +191,7 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
 export default TransactionsFlatListScreen
 
 const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
-  margin-left: 28px;
+  margin-left: ${DEFAULT_MARGIN}px;
   margin-top: 22px;
 `
 

@@ -18,15 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
-import { PressableProps, View } from 'react-native'
+import { View } from 'react-native'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import Button, { ButtonProps } from '~/components/buttons/Button'
 import BaseHeader from '~/components/headers/BaseHeader'
 import { StackHeaderCustomProps } from '~/components/headers/StackHeader'
-import { ScreenSection } from '~/components/layout/Screen'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
@@ -65,9 +63,9 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
             {options.headerRight && <HeaderRightOptionWrapper>{options.headerRight({})}</HeaderRightOptionWrapper>}
             <ProgressBar
               progress={progress}
-              color={theme.global.accent}
+              color={progress === 1 ? theme.global.valid : theme.global.accent}
               unfilledColor={theme.border.secondary}
-              fill="transparent"
+              fill={'transparent'}
               strokeCap="round"
               borderWidth={0}
               size={43}

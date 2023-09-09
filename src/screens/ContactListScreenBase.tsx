@@ -21,7 +21,6 @@ import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { TextInput } from 'react-native'
 import Animated from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
@@ -54,7 +53,6 @@ const ContactListScreenBase = ({
   ...props
 }: ContactListScreenBaseProps) => {
   const theme = useTheme()
-  const insets = useSafeAreaInsets()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const contacts = useAppSelector(selectAllContacts)
