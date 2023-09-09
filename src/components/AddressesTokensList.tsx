@@ -20,6 +20,7 @@ import { Asset } from '@alephium/sdk'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
+import Animated, { CurvedTransition } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import NFTsGrid from '~/components/NFTsGrid'
@@ -92,7 +93,7 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
   }, [addressHash, isLoading, knownFungibleTokens, unknownTokens.length])
 
   return (
-    <ListContainer style={style}>
+    <ListContainer style={style} layout={CurvedTransition}>
       <TabBarStyled items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
       {
         {
@@ -139,7 +140,7 @@ const TabBarStyled = styled(TabBar)`
   padding: 10px 15px 10px;
 `
 
-const ListContainer = styled.View`
+const ListContainer = styled(Animated.View)`
   border-radius: ${BORDER_RADIUS_BIG}px;
   margin: 0 ${DEFAULT_MARGIN}px;
   background-color: ${({ theme }) => theme.bg.primary};

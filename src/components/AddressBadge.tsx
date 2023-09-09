@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { StyleProp, TextStyle, View, ViewStyle } from 'react-native'
+import { StyleProp, TextStyle, TouchableNativeFeedback, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -27,48 +27,59 @@ import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
+import { copyAddressToClipboard } from '~/utils/addresses'
 
 interface AddressBadgeProps {
   addressHash: AddressHash
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
-  allowCopy?: boolean
+  showCopyBtn?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, allowCopy, style }: AddressBadgeProps) => {
+const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, showCopyBtn, style }: AddressBadgeProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   return (
-    <View style={style}>
-      {!address ? (
-        <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
-          {addressHash}
-        </Label>
-      ) : (
-        <>
-          {!hideSymbol && (
-            <Symbol>
-              {address.settings.isDefault ? (
-                <DefaultAddressBadge size={16} color={address.settings.color} />
-              ) : (
-                <Dot color={address.settings.color} />
-              )}
-            </Symbol>
-          )}
-          {address.settings.label ? (
-            <Label numberOfLines={1} style={textStyle}>
-              {address.settings.label}
-            </Label>
-          ) : (
-            <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
-              {address.hash}
-            </Label>
-          )}
-        </>
-      )}
-      {allowCopy && <CopyAddressButton iconProps={{ name: 'copy-outline' }} type="transparent" round compact />}
-    </View>
+    <TouchableNativeFeedback onLongPress={() => !showCopyBtn && copyAddressToClipboard(addressHash)}>
+      <View style={style}>
+        {!address ? (
+          <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
+            {addressHash}
+          </Label>
+        ) : (
+          <>
+            {!hideSymbol && (
+              <Symbol>
+                {address.settings.isDefault ? (
+                  <DefaultAddressBadge size={16} color={address.settings.color} />
+                ) : (
+                  <Dot color={address.settings.color} />
+                )}
+              </Symbol>
+            )}
+            {address.settings.label ? (
+              <Label numberOfLines={1} style={textStyle}>
+                {address.settings.label}
+              </Label>
+            ) : (
+              <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
+                {address.hash}
+              </Label>
+            )}
+          </>
+        )}
+        {showCopyBtn && address?.hash && (
+          <CopyAddressButton
+            onPress={() => copyAddressToClipboard(address?.hash)}
+            iconProps={{ name: 'copy-outline' }}
+            type="transparent"
+            round
+            compact
+          />
+        )}
+      </View>
+    </TouchableNativeFeedback>
   )
 }
 

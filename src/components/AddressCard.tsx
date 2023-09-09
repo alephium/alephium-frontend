@@ -72,7 +72,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
               fontWeight: '700',
               color: textColor
             }}
-            allowCopy
+            showCopyBtn
           />
           <AppText size={14} colorTheme={textColorTheme}>
             Group {address.group}
