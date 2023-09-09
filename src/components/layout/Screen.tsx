@@ -65,6 +65,6 @@ export const ScreenSectionTitle = styled(AppText)`
 `
 
 export const BottomScreenSection = styled(ScreenSection)`
-  margin-bottom: 20px;
+  margin: 25px 0;
   align-items: center;
 `

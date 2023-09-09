@@ -24,7 +24,8 @@ import { Alert } from 'react-native'
 import Toast from 'react-native-root-toast'
 
 import Button from '~/components/buttons/Button'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -101,13 +102,13 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
   }
 
   return (
-    <Screen {...props}>
+    <ScrollScreen hasHeader {...props}>
       <ContactForm initialValues={contact} onSubmit={handleSavePress} />
       <SpinnerModal
         isActive={loading || isDeleting}
         text={loading ? 'Saving contact...' : isDeleting ? 'Deleting contact...' : ''}
       />
-    </Screen>
+    </ScrollScreen>
   )
 }
 

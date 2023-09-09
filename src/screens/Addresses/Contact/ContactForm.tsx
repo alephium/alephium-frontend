@@ -21,7 +21,6 @@ import { View } from 'react-native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
 import { AddressHash } from '~/types/addresses'
 import { ContactFormData } from '~/types/contacts'
