@@ -102,12 +102,6 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
 
 export default TransactionModal
 
-const ScreenSectionRow = styled(ScreenSection)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`
-
 const AmountStyled = styled(Amount)`
   text-align: right;
 `

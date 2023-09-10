@@ -20,11 +20,11 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback } from 'react'
-import { Text } from 'react-native'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen'
@@ -78,9 +78,9 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
           {address?.settings.label && (
             <Row isLast>
-              <Text numberOfLines={1} ellipsizeMode="middle">
+              <AppText numberOfLines={1} ellipsizeMode="middle">
                 {params.addressHash}
-              </Text>
+              </AppText>
             </Row>
           )}
         </BoxSurface>

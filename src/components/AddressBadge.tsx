@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StyleProp, TextStyle, TouchableNativeFeedback, View, ViewStyle } from 'react-native'
+import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -37,13 +38,16 @@ interface AddressBadgeProps {
 }
 
 const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, color, showCopyBtn, style }: AddressBadgeProps) => {
+  const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+
+  const textColor = color || theme.font.primary
 
   return (
     <TouchableNativeFeedback onLongPress={() => !showCopyBtn && copyAddressToClipboard(addressHash)}>
       <View style={style}>
         {!address ? (
-          <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
+          <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
             {addressHash}
           </Label>
         ) : (
@@ -58,11 +62,11 @@ const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, color, showC
               </Symbol>
             )}
             {address.settings.label ? (
-              <Label numberOfLines={1} style={textStyle} color={color}>
+              <Label numberOfLines={1} style={textStyle} color={textColor}>
                 {address.settings.label}
               </Label>
             ) : (
-              <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={color}>
+              <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
                 {address.hash}
               </Label>
             )}
