@@ -20,7 +20,6 @@ import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { SendContextProvider } from '~/contexts/SendContext'
-import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
 import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
 import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'

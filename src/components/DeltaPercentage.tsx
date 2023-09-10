@@ -30,9 +30,11 @@ interface DeltaPercentageProps {
 const DeltaPercentage = ({ percentage, style }: DeltaPercentageProps) => {
   const theme = useTheme()
 
+  const isInvalidNumber = isNaN(percentage) || percentage > 100 || percentage < -100
+
   const isUp = percentage >= 0
-  const color = isUp ? theme.global.valid : theme.global.alert
-  const textColor = isUp ? 'valid' : 'alert'
+  const color = isInvalidNumber ? theme.font.secondary : isUp ? theme.global.valid : theme.global.alert
+  const textColor = isInvalidNumber ? 'tertiary' : isUp ? 'valid' : 'alert'
 
   const DirectionArrow = percentage >= 0 ? ArrowUpRight : ArrowDownRight
 
@@ -40,7 +42,7 @@ const DeltaPercentage = ({ percentage, style }: DeltaPercentageProps) => {
     <DeltaPercentageStyled style={style}>
       <DirectionArrow color={color} size={24} />
       <AppText color={textColor} semiBold size={18}>
-        {percentage}%
+        {isInvalidNumber ? '-' : percentage}%
       </AppText>
     </DeltaPercentageStyled>
   )
@@ -52,4 +54,5 @@ const DeltaPercentageStyled = styled.View`
   align-items: center;
   flex-direction: row;
   gap: 12px;
+  min-width: 10px;
 `

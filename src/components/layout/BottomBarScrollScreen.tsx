@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { ScrollViewProps } from 'react-native'
 
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'

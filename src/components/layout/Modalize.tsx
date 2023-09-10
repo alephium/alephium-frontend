@@ -23,8 +23,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Modal from '~/components/layout/BottomModal'
 
 const Modalize = forwardRef(function Modalize({ children, ...props }: ComponentProps<typeof RNModalize>, ref) {
-  const insets = useSafeAreaInsets()
-
   return (
     <Modal ref={ref} {...props}>
       {children}

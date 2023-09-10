@@ -21,6 +21,7 @@ import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
+import Animated, { FadeIn } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -28,10 +29,7 @@ import AppText from '~/components/AppText'
 import DeltaPercentage from '~/components/DeltaPercentage'
 import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
-import {
-  selectAddressesHaveHistoricBalances,
-  selectHaveHistoricBalancesLoaded
-} from '~/store/addresses/addressesSelectors'
+import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -49,13 +47,11 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
   const totalBalance = useAppSelector(selectTotalBalance)
   const networkStatus = useAppSelector((s) => s.network.status)
   const networkName = useAppSelector((s) => s.network.name)
-  const { data: price, isLoading: isPriceLoading } = useGetPriceQuery(currencies[currency].ticker, {
+  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
     pollingInterval: 60000,
     skip: totalBalance === BigInt(0)
   })
-  const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
-  const hasHistoricBalances = useAppSelector(selectAddressesHaveHistoricBalances)
   const theme = useTheme()
 
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
@@ -98,7 +94,7 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
 
           <Row>
             {haveHistoricBalancesLoaded && (
-              <>
+              <DeltaAndChartLengths entering={FadeIn}>
                 <DeltaPercentage percentage={deltaPercentage} />
                 <ChartLengthBadges>
                   {chartLengths.map((length) => {
@@ -113,7 +109,7 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
                     )
                   })}
                 </ChartLengthBadges>
-              </>
+              </DeltaAndChartLengths>
             )}
           </Row>
         </TextContainer>
@@ -199,4 +195,10 @@ const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
   width: 7px;
   border-radius: 10px;
   background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
+`
+
+const DeltaAndChartLengths = styled(Animated.View)`
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
 `

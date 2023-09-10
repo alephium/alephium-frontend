@@ -22,7 +22,7 @@ import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import Toast from 'react-native-root-toast'
 
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'

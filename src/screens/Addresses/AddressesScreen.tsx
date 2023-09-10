@@ -43,7 +43,6 @@ import {
   selectDefaultAddress,
   syncAddressesData
 } from '~/store/addressesSlice'
-import { VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
