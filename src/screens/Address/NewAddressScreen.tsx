@@ -20,10 +20,9 @@ import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 
-import Modalize from '~/components/layout/Modalize'
+import BottomModal from '~/components/layout/BottomModal'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { NewAddressContextProvider } from '~/contexts/NewAddressContext'
@@ -50,7 +49,8 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
-  const { ref: groupSelectModalRef, open: openGroupSelectModal, close: closeGroupSelectModal } = useModalize()
+
+  const [groupSelectModalOpen, setGroupSelectModalOpen] = useState(false)
 
   const [loading, setLoading] = useState(false)
 
@@ -92,13 +92,15 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
         <AddressForm
           initialValues={initialValues}
           onSubmit={handleGeneratePress}
-          onGroupPress={() => openGroupSelectModal()}
+          onGroupPress={() => setGroupSelectModalOpen(true)}
         />
 
         <Portal>
-          <Modalize ref={groupSelectModalRef}>
-            <GroupSelectModal onClose={closeGroupSelectModal} />
-          </Modalize>
+          <BottomModal
+            isOpen={groupSelectModalOpen}
+            onClose={() => setGroupSelectModalOpen(false)}
+            Content={(props) => <GroupSelectModal onClose={() => setGroupSelectModalOpen(false)} {...props} />}
+          />
         </Portal>
       </NewAddressContextProvider>
       <SpinnerModal isActive={loading} text="Generating address..." />

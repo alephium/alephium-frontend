@@ -26,12 +26,13 @@ import styled from 'styled-components/native'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContentProps, ScrollModal } from '~/components/layout/ModalContent'
+import { ModalContent, ModalContentProps, ScrollModal } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { NetworkName, NetworkPreset } from '~/types/network'
 import { NetworkSettings } from '~/types/settings'
 
@@ -69,83 +70,83 @@ const SwitchNetworkModal = ({ onClose, ...props }: ModalContentProps) => {
   }
 
   return (
-    <ScrollModal {...props}>
+    <ModalContent verticalGap {...props}>
       <ScreenSection>
         <BottomModalScreenTitle>Current network</BottomModalScreenTitle>
       </ScreenSection>
       <View>
-        <ScreenSection>
-          <BoxSurface>
-            {networkNames.map((networkName) => (
-              <RadioButtonRow
-                key={networkName}
-                title={capitalize(networkName)}
-                onPress={() => handleNetworkItemPress(networkName)}
-                isActive={networkName === selectedNetworkName}
-              />
-            ))}
-          </BoxSurface>
-        </ScreenSection>
+        <BoxSurface>
+          {networkNames.map((networkName) => (
+            <RadioButtonRow
+              key={networkName}
+              title={capitalize(networkName)}
+              onPress={() => handleNetworkItemPress(networkName)}
+              isActive={networkName === selectedNetworkName}
+            />
+          ))}
+        </BoxSurface>
 
         {showCustomNetworkForm && (
-          <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-            <ScreenSection>
-              <BoxSurface>
-                <Controller
-                  name="nodeHost"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                      label="Node host"
-                      keyboardType="url"
-                      textContentType="URL"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                    />
-                  )}
-                  control={control}
-                />
-                <Controller
-                  name="explorerApiHost"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                      label="Explorer API host"
-                      keyboardType="url"
-                      textContentType="URL"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                    />
-                  )}
-                  control={control}
-                />
-                <Controller
-                  name="explorerUrl"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                      label="Explorer URL"
-                      keyboardType="url"
-                      textContentType="URL"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                    />
-                  )}
-                  control={control}
-                />
-              </BoxSurface>
+          <CustomNetworkFormContainer entering={FadeInDown} exiting={FadeOutDown}>
+            <ScreenSection verticalGap>
+              <Controller
+                name="nodeHost"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Node host"
+                    keyboardType="url"
+                    textContentType="URL"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                )}
+                control={control}
+              />
+              <Controller
+                name="explorerApiHost"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Explorer API host"
+                    keyboardType="url"
+                    textContentType="URL"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                )}
+                control={control}
+              />
+              <Controller
+                name="explorerUrl"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Explorer URL"
+                    keyboardType="url"
+                    textContentType="URL"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                )}
+                control={control}
+              />
+
               <ButtonStyled centered title="Save custom network" onPress={handleSubmit(saveCustomNetwork)} />
             </ScreenSection>
-          </Animated.View>
+          </CustomNetworkFormContainer>
         )}
       </View>
-    </ScrollModal>
+    </ModalContent>
   )
 }
 
 export default SwitchNetworkModal
 
 const ButtonStyled = styled(Button)`
-  margin-top: 30px;
   margin-bottom: 20px;
+`
+
+const CustomNetworkFormContainer = styled(Animated.View)`
+  margin-top: ${DEFAULT_MARGIN}px;
 `

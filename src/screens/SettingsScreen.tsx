@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
+import { useState } from 'react'
 import { Alert } from 'react-native'
 import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
@@ -26,6 +27,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
 import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
@@ -63,8 +65,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const posthog = usePostHog()
-  const { ref: switchNetworkModalRef, open: openSwitchNetworkModal, close: closeSwitchNetworkModal } = useModalize()
-  const { ref: currencySelectModalRef, open: openCurrencySelectModal, close: closeCurrencySelectModal } = useModalize()
+
+  const [switchNetworkModalOpen, setSwitchNetworkModalOpen] = useState(false)
+  const [currencySelectModalOpen, setCurrencySelectModalOpen] = useState(false)
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
@@ -143,7 +146,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <Row title="Analytics" subtitle="Help us improve your experience!">
               <Toggle value={analytics} onValueChange={toggleAnalytics} />
             </Row>
-            <Row onPress={() => openCurrencySelectModal()} title="Currency" isLast>
+            <Row onPress={() => setCurrencySelectModalOpen(true)} title="Currency" isLast>
               <AppText bold>{currentCurrency}</AppText>
             </Row>
           </BoxSurface>
@@ -151,7 +154,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>Networks</ScreenSectionTitle>
           <BoxSurface>
-            <Row title="Current network" onPress={openSwitchNetworkModal} isLast>
+            <Row title="Current network" onPress={() => setSwitchNetworkModalOpen(true)} isLast>
               <AppText bold>{capitalize(currentNetworkName)}</AppText>
             </Row>
           </BoxSurface>
@@ -182,12 +185,19 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       </SettingsScreenStyled>
 
       <Portal>
-        <Modalize ref={switchNetworkModalRef}>
-          <SwitchNetworkModal onClose={closeSwitchNetworkModal} />
-        </Modalize>
-        <Modalize ref={currencySelectModalRef}>
-          <CurrencySelectModal onClose={closeCurrencySelectModal} />
-        </Modalize>
+        <BottomModal
+          isOpen={switchNetworkModalOpen}
+          onClose={() => setSwitchNetworkModalOpen(false)}
+          Content={(props) => <SwitchNetworkModal onClose={() => setSwitchNetworkModalOpen(false)} {...props} />}
+          scrollableContent
+        />
+
+        <BottomModal
+          isOpen={currencySelectModalOpen}
+          onClose={() => setCurrencySelectModalOpen(false)}
+          Content={(props) => <CurrencySelectModal onClose={() => setCurrencySelectModalOpen(false)} {...props} />}
+          scrollableContent
+        />
       </Portal>
     </>
   )
