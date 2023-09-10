@@ -31,6 +31,7 @@ import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { themes, ThemeType } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 import { currencies } from '~/utils/currencies'
@@ -135,6 +136,7 @@ const AddressBadgeContainer = styled.View`
 
 const Amounts = styled.View`
   padding: 15px;
+  margin-left: ${DEFAULT_MARGIN}px;
 `
 
 const FiatAmount = styled(Amount)`
@@ -145,7 +147,6 @@ const BottomRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: 50px;
 
   background-color: rgba(0, 0, 0, 0.2);
 `

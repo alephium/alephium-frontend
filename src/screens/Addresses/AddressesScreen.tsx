@@ -22,6 +22,7 @@ import { View } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
@@ -43,12 +44,14 @@ import {
   selectDefaultAddress,
   syncAddressesData
 } from '~/store/addressesSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const posthog = usePostHog()
+  const insets = useSafeAreaInsets()
 
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addresses = useAppSelector(selectAllAddresses)
@@ -130,7 +133,13 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
               <FlatList
                 {...{
                   data: addresses,
+                  style: {
+                    marginBottom: insets.bottom + insets.top
+                  },
                   keyExtractor: (item) => item.hash,
+                  contentContainerStyle: {
+                    gap: VERTICAL_GAP
+                  },
                   renderItem: ({ item: address, index }) => (
                     <AddressBoxStyled
                       key={address.hash}
@@ -140,7 +149,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
                       onPress={() => {
                         setSelectedAddressHash(address.hash)
                         setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
-                        setQuickSelectronModalOpen(false)
+                        props.onClose && props.onClose()
                         posthog?.capture('Used address quick navigation')
                       }}
                     />
