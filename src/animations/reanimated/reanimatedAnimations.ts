@@ -16,17 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ViewStyle } from 'react-native'
-import { StyleProp } from 'react-native'
-import { EntryAnimationsValues, withSpring } from 'react-native-reanimated'
-import { SpringConfig } from 'react-native-reanimated/lib/typescript/reanimated2/animation/springUtils'
+import { StyleProp, ViewStyle } from 'react-native'
+import { EntryAnimationsValues, withSpring, WithSpringConfig } from 'react-native-reanimated'
 
-export const defaultSpringConfiguration: SpringConfig = {
+export const defaultSpringConfiguration: WithSpringConfig = {
   stiffness: 100,
   damping: 50
 }
 
-export const fastSpringConfiguration: SpringConfig = {
+export const fastSpringConfiguration: WithSpringConfig = {
   stiffness: 260,
   damping: 30,
   overshootClamping: true
@@ -55,12 +53,8 @@ export const PopOut = (targetValues: EntryAnimationsValues) => {
   const initialValues = {
     transform: [{ scale: 1 }]
   }
-  const callback = (finished: boolean) => {
-    // optional callback that will fire when layout animation ends
-  }
   return {
     initialValues,
-    animations,
-    callback
+    animations
   }
 }

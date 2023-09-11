@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useHeaderHeight } from '@react-navigation/elements'
 import { RefObject, useRef } from 'react'
 import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
@@ -49,6 +50,7 @@ const ScrollScreen = ({
   const headerheight = useHeaderHeight()
   const scrollHandler = useScreenScrollHandler()
   const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
+  const insets = useSafeAreaInsets()
 
   useScrollToTopOnFocus(viewRef)
 
@@ -72,7 +74,10 @@ const ScrollScreen = ({
         <View
           style={[
             style,
-            { gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0 }
+            {
+              gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
+              paddingBottom: insets.bottom
+            }
           ]}
         >
           {children}

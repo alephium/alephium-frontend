@@ -34,18 +34,18 @@ interface WalletSwitchButtonProps {
 const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
 
-  const [modalOpen, setModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
     <>
-      <Button style={style} variant="contrast" onPress={() => setModalOpen(true)}>
+      <Button style={style} variant="contrast" onPress={() => setIsModalOpen(true)}>
         <AppText color="contrast" semiBold size={12} numberOfLines={1}>
           {activeWalletName.slice(0, 2).toUpperCase()}
         </AppText>
       </Button>
 
       <Portal>
-        <BottomModal Content={SwitchWalletModal} isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+        <BottomModal Content={SwitchWalletModal} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </Portal>
     </>
   )

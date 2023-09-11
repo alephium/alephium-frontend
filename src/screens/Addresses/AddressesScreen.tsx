@@ -18,8 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
-import { View } from 'react-native'
-import { FlatList } from 'react-native-gesture-handler'
+import { FlatList, View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

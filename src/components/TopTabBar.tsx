@@ -96,12 +96,10 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
 
 interface TabBarItemProps extends PressableProps {
   label: string
-  onPress: () => void
-  onLayout: ((event: LayoutChangeEvent) => void) | undefined
 }
 
-const TabBarItem = ({ label, onPress, onLayout }: TabBarItemProps) => (
-  <TabBarItemStyled key={label} accessibilityRole="button" onPress={onPress} onLayout={onLayout}>
+const TabBarItem = ({ label, ...props }: TabBarItemProps) => (
+  <TabBarItemStyled key={label} accessibilityRole="button" {...props}>
     <AppText semiBold size={16}>
       {label}
     </AppText>

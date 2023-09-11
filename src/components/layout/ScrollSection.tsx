@@ -16,17 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ScrollViewProps, View } from 'react-native'
-import styled from 'styled-components/native'
+import { ScrollView, ScrollViewProps, View } from 'react-native'
 
 export type ScrollSectionProps = ScrollViewProps
 
 const ScrollSection = ({ children, style, ...props }: ScrollSectionProps) => (
-  <ScrollSectionStyled scrollEventThrottle={16} alwaysBounceVertical={false} {...props}>
+  <ScrollView scrollEventThrottle={16} alwaysBounceVertical={false} {...props}>
     <View style={style}>{children}</View>
-  </ScrollSectionStyled>
+  </ScrollView>
 )
 
 export default ScrollSection
-
-const ScrollSectionStyled = styled.ScrollView``

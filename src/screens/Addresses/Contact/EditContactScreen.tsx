@@ -102,7 +102,7 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
   }
 
   return (
-    <ScrollScreen hasHeader {...props}>
+    <ScrollScreen hasHeader verticalGap {...props}>
       <ContactForm initialValues={contact} onSubmit={handleSavePress} />
       <SpinnerModal
         isActive={loading || isDeleting}

@@ -18,8 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { LinearGradient } from 'expo-linear-gradient'
 import { MotiView } from 'moti'
-import { useTheme } from 'styled-components'
-import styled, { css } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import Button, { ButtonProps } from '~/components/buttons/Button'
 import { themes } from '~/style/themes'

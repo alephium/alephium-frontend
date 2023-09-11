@@ -24,6 +24,7 @@ import { scrollScreenTo } from '~/utils/layout'
 
 const useScrollToTopOnFocus = (viewRef: RefObject<ScrollView> | RefObject<FlatList>) => {
   const navigation = useNavigation()
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
       scrollScreenTo(0, viewRef)

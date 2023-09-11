@@ -64,8 +64,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const analytics = useAppSelector((s) => s.settings.analytics)
   const posthog = usePostHog()
 
-  const [switchNetworkModalOpen, setSwitchNetworkModalOpen] = useState(false)
-  const [currencySelectModalOpen, setCurrencySelectModalOpen] = useState(false)
+  const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
+  const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
@@ -144,7 +144,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <Row title="Analytics" subtitle="Help us improve your experience!">
               <Toggle value={analytics} onValueChange={toggleAnalytics} />
             </Row>
-            <Row onPress={() => setCurrencySelectModalOpen(true)} title="Currency" isLast>
+            <Row onPress={() => setIsCurrencySelectModalOpen(true)} title="Currency" isLast>
               <AppText bold>{currentCurrency}</AppText>
             </Row>
           </BoxSurface>
@@ -152,7 +152,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>Networks</ScreenSectionTitle>
           <BoxSurface>
-            <Row title="Current network" onPress={() => setSwitchNetworkModalOpen(true)} isLast>
+            <Row title="Current network" onPress={() => setIsSwitchNetworkModalOpen(true)} isLast>
               <AppText bold>{capitalize(currentNetworkName)}</AppText>
             </Row>
           </BoxSurface>
@@ -184,16 +184,16 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
       <Portal>
         <BottomModal
-          isOpen={switchNetworkModalOpen}
-          onClose={() => setSwitchNetworkModalOpen(false)}
-          Content={(props) => <SwitchNetworkModal onClose={() => setSwitchNetworkModalOpen(false)} {...props} />}
+          isOpen={isSwitchNetworkModalOpen}
+          onClose={() => setIsSwitchNetworkModalOpen(false)}
+          Content={(props) => <SwitchNetworkModal onClose={() => setIsSwitchNetworkModalOpen(false)} {...props} />}
           scrollableContent
         />
 
         <BottomModal
-          isOpen={currencySelectModalOpen}
-          onClose={() => setCurrencySelectModalOpen(false)}
-          Content={(props) => <CurrencySelectModal onClose={() => setCurrencySelectModalOpen(false)} {...props} />}
+          isOpen={isCurrencySelectModalOpen}
+          onClose={() => setIsCurrencySelectModalOpen(false)}
+          Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
           scrollableContent
         />
       </Portal>

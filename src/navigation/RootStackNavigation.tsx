@@ -21,7 +21,7 @@ import { NavigationState } from '@react-navigation/routers'
 import { createStackNavigator } from '@react-navigation/stack'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 
 import StackHeader from '~/components/headers/StackHeader'
 import AnalyticsProvider from '~/contexts/AnalyticsContext'

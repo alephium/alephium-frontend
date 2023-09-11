@@ -70,6 +70,7 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHei
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
       setDimensions(window)
     })
+
     return () => subscription?.remove()
   }, [])
 
@@ -176,11 +177,7 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHei
       if (shouldMaximise) {
         handleMaximize()
       } else if (shouldMinimise) {
-        if (scrollableContent) {
-          handleClose()
-          return
-        }
-        handleMinimize()
+        scrollableContent ? handleClose() : handleMinimize()
       } else if (shouldClose) {
         handleClose()
       } else {

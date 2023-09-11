@@ -68,8 +68,8 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
-  const [contactSelectModalOpen, setContactSelectModalOpen] = useState(false)
-  const [addressSelectModalOpen, setAddressSelectModalOpen] = useState(false)
+  const [iscCntactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
+  const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
   const shouldFlash = useSharedValue(0)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
@@ -105,7 +105,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     if (contact) {
       setToAddress(contact.address)
       flashInputBg()
-      setContactSelectModalOpen(false)
+      setIsContactSelectModalOpen(false)
 
       posthog?.capture('Send: Selected contact to send funds to')
     }
@@ -114,7 +114,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const handleAddressPress = (addressHash: AddressHash) => {
     setToAddress(addressHash)
     flashInputBg()
-    setAddressSelectModalOpen(false)
+    setIsAddressSelectModalOpen(false)
 
     posthog?.capture('Send: Selected own address to send funds to')
   }
@@ -201,7 +201,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
               compact
               iconProps={{ name: 'person-outline' }}
               title="Contacts"
-              onPress={() => setContactSelectModalOpen(true)}
+              onPress={() => setIsContactSelectModalOpen(true)}
               variant="accent"
               type="secondary"
             />
@@ -209,7 +209,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
               compact
               iconProps={{ name: 'bookmarks-outline' }}
               title="Addresses"
-              onPress={() => setAddressSelectModalOpen(true)}
+              onPress={() => setIsAddressSelectModalOpen(true)}
               variant="accent"
               type="secondary"
             />
@@ -226,16 +226,16 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
       <Portal>
         <BottomModal
-          isOpen={contactSelectModalOpen}
+          isOpen={iscCntactSelectModalOpen}
           Content={(props) => <SelectContactModal onContactPress={handleContactPress} {...props} />}
-          onClose={() => setContactSelectModalOpen(false)}
+          onClose={() => setIsContactSelectModalOpen(false)}
           customMinHeight={300}
         ></BottomModal>
 
         <BottomModal
-          isOpen={addressSelectModalOpen}
+          isOpen={isAddressSelectModalOpen}
           Content={(props) => <SelectAddressModal onAddressPress={handleAddressPress} {...props} />}
-          onClose={() => setAddressSelectModalOpen(false)}
+          onClose={() => setIsAddressSelectModalOpen(false)}
           customMinHeight={300}
           scrollableContent
         ></BottomModal>

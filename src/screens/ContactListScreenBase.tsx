@@ -21,8 +21,7 @@ import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { TextInput } from 'react-native'
 import Animated from 'react-native-reanimated'
-import { useTheme } from 'styled-components'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -141,6 +140,7 @@ const HeaderScreenSection = styled(ScreenSection)`
   flex-direction: row;
   align-items: center;
   gap: 20px;
+  margin-bottom: ${VERTICAL_GAP}px;
 `
 
 const SearchInput = styled(TextInput)`

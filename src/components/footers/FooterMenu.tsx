@@ -20,8 +20,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { BlurView } from 'expo-blur'
 import { Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { css, useTheme } from 'styled-components'
-import styled from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import FooterMenuItem from '~/components/footers/FooterMenuItem'
 

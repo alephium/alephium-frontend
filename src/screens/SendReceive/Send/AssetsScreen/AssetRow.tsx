@@ -168,7 +168,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   )
 }
 
-export default styled(AssetRow)``
+export default AssetRow
 
 const BottomRow = styled(Animated.View)`
   padding: 0 15px;

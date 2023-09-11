@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StyleProp, TextStyle, TouchableNativeFeedback, View, ViewStyle } from 'react-native'
-import { useTheme } from 'styled-components'
-import styled from 'styled-components/native'
+import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -28,7 +27,7 @@ import { selectAddressByHash } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 import { copyAddressToClipboard } from '~/utils/addresses'
 
-interface AddressBadgeProps {
+interface AddressBadgeProps extends PressableProps {
   addressHash: AddressHash
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
@@ -37,53 +36,58 @@ interface AddressBadgeProps {
   style?: StyleProp<ViewStyle>
 }
 
-const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, color, showCopyBtn, style }: AddressBadgeProps) => {
+const AddressBadge = ({
+  addressHash,
+  hideSymbol = false,
+  textStyle,
+  color,
+  showCopyBtn,
+  ...props
+}: AddressBadgeProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   const textColor = color || theme.font.primary
 
   return (
-    <TouchableNativeFeedback onLongPress={() => !showCopyBtn && copyAddressToClipboard(addressHash)}>
-      <View style={style}>
-        {!address ? (
-          <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
-            {addressHash}
-          </Label>
-        ) : (
-          <>
-            {!hideSymbol && (
-              <Symbol>
-                {address.settings.isDefault ? (
-                  <DefaultAddressBadge size={16} color={address.settings.color} />
-                ) : (
-                  <Dot color={address.settings.color} />
-                )}
-              </Symbol>
-            )}
-            {address.settings.label ? (
-              <Label numberOfLines={1} style={textStyle} color={textColor}>
-                {address.settings.label}
-              </Label>
-            ) : (
-              <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
-                {address.hash}
-              </Label>
-            )}
-          </>
-        )}
-        {showCopyBtn && address?.hash && (
-          <CopyAddressButton
-            onPress={() => copyAddressToClipboard(address?.hash)}
-            iconProps={{ name: 'copy-outline' }}
-            type="transparent"
-            color={color}
-            round
-            compact
-          />
-        )}
-      </View>
-    </TouchableNativeFeedback>
+    <Pressable onLongPress={() => !showCopyBtn && copyAddressToClipboard(addressHash)} {...props}>
+      {!address ? (
+        <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
+          {addressHash}
+        </Label>
+      ) : (
+        <>
+          {!hideSymbol && (
+            <Symbol>
+              {address.settings.isDefault ? (
+                <DefaultAddressBadge size={16} color={address.settings.color} />
+              ) : (
+                <Dot color={address.settings.color} />
+              )}
+            </Symbol>
+          )}
+          {address.settings.label ? (
+            <Label numberOfLines={1} style={textStyle} color={textColor}>
+              {address.settings.label}
+            </Label>
+          ) : (
+            <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
+              {address.hash}
+            </Label>
+          )}
+        </>
+      )}
+      {showCopyBtn && address?.hash && (
+        <CopyAddressButton
+          onPress={() => copyAddressToClipboard(address?.hash)}
+          iconProps={{ name: 'copy-outline' }}
+          type="transparent"
+          color={color}
+          round
+          compact
+        />
+      )}
+    </Pressable>
   )
 }
 

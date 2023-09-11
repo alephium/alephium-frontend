@@ -52,7 +52,7 @@ const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
   return (
     <AddressBoxStyled {...props} style={boxAnimatedStyle}>
       <AddressBoxTop>
-        <AddressBadgeStyled addressHash={addressHash} textStyle={{ fontSize: 18 }} />
+        <AddressBadgeStyled onPress={props.onPress} addressHash={addressHash} textStyle={{ fontSize: 18 }} />
         {isSelected && <Checkmark />}
       </AddressBoxTop>
       <AddressBoxBottom>

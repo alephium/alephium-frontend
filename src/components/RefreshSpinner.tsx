@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { RefreshControl, RefreshControlProps } from 'react-native'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 
 interface RefreshSpinnerProps extends RefreshControlProps {
   progressViewOffset: Required<RefreshControlProps>['progressViewOffset']

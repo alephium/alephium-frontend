@@ -51,7 +51,7 @@ type TokensRow = Asset | UnknownTokensEntry | LoadingIndicator
 const tabItems = [
   {
     value: 'tokens',
-    label: 'Tokens '
+    label: 'Tokens'
   },
   {
     value: 'nfts',

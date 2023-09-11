@@ -21,16 +21,17 @@ import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, BackHandler, View } from 'react-native'
+import { ActivityIndicator, BackHandler } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import BoxSurface from '~/components/layout/BoxSurface'
 import { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
-import BaseScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import HighlightRow from '~/components/Row'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Row from '~/components/Row'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -159,28 +160,30 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }
 
   return (
-    <BaseScrollScreen {...props}>
-      <View>
-        <ScreenSection>
-          <AppText bold>Scan the blockchain to find your active addresses. This process might take a while.</AppText>
-        </ScreenSection>
-        <ScreenSection>
-          <ScreenSectionTitle>Current addresses</ScreenSectionTitle>
+    <ScrollScreen hasHeader verticalGap {...props}>
+      <ScreenSection>
+        <AppText bold>Scan the blockchain to find your active addresses. This process might take a while.</AppText>
+      </ScreenSection>
+      <ScreenSection>
+        <ScreenSectionTitle>Current addresses</ScreenSectionTitle>
+        <BoxSurface>
           {addresses.map((address, index) => (
-            <HighlightRow
+            <Row
               key={address.hash}
               title={address.settings.label || address.hash}
               subtitle={address.settings.label ? address.hash : undefined}
               truncate
+              isLast={index === addresses.length - 1}
             >
               <Amount value={BigInt(address.balance)} fadeDecimals bold />
-            </HighlightRow>
+            </Row>
           ))}
-        </ScreenSection>
-        {(loading || discoveredAddresses.length > 0) && (
-          <ScreenSection>
-            <ScreenSectionTitle>Newly discovered addresses</ScreenSectionTitle>
-
+        </BoxSurface>
+      </ScreenSection>
+      {(loading || discoveredAddresses.length > 0) && (
+        <ScreenSection>
+          <ScreenSectionTitle>Newly discovered addresses</ScreenSectionTitle>
+          <BoxSurface>
             {loading && (
               <ScanningIndication>
                 <Row style={{ marginBottom: 10 }}>
@@ -192,30 +195,39 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             )}
 
             {discoveredAddresses.map(({ hash, balance }, index) => (
-              <HighlightRow key={hash} title={hash} truncate onPress={() => toggleAddressSelection(hash)}>
-                <Row>
-                  <AmountStyled value={BigInt(balance)} color="secondary" fadeDecimals />
-                  <Checkbox
-                    value={addressSelections[hash]}
-                    disabled={loading}
-                    onValueChange={() => toggleAddressSelection(hash)}
-                  />
-                </Row>
-              </HighlightRow>
+              <Row
+                key={hash}
+                title={hash}
+                truncate
+                onPress={() => toggleAddressSelection(hash)}
+                isLast={index === discoveredAddresses.length - 1}
+              >
+                <AmountStyled value={BigInt(balance)} color="secondary" fadeDecimals />
+                <Checkbox
+                  value={addressSelections[hash]}
+                  disabled={loading}
+                  onValueChange={() => toggleAddressSelection(hash)}
+                />
+              </Row>
             ))}
-          </ScreenSection>
-        )}
-      </View>
+          </BoxSurface>
+        </ScreenSection>
+      )}
       <BottomScreenSection>
         {status === 'idle' && (
-          <ButtonStyled iconProps={{ name: 'search-outline' }} title="Start scanning" onPress={handleStartScanPress} />
+          <ButtonStyled
+            iconProps={{ name: 'search-outline' }}
+            title="Start scanning"
+            onPress={handleStartScanPress}
+            variant="accent"
+          />
         )}
         {status === 'started' && (
           <ButtonStyled
             iconProps={{ name: 'close-outline' }}
             title="Stop scanning"
             onPress={handleStopScanPress}
-            type="secondary"
+            variant="accent"
           />
         )}
         {status === 'stopped' && (
@@ -223,6 +235,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             iconProps={{ name: 'search-outline' }}
             title="Continue scanning"
             onPress={handleContinueScanPress}
+            variant="accent"
           />
         )}
         {(status === 'stopped' || status === 'finished') && (
@@ -231,19 +244,16 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             title="Import addresses"
             onPress={importAddresses}
             disabled={selectedAddressesToImport.length === 0}
+            variant="accent"
           />
         )}
       </BottomScreenSection>
       <SpinnerModal isActive={importLoading} text="Importing addresses..." />
-    </BaseScrollScreen>
+    </ScrollScreen>
   )
 }
 
 export default AddressDiscoveryScreen
-
-const Row = styled.View`
-  flex-direction: row;
-`
 
 const ScanningIndication = styled.View`
   margin-bottom: 20px;

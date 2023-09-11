@@ -50,7 +50,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
 
-  const [groupSelectModalOpen, setGroupSelectModalOpen] = useState(false)
+  const [isGroupSelectModalOpen, setIsGroupSelectModalOpen] = useState(false)
 
   const [loading, setLoading] = useState(false)
 
@@ -92,14 +92,14 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
         <AddressForm
           initialValues={initialValues}
           onSubmit={handleGeneratePress}
-          onGroupPress={() => setGroupSelectModalOpen(true)}
+          onGroupPress={() => setIsGroupSelectModalOpen(true)}
         />
 
         <Portal>
           <BottomModal
-            isOpen={groupSelectModalOpen}
-            onClose={() => setGroupSelectModalOpen(false)}
-            Content={(props) => <GroupSelectModal onClose={() => setGroupSelectModalOpen(false)} {...props} />}
+            isOpen={isGroupSelectModalOpen}
+            onClose={() => setIsGroupSelectModalOpen(false)}
+            Content={(props) => <GroupSelectModal onClose={() => setIsGroupSelectModalOpen(false)} {...props} />}
           />
         </Portal>
       </NewAddressContextProvider>
