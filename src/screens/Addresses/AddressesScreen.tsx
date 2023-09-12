@@ -19,7 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
-import { FlatList, View } from 'react-native'
+import { View } from 'react-native'
+import { FlatList } from 'react-native-gesture-handler'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -143,30 +144,25 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
           Content={(props) => (
             <ModalContent {...props}>
               <FlatList
-                {...{
-                  data: addresses,
-                  style: {
-                    marginBottom: insets.bottom + insets.top
-                  },
-                  keyExtractor: (item) => item.hash,
-                  contentContainerStyle: {
-                    gap: VERTICAL_GAP
-                  },
-                  renderItem: ({ item: address, index }) => (
-                    <AddressBoxStyled
-                      key={address.hash}
-                      addressHash={address.hash}
-                      isFirst={index === 0}
-                      isLast={index === addresses.length - 1}
-                      onPress={() => {
-                        setSelectedAddressHash(address.hash)
-                        setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
-                        props.onClose && props.onClose()
-                        posthog?.capture('Used address quick navigation')
-                      }}
-                    />
-                  )
-                }}
+                data={addresses}
+                style={{ marginBottom: insets.bottom + insets.top }}
+                keyExtractor={(item) => item.hash}
+                contentContainerStyle={{ gap: VERTICAL_GAP }}
+                canCancelContentTouches={true}
+                renderItem={({ item: address, index }) => (
+                  <AddressBoxStyled
+                    key={address.hash}
+                    addressHash={address.hash}
+                    isFirst={index === 0}
+                    isLast={index === addresses.length - 1}
+                    onPress={() => {
+                      setSelectedAddressHash(address.hash)
+                      setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
+                      props.onClose && props.onClose()
+                      posthog?.capture('Used address quick navigation')
+                    }}
+                  />
+                )}
               />
             </ModalContent>
           )}
