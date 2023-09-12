@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, LayoutChangeEvent, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
@@ -63,8 +63,10 @@ interface BottomModalProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHeight }: BottomModalProps) => {
-  const [dimensions, setDimensions] = useState(Dimensions.get('window'))
   const insets = useSafeAreaInsets()
+  const isOpenRef = useRef(isOpen)
+
+  const [dimensions, setDimensions] = useState(Dimensions.get('window'))
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -132,13 +134,13 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHei
     }
   }
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     'worklet'
 
     navHeight.value = withSpring(0, springConfig)
     modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(onClose)())
     position.value = 'closing'
-  }
+  }, [modalHeight, navHeight, onClose, position])
 
   const handleMaximize = () => {
     'worklet'
@@ -187,6 +189,16 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHei
             : withSpring(-minHeight.value, springConfig)
       }
     })
+
+  // This is needed to preserve the animations when closing the modal programmatically by setting isOpen to false
+  // from the parent component (ie: when a click on a button of the modal navigates to a new page)
+  useEffect(() => {
+    if (isOpenRef.current === true && !isOpen) {
+      handleClose()
+    }
+
+    isOpenRef.current = isOpen
+  }, [handleClose, isOpen])
 
   return isOpen ? (
     <GestureDetector gesture={panGesture}>

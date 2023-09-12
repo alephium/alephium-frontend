@@ -68,6 +68,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
+
   const [iscCntactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
   const shouldFlash = useSharedValue(0)
@@ -109,6 +110,11 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
       posthog?.capture('Send: Selected contact to send funds to')
     }
+  }
+
+  const handleNewContactPress = () => {
+    setIsContactSelectModalOpen(false)
+    navigation.navigate('NewContactScreen')
   }
 
   const handleAddressPress = (addressHash: AddressHash) => {
@@ -227,10 +233,16 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       <Portal>
         <BottomModal
           isOpen={iscCntactSelectModalOpen}
-          Content={(props) => <SelectContactModal onContactPress={handleContactPress} {...props} />}
+          Content={(props) => (
+            <SelectContactModal
+              onContactPress={handleContactPress}
+              onNewContactPress={handleNewContactPress}
+              {...props}
+            />
+          )}
           onClose={() => setIsContactSelectModalOpen(false)}
           customMinHeight={300}
-        ></BottomModal>
+        />
 
         <BottomModal
           isOpen={isAddressSelectModalOpen}
@@ -238,7 +250,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           onClose={() => setIsAddressSelectModalOpen(false)}
           customMinHeight={300}
           scrollableContent
-        ></BottomModal>
+        />
       </Portal>
     </>
   )
