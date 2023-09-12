@@ -112,11 +112,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     }
   }
 
-  const handleNewContactPress = () => {
-    setIsContactSelectModalOpen(false)
-    navigation.navigate('NewContactScreen')
-  }
-
   const handleAddressPress = (addressHash: AddressHash) => {
     setToAddress(addressHash)
     flashInputBg()
@@ -236,7 +231,10 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           Content={(props) => (
             <SelectContactModal
               onContactPress={handleContactPress}
-              onNewContactPress={handleNewContactPress}
+              onNewContactPress={() => {
+                props.onClose && props.onClose()
+                navigation.navigate('NewContactScreen')
+              }}
               {...props}
             />
           )}
