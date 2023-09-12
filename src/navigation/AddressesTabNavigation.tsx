@@ -16,19 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ParamListBase } from '@react-navigation/native'
-
 import TabBarPager from '~/components/layout/TabBarPager'
 import AddressesScreen from '~/screens/Addresses/AddressesScreen'
 import ContactsScreen from '~/screens/Addresses/ContactsScreen'
-import { AddressHash } from '~/types/addresses'
-
-export interface AddressTabsParamList extends ParamListBase {
-  AddressesScreen: {
-    addressHash?: AddressHash
-  }
-  ContactsScreen: undefined
-}
 
 const AddressesTabNavigation = () => (
   <TabBarPager

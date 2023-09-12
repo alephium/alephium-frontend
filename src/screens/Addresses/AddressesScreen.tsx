@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { FlatList, View } from 'react-native'
@@ -35,6 +36,7 @@ import { ModalContent } from '~/components/layout/ModalContent'
 import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import EditAddressModal from '~/screens/Address/EditAddressModal'
 import {
   selectAddressByHash,
@@ -51,6 +53,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
   const theme = useTheme()
   const posthog = usePostHog()
   const insets = useSafeAreaInsets()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addresses = useAppSelector(selectAllAddresses)
@@ -114,7 +117,13 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
                     compact
                   />
                 )}
-                <Button iconProps={{ name: 'add-outline' }} title="New address" color={theme.global.accent} compact />
+                <Button
+                  onPress={() => navigation.navigate('NewAddressScreen')}
+                  iconProps={{ name: 'add-outline' }}
+                  title="New address"
+                  color={theme.global.accent}
+                  compact
+                />
               </>
             }
           />
