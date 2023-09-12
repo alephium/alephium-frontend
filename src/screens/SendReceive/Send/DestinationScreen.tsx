@@ -69,7 +69,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
 
-  const [iscCntactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
+  const [isCntactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
   const shouldFlash = useSharedValue(0)
 
@@ -227,7 +227,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
       <Portal>
         <BottomModal
-          isOpen={iscCntactSelectModalOpen}
+          isOpen={isCntactSelectModalOpen}
           Content={(props) => (
             <SelectContactModal
               onContactPress={handleContactPress}
