@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { TextInput } from 'react-native'
@@ -30,7 +29,6 @@ import { ScreenSection } from '~/components/layout/Screen'
 import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
@@ -45,14 +43,8 @@ export interface ContactListScreenBaseProps extends TabBarPageProps {
 
 // TODO: Should be converted to a FlatList
 
-const ContactListScreenBase = ({
-  onContactPress,
-  onNewContactPress,
-  contentStyle,
-  ...props
-}: ContactListScreenBaseProps) => {
+const ContactListScreenBase = ({ onContactPress, onNewContactPress, contentStyle }: ContactListScreenBaseProps) => {
   const theme = useTheme()
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const contacts = useAppSelector(selectAllContacts)
 
@@ -70,7 +62,7 @@ const ContactListScreenBase = ({
           <NoContactMessageBox>
             <EmojiContainer size={60}>🤷‍♀️</EmojiContainer>
             <AppText>No contact yet!</AppText>
-            <Button title="Add contact" onPress={() => navigation.navigate('NewContactScreen')} />
+            <Button title="Add contact" onPress={onNewContactPress} />
           </NoContactMessageBox>
         </NoContactContainer>
       ) : (

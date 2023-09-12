@@ -27,9 +27,14 @@ import BaseHeader from '~/components/headers/BaseHeader'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppSelector } from '~/hooks/redux'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
-import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import DashboardScreen from '~/screens/DashboardScreen'
 import TransfersScreen from '~/screens/TransfersScreen'
+
+export type InWalletTabsParamList = {
+  DashboardScreen: undefined
+  AddressesTabNavigation: undefined
+  TransfersScreen: undefined
+}
 
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 

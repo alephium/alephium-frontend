@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
 
-type SelectContactModalProps = ModalContentProps & Pick<ContactListScreenBaseProps, 'onContactPress'>
+type SelectContactModalProps = ModalContentProps & ContactListScreenBaseProps
 
-const SelectContactModal = ({ onContactPress, ...props }: SelectContactModalProps) => (
+const SelectContactModal = ({ onContactPress, onNewContactPress, ...props }: SelectContactModalProps) => (
   <ModalContent {...props}>
-    <ContactListScreenBase onContactPress={onContactPress} />
+    <ContactListScreenBase onContactPress={onContactPress} onNewContactPress={onNewContactPress} />
   </ModalContent>
 )
 

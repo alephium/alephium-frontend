@@ -63,8 +63,9 @@ interface BottomModalProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHeight }: BottomModalProps) => {
-  const [dimensions, setDimensions] = useState(Dimensions.get('window'))
   const insets = useSafeAreaInsets()
+
+  const [dimensions, setDimensions] = useState(Dimensions.get('window'))
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {

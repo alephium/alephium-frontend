@@ -62,10 +62,10 @@ const BaseHeader = ({
   const { scrollY } = useScrollContext()
   const navigation = useNavigation()
 
-  const bgColorRange = [theme.bg.secondary, theme.bg.primary]
   const borderColorRange = ['transparent', theme.border.secondary]
 
   const hasCompactHeader = headerCompactContent !== undefined || headerTitle
+  const paddingTop = Platform.OS === 'android' ? insets.top + 10 : insets.top
 
   const HeaderRight = headerRight && headerRight({})
   const HeaderLeft = headerLeft && headerLeft({})
@@ -110,14 +110,6 @@ const BaseHeader = ({
       : {}
   )
 
-  const androidHeaderColor = useAnimatedStyle(() =>
-    Platform.OS === 'android'
-      ? {
-          backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, bgColorRange)
-        }
-      : {}
-  )
-
   const bottomBorderColor = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
   }))
@@ -143,57 +135,45 @@ const BaseHeader = ({
       : {}
   )
 
-  if (Platform.OS === 'android') {
-    return (
-      <Animated.View style={[style, androidHeaderColor, { paddingTop: insets.top }]} ref={headerRef}>
-        {HeaderLeft}
-        {HeaderRight}
-        {HeaderTitle && <Title>{HeaderTitle}</Title>}
-        {HeaderBottom}
-        <BottomBorder style={bottomBorderColor} />
-      </Animated.View>
-    )
-  } else {
-    return (
-      <Animated.View style={style} ref={headerRef}>
-        {(headerCompactContent || headerTitle) && (
-          <CompactContent style={compactContentAnimatedStyle}>
-            <ActionAreaBlurred
-              style={{ paddingTop: insets.top, justifyContent: 'center', height: '100%' }}
-              animatedProps={animatedBlurViewProps}
-              tint={theme.name}
-            >
-              {(headerCompactContent && headerCompactContent()) || <CompactTitle>{HeaderTitle}</CompactTitle>}
-              <BottomBorder style={bottomBorderColor} />
-            </ActionAreaBlurred>
-          </CompactContent>
-        )}
-        <FullContent style={fullContentAnimatedStyle}>
-          {headerLeft || headerRight ? (
-            <>
-              <ActionArea style={{ paddingTop: insets.top }}>
-                {HeaderLeft}
-                {HeaderRight}
-              </ActionArea>
-              {headerTitle && (
-                <TitleArea style={titleAnimatedStyle}>
-                  <Title>{HeaderTitle}</Title>
-                </TitleArea>
-              )}
-            </>
-          ) : (
-            <ActionArea style={{ paddingTop: insets.top, paddingLeft: 0, paddingBottom: 0 }}>
-              <TitleArea style={[titleAnimatedStyle]}>
+  return (
+    <Animated.View style={style} ref={headerRef}>
+      {hasCompactHeader && (
+        <CompactContent style={compactContentAnimatedStyle}>
+          <ActionAreaBlurred
+            style={{ paddingTop, justifyContent: 'center', height: '100%' }}
+            animatedProps={animatedBlurViewProps}
+            tint={theme.name}
+          >
+            {(headerCompactContent && headerCompactContent()) || <CompactTitle>{HeaderTitle}</CompactTitle>}
+            <BottomBorder style={bottomBorderColor} />
+          </ActionAreaBlurred>
+        </CompactContent>
+      )}
+      <FullContent style={fullContentAnimatedStyle}>
+        {HeaderLeft || HeaderRight ? (
+          <>
+            <ActionArea style={{ paddingTop }}>
+              {HeaderLeft}
+              {HeaderRight}
+            </ActionArea>
+            {headerTitle && (
+              <TitleArea style={titleAnimatedStyle}>
                 <Title>{HeaderTitle}</Title>
               </TitleArea>
-            </ActionArea>
-          )}
-          {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
-          <BottomBorder style={bottomBorderColor} />
-        </FullContent>
-      </Animated.View>
-    )
-  }
+            )}
+          </>
+        ) : (
+          <ActionArea style={{ paddingTop, paddingLeft: 0, paddingBottom: 0 }}>
+            <TitleArea style={[titleAnimatedStyle]}>
+              <Title>{HeaderTitle}</Title>
+            </TitleArea>
+          </ActionArea>
+        )}
+        {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
+        <BottomBorder style={bottomBorderColor} />
+      </FullContent>
+    </Animated.View>
+  )
 }
 
 export default BaseHeader

@@ -68,7 +68,8 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
-  const [iscCntactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
+
+  const [isCntactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
   const shouldFlash = useSharedValue(0)
 
@@ -226,11 +227,20 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
       <Portal>
         <BottomModal
-          isOpen={iscCntactSelectModalOpen}
-          Content={(props) => <SelectContactModal onContactPress={handleContactPress} {...props} />}
+          isOpen={isCntactSelectModalOpen}
+          Content={(props) => (
+            <SelectContactModal
+              onContactPress={handleContactPress}
+              onNewContactPress={() => {
+                props.onClose && props.onClose()
+                navigation.navigate('NewContactScreen')
+              }}
+              {...props}
+            />
+          )}
           onClose={() => setIsContactSelectModalOpen(false)}
           customMinHeight={300}
-        ></BottomModal>
+        />
 
         <BottomModal
           isOpen={isAddressSelectModalOpen}
@@ -238,7 +248,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           onClose={() => setIsAddressSelectModalOpen(false)}
           customMinHeight={300}
           scrollableContent
-        ></BottomModal>
+        />
       </Portal>
     </>
   )
