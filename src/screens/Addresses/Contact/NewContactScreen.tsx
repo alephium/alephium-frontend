@@ -23,7 +23,7 @@ import { useState } from 'react'
 import Toast from 'react-native-root-toast'
 
 import { ScreenProps } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import StaticScreen from '~/components/layout/StaticScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
@@ -62,10 +62,10 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
   }
 
   return (
-    <ScrollScreen {...props} hasHeader verticalGap>
+    <StaticScreen hasHeader {...props}>
       <ContactForm initialValues={initialValues} onSubmit={handleSavePress} />
       <SpinnerModal isActive={loading} text="Saving contact..." />
-    </ScrollScreen>
+    </StaticScreen>
   )
 }
 
