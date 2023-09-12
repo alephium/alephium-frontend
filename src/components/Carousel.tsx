@@ -62,7 +62,7 @@ const Carousel = <T,>({
   }
 
   useEffect(() => {
-    if (scrollTo !== undefined) {
+    if (scrollTo !== undefined && scrollTo !== ref.current?.getCurrentIndex()) {
       ref.current?.scrollTo({ index: scrollTo })
     }
   }, [scrollTo])

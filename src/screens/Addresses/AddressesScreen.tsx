@@ -69,13 +69,17 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
 
   useEffect(() => {
-    if (defaultAddress) {
+    if (defaultAddress?.hash) {
       setSelectedAddressHash(defaultAddress.hash)
+      setScrollToCarouselPage(0)
     }
-  }, [defaultAddress])
+  }, [addressHashes, defaultAddress?.hash])
 
   const onAddressCardsScrollEnd = (index: number) => {
-    if (index < addressHashes.length) setSelectedAddressHash(addressHashes[index])
+    if (index < addressHashes.length) {
+      setSelectedAddressHash(addressHashes[index])
+      setScrollToCarouselPage(index)
+    }
   }
 
   const renderAddressCard = ({ item }: { item: string }) => (
