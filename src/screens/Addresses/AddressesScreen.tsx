@@ -59,8 +59,8 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
 
-  const [quickSelectionModalOpen, setQuickSelectronModalOpen] = useState(false)
-  const [addressSettingsModalOpen, setAddressSettingsModalOpen] = useState(false)
+  const [isQuickSelectionModalOpen, setIsQuickSelectionModalOpen] = useState(false)
+  const [isAddressSettingsModalOpen, setIsAddressSettingsModalOpen] = useState(false)
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(200)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
@@ -77,7 +77,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
 
   const renderAddressCard = ({ item }: { item: string }) => (
     <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height)} key={item}>
-      <AddressCard addressHash={item} onSettingsPress={() => setAddressSettingsModalOpen(true)} />
+      <AddressCard addressHash={item} onSettingsPress={() => setIsAddressSettingsModalOpen(true)} />
     </View>
   )
 
@@ -108,7 +108,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
               <>
                 {addresses.length > 2 && (
                   <Button
-                    onPress={() => setQuickSelectronModalOpen(true)}
+                    onPress={() => setIsQuickSelectionModalOpen(true)}
                     iconProps={{ name: 'list-outline' }}
                     round
                     compact
@@ -124,8 +124,8 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
 
       <Portal>
         <BottomModal
-          isOpen={quickSelectionModalOpen}
-          onClose={() => setQuickSelectronModalOpen(false)}
+          isOpen={isQuickSelectionModalOpen}
+          onClose={() => setIsQuickSelectionModalOpen(false)}
           scrollableContent
           Content={(props) => (
             <ModalContent {...props}>
@@ -160,8 +160,8 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
         />
 
         <BottomModal
-          isOpen={addressSettingsModalOpen}
-          onClose={() => setAddressSettingsModalOpen(false)}
+          isOpen={isAddressSettingsModalOpen}
+          onClose={() => setIsAddressSettingsModalOpen(false)}
           scrollableContent
           Content={(props) => <EditAddressModal addressHash={selectedAddress.hash} {...props} />}
         />
