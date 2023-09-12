@@ -65,7 +65,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
   const [isQuickSelectionModalOpen, setIsQuickSelectionModalOpen] = useState(false)
   const [isAddressSettingsModalOpen, setIsAddressSettingsModalOpen] = useState(false)
 
-  const [heightCarouselItem, setHeightCarouselItem] = useState(200)
+  const [heightCarouselItem, setHeightCarouselItem] = useState(220)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
 
   useEffect(() => {
