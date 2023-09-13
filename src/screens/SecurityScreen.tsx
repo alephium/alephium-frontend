@@ -20,15 +20,17 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { AlertTriangle } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
+import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import BottomModal from '~/components/layout/BottomModal'
+import { ModalContent } from '~/components/layout/ModalContent'
+import { ScreenProps } from '~/components/layout/Screen'
 import { ScreenSection } from '~/components/layout/Screen'
-import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import OrderedTable from '~/components/OrderedTable'
 import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -60,7 +62,7 @@ const SecurityScreen = ({ navigation, ...props }: SecurityScreenProps) => {
   }, [isMnemonicBackedUp, navigation, metadataId, dispatch, posthog])
 
   return (
-    <Screen {...props}>
+    <ScrollScreen hasHeader fill {...props}>
       <ScreenSection fill>
         <Messages>
           {!isMnemonicBackedUp && (
@@ -83,26 +85,29 @@ const SecurityScreen = ({ navigation, ...props }: SecurityScreenProps) => {
       <ScreenSection centered>
         <Button disabled={!isUnderstood} title="Reveal secret phrase" onPress={() => setShowMnemonic(true)} />
       </ScreenSection>
-      <ModalWithBackdrop animationType="fade" visible={showMnemonic} closeModal={() => setShowMnemonic(false)}>
-        <SecretPhraseModalContent>
-          <ScreenSectionStyled fill>
-            <OrderedTable items={mnemonic.split(' ')} />
-          </ScreenSectionStyled>
-          <ScreenSection centered>
-            <ButtonsRow>
-              <Button title="Go back" onPress={() => setShowMnemonic(false)} />
-              <Button title="I wrote it down" onPress={handleBackupConfirmation} />
-            </ButtonsRow>
-          </ScreenSection>
-        </SecretPhraseModalContent>
-      </ModalWithBackdrop>
-    </Screen>
+
+      <Portal>
+        <BottomModal
+          isOpen={showMnemonic}
+          onClose={() => setShowMnemonic(false)}
+          scrollableContent
+          Content={(props) => (
+            <ModalContent fill {...props}>
+              <ScreenSection fill>
+                <OrderedTable items={mnemonic.split(' ')} />
+              </ScreenSection>
+              <ScreenSection centered>
+                <Button title="I wrote it down" onPress={handleBackupConfirmation} />
+              </ScreenSection>
+            </ModalContent>
+          )}
+        />
+      </Portal>
+    </ScrollScreen>
   )
 }
 
-export default styled(SecurityScreen)`
-  background-color: ${({ theme }) => theme.global.pale};
-`
+export default SecurityScreen
 
 const Messages = styled.View`
   flex: 1;
@@ -135,15 +140,4 @@ const BoldText = styled(CenteredText)`
 
 const ConsentText = styled(AppText)`
   flex-shrink: 1;
-`
-
-const SecretPhraseModalContent = styled.View`
-  flex: 1;
-  width: 100%;
-  background-color: #f7d1b6;
-`
-
-const ScreenSectionStyled = styled(ScreenSection)`
-  align-items: center;
-  justify-content: center;
 `
