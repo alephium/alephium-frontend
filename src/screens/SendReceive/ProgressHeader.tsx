@@ -109,12 +109,3 @@ const HeaderRightOptionWrapper = styled.View`
   left: 0;
   bottom: 0;
 `
-
-// TODO: Dry
-export const ContinueButtonStyled = styled.Pressable`
-  padding: 4px 15px;
-  background-color: ${({ theme }) => theme.global.accent};
-  border-radius: 26px;
-  width: 100px;
-  align-items: center;
-`
