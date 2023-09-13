@@ -123,11 +123,17 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
       </Content>
 
       <ButtonsRow>
-        <Button title="New wallet" onPress={() => handleButtonPress('create')} iconProps={{ name: 'add-outline' }} />
+        <Button
+          title="New wallet"
+          onPress={() => handleButtonPress('create')}
+          iconProps={{ name: 'add-outline' }}
+          style={{ flex: 1 }}
+        />
         <Button
           title="Import wallet"
           onPress={() => handleButtonPress('import')}
           iconProps={{ name: 'arrow-down-outline' }}
+          style={{ flex: 1 }}
         />
       </ButtonsRow>
 
