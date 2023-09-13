@@ -16,37 +16,44 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components/native'
+import { FlatList } from 'react-native-gesture-handler'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import AddressBox from '~/components/AddressBox'
-import { ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
-export interface AddressListScreenBaseProps extends ScrollScreenProps {
+export interface AddressFlatListProps extends ScrollScreenProps {
   onAddressPress: (addressHash: AddressHash) => void
 }
 
-// TODO: Should be converted to a FlatList
-
-const AddressListScreenBase = ({ onAddressPress, ...props }: AddressListScreenBaseProps) => {
+const AddressFlatList = ({ onAddressPress, ...props }: AddressFlatListProps) => {
   const addresses = useAppSelector(selectAllAddresses)
+  const insets = useSafeAreaInsets()
 
   return (
-    <ScreenSection>
-      <AddressList>
-        {addresses.map((address) => (
-          <AddressBox key={address.hash} addressHash={address.hash} onPress={() => onAddressPress(address.hash)} />
-        ))}
-      </AddressList>
-    </ScreenSection>
+    <FlatList
+      data={addresses}
+      style={{ marginBottom: insets.bottom + insets.top }}
+      keyExtractor={(item) => item.hash}
+      contentContainerStyle={{ gap: VERTICAL_GAP }}
+      renderItem={({ item: address, index }) => (
+        <AddressBox
+          key={address.hash}
+          addressHash={address.hash}
+          style={{
+            marginTop: index === 0 ? 20 : undefined,
+            marginBottom: index === addresses.length - 1 ? 40 : undefined
+          }}
+          onPress={() => onAddressPress(address.hash)}
+        />
+      )}
+      {...props}
+    />
   )
 }
 
-export default AddressListScreenBase
-
-const AddressList = styled.View`
-  gap: 20px;
-`
+export default AddressFlatList

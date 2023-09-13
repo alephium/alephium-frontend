@@ -33,8 +33,6 @@ import { AddressHash } from '~/types/addresses'
 interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash
   isSelected?: boolean
-  isFirst?: boolean
-  isLast?: boolean
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)

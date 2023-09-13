@@ -16,15 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalContentProps, ScrollModal } from '~/components/layout/ModalContent'
-import AddressListScreenBase, { AddressListScreenBaseProps } from '~/screens/AddressListScreenBase'
+import AddressFlatList, { AddressFlatListProps } from '~/components/AddressFlatList'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 
-type SelectAddressModalProps = ModalContentProps & Pick<AddressListScreenBaseProps, 'onAddressPress'>
+type SelectAddressModalProps = ModalContentProps & Pick<AddressFlatListProps, 'onAddressPress'>
 
 const SelectAddressModal = ({ onAddressPress, ...props }: SelectAddressModalProps) => (
-  <ScrollModal {...props}>
-    <AddressListScreenBase onAddressPress={onAddressPress} />
-  </ScrollModal>
+  <ModalContent {...props}>
+    <AddressFlatList onAddressPress={onAddressPress} />
+  </ModalContent>
 )
 
 export default SelectAddressModal
