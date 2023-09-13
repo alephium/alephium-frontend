@@ -77,7 +77,7 @@ const ScrollScreen = ({
           style={[
             {
               gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
-              paddingBottom: insets.bottom,
+              paddingBottom: insets.bottom + DEFAULT_MARGIN,
               flex: fill ? 1 : undefined
             },
             style
