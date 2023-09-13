@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { FlatListProps, ScrollViewProps } from 'react-native'
+import { FlatListProps, ScrollViewProps, View } from 'react-native'
 import { FlatList as GHFlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -36,9 +36,9 @@ export interface ModalContentProps extends ModalContentBaseProps, ScrollViewProp
 
 export interface ModalFlatListContentProps<T> extends ModalContentBaseProps, FlatListProps<T> {}
 
-export const ModalContent = ({ children, verticalGap, ...props }: ModalContentProps) => (
+export const ModalContent = ({ children, verticalGap, onLayout, ...props }: ModalContentProps) => (
   <GHScrollView {...getDefaultProps({ verticalGap })} {...props}>
-    {children}
+    <View onLayout={onLayout}>{children}</View>
   </GHScrollView>
 )
 

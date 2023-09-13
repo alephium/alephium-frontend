@@ -152,7 +152,6 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
         <BottomModal
           isOpen={isAddressSettingsModalOpen}
           onClose={() => setIsAddressSettingsModalOpen(false)}
-          maximisedContent
           Content={(props) => <EditAddressModal addressHash={selectedAddress.hash} {...props} />}
         />
       </Portal>
