@@ -135,7 +135,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
         <BottomModal
           isOpen={isQuickSelectionModalOpen}
           onClose={() => setIsQuickSelectionModalOpen(false)}
-          scrollableContent
+          maximisedContent
           Content={(props) => (
             <SelectAddressModal
               onAddressPress={(addressHash) => {
@@ -152,7 +152,7 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
         <BottomModal
           isOpen={isAddressSettingsModalOpen}
           onClose={() => setIsAddressSettingsModalOpen(false)}
-          scrollableContent
+          maximisedContent
           Content={(props) => <EditAddressModal addressHash={selectedAddress.hash} {...props} />}
         />
       </Portal>

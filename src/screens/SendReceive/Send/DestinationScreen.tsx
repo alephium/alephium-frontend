@@ -247,7 +247,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           Content={(props) => <SelectAddressModal onAddressPress={handleAddressPress} {...props} />}
           onClose={() => setIsAddressSelectModalOpen(false)}
           customMinHeight={300}
-          scrollableContent
+          maximisedContent
         />
       </Portal>
     </>

@@ -56,13 +56,13 @@ interface BottomModalProps {
   Content: (props: ModalContentProps) => ReactNode
   isOpen: boolean
   onClose: () => void
-  scrollableContent?: boolean
+  maximisedContent?: boolean
   customMinHeight?: number
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHeight }: BottomModalProps) => {
+const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeight }: BottomModalProps) => {
   const insets = useSafeAreaInsets()
 
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
@@ -101,7 +101,7 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHei
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: scrollableContent ? 0 : interpolate(-modalHeight.value, [0, minHeight.value, dimensions.height], [0, 1, 0])
+    opacity: maximisedContent ? 0 : interpolate(-modalHeight.value, [0, minHeight.value, dimensions.height], [0, 1, 0])
   }))
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
@@ -122,13 +122,13 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHei
 
         minHeight.value = customMinHeight
           ? customMinHeight
-          : scrollableContent
+          : maximisedContent
           ? maxHeight
           : canMaximize.value
           ? dimensions.height * 0.3
           : contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
 
-        scrollableContent ? handleMaximize() : handleMinimize()
+        maximisedContent ? handleMaximize() : handleMinimize()
       })()
     }
   }
@@ -180,7 +180,7 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHei
           if (shouldMaximise) {
             handleMaximize()
           } else if (shouldMinimise) {
-            scrollableContent ? handleClose() : handleMinimize()
+            maximisedContent ? handleClose() : handleMinimize()
           } else if (shouldClose) {
             handleClose()
           } else {
@@ -201,7 +201,7 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHei
       modalHeight,
       offsetY,
       position.value,
-      scrollableContent
+      maximisedContent
     ]
   )
 
