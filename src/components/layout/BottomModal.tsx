@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dimensions, LayoutChangeEvent, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
@@ -133,61 +133,77 @@ const BottomModal = ({ Content, isOpen, onClose, scrollableContent, customMinHei
     }
   }
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     'worklet'
 
     navHeight.value = withSpring(0, springConfig)
     modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(onClose)())
     position.value = 'closing'
-  }
+  }, [modalHeight, navHeight, onClose, position])
 
-  const handleMaximize = () => {
+  const handleMaximize = useCallback(() => {
     'worklet'
 
     navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)
     modalHeight.value = withSpring(-maxHeight, springConfig)
     position.value = 'maximised'
-  }
+  }, [maxHeight, modalHeight, navHeight, position])
 
-  const handleMinimize = () => {
+  const handleMinimize = useCallback(() => {
     'worklet'
 
     navHeight.value = withSpring(0, springConfig)
     modalHeight.value = withSpring(-minHeight.value, springConfig)
     position.value = 'minimised'
-  }
+  }, [minHeight.value, modalHeight, navHeight, position])
 
-  const panGesture = Gesture.Pan()
-    .onStart((e) => {
-      offsetY.value = modalHeight.value
-    })
-    .onChange((e) => {
-      if (position.value !== 'closing') {
-        modalHeight.value = offsetY.value + e.translationY
-      }
-    })
-    .onEnd(() => {
-      const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
+  const panGesture = useMemo(
+    () =>
+      Gesture.Pan()
+        .onStart((e) => {
+          offsetY.value = modalHeight.value
+        })
+        .onChange((e) => {
+          if (position.value !== 'closing') {
+            modalHeight.value = offsetY.value + e.translationY
+          }
+        })
+        .onEnd(() => {
+          const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
 
-      const shouldMaximise =
-        canMaximize.value && position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
+          const shouldMaximise =
+            canMaximize.value && position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
 
-      const shouldClose =
-        ['minimised', 'closing'].includes(position.value) && -modalHeight.value < minHeight.value - DRAG_BUFFER
+          const shouldClose =
+            ['minimised', 'closing'].includes(position.value) && -modalHeight.value < minHeight.value - DRAG_BUFFER
 
-      if (shouldMaximise) {
-        handleMaximize()
-      } else if (shouldMinimise) {
-        scrollableContent ? handleClose() : handleMinimize()
-      } else if (shouldClose) {
-        handleClose()
-      } else {
-        modalHeight.value =
-          position.value === 'maximised'
-            ? withSpring(-maxHeight, springConfig)
-            : withSpring(-minHeight.value, springConfig)
-      }
-    })
+          if (shouldMaximise) {
+            handleMaximize()
+          } else if (shouldMinimise) {
+            scrollableContent ? handleClose() : handleMinimize()
+          } else if (shouldClose) {
+            handleClose()
+          } else {
+            modalHeight.value =
+              position.value === 'maximised'
+                ? withSpring(-maxHeight, springConfig)
+                : withSpring(-minHeight.value, springConfig)
+          }
+        }),
+    [
+      canMaximize.value,
+      dimensions.height,
+      handleClose,
+      handleMaximize,
+      handleMinimize,
+      maxHeight,
+      minHeight.value,
+      modalHeight,
+      offsetY,
+      position.value,
+      scrollableContent
+    ]
+  )
 
   return isOpen ? (
     <GestureDetector gesture={panGesture}>
