@@ -25,7 +25,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
-import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
 interface ConsolidationModalProps {
@@ -51,12 +51,12 @@ const ConsolidationModal = ({ onConsolidate, onCancel, fees }: ConsolidationModa
           </View>
         </InfoBox>
       </ScreenSectionStyled>
-      <BottomScreenSection>
+      <ScreenSection centered>
         <ButtonsRow>
           <Button title="Cancel" onPress={onCancel} />
           <Button title="Consolidate" onPress={onConsolidate} />
         </ButtonsRow>
-      </BottomScreenSection>
+      </ScreenSection>
     </ConsolidationModalContent>
   </ModalWithBackdrop>
 )

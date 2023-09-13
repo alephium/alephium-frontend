@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
-import { View } from 'react-native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -25,7 +24,7 @@ import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useNewAddressContext } from '~/contexts/NewAddressContext'
@@ -65,37 +64,35 @@ const AddressForm = ({
 
   return (
     <>
-      <View style={{ flexGrow: 1 }}>
-        <ScreenSection verticalGap>
-          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
-          <ColorPicker value={color} onChange={setColor} />
-          <Row
-            title="Default address"
-            subtitle={`Default address for operations${
-              disableIsMainToggle
-                ? '. To remove this address from being the default address, you must set another one as main first.'
-                : ''
-            }`}
-            onPress={toggleIsMain}
-          >
-            <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
-          </Row>
-        </ScreenSection>
+      <ScreenSection verticalGap fill>
+        <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
+        <ColorPicker value={color} onChange={setColor} />
+        <Row
+          title="Default address"
+          subtitle={`Default address for operations${
+            disableIsMainToggle
+              ? '. To remove this address from being the default address, you must set another one as main first.'
+              : ''
+          }`}
+          onPress={toggleIsMain}
+        >
+          <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
+        </Row>
+
         {onGroupPress && (
-          <ScreenSection>
-            <ExpandableRow>
-              <BoxSurface>
-                <Row title="Address group" onPress={onGroupPress}>
-                  <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
-                </Row>
-              </BoxSurface>
-            </ExpandableRow>
-          </ScreenSection>
+          <ExpandableRow>
+            <BoxSurface>
+              <Row title="Address group" onPress={onGroupPress}>
+                <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
+              </Row>
+            </BoxSurface>
+          </ExpandableRow>
         )}
-      </View>
-      <BottomScreenSection>
+      </ScreenSection>
+
+      <ScreenSection centered>
         <Button title={buttonText} centered onPress={() => onSubmit({ isDefault, label, color, group })} />
-      </BottomScreenSection>
+      </ScreenSection>
     </>
   )
 }

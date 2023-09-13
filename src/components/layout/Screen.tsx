@@ -29,7 +29,12 @@ export default styled.View`
   background-color: ${({ theme }) => theme.bg.back2};
 `
 
-export const ScreenSection = styled.View<{ fill?: boolean; noMargin?: boolean; verticalGap?: number | boolean }>`
+export const ScreenSection = styled.View<{
+  fill?: boolean
+  noMargin?: boolean
+  verticalGap?: number | boolean
+  centered?: boolean
+}>`
   margin: 0 ${({ noMargin }) => (noMargin ? 0 : DEFAULT_MARGIN)}px;
 
   gap: ${({ verticalGap }) =>
@@ -40,16 +45,12 @@ export const ScreenSection = styled.View<{ fill?: boolean; noMargin?: boolean; v
     css`
       flex: 1;
     `}
-`
 
-export const CenteredScreenSection = styled(ScreenSection)`
-  align-items: center;
-`
-
-export const BottomModalScreenHeader = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
+  ${({ centered }) =>
+    centered &&
+    css`
+      align-items: center;
+    `}
 `
 
 export const BottomModalScreenTitle = styled(AppText)`
@@ -62,9 +63,4 @@ export const ScreenSectionTitle = styled(AppText)`
   font-weight: 600;
   color: ${({ theme }) => theme.font.primary};
   margin-bottom: 15px;
-`
-
-export const BottomScreenSection = styled(ScreenSection)`
-  margin: 0 ${DEFAULT_MARGIN}px;
-  align-items: center;
 `

@@ -27,7 +27,7 @@ import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
@@ -62,14 +62,14 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   return (
     <ScrollScreen hasHeader verticalGap {...props}>
       <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." />
-      <CenteredScreenSection>
+      <ScreenSection centered>
         <QRCodeContainer>
           <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={params.addressHash} />
         </QRCodeContainer>
-      </CenteredScreenSection>
-      <CenteredScreenSection>
+      </ScreenSection>
+      <ScreenSection centered>
         <Button title="Copy address" onPress={handleCopyAddressPress} iconProps={{ name: 'copy-outline' }} />
-      </CenteredScreenSection>
+      </ScreenSection>
       <ScreenSection>
         <BoxSurface>
           <Row title="Address" isLast={!address?.settings.label}>

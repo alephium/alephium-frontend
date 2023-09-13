@@ -29,7 +29,7 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomScreenSection, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -213,7 +213,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
           </BoxSurface>
         </ScreenSection>
       )}
-      <BottomScreenSection>
+      <ScreenSection centered>
         {status === 'idle' && (
           <ButtonStyled
             iconProps={{ name: 'search-outline' }}
@@ -247,7 +247,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             variant="accent"
           />
         )}
-      </BottomScreenSection>
+      </ScreenSection>
       <SpinnerModal isActive={importLoading} text="Importing addresses..." />
     </ScrollScreen>
   )

@@ -24,8 +24,7 @@ import { Alert } from 'react-native'
 import Toast from 'react-native-root-toast'
 
 import Button from '~/components/buttons/Button'
-import { ScreenProps } from '~/components/layout/Screen'
-import StaticScreen from '~/components/layout/StaticScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -34,7 +33,7 @@ import ContactForm from '~/screens/Addresses/Contact/ContactForm'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { ContactFormData } from '~/types/contacts'
 
-interface EditContactScreenProps extends StackScreenProps<RootStackParamList, 'EditContactScreen'>, ScreenProps {}
+interface EditContactScreenProps extends StackScreenProps<RootStackParamList, 'EditContactScreen'>, ScrollScreenProps {}
 
 const EditContactScreen = ({ navigation, route: { params }, ...props }: EditContactScreenProps) => {
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
@@ -102,13 +101,13 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
   }
 
   return (
-    <StaticScreen hasHeader verticalGap {...props}>
+    <ScrollScreen fill hasHeader {...props}>
       <ContactForm initialValues={contact} onSubmit={handleSavePress} />
       <SpinnerModal
         isActive={loading || isDeleting}
         text={loading ? 'Saving contact...' : isDeleting ? 'Deleting contact...' : ''}
       />
-    </StaticScreen>
+    </ScrollScreen>
   )
 }
 

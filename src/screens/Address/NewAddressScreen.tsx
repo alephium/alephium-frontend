@@ -23,7 +23,7 @@ import { useRef, useState } from 'react'
 import { Portal } from 'react-native-portalize'
 
 import BottomModal from '~/components/layout/BottomModal'
-import StaticScreen, { StaticScreenProps } from '~/components/layout/StaticScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { NewAddressContextProvider } from '~/contexts/NewAddressContext'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
@@ -40,7 +40,7 @@ import {
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed } from '~/utils/crypto'
 
-interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'NewAddressScreen'>, StaticScreenProps {}
+interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'NewAddressScreen'>, ScrollScreenProps {}
 
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
@@ -87,7 +87,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <StaticScreen hasHeader verticalGap {...props}>
+    <ScrollScreen fill hasHeader verticalGap {...props}>
       <NewAddressContextProvider>
         <AddressForm
           initialValues={initialValues}
@@ -104,7 +104,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
         </Portal>
       </NewAddressContextProvider>
       <SpinnerModal isActive={loading} text="Generating address..." />
-    </StaticScreen>
+    </ScrollScreen>
   )
 }
 

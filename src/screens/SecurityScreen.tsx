@@ -26,7 +26,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
-import Screen, { BottomScreenSection, ScreenProps } from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import OrderedTable from '~/components/OrderedTable'
@@ -80,20 +80,20 @@ const SecurityScreen = ({ navigation, ...props }: SecurityScreenProps) => {
           </ConsentText>
         </ConsentSection>
       </ScreenSection>
-      <BottomScreenSection>
+      <ScreenSection centered>
         <Button disabled={!isUnderstood} title="Reveal secret phrase" onPress={() => setShowMnemonic(true)} />
-      </BottomScreenSection>
+      </ScreenSection>
       <ModalWithBackdrop animationType="fade" visible={showMnemonic} closeModal={() => setShowMnemonic(false)}>
         <SecretPhraseModalContent>
           <ScreenSectionStyled fill>
             <OrderedTable items={mnemonic.split(' ')} />
           </ScreenSectionStyled>
-          <BottomScreenSection>
+          <ScreenSection centered>
             <ButtonsRow>
               <Button title="Go back" onPress={() => setShowMnemonic(false)} />
               <Button title="I wrote it down" onPress={handleBackupConfirmation} />
             </ButtonsRow>
-          </BottomScreenSection>
+          </ScreenSection>
         </SecretPhraseModalContent>
       </ModalWithBackdrop>
     </Screen>
