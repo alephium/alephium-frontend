@@ -43,7 +43,8 @@ export const ScreenSection = styled.View<{
   ${({ fill }) =>
     fill &&
     css`
-      flex: 1;
+      flex-grow: 1;
+      flex-shrink: 0;
     `}
 
   ${({ centered }) =>
