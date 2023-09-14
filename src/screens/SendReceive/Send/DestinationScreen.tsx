@@ -31,6 +31,7 @@ import styled, { useTheme } from 'styled-components/native'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BottomModal from '~/components/layout/BottomModal'
+import { ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
@@ -100,22 +101,22 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     setTimeout(() => (shouldFlash.value = 0), 300)
   }
 
-  const handleContactPress = (contactId: Contact['id']) => {
+  const handleContactPress = (contactId: Contact['id'], closeModal?: ModalContentProps['onClose']) => {
     const contact = contacts.find((c) => c.id === contactId)
 
     if (contact) {
+      closeModal && closeModal()
       setToAddress(contact.address)
       flashInputBg()
-      setIsContactSelectModalOpen(false)
 
       posthog?.capture('Send: Selected contact to send funds to')
     }
   }
 
-  const handleAddressPress = (addressHash: AddressHash) => {
+  const handleAddressPress = (addressHash: AddressHash, closeModal?: ModalContentProps['onClose']) => {
+    closeModal && closeModal()
     setToAddress(addressHash)
     flashInputBg()
-    setIsAddressSelectModalOpen(false)
 
     posthog?.capture('Send: Selected own address to send funds to')
   }
@@ -230,7 +231,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           isOpen={isContactSelectModalOpen}
           Content={(props) => (
             <SelectContactModal
-              onContactPress={handleContactPress}
+              onContactPress={(contactId) => handleContactPress(contactId, props.onClose)}
               onNewContactPress={() => {
                 props.onClose && props.onClose()
                 navigation.navigate('NewContactScreen')
@@ -244,7 +245,12 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
         <BottomModal
           isOpen={isAddressSelectModalOpen}
-          Content={(props) => <SelectAddressModal onAddressPress={handleAddressPress} {...props} />}
+          Content={(props) => (
+            <SelectAddressModal
+              onAddressPress={(addressHash) => handleAddressPress(addressHash, props.onClose)}
+              {...props}
+            />
+          )}
           onClose={() => setIsAddressSelectModalOpen(false)}
           customMinHeight={300}
           maximisedContent
