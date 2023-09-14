@@ -75,6 +75,7 @@ const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeader
         ),
         headerLeft: () => options.headerLeft && options.headerLeft({})
       }}
+      showCompactComponents
     />
   )
 }

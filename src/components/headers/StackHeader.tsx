@@ -28,15 +28,7 @@ const StackHeader = ({ navigation, options, ...props }: StackHeaderCustomProps) 
     <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-back-outline' }} round />
   ) : null
 
-  const CompactContent = props.back ? <Button onPress={navigation.goBack} title="Back" type="transparent" /> : null
-
-  return (
-    <BaseHeader
-      options={{ headerLeft: () => HeaderLeft, ...options }}
-      headerCompactContent={() => CompactContent}
-      {...props}
-    />
-  )
+  return <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} showCompactComponents {...props} />
 }
 
 export default StackHeader

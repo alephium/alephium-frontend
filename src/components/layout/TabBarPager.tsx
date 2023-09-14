@@ -121,7 +121,7 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
             headerTitle
           }}
           headerBottom={() => <TabBar />}
-          headerCompactContent={() => <TabBar />}
+          showCompactComponents
         />
       </HeaderContainer>
     </>
