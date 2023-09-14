@@ -187,14 +187,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           isOpen={isSwitchNetworkModalOpen}
           onClose={() => setIsSwitchNetworkModalOpen(false)}
           Content={(props) => <SwitchNetworkModal onClose={() => setIsSwitchNetworkModalOpen(false)} {...props} />}
-          maximisedContent
         />
 
         <BottomModal
           isOpen={isCurrencySelectModalOpen}
           onClose={() => setIsCurrencySelectModalOpen(false)}
           Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
-          maximisedContent
         />
       </Portal>
     </>
