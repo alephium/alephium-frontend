@@ -57,6 +57,8 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     }, [defaultAddress, fromAddress, navigation, setFromAddress])
   )
 
+  // TODO: Use FlatList (maybe AddressFlatList)
+
   return (
     <ScrollScreen hasHeader verticalGap {...props}>
       <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />

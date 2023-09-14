@@ -65,7 +65,7 @@ const EditAddressModal = ({ addressHash, onClose, ...props }: EditAddressModalPr
   }
 
   return (
-    <ModalContent fill verticalGap {...props}>
+    <ModalContent verticalGap {...props}>
       <ScreenSection>
         <BottomModalScreenTitle>Address settings</BottomModalScreenTitle>
         <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">

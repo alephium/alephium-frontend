@@ -17,33 +17,54 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { ViewProps } from 'react-native'
+import { FlatListProps, ScrollViewProps, View } from 'react-native'
+import { FlatList as GHFlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled from 'styled-components/native'
 
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import ScrollSection, { ScrollSectionProps } from '~/components/layout/ScrollSection'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
-export interface ModalContentProps extends ViewProps {
-  onLayout: ViewProps['onLayout']
+interface ModalContentBaseProps {
   onClose?: () => void
   isScrollable?: boolean
   children?: ReactNode
   verticalGap?: number | boolean
-  fill?: boolean
 }
 
-export const ModalContent = ({ children, verticalGap, fill, ...props }: ModalContentProps) => (
-  <ModalContentStyled
+export interface ModalContentProps extends ModalContentBaseProps, ScrollViewProps {}
+
+export interface ModalFlatListContentProps<T> extends ModalContentBaseProps, FlatListProps<T> {}
+
+const scrollDefaultProps = { bounces: false, scrollEventThrottle: 16 }
+
+export const ModalContent = ({
+  children,
+  verticalGap,
+  onLayout,
+  contentContainerStyle,
+  ...props
+}: ModalContentProps) => (
+  <GHScrollView {...scrollDefaultProps} {...props}>
+    <View onLayout={onLayout} style={getDefaultContentContainerStyle({ verticalGap, contentContainerStyle })}>
+      {children}
+    </View>
+  </GHScrollView>
+)
+
+export const ModalFlatListContent = <T,>({
+  children,
+  verticalGap,
+  contentContainerStyle,
+  ...props
+}: ModalFlatListContentProps<T>) => (
+  <GHFlatList
+    contentContainerStyle={getDefaultContentContainerStyle({ verticalGap, contentContainerStyle })}
+    {...scrollDefaultProps}
     {...props}
-    style={{
-      gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
-      flex: fill ? 1 : undefined
-    }}
   >
     {children}
-  </ModalContentStyled>
+  </GHFlatList>
 )
 
 export const Modal = ({ children, style, ...props }: ScreenProps) => {
@@ -66,7 +87,11 @@ export const ScrollModal = ({ children, style, ...props }: ScrollSectionProps) =
   )
 }
 
-const ModalContentStyled = styled.View`
-  padding-top: 10px;
-  padding-bottom: 10px;
-`
+const getDefaultContentContainerStyle = ({ verticalGap, contentContainerStyle }: ModalContentProps) => [
+  {
+    gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
+    paddingTop: 10,
+    paddingBottom: 20
+  },
+  contentContainerStyle
+]

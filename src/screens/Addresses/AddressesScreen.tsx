@@ -20,25 +20,22 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
-import { FlatList } from 'react-native-gesture-handler'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
-import AddressBox from '~/components/AddressBox'
 import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import BottomModal from '~/components/layout/BottomModal'
-import { ModalContent } from '~/components/layout/ModalContent'
 import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import EditAddressModal from '~/screens/Address/EditAddressModal'
+import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import {
   selectAddressByHash,
   selectAddressIds,
@@ -46,14 +43,12 @@ import {
   selectDefaultAddress,
   syncAddressesData
 } from '~/store/addressesSlice'
-import { VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const posthog = usePostHog()
-  const insets = useSafeAreaInsets()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
@@ -140,38 +135,23 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
         <BottomModal
           isOpen={isQuickSelectionModalOpen}
           onClose={() => setIsQuickSelectionModalOpen(false)}
-          scrollableContent
+          maximisedContent
           Content={(props) => (
-            <ModalContent {...props}>
-              <FlatList
-                data={addresses}
-                style={{ marginBottom: insets.bottom + insets.top }}
-                keyExtractor={(item) => item.hash}
-                contentContainerStyle={{ gap: VERTICAL_GAP }}
-                canCancelContentTouches={true}
-                renderItem={({ item: address, index }) => (
-                  <AddressBoxStyled
-                    key={address.hash}
-                    addressHash={address.hash}
-                    isFirst={index === 0}
-                    isLast={index === addresses.length - 1}
-                    onPress={() => {
-                      setSelectedAddressHash(address.hash)
-                      setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
-                      props.onClose && props.onClose()
-                      posthog?.capture('Used address quick navigation')
-                    }}
-                  />
-                )}
-              />
-            </ModalContent>
+            <SelectAddressModal
+              onAddressPress={(addressHash) => {
+                setSelectedAddressHash(addressHash)
+                setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === addressHash))
+                props.onClose && props.onClose()
+                posthog?.capture('Used address quick navigation')
+              }}
+              {...props}
+            />
           )}
         />
 
         <BottomModal
           isOpen={isAddressSettingsModalOpen}
           onClose={() => setIsAddressSettingsModalOpen(false)}
-          scrollableContent
           Content={(props) => <EditAddressModal addressHash={selectedAddress.hash} {...props} />}
         />
       </Portal>
@@ -184,20 +164,4 @@ export default AddressesScreen
 const Content = styled(Animated.View)`
   flex: 1;
   gap: 10px;
-`
-
-const AddressBoxStyled = styled(AddressBox)`
-  margin: 10px 20px;
-
-  ${({ isFirst }) =>
-    isFirst &&
-    css`
-      margin-top: 20px;
-    `}
-
-  ${({ isLast }) =>
-    isLast &&
-    css`
-      margin-bottom: 40px;
-    `}
 `

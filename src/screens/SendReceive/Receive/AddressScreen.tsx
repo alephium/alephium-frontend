@@ -53,6 +53,8 @@ const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
     }, [navigation])
   )
 
+  // TODO: Use FlatList (maybe AddressFlatList)
+
   return (
     <ScrollScreen hasHeader verticalGap {...props}>
       <ScreenIntro title="To address" subtitle="Select the address which you want to receive funds to." />

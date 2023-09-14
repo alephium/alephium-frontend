@@ -90,9 +90,9 @@ const SecurityScreen = ({ navigation, ...props }: SecurityScreenProps) => {
         <BottomModal
           isOpen={showMnemonic}
           onClose={() => setShowMnemonic(false)}
-          scrollableContent
+          maximisedContent
           Content={(props) => (
-            <ModalContent fill {...props}>
+            <ModalContent {...props}>
               <ScreenSection fill>
                 <OrderedTable items={mnemonic.split(' ')} />
               </ScreenSection>
