@@ -21,6 +21,7 @@ import { useRef } from 'react'
 import { FlatListProps } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useTheme } from 'styled-components/native'
 
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
@@ -30,12 +31,13 @@ import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {}
 
-const FlatListScreen = <T,>({ hasHeader, fill, contentContainerStyle, ...props }: FlatListScreenProps<T>) => {
+const FlatListScreen = <T,>({ hasHeader, fill, contentContainerStyle, style, ...props }: FlatListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
   const flatListRef = useRef<FlatList>(null)
   const headerheight = useHeaderHeight()
   const scrollHandler = useScreenScrollHandler()
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
+  const theme = useTheme()
 
   useScrollToTopOnFocus(flatListRef)
 
@@ -44,14 +46,20 @@ const FlatListScreen = <T,>({ hasHeader, fill, contentContainerStyle, ...props }
       ref={flatListRef}
       onScroll={scrollHandler}
       onScrollEndDrag={scrollEndHandler}
-      style={{ marginBottom: insets.bottom + insets.top }}
       contentContainerStyle={[
         {
           paddingTop: hasHeader ? headerheight + DEFAULT_MARGIN : 0,
+          paddingBottom: insets.bottom,
           flex: fill ? 1 : undefined,
           gap: VERTICAL_GAP
         },
         contentContainerStyle
+      ]}
+      style={[
+        {
+          backgroundColor: theme.bg.back2
+        },
+        style
       ]}
       {...props}
     />

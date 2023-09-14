@@ -20,13 +20,15 @@ import AddressBox from '~/components/AddressBox'
 import FlatListScreen, { FlatListScreenProps } from '~/components/layout/FlatListScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address, AddressHash } from '~/types/addresses'
 
 export interface AddressFlatListScreenProps extends Partial<FlatListScreenProps<Address>> {
   onAddressPress: (addressHash: AddressHash) => void
+  selectedAddress?: AddressHash
 }
 
-const AddressFlatListScreen = ({ onAddressPress, ...props }: AddressFlatListScreenProps) => {
+const AddressFlatListScreen = ({ onAddressPress, selectedAddress, ...props }: AddressFlatListScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
   return (
@@ -37,9 +39,12 @@ const AddressFlatListScreen = ({ onAddressPress, ...props }: AddressFlatListScre
         <AddressBox
           key={address.hash}
           addressHash={address.hash}
+          isSelected={address.hash === selectedAddress}
           style={{
             marginTop: index === 0 ? 20 : undefined,
-            marginBottom: index === addresses.length - 1 ? 40 : undefined
+            paddingBottom: index === addresses.length - 1 ? 40 : undefined,
+            marginLeft: DEFAULT_MARGIN,
+            marginRight: DEFAULT_MARGIN
           }}
           onPress={() => onAddressPress(address.hash)}
         />
