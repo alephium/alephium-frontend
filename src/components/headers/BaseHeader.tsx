@@ -35,12 +35,14 @@ import AppText from '~/components/AppText'
 import { useScrollContext } from '~/contexts/ScrollContext'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
+type HeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'>
+
 export interface BaseHeaderProps {
   headerBottom?: () => ReactNode
-  headerCompactContent?: () => ReactNode
   style?: StyleProp<ViewStyle>
   headerRef?: RefObject<Animated.View>
-  options: Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'>
+  options: HeaderOptions
+  showCompactComponents?: boolean
 }
 
 export const scrollEndThreshold = 80
@@ -53,7 +55,7 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle },
   headerBottom,
-  headerCompactContent,
+  showCompactComponents,
   style,
   headerRef
 }: BaseHeaderProps) => {
@@ -64,7 +66,7 @@ const BaseHeader = ({
 
   const borderColorRange = ['transparent', theme.border.secondary]
 
-  const hasCompactHeader = headerCompactContent !== undefined || headerTitle
+  const hasCompactHeader = showCompactComponents !== undefined || headerTitle
   const paddingTop = Platform.OS === 'android' ? insets.top + 10 : insets.top
 
   const HeaderRight = headerRight && headerRight({})
@@ -114,7 +116,7 @@ const BaseHeader = ({
     backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
   }))
 
-  const fullContentAnimatedStyle = useAnimatedStyle(() =>
+  const expandedContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
       ? {
           transform: [
@@ -138,18 +140,32 @@ const BaseHeader = ({
   return (
     <Animated.View style={style} ref={headerRef}>
       {hasCompactHeader && (
-        <CompactContent style={compactContentAnimatedStyle}>
+        <CompactHeaderContainer style={compactContentAnimatedStyle}>
           <ActionAreaBlurred
             style={{ paddingTop, justifyContent: 'center', height: '100%' }}
             animatedProps={animatedBlurViewProps}
             tint={theme.name}
           >
-            {(headerCompactContent && headerCompactContent()) || <CompactTitle>{HeaderTitle}</CompactTitle>}
+            {(showCompactComponents && (
+              <CompactContent>
+                {headerBottom ? (
+                  <ScaledDownHeaderComponent>{HeaderBottom}</ScaledDownHeaderComponent>
+                ) : (
+                  <>
+                    <ScaledDownHeaderComponentLeft>{HeaderLeft}</ScaledDownHeaderComponentLeft>
+                    <CompactHeaderTitle>
+                      <CompactTitle>{HeaderTitle}</CompactTitle>
+                    </CompactHeaderTitle>
+                    <ScaledDownHeaderComponentRight>{HeaderRight}</ScaledDownHeaderComponentRight>
+                  </>
+                )}
+              </CompactContent>
+            )) || <CompactTitle>{HeaderTitle}</CompactTitle>}
             <BottomBorder style={bottomBorderColor} />
           </ActionAreaBlurred>
-        </CompactContent>
+        </CompactHeaderContainer>
       )}
-      <FullContent style={fullContentAnimatedStyle}>
+      <ExpandedHeaderContainer style={expandedContentAnimatedStyle}>
         {HeaderLeft || HeaderRight ? (
           <>
             <ActionArea style={{ paddingTop }}>
@@ -171,14 +187,14 @@ const BaseHeader = ({
         )}
         {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
         <BottomBorder style={bottomBorderColor} />
-      </FullContent>
+      </ExpandedHeaderContainer>
     </Animated.View>
   )
 }
 
 export default BaseHeader
 
-const FullContent = styled(Animated.View)`
+const ExpandedHeaderContainer = styled(Animated.View)`
   flex-direction: column;
 `
 
@@ -221,7 +237,7 @@ const BottomBorder = styled(Animated.View)`
   height: 1px;
 `
 
-const CompactContent = styled(Animated.View)`
+const CompactHeaderContainer = styled(Animated.View)`
   position: absolute;
   top: 0;
   right: 0;
@@ -231,4 +247,30 @@ const CompactContent = styled(Animated.View)`
 
 const HeaderBottomContent = styled(Animated.View)`
   height: 0px;
+`
+
+const CompactContent = styled.View`
+  flex-direction: row;
+  align-items: center;
+`
+
+const ScaledDownHeaderComponent = styled.View`
+  transform: scale(0.85);
+  align-items: center;
+  flex: 1;
+`
+
+const ScaledDownHeaderComponentRight = styled(ScaledDownHeaderComponent)`
+  align-items: flex-end;
+  transform: scale(0.85) translateX(9px);
+`
+
+const ScaledDownHeaderComponentLeft = styled(ScaledDownHeaderComponent)`
+  align-items: flex-start;
+  transform: scale(0.85) translateX(-9px);
+`
+
+const CompactHeaderTitle = styled.View`
+  flex: 1;
+  align-items: center;
 `
