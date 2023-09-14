@@ -36,14 +36,25 @@ export interface ModalContentProps extends ModalContentBaseProps, ScrollViewProp
 
 export interface ModalFlatListContentProps<T> extends ModalContentBaseProps, FlatListProps<T> {}
 
-export const ModalContent = ({ children, verticalGap, onLayout, ...props }: ModalContentProps) => (
-  <GHScrollView {...getDefaultProps({ verticalGap })} {...props}>
+export const ModalContent = ({
+  children,
+  verticalGap,
+  onLayout,
+  contentContainerStyle,
+  ...props
+}: ModalContentProps) => (
+  <GHScrollView {...getDefaultProps({ verticalGap, contentContainerStyle })} {...props}>
     <View onLayout={onLayout}>{children}</View>
   </GHScrollView>
 )
 
-export const ModalFlatListContent = <T,>({ children, verticalGap, ...props }: ModalFlatListContentProps<T>) => (
-  <GHFlatList {...getDefaultProps({ verticalGap })} {...props}>
+export const ModalFlatListContent = <T,>({
+  children,
+  verticalGap,
+  contentContainerStyle,
+  ...props
+}: ModalFlatListContentProps<T>) => (
+  <GHFlatList {...getDefaultProps({ verticalGap, contentContainerStyle })} {...props}>
     {children}
   </GHFlatList>
 )
