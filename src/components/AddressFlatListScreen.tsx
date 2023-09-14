@@ -16,30 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FlatList } from 'react-native-gesture-handler'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
 import AddressBox from '~/components/AddressBox'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import FlatListScreen, { FlatListScreenProps } from '~/components/layout/FlatListScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
-import { VERTICAL_GAP } from '~/style/globalStyle'
-import { AddressHash } from '~/types/addresses'
+import { Address, AddressHash } from '~/types/addresses'
 
-export interface AddressFlatListProps extends ScrollScreenProps {
+export interface AddressFlatListScreenProps extends Partial<FlatListScreenProps<Address>> {
   onAddressPress: (addressHash: AddressHash) => void
 }
 
-const AddressFlatList = ({ onAddressPress, ...props }: AddressFlatListProps) => {
+const AddressFlatListScreen = ({ onAddressPress, ...props }: AddressFlatListScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
-  const insets = useSafeAreaInsets()
 
   return (
-    <FlatList
+    <FlatListScreen
       data={addresses}
-      style={{ marginBottom: insets.bottom + insets.top }}
       keyExtractor={(item) => item.hash}
-      contentContainerStyle={{ gap: VERTICAL_GAP }}
       renderItem={({ item: address, index }) => (
         <AddressBox
           key={address.hash}
@@ -56,4 +49,4 @@ const AddressFlatList = ({ onAddressPress, ...props }: AddressFlatListProps) => 
   )
 }
 
-export default AddressFlatList
+export default AddressFlatListScreen

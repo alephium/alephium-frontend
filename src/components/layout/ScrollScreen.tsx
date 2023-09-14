@@ -27,13 +27,16 @@ import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export interface ScrollScreenProps extends ScrollViewProps {
+export interface ScrollScreenBaseProps {
   hasHeader?: boolean
-  containerStyle?: StyleProp<ViewStyle>
   contentContainerStyle?: StyleProp<ViewStyle>
+  fill?: boolean
+}
+
+export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
+  containerStyle?: StyleProp<ViewStyle>
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
-  fill?: boolean
 }
 
 const ScrollScreen = ({

@@ -19,25 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect } from 'react'
-import styled from 'styled-components/native'
 
-import AddressBox from '~/components/AddressBox'
-import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import AddressFlatListScreen from '~/components/AddressFlatListScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
-import { selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
+import { selectDefaultAddress } from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}
 
-// TODO: Should be converted to a FlatList
-
 const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, setFromAddress, setToAddress } = useSendContext()
-  const addresses = useAppSelector(selectAllAddresses)
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
   useEffect(() => {
@@ -57,29 +52,15 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     }, [defaultAddress, fromAddress, navigation, setFromAddress])
   )
 
-  // TODO: Use FlatList (maybe AddressFlatList)
-
   return (
-    <ScrollScreen hasHeader verticalGap {...props}>
-      <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
-      <ScreenSection>
-        <AddressList>
-          {addresses.map((address) => (
-            <AddressBox
-              key={address.hash}
-              addressHash={address.hash}
-              isSelected={address.hash === fromAddress}
-              onPress={() => setFromAddress(address.hash)}
-            />
-          ))}
-        </AddressList>
-      </ScreenSection>
-    </ScrollScreen>
+    <AddressFlatListScreen
+      hasHeader
+      onAddressPress={(addressHash) => setFromAddress(addressHash)}
+      ListHeaderComponent={
+        <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
+      }
+    />
   )
 }
 
 export default OriginScreen
-
-const AddressList = styled.View`
-  gap: 20px;
-`
