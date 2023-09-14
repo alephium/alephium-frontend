@@ -87,13 +87,22 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
 
   const canMaximize = useSharedValue(false)
 
-  const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
-    height: -modalHeight.value,
-    paddingTop:
-      position.value === 'maximised' ? insets.top : position.value === 'closing' ? withSpring(0, springConfig) : 20,
-    marginRight: interpolate(-modalHeight.value, [minHeight.value, dimensions.height], [5, 0], Extrapolate.CLAMP),
-    marginLeft: interpolate(-modalHeight.value, [minHeight.value, dimensions.height], [5, 0], Extrapolate.CLAMP)
-  }))
+  const modalHeightAnimatedStyle = useAnimatedStyle(() => {
+    const margin = interpolate(
+      -modalHeight.value,
+      [maximisedContent ? 0 : minHeight.value, dimensions.height],
+      [5, 0],
+      Extrapolate.CLAMP
+    )
+
+    return {
+      height: -modalHeight.value,
+      paddingTop:
+        position.value === 'maximised' ? insets.top : position.value === 'closing' ? withSpring(0, springConfig) : 20,
+      marginRight: margin,
+      marginLeft: margin
+    }
+  })
 
   const modalNavigationAnimatedStyle = useAnimatedStyle(() => ({
     height: navHeight.value,
