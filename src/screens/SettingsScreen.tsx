@@ -123,7 +123,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <SettingsScreenStyled hasHeader verticalGap {...props}>
+      <ScrollScreenStyled hasHeader verticalGap {...props}>
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>
@@ -180,7 +180,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             onPress={handleDeleteButtonPress}
           />
         </ScreenSection>
-      </SettingsScreenStyled>
+      </ScrollScreenStyled>
 
       <Portal>
         <BottomModal
@@ -201,7 +201,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
 export default SettingsScreen
 
-const SettingsScreenStyled = styled(ScrollScreen)`
+const ScrollScreenStyled = styled(ScrollScreen)`
   gap: ${VERTICAL_GAP}px;
 `
 

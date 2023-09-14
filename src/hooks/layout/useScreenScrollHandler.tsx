@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 
+import { scrollEndThreshold } from '~/components/headers/BaseHeader'
 import { useScrollContext } from '~/contexts/ScrollContext'
 
 const scrollDirectionDeltaThreshold = 10
@@ -29,6 +30,11 @@ const useScreenScrollHandler = () => {
     if (!scrollY || !scrollDirection) return
 
     const newScrollY = e.nativeEvent.contentOffset.y
+
+    // 👇 Fixes the issue where the onScroll of a ScrollView gets called with 0 when trying to go back and then then
+    // aborting.
+    if (scrollY.value >= scrollEndThreshold && newScrollY === 0) return
+
     const delta = scrollY.value - newScrollY
     const direction = delta > 0 ? 'up' : 'down'
 
