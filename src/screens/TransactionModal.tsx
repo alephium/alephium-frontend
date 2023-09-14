@@ -27,7 +27,7 @@ import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenHeader, BottomModalScreenTitle } from '~/components/layout/Screen'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
@@ -47,7 +47,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
 
   return (
     <ModalContent {...props} verticalGap>
-      <BottomModalScreenHeader>
+      <ScreenSectionStyled>
         <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
         <Button
           iconProps={{ name: 'exit-outline' }}
@@ -56,7 +56,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           variant="accent"
           compact
         />
-      </BottomModalScreenHeader>
+      </ScreenSectionStyled>
 
       <BoxSurface type="highlight">
         <Row title="Amount" noMaxWidth transparent>
@@ -108,4 +108,10 @@ const AmountStyled = styled(Amount)`
 
 const AppTextStyled = styled(AppText)`
   text-align: right;
+`
+
+const ScreenSectionStyled = styled(ScreenSection)`
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 `

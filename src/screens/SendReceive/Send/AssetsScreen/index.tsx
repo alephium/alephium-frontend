@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
@@ -44,22 +45,24 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
   }, [params?.toAddressHash, setToAddress])
 
-  useEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => (
-        <ContinueButton
-          onPress={() =>
-            buildTransaction({
-              onBuildSuccess: () => navigation.navigate('VerifyScreen'),
-              onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
-            })
-          }
-          disabled={isContinueButtonDisabled}
-        />
-      )
-    })
-  }, [buildTransaction, isContinueButtonDisabled, navigation])
+  useFocusEffect(
+    useCallback(() => {
+      navigation.getParent()?.setOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        headerRight: () => (
+          <ContinueButton
+            onPress={() =>
+              buildTransaction({
+                onBuildSuccess: () => navigation.navigate('VerifyScreen'),
+                onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
+              })
+            }
+            disabled={isContinueButtonDisabled}
+          />
+        )
+      })
+    }, [buildTransaction, isContinueButtonDisabled, navigation])
+  )
 
   if (!address) return null
 

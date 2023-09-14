@@ -21,12 +21,11 @@ import { RefObject, useRef } from 'react'
 import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import Screen from '~/components/layout/Screen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
-
-import Screen from './Screen'
 
 export interface ScrollScreenProps extends ScrollViewProps {
   hasHeader?: boolean
@@ -34,6 +33,7 @@ export interface ScrollScreenProps extends ScrollViewProps {
   contentContainerStyle?: StyleProp<ViewStyle>
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
+  fill?: boolean
 }
 
 const ScrollScreen = ({
@@ -43,6 +43,7 @@ const ScrollScreen = ({
   containerStyle,
   contentContainerStyle,
   verticalGap,
+  fill,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
@@ -64,20 +65,22 @@ const ScrollScreen = ({
         onScrollEndDrag={scrollEndHandler}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={[
-          contentContainerStyle,
           {
-            paddingTop: hasHeader ? headerheight + DEFAULT_MARGIN : 0
-          }
+            paddingTop: hasHeader ? headerheight + DEFAULT_MARGIN : 0,
+            flex: fill ? 1 : undefined
+          },
+          contentContainerStyle
         ]}
         {...props}
       >
         <View
           style={[
-            style,
             {
               gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
-              paddingBottom: insets.bottom
-            }
+              paddingBottom: insets.bottom + DEFAULT_MARGIN,
+              flex: fill ? 1 : undefined
+            },
+            style
           ]}
         >
           {children}

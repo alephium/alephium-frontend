@@ -79,5 +79,5 @@ const TabText = styled.Text<{ isActive?: boolean }>`
   font-size: 11px;
   font-weight: 600;
   color: ${({ theme, isActive }) => (isActive ? theme.font.primary : theme.font.tertiary)};
-  margin-top: 3px;
+  margin: 3px 0;
 `

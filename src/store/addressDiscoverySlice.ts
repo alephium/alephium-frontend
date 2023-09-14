@@ -111,7 +111,6 @@ export const discoverAddresses = createAsyncThunk(
         const addressIsActive = data.length > 0 && data[0]
 
         if (addressIsActive) {
-          // TODO: Shouldn't we also show locked balance or at least a sum?
           const { balance } = await client.explorer.addresses.getAddressesAddressBalance(newAddressData.hash)
           dispatch(addressDiscovered({ ...newAddressData, balance }))
 

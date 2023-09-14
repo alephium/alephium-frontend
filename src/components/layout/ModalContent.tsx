@@ -31,12 +31,16 @@ export interface ModalContentProps extends ViewProps {
   isScrollable?: boolean
   children?: ReactNode
   verticalGap?: number | boolean
+  fill?: boolean
 }
 
-export const ModalContent = ({ children, verticalGap, ...props }: ModalContentProps) => (
+export const ModalContent = ({ children, verticalGap, fill, ...props }: ModalContentProps) => (
   <ModalContentStyled
     {...props}
-    style={{ gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0 }}
+    style={{
+      gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
+      flex: fill ? 1 : undefined
+    }}
   >
     {children}
   </ModalContentStyled>

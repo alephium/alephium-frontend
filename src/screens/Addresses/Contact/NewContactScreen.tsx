@@ -22,15 +22,14 @@ import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import Toast from 'react-native-root-toast'
 
-import { ScreenProps } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
 import ContactForm from '~/screens/Addresses/Contact/ContactForm'
 import { ContactFormData } from '~/types/contacts'
 
-interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScreenProps {}
+interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 
 const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
   const posthog = usePostHog()
@@ -62,7 +61,7 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
   }
 
   return (
-    <ScrollScreen {...props} hasHeader verticalGap>
+    <ScrollScreen fill hasHeader {...props}>
       <ContactForm initialValues={initialValues} onSubmit={handleSavePress} />
       <SpinnerModal isActive={loading} text="Saving contact..." />
     </ScrollScreen>
