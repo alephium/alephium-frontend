@@ -36,6 +36,8 @@ export interface ModalContentProps extends ModalContentBaseProps, ScrollViewProp
 
 export interface ModalFlatListContentProps<T> extends ModalContentBaseProps, FlatListProps<T> {}
 
+const scrollDefaultProps = { bounces: false, scrollEventThrottle: 16 }
+
 export const ModalContent = ({
   children,
   verticalGap,
@@ -43,8 +45,10 @@ export const ModalContent = ({
   contentContainerStyle,
   ...props
 }: ModalContentProps) => (
-  <GHScrollView {...getDefaultProps({ verticalGap, contentContainerStyle })} {...props}>
-    <View onLayout={onLayout}>{children}</View>
+  <GHScrollView {...scrollDefaultProps} {...props}>
+    <View onLayout={onLayout} style={getDefaultContentContainerStyle({ verticalGap, contentContainerStyle })}>
+      {children}
+    </View>
   </GHScrollView>
 )
 
@@ -54,7 +58,11 @@ export const ModalFlatListContent = <T,>({
   contentContainerStyle,
   ...props
 }: ModalFlatListContentProps<T>) => (
-  <GHFlatList {...getDefaultProps({ verticalGap, contentContainerStyle })} {...props}>
+  <GHFlatList
+    contentContainerStyle={getDefaultContentContainerStyle({ verticalGap, contentContainerStyle })}
+    {...scrollDefaultProps}
+    {...props}
+  >
     {children}
   </GHFlatList>
 )
@@ -79,15 +87,11 @@ export const ScrollModal = ({ children, style, ...props }: ScrollSectionProps) =
   )
 }
 
-const getDefaultProps = ({ verticalGap, contentContainerStyle }: ModalContentProps) => ({
-  bounces: false,
-  scrollEventThrottle: 16,
-  contentContainerStyle: [
-    {
-      gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
-      paddingTop: 10,
-      paddingBottom: 20
-    },
-    contentContainerStyle
-  ]
-})
+const getDefaultContentContainerStyle = ({ verticalGap, contentContainerStyle }: ModalContentProps) => [
+  {
+    gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
+    paddingTop: 10,
+    paddingBottom: 20
+  },
+  contentContainerStyle
+]
