@@ -97,8 +97,10 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
 
     return {
       height: -modalHeight.value,
-      paddingTop:
-        position.value === 'maximised' ? insets.top : position.value === 'closing' ? withSpring(0, springConfig) : 20,
+      paddingTop: withSpring(
+        position.value === 'maximised' ? insets.top : position.value === 'closing' ? 0 : 10,
+        springConfig
+      ),
       marginRight: margin,
       marginLeft: margin
     }
