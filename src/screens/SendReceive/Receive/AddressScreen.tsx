@@ -20,22 +20,17 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback } from 'react'
-import styled from 'styled-components/native'
 
-import AddressBox from '~/components/AddressBox'
-import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import { useAppSelector } from '~/hooks/redux'
+import AddressFlatListScreen from '~/components/AddressFlatListScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
-import { selectAllAddresses } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'>, ScrollScreenProps {}
 
 const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
-  const addresses = useAppSelector(selectAllAddresses)
   const posthog = usePostHog()
 
   const handleAddressPress = (addressHash: AddressHash) => {
@@ -53,24 +48,15 @@ const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
     }, [navigation])
   )
 
-  // TODO: Use FlatList (maybe AddressFlatList)
-
   return (
-    <ScrollScreen hasHeader verticalGap {...props}>
-      <ScreenIntro title="To address" subtitle="Select the address which you want to receive funds to." />
-      <ScreenSection>
-        <AddressList>
-          {addresses.map(({ hash }) => (
-            <AddressBox key={hash} addressHash={hash} onPress={() => handleAddressPress(hash)} />
-          ))}
-        </AddressList>
-      </ScreenSection>
-    </ScrollScreen>
+    <AddressFlatListScreen
+      hasHeader
+      onAddressPress={(addressHash) => handleAddressPress(addressHash)}
+      ListHeaderComponent={
+        <ScreenIntro title="To address" subtitle="Select the address which you want to receive funds to." />
+      }
+    />
   )
 }
 
 export default AddressScreen
-
-const AddressList = styled.View`
-  gap: 20px;
-`

@@ -17,12 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import AddressBox from '~/components/AddressBox'
-import { AddressFlatListProps } from '~/components/AddressFlatList'
+import { AddressFlatListScreenProps } from '~/components/AddressFlatListScreen'
 import { ModalContentProps, ModalFlatListContent } from '~/components/layout/ModalContent'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
 
-type SelectAddressModalProps = ModalContentProps & Pick<AddressFlatListProps, 'onAddressPress'>
+type SelectAddressModalProps = ModalContentProps & Pick<AddressFlatListScreenProps, 'onAddressPress'>
 
 const SelectAddressModal = ({ onAddressPress, ...props }: SelectAddressModalProps) => {
   const addresses = useAppSelector(selectAllAddresses)
