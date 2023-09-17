@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { PressableProps, Share, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -45,8 +45,9 @@ type ScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
   }
 
 const ContactScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
+  const listRef = useRef(null)
   const posthog = usePostHog()
-  const handleScroll = useScreenScrollHandler()
+  const handleScroll = useScreenScrollHandler(listRef)
 
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const contactAddressHash = contact?.address ?? ''
@@ -105,6 +106,7 @@ const ContactScreen = ({ navigation, route: { params }, ...props }: ScreenProps)
       contentContainerStyle={{ flexGrow: 1 }}
       hasHeader
       onScroll={handleScroll}
+      ref={listRef}
       ListHeaderComponent={
         <>
           <CenteredSection>

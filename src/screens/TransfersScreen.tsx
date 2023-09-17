@@ -43,7 +43,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
 
-  const handleScroll = useScreenScrollHandler()
+  const handleScroll = useScreenScrollHandler(listRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
   useScrollToTopOnFocus(listRef)

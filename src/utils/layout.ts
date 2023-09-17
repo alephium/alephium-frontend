@@ -16,21 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { RefObject } from 'react'
+import { MutableRefObject } from 'react'
 import { FlatList, ScrollView } from 'react-native'
 
 export const checkIfScrollView = (view: ScrollView | FlatList): view is ScrollView => 'scrollTo' in view
 
 export const scrollScreenTo = (
   position: number,
-  viewRef: RefObject<ScrollView> | RefObject<FlatList>,
+  viewRef: MutableRefObject<ScrollView | FlatList | null>,
   animated = false
 ) => {
   if (!viewRef?.current) return
 
-  const isScrollView = checkIfScrollView(viewRef.current)
-
-  if (isScrollView) {
+  if (checkIfScrollView(viewRef.current)) {
     viewRef.current.scrollTo({ y: position, animated })
   } else {
     viewRef.current.scrollToOffset({ offset: position, animated })

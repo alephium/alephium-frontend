@@ -52,7 +52,7 @@ const ScrollScreen = ({
   const viewRef = useRef<ScrollView>(null)
 
   const headerheight = useHeaderHeight()
-  const scrollHandler = useScreenScrollHandler()
+  const scrollHandler = useScreenScrollHandler(viewRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
   const insets = useSafeAreaInsets()
 

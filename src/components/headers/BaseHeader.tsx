@@ -20,7 +20,7 @@ import { useNavigation } from '@react-navigation/native'
 import { StackHeaderProps } from '@react-navigation/stack'
 import { BlurView } from 'expo-blur'
 import { ReactNode, RefObject, useEffect } from 'react'
-import { Platform, StyleProp, ViewStyle } from 'react-native'
+import { Platform, Pressable, StyleProp, ViewStyle } from 'react-native'
 import Animated, {
   Extrapolate,
   interpolate,
@@ -34,6 +34,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { useScrollContext } from '~/contexts/ScrollContext'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { scrollScreenTo } from '~/utils/layout'
 
 type HeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'>
 
@@ -61,7 +62,7 @@ const BaseHeader = ({
 }: BaseHeaderProps) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
-  const { scrollY } = useScrollContext()
+  const { scrollY, activeScreenRef } = useScrollContext()
   const navigation = useNavigation()
 
   const borderColorRange = ['transparent', theme.border.secondary]
@@ -137,57 +138,65 @@ const BaseHeader = ({
       : {}
   )
 
+  const handleCompactHeaderPress = () => {
+    if (activeScreenRef?.current) {
+      scrollScreenTo(0, activeScreenRef, true)
+    }
+  }
+
   return (
     <Animated.View style={style} ref={headerRef}>
-      {hasCompactHeader && (
-        <CompactHeaderContainer style={compactContentAnimatedStyle}>
-          <ActionAreaBlurred
-            style={{ paddingTop, justifyContent: 'center', height: '100%' }}
-            animatedProps={animatedBlurViewProps}
-            tint={theme.name}
-          >
-            {(showCompactComponents && (
-              <CompactContent>
-                {headerBottom ? (
-                  <ScaledDownHeaderComponent>{HeaderBottom}</ScaledDownHeaderComponent>
-                ) : (
-                  <>
-                    <ScaledDownHeaderComponentLeft>{HeaderLeft}</ScaledDownHeaderComponentLeft>
-                    <CompactHeaderTitle>
-                      <CompactTitle>{HeaderTitle}</CompactTitle>
-                    </CompactHeaderTitle>
-                    <ScaledDownHeaderComponentRight>{HeaderRight}</ScaledDownHeaderComponentRight>
-                  </>
-                )}
-              </CompactContent>
-            )) || <CompactTitle>{HeaderTitle}</CompactTitle>}
-            <BottomBorder style={bottomBorderColor} />
-          </ActionAreaBlurred>
-        </CompactHeaderContainer>
-      )}
-      <ExpandedHeaderContainer style={expandedContentAnimatedStyle}>
-        {HeaderLeft || HeaderRight ? (
-          <>
-            <ActionArea style={{ paddingTop }}>
-              {HeaderLeft}
-              {HeaderRight}
-            </ActionArea>
-            {headerTitle && (
-              <TitleArea style={titleAnimatedStyle}>
+      <Pressable onPress={handleCompactHeaderPress}>
+        {hasCompactHeader && (
+          <CompactHeaderContainer style={compactContentAnimatedStyle}>
+            <ActionAreaBlurred
+              style={{ paddingTop, justifyContent: 'center', height: '100%' }}
+              animatedProps={animatedBlurViewProps}
+              tint={theme.name}
+            >
+              {(showCompactComponents && (
+                <CompactContent>
+                  {headerBottom ? (
+                    <ScaledDownHeaderComponent>{HeaderBottom}</ScaledDownHeaderComponent>
+                  ) : (
+                    <>
+                      <ScaledDownHeaderComponentLeft>{HeaderLeft}</ScaledDownHeaderComponentLeft>
+                      <CompactHeaderTitle>
+                        <CompactTitle>{HeaderTitle}</CompactTitle>
+                      </CompactHeaderTitle>
+                      <ScaledDownHeaderComponentRight>{HeaderRight}</ScaledDownHeaderComponentRight>
+                    </>
+                  )}
+                </CompactContent>
+              )) || <CompactTitle>{HeaderTitle}</CompactTitle>}
+              <BottomBorder style={bottomBorderColor} />
+            </ActionAreaBlurred>
+          </CompactHeaderContainer>
+        )}
+        <ExpandedHeaderContainer style={expandedContentAnimatedStyle}>
+          {HeaderLeft || HeaderRight ? (
+            <>
+              <ActionArea style={{ paddingTop }}>
+                {HeaderLeft}
+                {HeaderRight}
+              </ActionArea>
+              {headerTitle && (
+                <TitleArea style={titleAnimatedStyle}>
+                  <Title>{HeaderTitle}</Title>
+                </TitleArea>
+              )}
+            </>
+          ) : (
+            <ActionArea style={{ paddingTop, paddingLeft: 0, paddingBottom: 0 }}>
+              <TitleArea style={[titleAnimatedStyle]}>
                 <Title>{HeaderTitle}</Title>
               </TitleArea>
-            )}
-          </>
-        ) : (
-          <ActionArea style={{ paddingTop, paddingLeft: 0, paddingBottom: 0 }}>
-            <TitleArea style={[titleAnimatedStyle]}>
-              <Title>{HeaderTitle}</Title>
-            </TitleArea>
-          </ActionArea>
-        )}
-        {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
-        <BottomBorder style={bottomBorderColor} />
-      </ExpandedHeaderContainer>
+            </ActionArea>
+          )}
+          {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
+          <BottomBorder style={bottomBorderColor} />
+        </ExpandedHeaderContainer>
+      </Pressable>
     </Animated.View>
   )
 }

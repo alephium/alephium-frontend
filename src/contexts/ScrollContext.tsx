@@ -16,26 +16,31 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, ReactNode, useContext } from 'react'
+import { createContext, MutableRefObject, ReactNode, RefObject, useContext, useRef } from 'react'
+import { FlatList, ScrollView } from 'react-native'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
+
+type ScrollableView = ScrollView | FlatList
+
+export type ScrollDirection = 'up' | 'down' | null
+export type ScrollableViewRef = RefObject<ScrollView> | RefObject<FlatList>
 
 interface ScrollContextValue {
   scrollY?: SharedValue<number>
   scrollDirection?: SharedValue<ScrollDirection>
+  activeScreenRef?: MutableRefObject<ScrollableView | null>
 }
 
-export type ScrollDirection = 'up' | 'down' | undefined
-
-const ScrollContext = createContext<ScrollContextValue>({
-  scrollY: undefined,
-  scrollDirection: undefined
-})
+const ScrollContext = createContext<ScrollContextValue>({})
 
 export const ScrollContextProvider = ({ children }: { children: ReactNode }) => {
   const scrollY = useSharedValue(0)
-  const scrollDirection = useSharedValue(undefined as ScrollDirection)
+  const scrollDirection = useSharedValue(null) as ScrollContextValue['scrollDirection']
+  const activeScreenRef = useRef<ScrollableView>(null)
 
-  return <ScrollContext.Provider value={{ scrollY, scrollDirection }}>{children}</ScrollContext.Provider>
+  return (
+    <ScrollContext.Provider value={{ scrollY, scrollDirection, activeScreenRef }}>{children}</ScrollContext.Provider>
+  )
 }
 
 export const useScrollContext = () => {

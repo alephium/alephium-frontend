@@ -35,7 +35,7 @@ const FlatListScreen = <T,>({ hasHeader, fill, contentContainerStyle, style, ...
   const insets = useSafeAreaInsets()
   const flatListRef = useRef<FlatList>(null)
   const headerheight = useHeaderHeight()
-  const scrollHandler = useScreenScrollHandler()
+  const scrollHandler = useScreenScrollHandler(flatListRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
   const theme = useTheme()
 
