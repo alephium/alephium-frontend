@@ -23,7 +23,8 @@ import styled from 'styled-components/native'
 import animationSrc from '~/animations/lottie/wallet.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -50,18 +51,23 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
   const method = useAppSelector((s) => s.walletGeneration.method) || 'create'
 
   return (
-    <Screen {...props}>
+    <ScrollScreen fill hasHeader {...props}>
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay />
       </AnimationContainer>
-      <CenteredInstructions instructions={instructions[method]} stretch />
+      <CenteredInstructions instructions={instructions[method]} />
       <ActionsContainer>
         <ButtonStack>
-          <Button title="Let's go!" type="primary" onPress={() => navigation.navigate('NewWalletNameScreen')} />
+          <Button
+            title="Let's go!"
+            type="primary"
+            variant="accent"
+            onPress={() => navigation.navigate('NewWalletNameScreen')}
+          />
           <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
         </ButtonStack>
       </ActionsContainer>
-    </Screen>
+    </ScrollScreen>
   )
 }
 
@@ -78,7 +84,7 @@ const StyledAnimation = styled(LottieView)`
 `
 
 const ActionsContainer = styled.View`
-  flex: 1.5;
-  justify-content: center;
+  flex: 2;
+  justify-content: flex-end;
   align-items: center;
 `
