@@ -75,7 +75,8 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
         shadowColor: 'black',
         shadowOffset: { height: 5, width: 0 },
         shadowOpacity: 0.5,
-        shadowRadius: 10
+        shadowRadius: 10,
+        elevation: 10
       }}
     >
       <GradientContainer colors={['transparent', colord(deltaColor).alpha(0.03).toHex()]} locations={[0, 0.6]}>
