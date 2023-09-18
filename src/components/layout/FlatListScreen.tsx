@@ -26,7 +26,7 @@ import { useTheme } from 'styled-components/native'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
+import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {}
@@ -35,11 +35,11 @@ const FlatListScreen = <T,>({ hasHeader, fill, contentContainerStyle, style, ...
   const insets = useSafeAreaInsets()
   const flatListRef = useRef<FlatList>(null)
   const headerheight = useHeaderHeight()
-  const scrollHandler = useScreenScrollHandler()
+  const scrollHandler = useScreenScrollHandler(flatListRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
   const theme = useTheme()
 
-  useScrollToTopOnFocus(flatListRef)
+  useScrollToTopOnBlur(flatListRef)
 
   return (
     <FlatList

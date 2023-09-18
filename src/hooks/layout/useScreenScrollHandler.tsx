@@ -16,15 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
+import { useCallback } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 
 import { scrollEndThreshold } from '~/components/headers/BaseHeader'
-import { useScrollContext } from '~/contexts/ScrollContext'
+import { ScrollableViewRef, useScrollContext } from '~/contexts/ScrollContext'
 
 const scrollDirectionDeltaThreshold = 10
 
-const useScreenScrollHandler = () => {
-  const { scrollY, scrollDirection } = useScrollContext()
+const useScreenScrollHandler = (viewRefForScrollTopOnHeaderPress?: ScrollableViewRef) => {
+  const { scrollY, scrollDirection, activeScreenRef } = useScrollContext()
+
+  useFocusEffect(
+    useCallback(() => {
+      if (activeScreenRef && viewRefForScrollTopOnHeaderPress) {
+        activeScreenRef.current = viewRefForScrollTopOnHeaderPress.current
+      }
+    }, [activeScreenRef, viewRefForScrollTopOnHeaderPress])
+  )
 
   const scrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!scrollY || !scrollDirection) return
@@ -39,7 +49,7 @@ const useScreenScrollHandler = () => {
     const direction = delta > 0 ? 'up' : 'down'
 
     if (newScrollY === 0) {
-      scrollDirection.value = undefined
+      scrollDirection.value = null
     } else if (direction === 'up' && delta > scrollDirectionDeltaThreshold) {
       scrollDirection.value = 'up'
     } else if (direction === 'down' && delta < -scrollDirectionDeltaThreshold) {

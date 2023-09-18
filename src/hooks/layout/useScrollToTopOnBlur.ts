@@ -17,21 +17,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useNavigation } from '@react-navigation/native'
-import { RefObject, useEffect } from 'react'
-import { FlatList, ScrollView } from 'react-native'
+import { useEffect } from 'react'
 
+import { ScrollableViewRef } from '~/contexts/ScrollContext'
 import { scrollScreenTo } from '~/utils/layout'
 
-const useScrollToTopOnFocus = (viewRef: RefObject<ScrollView> | RefObject<FlatList>) => {
+const useScrollToTopOnBlur = (viewRef: ScrollableViewRef) => {
   const navigation = useNavigation()
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
-      scrollScreenTo(0, viewRef)
+      if (viewRef) scrollScreenTo(0, viewRef)
     })
 
     return unsubscribe
   }, [navigation, viewRef])
 }
 
-export default useScrollToTopOnFocus
+export default useScrollToTopOnBlur

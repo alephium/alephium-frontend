@@ -24,7 +24,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Screen from '~/components/layout/Screen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
+import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScrollScreenBaseProps {
@@ -52,11 +52,11 @@ const ScrollScreen = ({
   const viewRef = useRef<ScrollView>(null)
 
   const headerheight = useHeaderHeight()
-  const scrollHandler = useScreenScrollHandler()
+  const scrollHandler = useScreenScrollHandler(viewRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
   const insets = useSafeAreaInsets()
 
-  useScrollToTopOnFocus(viewRef)
+  useScrollToTopOnBlur(viewRef)
 
   return (
     <Screen style={containerStyle}>
