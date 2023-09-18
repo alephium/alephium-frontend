@@ -22,7 +22,7 @@ import { useEffect } from 'react'
 import { ScrollableViewRef } from '~/contexts/ScrollContext'
 import { scrollScreenTo } from '~/utils/layout'
 
-const useScrollToTopOnFocus = (viewRef: ScrollableViewRef) => {
+const useScrollToTopOnBlur = (viewRef: ScrollableViewRef) => {
   const navigation = useNavigation()
 
   useEffect(() => {
@@ -34,4 +34,4 @@ const useScrollToTopOnFocus = (viewRef: ScrollableViewRef) => {
   }, [navigation, viewRef])
 }
 
-export default useScrollToTopOnFocus
+export default useScrollToTopOnBlur

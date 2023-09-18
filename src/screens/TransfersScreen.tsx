@@ -24,7 +24,7 @@ import { FlatList } from 'react-native'
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
+import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -46,7 +46,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const handleScroll = useScreenScrollHandler(listRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
-  useScrollToTopOnFocus(listRef)
+  useScrollToTopOnBlur(listRef)
 
   const headerHeight = useHeaderHeight()
 
