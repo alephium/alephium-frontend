@@ -16,22 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
-import { useEffect } from 'react'
+import { StackHeaderProps } from '@react-navigation/stack'
 
-import { ScrollableViewRef } from '~/contexts/NavigationScrollContext'
-import { scrollScreenTo } from '~/utils/layout'
+import Button from '~/components/buttons/Button'
+import NavigationBaseHeader, { NavigationBaseHeaderProps } from '~/components/headers/NavigationBaseHeader'
 
-const useScrollToTopOnBlur = (viewRef: ScrollableViewRef) => {
-  const navigation = useNavigation()
+export type NavigationStackHeaderCustomProps = StackHeaderProps & NavigationBaseHeaderProps
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('blur', () => {
-      if (viewRef) scrollScreenTo(0, viewRef)
-    })
+const NavigationStackHeader = ({ navigation, options, ...props }: NavigationStackHeaderCustomProps) => {
+  const HeaderLeft = props.back ? (
+    <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-back-outline' }} round />
+  ) : null
 
-    return unsubscribe
-  }, [navigation, viewRef])
+  return (
+    <NavigationBaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} showCompactComponents {...props} />
+  )
 }
 
-export default useScrollToTopOnBlur
+export default NavigationStackHeader

@@ -16,15 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
 import { StackHeaderProps } from '@react-navigation/stack'
 import { BlurView } from 'expo-blur'
-import { ReactNode, RefObject, useEffect } from 'react'
-import { Platform, Pressable, StyleProp, ViewStyle } from 'react-native'
+import { ReactNode, RefObject } from 'react'
+import { Platform, Pressable, ViewProps } from 'react-native'
 import Animated, {
   Extrapolate,
   interpolate,
   interpolateColor,
+  SharedValue,
   useAnimatedProps,
   useAnimatedStyle
 } from 'react-native-reanimated'
@@ -32,18 +32,21 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { useScrollContext } from '~/contexts/ScrollContext'
+import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { scrollScreenTo } from '~/utils/layout'
 
-type HeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'>
+export type HeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
+  type?: 'default' | 'stack'
+}
 
-export interface BaseHeaderProps {
+export interface BaseHeaderProps extends ViewProps {
   headerBottom?: () => ReactNode
-  style?: StyleProp<ViewStyle>
   headerRef?: RefObject<Animated.View>
   options: HeaderOptions
   showCompactComponents?: boolean
+  goBack?: () => void
+  scrollY?: SharedValue<number>
 }
 
 export const scrollEndThreshold = 80
@@ -57,13 +60,13 @@ const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle },
   headerBottom,
   showCompactComponents,
-  style,
-  headerRef
+  headerRef,
+  scrollY,
+  ...props
 }: BaseHeaderProps) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
-  const { scrollY, activeScreenRef } = useScrollContext()
-  const navigation = useNavigation()
+  const { activeScreenRef } = useNavigationScrollContext()
 
   const borderColorRange = ['transparent', theme.border.secondary]
 
@@ -74,14 +77,6 @@ const BaseHeader = ({
   const HeaderLeft = headerLeft && headerLeft({})
   const HeaderBottom = headerBottom && headerBottom()
   const HeaderTitle = headerTitle && (typeof headerTitle === 'string' ? headerTitle : headerTitle.arguments['children'])
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('blur', () => {
-      if (scrollY) scrollY.value = 0
-    })
-
-    return unsubscribe
-  }, [navigation, scrollY])
 
   const titleAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader || headerTitle
@@ -145,7 +140,7 @@ const BaseHeader = ({
   }
 
   return (
-    <Animated.View style={style} ref={headerRef}>
+    <BaseHeaderStyled ref={headerRef} {...props}>
       <Pressable onPress={handleCompactHeaderPress}>
         {hasCompactHeader && (
           <CompactHeaderContainer style={compactContentAnimatedStyle}>
@@ -197,11 +192,18 @@ const BaseHeader = ({
           <BottomBorder style={bottomBorderColor} />
         </ExpandedHeaderContainer>
       </Pressable>
-    </Animated.View>
+    </BaseHeaderStyled>
   )
 }
 
 export default BaseHeader
+
+const BaseHeaderStyled = styled(Animated.View)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+`
 
 const ExpandedHeaderContainer = styled(Animated.View)`
   flex-direction: column;

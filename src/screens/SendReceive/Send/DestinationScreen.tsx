@@ -159,7 +159,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
   return (
     <>
-      <ScrollScreen hasHeader verticalGap {...props}>
+      <ScrollScreen hasNavigationHeader verticalGap {...props}>
         <ScreenIntro title="Destination" subtitle="Send to an address, a contact, or one of your other addresses." />
         <ScreenSection>
           <Controller

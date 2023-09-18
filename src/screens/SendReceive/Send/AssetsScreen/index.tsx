@@ -24,6 +24,7 @@ import styled from 'styled-components/native'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
+import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
@@ -38,6 +39,8 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
+
+  useScrollToTopOnFocus()
 
   const isContinueButtonDisabled = assetAmounts.length < 1
 
@@ -67,7 +70,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   if (!address) return null
 
   return (
-    <ScrollScreen hasHeader verticalGap {...props}>
+    <ScrollScreen hasNavigationHeader verticalGap {...props}>
       <ScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />
       <ScreenSection>
         <AssetsList>

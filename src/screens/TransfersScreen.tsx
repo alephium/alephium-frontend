@@ -16,14 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { FlatList } from 'react-native'
+import { useSharedValue } from 'react-native-reanimated'
 
+import BaseHeader from '~/components/headers/BaseHeader'
+import Screen from '~/components/layout/Screen'
 import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
+import useScreenNavigationScrollHandler from '~/hooks/layout/useScreenNavigationScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
@@ -43,24 +45,33 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
 
-  const handleScroll = useScreenScrollHandler(listRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
+  useScreenNavigationScrollHandler(listRef)
   useScrollToTopOnBlur(listRef)
 
-  const headerHeight = useHeaderHeight()
+  const [fullHeaderHeight, setFullHeaderHeight] = useState(0)
+  const scrollY = useSharedValue(0)
 
   return (
-    <TransactionsFlatListScreen
-      confirmedTransactions={confirmedTransactions}
-      pendingTransactions={pendingTransactions}
-      initialNumToRender={8}
-      contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight + DEFAULT_MARGIN }}
-      onScroll={handleScroll}
-      onScrollEndDrag={scrollEndHandler}
-      hasHeader
-      ref={listRef}
-    />
+    <Screen>
+      <TransactionsFlatListScreen
+        confirmedTransactions={confirmedTransactions}
+        pendingTransactions={pendingTransactions}
+        initialNumToRender={8}
+        contentContainerStyle={{ flexGrow: 1, paddingTop: fullHeaderHeight + DEFAULT_MARGIN }}
+        onScroll={(e) => (scrollY.value = e.nativeEvent.contentOffset.y)}
+        onScrollEndDrag={scrollEndHandler}
+        ref={listRef}
+        headerHeight={fullHeaderHeight}
+      />
+
+      <BaseHeader
+        options={{ headerTitle: 'Transfers' }}
+        scrollY={scrollY}
+        onLayout={(e) => setFullHeaderHeight(e.nativeEvent.layout.height)}
+      />
+    </Screen>
   )
 }
 

@@ -16,22 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useNavigation } from '@react-navigation/native'
-import { useEffect } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
+import { useCallback } from 'react'
 
-import { ScrollableViewRef } from '~/contexts/NavigationScrollContext'
-import { scrollScreenTo } from '~/utils/layout'
+import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
 
-const useScrollToTopOnBlur = (viewRef: ScrollableViewRef) => {
-  const navigation = useNavigation()
+const useScrollToTopOnFocus = () => {
+  const { scrollY } = useNavigationScrollContext()
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('blur', () => {
-      if (viewRef) scrollScreenTo(0, viewRef)
-    })
-
-    return unsubscribe
-  }, [navigation, viewRef])
+  useFocusEffect(
+    useCallback(() => {
+      if (scrollY) scrollY.value = 0
+    }, [scrollY])
+  )
 }
 
-export default useScrollToTopOnBlur
+export default useScrollToTopOnFocus

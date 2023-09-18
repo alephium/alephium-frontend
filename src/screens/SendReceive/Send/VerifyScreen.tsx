@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
+import { useCallback } from 'react'
 import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -30,6 +31,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import { useSendContext } from '~/contexts/SendContext'
+import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
@@ -40,24 +42,28 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
 
+  useScrollToTopOnFocus()
+
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]
 
-  useFocusEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerRight: () => (
-        <ContinueButton
-          onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
-          iconProps={{ name: 'send-outline' }}
-        />
-      )
-    })
-  })
+  useFocusEffect(
+    useCallback(() => {
+      navigation.getParent()?.setOptions({
+        headerRight: () => (
+          <ContinueButton
+            onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
+            iconProps={{ name: 'send-outline' }}
+          />
+        )
+      })
+    }, [navigation, sendTransaction])
+  )
 
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <ScrollScreen hasHeader verticalGap {...props}>
+    <ScrollScreen hasNavigationHeader verticalGap {...props}>
       <ScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
       <ScreenSection>
         <BoxSurface>

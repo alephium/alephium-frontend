@@ -27,8 +27,10 @@ import AddressesTokensList from '~/components/AddressesTokensList'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
+import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import RefreshSpinner from '~/components/RefreshSpinner'
+import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -44,6 +46,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const headerHeight = useHeaderHeight()
+  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
 
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
@@ -61,9 +64,13 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       refreshControl={
         <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
       }
-      hasHeader
       hasBottomBar
       verticalGap
+      headerOptions={{
+        headerRight: () => <DashboardHeaderActions />,
+        headerLeft: () => <WalletSwitchButton />,
+        headerTitle: activeWalletName
+      }}
       {...props}
     >
       <BalanceAndButtons>

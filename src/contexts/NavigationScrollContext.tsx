@@ -25,32 +25,34 @@ type ScrollableView = ScrollView | FlatList
 export type ScrollDirection = 'up' | 'down' | null
 export type ScrollableViewRef = RefObject<ScrollView> | RefObject<FlatList>
 
-interface ScrollContextValue {
+interface NavigationScrollContextValue {
   scrollY?: SharedValue<number>
   scrollDirection?: SharedValue<ScrollDirection>
   activeScreenRef?: MutableRefObject<ScrollableView | null>
 }
 
-const ScrollContext = createContext<ScrollContextValue>({})
+const NavigationScrollContext = createContext<NavigationScrollContextValue>({})
 
-export const ScrollContextProvider = ({ children }: { children: ReactNode }) => {
+export const NavigationScrollContextProvider = ({ children }: { children: ReactNode }) => {
   const scrollY = useSharedValue(0)
-  const scrollDirection = useSharedValue(null) as ScrollContextValue['scrollDirection']
+  const scrollDirection = useSharedValue(null) as NavigationScrollContextValue['scrollDirection']
   const activeScreenRef = useRef<ScrollableView>(null)
 
   return (
-    <ScrollContext.Provider value={{ scrollY, scrollDirection, activeScreenRef }}>{children}</ScrollContext.Provider>
+    <NavigationScrollContext.Provider value={{ scrollY, scrollDirection, activeScreenRef }}>
+      {children}
+    </NavigationScrollContext.Provider>
   )
 }
 
-export const useScrollContext = () => {
-  const context = useContext(ScrollContext)
+export const useNavigationScrollContext = () => {
+  const context = useContext(NavigationScrollContext)
 
   if (!context) {
-    console.error('useScrollContext must be used within ScrollContextProvider')
+    console.error('useNavigationScrollContext must be used within NavigationScrollContextProvider')
   }
 
   return context
 }
 
-export default ScrollContext
+export default NavigationScrollContext

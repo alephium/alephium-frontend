@@ -17,20 +17,25 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useHeaderHeight } from '@react-navigation/elements'
+import { useNavigation } from '@react-navigation/native'
 import { RefObject, useRef } from 'react'
 import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import BaseHeader, { HeaderOptions } from '~/components/headers/BaseHeader'
+import StackHeader from '~/components/headers/StackHeader'
 import Screen from '~/components/layout/Screen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
+import useScreenNavigationScrollHandler from '~/hooks/layout/useScreenNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScrollScreenBaseProps {
-  hasHeader?: boolean
+  hasNavigationHeader?: boolean
   contentContainerStyle?: StyleProp<ViewStyle>
   fill?: boolean
+  headerOptions?: HeaderOptions
 }
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
@@ -41,22 +46,28 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
 
 const ScrollScreen = ({
   children,
-  hasHeader,
+  hasNavigationHeader,
   style,
   containerStyle,
   contentContainerStyle,
   verticalGap,
   fill,
+  headerOptions,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
+  const navigation = useNavigation()
 
   const headerheight = useHeaderHeight()
-  const scrollHandler = useScreenScrollHandler(viewRef)
+  const navigationScrollHandler = useScreenNavigationScrollHandler(viewRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
   const insets = useSafeAreaInsets()
 
   useScrollToTopOnBlur(viewRef)
+
+  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+
+  const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   return (
     <Screen style={containerStyle}>
@@ -64,12 +75,16 @@ const ScrollScreen = ({
         ref={viewRef}
         scrollEventThrottle={16}
         alwaysBounceVertical={true}
-        onScroll={scrollHandler}
+        onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={[
           {
-            paddingTop: hasHeader ? headerheight + DEFAULT_MARGIN : 0,
+            paddingTop: headerOptions
+              ? screenHeaderHeight + DEFAULT_MARGIN
+              : hasNavigationHeader
+              ? headerheight + DEFAULT_MARGIN
+              : 0,
             flex: fill ? 1 : undefined
           },
           contentContainerStyle
@@ -89,6 +104,14 @@ const ScrollScreen = ({
           {children}
         </View>
       </ScrollView>
+      {headerOptions && (
+        <HeaderComponent
+          goBack={navigation.goBack}
+          options={headerOptions}
+          scrollY={screenScrollY}
+          onLayout={screenHeaderLayoutHandler}
+        />
+      )}
     </Screen>
   )
 }

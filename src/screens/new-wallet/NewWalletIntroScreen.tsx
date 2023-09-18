@@ -51,7 +51,7 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
   const method = useAppSelector((s) => s.walletGeneration.method) || 'create'
 
   return (
-    <ScrollScreen fill hasHeader {...props}>
+    <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay />
       </AnimationContainer>

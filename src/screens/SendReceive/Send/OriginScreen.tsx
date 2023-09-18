@@ -23,6 +23,7 @@ import { useCallback, useEffect } from 'react'
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
+import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
@@ -34,6 +35,8 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginS
 const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, setFromAddress, setToAddress } = useSendContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
+
+  useScrollToTopOnFocus()
 
   useEffect(() => {
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
@@ -54,7 +57,7 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   return (
     <AddressFlatListScreen
-      hasHeader
+      hasNavigationHeader
       onAddressPress={setFromAddress}
       selectedAddress={fromAddress}
       ListHeaderComponent={

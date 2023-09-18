@@ -23,12 +23,12 @@ import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button, { ButtonProps } from '~/components/buttons/Button'
-import BaseHeader from '~/components/headers/BaseHeader'
-import { StackHeaderCustomProps } from '~/components/headers/StackHeader'
+import BaseHeader from '~/components/headers/NavigationBaseHeader'
+import { NavigationStackHeaderCustomProps } from '~/components/headers/NavigationStackHeader'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-interface ProgressHeaderProps extends StackHeaderCustomProps {
+interface ProgressHeaderProps extends NavigationStackHeaderCustomProps {
   workflow: 'send' | 'receive'
 }
 
@@ -40,7 +40,7 @@ const workflowSteps: Record<
   send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
 }
 
-const ProgressHeader = ({ navigation, route, workflow, options }: ProgressHeaderProps) => {
+const ProgressHeader = ({ route, workflow, options }: ProgressHeaderProps) => {
   const theme = useTheme()
 
   const [progress, setProgress] = useState(0)

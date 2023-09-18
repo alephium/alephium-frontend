@@ -42,7 +42,7 @@ const NewWalletSuccessScreenProps = ({ navigation, ...props }: NewWalletSuccessS
   const theme = useTheme()
 
   return (
-    <ScrollScreen hasHeader fill {...props}>
+    <ScrollScreen hasNavigationHeader fill {...props}>
       <AnimationContainer style={{ marginTop: 100 }}>
         <StyledAlephiumLogo color={theme.font.primary} />
         <StyledAnimation source={animationSrc} autoPlay />

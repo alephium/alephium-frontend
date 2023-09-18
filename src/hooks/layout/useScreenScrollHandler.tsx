@@ -16,50 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect } from '@react-navigation/native'
-import { useCallback } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
+import { useState } from 'react'
+import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
+import { useSharedValue } from 'react-native-reanimated'
 
-import { scrollEndThreshold } from '~/components/headers/BaseHeader'
-import { ScrollableViewRef, useScrollContext } from '~/contexts/ScrollContext'
+const useScreenScrollHandler = () => {
+  const [screenHeaderHeight, setScreenHeaderHeight] = useState(0)
+  const screenScrollY = useSharedValue(0)
 
-const scrollDirectionDeltaThreshold = 10
+  const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
+    (screenScrollY.value = e.nativeEvent.contentOffset.y)
 
-const useScreenScrollHandler = (viewRefForScrollTopOnHeaderPress?: ScrollableViewRef) => {
-  const { scrollY, scrollDirection, activeScreenRef } = useScrollContext()
+  const screenHeaderLayoutHandler = (e: LayoutChangeEvent) => setScreenHeaderHeight(e.nativeEvent.layout.height)
 
-  useFocusEffect(
-    useCallback(() => {
-      if (activeScreenRef && viewRefForScrollTopOnHeaderPress) {
-        activeScreenRef.current = viewRefForScrollTopOnHeaderPress.current
-      }
-    }, [activeScreenRef, viewRefForScrollTopOnHeaderPress])
-  )
-
-  const scrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!scrollY || !scrollDirection) return
-
-    const newScrollY = e.nativeEvent.contentOffset.y
-
-    // 👇 Fixes the issue where the onScroll of a ScrollView gets called with 0 when trying to go back and then then
-    // aborting.
-    if (scrollY.value >= scrollEndThreshold && newScrollY === 0) return
-
-    const delta = scrollY.value - newScrollY
-    const direction = delta > 0 ? 'up' : 'down'
-
-    if (newScrollY === 0) {
-      scrollDirection.value = null
-    } else if (direction === 'up' && delta > scrollDirectionDeltaThreshold) {
-      scrollDirection.value = 'up'
-    } else if (direction === 'down' && delta < -scrollDirectionDeltaThreshold) {
-      scrollDirection.value = 'down'
-    }
-
-    scrollY.value = newScrollY
-  }
-
-  return scrollHandler
+  return { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler }
 }
 
 export default useScreenScrollHandler

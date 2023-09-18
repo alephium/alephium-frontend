@@ -18,20 +18,34 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
+import styled from 'styled-components/native'
 
-import { ScrollableViewRef } from '~/contexts/NavigationScrollContext'
-import { scrollScreenTo } from '~/utils/layout'
+import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
+import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
 
-const useScrollToTopOnBlur = (viewRef: ScrollableViewRef) => {
+export type NavigationBaseHeaderProps = Omit<BaseHeaderProps, 'goBack' | 'scrollY'>
+
+export const scrollEndThreshold = 80
+
+// TODO: Reimplement tap bar to scroll up
+
+const NavigationBaseHeader = (props: NavigationBaseHeaderProps) => {
+  const { scrollY } = useNavigationScrollContext()
   const navigation = useNavigation()
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
-      if (viewRef) scrollScreenTo(0, viewRef)
+      if (scrollY) scrollY.value = 0
     })
 
     return unsubscribe
-  }, [navigation, viewRef])
+  }, [navigation, scrollY])
+
+  return <BaseHeaderStyled {...props} scrollY={scrollY} goBack={navigation.goBack} />
 }
 
-export default useScrollToTopOnBlur
+export default NavigationBaseHeader
+
+const BaseHeaderStyled = styled(BaseHeader)`
+  position: relative;
+`
