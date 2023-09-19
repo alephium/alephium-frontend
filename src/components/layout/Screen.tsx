@@ -16,18 +16,33 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useHeaderHeight } from '@react-navigation/elements'
 import { ViewProps } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export type ScreenProps = ViewProps
+export type ScreenProps = ViewProps & {
+  hasNavigationHeader?: boolean
+}
 
-export default styled.View`
+const Screen = ({ children, hasNavigationHeader, style, ...props }: ScreenProps) => {
+  const headerheight = useHeaderHeight()
+
+  return (
+    <ScreenStyled style={[{ paddingTop: hasNavigationHeader ? headerheight + DEFAULT_MARGIN : 0 }, style]} {...props}>
+      {children}
+    </ScreenStyled>
+  )
+}
+
+const ScreenStyled = styled.View`
   flex: 1;
   background-color: ${({ theme }) => theme.bg.back2};
 `
+
+export default Screen
 
 export const ScreenSection = styled.View<{
   fill?: boolean
