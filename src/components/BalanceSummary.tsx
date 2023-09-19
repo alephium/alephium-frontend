@@ -74,7 +74,7 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
       style={{
         shadowColor: 'black',
         shadowOffset: { height: 5, width: 0 },
-        shadowOpacity: 0.5,
+        shadowOpacity: theme.name === 'dark' ? 0.5 : 0.05,
         shadowRadius: 10,
         elevation: 10
       }}

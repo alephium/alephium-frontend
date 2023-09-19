@@ -57,8 +57,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   if (!address) return null
 
   const bgColor = address.settings.color ?? theme.font.primary
-  const textColorTheme: ThemeType = colord(bgColor).isDark() ? 'dark' : 'light'
-  const textColor = themes[textColorTheme].font.primary
+  const textColor = colord(bgColor).isDark() ? 'white' : 'black'
 
   return (
     <LinearGradient style={style} colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
@@ -75,7 +74,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             }}
             showCopyBtn
           />
-          <AppText size={14} colorTheme={textColorTheme}>
+          <AppText size={14} color={textColor}>
             Group {address.group}
           </AppText>
         </AddressBadgeContainer>
@@ -90,12 +89,12 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
         <FiatAmount
           value={totalAmountWorth}
           isFiat
-          colorTheme={textColorTheme}
+          color={textColor}
           size={30}
           semiBold
           suffix={currencies[currency].symbol}
         />
-        <Amount value={BigInt(address.balance)} colorTheme={textColorTheme} size={15} medium suffix="ALPH" />
+        <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
       </Amounts>
       <BottomRow>
         <ButtonsRow sticked>

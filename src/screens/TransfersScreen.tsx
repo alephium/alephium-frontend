@@ -54,7 +54,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   const scrollY = useSharedValue(0)
 
   return (
-    <Screen>
+    <Screen contrastedBackground>
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}

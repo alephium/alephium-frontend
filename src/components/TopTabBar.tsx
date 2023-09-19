@@ -125,5 +125,5 @@ const Indicator = styled(Reanimated.View)`
   position: absolute;
   height: 70%;
   border-radius: ${BORDER_RADIUS}px;
-  background-color: ${({ theme }) => colord(theme.button.primary).alpha(0.8).toHex()};
+  background-color: ${({ theme }) => theme.button.primary};
 `

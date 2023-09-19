@@ -103,7 +103,7 @@ const BaseHeader = ({
   const animatedBlurViewProps = useAnimatedProps(() =>
     Platform.OS === 'ios'
       ? {
-          intensity: interpolate(scrollY?.value || 0, defaultScrollRange, [0, 100], Extrapolate.CLAMP)
+          intensity: interpolate(scrollY?.value || 0, defaultScrollRange, [0, 80], Extrapolate.CLAMP)
         }
       : {}
   )

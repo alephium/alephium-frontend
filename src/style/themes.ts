@@ -23,25 +23,25 @@ export type ThemeType = 'light' | 'dark'
 export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
-    highlight: '#fff',
+    highlight: '#ffffff',
     primary: '#ffffff',
     secondary: '#f9f9f9',
     tertiary: '#FCFCFD',
-    back1: '#F4F5F5',
-    back2: '#E8E8E8',
+    back1: '#F7F7F7',
+    back2: '#F3F3F3',
     accent: 'rgba(93, 108, 243, 0.08)',
     contrast: '#212126'
   },
   font: {
-    primary: '#2c2c2c',
-    secondary: '#838383',
+    primary: '#171717',
+    secondary: '#595959',
     tertiary: '#ababab',
     contrast: '#ffffff',
     highlight: '#d4a10d'
   },
   button: {
-    primary: '#1d1d1d',
-    secondary: '#353539',
+    primary: '#e6e6e6',
+    secondary: '#ffffff',
     tertiary: '#353539'
   },
   border: {
@@ -60,8 +60,8 @@ export const lightTheme: DefaultTheme = {
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#b07dcb',
-    send: '#F7B789',
-    receive: '#8DD3FA'
+    send: '#f7784a',
+    receive: '#37b0fa'
   },
   gradient: {
     yellow: '#FFCD82',
