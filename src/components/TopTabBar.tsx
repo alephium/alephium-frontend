@@ -37,8 +37,6 @@ interface TopTabBarProps {
 
 const indicatorXPadding = 10
 
-// TODO: Reimplement tap bar to scroll up
-
 const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 

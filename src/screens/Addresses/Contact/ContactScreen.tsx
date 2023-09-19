@@ -150,12 +150,29 @@ const ContactScreen = ({ navigation, route: { params }, ...props }: ScreenProps)
 
 export default ContactScreen
 
+interface ContactButtonProps extends PressableProps {
+  title: string
+  Icon?: (props: LucideProps) => JSX.Element
+}
+
+const ContactButton = ({ Icon, title, children, ...props }: ContactButtonProps) => {
+  const theme = useTheme()
+
+  return (
+    <ButtonStyled {...props}>
+      {Icon && <Icon size={20} color={theme.global.accent} />}
+      <ButtonText medium color="accent">
+        {title}
+      </ButtonText>
+    </ButtonStyled>
+  )
+}
+
 const CenteredSection = styled(ScreenSection)`
   align-items: center;
   margin-bottom: 25px;
 `
 
-// TODO: DRY
 const ContactIcon = styled.View<{ color?: string }>`
   justify-content: center;
   align-items: center;
@@ -181,25 +198,6 @@ const ButtonsRow = styled.View`
   width: 100%;
   margin-top: 40px;
 `
-
-// TODO: Move to new cleaned-up Buttons component
-interface ButtonProps extends PressableProps {
-  title: string
-  Icon?: (props: LucideProps) => JSX.Element
-}
-
-const ContactButton = ({ Icon, title, children, ...props }: ButtonProps) => {
-  const theme = useTheme()
-
-  return (
-    <ButtonStyled {...props}>
-      {Icon && <Icon size={20} color={theme.global.accent} />}
-      <ButtonText medium color="accent">
-        {title}
-      </ButtonText>
-    </ButtonStyled>
-  )
-}
 
 const ButtonStyled = styled.Pressable`
   padding: 12px 6px;
