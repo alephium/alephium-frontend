@@ -24,18 +24,23 @@ interface ButtonsRowProps {
   children: ReactNode[]
   sticked?: boolean
   style?: StyleProp<ViewStyle>
+  hasDivider?: boolean
 }
 
-const ButtonsRow = ({ children, style }: ButtonsRowProps) => (
-  <View style={style}>
-    {children.map((c, i) => (
-      <ButtonsContainer key={`ButtonsContainer-${i}`}>
-        {c}
-        {i !== children.length - 1 && <Divider />}
-      </ButtonsContainer>
-    ))}
-  </View>
-)
+const ButtonsRow = ({ children, hasDivider, style }: ButtonsRowProps) => {
+  const buttons = children.filter((child) => !!child)
+
+  return (
+    <View style={style}>
+      {buttons.map((c, i) => (
+        <ButtonsContainer key={`ButtonsContainer-${i}`}>
+          {c}
+          {hasDivider && i !== buttons.length - 1 && <Divider />}
+        </ButtonsContainer>
+      ))}
+    </View>
+  )
+}
 
 export default styled(ButtonsRow)`
   flex: 1;

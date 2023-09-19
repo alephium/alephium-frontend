@@ -76,7 +76,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       <BalanceAndButtons>
         <BalanceSummary dateLabel="VALUE TODAY" />
         <ButtonsRowContainer style={buttonsRowStyle}>
-          <ButtonsRow sticked>
+          <ButtonsRow sticked hasDivider>
             <Button
               onPress={() => navigation.navigate('SendNavigation')}
               iconProps={{ name: 'arrow-up-outline' }}
