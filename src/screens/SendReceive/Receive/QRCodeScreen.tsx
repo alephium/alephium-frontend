@@ -30,6 +30,7 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
+import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { CloseButton } from '~/screens/SendReceive/ProgressHeader'
@@ -44,6 +45,8 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
   const posthog = usePostHog()
+
+  useScrollToTopOnFocus()
 
   const handleCopyAddressPress = () => {
     posthog?.capture('Copied address', { note: 'Receive screen' })
@@ -60,7 +63,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   )
 
   return (
-    <ScrollScreen hasHeader verticalGap {...props}>
+    <ScrollScreen hasNavigationHeader verticalGap {...props}>
       <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." />
       <ScreenSection centered>
         <QRCodeContainer>

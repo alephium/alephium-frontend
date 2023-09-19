@@ -23,46 +23,67 @@ import { FlatList } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
 
+import BaseHeader from '~/components/headers/BaseHeader'
+import Screen from '~/components/layout/Screen'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
+import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {}
 
-const FlatListScreen = <T,>({ hasHeader, fill, contentContainerStyle, style, ...props }: FlatListScreenProps<T>) => {
+const FlatListScreen = <T,>({
+  headerOptions,
+  fill,
+  contentContainerStyle,
+  style,
+  hasNavigationHeader,
+  ...props
+}: FlatListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
   const flatListRef = useRef<FlatList>(null)
   const headerheight = useHeaderHeight()
-  const scrollHandler = useScreenScrollHandler(flatListRef)
+  const navigationScrollHandler = useNavigationScrollHandler(flatListRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
   const theme = useTheme()
 
   useScrollToTopOnBlur(flatListRef)
 
+  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+
   return (
-    <FlatList
-      ref={flatListRef}
-      onScroll={scrollHandler}
-      onScrollEndDrag={scrollEndHandler}
-      contentContainerStyle={[
-        {
-          paddingTop: hasHeader ? headerheight + DEFAULT_MARGIN : 0,
-          paddingBottom: insets.bottom,
-          flex: fill ? 1 : undefined,
-          gap: VERTICAL_GAP
-        },
-        contentContainerStyle
-      ]}
-      style={[
-        {
-          backgroundColor: theme.bg.back2
-        },
-        style
-      ]}
-      {...props}
-    />
+    <Screen>
+      <FlatList
+        ref={flatListRef}
+        onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
+        onScrollEndDrag={scrollEndHandler}
+        contentContainerStyle={[
+          {
+            paddingTop: hasNavigationHeader
+              ? headerheight + DEFAULT_MARGIN
+              : headerOptions
+              ? screenHeaderHeight + DEFAULT_MARGIN
+              : 0,
+            paddingBottom: insets.bottom,
+            flex: fill ? 1 : undefined,
+            gap: VERTICAL_GAP
+          },
+          contentContainerStyle
+        ]}
+        style={[
+          {
+            backgroundColor: theme.bg.back2
+          },
+          style
+        ]}
+        {...props}
+      />
+      {headerOptions && (
+        <BaseHeader options={headerOptions} scrollY={screenScrollY} onLayout={screenHeaderLayoutHandler} />
+      )}
+    </Screen>
   )
 }
 

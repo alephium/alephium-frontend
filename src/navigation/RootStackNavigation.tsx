@@ -23,9 +23,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
-import StackHeader from '~/components/headers/StackHeader'
+import NavigationStackHeader from '~/components/headers/NavigationStackHeader'
 import AnalyticsProvider from '~/contexts/AnalyticsContext'
-import { ScrollContextProvider } from '~/contexts/ScrollContext'
+import { NavigationScrollContextProvider } from '~/contexts/NavigationScrollContext'
 import { useAppDispatch } from '~/hooks/redux'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
@@ -80,64 +80,15 @@ const RootStackNavigation = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Host>
         <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
-          <ScrollContextProvider>
+          <NavigationScrollContextProvider>
             <AnalyticsProvider>
               <RootStack.Navigator initialRouteName="SplashScreen">
                 {/* Screens with default header */}
                 <RootStack.Group
-                  screenOptions={{
-                    header: (props) => <StackHeader {...props} />,
-                    headerTransparent: true
-                  }}
+                  screenOptions={{ header: (props) => <NavigationStackHeader {...props} />, headerTransparent: true }}
                 >
                   <RootStack.Screen name="LandingScreen" component={LandingScreen} />
-                  <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
-                  <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
                   <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
-                  <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-                  <RootStack.Screen
-                    name="SettingsScreen"
-                    component={SettingsScreen}
-                    options={{
-                      headerTitle: 'Settings'
-                    }}
-                  />
-                  <RootStack.Screen
-                    name="ImportWalletSeedScreen"
-                    component={ImportWalletSeedScreen}
-                    options={{ headerTitle: 'Import wallet' }}
-                  />
-                  <RootStack.Screen
-                    name="ImportWalletAddressDiscoveryScreen"
-                    component={ImportWalletAddressDiscoveryScreen}
-                    options={{ headerTitle: 'Active addresses' }}
-                  />
-                  <RootStack.Screen
-                    name="SecurityScreen"
-                    component={SecurityScreen}
-                    options={{ headerTitle: 'Security', headerStyle: { backgroundColor: theme.global.pale } }}
-                  />
-                  <RootStack.Screen
-                    name="AddressDiscoveryScreen"
-                    component={AddressDiscoveryScreen}
-                    options={{ headerTitle: 'Active addresses' }}
-                  />
-                  <RootStack.Screen
-                    name="NewContactScreen"
-                    component={NewContactScreen}
-                    options={{ headerTitle: 'New contact' }}
-                  />
-                  <RootStack.Screen
-                    name="EditContactScreen"
-                    component={EditContactScreen}
-                    options={{ headerTitle: 'Edit contact' }}
-                  />
-                  <RootStack.Screen
-                    name="NewAddressScreen"
-                    component={NewAddressScreen}
-                    options={{ headerTitle: 'New address' }}
-                  />
-                  <RootStack.Screen name="ContactScreen" component={ContactScreen} />
                 </RootStack.Group>
                 <RootStack.Group screenOptions={{ headerTransparent: true }}>
                   {/* Sub-navigation with custom header */}
@@ -175,10 +126,25 @@ const RootStackNavigation = () => {
                   <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
                   <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
                   <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
+                  <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
+                  <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />
+                  <RootStack.Screen name="ContactScreen" component={ContactScreen} />
+                  <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
+                  <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
+                  <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
+                  <RootStack.Screen name="SecurityScreen" component={SecurityScreen} />
+                  <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
+                  <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
+                  <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
+                  <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
+                  <RootStack.Screen
+                    name="ImportWalletAddressDiscoveryScreen"
+                    component={ImportWalletAddressDiscoveryScreen}
+                  />
                 </RootStack.Group>
               </RootStack.Navigator>
             </AnalyticsProvider>
-          </ScrollContextProvider>
+          </NavigationScrollContextProvider>
         </NavigationContainer>
       </Host>
     </GestureHandlerRootView>

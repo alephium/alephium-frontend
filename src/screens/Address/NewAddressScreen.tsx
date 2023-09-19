@@ -87,7 +87,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <ScrollScreen fill hasHeader verticalGap {...props}>
+    <ScrollScreen fill verticalGap headerOptions={{ headerTitle: 'New address', type: 'stack' }} {...props}>
       <NewAddressContextProvider>
         <AddressForm
           initialValues={initialValues}

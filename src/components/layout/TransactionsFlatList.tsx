@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useHeaderHeight } from '@react-navigation/elements'
 import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
 import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
 import { Portal } from 'react-native-portalize'
@@ -39,13 +38,13 @@ import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransact
 import { isPendingTx } from '~/utils/transactions'
 
 import TransactionListItem from '../TransactionListItem'
-import Screen, { ScreenSectionTitle } from './Screen'
+import { ScreenSectionTitle } from './Screen'
 
-interface TransactionsFlatListScreenProps extends Partial<FlatListProps<AddressTransaction>> {
+interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransaction>> {
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
   addressHash?: AddressHash
-  hasHeader?: boolean
+  headerHeight?: number
   showInternalInflows?: boolean
 }
 
@@ -57,22 +56,21 @@ type TransactionItem = {
 
 const transactionKeyExtractor = (tx: AddressTransaction) => `${tx.hash}-${tx.address.hash}`
 
-const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScreen(
+const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   {
     confirmedTransactions,
     pendingTransactions,
     addressHash,
     ListHeaderComponent,
-    hasHeader,
     showInternalInflows = false,
     style,
+    headerHeight = 0,
     ...props
-  }: TransactionsFlatListScreenProps,
+  }: TransactionsFlatListProps,
   ref: ForwardedRef<FlatList<AddressTransaction>>
 ) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
-  const headerHeight = useHeaderHeight()
 
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
@@ -116,12 +114,12 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
   }
 
   return (
-    <Screen style={style}>
+    <>
       <FlatList
         {...props}
         contentContainerStyle={[
           props.contentContainerStyle,
-          { paddingTop: hasHeader ? headerHeight + DEFAULT_MARGIN : 0 }
+          { paddingTop: headerHeight ? headerHeight + DEFAULT_MARGIN : 0 }
         ]}
         scrollEventThrottle={16}
         ref={ref}
@@ -183,11 +181,11 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
           onClose={() => setTxModalOpen(false)}
         />
       </Portal>
-    </Screen>
+    </>
   )
 })
 
-export default TransactionsFlatListScreen
+export default TransactionsFlatList
 
 const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
   margin-left: ${DEFAULT_MARGIN}px;

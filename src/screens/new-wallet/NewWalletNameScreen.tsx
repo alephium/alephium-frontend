@@ -115,7 +115,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   }
 
   return (
-    <ScrollScreen hasHeader fill {...props}>
+    <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
       <ContentContainer>
         <CenteredInstructions instructions={instructions} />
         <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus error={error} />

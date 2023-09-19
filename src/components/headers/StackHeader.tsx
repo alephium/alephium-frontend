@@ -16,17 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackHeaderProps } from '@react-navigation/stack'
-
 import Button from '~/components/buttons/Button'
 import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
 
-export type StackHeaderCustomProps = StackHeaderProps & BaseHeaderProps
+export type StackHeaderCustomProps = BaseHeaderProps
 
-const StackHeader = ({ navigation, options, ...props }: StackHeaderCustomProps) => {
-  const HeaderLeft = props.back ? (
-    <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-back-outline' }} round />
-  ) : null
+const StackHeader = ({ goBack, options, ...props }: StackHeaderCustomProps) => {
+  const HeaderLeft = goBack ? <Button onPress={goBack} iconProps={{ name: 'arrow-back-outline' }} round /> : null
 
   return <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} showCompactComponents {...props} />
 }

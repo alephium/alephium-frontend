@@ -62,7 +62,7 @@ const SecurityScreen = ({ navigation, ...props }: SecurityScreenProps) => {
   }, [isMnemonicBackedUp, navigation, metadataId, dispatch, posthog])
 
   return (
-    <ScrollScreen hasHeader fill {...props}>
+    <ScrollScreen fill headerOptions={{ headerTitle: 'Security', type: 'stack' }} {...props}>
       <ScreenSection fill>
         <Messages>
           {!isMnemonicBackedUp && (

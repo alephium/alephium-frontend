@@ -101,7 +101,7 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
   }
 
   return (
-    <ScrollScreen fill hasHeader {...props}>
+    <ScrollScreen fill headerOptions={{ headerTitle: 'Edit contact', type: 'stack' }} {...props}>
       <ContactForm initialValues={contact} onSubmit={handleSavePress} />
       <SpinnerModal
         isActive={loading || isDeleting}
