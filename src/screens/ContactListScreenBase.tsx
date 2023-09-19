@@ -18,15 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
-import { TextInput } from 'react-native'
-import Animated from 'react-native-reanimated'
+import { TextInput, ViewProps } from 'react-native'
+import Animated, { AnimateProps } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
-import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
@@ -36,14 +35,15 @@ import { Contact } from '~/types/contacts'
 import { stringToColour } from '~/utils/colors'
 import { filterContacts } from '~/utils/contacts'
 
-export interface ContactListScreenBaseProps extends TabBarPageProps {
+export interface ContactListScreenBaseProps {
   onContactPress: (contactId: Contact['id']) => void
   onNewContactPress?: () => void
+  style?: AnimateProps<ViewProps>['style']
 }
 
 // TODO: Should be converted to a FlatList
 
-const ContactListScreenBase = ({ onContactPress, onNewContactPress, contentStyle }: ContactListScreenBaseProps) => {
+const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: ContactListScreenBaseProps) => {
   const theme = useTheme()
 
   const contacts = useAppSelector(selectAllContacts)
@@ -56,7 +56,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, contentStyle
   }, [contacts, searchTerm])
 
   return (
-    <ScreenContent style={contentStyle}>
+    <Animated.View {...props}>
       {filteredContacts.length === 0 ? (
         <NoContactContainer>
           <NoContactMessageBox>
@@ -109,13 +109,11 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, contentStyle
           </ScreenSection>
         </>
       )}
-    </ScreenContent>
+    </Animated.View>
   )
 }
 
 export default ContactListScreenBase
-
-const ScreenContent = styled(Animated.View)``
 
 const ContactList = styled.View``
 
