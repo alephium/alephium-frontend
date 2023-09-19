@@ -18,8 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { memo, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
+import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
+import { PopIn, PopOut } from '~/animations/reanimated/reanimatedAnimations'
 import NumberKeyboard, { NumberKeyboardKey } from '~/components/keyboard/NumberKeyboard'
 
 interface PinInputProps {
@@ -57,13 +59,18 @@ const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
 }
 
 const Slot = memo(function Slot({ number }: SlotProps) {
-  return <SlotContainer>{number ? <FilledSlot /> : <EmptySlot />}</SlotContainer>
+  return (
+    <SlotContainer>
+      {number ? <FilledSlot entering={PopIn} exiting={PopOut} /> : <EmptySlot entering={PopIn} exiting={PopOut} />}
+    </SlotContainer>
+  )
 })
 
 export default PinCodeInput
 
 const PinCodeInputStyled = styled.View`
   flex: 1;
+  background-color: ${({ theme }) => theme.bg.back2};
 `
 
 const Slots = styled.View`
@@ -74,19 +81,24 @@ const Slots = styled.View`
 `
 
 const SlotContainer = styled.View`
-  width: 12%;
+  width: 8%;
   justify-content: center;
   align-items: center;
+  height: 20px;
 `
 
-const FilledSlot = styled.View`
+const FilledSlot = styled(Animated.View)`
+  position: absolute;
+
   border-radius: 50px;
   background-color: ${({ theme }) => theme.font.primary};
-  height: 12px;
-  width: 12px;
+  height: 16px;
+  width: 16px;
 `
 
-const EmptySlot = styled.View`
+const EmptySlot = styled(Animated.View)`
+  position: absolute;
+
   border-bottom-width: 2px;
   border-bottom-color: ${({ theme }) => theme.font.primary};
 

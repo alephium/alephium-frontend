@@ -18,28 +18,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
-import { ChevronRight as ChevronRightIcon } from 'lucide-react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
-import HighlightRow from '~/components/HighlightRow'
+import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalProps, ScrollModal } from '~/components/layout/Modals'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { getTransactionInfo } from '~/utils/transactions'
 
-interface TransactionModalProps extends ModalProps<ScrollScreenProps> {
+interface TransactionModalProps extends ModalContentProps {
   tx: AddressConfirmedTransaction
 }
 
 const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
-  const theme = useTheme()
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   const { direction, infoType, assets } = getTransactionInfo(tx)
@@ -48,76 +46,61 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   const isMoved = infoType === 'move'
 
   return (
-    <ScrollModal {...props}>
-      <ScreenSectionRow>
+    <ModalContent {...props} verticalGap>
+      <ScreenSectionStyled>
         <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
-        <ExplorerLink onPress={() => openBrowserAsync(explorerTxUrl)}>
-          <ExplorerLinkText>See in explorer</ExplorerLinkText>
-          <ChevronRightIcon size={24} color={theme.global.accent} />
-        </ExplorerLink>
-      </ScreenSectionRow>
-      <ScreenSection>
-        <BoxSurface>
-          <HighlightRow title="Amount" noMaxWidth>
-            {assets.map(({ id, amount, decimals, symbol }) => (
-              <AmountStyled
-                key={id}
-                value={amount}
-                decimals={decimals}
-                suffix={symbol}
-                isUnknownToken={!symbol}
-                highlight={!isMoved}
-                showPlusMinus={!isMoved}
-                fullPrecision
-                bold
-              />
-            ))}
-          </HighlightRow>
-          <HighlightRow title="Timestamp">
-            <AppTextStyled semiBold>{dayjs(tx.timestamp).toDate().toUTCString()}</AppTextStyled>
-          </HighlightRow>
-          <HighlightRow title="Status">
-            <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
-          </HighlightRow>
-          <HighlightRow title="From">
-            {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-          </HighlightRow>
-          <HighlightRow title="To">
-            {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-          </HighlightRow>
-          <HighlightRow title="Fee">
-            <Amount
-              value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
-              fadeDecimals
+        <Button
+          iconProps={{ name: 'exit-outline' }}
+          onPress={() => openBrowserAsync(explorerTxUrl)}
+          round
+          variant="accent"
+          compact
+        />
+      </ScreenSectionStyled>
+
+      <BoxSurface type="highlight">
+        <Row title="Amount" noMaxWidth transparent>
+          {assets.map(({ id, amount, decimals, symbol }) => (
+            <AmountStyled
+              key={id}
+              value={amount}
+              decimals={decimals}
+              suffix={symbol}
+              isUnknownToken={!symbol}
+              highlight={!isMoved}
+              showPlusMinus={!isMoved}
               fullPrecision
               bold
-              showOnDiscreetMode
             />
-          </HighlightRow>
-        </BoxSurface>
-      </ScreenSection>
-    </ScrollModal>
+          ))}
+        </Row>
+        <Row title="Timestamp" transparent>
+          <AppTextStyled semiBold>{dayjs(tx.timestamp).toDate().toUTCString()}</AppTextStyled>
+        </Row>
+        <Row title="Status" transparent>
+          <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
+        </Row>
+        <Row title="From" transparent>
+          {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
+        </Row>
+        <Row title="To" transparent>
+          {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
+        </Row>
+        <Row title="Fee" transparent isLast>
+          <Amount
+            value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
+            fadeDecimals
+            fullPrecision
+            bold
+            showOnDiscreetMode
+          />
+        </Row>
+      </BoxSurface>
+    </ModalContent>
   )
 }
 
 export default TransactionModal
-
-const ScreenSectionRow = styled(ScreenSection)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`
-
-const ExplorerLink = styled.Pressable`
-  flex-direction: row;
-`
-
-const ExplorerLinkText = styled(AppText)`
-  color: ${({ theme }) => theme.global.accent};
-  font-size: 16px;
-  font-weight: 700;
-  margin-right: 10px;
-`
 
 const AmountStyled = styled(Amount)`
   text-align: right;
@@ -125,4 +108,10 @@ const AmountStyled = styled(Amount)`
 
 const AppTextStyled = styled(AppText)`
   text-align: right;
+`
+
+const ScreenSectionStyled = styled(ScreenSection)`
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 `

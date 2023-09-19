@@ -16,116 +16,114 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
+import { colord } from 'colord'
 import { useState } from 'react'
-import { Pressable } from 'react-native'
-import Reanimated, { Extrapolate, interpolate, interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { useTheme } from 'styled-components/native'
+import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
+import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
+import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
+import styled from 'styled-components/native'
 
-import { useScrollContext } from '~/contexts/ScrollContext'
+import AppText from '~/components/AppText'
+import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
 
-const scrollRange = [0, 50]
+type TabsLayout = Record<number, LayoutRectangle>
 
-type Tab = {
-  label: string
-  screen: string
+interface TopTabBarProps {
+  tabLabels: string[]
+  pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
+  onTabPress: (index: number) => void
+  tabBarRef?: AnimatedRef<Reanimated.View>
 }
 
-const tabs: Tab[] = [
-  {
-    label: 'Addresses',
-    screen: 'AddressesScreen'
-  },
-  {
-    label: 'Contacts',
-    screen: 'ContactsScreen'
+const indicatorXPadding = 10
+
+// TODO: Reimplement tap bar to scroll up
+
+const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTabBarProps) => {
+  const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
+
+  const indicatorStyle = useAnimatedStyle(() => {
+    const positionsArray = [...Array(tabLabels.length).keys()]
+    const tabLayoutValues = Object.values(tabLayouts)
+
+    if (tabLayoutValues.length !== positionsArray.length) return {}
+
+    const x = interpolate(
+      pagerScrollEvent.value.offset + pagerScrollEvent.value.position,
+      positionsArray,
+      Object.values(tabLayouts).map((l) => l.x)
+    )
+
+    const width = interpolate(
+      pagerScrollEvent.value.offset + pagerScrollEvent.value.position,
+      positionsArray,
+      Object.values(tabLayouts).map((l) => l.width)
+    )
+
+    return {
+      left: x - indicatorXPadding,
+      width: width + 2 * indicatorXPadding
+    }
+  }, [tabLayouts, tabLabels.length])
+
+  const handleOnTabPress = (tabIndex: number) => {
+    onTabPress(tabIndex)
   }
-]
 
-const TopTabBar = ({ navigation }: BottomTabHeaderProps) => {
-  const { scrollY, scrollToTop } = useScrollContext()
-  const theme = useTheme()
+  const handleTabLayoutEvent = (tabIndex: number, e: LayoutChangeEvent) => {
+    e.persist()
 
-  const [activeTab, setActiveTab] = useState(tabs[0])
-
-  const bgColorRange = [theme.bg.primary, theme.bg.secondary]
-  const borderColorRange = ['transparent', theme.border.secondary]
-  const insets = useSafeAreaInsets()
-
-  const headerStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(scrollY?.value || 0, scrollRange, bgColorRange),
-    borderColor: interpolateColor(scrollY?.value || 0, scrollRange, borderColorRange)
-  }))
-
-  const handleOnTabPress = (tab: Tab) => {
-    setActiveTab(tab)
-    navigation.navigate(tab.screen)
+    setTabLayouts((s) => ({
+      [tabIndex]: e.nativeEvent.layout,
+      ...s
+    }))
   }
 
   return (
-    <Pressable onPress={() => scrollToTop && scrollToTop()}>
-      <Reanimated.View style={[headerStyle, { paddingTop: insets.top }]}>
-        <TabsRow>
-          {tabs.map((tab) => (
-            <TabBarItem
-              key={tab.label}
-              isActive={activeTab.label === tab.label}
-              label={tab.label}
-              navigation={navigation}
-              onPress={() => handleOnTabPress(tab)}
-            />
-          ))}
-        </TabsRow>
-      </Reanimated.View>
-    </Pressable>
+    <TabsRow ref={tabBarRef}>
+      <Indicator style={indicatorStyle} />
+      {tabLabels.map((label, i) => (
+        <TabBarItem
+          key={label}
+          label={label}
+          onPress={() => handleOnTabPress(i)}
+          onLayout={(e) => handleTabLayoutEvent(i, e)}
+        />
+      ))}
+    </TabsRow>
   )
 }
 
-interface TabBarItemProps {
+interface TabBarItemProps extends PressableProps {
   label: string
-  navigation: BottomTabHeaderProps['navigation']
-  onPress: () => void
-  isActive: boolean
 }
 
-const TabBarItem = ({ label, isActive, onPress }: TabBarItemProps) => {
-  const { scrollY } = useScrollContext()
-  const theme = useTheme()
-
-  const textStyle = useAnimatedStyle(() => ({
-    fontSize: interpolate(scrollY?.value || 0, scrollRange, [28, 18], Extrapolate.CLAMP),
-    opacity: isActive ? 1 : 0.3
-  }))
-
-  return (
-    <PressableStyled
-      key={label}
-      accessibilityRole="button"
-      onPress={onPress}
-      style={{ borderColor: isActive ? theme.font.primary : 'transparent' }}
-    >
-      <ReanimatedText style={textStyle}>{label}</ReanimatedText>
-    </PressableStyled>
-  )
-}
+const TabBarItem = ({ label, ...props }: TabBarItemProps) => (
+  <TabBarItemStyled key={label} accessibilityRole="button" {...props}>
+    <AppText semiBold size={16}>
+      {label}
+    </AppText>
+  </TabBarItemStyled>
+)
 
 export default TopTabBar
 
-const TabsRow = styled.View`
+const TabsRow = styled(Reanimated.View)`
   flex-direction: row;
-  gap: 20px;
-  border-bottom-color: ${({ theme }) => theme.border.secondary};
-  border-bottom-width: 1px;
-  padding: 0 20px;
+  gap: 25px;
+  align-items: center;
+  height: 50px;
+  padding: 0 ${DEFAULT_MARGIN + indicatorXPadding}px;
 `
 
-const PressableStyled = styled(Pressable)`
-  border-bottom-width: 1px;
-  margin-bottom: -1px;
+const TabBarItemStyled = styled.Pressable`
+  height: 100%;
+  justify-content: center;
 `
 
-const ReanimatedText = styled(Reanimated.Text)`
-  padding: 18px 0;
-  font-weight: 600;
+const Indicator = styled(Reanimated.View)`
+  position: absolute;
+  height: 70%;
+  border-radius: ${BORDER_RADIUS}px;
+  background-color: ${({ theme }) => colord(theme.button.primary).alpha(0.8).toHex()};
 `

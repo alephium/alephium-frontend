@@ -16,103 +16,109 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
-import { ArrowDown, ArrowUp } from 'lucide-react-native'
 import React from 'react'
-import { RefreshControl } from 'react-native'
+import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressesTokensList from '~/components/AddressesTokensList'
-import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import TabScrollScreen from '~/components/layout/TabScrollScreen'
-import { useScrollEventHandler } from '~/contexts/ScrollContext'
+import ButtonsRow from '~/components/buttons/ButtonsRow'
+import DashboardHeaderActions from '~/components/DashboardHeaderActions'
+import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
+import RefreshSpinner from '~/components/RefreshSpinner'
+import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import InWalletTabsParamList from '~/navigation/inWalletRoutes'
+import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
+import { BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
   extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'>,
-    ScrollScreenProps {}
+    BottomBarScrollScreenProps {}
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
+  const headerHeight = useHeaderHeight()
+  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
+
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
-  const scrollHandler = useScrollEventHandler()
+
+  const buttonsRowStyle = useAnimatedStyle(() => ({
+    height: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 75, defaultSpringConfiguration))
+  }))
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
   }
 
   return (
-    <TabScrollScreen
-      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
-      onScroll={scrollHandler}
+    <DashboardScreenStyled
+      refreshControl={
+        <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
+      }
+      hasBottomBar
+      verticalGap
+      headerOptions={{
+        headerRight: () => <DashboardHeaderActions />,
+        headerLeft: () => <WalletSwitchButton />,
+        headerTitle: activeWalletName
+      }}
       {...props}
     >
-      <ScreenSectionStyled>
-        <BalanceSummaryStyled dateLabel="VALUE TODAY" />
-      </ScreenSectionStyled>
-      <ScreenSection>
-        <ButtonsRow>
-          <SendReceiveButton type="transparent" round onPress={() => navigation.navigate('SendNavigation')}>
-            <ButtonText semiBold>Send</ButtonText>
-            <Icon>
-              <ArrowUp color={theme.font.secondary} size={20} />
-            </Icon>
-          </SendReceiveButton>
-          <SendReceiveButton type="transparent" round onPress={() => navigation.navigate('ReceiveNavigation')}>
-            <ButtonText semiBold>Receive</ButtonText>
-            <Icon>
-              <ArrowDown color={theme.font.secondary} size={20} />
-            </Icon>
-          </SendReceiveButton>
-        </ButtonsRow>
-      </ScreenSection>
+      <BalanceAndButtons>
+        <BalanceSummary dateLabel="VALUE TODAY" />
+        <ButtonsRowContainer style={buttonsRowStyle}>
+          <ButtonsRow sticked hasDivider>
+            <Button
+              onPress={() => navigation.navigate('SendNavigation')}
+              iconProps={{ name: 'arrow-up-outline' }}
+              title="Send"
+              type="transparent"
+              color={theme.global.send}
+              flex
+            />
+            <Button
+              onPress={() => navigation.navigate('ReceiveNavigation')}
+              iconProps={{ name: 'arrow-down-outline' }}
+              title="Receive"
+              type="transparent"
+              color={theme.global.receive}
+              flex
+            />
+          </ButtonsRow>
+        </ButtonsRowContainer>
+      </BalanceAndButtons>
       <AddressesTokensList />
-    </TabScrollScreen>
+    </DashboardScreenStyled>
   )
 }
 
 export default DashboardScreen
 
-const ScreenSectionStyled = styled(ScreenSection)`
-  padding-bottom: 0;
-  padding-top: 0;
+const DashboardScreenStyled = styled(BottomBarScrollScreen)`
+  gap: ${VERTICAL_GAP}px;
 `
 
-const BalanceSummaryStyled = styled(BalanceSummary)`
-  padding: 0px 15px 0px;
-`
-
-const ButtonsRow = styled.View`
-  flex-direction: row;
-  gap: 15px;
-`
-
-const SendReceiveButton = styled(Button)`
+const BalanceAndButtons = styled.View`
   flex: 1;
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.border.primary};
-  padding: 8.5px 10px;
-  height: auto;
 `
 
-const Icon = styled.View`
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border-radius: 100px;
-  padding: 6px;
-  margin-left: auto;
-`
-
-const ButtonText = styled(AppText)`
-  flex: 1;
-  text-align: center;
+const ButtonsRowContainer = styled(Animated.View)`
+  z-index: -1;
+  margin: 0 ${DEFAULT_MARGIN}px;
+  margin-top: -20px;
+  padding-top: 20px;
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-bottom-left-radius: ${BORDER_RADIUS_BIG}px;
+  border-bottom-right-radius: ${BORDER_RADIUS_BIG}px;
+  overflow: hidden;
 `

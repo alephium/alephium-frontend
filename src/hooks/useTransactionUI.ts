@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TransactionInfoType } from '@alephium/sdk'
 import { colord } from 'colord'
 import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat } from 'lucide-react-native'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 
 export const useTransactionUI = (infoType: TransactionInfoType) => {
   const theme = useTheme()

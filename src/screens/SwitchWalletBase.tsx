@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { ArrowDown as ArrowDownIcon, Plus as PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { Alert, ScrollView } from 'react-native'
@@ -28,7 +27,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { BottomModalScreenTitle } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -42,6 +41,7 @@ import {
 } from '~/persistent-storage/wallets'
 import { walletSwitched } from '~/store/activeWalletSlice'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 import { resetNavigationState } from '~/utils/navigation'
 
@@ -103,13 +103,11 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
 
   return (
     <>
-      <ScreenSection>
+      <Content>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
-        <Subtitle>Switch to another wallet?</Subtitle>
-      </ScreenSection>
+        <Subtitle>Select a wallet to switch to.</Subtitle>
 
-      <ScrollView alwaysBounceVertical={false}>
-        <ScreenSection>
+        <ScrollView alwaysBounceVertical={false}>
           <BoxSurface>
             {wallets.map((wallet) => (
               <RadioButtonRow
@@ -121,15 +119,24 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
               />
             ))}
           </BoxSurface>
-        </ScreenSection>
-      </ScrollView>
+        </ScrollView>
+      </Content>
 
-      <BottomScreenSection>
-        <ButtonsRow>
-          <Button title="New wallet" onPress={() => handleButtonPress('create')} Icon={PlusIcon} />
-          <Button title="Import wallet" onPress={() => handleButtonPress('import')} Icon={ArrowDownIcon} />
-        </ButtonsRow>
-      </BottomScreenSection>
+      <ButtonsRow>
+        <Button
+          title="New wallet"
+          onPress={() => handleButtonPress('create')}
+          iconProps={{ name: 'add-outline' }}
+          style={{ flex: 1 }}
+        />
+        <Button
+          title="Import wallet"
+          onPress={() => handleButtonPress('import')}
+          iconProps={{ name: 'arrow-down-outline' }}
+          style={{ flex: 1 }}
+        />
+      </ButtonsRow>
+
       <SpinnerModal isActive={loading} text="Switching wallets..." />
     </>
   )
@@ -141,4 +148,9 @@ const Subtitle = styled(AppText)`
   font-weight: 500;
   font-size: 16px;
   color: ${({ theme }) => theme.font.secondary};
+`
+
+const Content = styled.View`
+  gap: ${VERTICAL_GAP}px;
+  margin-bottom: ${VERTICAL_GAP}px;
 `

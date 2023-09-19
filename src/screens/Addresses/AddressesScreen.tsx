@@ -16,29 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
-import { colord } from 'colord'
-import { ListIcon, PlusIcon, Upload } from 'lucide-react-native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
-import { RefreshControl, View } from 'react-native'
-import { useModalize } from 'react-native-modalize'
+import { View } from 'react-native'
 import { Portal } from 'react-native-portalize'
-import styled, { css, useTheme } from 'styled-components/native'
+import Animated from 'react-native-reanimated'
+import styled, { useTheme } from 'styled-components/native'
 
-import AddressBox from '~/components/AddressBox'
 import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
-import Modalize from '~/components/layout/Modalize'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import TabScrollScreen from '~/components/layout/TabScrollScreen'
-import { useScrollEventHandler } from '~/contexts/ScrollContext'
+import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
+import BottomModal from '~/components/layout/BottomModal'
+import { TabBarPageProps } from '~/components/layout/TabBarPager'
+import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import EditAddressModal from '~/screens/Address/EditAddressModal'
+import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import {
   selectAddressByHash,
   selectAddressIds,
@@ -46,52 +43,44 @@ import {
   selectDefaultAddress,
   syncAddressesData
 } from '~/store/addressesSlice'
-import { themes } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 
-type ScreenProps = StackScreenProps<AddressTabsParamList, 'AddressesScreen'> &
-  StackScreenProps<SendNavigationParamList, 'AddressesScreen'>
-
-interface AddressesScreenProps extends ScreenProps, ScrollScreenProps {}
-
-const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesScreenProps) => {
+const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
+  const posthog = usePostHog()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addresses = useAppSelector(selectAllAddresses)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
-  const theme = useTheme()
-  const scrollHandler = useScrollEventHandler()
-  const posthog = usePostHog()
-  const {
-    ref: addressQuickSelectionModalRef,
-    open: openAddressQuickSelectionModal,
-    close: closeAddressQuickSelectionModal
-  } = useModalize()
-  const {
-    ref: addressSettingsModalRef,
-    open: openAddressSettingsModal,
-    close: closeAddressSettingsModal
-  } = useModalize()
 
-  const [heightCarouselItem, setHeightCarouselItem] = useState(200)
+  const [isQuickSelectionModalOpen, setIsQuickSelectionModalOpen] = useState(false)
+  const [isAddressSettingsModalOpen, setIsAddressSettingsModalOpen] = useState(false)
+
+  const [heightCarouselItem, setHeightCarouselItem] = useState(220)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
 
   useEffect(() => {
-    if (defaultAddress) {
+    if (defaultAddress?.hash) {
       setSelectedAddressHash(defaultAddress.hash)
+      setScrollToCarouselPage(0)
     }
-  }, [defaultAddress])
+  }, [addressHashes, defaultAddress?.hash])
 
   const onAddressCardsScrollEnd = (index: number) => {
-    if (index < addressHashes.length) setSelectedAddressHash(addressHashes[index])
+    if (index < addressHashes.length) {
+      setSelectedAddressHash(addressHashes[index])
+      setScrollToCarouselPage(index)
+    }
   }
 
   const renderAddressCard = ({ item }: { item: string }) => (
     <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height)} key={item}>
-      <AddressCard addressHash={item} onSettingsPress={openAddressSettingsModal} />
+      <AddressCard addressHash={item} onSettingsPress={() => setIsAddressSettingsModalOpen(true)} />
     </View>
   )
 
@@ -101,42 +90,36 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
 
   if (!selectedAddress) return null
 
-  const handleSendFromPress = () => {
-    posthog?.capture('Send: Selected address to send funds from')
-
-    navigation.navigate('SendNavigation', {
-      screen: 'DestinationScreen',
-      params: { fromAddressHash: selectedAddressHash }
-    })
-  }
-
-  const floatingButtonBgColor = selectedAddress.settings.color ?? theme.font.primary
-
   return (
     <>
-      <TabScrollScreen
-        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
-        onScroll={scrollHandler}
-        bounces={false}
+      <BottomBarScrollScreen
+        refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={190} />}
+        onScroll={onScroll}
+        hasBottomBar
         {...props}
       >
-        <ScreenContent>
+        <Content style={contentStyle}>
           <Carousel
             data={addressHashes}
             renderItem={renderAddressCard}
             onScrollEnd={onAddressCardsScrollEnd}
-            padding={30}
-            distance={20}
+            padding={20}
+            distance={10}
             height={heightCarouselItem}
             scrollTo={scrollToCarouselPage}
             FooterComponent={
               <>
                 {addresses.length > 2 && (
-                  <Button onPress={() => openAddressQuickSelectionModal()} Icon={ListIcon} type="transparent" />
+                  <Button
+                    onPress={() => setIsQuickSelectionModalOpen(true)}
+                    iconProps={{ name: 'list-outline' }}
+                    round
+                    compact
+                  />
                 )}
                 <Button
                   onPress={() => navigation.navigate('NewAddressScreen')}
-                  Icon={PlusIcon}
+                  iconProps={{ name: 'add-outline' }}
                   title="New address"
                   color={theme.global.accent}
                   compact
@@ -145,43 +128,32 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
             }
           />
           {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} style={{ paddingBottom: 50 }} />}
-        </ScreenContent>
-      </TabScrollScreen>
-      <FloatingButton
-        Icon={Upload}
-        round
-        bgColor={floatingButtonBgColor}
-        color={colord(floatingButtonBgColor).isDark() ? themes.light.font.contrast : themes.light.font.primary}
-        onPress={handleSendFromPress}
-      />
+        </Content>
+      </BottomBarScrollScreen>
 
       <Portal>
-        <Modalize
-          ref={addressQuickSelectionModalRef}
-          flatListProps={{
-            data: addresses,
-            keyExtractor: (item) => item.hash,
-            renderItem: ({ item: address, index }) => (
-              <AddressBoxStyled
-                key={address.hash}
-                addressHash={address.hash}
-                isFirst={index === 0}
-                isLast={index === addresses.length - 1}
-                onPress={() => {
-                  setSelectedAddressHash(address.hash)
-                  setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === address.hash))
-                  closeAddressQuickSelectionModal()
-                  posthog?.capture('Used address quick navigation')
-                }}
-              />
-            )
-          }}
-        />
-        <Modalize ref={addressSettingsModalRef}>
-          {selectedAddress && (
-            <EditAddressModal addressHash={selectedAddress.hash} onClose={closeAddressSettingsModal} />
+        <BottomModal
+          isOpen={isQuickSelectionModalOpen}
+          onClose={() => setIsQuickSelectionModalOpen(false)}
+          maximisedContent
+          Content={(props) => (
+            <SelectAddressModal
+              onAddressPress={(addressHash) => {
+                setSelectedAddressHash(addressHash)
+                setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === addressHash))
+                props.onClose && props.onClose()
+                posthog?.capture('Used address quick navigation')
+              }}
+              {...props}
+            />
           )}
-        </Modalize>
+        />
+
+        <BottomModal
+          isOpen={isAddressSettingsModalOpen}
+          onClose={() => setIsAddressSettingsModalOpen(false)}
+          Content={(props) => <EditAddressModal addressHash={selectedAddress.hash} {...props} />}
+        />
       </Portal>
     </>
   )
@@ -189,31 +161,7 @@ const AddressesScreen = ({ navigation, route: { params }, ...props }: AddressesS
 
 export default AddressesScreen
 
-const ScreenContent = styled.View`
-  padding-top: 30px;
-`
-
-const FloatingButton = styled(Button)<{ bgColor: string }>`
-  position: absolute;
-  bottom: 18px;
-  right: 18px;
-  background-color: ${({ bgColor }) => bgColor};
-  width: 56px;
-  height: 56px;
-`
-
-const AddressBoxStyled = styled(AddressBox)`
-  margin: 10px 20px;
-
-  ${({ isFirst }) =>
-    isFirst &&
-    css`
-      margin-top: 20px;
-    `}
-
-  ${({ isLast }) =>
-    isLast &&
-    css`
-      margin-bottom: 40px;
-    `}
+const Content = styled(Animated.View)`
+  flex: 1;
+  gap: 10px;
 `

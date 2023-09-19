@@ -20,14 +20,17 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useEffect, useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { PressableProps, Share, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
-import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
+import StackHeader from '~/components/headers/StackHeader'
+import Screen, { ScreenSection } from '~/components/layout/Screen'
+import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
+import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -43,27 +46,19 @@ type ScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
     style?: StyleProp<ViewStyle>
   }
 
-const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) => {
+const ContactScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
+  const listRef = useRef(null)
+  const posthog = usePostHog()
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const contactAddressHash = contact?.address ?? ''
   const selectContactConfirmedTransactions = useMemo(makeSelectContactConfirmedTransactions, [])
   const selectContactPendingTransactions = useMemo(makeSelectContactPendingTransactions, [])
   const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
   const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
-  const posthog = usePostHog()
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Button
-          title="Edit"
-          onPress={() => navigation.navigate('EditContactScreen', { contactId: params.contactId })}
-          type="transparent"
-          variant="accent"
-        />
-      )
-    })
-  }, [navigation, params.contactId])
+  useNavigationScrollHandler(listRef)
+
+  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
 
   if (!contact) return null
 
@@ -95,41 +90,61 @@ const ContactScreen = ({ navigation, route: { params }, style }: ScreenProps) =>
   const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
   return (
-    <TransactionsFlatListScreen
-      confirmedTransactions={confirmedTransactions}
-      pendingTransactions={pendingTransactions}
-      initialNumToRender={8}
-      contentContainerStyle={{ flexGrow: 1 }}
-      ListHeaderComponent={
-        <>
-          <CenteredSection>
-            <ContactIcon color={iconBgColor}>
-              <AppText semiBold size={32} color={textColor}>
-                {contact.name[0].toUpperCase()}
-              </AppText>
-            </ContactIcon>
-            <ContactName semiBold size={28}>
-              {contact.name}
-            </ContactName>
-            <ContactAddress medium size={16} color="secondary" numberOfLines={1} ellipsizeMode="middle">
-              {contact.address}
-            </ContactAddress>
-            <ButtonsRow>
-              <ContactButton Icon={Upload} title={'Send funds'} onPress={handleSendFundsPress} />
-              <ContactButton Icon={Clipboard} title="Copy address" onPress={handleCopyAddressPress} />
-              <ContactButton Icon={Share2Icon} title="Share" onPress={handleShareContactPress} />
-            </ButtonsRow>
-          </CenteredSection>
-          <TransactionsHeaderRow>
-            <ScreenSection>
-              <AppText size={18} semiBold>
-                Transactions
-              </AppText>
-            </ScreenSection>
-          </TransactionsHeaderRow>
-        </>
-      }
-    />
+    <Screen>
+      <TransactionsFlatList
+        confirmedTransactions={confirmedTransactions}
+        pendingTransactions={pendingTransactions}
+        initialNumToRender={8}
+        contentContainerStyle={{ flexGrow: 1 }}
+        onScroll={screenScrollHandler}
+        headerHeight={screenHeaderHeight}
+        ref={listRef}
+        ListHeaderComponent={
+          <>
+            <CenteredSection>
+              <ContactIcon color={iconBgColor}>
+                <AppText semiBold size={32} color={textColor}>
+                  {contact.name[0].toUpperCase()}
+                </AppText>
+              </ContactIcon>
+              <ContactName semiBold size={28}>
+                {contact.name}
+              </ContactName>
+              <ContactAddress medium size={16} color="secondary" numberOfLines={1} ellipsizeMode="middle">
+                {contact.address}
+              </ContactAddress>
+              <ButtonsRow>
+                <ContactButton Icon={Upload} title={'Send funds'} onPress={handleSendFundsPress} />
+                <ContactButton Icon={Clipboard} title="Copy address" onPress={handleCopyAddressPress} />
+                <ContactButton Icon={Share2Icon} title="Share" onPress={handleShareContactPress} />
+              </ButtonsRow>
+            </CenteredSection>
+            <TransactionsHeaderRow>
+              <ScreenSection>
+                <AppText size={18} semiBold>
+                  Transactions
+                </AppText>
+              </ScreenSection>
+            </TransactionsHeaderRow>
+          </>
+        }
+      />
+      <StackHeader
+        options={{
+          headerRight: () => (
+            <Button
+              title="Edit"
+              onPress={() => navigation.navigate('EditContactScreen', { contactId: params.contactId })}
+              type="transparent"
+              variant="accent"
+            />
+          )
+        }}
+        goBack={navigation.goBack}
+        scrollY={screenScrollY}
+        onLayout={screenHeaderLayoutHandler}
+      />
+    </Screen>
   )
 }
 
@@ -137,6 +152,7 @@ export default ContactScreen
 
 const CenteredSection = styled(ScreenSection)`
   align-items: center;
+  margin-bottom: 25px;
 `
 
 // TODO: DRY
@@ -201,6 +217,5 @@ const ButtonText = styled(AppText)`
 
 const TransactionsHeaderRow = styled.View`
   border-bottom-width: 1px;
-  border-color: ${({ theme }) => theme.border.secondary};
-  margin-bottom: 7px;
+  margin-bottom: 15px;
 `

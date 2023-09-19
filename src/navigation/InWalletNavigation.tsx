@@ -16,75 +16,64 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Album as AddressesIcon, ArrowLeftRight as ArrowsIcon, List as ListIcon } from 'lucide-react-native'
+import React from 'react'
 import { Host } from 'react-native-portalize'
-import { useTheme } from 'styled-components/native'
 
-import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import FooterMenu from '~/components/footers/FooterMenu'
-import DefaultHeader from '~/components/headers/DefaultHeader'
-import TopTabBar from '~/components/TopTabBar'
-import WalletSwitchButton from '~/components/WalletSwitchButton'
-import { ScrollContextProvider } from '~/contexts/ScrollContext'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
-import InWalletTabsParamList from '~/navigation/inWalletRoutes'
 import DashboardScreen from '~/screens/DashboardScreen'
 import TransfersScreen from '~/screens/TransfersScreen'
 
+export type InWalletTabsParamList = {
+  DashboardScreen: undefined
+  AddressesTabNavigation: undefined
+  TransfersScreen: undefined
+}
+
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 
-const InWalletTabsNavigation = () => {
-  const theme = useTheme()
-
-  return (
-    <ScrollContextProvider>
-      <Host>
-        <InWalletTabs.Navigator
-          screenOptions={{
-            headerStyle: [{ elevation: 0, shadowOpacity: 0 }],
-            headerTitle: ''
-          }}
-          tabBar={(props) => <FooterMenu {...props} />}
-        >
-          <InWalletTabs.Screen
-            name="DashboardScreen"
-            component={DashboardScreen}
-            options={{
-              title: 'Overview',
-              tabBarIcon: ({ color, size }) => <ListIcon color={color} size={size} strokeWidth={1.5} />,
-              header: (props) => (
-                <DefaultHeader
-                  HeaderRight={<DashboardHeaderActions />}
-                  HeaderLeft={<WalletSwitchButton />}
-                  bgColor={theme.bg.primary}
-                  {...props}
-                />
-              )
-            }}
-          />
-          <InWalletTabs.Screen
-            name="TransfersScreen"
-            component={TransfersScreen}
-            options={{
-              title: 'Transfers',
-              tabBarIcon: ({ color, size }) => <ArrowsIcon color={color} size={size} strokeWidth={1.5} />,
-              header: (props) => <DefaultHeader HeaderLeft="Transfers" {...props} />
-            }}
-          />
-          <InWalletTabs.Screen
-            name="AddressesTabNavigation"
-            component={AddressesTabNavigation}
-            options={{
-              title: 'Addresses',
-              tabBarIcon: ({ color, size }) => <AddressesIcon color={color} size={size} strokeWidth={1.5} />,
-              header: (props) => <TopTabBar {...props} />
-            }}
-          />
-        </InWalletTabs.Navigator>
-      </Host>
-    </ScrollContextProvider>
-  )
-}
+const InWalletTabsNavigation = () => (
+  <Host>
+    <InWalletTabs.Navigator
+      tabBar={(props) => <FooterMenu {...props} />}
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <InWalletTabs.Screen
+        name="DashboardScreen"
+        component={DashboardScreen}
+        options={{
+          title: 'Overview',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
+          )
+        }}
+      />
+      <InWalletTabs.Screen
+        name="TransfersScreen"
+        component={TransfersScreen}
+        options={{
+          title: 'Transfers',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
+          )
+        }}
+      />
+      <InWalletTabs.Screen
+        name="AddressesTabNavigation"
+        component={AddressesTabNavigation}
+        options={{
+          title: 'Addresses',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
+          )
+        }}
+      />
+    </InWalletTabs.Navigator>
+  </Host>
+)
 
 export default InWalletTabsNavigation

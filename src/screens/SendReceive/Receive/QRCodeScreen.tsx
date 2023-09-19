@@ -16,25 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { Clipboard as ClipboardIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useEffect } from 'react'
-import { Text } from 'react-native'
+import { useCallback } from 'react'
 import QRCode from 'react-qr-code'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { CenteredScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Row from '~/components/Row'
+import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import { CloseButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectAddressByHash } from '~/store/addressesSlice'
+import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 import { copyAddressToClipboard } from '~/utils/addresses'
 
 interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCodeScreen'>, ScrollScreenProps {}
@@ -44,20 +46,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
   const posthog = usePostHog()
 
-  useEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => (
-        <ContinueButton
-          onPress={() => {
-            navigation.goBack()
-            navigation.goBack()
-          }}
-          text="Cancel"
-        />
-      )
-    })
-  }, [navigation])
+  useScrollToTopOnFocus()
 
   const handleCopyAddressPress = () => {
     posthog?.capture('Copied address', { note: 'Receive screen' })
@@ -65,27 +54,37 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     copyAddressToClipboard(params.addressHash)
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      navigation.getParent()?.setOptions({
+        headerRight: () => <CloseButton onPress={() => navigation.getParent()?.goBack()} />
+      })
+    }, [navigation])
+  )
+
   return (
-    <ScrollScreen {...props}>
-      <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." surtitle="RECEIVE" />
-      <CenteredScreenSection>
-        <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={params.addressHash} />
-      </CenteredScreenSection>
-      <CenteredScreenSection>
-        <Button title="Copy address" onPress={handleCopyAddressPress} Icon={ClipboardIcon} />
-      </CenteredScreenSection>
+    <ScrollScreen hasNavigationHeader verticalGap {...props}>
+      <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." />
+      <ScreenSection centered>
+        <QRCodeContainer>
+          <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={params.addressHash} />
+        </QRCodeContainer>
+      </ScreenSection>
+      <ScreenSection centered>
+        <Button title="Copy address" onPress={handleCopyAddressPress} iconProps={{ name: 'copy-outline' }} />
+      </ScreenSection>
       <ScreenSection>
         <BoxSurface>
-          <HighlightRow title="Address">
+          <Row title="Address" isLast={!address?.settings.label}>
             <AddressBadge addressHash={params.addressHash} />
-          </HighlightRow>
+          </Row>
 
           {address?.settings.label && (
-            <HighlightRow>
-              <Text numberOfLines={1} ellipsizeMode="middle">
+            <Row isLast>
+              <AppText numberOfLines={1} ellipsizeMode="middle">
                 {params.addressHash}
-              </Text>
-            </HighlightRow>
+              </AppText>
+            </Row>
           )}
         </BoxSurface>
       </ScreenSection>
@@ -94,3 +93,10 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 }
 
 export default QRCodeScreen
+
+const QRCodeContainer = styled.View`
+  margin: 15px 0;
+  padding: 25px;
+  border-radius: ${BORDER_RADIUS_BIG}px;
+  background-color: ${({ theme }) => theme.bg.primary};
+`

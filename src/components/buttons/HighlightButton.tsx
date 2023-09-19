@@ -16,13 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { LinearGradient } from 'expo-linear-gradient'
 import { MotiView } from 'moti'
-import { useTheme } from 'styled-components'
-import styled, { css } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Button, { ButtonProps } from '~/components/buttons/Button'
-import { themes } from '~/style/themes'
 
 interface HighlightButtonProps extends ButtonProps {
   title: string
@@ -30,31 +27,27 @@ interface HighlightButtonProps extends ButtonProps {
 }
 
 const HighlightButton = ({ title, wide, ...props }: HighlightButtonProps) => {
-  const { yellow, orange, red, purple, cyan } = useTheme().gradient
+  const theme = useTheme()
 
   return (
     <ButtonWrapper
       from={{ scale: 1 }}
-      animate={{ scale: 1.01 }}
+      animate={{ scale: 1.02 }}
       transition={{
         loop: true,
         type: 'timing',
         duration: 500
       }}
     >
-      <Button title={title} style={{ color: themes.dark.font.primary }} wide={wide} {...props}>
-        <GradientContainer
-          from={{ scale: 1 }}
-          animate={{ scale: 1.5 }}
-          transition={{
-            loop: true,
-            type: 'timing',
-            duration: 500
-          }}
-        >
-          <StyledLinearGradient colors={[yellow, orange, red, purple, cyan]} end={{ x: 1, y: 1 }} />
-        </GradientContainer>
-      </Button>
+      <Button
+        title={title}
+        style={{ backgroundColor: theme.global.accent }}
+        color={theme.font.primary}
+        wide={wide}
+        variant="accent"
+        type="primary"
+        {...props}
+      />
     </ButtonWrapper>
   )
 }
@@ -64,21 +57,4 @@ export default HighlightButton
 const ButtonWrapper = styled(MotiView)`
   width: 100%;
   align-items: center;
-`
-
-const fullScreen = css`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-`
-
-const GradientContainer = styled(MotiView)`
-  ${fullScreen}
-  z-index: -1;
-`
-
-const StyledLinearGradient = styled(LinearGradient)`
-  ${fullScreen}
 `

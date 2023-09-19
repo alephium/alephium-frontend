@@ -22,31 +22,35 @@ import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
 
 interface ScreenIntroProps {
-  surtitle: 'SEND' | 'RECEIVE'
   title: string
-  subtitle: string
+  surtitle?: 'SEND' | 'RECEIVE'
+  subtitle?: string
 }
 
 const ScreenIntro = ({ surtitle, title, subtitle }: ScreenIntroProps) => (
   <ScreenSection>
-    <AppText size={15} semiBold color="secondary">
-      {surtitle}
-    </AppText>
+    {surtitle && (
+      <AppText size={15} semiBold color="secondary">
+        {surtitle}
+      </AppText>
+    )}
     <Title size={32} semiBold>
       {title}
     </Title>
-    <Subtitle size={15} medium>
-      {subtitle}
-    </Subtitle>
+    {subtitle && (
+      <Subtitle size={16} medium color="secondary">
+        {subtitle}
+      </Subtitle>
+    )}
   </ScreenSection>
 )
 
 export default ScreenIntro
 
 const Title = styled(AppText)`
-  margin: 5px 0 22px;
+  margin-bottom: 20px;
 `
 
 const Subtitle = styled(AppText)`
-  width: 276px;
+  width: 70%;
 `

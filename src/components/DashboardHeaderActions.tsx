@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { Settings, ShieldAlert, WifiOff } from 'lucide-react-native'
 import { memo } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import Toast from 'react-native-root-toast'
@@ -42,15 +41,15 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   return (
     <View style={style}>
       {networkStatus === 'offline' && (
-        <Button onPress={showOfflineMessage} Icon={WifiOff} type="transparent" variant="alert" />
+        <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-offline-outline' }} variant="alert" round />
       )}
       <Button
         onPress={() => navigation.navigate('SecurityScreen')}
-        Icon={ShieldAlert}
-        type="transparent"
+        iconProps={{ name: 'warning-outline' }}
         variant={isMnemonicBackedUp ? 'default' : 'alert'}
+        round
       />
-      <Button onPress={() => navigation.navigate('SettingsScreen')} Icon={Settings} type="transparent" />
+      <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings-outline' }} round />
     </View>
   )
 }

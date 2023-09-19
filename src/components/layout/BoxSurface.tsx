@@ -16,13 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components/native'
+import styled, { DefaultTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
-export default styled.View`
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.primary};
+export default styled.View<{ type?: keyof DefaultTheme['bg'] }>`
+  background-color: ${({ theme, type }) => theme.bg[type || 'secondary']};
   border-radius: ${BORDER_RADIUS}px;
   overflow: hidden;
 `

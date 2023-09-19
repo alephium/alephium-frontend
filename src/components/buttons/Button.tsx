@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { colord } from 'colord'
-import { LucideProps } from 'lucide-react-native'
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -27,14 +27,15 @@ import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export interface ButtonProps extends PressableProps {
   title?: string
-  type?: 'primary' | 'secondary' | 'transparent'
+  type?: 'primary' | 'secondary' | 'transparent' | 'tint'
   variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert'
   style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
   centered?: boolean
-  Icon?: (props: LucideProps) => JSX.Element
+  iconProps?: ComponentProps<typeof Ionicons>
   color?: string
   round?: boolean
+  flex?: boolean
   children?: ReactNode
   compact?: boolean
 }
@@ -45,22 +46,23 @@ const Button = ({
   type = 'primary',
   variant = 'default',
   disabled,
-  Icon,
+  iconProps,
   children,
   round,
   color,
   centered,
   compact,
+  flex,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
 
-  const hasOnlyIcon = !!Icon && !title && !children
+  const hasOnlyIcon = !!iconProps && !title && !children
 
   const bg = {
-    default: theme.bg.secondary,
+    default: theme.button.primary,
     contrast: theme.font.primary,
-    accent: theme.global.accent,
+    accent: type === 'primary' ? theme.button.primary : theme.button.secondary,
     valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
     transparent: 'transparent'
@@ -81,51 +83,50 @@ const Button = ({
       opacity: pressed || disabled ? 0.5 : 1,
       backgroundColor: {
         primary: bg,
-        secondary: 'transparent',
-        transparent: 'transparent'
+        secondary: bg,
+        transparent: 'transparent',
+        tint: color ? colord(color).alpha(0.05).toHex() : ''
       }[type],
       borderWidth: {
         primary: 0,
-        secondary: 2,
-        transparent: 0
+        secondary: 0,
+        transparent: 0,
+        tint: 0
       }[type],
       borderColor: {
         primary: 'transparent',
         secondary: bg,
-        transparent: undefined
+        transparent: undefined,
+        tint: undefined
       }[type],
-      width: round ? 56 : props.wide ? '75%' : hasOnlyIcon ? 45 : 'auto',
-      height: compact ? 'auto' : hasOnlyIcon ? 45 : 55,
-      borderRadius: round ? 100 : BORDER_RADIUS,
+      flex: flex ? 1 : 0,
+      width: round ? (compact ? 30 : 43) : props.wide ? '75%' : hasOnlyIcon ? 43 : 'auto',
+      height: compact ? 30 : hasOnlyIcon ? 43 : 55,
+      borderRadius: round || compact ? 100 : BORDER_RADIUS,
       justifyContent: round ? 'center' : undefined,
+      alignItems: round ? 'center' : undefined,
       minWidth: centered ? 200 : undefined,
       marginVertical: centered ? 0 : undefined,
       marginHorizontal: centered ? 'auto' : undefined,
-      paddingVertical: compact ? 7 : !hasOnlyIcon ? 0 : undefined,
-      paddingHorizontal: compact ? 20 : !hasOnlyIcon ? 25 : undefined,
+      paddingVertical: round ? 0 : compact ? 5 : !hasOnlyIcon ? 0 : undefined,
+      paddingHorizontal: round ? 0 : compact ? 10 : !hasOnlyIcon ? 25 : undefined,
       gap: compact ? 5 : undefined
     },
     style
   ]
 
-  if (!Icon && !title && !children)
+  if (!iconProps && !title && !children)
     throw new Error('At least one of the following properties is required: icon, title, or children')
 
   return (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
-      {Icon && (
-        <Icon
-          style={!hasOnlyIcon && !compact ? { marginRight: 15 } : undefined}
-          color={font}
-          size={compact ? 20 : undefined}
-        />
-      )}
       {title && (
-        <ButtonText style={{ color: font }} semiBold>
+        <AppText style={{ flexGrow: 1, color: font, textAlign: 'center' }} medium size={compact ? 14 : 16}>
           {title}
-        </ButtonText>
+        </AppText>
       )}
       {children}
+      {iconProps && <Ionicons color={font} size={compact ? 18 : hasOnlyIcon ? 22 : 20} {...iconProps} />}
     </Pressable>
   )
 }
@@ -135,8 +136,4 @@ export default styled(Button)`
   justify-content: center;
   overflow: hidden;
   flex-direction: row;
-`
-
-const ButtonText = styled(AppText)`
-  text-align: center;
 `

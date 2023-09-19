@@ -21,7 +21,7 @@ import { Dimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
+import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
 import { NFT } from '~/types/assets'
 
 interface NFTsGridProps {
@@ -32,7 +32,8 @@ interface NFTsGridProps {
 const gap = 12
 const screenPadding = 20
 const nftsPerRow = 3
-const totalGapSize = (nftsPerRow - 1) * gap + screenPadding * 2
+const nftsGridPadding = DEFAULT_MARGIN
+const totalGapSize = (nftsPerRow - 1) * gap + screenPadding * 2 + nftsGridPadding * 2
 
 const NFTsGrid = ({ nfts, isLoading }: NFTsGridProps) => {
   const theme = useTheme()
@@ -41,7 +42,7 @@ const NFTsGrid = ({ nfts, isLoading }: NFTsGridProps) => {
   const nftWidth = (windowWidth - totalGapSize) / nftsPerRow
 
   return (
-    <NFTsGridStyled gap={gap} screenPadding={screenPadding}>
+    <NFTsGridStyled>
       {nfts.map((nft) => (
         <NFTThumbnail key={nft.id} style={{ width: nftWidth }} source={{ uri: nft.image }} />
       ))}
@@ -63,11 +64,11 @@ const NFTsGrid = ({ nfts, isLoading }: NFTsGridProps) => {
 
 export default NFTsGrid
 
-const NFTsGridStyled = styled.View<{ gap: number; screenPadding: number }>`
+const NFTsGridStyled = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
-  padding: ${({ screenPadding }) => `20px 0 0 ${screenPadding}px`};
-  gap: ${({ gap }) => gap}px;
+  padding: 20px 0 0 ${nftsGridPadding}px;
+  gap: ${gap}px;
 `
 
 const NoNFTsMessage = styled.View`

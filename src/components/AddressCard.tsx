@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { calculateAmountWorth } from '@alephium/sdk'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Copy, SettingsIcon } from 'lucide-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -27,13 +26,14 @@ import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { themes, ThemeType } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
-import { copyAddressToClipboard } from '~/utils/addresses'
 import { currencies } from '~/utils/currencies'
 
 interface AddressCardProps {
@@ -64,18 +64,27 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
     <LinearGradient style={style} colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
       <Header>
         <AddressBadgeContainer>
+          {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
           <AddressBadgeStyled
             addressHash={address.hash}
             hideSymbol
+            color={textColor}
             textStyle={{
               fontSize: 23,
-              fontWeight: '700',
-              color: textColor
+              fontWeight: '700'
             }}
+            showCopyBtn
           />
-          {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
+          <AppText size={14} colorTheme={textColorTheme}>
+            Group {address.group}
+          </AppText>
         </AddressBadgeContainer>
-        <Button Icon={SettingsIcon} type="transparent" color={textColor} onPress={onSettingsPress} />
+        <Button
+          iconProps={{ name: 'settings-outline' }}
+          type="transparent"
+          color={textColor}
+          onPress={onSettingsPress}
+        />
       </Header>
       <Amounts>
         <FiatAmount
@@ -89,15 +98,10 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
         <Amount value={BigInt(address.balance)} colorTheme={textColorTheme} size={15} medium suffix="ALPH" />
       </Amounts>
       <BottomRow>
-        <CopyAddressBadge onPress={() => copyAddressToClipboard(address.hash)}>
-          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" colorTheme={textColorTheme}>
-            {address.hash}
-          </HashEllipsed>
-          <Copy size={11} color={textColor} />
-        </CopyAddressBadge>
-        <AppText size={14} colorTheme={textColorTheme}>
-          Group {address.group}
-        </AppText>
+        <ButtonsRow sticked>
+          <Button iconProps={{ name: 'arrow-up-outline' }} title="Send" flex type="transparent" />
+          <Button iconProps={{ name: 'arrow-down-outline' }} title="Receive" flex type="transparent" />
+        </ButtonsRow>
       </BottomRow>
     </LinearGradient>
   )
@@ -105,8 +109,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
 export default styled(AddressCard)`
   border-radius: 16px;
-  height: 200px;
-  padding: 16px 19px 16px 23px;
+  height: 220px;
   justify-content: space-between;
 `
 
@@ -116,6 +119,7 @@ const Header = styled.View`
   max-width: 100%;
   align-items: center;
   gap: 18px;
+  padding: 15px 15px 0px 15px;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
@@ -130,28 +134,19 @@ const AddressBadgeContainer = styled.View`
   gap: 18px;
 `
 
-const Amounts = styled.View``
+const Amounts = styled.View`
+  padding: 15px;
+  margin-left: ${DEFAULT_MARGIN}px;
+`
 
 const FiatAmount = styled(Amount)`
   margin-bottom: 5px;
-`
-
-const HashEllipsed = styled(AppText)`
-  flex-shrink: 1;
-`
-
-const CopyAddressBadge = styled.Pressable`
-  flex-direction: row;
-  align-items: center;
-  padding: 5px 10px;
-  gap: 10px;
-  max-width: 158px;
-  border-radius: 22px;
-  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.14).toHex()};
 `
 
 const BottomRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
+  background-color: rgba(0, 0, 0, 0.2);
 `

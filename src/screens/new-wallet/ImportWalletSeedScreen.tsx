@@ -31,7 +31,8 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
-import Screen, { ScreenProps, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import { ScreenProps, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import PasswordModal from '~/components/PasswordModal'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -222,7 +223,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const isImportButtonVisible = selectedWords.length >= 12 || enablePasteForDevelopment
 
   return (
-    <Screen {...props}>
+    <ScrollScreen fill headerOptions={{ headerTitle: 'Import wallet', type: 'stack' }} {...props}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -302,7 +303,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
         )}
         <SpinnerModal isActive={loading} text="Importing wallet..." />
       </KeyboardAvoidingView>
-    </Screen>
+    </ScrollScreen>
   )
 }
 

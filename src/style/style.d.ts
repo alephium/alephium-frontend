@@ -38,6 +38,11 @@ declare module 'styled-components' {
       contrast: string
       highlight: string
     }
+    button: {
+      primary: string
+      secondary: string
+      tertiary: string
+    }
     shadow: {
       primary: string
       secondary: string
@@ -54,6 +59,8 @@ declare module 'styled-components' {
       star: string
       pale: string
       complementary: string
+      send: string
+      receive: string
     }
     gradient: {
       yellow: string

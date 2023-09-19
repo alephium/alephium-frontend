@@ -16,8 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export const BORDER_RADIUS = 17 //px
-export const BORDER_RADIUS_SMALL = 7 //px
+// ALL VALUES IN PIXELS
 
-export const INPUTS_HEIGHT = 70 //px
-export const INPUTS_PADDING = 21 //px
+export const BORDER_RADIUS_BIG = 16
+export const BORDER_RADIUS = 9
+export const BORDER_RADIUS_SMALL = 6
+
+export const INPUTS_HEIGHT = 60
+export const INPUTS_PADDING = 16
+
+export const DEFAULT_MARGIN = 15
+export const VERTICAL_GAP = 25

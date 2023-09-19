@@ -19,19 +19,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
+import { useCallback } from 'react'
 import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
-import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Row from '~/components/Row'
 import { useSendContext } from '~/contexts/SendContext'
+import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import { ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -40,42 +42,44 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
 
+  useScrollToTopOnFocus()
+
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]
 
-  useFocusEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => (
-        <ContinueButton text="Send" onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))} />
-      )
-    })
-  })
+  useFocusEffect(
+    useCallback(() => {
+      navigation.getParent()?.setOptions({
+        headerRight: () => (
+          <ContinueButton
+            onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
+            iconProps={{ name: 'send-outline' }}
+          />
+        )
+      })
+    }, [navigation, sendTransaction])
+  )
 
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <ScrollScreen {...props}>
-      <ScreenIntro
-        title="Verify"
-        subtitle="Please, double check that everything is correct before sending."
-        surtitle="SEND"
-      />
+    <ScrollScreen hasNavigationHeader verticalGap {...props}>
+      <ScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
       <ScreenSection>
         <BoxSurface>
-          <HighlightRow title="Sending" titleColor="secondary">
+          <Row title="Sending" titleColor="secondary">
             <AssetAmounts>
               {assets.map(({ id, amount }) =>
                 amount ? <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} /> : null
               )}
             </AssetAmounts>
-          </HighlightRow>
-          <HighlightRow title="To" titleColor="secondary">
+          </Row>
+          <Row title="To" titleColor="secondary">
             <AddressBadge addressHash={toAddress} />
-          </HighlightRow>
-          <HighlightRow title="From" titleColor="secondary">
+          </Row>
+          <Row title="From" titleColor="secondary" isLast>
             <AddressBadge addressHash={fromAddress} />
-          </HighlightRow>
+          </Row>
         </BoxSurface>
       </ScreenSection>
       <ScreenSection>

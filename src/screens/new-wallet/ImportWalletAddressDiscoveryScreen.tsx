@@ -21,10 +21,11 @@ import LottieView from 'lottie-react-native'
 import { usePostHog } from 'posthog-react-native'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/wallet.json'
+import animationSrc from '~/animations/lottie/wallet.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
@@ -50,7 +51,7 @@ const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWall
   }
 
   return (
-    <Screen {...props}>
+    <ScrollScreen fill headerOptions={{ headerTitle: 'Active addresses', type: 'stack' }} {...props}>
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
       </AnimationContainer>
@@ -65,7 +66,7 @@ const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWall
           <Button title="Later" type="secondary" onPress={handleLaterPress} />
         </ButtonStack>
       </ActionsContainer>
-    </Screen>
+    </ScrollScreen>
   )
 }
 
