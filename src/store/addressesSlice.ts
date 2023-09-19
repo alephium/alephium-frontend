@@ -127,7 +127,10 @@ export const syncAddressTransactionsNextPage = createAsyncThunk(
 // TODO: Same as in desktop wallet, share state?
 export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   'addresses/syncAllAddressesTransactionsNextPage',
-  async (_, { getState, dispatch }): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
+  async (
+    payload: { minTxs: number } | undefined,
+    { getState, dispatch }
+  ): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
     dispatch(transactionsLoadingStarted())
 
     const state = getState() as RootState
@@ -147,12 +150,14 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
 
       if (transactions.length === 0) break
 
-      newTransactionsFound = addresses.some((address) => {
+      const newTransactions = addresses.filter((address) => {
         const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
         const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
 
         return newTxHashes.length > 0
       })
+
+      newTransactionsFound = newTransactions.length > (payload?.minTxs ?? 0)
 
       nextPageToLoad += 1
     }
