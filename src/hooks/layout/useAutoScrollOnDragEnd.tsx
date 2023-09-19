@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { RefObject } from 'react'
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView } from 'react-native'
 
-import { scrollEndThreshold } from '~/components/headers/NavigationBaseHeader'
+import { scrollEndThreshold } from '~/components/headers/BaseHeader'
 import { scrollScreenTo } from '~/utils/layout'
 
 type UseAutoScrollReturnedHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => void

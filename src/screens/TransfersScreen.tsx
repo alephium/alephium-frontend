@@ -23,9 +23,9 @@ import { useSharedValue } from 'react-native-reanimated'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
-import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
+import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useScreenNavigationScrollHandler from '~/hooks/layout/useScreenNavigationScrollHandler'
+import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
@@ -47,7 +47,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
-  useScreenNavigationScrollHandler(listRef)
+  useNavigationScrollHandler(listRef)
   useScrollToTopOnBlur(listRef)
 
   const [fullHeaderHeight, setFullHeaderHeight] = useState(0)
@@ -55,7 +55,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <Screen>
-      <TransactionsFlatListScreen
+      <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
         initialNumToRender={8}

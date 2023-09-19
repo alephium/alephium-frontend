@@ -25,10 +25,6 @@ import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
 
 export type NavigationBaseHeaderProps = Omit<BaseHeaderProps, 'goBack' | 'scrollY'>
 
-export const scrollEndThreshold = 80
-
-// TODO: Reimplement tap bar to scroll up
-
 const NavigationBaseHeader = (props: NavigationBaseHeaderProps) => {
   const { scrollY } = useNavigationScrollContext()
   const navigation = useNavigation()

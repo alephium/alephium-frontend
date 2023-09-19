@@ -34,7 +34,7 @@ import { useTheme } from 'styled-components/native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import TopTabBar from '~/components/TopTabBar'
-import useScreenNavigationScrollHandler from '~/hooks/layout/useScreenNavigationScrollHandler'
+import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -63,7 +63,7 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
   })
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
-  useScreenNavigationScrollHandler()
+  useNavigationScrollHandler()
 
   const updateTabBarY = (newValue?: number) => {
     if (newValue && tabBarPageY.value !== newValue) {

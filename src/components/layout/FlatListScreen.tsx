@@ -27,7 +27,7 @@ import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useScreenNavigationScrollHandler from '~/hooks/layout/useScreenNavigationScrollHandler'
+import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
@@ -45,7 +45,7 @@ const FlatListScreen = <T,>({
   const insets = useSafeAreaInsets()
   const flatListRef = useRef<FlatList>(null)
   const headerheight = useHeaderHeight()
-  const navigationScrollHandler = useScreenNavigationScrollHandler(flatListRef)
+  const navigationScrollHandler = useNavigationScrollHandler(flatListRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
   const theme = useTheme()
 

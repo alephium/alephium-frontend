@@ -26,7 +26,7 @@ import BaseHeader, { HeaderOptions } from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import Screen from '~/components/layout/Screen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useScreenNavigationScrollHandler from '~/hooks/layout/useScreenNavigationScrollHandler'
+import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
@@ -59,7 +59,7 @@ const ScrollScreen = ({
   const navigation = useNavigation()
 
   const headerheight = useHeaderHeight()
-  const navigationScrollHandler = useScreenNavigationScrollHandler(viewRef)
+  const navigationScrollHandler = useNavigationScrollHandler(viewRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
   const insets = useSafeAreaInsets()
 

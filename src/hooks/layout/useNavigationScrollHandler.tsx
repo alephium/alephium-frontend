@@ -24,7 +24,7 @@ import { ScrollableViewRef, useNavigationScrollContext } from '~/contexts/Naviga
 
 const scrollDirectionDeltaThreshold = 10
 
-const useScreenNavigationScrollHandler = (viewRefForScrollTopOnHeaderPress?: ScrollableViewRef) => {
+const useNavigationScrollHandler = (viewRefForScrollTopOnHeaderPress?: ScrollableViewRef) => {
   const { scrollY, scrollDirection, activeScreenRef } = useNavigationScrollContext()
 
   useFocusEffect(
@@ -57,4 +57,4 @@ const useScreenNavigationScrollHandler = (viewRefForScrollTopOnHeaderPress?: Scr
   return scrollHandler
 }
 
-export default useScreenNavigationScrollHandler
+export default useNavigationScrollHandler

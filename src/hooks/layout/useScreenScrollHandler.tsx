@@ -21,13 +21,17 @@ import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from 'reac
 import { useSharedValue } from 'react-native-reanimated'
 
 const useScreenScrollHandler = () => {
-  const [screenHeaderHeight, setScreenHeaderHeight] = useState(0)
   const screenScrollY = useSharedValue(0)
 
-  const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
-    (screenScrollY.value = e.nativeEvent.contentOffset.y)
+  const [screenHeaderHeight, setScreenHeaderHeight] = useState(0)
 
-  const screenHeaderLayoutHandler = (e: LayoutChangeEvent) => setScreenHeaderHeight(e.nativeEvent.layout.height)
+  const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    screenScrollY.value = e.nativeEvent.contentOffset.y
+  }
+
+  const screenHeaderLayoutHandler = (e: LayoutChangeEvent) => {
+    setScreenHeaderHeight(e.nativeEvent.layout.height)
+  }
 
   return { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler }
 }

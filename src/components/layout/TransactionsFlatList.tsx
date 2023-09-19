@@ -40,7 +40,7 @@ import { isPendingTx } from '~/utils/transactions'
 import TransactionListItem from '../TransactionListItem'
 import { ScreenSectionTitle } from './Screen'
 
-interface TransactionsFlatListScreenProps extends Partial<FlatListProps<AddressTransaction>> {
+interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransaction>> {
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
   addressHash?: AddressHash
@@ -56,7 +56,7 @@ type TransactionItem = {
 
 const transactionKeyExtractor = (tx: AddressTransaction) => `${tx.hash}-${tx.address.hash}`
 
-const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScreen(
+const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   {
     confirmedTransactions,
     pendingTransactions,
@@ -66,7 +66,7 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
     style,
     headerHeight = 0,
     ...props
-  }: TransactionsFlatListScreenProps,
+  }: TransactionsFlatListProps,
   ref: ForwardedRef<FlatList<AddressTransaction>>
 ) {
   const theme = useTheme()
@@ -185,7 +185,7 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
   )
 })
 
-export default TransactionsFlatListScreen
+export default TransactionsFlatList
 
 const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
   margin-left: ${DEFAULT_MARGIN}px;
