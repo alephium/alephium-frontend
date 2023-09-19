@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
@@ -51,6 +52,8 @@ const errorInstructionSet: Instruction[] = [
 ]
 
 const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
+  const insets = useSafeAreaInsets()
+
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [encryptedWallet, setEncryptedWallet] = useState<ActiveWalletState>()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -101,22 +104,19 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: 
   if (shouldHideModal) return null
 
   return (
-    <>
-      <ModalWithBackdrop animationType="fade" visible closeModal={onClose}>
-        {encryptedWallet && (
-          <ModalContent>
-            {onClose && (
-              <HeaderSection>
-                <Button type="transparent" iconProps={{ name: 'close-outline' }} onPress={onClose} />
-              </HeaderSection>
-            )}
-            <CenteredInstructions instructions={shownInstructions} />
-            <PinCodeInput pinLength={pinLength} onPinEntered={decryptMnemonic} />
-          </ModalContent>
-        )}
-      </ModalWithBackdrop>
-      {/*<SpinnerModal isActive={loading} text="Verifying pin..." /> CANT SHOW 2 MODALS ON IOS*/}
-    </>
+    <ModalWithBackdrop animationType="fade" visible closeModal={onClose}>
+      {encryptedWallet && (
+        <ModalContent style={{ paddingTop: insets.top }}>
+          {onClose && (
+            <HeaderSection>
+              <Button type="transparent" iconProps={{ name: 'close-outline' }} onPress={onClose} />
+            </HeaderSection>
+          )}
+          <CenteredInstructions instructions={shownInstructions} />
+          <PinCodeInput pinLength={pinLength} onPinEntered={decryptMnemonic} />
+        </ModalContent>
+      )}
+    </ModalWithBackdrop>
   )
 }
 
@@ -125,7 +125,7 @@ export default ConfirmWithAuthModal
 const ModalContent = styled.View`
   flex: 1;
   width: 100%;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.back2};
   padding-top: 40px;
 `
 
