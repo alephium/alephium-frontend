@@ -16,16 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
+import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
 import { makeSelectAddressesKnownFungibleTokens, selectAddressByHash } from '~/store/addressesSlice'
@@ -38,38 +40,38 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
 
+  useScrollToTopOnFocus()
+
   const isContinueButtonDisabled = assetAmounts.length < 1
 
   useEffect(() => {
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
   }, [params?.toAddressHash, setToAddress])
 
-  useEffect(() => {
-    navigation.getParent()?.setOptions({
-      headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-      headerRight: () => (
-        <ContinueButton
-          onPress={() =>
-            buildTransaction({
-              onBuildSuccess: () => navigation.navigate('VerifyScreen'),
-              onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
-            })
-          }
-          disabled={isContinueButtonDisabled}
-        />
-      )
-    })
-  }, [buildTransaction, isContinueButtonDisabled, navigation])
+  useFocusEffect(
+    useCallback(() => {
+      navigation.getParent()?.setOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        headerRight: () => (
+          <ContinueButton
+            onPress={() =>
+              buildTransaction({
+                onBuildSuccess: () => navigation.navigate('VerifyScreen'),
+                onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
+              })
+            }
+            disabled={isContinueButtonDisabled}
+          />
+        )
+      })
+    }, [buildTransaction, isContinueButtonDisabled, navigation])
+  )
 
   if (!address) return null
 
   return (
-    <ScrollScreen {...props}>
-      <ScreenIntro
-        title="Assets"
-        subtitle="With Alephium, you can send multiple assets in one transaction."
-        surtitle="SEND"
-      />
+    <ScrollScreen hasNavigationHeader verticalGap {...props}>
+      <ScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />
       <ScreenSection>
         <AssetsList>
           {knownFungibleTokens.map((asset, index) => (
@@ -83,6 +85,4 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
 export default AssetsScreen
 
-const AssetsList = styled.View`
-  gap: 20px;
-`
+const AssetsList = styled.View``

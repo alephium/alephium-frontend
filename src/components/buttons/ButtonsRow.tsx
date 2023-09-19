@@ -18,33 +18,44 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 interface ButtonsRowProps {
   children: ReactNode[]
+  sticked?: boolean
   style?: StyleProp<ViewStyle>
+  hasDivider?: boolean
 }
 
-const ButtonsRow = ({ children, style }: ButtonsRowProps) => (
-  <View style={style}>
-    {children.map((button, index) => (
-      <ButtonContainer key={index} isFirst={index === 0}>
-        {button}
-      </ButtonContainer>
-    ))}
-  </View>
-)
+const ButtonsRow = ({ children, hasDivider, style }: ButtonsRowProps) => {
+  const buttons = children.filter((child) => !!child)
+
+  return (
+    <View style={style}>
+      {buttons.map((c, i) => (
+        <ButtonsContainer key={`ButtonsContainer-${i}`}>
+          {c}
+          {hasDivider && i !== buttons.length - 1 && <Divider />}
+        </ButtonsContainer>
+      ))}
+    </View>
+  )
+}
 
 export default styled(ButtonsRow)`
+  flex: 1;
+  flex-direction: row;
+  gap: ${({ sticked }) => (sticked ? 0 : 20)}px;
+`
+
+const ButtonsContainer = styled.View`
+  flex: 1;
   flex-direction: row;
 `
 
-const ButtonContainer = styled.View<{ isFirst: boolean }>`
-  flex: 1;
-  margin-left: 10px;
-  ${({ isFirst }) =>
-    isFirst &&
-    css`
-      margin-left: 0;
-    `}
+const Divider = styled.View`
+  width: 1px;
+  margin-right: -1px;
+  height: 100%;
+  background-color: ${({ theme }) => theme.border.primary};
 `

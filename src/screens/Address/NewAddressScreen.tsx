@@ -21,7 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
 
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -36,7 +36,7 @@ import {
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed } from '~/utils/crypto'
 
-interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'NewAddressScreen'>, ScreenProps {}
+interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'NewAddressScreen'>, ScrollScreenProps {}
 
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
@@ -81,10 +81,10 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <Screen {...props}>
+    <ScrollScreen fill verticalGap headerOptions={{ headerTitle: 'New address', type: 'stack' }} {...props}>
       <AddressForm initialValues={initialValues} onSubmit={handleGeneratePress} allowGroupSelection />
       <SpinnerModal isActive={loading} text="Generating address..." />
-    </Screen>
+    </ScrollScreen>
   )
 }
 

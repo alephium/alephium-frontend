@@ -18,20 +18,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
-import { Plus as PlusIcon, Search, Trash2 } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
+import { useState } from 'react'
 import { Alert } from 'react-native'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import HighlightRow from '~/components/HighlightRow'
+import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
-import Modalize from '~/components/layout/Modalize'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
@@ -46,6 +45,7 @@ import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
 import { analyticsToggled, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { resetNavigationState } from '~/utils/navigation'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
@@ -63,8 +63,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const posthog = usePostHog()
-  const { ref: switchNetworkModalRef, open: openSwitchNetworkModal, close: closeSwitchNetworkModal } = useModalize()
-  const { ref: currencySelectModalRef, open: openCurrencySelectModal, close: closeCurrencySelectModal } = useModalize()
+
+  const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
+  const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
@@ -122,45 +123,45 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <ScrollScreen {...props}>
+      <ScrollScreenStyled verticalGap headerOptions={{ headerTitle: 'Settings', type: 'stack' }} {...props}>
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>
-            <HighlightRow title="Discreet mode" subtitle="Hide all amounts">
+            <Row title="Discreet mode" subtitle="Hide all amounts">
               <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
-            </HighlightRow>
-            <HighlightRow title="Require authentication" subtitle="For important actions">
+            </Row>
+            <Row title="Require authentication" subtitle="For important actions">
               <Toggle value={requireAuth} onValueChange={toggleAuthRequirement} />
-            </HighlightRow>
-            <HighlightRow title="Use dark theme" subtitle="Try it, it's nice">
+            </Row>
+            <Row title="Use dark theme" subtitle="Try it, it's nice">
               <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
-            </HighlightRow>
+            </Row>
             {hasAvailableBiometrics && (
-              <HighlightRow title="Biometrics authentication" subtitle="Enhance your security">
+              <Row title="Biometrics authentication" subtitle="Enhance your security">
                 <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
-              </HighlightRow>
+              </Row>
             )}
-            <HighlightRow title="Analytics" subtitle="Help us improve your experience!">
+            <Row title="Analytics" subtitle="Help us improve your experience!">
               <Toggle value={analytics} onValueChange={toggleAnalytics} />
-            </HighlightRow>
-            <HighlightRow onPress={() => openCurrencySelectModal()} title="Currency">
+            </Row>
+            <Row onPress={() => setIsCurrencySelectModalOpen(true)} title="Currency" isLast>
               <AppText bold>{currentCurrency}</AppText>
-            </HighlightRow>
+            </Row>
           </BoxSurface>
         </ScreenSection>
         <ScreenSection>
           <ScreenSectionTitle>Networks</ScreenSectionTitle>
           <BoxSurface>
-            <HighlightRow title="Current network" onPress={openSwitchNetworkModal}>
+            <Row title="Current network" onPress={() => setIsSwitchNetworkModalOpen(true)} isLast>
               <AppText bold>{capitalize(currentNetworkName)}</AppText>
-            </HighlightRow>
+            </Row>
           </BoxSurface>
         </ScreenSection>
         <ScreenSection>
           <ScreenSectionTitle>Addresses</ScreenSectionTitle>
           <Button
             title="Scan for active addresses"
-            Icon={Search}
+            iconProps={{ name: 'search-outline' }}
             onPress={() => navigation.navigate('AddressDiscoveryScreen')}
           />
         </ScreenSection>
@@ -168,27 +169,41 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ScreenSectionTitle>Wallets</ScreenSectionTitle>
           <ButtonStyled
             title="Add a new wallet"
-            Icon={PlusIcon}
+            iconProps={{ name: 'add-outline' }}
             variant="valid"
             onPress={() => navigation.navigate('LandingScreen')}
           />
-          <ButtonStyled title="Delete this wallet" Icon={Trash2} variant="alert" onPress={handleDeleteButtonPress} />
+          <ButtonStyled
+            title="Delete this wallet"
+            iconProps={{ name: 'trash-outline' }}
+            variant="alert"
+            onPress={handleDeleteButtonPress}
+          />
         </ScreenSection>
-      </ScrollScreen>
+      </ScrollScreenStyled>
 
       <Portal>
-        <Modalize ref={switchNetworkModalRef}>
-          <SwitchNetworkModal onClose={closeSwitchNetworkModal} />
-        </Modalize>
-        <Modalize ref={currencySelectModalRef}>
-          <CurrencySelectModal onClose={closeCurrencySelectModal} />
-        </Modalize>
+        <BottomModal
+          isOpen={isSwitchNetworkModalOpen}
+          onClose={() => setIsSwitchNetworkModalOpen(false)}
+          Content={(props) => <SwitchNetworkModal onClose={() => setIsSwitchNetworkModalOpen(false)} {...props} />}
+        />
+
+        <BottomModal
+          isOpen={isCurrencySelectModalOpen}
+          onClose={() => setIsCurrencySelectModalOpen(false)}
+          Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
+        />
       </Portal>
     </>
   )
 }
 
 export default SettingsScreen
+
+const ScrollScreenStyled = styled(ScrollScreen)`
+  gap: ${VERTICAL_GAP}px;
+`
 
 const ButtonStyled = styled(Button)`
   margin-bottom: 24px;

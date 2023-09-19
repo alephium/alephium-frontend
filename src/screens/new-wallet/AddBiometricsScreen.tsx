@@ -22,10 +22,11 @@ import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/fingerprint.json'
+import animationSrc from '~/animations/lottie/fingerprint.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -79,7 +80,7 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
   }
 
   return (
-    <Screen {...props}>
+    <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
       </AnimationContainer>
@@ -91,7 +92,7 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
         </ButtonStack>
       </ActionsContainer>
       <SpinnerModal isActive={loading} text="Enabling biometrics..." />
-    </Screen>
+    </ScrollScreen>
   )
 }
 

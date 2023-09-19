@@ -16,27 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ComponentProps, forwardRef } from 'react'
-import { Modalize as RNModalize } from 'react-native-modalize'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useNavigation } from '@react-navigation/native'
+import { useEffect } from 'react'
 
-const Modalize = forwardRef(function Modalize({ children, ...props }: ComponentProps<typeof RNModalize>, ref) {
-  const insets = useSafeAreaInsets()
+import { ScrollableViewRef } from '~/contexts/NavigationScrollContext'
+import { scrollScreenTo } from '~/utils/layout'
 
-  return (
-    <RNModalize
-      ref={ref}
-      modalTopOffset={insets.top}
-      adjustToContentHeight
-      openAnimationConfig={{
-        timing: { duration: 360 },
-        spring: { stiffness: 140, damping: 30 }
-      }}
-      {...props}
-    >
-      {children}
-    </RNModalize>
-  )
-})
+const useScrollToTopOnBlur = (viewRef: ScrollableViewRef) => {
+  const navigation = useNavigation()
 
-export default Modalize
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      if (viewRef) scrollScreenTo(0, viewRef)
+    })
+
+    return unsubscribe
+  }, [navigation, viewRef])
+}
+
+export default useScrollToTopOnBlur

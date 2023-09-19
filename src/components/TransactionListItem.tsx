@@ -103,5 +103,10 @@ const AmountColumn = styled.View`
 `
 
 const AssetLogos = styled.View`
+  flex-shrink: 0;
+  flex: 1;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   gap: 5px;
 `

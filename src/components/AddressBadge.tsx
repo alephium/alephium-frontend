@@ -16,29 +16,43 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StyleProp, TextStyle, View, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
+import { copyAddressToClipboard } from '~/utils/addresses'
 
-interface AddressBadgeProps {
+interface AddressBadgeProps extends PressableProps {
   addressHash: AddressHash
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
+  color?: string
+  showCopyBtn?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, style }: AddressBadgeProps) => {
+const AddressBadge = ({
+  addressHash,
+  hideSymbol = false,
+  textStyle,
+  color,
+  showCopyBtn,
+  ...props
+}: AddressBadgeProps) => {
+  const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
+  const textColor = color || theme.font.primary
+
   return (
-    <View style={style}>
+    <Pressable onLongPress={() => !showCopyBtn && copyAddressToClipboard(addressHash)} {...props}>
       {!address ? (
-        <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
+        <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
           {addressHash}
         </Label>
       ) : (
@@ -53,17 +67,27 @@ const AddressBadge = ({ addressHash, hideSymbol = false, textStyle, style }: Add
             </Symbol>
           )}
           {address.settings.label ? (
-            <Label numberOfLines={1} style={textStyle}>
+            <Label numberOfLines={1} style={textStyle} color={textColor}>
               {address.settings.label}
             </Label>
           ) : (
-            <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle}>
+            <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
               {address.hash}
             </Label>
           )}
         </>
       )}
-    </View>
+      {showCopyBtn && address?.hash && (
+        <CopyAddressButton
+          onPress={() => copyAddressToClipboard(address?.hash)}
+          iconProps={{ name: 'copy-outline' }}
+          type="transparent"
+          color={color}
+          round
+          compact
+        />
+      )}
+    </Pressable>
   )
 }
 
@@ -73,7 +97,7 @@ export default styled(AddressBadge)`
 `
 
 const Symbol = styled.View`
-  margin-right: 10px;
+  margin-right: 5px;
 `
 
 const Dot = styled.View<{ color?: string }>`
@@ -87,3 +111,5 @@ const Label = styled(AppText)`
   font-weight: 600;
   flex-shrink: 1;
 `
+
+const CopyAddressButton = styled(Button)``

@@ -16,18 +16,104 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ScrollView, ScrollViewProps, View } from 'react-native'
+import { useHeaderHeight } from '@react-navigation/elements'
+import { useNavigation } from '@react-navigation/native'
+import { RefObject, useRef } from 'react'
+import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import Screen from './Screen'
+import BaseHeader, { HeaderOptions } from '~/components/headers/BaseHeader'
+import StackHeader from '~/components/headers/StackHeader'
+import Screen from '~/components/layout/Screen'
+import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
+import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
+import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export type ScrollScreenProps = ScrollViewProps
+export interface ScrollScreenBaseProps {
+  hasNavigationHeader?: boolean
+  contentContainerStyle?: StyleProp<ViewStyle>
+  fill?: boolean
+  headerOptions?: HeaderOptions
+}
 
-const ScrollScreen = ({ children, style, ...props }: ScrollScreenProps) => (
-  <Screen style={style}>
-    <ScrollView contentOffset={{ y: 0, x: 0 }} scrollEventThrottle={16} alwaysBounceVertical={false} {...props}>
-      <View>{children}</View>
-    </ScrollView>
-  </Screen>
-)
+export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
+  containerStyle?: StyleProp<ViewStyle>
+  scrollViewRef?: RefObject<ScrollView>
+  verticalGap?: number | boolean
+}
+
+const ScrollScreen = ({
+  children,
+  hasNavigationHeader,
+  style,
+  containerStyle,
+  contentContainerStyle,
+  verticalGap,
+  fill,
+  headerOptions,
+  ...props
+}: ScrollScreenProps) => {
+  const viewRef = useRef<ScrollView>(null)
+  const navigation = useNavigation()
+
+  const headerheight = useHeaderHeight()
+  const navigationScrollHandler = useNavigationScrollHandler(viewRef)
+  const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
+  const insets = useSafeAreaInsets()
+
+  useScrollToTopOnBlur(viewRef)
+
+  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+
+  const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
+
+  return (
+    <Screen style={containerStyle}>
+      <ScrollView
+        ref={viewRef}
+        scrollEventThrottle={16}
+        alwaysBounceVertical={true}
+        onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
+        onScrollEndDrag={scrollEndHandler}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={[
+          {
+            paddingTop: headerOptions
+              ? screenHeaderHeight + DEFAULT_MARGIN
+              : hasNavigationHeader
+              ? headerheight + DEFAULT_MARGIN
+              : 0,
+            flex: fill ? 1 : undefined
+          },
+          contentContainerStyle
+        ]}
+        {...props}
+      >
+        <View
+          style={[
+            {
+              gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
+              paddingBottom: insets.bottom + DEFAULT_MARGIN,
+              flex: fill ? 1 : undefined
+            },
+            style
+          ]}
+        >
+          {children}
+        </View>
+      </ScrollView>
+      {headerOptions && (
+        <HeaderComponent
+          goBack={navigation.goBack}
+          options={headerOptions}
+          scrollY={screenScrollY}
+          onLayout={screenHeaderLayoutHandler}
+        />
+      )}
+    </Screen>
+  )
+}
 
 export default ScrollScreen

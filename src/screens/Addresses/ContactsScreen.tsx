@@ -16,32 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
-import { ScrollViewProps } from 'react-native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import TabScrollScreen from '~/components/layout/TabScrollScreen'
-import { useScrollEventHandler } from '~/contexts/ScrollContext'
-import { AddressTabsParamList } from '~/navigation/AddressesTabNavigation'
+import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 import { Contact } from '~/types/contacts'
 
-interface ScreenProps
-  extends ScrollViewProps,
-    StackScreenProps<AddressTabsParamList & RootStackParamList, 'ContactsScreen'>,
-    ScrollScreenProps {}
-
-const ContactsScreen = ({ navigation, style, ...props }: ScreenProps) => {
-  const scrollHandler = useScrollEventHandler()
+const ContactsScreen = ({ onScroll, contentStyle }: TabBarPageProps) => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   return (
-    <TabScrollScreen {...props} onScroll={scrollHandler}>
-      <ContactListScreenBase
-        onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
-        onNewContactPress={() => navigation.navigate('NewContactScreen')}
-      />
-    </TabScrollScreen>
+    <ContactListScreenBase
+      onScroll={onScroll}
+      onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
+      onNewContactPress={() => navigation.navigate('NewContactScreen')}
+      contentStyle={contentStyle}
+    />
   )
 }
 

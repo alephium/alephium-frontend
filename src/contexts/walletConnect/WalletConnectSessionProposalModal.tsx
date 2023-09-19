@@ -28,9 +28,8 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
-import { ModalProps, ScrollModal } from '~/components/layout/Modals'
-import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -50,7 +49,7 @@ import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed } from '~/utils/crypto'
 import { isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
-interface WalletConnectSessionProposalModalProps extends ModalProps<ScrollScreenProps> {
+interface WalletConnectSessionProposalModalProps extends ModalContentProps {
   approveProposal: (signerAddress: Address) => Promise<void>
   rejectProposal: () => Promise<void>
   proposalEvent: SessionProposalEvent
@@ -125,7 +124,7 @@ const WalletConnectSessionProposalModal = ({
   }
 
   return (
-    <ScrollModal {...props}>
+    <ModalContent verticalGap {...props}>
       <ScreenSection>
         {metadata?.icons && metadata.icons.length > 0 && metadata.icons[0] && (
           <DAppIcon source={{ uri: metadata.icons[0] }} />
@@ -154,12 +153,12 @@ const WalletConnectSessionProposalModal = ({
               </AppText>
             </InfoBox>
           </ScreenSection>
-          <BottomScreenSection>
+          <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} />
-              <Button title="Switch network" variant="accent" onPress={handleSwitchNetworkPress} />
+              <Button title="Decline" variant="alert" onPress={rejectProposal} style={{ flex: 1 }} />
+              <Button title="Switch network" variant="accent" onPress={handleSwitchNetworkPress} style={{ flex: 1 }} />
             </ButtonsRow>
-          </BottomScreenSection>
+          </ScreenSection>
         </>
       ) : !signerAddress ? (
         <>
@@ -171,12 +170,17 @@ const WalletConnectSessionProposalModal = ({
               </AppText>
             </InfoBox>
           </ScreenSection>
-          <BottomScreenSection>
+          <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} />
-              <Button title="Generate new address" variant="accent" onPress={handleAddressGeneratePress} />
+              <Button title="Decline" variant="alert" onPress={rejectProposal} style={{ flex: 1 }} />
+              <Button
+                title="Generate new address"
+                variant="accent"
+                onPress={handleAddressGeneratePress}
+                style={{ flex: 1 }}
+              />
             </ButtonsRow>
-          </BottomScreenSection>
+          </ScreenSection>
         </>
       ) : (
         <>
@@ -185,17 +189,18 @@ const WalletConnectSessionProposalModal = ({
             <SectionSubtitle color="secondary">Tap to change the address to connect with.</SectionSubtitle>
             <AddressBox addressHash={signerAddress.hash} onPress={() => setShowAlternativeSignerAddresses(true)} />
           </ScreenSection>
-          <BottomScreenSection>
+          <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} />
+              <Button title="Decline" variant="alert" onPress={rejectProposal} style={{ flex: 1 }} />
               <Button
                 title="Accept"
                 variant="valid"
                 onPress={() => approveProposal(signerAddress)}
                 disabled={!signerAddress}
+                style={{ flex: 1 }}
               />
             </ButtonsRow>
-          </BottomScreenSection>
+          </ScreenSection>
         </>
       )}
       {showAlternativeSignerAddresses && (
@@ -225,7 +230,7 @@ const WalletConnectSessionProposalModal = ({
         </ScreenSection>
       )}
       <SpinnerModal isActive={!!loading} text={loading} />
-    </ScrollModal>
+    </ModalContent>
   )
 }
 

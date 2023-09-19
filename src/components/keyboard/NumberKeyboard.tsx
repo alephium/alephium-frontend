@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Icon from '@expo/vector-icons/Feather'
 import { PressableProps } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -30,10 +31,11 @@ export type NumberKeyboardKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | 
 
 const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
   const theme = useTheme()
+  const insets = useSafeAreaInsets()
 
   const keyButtonStyle: PressableProps['style'] = ({ pressed }) => [
     {
-      backgroundColor: pressed ? theme.bg.back1 : theme.bg.secondary
+      backgroundColor: pressed ? theme.bg.highlight : 'transparent'
     }
   ]
 
@@ -57,7 +59,7 @@ const NumberKeyboard = ({ onPress }: NumberKeyboardProps) => {
   )
 
   return (
-    <KeyboardContainer>
+    <KeyboardContainer style={{ paddingBottom: insets.bottom }}>
       {renderRow(['1', '2', '3'])}
       {renderRow(['4', '5', '6'])}
       {renderRow(['7', '8', '9'])}
@@ -72,6 +74,7 @@ const KeyboardContainer = styled.View`
   width: 100%;
   border-top-color: ${({ theme }) => theme.border.secondary};
   border-top-width: 1px;
+  background-color: ${({ theme }) => theme.bg.tertiary};
 `
 
 const KeyboardRow = styled.View`
@@ -83,7 +86,7 @@ const KeyboardButton = styled.Pressable`
   flex: 1;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  border-radius: 100px;
 `
 
 const KeyText = styled(AppText)`

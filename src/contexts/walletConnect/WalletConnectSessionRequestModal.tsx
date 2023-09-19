@@ -38,17 +38,16 @@ import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import HighlightRow from '~/components/HighlightRow'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalProps } from '~/components/layout/Modals'
-import { BottomModalScreenTitle, BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import Row from '~/components/Row'
 import { useAppDispatch } from '~/hooks/redux'
 import { transactionSent } from '~/store/addressesSlice'
 import { SessionRequestData } from '~/types/walletConnect'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
-interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> extends ModalProps<ScrollScreenProps> {
+interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> extends ModalContentProps {
   requestData: T
   onApprove: (
     sendTransaction: () => Promise<
@@ -171,7 +170,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
   }
 
   return (
-    <ScrollScreen {...props}>
+    <ModalContent verticalGap {...props}>
       {metadata && (
         <ScreenSection>
           {metadata.icons && metadata.icons.length > 0 && metadata.icons[0] && (
@@ -198,53 +197,53 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           {(requestData.type === 'transfer' || requestData.type === 'call-contract') &&
             requestData.wcData.assetAmounts &&
             requestData.wcData.assetAmounts.length > 0 && (
-              <HighlightRow title="Sending" titleColor="secondary">
+              <Row title="Sending" titleColor="secondary">
                 <AssetAmounts>
                   {requestData.wcData.assetAmounts.map(({ id, amount }) =>
                     amount ? <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} /> : null
                   )}
                 </AssetAmounts>
-              </HighlightRow>
+              </Row>
             )}
-          <HighlightRow title="From" titleColor="secondary">
+          <Row title="From" titleColor="secondary">
             <AddressBadge addressHash={requestData.wcData.fromAddress.hash} />
-          </HighlightRow>
+          </Row>
 
           {requestData.type === 'deploy-contract' || requestData.type === 'call-contract' ? (
             metadata?.name && (
-              <HighlightRow title="To" titleColor="secondary">
+              <Row title="To" titleColor="secondary">
                 <AppText semiBold>{metadata.name}</AppText>
-              </HighlightRow>
+              </Row>
             )
           ) : (
-            <HighlightRow title="To" titleColor="secondary">
+            <Row title="To" titleColor="secondary">
               <AddressBadge addressHash={requestData.wcData.toAddress} />
-            </HighlightRow>
+            </Row>
           )}
 
           {requestData.type === 'deploy-contract' && (
             <>
               {!!requestData.wcData.initialAlphAmount?.amount && (
-                <HighlightRow title="Initial amount" titleColor="secondary">
+                <Row title="Initial amount" titleColor="secondary">
                   <AssetAmountWithLogo
                     assetId={ALPH.id}
                     logoSize={18}
                     amount={BigInt(requestData.wcData.initialAlphAmount.amount)}
                   />
-                </HighlightRow>
+                </Row>
               )}
               {requestData.wcData.issueTokenAmount && (
-                <HighlightRow title="Issue token amount" titleColor="secondary">
+                <Row title="Issue token amount" titleColor="secondary">
                   <AppText>{requestData.wcData.issueTokenAmount}</AppText>
-                </HighlightRow>
+                </Row>
               )}
             </>
           )}
 
           {(requestData.type === 'deploy-contract' || requestData.type === 'call-contract') && (
-            <HighlightRow title="Bytecode" titleColor="secondary">
+            <Row title="Bytecode" titleColor="secondary">
               <AppText>{requestData.wcData.bytecode}</AppText>
-            </HighlightRow>
+            </Row>
           )}
         </BoxSurface>
       </ScreenSection>
@@ -256,13 +255,13 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           <Amount value={fees} suffix="ALPH" medium />
         </FeeBox>
       </ScreenSection>
-      <BottomScreenSection>
+      <ScreenSection centered>
         <ButtonsRow>
           <Button title="Reject" variant="alert" onPress={onReject} />
           <Button title="Approve" variant="valid" onPress={handleApprovePress} />
         </ButtonsRow>
-      </BottomScreenSection>
-    </ScrollScreen>
+      </ScreenSection>
+    </ModalContent>
   )
 }
 

@@ -38,7 +38,6 @@ import { getSdkError } from '@walletconnect/utils'
 import { partition } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import Toast from 'react-native-root-toast'
 
@@ -48,7 +47,7 @@ import {
   buildDeployContractTransaction,
   buildTransferTransaction
 } from '~/api/transactions'
-import Modalize from '~/components/layout/Modalize'
+import BottomModal from '~/components/layout/BottomModal'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
@@ -82,22 +81,12 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const addresses = useAppSelector(selectAllAddresses)
   const posthog = usePostHog()
 
-  const {
-    ref: sessionProposalModalRef,
-    open: openSessionProposalModal,
-    close: closeSessionProposalModal
-  } = useModalize()
-  const {
-    ref: walletConnectSessionRequestModalRef,
-    open: openSessionRequestModal,
-    close: closeSessionRequestModal
-  } = useModalize()
-
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
   const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
   const [sessionRequestData, setSessionRequestData] = useState<SessionRequestData>()
+  const [isSessionProposalModalOpen, setIsSessionProposalModalOpen] = useState(false)
   const [isSessionRequestModalOpen, setIsSessionRequestModalOpen] = useState(false)
   const [loading, setLoading] = useState('')
 
@@ -193,7 +182,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             setSessionRequestEvent(requestEvent)
 
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
-            openSessionRequestModal()
+            setIsSessionRequestModalOpen(true)
 
             break
           }
@@ -239,7 +228,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             setSessionRequestEvent(requestEvent)
 
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
-            openSessionRequestModal()
+            setIsSessionRequestModalOpen(true)
 
             break
           }
@@ -297,7 +286,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             setSessionRequestEvent(requestEvent)
 
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
-            openSessionRequestModal()
+            setIsSessionRequestModalOpen(true)
 
             break
           }
@@ -334,27 +323,17 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
     // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
     // TODO: Figure out a way to avoid re-renders
-    [
-      walletConnectClient,
-      addresses,
-      posthog,
-      openSessionRequestModal,
-      respondToWalletConnect,
-      respondToWalletConnectWithError
-    ]
+    [walletConnectClient, addresses, posthog, respondToWalletConnect, respondToWalletConnectWithError]
   )
 
-  const onSessionProposal = useCallback(
-    async (sessionProposalEvent: SessionProposalEvent) => {
-      console.log('📣 RECEIVED EVENT PROPOSAL TO CONNECT TO A DAPP!')
-      console.log('👉 ARGS:', sessionProposalEvent)
-      console.log('⏳ WAITING FOR PROPOSAL APPROVAL OR REJECTION')
+  const onSessionProposal = useCallback(async (sessionProposalEvent: SessionProposalEvent) => {
+    console.log('📣 RECEIVED EVENT PROPOSAL TO CONNECT TO A DAPP!')
+    console.log('👉 ARGS:', sessionProposalEvent)
+    console.log('⏳ WAITING FOR PROPOSAL APPROVAL OR REJECTION')
 
-      setSessionProposalEvent(sessionProposalEvent)
-      openSessionProposalModal()
-    },
-    [openSessionProposalModal]
-  )
+    setSessionProposalEvent(sessionProposalEvent)
+    setIsSessionProposalModalOpen(true)
+  }, [])
 
   const onSessionDelete = useCallback(
     async (args: SignClientTypes.EventArguments['session_delete']) => {
@@ -587,7 +566,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.error('❌ WC: Error while approving and acknowledging', e)
     } finally {
       setLoading('')
-      closeSessionProposalModal()
+      setIsSessionProposalModalOpen(false)
     }
   }
 
@@ -605,7 +584,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.error('❌ WC: Error while approving and acknowledging', e)
     } finally {
       setLoading('')
-      closeSessionProposalModal()
+      setIsSessionProposalModalOpen(false)
     }
   }
 
@@ -674,37 +653,42 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }
 
   useEffect(() => {
-    if (sessionRequestEvent === undefined && isSessionRequestModalOpen) closeSessionRequestModal()
-  }, [closeSessionRequestModal, isSessionRequestModalOpen, sessionRequestEvent])
+    if (sessionRequestEvent === undefined && isSessionRequestModalOpen) setIsSessionRequestModalOpen(false)
+  }, [isSessionRequestModalOpen, sessionRequestEvent])
 
   return (
     <WalletConnectContext.Provider value={{ pairWithDapp, unpairFromDapp, walletConnectClient, activeSessions }}>
       {children}
       <Portal>
-        <Modalize ref={sessionProposalModalRef}>
-          {sessionProposalEvent && (
-            <WalletConnectSessionProposalModal
-              onClose={closeSessionProposalModal}
-              approveProposal={approveProposal}
-              rejectProposal={rejectProposal}
-              proposalEvent={sessionProposalEvent}
-            />
-          )}
-        </Modalize>
-        <Modalize
-          ref={walletConnectSessionRequestModalRef}
-          onOpen={() => setIsSessionRequestModalOpen(true)}
-          onClose={handleSessionRequestModalClose}
-        >
-          {sessionRequestData && (
-            <WalletConnectSessionRequestModal
-              requestData={sessionRequestData}
-              onApprove={handleApprovePress}
-              onReject={handleRejectPress}
-              metadata={activeSessionMetadata}
-            />
-          )}
-        </Modalize>
+        {sessionProposalEvent && (
+          <BottomModal
+            isOpen={isSessionProposalModalOpen}
+            onClose={() => setIsSessionProposalModalOpen(false)}
+            Content={(props) => (
+              <WalletConnectSessionProposalModal
+                approveProposal={approveProposal}
+                rejectProposal={rejectProposal}
+                proposalEvent={sessionProposalEvent}
+                {...props}
+              />
+            )}
+          />
+        )}
+        {sessionRequestData && (
+          <BottomModal
+            isOpen={isSessionRequestModalOpen}
+            onClose={handleSessionRequestModalClose}
+            Content={(props) => (
+              <WalletConnectSessionRequestModal
+                requestData={sessionRequestData}
+                onApprove={handleApprovePress}
+                onReject={handleRejectPress}
+                metadata={activeSessionMetadata}
+                {...props}
+              />
+            )}
+          />
+        )}
       </Portal>
       <SpinnerModal isActive={!!loading} text={loading} />
     </WalletConnectContext.Provider>

@@ -21,12 +21,11 @@ import { map } from 'lodash'
 import React from 'react'
 
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalProps, ScrollModal } from '~/components/layout/Modals'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 
-interface GroupSelectModalProps extends ModalProps<ScrollScreenProps> {
+interface GroupSelectModalProps extends ModalContentProps {
   selectedGroup?: number
   onSelect: (group?: number) => void
 }
@@ -43,7 +42,7 @@ const GroupSelectModal = ({ onClose, onSelect, selectedGroup, ...props }: GroupS
   }
 
   return (
-    <ScrollModal {...props}>
+    <ModalContent {...props}>
       <ScreenSection>
         <BoxSurface>
           {groupSelectOptions.map((groupOption) => (
@@ -56,7 +55,7 @@ const GroupSelectModal = ({ onClose, onSelect, selectedGroup, ...props }: GroupS
           ))}
         </BoxSurface>
       </ScreenSection>
-    </ScrollModal>
+    </ModalContent>
   )
 }
 

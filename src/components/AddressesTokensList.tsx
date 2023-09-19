@@ -19,7 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset } from '@alephium/sdk'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
+import Animated, { CurvedTransition } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import NFTsGrid from '~/components/NFTsGrid'
@@ -31,9 +32,9 @@ import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs
 } from '~/store/addressesSlice'
+import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
-import { ScreenSection } from './layout/Screen'
 import TokenListItem from './TokenListItem'
 
 interface AddressesTokensListProps {
@@ -92,12 +93,12 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
   }, [addressHash, isLoading, knownFungibleTokens, unknownTokens.length])
 
   return (
-    <View style={style}>
-      <TabBar items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
+    <ListContainer style={style} layout={CurvedTransition}>
+      <TabBarStyled items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
       {
         {
           tokens: (
-            <ScreenSection>
+            <>
               {tokenRows.map((entry, index) =>
                 isAsset(entry) ? (
                   <TokenListItem
@@ -114,22 +115,36 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
                   </LoadingRow>
                 )
               )}
-            </ScreenSection>
+            </>
           ),
           nfts: <NFTsGrid nfts={nfts} isLoading={isLoading} />
         }[activeTab.value]
       }
-    </View>
+    </ListContainer>
   )
 }
 
-export default AddressesTokensList
+export default styled(AddressesTokensList)`
+  padding-top: 5px;
+  padding-bottom: 10px;
+`
 
 const LoadingRow = styled.View`
   flex-direction: row;
   gap: 15px;
   align-items: flex-start;
-  padding-top: 16px;
+  padding-top: 15px;
+`
+
+const TabBarStyled = styled(TabBar)`
+  padding: 10px 15px 10px;
+`
+
+const ListContainer = styled(Animated.View)`
+  border-radius: ${BORDER_RADIUS_BIG}px;
+  margin: 0 ${DEFAULT_MARGIN}px;
+  background-color: ${({ theme }) => theme.bg.primary};
+  overflow: hidden;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

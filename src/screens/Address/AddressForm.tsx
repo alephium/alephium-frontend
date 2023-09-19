@@ -17,19 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
-import { View } from 'react-native'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ExpandableRow from '~/components/ExpandableRow'
-import HighlightRow from '~/components/HighlightRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
+import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
-import Modalize from '~/components/layout/Modalize'
-import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
+import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import GroupSelectModal from '~/screens/Address/GroupSelectModal'
 import { AddressHash, AddressSettings } from '~/types/addresses'
@@ -54,12 +52,11 @@ const AddressForm = ({
   buttonText = 'Generate',
   disableIsMainToggle = false
 }: AddressFormProps) => {
-  const { ref: groupSelectModalRef, open: openGroupSelectModal, close: closeGroupSelectModal } = useModalize()
-
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
   const [isDefault, setIsDefault] = useState(initialValues.isDefault)
   const [group, setGroup] = useState<number>()
+  const [isGroupSelectModalOpen, setIsGroupSelectModalOpen] = useState(false)
 
   const toggleIsMain = () => {
     if (!disableIsMainToggle) {
@@ -69,44 +66,44 @@ const AddressForm = ({
 
   return (
     <>
-      <View style={{ flexGrow: 1 }}>
-        <ScreenSection>
-          <BoxSurface>
-            <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
-            <ColorPicker value={color} onChange={setColor} />
-            <HighlightRow
-              title="Default address"
-              subtitle={`Default address for operations${
-                disableIsMainToggle
-                  ? '. To remove this address from being the default address, you must set another one as main first.'
-                  : ''
-              }`}
-              onPress={toggleIsMain}
-            >
-              <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
-            </HighlightRow>
-          </BoxSurface>
-        </ScreenSection>
+      <ScreenSection verticalGap fill>
+        <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
+        <ColorPicker value={color} onChange={setColor} />
+        <Row
+          title="Default address"
+          subtitle={`Default address for operations${
+            disableIsMainToggle
+              ? '. To remove this address from being the default address, you must set another one as main first.'
+              : ''
+          }`}
+          onPress={toggleIsMain}
+        >
+          <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
+        </Row>
+
         {allowGroupSelection && (
-          <ScreenSection>
-            <ExpandableRow>
-              <BoxSurface>
-                <HighlightRow title="Address group" onPress={() => openGroupSelectModal()}>
-                  <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
-                </HighlightRow>
-              </BoxSurface>
-            </ExpandableRow>
-          </ScreenSection>
+          <ExpandableRow>
+            <BoxSurface>
+              <Row title="Address group" onPress={() => setIsGroupSelectModalOpen(true)}>
+                <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
+              </Row>
+            </BoxSurface>
+          </ExpandableRow>
         )}
-      </View>
-      <BottomScreenSection>
+      </ScreenSection>
+
+      <ScreenSection centered>
         <Button title={buttonText} centered onPress={() => onSubmit({ isDefault, label, color, group })} />
-      </BottomScreenSection>
+      </ScreenSection>
 
       <Portal>
-        <Modalize ref={groupSelectModalRef}>
-          <GroupSelectModal selectedGroup={group} onSelect={setGroup} onClose={closeGroupSelectModal} />
-        </Modalize>
+        <BottomModal
+          isOpen={isGroupSelectModalOpen}
+          onClose={() => setIsGroupSelectModalOpen(false)}
+          Content={(props) => (
+            <GroupSelectModal onClose={() => setIsGroupSelectModalOpen(false)} onSelect={setGroup} {...props} />
+          )}
+        />
       </Portal>
     </>
   )

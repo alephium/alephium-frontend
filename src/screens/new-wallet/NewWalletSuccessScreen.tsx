@@ -20,9 +20,10 @@ import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import animationSrc from '~/animations/success.json'
+import animationSrc from '~/animations/lottie/success.json'
 import HighlightButton from '~/components/buttons/HighlightButton'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -41,7 +42,7 @@ const NewWalletSuccessScreenProps = ({ navigation, ...props }: NewWalletSuccessS
   const theme = useTheme()
 
   return (
-    <Screen {...props}>
+    <ScrollScreen hasNavigationHeader fill {...props}>
       <AnimationContainer style={{ marginTop: 100 }}>
         <StyledAlephiumLogo color={theme.font.primary} />
         <StyledAnimation source={animationSrc} autoPlay />
@@ -50,7 +51,7 @@ const NewWalletSuccessScreenProps = ({ navigation, ...props }: NewWalletSuccessS
       <ActionsContainer>
         <HighlightButton title="Let's go!" wide onPress={() => resetNavigationState()} />
       </ActionsContainer>
-    </Screen>
+    </ScrollScreen>
   )
 }
 
@@ -73,7 +74,7 @@ const StyledAnimation = styled(LottieView)`
 `
 
 const ActionsContainer = styled.View`
-  flex: 1.5;
-  justify-content: center;
+  flex: 1;
+  justify-content: flex-end;
   align-items: center;
 `

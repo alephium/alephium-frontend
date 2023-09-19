@@ -16,46 +16,62 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { View, ViewProps } from 'react-native'
-import { SafeAreaViewProps } from 'react-native-safe-area-context'
+import { useHeaderHeight } from '@react-navigation/elements'
+import { ViewProps } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export type ScreenProps = ViewProps
+export type ScreenProps = ViewProps & {
+  hasNavigationHeader?: boolean
+}
 
-export default styled.View`
+const Screen = ({ children, hasNavigationHeader, style, ...props }: ScreenProps) => {
+  const headerheight = useHeaderHeight()
+
+  return (
+    <ScreenStyled style={[{ paddingTop: hasNavigationHeader ? headerheight + DEFAULT_MARGIN : 0 }, style]} {...props}>
+      {children}
+    </ScreenStyled>
+  )
+}
+
+const ScreenStyled = styled.View`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.back2};
 `
 
-export const ScreenSection = styled.View<{ fill?: boolean }>`
-  padding: 20px 20px 10px;
+export default Screen
+
+export const ScreenSection = styled.View<{
+  fill?: boolean
+  noMargin?: boolean
+  verticalGap?: number | boolean
+  centered?: boolean
+}>`
+  margin: 0 ${({ noMargin }) => (noMargin ? 0 : DEFAULT_MARGIN)}px;
+
+  gap: ${({ verticalGap }) =>
+    verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0}px;
 
   ${({ fill }) =>
     fill &&
     css`
-      flex: 1;
+      flex-grow: 1;
+      flex-shrink: 0;
     `}
-`
 
-export const CenteredScreenSection = styled(ScreenSection)`
-  align-items: center;
+  ${({ centered }) =>
+    centered &&
+    css`
+      align-items: center;
+    `}
 `
 
 export const BottomModalScreenTitle = styled(AppText)`
   font-weight: 600;
-  font-size: 26px;
-`
-
-export let BottomModal = ({ children, style }: SafeAreaViewProps) => <View style={style}>{children}</View>
-
-BottomModal = styled(BottomModal)`
-  background-color: ${({ theme }) => theme.bg.primary};
-  top: 400px;
-  position: absolute;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
+  font-size: 28px;
 `
 
 export const ScreenSectionTitle = styled(AppText)`
@@ -63,9 +79,4 @@ export const ScreenSectionTitle = styled(AppText)`
   font-weight: 600;
   color: ${({ theme }) => theme.font.primary};
   margin-bottom: 15px;
-`
-
-export const BottomScreenSection = styled(ScreenSection)`
-  margin-bottom: 20px;
-  align-items: center;
 `

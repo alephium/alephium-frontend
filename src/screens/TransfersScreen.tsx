@@ -16,51 +16,62 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { FlatList } from 'react-native'
+import { useSharedValue } from 'react-native-reanimated'
 
-import TransactionsFlatListScreen from '~/components/layout/TransactionsFlatListScreen'
-import { useScrollContext, useScrollEventHandler } from '~/contexts/ScrollContext'
+import BaseHeader from '~/components/headers/BaseHeader'
+import Screen from '~/components/layout/Screen'
+import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
+import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
+import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
+import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { useAppSelector } from '~/hooks/redux'
-import InWalletTabsParamList from '~/navigation/inWalletRoutes'
+import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { makeSelectAddressesConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { makeSelectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressTransaction } from '~/types/transactions'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
+  const listRef = useRef<FlatList<AddressTransaction>>(null)
+
   const selectAddressesConfirmedTransactions = useMemo(makeSelectAddressesConfirmedTransactions, [])
   const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
-  const scrollHandler = useScrollEventHandler()
-  const { setScrollToTop } = useScrollContext()
-  const listRef = useRef<FlatList<AddressTransaction>>(null)
 
-  useEffect(() => {
-    navigation.addListener('blur', () => listRef.current?.scrollToOffset({ offset: 0, animated: false }))
-  }, [navigation])
+  const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
-  useFocusEffect(
-    useCallback(
-      () => setScrollToTop(() => () => listRef.current?.scrollToOffset({ offset: 0, animated: true })),
-      [setScrollToTop]
-    )
-  )
+  useNavigationScrollHandler(listRef)
+  useScrollToTopOnBlur(listRef)
+
+  const [fullHeaderHeight, setFullHeaderHeight] = useState(0)
+  const scrollY = useSharedValue(0)
 
   return (
-    <TransactionsFlatListScreen
-      confirmedTransactions={confirmedTransactions}
-      pendingTransactions={pendingTransactions}
-      initialNumToRender={8}
-      contentContainerStyle={{ flexGrow: 1 }}
-      onScroll={scrollHandler}
-      ref={listRef}
-    />
+    <Screen>
+      <TransactionsFlatList
+        confirmedTransactions={confirmedTransactions}
+        pendingTransactions={pendingTransactions}
+        initialNumToRender={8}
+        contentContainerStyle={{ flexGrow: 1, paddingTop: fullHeaderHeight + DEFAULT_MARGIN }}
+        onScroll={(e) => (scrollY.value = e.nativeEvent.contentOffset.y)}
+        onScrollEndDrag={scrollEndHandler}
+        ref={listRef}
+        headerHeight={fullHeaderHeight}
+      />
+
+      <BaseHeader
+        options={{ headerTitle: 'Transfers' }}
+        scrollY={scrollY}
+        onLayout={(e) => setFullHeaderHeight(e.nativeEvent.layout.height)}
+      />
+    </Screen>
   )
 }
 

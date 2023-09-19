@@ -16,31 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { HeaderOptions } from '~/components/headers/BaseHeader'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-export type ModalProps<ScreenType = ScreenProps | ScrollScreenProps> = ScreenType & {
-  onClose?: () => void
+export interface BottomBarScrollScreenProps extends ScrollScreenProps {
+  headerOptions?: HeaderOptions
+  hasBottomBar?: boolean
 }
 
-export const Modal = ({ children, style, ...props }: ScreenProps) => {
-  const insets = useSafeAreaInsets()
+const BottomBarScrollScreen = ({
+  headerOptions,
+  hasBottomBar = false,
+  children,
+  ...props
+}: BottomBarScrollScreenProps) => {
+  const bottomBarHeight = useBottomTabBarHeight()
 
   return (
-    <Screen style={[style, { paddingBottom: insets.bottom }]} {...props}>
-      {children}
-    </Screen>
-  )
-}
-
-export const ScrollModal = ({ children, style, ...props }: ScrollScreenProps) => {
-  const insets = useSafeAreaInsets()
-
-  return (
-    <ScrollScreen style={[style, { paddingBottom: insets.bottom }]} {...props}>
+    <ScrollScreen
+      contentContainerStyle={{
+        paddingBottom: hasBottomBar ? bottomBarHeight + DEFAULT_MARGIN : 0
+      }}
+      headerOptions={headerOptions}
+      showsHorizontalScrollIndicator={false}
+      {...props}
+    >
       {children}
     </ScrollScreen>
   )
 }
+
+export default BottomBarScrollScreen

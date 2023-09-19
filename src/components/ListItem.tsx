@@ -22,16 +22,18 @@ import Animated from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export interface ListItemProps extends PressableProps {
   title: string
-  subtitle: string | ReactNode
+  subtitle?: string | ReactNode
   icon: ReactNode
   isLast?: boolean
   style?: StyleProp<ViewStyle>
   innerStyle?: StyleProp<ViewStyle>
   hideSeparator?: boolean
   rightSideContent?: ReactNode
+  height?: number
   children?: ReactNode
 }
 
@@ -44,20 +46,21 @@ const ListItem = ({
   isLast,
   hideSeparator,
   rightSideContent,
+  height = 60,
   children,
   ...props
 }: ListItemProps) => (
   <Pressable {...props}>
     <ListItemStyled style={style}>
-      <Row style={innerStyle}>
+      <Row style={[{ height }, innerStyle]}>
         <Icon>{icon}</Icon>
-        <ContentRow showSeparator={!isLast && !hideSeparator}>
+        <RowContent showSeparator={!isLast && !hideSeparator}>
           <LeftSideContent>
             <Title semiBold size={16} numberOfLines={1}>
               {title}
             </Title>
             {typeof subtitle === 'string' ? (
-              <Subtitle color="secondary" numberOfLines={1} ellipsizeMode="middle">
+              <Subtitle color="tertiary" numberOfLines={1} ellipsizeMode="middle">
                 {subtitle}
               </Subtitle>
             ) : (
@@ -65,7 +68,7 @@ const ListItem = ({
             )}
           </LeftSideContent>
           {rightSideContent}
-        </ContentRow>
+        </RowContent>
       </Row>
       {children}
     </ListItemStyled>
@@ -75,16 +78,25 @@ const ListItem = ({
 export default ListItem
 
 const ListItemStyled = styled(Animated.View)`
-  border-radius: 9px;
+  border-radius: ${BORDER_RADIUS}px;
   border-color: ${({ theme }) => theme.border.primary};
   overflow: hidden;
 `
 
-const ContentRow = styled.View<{ showSeparator: boolean }>`
+const Row = styled(Animated.View)`
+  flex-direction: row;
+  align-items: center;
+  padding-left: 15px;
+  gap: 15px;
+`
+
+const RowContent = styled.View<{ showSeparator: boolean }>`
   flex-direction: row;
   gap: 10px;
+  height: 100%;
+  padding-right: 15px;
+  align-items: center;
   flex: 1;
-  padding-bottom: 16px;
 
   ${({ showSeparator }) =>
     showSeparator &&
@@ -96,26 +108,15 @@ const ContentRow = styled.View<{ showSeparator: boolean }>`
 
 const Title = styled(AppText)`
   max-width: 80%;
-  flex-shrink: 1;
-  margin-bottom: 2px;
 `
 
 const Subtitle = styled(AppText)`
   max-width: 80%;
 `
 
-const Icon = styled.View`
-  margin-bottom: 16px;
-  margin-top: 2px;
-`
-
-const Row = styled(Animated.View)`
-  flex-direction: row;
-  gap: 15px;
-  align-items: flex-start;
-  padding-top: 16px;
-`
+const Icon = styled.View``
 
 const LeftSideContent = styled.View`
   flex: 1;
+  justify-content: center;
 `

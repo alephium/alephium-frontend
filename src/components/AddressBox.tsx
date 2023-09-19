@@ -16,38 +16,42 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Check } from 'lucide-react-native'
 import { useMemo } from 'react'
-import { PressableProps } from 'react-native'
+import { Pressable, PressableProps } from 'react-native'
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressBadge from '~/components/AddressBadge'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
+import Checkmark from '~/components/Checkmark'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash
   isSelected?: boolean
-  isFirst?: boolean
-  isLast?: boolean
 }
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const theme = useTheme()
 
+  const boxAnimatedStyle = useAnimatedStyle(() => ({
+    borderColor: withSpring(isSelected ? theme.global.accent : theme.border.primary, fastSpringConfiguration),
+    borderWidth: 2
+  }))
+
   return (
-    <AddressBoxStyled {...props}>
-      <AddressBoxTop style={{ backgroundColor: isSelected ? theme.bg.accent : undefined }}>
-        <AddressBadgeStyled addressHash={addressHash} textStyle={{ fontSize: 18 }} />
-        {isSelected && (
-          <Checkmark>
-            <Check color="white" size={15} strokeWidth={3} />
-          </Checkmark>
-        )}
+    <AddressBoxStyled {...props} style={[boxAnimatedStyle, props.style]}>
+      <AddressBoxTop>
+        <AddressBadgeStyled onPress={props.onPress} addressHash={addressHash} textStyle={{ fontSize: 18 }} />
+        {isSelected && <Checkmark />}
       </AddressBoxTop>
       <AddressBoxBottom>
         <AssetsRow>
@@ -67,9 +71,8 @@ const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
 
 export default AddressBox
 
-const AddressBoxStyled = styled.Pressable`
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: 9px;
+const AddressBoxStyled = styled(AnimatedPressable)`
+  border-radius: ${BORDER_RADIUS}px;
   overflow: hidden;
 `
 
@@ -77,26 +80,19 @@ const AddressBoxTop = styled.View`
   padding: 15px;
   flex-direction: row;
   justify-content: space-between;
+  background-color: ${({ theme }) => theme.bg.primary};
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
 `
 
 const AddressBoxBottom = styled.View`
   padding: 13px 15px;
-  background-color: ${({ theme }) => theme.bg.tertiary};
   border-top-width: 1px;
-  border-top-color: ${({ theme }) => theme.border.secondary};
+  border-top-color: ${({ theme }) => theme.border.primary};
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
   max-width: 80%;
-`
-
-const Checkmark = styled.View`
-  width: 22px;
-  height: 22px;
-  border-radius: 22px;
-  background-color: ${({ theme }) => theme.global.accent};
-  align-items: center;
-  justify-content: center;
 `
 
 const AssetsRow = styled.View`

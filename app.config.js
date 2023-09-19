@@ -28,7 +28,7 @@ export default {
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff'
+      backgroundColor: '#000000'
     },
     updates: {
       fallbackToCacheTimeout: 0
@@ -53,7 +53,11 @@ export default {
         'expo-build-properties',
         {
           ios: {
-            deploymentTarget: '13.0'
+            deploymentTarget: '13.0',
+            newArchEnabled: true
+          },
+          android: {
+            newArchEnabled: true
           }
         }
       ],

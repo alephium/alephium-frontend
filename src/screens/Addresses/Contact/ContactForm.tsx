@@ -17,12 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Controller, useForm } from 'react-hook-form'
-import { View } from 'react-native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
-import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomScreenSection, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import { AddressHash } from '~/types/addresses'
 import { ContactFormData } from '~/types/contacts'
 import { isContactAddressValid, isContactNameValid } from '~/utils/form-validation'
@@ -47,52 +45,49 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save' }: ContactFo
 
   return (
     <>
-      <View style={{ flexGrow: 1 }}>
-        <ScreenSection>
-          <BoxSurface>
-            <Controller
-              name="name"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label="Contact name"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={errors.name?.type === 'required' ? requiredErrorMessage : errors.name?.message}
-                />
-              )}
-              rules={{
-                required: true,
-                validate: (name) => isContactNameValid({ name, id: initialValues?.id })
-              }}
-              control={control}
+      <ScreenSection fill verticalGap>
+        <Controller
+          name="name"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Contact name"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.name?.type === 'required' ? requiredErrorMessage : errors.name?.message}
             />
-            <Controller
-              name="address"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label="Contact address"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={errors.address?.type === 'required' ? requiredErrorMessage : errors.address?.message}
-                />
-              )}
-              rules={{
-                required: true,
-                validate: {
-                  isAddressValid: validateIsAddressValid,
-                  isContactAddressValid: (address) => isContactAddressValid({ address, id: initialValues?.id })
-                }
-              }}
-              control={control}
+          )}
+          rules={{
+            required: true,
+            validate: (name) => isContactNameValid({ name, id: initialValues?.id })
+          }}
+          control={control}
+        />
+        <Controller
+          name="address"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Contact address"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.address?.type === 'required' ? requiredErrorMessage : errors.address?.message}
             />
-          </BoxSurface>
-        </ScreenSection>
-      </View>
-      <BottomScreenSection>
+          )}
+          rules={{
+            required: true,
+            validate: {
+              isAddressValid: validateIsAddressValid,
+              isContactAddressValid: (address) => isContactAddressValid({ address, id: initialValues?.id })
+            }
+          }}
+          control={control}
+        />
+      </ScreenSection>
+
+      <ScreenSection centered>
         <Button title={buttonText} centered onPress={handleSubmit(onSubmit)} />
-      </BottomScreenSection>
+      </ScreenSection>
     </>
   )
 }

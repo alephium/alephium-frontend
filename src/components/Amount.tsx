@@ -84,7 +84,7 @@ const Amount = ({
 
   const [integralPart, fractionalPart] = amount.split('.')
 
-  const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'highlight' : 'valid') : 'primary')
+  const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'send' : 'receive') : 'primary')
   const fadedColor = fadeDecimals ? 'secondary' : color
 
   return (

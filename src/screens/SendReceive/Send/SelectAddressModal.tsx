@@ -16,17 +16,36 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalProps } from '~/components/layout/Modals'
-import { ScrollModal } from '~/components/layout/Modals'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import AddressListScreenBase, { AddressListScreenBaseProps } from '~/screens/AddressListScreenBase'
+import AddressBox from '~/components/AddressBox'
+import { AddressFlatListScreenProps } from '~/components/AddressFlatListScreen'
+import { ModalContentProps, ModalFlatListContent } from '~/components/layout/ModalContent'
+import { useAppSelector } from '~/hooks/redux'
+import { selectAllAddresses } from '~/store/addressesSlice'
 
-type SelectAddressModalProps = ModalProps<ScrollScreenProps> & Pick<AddressListScreenBaseProps, 'onAddressPress'>
+type SelectAddressModalProps = ModalContentProps & Pick<AddressFlatListScreenProps, 'onAddressPress'>
 
-const SelectAddressModal = ({ onAddressPress, ...props }: SelectAddressModalProps) => (
-  <ScrollModal {...props}>
-    <AddressListScreenBase onAddressPress={onAddressPress} />
-  </ScrollModal>
-)
+const SelectAddressModal = ({ onAddressPress, ...props }: SelectAddressModalProps) => {
+  const addresses = useAppSelector(selectAllAddresses)
+
+  return (
+    <ModalFlatListContent
+      data={addresses}
+      verticalGap
+      keyExtractor={(item) => item.hash}
+      renderItem={({ item: address, index }) => (
+        <AddressBox
+          key={address.hash}
+          addressHash={address.hash}
+          style={{
+            marginTop: index === 0 ? 20 : undefined,
+            marginBottom: index === addresses.length - 1 ? 40 : undefined
+          }}
+          onPress={() => onAddressPress(address.hash)}
+        />
+      )}
+      {...props}
+    />
+  )
+}
 
 export default SelectAddressModal

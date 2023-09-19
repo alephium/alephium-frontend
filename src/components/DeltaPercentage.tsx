@@ -23,18 +23,18 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 
 interface DeltaPercentageProps {
-  initialValue: number
-  latestValue: number
+  percentage: number
   style?: StyleProp<ViewStyle>
 }
 
-const DeltaPercentage = ({ initialValue, latestValue, style }: DeltaPercentageProps) => {
+const DeltaPercentage = ({ percentage, style }: DeltaPercentageProps) => {
   const theme = useTheme()
 
-  const percentage = Math.round(((latestValue - initialValue) / initialValue) * 10000) / 100
+  const isInvalidNumber = isNaN(percentage) || percentage > 100 || percentage < -100
+
   const isUp = percentage >= 0
-  const color = isUp ? theme.global.valid : theme.global.alert
-  const textColor = isUp ? 'valid' : 'alert'
+  const color = isInvalidNumber ? theme.font.secondary : isUp ? theme.global.valid : theme.global.alert
+  const textColor = isInvalidNumber ? 'tertiary' : isUp ? 'valid' : 'alert'
 
   const DirectionArrow = percentage >= 0 ? ArrowUpRight : ArrowDownRight
 
@@ -42,7 +42,7 @@ const DeltaPercentage = ({ initialValue, latestValue, style }: DeltaPercentagePr
     <DeltaPercentageStyled style={style}>
       <DirectionArrow color={color} size={24} />
       <AppText color={textColor} semiBold size={18}>
-        {percentage}%
+        {isInvalidNumber ? '-' : percentage}%
       </AppText>
     </DeltaPercentageStyled>
   )
@@ -54,4 +54,5 @@ const DeltaPercentageStyled = styled.View`
   align-items: center;
   flex-direction: row;
   gap: 12px;
+  min-width: 10px;
 `

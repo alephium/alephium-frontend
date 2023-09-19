@@ -18,17 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { isAddressValid } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { Radio, ScanLine, Settings, ShieldAlert, WifiOff } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import Toast from 'react-native-root-toast'
 import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
-import Modalize from '~/components/layout/Modalize'
+import BottomModal from '~/components/layout/BottomModal'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -48,11 +46,8 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
   const { pairWithDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
-  const {
-    ref: currentWalletConnectConnectionsModalRef,
-    open: openCurrentWalletConnectConnectionsModal,
-    close: closeCurrentWalletConnectConnectionsModal
-  } = useModalize()
+
+  const [isWalletConnectPairingsModalOpen, setIsWalletConnectPairingsModalOpen] = useState(false)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -73,24 +68,19 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
     <>
       <View style={style}>
         {networkStatus === 'offline' && (
-          <Button onPress={showOfflineMessage} Icon={WifiOff} type="transparent" variant="alert" />
+          <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-offline-outline' }} variant="alert" round />
         )}
         <Button
           onPress={() => navigation.navigate('SecurityScreen')}
-          Icon={ShieldAlert}
-          type="transparent"
+          iconProps={{ name: 'warning-outline' }}
           variant={isMnemonicBackedUp ? 'default' : 'alert'}
+          round
         />
         {walletConnectClient && activeSessions.length > 0 && (
-          <Button
-            onPress={() => openCurrentWalletConnectConnectionsModal()}
-            Icon={Radio}
-            type="transparent"
-            variant="accent"
-          />
+          <Button onPress={() => setIsWalletConnectPairingsModalOpen(true)} iconProps={{ name: 'radio' }} round />
         )}
-        <Button onPress={openQRCodeScannerModal} Icon={ScanLine} type="transparent" />
-        <Button onPress={() => navigation.navigate('SettingsScreen')} Icon={Settings} type="transparent" />
+        <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'scan-outline' }} round />
+        <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings-outline' }} round />
       </View>
       {isCameraOpen && (
         <QRCodeScannerModal
@@ -101,9 +91,11 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
       )}
 
       <Portal>
-        <Modalize ref={currentWalletConnectConnectionsModalRef}>
-          <WalletConnectPairingsModal onClose={closeCurrentWalletConnectConnectionsModal} />
-        </Modalize>
+        <BottomModal
+          Content={WalletConnectPairingsModal}
+          isOpen={isWalletConnectPairingsModalOpen}
+          onClose={() => setIsWalletConnectPairingsModalOpen(false)}
+        />
       </Portal>
     </>
   )

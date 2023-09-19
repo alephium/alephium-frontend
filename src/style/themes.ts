@@ -39,6 +39,11 @@ export const lightTheme: DefaultTheme = {
     contrast: '#ffffff',
     highlight: '#d4a10d'
   },
+  button: {
+    primary: '#1d1d1d',
+    secondary: '#353539',
+    tertiary: '#353539'
+  },
   border: {
     primary: 'rgba(36, 34, 32, 0.10)',
     secondary: 'rgba(36, 34, 32, 0.05)'
@@ -54,7 +59,9 @@ export const lightTheme: DefaultTheme = {
     valid: '#2DA023',
     star: '#FFD66D',
     pale: '#f7d1b6',
-    complementary: '#b07dcb'
+    complementary: '#b07dcb',
+    send: '#F7B789',
+    receive: '#8DD3FA'
   },
   gradient: {
     yellow: '#FFCD82',
@@ -68,10 +75,10 @@ export const lightTheme: DefaultTheme = {
 export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
-    highlight: '',
-    primary: '#1B1B1F',
-    secondary: '#17171A',
-    tertiary: '#17171A',
+    highlight: '#353539',
+    primary: '#19191b',
+    secondary: '#18181B',
+    tertiary: '#131315',
     back1: '#121215',
     back2: '#0E0E10',
     accent: 'rgba(93, 108, 243, 0.08)',
@@ -84,9 +91,14 @@ export const darkTheme: DefaultTheme = {
     contrast: '#19191E',
     highlight: '#f0d590'
   },
+  button: {
+    primary: '#252529',
+    secondary: '#1d1d20',
+    tertiary: '#28282b'
+  },
   border: {
-    primary: 'rgba(255, 255, 255, 0.08)',
-    secondary: 'rgba(255, 255, 255, 0.04)'
+    primary: 'rgba(255, 255, 255, 0.12)',
+    secondary: 'rgba(255, 255, 255, 0.06)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.25; shadow-radius: 2px; elevation: 5;',
@@ -94,12 +106,14 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#007AFF',
+    accent: '#2f8cef',
     alert: '#ed4a34',
     valid: '#3ed282',
     star: '#FFD66D',
     pale: '#f7d1b6',
-    complementary: '#d488eb'
+    complementary: '#d488eb',
+    send: '#fd9166',
+    receive: '#7fcef8'
   },
   gradient: {
     yellow: '#FFCD82',

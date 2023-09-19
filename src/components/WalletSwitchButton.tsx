@@ -16,15 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import Modalize from '~/components/layout/Modalize'
+import BottomModal from '~/components/layout/BottomModal'
 import { useAppSelector } from '~/hooks/redux'
 import SwitchWalletModal from '~/screens/SwitchWalletModal'
 
@@ -34,20 +33,19 @@ interface WalletSwitchButtonProps {
 
 const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-  const { ref: walletSwitchModalRef, open: openWalletSwitchModal, close: closeWalletSwitchModal } = useModalize()
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
     <>
-      <Button style={style} variant="contrast" onPress={() => openWalletSwitchModal()}>
+      <Button style={style} variant="contrast" onPress={() => setIsModalOpen(true)}>
         <AppText color="contrast" semiBold size={12} numberOfLines={1}>
           {activeWalletName.slice(0, 2).toUpperCase()}
         </AppText>
       </Button>
 
       <Portal>
-        <Modalize ref={walletSwitchModalRef}>
-          <SwitchWalletModal onClose={closeWalletSwitchModal} />
-        </Modalize>
+        <BottomModal Content={SwitchWalletModal} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </Portal>
     </>
   )

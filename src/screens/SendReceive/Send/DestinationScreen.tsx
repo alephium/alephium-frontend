@@ -20,11 +20,9 @@ import { isAddressValid } from '@alephium/sdk'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
-import { Book, ClipboardIcon, Contact2, Scan } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import Toast from 'react-native-root-toast'
@@ -32,14 +30,15 @@ import styled, { useTheme } from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
-import BoxSurface from '~/components/layout/BoxSurface'
-import Modalize from '~/components/layout/Modalize'
-import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import BottomModal from '~/components/layout/BottomModal'
+import { ModalContentProps } from '~/components/layout/ModalContent'
+import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton, ContinueButton } from '~/screens/SendReceive/ScreenHeader'
+import { CloseButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
@@ -70,8 +69,9 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
-  const { ref: contactSelectModalRef, open: openContactSelectModal, close: closeContactSelectModal } = useModalize()
-  const { ref: addressSelectModalRef, open: openAddressSelectModal, close: closeAddressSelectModal } = useModalize()
+
+  const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
+  const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
   const shouldFlash = useSharedValue(0)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
@@ -101,22 +101,22 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     setTimeout(() => (shouldFlash.value = 0), 300)
   }
 
-  const handleContactPress = (contactId: Contact['id']) => {
+  const handleContactPress = (contactId: Contact['id'], closeModal?: ModalContentProps['onClose']) => {
     const contact = contacts.find((c) => c.id === contactId)
 
     if (contact) {
+      closeModal && closeModal()
       setToAddress(contact.address)
       flashInputBg()
-      closeContactSelectModal()
 
       posthog?.capture('Send: Selected contact to send funds to')
     }
   }
 
-  const handleAddressPress = (addressHash: AddressHash) => {
+  const handleAddressPress = (addressHash: AddressHash, closeModal?: ModalContentProps['onClose']) => {
+    closeModal && closeModal()
     setToAddress(addressHash)
     flashInputBg()
-    closeAddressSelectModal()
 
     posthog?.capture('Send: Selected own address to send funds to')
   }
@@ -130,20 +130,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     }
   }, [params?.fromAddressHash, setFromAddress, setToAddress])
 
-  useFocusEffect(
-    useCallback(() => {
-      const onContinue = (formData: FormData) => {
-        setToAddress(formData.toAddressHash)
-        navigation.navigate(nextScreen)
-      }
-
-      navigation.getParent()?.setOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => <ContinueButton onPress={handleSubmit(onContinue)} />
-      })
-    }, [handleSubmit, navigation, nextScreen, setToAddress])
-  )
-
   useEffect(() => {
     if (toAddress) {
       setValue('toAddressHash', toAddress)
@@ -151,20 +137,31 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   }, [setValue, toAddress])
 
   const inputStyle = useAnimatedStyle(() => ({
-    backgroundColor: withTiming(interpolateColor(shouldFlash.value, [0, 1], [theme.bg.primary, theme.global.pale]), {
+    backgroundColor: withTiming(interpolateColor(shouldFlash.value, [0, 1], [theme.bg.highlight, theme.global.pale]), {
       duration: 300
     })
   }))
 
+  useFocusEffect(
+    useCallback(() => {
+      const onContinue = (formData: FormData) => {
+        setToAddress(formData.toAddressHash)
+        navigation.navigate(nextScreen)
+      }
+      navigation.getParent()?.setOptions({
+        headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />,
+        headerRight: () => (
+          <ContinueButton onPress={handleSubmit(onContinue)} disabled={!!errors.toAddressHash?.message} />
+        )
+      })
+    }, [errors.toAddressHash?.message, handleSubmit, navigation, nextScreen, setToAddress])
+  )
+
   return (
-    <Screen {...props}>
-      <ScreenIntro
-        title="Destination"
-        subtitle="Send to an address, a contact, or one of your other addresses."
-        surtitle="SEND"
-      />
-      <ScreenSection>
-        <BoxSurface>
+    <>
+      <ScrollScreen hasNavigationHeader verticalGap {...props}>
+        <ScreenIntro title="Destination" subtitle="Send to an address, a contact, or one of your other addresses." />
+        <ScreenSection>
           <Controller
             name="toAddressHash"
             render={({ field: { onChange, onBlur, value } }) => (
@@ -183,45 +180,83 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             }}
             control={control}
           />
-        </BoxSurface>
-      </ScreenSection>
-      <ScreenSection>
-        <ButtonsRow>
-          <Button color={theme.global.accent} compact Icon={Scan} title="Scan" onPress={openQRCodeScannerModal} />
-          <Button color={theme.global.accent} compact Icon={ClipboardIcon} title="Paste" onPress={handlePastePress} />
-          <Button
-            color={theme.global.accent}
-            compact
-            Icon={Contact2}
-            title="Contacts"
-            onPress={() => openContactSelectModal()}
+        </ScreenSection>
+        <ScreenSection>
+          <ButtonsRow>
+            <Button
+              compact
+              iconProps={{ name: 'qr-code-outline' }}
+              title="Scan"
+              onPress={openQRCodeScannerModal}
+              variant="accent"
+              type="secondary"
+            />
+            <Button
+              compact
+              iconProps={{ name: 'copy-outline' }}
+              title="Paste"
+              onPress={handlePastePress}
+              variant="accent"
+              type="secondary"
+            />
+            <Button
+              compact
+              iconProps={{ name: 'person-outline' }}
+              title="Contacts"
+              onPress={() => setIsContactSelectModalOpen(true)}
+              variant="accent"
+              type="secondary"
+            />
+            <Button
+              compact
+              iconProps={{ name: 'bookmarks-outline' }}
+              title="Addresses"
+              onPress={() => setIsAddressSelectModalOpen(true)}
+              variant="accent"
+              type="secondary"
+            />
+          </ButtonsRow>
+        </ScreenSection>
+        {isCameraOpen && (
+          <QRCodeScannerModal
+            onClose={closeQRCodeScannerModal}
+            onQRCodeScan={handleQRCodeScan}
+            text="Scan an Alephium address QR code"
           />
-          <Button
-            color={theme.global.accent}
-            compact
-            Icon={Book}
-            title="Addresses"
-            onPress={() => openAddressSelectModal()}
-          />
-        </ButtonsRow>
-      </ScreenSection>
-      {isCameraOpen && (
-        <QRCodeScannerModal
-          onClose={closeQRCodeScannerModal}
-          onQRCodeScan={handleQRCodeScan}
-          text="Scan an Alephium address QR code"
-        />
-      )}
+        )}
+      </ScrollScreen>
 
       <Portal>
-        <Modalize ref={contactSelectModalRef}>
-          <SelectContactModal onContactPress={handleContactPress} />
-        </Modalize>
-        <Modalize ref={addressSelectModalRef}>
-          <SelectAddressModal onAddressPress={handleAddressPress} />
-        </Modalize>
+        <BottomModal
+          isOpen={isContactSelectModalOpen}
+          Content={(props) => (
+            <SelectContactModal
+              onContactPress={(contactId) => handleContactPress(contactId, props.onClose)}
+              onNewContactPress={() => {
+                props.onClose && props.onClose()
+                navigation.navigate('NewContactScreen')
+              }}
+              {...props}
+            />
+          )}
+          onClose={() => setIsContactSelectModalOpen(false)}
+          customMinHeight={300}
+        />
+
+        <BottomModal
+          isOpen={isAddressSelectModalOpen}
+          Content={(props) => (
+            <SelectAddressModal
+              onAddressPress={(addressHash) => handleAddressPress(addressHash, props.onClose)}
+              {...props}
+            />
+          )}
+          onClose={() => setIsAddressSelectModalOpen(false)}
+          customMinHeight={300}
+          maximisedContent
+        />
       </Portal>
-    </Screen>
+    </>
   )
 }
 

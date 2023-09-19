@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
 import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
-import { useModalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Modalize from '~/components/layout/Modalize'
+import BottomModal from '~/components/layout/BottomModal'
+import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import TransactionModal from '~/screens/TransactionModal'
 import {
@@ -32,17 +32,19 @@ import {
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '~/store/addressesSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
 import { isPendingTx } from '~/utils/transactions'
 
 import TransactionListItem from '../TransactionListItem'
-import Screen, { ScreenSectionTitle } from './Screen'
+import { ScreenSectionTitle } from './Screen'
 
-interface TransactionsFlatListScreenProps extends Partial<FlatListProps<AddressTransaction>> {
+interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransaction>> {
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
   addressHash?: AddressHash
+  headerHeight?: number
   showInternalInflows?: boolean
 }
 
@@ -54,7 +56,7 @@ type TransactionItem = {
 
 const transactionKeyExtractor = (tx: AddressTransaction) => `${tx.hash}-${tx.address.hash}`
 
-const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScreen(
+const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   {
     confirmedTransactions,
     pendingTransactions,
@@ -62,16 +64,19 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
     ListHeaderComponent,
     showInternalInflows = false,
     style,
+    headerHeight = 0,
     ...props
-  }: TransactionsFlatListScreenProps,
+  }: TransactionsFlatListProps,
   ref: ForwardedRef<FlatList<AddressTransaction>>
 ) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
+
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
-  const { ref: transactionModalRef, open: openTransactionModal } = useModalize()
+
+  const [txModalOpen, setTxModalOpen] = useState(false)
 
   const [selectedTx, setSelectedTx] = useState<AddressConfirmedTransaction>()
 
@@ -86,7 +91,7 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
       onPress={() => {
         if (!isPendingTx(tx)) {
           setSelectedTx(tx)
-          openTransactionModal()
+          setTxModalOpen(true)
         }
       }}
     />
@@ -109,16 +114,22 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
   }
 
   return (
-    <Screen style={style}>
+    <>
       <FlatList
         {...props}
+        contentContainerStyle={[
+          props.contentContainerStyle,
+          { paddingTop: headerHeight ? headerHeight + DEFAULT_MARGIN : 0 }
+        ]}
         scrollEventThrottle={16}
         ref={ref}
         data={confirmedTransactions}
         renderItem={renderConfirmedTransactionItem}
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
-        onRefresh={refreshData}
+        refreshControl={
+          <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
+        }
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         ListHeaderComponent={
@@ -164,22 +175,24 @@ const TransactionsFlatListScreen = forwardRef(function TransactionsFlatListScree
       />
 
       <Portal>
-        <Modalize ref={transactionModalRef}>{selectedTx && <TransactionModal tx={selectedTx} />}</Modalize>
+        <BottomModal
+          Content={(props) => selectedTx && <TransactionModal {...props} tx={selectedTx} />}
+          isOpen={txModalOpen}
+          onClose={() => setTxModalOpen(false)}
+        />
       </Portal>
-    </Screen>
+    </>
   )
 })
 
-export default TransactionsFlatListScreen
+export default TransactionsFlatList
 
 const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
-  margin-left: 28px;
+  margin-left: ${DEFAULT_MARGIN}px;
   margin-top: 22px;
 `
 
-const TransactionListItemStyled = styled(TransactionListItem)`
-  margin: 0 20px;
-`
+const TransactionListItemStyled = styled(TransactionListItem)``
 
 const Footer = styled.View`
   padding-top: 40px;

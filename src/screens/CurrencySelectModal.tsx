@@ -19,9 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import React from 'react'
 
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalProps, ScrollModal } from '~/components/layout/Modals'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { currencySelected } from '~/store/settingsSlice'
@@ -33,7 +32,7 @@ const currencyOptions = Object.values(currencies).map((currency) => ({
   value: currency.ticker
 }))
 
-const CurrencySelectModal = ({ onClose, ...props }: ModalProps<ScrollScreenProps>) => {
+const CurrencySelectModal = ({ onClose, ...props }: ModalContentProps) => {
   const dispatch = useAppDispatch()
   const currentCurrency = useAppSelector((s) => s.settings.currency)
 
@@ -43,7 +42,7 @@ const CurrencySelectModal = ({ onClose, ...props }: ModalProps<ScrollScreenProps
   }
 
   return (
-    <ScrollModal {...props}>
+    <ModalContent verticalGap {...props}>
       <ScreenSection>
         <BoxSurface>
           {currencyOptions.map((currencyOption) => (
@@ -56,7 +55,7 @@ const CurrencySelectModal = ({ onClose, ...props }: ModalProps<ScrollScreenProps
           ))}
         </BoxSurface>
       </ScreenSection>
-    </ScrollModal>
+    </ModalContent>
   )
 }
 

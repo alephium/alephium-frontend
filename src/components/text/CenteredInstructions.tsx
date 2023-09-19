@@ -35,11 +35,11 @@ interface CenteredInstructionsProps {
   fontSize?: number
 }
 
-const CenteredInstructions = ({ instructions, style, fontSize = 16 }: CenteredInstructionsProps) => (
+const CenteredInstructions = ({ instructions, style, fontSize = 17 }: CenteredInstructionsProps) => (
   <View style={style}>
     {instructions.map(({ text, type, url }, i) =>
       type === 'link' ? (
-        <LinkToWeb key={i} text={text} url={url || ''} />
+        <LinkToWeb key={i} text={text} url={url || ''} style={{ marginVertical: 5 }} />
       ) : (
         <Instruction key={i} type={type} style={{ fontSize }}>
           {text}
@@ -52,7 +52,6 @@ const CenteredInstructions = ({ instructions, style, fontSize = 16 }: CenteredIn
 export default memo(styled(CenteredInstructions)`
   justify-content: center;
   align-items: center;
-  padding: 10%;
   ${({ stretch }) => stretch && 'flex: 1;'}
 `)
 
@@ -66,7 +65,6 @@ const Instruction = styled.Text<{ type: Instruction['type'] }>`
     })[type]};
 
   font-weight: ${({ type }) => (['primary', 'error'].includes(type) ? 'bold' : 'normal')};
-  font-size: 16px;
   margin-bottom: 10px;
   text-align: center;
   line-height: 23px;

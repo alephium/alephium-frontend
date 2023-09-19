@@ -24,7 +24,7 @@ import styled, { css } from 'styled-components/native'
 import AppText, { AppTextProps } from '~/components/AppText'
 import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
-export interface HighlightRowProps {
+export interface RowProps {
   children: ReactNode
   isInput?: boolean
   isSecondary?: boolean
@@ -35,19 +35,14 @@ export interface HighlightRowProps {
   hasRightContent?: boolean
   truncate?: boolean
   noMaxWidth?: boolean
+  transparent?: boolean
+  isLast?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const HighlightRow = ({
-  title,
-  subtitle,
-  children,
-  onPress,
-  truncate,
-  noMaxWidth,
-  style,
-  titleColor
-}: HighlightRowProps) => {
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+
+const Row = ({ title, subtitle, children, onPress, truncate, noMaxWidth, style, titleColor }: RowProps) => {
   const componentContent = title ? (
     <>
       <LeftContent>
@@ -67,23 +62,23 @@ const HighlightRow = ({
   )
 
   return onPress ? (
-    <Pressable onPress={onPress} style={style}>
+    <AnimatedPressable onPress={onPress} style={style}>
       {componentContent}
-    </Pressable>
+    </AnimatedPressable>
   ) : (
     <Animated.View style={style}>{componentContent}</Animated.View>
   )
 }
 
-export default styled(HighlightRow)`
-  ${({ theme, isInput, isSecondary }) =>
+export default styled(Row)`
+  ${({ theme, isInput, isSecondary, transparent, isLast }) =>
     isInput
       ? css`
           justify-content: center;
           min-height: ${INPUTS_HEIGHT}px;
           height: ${INPUTS_HEIGHT}px;
           padding: 0 ${INPUTS_PADDING}px;
-          background-color: ${isSecondary ? theme.bg.accent : theme.bg.highlight};
+          background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.highlight};
         `
       : css`
           flex-direction: row;
@@ -91,7 +86,9 @@ export default styled(HighlightRow)`
           justify-content: space-between;
           min-height: ${INPUTS_HEIGHT}px;
           padding: 20px;
-          background-color: ${isSecondary ? theme.bg.accent : theme.bg.primary};
+          background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.primary};
+          border-bottom-width: ${isLast ? 0 : 1}px;
+          border-bottom-color: ${theme.border.secondary};
         `}
 
   ${({ isInput, hasRightContent }) =>

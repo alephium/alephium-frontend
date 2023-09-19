@@ -16,54 +16,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, ReactNode, useContext, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
+import { useCallback } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
-import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
-interface ScrollContextValue {
-  scrollY?: SharedValue<number>
-  scrollDirection?: SharedValue<ScrollDirection>
-  scrollToTop?: () => void
-  setScrollToTop: (scrollToTop: () => void) => void
-}
+import { ScrollableViewRef, useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
 
 const scrollDirectionDeltaThreshold = 10
 
-export type ScrollDirection = 'up' | 'down' | undefined
+const useNavigationScrollHandler = (viewRefForScrollTopOnHeaderPress?: ScrollableViewRef) => {
+  const { scrollY, scrollDirection, activeScreenRef } = useNavigationScrollContext()
 
-const ScrollContext = createContext<ScrollContextValue>({
-  scrollY: undefined,
-  scrollDirection: undefined,
-  scrollToTop: undefined,
-  setScrollToTop: () => () => null
-})
-
-export const ScrollContextProvider = ({ children }: { children: ReactNode }) => {
-  const scrollY = useSharedValue(0)
-  const scrollDirection = useSharedValue(undefined as ScrollDirection)
-  const [scrollToTop, setScrollToTop] = useState<() => void>(() => () => null)
-
-  return (
-    <ScrollContext.Provider value={{ scrollY, scrollDirection, scrollToTop, setScrollToTop }}>
-      {children}
-    </ScrollContext.Provider>
+  useFocusEffect(
+    useCallback(() => {
+      if (activeScreenRef && viewRefForScrollTopOnHeaderPress) {
+        activeScreenRef.current = viewRefForScrollTopOnHeaderPress.current
+      }
+    }, [activeScreenRef, viewRefForScrollTopOnHeaderPress])
   )
-}
-
-export const useScrollContext = () => useContext(ScrollContext)
-
-export const useScrollEventHandler = () => {
-  const { scrollY, scrollDirection } = useScrollContext()
 
   const scrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!scrollY || !scrollDirection) return
 
     const newScrollY = e.nativeEvent.contentOffset.y
+
     const delta = scrollY.value - newScrollY
     const direction = delta > 0 ? 'up' : 'down'
 
     if (newScrollY === 0) {
-      scrollDirection.value = undefined
+      scrollDirection.value = null
     } else if (direction === 'up' && delta > scrollDirectionDeltaThreshold) {
       scrollDirection.value = 'up'
     } else if (direction === 'down' && delta < -scrollDirectionDeltaThreshold) {
@@ -76,4 +57,4 @@ export const useScrollEventHandler = () => {
   return scrollHandler
 }
 
-export default ScrollContext
+export default useNavigationScrollHandler

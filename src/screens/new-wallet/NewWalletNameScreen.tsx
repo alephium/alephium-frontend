@@ -24,7 +24,8 @@ import styled from 'styled-components/native'
 import Button from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps } from '~/components/layout/Screen'
+import ScrollScreen from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -36,6 +37,7 @@ import { biometricsEnabled } from '~/store/activeWalletSlice'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -113,34 +115,42 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   }
 
   return (
-    <Screen {...props}>
-      <CenteredInstructions instructions={instructions} stretch />
-      <InputContainer>
+    <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
+      <ContentContainer>
+        <CenteredInstructions instructions={instructions} />
         <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus error={error} />
-      </InputContainer>
+      </ContentContainer>
       <ActionsContainer>
-        <Button title="Next" type="primary" wide disabled={name.length < 3 || !!error} onPress={handleButtonPress} />
+        <Button
+          title="Next"
+          type="primary"
+          variant="accent"
+          wide
+          disabled={name.length < 3 || !!error}
+          onPress={handleButtonPress}
+        />
       </ActionsContainer>
       {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} />}
       <SpinnerModal isActive={loading} text="Creating wallet..." />
-    </Screen>
+    </ScrollScreen>
   )
 }
 
 export default NewWalletNameScreen
 
-const InputContainer = styled.View`
+const ContentContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
 `
 
 const StyledInput = styled(Input)`
+  margin-top: ${DEFAULT_MARGIN}px;
   width: 80%;
 `
 
 const ActionsContainer = styled.View`
-  flex: 1.5;
-  justify-content: center;
+  flex: 1;
+  justify-content: flex-end;
   align-items: center;
 `

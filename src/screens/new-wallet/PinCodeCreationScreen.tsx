@@ -58,7 +58,7 @@ const errorInstructionSet: Instruction[] = [
   { text: 'Please try again 💪', type: 'secondary' }
 ]
 
-const PinCodeCreationScreen = ({ navigation, ...props }: PinCodeCreationScreenProps) => {
+const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationScreenProps) => {
   const dispatch = useAppDispatch()
   const hasAvailableBiometrics = useBiometrics()
   const { method, walletName: name } = useAppSelector((s) => s.walletGeneration)
@@ -119,7 +119,7 @@ const PinCodeCreationScreen = ({ navigation, ...props }: PinCodeCreationScreenPr
     step === 'enter-pin' ? handlePinCodeSet(pin) : step === 'verify-pin' ? handlePinCodeVerification(pin) : false
 
   return (
-    <Screen {...props}>
+    <Screen hasNavigationHeader {...props}>
       <CenteredInstructions instructions={shownInstructions} />
       <PinCodeInput pinLength={pinLength} onPinEntered={handleFullPinEntered} />
       <SpinnerModal isActive={loading} text="Creating wallet..." />

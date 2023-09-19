@@ -23,7 +23,6 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import Input from '~/components/inputs/Input'
 import Screen, { ScreenSection } from '~/components/layout/Screen'
-import { BottomScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
 interface PasswordModalProps {
@@ -47,12 +46,12 @@ const PasswordModal = ({ onClose, onPasswordEntered }: PasswordModalProps) => {
         <ScreenSectionStyled fill>
           <Input label="Password" value={password} onChangeText={setPassword} secureTextEntry />
         </ScreenSectionStyled>
-        <BottomScreenSection>
+        <ScreenSection centered>
           <ButtonsRow>
             <Button title="Cancel" onPress={onClose} />
             <Button title="Submit" onPress={handleSubmit} />
           </ButtonsRow>
-        </BottomScreenSection>
+        </ScreenSection>
       </ScreenStyled>
     </ModalWithBackdrop>
   )

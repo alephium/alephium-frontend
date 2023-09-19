@@ -16,19 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { MinusCircle } from 'lucide-react-native'
 import { useEffect } from 'react'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
-import { ModalProps, ScrollModal } from '~/components/layout/Modals'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 
-const WalletConnectPairingsModal = ({ onClose, ...props }: ModalProps<ScrollScreenProps>) => {
+const WalletConnectPairingsModal = ({ onClose, ...props }: ModalContentProps) => {
   const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
 
   useEffect(() => {
@@ -42,7 +40,7 @@ const WalletConnectPairingsModal = ({ onClose, ...props }: ModalProps<ScrollScre
   }
 
   return (
-    <ScrollModal {...props}>
+    <ModalContent verticalGap {...props}>
       <ScreenSection>
         <BottomModalScreenTitle>Current connections</BottomModalScreenTitle>
       </ScreenSection>
@@ -54,12 +52,16 @@ const WalletConnectPairingsModal = ({ onClose, ...props }: ModalProps<ScrollScre
             subtitle={metadata.description}
             icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
             rightSideContent={
-              <Button onPress={() => handleDisconnectPress(topic)} Icon={MinusCircle} type="transparent" />
+              <Button
+                onPress={() => handleDisconnectPress(topic)}
+                iconProps={{ name: 'remove-circle' }}
+                type="transparent"
+              />
             }
           />
         ))}
       </ScreenSection>
-    </ScrollModal>
+    </ModalContent>
   )
 }
 

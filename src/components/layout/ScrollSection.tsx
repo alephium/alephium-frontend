@@ -16,10 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-type InWalletTabsParamList = {
-  DashboardScreen: undefined
-  AddressesTabNavigation: undefined
-  TransfersScreen: undefined
-}
+import { ScrollView, ScrollViewProps, View } from 'react-native'
 
-export default InWalletTabsParamList
+export type ScrollSectionProps = ScrollViewProps
+
+const ScrollSection = ({ children, style, ...props }: ScrollSectionProps) => (
+  <ScrollView scrollEventThrottle={16} alwaysBounceVertical={false} {...props}>
+    <View style={style}>{children}</View>
+  </ScrollView>
+)
+
+export default ScrollSection

@@ -21,8 +21,9 @@ import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import HighlightRow from '~/components/HighlightRow'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import HighlightRow from '~/components/Row'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 import { labelColorPalette } from '~/utils/colors'
 
 interface ColorPickerProps {
@@ -60,6 +61,7 @@ export default styled(ColorPicker)`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  border-radius: ${BORDER_RADIUS}px;
 `
 
 const Dot = styled.View<{ color?: string }>`
