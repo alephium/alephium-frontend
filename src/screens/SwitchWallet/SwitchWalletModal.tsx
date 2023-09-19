@@ -17,11 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import SwitchWalletBase from '~/screens/SwitchWalletBase'
+import { ScreenSection } from '~/components/layout/Screen'
+import NewWalletButtons from '~/screens/SwitchWallet/NewWalletButtons'
+import SwitchWalletList from '~/screens/SwitchWallet/SwitchWalletList'
 
 const SwitchWalletModal = ({ onClose, ...props }: ModalContentProps) => (
-  <ModalContent {...props}>
-    <SwitchWalletBase onClose={onClose} />
+  <ModalContent verticalGap {...props}>
+    <SwitchWalletList />
+
+    <ScreenSection>
+      <NewWalletButtons onButtonPress={onClose} />
+    </ScreenSection>
   </ModalContent>
 )
 

@@ -25,7 +25,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BottomModal from '~/components/layout/BottomModal'
 import { useAppSelector } from '~/hooks/redux'
-import SwitchWalletModal from '~/screens/SwitchWalletModal'
+import SwitchWalletModal from '~/screens/SwitchWallet/SwitchWalletModal'
 
 interface WalletSwitchButtonProps {
   style?: StyleProp<ViewStyle>

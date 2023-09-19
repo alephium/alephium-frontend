@@ -20,14 +20,11 @@ import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
-import { Alert, ScrollView } from 'react-native'
-import styled from 'styled-components/native'
+import { Alert } from 'react-native'
 
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomModalScreenTitle } from '~/components/layout/Screen'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -40,16 +37,14 @@ import {
   rememberActiveWallet
 } from '~/persistent-storage/wallets'
 import { walletSwitched } from '~/store/activeWalletSlice'
-import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
-import { VERTICAL_GAP } from '~/style/globalStyle'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 import { resetNavigationState } from '~/utils/navigation'
 
-interface SwitchWalletBaseProps {
+interface SwitchWalletListProps {
   onClose?: () => void
 }
 
-const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
+const SwitchWalletList = ({ onClose }: SwitchWalletListProps) => {
   const dispatch = useAppDispatch()
   const wallets = useSortedWallets()
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
@@ -58,12 +53,6 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [loading, setLoading] = useState(false)
-
-  const handleButtonPress = (method: WalletGenerationMethod) => {
-    dispatch(methodSelected(method))
-    onClose && onClose()
-    navigation.navigate('NewWalletIntroScreen')
-  }
 
   const handleWalletItemPress = async (walletId: string) => {
     setLoading(true)
@@ -103,54 +92,29 @@ const SwitchWalletBase = ({ onClose }: SwitchWalletBaseProps) => {
 
   return (
     <>
-      <Content>
+      <ScreenSection>
         <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
-        <Subtitle>Select a wallet to switch to.</Subtitle>
-
-        <ScrollView alwaysBounceVertical={false}>
-          <BoxSurface>
-            {wallets.map((wallet) => (
-              <RadioButtonRow
-                key={wallet.id}
-                title={wallet.name}
-                onPress={() => handleWalletItemPress(wallet.id)}
-                isActive={wallet.id === activeWalletMetadataId}
-                isInput
-              />
-            ))}
-          </BoxSurface>
-        </ScrollView>
-      </Content>
-
-      <ButtonsRow>
-        <Button
-          title="New wallet"
-          onPress={() => handleButtonPress('create')}
-          iconProps={{ name: 'add-outline' }}
-          style={{ flex: 1 }}
-        />
-        <Button
-          title="Import wallet"
-          onPress={() => handleButtonPress('import')}
-          iconProps={{ name: 'arrow-down-outline' }}
-          style={{ flex: 1 }}
-        />
-      </ButtonsRow>
+        <AppText semiBold size={16} color="secondary">
+          Select a wallet to switch to.
+        </AppText>
+      </ScreenSection>
+      <ScreenSection>
+        <BoxSurface>
+          {wallets.map((wallet) => (
+            <RadioButtonRow
+              key={wallet.id}
+              title={wallet.name}
+              onPress={() => handleWalletItemPress(wallet.id)}
+              isActive={wallet.id === activeWalletMetadataId}
+              isInput
+            />
+          ))}
+        </BoxSurface>
+      </ScreenSection>
 
       <SpinnerModal isActive={loading} text="Switching wallets..." />
     </>
   )
 }
 
-export default SwitchWalletBase
-
-const Subtitle = styled(AppText)`
-  font-weight: 500;
-  font-size: 16px;
-  color: ${({ theme }) => theme.font.secondary};
-`
-
-const Content = styled.View`
-  gap: ${VERTICAL_GAP}px;
-  margin-bottom: ${VERTICAL_GAP}px;
-`
+export default SwitchWalletList

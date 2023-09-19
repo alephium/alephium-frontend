@@ -49,7 +49,7 @@ import SecurityScreen from '~/screens/SecurityScreen'
 import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
-import SwitchWalletScreen from '~/screens/SwitchWalletScreen'
+import SwitchWalletScreen from '~/screens/SwitchWallet/SwitchWalletScreen'
 import { routeChanged } from '~/store/appSlice'
 import { isNavStateRestorable, rootStackNavigationRef } from '~/utils/navigation'
 
