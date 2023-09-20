@@ -32,7 +32,6 @@ import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { themes, ThemeType } from '~/style/themes'
 import { AddressHash } from '~/types/addresses'
 import { currencies } from '~/utils/currencies'
 
