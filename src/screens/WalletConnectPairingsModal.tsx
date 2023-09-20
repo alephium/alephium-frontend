@@ -45,11 +45,12 @@ const WalletConnectPairingsModal = ({ onClose, ...props }: ModalContentProps) =>
         <BottomModalScreenTitle>Current connections</BottomModalScreenTitle>
       </ScreenSection>
       <ScreenSection>
-        {activeSessions.map(({ topic, peer: { metadata } }) => (
+        {activeSessions.map(({ topic, peer: { metadata } }, index) => (
           <ListItem
             key={topic}
             title={metadata.name}
             subtitle={metadata.description}
+            isLast={index === activeSessions.length - 1}
             icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
             rightSideContent={
               <Button

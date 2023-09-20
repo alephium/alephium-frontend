@@ -257,8 +257,8 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
       </ScreenSection>
       <ScreenSection centered>
         <ButtonsRow>
-          <Button title="Reject" variant="alert" onPress={onReject} />
-          <Button title="Approve" variant="valid" onPress={handleApprovePress} />
+          <Button title="Reject" variant="alert" onPress={onReject} flex />
+          <Button title="Approve" variant="valid" onPress={handleApprovePress} flex />
         </ButtonsRow>
       </ScreenSection>
     </ModalContent>

@@ -155,8 +155,8 @@ const WalletConnectSessionProposalModal = ({
           </ScreenSection>
           <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} style={{ flex: 1 }} />
-              <Button title="Switch network" variant="accent" onPress={handleSwitchNetworkPress} style={{ flex: 1 }} />
+              <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
+              <Button title="Switch network" variant="accent" onPress={handleSwitchNetworkPress} flex />
             </ButtonsRow>
           </ScreenSection>
         </>
@@ -172,13 +172,8 @@ const WalletConnectSessionProposalModal = ({
           </ScreenSection>
           <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} style={{ flex: 1 }} />
-              <Button
-                title="Generate new address"
-                variant="accent"
-                onPress={handleAddressGeneratePress}
-                style={{ flex: 1 }}
-              />
+              <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
+              <Button title="Generate new address" variant="accent" onPress={handleAddressGeneratePress} flex />
             </ButtonsRow>
           </ScreenSection>
         </>
@@ -191,13 +186,13 @@ const WalletConnectSessionProposalModal = ({
           </ScreenSection>
           <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} style={{ flex: 1 }} />
+              <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
               <Button
                 title="Accept"
                 variant="valid"
                 onPress={() => approveProposal(signerAddress)}
                 disabled={!signerAddress}
-                style={{ flex: 1 }}
+                flex
               />
             </ButtonsRow>
           </ScreenSection>
