@@ -179,11 +179,39 @@ const WalletConnectSessionProposalModal = ({
         </>
       ) : (
         <>
-          <ScreenSection>
-            <SectionTitle semiBold>Connect with address</SectionTitle>
-            <SectionSubtitle color="secondary">Tap to change the address to connect with.</SectionSubtitle>
-            <AddressBox addressHash={signerAddress.hash} onPress={() => setShowAlternativeSignerAddresses(true)} />
-          </ScreenSection>
+          {showAlternativeSignerAddresses ? (
+            <ScreenSection>
+              <SectionTitle semiBold>Addresses in group {requiredChainInfo?.addressGroup}</SectionTitle>
+              <SectionSubtitle color="secondary">Tap to select another one</SectionSubtitle>
+              <AddressList>
+                {addressesInGroup.map((address, index) => (
+                  <AddressBox
+                    key={address.hash}
+                    addressHash={address.hash}
+                    isSelected={address.hash === signerAddress?.hash}
+                    onPress={() => {
+                      setSignerAddress(address)
+                      setShowAlternativeSignerAddresses(false)
+                      posthog?.capture('WC: Switched signer address')
+                    }}
+                  />
+                ))}
+                <PlaceholderBox>
+                  <SectionSubtitle>
+                    If none of the above addresses fit your needs, you can generate a new one.
+                  </SectionSubtitle>
+                  <Button title="Generate new address" variant="accent" onPress={handleAddressGeneratePress} />
+                </PlaceholderBox>
+              </AddressList>
+            </ScreenSection>
+          ) : (
+            <ScreenSection>
+              <SectionTitle semiBold>Connect with address</SectionTitle>
+              <SectionSubtitle color="secondary">Tap to change the address to connect with.</SectionSubtitle>
+              <AddressBox addressHash={signerAddress.hash} onPress={() => setShowAlternativeSignerAddresses(true)} />
+            </ScreenSection>
+          )}
+
           <ScreenSection centered>
             <ButtonsRow>
               <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
@@ -198,32 +226,7 @@ const WalletConnectSessionProposalModal = ({
           </ScreenSection>
         </>
       )}
-      {showAlternativeSignerAddresses && (
-        <ScreenSection>
-          <SectionTitle semiBold>Addresses in group {requiredChainInfo?.addressGroup}</SectionTitle>
-          <SectionSubtitle color="secondary">Tap to select another one</SectionSubtitle>
-          <AddressList>
-            {addressesInGroup.map((address, index) => (
-              <AddressBox
-                key={address.hash}
-                addressHash={address.hash}
-                isSelected={address.hash === signerAddress?.hash}
-                onPress={() => {
-                  setSignerAddress(address)
-                  setShowAlternativeSignerAddresses(false)
-                  posthog?.capture('WC: Switched signer address')
-                }}
-              />
-            ))}
-            <PlaceholderBox>
-              <SectionSubtitle>
-                If none of the above addresses fit your needs, you can generate a new one.
-              </SectionSubtitle>
-              <Button title="Generate new address" variant="accent" onPress={handleAddressGeneratePress} />
-            </PlaceholderBox>
-          </AddressList>
-        </ScreenSection>
-      )}
+
       <SpinnerModal isActive={!!loading} text={loading} />
     </ModalContent>
   )
