@@ -50,11 +50,10 @@ export interface BaseHeaderProps extends ViewProps {
 }
 
 export const scrollEndThreshold = 80
+
 const defaultScrollRange = [0, scrollEndThreshold]
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
-
-// TODO: Reimplement tap bar to scroll up
 
 const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle },

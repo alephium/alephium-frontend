@@ -45,7 +45,7 @@ import {
 } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 
-const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
+const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const posthog = usePostHog()
@@ -94,7 +94,6 @@ const AddressesScreen = ({ onScroll, contentStyle, ...props }: BottomBarScrollSc
     <>
       <BottomBarScrollScreen
         refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={190} />}
-        onScroll={onScroll}
         hasBottomBar
         {...props}
       >

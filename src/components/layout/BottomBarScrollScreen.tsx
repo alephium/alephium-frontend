@@ -18,21 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 
-import { HeaderOptions } from '~/components/headers/BaseHeader'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface BottomBarScrollScreenProps extends ScrollScreenProps {
-  headerOptions?: HeaderOptions
   hasBottomBar?: boolean
 }
 
-const BottomBarScrollScreen = ({
-  headerOptions,
-  hasBottomBar = false,
-  children,
-  ...props
-}: BottomBarScrollScreenProps) => {
+const BottomBarScrollScreen = ({ hasBottomBar = false, children, ...props }: BottomBarScrollScreenProps) => {
   const bottomBarHeight = useBottomTabBarHeight()
 
   return (
@@ -40,7 +33,6 @@ const BottomBarScrollScreen = ({
       contentContainerStyle={{
         paddingBottom: hasBottomBar ? bottomBarHeight + DEFAULT_MARGIN : 0
       }}
-      headerOptions={headerOptions}
       showsHorizontalScrollIndicator={false}
       {...props}
     >

@@ -21,13 +21,13 @@ import { colord } from 'colord'
 import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useMemo, useRef } from 'react'
-import { PressableProps, Share, StyleProp, ViewStyle } from 'react-native'
+import { PressableProps, Share } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
-import Screen, { ScreenSection } from '~/components/layout/Screen'
+import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
 import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
@@ -41,12 +41,11 @@ import { themes } from '~/style/themes'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { stringToColour } from '~/utils/colors'
 
-type ScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
-  StackScreenProps<RootStackParamList, 'ContactScreen'> & {
-    style?: StyleProp<ViewStyle>
-  }
+type ContactScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
+  StackScreenProps<RootStackParamList, 'ContactScreen'> &
+  ScreenProps
 
-const ContactScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
+const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenProps) => {
   const listRef = useRef(null)
   const posthog = usePostHog()
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
@@ -90,7 +89,7 @@ const ContactScreen = ({ navigation, route: { params }, ...props }: ScreenProps)
   const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
   return (
-    <Screen>
+    <Screen style={style}>
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
@@ -150,12 +149,29 @@ const ContactScreen = ({ navigation, route: { params }, ...props }: ScreenProps)
 
 export default ContactScreen
 
+interface ContactButtonProps extends PressableProps {
+  title: string
+  Icon?: (props: LucideProps) => JSX.Element
+}
+
+const ContactButton = ({ Icon, title, children, ...props }: ContactButtonProps) => {
+  const theme = useTheme()
+
+  return (
+    <ButtonStyled {...props}>
+      {Icon && <Icon size={20} color={theme.global.accent} />}
+      <ButtonText medium color="accent">
+        {title}
+      </ButtonText>
+    </ButtonStyled>
+  )
+}
+
 const CenteredSection = styled(ScreenSection)`
   align-items: center;
   margin-bottom: 25px;
 `
 
-// TODO: DRY
 const ContactIcon = styled.View<{ color?: string }>`
   justify-content: center;
   align-items: center;
@@ -181,25 +197,6 @@ const ButtonsRow = styled.View`
   width: 100%;
   margin-top: 40px;
 `
-
-// TODO: Move to new cleaned-up Buttons component
-interface ButtonProps extends PressableProps {
-  title: string
-  Icon?: (props: LucideProps) => JSX.Element
-}
-
-const ContactButton = ({ Icon, title, children, ...props }: ButtonProps) => {
-  const theme = useTheme()
-
-  return (
-    <ButtonStyled {...props}>
-      {Icon && <Icon size={20} color={theme.global.accent} />}
-      <ButtonText medium color="accent">
-        {title}
-      </ButtonText>
-    </ButtonStyled>
-  )
-}
 
 const ButtonStyled = styled.Pressable`
   padding: 12px 6px;

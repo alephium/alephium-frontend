@@ -18,21 +18,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 
+import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
 import { Contact } from '~/types/contacts'
 
-const ContactsScreen = ({ onScroll, contentStyle }: TabBarPageProps) => {
+const ContactsScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   return (
-    <ContactListScreenBase
-      onScroll={onScroll}
-      onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
-      onNewContactPress={() => navigation.navigate('NewContactScreen')}
-      contentStyle={contentStyle}
-    />
+    <BottomBarScrollScreen hasBottomBar {...props}>
+      <ContactListScreenBase
+        onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
+        onNewContactPress={() => navigation.navigate('NewContactScreen')}
+        style={contentStyle}
+      />
+    </BottomBarScrollScreen>
   )
 }
 
