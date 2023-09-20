@@ -25,7 +25,7 @@ import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export type ScreenProps = ViewProps & {
   hasNavigationHeader?: boolean
-  contrastedBackground?: boolean
+  contrastedBg?: boolean
 }
 
 const Screen = ({ children, hasNavigationHeader, style, ...props }: ScreenProps) => {
@@ -40,7 +40,7 @@ const Screen = ({ children, hasNavigationHeader, style, ...props }: ScreenProps)
 
 const ScreenStyled = styled.View<ScreenProps>`
   flex: 1;
-  background-color: ${({ theme, contrastedBackground }) => (contrastedBackground ? theme.bg.primary : theme.bg.back2)};
+  background-color: ${({ theme, contrastedBg }) => (contrastedBg ? theme.bg.primary : theme.bg.back2)};
 `
 
 export default Screen
