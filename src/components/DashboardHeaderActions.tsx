@@ -43,6 +43,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const networkStatus = useAppSelector((s) => s.network.status)
   const navigation = useNavigation<NavigationProp<SendNavigationParamList>>()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
+  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
   const { pairWithDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
@@ -60,7 +61,11 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
       navigation.navigate('SendNavigation', { screen: 'OriginScreen', params: { toAddressHash: text } })
       posthog?.capture('Send: Captured destination address by scanning QR code from Dashboard')
     } else if (text.startsWith('wc:')) {
-      pairWithDapp(text)
+      if (isWalletConnectEnabled) {
+        pairWithDapp(text)
+      } else {
+        Toast.show('WalletConnect is an experimental feature. You can enable it in the settings.', { duration: 10000 })
+      }
     }
   }
 
@@ -76,7 +81,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           variant={isMnemonicBackedUp ? 'default' : 'alert'}
           round
         />
-        {walletConnectClient && activeSessions.length > 0 && (
+        {isWalletConnectEnabled && walletConnectClient && activeSessions.length > 0 && (
           <Button onPress={() => setIsWalletConnectPairingsModalOpen(true)} iconProps={{ name: 'radio' }} round />
         )}
         <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'scan-outline' }} round />
@@ -86,7 +91,11 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
         <QRCodeScannerModal
           onClose={closeQRCodeScannerModal}
           onQRCodeScan={handleQRCodeScan}
-          text="Scan an Alephium address QR code to send funds or a WalletConnect QR code to connect to a dApp."
+          text={
+            isWalletConnectEnabled
+              ? 'Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.'
+              : 'Scan an Alephium address QR code to send funds to.'
+          }
         />
       )}
 

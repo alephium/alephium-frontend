@@ -47,7 +47,8 @@ export const defaultGeneralSettings: GeneralSettings = {
   requireAuth: false,
   currency: 'USD',
   analytics: true,
-  analyticsId: undefined
+  analyticsId: undefined,
+  walletConnect: false
 }
 
 export const defaultNetworkSettings: NetworkSettings = clone(networkPresetSettings[defaultNetwork])
