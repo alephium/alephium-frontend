@@ -82,9 +82,14 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           round
         />
         {isWalletConnectEnabled && walletConnectClient && activeSessions.length > 0 && (
-          <Button onPress={() => setIsWalletConnectPairingsModalOpen(true)} iconProps={{ name: 'radio' }} round />
+          <Button
+            onPress={() => setIsWalletConnectPairingsModalOpen(true)}
+            iconProps={{ name: 'radio' }}
+            round
+            variant="accent"
+          />
         )}
-        <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'scan-outline' }} round />
+        <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'qr-code-outline' }} round />
         <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings-outline' }} round />
       </View>
       {isCameraOpen && (
