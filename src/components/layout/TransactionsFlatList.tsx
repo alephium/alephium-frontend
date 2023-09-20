@@ -105,7 +105,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
         dispatch(syncAddressTransactionsNextPage(address.hash))
       }
     } else if (!allConfirmedTransactionsLoaded) {
-      dispatch(syncAllAddressesTransactionsNextPage())
+      dispatch(syncAllAddressesTransactionsNextPage({ minTxs: 10 }))
     }
   }, [address, allConfirmedTransactionsLoaded, dispatch, isLoading])
 

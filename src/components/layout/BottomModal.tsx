@@ -86,11 +86,12 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
   const offsetY = useSharedValue(0)
 
   const canMaximize = useSharedValue(false)
+  const shouldMaximizeOnOpen = useSharedValue(maximisedContent)
 
   const modalHeightAnimatedStyle = useAnimatedStyle(() => {
     const margin = interpolate(
       -modalHeight.value,
-      [maximisedContent ? 0 : minHeight.value, dimensions.height],
+      [shouldMaximizeOnOpen.value ? 0 : minHeight.value, dimensions.height],
       [5, 0],
       Extrapolate.CLAMP
     )
@@ -112,11 +113,13 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: maximisedContent ? 0 : interpolate(-modalHeight.value, [0, minHeight.value, dimensions.height], [0, 1, 0])
+    opacity: shouldMaximizeOnOpen.value
+      ? 0
+      : interpolate(-modalHeight.value, [0, minHeight.value, dimensions.height], [0, 1, 0])
   }))
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(-modalHeight.value, [0, dimensions.height], [0, 1]),
+    opacity: interpolate(-modalHeight.value, [0, dimensions.height - 100], [0, 1]),
     pointerEvents: position.value === 'closing' ? 'none' : 'auto'
   }))
 
@@ -130,14 +133,15 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
       runOnUI(() => {
         contentHeight.value = newContentHeight
         canMaximize.value = contentHeight.value > 0.3 * dimensions.height
+        shouldMaximizeOnOpen.value = maximisedContent || newContentHeight > dimensions.height
 
         minHeight.value = customMinHeight
           ? customMinHeight
-          : maximisedContent
+          : shouldMaximizeOnOpen.value
           ? maxHeight
           : contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
 
-        maximisedContent ? handleMaximize() : handleMinimize()
+        shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
       })()
     }
   }
@@ -189,7 +193,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
           if (shouldMaximise) {
             handleMaximize()
           } else if (shouldMinimise) {
-            maximisedContent ? handleClose() : handleMinimize()
+            shouldMaximizeOnOpen.value ? handleClose() : handleMinimize()
           } else if (shouldClose) {
             handleClose()
           } else {
@@ -200,17 +204,17 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
           }
         }),
     [
-      canMaximize.value,
-      dimensions.height,
-      handleClose,
-      handleMaximize,
-      handleMinimize,
-      maxHeight,
-      minHeight.value,
-      modalHeight,
       offsetY,
+      modalHeight,
       position.value,
-      maximisedContent
+      dimensions.height,
+      canMaximize.value,
+      minHeight.value,
+      handleMaximize,
+      shouldMaximizeOnOpen.value,
+      handleClose,
+      handleMinimize,
+      maxHeight
     ]
   )
 
@@ -256,7 +260,7 @@ const Backdrop = styled(AnimatedPressable)`
 
 const BottomModalStyled = styled(Animated.View)`
   justify-content: flex-start;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.back1};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;
