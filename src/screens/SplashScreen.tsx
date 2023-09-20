@@ -39,7 +39,7 @@ export default styled(SplashScreen)`
 `
 
 const LogoContainer = styled.View`
-  flex: 1.5;
+  flex: 1;
   justify-content: center;
   align-items: center;
 `
