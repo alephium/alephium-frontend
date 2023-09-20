@@ -29,6 +29,7 @@ import {
 } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, explorer } from '@alephium/web3'
+import { sortBy } from 'lodash'
 
 import { store } from '~/store/store'
 import { Address } from '~/types/addresses'
@@ -40,7 +41,8 @@ export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransac
 // TODO: Same as in desktop wallet, move to SDK?
 export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
   const state = store.getState()
-  const assetsInfo = state.assetsInfo.entities
+  const fungibleTokens = state.assetsInfo.entities
+  const nfts = state.nfts.entities
   const addresses = Object.values(state.addresses.entities) as Address[]
 
   let amount: bigint | undefined = BigInt(0)
@@ -89,8 +91,23 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     lockTime = lockTime.toISOString() === new Date(0).toISOString() ? undefined : lockTime
   }
 
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...assetsInfo[token.id] }))]
-  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
+  const tokenAssets = [
+    ...tokens.map((token) =>
+      fungibleTokens[token.id]
+        ? { ...token, ...fungibleTokens[token.id], type: 'fungible' }
+        : nfts[token.id]
+        ? { ...token, ...fungibleTokens[token.id], type: 'non-fungible' }
+        : { ...token, verified: false, type: undefined, name: '' }
+    )
+  ]
+  const sortedTokens = sortBy(tokenAssets, [
+    (v) => !v.type,
+    (v) => !v.verified,
+    (v) => v.type === 'non-fungible',
+    (v) => v.type === 'fungible',
+    (v) => (v.type === 'fungible' ? v.symbol : v?.name)
+  ])
+  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...sortedTokens] : sortedTokens
 
   return {
     assets,
