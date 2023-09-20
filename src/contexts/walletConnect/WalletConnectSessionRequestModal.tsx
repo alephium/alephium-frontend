@@ -87,7 +87,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           dispatch(
             transactionSent({
               hash: data.txId,
-              fromAddress: requestData.wcData.fromAddress.hash,
+              fromAddress: requestData.wcData.fromAddress,
               toAddress: requestData.wcData.toAddress,
               amount: attoAlphAmount,
               tokens,
@@ -117,7 +117,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           dispatch(
             transactionSent({
               hash: data.txId,
-              fromAddress: requestData.wcData.fromAddress.hash,
+              fromAddress: requestData.wcData.fromAddress,
               amount: attoAlphAmount,
               tokens,
               timestamp: new Date().getTime(),
@@ -141,7 +141,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           dispatch(
             transactionSent({
               hash: data.txId,
-              fromAddress: requestData.wcData.fromAddress.hash,
+              fromAddress: requestData.wcData.fromAddress,
               timestamp: new Date().getTime(),
               status: 'pending',
               type: 'deploy-contract'
@@ -206,7 +206,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
               </Row>
             )}
           <Row title="From" titleColor="secondary">
-            <AddressBadge addressHash={requestData.wcData.fromAddress.hash} />
+            <AddressBadge addressHash={requestData.wcData.fromAddress} />
           </Row>
 
           {requestData.type === 'deploy-contract' || requestData.type === 'call-contract' ? (

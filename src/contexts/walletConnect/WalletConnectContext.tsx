@@ -52,8 +52,8 @@ import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppSelector } from '~/hooks/redux'
-import { selectAllAddresses } from '~/store/addressesSlice'
-import { Address } from '~/types/addresses'
+import { selectAddressIds } from '~/store/addressesSlice'
+import { Address, AddressHash } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
@@ -78,7 +78,7 @@ const WalletConnectContext = createContext(initialValues)
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
   const currentNetworkName = useAppSelector((s) => s.network.name)
-  const addresses = useAppSelector(selectAllAddresses)
+  const addressIds = useAppSelector(selectAddressIds) as AddressHash[]
   const posthog = usePostHog()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
@@ -150,7 +150,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
             ]
 
-            const fromAddress = addresses.find((address) => address.hash === signerAddress)
+            const fromAddress = addressIds.find((address) => address === signerAddress)
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
@@ -196,7 +196,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
               : undefined
 
-            const fromAddress = addresses.find((address) => address.hash === signerAddress)
+            const fromAddress = addressIds.find((address) => address === signerAddress)
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
@@ -241,7 +241,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             let assetAmounts: AssetAmount[] = []
             let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
 
-            const fromAddress = addresses.find((address) => address.hash === signerAddress)
+            const fromAddress = addressIds.find((address) => address === signerAddress)
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
@@ -322,8 +322,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     },
     // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
     // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
-    // TODO: Figure out a way to avoid re-renders
-    [walletConnectClient, addresses, posthog, respondToWalletConnect, respondToWalletConnectWithError]
+    // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
+    // TODO: Separate offline/online address data slices
+    [walletConnectClient, addressIds, posthog, respondToWalletConnect, respondToWalletConnectWithError]
   )
 
   const onSessionProposal = useCallback(async (sessionProposalEvent: SessionProposalEvent) => {

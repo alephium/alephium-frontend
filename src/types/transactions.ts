@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair, AssetAmount } from '@alephium/sdk'
+import { AssetAmount } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
 
-import { Address } from '~/types/addresses'
+import { Address, AddressHash } from '~/types/addresses'
 
 export type PendingTransaction =
   | {
@@ -65,8 +65,8 @@ export enum TxType {
 }
 
 export interface TransferTxData {
-  fromAddress: AddressKeyPair
-  toAddress: string
+  fromAddress: AddressHash
+  toAddress: AddressHash
   assetAmounts: AssetAmount[]
   gasAmount?: number
   gasPrice?: string
@@ -74,7 +74,7 @@ export interface TransferTxData {
 }
 
 export interface CallContractTxData {
-  fromAddress: AddressKeyPair
+  fromAddress: AddressHash
   bytecode: string
 
   assetAmounts?: AssetAmount[]
@@ -83,7 +83,7 @@ export interface CallContractTxData {
 }
 
 export interface DeployContractTxData {
-  fromAddress: AddressKeyPair
+  fromAddress: AddressHash
   bytecode: string
 
   initialAlphAmount?: AssetAmount
