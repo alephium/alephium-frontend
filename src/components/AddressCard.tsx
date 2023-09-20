@@ -17,8 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/sdk'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
+import { usePostHog } from 'posthog-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -29,6 +31,7 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -43,6 +46,8 @@ interface AddressCardProps {
 
 const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) => {
   const theme = useTheme()
+  const navigation = useNavigation<NavigationProp<SendNavigationParamList>>()
+  const posthog = usePostHog()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const currency = useAppSelector((s) => s.settings.currency)
   const totalAddressBalance = BigInt(address?.balance ?? 0) + BigInt(address?.lockedBalance ?? 0)
@@ -57,6 +62,24 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
   const bgColor = address.settings.color ?? theme.font.primary
   const textColor = colord(bgColor).isDark() ? 'white' : 'black'
+
+  const handleSendPress = () => {
+    posthog?.capture('Address card: Selected address to send funds from')
+
+    navigation.navigate('SendNavigation', {
+      screen: 'DestinationScreen',
+      params: { fromAddressHash: addressHash }
+    })
+  }
+
+  const handleReceivePress = () => {
+    posthog?.capture('Address card: Selected address to receive funds to')
+
+    navigation.navigate('ReceiveNavigation', {
+      screen: 'QRCodeScreen',
+      params: { addressHash }
+    })
+  }
 
   return (
     <LinearGradient style={style} colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
@@ -97,8 +120,20 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
       </Amounts>
       <BottomRow>
         <ButtonsRow sticked>
-          <Button iconProps={{ name: 'arrow-up-outline' }} title="Send" flex type="transparent" />
-          <Button iconProps={{ name: 'arrow-down-outline' }} title="Receive" flex type="transparent" />
+          <Button
+            title="Send"
+            onPress={handleSendPress}
+            iconProps={{ name: 'arrow-up-outline' }}
+            flex
+            type="transparent"
+          />
+          <Button
+            title="Receive"
+            onPress={handleReceivePress}
+            iconProps={{ name: 'arrow-down-outline' }}
+            flex
+            type="transparent"
+          />
         </ButtonsRow>
       </BottomRow>
     </LinearGradient>

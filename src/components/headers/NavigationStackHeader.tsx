@@ -21,9 +21,9 @@ import { StackHeaderProps } from '@react-navigation/stack'
 import Button from '~/components/buttons/Button'
 import NavigationBaseHeader, { NavigationBaseHeaderProps } from '~/components/headers/NavigationBaseHeader'
 
-export type NavigationStackHeaderCustomProps = StackHeaderProps & NavigationBaseHeaderProps
+export type NavigationStackHeaderProps = StackHeaderProps & NavigationBaseHeaderProps
 
-const NavigationStackHeader = ({ navigation, options, ...props }: NavigationStackHeaderCustomProps) => {
+const NavigationStackHeader = ({ navigation, options, ...props }: NavigationStackHeaderProps) => {
   const HeaderLeft = props.back ? (
     <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-back-outline' }} round />
   ) : null
