@@ -114,7 +114,7 @@ const CarouselPagination = styled.View`
   flex-wrap: wrap;
   flex-shrink: 1;
   align-self: center;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.button.primary};
   padding: 10px;
   border-radius: 100px;
   gap: 9px;

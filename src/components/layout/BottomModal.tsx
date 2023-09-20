@@ -119,7 +119,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
   }))
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(-modalHeight.value, [0, dimensions.height], [0, 1]),
+    opacity: interpolate(-modalHeight.value, [0, dimensions.height - 100], [0, 1]),
     pointerEvents: position.value === 'closing' ? 'none' : 'auto'
   }))
 
@@ -260,7 +260,7 @@ const Backdrop = styled(AnimatedPressable)`
 
 const BottomModalStyled = styled(Animated.View)`
   justify-content: flex-start;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.back1};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;
