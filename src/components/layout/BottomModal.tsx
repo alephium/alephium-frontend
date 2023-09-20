@@ -256,7 +256,7 @@ const Backdrop = styled(AnimatedPressable)`
 
 const BottomModalStyled = styled(Animated.View)`
   justify-content: flex-start;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.back1};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;
