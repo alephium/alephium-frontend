@@ -52,7 +52,7 @@ const ListItem = ({
 }: ListItemProps) => (
   <Pressable {...props}>
     <ListItemStyled style={style}>
-      <Row style={[{ height }, innerStyle]}>
+      <Row style={[{ minHeight: height }, innerStyle]}>
         <Icon>{icon}</Icon>
         <RowContent showSeparator={!isLast && !hideSeparator}>
           <LeftSideContent>
