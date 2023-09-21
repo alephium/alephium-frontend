@@ -30,7 +30,7 @@ import AppText from '~/components/AppText'
 import { ContinueButton } from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
-import { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import PasswordModal from '~/components/PasswordModal'
@@ -262,7 +262,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           )}
         </SecretPhraseContainer>
 
-        <ScreenSectionBottom>
+        <ScreenSection>
           <PossibleMatches style={{ padding: possibleMatches.length > 0 ? 15 : 0 }}>
             {possibleMatches.map((word, index) => (
               <PossibleWordBox
@@ -287,7 +287,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
             error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
             label={`Secret phrase ${selectedWords.length === 0 ? 'first' : 'next'} word`}
           />
-        </ScreenSectionBottom>
+        </ScreenSection>
         {isPinModalVisible && (
           <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin, decryptedWalletFromQRCode)} />
         )}
@@ -324,12 +324,6 @@ export const SecretPhraseWords = styled.View`
   padding: 15px;
   flex-direction: row;
   flex-wrap: wrap;
-`
-
-const ScreenSectionBottom = styled.View`
-  background-color: ${({ theme }) => theme.bg.secondary};
-  justify-content: flex-end;
-  padding: 0 ${DEFAULT_MARGIN}px;
 `
 
 const PossibleMatches = styled(Animated.View)`
