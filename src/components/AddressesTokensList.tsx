@@ -134,6 +134,7 @@ const LoadingRow = styled.View`
   gap: 15px;
   align-items: flex-start;
   padding-top: 15px;
+  margin: 0 ${DEFAULT_MARGIN}px;
 `
 
 const TabBarStyled = styled(TabBar)`
