@@ -23,19 +23,20 @@ import LottieView from 'lottie-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert } from 'react-native'
-import { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import animationSrc from '~/animations/lottie/success.json'
 import AppText from '~/components/AppText'
-import { ScreenProps, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistWalletMetadata } from '~/persistent-storage/wallets'
 import {
-  PossibleMatches,
   PossibleWordBox,
   SecretPhraseBox,
   SecretPhraseWords,
@@ -44,6 +45,7 @@ import {
   WordBox
 } from '~/screens/new-wallet/ImportWalletSeedScreen'
 import { mnemonicBackedUp } from '~/store/activeWalletSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
 
 interface VerifyMnemonicScreenProps extends StackScreenProps<RootStackParamList, 'VerifyMnemonicScreen'>, ScreenProps {}
@@ -58,6 +60,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const allowedWords = useRef(bip39Words.split(' '))
   const randomizedOptions = useRef(getRandomizedOptions(mnemonicWords.current, allowedWords.current))
   const posthog = usePostHog()
+  const insets = useSafeAreaInsets()
 
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
@@ -80,7 +83,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       setShowSuccess(true)
       setTimeout(() => {
         setShowSuccess(false)
-        navigation.goBack()
+        navigation.navigate('InWalletTabsNavigation')
       }, 2000)
     }
   }, [confirmBackup, mnemonicWords.current.length, navigation, randomizedOptions, selectedWords.length])
@@ -91,7 +94,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
     if (word !== mnemonicWords.current[selectedWords.length]) {
       Alert.alert(
         `This is not the word in position ${selectedWords.length + 1}`,
-        'Verify you wrote down your secret phrase correctly and try again.'
+        'Please, verify that you wrote your secret phrase down correctly and try again.'
       )
       return
     }
@@ -100,13 +103,23 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   }
 
   return (
-    <ScrollScreen fill headerOptions={{ headerTitle: 'Verify', type: 'stack' }} {...props}>
+    <ScrollScreen
+      fill
+      verticalGap
+      headerOptions={{ headerTitle: 'Verify', type: 'stack' }}
+      style={{ paddingBottom: 0 }}
+      {...props}
+    >
+      <ScreenIntro
+        title="Secret recovery phrase"
+        subtitle="Select the words of your secret recovery phrase in the right order."
+      />
+
       <ScreenSection fill>
-        <ScreenSectionTitle>Secret phrase</ScreenSectionTitle>
-        <SecretPhraseBox style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}>
-          <SecretPhraseWords>
-            {selectedWords.length > 0 ? (
-              selectedWords.map((word, index) => (
+        {selectedWords.length > 0 && (
+          <SecretPhraseBox style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}>
+            <SecretPhraseWords>
+              {selectedWords.map((word, index) => (
                 <SelectedWordBox
                   key={`${word.word}-${word.timestamp}`}
                   entering={FadeIn}
@@ -117,16 +130,20 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
                     {index + 1}. {word.word}
                   </AppText>
                 </SelectedWordBox>
-              ))
-            ) : (
-              <AppText color="secondary">Select the words in the correct order 👇</AppText>
-            )}
-          </SecretPhraseWords>
-        </SecretPhraseBox>
+              ))}
+            </SecretPhraseWords>
+          </SecretPhraseBox>
+        )}
       </ScreenSection>
 
-      <ScreenSection>
-        <PossibleMatches style={{ padding: possibleMatches.length > 0 ? 15 : 0 }}>
+      <ChoicesBox
+        style={{ padding: possibleMatches.length > 0 ? 15 : 0, paddingBottom: insets.bottom + DEFAULT_MARGIN }}
+      >
+        <AppText size={16} bold color="secondary" style={{ marginBottom: DEFAULT_MARGIN }}>
+          Word {selectedWords.length + 1} is:
+        </AppText>
+
+        <WordsList>
           {possibleMatches.map((word, index) => (
             <PossibleWordBox
               key={`${word}-${index}`}
@@ -136,8 +153,8 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
               <Word bold>{word}</Word>
             </PossibleWordBox>
           ))}
-        </PossibleMatches>
-      </ScreenSection>
+        </WordsList>
+      </ChoicesBox>
 
       {showSuccess && (
         <ModalWithBackdrop animationType="fade" visible closeModal={() => setShowSuccess(false)}>
@@ -177,4 +194,16 @@ const ModalContent = styled.View`
 
 const StyledAnimation = styled(LottieView)`
   width: 80%;
+`
+
+const ChoicesBox = styled(Animated.View)`
+  background-color: ${({ theme }) => theme.bg.secondary};
+  border-top-width: 1px;
+  border-top-color: ${({ theme }) => theme.border.primary};
+  align-items: center;
+`
+
+const WordsList = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
 `

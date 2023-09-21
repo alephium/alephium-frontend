@@ -333,7 +333,7 @@ const ScreenSectionBottom = styled(ScreenSection)`
   padding: 0;
 `
 
-export const PossibleMatches = styled(Animated.View)`
+const PossibleMatches = styled(Animated.View)`
   flex-direction: row;
   flex-wrap: wrap;
   background-color: ${({ theme }) => theme.bg.secondary};
