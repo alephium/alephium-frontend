@@ -106,14 +106,11 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
     <ScrollScreen
       fill
       verticalGap
-      headerOptions={{ headerTitle: 'Verify', type: 'stack' }}
+      headerOptions={{ headerTitle: 'Verify secret phrase', type: 'stack' }}
       style={{ paddingBottom: 0 }}
       {...props}
     >
-      <ScreenIntro
-        title="Secret recovery phrase"
-        subtitle="Select the words of your secret recovery phrase in the right order."
-      />
+      <ScreenIntro subtitle="Select the words of your secret recovery phrase in the right order." />
 
       <ScreenSection fill>
         {selectedWords.length > 0 && (

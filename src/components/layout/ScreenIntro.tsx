@@ -22,7 +22,7 @@ import AppText from '~/components/AppText'
 import { ScreenSection, ScreenSectionProps } from '~/components/layout/Screen'
 
 interface ScreenIntroProps extends ScreenSectionProps {
-  title: string
+  title?: string
   surtitle?: 'SEND' | 'RECEIVE'
   subtitle?: string
 }
@@ -34,9 +34,11 @@ const ScreenIntro = ({ surtitle, title, subtitle, ...props }: ScreenIntroProps) 
         {surtitle}
       </AppText>
     )}
-    <Title size={32} semiBold>
-      {title}
-    </Title>
+    {title && (
+      <Title size={32} semiBold>
+        {title}
+      </Title>
+    )}
     {subtitle && (
       <Subtitle size={16} medium color="secondary">
         {subtitle}
