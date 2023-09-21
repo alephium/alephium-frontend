@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dimensions, LayoutChangeEvent, Pressable } from 'react-native'
+import { Dimensions, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
@@ -123,9 +123,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
     pointerEvents: position.value === 'closing' ? 'none' : 'auto'
   }))
 
-  const handleContentLayout = (e: LayoutChangeEvent) => {
-    const newContentHeight = e.nativeEvent.layout.height
-
+  const handleContentSizeChange = (w: number, newContentHeight: number) => {
     if (!modalHeight.value || newContentHeight > contentHeight.value + 1) {
       // 👆 Add one to avoid floating point issues
 
@@ -231,7 +229,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
               <Navigation style={modalNavigationAnimatedStyle}>
                 <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
               </Navigation>
-              <Content onLayout={handleContentLayout} onClose={handleClose} />
+              <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
             </ContentContainer>
           </BottomModalStyled>
         </Container>
