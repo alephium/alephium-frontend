@@ -62,7 +62,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   return (
     <DashboardScreenStyled
       refreshControl={
-        <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
+        <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight || 170} />
       }
       hasBottomBar
       verticalGap
