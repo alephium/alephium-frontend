@@ -266,7 +266,7 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   return (
     <RootSiblingParent>
-      <SafeAreaProvider {...props} style={{ backgroundColor: 'black' }}>
+      <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>
         {children}
       </SafeAreaProvider>
     </RootSiblingParent>
