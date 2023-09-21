@@ -128,7 +128,14 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       >
         <ContentContainer>
           <CenteredInstructions instructions={instructions} />
-          <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus error={error} />
+          <StyledInput
+            label="Wallet name"
+            value={name}
+            onChangeText={setName}
+            autoFocus
+            error={error}
+            onSubmitEditing={handleButtonPress}
+          />
         </ContentContainer>
         {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} />}
         <SpinnerModal isActive={loading} text="Creating wallet..." />
@@ -148,10 +155,4 @@ const ContentContainer = styled.View`
 const StyledInput = styled(Input)`
   margin-top: ${DEFAULT_MARGIN}px;
   width: 80%;
-`
-
-const ActionsContainer = styled.View`
-  flex: 1;
-  justify-content: flex-end;
-  align-items: center;
 `

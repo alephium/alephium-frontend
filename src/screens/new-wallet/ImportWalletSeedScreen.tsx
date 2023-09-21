@@ -40,12 +40,13 @@ import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { importContacts } from '~/persistent-storage/contacts'
 import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
+import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { biometricsEnabled } from '~/store/activeWalletSlice'
 import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { cameraToggled } from '~/store/appSlice'
 import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
-import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '~/style/globalStyle'
+import { BORDER_RADIUS, BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { WalletImportData } from '~/types/wallet'
 import { bip39Words } from '~/utils/bip39'
 import { pbkdf2 } from '~/utils/crypto'
@@ -220,47 +221,44 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const isImportButtonEnabled = selectedWords.length >= 12 || enablePasteForDevelopment
 
   return (
-    <ScrollScreen
-      fill
-      headerOptions={{
-        headerTitle: 'Secret phrase',
-        type: 'stack',
-        headerRight: () => <ContinueButton onPress={handleWalletImport} disabled={!isImportButtonEnabled} />
-      }}
-      keyboardShouldPersistTaps="always"
-      {...props}
-    >
-      <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+      <ScrollScreen
+        fill
+        headerOptions={{
+          type: 'stack',
+          headerRight: () => <ContinueButton onPress={handleWalletImport} disabled={!isImportButtonEnabled} />
+        }}
+        keyboardShouldPersistTaps="always"
+        {...props}
+      >
+        <ScreenIntro title="Secret phrase" subtitle={`Enter the secret phrase for the "${name}" wallet`} />
         <SecretPhraseContainer>
-          {selectedWords.length > 1 && (
-            <>
-              <ScreenSectionTitle>Secret phrase</ScreenSectionTitle>
-              <SecretPhraseBox
-                style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}
-              >
-                <ScrollView>
-                  <SecretPhraseWords>
-                    {selectedWords.length > 0 ? (
-                      selectedWords.map((word, index) => (
-                        <SelectedWordBox
-                          key={`${word.word}-${word.timestamp}`}
-                          onPress={() => removeSelectedWord(word)}
-                          entering={FadeIn}
-                          exiting={FadeOut}
-                          layout={Layout.duration(200).delay(200)}
-                        >
-                          <AppText color="accent" bold>
-                            {index + 1}. {word.word}
-                          </AppText>
-                        </SelectedWordBox>
-                      ))
-                    ) : (
-                      <AppText color="secondary">Start entering your phrase... 👇</AppText>
-                    )}
-                  </SecretPhraseWords>
-                </ScrollView>
-              </SecretPhraseBox>
-            </>
+          {selectedWords.length > 0 && (
+            <SecretPhraseBox
+              style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}
+            >
+              <ScrollView>
+                <SecretPhraseWords>
+                  {selectedWords.length > 0 ? (
+                    selectedWords.map((word, index) => (
+                      <SelectedWordBox
+                        key={`${word.word}-${word.timestamp}`}
+                        onPress={() => removeSelectedWord(word)}
+                        entering={FadeIn}
+                        exiting={FadeOut}
+                        layout={Layout.duration(200).delay(200)}
+                      >
+                        <AppText color="accent" bold>
+                          {index + 1}. {word.word}
+                        </AppText>
+                      </SelectedWordBox>
+                    ))
+                  ) : (
+                    <AppText color="secondary">Start entering your phrase... 👇</AppText>
+                  )}
+                </SecretPhraseWords>
+              </ScrollView>
+            </SecretPhraseBox>
           )}
         </SecretPhraseContainer>
 
@@ -287,7 +285,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
             blurOnSubmit={false}
             autoCorrect={false}
             error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
-            label="Type your secret phrase word by word"
+            label={`Secret phrase ${selectedWords.length === 0 ? 'first' : 'next'} word`}
           />
         </ScreenSectionBottom>
         {isPinModalVisible && (
@@ -305,19 +303,21 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
         )}
         <SpinnerModal isActive={loading} text="Importing wallet..." />
-      </KeyboardAvoidingView>
-    </ScrollScreen>
+      </ScrollScreen>
+    </KeyboardAvoidingView>
   )
 }
 
 export default ImportWalletSeedScreen
 
-const SecretPhraseContainer = styled.View``
+const SecretPhraseContainer = styled.View`
+  flex: 1;
+  margin: ${VERTICAL_GAP}px ${DEFAULT_MARGIN}px;
+`
 
 export const SecretPhraseBox = styled.View`
   background-color: ${({ theme }) => theme.bg.primary};
   border-radius: ${BORDER_RADIUS}px;
-  margin-bottom: 40px;
 `
 
 export const SecretPhraseWords = styled.View`
@@ -326,9 +326,10 @@ export const SecretPhraseWords = styled.View`
   flex-wrap: wrap;
 `
 
-const ScreenSectionBottom = styled(ScreenSection)`
-  background-color: ${({ theme }) => theme.bg.back2};
-  padding: 0;
+const ScreenSectionBottom = styled.View`
+  background-color: ${({ theme }) => theme.bg.secondary};
+  justify-content: flex-end;
+  padding: 0 ${DEFAULT_MARGIN}px;
 `
 
 const PossibleMatches = styled(Animated.View)`
@@ -338,8 +339,7 @@ const PossibleMatches = styled(Animated.View)`
 `
 
 const WordInput = styled(Input)`
-  margin: 10px 15px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
 `
 
 export const Word = styled(AppText)<{ highlight?: boolean }>`
@@ -348,7 +348,7 @@ export const Word = styled(AppText)<{ highlight?: boolean }>`
 
 export const WordBox = styled(Animated.createAnimatedComponent(Pressable))`
   background-color: ${({ theme }) => theme.bg.primary};
-  padding: 10px 16px;
+  padding: 7px 12px;
   margin: 0 10px 10px 0;
   border-radius: ${BORDER_RADIUS_SMALL}px;
 `
