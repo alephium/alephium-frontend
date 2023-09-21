@@ -122,6 +122,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
                   title="New address"
                   color={theme.global.accent}
                   compact
+                  style={{ marginLeft: addresses.length <= 2 ? 'auto' : undefined }}
                 />
               </>
             }
