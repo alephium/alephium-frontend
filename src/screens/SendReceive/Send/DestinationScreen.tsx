@@ -239,7 +239,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             />
           )}
           onClose={() => setIsContactSelectModalOpen(false)}
-          customMinHeight={300}
         />
 
         <BottomModal
@@ -251,7 +250,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             />
           )}
           onClose={() => setIsAddressSelectModalOpen(false)}
-          customMinHeight={300}
           maximisedContent
         />
       </Portal>
