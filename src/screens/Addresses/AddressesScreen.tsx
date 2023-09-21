@@ -127,7 +127,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
               </>
             }
           />
-          {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} style={{ paddingBottom: 50 }} />}
+          {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} />}
         </Content>
       </BottomBarScrollScreen>
 
