@@ -20,29 +20,26 @@ import { calculateAmountWorth } from '@alephium/sdk'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useState } from 'react'
-import { Pressable, StyleProp, ViewStyle } from 'react-native'
-import Animated, { FadeIn } from 'react-native-reanimated'
+import { ViewProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
-import DeltaPercentage from '~/components/DeltaPercentage'
 import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
-import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
+import useWorthDeltaPercentage from '~/hooks/useWorthDeltaPercentage'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
-import { ChartLength, chartLengths, DataPoint } from '~/types/charts'
+import { DataPoint } from '~/types/charts'
 import { NetworkStatus } from '~/types/network'
 import { currencies } from '~/utils/currencies'
 
-interface BalanceSummaryProps {
+interface BalanceSummaryProps extends ViewProps {
   dateLabel: string
-  style?: StyleProp<ViewStyle>
 }
 
-const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
+const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
   const networkStatus = useAppSelector((s) => s.network.status)
@@ -51,33 +48,29 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
     pollingInterval: 60000,
     skip: totalBalance === BigInt(0)
   })
-  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const theme = useTheme()
 
-  const [chartLength, setChartLength] = useState<ChartLength>('1m')
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
+  const deltaPercentage = useWorthDeltaPercentage(worthInBeginningOfChart)
 
   const totalAmountWorth = calculateAmountWorth(totalBalance, price ?? 0)
 
-  const initialValue = worthInBeginningOfChart || 0
-  const latestValue = totalAmountWorth
-
-  const deltaPercentage = Math.round(((latestValue - initialValue) / initialValue) * 10000) / 100
-  const deltaColor = !deltaPercentage
-    ? theme.bg.tertiary
-    : deltaPercentage < 0
-    ? theme.global.alert
-    : theme.global.valid
+  const deltaColor =
+    deltaPercentage < 0 ? theme.global.alert : deltaPercentage > 0 ? theme.global.valid : theme.bg.tertiary
 
   return (
     <BalanceSummaryContainer
-      style={{
-        shadowColor: 'black',
-        shadowOffset: { height: 5, width: 0 },
-        shadowOpacity: theme.name === 'dark' ? 0.5 : 0.05,
-        shadowRadius: 10,
-        elevation: 10
-      }}
+      style={[
+        {
+          shadowColor: 'black',
+          shadowOffset: { height: 5, width: 0 },
+          shadowOpacity: theme.name === 'dark' ? 0.5 : 0.05,
+          shadowRadius: 10,
+          elevation: 10
+        },
+        style
+      ]}
+      {...props}
     >
       <GradientContainer colors={['transparent', colord(deltaColor).alpha(0.03).toHex()]} locations={[0, 0.6]}>
         <TextContainer>
@@ -92,34 +85,12 @@ const BalanceSummary = ({ dateLabel, style }: BalanceSummaryProps) => {
           </SurfaceHeader>
 
           <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
-
-          <Row>
-            {haveHistoricBalancesLoaded && (
-              <DeltaAndChartLengths entering={FadeIn}>
-                <DeltaPercentage percentage={deltaPercentage} />
-                <ChartLengthBadges>
-                  {chartLengths.map((length) => {
-                    const isActive = length === chartLength
-
-                    return (
-                      <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
-                        <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
-                          {length.toUpperCase()}
-                        </AppText>
-                      </ChartLengthButton>
-                    )
-                  })}
-                </ChartLengthBadges>
-              </DeltaAndChartLengths>
-            )}
-          </Row>
         </TextContainer>
 
         <ChartContainer>
           <HistoricWorthChart
             currency={currency}
             latestWorth={totalAmountWorth}
-            length={chartLength}
             onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
           />
         </ChartContainer>
@@ -143,34 +114,13 @@ const GradientContainer = styled(LinearGradient)`
 `
 
 const TextContainer = styled.View`
-  margin: 5px ${DEFAULT_MARGIN}px;
+  margin: 5px ${DEFAULT_MARGIN}px 15px ${DEFAULT_MARGIN}px;
 `
 
 const ChartContainer = styled.View`
   margin-bottom: -1px;
   margin-right: -1px;
   margin-left: -1px;
-`
-
-const ChartLengthBadges = styled.View`
-  flex-direction: row;
-  gap: 12px;
-`
-
-const ChartLengthButton = styled(Pressable)<{ isActive?: boolean }>`
-  width: 32px;
-  height: 23px;
-  border-radius: 6px;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.font.secondary : 'transparent')};
-`
-
-const Row = styled.View`
-  flex-direction: row;
-  gap: 24px;
-  margin: 10px 0;
-  height: 30px;
 `
 
 const SurfaceHeader = styled.View`
@@ -196,10 +146,4 @@ const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
   width: 7px;
   border-radius: 10px;
   background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
-`
-
-const DeltaAndChartLengths = styled(Animated.View)`
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
 `

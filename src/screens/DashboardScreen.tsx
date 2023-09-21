@@ -34,7 +34,7 @@ import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { selectAddressIds, syncAddressesData } from '~/store/addressesSlice'
+import { selectAddressIds, selectTotalBalance, syncAddressesData } from '~/store/addressesSlice'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
@@ -47,6 +47,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const theme = useTheme()
   const headerHeight = useHeaderHeight()
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
+  const totalBalance = useAppSelector(selectTotalBalance)
 
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
@@ -76,15 +77,17 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       <BalanceAndButtons>
         <BalanceSummary dateLabel="VALUE TODAY" />
         <ButtonsRowContainer style={buttonsRowStyle}>
-          <ButtonsRow sticked hasDivider>
-            <Button
-              onPress={() => navigation.navigate('SendNavigation')}
-              iconProps={{ name: 'arrow-up-outline' }}
-              title="Send"
-              type="transparent"
-              color={theme.global.send}
-              flex
-            />
+          <ButtonsRow sticked hasDivider={totalBalance > 0}>
+            {totalBalance > 0 && (
+              <Button
+                onPress={() => navigation.navigate('SendNavigation')}
+                iconProps={{ name: 'arrow-up-outline' }}
+                title="Send"
+                type="transparent"
+                color={theme.global.send}
+                flex
+              />
+            )}
             <Button
               onPress={() => navigation.navigate('ReceiveNavigation')}
               iconProps={{ name: 'arrow-down-outline' }}

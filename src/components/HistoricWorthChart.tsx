@@ -21,22 +21,25 @@ import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
+import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import { Defs, LinearGradient, Stop, Svg } from 'react-native-svg'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { VictoryArea } from 'victory-native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
+import AppText from '~/components/AppText'
+import DeltaPercentage from '~/components/DeltaPercentage'
 import { useAppSelector } from '~/hooks/redux'
+import useWorthDeltaPercentage from '~/hooks/useWorthDeltaPercentage'
 import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { HistoricalPriceResult, useGetHistoricalPriceQuery } from '~/store/assets/priceApiSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
-import { ChartLength, DataPoint, LatestAmountPerAddress } from '~/types/charts'
+import { ChartLength, chartLengths, DataPoint, LatestAmountPerAddress } from '~/types/charts'
 import { Currency } from '~/types/settings'
 
 interface HistoricWorthChart {
-  length?: ChartLength
   latestWorth: number
   currency: Currency
   onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
@@ -52,30 +55,27 @@ const startingDates: Record<ChartLength, Dayjs> = {
 }
 
 const chartHeight = 70
+const chartIntervalsRowHeight = 30
 
-const HistoricWorthChart = ({
-  length = '1m',
-  latestWorth,
-  currency,
-  onWorthInBeginningOfChartChange,
-  style
-}: HistoricWorthChart) => {
+const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartChange, style }: HistoricWorthChart) => {
   const theme = useTheme()
   const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
   const addresses = useAppSelector(selectAllAddresses)
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
+  const [chartLength, setChartLength] = useState<ChartLength>('1m')
 
-  const startingDate = startingDates[length].format('YYYY-MM-DD')
+  const startingDate = startingDates[chartLength].format('YYYY-MM-DD')
   const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
   const filteredChartData = getFilteredChartData(chartData, startingDate)
   const firstItem = filteredChartData.length > 0 ? filteredChartData[0] : undefined
+  const deltaPercentage = useWorthDeltaPercentage(firstItem?.worth)
 
   const isLoading = filteredChartData.length === 0
 
   const animatedStyle = useAnimatedStyle(() => ({
-    height: isLoading ? 0 : withSpring(chartHeight, defaultSpringConfiguration)
+    height: isLoading ? 0 : withSpring(chartHeight + chartIntervalsRowHeight, defaultSpringConfiguration)
   }))
 
   useEffect(() => {
@@ -100,8 +100,30 @@ const HistoricWorthChart = ({
         }))
       : undefined
 
+  if (!data || data.length < 2) return null
+
   return (
     <Animated.View style={[style, animatedStyle]}>
+      <Row>
+        {haveHistoricBalancesLoaded && (
+          <DeltaAndChartLengths entering={FadeIn}>
+            <DeltaPercentage percentage={deltaPercentage} />
+            <ChartLengthBadges>
+              {chartLengths.map((length) => {
+                const isActive = length === chartLength
+
+                return (
+                  <ChartLengthButton key={length} isActive={isActive} onPress={() => setChartLength(length)}>
+                    <AppText color={isActive ? 'contrast' : 'secondary'} size={14} medium>
+                      {length.toUpperCase()}
+                    </AppText>
+                  </ChartLengthButton>
+                )
+              })}
+            </ChartLengthBadges>
+          </DeltaAndChartLengths>
+        )}
+      </Row>
       <Svg height={chartHeight}>
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -164,3 +186,30 @@ const computeChartDataPoints = (alphPriceHistory: HistoricalPriceResult[], addre
     }
   })
 }
+
+const DeltaAndChartLengths = styled(Animated.View)`
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+`
+
+const ChartLengthBadges = styled.View`
+  flex-direction: row;
+  gap: 12px;
+`
+
+const ChartLengthButton = styled.Pressable<{ isActive?: boolean }>`
+  width: 32px;
+  height: 23px;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ isActive, theme }) => (isActive ? theme.font.secondary : 'transparent')};
+`
+
+const Row = styled.View`
+  flex-direction: row;
+  gap: 24px;
+  margin: 0px ${DEFAULT_MARGIN}px 5px;
+  height: ${chartIntervalsRowHeight}px;
+`
