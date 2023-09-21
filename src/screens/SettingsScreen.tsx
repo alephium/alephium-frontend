@@ -26,10 +26,13 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
+import { ModalContent } from '~/components/layout/ModalContent'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import OrderedTable from '~/components/OrderedTable'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -69,10 +72,13 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const analytics = useAppSelector((s) => s.settings.analytics)
+  const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const posthog = usePostHog()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
+  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
+  const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
 
   const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
 
@@ -216,8 +222,23 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             variant="alert"
             onPress={handleDeleteButtonPress}
           />
+          <ButtonStyled
+            title="View secret recovery phrase"
+            iconProps={{ name: 'key' }}
+            onPress={() => setIsAuthenticationModalVisible(true)}
+          />
         </ScreenSection>
       </ScrollScreenStyled>
+
+      {isAuthenticationModalVisible && (
+        <ConfirmWithAuthModal
+          onConfirm={() => {
+            setIsAuthenticationModalVisible(false)
+            setIsMnemonicModalVisible(true)
+          }}
+          onClose={() => setIsAuthenticationModalVisible(false)}
+        />
+      )}
 
       <Portal>
         <BottomModal
@@ -230,6 +251,18 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           isOpen={isCurrencySelectModalOpen}
           onClose={() => setIsCurrencySelectModalOpen(false)}
           Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
+        />
+
+        <BottomModal
+          isOpen={isMnemonicModalVisible}
+          onClose={() => setIsMnemonicModalVisible(false)}
+          Content={(props) => (
+            <ModalContent {...props}>
+              <ScreenSection fill>
+                <OrderedTable items={mnemonic.split(' ')} />
+              </ScreenSection>
+            </ModalContent>
+          )}
         />
       </Portal>
     </>
