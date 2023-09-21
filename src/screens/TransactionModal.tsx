@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
+import { partition } from 'lodash'
 import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -28,8 +29,10 @@ import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import NFTsGrid from '~/components/NFTsGrid'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
+import { NFT } from '~/types/assets'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { getTransactionInfo } from '~/utils/transactions'
 
@@ -39,8 +42,12 @@ interface TransactionModalProps extends ModalContentProps {
 
 const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+  const allNFTs = useAppSelector((s) => s.nfts.entities)
 
   const { direction, infoType, assets } = getTransactionInfo(tx)
+  const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
+  const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs[token.id])
+  const nftsData = nfts.map((nft) => allNFTs[nft.id] as NFT)
   const explorerTxUrl = `${explorerBaseUrl}/transactions/${tx.hash}`
   const isOut = direction === 'out'
   const isMoved = infoType === 'move'
@@ -60,7 +67,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
 
       <BoxSurface type="highlight">
         <Row title="Amount" noMaxWidth transparent>
-          {assets.map(({ id, amount, decimals, symbol }) => (
+          {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
             <AmountStyled
               key={id}
               value={amount}
@@ -86,7 +93,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
         <Row title="To" transparent>
           {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
         </Row>
-        <Row title="Fee" transparent isLast>
+        <Row title="Fee" transparent isLast={unknownTokens.length === 0 && nftsData.length === 0}>
           <Amount
             value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
             fadeDecimals
@@ -95,6 +102,36 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
             showOnDiscreetMode
           />
         </Row>
+        {unknownTokens.length > 0 && (
+          <Row title="Unknown tokens" transparent isLast={nftsData.length === 0}>
+            {unknownTokens.map(({ id, amount, decimals, symbol }) => (
+              <UnknownTokenAmount key={id}>
+                <AmountStyled
+                  value={amount}
+                  decimals={decimals}
+                  suffix={symbol}
+                  isUnknownToken={!symbol}
+                  highlight={!isMoved}
+                  showPlusMinus={!isMoved}
+                  fullPrecision
+                  bold
+                />
+                {!symbol && (
+                  <TokenId>
+                    <AppText numberOfLines={1} ellipsizeMode="middle">
+                      {id}
+                    </AppText>
+                  </TokenId>
+                )}
+              </UnknownTokenAmount>
+            ))}
+          </Row>
+        )}
+        {nftsData.length > 0 && (
+          <Row title="NFTs" noMaxWidth transparent isLast>
+            <NFTsGrid nfts={nftsData} nftsPerRow={2} nftWidth={100} isLoading={false} />
+          </Row>
+        )}
       </BoxSurface>
     </ModalContent>
   )
@@ -114,4 +151,16 @@ const ScreenSectionStyled = styled(ScreenSection)`
   flex-direction: row;
   align-items: center;
   gap: 10px;
+`
+
+const TokenId = styled.View`
+  max-width: 60px;
+`
+
+const UnknownTokenAmount = styled.View`
+  display: flex;
+  flex-direction: row;
+  column-gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
 `

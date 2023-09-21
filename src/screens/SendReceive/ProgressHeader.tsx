@@ -23,12 +23,11 @@ import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
 import Button, { ButtonProps } from '~/components/buttons/Button'
-import BaseHeader from '~/components/headers/NavigationBaseHeader'
-import { NavigationStackHeaderCustomProps } from '~/components/headers/NavigationStackHeader'
+import NavigationStackHeader, { NavigationStackHeaderProps } from '~/components/headers/NavigationStackHeader'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-interface ProgressHeaderProps extends NavigationStackHeaderCustomProps {
+interface ProgressHeaderProps extends NavigationStackHeaderProps {
   workflow: 'send' | 'receive'
 }
 
@@ -40,7 +39,7 @@ const workflowSteps: Record<
   send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
 }
 
-const ProgressHeader = ({ route, workflow, options }: ProgressHeaderProps) => {
+const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderProps) => {
   const theme = useTheme()
 
   const [progress, setProgress] = useState(0)
@@ -55,7 +54,7 @@ const ProgressHeader = ({ route, workflow, options }: ProgressHeaderProps) => {
   }, [route, steps])
 
   return (
-    <BaseHeader
+    <NavigationStackHeader
       options={{
         ...options,
         headerRight: () => (
@@ -72,10 +71,11 @@ const ProgressHeader = ({ route, workflow, options }: ProgressHeaderProps) => {
               pointerEvents="none"
             />
           </View>
-        ),
-        headerLeft: () => options.headerLeft && options.headerLeft({})
+        )
       }}
       showCompactComponents
+      route={route}
+      {...props}
     />
   )
 }

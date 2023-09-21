@@ -24,7 +24,8 @@ import styled, { css, useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
-import { selectAssetInfoById } from '~/store/assets/assetsSelectors'
+import { selectAssetInfoById, selectNFTById } from '~/store/assets/assetsSelectors'
+import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface AssetLogoProps {
   assetId: TokenInfo['id']
@@ -34,16 +35,19 @@ interface AssetLogoProps {
 
 const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
   const theme = useTheme()
-  const asset = useAppSelector((state) => selectAssetInfoById(state, assetId))
+  const token = useAppSelector((state) => selectAssetInfoById(state, assetId))
+  const nft = useAppSelector((s) => selectNFTById(s, assetId))
+
+  const imageUrl = token?.logoURI || nft?.image
 
   return (
-    <AssetLogoStyled {...{ assetId, style, size }} logoURI={asset?.logoURI}>
-      {asset?.logoURI ? (
-        <LogoImage source={{ uri: asset?.logoURI }} />
-      ) : asset?.id === ALPH.id ? (
+    <AssetLogoStyled {...{ assetId, style, size }} logoURI={imageUrl} isNft={!!nft}>
+      {imageUrl ? (
+        <LogoImage source={{ uri: imageUrl }} />
+      ) : assetId === ALPH.id ? (
         <AlephiumLogo color={theme.font.tertiary} />
-      ) : asset?.name ? (
-        <Initials size={size * 0.45}>{asset.name.slice(0, 2)}</Initials>
+      ) : token?.name ? (
+        <Initials size={size * 0.45}>{token.name.slice(0, 2)}</Initials>
       ) : (
         <HelpCircle size={size * 0.7} color={theme.font.secondary} />
       )}
@@ -53,10 +57,10 @@ const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
 
 export default AssetLogo
 
-const AssetLogoStyled = styled.View<AssetLogoProps & { logoURI: TokenInfo['logoURI'] }>`
+const AssetLogoStyled = styled.View<AssetLogoProps & { logoURI: TokenInfo['logoURI']; isNft: boolean }>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
-  border-radius: ${({ size }) => size}px;
+  border-radius: ${({ size, isNft }) => (isNft ? BORDER_RADIUS_SMALL : size)}px;
   padding: 1px;
   background: ${({ theme }) => theme.bg.secondary};
 

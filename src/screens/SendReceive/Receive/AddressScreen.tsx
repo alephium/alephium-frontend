@@ -16,21 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
-import { useCallback } from 'react'
 
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { BackButton } from '~/screens/SendReceive/ProgressHeader'
 import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'>, ScrollScreenProps {}
 
-const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
+const AddressScreen = ({ navigation }: ScreenProps) => {
   const posthog = usePostHog()
 
   const handleAddressPress = (addressHash: AddressHash) => {
@@ -38,15 +35,6 @@ const AddressScreen = ({ navigation, ...props }: ScreenProps) => {
 
     navigation.navigate('QRCodeScreen', { addressHash })
   }
-
-  useFocusEffect(
-    useCallback(() => {
-      navigation.getParent()?.setOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => null
-      })
-    }, [navigation])
-  )
 
   return (
     <AddressFlatListScreen

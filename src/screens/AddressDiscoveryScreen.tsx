@@ -183,17 +183,17 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
       {(loading || discoveredAddresses.length > 0) && (
         <ScreenSection>
           <ScreenSectionTitle>Newly discovered addresses</ScreenSectionTitle>
-          <BoxSurface>
-            {loading && (
-              <ScanningIndication>
-                <Row style={{ marginBottom: 10 }}>
-                  <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
-                  <AppText color="secondary">Scanning...</AppText>
-                </Row>
-                <ProgressBar progress={progress} color={theme.global.accent} />
-              </ScanningIndication>
-            )}
+          {loading && (
+            <ScanningIndication>
+              <Row transparent style={{ marginBottom: 10 }} isLast>
+                <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
+                <AppText color="secondary">Scanning...</AppText>
+              </Row>
+              <ProgressBar progress={progress} color={theme.global.accent} />
+            </ScanningIndication>
+          )}
 
+          <BoxSurface>
             {discoveredAddresses.map(({ hash, balance }, index) => (
               <Row
                 key={hash}
@@ -202,12 +202,14 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
                 onPress={() => toggleAddressSelection(hash)}
                 isLast={index === discoveredAddresses.length - 1}
               >
-                <AmountStyled value={BigInt(balance)} color="secondary" fadeDecimals />
-                <Checkbox
-                  value={addressSelections[hash]}
-                  disabled={loading}
-                  onValueChange={() => toggleAddressSelection(hash)}
-                />
+                <AmountContent>
+                  <AmountStyled value={BigInt(balance)} color="secondary" fadeDecimals />
+                  <Checkbox
+                    value={addressSelections[hash]}
+                    disabled={loading}
+                    onValueChange={() => toggleAddressSelection(hash)}
+                  />
+                </AmountContent>
               </Row>
             ))}
           </BoxSurface>
@@ -270,4 +272,9 @@ const ButtonStyled = styled(Button)`
 
 const ContinueButton = styled(ButtonStyled)`
   margin-bottom: 24px;
+`
+
+const AmountContent = styled.View`
+  flex-direction: row;
+  align-items: center;
 `

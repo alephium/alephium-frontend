@@ -100,6 +100,7 @@ const AmountColumn = styled.View`
   flex: 1;
   align-items: flex-end;
   flex-shrink: 0;
+  padding: 10px 0;
 `
 
 const AssetLogos = styled.View`
@@ -109,4 +110,5 @@ const AssetLogos = styled.View`
   justify-content: flex-start;
   flex-wrap: wrap;
   gap: 5px;
+  padding: 10px 0;
 `
