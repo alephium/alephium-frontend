@@ -24,7 +24,7 @@ import { Alert } from 'react-native'
 
 import AppText from '~/components/AppText'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -93,7 +93,6 @@ const SwitchWalletList = ({ onClose }: SwitchWalletListProps) => {
   return (
     <>
       <ScreenSection>
-        <BottomModalScreenTitle>Wallets</BottomModalScreenTitle>
         <AppText semiBold size={16} color="secondary">
           Select a wallet to switch to.
         </AppText>
