@@ -42,7 +42,7 @@ const HighlightButton = ({ title, wide, ...props }: HighlightButtonProps) => {
       <Button
         title={title}
         style={{ backgroundColor: theme.global.accent }}
-        color={theme.font.primary}
+        color="white"
         wide={wide}
         variant="accent"
         type="primary"

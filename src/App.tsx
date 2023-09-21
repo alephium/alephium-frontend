@@ -21,8 +21,8 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 import { isEnrolledAsync } from 'expo-local-authentication'
 import { StatusBar } from 'expo-status-bar'
 import { difference } from 'lodash'
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, AppState, AppStateStatus } from 'react-native'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Alert, AppState, AppStateStatus, ViewProps } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
@@ -99,7 +99,7 @@ const App = () => {
   )
 }
 
-const Main = ({ children }: { children: ReactNode }) => {
+const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
@@ -266,7 +266,9 @@ const Main = ({ children }: { children: ReactNode }) => {
 
   return (
     <RootSiblingParent>
-      <SafeAreaProvider>{children}</SafeAreaProvider>
+      <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>
+        {children}
+      </SafeAreaProvider>
     </RootSiblingParent>
   )
 }

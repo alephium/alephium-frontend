@@ -44,7 +44,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
     const routesHistory = navigation.getState().routes.map((route) => route.name)
     const previousRouteName = routesHistory.length > 1 ? routesHistory[routesHistory.length - 2] : undefined
 
-    if (previousRouteName === 'SplashScreen') navigation.setOptions({ headerShown: false })
+    if (!previousRouteName) navigation.setOptions({ headerShown: false })
   }, [navigation])
 
   return (
@@ -76,7 +76,7 @@ const LogoContainer = styled.View`
 `
 
 export const AlephiumLogoStyled = styled(AlephiumLogo)`
-  width: 15%;
+  width: 14%;
   min-width: 40px;
 `
 

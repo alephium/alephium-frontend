@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
-import { createStackNavigator } from '@react-navigation/stack'
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
@@ -123,10 +123,22 @@ const RootStackNavigation = () => {
                   </RootStack.Group>
                   {/* Screens without header */}
                   <RootStack.Group screenOptions={{ headerShown: false }}>
-                    <RootStack.Screen name="SplashScreen" component={SplashScreen} />
-                    <RootStack.Screen name="LoginScreen" component={LoginScreen} />
+                    <RootStack.Screen
+                      name="SplashScreen"
+                      component={SplashScreen}
+                      options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
+                    />
+                    <RootStack.Screen
+                      name="LoginScreen"
+                      component={LoginScreen}
+                      options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
+                    />
                     <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
-                    <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
+                    <RootStack.Screen
+                      name="InWalletTabsNavigation"
+                      component={InWalletTabsNavigation}
+                      options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
+                    />
                     <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
                     <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
                     <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />

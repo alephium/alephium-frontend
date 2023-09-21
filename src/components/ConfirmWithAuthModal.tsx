@@ -106,7 +106,7 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: 
   return (
     <ModalWithBackdrop animationType="fade" visible closeModal={onClose}>
       {encryptedWallet && (
-        <ModalContent style={{ paddingTop: insets.top }}>
+        <ModalContent style={{ paddingTop: insets.top + 50 }}>
           {onClose && (
             <HeaderSection>
               <Button type="transparent" iconProps={{ name: 'close-outline' }} onPress={onClose} />

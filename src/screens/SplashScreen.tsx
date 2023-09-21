@@ -17,8 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
+import { PopOut } from '~/animations/reanimated/reanimatedAnimations'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { AlephiumLogoStyled } from '~/screens/LandingScreen'
@@ -28,7 +30,7 @@ interface SplashScreenProps extends StackScreenProps<RootStackParamList, 'Splash
 
 const SplashScreen = (props: SplashScreenProps) => (
   <Screen {...props}>
-    <LogoContainer>
+    <LogoContainer entering={PopOut}>
       <AlephiumLogoStyled />
     </LogoContainer>
   </Screen>
@@ -38,8 +40,8 @@ export default styled(SplashScreen)`
   background-color: ${darkTheme.bg.back2};
 `
 
-const LogoContainer = styled.View`
-  flex: 1.5;
+const LogoContainer = styled(Animated.View)`
+  flex: 1;
   justify-content: center;
   align-items: center;
 `
