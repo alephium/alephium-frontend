@@ -179,6 +179,7 @@ const getRandomizedOptions = (mnemonicWords: string[], allowedWords: string[]) =
 
 const SelectedWordBox = styled(WordBox)`
   background-color: ${({ theme }) => colord(theme.global.valid).alpha(0.2).toHex()};
+  padding: 5px 8px;
 `
 
 const ModalContent = styled.View`
