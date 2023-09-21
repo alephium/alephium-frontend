@@ -30,6 +30,7 @@ import BottomModal from '~/components/layout/BottomModal'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import WalletConnectPairingsModal from '~/screens/WalletConnectPairingsModal'
 import { cameraToggled } from '~/store/appSlice'
@@ -41,9 +42,9 @@ interface DashboardHeaderActionsProps {
 const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isMnemonicBackedUp = useAppSelector((s) => s.activeWallet.isMnemonicBackedUp)
   const networkStatus = useAppSelector((s) => s.network.status)
-  const navigation = useNavigation<NavigationProp<SendNavigationParamList>>()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
+  const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
   const { pairWithDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
@@ -75,12 +76,14 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
         {networkStatus === 'offline' && (
           <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-offline-outline' }} variant="alert" round />
         )}
-        <Button
-          onPress={() => navigation.navigate('SecurityScreen')}
-          iconProps={{ name: 'warning-outline' }}
-          variant={isMnemonicBackedUp ? 'default' : 'alert'}
-          round
-        />
+        {!isMnemonicBackedUp && (
+          <Button
+            onPress={() => navigation.navigate('VerifyMnemonicScreen')}
+            iconProps={{ name: 'warning-outline' }}
+            variant="alert"
+            round
+          />
+        )}
         {isWalletConnectEnabled && walletConnectClient && activeSessions.length > 0 && (
           <Button
             onPress={() => setIsWalletConnectPairingsModalOpen(true)}

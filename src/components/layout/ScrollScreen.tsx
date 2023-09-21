@@ -85,7 +85,7 @@ const ScrollScreen = ({
               : hasNavigationHeader
               ? headerheight + DEFAULT_MARGIN
               : 0,
-            flex: fill ? 1 : undefined
+            flexGrow: fill ? 1 : undefined
           },
           contentContainerStyle
         ]}

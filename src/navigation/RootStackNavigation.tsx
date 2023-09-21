@@ -46,11 +46,11 @@ import NewWalletIntroScreen from '~/screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
-import SecurityScreen from '~/screens/SecurityScreen'
 import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import SwitchWalletScreen from '~/screens/SwitchWallet/SwitchWalletScreen'
+import VerifyMnemonicScreen from '~/screens/VerifyMnemonicScreen'
 import { routeChanged } from '~/store/appSlice'
 import { isNavStateRestorable, rootStackNavigationRef } from '~/utils/navigation'
 
@@ -146,7 +146,7 @@ const RootStackNavigation = () => {
                     <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
                     <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
                     <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
-                    <RootStack.Screen name="SecurityScreen" component={SecurityScreen} />
+                    <RootStack.Screen name="VerifyMnemonicScreen" component={VerifyMnemonicScreen} />
                     <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
                     <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
                     <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />

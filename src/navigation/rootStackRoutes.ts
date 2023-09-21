@@ -43,7 +43,7 @@ type RootStackParamList = {
   ContactScreen: {
     contactId: string
   }
-  SecurityScreen: undefined
+  VerifyMnemonicScreen: undefined
   AddressDiscoveryScreen?: {
     isImporting?: boolean
   }

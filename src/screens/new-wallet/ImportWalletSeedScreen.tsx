@@ -55,7 +55,7 @@ interface ImportWalletSeedScreenProps
   extends StackScreenProps<RootStackParamList, 'ImportWalletSeedScreen'>,
     ScreenProps {}
 
-type SelectedWord = {
+export type SelectedWord = {
   word: string
   timestamp: Date
 }
@@ -309,14 +309,14 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
 export default ImportWalletSeedScreen
 
-const SecretPhraseBox = styled.View`
+export const SecretPhraseBox = styled.View`
   background-color: ${({ theme }) => theme.bg.secondary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: ${BORDER_RADIUS}px;
   margin-bottom: 40px;
 `
 
-const SecretPhraseWords = styled.View`
+export const SecretPhraseWords = styled.View`
   padding: 15px;
   flex-direction: row;
   flex-wrap: wrap;
@@ -333,7 +333,7 @@ const ScreenSectionBottom = styled(ScreenSection)`
   padding: 0;
 `
 
-const PossibleMatches = styled(Animated.View)`
+export const PossibleMatches = styled(Animated.View)`
   flex-direction: row;
   flex-wrap: wrap;
   background-color: ${({ theme }) => theme.bg.secondary};
@@ -346,23 +346,23 @@ const WordInput = styled(Input)`
   background-color: ${({ theme }) => theme.bg.primary};
 `
 
-const Word = styled(AppText)<{ highlight?: boolean }>`
+export const Word = styled(AppText)<{ highlight?: boolean }>`
   color: ${({ highlight, theme }) => (highlight ? theme.font.contrast : theme.global.accent)};
 `
 
-const WordBox = styled(Animated.createAnimatedComponent(Pressable))`
+export const WordBox = styled(Animated.createAnimatedComponent(Pressable))`
   background-color: ${({ theme }) => theme.bg.primary};
   padding: 10px 16px;
   margin: 0 10px 10px 0;
   border-radius: ${BORDER_RADIUS_SMALL}px;
 `
 
-const PossibleWordBox = styled(WordBox)<{ highlight?: boolean }>`
+export const PossibleWordBox = styled(WordBox)<{ highlight?: boolean }>`
   background-color: ${({ highlight, theme }) =>
     highlight ? theme.global.accent : colord(theme.global.accent).alpha(0.1).toHex()};
 `
 
-const SelectedWordBox = styled(WordBox)`
+export const SelectedWordBox = styled(WordBox)`
   background-color: ${({ theme }) => colord(theme.global.accent).alpha(0.2).toHex()};
 `
 
