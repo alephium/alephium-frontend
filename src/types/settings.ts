@@ -27,6 +27,7 @@ export interface GeneralSettings {
   currency: Currency
   analytics: boolean
   analyticsId?: string
+  walletConnect: boolean
 }
 
 export interface NetworkSettings {

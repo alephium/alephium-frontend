@@ -20,17 +20,13 @@ import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
-import { Portal } from 'react-native-portalize'
 
-import BottomModal from '~/components/layout/BottomModal'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
-import { NewAddressContextProvider } from '~/contexts/NewAddressContext'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressForm, { AddressFormData } from '~/screens/Address/AddressForm'
-import GroupSelectModal from '~/screens/Address/GroupSelectModal'
 import {
   newAddressGenerated,
   selectAllAddresses,
@@ -49,8 +45,6 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
-
-  const [isGroupSelectModalOpen, setIsGroupSelectModalOpen] = useState(false)
 
   const [loading, setLoading] = useState(false)
 
@@ -88,21 +82,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
 
   return (
     <ScrollScreen fill verticalGap headerOptions={{ headerTitle: 'New address', type: 'stack' }} {...props}>
-      <NewAddressContextProvider>
-        <AddressForm
-          initialValues={initialValues}
-          onSubmit={handleGeneratePress}
-          onGroupPress={() => setIsGroupSelectModalOpen(true)}
-        />
-
-        <Portal>
-          <BottomModal
-            isOpen={isGroupSelectModalOpen}
-            onClose={() => setIsGroupSelectModalOpen(false)}
-            Content={(props) => <GroupSelectModal onClose={() => setIsGroupSelectModalOpen(false)} {...props} />}
-          />
-        </Portal>
-      </NewAddressContextProvider>
+      <AddressForm initialValues={initialValues} onSubmit={handleGeneratePress} allowGroupSelection />
       <SpinnerModal isActive={loading} text="Generating address..." />
     </ScrollScreen>
   )

@@ -20,9 +20,11 @@ import { AssetAmount } from '@alephium/sdk'
 import { transactionSign } from '@alephium/web3'
 
 import client from '~/api/client'
+import { store } from '~/store/store'
 import { Address, AddressHash } from '~/types/addresses'
+import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
-import { getTransactionAssetAmounts } from '~/utils/transactions'
+import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
   const { unsignedTxs } = await client.node.transactions.postTransactionsSweepAddressBuild({
@@ -54,18 +56,13 @@ export const buildUnsignedTransactions = async (
   if (shouldSweep) {
     return await buildSweepTransactions(fromAddress, toAddressHash)
   } else {
-    const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
-
-    const data = await client.node.transactions.postTransactionsBuild({
-      fromPublicKey: fromAddress.publicKey,
-      destinations: [
-        {
-          address: toAddressHash,
-          attoAlphAmount,
-          tokens
-        }
-      ]
+    const data = await buildTransferTransaction({
+      fromAddress: fromAddress.hash,
+      toAddress: toAddressHash,
+      assetAmounts
     })
+
+    if (!data) return
 
     return {
       unsignedTxs: [{ txId: data.txId, unsignedTx: data.unsignedTx }],
@@ -74,8 +71,83 @@ export const buildUnsignedTransactions = async (
   }
 }
 
-export const signAndSendTransaction = async (fromAddress: Address, txId: string, unsignedTx: string) => {
-  const signature = transactionSign(txId, fromAddress.privateKey)
+export const buildTransferTransaction = async ({
+  fromAddress,
+  toAddress,
+  assetAmounts,
+  gasAmount,
+  gasPrice
+}: TransferTxData) => {
+  const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+  const address = store.getState().addresses.entities[fromAddress]
+
+  if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
+
+  return await client.node.transactions.postTransactionsBuild({
+    fromPublicKey: address.publicKey,
+    destinations: [
+      {
+        address: toAddress,
+        attoAlphAmount,
+        tokens
+      }
+    ],
+    gasAmount,
+    gasPrice
+  })
+}
+
+export const buildCallContractTransaction = async ({
+  fromAddress,
+  bytecode,
+  assetAmounts,
+  gasAmount,
+  gasPrice
+}: CallContractTxData) => {
+  const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
+
+  const address = store.getState().addresses.entities[fromAddress]
+
+  if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
+
+  return await client.node.contracts.postContractsUnsignedTxExecuteScript({
+    fromPublicKey: address.publicKey,
+    bytecode,
+    attoAlphAmount,
+    tokens,
+    gasAmount: gasAmount,
+    gasPrice: gasPrice?.toString()
+  })
+}
+
+export const buildDeployContractTransaction = async ({
+  fromAddress,
+  bytecode,
+  initialAlphAmount,
+  issueTokenAmount,
+  gasAmount,
+  gasPrice
+}: DeployContractTxData) => {
+  const address = store.getState().addresses.entities[fromAddress]
+
+  if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
+
+  return await client.node.contracts.postContractsUnsignedTxDeployContract({
+    fromPublicKey: address.publicKey,
+    bytecode: bytecode,
+    initialAttoAlphAmount: initialAlphAmount?.amount?.toString(),
+    issueTokenAmount: issueTokenAmount?.toString(),
+    gasAmount: gasAmount,
+    gasPrice: gasPrice?.toString()
+  })
+}
+
+export const signAndSendTransaction = async (fromAddress: AddressHash, txId: string, unsignedTx: string) => {
+  const address = store.getState().addresses.entities[fromAddress]
+
+  if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
+
+  const signature = transactionSign(txId, address.privateKey)
   const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 
   return { ...data, signature }

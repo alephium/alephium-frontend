@@ -25,7 +25,9 @@ export const makeSelectAddressesHashesWithPendingTransactions = () =>
   createSelector([selectAllPendingTransactions, makeSelectAddresses()], (allPendingTransactions, addresses) =>
     addresses
       .filter(({ hash }) =>
-        allPendingTransactions.some(({ fromAddress, toAddress }) => fromAddress === hash || toAddress === hash)
+        allPendingTransactions.some(
+          (tx) => tx.fromAddress === hash || (tx.type === 'transfer' && tx.toAddress) === hash
+        )
       )
       .map(({ hash }) => hash)
   )

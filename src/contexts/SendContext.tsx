@@ -120,8 +120,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         const data = await buildUnsignedTransactions(address, toAddress, assetAmounts)
-        setUnsignedTxData(data)
-
+        if (data) setUnsignedTxData(data)
         callbacks.onBuildSuccess()
       } catch (e) {
         // TODO: When API error codes are available, replace this substring check with a proper error code check
@@ -149,7 +148,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         for (const { txId, unsignedTx } of unsignedTxData.unsignedTxs) {
-          const data = await signAndSendTransaction(address, txId, unsignedTx)
+          const data = await signAndSendTransaction(address.hash, txId, unsignedTx)
 
           dispatch(
             transactionSent({
@@ -159,7 +158,8 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
               amount: attoAlphAmount,
               tokens,
               timestamp: new Date().getTime(),
-              status: 'pending'
+              status: 'pending',
+              type: 'transfer'
             })
           )
         }

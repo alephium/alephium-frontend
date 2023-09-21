@@ -137,3 +137,7 @@ export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
     tokens
   }
 }
+
+// TODO: Same as in desktop wallet
+export const getOptionalTransactionAssetAmounts = (assetAmounts?: AssetAmount[]) =>
+  assetAmounts ? getTransactionAssetAmounts(assetAmounts) : { attoAlphAmount: undefined, tokens: undefined }
