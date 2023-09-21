@@ -19,9 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useRef, useState } from 'react'
+import { KeyboardAvoidingView } from 'react-native'
 import styled from 'styled-components/native'
 
-import Button from '~/components/buttons/Button'
+import { ContinueButton } from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
@@ -115,24 +116,24 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   }
 
   return (
-    <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
-      <ContentContainer>
-        <CenteredInstructions instructions={instructions} />
-        <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus error={error} />
-      </ContentContainer>
-      <ActionsContainer>
-        <Button
-          title="Next"
-          type="primary"
-          variant="accent"
-          wide
-          disabled={name.length < 3 || !!error}
-          onPress={handleButtonPress}
-        />
-      </ActionsContainer>
-      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} />}
-      <SpinnerModal isActive={loading} text="Creating wallet..." />
-    </ScrollScreen>
+    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+      <ScrollScreen
+        fill
+        headerOptions={{
+          type: 'stack',
+          headerRight: () => <ContinueButton onPress={handleButtonPress} disabled={name.length < 3 || !!error} />
+        }}
+        keyboardShouldPersistTaps="always"
+        {...props}
+      >
+        <ContentContainer>
+          <CenteredInstructions instructions={instructions} />
+          <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus error={error} />
+        </ContentContainer>
+        {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} />}
+        <SpinnerModal isActive={loading} text="Creating wallet..." />
+      </ScrollScreen>
+    </KeyboardAvoidingView>
   )
 }
 

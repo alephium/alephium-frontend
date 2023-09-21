@@ -17,18 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { decryptAsync } from '@alephium/sdk'
-import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { ScanLine } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView } from 'react-native'
+import { Alert, KeyboardAvoidingView, Pressable, ScrollView } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
+import { ContinueButton } from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
 import { ScreenProps, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
@@ -88,8 +87,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const isAuthenticated = !!activeWalletMnemonic
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
-
-  const headerHeight = useHeaderHeight()
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -220,46 +217,52 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   }
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
-  const isImportButtonVisible = selectedWords.length >= 12 || enablePasteForDevelopment
+  const isImportButtonEnabled = selectedWords.length >= 12 || enablePasteForDevelopment
 
   return (
-    <ScrollScreen fill headerOptions={{ headerTitle: 'Import wallet', type: 'stack' }} {...props}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={headerHeight}
-      >
-        <ScreenSection style={{ flex: 1 }}>
-          <ScreenSectionTitle>Secret phrase</ScreenSectionTitle>
-          <SecretPhraseBox style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}>
-            <ScrollView>
-              <SecretPhraseWords>
-                {selectedWords.length > 0 ? (
-                  selectedWords.map((word, index) => (
-                    <SelectedWordBox
-                      key={`${word.word}-${word.timestamp}`}
-                      onPress={() => removeSelectedWord(word)}
-                      entering={FadeIn}
-                      exiting={FadeOut}
-                      layout={Layout.duration(200).delay(200)}
-                    >
-                      <AppText color="accent" bold>
-                        {index + 1}. {word.word}
-                      </AppText>
-                    </SelectedWordBox>
-                  ))
-                ) : (
-                  <AppText color="secondary">Start entering your phrase... 👇</AppText>
-                )}
-              </SecretPhraseWords>
-            </ScrollView>
-          </SecretPhraseBox>
-          {isImportButtonVisible && (
-            <ActionsContainer>
-              <Button title="Import wallet" type="primary" wide onPress={handleWalletImport} />
-            </ActionsContainer>
+    <ScrollScreen
+      fill
+      headerOptions={{
+        headerTitle: 'Secret phrase',
+        type: 'stack',
+        headerRight: () => <ContinueButton onPress={handleWalletImport} disabled={!isImportButtonEnabled} />
+      }}
+      keyboardShouldPersistTaps="always"
+      {...props}
+    >
+      <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+        <SecretPhraseContainer>
+          {selectedWords.length > 1 && (
+            <>
+              <ScreenSectionTitle>Secret phrase</ScreenSectionTitle>
+              <SecretPhraseBox
+                style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}
+              >
+                <ScrollView>
+                  <SecretPhraseWords>
+                    {selectedWords.length > 0 ? (
+                      selectedWords.map((word, index) => (
+                        <SelectedWordBox
+                          key={`${word.word}-${word.timestamp}`}
+                          onPress={() => removeSelectedWord(word)}
+                          entering={FadeIn}
+                          exiting={FadeOut}
+                          layout={Layout.duration(200).delay(200)}
+                        >
+                          <AppText color="accent" bold>
+                            {index + 1}. {word.word}
+                          </AppText>
+                        </SelectedWordBox>
+                      ))
+                    ) : (
+                      <AppText color="secondary">Start entering your phrase... 👇</AppText>
+                    )}
+                  </SecretPhraseWords>
+                </ScrollView>
+              </SecretPhraseBox>
+            </>
           )}
-        </ScreenSection>
+        </SecretPhraseContainer>
 
         <ScreenSectionBottom>
           <PossibleMatches style={{ padding: possibleMatches.length > 0 ? 15 : 0 }}>
@@ -309,9 +312,10 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
 export default ImportWalletSeedScreen
 
+const SecretPhraseContainer = styled.View``
+
 export const SecretPhraseBox = styled.View`
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.primary};
   border-radius: ${BORDER_RADIUS}px;
   margin-bottom: 40px;
 `
@@ -320,12 +324,6 @@ export const SecretPhraseWords = styled.View`
   padding: 15px;
   flex-direction: row;
   flex-wrap: wrap;
-`
-
-const ActionsContainer = styled.View`
-  justify-content: center;
-  align-items: center;
-  margin-top: 40px;
 `
 
 const ScreenSectionBottom = styled(ScreenSection)`
@@ -337,8 +335,6 @@ const PossibleMatches = styled(Animated.View)`
   flex-direction: row;
   flex-wrap: wrap;
   background-color: ${({ theme }) => theme.bg.secondary};
-  border-top-width: 1px;
-  border-top-color: ${({ theme }) => theme.border.primary};
 `
 
 const WordInput = styled(Input)`
