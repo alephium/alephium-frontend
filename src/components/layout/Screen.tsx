@@ -50,6 +50,7 @@ export interface ScreenSectionProps extends ViewProps {
   noMargin?: boolean
   verticalGap?: number | boolean
   centered?: boolean
+  verticallyCentered?: boolean
 }
 
 export const ScreenSection = styled.View<ScreenSectionProps>`
@@ -69,6 +70,12 @@ export const ScreenSection = styled.View<ScreenSectionProps>`
     centered &&
     css`
       align-items: center;
+    `}
+
+  ${({ verticallyCentered }) =>
+    verticallyCentered &&
+    css`
+      justify-content: center;
     `}
 `
 

@@ -132,7 +132,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
           ))}
 
         {hasPermission === false && (
-          <ScreenSection fill>
+          <ScreenSection fill verticallyCentered>
             <InfoBox title="Camera permissions required" Icon={CameraIcon}>
               <AppText>Please, enable access to camera through the settings of your device.</AppText>
             </InfoBox>
