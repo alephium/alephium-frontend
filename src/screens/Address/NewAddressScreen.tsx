@@ -81,7 +81,13 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <ScrollScreen fill verticalGap headerOptions={{ headerTitle: 'New address', type: 'stack' }} {...props}>
+    <ScrollScreen
+      usesKeyboard
+      fill
+      verticalGap
+      headerOptions={{ headerTitle: 'New address', type: 'stack' }}
+      {...props}
+    >
       <AddressForm initialValues={initialValues} onSubmit={handleGeneratePress} allowGroupSelection />
       <SpinnerModal isActive={loading} text="Generating address..." />
     </ScrollScreen>

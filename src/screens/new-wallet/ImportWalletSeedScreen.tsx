@@ -22,7 +22,7 @@ import { colord } from 'colord'
 import { ScanLine } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Alert, KeyboardAvoidingView, Pressable, ScrollView } from 'react-native'
+import { Alert, Pressable, ScrollView } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -221,90 +221,87 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const isImportButtonEnabled = selectedWords.length >= 12 || enablePasteForDevelopment
 
   return (
-    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-      <ScrollScreen
-        fill
-        headerOptions={{
-          type: 'stack',
-          headerRight: () => <ContinueButton onPress={handleWalletImport} disabled={!isImportButtonEnabled} />
-        }}
-        keyboardShouldPersistTaps="always"
-        {...props}
-      >
-        <ScreenIntro title="Secret phrase" subtitle={`Enter the secret phrase for the "${name}" wallet`} />
-        <SecretPhraseContainer>
-          {selectedWords.length > 0 && (
-            <SecretPhraseBox
-              style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}
-            >
-              <ScrollView>
-                <SecretPhraseWords>
-                  {selectedWords.length > 0 ? (
-                    selectedWords.map((word, index) => (
-                      <SelectedWordBox
-                        key={`${word.word}-${word.timestamp}`}
-                        onPress={() => removeSelectedWord(word)}
-                        entering={FadeIn}
-                        exiting={FadeOut}
-                        layout={Layout.duration(200).delay(200)}
-                      >
-                        <AppText color="accent" bold>
-                          {index + 1}. {word.word}
-                        </AppText>
-                      </SelectedWordBox>
-                    ))
-                  ) : (
-                    <AppText color="secondary">Start entering your phrase... 👇</AppText>
-                  )}
-                </SecretPhraseWords>
-              </ScrollView>
-            </SecretPhraseBox>
-          )}
-        </SecretPhraseContainer>
+    <ScrollScreen
+      fill
+      usesKeyboard
+      headerOptions={{
+        type: 'stack',
+        headerRight: () => <ContinueButton onPress={handleWalletImport} disabled={!isImportButtonEnabled} />
+      }}
+      keyboardShouldPersistTaps="always"
+      {...props}
+    >
+      <ScreenIntro title="Secret phrase" subtitle={`Enter the secret phrase for the "${name}" wallet`} />
+      <SecretPhraseContainer>
+        {selectedWords.length > 0 && (
+          <SecretPhraseBox style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}>
+            <ScrollView>
+              <SecretPhraseWords>
+                {selectedWords.length > 0 ? (
+                  selectedWords.map((word, index) => (
+                    <SelectedWordBox
+                      key={`${word.word}-${word.timestamp}`}
+                      onPress={() => removeSelectedWord(word)}
+                      entering={FadeIn}
+                      exiting={FadeOut}
+                      layout={Layout.duration(200).delay(200)}
+                    >
+                      <AppText color="accent" bold>
+                        {index + 1}. {word.word}
+                      </AppText>
+                    </SelectedWordBox>
+                  ))
+                ) : (
+                  <AppText color="secondary">Start entering your phrase... 👇</AppText>
+                )}
+              </SecretPhraseWords>
+            </ScrollView>
+          </SecretPhraseBox>
+        )}
+      </SecretPhraseContainer>
 
-        <ScreenSection>
-          <PossibleMatches style={{ padding: possibleMatches.length > 0 ? 15 : 0 }}>
-            {possibleMatches.map((word, index) => (
-              <PossibleWordBox
-                key={`${word}-${index}`}
-                onPress={() => selectWord(word)}
-                highlight={index === 0}
-                entering={FadeIn.delay(index * 100)}
-              >
-                <Word highlight={index === 0} bold>
-                  {word}
-                </Word>
-              </PossibleWordBox>
-            ))}
-          </PossibleMatches>
-          <WordInput
-            value={typedInput}
-            onChangeText={setTypedInput}
-            onSubmitEditing={handleEnterPress}
-            autoFocus
-            blurOnSubmit={false}
-            autoCorrect={false}
-            error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
-            label={`Secret phrase ${selectedWords.length === 0 ? 'first' : 'next'} word`}
-          />
-        </ScreenSection>
-        {isPinModalVisible && (
-          <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin, decryptedWalletFromQRCode)} />
-        )}
-        {isCameraOpen && (
-          <QRCodeScannerModal
-            onClose={closeQRCodeScannerModal}
-            onQRCodeScan={handleQRCodeScan}
-            text="Scan the animated QR code from the desktop wallet"
-            qrCodeMode="animated"
-          />
-        )}
-        {isPasswordModalVisible && (
-          <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
-        )}
-        <SpinnerModal isActive={loading} text="Importing wallet..." />
-      </ScrollScreen>
-    </KeyboardAvoidingView>
+      <ScreenSection>
+        <PossibleMatches style={{ padding: possibleMatches.length > 0 ? 15 : 0 }}>
+          {possibleMatches.map((word, index) => (
+            <PossibleWordBox
+              key={`${word}-${index}`}
+              onPress={() => selectWord(word)}
+              highlight={index === 0}
+              entering={FadeIn.delay(index * 100)}
+            >
+              <Word highlight={index === 0} bold>
+                {word}
+              </Word>
+            </PossibleWordBox>
+          ))}
+        </PossibleMatches>
+        <WordInput
+          value={typedInput}
+          onChangeText={setTypedInput}
+          onSubmitEditing={handleEnterPress}
+          autoFocus
+          blurOnSubmit={false}
+          autoCorrect={false}
+          error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
+          label={`Secret phrase ${selectedWords.length === 0 ? 'first' : 'next'} word`}
+        />
+      </ScreenSection>
+      {isPinModalVisible && (
+        <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin, decryptedWalletFromQRCode)} />
+      )}
+      {isCameraOpen && (
+        <QRCodeScannerModal
+          onClose={closeQRCodeScannerModal}
+          onQRCodeScan={handleQRCodeScan}
+          text="Scan the animated QR code from the desktop wallet"
+          qrCodeMode="animated"
+        />
+      )}
+      {isPasswordModalVisible && (
+        <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
+      )}
+      <SpinnerModal isActive={loading} text="Importing wallet..." />
+    </ScrollScreen>
   )
 }
 
