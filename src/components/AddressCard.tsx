@@ -119,13 +119,14 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
         <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
       </Amounts>
       <BottomRow>
-        <ButtonsRow sticked>
+        <ButtonsRow sticked hasDivider>
           <Button
             title="Send"
             onPress={handleSendPress}
             iconProps={{ name: 'arrow-up-outline' }}
             flex
             type="transparent"
+            color={textColor}
           />
           <Button
             title="Receive"
@@ -133,6 +134,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             iconProps={{ name: 'arrow-down-outline' }}
             flex
             type="transparent"
+            color={textColor}
           />
         </ButtonsRow>
       </BottomRow>
