@@ -17,3 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 export const CHART_DATE_FORMAT = 'YYYY-MM-DD'
+
+export enum WALLETCONNECT_ERRORS {
+  TRANSACTION_SEND_FAILED = -32000,
+  PARSING_SESSION_REQUEST_FAILED = -33000,
+  TRANSACTION_BUILD_FAILED = -34000,
+  SIGNER_ADDRESS_DOESNT_EXIST = -35000
+}

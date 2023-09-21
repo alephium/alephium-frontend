@@ -24,18 +24,20 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
-import { useNewAddressContext } from '~/contexts/NewAddressContext'
+
+interface GroupSelectModalProps extends ModalContentProps {
+  selectedGroup?: number
+  onSelect: (group?: number) => void
+}
 
 const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
   value: i === 0 ? undefined : i - 1,
   label: i === 0 ? 'Default' : `Group ${i - 1}`
 }))
 
-const GroupSelectModal = ({ onClose, ...props }: ModalContentProps) => {
-  const { group, setGroup } = useNewAddressContext()
-
+const GroupSelectModal = ({ onClose, onSelect, selectedGroup, ...props }: GroupSelectModalProps) => {
   const onGroupSelect = (group?: number) => {
-    setGroup(group)
+    onSelect(group)
     onClose && onClose()
   }
 
@@ -48,7 +50,7 @@ const GroupSelectModal = ({ onClose, ...props }: ModalContentProps) => {
               key={groupOption.label}
               title={groupOption.label}
               onPress={() => onGroupSelect(groupOption.value)}
-              isActive={group === groupOption.value}
+              isActive={selectedGroup === groupOption.value}
             />
           ))}
         </BoxSurface>

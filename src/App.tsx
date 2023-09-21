@@ -44,7 +44,7 @@ import {
 import { biometricsDisabled, walletUnlocked } from '~/store/activeWalletSlice'
 import {
   makeSelectAddressesUnknownTokens,
-  selectAllAddresses,
+  selectAddressIds,
   syncAddressesData,
   syncAddressesHistoricBalances
 } from '~/store/addressesSlice'
@@ -107,7 +107,7 @@ const Main = ({ children }: { children: ReactNode }) => {
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const network = useAppSelector((s) => s.network)
-  const addresses = useAppSelector(selectAllAddresses)
+  const addressIds = useAppSelector(selectAddressIds)
   const assetsInfo = useAppSelector((s) => s.assetsInfo)
   const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
@@ -154,7 +154,7 @@ const Main = ({ children }: { children: ReactNode }) => {
         dispatch(syncNetworkTokensInfo())
       }
       if (addressesStatus === 'uninitialized') {
-        if (!isSyncingAddressData && addresses.length > 0) {
+        if (!isSyncingAddressData && addressIds.length > 0) {
           dispatch(syncAddressesData())
           dispatch(syncAddressesHistoricBalances())
         }
@@ -165,7 +165,7 @@ const Main = ({ children }: { children: ReactNode }) => {
       }
     }
   }, [
-    addresses.length,
+    addressIds.length,
     addressesStatus,
     assetsInfo.status,
     dispatch,

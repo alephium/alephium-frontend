@@ -44,7 +44,13 @@ import {
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
-import { analyticsToggled, discreetModeToggled, passwordRequirementToggled, themeChanged } from '~/store/settingsSlice'
+import {
+  analyticsToggled,
+  discreetModeToggled,
+  passwordRequirementToggled,
+  themeChanged,
+  walletConnectToggled
+} from '~/store/settingsSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { resetNavigationState } from '~/utils/navigation'
 
@@ -57,6 +63,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const requireAuth = useAppSelector((s) => s.settings.requireAuth)
   const currentTheme = useAppSelector((s) => s.settings.theme)
   const currentCurrency = useAppSelector((s) => s.settings.currency)
+  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
@@ -91,6 +98,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const toggleAnalytics = () => dispatch(analyticsToggled())
 
+  const toggleWalletConnect = () => dispatch(walletConnectToggled())
+
   const deleteWallet = async () => {
     await deleteWalletById(activeWalletMetadataId)
 
@@ -119,6 +128,24 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         }
       ]
     )
+  }
+
+  const handleWalletConnectEnablePress = () => {
+    if (!isWalletConnectEnabled) {
+      Alert.alert(
+        'Enabling experimental feature',
+        'The WalletConnect feature is experimental, use it at your own risk.',
+        [
+          { text: 'Cancel' },
+          {
+            text: 'I understand',
+            onPress: toggleWalletConnect
+          }
+        ]
+      )
+    } else {
+      toggleWalletConnect()
+    }
   }
 
   return (
@@ -165,6 +192,16 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             onPress={() => navigation.navigate('AddressDiscoveryScreen')}
           />
         </ScreenSection>
+
+        <ScreenSection>
+          <ScreenSectionTitle>Experimental features</ScreenSectionTitle>
+          <BoxSurface>
+            <Row title="WalletConnect" subtitle="Connect to dApps" isLast>
+              <Toggle value={isWalletConnectEnabled} onValueChange={handleWalletConnectEnablePress} />
+            </Row>
+          </BoxSurface>
+        </ScreenSection>
+
         <ScreenSection>
           <ScreenSectionTitle>Wallets</ScreenSectionTitle>
           <ButtonStyled
