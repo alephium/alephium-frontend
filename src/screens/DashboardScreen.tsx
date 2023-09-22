@@ -119,7 +119,7 @@ const ButtonsRowContainer = styled(Animated.View)`
   margin: 0 ${DEFAULT_MARGIN}px;
   margin-top: -20px;
   padding-top: 20px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.secondary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-bottom-left-radius: ${BORDER_RADIUS_BIG}px;
   border-bottom-right-radius: ${BORDER_RADIUS_BIG}px;
