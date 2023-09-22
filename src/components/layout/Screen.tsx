@@ -45,12 +45,14 @@ const ScreenStyled = styled.View<ScreenProps>`
 
 export default Screen
 
-export const ScreenSection = styled.View<{
+export interface ScreenSectionProps extends ViewProps {
   fill?: boolean
   noMargin?: boolean
   verticalGap?: number | boolean
   centered?: boolean
-}>`
+}
+
+export const ScreenSection = styled.View<ScreenSectionProps>`
   margin: 0 ${({ noMargin }) => (noMargin ? 0 : DEFAULT_MARGIN)}px;
 
   gap: ${({ verticalGap }) =>

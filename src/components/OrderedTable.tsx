@@ -51,6 +51,7 @@ export default styled(OrderedTable)`
   flex-direction: row;
   width: 80%;
   justify-content: space-between;
+  margin-top: 20px;
 `
 
 const Column = styled.View``

@@ -19,16 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection, ScreenSectionProps } from '~/components/layout/Screen'
 
-interface ScreenIntroProps {
+interface ScreenIntroProps extends ScreenSectionProps {
   title: string
   surtitle?: 'SEND' | 'RECEIVE'
   subtitle?: string
 }
 
-const ScreenIntro = ({ surtitle, title, subtitle }: ScreenIntroProps) => (
-  <ScreenSection>
+const ScreenIntro = ({ surtitle, title, subtitle, ...props }: ScreenIntroProps) => (
+  <ScreenSection {...props}>
     {surtitle && (
       <AppText size={15} semiBold color="secondary">
         {surtitle}

@@ -21,13 +21,13 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect } from 'react'
 
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
+import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { BackButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
-import ScreenIntro from '~/screens/SendReceive/ScreenIntro'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}

@@ -79,6 +79,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const addressIds = useAppSelector(selectAddressIds) as AddressHash[]
+  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const posthog = usePostHog()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
@@ -379,6 +380,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [])
 
   useEffect(() => {
+    if (!isWalletConnectEnabled) return
+
     if (!walletConnectClient) {
       initializeWalletConnectClient()
     } else {
@@ -408,6 +411,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }, [
     initializeWalletConnectClient,
+    isWalletConnectEnabled,
     onProposalExpire,
     onSessionDelete,
     onSessionEvent,
