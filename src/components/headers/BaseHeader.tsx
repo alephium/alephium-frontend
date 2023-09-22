@@ -237,6 +237,7 @@ const Title = styled(AppText)`
 const CompactTitle = styled(AppText)`
   font-size: 15px;
   font-weight: 600;
+  text-align: center;
 `
 
 const BottomBorder = styled(Animated.View)`

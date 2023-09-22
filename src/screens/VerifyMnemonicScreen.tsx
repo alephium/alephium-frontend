@@ -22,7 +22,7 @@ import { shuffle } from 'lodash'
 import LottieView from 'lottie-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Alert } from 'react-native'
+import { Alert, Dimensions } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
@@ -65,6 +65,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const [showSuccess, setShowSuccess] = useState(false)
+  const [footerButtonsHeight, setFooterButtonsHeight] = useState(0)
 
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {
@@ -103,41 +104,51 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   }
 
   return (
-    <ScrollScreen
-      fill
-      verticalGap
-      headerOptions={{ headerTitle: 'Verify', type: 'stack' }}
-      style={{ paddingBottom: 0 }}
-      {...props}
-    >
-      <ScreenIntro
-        title="Secret recovery phrase"
-        subtitle="Select the words of your secret recovery phrase in the right order."
-      />
+    <>
+      <ScrollScreen
+        fill
+        verticalGap
+        headerOptions={{ headerTitle: 'Verify secret phrase', type: 'stack' }}
+        style={{ paddingBottom: footerButtonsHeight + DEFAULT_MARGIN }}
+        {...props}
+      >
+        <ScreenIntro subtitle="Select the words of your secret recovery phrase in the right order." />
 
-      <ScreenSection fill>
-        {selectedWords.length > 0 && (
-          <SecretPhraseBox style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}>
-            <SecretPhraseWords>
-              {selectedWords.map((word, index) => (
-                <SelectedWordBox
-                  key={`${word.word}-${word.timestamp}`}
-                  entering={FadeIn}
-                  exiting={FadeOut}
-                  layout={Layout.duration(200).delay(200)}
-                >
-                  <AppText color="valid" bold>
-                    {index + 1}. {word.word}
-                  </AppText>
-                </SelectedWordBox>
-              ))}
-            </SecretPhraseWords>
-          </SecretPhraseBox>
+        <ScreenSection fill>
+          {selectedWords.length > 0 && (
+            <SecretPhraseBox
+              style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}
+            >
+              <SecretPhraseWords>
+                {selectedWords.map((word, index) => (
+                  <SelectedWordBox
+                    key={`${word.word}-${word.timestamp}`}
+                    entering={FadeIn}
+                    exiting={FadeOut}
+                    layout={Layout.duration(200).delay(200)}
+                  >
+                    <AppText color="valid" bold>
+                      {index + 1}. {word.word}
+                    </AppText>
+                  </SelectedWordBox>
+                ))}
+              </SecretPhraseWords>
+            </SecretPhraseBox>
+          )}
+        </ScreenSection>
+
+        {showSuccess && (
+          <ModalWithBackdrop animationType="fade" visible closeModal={() => setShowSuccess(false)}>
+            <ModalContent>
+              <StyledAnimation source={animationSrc} autoPlay loop={false} />
+            </ModalContent>
+          </ModalWithBackdrop>
         )}
-      </ScreenSection>
-
+      </ScrollScreen>
       <ChoicesBox
         style={{ padding: possibleMatches.length > 0 ? 15 : 0, paddingBottom: insets.bottom + DEFAULT_MARGIN }}
+        onLayout={(e) => setFooterButtonsHeight(e.nativeEvent.layout.height)}
+        top={Dimensions.get('window').height - footerButtonsHeight}
       >
         <AppText size={16} bold color="secondary" style={{ marginBottom: DEFAULT_MARGIN }}>
           Word {selectedWords.length + 1} is:
@@ -155,15 +166,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
           ))}
         </WordsList>
       </ChoicesBox>
-
-      {showSuccess && (
-        <ModalWithBackdrop animationType="fade" visible closeModal={() => setShowSuccess(false)}>
-          <ModalContent>
-            <StyledAnimation source={animationSrc} autoPlay loop={false} />
-          </ModalContent>
-        </ModalWithBackdrop>
-      )}
-    </ScrollScreen>
+    </>
   )
 }
 
@@ -182,6 +185,7 @@ const getRandomizedOptions = (mnemonicWords: string[], allowedWords: string[]) =
 
 const SelectedWordBox = styled(WordBox)`
   background-color: ${({ theme }) => colord(theme.global.valid).alpha(0.2).toHex()};
+  padding: 5px 8px;
 `
 
 const ModalContent = styled.View`
@@ -196,11 +200,15 @@ const StyledAnimation = styled(LottieView)`
   width: 80%;
 `
 
-const ChoicesBox = styled(Animated.View)`
+const ChoicesBox = styled(Animated.View)<{ top: number }>`
   background-color: ${({ theme }) => theme.bg.secondary};
   border-top-width: 1px;
   border-top-color: ${({ theme }) => theme.border.primary};
   align-items: center;
+  position: absolute;
+  top: ${({ top }) => top}px;
+  left: 0;
+  right: 0;
 `
 
 const WordsList = styled.View`
