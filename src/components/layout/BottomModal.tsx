@@ -36,6 +36,7 @@ import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import { ModalContentProps } from '~/components/layout/ModalContent'
+import useKeyboardMetrics from '~/hooks/layout/useKeyboardMetrics'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
@@ -64,6 +65,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeight }: BottomModalProps) => {
   const insets = useSafeAreaInsets()
+  const keyboardMetrics = useKeyboardMetrics()
 
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
 
@@ -103,7 +105,8 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
         springConfig
       ),
       marginRight: margin,
-      marginLeft: margin
+      marginLeft: margin,
+      marginBottom: withSpring(keyboardMetrics ? keyboardMetrics.height : 0, springConfig)
     }
   })
 
@@ -137,7 +140,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
           ? customMinHeight
           : shouldMaximizeOnOpen.value
           ? maxHeight
-          : contentHeight.value + NAV_HEIGHT + insets.bottom + VERTICAL_GAP
+          : contentHeight.value + insets.bottom + VERTICAL_GAP
 
         shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
       })()
