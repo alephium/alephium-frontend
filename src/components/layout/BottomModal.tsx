@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dimensions, Pressable } from 'react-native'
+import { Dimensions, KeyboardAvoidingView, LayoutChangeEvent, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
@@ -36,7 +36,6 @@ import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
 import { ModalContentProps } from '~/components/layout/ModalContent'
-import useKeyboardMetrics from '~/hooks/layout/useKeyboardMetrics'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
@@ -65,7 +64,6 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeight }: BottomModalProps) => {
   const insets = useSafeAreaInsets()
-  const keyboardMetrics = useKeyboardMetrics()
 
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
 
@@ -105,8 +103,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
         springConfig
       ),
       marginRight: margin,
-      marginLeft: margin,
-      marginBottom: withSpring(keyboardMetrics ? keyboardMetrics.height : 0, springConfig)
+      marginLeft: margin
     }
   })
 
@@ -171,6 +168,10 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
     position.value = 'minimised'
   }, [minHeight.value, modalHeight, navHeight, position])
 
+  const handleAnimatedContainerLayout = (e: LayoutChangeEvent) => {
+    console.log(e.nativeEvent.layout.y)
+  }
+
   const panGesture = useMemo(
     () =>
       Gesture.Pan()
@@ -229,10 +230,12 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
               <Handle style={handleAnimatedStyle} />
             </HandleContainer>
             <ContentContainer>
-              <Navigation style={modalNavigationAnimatedStyle}>
-                <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
-              </Navigation>
-              <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
+              <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
+                <Navigation style={modalNavigationAnimatedStyle}>
+                  <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
+                </Navigation>
+                <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
+              </KeyboardAvoidingView>
             </ContentContainer>
           </BottomModalStyled>
         </Container>
@@ -265,6 +268,7 @@ const BottomModalStyled = styled(Animated.View)`
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;
+  overflow: hidden;
 `
 
 const HandleContainer = styled.View`
