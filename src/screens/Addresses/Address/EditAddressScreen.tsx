@@ -36,11 +36,10 @@ interface EditAddressScreenProps extends StackScreenProps<RootStackParamList, 'E
 
 const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddressScreenProps) => {
   const dispatch = useAppDispatch()
+  const addressHash = params.addressHash
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
-
-  const addressHash = params.addressHash
 
   const [loading, setLoading] = useState(false)
 
@@ -67,7 +66,12 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
   }
 
   return (
-    <ScrollScreen verticalGap headerOptions={{ headerTitle: 'Address settings' }} {...props}>
+    <ScrollScreen
+      usesKeyboard
+      verticalGap
+      headerOptions={{ headerTitle: 'Address settings', type: 'stack' }}
+      {...props}
+    >
       <ScreenSection>
         <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
           {addressHash}
