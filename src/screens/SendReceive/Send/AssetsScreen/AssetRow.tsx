@@ -20,7 +20,7 @@ import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmo
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useRef, useState } from 'react'
-import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
+import { NativeSyntheticEvent, Pressable, StyleProp, TextInput, TextInputFocusEventData, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -102,6 +102,14 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     inputRef.current?.focus()
   }
 
+  const handleInputBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    if (!e.nativeEvent.text || e.nativeEvent.text === '0') {
+      setAmount('')
+      setError('')
+      setIsSelected(false)
+    }
+  }
+
   const animatedStyle = useAnimatedStyle(() => ({
     borderWidth: withSpring(isSelected ? 2 : 0, fastSpringConfiguration),
     borderColor: withSpring(isSelected ? theme.global.accent : theme.border.secondary, fastSpringConfiguration),
@@ -152,6 +160,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
                 onChangeText={handleOnAmountChange}
                 keyboardType="number-pad"
                 inputMode="numeric"
+                onBlur={handleInputBlur}
                 ref={inputRef}
               />
               <AppText semiBold size={23} color="secondary">
