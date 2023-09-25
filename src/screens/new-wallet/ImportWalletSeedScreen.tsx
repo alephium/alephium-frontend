@@ -19,15 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { decryptAsync } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
-import { ScanLine } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Pressable, ScrollView } from 'react-native'
-import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInRight, FadeOut, FadeOutRight, Layout, LinearTransition } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button, { ContinueButton } from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
@@ -60,6 +59,8 @@ export type SelectedWord = {
   timestamp: Date
 }
 
+const AnimatedAppText = Animated.createAnimatedComponent(AppText)
+
 // TODO: Set this to false before creating production build
 const enablePasteForDevelopment = true
 
@@ -88,17 +89,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const isAuthenticated = !!activeWalletMnemonic
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <ScanButton onPress={openQRCodeScannerModal}>
-          <ScanLine size={24} color={theme.global.accent} style={{ marginRight: 10 }} />
-          <ScanText>Scan</ScanText>
-        </ScanButton>
-      )
-    })
-  })
+  const isScanBtnShrinked = typedInput.length > 0 || selectedWords.length > 0
 
   useEffect(() => {
     setPossibleMatches(
@@ -231,7 +222,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       keyboardShouldPersistTaps="always"
       {...props}
     >
-      <ScreenIntro title="Secret phrase" subtitle={`Enter the secret phrase for the "${name}" wallet`} />
+      <ScreenIntro title="Secret phrase" subtitle={`Enter the secret phrase for the "${name}" wallet.`} />
       <SecretPhraseContainer>
         {selectedWords.length > 0 && (
           <SecretPhraseBox style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}>
@@ -275,16 +266,31 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
             </PossibleWordBox>
           ))}
         </PossibleMatches>
-        <WordInput
-          value={typedInput}
-          onChangeText={setTypedInput}
-          onSubmitEditing={handleEnterPress}
-          autoFocus
-          blurOnSubmit={false}
-          autoCorrect={false}
-          error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
-          label={`Secret phrase ${selectedWords.length === 0 ? 'first' : 'next'} word`}
-        />
+        <Row>
+          <WordInput
+            value={typedInput}
+            onChangeText={setTypedInput}
+            onSubmitEditing={handleEnterPress}
+            autoFocus
+            blurOnSubmit={false}
+            autoCorrect={false}
+            error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
+            label={`Type the ${selectedWords.length === 0 ? 'first' : 'next'} word`}
+            layout={LinearTransition}
+          />
+          {!isScanBtnShrinked && (
+            <AnimatedAppText exiting={FadeOutRight} entering={FadeInRight}>
+              or
+            </AnimatedAppText>
+          )}
+          <Button
+            onPress={openQRCodeScannerModal}
+            iconProps={{ name: 'qr-code-outline' }}
+            title={isScanBtnShrinked ? '' : 'Scan'}
+            round={isScanBtnShrinked}
+            animated
+          />
+        </Row>
       </ScreenSection>
       {isPinModalVisible && (
         <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin, decryptedWalletFromQRCode)} />
@@ -331,6 +337,7 @@ const PossibleMatches = styled(Animated.View)`
 
 const WordInput = styled(Input)`
   background-color: ${({ theme }) => theme.bg.highlight};
+  flex-grow: 1;
 `
 
 export const Word = styled(AppText)<{ highlight?: boolean }>`
@@ -353,14 +360,8 @@ export const SelectedWordBox = styled(WordBox)`
   background-color: ${({ theme }) => colord(theme.global.accent).alpha(0.2).toHex()};
 `
 
-const ScanButton = styled.Pressable`
+const Row = styled.View`
   flex-direction: row;
+  gap: 10px;
   align-items: center;
-`
-
-const ScanText = styled.Text`
-  margin-right: 20px;
-  color: ${({ theme }) => theme.global.accent};
-  font-size: 16px;
-  font-weight: 600;
 `

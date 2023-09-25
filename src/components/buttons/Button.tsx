@@ -20,6 +20,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -38,7 +39,11 @@ export interface ButtonProps extends PressableProps {
   flex?: boolean
   children?: ReactNode
   compact?: boolean
+  animated?: boolean
 }
+
+const AnimatedAppText = Animated.createAnimatedComponent(AppText)
+const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons)
 
 const Button = ({
   style,
@@ -53,6 +58,7 @@ const Button = ({
   centered,
   compact,
   flex,
+  animated,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -78,15 +84,22 @@ const Button = ({
       alert: theme.global.alert
     }[variant]
 
+  const buttonContainerStyle: PressableProps['style'] = {
+    width: round ? (compact ? 30 : 43) : props.wide ? '75%' : hasOnlyIcon ? 43 : 'auto',
+    height: compact ? 30 : hasOnlyIcon ? 43 : 55,
+    backgroundColor: {
+      primary: bg,
+      secondary: bg,
+      transparent: 'transparent',
+      tint: color ? colord(color).alpha(0.05).toHex() : ''
+    }[type],
+    borderRadius: round || compact ? 100 : BORDER_RADIUS,
+    flex: flex ? 1 : 0
+  }
+
   const buttonStyle: PressableProps['style'] = ({ pressed }) => [
     {
       opacity: pressed || disabled ? 0.5 : 1,
-      backgroundColor: {
-        primary: bg,
-        secondary: bg,
-        transparent: 'transparent',
-        tint: color ? colord(color).alpha(0.05).toHex() : ''
-      }[type],
       borderWidth: {
         primary: 0,
         secondary: 0,
@@ -99,35 +112,54 @@ const Button = ({
         transparent: undefined,
         tint: undefined
       }[type],
-      flex: flex ? 1 : 0,
-      width: round ? (compact ? 30 : 43) : props.wide ? '75%' : hasOnlyIcon ? 43 : 'auto',
-      height: compact ? 30 : hasOnlyIcon ? 43 : 55,
-      borderRadius: round || compact ? 100 : BORDER_RADIUS,
+      height: animated ? '100%' : undefined,
       justifyContent: round ? 'center' : undefined,
       alignItems: round ? 'center' : undefined,
+      gap: compact ? 5 : 10,
       minWidth: centered ? 200 : undefined,
       marginVertical: centered ? 0 : undefined,
       marginHorizontal: centered ? 'auto' : undefined,
       paddingVertical: round ? 0 : compact ? 5 : !hasOnlyIcon ? 0 : undefined,
-      paddingHorizontal: round ? 0 : compact ? 10 : !hasOnlyIcon ? 25 : undefined,
-      gap: compact ? 5 : undefined
+      paddingHorizontal: round ? 0 : compact ? 10 : !hasOnlyIcon ? 25 : undefined
     },
+    animated ? {} : buttonContainerStyle,
     style
   ]
 
   if (!iconProps && !title && !children)
     throw new Error('At least one of the following properties is required: icon, title, or children')
 
-  return (
+  const button = (
     <Pressable style={buttonStyle} disabled={disabled} {...props}>
       {title && (
-        <AppText style={{ flexGrow: 1, color: font, textAlign: 'center' }} medium size={compact ? 14 : 16}>
+        <AnimatedAppText
+          style={{ flexGrow: 1, color: font, textAlign: 'center' }}
+          medium
+          size={compact ? 14 : 16}
+          exiting={FadeOut}
+          entering={FadeIn}
+        >
           {title}
-        </AppText>
+        </AnimatedAppText>
       )}
       {children}
-      {iconProps && <Ionicons color={font} size={compact ? 18 : hasOnlyIcon ? 22 : 20} {...iconProps} />}
+      {iconProps && (
+        <AnimatedIonicons
+          layout={LinearTransition}
+          color={font}
+          size={compact ? 18 : hasOnlyIcon ? 22 : 20}
+          {...iconProps}
+        />
+      )}
     </Pressable>
+  )
+
+  return animated ? (
+    <Animated.View layout={LinearTransition} style={[buttonContainerStyle]}>
+      {button}
+    </Animated.View>
+  ) : (
+    button
   )
 }
 
