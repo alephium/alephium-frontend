@@ -55,6 +55,12 @@ export default {
           ios: {
             deploymentTarget: '13.0',
             newArchEnabled: false
+          },
+          android: {
+            compileSdkVersion: 33,
+            targetSdkVersion: 33,
+            buildToolsVersion: '33.0.0',
+            newArchEnabled: false
           }
         }
       ],

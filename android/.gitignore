@@ -13,3 +13,4 @@ local.properties
 
 # Bundle artifacts
 *.jsbundle
+.cxx
