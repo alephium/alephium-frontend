@@ -288,6 +288,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
             iconProps={{ name: 'qr-code-outline' }}
             title={isScanBtnShrinked ? '' : 'Scan'}
             round={isScanBtnShrinked}
+            variant="accent"
             animated
           />
         </Row>

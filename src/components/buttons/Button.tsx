@@ -167,16 +167,22 @@ export const CloseButton = (props: ButtonProps) => (
   <Button onPress={props.onPress} iconProps={{ name: 'close-outline' }} round {...props} />
 )
 
-export const ContinueButton = (props: ButtonProps) => (
-  <Button
-    onPress={props.onPress}
-    iconProps={{ name: 'arrow-forward-outline' }}
-    round
-    type="primary"
-    variant="accent"
-    {...props}
-  />
-)
+export const ContinueButton = (props: ButtonProps) => {
+  const theme = useTheme()
+
+  return (
+    <Button
+      onPress={props.onPress}
+      iconProps={{ name: 'arrow-forward-outline' }}
+      round
+      type="primary"
+      variant="accent"
+      style={[props.style, !props.disabled ? { backgroundColor: theme.global.accent } : undefined]}
+      color={!props.disabled ? 'white' : props.color}
+      {...props}
+    />
+  )
+}
 
 export const BackButton = (props: ButtonProps) => (
   <Button onPress={props.onPress} iconProps={{ name: 'arrow-back-outline' }} round {...props} />
