@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useHeaderHeight } from '@react-navigation/elements'
 import { useNavigation } from '@react-navigation/native'
 import { RefObject, useRef } from 'react'
-import { ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import BaseHeader, { HeaderOptions } from '~/components/headers/BaseHeader'
@@ -42,6 +42,7 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
   containerStyle?: StyleProp<ViewStyle>
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
+  usesKeyboard?: boolean
 }
 
 const ScrollScreen = ({
@@ -53,6 +54,7 @@ const ScrollScreen = ({
   verticalGap,
   fill,
   headerOptions,
+  usesKeyboard,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
@@ -69,7 +71,7 @@ const ScrollScreen = ({
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
-  return (
+  const screen = (
     <Screen style={containerStyle}>
       <ScrollView
         ref={viewRef}
@@ -113,6 +115,14 @@ const ScrollScreen = ({
         />
       )}
     </Screen>
+  )
+
+  return usesKeyboard ? (
+    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+      {screen}
+    </KeyboardAvoidingView>
+  ) : (
+    screen
   )
 }
 

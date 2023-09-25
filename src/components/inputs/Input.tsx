@@ -92,26 +92,24 @@ const Input = <T extends InputValue>({
   }
 
   return (
-    <>
-      <Row onPress={onPress} isInput hasRightContent={!!RightContent} style={style}>
-        <InputContainer>
-          <Label style={labelStyle}>
-            <LabelText style={labelTextStyle}>{label}</LabelText>
-          </Label>
-          {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
-          <TextInputStyled
-            selectionColor={theme.gradient.yellow}
-            value={renderedValue?.toString()}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            ref={inputRef}
-            style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
-            hide={showCustomValueRendering}
-            {...props}
-          />
-        </InputContainer>
-        {RightContent}
-      </Row>
+    <Row onPress={onPress} isInput hasRightContent={!!RightContent} style={style}>
+      <InputContainer>
+        <Label style={labelStyle}>
+          <LabelText style={labelTextStyle}>{label}</LabelText>
+        </Label>
+        {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
+        <TextInputStyled
+          selectionColor={theme.gradient.yellow}
+          value={renderedValue?.toString()}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          ref={inputRef}
+          style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
+          hide={showCustomValueRendering}
+          {...props}
+        />
+      </InputContainer>
+      {RightContent}
       {error && (
         <ErrorContainer
           style={{ shadowColor: 'black', shadowRadius: 5, shadowOpacity: 0.2 }}
@@ -121,7 +119,7 @@ const Input = <T extends InputValue>({
           <Error>{error}</Error>
         </ErrorContainer>
       )}
-    </>
+    </Row>
   )
 }
 

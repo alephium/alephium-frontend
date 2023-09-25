@@ -22,7 +22,6 @@ import { View } from 'react-native'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
-import Button, { ButtonProps } from '~/components/buttons/Button'
 import NavigationStackHeader, { NavigationStackHeaderProps } from '~/components/headers/NavigationStackHeader'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -81,18 +80,6 @@ const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderPr
 }
 
 export default ProgressHeader
-
-export const CloseButton = (props: ButtonProps) => (
-  <Button onPress={props.onPress} iconProps={{ name: 'close-outline' }} round {...props} />
-)
-
-export const ContinueButton = (props: ButtonProps) => (
-  <Button onPress={props.onPress} iconProps={{ name: 'arrow-forward-outline' }} round {...props} />
-)
-
-export const BackButton = (props: ButtonProps) => (
-  <Button onPress={props.onPress} iconProps={{ name: 'arrow-back-outline' }} round {...props} />
-)
 
 export const BackButtonStyled = styled.Pressable`
   width: 30px;

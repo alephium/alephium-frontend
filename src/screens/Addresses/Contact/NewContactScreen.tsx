@@ -61,7 +61,13 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
   }
 
   return (
-    <ScrollScreen fill hasNavigationHeader headerOptions={{ headerTitle: 'New contact', type: 'stack' }} {...props}>
+    <ScrollScreen
+      usesKeyboard
+      fill
+      hasNavigationHeader
+      headerOptions={{ headerTitle: 'New contact', type: 'stack' }}
+      {...props}
+    >
       <ContactForm initialValues={initialValues} onSubmit={handleSavePress} />
       <SpinnerModal isActive={loading} text="Saving contact..." />
     </ScrollScreen>

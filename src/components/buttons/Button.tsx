@@ -131,6 +131,25 @@ const Button = ({
   )
 }
 
+export const CloseButton = (props: ButtonProps) => (
+  <Button onPress={props.onPress} iconProps={{ name: 'close-outline' }} round {...props} />
+)
+
+export const ContinueButton = (props: ButtonProps) => (
+  <Button
+    onPress={props.onPress}
+    iconProps={{ name: 'arrow-forward-outline' }}
+    round
+    type="primary"
+    variant="accent"
+    {...props}
+  />
+)
+
+export const BackButton = (props: ButtonProps) => (
+  <Button onPress={props.onPress} iconProps={{ name: 'arrow-back-outline' }} round {...props} />
+)
+
 export default styled(Button)`
   align-items: center;
   justify-content: center;

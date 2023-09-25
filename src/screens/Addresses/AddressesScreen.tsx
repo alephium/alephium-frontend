@@ -34,7 +34,6 @@ import { TabBarPageProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import EditAddressModal from '~/screens/Address/EditAddressModal'
 import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import {
   selectAddressByHash,
@@ -59,7 +58,6 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
 
   const [isQuickSelectionModalOpen, setIsQuickSelectionModalOpen] = useState(false)
-  const [isAddressSettingsModalOpen, setIsAddressSettingsModalOpen] = useState(false)
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(220)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
@@ -80,7 +78,10 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
 
   const renderAddressCard = ({ item }: { item: string }) => (
     <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height)} key={item}>
-      <AddressCard addressHash={item} onSettingsPress={() => setIsAddressSettingsModalOpen(true)} />
+      <AddressCard
+        addressHash={item}
+        onSettingsPress={() => navigation.navigate('EditAddressScreen', { addressHash: item })}
+      />
     </View>
   )
 
@@ -147,12 +148,6 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
               {...props}
             />
           )}
-        />
-
-        <BottomModal
-          isOpen={isAddressSettingsModalOpen}
-          onClose={() => setIsAddressSettingsModalOpen(false)}
-          Content={(props) => <EditAddressModal addressHash={selectedAddress.hash} {...props} />}
         />
       </Portal>
     </>

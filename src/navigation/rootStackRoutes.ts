@@ -51,6 +51,9 @@ type RootStackParamList = {
   EditContactScreen: {
     contactId: string
   }
+  EditAddressScreen: {
+    addressHash: string
+  }
 }
 
 export default RootStackParamList

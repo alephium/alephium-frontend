@@ -53,11 +53,7 @@ export default {
         'expo-build-properties',
         {
           ios: {
-            deploymentTarget: '13.0',
-            newArchEnabled: true
-          },
-          android: {
-            newArchEnabled: true
+            deploymentTarget: '13.0'
           }
         }
       ],

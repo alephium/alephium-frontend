@@ -26,7 +26,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import AddressForm, { AddressFormData } from '~/screens/Address/AddressForm'
+import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import {
   newAddressGenerated,
   selectAllAddresses,
@@ -81,7 +81,13 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <ScrollScreen fill verticalGap headerOptions={{ headerTitle: 'New address', type: 'stack' }} {...props}>
+    <ScrollScreen
+      usesKeyboard
+      fill
+      verticalGap
+      headerOptions={{ headerTitle: 'New address', type: 'stack' }}
+      {...props}
+    >
       <AddressForm initialValues={initialValues} onSubmit={handleGeneratePress} allowGroupSelection />
       <SpinnerModal isActive={loading} text="Generating address..." />
     </ScrollScreen>

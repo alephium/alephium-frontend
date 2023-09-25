@@ -213,6 +213,5 @@ const ButtonText = styled(AppText)`
 `
 
 const TransactionsHeaderRow = styled.View`
-  border-bottom-width: 1px;
   margin-bottom: 15px;
 `

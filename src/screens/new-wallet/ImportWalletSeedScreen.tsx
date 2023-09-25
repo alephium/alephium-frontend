@@ -17,21 +17,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { decryptAsync } from '@alephium/sdk'
-import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { ScanLine } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView } from 'react-native'
+import { Alert, Pressable, ScrollView } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
+import { ContinueButton } from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
-import { ScreenProps, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import PasswordModal from '~/components/PasswordModal'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
@@ -46,7 +46,7 @@ import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { cameraToggled } from '~/store/appSlice'
 import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
-import { BORDER_RADIUS, BORDER_RADIUS_SMALL } from '~/style/globalStyle'
+import { BORDER_RADIUS, BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { WalletImportData } from '~/types/wallet'
 import { bip39Words } from '~/utils/bip39'
 import { pbkdf2 } from '~/utils/crypto'
@@ -88,8 +88,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const isAuthenticated = !!activeWalletMnemonic
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
-
-  const headerHeight = useHeaderHeight()
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -220,17 +218,22 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   }
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
-  const isImportButtonVisible = selectedWords.length >= 12 || enablePasteForDevelopment
+  const isImportButtonEnabled = selectedWords.length >= 12 || enablePasteForDevelopment
 
   return (
-    <ScrollScreen fill headerOptions={{ headerTitle: 'Import wallet', type: 'stack' }} {...props}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={headerHeight}
-      >
-        <ScreenSection style={{ flex: 1 }}>
-          <ScreenSectionTitle>Secret phrase</ScreenSectionTitle>
+    <ScrollScreen
+      fill
+      usesKeyboard
+      headerOptions={{
+        type: 'stack',
+        headerRight: () => <ContinueButton onPress={handleWalletImport} disabled={!isImportButtonEnabled} />
+      }}
+      keyboardShouldPersistTaps="always"
+      {...props}
+    >
+      <ScreenIntro title="Secret phrase" subtitle={`Enter the secret phrase for the "${name}" wallet`} />
+      <SecretPhraseContainer>
+        {selectedWords.length > 0 && (
           <SecretPhraseBox style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}>
             <ScrollView>
               <SecretPhraseWords>
@@ -254,66 +257,64 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
               </SecretPhraseWords>
             </ScrollView>
           </SecretPhraseBox>
-          {isImportButtonVisible && (
-            <ActionsContainer>
-              <Button title="Import wallet" type="primary" wide onPress={handleWalletImport} />
-            </ActionsContainer>
-          )}
-        </ScreenSection>
+        )}
+      </SecretPhraseContainer>
 
-        <ScreenSectionBottom>
-          <PossibleMatches style={{ padding: possibleMatches.length > 0 ? 15 : 0 }}>
-            {possibleMatches.map((word, index) => (
-              <PossibleWordBox
-                key={`${word}-${index}`}
-                onPress={() => selectWord(word)}
-                highlight={index === 0}
-                entering={FadeIn.delay(index * 100)}
-              >
-                <Word highlight={index === 0} bold>
-                  {word}
-                </Word>
-              </PossibleWordBox>
-            ))}
-          </PossibleMatches>
-          <WordInput
-            value={typedInput}
-            onChangeText={setTypedInput}
-            onSubmitEditing={handleEnterPress}
-            autoFocus
-            blurOnSubmit={false}
-            autoCorrect={false}
-            error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
-            label="Type your secret phrase word by word"
-          />
-        </ScreenSectionBottom>
-        {isPinModalVisible && (
-          <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin, decryptedWalletFromQRCode)} />
-        )}
-        {isCameraOpen && (
-          <QRCodeScannerModal
-            onClose={closeQRCodeScannerModal}
-            onQRCodeScan={handleQRCodeScan}
-            text="Scan the animated QR code from the desktop wallet"
-            qrCodeMode="animated"
-          />
-        )}
-        {isPasswordModalVisible && (
-          <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
-        )}
-        <SpinnerModal isActive={loading} text="Importing wallet..." />
-      </KeyboardAvoidingView>
+      <ScreenSection>
+        <PossibleMatches style={{ padding: possibleMatches.length > 0 ? 15 : 0 }}>
+          {possibleMatches.map((word, index) => (
+            <PossibleWordBox
+              key={`${word}-${index}`}
+              onPress={() => selectWord(word)}
+              highlight={index === 0}
+              entering={FadeIn.delay(index * 100)}
+            >
+              <Word highlight={index === 0} bold>
+                {word}
+              </Word>
+            </PossibleWordBox>
+          ))}
+        </PossibleMatches>
+        <WordInput
+          value={typedInput}
+          onChangeText={setTypedInput}
+          onSubmitEditing={handleEnterPress}
+          autoFocus
+          blurOnSubmit={false}
+          autoCorrect={false}
+          error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
+          label={`Secret phrase ${selectedWords.length === 0 ? 'first' : 'next'} word`}
+        />
+      </ScreenSection>
+      {isPinModalVisible && (
+        <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin, decryptedWalletFromQRCode)} />
+      )}
+      {isCameraOpen && (
+        <QRCodeScannerModal
+          onClose={closeQRCodeScannerModal}
+          onQRCodeScan={handleQRCodeScan}
+          text="Scan the animated QR code from the desktop wallet"
+          qrCodeMode="animated"
+        />
+      )}
+      {isPasswordModalVisible && (
+        <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
+      )}
+      <SpinnerModal isActive={loading} text="Importing wallet..." />
     </ScrollScreen>
   )
 }
 
 export default ImportWalletSeedScreen
 
+const SecretPhraseContainer = styled.View`
+  flex: 1;
+  margin: ${VERTICAL_GAP}px ${DEFAULT_MARGIN}px;
+`
+
 export const SecretPhraseBox = styled.View`
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.primary};
   border-radius: ${BORDER_RADIUS}px;
-  margin-bottom: 40px;
 `
 
 export const SecretPhraseWords = styled.View`
@@ -322,28 +323,14 @@ export const SecretPhraseWords = styled.View`
   flex-wrap: wrap;
 `
 
-const ActionsContainer = styled.View`
-  justify-content: center;
-  align-items: center;
-  margin-top: 40px;
-`
-
-const ScreenSectionBottom = styled(ScreenSection)`
-  background-color: ${({ theme }) => theme.bg.back2};
-  padding: 0;
-`
-
 const PossibleMatches = styled(Animated.View)`
   flex-direction: row;
   flex-wrap: wrap;
   background-color: ${({ theme }) => theme.bg.secondary};
-  border-top-width: 1px;
-  border-top-color: ${({ theme }) => theme.border.primary};
 `
 
 const WordInput = styled(Input)`
-  margin: 10px 15px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
 `
 
 export const Word = styled(AppText)<{ highlight?: boolean }>`
@@ -352,7 +339,7 @@ export const Word = styled(AppText)<{ highlight?: boolean }>`
 
 export const WordBox = styled(Animated.createAnimatedComponent(Pressable))`
   background-color: ${({ theme }) => theme.bg.primary};
-  padding: 10px 16px;
+  padding: 7px 12px;
   margin: 0 10px 10px 0;
   border-radius: ${BORDER_RADIUS_SMALL}px;
 `

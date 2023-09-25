@@ -21,7 +21,7 @@ import { usePostHog } from 'posthog-react-native'
 import { useCallback, useRef, useState } from 'react'
 import styled from 'styled-components/native'
 
-import Button from '~/components/buttons/Button'
+import { ContinueButton } from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
@@ -115,21 +115,27 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   }
 
   return (
-    <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
+    <ScrollScreen
+      usesKeyboard
+      fill
+      headerOptions={{
+        type: 'stack',
+        headerRight: () => <ContinueButton onPress={handleButtonPress} disabled={name.length < 3 || !!error} />
+      }}
+      keyboardShouldPersistTaps="always"
+      {...props}
+    >
       <ContentContainer>
         <CenteredInstructions instructions={instructions} />
-        <StyledInput label="Wallet name" value={name} onChangeText={setName} autoFocus error={error} />
-      </ContentContainer>
-      <ActionsContainer>
-        <Button
-          title="Next"
-          type="primary"
-          variant="accent"
-          wide
-          disabled={name.length < 3 || !!error}
-          onPress={handleButtonPress}
+        <StyledInput
+          label="Wallet name"
+          value={name}
+          onChangeText={setName}
+          autoFocus
+          error={error}
+          onSubmitEditing={handleButtonPress}
         />
-      </ActionsContainer>
+      </ContentContainer>
       {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} />}
       <SpinnerModal isActive={loading} text="Creating wallet..." />
     </ScrollScreen>
@@ -147,10 +153,4 @@ const ContentContainer = styled.View`
 const StyledInput = styled(Input)`
   margin-top: ${DEFAULT_MARGIN}px;
   width: 80%;
-`
-
-const ActionsContainer = styled.View`
-  flex: 1;
-  justify-content: flex-end;
-  align-items: center;
 `

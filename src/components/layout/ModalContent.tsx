@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { FlatListProps, ScrollViewProps, View } from 'react-native'
+import { FlatListProps, ScrollViewProps } from 'react-native'
 import { FlatList as GHFlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -45,10 +45,12 @@ export const ModalContent = ({
   contentContainerStyle,
   ...props
 }: ModalContentProps) => (
-  <GHScrollView {...scrollDefaultProps} {...props}>
-    <View onLayout={onLayout} style={getDefaultContentContainerStyle({ verticalGap, contentContainerStyle })}>
-      {children}
-    </View>
+  <GHScrollView
+    {...scrollDefaultProps}
+    {...props}
+    contentContainerStyle={getDefaultContentContainerStyle({ verticalGap, contentContainerStyle })}
+  >
+    {children}
   </GHScrollView>
 )
 

@@ -28,7 +28,7 @@ import { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from '
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
-import Button from '~/components/buttons/Button'
+import Button, { CloseButton, ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BottomModal from '~/components/layout/BottomModal'
 import { ModalContentProps } from '~/components/layout/ModalContent'
@@ -39,7 +39,6 @@ import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
-import { CloseButton, ContinueButton } from '~/screens/SendReceive/ProgressHeader'
 import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
@@ -159,7 +158,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
   return (
     <>
-      <ScrollScreen hasNavigationHeader verticalGap {...props}>
+      <ScrollScreen usesKeyboard hasNavigationHeader verticalGap {...props}>
         <ScreenIntro title="Destination" subtitle="Send to an address, a contact, or one of your other addresses." />
         <ScreenSection>
           <Controller
@@ -240,7 +239,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             />
           )}
           onClose={() => setIsContactSelectModalOpen(false)}
-          customMinHeight={300}
         />
 
         <BottomModal
@@ -252,7 +250,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             />
           )}
           onClose={() => setIsAddressSelectModalOpen(false)}
-          customMinHeight={300}
           maximisedContent
         />
       </Portal>
