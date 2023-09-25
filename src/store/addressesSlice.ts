@@ -79,6 +79,19 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
   status: 'uninitialized'
 })
 
+export const syncAddressesDataWhenPendingTxsConfirm = createAsyncThunk(
+  `${sliceName}/syncAddressesDataWhenPendingTxsConfirm`,
+  async ({ addresses, pendingTxs }: { addresses: AddressHash[]; pendingTxs: PendingTransaction[] }, { dispatch }) => {
+    const results = await fetchAddressesTransactions(addresses)
+
+    for (const { hash, transactions } of results) {
+      if (transactions.some((confirmedTx) => pendingTxs.some((pendingTx) => pendingTx.hash === confirmedTx.hash))) {
+        await dispatch(syncAddressesData(hash))
+      }
+    }
+  }
+)
+
 export const syncAddressesData = createAsyncThunk(
   `${sliceName}/syncAddressesData`,
   async (payload: AddressHash | AddressHash[] | undefined, { getState, dispatch }) => {
@@ -542,7 +555,6 @@ const getInitialAddressState = (addressData: AddressPartial): Address => ({
   allTransactionPagesLoaded: false,
   balance: '0',
   lockedBalance: '0',
-  txNumber: 0,
   lastUsed: 0,
   tokens: [],
   balanceHistory: balanceHistoryAdapter.getInitialState(),
