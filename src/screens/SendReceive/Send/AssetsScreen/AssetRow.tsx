@@ -20,7 +20,7 @@ import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmo
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useRef, useState } from 'react'
-import { StyleProp, TextInput, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -87,16 +87,19 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   }
 
   const handleOnRowPress = () => {
-    if (!isSelected) {
-      setIsSelected(true)
+    const isNowSelected = !isSelected
+    setIsSelected(isNowSelected)
+
+    if (isNowSelected) {
       inputRef.current?.focus()
+    } else {
+      setAmount('')
+      setError('')
     }
   }
 
-  const handleOnCheckmarkPress = () => {
-    setAmount('')
-    setError('')
-    setIsSelected(!isSelected)
+  const handleBottomRowPress = () => {
+    inputRef.current?.focus()
   }
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -112,7 +115,8 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
 
   const bottomRowAnimatedStyle = useAnimatedStyle(() => ({
     height: withSpring(isSelected ? 100 : 0, fastSpringConfiguration),
-    opacity: withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
+    opacity: withSpring(isSelected ? 1 : 0, fastSpringConfiguration),
+    borderTopWidth: withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
   }))
 
   return (
@@ -124,9 +128,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       title={asset.name || asset.id}
       onPress={handleOnRowPress}
       height={64}
-      rightSideContent={
-        <CheckmarkContainer onPress={handleOnCheckmarkPress}>{isSelected && <Checkmark />}</CheckmarkContainer>
-      }
+      rightSideContent={<CheckmarkContainer>{isSelected && <Checkmark />}</CheckmarkContainer>}
       subtitle={
         <Amount
           value={asset.balance - asset.lockedBalance}
@@ -138,32 +140,33 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       }
       icon={<AssetLogo assetId={asset.id} size={38} />}
     >
-      <BottomRow entering={FadeIn} style={bottomRowAnimatedStyle}>
-        <AmountInputRow>
-          <AppText semiBold size={15}>
-            Amount
-          </AppText>
-          <AmountInputValue>
-            <AmountTextInput
-              value={amount}
-              onChangeText={handleOnAmountChange}
-              keyboardType="number-pad"
-              inputMode="numeric"
-              autoFocus={true}
-              ref={inputRef}
-            />
-            <AppText semiBold size={23} color="secondary">
-              {asset.symbol}
+      <Pressable onPress={handleBottomRowPress}>
+        <BottomRow entering={FadeIn} style={bottomRowAnimatedStyle}>
+          <AmountInputRow>
+            <AppText semiBold size={15}>
+              Amount
             </AppText>
-          </AmountInputValue>
-        </AmountInputRow>
-        <Row>
-          <AppText color="alert" size={11}>
-            {error}
-          </AppText>
-          <UseMaxButton title="Use max" onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
-        </Row>
-      </BottomRow>
+            <AmountInputValue>
+              <AmountTextInput
+                value={amount}
+                onChangeText={handleOnAmountChange}
+                keyboardType="number-pad"
+                inputMode="numeric"
+                ref={inputRef}
+              />
+              <AppText semiBold size={23} color="secondary">
+                {asset.symbol}
+              </AppText>
+            </AmountInputValue>
+          </AmountInputRow>
+          <Row>
+            <AppText color="alert" size={11}>
+              {error}
+            </AppText>
+            <UseMaxButton title="Use max" onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+          </Row>
+        </BottomRow>
+      </Pressable>
     </ListItem>
   )
 }
@@ -173,6 +176,9 @@ export default AssetRow
 const BottomRow = styled(Animated.View)`
   padding: 0 15px;
   justify-content: center;
+  background-color: ${({ theme }) => theme.bg.primary};
+  border-top-width: 0px;
+  border-top-color: ${({ theme }) => theme.border.primary};
 `
 
 const AmountInputRow = styled.View`
@@ -202,8 +208,7 @@ const AmountTextInput = styled(TextInput)`
   font-size: 23px;
 `
 
-const CheckmarkContainer = styled.Pressable`
-  height: 100%;
+const CheckmarkContainer = styled.View`
   width: 30px;
   align-items: center;
   justify-content: center;
