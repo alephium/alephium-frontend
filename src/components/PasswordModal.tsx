@@ -44,12 +44,12 @@ const PasswordModal = ({ onClose, onPasswordEntered }: PasswordModalProps) => {
     <ModalWithBackdrop visible animationType="fade" closeModal={onClose} color={theme.bg.primary}>
       <ScreenStyled>
         <ScreenSectionStyled fill>
-          <Input label="Password" value={password} onChangeText={setPassword} secureTextEntry />
+          <Input label="Password" value={password} onChangeText={setPassword} secureTextEntry autoFocus />
         </ScreenSectionStyled>
         <ScreenSection centered>
           <ButtonsRow>
-            <Button title="Cancel" onPress={onClose} />
-            <Button title="Submit" onPress={handleSubmit} />
+            <Button title="Cancel" onPress={onClose} flex />
+            <Button title="Submit" onPress={handleSubmit} flex />
           </ButtonsRow>
         </ScreenSection>
       </ScreenStyled>
