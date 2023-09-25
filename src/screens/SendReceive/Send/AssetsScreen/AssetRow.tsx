@@ -159,7 +159,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
                 value={amount}
                 onChangeText={handleOnAmountChange}
                 keyboardType="number-pad"
-                inputMode="numeric"
+                inputMode="decimal"
                 onBlur={handleInputBlur}
                 ref={inputRef}
               />

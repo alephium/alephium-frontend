@@ -45,6 +45,7 @@ const AssetAmountWithLogo = ({ assetId, logoSize, amount }: AssetAmountWithLogoP
         decimals={asset.decimals}
         semiBold
         fadeSuffix
+        fullPrecision
       />
     </AssetStyled>
   )
