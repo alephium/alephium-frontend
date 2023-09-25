@@ -26,7 +26,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import AddressForm, { AddressFormData } from '~/screens/Address/AddressForm'
+import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import {
   newAddressGenerated,
   selectAllAddresses,

@@ -29,7 +29,7 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
-import GroupSelectModal from '~/screens/Address/GroupSelectModal'
+import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import { AddressHash, AddressSettings } from '~/types/addresses'
 
 export type AddressFormData = AddressSettings & {
