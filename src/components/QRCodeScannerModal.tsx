@@ -95,6 +95,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
           </AppText>
         </TextContainer>
       )}
+
       <QRCodePlaceholder />
 
       {qrCodeMode === 'animated' && (
@@ -177,8 +178,9 @@ const ScreenSectionCentered = styled(ScreenSection)`
 `
 
 const TextContainer = styled.View`
-  width: 80%;
   border: 0px solid transparent; // This is a hack cause I don't freaking understand why the text doesn't expand
+  align-items: center;
+  gap: 10px;
 `
 
 const AppTextCentered = styled(AppText)`
