@@ -69,7 +69,7 @@ const SwitchWalletScreen = ({ navigation, route: { params }, ...props }: SwitchW
       <FooterButtonsSection
         tint={theme.name}
         intensity={100}
-        top={Dimensions.get('window').height - footerButtonsHeight}
+        top={Dimensions.get('window').height - footerButtonsHeight + DEFAULT_MARGIN * 2}
         onLayout={(e) => setFooterButtonsHeight(e.nativeEvent.layout.height)}
       >
         <NewWalletButtons />

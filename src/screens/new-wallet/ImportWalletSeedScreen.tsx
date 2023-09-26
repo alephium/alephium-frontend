@@ -16,40 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { decryptAsync } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, KeyboardAvoidingView, Pressable, ScrollView } from 'react-native'
-import Animated, { FadeIn, FadeInRight, FadeOut, FadeOutRight, Layout, LinearTransition } from 'react-native-reanimated'
+import { KeyboardAvoidingView, Pressable, ScrollView } from 'react-native'
+import Animated, { FadeIn, FadeOut, Layout, LinearTransition } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Button, { ContinueButton } from '~/components/buttons/Button'
+import { ContinueButton } from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import PasswordModal from '~/components/PasswordModal'
-import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { importContacts } from '~/persistent-storage/contacts'
 import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
 import { biometricsEnabled } from '~/store/activeWalletSlice'
-import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
-import { cameraToggled } from '~/store/appSlice'
-import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
+import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
-import { WalletImportData } from '~/types/wallet'
 import { bip39Words } from '~/utils/bip39'
-import { pbkdf2 } from '~/utils/crypto'
 
 interface ImportWalletSeedScreenProps
   extends StackScreenProps<RootStackParamList, 'ImportWalletSeedScreen'>,
@@ -60,8 +52,6 @@ export type SelectedWord = {
   timestamp: Date
 }
 
-const AnimatedAppText = Animated.createAnimatedComponent(AppText)
-
 // TODO: Set this to false before creating production build
 const enablePasteForDevelopment = true
 
@@ -71,7 +61,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
   const pin = useAppSelector((s) => s.credentials.pin)
-  const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const hasAvailableBiometrics = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
@@ -83,14 +72,8 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
-  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false)
-  const [encryptedWalletFromQRCode, setEncryptedWalletFromQRCode] = useState('')
-  const [decryptedWalletFromQRCode, setDecryptedWalletFromQRCode] = useState<WalletImportData>()
 
   const isAuthenticated = !!activeWalletMnemonic
-  const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
-  const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
-  const isScanBtnShrinked = typedInput.length > 0 || selectedWords.length > 0
 
   useEffect(() => {
     setPossibleMatches(
@@ -120,7 +103,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const handleEnterPress = () => possibleMatches.length > 0 && selectWord(possibleMatches[0])
 
   const importWallet = useCallback(
-    async (pin?: string, importedData?: WalletImportData) => {
+    async (pin?: string) => {
       if (!name) return
 
       if (!pin) {
@@ -130,39 +113,19 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       setLoading(true)
 
-      const mnemonicToImport =
-        importedData?.mnemonic ||
-        (enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' '))
+      const mnemonicToImport = enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' ')
 
       const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
 
-      if (importedData?.addresses) {
-        try {
-          importAddresses(wallet.mnemonic, wallet.metadataId, importedData.addresses)
-        } catch (e) {
-          console.error(e)
+      dispatch(newWalletGenerated(wallet))
+      dispatch(syncAddressesData(wallet.firstAddress.hash))
+      dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
 
-          posthog?.capture('Error', { message: 'Could not import addresses from QR code scan' })
-        }
-
-        dispatch(newWalletImportedWithMetadata(wallet))
-
-        posthog?.capture('Imported wallet', { note: 'Scanned desktop wallet QR code' })
-      } else {
-        dispatch(newWalletGenerated(wallet))
-        dispatch(syncAddressesData(wallet.firstAddress.hash))
-        dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
-
-        posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
-      }
-
-      if (importedData?.contacts) {
-        importContacts(importedData.contacts)
-      }
+      posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
 
       if (!isAuthenticated) {
         setLoading(false)
-        navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: !!importedData?.addresses })
+        navigation.navigate('AddBiometricsScreen')
         return
       }
 
@@ -174,40 +137,12 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       setLoading(false)
 
-      if (!importedData?.addresses) {
-        navigation.navigate('ImportWalletAddressDiscoveryScreen')
-      } else {
-        navigation.navigate('NewWalletSuccessScreen')
-      }
-
-      setDecryptedWalletFromQRCode(undefined)
+      navigation.navigate('NewWalletSuccessScreen')
     },
     [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, posthog, selectedWords, typedInput]
   )
 
   const handleWalletImport = () => importWallet(pin)
-
-  const handleQRCodeScan = (data: string) => {
-    posthog?.capture('Scanned QR code from desktop wallet')
-
-    setEncryptedWalletFromQRCode(data)
-    setIsPasswordModalVisible(true)
-  }
-
-  const decryptAndImportWallet = async (password: string) => {
-    try {
-      const decryptedData = await decryptAsync(password, encryptedWalletFromQRCode, pbkdf2)
-      const parsedDecryptedData = JSON.parse(decryptedData) as WalletImportData
-
-      posthog?.capture('Decrypted desktop wallet QR code')
-
-      setDecryptedWalletFromQRCode(parsedDecryptedData)
-      importWallet(pin, parsedDecryptedData)
-    } catch (e) {
-      console.error(e)
-      Alert.alert('Could not decrypt wallet with the given password.')
-    }
-  }
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isImportButtonEnabled = selectedWords.length >= 12 || enablePasteForDevelopment
@@ -254,22 +189,10 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           )}
         </SecretPhraseContainer>
 
-        {isPinModalVisible && (
-          <ConfirmWithAuthModal usePin onConfirm={(pin) => importWallet(pin, decryptedWalletFromQRCode)} />
-        )}
-        {isCameraOpen && (
-          <QRCodeScannerModal
-            onClose={closeQRCodeScannerModal}
-            onQRCodeScan={handleQRCodeScan}
-            text="Scan the animated QR code from the desktop wallet"
-            qrCodeMode="animated"
-          />
-        )}
-        {isPasswordModalVisible && (
-          <PasswordModal onClose={() => setIsPasswordModalVisible(false)} onPasswordEntered={decryptAndImportWallet} />
-        )}
-        <SpinnerModal isActive={loading} text="Importing wallet..." />
+        {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={importWallet} />}
+        {loading && <SpinnerModal isActive={loading} text="Importing wallet..." />}
       </ScrollScreenStyled>
+
       <BottomInputContainer
         tint={theme.name}
         intensity={80}
@@ -304,19 +227,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
             error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
             label={`Type the ${selectedWords.length === 0 ? 'first' : 'next'} word`}
             layout={LinearTransition}
-          />
-          {!isScanBtnShrinked && (
-            <AnimatedAppText exiting={FadeOutRight} entering={FadeInRight}>
-              or
-            </AnimatedAppText>
-          )}
-          <Button
-            onPress={openQRCodeScannerModal}
-            iconProps={{ name: 'qr-code-outline' }}
-            title={isScanBtnShrinked ? '' : 'Scan'}
-            round={isScanBtnShrinked}
-            variant="accent"
-            animated
           />
         </Row>
       </BottomInputContainer>

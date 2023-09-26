@@ -54,6 +54,8 @@ type RootStackParamList = {
   EditAddressScreen: {
     addressHash: string
   }
+  SelectImportMethodScreen: undefined
+  DecryptScannedMnemonicScreen: undefined
 }
 
 export default RootStackParamList

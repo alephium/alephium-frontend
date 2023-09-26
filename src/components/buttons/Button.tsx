@@ -29,7 +29,7 @@ import { BORDER_RADIUS } from '~/style/globalStyle'
 export interface ButtonProps extends PressableProps {
   title?: string
   type?: 'primary' | 'secondary' | 'transparent' | 'tint'
-  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert'
+  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight'
   style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
   centered?: boolean
@@ -71,7 +71,8 @@ const Button = ({
     accent: type === 'primary' ? theme.button.primary : theme.button.secondary,
     valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
-    transparent: 'transparent'
+    transparent: 'transparent',
+    highlight: theme.global.accent
   }[variant]
 
   const font =
@@ -81,7 +82,8 @@ const Button = ({
       contrast: theme.font.contrast,
       accent: theme.global.accent,
       valid: theme.global.valid,
-      alert: theme.global.alert
+      alert: theme.global.alert,
+      highlight: 'white'
     }[variant]
 
   const buttonContainerStyle: PressableProps['style'] = {
@@ -167,7 +169,7 @@ export const CloseButton = (props: ButtonProps) => (
   <Button onPress={props.onPress} iconProps={{ name: 'close-outline' }} round {...props} />
 )
 
-export const ContinueButton = (props: ButtonProps) => {
+export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
   const theme = useTheme()
 
   return (
@@ -177,8 +179,8 @@ export const ContinueButton = (props: ButtonProps) => {
       round
       type="primary"
       variant="accent"
-      style={[props.style, !props.disabled ? { backgroundColor: theme.global.accent } : undefined]}
-      color={!props.disabled ? 'white' : props.color}
+      style={[style, !props.disabled ? { backgroundColor: theme.global.accent } : undefined]}
+      color={!props.disabled ? 'white' : color}
       {...props}
     />
   )

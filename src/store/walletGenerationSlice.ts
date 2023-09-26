@@ -16,9 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
+import { walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
 import { appReset } from '~/store/appSlice'
+import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 
 const sliceName = 'walletGeneration'
 
@@ -27,11 +29,13 @@ export type WalletGenerationMethod = 'create' | 'import'
 interface WalletGenerationState {
   method: WalletGenerationMethod | null
   walletName: string
+  qrCodeImportedEncryptedMnemonic: string | null
 }
 
 const initialState: WalletGenerationState = {
   method: null,
-  walletName: ''
+  walletName: '',
+  qrCodeImportedEncryptedMnemonic: ''
 }
 
 const walletGenerationSlice = createSlice({
@@ -43,13 +47,19 @@ const walletGenerationSlice = createSlice({
     },
     newWalletNameEntered: (state, action: PayloadAction<string>) => {
       state.walletName = action.payload
+    },
+    qrCodeFromDesktopWalletScanned: (state, action: PayloadAction<string>) => {
+      state.qrCodeImportedEncryptedMnemonic = action.payload
     }
   },
   extraReducers(builder) {
-    builder.addCase(appReset, () => initialState)
+    builder.addCase(newWalletImportedWithMetadata, (state) => {
+      state.qrCodeImportedEncryptedMnemonic = ''
+    })
+    builder.addMatcher(isAnyOf(appReset, walletUnlocked, walletSwitched), () => initialState)
   }
 })
 
-export const { methodSelected, newWalletNameEntered } = walletGenerationSlice.actions
+export const { methodSelected, newWalletNameEntered, qrCodeFromDesktopWalletScanned } = walletGenerationSlice.actions
 
 export default walletGenerationSlice

@@ -105,7 +105,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
     }
 
     if (method === 'import') {
-      navigation.navigate('ImportWalletSeedScreen')
+      navigation.navigate('SelectImportMethodScreen')
       return
     }
 
