@@ -22,7 +22,7 @@ import { BlurView } from 'expo-blur'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { KeyboardAvoidingView, Pressable, ScrollView } from 'react-native'
-import Animated, { FadeIn, FadeOut, Layout, LinearTransition } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -216,19 +216,17 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
             </PossibleWordBox>
           ))}
         </PossibleMatches>
-        <Row>
-          <WordInput
-            value={typedInput}
-            onChangeText={setTypedInput}
-            onSubmitEditing={handleEnterPress}
-            autoFocus
-            blurOnSubmit={false}
-            autoCorrect={false}
-            error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
-            label={`Type the ${selectedWords.length === 0 ? 'first' : 'next'} word`}
-            layout={LinearTransition}
-          />
-        </Row>
+
+        <WordInput
+          value={typedInput}
+          onChangeText={setTypedInput}
+          onSubmitEditing={handleEnterPress}
+          autoFocus
+          blurOnSubmit={false}
+          autoCorrect={false}
+          error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
+          label={`Type the ${selectedWords.length === 0 ? 'first' : 'next'} word`}
+        />
       </BottomInputContainer>
     </KeyboardAvoidingView>
   )
@@ -266,7 +264,7 @@ const BottomInputContainer = styled(BlurView)`
   flex: 0;
 `
 
-const PossibleMatches = styled(Animated.View)`
+const PossibleMatches = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   border-radius: ${BORDER_RADIUS}px;
@@ -274,7 +272,6 @@ const PossibleMatches = styled(Animated.View)`
 
 const WordInput = styled(Input)`
   background-color: ${({ theme }) => theme.bg.highlight};
-  flex-grow: 1;
 `
 
 export const Word = styled(AppText)<{ highlight?: boolean }>`
@@ -295,10 +292,4 @@ export const PossibleWordBox = styled(WordBox)<{ highlight?: boolean }>`
 
 export const SelectedWordBox = styled(WordBox)`
   background-color: ${({ theme }) => colord(theme.global.accent).alpha(0.2).toHex()};
-`
-
-const Row = styled.View`
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
 `
