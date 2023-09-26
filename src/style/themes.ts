@@ -24,12 +24,12 @@ export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
     highlight: '#ffffff',
-    primary: '#ffffff',
-    secondary: '#fafafa',
-    tertiary: '#f6f6f6',
-    back1: '#F5F5F5',
-    back2: '#F3F3F3',
-    accent: 'rgba(93, 108, 243, 0.08)',
+    primary: '#fafcff',
+    secondary: '#f1f4f9',
+    tertiary: '#eff1f6',
+    back1: '#f5f6fa',
+    back2: '#f2f3f7',
+    accent: 'rgba(58, 122, 244, 0.05)',
     contrast: '#212126'
   },
   font: {

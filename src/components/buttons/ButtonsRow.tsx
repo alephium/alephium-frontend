@@ -57,5 +57,5 @@ const Divider = styled.View`
   width: 1px;
   margin-right: -1px;
   height: 100%;
-  background-color: ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.border.secondary};
 `

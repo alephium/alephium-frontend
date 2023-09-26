@@ -84,7 +84,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
                 iconProps={{ name: 'arrow-up-outline' }}
                 title="Send"
                 type="transparent"
-                color={theme.global.send}
+                variant="accent"
                 flex
               />
             )}
@@ -93,7 +93,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               iconProps={{ name: 'arrow-down-outline' }}
               title="Receive"
               type="transparent"
-              color={theme.global.receive}
+              variant="accent"
               flex
             />
           </ButtonsRow>
@@ -119,9 +119,9 @@ const ButtonsRowContainer = styled(Animated.View)`
   margin: 0 ${DEFAULT_MARGIN}px;
   margin-top: -20px;
   padding-top: 20px;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.primary};
   border-bottom-left-radius: ${BORDER_RADIUS_BIG}px;
   border-bottom-right-radius: ${BORDER_RADIUS_BIG}px;
+  border-color: transparent;
   overflow: hidden;
 `
