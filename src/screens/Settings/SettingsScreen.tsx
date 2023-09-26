@@ -29,10 +29,8 @@ import Button from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent } from '~/components/layout/ModalContent'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import OrderedTable from '~/components/OrderedTable'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -45,6 +43,7 @@ import {
   enableBiometrics
 } from '~/persistent-storage/wallets'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
+import MnemonicModal from '~/screens/Settings/MnemonicModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
 import {
@@ -72,7 +71,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const analytics = useAppSelector((s) => s.settings.analytics)
-  const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const posthog = usePostHog()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
@@ -256,13 +254,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <BottomModal
           isOpen={isMnemonicModalVisible}
           onClose={() => setIsMnemonicModalVisible(false)}
-          Content={(props) => (
-            <ModalContent {...props}>
-              <ScreenSection fill>
-                <OrderedTable items={mnemonic.split(' ')} />
-              </ScreenSection>
-            </ModalContent>
-          )}
+          Content={(props) => <MnemonicModal {...props} />}
         />
       </Portal>
     </>
