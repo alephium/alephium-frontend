@@ -25,7 +25,7 @@ interface ModalWithBackdropProps extends ModalProps {
 }
 
 const ModalWithBackdrop = ({ children, closeModal, color, ...props }: ModalWithBackdropProps) => (
-  <Modal transparent={true} {...props}>
+  <Modal transparent={true} {...props} animationType="none">
     <ModalBackdrop onPress={closeModal} color={color} />
     <ModalContent>{children}</ModalContent>
   </Modal>
