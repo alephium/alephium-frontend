@@ -45,12 +45,14 @@ const NewWalletButtons = ({ onButtonPress }: NewWalletButtonsProps) => {
         onPress={() => handleButtonPress('create')}
         iconProps={{ name: 'add-outline' }}
         style={{ flex: 1 }}
+        variant="accent"
       />
       <Button
         title="Import wallet"
         onPress={() => handleButtonPress('import')}
         iconProps={{ name: 'arrow-down-outline' }}
         style={{ flex: 1 }}
+        variant="accent"
       />
     </ButtonsRow>
   )
