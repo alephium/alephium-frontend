@@ -31,7 +31,7 @@ const MnemonicModal = (props: ModalContentProps) => {
   return (
     <ModalContent {...props}>
       <ScreenSection fill>
-        <OrderedTable items={mnemonic.split(' ')} />
+        <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
       </ScreenSection>
     </ModalContent>
   )
