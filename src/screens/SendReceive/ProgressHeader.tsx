@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
-import { View } from 'react-native'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -57,19 +56,19 @@ const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderPr
       options={{
         ...options,
         headerRight: () => (
-          <View>
+          <HeaderRightContainer>
             {options.headerRight && <HeaderRightOptionWrapper>{options.headerRight({})}</HeaderRightOptionWrapper>}
             <ProgressBar
               progress={progress}
-              color={progress === 1 ? theme.global.valid : theme.global.accent}
+              color={progress === 1 ? theme.global.valid : theme.font.primary}
               unfilledColor={theme.border.secondary}
               fill={'transparent'}
               strokeCap="round"
               borderWidth={0}
-              size={43}
+              size={30}
               pointerEvents="none"
             />
-          </View>
+          </HeaderRightContainer>
         )
       }}
       showCompactComponents
@@ -90,10 +89,16 @@ export const BackButtonStyled = styled.Pressable`
   justify-content: center;
 `
 
+const HeaderRightContainer = styled.View`
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+`
+
 const HeaderRightOptionWrapper = styled.View`
   position: absolute;
   top: 0;
   right: 0;
-  left: 0;
   bottom: 0;
+  justify-content: center;
 `
