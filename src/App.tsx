@@ -46,12 +46,14 @@ import {
   makeSelectAddressesUnknownTokens,
   selectAddressIds,
   syncAddressesData,
+  syncAddressesDataWhenPendingTxsConfirm,
   syncAddressesHistoricBalances
 } from '~/store/addressesSlice'
 import { appBecameInactive } from '~/store/appSlice'
 import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
 import { selectIsTokensMetadataUninitialized } from '~/store/assets/assetsSelectors'
 import { apiClientInitFailed, apiClientInitSucceeded } from '~/store/networkSlice'
+import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { store } from '~/store/store'
 import { makeSelectAddressesHashesWithPendingTransactions } from '~/store/transactions/transactionSelectors'
 import { themes } from '~/style/themes'
@@ -114,6 +116,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
   const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
+  const pendingTxs = useAppSelector(selectAllPendingTransactions)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const unknownTokens = useAppSelector(selectAddressesUnknownTokens)
@@ -176,11 +179,11 @@ const Main = ({ children, ...props }: ViewProps) => {
     newUnknownTokens
   ])
 
-  const refreshAddressesData = useCallback(() => {
-    dispatch(syncAddressesData(addressesWithPendingTxs))
-  }, [dispatch, addressesWithPendingTxs])
+  const refreshAddressDataWhenPendingTxsConfirm = useCallback(() => {
+    dispatch(syncAddressesDataWhenPendingTxsConfirm({ addresses: addressesWithPendingTxs, pendingTxs }))
+  }, [addressesWithPendingTxs, dispatch, pendingTxs])
 
-  useInterval(refreshAddressesData, 5000, addressesWithPendingTxs.length === 0 || isSyncingAddressData)
+  useInterval(refreshAddressDataWhenPendingTxsConfirm, 5000, pendingTxs.length === 0)
 
   const unlockActiveWallet = useCallback(async () => {
     if (activeWalletMnemonic) return

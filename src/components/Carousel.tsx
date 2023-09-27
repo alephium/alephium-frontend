@@ -125,7 +125,7 @@ const CarouselFooter = styled(ScreenSection)<{ centered?: boolean }>`
   flex-direction: row;
   align-items: center;
   justify-content: ${({ centered }) => (centered ? 'center' : 'space-between')};
-  padding: 0 15px;
+  gap: 10px;
 `
 
 interface CarouselPaginationItemProps {

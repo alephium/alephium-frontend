@@ -23,7 +23,7 @@ import { useSharedValue } from 'react-native-reanimated'
 const useScreenScrollHandler = () => {
   const screenScrollY = useSharedValue(0)
 
-  const [screenHeaderHeight, setScreenHeaderHeight] = useState(0)
+  const [screenHeaderHeight, setScreenHeaderHeight] = useState(182) // Approx height to avoid jumping glitch (see #238)
 
   const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     screenScrollY.value = e.nativeEvent.contentOffset.y

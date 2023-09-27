@@ -93,7 +93,7 @@ const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationS
     dispatch(newPinVerified(pin))
 
     if (method === 'import') {
-      navigation.navigate('ImportWalletSeedScreen')
+      navigation.navigate('SelectImportMethodScreen')
       return true
     }
 

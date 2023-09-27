@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { BarCodeScanningResult, Camera, CameraType } from 'expo-camera'
-import { Camera as CameraIcon, X } from 'lucide-react-native'
+import { Camera as CameraIcon } from 'lucide-react-native'
 import { areFramesComplete, framesToData, parseFramesReducer, progressOfFrames, State as FrameState } from 'qrloop'
 import React, { useEffect, useState } from 'react'
 import { Dimensions } from 'react-native'
@@ -27,6 +27,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { CloseButton } from '~/components/buttons/Button'
 import InfoBox from '~/components/InfoBox'
 import Screen, { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
@@ -95,6 +96,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
           </AppText>
         </TextContainer>
       )}
+
       <QRCodePlaceholder />
 
       {qrCodeMode === 'animated' && (
@@ -110,12 +112,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
 
   return (
     <ModalWithBackdrop visible animationType="fade" closeModal={onClose} color={theme.bg.primary}>
-      <ScreenStyled style={{ paddingTop: insets.top }}>
-        <ScreenSection>
-          <CloseButton onPress={onClose}>
-            <X size={32} color={theme.font.primary} />
-          </CloseButton>
-        </ScreenSection>
+      <ScreenStyled>
         {!scanned &&
           hasPermission &&
           (qrCodeMode === 'animated' ? (
@@ -138,6 +135,10 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
             </InfoBox>
           </ScreenSection>
         )}
+
+        <ScreenSectionHeader style={{ paddingTop: insets.top }}>
+          <CloseButton onPress={onClose} style={{ marginLeft: 'auto' }} variant="highlight" />
+        </ScreenSectionHeader>
       </ScreenStyled>
     </ModalWithBackdrop>
   )
@@ -147,10 +148,6 @@ export default QRCodeScannerModal
 
 const ScreenStyled = styled(Screen)`
   width: 100%;
-`
-
-const CloseButton = styled.Pressable`
-  margin-left: auto;
 `
 
 const CameraStyled = styled(Camera)`
@@ -177,10 +174,18 @@ const ScreenSectionCentered = styled(ScreenSection)`
 `
 
 const TextContainer = styled.View`
-  width: 80%;
   border: 0px solid transparent; // This is a hack cause I don't freaking understand why the text doesn't expand
+  align-items: center;
+  gap: 10px;
 `
 
 const AppTextCentered = styled(AppText)`
   text-align: center;
+`
+
+const ScreenSectionHeader = styled(ScreenSection)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 `

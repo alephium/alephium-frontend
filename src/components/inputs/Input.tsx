@@ -23,9 +23,10 @@ import {
   TextInput,
   TextInputFocusEventData,
   TextInputProps,
+  ViewProps,
   ViewStyle
 } from 'react-native'
-import Animated, { FadeIn, FadeOut, useAnimatedStyle, withSpring } from 'react-native-reanimated'
+import Animated, { AnimateProps, FadeIn, FadeOut, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
@@ -45,6 +46,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   renderValue?: RenderValueFunc<T>
   error?: string
   style?: StyleProp<ViewStyle>
+  layout?: AnimateProps<ViewProps>['layout']
 }
 
 const Input = <T extends InputValue>({
@@ -58,6 +60,7 @@ const Input = <T extends InputValue>({
   RightContent,
   renderValue,
   error,
+  layout,
   ...props
 }: InputProps<T>) => {
   const theme = useTheme()
@@ -92,7 +95,7 @@ const Input = <T extends InputValue>({
   }
 
   return (
-    <Row onPress={onPress} isInput hasRightContent={!!RightContent} style={style}>
+    <Row onPress={onPress} isInput hasRightContent={!!RightContent} style={style} layout={layout}>
       <InputContainer>
         <Label style={labelStyle}>
           <LabelText style={labelTextStyle}>{label}</LabelText>

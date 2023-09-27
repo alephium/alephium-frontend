@@ -69,7 +69,7 @@ const SwitchWalletScreen = ({ navigation, route: { params }, ...props }: SwitchW
       <FooterButtonsSection
         tint={theme.name}
         intensity={100}
-        top={Dimensions.get('window').height - footerButtonsHeight}
+        top={Dimensions.get('window').height - footerButtonsHeight + DEFAULT_MARGIN * 2}
         onLayout={(e) => setFooterButtonsHeight(e.nativeEvent.layout.height)}
       >
         <NewWalletButtons />
@@ -86,5 +86,5 @@ const FooterButtonsSection = styled(BlurView)<{ top: number }>`
   left: 0;
   right: 0;
   background-color: ${({ theme }) => theme.bg.back2};
-  padding: ${DEFAULT_MARGIN * 2}px ${DEFAULT_MARGIN}px;
+  padding: ${DEFAULT_MARGIN * 2}px ${DEFAULT_MARGIN}px ${DEFAULT_MARGIN * 3}px;
 `

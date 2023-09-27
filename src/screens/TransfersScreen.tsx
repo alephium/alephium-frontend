@@ -17,15 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import { FlatList } from 'react-native'
-import { useSharedValue } from 'react-native-reanimated'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
@@ -50,8 +50,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
   useNavigationScrollHandler(listRef)
   useScrollToTopOnBlur(listRef)
 
-  const [fullHeaderHeight, setFullHeaderHeight] = useState(0)
-  const scrollY = useSharedValue(0)
+  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
 
   return (
     <Screen contrastedBg>
@@ -59,18 +58,14 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
         initialNumToRender={8}
-        contentContainerStyle={{ flexGrow: 1, paddingTop: fullHeaderHeight + DEFAULT_MARGIN }}
-        onScroll={(e) => (scrollY.value = e.nativeEvent.contentOffset.y)}
+        contentContainerStyle={{ flexGrow: 1, paddingTop: screenHeaderHeight + DEFAULT_MARGIN }}
+        onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         ref={listRef}
-        headerHeight={fullHeaderHeight}
+        headerHeight={screenHeaderHeight}
       />
 
-      <BaseHeader
-        options={{ headerTitle: 'Transfers' }}
-        scrollY={scrollY}
-        onLayout={(e) => setFullHeaderHeight(e.nativeEvent.layout.height)}
-      />
+      <BaseHeader options={{ headerTitle: 'Transfers' }} scrollY={screenScrollY} onLayout={screenHeaderLayoutHandler} />
     </Screen>
   )
 }

@@ -41,12 +41,14 @@ import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginScreen from '~/screens/LoginScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
+import DecryptScannedMnemonicScreen from '~/screens/new-wallet/DecryptScannedMnemonicScreen'
 import ImportWalletAddressDiscoveryScreen from '~/screens/new-wallet/ImportWalletAddressDiscoveryScreen'
 import ImportWalletSeedScreen from '~/screens/new-wallet/ImportWalletSeedScreen'
 import NewWalletIntroScreen from '~/screens/new-wallet/NewWalletIntroScreen'
 import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
+import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
 import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import SettingsScreen from '~/screens/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
@@ -151,6 +153,8 @@ const RootStackNavigation = () => {
                     <RootStack.Screen name="VerifyMnemonicScreen" component={VerifyMnemonicScreen} />
                     <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
                     <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
+                    <RootStack.Screen name="SelectImportMethodScreen" component={SelectImportMethodScreen} />
+                    <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
                     <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
                     <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
                     <RootStack.Screen

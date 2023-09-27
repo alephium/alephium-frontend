@@ -39,7 +39,7 @@ export type AddressMetadata = AddressSettings & {
 }
 
 export type Address = AddressKeyPair &
-  explorer.AddressInfo & {
+  Omit<explorer.AddressInfo, 'txNumber'> & {
     group: number
     settings: AddressSettings
     transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
@@ -60,7 +60,6 @@ export type AddressDiscoveryGroupData = {
 
 export type AddressTransactionsSyncResult = {
   hash: AddressHash
-  txNumber: explorer.AddressInfo['txNumber']
   transactions: explorer.Transaction[]
   mempoolTransactions: explorer.MempoolTransaction[]
 }

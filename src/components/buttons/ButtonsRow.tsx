@@ -43,7 +43,7 @@ const ButtonsRow = ({ children, hasDivider, style }: ButtonsRowProps) => {
 }
 
 export default styled(ButtonsRow)`
-  flex: 1;
+  flex-grow: 1;
   flex-direction: row;
   gap: ${({ sticked }) => (sticked ? 0 : 20)}px;
 `
