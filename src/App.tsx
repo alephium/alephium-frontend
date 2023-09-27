@@ -107,6 +107,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const activeWalletId = useAppSelector((s) => s.activeWallet.metadataId)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const network = useAppSelector((s) => s.network)
   const addressIds = useAppSelector(selectAddressIds)
@@ -190,9 +191,8 @@ const Main = ({ children, ...props }: ViewProps) => {
 
     setIsUnlockingWallet(true)
 
-    const hasAvailableBiometrics = await isEnrolledAsync()
-
     try {
+      const hasAvailableBiometrics = await isEnrolledAsync()
       const activeWalletMetadata = await getActiveWalletMetadata()
 
       // Disable biometrics if needed
@@ -254,6 +254,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' && !isCameraOpen) {
+        navigateRootStack('SplashScreen')
         dispatch(appBecameInactive())
       } else if (nextAppState === 'active' && !activeWalletMnemonic && !isUnlockingWallet) {
         unlockActiveWallet()
@@ -265,7 +266,7 @@ const Main = ({ children, ...props }: ViewProps) => {
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [activeWalletMnemonic, dispatch, isCameraOpen, isUnlockingWallet, unlockActiveWallet])
+  }, [activeWalletId, activeWalletMnemonic, dispatch, isCameraOpen, isUnlockingWallet, unlockActiveWallet])
 
   return (
     <RootSiblingParent>

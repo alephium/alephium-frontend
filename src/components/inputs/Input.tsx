@@ -71,7 +71,7 @@ const Input = <T extends InputValue>({
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   const labelStyle = useAnimatedStyle(() => ({
-    top: withSpring(!isActive ? -10 : -40, fastSpringConfiguration)
+    bottom: withSpring(!isActive ? 0 : 30, fastSpringConfiguration)
   }))
 
   const labelTextStyle = useAnimatedStyle(() => ({
@@ -151,7 +151,8 @@ const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
 
 const Label = styled(Animated.View)`
   position: absolute;
-  bottom: -10px;
+  top: 0;
+  bottom: 0;
   left: 0;
   justify-content: center;
 `
