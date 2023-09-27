@@ -55,18 +55,20 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
   const activateBiometrics = async () => {
     setLoading(true)
 
-    await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
-    dispatch(biometricsEnabled())
+    try {
+      await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
+      dispatch(biometricsEnabled())
 
-    posthog?.capture('Activated biometrics from wallet creation flow')
+      posthog?.capture('Activated biometrics from wallet creation flow')
 
-    if (params?.skipAddressDiscovery) {
-      navigation.navigate('NewWalletSuccessScreen')
-    } else {
-      navigateToAddressDiscoveryPage()
+      if (params?.skipAddressDiscovery) {
+        navigation.navigate('NewWalletSuccessScreen')
+      } else {
+        navigateToAddressDiscoveryPage()
+      }
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   const handleLaterPress = () => {
