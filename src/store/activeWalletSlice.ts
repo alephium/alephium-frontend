@@ -25,10 +25,10 @@ import { ActiveWalletState, WalletUnlockedPayload } from '~/types/wallet'
 const sliceName = 'activeWallet'
 
 const initialState: ActiveWalletState = {
+  id: '',
   name: '',
   mnemonic: '',
   isMnemonicBackedUp: undefined,
-  metadataId: '',
   authType: undefined
 }
 
@@ -48,13 +48,13 @@ const activeWalletSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(appBecameInactive, resetState).addCase(appReset, resetState)
     builder.addMatcher(isAnyOf(newWalletGenerated, newWalletImportedWithMetadata), (state, action) => {
-      const { name, mnemonic, metadataId, isMnemonicBackedUp } = action.payload
+      const { name, mnemonic, id, isMnemonicBackedUp } = action.payload
 
       return {
+        id,
         name,
         mnemonic,
         authType: 'pin',
-        metadataId,
         isMnemonicBackedUp
       }
     })

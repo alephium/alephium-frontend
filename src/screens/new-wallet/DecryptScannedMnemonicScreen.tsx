@@ -77,7 +77,7 @@ const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMn
       const wallet = await generateAndStoreWallet(name, pin, mnemonic)
 
       try {
-        importAddresses(wallet.mnemonic, wallet.metadataId, addresses)
+        importAddresses(wallet.mnemonic, wallet.id, addresses)
       } catch (e) {
         console.error(e)
 
@@ -98,7 +98,7 @@ const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMn
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
       if (isAuthenticated && lastActiveWalletAuthType.current === 'biometrics' && deviceHasBiometricsData) {
-        await enableBiometrics(wallet.metadataId, wallet.mnemonic)
+        await enableBiometrics(wallet.id, wallet.mnemonic)
         dispatch(biometricsToggled(true))
       }
 

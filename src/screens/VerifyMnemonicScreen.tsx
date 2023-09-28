@@ -53,7 +53,7 @@ interface VerifyMnemonicScreenProps extends StackScreenProps<RootStackParamList,
 const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProps) => {
   const dispatch = useAppDispatch()
   const isMnemonicBackedUp = useAppSelector((s) => s.activeWallet.isMnemonicBackedUp)
-  const metadataId = useAppSelector((s) => s.activeWallet.metadataId)
+  const metadataId = useAppSelector((s) => s.activeWallet.id)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const mnemonicWords = useRef(activeWalletMnemonic.split(' '))
   const theme = useTheme()

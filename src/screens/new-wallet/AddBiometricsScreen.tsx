@@ -42,7 +42,7 @@ const instructions: Instruction[] = [
 ]
 
 const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBiometricsScreenProps) => {
-  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
+  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.id)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()

@@ -47,7 +47,7 @@ interface SwitchWalletListProps {
 const SwitchWalletList = ({ onClose }: SwitchWalletListProps) => {
   const dispatch = useAppDispatch()
   const wallets = useSortedWallets()
-  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
+  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.id)
   const pin = useAppSelector((s) => s.credentials.pin)
   const posthog = usePostHog()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
@@ -73,7 +73,7 @@ const SwitchWalletList = ({ onClose }: SwitchWalletListProps) => {
       }
 
       const wallet = { ...storedWallet, mnemonic }
-      await rememberActiveWallet(wallet.metadataId)
+      await rememberActiveWallet(wallet.id)
       const addressesToInitialize = await deriveWalletStoredAddresses(wallet)
       const activeWalletMetadata = await getActiveWalletMetadata()
 

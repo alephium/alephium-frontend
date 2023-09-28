@@ -23,7 +23,7 @@ import { getWalletsMetadata } from '~/persistent-storage/wallets'
 import { WalletMetadata } from '~/types/wallet'
 
 export const useSortedWallets = () => {
-  const activeWalletId = useAppSelector((s) => s.activeWallet.metadataId)
+  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
 
   const [wallets, setWallets] = useState<WalletMetadata[]>([])
 

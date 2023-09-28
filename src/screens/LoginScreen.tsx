@@ -56,7 +56,7 @@ const LoginScreen = ({
       setIsPinModalVisible(false)
       let addressesToInitialize = [] as AddressPartial[]
 
-      await rememberActiveWallet(wallet.metadataId)
+      await rememberActiveWallet(wallet.id)
 
       const activeWalletMetadata = await getActiveWalletMetadata()
       const contacts = activeWalletMetadata?.contacts ?? []

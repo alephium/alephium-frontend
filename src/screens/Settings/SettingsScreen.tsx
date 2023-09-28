@@ -69,7 +69,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
-  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
+  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.id)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const posthog = usePostHog()

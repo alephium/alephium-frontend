@@ -57,7 +57,7 @@ export const generateAndStoreWallet = async (
 
   return {
     name,
-    metadataId,
+    id: metadataId,
     mnemonic: wallet.mnemonic,
     isMnemonicBackedUp,
     firstAddress: {
@@ -143,10 +143,10 @@ export const getStoredWalletById = async (id: string, usePin?: boolean): Promise
   if (!mnemonic) throw `Could not find mnemonic for wallet with ID ${id}`
 
   return {
+    id,
     name,
     mnemonic,
     authType,
-    metadataId: id,
     isMnemonicBackedUp
   } as ActiveWalletState
 }
@@ -294,7 +294,7 @@ const deleteBiometricsEnabledMnemonic = async (id: string, name: string) => {
 
 export const deriveWalletStoredAddresses = async (wallet: ActiveWalletState): Promise<AddressPartial[]> => {
   const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, wallet.mnemonic)
-  const addressesMetadata = await getAddressesMetadataByWalletId(wallet.metadataId)
+  const addressesMetadata = await getAddressesMetadataByWalletId(wallet.id)
 
   console.log(`👀 Found ${addressesMetadata.length} addresses metadata in persistent storage`)
 

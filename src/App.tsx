@@ -108,7 +108,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const activeWalletId = useAppSelector((s) => s.activeWallet.metadataId)
+  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const network = useAppSelector((s) => s.network)
   const addressIds = useAppSelector(selectAddressIds)
@@ -216,12 +216,12 @@ const Main = ({ children, ...props }: ViewProps) => {
       }
 
       if (wallet.authType === 'pin') {
-        navigateRootStack('LoginScreen', { walletIdToLogin: wallet.metadataId, workflow: 'wallet-unlock' })
+        navigateRootStack('LoginScreen', { walletIdToLogin: wallet.id, workflow: 'wallet-unlock' })
         return
       }
 
       if (wallet.authType === 'biometrics') {
-        await rememberActiveWallet(wallet.metadataId)
+        await rememberActiveWallet(wallet.id)
 
         const addressesToInitialize =
           addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
