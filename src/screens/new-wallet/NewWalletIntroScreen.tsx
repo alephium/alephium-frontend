@@ -61,7 +61,7 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
           <Button
             title="Let's go!"
             type="primary"
-            variant="accent"
+            variant="highlight"
             onPress={() => navigation.navigate('NewWalletNameScreen')}
           />
           <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />

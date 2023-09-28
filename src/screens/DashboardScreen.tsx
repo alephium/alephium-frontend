@@ -20,7 +20,7 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import React from 'react'
 import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressesTokensList from '~/components/AddressesTokensList'
@@ -44,7 +44,6 @@ interface ScreenProps
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const headerHeight = useHeaderHeight()
   const walletName = useAppSelector((s) => s.wallet.name)
   const totalBalance = useAppSelector(selectTotalBalance)

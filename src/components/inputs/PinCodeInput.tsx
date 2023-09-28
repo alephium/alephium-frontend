@@ -21,7 +21,7 @@ import { StyleProp, ViewStyle } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
-import { PopIn, PopOut } from '~/animations/reanimated/reanimatedAnimations'
+import { PopInFast, PopOutFast } from '~/animations/reanimated/reanimatedAnimations'
 import NumberKeyboard, { NumberKeyboardKey } from '~/components/keyboard/NumberKeyboard'
 
 interface PinInputProps {
@@ -61,7 +61,11 @@ const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
 const Slot = memo(function Slot({ number }: SlotProps) {
   return (
     <SlotContainer>
-      {number ? <FilledSlot entering={PopIn} exiting={PopOut} /> : <EmptySlot entering={PopIn} exiting={PopOut} />}
+      {number ? (
+        <FilledSlot entering={PopInFast} exiting={PopOutFast} />
+      ) : (
+        <EmptySlot entering={PopInFast} exiting={PopOutFast} />
+      )}
     </SlotContainer>
   )
 })

@@ -54,7 +54,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#3A7AF4',
+    accent: '#3a6ff4',
     alert: '#ed4a34',
     valid: '#2DA023',
     star: '#FFD66D',

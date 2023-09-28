@@ -59,11 +59,11 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
   }
 
   return (
-    <ScrollScreen verticalGap fill headerOptions={{ headerTitle: 'Import', type: 'stack' }} {...props}>
+    <ScrollScreen fill headerOptions={{ headerTitle: 'Import', type: 'stack' }} {...props}>
       <ScreenSection fill>
-        <BoxSurfaceStyled border="primary">
+        <BoxSurfaceStyled border="primary" type="highlight">
           <IconBox>
-            <Ionicons size={35} name="desktop" color="#56E0FE" />
+            <Ionicons size={35} name="desktop" color="#56c9fe" />
           </IconBox>
           <Title size={28} medium>
             Desktop wallet
@@ -75,7 +75,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
         </BoxSurfaceStyled>
       </ScreenSection>
       <ScreenSection fill>
-        <BoxSurfaceStyled border="primary">
+        <BoxSurfaceStyled border="primary" type="highlight">
           <IconBox>
             <Ionicons size={35} name="list-outline" color="#FF9315" />
           </IconBox>

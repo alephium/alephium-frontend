@@ -42,6 +42,7 @@ export type HeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'h
 
 export interface BaseHeaderProps extends ViewProps {
   headerBottom?: () => ReactNode
+  headerTitleRight?: () => ReactNode
   headerRef?: RefObject<Animated.View>
   options: HeaderOptions
   showCompactComponents?: boolean
@@ -58,6 +59,7 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle },
   headerBottom,
+  headerTitleRight,
   showCompactComponents,
   headerRef,
   scrollY,
@@ -76,6 +78,7 @@ const BaseHeader = ({
   const HeaderLeft = headerLeft && headerLeft({})
   const HeaderBottom = headerBottom && headerBottom()
   const HeaderTitle = headerTitle && (typeof headerTitle === 'string' ? headerTitle : headerTitle.arguments['children'])
+  const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
   const titleAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader || headerTitle
@@ -157,6 +160,7 @@ const BaseHeader = ({
                       <ScaledDownHeaderComponentLeft>{HeaderLeft}</ScaledDownHeaderComponentLeft>
                       <CompactHeaderTitle>
                         <CompactTitle>{HeaderTitle}</CompactTitle>
+                        {HeaderTitleRight}
                       </CompactHeaderTitle>
                       <ScaledDownHeaderComponentRight>{HeaderRight}</ScaledDownHeaderComponentRight>
                     </>
@@ -177,6 +181,7 @@ const BaseHeader = ({
               {headerTitle && (
                 <TitleArea style={titleAnimatedStyle}>
                   <Title>{HeaderTitle}</Title>
+                  {HeaderTitleRight}
                 </TitleArea>
               )}
             </>
@@ -225,6 +230,9 @@ const ActionAreaBlurred = styled(AnimatedBlurView)`
 const TitleArea = styled(Animated.View)`
   padding: 10px ${DEFAULT_MARGIN}px;
   align-self: flex-start;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
 `
 
 const Title = styled(AppText)`
@@ -235,7 +243,7 @@ const Title = styled(AppText)`
 `
 
 const CompactTitle = styled(AppText)`
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   text-align: center;
 `
@@ -284,4 +292,7 @@ const ScaledDownHeaderComponentLeft = styled(ScaledDownHeaderComponent)`
 const CompactHeaderTitle = styled.View`
   flex: 1;
   align-items: center;
+  flex-direction: row;
+  transform: scale(0.85);
+  gap: 10px;
 `

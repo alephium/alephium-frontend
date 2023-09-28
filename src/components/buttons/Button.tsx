@@ -20,9 +20,17 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import Animated, { FadeIn, FadeOut, LinearTransition, useSharedValue } from 'react-native-reanimated'
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring
+} from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
@@ -88,9 +96,12 @@ const Button = ({
       highlight: 'white'
     }[variant]
 
+  const buttonAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: withSpring(pressed.value ? 0.7 : disabled ? 0.7 : 1, fastestSpringConfiguration)
+  }))
+
   const buttonStyle: PressableProps['style'] = [
     {
-      opacity: pressed.value || disabled ? 0.5 : 1,
       borderWidth: {
         primary: 0,
         secondary: 0,
@@ -130,7 +141,7 @@ const Button = ({
 
   return (
     <AnimatedPressable
-      style={buttonStyle}
+      style={[buttonAnimatedStyle, buttonStyle]}
       disabled={disabled}
       onPressIn={() => (pressed.value = true)}
       onPressOut={() => (pressed.value = false)}
@@ -172,21 +183,17 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
       onPress={props.onPress}
       iconProps={{ name: 'arrow-forward-outline' }}
       type="primary"
-      variant="accent"
       style={[
         style,
+        { height: 40, flexDirection: 'row', alignItems: 'center' },
         !props.disabled
           ? {
-              backgroundColor: theme.global.accent,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 10,
-              height: 40
+              backgroundColor: theme.global.accent
             }
           : undefined
       ]}
       color={!props.disabled ? 'white' : color}
-      title={!props.disabled ? 'Next' : undefined}
+      title={props.title || !props.disabled ? 'Next' : undefined}
       compact
       animated
       {...props}
