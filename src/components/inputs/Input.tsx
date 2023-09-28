@@ -95,7 +95,16 @@ const Input = <T extends InputValue>({
   }
 
   return (
-    <Row onPress={onPress} isInput hasRightContent={!!RightContent} style={style} layout={layout}>
+    <Row
+      onPress={onPress}
+      isInput
+      hasRightContent={!!RightContent}
+      style={[
+        style,
+        { shadowColor: 'black', shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { height: 5, width: 0 } }
+      ]}
+      layout={layout}
+    >
       <InputContainer>
         <Label style={labelStyle}>
           <LabelText style={labelTextStyle}>{label}</LabelText>

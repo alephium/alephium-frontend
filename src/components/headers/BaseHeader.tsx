@@ -176,7 +176,11 @@ const BaseHeader = ({
                     </>
                   )}
                 </CompactContent>
-              )) || <CompactTitle>{HeaderTitle}</CompactTitle>}
+              )) || (
+                <CompactHeaderTitle>
+                  <CompactTitle>{HeaderTitle}</CompactTitle>
+                </CompactHeaderTitle>
+              )}
               <BottomBorder style={bottomBorderColor} />
             </ActionAreaBlurred>
           </CompactHeaderContainer>
@@ -253,7 +257,7 @@ const Title = styled(AppText)`
 `
 
 const CompactTitle = styled(AppText)`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   text-align: center;
 `
@@ -302,6 +306,7 @@ const ScaledDownHeaderComponentLeft = styled(ScaledDownHeaderComponent)`
 const CompactHeaderTitle = styled.View`
   flex: 1;
   align-items: center;
+  justify-content: center;
   flex-direction: row;
   transform: scale(0.85);
   gap: 10px;

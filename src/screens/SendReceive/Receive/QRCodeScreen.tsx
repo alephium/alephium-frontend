@@ -97,5 +97,5 @@ const QRCodeContainer = styled.View`
   margin: 15px 0;
   padding: 25px;
   border-radius: ${BORDER_RADIUS_BIG}px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
 `

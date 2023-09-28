@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -26,14 +27,20 @@ interface RadioButtonRowProps extends Omit<RowProps, 'children'> {
   isActive: boolean
 }
 
-const RadioButtonRow = ({ title, isActive, ...props }: RadioButtonRowProps) => (
-  <Row key={title} {...props}>
-    <RowContents>
-      <RadioButton>{isActive && <RadioButtonChecked />}</RadioButton>
-      <Title>{title}</Title>
-    </RowContents>
-  </Row>
-)
+const RadioButtonRow = ({ title, isActive, ...props }: RadioButtonRowProps) => {
+  const theme = useTheme()
+
+  return (
+    <Row key={title} {...props}>
+      <RowContents>
+        <RadioButton style={{ backgroundColor: isActive ? theme.global.accent : theme.bg.back2 }}>
+          {isActive && <RadioButtonChecked />}
+        </RadioButton>
+        <Title>{title}</Title>
+      </RowContents>
+    </Row>
+  )
+}
 
 export default RadioButtonRow
 
@@ -41,7 +48,6 @@ const RadioButton = styled.View`
   width: 19px;
   height: 19px;
   border-radius: 19px;
-  background-color: ${({ theme }) => theme.bg.secondary};
   margin-right: 21px;
   flex-direction: row;
   align-items: center;
@@ -49,10 +55,10 @@ const RadioButton = styled.View`
 `
 
 export const RadioButtonChecked = styled.View`
-  width: 13px;
-  height: 13px;
-  border-radius: 13px;
-  background-color: ${({ theme }) => theme.font.primary};
+  width: 10px;
+  height: 10px;
+  border-radius: 10px;
+  background-color: white;
 `
 
 const RowContents = styled.View`
