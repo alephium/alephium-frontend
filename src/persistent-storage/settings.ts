@@ -49,7 +49,8 @@ export const defaultGeneralSettings: GeneralSettings = {
   currency: 'USD',
   analytics: true,
   analyticsId: undefined,
-  walletConnect: false
+  walletConnect: false,
+  usesBiometrics: false
 }
 
 export const defaultNetworkSettings: NetworkSettings = clone(networkPresetSettings[defaultNetwork])

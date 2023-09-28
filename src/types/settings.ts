@@ -28,6 +28,7 @@ export interface GeneralSettings {
   analytics: boolean
   analyticsId?: string
   walletConnect: boolean
+  usesBiometrics: boolean
 }
 
 export interface NetworkSettings {
