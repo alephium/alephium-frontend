@@ -33,8 +33,8 @@ import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { importContacts } from '~/persistent-storage/contacts'
 import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
-import { biometricsEnabled } from '~/store/activeWalletSlice'
 import { importAddresses } from '~/store/addresses/addressesStorageUtils'
+import { biometricsToggled } from '~/store/settingsSlice'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import { WalletImportData } from '~/types/wallet'
 import { pbkdf2 } from '~/utils/crypto'
@@ -52,7 +52,7 @@ const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMn
   const posthog = usePostHog()
   const dispatch = useAppDispatch()
   const lastActiveWalletAuthType = useRef(activeWalletAuthType)
-  const hasAvailableBiometrics = useBiometrics()
+  const deviceHasBiometricsData = useBiometrics()
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -97,9 +97,9 @@ const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMn
       }
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
-      if (isAuthenticated && lastActiveWalletAuthType.current === 'biometrics' && hasAvailableBiometrics) {
+      if (isAuthenticated && lastActiveWalletAuthType.current === 'biometrics' && deviceHasBiometricsData) {
         await enableBiometrics(wallet.metadataId, wallet.mnemonic)
-        dispatch(biometricsEnabled())
+        dispatch(biometricsToggled(true))
       }
 
       setLoading(false)

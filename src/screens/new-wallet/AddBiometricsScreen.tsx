@@ -32,7 +32,7 @@ import CenteredInstructions, { Instruction } from '~/components/text/CenteredIns
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { enableBiometrics } from '~/persistent-storage/wallets'
-import { biometricsEnabled } from '~/store/activeWalletSlice'
+import { biometricsToggled } from '~/store/settingsSlice'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
 
@@ -57,7 +57,7 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
 
     try {
       await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
-      dispatch(biometricsEnabled())
+      dispatch(biometricsToggled(true))
 
       posthog?.capture('Activated biometrics from wallet creation flow')
 

@@ -41,7 +41,7 @@ import {
   getStoredActiveWallet,
   rememberActiveWallet
 } from '~/persistent-storage/wallets'
-import { biometricsDisabled, walletUnlocked } from '~/store/activeWalletSlice'
+import { walletUnlocked } from '~/store/activeWalletSlice'
 import {
   makeSelectAddressesUnknownTokens,
   selectAddressIds,
@@ -54,6 +54,7 @@ import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '~/store/assets/ass
 import { selectIsTokensMetadataUninitialized } from '~/store/assets/assetsSelectors'
 import { apiClientInitFailed, apiClientInitSucceeded } from '~/store/networkSlice'
 import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { biometricsToggled } from '~/store/settingsSlice'
 import { store } from '~/store/store'
 import { makeSelectAddressesHashesWithPendingTransactions } from '~/store/transactions/transactionSelectors'
 import { themes } from '~/style/themes'
@@ -192,13 +193,13 @@ const Main = ({ children, ...props }: ViewProps) => {
     setIsUnlockingWallet(true)
 
     try {
-      const hasAvailableBiometrics = await isEnrolledAsync()
+      const deviceHasBiometricsData = await isEnrolledAsync()
       const activeWalletMetadata = await getActiveWalletMetadata()
 
       // Disable biometrics if needed
-      if (activeWalletMetadata && activeWalletMetadata.authType === 'biometrics' && !hasAvailableBiometrics) {
+      if (activeWalletMetadata && activeWalletMetadata.authType === 'biometrics' && !deviceHasBiometricsData) {
         await disableBiometrics(activeWalletMetadata.id)
-        dispatch(biometricsDisabled())
+        dispatch(biometricsToggled(false))
       }
 
       const wallet = await getStoredActiveWallet()

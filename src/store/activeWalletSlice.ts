@@ -38,12 +38,6 @@ const activeWalletSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    biometricsEnabled: (state) => {
-      state.authType = 'biometrics'
-    },
-    biometricsDisabled: (state) => {
-      state.authType = 'pin'
-    },
     mnemonicBackedUp: (state) => {
       state.isMnemonicBackedUp = true
     },
@@ -67,13 +61,6 @@ const activeWalletSlice = createSlice({
   }
 })
 
-export const {
-  biometricsEnabled,
-  biometricsDisabled,
-  mnemonicBackedUp,
-  walletDeleted,
-  walletSwitched,
-  walletUnlocked
-} = activeWalletSlice.actions
+export const { mnemonicBackedUp, walletDeleted, walletSwitched, walletUnlocked } = activeWalletSlice.actions
 
 export default activeWalletSlice

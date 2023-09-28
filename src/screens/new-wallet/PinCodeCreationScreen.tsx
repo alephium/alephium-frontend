@@ -60,7 +60,7 @@ const errorInstructionSet: Instruction[] = [
 
 const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationScreenProps) => {
   const dispatch = useAppDispatch()
-  const hasAvailableBiometrics = useBiometrics()
+  const deviceHasBiometricsData = useBiometrics()
   const { method, walletName: name } = useAppSelector((s) => s.walletGeneration)
   const posthog = usePostHog()
 
@@ -109,7 +109,7 @@ const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationS
 
       setLoading(false)
 
-      hasAvailableBiometrics
+      deviceHasBiometricsData
         ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
         : navigation.navigate('NewWalletSuccessScreen')
     }

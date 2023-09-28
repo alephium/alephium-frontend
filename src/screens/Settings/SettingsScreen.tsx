@@ -45,9 +45,10 @@ import {
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
-import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
+import { walletDeleted } from '~/store/activeWalletSlice'
 import {
   analyticsToggled,
+  biometricsToggled,
   discreetModeToggled,
   passwordRequirementToggled,
   themeChanged,
@@ -60,14 +61,14 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScre
 
 const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const hasAvailableBiometrics = useBiometrics()
+  const deviceHasBiometricsData = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const requireAuth = useAppSelector((s) => s.settings.requireAuth)
   const currentTheme = useAppSelector((s) => s.settings.theme)
   const currentCurrency = useAppSelector((s) => s.settings.currency)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
-  const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
+  const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const analytics = useAppSelector((s) => s.settings.analytics)
@@ -78,17 +79,15 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
 
-  const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
-
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
       await disableBiometrics(activeWalletMetadataId)
-      dispatch(biometricsDisabled())
+      dispatch(biometricsToggled(false))
 
       posthog?.capture('Deactivated biometrics')
     } else {
       await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
-      dispatch(biometricsEnabled())
+      dispatch(biometricsToggled(true))
 
       posthog?.capture('Manually activated biometrics')
     }
@@ -167,7 +166,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <Row title="Use dark theme" subtitle="Try it, it's nice">
               <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
             </Row>
-            {hasAvailableBiometrics && (
+            {deviceHasBiometricsData && (
               <Row title="Biometrics authentication" subtitle="Enhance your security">
                 <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
               </Row>

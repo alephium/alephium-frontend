@@ -33,8 +33,8 @@ import useBiometrics from '~/hooks/useBiometrics'
 import { useSortedWallets } from '~/hooks/useSortedWallets'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
-import { biometricsEnabled } from '~/store/activeWalletSlice'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
+import { biometricsToggled } from '~/store/settingsSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -53,7 +53,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
   const pin = useAppSelector((s) => s.credentials.pin)
-  const hasAvailableBiometrics = useBiometrics()
+  const deviceHasBiometricsData = useBiometrics()
   const wallets = useSortedWallets()
   const lastActiveWalletAuthType = useRef(activeWalletAuthType)
   const posthog = usePostHog()
@@ -82,16 +82,16 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       posthog?.capture('Generated new wallet', { note: 'With existing pin' })
 
       // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
-      if (lastActiveWalletAuthType.current === 'biometrics' && hasAvailableBiometrics) {
+      if (lastActiveWalletAuthType.current === 'biometrics' && deviceHasBiometricsData) {
         await enableBiometrics(wallet.metadataId, wallet.mnemonic)
-        dispatch(biometricsEnabled())
+        dispatch(biometricsToggled(true))
       }
 
       setLoading(false)
 
       navigation.navigate('NewWalletSuccessScreen')
     },
-    [dispatch, hasAvailableBiometrics, name, navigation, posthog]
+    [dispatch, deviceHasBiometricsData, name, navigation, posthog]
   )
 
   const handleButtonPress = async () => {
