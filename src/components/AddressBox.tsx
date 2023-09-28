@@ -80,7 +80,7 @@ const AddressBoxTop = styled.View`
   padding: 15px;
   flex-direction: row;
   justify-content: space-between;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
   border-top-right-radius: 6px;
   border-top-left-radius: 6px;
 `

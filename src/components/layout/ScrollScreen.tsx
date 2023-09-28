@@ -41,6 +41,7 @@ export interface ScrollScreenBaseProps {
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
   containerStyle?: StyleProp<ViewStyle>
   scrollViewRef?: RefObject<ScrollView>
+  contrastedBg?: boolean
   verticalGap?: number | boolean
   usesKeyboard?: boolean
 }
@@ -52,6 +53,7 @@ const ScrollScreen = ({
   containerStyle,
   contentContainerStyle,
   verticalGap,
+  contrastedBg,
   fill,
   headerOptions,
   usesKeyboard,
@@ -72,7 +74,7 @@ const ScrollScreen = ({
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   const screen = (
-    <Screen style={containerStyle}>
+    <Screen style={containerStyle} contrastedBg={contrastedBg}>
       <ScrollView
         ref={viewRef}
         scrollEventThrottle={16}

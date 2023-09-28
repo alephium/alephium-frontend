@@ -76,10 +76,10 @@ export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
     highlight: '#353539',
-    primary: '#1e1e21',
-    secondary: '#18181b',
-    tertiary: '#19191c',
-    back1: '#151519',
+    primary: '#19191c',
+    secondary: '#17171a',
+    tertiary: '#141417',
+    back1: '#111114',
     back2: '#0E0E10',
     accent: 'rgba(93, 108, 243, 0.08)',
     contrast: 'white'

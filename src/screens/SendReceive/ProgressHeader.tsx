@@ -62,6 +62,7 @@ const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderPr
         )
       }}
       showCompactComponents
+      showBorderBottom
       headerTitleRight={() => (
         <ProgressBar
           progress={progress}
@@ -72,7 +73,7 @@ const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderPr
           size={28}
           style={{ marginBottom: -1 }}
           pointerEvents="none"
-          thickness={2}
+          thickness={3}
         />
       )}
       route={route}

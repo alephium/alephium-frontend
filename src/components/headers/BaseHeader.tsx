@@ -46,6 +46,7 @@ export interface BaseHeaderProps extends ViewProps {
   headerRef?: RefObject<Animated.View>
   options: HeaderOptions
   showCompactComponents?: boolean
+  showBorderBottom?: boolean
   goBack?: () => void
   scrollY?: SharedValue<number>
 }
@@ -61,6 +62,7 @@ const BaseHeader = ({
   headerBottom,
   headerTitleRight,
   showCompactComponents,
+  showBorderBottom,
   headerRef,
   scrollY,
   ...props
@@ -69,7 +71,7 @@ const BaseHeader = ({
   const insets = useSafeAreaInsets()
   const { activeScreenRef } = useNavigationScrollContext()
 
-  const borderColorRange = ['transparent', theme.border.secondary]
+  const borderColorRange = [showBorderBottom ? theme.border.secondary : 'transparent', theme.border.secondary]
 
   const hasCompactHeader = showCompactComponents !== undefined || headerTitle
   const paddingTop = Platform.OS === 'android' ? insets.top + 10 : insets.top
@@ -113,6 +115,14 @@ const BaseHeader = ({
   const bottomBorderColor = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
   }))
+
+  const bottomBorderPosition = useAnimatedStyle(() =>
+    showBorderBottom
+      ? {
+          transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }]
+        }
+      : {}
+  )
 
   const expandedContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
@@ -193,7 +203,7 @@ const BaseHeader = ({
             </ActionArea>
           )}
           {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
-          <BottomBorder style={bottomBorderColor} />
+          <BottomBorder style={[bottomBorderColor, bottomBorderPosition]} />
         </ExpandedHeaderContainer>
       </Pressable>
     </BaseHeaderStyled>

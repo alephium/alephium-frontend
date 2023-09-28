@@ -40,7 +40,8 @@ const Screen = ({ children, hasNavigationHeader, style, ...props }: ScreenProps)
 
 const ScreenStyled = styled.View<ScreenProps>`
   flex: 1;
-  background-color: ${({ theme, contrastedBg }) => (contrastedBg ? theme.bg.primary : theme.bg.back2)};
+  background-color: ${({ theme, contrastedBg }) =>
+    contrastedBg ? (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2) : theme.bg.back1};
 `
 
 export default Screen
