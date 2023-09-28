@@ -12,7 +12,7 @@ PODS:
     - ExpoModulesCore
   - EXConstants (14.4.2):
     - ExpoModulesCore
-  - EXFileSystem (15.4.3):
+  - EXFileSystem (15.4.4):
     - ExpoModulesCore
   - EXFont (11.4.0):
     - ExpoModulesCore
@@ -22,7 +22,7 @@ PODS:
   - EXJSONUtils (0.8.0)
   - EXManifests (0.8.1):
     - ExpoModulesCore
-  - Expo (49.0.7):
+  - Expo (49.0.13):
     - ExpoModulesCore
   - expo-dev-client (3.0.0):
     - EXManifests
@@ -93,13 +93,13 @@ PODS:
     - ExpoModulesCore
   - ExpoLocalization (14.3.0):
     - ExpoModulesCore
-  - ExpoModulesCore (1.5.9):
+  - ExpoModulesCore (1.5.11):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-NativeModulesApple
     - React-RCTAppDelegate
     - ReactCommon/turbomodule/core
-  - ExpoSecureStore (12.3.1):
+  - ExpoSecureStore (12.5.0):
     - ExpoModulesCore
   - ExpoWebBrowser (12.3.2):
     - ExpoModulesCore
@@ -844,12 +844,12 @@ SPEC CHECKSUMS:
   EXBarCodeScanner: 44783bf0be375ab18a838dcfef29dd648397000a
   EXCamera: 0fbfa338a3776af2722d626a3437abe33f708aad
   EXConstants: ce5bbea779da8031ac818c36bea41b10e14d04e1
-  EXFileSystem: 941b273758aee14be2ecc671dacb4f10dd28c833
+  EXFileSystem: 2b826a3bf1071a4b80a8457e97124783d1ac860e
   EXFont: 738c44c390953ebcbab075a4848bfbef025fd9ee
   EXImageLoader: 34b214f9387e98f3c73989f15d8d5b399c9ab3f7
   EXJSONUtils: b0d84048ff79d9c3747fce603a770ac189b8af59
   EXManifests: a9e5206b6b1a6016eea8ddd5c379cf97f7ec89f0
-  Expo: d310f3b84bd30843324d41f23ea7cc5e4273abf1
+  Expo: e7d2116b947e2e6fdeb09ee4f2754f819426d1b6
   expo-dev-client: b45e1b2dee3ee0fdeabe0170d32828b70e27860a
   expo-dev-launcher: 769ab10f74c743f785d7a65f2f0c268fc1e4bbba
   expo-dev-menu: 9b1704f9e7a2617c344e243e45736f99b0f1bd32
@@ -861,8 +861,8 @@ SPEC CHECKSUMS:
   ExpoLinearGradient: 5966dd5d49872cc9c104fedc8bbc298b6049b2e8
   ExpoLocalAuthentication: bd9d9037a96a11ccc456e327ddb404df02da10ca
   ExpoLocalization: be37fdd0b5930c6a49cd307b4542f4b426d6134c
-  ExpoModulesCore: e4e437139259c5a73530a8895af69774ff8ec12d
-  ExpoSecureStore: 57db3b6da8b59046e2057e95bf7738a8027b47c3
+  ExpoModulesCore: 51cb2e7ab4c8da14be3f40b66d54c1781002e99d
+  ExpoSecureStore: 5372610a4bbcf5e50fafbe6f38f8d9c22edf8253
   ExpoWebBrowser: 2c788f9c07718a780fe6d8bf2f6195c47609faaa
   EXScreenCapture: 81002ba5fb40a367fba9047d223068abb558594d
   EXUpdatesInterface: 91b87edc70c7f597d160c63dbd5d0ae4368f4c2a

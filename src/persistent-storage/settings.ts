@@ -86,3 +86,15 @@ export const persistSettings = async (key: SettingsKey, settings: SettingsPartia
     console.error(e)
   }
 }
+
+export const loadBiometricsSettings = async () => {
+  const { usesBiometrics } = (await loadSettings('general')) as GeneralSettings
+
+  return usesBiometrics
+}
+
+export const storeBiometricsSettings = async (usesBiometrics: GeneralSettings['usesBiometrics']) => {
+  const generalSettings = (await loadSettings('general')) as GeneralSettings
+
+  await persistSettings('general', { ...generalSettings, usesBiometrics })
+}

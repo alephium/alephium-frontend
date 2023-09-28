@@ -38,14 +38,13 @@ import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import {
   areThereOtherWallets,
+  deleteBiometricsWallets,
   deleteWalletById,
-  disableBiometrics,
-  enableBiometrics
+  updateBiometricsWallets
 } from '~/persistent-storage/wallets'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
-import { walletDeleted } from '~/store/activeWalletSlice'
 import {
   analyticsToggled,
   biometricsToggled,
@@ -54,6 +53,8 @@ import {
   themeChanged,
   walletConnectToggled
 } from '~/store/settingsSlice'
+import { walletDeleted } from '~/store/wallet/walletActions'
+import { selectAllWallets } from '~/store/wallet/walletsSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { resetNavigationState } from '~/utils/navigation'
 
@@ -70,8 +71,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.id)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const analytics = useAppSelector((s) => s.settings.analytics)
+  const wallets = useAppSelector(selectAllWallets)
   const posthog = usePostHog()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
@@ -81,12 +82,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
-      await disableBiometrics(activeWalletMetadataId)
+      await deleteBiometricsWallets()
       dispatch(biometricsToggled(false))
 
       posthog?.capture('Deactivated biometrics')
     } else {
-      await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
+      await updateBiometricsWallets(wallets)
       dispatch(biometricsToggled(true))
 
       posthog?.capture('Manually activated biometrics')
@@ -114,7 +115,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       resetNavigationState('LandingScreen')
     }
 
-    dispatch(walletDeleted())
+    dispatch(walletDeleted(activeWalletMetadataId))
   }
 
   const handleDeleteButtonPress = () => {

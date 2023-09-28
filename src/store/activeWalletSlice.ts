@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { appBecameInactive, appReset } from '~/store/appSlice'
-import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
+import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
 import { ActiveWalletState, WalletUnlockedPayload } from '~/types/wallet'
 
 const sliceName = 'activeWallet'
@@ -28,8 +28,7 @@ const initialState: ActiveWalletState = {
   id: '',
   name: '',
   mnemonic: '',
-  isMnemonicBackedUp: undefined,
-  authType: undefined
+  isMnemonicBackedUp: undefined
 }
 
 const resetState = () => initialState
@@ -41,26 +40,23 @@ const activeWalletSlice = createSlice({
     mnemonicBackedUp: (state) => {
       state.isMnemonicBackedUp = true
     },
-    walletDeleted: resetState,
     walletSwitched: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet,
     walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet
   },
   extraReducers: (builder) => {
-    builder.addCase(appBecameInactive, resetState).addCase(appReset, resetState)
-    builder.addMatcher(isAnyOf(newWalletGenerated, newWalletImportedWithMetadata), (state, action) => {
-      const { name, mnemonic, id, isMnemonicBackedUp } = action.payload
-
-      return {
+    builder.addMatcher(isAnyOf(appBecameInactive, appReset, walletDeleted), resetState)
+    builder.addMatcher(
+      isAnyOf(newWalletGenerated, newWalletImportedWithMetadata),
+      (_, { payload: { name, mnemonic, id, isMnemonicBackedUp } }) => ({
         id,
         name,
         mnemonic,
-        authType: 'pin',
         isMnemonicBackedUp
-      }
-    })
+      })
+    )
   }
 })
 
-export const { mnemonicBackedUp, walletDeleted, walletSwitched, walletUnlocked } = activeWalletSlice.actions
+export const { mnemonicBackedUp, walletSwitched, walletUnlocked } = activeWalletSlice.actions
 
 export default activeWalletSlice

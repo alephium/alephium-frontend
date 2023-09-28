@@ -36,7 +36,6 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
   const theme = useAppSelector((s) => s.settings.theme)
   const currency = useAppSelector((s) => s.settings.currency)
   const networkName = useAppSelector((s) => s.network.name)
-  const authType = useAppSelector((s) => s.activeWallet.authType)
   const dispatch = useAppDispatch()
 
   const canCaptureUserProperties = settingsLoadedFromStorage && analytics && !!analyticsId
@@ -70,11 +69,10 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
         theme,
         currency,
         networkName,
-        authType,
         analytics
       }
     })
-  }, [analytics, authType, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme])
+  }, [analytics, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme])
 
   useEffect(() => {
     if (canCaptureUserProperties) captureUserProperties()

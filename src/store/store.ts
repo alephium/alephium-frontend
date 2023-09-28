@@ -31,6 +31,7 @@ import credentialsSlice from '~/store/credentialsSlice'
 import networkSlice from '~/store/networkSlice'
 import pendingTransactionsSlice from '~/store/pendingTransactionsSlice'
 import settingsSlice, { settingsListenerMiddleware } from '~/store/settingsSlice'
+import walletsSlice from '~/store/wallet/walletsSlice'
 import walletGenerationSlice from '~/store/walletGenerationSlice'
 
 export const store = configureStore({
@@ -48,7 +49,8 @@ export const store = configureStore({
     confirmedTransactions: confirmedTransactionsSlice.reducer,
     pendingTransactions: pendingTransactionsSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
-    [nftsSlice.name]: nftsSlice.reducer
+    [nftsSlice.name]: nftsSlice.reducer,
+    [walletsSlice.name]: walletsSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

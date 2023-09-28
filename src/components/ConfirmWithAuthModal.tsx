@@ -27,6 +27,7 @@ import PinCodeInput from '~/components/inputs/PinCodeInput'
 import { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
+import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import { getStoredActiveWallet, getStoredWalletById } from '~/persistent-storage/wallets'
 import { ShouldClearPin } from '~/types/misc'
 import { ActiveWalletState } from '~/types/wallet'
@@ -56,8 +57,6 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: 
 
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [encryptedWallet, setEncryptedWallet] = useState<ActiveWalletState>()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loading, setLoading] = useState(false)
   const [shouldHideModal, setShouldHideModal] = useState(false)
 
   const getStoredWallet = useCallback(async () => {
@@ -66,10 +65,12 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: 
 
       if (!storedWallet) return
 
-      if (storedWallet.authType === 'biometrics') {
+      const usesBiometrics = await loadBiometricsSettings()
+
+      if (usesBiometrics) {
         onConfirm()
         setShouldHideModal(true)
-      } else if (storedWallet.authType === 'pin') {
+      } else {
         setEncryptedWallet(storedWallet)
       }
     } catch (e: unknown) {
@@ -79,8 +80,6 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: 
 
   const decryptMnemonic = async (pin: string): Promise<ShouldClearPin> => {
     if (!pin || !encryptedWallet) return false
-
-    setLoading(true)
 
     try {
       const decryptedWallet = await walletOpenAsyncUnsafe(pin, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
@@ -92,8 +91,6 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: 
       setShownInstructions(errorInstructionSet)
 
       return true
-    } finally {
-      setLoading(false)
     }
   }
 

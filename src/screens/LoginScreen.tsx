@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
@@ -27,11 +28,14 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import {
   deriveWalletStoredAddresses,
   getActiveWalletMetadata,
+  getEncryptedWallets,
   rememberActiveWallet
 } from '~/persistent-storage/wallets'
 import { walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
+import { loadedDecryptedWallets } from '~/store/wallet/walletActions'
 import { AddressPartial } from '~/types/addresses'
-import { ActiveWalletState } from '~/types/wallet'
+import { ActiveWalletState, SimpleWallet } from '~/types/wallet'
+import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 import { resetNavigationState, setNavigationState } from '~/utils/navigation'
 
 interface LoginScreenProps extends StackScreenProps<RootStackParamList, 'LoginScreen'>, ScreenProps {}
@@ -45,6 +49,7 @@ const LoginScreen = ({
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
+  const walletIds = useAppSelector((s) => s.wallets.ids)
   const posthog = usePostHog()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
@@ -52,6 +57,19 @@ const LoginScreen = ({
   const handleSuccessfulLogin = useCallback(
     async (pin?: string, wallet?: ActiveWalletState) => {
       if (!pin || !wallet) return
+
+      if (walletIds.length === 0) {
+        const encryptedWallets = (await getEncryptedWallets()).filter(({ id }) => id !== wallet.id)
+        const decryptedWallets: SimpleWallet[] = [{ id: wallet.id, mnemonic: wallet.mnemonic }]
+
+        for (const { id, mnemonic } of encryptedWallets) {
+          const decryptedWallet = await walletOpenAsyncUnsafe(pin, mnemonic, pbkdf2, mnemonicToSeed)
+
+          decryptedWallets.push({ id, mnemonic: decryptedWallet.mnemonic })
+        }
+
+        dispatch(loadedDecryptedWallets(decryptedWallets))
+      }
 
       setIsPinModalVisible(false)
       let addressesToInitialize = [] as AddressPartial[]
@@ -79,7 +97,7 @@ const LoginScreen = ({
         posthog?.capture('Unlocked wallet')
       }
     },
-    [addressesStatus, dispatch, lastNavigationState, posthog, workflow]
+    [addressesStatus, dispatch, lastNavigationState, posthog, walletIds.length, workflow]
   )
 
   return (

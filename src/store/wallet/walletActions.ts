@@ -18,8 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAction } from '@reduxjs/toolkit'
 
-import { GeneratedWallet } from '~/types/wallet'
+import { ActiveWalletState, GeneratedWallet, SimpleWallet } from '~/types/wallet'
 
 export const newWalletGenerated = createAction<GeneratedWallet>('wallets/newWalletGenerated')
 
 export const newWalletImportedWithMetadata = createAction<GeneratedWallet>('wallets/newWalletImportedWithMetadata')
+
+export const walletDeleted = createAction<ActiveWalletState['id']>('wallets/walletDeleted')
+
+export const loadedDecryptedWallets = createAction<SimpleWallet[]>('wallets/loadedDecryptedWallets')

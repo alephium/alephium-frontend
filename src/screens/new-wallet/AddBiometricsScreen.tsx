@@ -31,8 +31,9 @@ import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { enableBiometrics } from '~/persistent-storage/wallets'
+import { updateBiometricsWallets } from '~/persistent-storage/wallets'
 import { biometricsToggled } from '~/store/settingsSlice'
+import { selectAllWallets } from '~/store/wallet/walletsSlice'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
 
@@ -42,9 +43,8 @@ const instructions: Instruction[] = [
 ]
 
 const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBiometricsScreenProps) => {
-  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.id)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const method = useAppSelector((s) => s.walletGeneration.method)
+  const wallets = useAppSelector(selectAllWallets)
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
 
@@ -56,7 +56,12 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
     setLoading(true)
 
     try {
-      await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
+      console.log('activating...')
+
+      await updateBiometricsWallets(wallets)
+
+      console.log('supposed to be activated.')
+
       dispatch(biometricsToggled(true))
 
       posthog?.capture('Activated biometrics from wallet creation flow')

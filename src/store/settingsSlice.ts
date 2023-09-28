@@ -94,7 +94,8 @@ settingsListenerMiddleware.startListening({
     analyticsIdGenerated,
     analyticsToggled,
     walletConnectToggled,
-    biometricsToggled
+    biometricsToggled,
+    appReset
   ),
   effect: async (_, { getState }) => {
     const state = getState() as RootState

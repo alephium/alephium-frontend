@@ -33,10 +33,13 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import {
   deriveWalletStoredAddresses,
   getActiveWalletMetadata,
-  getStoredWalletById,
+  getEncryptedWallets,
+  getWalletMetadataById,
   rememberActiveWallet
 } from '~/persistent-storage/wallets'
 import { walletSwitched } from '~/store/activeWalletSlice'
+import { loadedDecryptedWallets } from '~/store/wallet/walletActions'
+import { SimpleWallet } from '~/types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 import { resetNavigationState } from '~/utils/navigation'
 
@@ -46,11 +49,14 @@ interface SwitchWalletListProps {
 
 const SwitchWalletList = ({ onClose }: SwitchWalletListProps) => {
   const dispatch = useAppDispatch()
-  const wallets = useSortedWallets()
+  const sortedWallets = useSortedWallets()
   const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.id)
+  const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const pin = useAppSelector((s) => s.credentials.pin)
   const posthog = usePostHog()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const wallets = useAppSelector((s) => s.wallets.entities)
+  const walletIds = useAppSelector((s) => s.wallets.ids)
 
   const [loading, setLoading] = useState(false)
 
@@ -59,12 +65,33 @@ const SwitchWalletList = ({ onClose }: SwitchWalletListProps) => {
     onClose && onClose()
 
     try {
-      const storedWallet = await getStoredWalletById(walletId)
+      if (walletIds.length === 0) {
+        if (pin) {
+          const encryptedWallets = await getEncryptedWallets()
+          const decryptedWallets: SimpleWallet[] = []
+
+          for (const { id, mnemonic } of encryptedWallets) {
+            const decryptedWallet = await walletOpenAsyncUnsafe(pin, mnemonic, pbkdf2, mnemonicToSeed)
+
+            decryptedWallets.push({ id, mnemonic: decryptedWallet.mnemonic })
+          }
+
+          dispatch(loadedDecryptedWallets(decryptedWallets))
+        } else {
+          navigation.navigate('LoginScreen', { walletIdToLogin: walletId, workflow: 'wallet-switch' })
+          return
+        }
+      }
+
+      const storedWallet = {
+        ...(wallets[walletId] as SimpleWallet),
+        ...(await getWalletMetadataById(walletId))
+      }
       let mnemonic = storedWallet.mnemonic
 
-      if (storedWallet.authType === 'pin') {
+      if (!isBiometricsEnabled) {
         if (pin) {
-          const decryptedWallet = await walletOpenAsyncUnsafe(pin, storedWallet.mnemonic, pbkdf2, mnemonicToSeed)
+          const decryptedWallet = await walletOpenAsyncUnsafe(pin, mnemonic, pbkdf2, mnemonicToSeed)
           mnemonic = decryptedWallet.mnemonic
         } else {
           navigation.navigate('LoginScreen', { walletIdToLogin: walletId, workflow: 'wallet-switch' })
@@ -99,7 +126,7 @@ const SwitchWalletList = ({ onClose }: SwitchWalletListProps) => {
       </ScreenSection>
       <ScreenSection>
         <BoxSurface>
-          {wallets.map((wallet) => (
+          {sortedWallets.map((wallet) => (
             <RadioButtonRow
               key={wallet.id}
               title={wallet.name}

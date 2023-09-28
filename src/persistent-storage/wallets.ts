@@ -26,15 +26,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
+import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import { AddressMetadata, AddressPartial } from '~/types/addresses'
-import { ActiveWalletState, GeneratedWallet, Mnemonic, WalletMetadata } from '~/types/wallet'
+import { ActiveWalletState, GeneratedWallet, Mnemonic, SimpleWallet, WalletMetadata } from '~/types/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
 const defaultBiometricsConfig = {
   requireAuthentication: true,
   authenticationPrompt: 'Please authenticate',
-  keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY
+  keychainAccessible: SecureStore.WHEN_UNLOCKED
 }
 
 export const generateAndStoreWallet = async (
@@ -81,7 +82,6 @@ const persistWallet = async (
   walletsMetadata.push({
     id: walletId,
     name: walletName,
-    authType: 'pin',
     isMnemonicBackedUp,
     addresses: [
       {
@@ -103,42 +103,61 @@ const persistWallet = async (
   return walletId
 }
 
-export const enableBiometrics = async (walletId: string, mnemonic: Mnemonic) => {
-  const { authType } = await getWalletMetadataById(walletId)
+export const updateBiometricsWallets = async (wallets: SimpleWallet[]) => {
+  console.log('updateBiometricsWallets:')
+  wallets.map((wallet) => console.log(wallet))
 
-  if (authType === 'biometrics') throw `Biometrics is already enabled for wallet with ID ${walletId}`
+  console.log('💽 Storing biometrics-enabled wallets')
 
-  console.log(`💽 Storing biometrics-enabled mnemonic for wallet with ID ${walletId}`)
-  await SecureStore.setItemAsync(`wallet-biometrics-${walletId}`, mnemonic, {
+  await SecureStore.setItemAsync('wallets-biometrics', JSON.stringify(wallets), {
     ...defaultBiometricsConfig,
     authenticationPrompt: 'Please authenticate to enable biometrics'
   })
-  await persistWalletMetadata(walletId, { authType: 'biometrics' })
 }
 
-export const disableBiometrics = async (walletId: string) => {
-  const { authType, name } = await getWalletMetadataById(walletId)
+export const deleteBiometricsWallets = async () => {
+  await SecureStore.deleteItemAsync('wallets-biometrics')
+}
 
-  if (authType === 'pin') {
-    console.warn('Biometrics is already disabled')
-    return
+export const getBiometricsWallets = async (): Promise<SimpleWallet[]> => {
+  let wallets: SimpleWallet[] = []
+
+  try {
+    const walletsRaw = await SecureStore.getItemAsync('wallets-biometrics', defaultBiometricsConfig)
+
+    wallets = walletsRaw ? JSON.parse(walletsRaw) : undefined
+  } catch {
+    console.error('Could not find biometrics wallets')
   }
 
-  await persistWalletMetadata(walletId, { authType: 'pin' })
-  await deleteBiometricsEnabledMnemonic(walletId, name)
+  return wallets
+}
+
+export const getEncryptedWallets = async (): Promise<SimpleWallet[]> => {
+  const encryptedWallets: SimpleWallet[] = []
+  const walletsMetadata = await getWalletsMetadata()
+
+  for (const { id } of walletsMetadata) {
+    const encryptedWallet = await SecureStore.getItemAsync(`wallet-${id}`)
+
+    if (encryptedWallet)
+      encryptedWallets.push({
+        id,
+        mnemonic: encryptedWallet
+      })
+  }
+
+  return encryptedWallets
 }
 
 export const getStoredWalletById = async (id: string, usePin?: boolean): Promise<ActiveWalletState> => {
-  const { name, authType: preferredAuthType, isMnemonicBackedUp } = await getWalletMetadataById(id)
+  const { name, isMnemonicBackedUp } = await getWalletMetadataById(id)
+  const usesBiometrics = await loadBiometricsSettings()
 
-  const authType = usePin ? 'pin' : preferredAuthType
   const mnemonic =
-    authType === 'pin'
+    usePin || !usesBiometrics
       ? await SecureStore.getItemAsync(`wallet-${id}`)
-      : await SecureStore.getItemAsync(`wallet-biometrics-${id}`, {
-          ...defaultBiometricsConfig,
-          authenticationPrompt: `Please authenticate to unlock "${name}"`
-        })
+      : (await getBiometricsWallets()).find((wallet) => wallet.id === id)?.mnemonic
 
   if (!mnemonic) throw `Could not find mnemonic for wallet with ID ${id}`
 
@@ -146,7 +165,6 @@ export const getStoredWalletById = async (id: string, usePin?: boolean): Promise
     id,
     name,
     mnemonic,
-    authType,
     isMnemonicBackedUp
   } as ActiveWalletState
 }
@@ -171,8 +189,6 @@ export const deleteWalletById = async (id: string) => {
 
   if (index < 0) throw `Could not find wallet with ID ${id}`
 
-  const walletMetadata = walletsMetadata[index]
-
   walletsMetadata.splice(index, 1)
   await persistWalletsMetadata(walletsMetadata)
 
@@ -182,25 +198,30 @@ export const deleteWalletById = async (id: string) => {
     await AsyncStorage.removeItem('active-wallet-id')
   }
 
-  await deleteWallet(walletMetadata)
+  await deleteWallet(id)
 }
 
 export const deleteAllWallets = async () => {
   const walletsMetadata = await getWalletsMetadata()
 
   for (const walletMetadata of walletsMetadata) {
-    await deleteWallet(walletMetadata)
+    await deleteWallet(walletMetadata.id)
   }
 
   console.log('🗑️ Deleting wallets-metadata')
   await AsyncStorage.removeItem('wallets-metadata')
+
   console.log('🗑️ Deleting active-wallet-id')
   await AsyncStorage.removeItem('active-wallet-id')
+
+  await deleteBiometricsWallets()
 }
 
-const deleteWallet = async ({ id, name, authType }: WalletMetadata) => {
-  if (authType === 'biometrics') {
-    await deleteBiometricsEnabledMnemonic(id, name)
+const deleteWallet = async (id: WalletMetadata['id']) => {
+  const usesBiometrics = await loadBiometricsSettings()
+
+  if (usesBiometrics) {
+    await deleteBiometricsEnabledMnemonic(id)
   }
 
   console.log(`🗑️ Deleting pin-encrypted mnemonic for wallet with ID ${id}`)
@@ -216,7 +237,7 @@ export const areThereOtherWallets = async (): Promise<boolean> => {
   return Array.isArray(walletsMetadata) && walletsMetadata.length > 0
 }
 
-const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
+export const getWalletMetadataById = async (id: string): Promise<WalletMetadata> => {
   const walletsMetadata = await getWalletsMetadata()
 
   const metadata = walletsMetadata.find((wallet: WalletMetadata) => wallet.id === id)
@@ -284,12 +305,11 @@ export const persistWalletsMetadata = async (walletsMetadata: WalletMetadata[]) 
   await AsyncStorage.setItem('wallets-metadata', JSON.stringify(walletsMetadata))
 }
 
-const deleteBiometricsEnabledMnemonic = async (id: string, name: string) => {
+const deleteBiometricsEnabledMnemonic = async (id: string) => {
   console.log(`🗑️ Deleting biometrics-enabled mnemonic for wallet with ID ${id}`)
-  await SecureStore.deleteItemAsync(`wallet-biometrics-${id}`, {
-    ...defaultBiometricsConfig,
-    authenticationPrompt: `Please, authenticate to delete the wallet "${name}"`
-  })
+  console.log('TODO')
+
+  // await SecureStore.deleteItemAsync(`wallet-biometrics-${id}`)
 }
 
 export const deriveWalletStoredAddresses = async (wallet: ActiveWalletState): Promise<AddressPartial[]> => {

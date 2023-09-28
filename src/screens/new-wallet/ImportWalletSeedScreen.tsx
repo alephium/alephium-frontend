@@ -36,10 +36,10 @@ import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
+import { generateAndStoreWallet, updateBiometricsWallets } from '~/persistent-storage/wallets'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
-import { biometricsToggled } from '~/store/settingsSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
+import { selectAllWallets } from '~/store/wallet/walletsSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
 
@@ -59,12 +59,12 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const dispatch = useAppDispatch()
   const name = useAppSelector((s) => s.walletGeneration.walletName)
   const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
+  const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
+  const wallets = useAppSelector(selectAllWallets)
   const pin = useAppSelector((s) => s.credentials.pin)
   const deviceHasBiometricsData = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
-  const lastActiveWalletAuthType = useRef(activeWalletAuthType)
   const posthog = usePostHog()
 
   const [typedInput, setTypedInput] = useState('')
@@ -123,23 +123,32 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
 
-      if (!isAuthenticated) {
+      if (!isAuthenticated && deviceHasBiometricsData) {
         setLoading(false)
         navigation.navigate('AddBiometricsScreen')
         return
       }
 
-      // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
-      if (isAuthenticated && lastActiveWalletAuthType.current === 'biometrics' && deviceHasBiometricsData) {
-        await enableBiometrics(wallet.id, wallet.mnemonic)
-        dispatch(biometricsToggled(true))
+      if (isBiometricsEnabled && deviceHasBiometricsData) {
+        await updateBiometricsWallets([...wallets, { id: wallet.id, mnemonic: wallet.mnemonic }])
       }
 
       setLoading(false)
 
       navigation.navigate('NewWalletSuccessScreen')
     },
-    [dispatch, deviceHasBiometricsData, isAuthenticated, name, navigation, posthog, selectedWords, typedInput]
+    [
+      name,
+      typedInput,
+      selectedWords,
+      dispatch,
+      posthog,
+      isAuthenticated,
+      deviceHasBiometricsData,
+      isBiometricsEnabled,
+      navigation,
+      wallets
+    ]
   )
 
   const handleWalletImport = () => importWallet(pin)
