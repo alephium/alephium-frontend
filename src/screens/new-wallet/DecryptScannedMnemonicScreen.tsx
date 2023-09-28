@@ -32,10 +32,9 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { importContacts } from '~/persistent-storage/contacts'
-import { generateAndStoreWallet, updateBiometricsWallets } from '~/persistent-storage/wallets'
+import { generateAndStoreWallet } from '~/persistent-storage/wallet'
 import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
-import { selectAllWallets } from '~/store/wallet/walletsSlice'
 import { WalletImportData } from '~/types/wallet'
 import { pbkdf2 } from '~/utils/crypto'
 
@@ -43,13 +42,10 @@ interface DecryptScannedMnemonicScreenProps
   extends StackScreenProps<RootStackParamList, 'DecryptScannedMnemonicScreen'>,
     ScrollScreenProps {}
 
-const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMnemonicScreenProps) => {
+const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScreenProps) => {
   const qrCodeImportedEncryptedMnemonic = useAppSelector((s) => s.walletGeneration.qrCodeImportedEncryptedMnemonic)
   const name = useAppSelector((s) => s.walletGeneration.walletName)
   const credentials = useAppSelector((s) => s.credentials)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
-  const wallets = useAppSelector(selectAllWallets)
   const posthog = usePostHog()
   const dispatch = useAppDispatch()
   const deviceHasBiometricsData = useBiometrics()
@@ -58,8 +54,6 @@ const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMn
   const [error, setError] = useState('')
   const [pin, setPin] = useState(credentials.pin)
   const [loading, setLoading] = useState(false)
-
-  const isAuthenticated = !!activeWalletMnemonic
 
   const decryptAndImportWallet = async () => {
     if (!qrCodeImportedEncryptedMnemonic) return
@@ -90,19 +84,11 @@ const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMn
 
       if (contacts.length > 0) importContacts(contacts)
 
-      if (!isAuthenticated && deviceHasBiometricsData) {
-        setLoading(false)
-        navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
-        return
-      }
-
-      if (isBiometricsEnabled && deviceHasBiometricsData) {
-        await updateBiometricsWallets([...wallets, { id: wallet.id, mnemonic: wallet.mnemonic }])
-      }
+      deviceHasBiometricsData
+        ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
+        : navigation.navigate('NewWalletSuccessScreen')
 
       setLoading(false)
-
-      navigation.navigate('NewWalletSuccessScreen')
       setPin('')
     } catch (e) {
       setError('Could not decrypt wallet with the given password.')

@@ -24,7 +24,7 @@ import { useAppSelector } from '~/hooks/redux'
 import OrderedTable from '~/screens/Settings/OrderedTable'
 
 const MnemonicModal = (props: ModalContentProps) => {
-  const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
 
   usePreventScreenCapture()
 

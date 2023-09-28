@@ -28,16 +28,15 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
-import { getStoredActiveWallet, getStoredWalletById } from '~/persistent-storage/wallets'
+import { getStoredWallet } from '~/persistent-storage/wallet'
 import { ShouldClearPin } from '~/types/misc'
-import { ActiveWalletState } from '~/types/wallet'
+import { WalletState } from '~/types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
 interface ConfirmWithAuthModalProps {
-  onConfirm: (pin?: string, wallet?: ActiveWalletState) => void
+  onConfirm: (pin?: string, wallet?: WalletState) => void
   onClose?: () => void
   usePin?: boolean
-  walletId?: string
 }
 
 const pinLength = 6
@@ -52,31 +51,28 @@ const errorInstructionSet: Instruction[] = [
   { text: 'Please try again 💪', type: 'secondary' }
 ]
 
-const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: ConfirmWithAuthModalProps) => {
+const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWithAuthModalProps) => {
   const insets = useSafeAreaInsets()
 
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const [encryptedWallet, setEncryptedWallet] = useState<ActiveWalletState>()
+  const [encryptedWallet, setEncryptedWallet] = useState<WalletState>()
   const [shouldHideModal, setShouldHideModal] = useState(false)
 
-  const getStoredWallet = useCallback(async () => {
+  const getWallet = useCallback(async () => {
     try {
-      const storedWallet = walletId ? await getStoredWalletById(walletId, usePin) : await getStoredActiveWallet(usePin)
-
-      if (!storedWallet) return
-
+      const storedWallet = await getStoredWallet(usePin)
       const usesBiometrics = await loadBiometricsSettings()
 
       if (usesBiometrics) {
         onConfirm()
         setShouldHideModal(true)
-      } else {
+      } else if (storedWallet) {
         setEncryptedWallet(storedWallet)
       }
     } catch (e: unknown) {
       Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
     }
-  }, [onConfirm, usePin, walletId])
+  }, [onConfirm, usePin])
 
   const decryptMnemonic = async (pin: string): Promise<ShouldClearPin> => {
     if (!pin || !encryptedWallet) return false
@@ -95,8 +91,8 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, walletId, usePin = false }: 
   }
 
   useEffect(() => {
-    getStoredWallet()
-  }, [getStoredWallet])
+    getWallet()
+  }, [getWallet])
 
   if (shouldHideModal) return null
 

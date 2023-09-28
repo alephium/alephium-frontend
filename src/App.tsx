@@ -22,7 +22,7 @@ import { isEnrolledAsync } from 'expo-local-authentication'
 import { StatusBar } from 'expo-status-bar'
 import { difference } from 'lodash'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, AppState, AppStateStatus, ViewProps } from 'react-native'
+import { Alert, AppState, AppStateStatus, Platform, ViewProps } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
@@ -33,16 +33,13 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useInterval from '~/hooks/useInterval'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
-import { storeBiometricsSettings } from '~/persistent-storage/settings'
+import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
 import {
-  areThereOtherWallets,
-  deleteBiometricsWallets,
   deriveWalletStoredAddresses,
-  getActiveWalletMetadata,
-  getBiometricsWallets,
-  getEncryptedWallets
-} from '~/persistent-storage/wallets'
-import { walletUnlocked } from '~/store/activeWalletSlice'
+  disableBiometrics,
+  getStoredWallet,
+  getWalletMetadata
+} from '~/persistent-storage/wallet'
 import {
   makeSelectAddressesUnknownTokens,
   selectAddressIds,
@@ -58,7 +55,7 @@ import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { biometricsToggled } from '~/store/settingsSlice'
 import { store } from '~/store/store'
 import { makeSelectAddressesHashesWithPendingTransactions } from '~/store/transactions/transactionSelectors'
-import { loadedDecryptedWallets } from '~/store/wallet/walletActions'
+import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
 import { navigateRootStack, resetNavigationState, setNavigationState } from '~/utils/navigation'
 
@@ -109,8 +106,8 @@ const Main = ({ children, ...props }: ViewProps) => {
   const appState = useRef(AppState.currentState)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
+  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const network = useAppSelector((s) => s.network)
   const addressIds = useAppSelector(selectAddressIds)
@@ -121,7 +118,6 @@ const Main = ({ children, ...props }: ViewProps) => {
   const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
   const pendingTxs = useAppSelector(selectAllPendingTransactions)
-  const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const unknownTokens = useAppSelector(selectAddressesUnknownTokens)
@@ -132,9 +128,6 @@ const Main = ({ children, ...props }: ViewProps) => {
   const [isUnlockingApp, setIsUnlockingApp] = useState(false)
 
   useLoadStoredSettings()
-
-  // deleteAllWallets()
-  // dispatch(appReset())
 
   const initializeClient = useCallback(async () => {
     try {
@@ -194,54 +187,36 @@ const Main = ({ children, ...props }: ViewProps) => {
   useInterval(refreshAddressDataWhenPendingTxsConfirm, 5000, pendingTxs.length === 0)
 
   const unlockApp = useCallback(async () => {
-    if (activeWalletMnemonic) return
+    if (walletMnemonic) return
 
     setIsUnlockingApp(true)
 
     try {
       const deviceHasBiometricsData = await isEnrolledAsync()
-      const activeWalletMetadata = await getActiveWalletMetadata()
-      let isBioEnabled = isBiometricsEnabled
-      let wallet
+      const walletMetadata = await getWalletMetadata()
+      let isBioEnabled = await loadBiometricsSettings()
 
       // Disable biometrics if needed
       if (isBioEnabled && !deviceHasBiometricsData) {
-        await deleteBiometricsWallets()
+        await disableBiometrics()
         await storeBiometricsSettings(false)
         dispatch(biometricsToggled(false))
         isBioEnabled = false
       }
 
-      if (isBioEnabled) {
-        const simpleWallets = await getBiometricsWallets()
-        dispatch(loadedDecryptedWallets(simpleWallets))
-
-        const simpleWallet = simpleWallets.find(({ id }) => id === activeWalletMetadata?.id)
-        wallet = simpleWallet && activeWalletMetadata ? { ...simpleWallet, ...activeWalletMetadata } : undefined
-
-        if (wallet) {
-          const addressesToInitialize =
-            addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
-          dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: activeWalletMetadata?.contacts ?? [] }))
-
-          lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
-        }
-      } else {
-        const encryptedWallets = await getEncryptedWallets()
-        wallet = encryptedWallets.find(({ id }) => id === activeWalletMetadata?.id)
-
-        if (wallet) {
-          navigateRootStack('LoginScreen', { walletIdToLogin: wallet.id, workflow: 'wallet-unlock' })
-        }
-      }
+      const wallet = await getStoredWallet()
 
       if (!wallet) {
-        if (await areThereOtherWallets()) {
-          navigateRootStack('SwitchWalletScreen', { disableBack: true })
-        } else if (lastNavigationState) {
-          setNavigationState(lastNavigationState)
+        navigateRootStack('LandingScreen')
+      } else {
+        if (isBioEnabled) {
+          const addressesToInitialize =
+            addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
+          dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: walletMetadata?.contacts ?? [] }))
+
+          lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
         } else {
-          navigateRootStack('LandingScreen')
+          navigateRootStack('LoginWithPinScreen')
         }
       }
 
@@ -258,22 +233,24 @@ const Main = ({ children, ...props }: ViewProps) => {
     } finally {
       setIsUnlockingApp(false)
     }
-  }, [activeWalletMnemonic, addressesStatus, dispatch, isBiometricsEnabled, lastNavigationState])
+  }, [walletMnemonic, addressesStatus, dispatch, lastNavigationState])
 
   useEffect(() => {
-    if (!activeWalletMnemonic && appState.current === 'active' && !isUnlockingApp) unlockApp()
+    // We want this to only run 1 time and not every time lastNavigationState changes (dep of unlockApp).
+    // On Android the AppState.change event is triggered when launching the app, but not on iOS
+    if (!walletMnemonic && appState.current === 'active' && !isUnlockingApp && Platform.OS === 'ios') {
+      unlockApp()
+    }
 
-    // We want this to only run 1 time and not every time lastNavigationState changes (dep of unlockApp)
-    // TODO: Revisit this approach.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeWalletMnemonic])
+  }, [walletMnemonic])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' && !isCameraOpen) {
         navigateRootStack('SplashScreen')
         dispatch(appBecameInactive())
-      } else if (nextAppState === 'active' && !activeWalletMnemonic && !isUnlockingApp) {
+      } else if (nextAppState === 'active' && !walletMnemonic && !isUnlockingApp) {
         unlockApp()
       }
 
@@ -283,7 +260,7 @@ const Main = ({ children, ...props }: ViewProps) => {
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [activeWalletId, activeWalletMnemonic, dispatch, isCameraOpen, isUnlockingApp, unlockApp])
+  }, [walletId, walletMnemonic, dispatch, isCameraOpen, isUnlockingApp, unlockApp])
 
   return (
     <RootSiblingParent>

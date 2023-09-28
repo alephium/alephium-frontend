@@ -36,12 +36,7 @@ import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import {
-  areThereOtherWallets,
-  deleteBiometricsWallets,
-  deleteWalletById,
-  updateBiometricsWallets
-} from '~/persistent-storage/wallets'
+import { deleteWallet, disableBiometrics, enableBiometrics } from '~/persistent-storage/wallet'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
@@ -54,7 +49,6 @@ import {
   walletConnectToggled
 } from '~/store/settingsSlice'
 import { walletDeleted } from '~/store/wallet/walletActions'
-import { selectAllWallets } from '~/store/wallet/walletsSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { resetNavigationState } from '~/utils/navigation'
 
@@ -70,9 +64,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
-  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.id)
   const analytics = useAppSelector((s) => s.settings.analytics)
-  const wallets = useAppSelector(selectAllWallets)
+  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const posthog = usePostHog()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
@@ -82,12 +75,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
-      await deleteBiometricsWallets()
+      await disableBiometrics()
       dispatch(biometricsToggled(false))
 
       posthog?.capture('Deactivated biometrics')
     } else {
-      await updateBiometricsWallets(wallets)
+      await enableBiometrics(walletMnemonic)
       dispatch(biometricsToggled(true))
 
       posthog?.capture('Manually activated biometrics')
@@ -104,23 +97,16 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const toggleWalletConnect = () => dispatch(walletConnectToggled())
 
-  const deleteWallet = async () => {
-    await deleteWalletById(activeWalletMetadataId)
+  const handleDeleteConfirmPress = async () => {
+    await deleteWallet()
 
+    resetNavigationState('LandingScreen')
+
+    dispatch(walletDeleted())
     posthog?.capture('Deleted wallet')
-
-    if (await areThereOtherWallets()) {
-      navigation.navigate('SwitchWalletScreen', { disableBack: true })
-    } else {
-      resetNavigationState('LandingScreen')
-    }
-
-    dispatch(walletDeleted(activeWalletMetadataId))
   }
 
   const handleDeleteButtonPress = () => {
-    if (!activeWalletMetadataId) return
-
     Alert.alert(
       'Deleting wallet',
       'Are you sure you want to delete your wallet? Ensure you have a backup of your secret recovery phrase.',
@@ -128,7 +114,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         { text: 'Cancel' },
         {
           text: 'Delete',
-          onPress: deleteWallet
+          onPress: handleDeleteConfirmPress
         }
       ]
     )
@@ -209,13 +195,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>Wallets</ScreenSectionTitle>
           <ButtonStyled
-            title="Add a new wallet"
-            iconProps={{ name: 'add-outline' }}
-            variant="valid"
-            onPress={() => navigation.navigate('LandingScreen')}
-          />
-          <ButtonStyled
-            title="Delete this wallet"
+            title="Delete wallet"
             iconProps={{ name: 'trash-outline' }}
             variant="alert"
             onPress={handleDeleteButtonPress}

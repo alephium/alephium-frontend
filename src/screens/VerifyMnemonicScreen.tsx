@@ -35,7 +35,7 @@ import ScrollScreen from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { persistWalletMetadata } from '~/persistent-storage/wallets'
+import { persistWalletMetadata } from '~/persistent-storage/wallet'
 import {
   PossibleWordBox,
   SecretPhraseBox,
@@ -44,7 +44,7 @@ import {
   Word,
   WordBox
 } from '~/screens/new-wallet/ImportWalletSeedScreen'
-import { mnemonicBackedUp } from '~/store/activeWalletSlice'
+import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
 
@@ -52,10 +52,9 @@ interface VerifyMnemonicScreenProps extends StackScreenProps<RootStackParamList,
 
 const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProps) => {
   const dispatch = useAppDispatch()
-  const isMnemonicBackedUp = useAppSelector((s) => s.activeWallet.isMnemonicBackedUp)
-  const metadataId = useAppSelector((s) => s.activeWallet.id)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const mnemonicWords = useRef(activeWalletMnemonic.split(' '))
+  const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
+  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const mnemonicWords = useRef(walletMnemonic.split(' '))
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
   const randomizedOptions = useRef(getRandomizedOptions(mnemonicWords.current, allowedWords.current))
@@ -69,12 +68,12 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {
-      await persistWalletMetadata(metadataId, { isMnemonicBackedUp: true })
+      await persistWalletMetadata({ isMnemonicBackedUp: true })
       dispatch(mnemonicBackedUp())
 
       posthog?.capture('Backed-up mnemonic')
     }
-  }, [isMnemonicBackedUp, metadataId, dispatch, posthog])
+  }, [isMnemonicBackedUp, dispatch, posthog])
 
   useEffect(() => {
     if (selectedWords.length < mnemonicWords.current.length) {

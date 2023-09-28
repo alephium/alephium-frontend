@@ -46,7 +46,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const headerHeight = useHeaderHeight()
-  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
+  const walletName = useAppSelector((s) => s.wallet.name)
   const totalBalance = useAppSelector(selectTotalBalance)
 
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
@@ -70,7 +70,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       headerOptions={{
         headerRight: () => <DashboardHeaderActions />,
         headerLeft: () => <WalletSwitchButton />,
-        headerTitle: activeWalletName
+        headerTitle: walletName
       }}
       {...props}
     >

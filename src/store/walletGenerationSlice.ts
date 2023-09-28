@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
-import { walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
 import { appReset } from '~/store/appSlice'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
+import { walletUnlocked } from '~/store/wallet/walletSlice'
 
 const sliceName = 'walletGeneration'
 
@@ -56,7 +56,7 @@ const walletGenerationSlice = createSlice({
     builder.addCase(newWalletImportedWithMetadata, (state) => {
       state.qrCodeImportedEncryptedMnemonic = ''
     })
-    builder.addMatcher(isAnyOf(appReset, walletUnlocked, walletSwitched), () => initialState)
+    builder.addMatcher(isAnyOf(appReset, walletUnlocked), () => initialState)
   }
 })
 

@@ -21,7 +21,6 @@ import { PostHogProvider, usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { getWalletsMetadata } from '~/persistent-storage/wallets'
 import { analyticsIdGenerated } from '~/store/settingsSlice'
 
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
@@ -31,6 +30,7 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
   const posthog = usePostHog()
   const analytics = useAppSelector((s) => s.settings.analytics)
   const analyticsId = useAppSelector((s) => s.settings.analyticsId)
+  const usesBiometrics = useAppSelector((s) => s.settings.usesBiometrics)
   const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
   const requireAuth = useAppSelector((s) => s.settings.requireAuth)
   const theme = useAppSelector((s) => s.settings.theme)
@@ -60,19 +60,17 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
   const captureUserProperties = useCallback(async () => {
     if (!canCaptureUserProperties) return
 
-    const wallets = await getWalletsMetadata()
-
     posthog?.capture('User identified', {
       $set: {
-        wallets: wallets.length,
         requireAuth,
         theme,
         currency,
         networkName,
-        analytics
+        analytics,
+        usesBiometrics
       }
     })
-  }, [analytics, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme])
+  }, [analytics, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme, usesBiometrics])
 
   useEffect(() => {
     if (canCaptureUserProperties) captureUserProperties()

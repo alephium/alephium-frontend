@@ -36,10 +36,9 @@ import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { generateAndStoreWallet, updateBiometricsWallets } from '~/persistent-storage/wallets'
+import { generateAndStoreWallet } from '~/persistent-storage/wallet'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
-import { selectAllWallets } from '~/store/wallet/walletsSlice'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
 
@@ -58,9 +57,6 @@ const enablePasteForDevelopment = true
 const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreenProps) => {
   const dispatch = useAppDispatch()
   const name = useAppSelector((s) => s.walletGeneration.walletName)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
-  const wallets = useAppSelector(selectAllWallets)
   const pin = useAppSelector((s) => s.credentials.pin)
   const deviceHasBiometricsData = useBiometrics()
   const theme = useTheme()
@@ -72,8 +68,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
-
-  const isAuthenticated = !!activeWalletMnemonic
 
   useEffect(() => {
     setPossibleMatches(
@@ -123,32 +117,11 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
 
-      if (!isAuthenticated && deviceHasBiometricsData) {
-        setLoading(false)
-        navigation.navigate('AddBiometricsScreen')
-        return
-      }
-
-      if (isBiometricsEnabled && deviceHasBiometricsData) {
-        await updateBiometricsWallets([...wallets, { id: wallet.id, mnemonic: wallet.mnemonic }])
-      }
+      navigation.navigate(deviceHasBiometricsData ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
 
       setLoading(false)
-
-      navigation.navigate('NewWalletSuccessScreen')
     },
-    [
-      name,
-      typedInput,
-      selectedWords,
-      dispatch,
-      posthog,
-      isAuthenticated,
-      deviceHasBiometricsData,
-      isBiometricsEnabled,
-      navigation,
-      wallets
-    ]
+    [name, typedInput, selectedWords, dispatch, posthog, deviceHasBiometricsData, navigation]
   )
 
   const handleWalletImport = () => importWallet(pin)

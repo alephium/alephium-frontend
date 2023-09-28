@@ -20,11 +20,11 @@ import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { appBecameInactive, appReset } from '~/store/appSlice'
 import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
-import { ActiveWalletState, WalletUnlockedPayload } from '~/types/wallet'
+import { WalletState, WalletUnlockedPayload } from '~/types/wallet'
 
-const sliceName = 'activeWallet'
+const sliceName = 'wallet'
 
-const initialState: ActiveWalletState = {
+const initialState: WalletState = {
   id: '',
   name: '',
   mnemonic: '',
@@ -33,14 +33,13 @@ const initialState: ActiveWalletState = {
 
 const resetState = () => initialState
 
-const activeWalletSlice = createSlice({
+const walletSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
     mnemonicBackedUp: (state) => {
       state.isMnemonicBackedUp = true
     },
-    walletSwitched: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet,
     walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet
   },
   extraReducers: (builder) => {
@@ -57,6 +56,6 @@ const activeWalletSlice = createSlice({
   }
 })
 
-export const { mnemonicBackedUp, walletSwitched, walletUnlocked } = activeWalletSlice.actions
+export const { mnemonicBackedUp, walletUnlocked } = walletSlice.actions
 
-export default activeWalletSlice
+export default walletSlice

@@ -31,9 +31,8 @@ import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { updateBiometricsWallets } from '~/persistent-storage/wallets'
+import { enableBiometrics } from '~/persistent-storage/wallet'
 import { biometricsToggled } from '~/store/settingsSlice'
-import { selectAllWallets } from '~/store/wallet/walletsSlice'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
 
@@ -44,33 +43,24 @@ const instructions: Instruction[] = [
 
 const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBiometricsScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
-  const wallets = useAppSelector(selectAllWallets)
   const dispatch = useAppDispatch()
+  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
-
-  const navigateToAddressDiscoveryPage = () => navigation.navigate('ImportWalletAddressDiscoveryScreen')
 
   const activateBiometrics = async () => {
     setLoading(true)
 
     try {
-      console.log('activating...')
-
-      await updateBiometricsWallets(wallets)
-
-      console.log('supposed to be activated.')
-
+      await enableBiometrics(walletMnemonic)
       dispatch(biometricsToggled(true))
 
       posthog?.capture('Activated biometrics from wallet creation flow')
 
-      if (params?.skipAddressDiscovery) {
-        navigation.navigate('NewWalletSuccessScreen')
-      } else {
-        navigateToAddressDiscoveryPage()
-      }
+      navigation.navigate(
+        params?.skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen'
+      )
     } finally {
       setLoading(false)
     }

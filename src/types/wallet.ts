@@ -31,16 +31,14 @@ export type WalletMetadata = {
   contacts: Contact[]
 }
 
-export interface ActiveWalletState {
+export interface WalletState {
   name: string
   mnemonic: Mnemonic
   id: string
   isMnemonicBackedUp?: boolean
 }
 
-export type SimpleWallet = Pick<ActiveWalletState, 'id' | 'mnemonic'>
-
-export type GeneratedWallet = ActiveWalletState & { firstAddress: AddressKeyPair }
+export type GeneratedWallet = WalletState & { firstAddress: AddressKeyPair }
 
 export type WalletImportData = {
   mnemonic: Mnemonic
@@ -48,14 +46,14 @@ export type WalletImportData = {
   contacts: ContactFormData[]
 }
 
-export type ImportedWalletWithMetadata = ActiveWalletState & Omit<WalletImportData, 'mnemonic'>
+export type ImportedWalletWithMetadata = WalletState & Omit<WalletImportData, 'mnemonic'>
 
 export interface CredentialsState {
   pin?: string
 }
 
 export type WalletUnlockedPayload = CredentialsState & {
-  wallet: ActiveWalletState
+  wallet: WalletState
   addressesToInitialize: AddressPartial[]
   contacts: Contact[]
 }

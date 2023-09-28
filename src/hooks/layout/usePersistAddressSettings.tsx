@@ -23,10 +23,10 @@ import { persistAddressesSettings } from '~/utils/addresses'
 
 const usePersistAddressSettings = () => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
+  const walletId = useAppSelector((s) => s.wallet.id)
 
   return async (addresses: AddressPartial[] | AddressPartial) => {
-    await persistAddressesSettings(Array.isArray(addresses) ? addresses : [addresses], activeWalletId, defaultAddress)
+    await persistAddressesSettings(Array.isArray(addresses) ? addresses : [addresses], walletId, defaultAddress)
   }
 }
 

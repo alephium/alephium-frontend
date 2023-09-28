@@ -41,7 +41,7 @@ interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'Ne
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
@@ -56,7 +56,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
 
   const handleGeneratePress = async ({ isDefault, label, color, group }: AddressFormData) => {
     setLoading(true)
-    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, activeWalletMnemonic)
+    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, walletMnemonic)
     const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
     const newAddress = { ...newAddressData, settings: { label, color, isDefault } }
 

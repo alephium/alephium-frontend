@@ -40,7 +40,7 @@ interface DashboardHeaderActionsProps {
 }
 
 const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
-  const isMnemonicBackedUp = useAppSelector((s) => s.activeWallet.isMnemonicBackedUp)
+  const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const networkStatus = useAppSelector((s) => s.network.status)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)

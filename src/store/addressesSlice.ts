@@ -37,7 +37,6 @@ import {
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
 } from '~/api/addresses'
-import { walletSwitched, walletUnlocked } from '~/store/activeWalletSlice'
 import { syncingAddressDataStarted } from '~/store/addresses/addressesActions'
 import { balanceHistoryAdapter } from '~/store/addresses/addressesAdapter'
 import { appReset } from '~/store/appSlice'
@@ -46,6 +45,7 @@ import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/netwo
 import { RootState } from '~/store/store'
 import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
+import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { Address, AddressesHistoricalBalanceResult, AddressHash, AddressPartial } from '~/types/addresses'
 import { NFT } from '~/types/assets'
 import { PendingTransaction } from '~/types/transactions'
@@ -247,15 +247,6 @@ const addressesSlice = createSlice({
         state.loadingBalances = true
         state.loadingTransactions = true
         state.loadingTokens = true
-      })
-      .addCase(walletSwitched, (state, action) => {
-        addressesAdapter.setAll(state, [])
-        addressesAdapter.addMany(state, action.payload.addressesToInitialize.map(getInitialAddressState))
-        state.status = 'uninitialized'
-        state.syncingAddressData = false
-        state.loadingBalances = false
-        state.loadingTransactions = false
-        state.loadingTokens = false
       })
       .addCase(walletUnlocked, (state, action) => {
         const { addressesToInitialize } = action.payload
