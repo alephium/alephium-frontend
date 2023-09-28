@@ -109,7 +109,9 @@ const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationS
 
       setLoading(false)
 
-      navigation.navigate(hasAvailableBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+      hasAvailableBiometrics
+        ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
+        : navigation.navigate('NewWalletSuccessScreen')
     }
 
     return true

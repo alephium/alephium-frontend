@@ -86,5 +86,5 @@ const FooterButtonsSection = styled(BlurView)<{ top: number }>`
   left: 0;
   right: 0;
   background-color: ${({ theme }) => theme.bg.back2};
-  padding: ${DEFAULT_MARGIN * 2}px ${DEFAULT_MARGIN}px ${DEFAULT_MARGIN * 3}px;
+  padding: ${DEFAULT_MARGIN * 2}px ${DEFAULT_MARGIN}px ${DEFAULT_MARGIN * 4}px;
 `
