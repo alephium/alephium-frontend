@@ -15,7 +15,8 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import AsyncStorage from '@react-native-async-storage/async-storage'
+
+import * as SecureStore from 'expo-secure-store'
 import { clone } from 'lodash'
 import { Appearance } from 'react-native'
 
@@ -62,7 +63,7 @@ const constructSettingsStorageKey = (key: SettingsKey) => `${STORAGE_KEY}-${key}
 
 export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> => {
   try {
-    const rawSettings = await AsyncStorage.getItem(constructSettingsStorageKey(key))
+    const rawSettings = await SecureStore.getItemAsync(constructSettingsStorageKey(key))
     if (!rawSettings) return defaultSettings[key]
 
     const loadedSettings = JSON.parse(rawSettings) as SettingsPartial
@@ -79,7 +80,7 @@ export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> =
 
 export const persistSettings = async (key: SettingsKey, settings: SettingsPartial) => {
   try {
-    await AsyncStorage.setItem(constructSettingsStorageKey(key), JSON.stringify(settings))
+    await SecureStore.setItemAsync(constructSettingsStorageKey(key), JSON.stringify(settings))
   } catch (e) {
     console.error(e)
   }
