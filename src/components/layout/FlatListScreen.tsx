@@ -59,6 +59,7 @@ const FlatListScreen = <T,>({
         ref={flatListRef}
         onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
+        scrollEventThrottle={16}
         contentContainerStyle={[
           {
             paddingTop: hasNavigationHeader

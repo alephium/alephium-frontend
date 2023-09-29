@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Canvas, FitBox, Path, rect } from '@shopify/react-native-skia'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 
 interface DefaultAddressBadgeProps {
   style?: StyleProp<ViewStyle>

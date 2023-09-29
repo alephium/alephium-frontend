@@ -101,7 +101,14 @@ const Input = <T extends InputValue>({
       hasRightContent={!!RightContent}
       style={[
         style,
-        { shadowColor: 'black', shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { height: 5, width: 0 } }
+        {
+          shadowColor: 'black',
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
+          shadowOffset: { height: 3, width: 0 },
+          borderWidth: 1,
+          borderColor: theme.border.primary
+        }
       ]}
       layout={layout}
     >
