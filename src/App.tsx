@@ -207,7 +207,11 @@ const Main = ({ children, ...props }: ViewProps) => {
       const wallet = await getStoredWallet()
 
       if (!wallet) {
-        navigateRootStack('LandingScreen')
+        if (lastNavigationState) {
+          setNavigationState(lastNavigationState)
+        } else {
+          navigateRootStack('LandingScreen')
+        }
       } else {
         if (isBioEnabled) {
           const addressesToInitialize =
