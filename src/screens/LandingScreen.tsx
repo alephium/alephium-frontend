@@ -76,8 +76,7 @@ const LogoContainer = styled.View`
 `
 
 export const AlephiumLogoStyled = styled(AlephiumLogo)`
-  width: 14%;
-  min-width: 40px;
+  width: 23%;
 `
 
 const TitleContainer = styled.View`
