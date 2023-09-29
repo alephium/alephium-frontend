@@ -36,12 +36,12 @@ export interface ScrollScreenBaseProps {
   contentContainerStyle?: StyleProp<ViewStyle>
   fill?: boolean
   headerOptions?: HeaderOptions
+  contrastedBg?: boolean
 }
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
   containerStyle?: StyleProp<ViewStyle>
   scrollViewRef?: RefObject<ScrollView>
-  contrastedBg?: boolean
   verticalGap?: number | boolean
   usesKeyboard?: boolean
 }

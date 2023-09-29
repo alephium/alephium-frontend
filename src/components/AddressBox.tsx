@@ -21,7 +21,7 @@ import { Pressable, PressableProps } from 'react-native'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
+import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressBadge from '~/components/AddressBadge'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Checkmark from '~/components/Checkmark'
@@ -43,7 +43,7 @@ const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
   const theme = useTheme()
 
   const boxAnimatedStyle = useAnimatedStyle(() => ({
-    borderColor: withSpring(isSelected ? theme.global.accent : theme.border.primary, fastSpringConfiguration),
+    borderColor: withSpring(isSelected ? theme.global.accent : theme.border.primary, fastestSpringConfiguration),
     borderWidth: 2
   }))
 
@@ -89,6 +89,7 @@ const AddressBoxBottom = styled.View`
   padding: 13px 15px;
   border-top-width: 1px;
   border-top-color: ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`

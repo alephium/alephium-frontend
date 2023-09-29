@@ -63,6 +63,7 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       ListHeaderComponent={
         <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
       }
+      contrastedBg
     />
   )
 }

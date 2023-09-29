@@ -54,6 +54,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           <ContinueButton
             onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
             iconProps={{ name: 'send-outline' }}
+            title="Send"
           />
         )
       })
@@ -102,7 +103,7 @@ const AssetAmounts = styled.View`
 `
 
 const FeeBox = styled.View`
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.primary};
   border-radius: 9px;
   padding: 12px 10px;
   flex-direction: row;

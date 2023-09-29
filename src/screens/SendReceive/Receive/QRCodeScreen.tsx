@@ -66,7 +66,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." />
       <ScreenSection centered>
         <QRCodeContainer>
-          <QRCode size={200} bgColor={theme.bg.secondary} fgColor={theme.font.primary} value={params.addressHash} />
+          <QRCode size={200} bgColor={theme.bg.highlight} fgColor={theme.font.primary} value={params.addressHash} />
         </QRCodeContainer>
       </ScreenSection>
       <ScreenSection centered>

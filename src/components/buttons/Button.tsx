@@ -23,7 +23,6 @@ import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'reac
 import Animated, {
   FadeIn,
   FadeOut,
-  Layout,
   LinearTransition,
   useAnimatedStyle,
   useSharedValue,
@@ -186,7 +185,7 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
       type="primary"
       style={[
         style,
-        { height: 40, flexDirection: 'row', alignItems: 'center' },
+        { height: 40, flexDirection: 'row', alignItems: 'center', gap: 10 },
         !props.disabled
           ? {
               backgroundColor: theme.global.accent
