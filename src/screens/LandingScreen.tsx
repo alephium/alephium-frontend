@@ -17,7 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
 import { useEffect } from 'react'
+import { useWindowDimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -34,6 +36,7 @@ interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'Landi
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
+  const dimensions = useWindowDimensions()
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
@@ -48,9 +51,17 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }, [navigation])
 
   return (
-    <Screen {...props}>
+    <Screen contrastedBg {...props}>
+      <CanvasStyled>
+        <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
+          <SweepGradient
+            c={vec(dimensions.width / 2, dimensions.height / 3.5)}
+            colors={['#FF4385', '#61A1F6', '#FF7D26', '#FF4385']}
+          />
+        </Rect>
+      </CanvasStyled>
       <LogoContainer>
-        <AlephiumLogoStyled color={theme.bg.contrast} />
+        <AlephiumLogoStyled color="black" />
       </LogoContainer>
       <TitleContainer>
         <TitleFirstLine>Welcome to the official</TitleFirstLine>
@@ -58,8 +69,19 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
       </TitleContainer>
       <ActionsContainer>
         <ButtonStack>
-          <Button title="New wallet" type="primary" variant="contrast" onPress={() => handleButtonPress('create')} />
-          <Button title="Import wallet" onPress={() => handleButtonPress('import')} />
+          <Button
+            title="New wallet"
+            type="primary"
+            onPress={() => handleButtonPress('create')}
+            variant="contrast"
+            iconProps={{ name: 'flower-outline' }}
+          />
+          <Button
+            title="Import wallet"
+            onPress={() => handleButtonPress('import')}
+            variant="contrast"
+            iconProps={{ name: 'download-outline' }}
+          />
         </ButtonStack>
       </ActionsContainer>
     </Screen>
@@ -86,18 +108,26 @@ const TitleContainer = styled.View`
 `
 
 const TitleFirstLine = styled(AppText)`
-  font-size: 18px;
-  color: ${({ theme }) => theme.font.secondary};
+  font-size: 20px;
+  color: black;
 `
 
 const TitleSecondLine = styled(AppText)`
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
-  color: ${({ theme }) => theme.font.primary};
+  color: black;
 `
 
 const ActionsContainer = styled.View`
   flex: 1.5;
   justify-content: center;
   align-items: center;
+`
+
+const CanvasStyled = styled(Canvas)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
 `
