@@ -16,11 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
-import { useEffect } from 'react'
+import { DeviceMotion } from 'expo-sensors'
+import { useCallback, useEffect } from 'react'
 import { useWindowDimensions } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { interpolate, useDerivedValue, useSharedValue } from 'react-native-reanimated'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -35,8 +38,22 @@ interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'Landi
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const dimensions = useWindowDimensions()
+
+  const yAxisRotation = useSharedValue(0)
+
+  const gradientEnd = useDerivedValue(() => interpolate(yAxisRotation.value, [-1, 1], [300, 360]))
+  const gradientStart = useDerivedValue(() => interpolate(yAxisRotation.value, [-1, 1], [0, 100]))
+
+  useFocusEffect(
+    useCallback(() => {
+      const motionsListener = DeviceMotion.addListener((motionData) => {
+        yAxisRotation.value = motionData.rotation.gamma
+      })
+
+      return () => motionsListener.remove()
+    }, [yAxisRotation])
+  )
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
@@ -56,6 +73,8 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
         <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
           <SweepGradient
             c={vec(dimensions.width / 2, dimensions.height / 3.5)}
+            start={gradientStart}
+            end={gradientEnd}
             colors={['#FF4385', '#61A1F6', '#FF7D26', '#FF4385']}
           />
         </Rect>

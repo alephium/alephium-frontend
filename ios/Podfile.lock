@@ -105,6 +105,8 @@ PODS:
     - ExpoModulesCore
   - EXScreenCapture (5.3.0):
     - ExpoModulesCore
+  - EXSensors (12.3.0):
+    - ExpoModulesCore
   - EXUpdatesInterface (0.11.0)
   - FBLazyVector (0.72.3)
   - FBReactNativeSpec (0.72.3):
@@ -626,6 +628,7 @@ DEPENDENCIES:
   - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - EXScreenCapture (from `../node_modules/expo-screen-capture/ios`)
+  - EXSensors (from `../node_modules/expo-sensors/ios`)
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -742,6 +745,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-web-browser/ios"
   EXScreenCapture:
     :path: "../node_modules/expo-screen-capture/ios"
+  EXSensors:
+    :path: "../node_modules/expo-sensors/ios"
   EXUpdatesInterface:
     :path: "../node_modules/expo-updates-interface/ios"
   FBLazyVector:
@@ -872,6 +877,7 @@ SPEC CHECKSUMS:
   ExpoSecureStore: 5372610a4bbcf5e50fafbe6f38f8d9c22edf8253
   ExpoWebBrowser: 2c788f9c07718a780fe6d8bf2f6195c47609faaa
   EXScreenCapture: 81002ba5fb40a367fba9047d223068abb558594d
+  EXSensors: d26e160b5c91ada2df4a638859ef0c5731bf6404
   EXUpdatesInterface: 91b87edc70c7f597d160c63dbd5d0ae4368f4c2a
   FBLazyVector: 4cce221dd782d3ff7c4172167bba09d58af67ccb
   FBReactNativeSpec: c6bd9e179757b3c0ecf815864fae8032377903ef
