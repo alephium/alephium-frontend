@@ -53,6 +53,7 @@ export default memo(styled(CenteredInstructions)`
   justify-content: center;
   align-items: center;
   ${({ stretch }) => stretch && 'flex: 1;'}
+  margin: 0 8%;
 `)
 
 const Instruction = styled.Text<{ type: Instruction['type'] }>`

@@ -112,6 +112,9 @@ const generateWalletMetadata = (name: string, isMnemonicBackedUp = false) => ({
 export const enableBiometrics = async (mnemonic: Mnemonic) => {
   console.log('💽 Storing biometrics wallet')
   await SecureStore.setItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, mnemonic, defaultBiometricsConfig)
+
+  // Ensure we can actually get the secured mnemonic and force to show prompt
+  await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
 }
 
 export const disableBiometrics = async () => {
