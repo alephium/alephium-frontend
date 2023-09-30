@@ -103,9 +103,9 @@ const Input = <T extends InputValue>({
         style,
         {
           shadowColor: 'black',
-          shadowOpacity: 0.08,
+          shadowOpacity: theme.name === 'light' ? 0.05 : 0.2,
           shadowRadius: 8,
-          shadowOffset: { height: 3, width: 0 },
+          shadowOffset: { height: 5, width: 0 },
           borderWidth: 1,
           borderColor: theme.border.primary
         }

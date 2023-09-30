@@ -121,7 +121,7 @@ const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationS
     step === 'enter-pin' ? handlePinCodeSet(pin) : step === 'verify-pin' ? handlePinCodeVerification(pin) : false
 
   return (
-    <Screen hasNavigationHeader {...props}>
+    <Screen hasNavigationHeader contrastedBg {...props}>
       <CenteredInstructions instructions={shownInstructions} />
       <PinCodeInput pinLength={pinLength} onPinEntered={handleFullPinEntered} />
       <SpinnerModal isActive={loading} text="Creating wallet..." />
