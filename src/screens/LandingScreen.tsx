@@ -41,18 +41,20 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dimensions = useWindowDimensions()
 
   const yAxisRotation = useSharedValue(0)
+  const zAxisRotation = useSharedValue(0)
 
-  const gradientEnd = useDerivedValue(() => interpolate(yAxisRotation.value, [-1, 1], [300, 360]))
-  const gradientStart = useDerivedValue(() => interpolate(yAxisRotation.value, [-1, 1], [0, 100]))
+  const gradientEnd = useDerivedValue(() => interpolate(yAxisRotation.value + zAxisRotation.value, [-1, 1], [90, 220]))
+  const gradientStart = useDerivedValue(() => interpolate(yAxisRotation.value + zAxisRotation.value, [-1, 1], [60, 0]))
 
   useFocusEffect(
     useCallback(() => {
       const motionsListener = DeviceMotion.addListener((motionData) => {
         yAxisRotation.value = motionData.rotation.gamma
+        zAxisRotation.value = motionData.rotation.beta
       })
 
       return () => motionsListener.remove()
-    }, [yAxisRotation])
+    }, [yAxisRotation, zAxisRotation])
   )
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
@@ -75,12 +77,12 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
             c={vec(dimensions.width / 2, dimensions.height / 3.5)}
             start={gradientStart}
             end={gradientEnd}
-            colors={['#FF4385', '#61A1F6', '#FF7D26', '#FF4385']}
+            colors={['#05081d', '#FF4385', '#61A1F6', '#FF7D26', '#FF4385', '#05081d']}
           />
         </Rect>
       </CanvasStyled>
       <LogoContainer>
-        <AlephiumLogoStyled color="black" />
+        <AlephiumLogoStyled color="white" />
       </LogoContainer>
       <TitleContainer>
         <TitleFirstLine>Welcome to the official</TitleFirstLine>
