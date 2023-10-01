@@ -20,13 +20,13 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import React from 'react'
 import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
+import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import RefreshSpinner from '~/components/RefreshSpinner'
@@ -35,7 +35,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, selectTotalBalance, syncAddressesData } from '~/store/addressesSlice'
-import { BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
@@ -44,6 +44,7 @@ interface ScreenProps
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
   const headerHeight = useHeaderHeight()
   const walletName = useAppSelector((s) => s.wallet.name)
   const totalBalance = useAppSelector(selectTotalBalance)
@@ -52,7 +53,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
 
   const buttonsRowStyle = useAnimatedStyle(() => ({
-    height: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 75, defaultSpringConfiguration))
+    height: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 65, defaultSpringConfiguration)),
+    opacity: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 1, defaultSpringConfiguration))
   }))
 
   const refreshData = () => {
@@ -75,27 +77,37 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <BalanceAndButtons>
         <BalanceSummary dateLabel="VALUE TODAY" />
-        <ButtonsRowContainer style={buttonsRowStyle}>
-          <ButtonsRow sticked hasDivider={totalBalance > 0}>
-            {totalBalance > 0 && (
-              <Button
-                onPress={() => navigation.navigate('SendNavigation')}
-                iconProps={{ name: 'arrow-up-outline' }}
-                title="Send"
-                type="transparent"
-                variant="accent"
-                flex
-              />
-            )}
+        <ButtonsRowContainer
+          style={[
+            buttonsRowStyle,
+            {
+              shadowColor: 'black',
+              shadowOffset: { height: 5, width: 0 },
+              shadowOpacity: theme.name === 'dark' ? 0.5 : 0.08,
+              shadowRadius: 3
+            }
+          ]}
+        >
+          {totalBalance > 0 && (
             <Button
-              onPress={() => navigation.navigate('ReceiveNavigation')}
-              iconProps={{ name: 'arrow-down-outline' }}
-              title="Receive"
-              type="transparent"
-              variant="accent"
+              onPress={() => navigation.navigate('SendNavigation')}
+              iconProps={{ name: 'arrow-up-outline' }}
+              title="Send"
+              variant="highlightedIcon"
+              round
+              short
               flex
             />
-          </ButtonsRow>
+          )}
+          <Button
+            onPress={() => navigation.navigate('ReceiveNavigation')}
+            iconProps={{ name: 'arrow-down-outline' }}
+            title="Receive"
+            variant="highlightedIcon"
+            round
+            short
+            flex
+          />
         </ButtonsRowContainer>
       </BalanceAndButtons>
       <AddressesTokensList />
@@ -106,7 +118,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 export default DashboardScreen
 
 const DashboardScreenStyled = styled(BottomBarScrollScreen)`
-  gap: ${VERTICAL_GAP}px;
+  gap: 15px;
 `
 
 const BalanceAndButtons = styled.View`
@@ -114,13 +126,14 @@ const BalanceAndButtons = styled.View`
 `
 
 const ButtonsRowContainer = styled(Animated.View)`
-  z-index: -1;
-  margin: 0 ${DEFAULT_MARGIN}px;
-  margin-top: -20px;
-  padding-top: 20px;
+  margin: 20px ${DEFAULT_MARGIN}px 10px;
+  flex-direction: row;
+  border-radius: 100px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 10px;
+
+  border-color: ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.primary};
-  border-bottom-left-radius: ${BORDER_RADIUS_BIG}px;
-  border-bottom-right-radius: ${BORDER_RADIUS_BIG}px;
-  border-color: transparent;
-  overflow: hidden;
 `

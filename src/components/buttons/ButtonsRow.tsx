@@ -45,7 +45,7 @@ const ButtonsRow = ({ children, hasDivider, style }: ButtonsRowProps) => {
 export default styled(ButtonsRow)`
   flex-grow: 1;
   flex-direction: row;
-  gap: ${({ sticked }) => (sticked ? 0 : 20)}px;
+  gap: ${({ sticked }) => (sticked ? 0 : 10)}px;
 `
 
 const ButtonsContainer = styled.View`

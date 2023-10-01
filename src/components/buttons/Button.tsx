@@ -37,9 +37,10 @@ import { BORDER_RADIUS } from '~/style/globalStyle'
 export interface ButtonProps extends PressableProps {
   title?: string
   type?: 'primary' | 'secondary' | 'transparent' | 'tint'
-  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight'
+  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight' | 'highlightedIcon'
   style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
+  short?: boolean
   centered?: boolean
   iconProps?: ComponentProps<typeof Ionicons>
   color?: string
@@ -63,6 +64,7 @@ const Button = ({
   iconProps,
   children,
   round,
+  short,
   color,
   centered,
   compact,
@@ -82,7 +84,8 @@ const Button = ({
     valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
     transparent: 'transparent',
-    highlight: theme.global.accent
+    highlight: theme.global.accent,
+    highlightedIcon: theme.button.primary
   }[variant]
 
   const font =
@@ -93,7 +96,8 @@ const Button = ({
       accent: theme.global.accent,
       valid: theme.global.valid,
       alert: theme.global.alert,
-      highlight: 'white'
+      highlight: 'white',
+      highlightedIcon: theme.font.primary
     }[variant]
 
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
@@ -114,7 +118,7 @@ const Button = ({
         transparent: undefined,
         tint: undefined
       }[type],
-      height: compact ? 30 : hasOnlyIcon ? 40 : 55,
+      height: short ? 45 : compact ? 30 : hasOnlyIcon ? 40 : 55,
       width: round ? (compact ? 30 : 40) : props.wide ? '75%' : hasOnlyIcon ? 40 : 'auto',
       justifyContent: round ? 'center' : undefined,
       alignItems: round ? 'center' : undefined,
@@ -129,7 +133,7 @@ const Button = ({
         primary: bg,
         secondary: bg,
         transparent: 'transparent',
-        tint: color ? colord(color).alpha(0.05).toHex() : ''
+        tint: color ? colord(color).alpha(0.1).toHex() : ''
       }[type],
       flex: flex ? 1 : 0
     },
@@ -160,12 +164,20 @@ const Button = ({
       )}
       {children}
       {iconProps && (
-        <AnimatedIonicons
-          layout={LinearTransition}
-          color={font}
-          size={compact ? 18 : hasOnlyIcon ? 22 : 20}
-          {...iconProps}
-        />
+        <IconContainer
+          style={
+            variant === 'highlightedIcon'
+              ? { backgroundColor: theme.global.accent, borderRadius: 100, padding: 6, margin: 6, overflow: 'hidden' }
+              : undefined
+          }
+        >
+          <AnimatedIonicons
+            layout={LinearTransition}
+            color={variant === 'highlightedIcon' ? 'white' : font}
+            size={compact ? 18 : hasOnlyIcon ? 22 : 20}
+            {...iconProps}
+          />
+        </IconContainer>
       )}
     </AnimatedPressable>
   )
@@ -211,3 +223,5 @@ export default styled(Button)`
   overflow: hidden;
   flex-direction: row;
 `
+
+const IconContainer = styled.View``

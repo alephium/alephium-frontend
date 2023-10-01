@@ -29,7 +29,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: '#eff1f6',
     back1: '#f2f3f7',
     back2: '#f0f1f5',
-    accent: 'rgba(58, 122, 244, 0.05)',
+    accent: 'rgba(58, 111, 244, 0.12)',
     contrast: '#212126'
   },
   font: {
@@ -54,7 +54,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#3a6ff4',
+    accent: '#1575f9',
     alert: '#ed4a34',
     valid: '#2DA023',
     star: '#FFD66D',

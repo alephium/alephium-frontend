@@ -91,7 +91,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
     <ScreenSectionCentered fill>
       {text && (
         <TextContainer>
-          <AppText size={16} semiBold color="white">
+          <AppText size={16} semiBold color="white" style={{ textAlign: 'center' }}>
             {text}
           </AppText>
         </TextContainer>
@@ -177,6 +177,7 @@ const TextContainer = styled.View`
   border: 0px solid transparent; // This is a hack cause I don't freaking understand why the text doesn't expand
   align-items: center;
   gap: 10px;
+  width: 70%;
 `
 
 const AppTextCentered = styled(AppText)`
