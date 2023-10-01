@@ -60,8 +60,8 @@ const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
       }
 
       pinOpacity.value = withSequence(
-        withTiming(0, { duration: 300 }),
-        withTiming(1, { duration: 300 }, () => {
+        withTiming(0, { duration: 150 }),
+        withTiming(1, { duration: 150 }, () => {
           runOnJS(onPinEnteredCallback)()
         })
       )
@@ -92,7 +92,7 @@ export default PinCodeInput
 
 const PinCodeInputStyled = styled.View`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.highlight};
+  background-color: ${({ theme }) => (theme.name === 'dark' ? theme.bg.back2 : theme.bg.highlight)};
 `
 
 const Slots = styled(Animated.View)`

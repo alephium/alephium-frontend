@@ -69,6 +69,8 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           onChangeText={setName}
           autoFocus
           onSubmitEditing={handleButtonPress}
+          blurOnSubmit={false}
+          returnKeyType="done"
         />
       </ContentContainer>
     </ScrollScreen>
@@ -81,6 +83,7 @@ const ContentContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
+  margin-bottom: 75%;
 `
 
 const StyledInput = styled(Input)`
