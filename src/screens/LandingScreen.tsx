@@ -22,7 +22,7 @@ import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
 import { DeviceMotion } from 'expo-sensors'
 import { useCallback, useEffect } from 'react'
 import { useWindowDimensions } from 'react-native'
-import { interpolate, useDerivedValue, useSharedValue } from 'react-native-reanimated'
+import { Extrapolation, interpolate, useDerivedValue, useSharedValue } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -43,8 +43,12 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const yAxisRotation = useSharedValue(0)
   const zAxisRotation = useSharedValue(0)
 
-  const gradientEnd = useDerivedValue(() => interpolate(yAxisRotation.value + zAxisRotation.value, [-1, 1], [90, 220]))
-  const gradientStart = useDerivedValue(() => interpolate(yAxisRotation.value + zAxisRotation.value, [-1, 1], [60, 0]))
+  const gradientStart = useDerivedValue(() =>
+    interpolate(yAxisRotation.value + zAxisRotation.value, [1, 3], [0, 160], Extrapolation.CLAMP)
+  )
+  const gradientEnd = useDerivedValue(() =>
+    interpolate(yAxisRotation.value + zAxisRotation.value, [-1, 2], [50, 290], Extrapolation.CLAMP)
+  )
 
   useFocusEffect(
     useCallback(() => {
@@ -77,12 +81,12 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
             c={vec(dimensions.width / 2, dimensions.height / 3.5)}
             start={gradientStart}
             end={gradientEnd}
-            colors={['#05081d', '#FF4385', '#61A1F6', '#FF7D26', '#FF4385', '#05081d']}
+            colors={['#ffffff', '#FF4385', '#61A1F6', '#FF7D26', '#FF4385', '#ffffff']}
           />
         </Rect>
       </CanvasStyled>
       <LogoContainer>
-        <AlephiumLogoStyled color="white" />
+        <AlephiumLogoStyled color="black" />
       </LogoContainer>
       <TitleContainer>
         <TitleFirstLine>Welcome to the official</TitleFirstLine>
@@ -119,7 +123,7 @@ const LogoContainer = styled.View`
 `
 
 export const AlephiumLogoStyled = styled(AlephiumLogo)`
-  width: 23%;
+  width: 20%;
 `
 
 const TitleContainer = styled.View`

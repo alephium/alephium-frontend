@@ -250,7 +250,7 @@ const Main = ({ children, ...props }: ViewProps) => {
       if (nextAppState === 'background' && !isCameraOpen) {
         navigateRootStack('SplashScreen')
         dispatch(appBecameInactive())
-      } else if (nextAppState === 'active' && !walletMnemonic && !isUnlockingApp) {
+      } else if (nextAppState === 'active' && !walletMnemonic && !isUnlockingApp && !isCameraOpen) {
         unlockApp()
       }
 
