@@ -22,7 +22,13 @@ import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
 import { DeviceMotion } from 'expo-sensors'
 import { useCallback, useEffect } from 'react'
 import { useWindowDimensions } from 'react-native'
-import { Extrapolation, interpolate, useDerivedValue, useSharedValue } from 'react-native-reanimated'
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue
+} from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -46,9 +52,16 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const gradientStart = useDerivedValue(() =>
     interpolate(yAxisRotation.value + zAxisRotation.value, [1, 3], [0, 160], Extrapolation.CLAMP)
   )
+
   const gradientEnd = useDerivedValue(() =>
     interpolate(yAxisRotation.value + zAxisRotation.value, [-1, 2], [50, 290], Extrapolation.CLAMP)
   )
+
+  const logoRotation = useDerivedValue(() => -yAxisRotation.value * 10)
+
+  const logoStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${logoRotation.value}deg` }]
+  }))
 
   useFocusEffect(
     useCallback(() => {
@@ -85,7 +98,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
           />
         </Rect>
       </CanvasStyled>
-      <LogoContainer>
+      <LogoContainer style={logoStyle}>
         <AlephiumLogoStyled color="black" />
       </LogoContainer>
       <TitleContainer>
@@ -115,7 +128,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
 export default LandingScreen
 
-const LogoContainer = styled.View`
+const LogoContainer = styled(Animated.View)`
   flex: 1.5;
   margin-top: 100px;
   justify-content: center;
