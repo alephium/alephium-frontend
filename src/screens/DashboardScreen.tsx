@@ -70,7 +70,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       verticalGap
       headerOptions={{
         headerRight: () => <DashboardHeaderActions />,
-        headerLeft: () => <WalletSwitchButton />,
+        headerLeft: () => <WalletSwitchButton isLoading={isLoading} />,
         headerTitle: walletName
       }}
       {...props}
