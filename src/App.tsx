@@ -35,6 +35,7 @@ import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
 import {
+  deleteWallet,
   deriveWalletStoredAddresses,
   disableBiometrics,
   getStoredWallet,
@@ -231,6 +232,10 @@ const Main = ({ children, ...props }: ViewProps) => {
         Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
           { text: 'Try again', onPress: unlockApp }
         ])
+      } else if (error.message?.includes('Could not decrypt the value with provided keychain')) {
+        console.error(e)
+        await deleteWallet()
+        navigateRootStack('LandingScreen')
       } else {
         console.error(e)
       }
