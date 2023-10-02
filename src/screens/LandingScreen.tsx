@@ -20,8 +20,8 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
 import { DeviceMotion } from 'expo-sensors'
-import { useCallback, useEffect } from 'react'
-import { useWindowDimensions } from 'react-native'
+import { useCallback, useEffect, useState } from 'react'
+import { Dimensions, LayoutChangeEvent } from 'react-native'
 import Animated, {
   Extrapolation,
   interpolate,
@@ -44,7 +44,9 @@ interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'Landi
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
-  const dimensions = useWindowDimensions()
+
+  const { width, height } = Dimensions.get('window')
+  const [dimensions, setDimensions] = useState({ width, height })
 
   const yAxisRotation = useSharedValue(0)
   const zAxisRotation = useSharedValue(0)
@@ -66,8 +68,8 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   useFocusEffect(
     useCallback(() => {
       const motionsListener = DeviceMotion.addListener((motionData) => {
-        yAxisRotation.value = motionData.rotation.gamma
-        zAxisRotation.value = motionData.rotation.beta
+        yAxisRotation.value = motionData.rotation?.gamma
+        zAxisRotation.value = motionData.rotation?.beta
       })
 
       return () => motionsListener.remove()
@@ -86,8 +88,14 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
     if (!previousRouteName || previousRouteName === 'SplashScreen') navigation.setOptions({ headerShown: false })
   }, [navigation])
 
+  const handleScreenLayoutChange = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout
+
+    setDimensions({ width, height })
+  }
+
   return (
-    <Screen contrastedBg {...props}>
+    <Screen contrastedBg {...props} onLayout={handleScreenLayoutChange}>
       <CanvasStyled>
         <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
           <SweepGradient
