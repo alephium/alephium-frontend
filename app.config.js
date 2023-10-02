@@ -22,7 +22,7 @@ export default {
   expo: {
     name: IS_DEV ? 'Alephium (DEV)' : 'Alephium',
     slug: 'alephium-mobile-wallet',
-    version: '1.0.0',
+    version: '0.1.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
     splash: {
