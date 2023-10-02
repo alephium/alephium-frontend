@@ -77,18 +77,18 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <BalanceAndButtons>
         <BalanceSummary dateLabel="VALUE TODAY" />
-        <ButtonsRowContainer
-          style={[
-            buttonsRowStyle,
-            {
-              shadowColor: 'black',
-              shadowOffset: { height: 5, width: 0 },
-              shadowOpacity: theme.name === 'dark' ? 0.5 : 0.08,
-              shadowRadius: 3
-            }
-          ]}
-        >
-          {totalBalance > 0 && (
+        {totalBalance > 0 && (
+          <ButtonsRowContainer
+            style={[
+              buttonsRowStyle,
+              {
+                shadowColor: 'black',
+                shadowOffset: { height: 5, width: 0 },
+                shadowOpacity: theme.name === 'dark' ? 0.5 : 0.08,
+                shadowRadius: 3
+              }
+            ]}
+          >
             <Button
               onPress={() => navigation.navigate('SendNavigation')}
               iconProps={{ name: 'arrow-up-outline' }}
@@ -98,17 +98,17 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               short
               flex
             />
-          )}
-          <Button
-            onPress={() => navigation.navigate('ReceiveNavigation')}
-            iconProps={{ name: 'arrow-down-outline' }}
-            title="Receive"
-            variant="highlightedIcon"
-            round
-            short
-            flex
-          />
-        </ButtonsRowContainer>
+            <Button
+              onPress={() => navigation.navigate('ReceiveNavigation')}
+              iconProps={{ name: 'arrow-down-outline' }}
+              title="Receive"
+              variant="highlightedIcon"
+              round
+              short
+              flex
+            />
+          </ButtonsRowContainer>
+        )}
       </BalanceAndButtons>
       <AddressesTokensList />
     </DashboardScreenStyled>

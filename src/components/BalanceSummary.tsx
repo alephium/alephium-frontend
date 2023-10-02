@@ -25,6 +25,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
 import useWorthDeltaPercentage from '~/hooks/useWorthDeltaPercentage'
@@ -87,13 +88,19 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
         </TextContainer>
 
-        <ChartContainer>
-          <HistoricWorthChart
-            currency={currency}
-            latestWorth={totalAmountWorth}
-            onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-          />
-        </ChartContainer>
+        {totalBalance === BigInt(0) ? (
+          <ReceiveFundsButtonContainer>
+            <Button title="Receive assets" iconProps={{ name: 'arrow-down-outline' }} variant="highlight" short />
+          </ReceiveFundsButtonContainer>
+        ) : (
+          <ChartContainer>
+            <HistoricWorthChart
+              currency={currency}
+              latestWorth={totalAmountWorth}
+              onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
+            />
+          </ChartContainer>
+        )}
       </GradientContainer>
     </BalanceSummaryContainer>
   )
@@ -139,6 +146,8 @@ const ActiveNetwork = styled.View`
   align-items: center;
   gap: 5px;
   border-radius: 33px;
+  padding: 1px 7px;
+  background-color: ${({ theme }) => theme.bg.tertiary};
 `
 
 const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
@@ -146,4 +155,8 @@ const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
   width: 7px;
   border-radius: 10px;
   background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
+`
+
+const ReceiveFundsButtonContainer = styled.View`
+  padding: 15px;
 `
