@@ -56,7 +56,7 @@ const NFTsGrid = ({ nfts, isLoading, nftWidth, nftsPerRow = 3 }: NFTsGridProps) 
       )}
       {!isLoading && nfts.length === 0 && (
         <NoNFTsMessage>
-          <AppText color={theme.font.tertiary}>No NFTs yet.</AppText>
+          <AppText color={theme.font.tertiary}>No NFTs yet 🖼️</AppText>
         </NoNFTsMessage>
       )}
     </NFTsGridStyled>

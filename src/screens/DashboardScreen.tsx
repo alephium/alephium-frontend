@@ -25,6 +25,7 @@ import styled from 'styled-components/native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressesTokensList from '~/components/AddressesTokensList'
+import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
@@ -111,6 +112,13 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         )}
       </BalanceAndButtons>
       <AddressesTokensList />
+      {totalBalance === BigInt(0) && (
+        <EmptyPlaceholder>
+          <AppText semiBold color="secondary">
+            There is so much left to discover! 🌈
+          </AppText>
+        </EmptyPlaceholder>
+      )}
     </DashboardScreenStyled>
   )
 }
@@ -136,4 +144,15 @@ const ButtonsRowContainer = styled(Animated.View)`
 
   border-color: ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.primary};
+`
+
+const EmptyPlaceholder = styled.View`
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 20px;
+  border-radius: 9px;
+  border: 2px dashed ${({ theme }) => theme.border.primary};
+  margin: ${DEFAULT_MARGIN}px;
 `
