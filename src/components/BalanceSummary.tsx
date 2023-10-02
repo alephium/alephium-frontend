@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/sdk'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useState } from 'react'
@@ -29,6 +30,7 @@ import Button from '~/components/buttons/Button'
 import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
 import useWorthDeltaPercentage from '~/hooks/useWorthDeltaPercentage'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -50,6 +52,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
     skip: totalBalance === BigInt(0)
   })
   const theme = useTheme()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
   const deltaPercentage = useWorthDeltaPercentage(worthInBeginningOfChart)
@@ -90,7 +93,13 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
 
         {totalBalance === BigInt(0) ? (
           <ReceiveFundsButtonContainer>
-            <Button title="Receive assets" iconProps={{ name: 'arrow-down-outline' }} variant="highlight" short />
+            <Button
+              title="Receive assets"
+              onPress={() => navigation.navigate('ReceiveNavigation')}
+              iconProps={{ name: 'arrow-down-outline' }}
+              variant="highlight"
+              short
+            />
           </ReceiveFundsButtonContainer>
         ) : (
           <ChartContainer>
@@ -132,7 +141,7 @@ const ChartContainer = styled.View`
 
 const ActiveNetworkContainer = styled.View`
   align-self: flex-end;
-  margin-right: -5px;
+  margin-right: -8px;
   margin-top: 3px;
   flex-direction: row;
   align-items: center;

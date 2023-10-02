@@ -43,7 +43,7 @@ const NFTsGrid = ({ nfts, isLoading, nftWidth, nftsPerRow = 3 }: NFTsGridProps) 
   const width = nftWidth ?? (windowWidth - totalGapSize) / nftsPerRow
 
   return (
-    <NFTsGridStyled>
+    <NFTsGridStyled style={{ paddingRight: nfts.length === 0 ? 15 : 0 }}>
       {nfts.map((nft) => (
         <NFTThumbnail key={nft.id} style={{ width: width }} source={{ uri: nft.image }} />
       ))}
@@ -76,7 +76,7 @@ const NoNFTsMessage = styled.View`
   text-align: center;
   justify-content: center;
   align-items: center;
-  margin: 20px auto;
+  flex: 1;
   padding: 20px;
   border-radius: 9px;
   border: 2px dashed ${({ theme }) => theme.border.primary};
