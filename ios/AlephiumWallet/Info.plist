@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Alephium Wallet</string>
+    <string>Alephium</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -33,7 +33,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>exp+alephium-mobile-wallet</string>
+          <string>exp+alephium-wallet</string>
         </array>
       </dict>
     </array>

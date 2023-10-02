@@ -20,8 +20,8 @@ const IS_DEV = process.env.APP_VARIANT === 'development'
 
 export default {
   expo: {
-    name: IS_DEV ? 'Alephium Wallet (DEV)' : 'Alephium Wallet',
-    slug: 'alephium-mobile-wallet',
+    name: IS_DEV ? 'Alephium (DEV)' : 'Alephium',
+    slug: 'alephium-wallet',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
