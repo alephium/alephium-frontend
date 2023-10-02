@@ -17,25 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
-import { useCallback, useRef, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components/native'
 
 import { ContinueButton } from '~/components/buttons/Button'
-import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import useBiometrics from '~/hooks/useBiometrics'
-import { useSortedWallets } from '~/hooks/useSortedWallets'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
-import { biometricsEnabled } from '~/store/activeWalletSlice'
-import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
-import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -48,70 +39,15 @@ interface NewWalletNameScreenProps extends StackScreenProps<RootStackParamList, 
 
 const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps) => {
   const dispatch = useAppDispatch()
+
   const [name, setName] = useState('')
-  const method = useAppSelector((s) => s.walletGeneration.method)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
-  const pin = useAppSelector((s) => s.credentials.pin)
-  const hasAvailableBiometrics = useBiometrics()
-  const wallets = useSortedWallets()
-  const lastActiveWalletAuthType = useRef(activeWalletAuthType)
-  const posthog = usePostHog()
-
-  const [loading, setLoading] = useState(false)
-  const [isPinModalVisible, setIsPinModalVisible] = useState(false)
-
-  const walletNames = wallets.map(({ name }) => name)
-  const error = walletNames.includes(name) ? 'A wallet with this name already exists' : ''
-  const isAuthenticated = !!activeWalletMnemonic
-
-  const createNewWallet = useCallback(
-    async (pin?: string) => {
-      if (!pin) {
-        setIsPinModalVisible(true)
-        return
-      }
-
-      setLoading(true)
-
-      const wallet = await generateAndStoreWallet(name, pin)
-      dispatch(newWalletGenerated(wallet))
-      dispatch(syncAddressesData(wallet.firstAddress.hash))
-      dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
-
-      posthog?.capture('Generated new wallet', { note: 'With existing pin' })
-
-      // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
-      if (lastActiveWalletAuthType.current === 'biometrics' && hasAvailableBiometrics) {
-        await enableBiometrics(wallet.metadataId, wallet.mnemonic)
-        dispatch(biometricsEnabled())
-      }
-
-      setLoading(false)
-
-      navigation.navigate('NewWalletSuccessScreen')
-    },
-    [dispatch, hasAvailableBiometrics, name, navigation, posthog]
-  )
 
   const handleButtonPress = async () => {
     if (!name) return
 
     dispatch(newWalletNameEntered(name))
 
-    if (!isAuthenticated) {
-      navigation.navigate('PinCodeCreationScreen')
-      return
-    }
-
-    if (method === 'import') {
-      navigation.navigate('SelectImportMethodScreen')
-      return
-    }
-
-    if (method === 'create') {
-      createNewWallet(pin)
-    }
+    navigation.navigate('PinCodeCreationScreen')
   }
 
   return (
@@ -120,7 +56,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       fill
       headerOptions={{
         type: 'stack',
-        headerRight: () => <ContinueButton onPress={handleButtonPress} disabled={name.length < 3 || !!error} />
+        headerRight: () => <ContinueButton onPress={handleButtonPress} disabled={name.length < 3} />
       }}
       keyboardShouldPersistTaps="always"
       {...props}
@@ -132,12 +68,9 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           value={name}
           onChangeText={setName}
           autoFocus
-          error={error}
           onSubmitEditing={handleButtonPress}
         />
       </ContentContainer>
-      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={createNewWallet} />}
-      <SpinnerModal isActive={loading} text="Creating wallet..." />
     </ScrollScreen>
   )
 }

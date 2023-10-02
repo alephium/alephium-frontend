@@ -22,7 +22,7 @@ import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-root-toast'
 
-import { persistAddressesMetadata } from '~/persistent-storage/wallets'
+import { persistAddressesMetadata } from '~/persistent-storage/wallet'
 import { getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
 import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '~/types/addresses'
 import { AddressTransaction, PendingTransaction } from '~/types/transactions'

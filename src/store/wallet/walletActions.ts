@@ -23,3 +23,5 @@ import { GeneratedWallet } from '~/types/wallet'
 export const newWalletGenerated = createAction<GeneratedWallet>('wallets/newWalletGenerated')
 
 export const newWalletImportedWithMetadata = createAction<GeneratedWallet>('wallets/newWalletImportedWithMetadata')
+
+export const walletDeleted = createAction('wallets/walletDeleted')

@@ -67,7 +67,7 @@ const WalletConnectSessionProposalModal = ({
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const addresses = useAppSelector(selectAllAddresses)
   const dispatch = useAppDispatch()
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const { requiredChainInfo, metadata } = parseSessionProposalEvent(proposalEvent)
   const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, requiredChainInfo?.addressGroup))
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
@@ -98,7 +98,7 @@ const WalletConnectSessionProposalModal = ({
   const handleAddressGeneratePress = async () => {
     setLoading('Generating new address...')
 
-    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, activeWalletMnemonic)
+    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, walletMnemonic)
     const newAddressData = deriveNewAddressData(
       masterKey,
       requiredChainInfo?.addressGroup,

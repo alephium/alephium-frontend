@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { decryptAsync } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { ContinueButton } from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
@@ -32,8 +32,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { importContacts } from '~/persistent-storage/contacts'
-import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
-import { biometricsEnabled } from '~/store/activeWalletSlice'
+import { generateAndStoreWallet } from '~/persistent-storage/wallet'
 import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import { WalletImportData } from '~/types/wallet'
@@ -43,23 +42,18 @@ interface DecryptScannedMnemonicScreenProps
   extends StackScreenProps<RootStackParamList, 'DecryptScannedMnemonicScreen'>,
     ScrollScreenProps {}
 
-const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMnemonicScreenProps) => {
+const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScreenProps) => {
   const qrCodeImportedEncryptedMnemonic = useAppSelector((s) => s.walletGeneration.qrCodeImportedEncryptedMnemonic)
   const name = useAppSelector((s) => s.walletGeneration.walletName)
   const credentials = useAppSelector((s) => s.credentials)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
   const posthog = usePostHog()
   const dispatch = useAppDispatch()
-  const lastActiveWalletAuthType = useRef(activeWalletAuthType)
-  const hasAvailableBiometrics = useBiometrics()
+  const deviceHasBiometricsData = useBiometrics()
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [pin, setPin] = useState(credentials.pin)
   const [loading, setLoading] = useState(false)
-
-  const isAuthenticated = !!activeWalletMnemonic
 
   const decryptAndImportWallet = async () => {
     if (!qrCodeImportedEncryptedMnemonic) return
@@ -77,7 +71,7 @@ const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMn
       const wallet = await generateAndStoreWallet(name, pin, mnemonic)
 
       try {
-        importAddresses(wallet.mnemonic, wallet.metadataId, addresses)
+        importAddresses(wallet.mnemonic, wallet.id, addresses)
       } catch (e) {
         console.error(e)
 
@@ -90,21 +84,11 @@ const DecryptScannedMnemonicScreen = ({ navigation, ...props }: DecryptScannedMn
 
       if (contacts.length > 0) importContacts(contacts)
 
-      if (!isAuthenticated) {
-        setLoading(false)
-        navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
-        return
-      }
-
-      // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
-      if (isAuthenticated && lastActiveWalletAuthType.current === 'biometrics' && hasAvailableBiometrics) {
-        await enableBiometrics(wallet.metadataId, wallet.mnemonic)
-        dispatch(biometricsEnabled())
-      }
+      deviceHasBiometricsData
+        ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
+        : navigation.navigate('NewWalletSuccessScreen')
 
       setLoading(false)
-
-      navigation.navigate('NewWalletSuccessScreen')
       setPin('')
     } catch (e) {
       setError('Could not decrypt wallet with the given password.')

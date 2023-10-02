@@ -28,7 +28,7 @@ import CenteredInstructions, { Instruction } from '~/components/text/CenteredIns
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { generateAndStoreWallet } from '~/persistent-storage/wallets'
+import { generateAndStoreWallet } from '~/persistent-storage/wallet'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { newPinVerified } from '~/store/credentialsSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
@@ -60,7 +60,7 @@ const errorInstructionSet: Instruction[] = [
 
 const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationScreenProps) => {
   const dispatch = useAppDispatch()
-  const hasAvailableBiometrics = useBiometrics()
+  const deviceHasBiometricsData = useBiometrics()
   const { method, walletName: name } = useAppSelector((s) => s.walletGeneration)
   const posthog = usePostHog()
 
@@ -105,11 +105,11 @@ const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationS
       dispatch(syncAddressesData(wallet.firstAddress.hash))
       dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
 
-      posthog?.capture('Generated new wallet', { note: 'With new pin' })
+      posthog?.capture('Created new wallet')
 
       setLoading(false)
 
-      hasAvailableBiometrics
+      deviceHasBiometricsData
         ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
         : navigation.navigate('NewWalletSuccessScreen')
     }

@@ -16,28 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { nanoid } from 'nanoid'
 
-import { getWalletsMetadata, persistWalletsMetadata } from '~/persistent-storage/wallets'
+import { getWalletMetadata, persistWalletMetadata } from '~/persistent-storage/wallet'
 import {
   contactDeletedFromPersistentStorage,
   contactStoredInPersistentStorage
 } from '~/store/addresses/addressesActions'
 import { store } from '~/store/store'
 import { Contact, ContactFormData } from '~/types/contacts'
-import { WalletMetadata } from '~/types/wallet'
 
 export const persistContact = async (contactData: ContactFormData) => {
-  const walletId = await AsyncStorage.getItem('active-wallet-id')
-  const walletsMetadata = await getWalletsMetadata()
-  const walletIndex = walletsMetadata.findIndex((wallet: WalletMetadata) => wallet.id === walletId)
-
-  if (walletIndex < 0) throw `Could not find wallet with ID ${walletId}`
-
-  const walletMetadata = walletsMetadata[walletIndex]
-
-  const contacts = walletMetadata.contacts ?? []
+  const { contacts } = await getWalletMetadata()
 
   let contactId = contactData.id
 
@@ -69,9 +59,7 @@ export const persistContact = async (contactData: ContactFormData) => {
 
   console.log('💽 Storing contact in persistent storage')
 
-  walletMetadata.contacts = contacts
-  walletsMetadata.splice(walletIndex, 1, walletMetadata)
-  await persistWalletsMetadata(walletsMetadata)
+  await persistWalletMetadata({ contacts })
 
   store.dispatch(contactStoredInPersistentStorage({ ...contactData, id: contactId }))
 
@@ -79,23 +67,15 @@ export const persistContact = async (contactData: ContactFormData) => {
 }
 
 export const deleteContact = async (contactId: Contact['id']) => {
-  const walletId = await AsyncStorage.getItem('active-wallet-id')
-  const walletsMetadata = await getWalletsMetadata()
-  const walletIndex = walletsMetadata.findIndex((wallet: WalletMetadata) => wallet.id === walletId)
-
-  if (walletIndex < 0) throw `Could not find wallet with ID ${walletId}`
-
-  const walletMetadata = walletsMetadata[walletIndex]
-  const contacts = walletMetadata.contacts
+  const { contacts } = await getWalletMetadata()
 
   const storedContactIndex = contacts.findIndex((c) => c.id === contactId)
 
   if (storedContactIndex < 0) throw new Error('Could not find a contact with this ID')
 
   contacts.splice(storedContactIndex, 1)
-  walletsMetadata.splice(walletIndex, 1, walletMetadata)
 
-  await persistWalletsMetadata(walletsMetadata)
+  await persistWalletMetadata({ contacts })
 
   store.dispatch(contactDeletedFromPersistentStorage(contactId))
 }

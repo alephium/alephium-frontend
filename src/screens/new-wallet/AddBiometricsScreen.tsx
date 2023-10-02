@@ -31,8 +31,8 @@ import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { enableBiometrics } from '~/persistent-storage/wallets'
-import { biometricsEnabled } from '~/store/activeWalletSlice'
+import { enableBiometrics } from '~/persistent-storage/wallet'
+import { biometricsToggled } from '~/store/settingsSlice'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
 
@@ -42,30 +42,25 @@ const instructions: Instruction[] = [
 ]
 
 const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBiometricsScreenProps) => {
-  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
   const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()
+  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
-
-  const navigateToAddressDiscoveryPage = () => navigation.navigate('ImportWalletAddressDiscoveryScreen')
 
   const activateBiometrics = async () => {
     setLoading(true)
 
     try {
-      await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
-      dispatch(biometricsEnabled())
+      await enableBiometrics(walletMnemonic)
+      dispatch(biometricsToggled(true))
 
       posthog?.capture('Activated biometrics from wallet creation flow')
 
-      if (params?.skipAddressDiscovery) {
-        navigation.navigate('NewWalletSuccessScreen')
-      } else {
-        navigateToAddressDiscoveryPage()
-      }
+      navigation.navigate(
+        params?.skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen'
+      )
     } finally {
       setLoading(false)
     }

@@ -19,61 +19,43 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { appBecameInactive, appReset } from '~/store/appSlice'
-import { newWalletGenerated, newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
-import { ActiveWalletState, WalletUnlockedPayload } from '~/types/wallet'
+import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
+import { WalletState, WalletUnlockedPayload } from '~/types/wallet'
 
-const sliceName = 'activeWallet'
+const sliceName = 'wallet'
 
-const initialState: ActiveWalletState = {
+const initialState: WalletState = {
+  id: '',
   name: '',
   mnemonic: '',
-  isMnemonicBackedUp: undefined,
-  metadataId: '',
-  authType: undefined
+  isMnemonicBackedUp: undefined
 }
 
 const resetState = () => initialState
 
-const activeWalletSlice = createSlice({
+const walletSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    biometricsEnabled: (state) => {
-      state.authType = 'biometrics'
-    },
-    biometricsDisabled: (state) => {
-      state.authType = 'pin'
-    },
     mnemonicBackedUp: (state) => {
       state.isMnemonicBackedUp = true
     },
-    walletDeleted: resetState,
-    walletSwitched: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet,
     walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet
   },
   extraReducers: (builder) => {
-    builder.addCase(appBecameInactive, resetState).addCase(appReset, resetState)
-    builder.addMatcher(isAnyOf(newWalletGenerated, newWalletImportedWithMetadata), (state, action) => {
-      const { name, mnemonic, metadataId, isMnemonicBackedUp } = action.payload
-
-      return {
+    builder.addMatcher(isAnyOf(appBecameInactive, appReset, walletDeleted), resetState)
+    builder.addMatcher(
+      isAnyOf(newWalletGenerated, newWalletImportedWithMetadata),
+      (_, { payload: { name, mnemonic, id, isMnemonicBackedUp } }) => ({
+        id,
         name,
         mnemonic,
-        authType: 'pin',
-        metadataId,
         isMnemonicBackedUp
-      }
-    })
+      })
+    )
   }
 })
 
-export const {
-  biometricsEnabled,
-  biometricsDisabled,
-  mnemonicBackedUp,
-  walletDeleted,
-  walletSwitched,
-  walletUnlocked
-} = activeWalletSlice.actions
+export const { mnemonicBackedUp, walletUnlocked } = walletSlice.actions
 
-export default activeWalletSlice
+export default walletSlice

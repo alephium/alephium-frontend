@@ -61,7 +61,7 @@ export const discoverAddresses = createAsyncThunk(
     const minGap = 5
     const state = getState() as RootState
     await sleep(1) // Allow execution to continue to not block rendering
-    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, state.activeWallet.mnemonic)
+    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, state.wallet.mnemonic)
     const addresses = Object.values(state.addresses.entities) as Address[]
     const activeAddressIndexes: AddressIndex[] = addresses.map((address) => address.index)
     const groupsData = initializeAddressDiscoveryGroupsData(addresses)

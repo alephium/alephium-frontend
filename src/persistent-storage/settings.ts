@@ -15,7 +15,8 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import AsyncStorage from '@react-native-async-storage/async-storage'
+
+import * as SecureStore from 'expo-secure-store'
 import { clone } from 'lodash'
 import { Appearance } from 'react-native'
 
@@ -48,7 +49,8 @@ export const defaultGeneralSettings: GeneralSettings = {
   currency: 'USD',
   analytics: true,
   analyticsId: undefined,
-  walletConnect: false
+  walletConnect: false,
+  usesBiometrics: false
 }
 
 export const defaultNetworkSettings: NetworkSettings = clone(networkPresetSettings[defaultNetwork])
@@ -62,7 +64,7 @@ const constructSettingsStorageKey = (key: SettingsKey) => `${STORAGE_KEY}-${key}
 
 export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> => {
   try {
-    const rawSettings = await AsyncStorage.getItem(constructSettingsStorageKey(key))
+    const rawSettings = await SecureStore.getItemAsync(constructSettingsStorageKey(key))
     if (!rawSettings) return defaultSettings[key]
 
     const loadedSettings = JSON.parse(rawSettings) as SettingsPartial
@@ -79,8 +81,20 @@ export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> =
 
 export const persistSettings = async (key: SettingsKey, settings: SettingsPartial) => {
   try {
-    await AsyncStorage.setItem(constructSettingsStorageKey(key), JSON.stringify(settings))
+    await SecureStore.setItemAsync(constructSettingsStorageKey(key), JSON.stringify(settings))
   } catch (e) {
     console.error(e)
   }
+}
+
+export const loadBiometricsSettings = async () => {
+  const { usesBiometrics } = (await loadSettings('general')) as GeneralSettings
+
+  return usesBiometrics
+}
+
+export const storeBiometricsSettings = async (usesBiometrics: GeneralSettings['usesBiometrics']) => {
+  const generalSettings = (await loadSettings('general')) as GeneralSettings
+
+  await persistSettings('general', { ...generalSettings, usesBiometrics })
 }

@@ -23,26 +23,22 @@ import { Contact, ContactFormData } from '~/types/contacts'
 
 export type Mnemonic = string
 
-export type StoredWalletAuthType = 'pin' | 'biometrics'
-
 export type WalletMetadata = {
   id: string
   name: string
-  authType: StoredWalletAuthType
   isMnemonicBackedUp: boolean
   addresses: AddressMetadata[]
   contacts: Contact[]
 }
 
-export interface ActiveWalletState {
+export interface WalletState {
   name: string
   mnemonic: Mnemonic
-  metadataId: string
+  id: string
   isMnemonicBackedUp?: boolean
-  authType?: StoredWalletAuthType
 }
 
-export type GeneratedWallet = ActiveWalletState & { firstAddress: AddressKeyPair }
+export type GeneratedWallet = WalletState & { firstAddress: AddressKeyPair }
 
 export type WalletImportData = {
   mnemonic: Mnemonic
@@ -50,14 +46,14 @@ export type WalletImportData = {
   contacts: ContactFormData[]
 }
 
-export type ImportedWalletWithMetadata = ActiveWalletState & Omit<WalletImportData, 'mnemonic'>
+export type ImportedWalletWithMetadata = WalletState & Omit<WalletImportData, 'mnemonic'>
 
 export interface CredentialsState {
   pin?: string
 }
 
 export type WalletUnlockedPayload = CredentialsState & {
-  wallet: ActiveWalletState
+  wallet: WalletState
   addressesToInitialize: AddressPartial[]
   contacts: Contact[]
 }

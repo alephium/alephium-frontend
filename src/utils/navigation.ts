@@ -36,7 +36,7 @@ const getInitialNavigationState = (initialRouteName?: string) => ({
 // well as the RootStackNavigation itself.
 export const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
 
-const excludedRoutesFromRestoring = ['SplashScreen', 'LoginScreen']
+const excludedRoutesFromRestoring = ['SplashScreen', 'LoginWithPinScreen']
 
 export const isNavStateRestorable = (state: NavigationState) => {
   const routes = state.routes.map((route) => route.name)

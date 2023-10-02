@@ -60,6 +60,9 @@ const settingsSlice = createSlice({
     },
     walletConnectToggled: (state) => {
       state.walletConnect = !state.walletConnect
+    },
+    biometricsToggled: (state, action: PayloadAction<boolean>) => {
+      state.usesBiometrics = action.payload
     }
   },
   extraReducers(builder) {
@@ -75,7 +78,8 @@ export const {
   currencySelected,
   analyticsIdGenerated,
   analyticsToggled,
-  walletConnectToggled
+  walletConnectToggled,
+  biometricsToggled
 } = settingsSlice.actions
 
 export const settingsListenerMiddleware = createListenerMiddleware()
@@ -89,7 +93,9 @@ settingsListenerMiddleware.startListening({
     currencySelected,
     analyticsIdGenerated,
     analyticsToggled,
-    walletConnectToggled
+    walletConnectToggled,
+    biometricsToggled,
+    appReset
   ),
   effect: async (_, { getState }) => {
     const state = getState() as RootState

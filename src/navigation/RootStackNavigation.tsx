@@ -39,7 +39,7 @@ import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import LandingScreen from '~/screens/LandingScreen'
-import LoginScreen from '~/screens/LoginScreen'
+import LoginWithPinScreen from '~/screens/LoginWithPinScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
 import DecryptScannedMnemonicScreen from '~/screens/new-wallet/DecryptScannedMnemonicScreen'
 import ImportWalletAddressDiscoveryScreen from '~/screens/new-wallet/ImportWalletAddressDiscoveryScreen'
@@ -52,7 +52,6 @@ import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScr
 import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
-import SwitchWalletScreen from '~/screens/SwitchWallet/SwitchWalletScreen'
 import VerifyMnemonicScreen from '~/screens/VerifyMnemonicScreen'
 import { routeChanged } from '~/store/appSlice'
 import { isNavStateRestorable, rootStackNavigationRef } from '~/utils/navigation'
@@ -132,8 +131,8 @@ const RootStackNavigation = () => {
                       options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
                     />
                     <RootStack.Screen
-                      name="LoginScreen"
-                      component={LoginScreen}
+                      name="LoginWithPinScreen"
+                      component={LoginWithPinScreen}
                       options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
                     />
                     <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
@@ -142,7 +141,6 @@ const RootStackNavigation = () => {
                       component={InWalletTabsNavigation}
                       options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
                     />
-                    <RootStack.Screen name="SwitchWalletScreen" component={SwitchWalletScreen} />
                     <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
                     <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />
                     <RootStack.Screen name="ContactScreen" component={ContactScreen} />

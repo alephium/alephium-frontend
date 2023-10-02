@@ -20,18 +20,18 @@ import { isEnrolledAsync } from 'expo-local-authentication'
 import { useEffect, useState } from 'react'
 
 const useBiometrics = () => {
-  const [hasAvailableBiometrics, setHasAvailableBiometrics] = useState<boolean>()
+  const [deviceHasBiometricsData, setDeviceHasBiometricsData] = useState<boolean>()
 
   useEffect(() => {
     const checkBiometricsAvailability = async () => {
       const available = await isEnrolledAsync()
-      setHasAvailableBiometrics(available)
+      setDeviceHasBiometricsData(available)
     }
 
     checkBiometricsAvailability()
   }, [])
 
-  return hasAvailableBiometrics
+  return deviceHasBiometricsData
 }
 
 export default useBiometrics

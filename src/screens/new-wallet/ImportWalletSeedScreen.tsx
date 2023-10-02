@@ -36,8 +36,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { enableBiometrics, generateAndStoreWallet } from '~/persistent-storage/wallets'
-import { biometricsEnabled } from '~/store/activeWalletSlice'
+import { generateAndStoreWallet } from '~/persistent-storage/wallet'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
@@ -58,13 +57,10 @@ const enablePasteForDevelopment = true
 const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreenProps) => {
   const dispatch = useAppDispatch()
   const name = useAppSelector((s) => s.walletGeneration.walletName)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
   const pin = useAppSelector((s) => s.credentials.pin)
-  const hasAvailableBiometrics = useBiometrics()
+  const deviceHasBiometricsData = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
-  const lastActiveWalletAuthType = useRef(activeWalletAuthType)
   const posthog = usePostHog()
 
   const [typedInput, setTypedInput] = useState('')
@@ -72,8 +68,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [isPinModalVisible, setIsPinModalVisible] = useState(false)
-
-  const isAuthenticated = !!activeWalletMnemonic
 
   useEffect(() => {
     setPossibleMatches(
@@ -123,23 +117,11 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
 
-      if (!isAuthenticated) {
-        setLoading(false)
-        navigation.navigate('AddBiometricsScreen')
-        return
-      }
-
-      // We assume the preference of the user to enable biometrics by looking at the auth settings of the current wallet
-      if (isAuthenticated && lastActiveWalletAuthType.current === 'biometrics' && hasAvailableBiometrics) {
-        await enableBiometrics(wallet.metadataId, wallet.mnemonic)
-        dispatch(biometricsEnabled())
-      }
+      navigation.navigate(deviceHasBiometricsData ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
 
       setLoading(false)
-
-      navigation.navigate('NewWalletSuccessScreen')
     },
-    [dispatch, hasAvailableBiometrics, isAuthenticated, name, navigation, posthog, selectedWords, typedInput]
+    [name, typedInput, selectedWords, dispatch, posthog, deviceHasBiometricsData, navigation]
   )
 
   const handleWalletImport = () => importWallet(pin)

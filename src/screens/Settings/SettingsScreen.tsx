@@ -36,23 +36,19 @@ import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import {
-  areThereOtherWallets,
-  deleteWalletById,
-  disableBiometrics,
-  enableBiometrics
-} from '~/persistent-storage/wallets'
+import { deleteWallet, disableBiometrics, enableBiometrics } from '~/persistent-storage/wallet'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
-import { biometricsDisabled, biometricsEnabled, walletDeleted } from '~/store/activeWalletSlice'
 import {
   analyticsToggled,
+  biometricsToggled,
   discreetModeToggled,
   passwordRequirementToggled,
   themeChanged,
   walletConnectToggled
 } from '~/store/settingsSlice'
+import { walletDeleted } from '~/store/wallet/walletActions'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { resetNavigationState } from '~/utils/navigation'
 
@@ -60,17 +56,16 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScre
 
 const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const hasAvailableBiometrics = useBiometrics()
+  const deviceHasBiometricsData = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const requireAuth = useAppSelector((s) => s.settings.requireAuth)
   const currentTheme = useAppSelector((s) => s.settings.theme)
   const currentCurrency = useAppSelector((s) => s.settings.currency)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
-  const activeWalletAuthType = useAppSelector((s) => s.activeWallet.authType)
-  const activeWalletMetadataId = useAppSelector((s) => s.activeWallet.metadataId)
-  const activeWalletMnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const analytics = useAppSelector((s) => s.settings.analytics)
+  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const posthog = usePostHog()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
@@ -78,17 +73,15 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
 
-  const isBiometricsEnabled = activeWalletAuthType === 'biometrics'
-
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
-      await disableBiometrics(activeWalletMetadataId)
-      dispatch(biometricsDisabled())
+      await disableBiometrics()
+      dispatch(biometricsToggled(false))
 
       posthog?.capture('Deactivated biometrics')
     } else {
-      await enableBiometrics(activeWalletMetadataId, activeWalletMnemonic)
-      dispatch(biometricsEnabled())
+      await enableBiometrics(walletMnemonic)
+      dispatch(biometricsToggled(true))
 
       posthog?.capture('Manually activated biometrics')
     }
@@ -104,23 +97,16 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const toggleWalletConnect = () => dispatch(walletConnectToggled())
 
-  const deleteWallet = async () => {
-    await deleteWalletById(activeWalletMetadataId)
+  const handleDeleteConfirmPress = async () => {
+    await deleteWallet()
 
-    posthog?.capture('Deleted wallet')
-
-    if (await areThereOtherWallets()) {
-      navigation.navigate('SwitchWalletScreen', { disableBack: true })
-    } else {
-      resetNavigationState('LandingScreen')
-    }
+    resetNavigationState('LandingScreen')
 
     dispatch(walletDeleted())
+    posthog?.capture('Deleted wallet')
   }
 
   const handleDeleteButtonPress = () => {
-    if (!activeWalletMetadataId) return
-
     Alert.alert(
       'Deleting wallet',
       'Are you sure you want to delete your wallet? Ensure you have a backup of your secret recovery phrase.',
@@ -128,7 +114,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         { text: 'Cancel' },
         {
           text: 'Delete',
-          onPress: deleteWallet
+          onPress: handleDeleteConfirmPress
         }
       ]
     )
@@ -167,7 +153,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <Row title="Use dark theme" subtitle="Try it, it's nice">
               <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
             </Row>
-            {hasAvailableBiometrics && (
+            {deviceHasBiometricsData && (
               <Row title="Biometrics authentication" subtitle="Enhance your security">
                 <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
               </Row>
@@ -207,23 +193,17 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         </ScreenSection>
 
         <ScreenSection>
-          <ScreenSectionTitle>Wallets</ScreenSectionTitle>
-          <ButtonStyled
-            title="Add a new wallet"
-            iconProps={{ name: 'add-outline' }}
-            variant="valid"
-            onPress={() => navigation.navigate('LandingScreen')}
-          />
-          <ButtonStyled
-            title="Delete this wallet"
-            iconProps={{ name: 'trash-outline' }}
-            variant="alert"
-            onPress={handleDeleteButtonPress}
-          />
+          <ScreenSectionTitle>Wallet</ScreenSectionTitle>
           <ButtonStyled
             title="View secret recovery phrase"
             iconProps={{ name: 'key' }}
             onPress={() => setIsAuthenticationModalVisible(true)}
+          />
+          <ButtonStyled
+            title="Delete wallet"
+            iconProps={{ name: 'trash-outline' }}
+            variant="alert"
+            onPress={handleDeleteButtonPress}
           />
         </ScreenSection>
       </ScrollScreenStyled>

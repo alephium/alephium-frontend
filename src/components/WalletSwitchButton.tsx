@@ -16,38 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import BottomModal from '~/components/layout/BottomModal'
 import { useAppSelector } from '~/hooks/redux'
-import SwitchWalletModal from '~/screens/SwitchWallet/SwitchWalletModal'
 
 interface WalletSwitchButtonProps {
   style?: StyleProp<ViewStyle>
 }
 
 const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
-  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const walletName = useAppSelector((s) => s.wallet.name)
 
   return (
-    <>
-      <Button style={style} variant="contrast" onPress={() => setIsModalOpen(true)}>
-        <AppText color="contrast" semiBold size={12} numberOfLines={1}>
-          {activeWalletName.slice(0, 2).toUpperCase()}
-        </AppText>
-      </Button>
-
-      <Portal>
-        <BottomModal Content={SwitchWalletModal} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      </Portal>
-    </>
+    <Button style={style} variant="contrast">
+      <AppText color="contrast" semiBold size={12} numberOfLines={1}>
+        {walletName.slice(0, 2).toUpperCase()}
+      </AppText>
+    </Button>
   )
 }
 

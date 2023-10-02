@@ -21,7 +21,6 @@ import { PostHogProvider, usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { getWalletsMetadata } from '~/persistent-storage/wallets'
 import { analyticsIdGenerated } from '~/store/settingsSlice'
 
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
@@ -31,12 +30,12 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
   const posthog = usePostHog()
   const analytics = useAppSelector((s) => s.settings.analytics)
   const analyticsId = useAppSelector((s) => s.settings.analyticsId)
+  const usesBiometrics = useAppSelector((s) => s.settings.usesBiometrics)
   const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
   const requireAuth = useAppSelector((s) => s.settings.requireAuth)
   const theme = useAppSelector((s) => s.settings.theme)
   const currency = useAppSelector((s) => s.settings.currency)
   const networkName = useAppSelector((s) => s.network.name)
-  const authType = useAppSelector((s) => s.activeWallet.authType)
   const dispatch = useAppDispatch()
 
   const canCaptureUserProperties = settingsLoadedFromStorage && analytics && !!analyticsId
@@ -61,20 +60,17 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
   const captureUserProperties = useCallback(async () => {
     if (!canCaptureUserProperties) return
 
-    const wallets = await getWalletsMetadata()
-
     posthog?.capture('User identified', {
       $set: {
-        wallets: wallets.length,
         requireAuth,
         theme,
         currency,
         networkName,
-        authType,
-        analytics
+        analytics,
+        usesBiometrics
       }
     })
-  }, [analytics, authType, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme])
+  }, [analytics, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme, usesBiometrics])
 
   useEffect(() => {
     if (canCaptureUserProperties) captureUserProperties()
