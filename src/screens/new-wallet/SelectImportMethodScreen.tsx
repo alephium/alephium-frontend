@@ -62,7 +62,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
     <ScrollScreen fill headerOptions={{ headerTitle: 'Import', type: 'stack' }} {...props}>
       <ScreenSection fill>
         <BoxSurfaceStyled border="primary" type="highlight">
-          <IconBox style={{ backgroundColor: 'rgba(62, 125, 155, 0.2)' }}>
+          <IconBox style={{ backgroundColor: 'rgba(61, 149, 190, 0.1)' }}>
             <Ionicons size={35} name="desktop" color="rgb(86, 201, 254)" />
           </IconBox>
           <Title size={28} medium>
@@ -76,7 +76,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
       </ScreenSection>
       <ScreenSection fill>
         <BoxSurfaceStyled border="primary" type="highlight">
-          <IconBox style={{ backgroundColor: 'rgba(145, 92, 32, 0.2)' }}>
+          <IconBox style={{ backgroundColor: 'rgba(185, 111, 26, 0.1)' }}>
             <Ionicons size={35} name="list-outline" color="rgb(255, 147, 21)" />
           </IconBox>
           <Title size={28} medium>

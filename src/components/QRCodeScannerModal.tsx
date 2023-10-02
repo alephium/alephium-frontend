@@ -91,9 +91,9 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
     <ScreenSectionCentered fill>
       {text && (
         <TextContainer>
-          <AppText size={16} semiBold color="white" style={{ textAlign: 'center' }}>
+          <AppTextCentered size={16} semiBold color="white" style={{ textAlign: 'center' }}>
             {text}
-          </AppText>
+          </AppTextCentered>
         </TextContainer>
       )}
 
@@ -111,7 +111,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
   )
 
   return (
-    <ModalWithBackdrop visible animationType="fade" closeModal={onClose} color={theme.bg.primary}>
+    <ModalWithBackdrop visible closeModal={onClose} color={theme.bg.primary}>
       <ScreenStyled>
         {!scanned &&
           hasPermission &&
@@ -152,6 +152,7 @@ const ScreenStyled = styled(Screen)`
 
 const CameraStyled = styled(Camera)`
   flex: 1;
+  align-items: center;
 `
 
 const BarCodeScannerStyled = styled(BarCodeScanner)`
@@ -171,13 +172,13 @@ const QRCodePlaceholder = styled.View`
 const ScreenSectionCentered = styled(ScreenSection)`
   justify-content: center;
   align-items: center;
+  width: 70%;
 `
 
 const TextContainer = styled.View`
   border: 0px solid transparent; // This is a hack cause I don't freaking understand why the text doesn't expand
   align-items: center;
   gap: 10px;
-  width: 70%;
 `
 
 const AppTextCentered = styled(AppText)`
