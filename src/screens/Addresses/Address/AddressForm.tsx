@@ -69,17 +69,20 @@ const AddressForm = ({
       <ScreenSection verticalGap fill>
         <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
         <ColorPicker value={color} onChange={setColor} />
-        <Row
-          title="Default address"
-          subtitle={`Default address for operations${
-            disableIsMainToggle
-              ? '. To remove this address from being the default address, you must set another one as main first.'
-              : ''
-          }`}
-          onPress={toggleIsMain}
-        >
-          <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
-        </Row>
+        <BoxSurface>
+          <Row
+            title="Default address"
+            subtitle={`Default address for operations${
+              disableIsMainToggle
+                ? '. To remove this address from being the default address, you must set another one as main first.'
+                : ''
+            }`}
+            onPress={toggleIsMain}
+            isLast
+          >
+            <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
+          </Row>
+        </BoxSurface>
 
         {allowGroupSelection && (
           <ExpandableRow>
