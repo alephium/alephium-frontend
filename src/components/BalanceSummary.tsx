@@ -30,10 +30,12 @@ import Button from '~/components/buttons/Button'
 import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
 import useWorthDelta from '~/hooks/useWorthDelta'
+import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { selectTotalBalance } from '~/store/addressesSlice'
+import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
+import { AddressHash } from '~/types/addresses'
 import { DataPoint } from '~/types/charts'
 import { NetworkStatus } from '~/types/network'
 import { currencies } from '~/utils/currencies'
@@ -47,12 +49,13 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const totalBalance = useAppSelector(selectTotalBalance)
   const networkStatus = useAppSelector((s) => s.network.status)
   const networkName = useAppSelector((s) => s.network.name)
+  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
     pollingInterval: 60000,
     skip: totalBalance === BigInt(0)
   })
   const theme = useTheme()
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
 
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
   const worthDelta = useWorthDelta(worthInBeginningOfChart)
@@ -60,6 +63,17 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const totalAmountWorth = calculateAmountWorth(totalBalance, price ?? 0)
 
   const deltaColor = worthDelta < 0 ? theme.global.alert : worthDelta > 0 ? theme.global.valid : theme.bg.tertiary
+
+  const handleReceivePress = () => {
+    if (addressHashes.length === 1) {
+      navigation.navigate('ReceiveNavigation', {
+        screen: 'QRCodeScreen',
+        params: { addressHash: addressHashes[0] }
+      })
+    } else {
+      navigation.navigate('ReceiveNavigation')
+    }
+  }
 
   return (
     <BalanceSummaryContainer
@@ -95,7 +109,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           <ReceiveFundsButtonContainer>
             <Button
               title="Receive assets"
-              onPress={() => navigation.navigate('ReceiveNavigation')}
+              onPress={handleReceivePress}
               iconProps={{ name: 'arrow-down-outline' }}
               variant="highlight"
               short
