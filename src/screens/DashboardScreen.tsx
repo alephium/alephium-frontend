@@ -33,14 +33,14 @@ import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
+import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds, selectTotalBalance, syncAddressesData } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
-  extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'>,
+  extends StackScreenProps<RootStackParamList | ReceiveNavigationParamList>,
     BottomBarScrollScreenProps {}
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
@@ -60,6 +60,17 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
+  }
+
+  const handleReceivePress = () => {
+    if (addressHashes.length === 1) {
+      navigation.navigate('ReceiveNavigation', {
+        screen: 'QRCodeScreen',
+        params: { addressHash: addressHashes[0] }
+      })
+    } else {
+      navigation.navigate('ReceiveNavigation')
+    }
   }
 
   return (
@@ -100,7 +111,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               flex
             />
             <Button
-              onPress={() => navigation.navigate('ReceiveNavigation')}
+              onPress={handleReceivePress}
               iconProps={{ name: 'arrow-down-outline' }}
               title="Receive"
               variant="highlightedIcon"
