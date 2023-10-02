@@ -193,17 +193,17 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         </ScreenSection>
 
         <ScreenSection>
-          <ScreenSectionTitle>Wallets</ScreenSectionTitle>
+          <ScreenSectionTitle>Wallet</ScreenSectionTitle>
+          <ButtonStyled
+            title="View secret recovery phrase"
+            iconProps={{ name: 'key' }}
+            onPress={() => setIsAuthenticationModalVisible(true)}
+          />
           <ButtonStyled
             title="Delete wallet"
             iconProps={{ name: 'trash-outline' }}
             variant="alert"
             onPress={handleDeleteButtonPress}
-          />
-          <ButtonStyled
-            title="View secret recovery phrase"
-            iconProps={{ name: 'key' }}
-            onPress={() => setIsAuthenticationModalVisible(true)}
           />
         </ScreenSection>
       </ScrollScreenStyled>
