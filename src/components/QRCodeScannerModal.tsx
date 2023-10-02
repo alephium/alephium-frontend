@@ -88,7 +88,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
   }
 
   const CameraContents = (
-    <ScreenSectionCentered fill>
+    <ScreenSection fill centered verticallyCentered style={{ padding: '10%' }}>
       {text && (
         <TextContainer>
           <AppTextCentered size={16} semiBold color="white">
@@ -107,7 +107,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
           <ProgressBar progress={progress} color="white" />
         </TextContainer>
       )}
-    </ScreenSectionCentered>
+    </ScreenSection>
   )
 
   return (
@@ -167,12 +167,6 @@ const QRCodePlaceholder = styled.View`
   border: 4px dashed white;
   border-radius: ${BORDER_RADIUS}px;
   margin: 20px 0;
-`
-
-const ScreenSectionCentered = styled(ScreenSection)`
-  justify-content: center;
-  align-items: center;
-  width: 70%;
 `
 
 const TextContainer = styled.View`
