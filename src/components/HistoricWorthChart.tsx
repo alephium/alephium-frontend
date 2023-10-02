@@ -104,7 +104,7 @@ const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartCh
 
   return (
     <Animated.View style={[style, animatedStyle]}>
-      <Row style={{ marginBottom: 15 }}>
+      <Row style={{ marginBottom: 0 }}>
         {haveHistoricBalancesLoaded && (
           <DeltaAndChartLengths entering={FadeIn}>
             <DeltaPercentage percentage={deltaPercentage} />

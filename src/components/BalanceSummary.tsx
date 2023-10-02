@@ -70,7 +70,8 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           shadowOffset: { height: 5, width: 0 },
           shadowOpacity: theme.name === 'dark' ? 0.5 : 0.08,
           shadowRadius: 5,
-          elevation: 10
+          elevation: 10,
+          overflow: 'hidden'
         },
         style
       ]}
@@ -134,7 +135,6 @@ const TextContainer = styled.View`
 `
 
 const ChartContainer = styled.View`
-  margin-bottom: -1px;
   margin-right: -1px;
   margin-left: -1px;
 `
