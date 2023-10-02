@@ -198,7 +198,7 @@ const DeltaAndChartLengths = styled(Animated.View)`
 
 const ChartLengthBadges = styled.View`
   flex-direction: row;
-  gap: 12px;
+  gap: 6px;
 `
 
 const ChartLengthButton = styled.Pressable<{ isActive?: boolean }>`
