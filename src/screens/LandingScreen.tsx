@@ -38,6 +38,7 @@ import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useAppDispatch } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { storeIsNewWallet } from '~/persistent-storage/wallet'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
@@ -85,6 +86,10 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
     if (!previousRouteName || previousRouteName === 'SplashScreen') navigation.setOptions({ headerShown: false })
   }, [navigation])
+
+  useEffect(() => {
+    storeIsNewWallet(true)
+  }, [])
 
   return (
     <Screen contrastedBg {...props}>

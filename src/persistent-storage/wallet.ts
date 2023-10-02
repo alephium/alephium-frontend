@@ -42,6 +42,7 @@ const defaultBiometricsConfig = {
 const PIN_WALLET_STORAGE_KEY = 'wallet-pin'
 const BIOMETRICS_WALLET_STORAGE_KEY = 'wallet-biometrics'
 const WALLET_METADATA_STORAGE_KEY = 'wallet-metadata'
+const IS_NEW_WALLET = 'is-new-wallet'
 
 export const generateAndStoreWallet = async (
   name: WalletState['name'],
@@ -184,3 +185,7 @@ export const deriveWalletStoredAddresses = async (wallet: WalletState): Promise<
 
   return addresses.map(({ index, ...settings }) => ({ ...deriveAddressAndKeys(masterKey, index), settings }))
 }
+
+export const getIsNewWallet = async (): Promise<boolean> => (await AsyncStorage.getItem(IS_NEW_WALLET)) === 'true'
+
+export const storeIsNewWallet = async (isNew: boolean) => await AsyncStorage.setItem(IS_NEW_WALLET, isNew.toString())
