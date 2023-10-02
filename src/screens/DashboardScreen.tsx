@@ -195,7 +195,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               <ScreenSection>
                 <Button
                   title="Let's do that!"
-                  onPress={() => navigation.navigate('VerifyMnemonicScreen')}
+                  onPress={() => navigation.navigate('BackupMnemonicNavigation')}
                   variant="highlight"
                 />
               </ScreenSection>

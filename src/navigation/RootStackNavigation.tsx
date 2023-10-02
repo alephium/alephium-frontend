@@ -24,10 +24,12 @@ import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
 import NavigationStackHeader from '~/components/headers/NavigationStackHeader'
+import ProgressHeader from '~/components/headers/ProgressHeader'
 import AnalyticsProvider from '~/contexts/AnalyticsContext'
 import { NavigationScrollContextProvider } from '~/contexts/NavigationScrollContext'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch } from '~/hooks/redux'
+import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -49,10 +51,8 @@ import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
-import ProgressHeader from '~/screens/SendReceive/ProgressHeader'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
-import VerifyMnemonicScreen from '~/screens/VerifyMnemonicScreen'
 import { routeChanged } from '~/store/appSlice'
 import { isNavStateRestorable, rootStackNavigationRef } from '~/utils/navigation'
 
@@ -126,6 +126,19 @@ const RootStackNavigation = () => {
                         )
                       }}
                     />
+                    <RootStack.Screen
+                      name="BackupMnemonicNavigation"
+                      component={BackupMnemonicNavigation}
+                      options={{
+                        header: (props) => (
+                          <ProgressHeader
+                            workflow="backup"
+                            {...props}
+                            options={{ ...props.options, headerTitle: 'Backup' }}
+                          />
+                        )
+                      }}
+                    />
                   </RootStack.Group>
                   {/* Screens without header */}
                   <RootStack.Group screenOptions={{ headerShown: false }}>
@@ -152,7 +165,6 @@ const RootStackNavigation = () => {
                     <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
                     <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} />
                     <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
-                    <RootStack.Screen name="VerifyMnemonicScreen" component={VerifyMnemonicScreen} />
                     <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
                     <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
                     <RootStack.Screen name="SelectImportMethodScreen" component={SelectImportMethodScreen} />
