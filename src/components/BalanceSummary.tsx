@@ -75,15 +75,15 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
     >
       <GradientContainer colors={['transparent', colord(deltaColor).alpha(0.03).toHex()]} locations={[0, 0.6]}>
         <TextContainer>
-          <SurfaceHeader>
+          <ActiveNetworkContainer>
+            <NetworkStatusBullet status={networkStatus} />
+            <AppText color="primary">{networkName}</AppText>
+          </ActiveNetworkContainer>
+          <DateLabelContainer>
             <AppText color="tertiary" semiBold>
               {dateLabel}
             </AppText>
-            <ActiveNetwork>
-              <NetworkStatusBullet status={networkStatus} />
-              <AppText color="primary">{networkName}</AppText>
-            </ActiveNetwork>
-          </SurfaceHeader>
+          </DateLabelContainer>
 
           <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
         </TextContainer>
@@ -130,18 +130,10 @@ const ChartContainer = styled.View`
   margin-left: -1px;
 `
 
-const SurfaceHeader = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-top: 15px;
-  margin-bottom: 10px;
-`
-
-const ActiveNetwork = styled.View`
-  position: absolute;
-  right: 0px;
-  top: -10px;
+const ActiveNetworkContainer = styled.View`
+  align-self: flex-end;
+  margin-right: -5px;
+  margin-top: 3px;
   flex-direction: row;
   align-items: center;
   gap: 5px;
@@ -149,6 +141,8 @@ const ActiveNetwork = styled.View`
   padding: 1px 7px;
   background-color: ${({ theme }) => theme.bg.tertiary};
 `
+
+const DateLabelContainer = styled.View``
 
 const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
   height: 7px;
