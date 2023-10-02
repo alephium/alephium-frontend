@@ -59,7 +59,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
   }
 
   return (
-    <ScrollScreen fill headerOptions={{ headerTitle: 'Import', type: 'stack' }} {...props}>
+    <ScrollScreen fill verticalGap headerOptions={{ headerTitle: 'Import', type: 'stack' }} {...props}>
       <ScreenSection fill>
         <BoxSurfaceStyled border="primary" type="highlight">
           <IconBox style={{ backgroundColor: 'rgba(61, 149, 190, 0.1)' }}>
