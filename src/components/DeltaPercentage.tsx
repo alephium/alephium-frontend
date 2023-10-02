@@ -30,7 +30,7 @@ interface DeltaPercentageProps {
 const DeltaPercentage = ({ percentage, style }: DeltaPercentageProps) => {
   const theme = useTheme()
 
-  const isInvalidNumber = isNaN(percentage) || percentage > 100 || percentage < -100
+  const isInvalidNumber = isNaN(percentage)
 
   const isUp = percentage >= 0
   const color = isInvalidNumber ? theme.font.secondary : isUp ? theme.global.valid : theme.global.alert
