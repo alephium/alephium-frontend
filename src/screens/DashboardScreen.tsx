@@ -78,7 +78,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <BalanceAndButtons>
         <BalanceSummary dateLabel="VALUE TODAY" />
-        {totalBalance > 0 && (
+        {totalBalance > BigInt(0) && (
           <ButtonsRowContainer
             style={[
               buttonsRowStyle,

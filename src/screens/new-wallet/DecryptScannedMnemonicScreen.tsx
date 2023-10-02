@@ -111,7 +111,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   }
 
   const handleBlur = () => {
-    // And this as well is to aoid weird iOS issue where input is focused then blurred right away
+    // And this as well is to avoid weird iOS issue where input is focused then blurred right away
     // WTF.
     inputRef.current?.focus()
   }

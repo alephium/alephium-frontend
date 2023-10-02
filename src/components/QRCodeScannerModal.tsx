@@ -91,7 +91,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
     <ScreenSectionCentered fill>
       {text && (
         <TextContainer>
-          <AppTextCentered size={16} semiBold color="white" style={{ textAlign: 'center' }}>
+          <AppTextCentered size={16} semiBold color="white">
             {text}
           </AppTextCentered>
         </TextContainer>
