@@ -51,8 +51,7 @@ export type SelectedWord = {
   timestamp: Date
 }
 
-// TODO: Set this to false before creating production build
-const enablePasteForDevelopment = true
+const enablePasteForDevelopment = false
 
 const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreenProps) => {
   const dispatch = useAppDispatch()
