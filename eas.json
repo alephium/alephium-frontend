@@ -8,18 +8,15 @@
     },
     "development": {
       "extends": "production",
-      "developmentClient": true,
       "distribution": "internal",
+      "developmentClient": true,
       "env": {
         "APP_VARIANT": "development"
       }
     },
     "preview": {
       "extends": "production",
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      }
+      "distribution": "internal"
     }
   },
   "submit": {
