@@ -33,14 +33,18 @@ import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { selectAddressIds, selectTotalBalance, syncAddressesData } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
-  extends StackScreenProps<RootStackParamList | ReceiveNavigationParamList>,
+  extends StackScreenProps<
+      InWalletTabsParamList & ReceiveNavigationParamList & SendNavigationParamList,
+      'DashboardScreen'
+    >,
     BottomBarScrollScreenProps {}
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
@@ -73,6 +77,17 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
+  const handleSendPress = () => {
+    if (addressHashes.length === 1) {
+      navigation.navigate('SendNavigation', {
+        screen: 'DestinationScreen',
+        params: { fromAddressHash: addressHashes[0] }
+      })
+    } else {
+      navigation.navigate('SendNavigation')
+    }
+  }
+
   return (
     <DashboardScreenStyled
       refreshControl={
@@ -102,7 +117,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
             ]}
           >
             <Button
-              onPress={() => navigation.navigate('SendNavigation')}
+              onPress={handleSendPress}
               iconProps={{ name: 'arrow-up-outline' }}
               title="Send"
               variant="highlightedIcon"
