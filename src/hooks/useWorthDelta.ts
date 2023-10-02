@@ -24,7 +24,7 @@ import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { DataPoint } from '~/types/charts'
 import { currencies } from '~/utils/currencies'
 
-const useWorthDeltaPercentage = (worthInBeginningOfChart?: DataPoint['worth']) => {
+const useWorthDelta = (worthInBeginningOfChart?: DataPoint['worth']) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
   const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
@@ -32,14 +32,10 @@ const useWorthDeltaPercentage = (worthInBeginningOfChart?: DataPoint['worth']) =
     skip: totalBalance === BigInt(0)
   })
 
-  const totalAmountWorth = calculateAmountWorth(totalBalance, price ?? 0)
-  const initialValue =
-    worthInBeginningOfChart === undefined ? 0 : worthInBeginningOfChart < 1 ? 1 : worthInBeginningOfChart
-  const latestValue = totalAmountWorth
+  const latestValue = calculateAmountWorth(totalBalance, price ?? 0)
+  const initialValue = worthInBeginningOfChart ?? 0
 
-  const deltaPercentage = initialValue > 0 ? Math.round(((latestValue - initialValue) / initialValue) * 10000) / 100 : 0
-
-  return deltaPercentage
+  return latestValue - initialValue
 }
 
-export default useWorthDeltaPercentage
+export default useWorthDelta

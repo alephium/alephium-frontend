@@ -16,41 +16,44 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ArrowDownRight, ArrowUpRight } from 'lucide-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
+import Amount from '~/components/Amount'
+import { useAppSelector } from '~/hooks/redux'
+import { currencies } from '~/utils/currencies'
 
-interface DeltaPercentageProps {
-  percentage: number
+interface WorthDeltaProps {
+  delta: number
   style?: StyleProp<ViewStyle>
 }
 
-const DeltaPercentage = ({ percentage, style }: DeltaPercentageProps) => {
-  const theme = useTheme()
+const WorthDelta = ({ delta, style }: WorthDeltaProps) => {
+  const currency = useAppSelector((s) => s.settings.currency)
 
-  const isInvalidNumber = isNaN(percentage)
+  const isInvalidNumber = isNaN(delta)
 
-  const isUp = percentage >= 0
-  const color = isInvalidNumber ? theme.font.secondary : isUp ? theme.global.valid : theme.global.alert
+  const isUp = delta >= 0
   const textColor = isInvalidNumber ? 'tertiary' : isUp ? 'valid' : 'alert'
 
-  const DirectionArrow = percentage >= 0 ? ArrowUpRight : ArrowDownRight
-
   return (
-    <DeltaPercentageStyled style={style}>
-      <DirectionArrow color={color} size={24} />
-      <AppText color={textColor} semiBold size={18}>
-        {isInvalidNumber ? '-' : percentage}%
-      </AppText>
-    </DeltaPercentageStyled>
+    <WorthDeltaStyled style={style}>
+      <Amount
+        color={textColor}
+        semiBold
+        size={18}
+        value={delta}
+        isFiat
+        suffix={currencies[currency].symbol}
+        showPlusMinus
+      />
+    </WorthDeltaStyled>
   )
 }
 
-export default DeltaPercentage
+export default WorthDelta
 
-const DeltaPercentageStyled = styled.View`
+const WorthDeltaStyled = styled.View`
   align-items: center;
   flex-direction: row;
   gap: 12px;

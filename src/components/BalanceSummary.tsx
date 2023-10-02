@@ -29,7 +29,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
-import useWorthDeltaPercentage from '~/hooks/useWorthDeltaPercentage'
+import useWorthDelta from '~/hooks/useWorthDelta'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
@@ -55,12 +55,11 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
-  const deltaPercentage = useWorthDeltaPercentage(worthInBeginningOfChart)
+  const worthDelta = useWorthDelta(worthInBeginningOfChart)
 
   const totalAmountWorth = calculateAmountWorth(totalBalance, price ?? 0)
 
-  const deltaColor =
-    deltaPercentage < 0 ? theme.global.alert : deltaPercentage > 0 ? theme.global.valid : theme.bg.tertiary
+  const deltaColor = worthDelta < 0 ? theme.global.alert : worthDelta > 0 ? theme.global.valid : theme.bg.tertiary
 
   return (
     <BalanceSummaryContainer
