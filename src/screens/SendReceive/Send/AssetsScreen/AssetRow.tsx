@@ -20,7 +20,7 @@ import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmo
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useRef, useState } from 'react'
-import { NativeSyntheticEvent, Pressable, StyleProp, TextInput, TextInputFocusEventData, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -43,7 +43,6 @@ interface AssetRowProps {
 const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const theme = useTheme()
   const inputRef = useRef<TextInput>(null)
-
   const { assetAmounts, setAssetAmount } = useSendContext()
 
   const assetAmount = assetAmounts.find(({ id }) => id === asset.id)
@@ -91,23 +90,16 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     setIsSelected(isNowSelected)
 
     if (isNowSelected) {
-      inputRef.current?.focus()
+      setTimeout(() => inputRef.current?.focus(), 500)
     } else {
       setAmount('')
+      setAssetAmount(asset.id, undefined)
       setError('')
     }
   }
 
   const handleBottomRowPress = () => {
-    inputRef.current?.focus()
-  }
-
-  const handleInputBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-    if (!e.nativeEvent.text || e.nativeEvent.text === '0') {
-      setAmount('')
-      setError('')
-      setIsSelected(false)
-    }
+    setTimeout(() => inputRef.current?.focus(), 0)
   }
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -160,13 +152,14 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
                 onChangeText={handleOnAmountChange}
                 keyboardType="number-pad"
                 inputMode="decimal"
-                onBlur={handleInputBlur}
                 ref={inputRef}
+                multiline={true}
+                numberOfLines={2}
               />
-              <AppText semiBold size={23} color="secondary">
-                {asset.symbol}
-              </AppText>
             </AmountInputValue>
+            <AppText semiBold size={23} color="secondary">
+              {asset.symbol}
+            </AppText>
           </AmountInputRow>
           <Row>
             <AppText color="alert" size={11}>
@@ -194,6 +187,7 @@ const AmountInputRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
 `
 
 const Row = styled.View`
@@ -207,14 +201,18 @@ const UseMaxButton = styled(Button)`
 `
 
 const AmountInputValue = styled.View`
-  flex-direction: row;
-  gap: 5px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  justify-content: flex-end;
+  overflow: hidden;
 `
 
 const AmountTextInput = styled(TextInput)`
   color: ${({ theme }) => theme.font.primary};
   font-weight: 600;
   font-size: 23px;
+  text-align: right;
+  flex-grow: 1;
 `
 
 const CheckmarkContainer = styled.View`
