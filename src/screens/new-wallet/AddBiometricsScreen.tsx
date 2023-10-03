@@ -79,7 +79,9 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
   return (
     <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
       <AnimationContainer>
-        <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
+        <WhiteCircle>
+          <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
+        </WhiteCircle>
       </AnimationContainer>
       <CenteredInstructions instructions={instructions} stretch />
       <ActionsContainer>
@@ -102,11 +104,20 @@ const AnimationContainer = styled.View`
 `
 
 const StyledAnimation = styled(LottieView)`
-  width: 60%;
+  width: 300px;
 `
 
 const ActionsContainer = styled.View`
   flex: 1.5;
   justify-content: center;
   align-items: center;
+`
+
+const WhiteCircle = styled.View`
+  background-color: white;
+  width: 150px;
+  height: 150px;
+  border-radius: 150px;
+  align-items: center;
+  justify-content: center;
 `
