@@ -43,6 +43,6 @@ export const importAddresses = async (
     addressHashes.push(newAddress.hash)
   }
 
-  await store.dispatch(syncAddressesData(addressHashes))
-  await store.dispatch(syncAddressesHistoricBalances(addressHashes))
+  store.dispatch(syncAddressesData(addressHashes))
+  store.dispatch(syncAddressesHistoricBalances(addressHashes))
 }
