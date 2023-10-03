@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>org.alephium.wallet</string>
+          <string>org.alephium.mobilewallet</string>
         </array>
       </dict>
       <dict>
