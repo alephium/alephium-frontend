@@ -20,6 +20,7 @@ import * as SecureStore from 'expo-secure-store'
 import { clone } from 'lodash'
 import { Appearance } from 'react-native'
 
+import { defaultSecureStoreConfig } from '~/persistent-storage/config'
 import { NetworkName, NetworkPreset } from '~/types/network'
 import { GeneralSettings, NetworkSettings, SettingsKey, SettingsPartial } from '~/types/settings'
 
@@ -64,7 +65,7 @@ const constructSettingsStorageKey = (key: SettingsKey) => `${STORAGE_KEY}-${key}
 
 export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> => {
   try {
-    const rawSettings = await SecureStore.getItemAsync(constructSettingsStorageKey(key))
+    const rawSettings = await SecureStore.getItemAsync(constructSettingsStorageKey(key), defaultSecureStoreConfig)
     if (!rawSettings) return defaultSettings[key]
 
     const loadedSettings = JSON.parse(rawSettings) as SettingsPartial
@@ -81,7 +82,7 @@ export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> =
 
 export const persistSettings = async (key: SettingsKey, settings: SettingsPartial) => {
   try {
-    await SecureStore.setItemAsync(constructSettingsStorageKey(key), JSON.stringify(settings))
+    await SecureStore.setItemAsync(constructSettingsStorageKey(key), JSON.stringify(settings), defaultSecureStoreConfig)
   } catch (e) {
     console.error(e)
   }

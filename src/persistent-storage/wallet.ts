@@ -27,17 +27,12 @@ import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 import { Platform } from 'react-native'
 
+import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
 import { AddressMetadata, AddressPartial } from '~/types/addresses'
 import { GeneratedWallet, Mnemonic, WalletMetadata, WalletState } from '~/types/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
-
-const defaultBiometricsConfig = {
-  requireAuthentication: true,
-  authenticationPrompt: 'Please authenticate',
-  keychainAccessible: SecureStore.WHEN_UNLOCKED
-}
 
 const PIN_WALLET_STORAGE_KEY = 'wallet-pin'
 const BIOMETRICS_WALLET_STORAGE_KEY = 'wallet-biometrics'
@@ -80,7 +75,7 @@ const persistWallet = async (
   const encryptedWithPinMnemonic = await walletEncryptAsyncUnsafe(pin, mnemonic, pbkdf2)
 
   console.log('💽 Storing pin-encrypted mnemonic')
-  await SecureStore.setItemAsync(PIN_WALLET_STORAGE_KEY, encryptedWithPinMnemonic)
+  await SecureStore.setItemAsync(PIN_WALLET_STORAGE_KEY, encryptedWithPinMnemonic, defaultSecureStoreConfig)
 
   console.log('💽 Storing wallet initial metadata')
   const walletMetadata = generateWalletMetadata(walletName, isMnemonicBackedUp)
@@ -137,7 +132,7 @@ export const getStoredWallet = async (usePin?: boolean): Promise<WalletState | n
 
   const mnemonic =
     usePin || !usesBiometrics
-      ? await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY)
+      ? await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
       : await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
 
   return mnemonic
