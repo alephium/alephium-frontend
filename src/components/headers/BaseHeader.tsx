@@ -29,7 +29,7 @@ import Animated, {
   useAnimatedStyle
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
@@ -151,38 +151,52 @@ const BaseHeader = ({
     }
   }
 
+  const compactHeaderContents = (
+    <>
+      {(showCompactComponents && (
+        <CompactContent>
+          {headerBottom ? (
+            <ScaledDownHeaderComponent>{HeaderBottom}</ScaledDownHeaderComponent>
+          ) : (
+            <>
+              <ScaledDownHeaderComponentLeft>{HeaderLeft}</ScaledDownHeaderComponentLeft>
+              <CompactHeaderTitle>
+                <CompactTitle>{HeaderTitle}</CompactTitle>
+                {HeaderTitleRight}
+              </CompactHeaderTitle>
+              <ScaledDownHeaderComponentRight>{HeaderRight}</ScaledDownHeaderComponentRight>
+            </>
+          )}
+        </CompactContent>
+      )) || (
+        <CompactHeaderTitle>
+          <CompactTitle>{HeaderTitle}</CompactTitle>
+        </CompactHeaderTitle>
+      )}
+      <BottomBorder style={bottomBorderColor} />
+    </>
+  )
+
   return (
     <BaseHeaderStyled ref={headerRef} {...props}>
       <Pressable onPress={handleCompactHeaderPress}>
         {hasCompactHeader && (
           <CompactHeaderContainer style={compactContentAnimatedStyle}>
-            <ActionAreaBlurred
-              style={{ paddingTop, justifyContent: 'center', height: '100%' }}
-              animatedProps={animatedBlurViewProps}
-              tint={theme.name}
-            >
-              {(showCompactComponents && (
-                <CompactContent>
-                  {headerBottom ? (
-                    <ScaledDownHeaderComponent>{HeaderBottom}</ScaledDownHeaderComponent>
-                  ) : (
-                    <>
-                      <ScaledDownHeaderComponentLeft>{HeaderLeft}</ScaledDownHeaderComponentLeft>
-                      <CompactHeaderTitle>
-                        <CompactTitle>{HeaderTitle}</CompactTitle>
-                        {HeaderTitleRight}
-                      </CompactHeaderTitle>
-                      <ScaledDownHeaderComponentRight>{HeaderRight}</ScaledDownHeaderComponentRight>
-                    </>
-                  )}
-                </CompactContent>
-              )) || (
-                <CompactHeaderTitle>
-                  <CompactTitle>{HeaderTitle}</CompactTitle>
-                </CompactHeaderTitle>
-              )}
-              <BottomBorder style={bottomBorderColor} />
-            </ActionAreaBlurred>
+            {Platform.OS === 'ios' ? (
+              <ActionAreaBlurred
+                style={{ paddingTop, justifyContent: 'center', height: '100%' }}
+                animatedProps={animatedBlurViewProps}
+                tint={theme.name}
+              >
+                {compactHeaderContents}
+              </ActionAreaBlurred>
+            ) : (
+              <ActionArea
+                style={{ paddingTop, justifyContent: 'center', height: '100%', backgroundColor: theme.bg.back2 }}
+              >
+                {compactHeaderContents}
+              </ActionArea>
+            )}
           </CompactHeaderContainer>
         )}
         <ExpandedHeaderContainer style={expandedContentAnimatedStyle}>
@@ -227,18 +241,19 @@ const ExpandedHeaderContainer = styled(Animated.View)`
   flex-direction: column;
 `
 
-const ActionArea = styled(Animated.View)`
+const actionAreaStyles = css`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 10px ${DEFAULT_MARGIN}px;
 `
 
+const ActionArea = styled(Animated.View)`
+  ${actionAreaStyles}
+`
+
 const ActionAreaBlurred = styled(AnimatedBlurView)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px ${DEFAULT_MARGIN}px;
+  ${actionAreaStyles}
 `
 
 const TitleArea = styled(Animated.View)`
