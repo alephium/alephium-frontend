@@ -37,7 +37,7 @@ const useWorthDelta = (worthInBeginningOfChart?: DataPoint['worth']) => {
 
   const delta = latestValue - initialValue
 
-  return delta < 0.01 ? 0 : delta
+  return delta < 0.01 && delta > -0.01 ? 0 : delta
 }
 
 export default useWorthDelta
