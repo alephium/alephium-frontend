@@ -23,12 +23,12 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import AddressForm from '~/screens/Addresses/Address/AddressForm'
+import AddressFormBaseScreen from '~/screens/Addresses/Address/AddressFormBaseScreen'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { AddressSettings } from '~/types/addresses'
 
@@ -66,27 +66,23 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
   }
 
   return (
-    <ScrollScreen
-      usesKeyboard
-      verticalGap
-      headerOptions={{ headerTitle: 'Address settings', type: 'stack' }}
-      {...props}
-    >
-      <ScreenSection>
-        <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
-          {addressHash}
-        </HashEllipsed>
-      </ScreenSection>
-
-      <AddressForm
+    <>
+      <AddressFormBaseScreen
         initialValues={address.settings}
         onSubmit={handleSavePress}
         buttonText="Save"
         disableIsMainToggle={address.settings.isDefault}
-        addressHash={address.hash}
+        headerOptions={{ headerTitle: 'Address settings ' }}
+        HeaderComponent={
+          <ScreenSection>
+            <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
+              {addressHash}
+            </HashEllipsed>
+          </ScreenSection>
+        }
       />
       <SpinnerModal isActive={loading} text="Saving address..." />
-    </ScrollScreen>
+    </>
   )
 }
 

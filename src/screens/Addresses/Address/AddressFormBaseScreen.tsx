@@ -16,33 +16,34 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Portal } from 'react-native-portalize'
 
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
+import { ContinueButton } from '~/components/buttons/Button'
 import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
 import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
-import { AddressHash, AddressSettings } from '~/types/addresses'
+import { AddressSettings } from '~/types/addresses'
 
 export type AddressFormData = AddressSettings & {
   group?: number
 }
 
-interface AddressFormProps {
+interface AddressFormProps extends ScrollScreenProps {
   initialValues: AddressFormData
   onSubmit: (data: AddressFormData) => void
   allowGroupSelection?: boolean
   buttonText?: string
   disableIsMainToggle?: boolean
-  addressHash?: AddressHash
+  HeaderComponent?: ReactNode
 }
 
 const AddressForm = ({
@@ -50,7 +51,10 @@ const AddressForm = ({
   onSubmit,
   allowGroupSelection,
   buttonText = 'Generate',
-  disableIsMainToggle = false
+  disableIsMainToggle = false,
+  HeaderComponent,
+  headerOptions,
+  ...props
 }: AddressFormProps) => {
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
@@ -66,39 +70,49 @@ const AddressForm = ({
 
   return (
     <>
-      <ScreenSection verticalGap fill>
-        <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
-        <ColorPicker value={color} onChange={setColor} />
-        <BoxSurface>
-          <Row
-            title="Default address"
-            subtitle={`Default address for operations${
-              disableIsMainToggle
-                ? '. To remove this address from being the default address, you must set another one as main first.'
-                : ''
-            }`}
-            onPress={toggleIsMain}
-            isLast
-          >
-            <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
-          </Row>
-        </BoxSurface>
+      <ScrollScreen
+        usesKeyboard
+        fill
+        verticalGap
+        headerOptions={{
+          type: 'stack',
+          headerRight: () => (
+            <ContinueButton title={buttonText} onPress={() => onSubmit({ isDefault, label, color, group })} />
+          ),
+          ...headerOptions
+        }}
+        {...props}
+      >
+        {HeaderComponent}
+        <ScreenSection verticalGap fill>
+          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
+          <ColorPicker value={color} onChange={setColor} />
+          <BoxSurface>
+            <Row
+              title="Default address"
+              subtitle={`Default address for operations${
+                disableIsMainToggle
+                  ? '. To remove this address from being the default address, you must set another one as main first.'
+                  : ''
+              }`}
+              onPress={toggleIsMain}
+              isLast
+            >
+              <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
+            </Row>
+          </BoxSurface>
 
-        {allowGroupSelection && (
-          <ExpandableRow>
-            <BoxSurface>
-              <Row title="Address group" onPress={() => setIsGroupSelectModalOpen(true)}>
-                <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
-              </Row>
-            </BoxSurface>
-          </ExpandableRow>
-        )}
-      </ScreenSection>
-
-      <ScreenSection centered>
-        <Button title={buttonText} centered onPress={() => onSubmit({ isDefault, label, color, group })} />
-      </ScreenSection>
-
+          {allowGroupSelection && (
+            <ExpandableRow>
+              <BoxSurface>
+                <Row title="Address group" onPress={() => setIsGroupSelectModalOpen(true)}>
+                  <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
+                </Row>
+              </BoxSurface>
+            </ExpandableRow>
+          )}
+        </ScreenSection>
+      </ScrollScreen>
       <Portal>
         <BottomModal
           isOpen={isGroupSelectModalOpen}
