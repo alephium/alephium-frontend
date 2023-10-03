@@ -35,7 +35,9 @@ const useWorthDelta = (worthInBeginningOfChart?: DataPoint['worth']) => {
   const latestValue = calculateAmountWorth(totalBalance, price ?? 0)
   const initialValue = worthInBeginningOfChart ?? 0
 
-  return latestValue - initialValue
+  const delta = latestValue - initialValue
+
+  return delta < 0.01 ? 0 : delta
 }
 
 export default useWorthDelta
