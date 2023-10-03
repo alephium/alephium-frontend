@@ -133,6 +133,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
         <Amount
           value={asset.balance - asset.lockedBalance}
           suffix={asset.symbol}
+          decimals={asset.decimals}
           isUnknownToken={!asset.symbol}
           medium
           color="secondary"
