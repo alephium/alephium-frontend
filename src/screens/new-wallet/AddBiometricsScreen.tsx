@@ -105,6 +105,7 @@ const AnimationContainer = styled.View`
 
 const StyledAnimation = styled(LottieView)`
   width: 300px;
+  margin-left: 0.5px; // Fixes tiny misalignment
 `
 
 const ActionsContainer = styled.View`
