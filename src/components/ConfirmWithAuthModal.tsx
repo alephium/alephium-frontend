@@ -97,7 +97,7 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
   if (shouldHideModal) return null
 
   return (
-    <ModalWithBackdrop animationType="fade" visible closeModal={onClose}>
+    <ModalWithBackdrop visible closeModal={onClose}>
       {encryptedWallet && (
         <ModalContent style={{ paddingTop: insets.top + 50 }}>
           {onClose && (
@@ -118,7 +118,7 @@ export default ConfirmWithAuthModal
 const ModalContent = styled.View`
   flex: 1;
   width: 100%;
-  background-color: ${({ theme }) => theme.bg.back2};
+  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2)};
   padding-top: 40px;
 `
 

@@ -24,10 +24,11 @@ import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Portal } from 'react-native-portalize'
-import { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import { interpolateColor, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
+import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import Button, { CloseButton, ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import BottomModal from '~/components/layout/BottomModal'
@@ -136,9 +137,10 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   }, [setValue, toAddress])
 
   const inputStyle = useAnimatedStyle(() => ({
-    backgroundColor: withTiming(interpolateColor(shouldFlash.value, [0, 1], [theme.bg.highlight, theme.global.pale]), {
-      duration: 300
-    })
+    backgroundColor: withSpring(
+      interpolateColor(shouldFlash.value, [0, 1], [theme.bg.highlight, theme.global.accent]),
+      defaultSpringConfiguration
+    )
   }))
 
   useFocusEffect(
@@ -158,7 +160,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
   return (
     <>
-      <ScrollScreen usesKeyboard hasNavigationHeader verticalGap {...props}>
+      <ScrollScreen usesKeyboard hasNavigationHeader verticalGap contrastedBg {...props}>
         <ScreenIntro title="Destination" subtitle="Send to an address, a contact, or one of your other addresses." />
         <ScreenSection>
           <Controller

@@ -21,7 +21,6 @@ import { useRef } from 'react'
 import { FlatListProps } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useTheme } from 'styled-components/native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
@@ -39,6 +38,7 @@ const FlatListScreen = <T,>({
   fill,
   contentContainerStyle,
   style,
+  contrastedBg,
   hasNavigationHeader,
   ...props
 }: FlatListScreenProps<T>) => {
@@ -47,18 +47,18 @@ const FlatListScreen = <T,>({
   const headerheight = useHeaderHeight()
   const navigationScrollHandler = useNavigationScrollHandler(flatListRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
-  const theme = useTheme()
 
   useScrollToTopOnBlur(flatListRef)
 
   const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
 
   return (
-    <Screen>
+    <Screen contrastedBg={contrastedBg}>
       <FlatList
         ref={flatListRef}
         onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
+        scrollEventThrottle={16}
         contentContainerStyle={[
           {
             paddingTop: hasNavigationHeader
@@ -72,12 +72,7 @@ const FlatListScreen = <T,>({
           },
           contentContainerStyle
         ]}
-        style={[
-          {
-            backgroundColor: theme.bg.back2
-          },
-          style
-        ]}
+        style={style}
         {...props}
       />
       {headerOptions && (

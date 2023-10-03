@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import {
   NativeSyntheticEvent,
   StyleProp,
@@ -47,6 +47,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   error?: string
   style?: StyleProp<ViewStyle>
   layout?: AnimateProps<ViewProps>['layout']
+  inputRef?: RefObject<TextInput>
 }
 
 const Input = <T extends InputValue>({
@@ -61,11 +62,13 @@ const Input = <T extends InputValue>({
   renderValue,
   error,
   layout,
+  inputRef,
   ...props
 }: InputProps<T>) => {
   const theme = useTheme()
   const [isActive, setIsActive] = useState(false)
-  const inputRef = useRef<TextInput>(null)
+  const localInputRef = useRef<TextInput>(null)
+  const usedInputRef = inputRef || localInputRef
 
   const renderedValue = renderValue ? renderValue(value) : value ? (value as object).toString() : ''
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
@@ -95,7 +98,23 @@ const Input = <T extends InputValue>({
   }
 
   return (
-    <Row onPress={onPress} isInput hasRightContent={!!RightContent} style={style} layout={layout}>
+    <Row
+      onPress={onPress}
+      isInput
+      hasRightContent={!!RightContent}
+      style={[
+        style,
+        {
+          shadowColor: 'black',
+          shadowOpacity: theme.name === 'light' ? 0.05 : 0.2,
+          shadowRadius: 8,
+          shadowOffset: { height: 5, width: 0 },
+          borderWidth: 1,
+          borderColor: theme.border.primary
+        }
+      ]}
+      layout={layout}
+    >
       <InputContainer>
         <Label style={labelStyle}>
           <LabelText style={labelTextStyle}>{label}</LabelText>
@@ -106,7 +125,7 @@ const Input = <T extends InputValue>({
           value={renderedValue?.toString()}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          ref={inputRef}
+          ref={usedInputRef}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
           hide={showCustomValueRendering}
           {...props}

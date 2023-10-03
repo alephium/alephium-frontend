@@ -17,9 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { decryptAsync } from '@alephium/sdk'
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
+import { TextInput } from 'react-native-gesture-handler'
 
 import { ContinueButton } from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
@@ -49,11 +51,19 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   const posthog = usePostHog()
   const dispatch = useAppDispatch()
   const deviceHasBiometricsData = useBiometrics()
+  const inputRef = useRef<TextInput>(null)
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [pin, setPin] = useState(credentials.pin)
   const [loading, setLoading] = useState(false)
+
+  useFocusEffect(
+    useCallback(() => {
+      // Avoid weird iOS issue where input is focused then blurred right away
+      inputRef.current?.focus()
+    }, [])
+  )
 
   const decryptAndImportWallet = async () => {
     if (!qrCodeImportedEncryptedMnemonic) return
@@ -100,11 +110,18 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     setError('')
   }
 
+  const handleBlur = () => {
+    // And this as well is to avoid weird iOS issue where input is focused then blurred right away
+    // WTF.
+    inputRef.current?.focus()
+  }
+
   return (
     <ScrollScreen
       verticalGap
       usesKeyboard
       fill
+      keyboardShouldPersistTaps="always"
       headerOptions={{
         headerTitle: 'Password',
         type: 'stack',
@@ -112,15 +129,18 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       }}
     >
       <ScreenIntro subtitle="Enter your desktop wallet password to decrypt the secret recovery phrase." />
-      <ScreenSection verticallyCentered fill>
+      <ScreenSection fill>
         <Input
           label="Password"
           value={password}
           onChangeText={handleChangeText}
           secureTextEntry
-          autoFocus
           error={error}
-          style={{ width: '100%' }}
+          returnKeyType="done"
+          inputRef={inputRef}
+          onBlur={handleBlur}
+          blurOnSubmit={false}
+          onSubmitEditing={decryptAndImportWallet}
         />
       </ScreenSection>
       {!credentials.pin && <ConfirmWithAuthModal usePin onConfirm={setPin} />}

@@ -59,11 +59,11 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
   }
 
   return (
-    <ScrollScreen verticalGap fill headerOptions={{ headerTitle: 'Import', type: 'stack' }} {...props}>
+    <ScrollScreen fill headerOptions={{ headerTitle: 'Import', type: 'stack' }} {...props}>
       <ScreenSection fill>
-        <BoxSurfaceStyled border="primary">
-          <IconBox>
-            <Ionicons size={35} name="desktop" color="#56E0FE" />
+        <BoxSurfaceStyled border="primary" type="highlight">
+          <IconBox style={{ backgroundColor: 'rgba(61, 149, 190, 0.1)' }}>
+            <Ionicons size={35} name="desktop" color="rgb(86, 201, 254)" />
           </IconBox>
           <Title size={28} medium>
             Desktop wallet
@@ -75,9 +75,9 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
         </BoxSurfaceStyled>
       </ScreenSection>
       <ScreenSection fill>
-        <BoxSurfaceStyled border="primary">
-          <IconBox>
-            <Ionicons size={35} name="list-outline" color="#FF9315" />
+        <BoxSurfaceStyled border="primary" type="highlight">
+          <IconBox style={{ backgroundColor: 'rgba(185, 111, 26, 0.1)' }}>
+            <Ionicons size={35} name="list-outline" color="rgb(255, 147, 21)" />
           </IconBox>
           <Title size={28} medium>
             Secret recovery phrase

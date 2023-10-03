@@ -57,7 +57,9 @@ const LoginWithPinScreen = (props: LoginWithPinScreenProps) => {
   )
 
   return (
-    <Screen {...props}>{isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={handleSuccessfulLogin} />}</Screen>
+    <Screen contrastedBg {...props}>
+      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={handleSuccessfulLogin} />}
+    </Screen>
   )
 }
 

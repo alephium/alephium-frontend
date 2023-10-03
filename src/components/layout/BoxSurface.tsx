@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled, { css, DefaultTheme } from 'styled-components/native'
 
-import { BORDER_RADIUS } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
 interface BoxSurfaceProps {
   type?: keyof DefaultTheme['bg']
@@ -26,8 +26,8 @@ interface BoxSurfaceProps {
 }
 
 export default styled.View<BoxSurfaceProps>`
-  background-color: ${({ theme, type }) => theme.bg[type || 'secondary']};
-  border-radius: ${BORDER_RADIUS}px;
+  background-color: ${({ theme, type }) => theme.bg[type || 'primary']};
+  border-radius: ${BORDER_RADIUS_BIG}px;
   overflow: hidden;
 
   ${({ border, theme }) =>

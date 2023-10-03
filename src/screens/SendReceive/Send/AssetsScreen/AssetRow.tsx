@@ -118,7 +118,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
 
   const topRowAnimatedStyle = useAnimatedStyle(() => ({
     paddingLeft: withSpring(isSelected ? 11 : 0, fastSpringConfiguration),
-    backgroundColor: isSelected ? theme.bg.primary : 'transparent'
+    backgroundColor: isSelected ? theme.bg.highlight : 'transparent'
   }))
 
   const bottomRowAnimatedStyle = useAnimatedStyle(() => ({

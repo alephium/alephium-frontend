@@ -25,6 +25,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
+import { Platform } from 'react-native'
 
 import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
 import { AddressMetadata, AddressPartial } from '~/types/addresses'
@@ -112,6 +113,11 @@ const generateWalletMetadata = (name: string, isMnemonicBackedUp = false) => ({
 export const enableBiometrics = async (mnemonic: Mnemonic) => {
   console.log('💽 Storing biometrics wallet')
   await SecureStore.setItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, mnemonic, defaultBiometricsConfig)
+
+  if (Platform.OS === 'ios') {
+    // Ensure we can actually get the secured mnemonic and force to show prompt
+    await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
+  }
 }
 
 export const disableBiometrics = async () => {

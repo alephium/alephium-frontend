@@ -57,7 +57,7 @@ const AssetStyled = styled.View`
   flex-direction: row;
   gap: 5px;
   padding: 3px 7px 3px 3px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.tertiary};
   border-radius: 24px;
   align-items: center;
 `

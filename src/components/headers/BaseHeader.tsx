@@ -42,9 +42,11 @@ export type HeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'h
 
 export interface BaseHeaderProps extends ViewProps {
   headerBottom?: () => ReactNode
+  headerTitleRight?: () => ReactNode
   headerRef?: RefObject<Animated.View>
   options: HeaderOptions
   showCompactComponents?: boolean
+  showBorderBottom?: boolean
   goBack?: () => void
   scrollY?: SharedValue<number>
 }
@@ -58,7 +60,9 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle },
   headerBottom,
+  headerTitleRight,
   showCompactComponents,
+  showBorderBottom,
   headerRef,
   scrollY,
   ...props
@@ -67,7 +71,7 @@ const BaseHeader = ({
   const insets = useSafeAreaInsets()
   const { activeScreenRef } = useNavigationScrollContext()
 
-  const borderColorRange = ['transparent', theme.border.secondary]
+  const borderColorRange = [showBorderBottom ? theme.border.secondary : 'transparent', theme.border.secondary]
 
   const hasCompactHeader = showCompactComponents !== undefined || headerTitle
   const paddingTop = Platform.OS === 'android' ? insets.top + 10 : insets.top
@@ -76,6 +80,7 @@ const BaseHeader = ({
   const HeaderLeft = headerLeft && headerLeft({})
   const HeaderBottom = headerBottom && headerBottom()
   const HeaderTitle = headerTitle && (typeof headerTitle === 'string' ? headerTitle : headerTitle.arguments['children'])
+  const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
   const titleAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader || headerTitle
@@ -110,6 +115,14 @@ const BaseHeader = ({
   const bottomBorderColor = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
   }))
+
+  const bottomBorderPosition = useAnimatedStyle(() =>
+    showBorderBottom
+      ? {
+          transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }]
+        }
+      : {}
+  )
 
   const expandedContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
@@ -157,12 +170,17 @@ const BaseHeader = ({
                       <ScaledDownHeaderComponentLeft>{HeaderLeft}</ScaledDownHeaderComponentLeft>
                       <CompactHeaderTitle>
                         <CompactTitle>{HeaderTitle}</CompactTitle>
+                        {HeaderTitleRight}
                       </CompactHeaderTitle>
                       <ScaledDownHeaderComponentRight>{HeaderRight}</ScaledDownHeaderComponentRight>
                     </>
                   )}
                 </CompactContent>
-              )) || <CompactTitle>{HeaderTitle}</CompactTitle>}
+              )) || (
+                <CompactHeaderTitle>
+                  <CompactTitle>{HeaderTitle}</CompactTitle>
+                </CompactHeaderTitle>
+              )}
               <BottomBorder style={bottomBorderColor} />
             </ActionAreaBlurred>
           </CompactHeaderContainer>
@@ -177,6 +195,7 @@ const BaseHeader = ({
               {headerTitle && (
                 <TitleArea style={titleAnimatedStyle}>
                   <Title>{HeaderTitle}</Title>
+                  {HeaderTitleRight}
                 </TitleArea>
               )}
             </>
@@ -188,7 +207,7 @@ const BaseHeader = ({
             </ActionArea>
           )}
           {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
-          <BottomBorder style={bottomBorderColor} />
+          <BottomBorder style={[bottomBorderColor, bottomBorderPosition]} />
         </ExpandedHeaderContainer>
       </Pressable>
     </BaseHeaderStyled>
@@ -225,6 +244,9 @@ const ActionAreaBlurred = styled(AnimatedBlurView)`
 const TitleArea = styled(Animated.View)`
   padding: 10px ${DEFAULT_MARGIN}px;
   align-self: flex-start;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
 `
 
 const Title = styled(AppText)`
@@ -235,7 +257,7 @@ const Title = styled(AppText)`
 `
 
 const CompactTitle = styled(AppText)`
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   text-align: center;
 `
@@ -284,4 +306,8 @@ const ScaledDownHeaderComponentLeft = styled(ScaledDownHeaderComponent)`
 const CompactHeaderTitle = styled.View`
   flex: 1;
   align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  transform: scale(0.85);
+  gap: 10px;
 `

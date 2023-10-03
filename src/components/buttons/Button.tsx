@@ -20,18 +20,27 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated'
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring
+} from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export interface ButtonProps extends PressableProps {
   title?: string
   type?: 'primary' | 'secondary' | 'transparent' | 'tint'
-  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight'
+  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight' | 'highlightedIcon'
   style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
+  short?: boolean
   centered?: boolean
   iconProps?: ComponentProps<typeof Ionicons>
   color?: string
@@ -42,6 +51,7 @@ export interface ButtonProps extends PressableProps {
   animated?: boolean
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 const AnimatedAppText = Animated.createAnimatedComponent(AppText)
 const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons)
 
@@ -54,6 +64,7 @@ const Button = ({
   iconProps,
   children,
   round,
+  short,
   color,
   centered,
   compact,
@@ -64,6 +75,7 @@ const Button = ({
   const theme = useTheme()
 
   const hasOnlyIcon = !!iconProps && !title && !children
+  const pressed = useSharedValue(false)
 
   const bg = {
     default: theme.button.primary,
@@ -72,7 +84,8 @@ const Button = ({
     valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
     transparent: 'transparent',
-    highlight: theme.global.accent
+    highlight: theme.global.accent,
+    highlightedIcon: theme.button.primary
   }[variant]
 
   const font =
@@ -83,25 +96,16 @@ const Button = ({
       accent: theme.global.accent,
       valid: theme.global.valid,
       alert: theme.global.alert,
-      highlight: 'white'
+      highlight: 'white',
+      highlightedIcon: theme.font.primary
     }[variant]
 
-  const buttonContainerStyle: PressableProps['style'] = {
-    width: round ? (compact ? 30 : 43) : props.wide ? '75%' : hasOnlyIcon ? 43 : 'auto',
-    height: compact ? 30 : hasOnlyIcon ? 43 : 55,
-    backgroundColor: {
-      primary: bg,
-      secondary: bg,
-      transparent: 'transparent',
-      tint: color ? colord(color).alpha(0.05).toHex() : ''
-    }[type],
-    borderRadius: round || compact ? 100 : BORDER_RADIUS,
-    flex: flex ? 1 : 0
-  }
+  const buttonAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: withSpring(pressed.value ? 0.7 : disabled ? 0.7 : 1, fastestSpringConfiguration)
+  }))
 
-  const buttonStyle: PressableProps['style'] = ({ pressed }) => [
+  const buttonStyle: PressableProps['style'] = [
     {
-      opacity: pressed || disabled ? 0.5 : 1,
       borderWidth: {
         primary: 0,
         secondary: 0,
@@ -114,7 +118,8 @@ const Button = ({
         transparent: undefined,
         tint: undefined
       }[type],
-      height: animated ? '100%' : undefined,
+      height: short ? 45 : compact ? 30 : hasOnlyIcon ? 40 : 55,
+      width: round ? (compact ? 30 : 40) : props.wide ? '75%' : hasOnlyIcon ? 40 : 'auto',
       justifyContent: round ? 'center' : undefined,
       alignItems: round ? 'center' : undefined,
       gap: compact ? 5 : 10,
@@ -122,17 +127,30 @@ const Button = ({
       marginVertical: centered ? 0 : undefined,
       marginHorizontal: centered ? 'auto' : undefined,
       paddingVertical: round ? 0 : compact ? 5 : !hasOnlyIcon ? 0 : undefined,
-      paddingHorizontal: round ? 0 : compact ? 10 : !hasOnlyIcon ? 25 : undefined
+      paddingHorizontal: round ? 0 : compact ? 10 : !hasOnlyIcon ? 25 : undefined,
+      borderRadius: round || compact ? 100 : BORDER_RADIUS,
+      backgroundColor: {
+        primary: bg,
+        secondary: bg,
+        transparent: 'transparent',
+        tint: color ? colord(color).alpha(0.1).toHex() : ''
+      }[type],
+      flex: flex ? 1 : 0
     },
-    animated ? {} : buttonContainerStyle,
     style
   ]
 
   if (!iconProps && !title && !children)
     throw new Error('At least one of the following properties is required: icon, title, or children')
 
-  const button = (
-    <Pressable style={buttonStyle} disabled={disabled} {...props}>
+  return (
+    <AnimatedPressable
+      style={[buttonAnimatedStyle, buttonStyle]}
+      disabled={disabled}
+      onPressIn={() => (pressed.value = true)}
+      onPressOut={() => (pressed.value = false)}
+      {...props}
+    >
       {title && (
         <AnimatedAppText
           style={{ flexGrow: 1, color: font, textAlign: 'center' }}
@@ -146,22 +164,22 @@ const Button = ({
       )}
       {children}
       {iconProps && (
-        <AnimatedIonicons
-          layout={LinearTransition}
-          color={font}
-          size={compact ? 18 : hasOnlyIcon ? 22 : 20}
-          {...iconProps}
-        />
+        <IconContainer
+          style={
+            variant === 'highlightedIcon'
+              ? { backgroundColor: theme.global.accent, borderRadius: 100, padding: 6, margin: 6, overflow: 'hidden' }
+              : undefined
+          }
+        >
+          <AnimatedIonicons
+            layout={LinearTransition}
+            color={variant === 'highlightedIcon' ? 'white' : font}
+            size={compact ? 18 : hasOnlyIcon ? 22 : 20}
+            {...iconProps}
+          />
+        </IconContainer>
       )}
-    </Pressable>
-  )
-
-  return animated ? (
-    <Animated.View layout={LinearTransition} style={[buttonContainerStyle]}>
-      {button}
-    </Animated.View>
-  ) : (
-    button
+    </AnimatedPressable>
   )
 }
 
@@ -176,11 +194,20 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
     <Button
       onPress={props.onPress}
       iconProps={{ name: 'arrow-forward-outline' }}
-      round
       type="primary"
-      variant="accent"
-      style={[style, !props.disabled ? { backgroundColor: theme.global.accent } : undefined]}
+      style={[
+        style,
+        { height: 40, flexDirection: 'row', alignItems: 'center', gap: 10 },
+        !props.disabled
+          ? {
+              backgroundColor: theme.global.accent
+            }
+          : undefined
+      ]}
       color={!props.disabled ? 'white' : color}
+      title={props.title || !props.disabled ? 'Next' : undefined}
+      compact
+      animated
       {...props}
     />
   )
@@ -196,3 +223,5 @@ export default styled(Button)`
   overflow: hidden;
   flex-direction: row;
 `
+
+const IconContainer = styled.View``

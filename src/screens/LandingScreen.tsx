@@ -16,9 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useEffect } from 'react'
-import styled, { useTheme } from 'styled-components/native'
+import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
+import { DeviceMotion } from 'expo-sensors'
+import { useCallback, useEffect } from 'react'
+import { useWindowDimensions } from 'react-native'
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue
+} from 'react-native-reanimated'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -33,7 +44,35 @@ interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'Landi
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
-  const theme = useTheme()
+  const dimensions = useWindowDimensions()
+
+  const yAxisRotation = useSharedValue(0)
+  const zAxisRotation = useSharedValue(0)
+
+  const gradientStart = useDerivedValue(() =>
+    interpolate(yAxisRotation.value + zAxisRotation.value, [1, 3], [0, 160], Extrapolation.CLAMP)
+  )
+
+  const gradientEnd = useDerivedValue(() =>
+    interpolate(yAxisRotation.value + zAxisRotation.value, [-1, 2], [50, 290], Extrapolation.CLAMP)
+  )
+
+  const logoRotation = useDerivedValue(() => -yAxisRotation.value * 10)
+
+  const logoStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${logoRotation.value}deg` }]
+  }))
+
+  useFocusEffect(
+    useCallback(() => {
+      const motionsListener = DeviceMotion.addListener((motionData) => {
+        yAxisRotation.value = motionData.rotation.gamma
+        zAxisRotation.value = motionData.rotation.beta
+      })
+
+      return () => motionsListener.remove()
+    }, [yAxisRotation, zAxisRotation])
+  )
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
@@ -48,9 +87,19 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }, [navigation])
 
   return (
-    <Screen {...props}>
-      <LogoContainer>
-        <AlephiumLogoStyled color={theme.bg.contrast} />
+    <Screen contrastedBg {...props}>
+      <CanvasStyled>
+        <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
+          <SweepGradient
+            c={vec(dimensions.width / 2, dimensions.height / 3.5)}
+            start={gradientStart}
+            end={gradientEnd}
+            colors={['#ffffff', '#FF4385', '#61A1F6', '#FF7D26', '#FF4385', '#ffffff']}
+          />
+        </Rect>
+      </CanvasStyled>
+      <LogoContainer style={logoStyle}>
+        <AlephiumLogoStyled color="black" />
       </LogoContainer>
       <TitleContainer>
         <TitleFirstLine>Welcome to the official</TitleFirstLine>
@@ -58,8 +107,19 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
       </TitleContainer>
       <ActionsContainer>
         <ButtonStack>
-          <Button title="New wallet" type="primary" variant="contrast" onPress={() => handleButtonPress('create')} />
-          <Button title="Import wallet" onPress={() => handleButtonPress('import')} />
+          <Button
+            title="New wallet"
+            type="primary"
+            onPress={() => handleButtonPress('create')}
+            variant="contrast"
+            iconProps={{ name: 'flower-outline' }}
+          />
+          <Button
+            title="Import wallet"
+            onPress={() => handleButtonPress('import')}
+            variant="contrast"
+            iconProps={{ name: 'download-outline' }}
+          />
         </ButtonStack>
       </ActionsContainer>
     </Screen>
@@ -68,7 +128,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
 export default LandingScreen
 
-const LogoContainer = styled.View`
+const LogoContainer = styled(Animated.View)`
   flex: 1.5;
   margin-top: 100px;
   justify-content: center;
@@ -76,8 +136,7 @@ const LogoContainer = styled.View`
 `
 
 export const AlephiumLogoStyled = styled(AlephiumLogo)`
-  width: 14%;
-  min-width: 40px;
+  width: 20%;
 `
 
 const TitleContainer = styled.View`
@@ -87,18 +146,26 @@ const TitleContainer = styled.View`
 `
 
 const TitleFirstLine = styled(AppText)`
-  font-size: 18px;
-  color: ${({ theme }) => theme.font.secondary};
+  font-size: 20px;
+  color: black;
 `
 
 const TitleSecondLine = styled(AppText)`
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
-  color: ${({ theme }) => theme.font.primary};
+  color: black;
 `
 
 const ActionsContainer = styled.View`
   flex: 1.5;
   justify-content: center;
   align-items: center;
+`
+
+const CanvasStyled = styled(Canvas)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
 `

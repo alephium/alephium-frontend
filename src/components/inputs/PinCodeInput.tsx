@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { memo, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import Animated from 'react-native-reanimated'
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
-import { PopIn, PopOut } from '~/animations/reanimated/reanimatedAnimations'
+import { PopInFast, PopOutFast } from '~/animations/reanimated/reanimatedAnimations'
 import NumberKeyboard, { NumberKeyboardKey } from '~/components/keyboard/NumberKeyboard'
 
 interface PinInputProps {
@@ -31,37 +31,59 @@ interface PinInputProps {
 }
 
 interface SlotProps {
-  number?: string
+  value?: string
 }
 
 const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
   const [pin, setPin] = useState('')
+  const pinTranslation = useSharedValue(0)
+  const pinOpacity = useSharedValue(1)
 
-  const renderSlots = () => [...new Array(pinLength)].map((_, i) => <Slot key={i} number={pin[i]} />)
+  const animatedSlotsStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: pinTranslation.value }],
+    opacity: pinOpacity.value
+  }))
+
+  const renderSlots = () => [...new Array(pinLength)].map((_, i) => <Slot key={i} value={pin[i]} />)
 
   const handleKeyboardPress = async (key: NumberKeyboardKey) => {
     const newPin = key === 'delete' ? pin.slice(0, -1) : pin.length < pinLength ? pin + key : pin
     setPin(newPin)
 
     if (newPin.length === pinLength) {
-      const shouldClearPin = await onPinEntered(newPin)
+      // Intermediate animation to give time to understand what's going on
+      const onPinEnteredCallback = async () => {
+        const shouldClearPin = await onPinEntered(newPin)
+        if (shouldClearPin) {
+          setPin('')
+        }
+      }
 
-      if (shouldClearPin) setPin('')
+      pinOpacity.value = withSequence(
+        withTiming(0, { duration: 150 }),
+        withTiming(1, { duration: 150 }, () => {
+          runOnJS(onPinEnteredCallback)()
+        })
+      )
     }
   }
 
   return (
-    <PinCodeInputStyled style={style}>
-      <Slots>{renderSlots()}</Slots>
+    <PinCodeInputStyled>
+      <Slots style={animatedSlotsStyle}>{renderSlots()}</Slots>
       <NumberKeyboard onPress={handleKeyboardPress} />
     </PinCodeInputStyled>
   )
 }
 
-const Slot = memo(function Slot({ number }: SlotProps) {
+const Slot = memo(function Slot({ value }: SlotProps) {
   return (
     <SlotContainer>
-      {number ? <FilledSlot entering={PopIn} exiting={PopOut} /> : <EmptySlot entering={PopIn} exiting={PopOut} />}
+      {value ? (
+        <FilledSlot entering={PopInFast} exiting={PopOutFast} />
+      ) : (
+        <EmptySlot entering={PopInFast} exiting={PopOutFast} />
+      )}
     </SlotContainer>
   )
 })
@@ -70,10 +92,10 @@ export default PinCodeInput
 
 const PinCodeInputStyled = styled.View`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.back2};
+  background-color: ${({ theme }) => (theme.name === 'dark' ? theme.bg.back2 : theme.bg.highlight)};
 `
 
-const Slots = styled.View`
+const Slots = styled(Animated.View)`
   flex: 1;
   flex-direction: row;
   align-items: center;

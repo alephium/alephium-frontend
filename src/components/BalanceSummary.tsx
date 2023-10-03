@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/sdk'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useState } from 'react'
@@ -25,9 +26,11 @@ import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import HistoricWorthChart from '~/components/HistoricWorthChart'
 import { useAppSelector } from '~/hooks/redux'
 import useWorthDeltaPercentage from '~/hooks/useWorthDeltaPercentage'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -49,6 +52,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
     skip: totalBalance === BigInt(0)
   })
   const theme = useTheme()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
   const deltaPercentage = useWorthDeltaPercentage(worthInBeginningOfChart)
@@ -74,26 +78,38 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
     >
       <GradientContainer colors={['transparent', colord(deltaColor).alpha(0.03).toHex()]} locations={[0, 0.6]}>
         <TextContainer>
-          <SurfaceHeader>
+          <ActiveNetworkContainer>
+            <NetworkStatusBullet status={networkStatus} />
+            <AppText color="primary">{networkName}</AppText>
+          </ActiveNetworkContainer>
+          <DateLabelContainer>
             <AppText color="tertiary" semiBold>
               {dateLabel}
             </AppText>
-            <ActiveNetwork>
-              <NetworkStatusBullet status={networkStatus} />
-              <AppText color="primary">{networkName}</AppText>
-            </ActiveNetwork>
-          </SurfaceHeader>
+          </DateLabelContainer>
 
           <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
         </TextContainer>
 
-        <ChartContainer>
-          <HistoricWorthChart
-            currency={currency}
-            latestWorth={totalAmountWorth}
-            onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-          />
-        </ChartContainer>
+        {totalBalance === BigInt(0) ? (
+          <ReceiveFundsButtonContainer>
+            <Button
+              title="Receive assets"
+              onPress={() => navigation.navigate('ReceiveNavigation')}
+              iconProps={{ name: 'arrow-down-outline' }}
+              variant="highlight"
+              short
+            />
+          </ReceiveFundsButtonContainer>
+        ) : (
+          <ChartContainer>
+            <HistoricWorthChart
+              currency={currency}
+              latestWorth={totalAmountWorth}
+              onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
+            />
+          </ChartContainer>
+        )}
       </GradientContainer>
     </BalanceSummaryContainer>
   )
@@ -123,27 +139,27 @@ const ChartContainer = styled.View`
   margin-left: -1px;
 `
 
-const SurfaceHeader = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-top: 15px;
-  margin-bottom: 10px;
-`
-
-const ActiveNetwork = styled.View`
-  position: absolute;
-  right: 0px;
-  top: -10px;
+const ActiveNetworkContainer = styled.View`
+  align-self: flex-end;
+  margin-right: -8px;
+  margin-top: 3px;
   flex-direction: row;
   align-items: center;
   gap: 5px;
   border-radius: 33px;
+  padding: 1px 7px;
+  background-color: ${({ theme }) => theme.bg.tertiary};
 `
+
+const DateLabelContainer = styled.View``
 
 const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
   height: 7px;
   width: 7px;
   border-radius: 10px;
   background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
+`
+
+const ReceiveFundsButtonContainer = styled.View`
+  padding: 15px;
 `

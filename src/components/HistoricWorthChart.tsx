@@ -54,7 +54,7 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
-const chartHeight = 70
+const chartHeight = 95
 const chartIntervalsRowHeight = 30
 
 const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartChange, style }: HistoricWorthChart) => {
@@ -104,7 +104,7 @@ const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartCh
 
   return (
     <Animated.View style={[style, animatedStyle]}>
-      <Row>
+      <Row style={{ marginBottom: 15 }}>
         {haveHistoricBalancesLoaded && (
           <DeltaAndChartLengths entering={FadeIn}>
             <DeltaPercentage percentage={deltaPercentage} />

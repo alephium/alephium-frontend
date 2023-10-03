@@ -91,7 +91,11 @@ const RootStackNavigation = () => {
                   <RootStack.Group
                     screenOptions={{ header: (props) => <NavigationStackHeader {...props} />, headerTransparent: true }}
                   >
-                    <RootStack.Screen name="LandingScreen" component={LandingScreen} />
+                    <RootStack.Screen
+                      name="LandingScreen"
+                      component={LandingScreen}
+                      options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
+                    />
                     <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
                   </RootStack.Group>
                   <RootStack.Group screenOptions={{ headerTransparent: true }}>

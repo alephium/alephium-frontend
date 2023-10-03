@@ -16,37 +16,48 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { memo } from 'react'
+import { Canvas, Circle, SweepGradient, vec } from '@shopify/react-native-skia'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
-import { useAppSelector } from '~/hooks/redux'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
 interface WalletSwitchButtonProps {
+  isLoading: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
-  const walletName = useAppSelector((s) => s.wallet.name)
+const buttonSize = 40
 
+const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
+  const Gradient = (
+    <SweepGradient c={vec(buttonSize / 2, buttonSize / 2)} colors={['#FF4385', '#61A1F6', '#FF7D26', '#FF4385']} />
+  )
   return (
-    <Button style={style} variant="contrast">
-      <AppText color="contrast" semiBold size={12} numberOfLines={1}>
-        {walletName.slice(0, 2).toUpperCase()}
-      </AppText>
-    </Button>
+    <Container style={style}>
+      <AlephiumLogo color="white" />
+      <BackgroundCanvas style={{ height: 40, width: 40 }}>
+        <Circle cx={buttonSize / 2} cy={buttonSize / 2} r={buttonSize / 2}>
+          {Gradient}
+        </Circle>
+      </BackgroundCanvas>
+    </Container>
   )
 }
 
-export default memo(styled(WalletSwitchButton)`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0 8px;
-  height: 40px;
-  width: 40px;
-  border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 40px;
-`)
+export default WalletSwitchButton
+
+const Container = styled.View`
+  padding: 7px;
+  height: ${buttonSize}px;
+  width: ${buttonSize}px;
+  border-radius: ${buttonSize}px;
+  background-color: ${({ theme }) => theme.bg.contrast};
+`
+
+const BackgroundCanvas = styled(Canvas)`
+  position: absolute;
+  height: ${buttonSize}px;
+  width: ${buttonSize}px;
+  z-index: -1;
+`

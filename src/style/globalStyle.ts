@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 // ALL VALUES IN PIXELS
 
 export const BORDER_RADIUS_BIG = 16
-export const BORDER_RADIUS = 9
+export const BORDER_RADIUS = 10
 export const BORDER_RADIUS_SMALL = 6
 
 export const INPUTS_HEIGHT = 60
