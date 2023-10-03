@@ -110,8 +110,8 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
         <AlephiumLogoStyled color="black" />
       </LogoContainer>
       <TitleContainer>
-        <TitleFirstLine>Welcome to the official</TitleFirstLine>
-        <TitleSecondLine>Alephium Wallet</TitleSecondLine>
+        <TitleFirstLine>Welcome to</TitleFirstLine>
+        <TitleSecondLine>Alephium</TitleSecondLine>
       </TitleContainer>
       <ActionsContainer>
         <ButtonStack>
@@ -159,7 +159,7 @@ const TitleFirstLine = styled(AppText)`
 `
 
 const TitleSecondLine = styled(AppText)`
-  font-size: 20px;
+  font-size: 26px;
   font-weight: bold;
   color: black;
 `
