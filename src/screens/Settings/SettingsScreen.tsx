@@ -70,8 +70,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
-  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
+  const [isAuthenticationModalVisible, setIsAuthenticationModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
+  const [authCallback, setAuthCallback] = useState<() => void>(() => null)
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
@@ -138,6 +139,15 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
+  const handleAuthRequimementToggle = () => {
+    if (requireAuth) {
+      setAuthCallback(() => () => toggleAuthRequirement())
+      setIsAuthenticationModalOpen(true)
+    } else {
+      toggleAuthRequirement()
+    }
+  }
+
   return (
     <>
       <ScrollScreenStyled verticalGap headerOptions={{ headerTitle: 'Settings', type: 'stack' }} {...props}>
@@ -148,7 +158,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
             </Row>
             <Row title="Require authentication" subtitle="For important actions">
-              <Toggle value={requireAuth} onValueChange={toggleAuthRequirement} />
+              <Toggle value={requireAuth} onValueChange={handleAuthRequimementToggle} />
             </Row>
             <Row title="Use dark theme" subtitle="Try it, it's nice">
               <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
@@ -197,7 +207,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ButtonStyled
             title="View secret recovery phrase"
             iconProps={{ name: 'key' }}
-            onPress={() => setIsAuthenticationModalVisible(true)}
+            onPress={() => {
+              setAuthCallback(() => () => setIsMnemonicModalVisible(true))
+              setIsAuthenticationModalOpen(true)
+            }}
           />
           <ButtonStyled
             title="Delete wallet"
@@ -211,10 +224,11 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       {isAuthenticationModalVisible && (
         <ConfirmWithAuthModal
           onConfirm={() => {
-            setIsAuthenticationModalVisible(false)
-            setIsMnemonicModalVisible(true)
+            setIsAuthenticationModalOpen(false)
+            authCallback()
+            setAuthCallback(() => () => null)
           }}
-          onClose={() => setIsAuthenticationModalVisible(false)}
+          onClose={() => setIsAuthenticationModalOpen(false)}
         />
       )}
 
