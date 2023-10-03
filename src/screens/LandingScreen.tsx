@@ -29,7 +29,7 @@ import Animated, {
   useDerivedValue,
   useSharedValue
 } from 'react-native-reanimated'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -44,6 +44,10 @@ interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'Landi
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
+
+  const mainbgColor = theme.name === 'light' ? '#fff' : '#000'
+  const logoColor = theme.name === 'dark' ? '#fff' : '#000'
 
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
@@ -102,12 +106,12 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
             c={vec(dimensions.width / 2, dimensions.height / 3.5)}
             start={gradientStart}
             end={gradientEnd}
-            colors={['#ffffff', '#FF4385', '#61A1F6', '#FF7D26', '#FF4385', '#ffffff']}
+            colors={[mainbgColor, '#FF4385', '#61A1F6', '#FF7D26', '#FF4385', mainbgColor]}
           />
         </Rect>
       </CanvasStyled>
       <LogoContainer style={logoStyle}>
-        <AlephiumLogoStyled color="black" />
+        <AlephiumLogoStyled color={logoColor} />
       </LogoContainer>
       <TitleContainer>
         <TitleFirstLine>Welcome to</TitleFirstLine>
