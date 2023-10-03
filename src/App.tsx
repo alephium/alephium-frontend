@@ -227,7 +227,8 @@ const Main = ({ children, ...props }: ViewProps) => {
       // TODO: Revisit error handling with proper error codes
     } catch (e: unknown) {
       const error = e as { message?: string }
-      if (error.message?.includes('User canceled the authentication')) {
+
+      if (error.message?.includes('User canceled')) {
         Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
           { text: 'Try again', onPress: unlockApp }
         ])

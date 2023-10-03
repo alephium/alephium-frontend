@@ -70,9 +70,16 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
         setEncryptedWallet(storedWallet)
       }
     } catch (e: unknown) {
-      Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
+      const error = e as { message?: string }
+
+      if (!error.message?.includes('User canceled')) {
+        console.error(e)
+        Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
+      }
+
+      onClose && onClose()
     }
-  }, [onConfirm, usePin])
+  }, [onClose, onConfirm, usePin])
 
   const decryptMnemonic = async (pin: string): Promise<ShouldClearPin> => {
     if (!pin || !encryptedWallet) return false
