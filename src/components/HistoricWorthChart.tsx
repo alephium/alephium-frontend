@@ -103,7 +103,7 @@ const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartCh
         }))
       : undefined
 
-  if (!data || data.length < 2) return null
+  if (!data || data.length < 2 || (data.length === 2 && data[0].x === data[1].x)) return null
 
   return (
     <Animated.View style={[style, animatedStyle]}>
