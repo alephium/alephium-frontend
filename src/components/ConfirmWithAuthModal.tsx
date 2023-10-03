@@ -61,7 +61,7 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
   const getWallet = useCallback(async () => {
     try {
       const storedWallet = await getStoredWallet(usePin)
-      const usesBiometrics = await loadBiometricsSettings()
+      const usesBiometrics = usePin ? false : await loadBiometricsSettings()
 
       if (usesBiometrics) {
         onConfirm()
@@ -87,6 +87,7 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
     try {
       const decryptedWallet = await walletOpenAsyncUnsafe(pin, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
       onConfirm(pin, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
+      onClose && onClose()
       setShouldHideModal(true)
 
       return false

@@ -172,7 +172,9 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           )}
         </SecretPhraseContainer>
 
-        {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={importWallet} />}
+        {isPinModalVisible && (
+          <ConfirmWithAuthModal usePin onConfirm={importWallet} onClose={() => setIsPinModalVisible(false)} />
+        )}
         {loading && <SpinnerModal isActive={loading} text="Importing wallet..." />}
       </ScrollScreenStyled>
 
