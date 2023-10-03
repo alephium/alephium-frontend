@@ -22,10 +22,15 @@
   "submit": {
     "preview": {
       "android": {
-        "track": "alpha"
+        "track": "internal",
+        "releaseStatus": "draft",
+        "serviceAccountKeyPath": "keys/pc-api-9048873233656925435-296-b7675cb8d0ff.json"
       },
       "ios": {}
     },
-    "production": {}
+    "production": {
+      "android": {},
+      "ios": {}
+    }
   }
 }
