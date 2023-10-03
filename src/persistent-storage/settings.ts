@@ -41,7 +41,7 @@ export const networkPresetSettings: Record<NetworkPreset, NetworkSettings> = {
   }
 }
 
-export const defaultNetwork = NetworkName.testnet
+export const defaultNetwork = NetworkName.mainnet
 
 export const defaultGeneralSettings: GeneralSettings = {
   theme: Appearance.getColorScheme() === 'dark' ? 'dark' : 'light',
