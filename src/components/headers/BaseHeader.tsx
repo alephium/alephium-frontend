@@ -71,10 +71,11 @@ const BaseHeader = ({
   const insets = useSafeAreaInsets()
   const { activeScreenRef } = useNavigationScrollContext()
 
+  const isIos = Platform.OS === 'ios'
   const borderColorRange = [showBorderBottom ? theme.border.secondary : 'transparent', theme.border.secondary]
 
   const hasCompactHeader = showCompactComponents !== undefined || headerTitle
-  const paddingTop = Platform.OS === 'android' ? insets.top + 10 : insets.top
+  const paddingTop = isIos ? insets.top : insets.top + 10
 
   const HeaderRight = headerRight && headerRight({})
   const HeaderLeft = headerLeft && headerLeft({})
@@ -85,12 +86,14 @@ const BaseHeader = ({
   const titleAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader || headerTitle
       ? {
-          transform: [
-            { translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) },
-            { translateX: interpolate(scrollY?.value || 0, [0, -100], [0, 3], Extrapolate.CLAMP) },
-            { scale: interpolate(scrollY?.value || 0, [0, -100], [1, 1.05], Extrapolate.CLAMP) }
-          ],
-          opacity: interpolate(scrollY?.value || 0, [0, 70], [1, 0], Extrapolate.CLAMP)
+          transform: isIos
+            ? [
+                { translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) },
+                { translateX: interpolate(scrollY?.value || 0, [0, -100], [0, 3], Extrapolate.CLAMP) },
+                { scale: interpolate(scrollY?.value || 0, [0, -100], [1, 1.05], Extrapolate.CLAMP) }
+              ]
+            : undefined,
+          opacity: interpolate(scrollY?.value || 0, [0, 40], [1, 0], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -105,7 +108,7 @@ const BaseHeader = ({
   )
 
   const animatedBlurViewProps = useAnimatedProps(() =>
-    Platform.OS === 'ios'
+    isIos
       ? {
           intensity: interpolate(scrollY?.value || 0, defaultScrollRange, [0, 80], Extrapolate.CLAMP)
         }
@@ -119,7 +122,10 @@ const BaseHeader = ({
   const bottomBorderPosition = useAnimatedStyle(() =>
     showBorderBottom
       ? {
-          transform: [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }]
+          transform: isIos
+            ? [{ translateY: interpolate(scrollY?.value || 0, [0, 70], [0, -50], Extrapolate.CLAMP) }]
+            : undefined,
+          opacity: isIos ? undefined : interpolate(scrollY?.value || 0, [0, 20], [1, 0], Extrapolate.CLAMP)
         }
       : {}
   )
@@ -127,9 +133,9 @@ const BaseHeader = ({
   const expandedContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
       ? {
-          transform: [
-            { translateY: interpolate(scrollY?.value || 0, [20, scrollEndThreshold], [0, -15], Extrapolate.CLAMP) }
-          ],
+          transform: isIos
+            ? [{ translateY: interpolate(scrollY?.value || 0, [20, scrollEndThreshold], [0, -15], Extrapolate.CLAMP) }]
+            : undefined,
           opacity: interpolate(scrollY?.value || 0, [20, scrollEndThreshold], [1, 0], Extrapolate.CLAMP),
           zIndex: (scrollY?.value || 0) > scrollEndThreshold - 10 ? -1 : 0
         }
@@ -139,8 +145,8 @@ const BaseHeader = ({
   const compactContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
       ? {
-          opacity: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [0, 1], Extrapolate.CLAMP),
-          height: interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [110, 95], Extrapolate.CLAMP)
+          opacity: interpolate(scrollY?.value || 0, [40, scrollEndThreshold], [0, 1], Extrapolate.CLAMP),
+          height: isIos ? interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [110, 95], Extrapolate.CLAMP) : 95
         }
       : {}
   )
@@ -182,7 +188,7 @@ const BaseHeader = ({
       <Pressable onPress={handleCompactHeaderPress}>
         {hasCompactHeader && (
           <CompactHeaderContainer style={compactContentAnimatedStyle}>
-            {Platform.OS === 'ios' ? (
+            {isIos ? (
               <ActionAreaBlurred
                 style={{ paddingTop, justifyContent: 'center', height: '100%' }}
                 animatedProps={animatedBlurViewProps}
@@ -221,7 +227,7 @@ const BaseHeader = ({
             </ActionArea>
           )}
           {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
-          <BottomBorder style={[bottomBorderColor, bottomBorderPosition]} />
+          {showBorderBottom && <BottomBorder style={[bottomBorderColor, bottomBorderPosition]} />}
         </ExpandedHeaderContainer>
       </Pressable>
     </BaseHeaderStyled>
