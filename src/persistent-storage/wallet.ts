@@ -117,7 +117,7 @@ export const enableBiometrics = async (mnemonic: Mnemonic) => {
 }
 
 export const disableBiometrics = async () => {
-  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY)
+  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
 }
 
 export const getWalletMetadata = async (): Promise<WalletMetadata> => {
@@ -148,8 +148,8 @@ export const getStoredWallet = async (usePin?: boolean): Promise<WalletState | n
 export const deleteWallet = async () => {
   console.log('🗑️ Deleting pin-encrypted & biometrics wallet')
 
-  await SecureStore.deleteItemAsync(PIN_WALLET_STORAGE_KEY)
-  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY)
+  await SecureStore.deleteItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
+  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
   await AsyncStorage.removeItem(WALLET_METADATA_STORAGE_KEY)
   await storeBiometricsSettings(false)
 }
