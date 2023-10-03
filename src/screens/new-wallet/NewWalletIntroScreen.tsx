@@ -34,11 +34,13 @@ interface NewWalletIntroScreenProps extends StackScreenProps<RootStackParamList,
 const instructionsCreate: Instruction[] = [
   { text: 'You are about to create a wallet 🎉', type: 'primary' },
   { text: 'Your gateway to the Alephium ecosystem', type: 'secondary' },
+  // TODO: Put correct link
   { text: 'More info', type: 'link', url: 'https://docs.alephium.org/Frequently-Asked-Questions.html' }
 ]
 const instructionsImport: Instruction[] = [
   { text: 'You are about to import a wallet 🎉', type: 'primary' },
   { text: 'Get your secret phrase ready!', type: 'secondary' },
+  // TODO: Put correct link
   { text: 'More info', type: 'link', url: 'https://docs.alephium.org/Frequently-Asked-Questions.html' }
 ]
 

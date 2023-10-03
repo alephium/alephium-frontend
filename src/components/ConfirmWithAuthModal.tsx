@@ -43,6 +43,7 @@ const pinLength = 6
 
 const firstInstructionSet: Instruction[] = [
   { text: 'Please enter your pin', type: 'primary' },
+  // TODO: Put correct link
   { text: 'More info', type: 'link', url: 'https://docs.alephium.org/Frequently-Asked-Questions.html' }
 ]
 
