@@ -57,8 +57,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
               {
                 text: 'Why is this important?',
                 type: 'link',
-                // TODO: Put correct link
-                url: 'https://docs.alephium.org/Frequently-Asked-Questions.html'
+                url: 'https://docs.alephium.org/frequently-asked-questions#why-is-it-important-to-back-up-your-secret-recovery-phrase'
               }
             ]}
           />
