@@ -145,7 +145,7 @@ const BaseHeader = ({
   const compactContentAnimatedStyle = useAnimatedStyle(() =>
     hasCompactHeader
       ? {
-          opacity: interpolate(scrollY?.value || 0, [40, scrollEndThreshold], [0, 1], Extrapolate.CLAMP),
+          opacity: interpolate(scrollY?.value || 0, [isIos ? 60 : 40, scrollEndThreshold], [0, 1], Extrapolate.CLAMP),
           height: isIos ? interpolate(scrollY?.value || 0, [60, scrollEndThreshold], [110, 95], Extrapolate.CLAMP) : 95
         }
       : {}
