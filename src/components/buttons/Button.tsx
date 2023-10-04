@@ -198,6 +198,7 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
       style={[
         style,
         { height: 32, flexDirection: 'row', alignItems: 'center', gap: 10 },
+        !!props.title && { minWidth: 75 },
         !props.disabled
           ? {
               backgroundColor: theme.global.accent
