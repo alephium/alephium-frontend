@@ -49,6 +49,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const totalBalance = useAppSelector(selectTotalBalance)
   const networkStatus = useAppSelector((s) => s.network.status)
   const networkName = useAppSelector((s) => s.network.name)
+  const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
     pollingInterval: 60000,
@@ -104,7 +105,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
         </TextContainer>
 
-        {totalBalance === BigInt(0) ? (
+        {totalBalance === BigInt(0) && !isLoadingTokenBalances ? (
           <ReceiveFundsButtonContainer>
             <Button
               title="Receive assets"

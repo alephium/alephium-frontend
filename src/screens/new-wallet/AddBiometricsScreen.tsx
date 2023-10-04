@@ -86,7 +86,7 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
       <CenteredInstructions instructions={instructions} stretch />
       <ActionsContainer>
         <ButtonStack>
-          <Button title="Activate" type="primary" onPress={activateBiometrics} />
+          <Button title="Activate" type="primary" variant="highlight" onPress={activateBiometrics} />
           <Button title="Later" type="secondary" onPress={handleLaterPress} />
         </ButtonStack>
       </ActionsContainer>
