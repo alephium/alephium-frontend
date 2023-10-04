@@ -82,7 +82,6 @@ const ScrollScreen = ({
         onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         showsHorizontalScrollIndicator={false}
-        keyboardShouldPersistTaps="always"
         contentContainerStyle={[
           {
             paddingTop: headerOptions
