@@ -25,6 +25,7 @@ import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
+import ActiveNetworkBadge from '~/components/ActiveNetworkBadge'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
@@ -116,6 +117,13 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         headerRight: () => <DashboardHeaderActions />,
         headerLeft: () => <WalletSwitchButton isLoading={isLoading} />,
         headerTitle: walletName
+      }}
+      headerProps={{
+        headerTitleRight: () => (
+          <NetworkBadgeContainer>
+            <ActiveNetworkBadge />
+          </NetworkBadgeContainer>
+        )
       }}
       {...props}
     >
@@ -216,7 +224,7 @@ const BalanceAndButtons = styled.View`
 `
 
 const ButtonsRowContainer = styled(Animated.View)`
-  margin: 20px ${DEFAULT_MARGIN}px 10px;
+  margin: 0 ${DEFAULT_MARGIN}px 10px ${DEFAULT_MARGIN}px;
   flex-direction: row;
   border-radius: 100px;
   align-items: center;
@@ -237,4 +245,11 @@ const EmptyPlaceholder = styled.View`
   border-radius: 9px;
   border: 2px dashed ${({ theme }) => theme.border.primary};
   margin: ${DEFAULT_MARGIN}px;
+`
+
+const NetworkBadgeContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-end;
 `

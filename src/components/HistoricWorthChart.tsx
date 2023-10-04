@@ -194,6 +194,7 @@ const DeltaAndChartLengths = styled(Animated.View)`
   flex-direction: row;
   align-items: center;
   gap: 15px;
+  margin: 0 ${DEFAULT_MARGIN}px;
 `
 
 const ChartLengthBadges = styled.View`
