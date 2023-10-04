@@ -77,7 +77,11 @@ const AddressForm = ({
         headerOptions={{
           type: 'stack',
           headerRight: () => (
-            <ContinueButton title={buttonText} onPress={() => onSubmit({ isDefault, label, color, group })} />
+            <ContinueButton
+              title={buttonText}
+              onPress={() => onSubmit({ isDefault, label, color, group })}
+              iconProps={{ name: 'checkmark' }}
+            />
           ),
           ...headerOptions
         }}
