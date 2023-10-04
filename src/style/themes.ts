@@ -56,6 +56,7 @@ export const lightTheme: DefaultTheme = {
   global: {
     accent: '#1575f9',
     alert: '#ed4a34',
+    warning: '#f48826',
     valid: '#2DA023',
     star: '#FFD66D',
     pale: '#f7d1b6',
@@ -108,6 +109,7 @@ export const darkTheme: DefaultTheme = {
   global: {
     accent: '#2f8cef',
     alert: '#ed4a34',
+    warning: '#ed882d',
     valid: '#3ed282',
     star: '#FFD66D',
     pale: '#f7d1b6',

@@ -22,6 +22,7 @@ import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { Alert } from 'react-native'
 import { Portal } from 'react-native-portalize'
+import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -68,6 +69,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const posthog = usePostHog()
+  const theme = useTheme()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
@@ -156,43 +158,36 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>
+            <Row onPress={() => setIsCurrencySelectModalOpen(true)} title="Currency">
+              <AppText bold>{currentCurrency}</AppText>
+            </Row>
+            <Row title="Current network" onPress={() => setIsSwitchNetworkModalOpen(true)}>
+              <AppText bold>{capitalize(currentNetworkName)}</AppText>
+            </Row>
             <Row title="Discreet mode" subtitle="Hide all amounts">
               <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
             </Row>
-            <Row title="Require authentication" subtitle="For important actions">
-              <Toggle value={requireAuth} onValueChange={handleAuthRequimementToggle} />
-            </Row>
+
             <Row title="Use dark theme" subtitle="Try it, it's nice">
               <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
+            </Row>
+            <Row title="Analytics" subtitle="Help us improve your experience!" isLast>
+              <Toggle value={analytics} onValueChange={toggleAnalytics} />
+            </Row>
+          </BoxSurface>
+        </ScreenSection>
+        <ScreenSection>
+          <ScreenSectionTitle>Security</ScreenSectionTitle>
+          <BoxSurface>
+            <Row title="Require authentication" subtitle="For important actions">
+              <Toggle value={requireAuth} onValueChange={handleAuthRequimementToggle} />
             </Row>
             {deviceHasBiometricsData && (
               <Row title="Biometrics authentication" subtitle="Enhance your security">
                 <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
               </Row>
             )}
-            <Row title="Analytics" subtitle="Help us improve your experience!">
-              <Toggle value={analytics} onValueChange={toggleAnalytics} />
-            </Row>
-            <Row onPress={() => setIsCurrencySelectModalOpen(true)} title="Currency" isLast>
-              <AppText bold>{currentCurrency}</AppText>
-            </Row>
           </BoxSurface>
-        </ScreenSection>
-        <ScreenSection>
-          <ScreenSectionTitle>Networks</ScreenSectionTitle>
-          <BoxSurface>
-            <Row title="Current network" onPress={() => setIsSwitchNetworkModalOpen(true)} isLast>
-              <AppText bold>{capitalize(currentNetworkName)}</AppText>
-            </Row>
-          </BoxSurface>
-        </ScreenSection>
-        <ScreenSection>
-          <ScreenSectionTitle>Addresses</ScreenSectionTitle>
-          <Button
-            title="Scan for active addresses"
-            iconProps={{ name: 'search-outline' }}
-            onPress={() => navigation.navigate('AddressDiscoveryScreen')}
-          />
         </ScreenSection>
 
         <ScreenSection>
@@ -207,9 +202,16 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>Wallet</ScreenSectionTitle>
           <ButtonStyled
+            title="Scan for active addresses"
+            iconProps={{ name: 'search-outline' }}
+            variant="accent"
+            onPress={() => navigation.navigate('AddressDiscoveryScreen')}
+          />
+          <ButtonStyled
             title="View secret recovery phrase"
             iconProps={{ name: 'key' }}
             onPress={() => setIsSafePlaceWarningModalOpen(true)}
+            color={theme.global.warning}
           />
           <ButtonStyled
             title="Delete wallet"
