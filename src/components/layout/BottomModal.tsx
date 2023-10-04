@@ -226,10 +226,10 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
               <Handle style={handleAnimatedStyle} />
             </HandleContainer>
             <ContentContainer>
-              <KeyboardAvoidingView style={{ flex: 1 }} behavior="position" keyboardVerticalOffset={20}>
-                <Navigation style={modalNavigationAnimatedStyle}>
-                  <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
-                </Navigation>
+              <Navigation style={modalNavigationAnimatedStyle}>
+                <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
+              </Navigation>
+              <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
                 <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
               </KeyboardAvoidingView>
             </ContentContainer>
