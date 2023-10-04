@@ -80,7 +80,7 @@ const AddressForm = ({
             <ContinueButton
               title={buttonText}
               onPress={() => onSubmit({ isDefault, label, color, group })}
-              iconProps={{ name: 'checkmark' }}
+              iconProps={undefined}
             />
           ),
           ...headerOptions

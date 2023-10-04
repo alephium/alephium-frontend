@@ -48,9 +48,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save', headerOptio
       hasNavigationHeader
       headerOptions={{
         type: 'stack',
-        headerRight: () => (
-          <ContinueButton title={buttonText} onPress={handleSubmit(onSubmit)} iconProps={{ name: 'checkmark' }} />
-        ),
+        headerRight: () => <ContinueButton title={buttonText} onPress={handleSubmit(onSubmit)} iconProps={undefined} />,
         ...headerOptions
       }}
       {...props}
