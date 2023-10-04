@@ -94,14 +94,16 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
       <LinearGradient
         colors={[
           'transparent',
-          isLoadingTokenBalances || !haveHistoricBalancesLoaded ? 'transparent' : colord(deltaColor).alpha(0.1).toHex(),
+          isLoadingTokenBalances || !haveHistoricBalancesLoaded
+            ? 'transparent'
+            : colord(deltaColor).alpha(0.05).toHex(),
           'transparent'
         ]}
-        locations={[0, 0.8, 1]}
+        locations={[0.3, 0.65, 1]}
       >
         <TextContainer>
           <DateLabelContainer>
-            <AppText color="tertiary" semiBold>
+            <AppText color="secondary" semiBold>
               {dateLabel}
             </AppText>
           </DateLabelContainer>
