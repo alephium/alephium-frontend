@@ -166,7 +166,7 @@ const WalletConnectSessionProposalModal = ({
             <InfoBox title="New address needed" Icon={PlusSquare}>
               <AppText>
                 The dApp asks for an address in group
-                <AppText color="accent">{requiredChainInfo?.addressGroup}</AppText>. Click below to generate one!
+                <AppText color="accent"> {requiredChainInfo?.addressGroup}</AppText>. Click below to generate one!
               </AppText>
             </InfoBox>
           </ScreenSection>
