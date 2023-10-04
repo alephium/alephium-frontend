@@ -29,7 +29,8 @@ import Button from '~/components/buttons/Button'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import { ModalContent } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
@@ -72,6 +73,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
   const [isAuthenticationModalVisible, setIsAuthenticationModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
+  const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [authCallback, setAuthCallback] = useState<() => void>(() => null)
 
   const toggleBiometrics = async () => {
@@ -207,10 +209,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ButtonStyled
             title="View secret recovery phrase"
             iconProps={{ name: 'key' }}
-            onPress={() => {
-              setAuthCallback(() => () => setIsMnemonicModalVisible(true))
-              setIsAuthenticationModalOpen(true)
-            }}
+            onPress={() => setIsSafePlaceWarningModalOpen(true)}
           />
           <ButtonStyled
             title="Delete wallet"
@@ -249,6 +248,41 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           isOpen={isMnemonicModalVisible}
           onClose={() => setIsMnemonicModalVisible(false)}
           Content={(props) => <MnemonicModal {...props} />}
+        />
+
+        <BottomModal
+          isOpen={isSafePlaceWarningModalOpen}
+          onClose={() => setIsSafePlaceWarningModalOpen(false)}
+          Content={(props) => (
+            <ModalContent verticalGap {...props}>
+              <ScreenSection>
+                <BottomModalScreenTitle>Be careful! 🕵️‍♀️</BottomModalScreenTitle>
+              </ScreenSection>
+              <ScreenSection>
+                <AppText color="secondary" size={18}>
+                  Don&apos;t share your secret recovery phrase with anyone!
+                </AppText>
+                <AppText color="secondary" size={18}>
+                  Before displaying it, make sure to be in an{' '}
+                  <AppText bold size={18}>
+                    non-public
+                  </AppText>{' '}
+                  space.
+                </AppText>
+              </ScreenSection>
+              <ScreenSection>
+                <Button
+                  title="I get it"
+                  variant="accent"
+                  onPress={() => {
+                    props.onClose && props.onClose()
+                    setAuthCallback(() => () => setIsMnemonicModalVisible(true))
+                    setIsAuthenticationModalOpen(true)
+                  }}
+                />
+              </ScreenSection>
+            </ModalContent>
+          )}
         />
       </Portal>
     </>
