@@ -248,7 +248,7 @@ const EmptyPlaceholder = styled.View`
 `
 
 const NetworkBadgeContainer = styled.View`
-  flex: 1;
+  flex-grow: 1;
   align-items: center;
   flex-direction: row;
   justify-content: flex-end;

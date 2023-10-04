@@ -275,6 +275,7 @@ const Title = styled(AppText)`
   font-weight: 700;
   color: ${({ theme }) => theme.font.primary};
   align-self: flex-start;
+  flex-shrink: 1;
 `
 
 const CompactTitle = styled(AppText)`
