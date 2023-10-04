@@ -32,7 +32,6 @@ import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { makeSelectAddressesConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { makeSelectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressTransaction } from '~/types/transactions'
 
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
@@ -58,14 +57,18 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
         initialNumToRender={8}
-        contentContainerStyle={{ flexGrow: 1, paddingTop: screenHeaderHeight + DEFAULT_MARGIN }}
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         ref={listRef}
         headerHeight={screenHeaderHeight}
       />
 
-      <BaseHeader options={{ headerTitle: 'Transfers' }} scrollY={screenScrollY} onLayout={screenHeaderLayoutHandler} />
+      <BaseHeader
+        options={{ headerTitle: 'Transfers' }}
+        scrollY={screenScrollY}
+        onLayout={screenHeaderLayoutHandler}
+        showBorderBottom
+      />
     </Screen>
   )
 }

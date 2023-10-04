@@ -117,10 +117,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
     <>
       <FlatList
         {...props}
-        contentContainerStyle={[
-          props.contentContainerStyle,
-          { paddingTop: headerHeight ? headerHeight + DEFAULT_MARGIN : 0 }
-        ]}
+        contentContainerStyle={[props.contentContainerStyle, { paddingTop: headerHeight ? headerHeight : 0 }]}
         scrollEventThrottle={16}
         ref={ref}
         data={confirmedTransactions}
