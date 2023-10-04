@@ -54,7 +54,7 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
-const chartHeight = 95
+const chartHeight = 80
 const chartIntervalsRowHeight = 30
 const chartItemsMargin = 15
 

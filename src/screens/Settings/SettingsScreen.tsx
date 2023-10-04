@@ -183,7 +183,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               <Toggle value={requireAuth} onValueChange={handleAuthRequimementToggle} />
             </Row>
             {deviceHasBiometricsData && (
-              <Row title="Biometrics authentication" subtitle="Enhance your security">
+              <Row title="Biometrics authentication" subtitle="Enhance your security" isLast>
                 <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
               </Row>
             )}

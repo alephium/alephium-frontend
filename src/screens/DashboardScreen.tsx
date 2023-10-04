@@ -129,7 +129,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
                 shadowColor: 'black',
                 shadowOffset: { height: 5, width: 0 },
                 shadowOpacity: theme.name === 'dark' ? 0.5 : 0.05,
-                shadowRadius: 3
+                shadowRadius: 5
               }
             ]}
           >
