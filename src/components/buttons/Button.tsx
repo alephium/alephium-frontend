@@ -197,7 +197,7 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
       type="primary"
       style={[
         style,
-        { height: 40, flexDirection: 'row', alignItems: 'center', gap: 10 },
+        { height: 32, flexDirection: 'row', alignItems: 'center', gap: 10 },
         !props.disabled
           ? {
               backgroundColor: theme.global.accent
