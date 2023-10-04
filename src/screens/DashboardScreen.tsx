@@ -169,9 +169,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           Content={(props) => (
             <ModalContent verticalGap {...props}>
               <ScreenSection>
-                <BottomModalScreenTitle>
-                  {isNewWallet ? 'Welcome to your new wallet! 👋' : "Let's verify! 😌"}
-                </BottomModalScreenTitle>
+                <BottomModalScreenTitle>{isNewWallet ? 'Hello there! 👋' : "Let's verify! 😌"}</BottomModalScreenTitle>
               </ScreenSection>
               <ScreenSection>
                 {isNewWallet ? (
