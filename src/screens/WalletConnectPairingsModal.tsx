@@ -44,24 +44,23 @@ const WalletConnectPairingsModal = ({ onClose, ...props }: ModalContentProps) =>
       <ScreenSection>
         <BottomModalScreenTitle>Current connections</BottomModalScreenTitle>
       </ScreenSection>
-      <ScreenSection>
-        {activeSessions.map(({ topic, peer: { metadata } }, index) => (
-          <ListItem
-            key={topic}
-            title={metadata.name}
-            subtitle={metadata.description}
-            isLast={index === activeSessions.length - 1}
-            icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
-            rightSideContent={
-              <Button
-                onPress={() => handleDisconnectPress(topic)}
-                iconProps={{ name: 'remove-circle' }}
-                type="transparent"
-              />
-            }
-          />
-        ))}
-      </ScreenSection>
+
+      {activeSessions.map(({ topic, peer: { metadata } }, index) => (
+        <ListItem
+          key={topic}
+          title={metadata.name}
+          subtitle={metadata.url}
+          isLast={index === activeSessions.length - 1}
+          icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
+          rightSideContent={
+            <Button
+              onPress={() => handleDisconnectPress(topic)}
+              iconProps={{ name: 'remove-circle' }}
+              type="transparent"
+            />
+          }
+        />
+      ))}
     </ModalContent>
   )
 }
