@@ -42,7 +42,7 @@ const AddressFlatListScreen = ({ onAddressPress, selectedAddress, ...props }: Ad
           isSelected={address.hash === selectedAddress}
           style={{
             marginTop: index === 0 ? 20 : undefined,
-            paddingBottom: index === addresses.length - 1 ? 40 : undefined,
+            marginBottom: index === addresses.length - 1 ? 40 : undefined,
             marginLeft: DEFAULT_MARGIN,
             marginRight: DEFAULT_MARGIN
           }}

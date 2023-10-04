@@ -94,7 +94,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       amount
         ? newAssetAmounts.splice(existingAmountIndex, 1, { id: assetId, amount })
         : newAssetAmounts.splice(existingAmountIndex, 1)
-    } else {
+    } else if (amount) {
       newAssetAmounts.push({ id: assetId, amount })
     }
 

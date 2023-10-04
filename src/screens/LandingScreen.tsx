@@ -20,8 +20,8 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
 import { DeviceMotion } from 'expo-sensors'
-import { useCallback, useEffect } from 'react'
-import { useWindowDimensions } from 'react-native'
+import { useCallback, useEffect, useState } from 'react'
+import { Dimensions, LayoutChangeEvent } from 'react-native'
 import Animated, {
   Extrapolation,
   interpolate,
@@ -29,7 +29,7 @@ import Animated, {
   useDerivedValue,
   useSharedValue
 } from 'react-native-reanimated'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -44,7 +44,13 @@ interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'Landi
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
-  const dimensions = useWindowDimensions()
+  const theme = useTheme()
+
+  const mainbgColor = theme.name === 'light' ? '#fff' : '#000'
+  const logoColor = theme.name === 'dark' ? '#fff' : '#000'
+
+  const { width, height } = Dimensions.get('window')
+  const [dimensions, setDimensions] = useState({ width, height })
 
   const yAxisRotation = useSharedValue(0)
   const zAxisRotation = useSharedValue(0)
@@ -66,8 +72,8 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   useFocusEffect(
     useCallback(() => {
       const motionsListener = DeviceMotion.addListener((motionData) => {
-        yAxisRotation.value = motionData.rotation.gamma
-        zAxisRotation.value = motionData.rotation.beta
+        yAxisRotation.value = motionData.rotation?.gamma
+        zAxisRotation.value = motionData.rotation?.beta
       })
 
       return () => motionsListener.remove()
@@ -86,24 +92,30 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
     if (!previousRouteName || previousRouteName === 'SplashScreen') navigation.setOptions({ headerShown: false })
   }, [navigation])
 
+  const handleScreenLayoutChange = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout
+
+    setDimensions({ width, height })
+  }
+
   return (
-    <Screen contrastedBg {...props}>
+    <Screen contrastedBg {...props} onLayout={handleScreenLayoutChange}>
       <CanvasStyled>
         <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
           <SweepGradient
             c={vec(dimensions.width / 2, dimensions.height / 3.5)}
             start={gradientStart}
             end={gradientEnd}
-            colors={['#ffffff', '#FF4385', '#61A1F6', '#FF7D26', '#FF4385', '#ffffff']}
+            colors={[mainbgColor, '#FF4385', '#61A1F6', '#FF7D26', '#FF4385', mainbgColor]}
           />
         </Rect>
       </CanvasStyled>
       <LogoContainer style={logoStyle}>
-        <AlephiumLogoStyled color="black" />
+        <AlephiumLogoStyled color={logoColor} />
       </LogoContainer>
       <TitleContainer>
-        <TitleFirstLine>Welcome to the official</TitleFirstLine>
-        <TitleSecondLine>Alephium Wallet</TitleSecondLine>
+        <TitleFirstLine>Welcome to</TitleFirstLine>
+        <TitleSecondLine>Alephium</TitleSecondLine>
       </TitleContainer>
       <ActionsContainer>
         <ButtonStack>
@@ -151,7 +163,7 @@ const TitleFirstLine = styled(AppText)`
 `
 
 const TitleSecondLine = styled(AppText)`
-  font-size: 20px;
+  font-size: 26px;
   font-weight: bold;
   color: black;
 `

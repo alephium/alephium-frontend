@@ -43,6 +43,7 @@ const pinLength = 6
 
 const firstInstructionSet: Instruction[] = [
   { text: 'Please enter your pin', type: 'primary' },
+  // TODO: Put correct link
   { text: 'More info', type: 'link', url: 'https://docs.alephium.org/Frequently-Asked-Questions.html' }
 ]
 
@@ -61,7 +62,7 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
   const getWallet = useCallback(async () => {
     try {
       const storedWallet = await getStoredWallet(usePin)
-      const usesBiometrics = await loadBiometricsSettings()
+      const usesBiometrics = usePin ? false : await loadBiometricsSettings()
 
       if (usesBiometrics) {
         onConfirm()
@@ -70,9 +71,16 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
         setEncryptedWallet(storedWallet)
       }
     } catch (e: unknown) {
-      Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
+      const error = e as { message?: string }
+
+      if (!error.message?.includes('User canceled')) {
+        console.error(e)
+        Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
+      }
+
+      onClose && onClose()
     }
-  }, [onConfirm, usePin])
+  }, [onClose, onConfirm, usePin])
 
   const decryptMnemonic = async (pin: string): Promise<ShouldClearPin> => {
     if (!pin || !encryptedWallet) return false
@@ -80,6 +88,7 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
     try {
       const decryptedWallet = await walletOpenAsyncUnsafe(pin, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
       onConfirm(pin, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
+      onClose && onClose()
       setShouldHideModal(true)
 
       return false
@@ -99,10 +108,10 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
   return (
     <ModalWithBackdrop visible closeModal={onClose}>
       {encryptedWallet && (
-        <ModalContent style={{ paddingTop: insets.top + 50 }}>
+        <ModalContent style={{ paddingTop: !onClose ? insets.top + 60 : undefined }}>
           {onClose && (
-            <HeaderSection>
-              <Button type="transparent" iconProps={{ name: 'close-outline' }} onPress={onClose} />
+            <HeaderSection style={{ paddingTop: insets.top }}>
+              <Button round iconProps={{ name: 'arrow-back-outline' }} onPress={onClose} />
             </HeaderSection>
           )}
           <CenteredInstructions instructions={shownInstructions} />
@@ -119,9 +128,8 @@ const ModalContent = styled.View`
   flex: 1;
   width: 100%;
   background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2)};
-  padding-top: 40px;
 `
 
 const HeaderSection = styled(ScreenSection)`
-  align-items: flex-end;
+  padding-bottom: 90px;
 `

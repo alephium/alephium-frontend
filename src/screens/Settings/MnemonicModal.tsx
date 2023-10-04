@@ -18,21 +18,31 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { usePreventScreenCapture } from 'expo-screen-capture'
 
+import Button from '~/components/buttons/Button'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
 import { useAppSelector } from '~/hooks/redux'
 import OrderedTable from '~/screens/Settings/OrderedTable'
 
-const MnemonicModal = (props: ModalContentProps) => {
+interface MnemonicModalProps extends ModalContentProps {
+  onVerifyButtonPress?: () => void
+}
+
+const MnemonicModal = ({ onVerifyButtonPress, ...props }: MnemonicModalProps) => {
   const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
 
   usePreventScreenCapture()
 
   return (
-    <ModalContent {...props}>
+    <ModalContent verticalGap {...props}>
       <ScreenSection fill>
         <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
       </ScreenSection>
+      {onVerifyButtonPress && (
+        <ScreenSection>
+          <Button variant="highlight" title="Verify" onPress={onVerifyButtonPress} />
+        </ScreenSection>
+      )}
     </ModalContent>
   )
 }

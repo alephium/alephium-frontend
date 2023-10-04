@@ -18,25 +18,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Controller, useForm } from 'react-hook-form'
 
-import Button from '~/components/buttons/Button'
+import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
-import { AddressHash } from '~/types/addresses'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { ContactFormData } from '~/types/contacts'
 import { isContactAddressValid, isContactNameValid } from '~/utils/form-validation'
 import { validateIsAddressValid } from '~/utils/forms'
 
-interface ContactFormProps {
+interface ContactFormProps extends ScrollScreenProps {
   initialValues: ContactFormData
   onSubmit: (data: ContactFormData) => void
   buttonText?: string
-  disableIsMainToggle?: boolean
-  addressHash?: AddressHash
 }
 
 const requiredErrorMessage = 'This field is required'
 
-const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save' }: ContactFormProps) => {
+const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save', headerOptions, ...props }: ContactFormProps) => {
   const {
     control,
     handleSubmit,
@@ -44,7 +42,17 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save' }: ContactFo
   } = useForm<ContactFormData>({ defaultValues: initialValues })
 
   return (
-    <>
+    <ScrollScreen
+      usesKeyboard
+      fill
+      hasNavigationHeader
+      headerOptions={{
+        type: 'stack',
+        headerRight: () => <ContinueButton title={buttonText} onPress={handleSubmit(onSubmit)} />,
+        ...headerOptions
+      }}
+      {...props}
+    >
       <ScreenSection fill verticalGap>
         <Controller
           name="name"
@@ -84,11 +92,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save' }: ContactFo
           control={control}
         />
       </ScreenSection>
-
-      <ScreenSection centered>
-        <Button title={buttonText} centered onPress={handleSubmit(onSubmit)} />
-      </ScreenSection>
-    </>
+    </ScrollScreen>
   )
 }
 

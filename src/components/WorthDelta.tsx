@@ -16,28 +16,46 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth } from '@alephium/sdk'
+import { StyleProp, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
 
+import Amount from '~/components/Amount'
 import { useAppSelector } from '~/hooks/redux'
-import { selectTotalBalance } from '~/store/addressesSlice'
-import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
-import { DataPoint } from '~/types/charts'
 import { currencies } from '~/utils/currencies'
 
-const useWorthDeltaPercentage = (worthInBeginningOfChart?: DataPoint['worth']) => {
-  const currency = useAppSelector((s) => s.settings.currency)
-  const totalBalance = useAppSelector(selectTotalBalance)
-  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
-    pollingInterval: 60000,
-    skip: totalBalance === BigInt(0)
-  })
-
-  const totalAmountWorth = calculateAmountWorth(totalBalance, price ?? 0)
-  const initialValue = worthInBeginningOfChart || 0
-  const latestValue = totalAmountWorth
-  const deltaPercentage = initialValue > 0 ? Math.round(((latestValue - initialValue) / initialValue) * 10000) / 100 : 0
-
-  return deltaPercentage
+interface WorthDeltaProps {
+  delta: number
+  style?: StyleProp<ViewStyle>
 }
 
-export default useWorthDeltaPercentage
+const WorthDelta = ({ delta, style }: WorthDeltaProps) => {
+  const currency = useAppSelector((s) => s.settings.currency)
+
+  const isInvalidNumber = isNaN(delta)
+
+  const isUp = delta >= 0
+  const textColor = isInvalidNumber ? 'tertiary' : isUp ? 'valid' : 'alert'
+
+  return (
+    <WorthDeltaStyled style={style}>
+      <Amount
+        color={textColor}
+        semiBold
+        size={18}
+        value={delta}
+        isFiat
+        suffix={currencies[currency].symbol}
+        showPlusMinus
+      />
+    </WorthDeltaStyled>
+  )
+}
+
+export default WorthDelta
+
+const WorthDeltaStyled = styled.View`
+  align-items: center;
+  flex-direction: row;
+  gap: 12px;
+  min-width: 10px;
+`

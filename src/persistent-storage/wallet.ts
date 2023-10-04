@@ -27,21 +27,17 @@ import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 import { Platform } from 'react-native'
 
+import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
 import { AddressMetadata, AddressPartial } from '~/types/addresses'
 import { GeneratedWallet, Mnemonic, WalletMetadata, WalletState } from '~/types/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
-const defaultBiometricsConfig = {
-  requireAuthentication: true,
-  authenticationPrompt: 'Please authenticate',
-  keychainAccessible: SecureStore.WHEN_UNLOCKED
-}
-
 const PIN_WALLET_STORAGE_KEY = 'wallet-pin'
 const BIOMETRICS_WALLET_STORAGE_KEY = 'wallet-biometrics'
 const WALLET_METADATA_STORAGE_KEY = 'wallet-metadata'
+const IS_NEW_WALLET = 'is-new-wallet'
 
 export const generateAndStoreWallet = async (
   name: WalletState['name'],
@@ -79,7 +75,7 @@ const persistWallet = async (
   const encryptedWithPinMnemonic = await walletEncryptAsyncUnsafe(pin, mnemonic, pbkdf2)
 
   console.log('💽 Storing pin-encrypted mnemonic')
-  await SecureStore.setItemAsync(PIN_WALLET_STORAGE_KEY, encryptedWithPinMnemonic)
+  await SecureStore.setItemAsync(PIN_WALLET_STORAGE_KEY, encryptedWithPinMnemonic, defaultSecureStoreConfig)
 
   console.log('💽 Storing wallet initial metadata')
   const walletMetadata = generateWalletMetadata(walletName, isMnemonicBackedUp)
@@ -121,7 +117,7 @@ export const enableBiometrics = async (mnemonic: Mnemonic) => {
 }
 
 export const disableBiometrics = async () => {
-  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY)
+  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
 }
 
 export const getWalletMetadata = async (): Promise<WalletMetadata> => {
@@ -136,7 +132,7 @@ export const getStoredWallet = async (usePin?: boolean): Promise<WalletState | n
 
   const mnemonic =
     usePin || !usesBiometrics
-      ? await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY)
+      ? await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
       : await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
 
   return mnemonic
@@ -152,8 +148,8 @@ export const getStoredWallet = async (usePin?: boolean): Promise<WalletState | n
 export const deleteWallet = async () => {
   console.log('🗑️ Deleting pin-encrypted & biometrics wallet')
 
-  await SecureStore.deleteItemAsync(PIN_WALLET_STORAGE_KEY)
-  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY)
+  await SecureStore.deleteItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
+  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
   await AsyncStorage.removeItem(WALLET_METADATA_STORAGE_KEY)
   await storeBiometricsSettings(false)
 }
@@ -184,3 +180,7 @@ export const deriveWalletStoredAddresses = async (wallet: WalletState): Promise<
 
   return addresses.map(({ index, ...settings }) => ({ ...deriveAddressAndKeys(masterKey, index), settings }))
 }
+
+export const getIsNewWallet = async (): Promise<boolean> => (await AsyncStorage.getItem(IS_NEW_WALLET)) === 'true'
+
+export const storeIsNewWallet = async (isNew: boolean) => await AsyncStorage.setItem(IS_NEW_WALLET, isNew.toString())

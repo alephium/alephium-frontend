@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
+import { useEffect } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 
 import animationSrc from '~/animations/lottie/success.json'
@@ -25,8 +26,10 @@ import HighlightButton from '~/components/buttons/HighlightButton'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
+import { useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { storeIsNewWallet } from '~/persistent-storage/wallet'
 import { resetNavigationState } from '~/utils/navigation'
 
 interface NewWalletSuccessScreenProps
@@ -38,8 +41,13 @@ const instructions: Instruction[] = [
   { text: 'Enjoy your new wallet!', type: 'secondary' }
 ]
 
-const NewWalletSuccessScreenProps = ({ navigation, ...props }: NewWalletSuccessScreenProps) => {
+const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreenProps) => {
+  const method = useAppSelector((s) => s.walletGeneration.method)
   const theme = useTheme()
+
+  useEffect(() => {
+    storeIsNewWallet(method === 'create')
+  }, [method])
 
   return (
     <ScrollScreen hasNavigationHeader fill {...props}>
@@ -55,7 +63,7 @@ const NewWalletSuccessScreenProps = ({ navigation, ...props }: NewWalletSuccessS
   )
 }
 
-export default NewWalletSuccessScreenProps
+export default NewWalletSuccessScreen
 
 const AnimationContainer = styled.View`
   flex: 1;

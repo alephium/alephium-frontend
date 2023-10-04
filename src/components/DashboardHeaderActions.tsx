@@ -78,7 +78,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
         )}
         {!isMnemonicBackedUp && (
           <Button
-            onPress={() => navigation.navigate('VerifyMnemonicScreen')}
+            onPress={() => navigation.navigate('BackupMnemonicNavigation')}
             iconProps={{ name: 'warning-outline' }}
             variant="alert"
             round

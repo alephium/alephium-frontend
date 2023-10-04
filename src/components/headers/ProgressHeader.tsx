@@ -22,19 +22,21 @@ import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
 import NavigationStackHeader, { NavigationStackHeaderProps } from '~/components/headers/NavigationStackHeader'
+import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
 interface ProgressHeaderProps extends NavigationStackHeaderProps {
-  workflow: 'send' | 'receive'
+  workflow: 'send' | 'receive' | 'backup'
 }
 
 const workflowSteps: Record<
   ProgressHeaderProps['workflow'],
-  (keyof ReceiveNavigationParamList)[] | (keyof SendNavigationParamList)[]
+  (keyof ReceiveNavigationParamList)[] | (keyof SendNavigationParamList)[] | (keyof BackupMnemonicNavigationParamList)[]
 > = {
   receive: ['AddressScreen', 'QRCodeScreen'],
-  send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen']
+  send: ['DestinationScreen', 'OriginScreen', 'AssetsScreen', 'VerifyScreen'],
+  backup: ['BackupIntroScreen', 'VerifyMnemonicScreen', 'VerificationSuccessScreen']
 }
 
 const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderProps) => {

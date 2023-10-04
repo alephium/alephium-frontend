@@ -22,6 +22,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import { contactsAdapter } from '~/store/addresses/addressesAdapter'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
+import { AddressHash } from '~/types/addresses'
 
 // TODO: Same as in desktop wallet
 export const selectHaveHistoricBalancesLoaded = createSelector(selectAllAddresses, (addresses) =>
@@ -49,4 +50,9 @@ export const { selectAll: selectAllContacts, selectById: selectContactById } = c
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],
   (addresses, group) => (group !== undefined ? addresses.filter((address) => address.group === group) : addresses)
+)
+
+export const selectContactByHash = createSelector(
+  [selectAllContacts, (_, addressHash: AddressHash) => addressHash],
+  (contacts, addressHash) => contacts.find((contact) => contact.address === addressHash)
 )

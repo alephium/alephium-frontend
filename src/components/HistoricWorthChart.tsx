@@ -28,9 +28,9 @@ import { VictoryArea } from 'victory-native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
-import DeltaPercentage from '~/components/DeltaPercentage'
+import WorthDelta from '~/components/WorthDelta'
 import { useAppSelector } from '~/hooks/redux'
-import useWorthDeltaPercentage from '~/hooks/useWorthDeltaPercentage'
+import useWorthDelta from '~/hooks/useWorthDelta'
 import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { HistoricalPriceResult, useGetHistoricalPriceQuery } from '~/store/assets/priceApiSlice'
@@ -56,6 +56,7 @@ const startingDates: Record<ChartLength, Dayjs> = {
 
 const chartHeight = 95
 const chartIntervalsRowHeight = 30
+const chartItemsMargin = 15
 
 const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartChange, style }: HistoricWorthChart) => {
   const theme = useTheme()
@@ -70,12 +71,14 @@ const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartCh
   const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
   const filteredChartData = getFilteredChartData(chartData, startingDate)
   const firstItem = filteredChartData.length > 0 ? filteredChartData[0] : undefined
-  const deltaPercentage = useWorthDeltaPercentage(firstItem?.worth)
+  const worthDelta = useWorthDelta(firstItem?.worth)
 
   const isLoading = filteredChartData.length === 0
 
   const animatedStyle = useAnimatedStyle(() => ({
-    height: isLoading ? 0 : withSpring(chartHeight + chartIntervalsRowHeight, defaultSpringConfiguration)
+    height: isLoading
+      ? 0
+      : withSpring(chartHeight + chartIntervalsRowHeight + chartItemsMargin, defaultSpringConfiguration)
   }))
 
   useEffect(() => {
@@ -100,14 +103,14 @@ const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartCh
         }))
       : undefined
 
-  if (!data || data.length < 2) return null
+  if (!data || data.length < 2 || (data.length === 2 && data[0].x === data[1].x)) return null
 
   return (
     <Animated.View style={[style, animatedStyle]}>
-      <Row style={{ marginBottom: 15 }}>
+      <Row style={{ marginBottom: chartItemsMargin }}>
         {haveHistoricBalancesLoaded && (
           <DeltaAndChartLengths entering={FadeIn}>
-            <DeltaPercentage percentage={deltaPercentage} />
+            <WorthDelta delta={worthDelta} />
             <ChartLengthBadges>
               {chartLengths.map((length) => {
                 const isActive = length === chartLength
@@ -195,7 +198,7 @@ const DeltaAndChartLengths = styled(Animated.View)`
 
 const ChartLengthBadges = styled.View`
   flex-direction: row;
-  gap: 12px;
+  gap: 6px;
 `
 
 const ChartLengthButton = styled.Pressable<{ isActive?: boolean }>`

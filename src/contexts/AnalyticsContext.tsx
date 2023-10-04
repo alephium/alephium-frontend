@@ -41,7 +41,7 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
   const canCaptureUserProperties = settingsLoadedFromStorage && analytics && !!analyticsId
 
   useEffect(() => {
-    if (!settingsLoadedFromStorage) {
+    if (!settingsLoadedFromStorage || __DEV__) {
       posthog?.optOut()
       return
     }

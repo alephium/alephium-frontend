@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { shuffle } from 'lodash'
@@ -29,12 +30,13 @@ import styled, { useTheme } from 'styled-components/native'
 
 import animationSrc from '~/animations/lottie/success.json'
 import AppText from '~/components/AppText'
+import { BackButton } from '~/components/buttons/Button'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
 import { persistWalletMetadata } from '~/persistent-storage/wallet'
 import {
   PossibleWordBox,
@@ -48,7 +50,9 @@ import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
 
-interface VerifyMnemonicScreenProps extends StackScreenProps<RootStackParamList, 'VerifyMnemonicScreen'>, ScreenProps {}
+interface VerifyMnemonicScreenProps
+  extends StackScreenProps<BackupMnemonicNavigationParamList, 'VerifyMnemonicScreen'>,
+    ScreenProps {}
 
 const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProps) => {
   const dispatch = useAppDispatch()
@@ -83,10 +87,18 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       setShowSuccess(true)
       setTimeout(() => {
         setShowSuccess(false)
-        navigation.navigate('InWalletTabsNavigation')
+        navigation.navigate('VerificationSuccessScreen')
       }, 2000)
     }
   }, [confirmBackup, mnemonicWords.current.length, navigation, randomizedOptions, selectedWords.length])
+
+  useFocusEffect(
+    useCallback(() => {
+      navigation.getParent()?.setOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
+      })
+    }, [navigation])
+  )
 
   const selectWord = (word: string) => {
     if (!word) return
@@ -107,11 +119,14 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       <ScrollScreen
         fill
         verticalGap
-        headerOptions={{ headerTitle: 'Verify secret phrase', type: 'stack' }}
+        hasNavigationHeader
         style={{ paddingBottom: footerButtonsHeight + DEFAULT_MARGIN }}
         {...props}
       >
-        <ScreenIntro subtitle="Select the words of your secret recovery phrase in the right order." />
+        <ScreenIntro
+          title="Verify secret phrase"
+          subtitle="Select the words of your secret recovery phrase in the right order."
+        />
 
         <ScreenSection fill>
           {selectedWords.length > 0 && (

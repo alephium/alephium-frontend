@@ -22,7 +22,7 @@ import { isEnrolledAsync } from 'expo-local-authentication'
 import { StatusBar } from 'expo-status-bar'
 import { difference } from 'lodash'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, AppState, AppStateStatus, Platform, ViewProps } from 'react-native'
+import { Alert, AppState, AppStateStatus, ViewProps } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
@@ -227,7 +227,8 @@ const Main = ({ children, ...props }: ViewProps) => {
       // TODO: Revisit error handling with proper error codes
     } catch (e: unknown) {
       const error = e as { message?: string }
-      if (error.message?.includes('User canceled the authentication')) {
+
+      if (error.message?.includes('User canceled')) {
         Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
           { text: 'Try again', onPress: unlockApp }
         ])
@@ -241,8 +242,7 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useEffect(() => {
     // We want this to only run 1 time and not every time lastNavigationState changes (dep of unlockApp).
-    // On Android the AppState.change event is triggered when launching the app, but not on iOS
-    if (!walletMnemonic && appState.current === 'active' && !isUnlockingApp && Platform.OS === 'ios') {
+    if (!walletMnemonic && appState.current === 'active' && !isUnlockingApp) {
       unlockApp()
     }
 

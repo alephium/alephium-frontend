@@ -10,6 +10,7 @@ npm-debug.*
 *.orig.*
 web-build/
 /ios/Pods/
+keys/
 
 # macOS
 .DS_Store

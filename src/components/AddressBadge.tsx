@@ -23,9 +23,11 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
+import { selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
 import { copyAddressToClipboard } from '~/utils/addresses'
+import { stringToColour } from '~/utils/colors'
 
 interface AddressBadgeProps extends PressableProps {
   addressHash: AddressHash
@@ -46,16 +48,13 @@ const AddressBadge = ({
 }: AddressBadgeProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
 
   const textColor = color || theme.font.primary
 
   return (
     <Pressable onLongPress={() => !showCopyBtn && copyAddressToClipboard(addressHash)} {...props}>
-      {!address ? (
-        <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
-          {addressHash}
-        </Label>
-      ) : (
+      {address ? (
         <>
           {!hideSymbol && (
             <Symbol>
@@ -76,6 +75,21 @@ const AddressBadge = ({
             </Label>
           )}
         </>
+      ) : contact ? (
+        <>
+          {!hideSymbol && (
+            <Symbol>
+              <Dot color={stringToColour(contact.address)} />
+            </Symbol>
+          )}
+          <Label numberOfLines={1} style={textStyle} color={textColor}>
+            {contact.name}
+          </Label>
+        </>
+      ) : (
+        <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
+          {addressHash}
+        </Label>
       )}
       {showCopyBtn && address?.hash && (
         <CopyAddressButton

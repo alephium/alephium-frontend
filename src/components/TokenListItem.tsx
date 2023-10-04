@@ -36,7 +36,16 @@ const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemPro
     isLast={isLast}
     title={asset.name || asset.id}
     icon={<AssetLogo assetId={asset.id} size={38} />}
-    rightSideContent={<AmountStyled value={BigInt(asset.balance)} fadeDecimals suffix={asset.symbol} bold />}
+    rightSideContent={
+      <AmountStyled
+        value={BigInt(asset.balance)}
+        decimals={asset.decimals}
+        isUnknownToken={!asset.symbol}
+        fadeDecimals
+        suffix={asset.symbol}
+        bold
+      />
+    }
     hideSeparator={hideSeparator}
   />
 )

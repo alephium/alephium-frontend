@@ -81,7 +81,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       const wallet = await generateAndStoreWallet(name, pin, mnemonic)
 
       try {
-        importAddresses(wallet.mnemonic, wallet.id, addresses)
+        await importAddresses(wallet.mnemonic, wallet.id, addresses)
       } catch (e) {
         console.error(e)
 
@@ -92,7 +92,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
       posthog?.capture('Imported wallet', { note: 'Scanned desktop wallet QR code' })
 
-      if (contacts.length > 0) importContacts(contacts)
+      if (contacts.length > 0) await importContacts(contacts)
 
       deviceHasBiometricsData
         ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })

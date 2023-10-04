@@ -20,9 +20,9 @@ const IS_DEV = process.env.APP_VARIANT === 'development'
 
 export default {
   expo: {
-    name: IS_DEV ? 'Alephium Wallet (DEV)' : 'Alephium Wallet',
+    name: IS_DEV ? 'Alephium (DEV)' : 'Alephium',
     slug: 'alephium-mobile-wallet',
-    version: '1.0.0',
+    version: '0.1.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
     splash: {
@@ -36,14 +36,15 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: IS_DEV ? 'org.alephium.wallet.dev' : 'org.alephium.wallet'
+      bundleIdentifier: IS_DEV ? 'org.alephium.mobilewallet.dev' : 'org.alephium.mobilewallet'
     },
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#000000'
       },
-      package: IS_DEV ? 'org.alephium.wallet.dev' : 'org.alephium.wallet'
+      package: IS_DEV ? 'org.alephium.wallet.dev' : 'org.alephium.wallet',
+      versionCode: 2
     },
     web: {
       favicon: './assets/favicon.png'
@@ -68,7 +69,7 @@ export default {
     ],
     extra: {
       eas: {
-        projectId: '6188edbf-c6d3-491d-a5b1-e965e3d21ce6'
+        projectId: '877a64af-ee97-4b79-8dfb-eddd78ebe065'
       }
     }
   }

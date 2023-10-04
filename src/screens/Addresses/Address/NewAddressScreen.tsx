@@ -21,12 +21,12 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
 
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
+import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Address/AddressFormBaseScreen'
 import {
   newAddressGenerated,
   selectAllAddresses,
@@ -81,16 +81,15 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <ScrollScreen
-      usesKeyboard
-      fill
-      verticalGap
-      headerOptions={{ headerTitle: 'New address', type: 'stack' }}
-      {...props}
-    >
-      <AddressForm initialValues={initialValues} onSubmit={handleGeneratePress} allowGroupSelection />
+    <>
+      <AddressFormBaseScreen
+        headerOptions={{ headerTitle: 'New address' }}
+        initialValues={initialValues}
+        onSubmit={handleGeneratePress}
+        allowGroupSelection
+      />
       <SpinnerModal isActive={loading} text="Generating address..." />
-    </ScrollScreen>
+    </>
   )
 }
 

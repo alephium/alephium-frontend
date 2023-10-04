@@ -63,7 +63,8 @@ const Amount = ({
 
   if (value !== undefined) {
     if (isFiat && typeof value === 'number') {
-      amount = formatFiatAmountForDisplay(value)
+      isNegative = value < 0
+      amount = formatFiatAmountForDisplay(isNegative ? value * -1 : value)
     } else if (isUnknownToken) {
       amount = value.toString()
     } else {

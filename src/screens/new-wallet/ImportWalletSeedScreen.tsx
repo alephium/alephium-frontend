@@ -51,8 +51,7 @@ export type SelectedWord = {
   timestamp: Date
 }
 
-// TODO: Set this to false before creating production build
-const enablePasteForDevelopment = true
+const enablePasteForDevelopment = false
 
 const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreenProps) => {
   const dispatch = useAppDispatch()
@@ -117,7 +116,9 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
 
-      navigation.navigate(deviceHasBiometricsData ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+      deviceHasBiometricsData
+        ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
+        : navigation.navigate('NewWalletSuccessScreen')
 
       setLoading(false)
     },
@@ -171,7 +172,9 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           )}
         </SecretPhraseContainer>
 
-        {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={importWallet} />}
+        {isPinModalVisible && (
+          <ConfirmWithAuthModal usePin onConfirm={importWallet} onClose={() => setIsPinModalVisible(false)} />
+        )}
         {loading && <SpinnerModal isActive={loading} text="Importing wallet..." />}
       </ScrollScreenStyled>
 

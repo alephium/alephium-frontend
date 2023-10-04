@@ -18,7 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Portal } from 'react-native-portalize'
 import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
@@ -30,17 +31,25 @@ import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
+import BottomModal from '~/components/layout/BottomModal'
+import { ModalContent } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import { selectAddressIds, selectTotalBalance, syncAddressesData } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
-  extends StackScreenProps<InWalletTabsParamList & RootStackParamList, 'DashboardScreen'>,
+  extends StackScreenProps<
+      InWalletTabsParamList & ReceiveNavigationParamList & SendNavigationParamList,
+      'DashboardScreen'
+    >,
     BottomBarScrollScreenProps {}
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
@@ -49,17 +58,51 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const headerHeight = useHeaderHeight()
   const walletName = useAppSelector((s) => s.wallet.name)
   const totalBalance = useAppSelector(selectTotalBalance)
-
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
+  const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
+
+  const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
+  const [isNewWallet, setIsNewWallet] = useState(false)
 
   const buttonsRowStyle = useAnimatedStyle(() => ({
     height: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 65, defaultSpringConfiguration)),
     opacity: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 1, defaultSpringConfiguration))
   }))
 
+  useEffect(() => {
+    const initializeNewWalletFlag = async () => {
+      setIsNewWallet(await getIsNewWallet())
+      storeIsNewWallet(false)
+    }
+
+    initializeNewWalletFlag()
+  }, [])
+
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHashes))
+  }
+
+  const handleReceivePress = () => {
+    if (addressHashes.length === 1) {
+      navigation.navigate('ReceiveNavigation', {
+        screen: 'QRCodeScreen',
+        params: { addressHash: addressHashes[0] }
+      })
+    } else {
+      navigation.navigate('ReceiveNavigation')
+    }
+  }
+
+  const handleSendPress = () => {
+    if (addressHashes.length === 1) {
+      navigation.navigate('SendNavigation', {
+        screen: 'DestinationScreen',
+        params: { fromAddressHash: addressHashes[0] }
+      })
+    } else {
+      navigation.navigate('SendNavigation')
+    }
   }
 
   return (
@@ -91,7 +134,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
             ]}
           >
             <Button
-              onPress={() => navigation.navigate('SendNavigation')}
+              onPress={handleSendPress}
               iconProps={{ name: 'arrow-up-outline' }}
               title="Send"
               variant="highlightedIcon"
@@ -100,7 +143,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               flex
             />
             <Button
-              onPress={() => navigation.navigate('ReceiveNavigation')}
+              onPress={handleReceivePress}
               iconProps={{ name: 'arrow-down-outline' }}
               title="Receive"
               variant="highlightedIcon"
@@ -119,6 +162,47 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           </AppText>
         </EmptyPlaceholder>
       )}
+      <Portal>
+        <BottomModal
+          isOpen={isBackupReminderModalOpen}
+          onClose={() => setIsBackupReminderModalOpen(false)}
+          Content={(props) => (
+            <ModalContent verticalGap {...props}>
+              <ScreenSection>
+                <BottomModalScreenTitle>
+                  {isNewWallet ? 'Welcome to your new wallet! 👋' : "Let's verify! 😌"}
+                </BottomModalScreenTitle>
+              </ScreenSection>
+              <ScreenSection>
+                {isNewWallet ? (
+                  <AppText color="secondary" size={18}>
+                    The first and most important step is to{' '}
+                    <AppText size={18} bold>
+                      write down your secret recovery phrase
+                    </AppText>{' '}
+                    and store it in a safe place.
+                  </AppText>
+                ) : (
+                  <AppText color="secondary" size={18}>
+                    Have peace of mind by verifying that you{' '}
+                    <AppText size={18} bold>
+                      wrote your secret recovery phrase down
+                    </AppText>{' '}
+                    correctly.
+                  </AppText>
+                )}
+              </ScreenSection>
+              <ScreenSection>
+                <Button
+                  title="Let's do that!"
+                  onPress={() => navigation.navigate('BackupMnemonicNavigation')}
+                  variant="highlight"
+                />
+              </ScreenSection>
+            </ModalContent>
+          )}
+        />
+      </Portal>
     </DashboardScreenStyled>
   )
 }

@@ -146,6 +146,7 @@ export default styled(AddressCard)`
   border-radius: 16px;
   height: 220px;
   justify-content: space-between;
+  overflow: hidden;
 `
 
 const Header = styled.View`
