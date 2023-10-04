@@ -158,7 +158,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
             {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
               confirmedTransactions.length > 0 && (
                 <AppText color="tertiary" bold>
-                  👏 You reached the end of history.
+                  👏 You reached the end of the transactions&apos; history.
                 </AppText>
               )}
             {isLoading &&
