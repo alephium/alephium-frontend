@@ -71,6 +71,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           onSubmitEditing={handleButtonPress}
           blurOnSubmit={false}
           returnKeyType="done"
+          maxLength={24}
         />
       </ContentContainer>
     </ScrollScreen>

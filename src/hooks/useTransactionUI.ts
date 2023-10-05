@@ -40,15 +40,15 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       swap: Repeat
     }[infoType],
     iconColor: {
-      in: theme.global.valid,
-      out: theme.global.accent,
+      in: theme.global.receive,
+      out: theme.global.send,
       move: theme.font.secondary,
       pending: theme.font.secondary,
       swap: theme.global.complementary
     }[infoType],
     iconBgColor: {
-      in: colord(theme.global.valid).alpha(0.11).toRgbString(),
-      out: colord(theme.global.accent).alpha(0.11).toRgbString(),
+      in: colord(theme.global.receive).alpha(0.11).toRgbString(),
+      out: colord(theme.global.send).alpha(0.11).toRgbString(),
       move: colord(theme.font.secondary).alpha(0.11).toRgbString(),
       pending: colord(theme.font.secondary).alpha(0.11).toRgbString(),
       swap: colord(theme.global.complementary).alpha(0.11).toRgbString()

@@ -54,7 +54,7 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
-const chartHeight = 95
+const chartHeight = 70
 const chartIntervalsRowHeight = 30
 const chartItemsMargin = 15
 
@@ -78,7 +78,8 @@ const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartCh
   const animatedStyle = useAnimatedStyle(() => ({
     height: isLoading
       ? 0
-      : withSpring(chartHeight + chartIntervalsRowHeight + chartItemsMargin, defaultSpringConfiguration)
+      : withSpring(chartHeight + chartIntervalsRowHeight + chartItemsMargin, defaultSpringConfiguration),
+    marginBottom: withSpring(10)
   }))
 
   useEffect(() => {
@@ -130,7 +131,7 @@ const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartCh
       <Svg height={chartHeight}>
         <Defs>
           <LinearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor={chartColor.toHex()} stopOpacity={0.2} />
+            <Stop offset="0%" stopColor={chartColor.toHex()} stopOpacity={0.1} />
             <Stop offset="75%" stopColor={chartColor.toHex()} stopOpacity={0} />
           </LinearGradient>
         </Defs>
@@ -194,6 +195,7 @@ const DeltaAndChartLengths = styled(Animated.View)`
   flex-direction: row;
   align-items: center;
   gap: 15px;
+  margin: 0 ${DEFAULT_MARGIN}px;
 `
 
 const ChartLengthBadges = styled.View`

@@ -41,7 +41,8 @@ export default styled(Badge)`
     const usedColor = color || theme.font.primary
 
     return css`
-      padding: 5px 10px;
+      min-width: 25px;
+      padding: 2px 5px;
       align-items: center;
       justify-content: center;
       border-radius: ${rounded ? '30px' : '7px'};

@@ -22,6 +22,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
+import Badge from '~/components/Badge'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressHash } from '~/types/addresses'
@@ -45,7 +46,7 @@ const UnknownTokensListItem = ({ entry }: UnknownTokensListItemProps) => {
       title="Unknown tokens"
       icon={<AssetLogo assetId="" size={38} />}
       hideSeparator
-      rightSideContent={<AppText bold>{entry.numberOfUnknownTokens}</AppText>}
+      rightSideContent={<Badge>{entry.numberOfUnknownTokens}</Badge>}
       subtitle={
         entry.addressHash ? (
           <ExplorerLink onPress={() => openBrowserAsync(`${explorerBaseUrl}/addresses/${entry.addressHash}`)}>
@@ -54,9 +55,7 @@ const UnknownTokensListItem = ({ entry }: UnknownTokensListItemProps) => {
             </AppText>
             <ChevronRightIcon size={20} color={theme.global.accent} />
           </ExplorerLink>
-        ) : (
-          ''
-        )
+        ) : undefined
       }
     />
   )

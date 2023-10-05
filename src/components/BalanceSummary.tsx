@@ -32,12 +32,12 @@ import { useAppSelector } from '~/hooks/redux'
 import useWorthDelta from '~/hooks/useWorthDelta'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
-import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { DataPoint } from '~/types/charts'
-import { NetworkStatus } from '~/types/network'
 import { currencies } from '~/utils/currencies'
 
 interface BalanceSummaryProps extends ViewProps {
@@ -47,13 +47,15 @@ interface BalanceSummaryProps extends ViewProps {
 const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
-  const networkStatus = useAppSelector((s) => s.network.status)
-  const networkName = useAppSelector((s) => s.network.name)
+  const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
+  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
+
   const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
     pollingInterval: 60000,
     skip: totalBalance === BigInt(0)
   })
+
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
 
@@ -81,23 +83,27 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
         {
           shadowColor: 'black',
           shadowOffset: { height: 5, width: 0 },
-          shadowOpacity: theme.name === 'dark' ? 0.5 : 0.08,
-          shadowRadius: 5,
-          elevation: 10,
-          overflow: 'hidden'
+          shadowOpacity: theme.name === 'dark' ? 0.5 : 0.1,
+          shadowRadius: 8,
+          elevation: 10
         },
         style
       ]}
       {...props}
     >
-      <GradientContainer colors={['transparent', colord(deltaColor).alpha(0.03).toHex()]} locations={[0, 0.6]}>
+      <LinearGradient
+        colors={[
+          'transparent',
+          isLoadingTokenBalances || !haveHistoricBalancesLoaded
+            ? 'transparent'
+            : colord(deltaColor).alpha(0.05).toHex(),
+          'transparent'
+        ]}
+        locations={[0.3, 0.65, 1]}
+      >
         <TextContainer>
-          <ActiveNetworkContainer>
-            <NetworkStatusBullet status={networkStatus} />
-            <AppText color="primary">{networkName}</AppText>
-          </ActiveNetworkContainer>
           <DateLabelContainer>
-            <AppText color="tertiary" semiBold>
+            <AppText color="secondary" semiBold>
               {dateLabel}
             </AppText>
           </DateLabelContainer>
@@ -105,7 +111,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
         </TextContainer>
 
-        {totalBalance === BigInt(0) ? (
+        {totalBalance === BigInt(0) && !isLoadingTokenBalances ? (
           <ReceiveFundsButtonContainer>
             <Button
               title="Receive assets"
@@ -124,27 +130,17 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
             />
           </ChartContainer>
         )}
-      </GradientContainer>
+      </LinearGradient>
     </BalanceSummaryContainer>
   )
 }
 
 export default BalanceSummary
 
-const BalanceSummaryContainer = styled.View`
-  margin: 0 ${DEFAULT_MARGIN}px;
-  border-radius: ${BORDER_RADIUS_BIG}px;
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.primary};
-`
-
-const GradientContainer = styled(LinearGradient)`
-  border-radius: ${BORDER_RADIUS_BIG}px;
-`
+const BalanceSummaryContainer = styled.View``
 
 const TextContainer = styled.View`
-  margin: 5px ${DEFAULT_MARGIN}px 15px ${DEFAULT_MARGIN}px;
+  margin: 10px ${DEFAULT_MARGIN + 10}px 15px ${DEFAULT_MARGIN + 10}px;
 `
 
 const ChartContainer = styled.View`
@@ -152,26 +148,7 @@ const ChartContainer = styled.View`
   margin-left: -1px;
 `
 
-const ActiveNetworkContainer = styled.View`
-  align-self: flex-end;
-  margin-right: -8px;
-  margin-top: 3px;
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-  border-radius: 33px;
-  padding: 1px 7px;
-  background-color: ${({ theme }) => theme.bg.tertiary};
-`
-
 const DateLabelContainer = styled.View``
-
-const NetworkStatusBullet = styled.View<{ status: NetworkStatus }>`
-  height: 7px;
-  width: 7px;
-  border-radius: 10px;
-  background-color: ${({ status, theme }) => (status === 'online' ? theme.global.valid : theme.global.alert)};
-`
 
 const ReceiveFundsButtonContainer = styled.View`
   padding: 15px;

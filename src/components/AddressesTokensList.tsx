@@ -19,12 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset } from '@alephium/sdk'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
+import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
 import Animated, { CurvedTransition } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from '~/components/AppText'
+import Badge from '~/components/Badge'
 import NFTsGrid from '~/components/NFTsGrid'
-import TabBar from '~/components/TabBar'
+import TabBar, { TabItem } from '~/components/TabBar'
 import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
 import { useAppSelector } from '~/hooks/redux'
 import {
@@ -39,6 +41,7 @@ import TokenListItem from './TokenListItem'
 
 interface AddressesTokensListProps {
   addressHash?: AddressHash
+  isRefreshing?: boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -48,18 +51,7 @@ type LoadingIndicator = {
 
 type TokensRow = Asset | UnknownTokensEntry | LoadingIndicator
 
-const tabItems = [
-  {
-    value: 'tokens',
-    label: 'Tokens'
-  },
-  {
-    value: 'nfts',
-    label: 'NFTs'
-  }
-]
-
-const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) => {
+const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesTokensListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
@@ -71,6 +63,31 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
   const theme = useTheme()
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
+
+  const tabItems: TabItem[] = useMemo(
+    () => [
+      {
+        value: 'tokens',
+        label: (
+          <>
+            <AppText semiBold>Tokens</AppText>
+            <Badge rounded>{knownFungibleTokens.length + unknownTokens.length}</Badge>
+          </>
+        )
+      },
+      {
+        value: 'nfts',
+        label: (
+          <>
+            <AppText semiBold>NFTs</AppText>
+            <Badge rounded>{nfts.length}</Badge>
+          </>
+        )
+      }
+    ],
+    [knownFungibleTokens.length, nfts.length, unknownTokens.length]
+  )
+
   const [activeTab, setActiveTab] = useState(tabItems[0])
 
   const isLoading = isLoadingTokenBalances || isLoadingTokensMetadata
@@ -120,6 +137,14 @@ const AddressesTokensList = ({ addressHash, style }: AddressesTokensListProps) =
           nfts: <NFTsGrid nfts={nfts} isLoading={isLoading} />
         }[activeTab.value]
       }
+      {isRefreshing && (
+        <>
+          <LoadingOverlay />
+          <Loader>
+            <ActivityIndicator size={72} color={theme.font.tertiary} />
+          </Loader>
+        </>
+      )}
     </ListContainer>
   )
 }
@@ -146,6 +171,25 @@ const ListContainer = styled(Animated.View)`
   margin: 0 ${DEFAULT_MARGIN}px;
   background-color: ${({ theme }) => theme.bg.primary};
   overflow: hidden;
+  position: relative;
+`
+
+const LoadingOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0
+  background-color: ${({ theme }) => theme.bg.back1};
+  opacity: 0.8;
+`
+
+const Loader = styled.View`
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  align-items: center;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

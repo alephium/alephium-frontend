@@ -55,6 +55,7 @@ declare module 'styled-components' {
     global: {
       accent: string
       alert: string
+      warning: string
       valid: string
       star: string
       pale: string

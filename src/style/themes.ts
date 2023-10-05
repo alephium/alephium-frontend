@@ -56,12 +56,13 @@ export const lightTheme: DefaultTheme = {
   global: {
     accent: '#1575f9',
     alert: '#ed4a34',
+    warning: '#f48826',
     valid: '#2DA023',
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#b07dcb',
-    send: '#f7654b',
-    receive: '#3396fa'
+    send: '#f7aa54',
+    receive: '#61b15b'
   },
   gradient: {
     yellow: '#FFCD82',
@@ -108,12 +109,13 @@ export const darkTheme: DefaultTheme = {
   global: {
     accent: '#2f8cef',
     alert: '#ed4a34',
+    warning: '#ed882d',
     valid: '#3ed282',
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#d488eb',
-    send: '#fd9166',
-    receive: '#7fcef8'
+    send: '#fdb866',
+    receive: '#71c56b'
   },
   gradient: {
     yellow: '#FFCD82',

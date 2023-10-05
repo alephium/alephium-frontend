@@ -37,12 +37,12 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { scrollScreenTo } from '~/utils/layout'
 
 export type HeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
+  headerTitleRight?: () => ReactNode
   type?: 'default' | 'stack'
 }
 
 export interface BaseHeaderProps extends ViewProps {
   headerBottom?: () => ReactNode
-  headerTitleRight?: () => ReactNode
   headerRef?: RefObject<Animated.View>
   options: HeaderOptions
   showCompactComponents?: boolean
@@ -58,9 +58,8 @@ const defaultScrollRange = [0, scrollEndThreshold]
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 
 const BaseHeader = ({
-  options: { headerRight, headerLeft, headerTitle },
+  options: { headerRight, headerLeft, headerTitle, headerTitleRight },
   headerBottom,
-  headerTitleRight,
   showCompactComponents,
   showBorderBottom,
   headerRef,
@@ -275,6 +274,7 @@ const Title = styled(AppText)`
   font-weight: 700;
   color: ${({ theme }) => theme.font.primary};
   align-self: flex-start;
+  flex-shrink: 1;
 `
 
 const CompactTitle = styled(AppText)`

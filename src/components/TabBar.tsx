@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ReactNode } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -24,7 +25,7 @@ import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export interface TabItem {
   value: string
-  label: string
+  label: ReactNode
 }
 
 export interface TabBarProps {
@@ -44,10 +45,23 @@ const TabBar = ({ items, onTabChange, activeTab, style }: TabBarProps) => {
 
         return (
           <Pressable key={item.value} onPress={() => onTabChange(item)}>
-            <Tab isActive={isActive}>
-              <AppText semiBold size={16} color={isActive ? theme.font.primary : theme.font.tertiary}>
-                {item.label}
-              </AppText>
+            <Tab
+              isActive={isActive}
+              style={{
+                shadowColor: 'black',
+                shadowOffset: { height: 3, width: 0 },
+                shadowOpacity: theme.name === 'dark' ? 0 : 0.08,
+                shadowRadius: 5,
+                elevation: 10
+              }}
+            >
+              {typeof item.label === 'string' ? (
+                <AppText semiBold size={16} color={isActive ? theme.font.primary : theme.font.tertiary}>
+                  {item.label}
+                </AppText>
+              ) : (
+                item.label
+              )}
             </Tab>
           </Pressable>
         )
@@ -66,8 +80,10 @@ const TabBarStyled = styled.View`
 export const Tab = styled.View<{ isActive: boolean }>`
   text-align: center;
   justify-content: center;
+  flex-direction: row;
+  gap: 10px;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.button.primary : 'transparent')};
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : 'transparent')};
   padding: 8px 10px;
   border-radius: ${BORDER_RADIUS}px;
   margin-bottom: -1px;
