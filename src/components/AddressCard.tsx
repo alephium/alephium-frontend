@@ -26,7 +26,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
-import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { useAppSelector } from '~/hooks/redux'
@@ -62,6 +61,8 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
   const bgColor = address.settings.color ?? theme.font.primary
   const textColor = colord(bgColor).isDark() ? 'white' : 'black'
+  const outterBorderColor = colord(bgColor).lighten(0.15).toHex()
+  const innerBorderColor = colord(bgColor).lighten(0.05).toHex()
 
   const handleSendPress = () => {
     posthog?.capture('Address card: Selected address to send funds from')
@@ -91,14 +92,13 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           shadowOpacity: theme.name === 'dark' ? 0.5 : 0.2,
           shadowRadius: 5,
           elevation: 10,
-          borderColor: colord(bgColor).lighten(0.1).toHex()
+          borderColor: outterBorderColor
         }
       ]}
     >
       <CardGradientContainer colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
         <Header>
           <AddressBadgeContainer>
-            {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
             <AddressBadgeStyled
               addressHash={address.hash}
               hideSymbol
@@ -109,30 +109,30 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
               }}
               showCopyBtn
             />
-            <AppText size={14} color={textColor}>
-              Group {address.group}
-            </AppText>
           </AddressBadgeContainer>
-          <Button
-            iconProps={{ name: 'settings-outline' }}
-            type="transparent"
-            color={textColor}
-            onPress={onSettingsPress}
-          />
+          <HeaderButtons>
+            <Button
+              color="white"
+              onPress={onSettingsPress}
+              customIcon={<DefaultAddressBadge size={18} color={textColor} />}
+              round
+            />
+            <Button iconProps={{ name: 'settings-outline' }} color={textColor} onPress={onSettingsPress} round />
+          </HeaderButtons>
         </Header>
         <Amounts>
           <FiatAmount
             value={totalAmountWorth}
             isFiat
             color={textColor}
-            size={30}
-            semiBold
+            size={32}
+            bold
             suffix={currencies[currency].symbol}
           />
           <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
         </Amounts>
-        <BottomRow>
-          <ButtonsRow sticked hasDivider>
+        <BottomRow style={{ borderTopColor: innerBorderColor }}>
+          <ButtonsRow sticked hasDivider dividerColor={innerBorderColor}>
             <Button
               title="Send"
               onPress={handleSendPress}
@@ -190,6 +190,12 @@ const AddressBadgeContainer = styled.View`
   gap: 18px;
 `
 
+const HeaderButtons = styled.View`
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 10px;
+`
+
 const Amounts = styled.View`
   padding: 15px;
   margin-left: ${DEFAULT_MARGIN}px;
@@ -205,4 +211,5 @@ const BottomRow = styled.View`
   align-items: center;
 
   background-color: rgba(0, 0, 0, 0.1);
+  border-top-width: 1px;
 `

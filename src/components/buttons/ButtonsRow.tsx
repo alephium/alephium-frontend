@@ -25,9 +25,10 @@ interface ButtonsRowProps {
   sticked?: boolean
   style?: StyleProp<ViewStyle>
   hasDivider?: boolean
+  dividerColor?: string
 }
 
-const ButtonsRow = ({ children, hasDivider, style }: ButtonsRowProps) => {
+const ButtonsRow = ({ children, hasDivider, dividerColor, style }: ButtonsRowProps) => {
   const buttons = children.filter((child) => !!child)
 
   return (
@@ -35,7 +36,9 @@ const ButtonsRow = ({ children, hasDivider, style }: ButtonsRowProps) => {
       {buttons.map((c, i) => (
         <ButtonsContainer key={`ButtonsContainer-${i}`}>
           {c}
-          {hasDivider && i !== buttons.length - 1 && <Divider />}
+          {hasDivider && i !== buttons.length - 1 && (
+            <Divider style={dividerColor ? { backgroundColor: dividerColor } : undefined} />
+          )}
         </ButtonsContainer>
       ))}
     </View>

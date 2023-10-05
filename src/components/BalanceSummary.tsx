@@ -96,7 +96,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
             </AppText>
           </DateLabelContainer>
 
-          <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+          <Amount value={totalAmountWorth} isFiat suffix={currencies[currency].symbol} bold size={38} />
         </TextContainer>
 
         {totalBalance === BigInt(0) && !isLoadingTokenBalances ? (

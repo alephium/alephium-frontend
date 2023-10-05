@@ -93,8 +93,8 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   button: {
-    primary: '#29292d',
-    secondary: '#1d1d20',
+    primary: 'rgba(255, 255, 255, 0.075)',
+    secondary: 'rgba(255, 255, 255, 0.04)',
     tertiary: '#28282b'
   },
   border: {
