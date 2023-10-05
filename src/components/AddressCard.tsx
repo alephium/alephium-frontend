@@ -72,9 +72,10 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
   const bgColor = address.settings.color ?? theme.font.primary
   const isDark = colord(bgColor).isDark()
-  const textColor = isDark ? 'white' : 'black'
-  const outterBorderColor = colord(bgColor).lighten(0.15).toHex()
-  const innerBorderColor = colord(bgColor).lighten(0.02).toHex()
+  const textColor = isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.8)'
+  const outterBorderColor = colord(bgColor).lighten(0.3).toHex()
+  const innerBorderColor = isDark ? colord(bgColor).lighten(0.1).toHex() : colord(bgColor).darken(0.05).toHex()
+  const buttonsBackground = isDark ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)'
 
   const handleSendPress = () => {
     posthog?.capture('Address card: Selected address to send funds from')
@@ -121,14 +122,17 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
         {
           shadowColor: 'black',
           shadowOffset: { height: 5, width: 0 },
-          shadowOpacity: theme.name === 'dark' ? 0.5 : 0.2,
-          shadowRadius: 5,
+          shadowOpacity: theme.name === 'dark' ? 0.5 : 0.15,
+          shadowRadius: 8,
           elevation: 10,
           borderColor: outterBorderColor
         }
       ]}
     >
-      <CardGradientContainer colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
+      <CardGradientContainer
+        colors={[bgColor, colord(bgColor).saturate(0.15).lighten(0.05).toHex()]}
+        start={{ x: 0.1, y: 0.3 }}
+      >
         <Header>
           <AddressBadgeContainer>
             <AddressBadgeStyled
@@ -152,10 +156,16 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
                   color={isDefaultAddress ? theme.global.accent : textColor}
                 />
               }
-              style={isDefaultAddress ? { backgroundColor: 'rgba(255, 255, 255, 0.2)' } : undefined}
+              style={{ backgroundColor: isDefaultAddress ? 'rgba(255, 255, 255, 0.2)' : buttonsBackground }}
               round
             />
-            <Button iconProps={{ name: 'settings-outline' }} color={textColor} onPress={onSettingsPress} round />
+            <Button
+              iconProps={{ name: 'settings-outline' }}
+              color={textColor}
+              onPress={onSettingsPress}
+              style={{ backgroundColor: buttonsBackground }}
+              round
+            />
           </HeaderButtons>
         </Header>
         <Amounts>
@@ -177,7 +187,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
         <BottomRow
           style={{
             borderTopColor: innerBorderColor,
-            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)'
+            backgroundColor: buttonsBackground
           }}
         >
           <ButtonsRow sticked hasDivider dividerColor={innerBorderColor}>
