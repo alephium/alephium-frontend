@@ -278,7 +278,7 @@ const Title = styled(AppText)`
 `
 
 const CompactTitle = styled(AppText)`
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   text-align: center;
 `
