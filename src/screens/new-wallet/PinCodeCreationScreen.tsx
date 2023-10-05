@@ -44,9 +44,7 @@ const pinLength = 6
 
 const firstInstructionSet: Instruction[] = [
   { text: 'Please choose a pin 🔐', type: 'primary' },
-  { text: 'Try not to forget it!', type: 'secondary' },
-  // TODO: Put correct link
-  { text: 'More info', type: 'link', url: 'https://docs.alephium.org/Frequently-Asked-Questions.html' }
+  { text: 'Try not to forget it!', type: 'secondary' }
 ]
 
 const secondInstructionSet: Instruction[] = [

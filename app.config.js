@@ -43,8 +43,7 @@ export default {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#000000'
       },
-      package: IS_DEV ? 'org.alephium.wallet.dev' : 'org.alephium.wallet',
-      versionCode: 2
+      package: IS_DEV ? 'org.alephium.wallet.dev' : 'org.alephium.wallet'
     },
     web: {
       favicon: './assets/favicon.png'

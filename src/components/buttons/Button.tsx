@@ -43,6 +43,7 @@ export interface ButtonProps extends PressableProps {
   short?: boolean
   centered?: boolean
   iconProps?: ComponentProps<typeof Ionicons>
+  customIcon?: ReactNode
   color?: string
   round?: boolean
   flex?: boolean
@@ -62,6 +63,7 @@ const Button = ({
   variant = 'default',
   disabled,
   iconProps,
+  customIcon,
   children,
   round,
   short,
@@ -74,7 +76,7 @@ const Button = ({
 }: ButtonProps) => {
   const theme = useTheme()
 
-  const hasOnlyIcon = !!iconProps && !title && !children
+  const hasOnlyIcon = (!!iconProps || !!customIcon) && !title && !children
   const pressed = useSharedValue(false)
 
   const bg = {
@@ -140,7 +142,7 @@ const Button = ({
     style
   ]
 
-  if (!iconProps && !title && !children)
+  if (!iconProps && !customIcon && !title && !children)
     throw new Error('At least one of the following properties is required: icon, title, or children')
 
   return (
@@ -163,7 +165,7 @@ const Button = ({
         </AnimatedAppText>
       )}
       {children}
-      {iconProps && (
+      {iconProps ? (
         <IconContainer
           style={
             variant === 'highlightedIcon'
@@ -178,7 +180,9 @@ const Button = ({
             {...iconProps}
           />
         </IconContainer>
-      )}
+      ) : customIcon ? (
+        customIcon
+      ) : null}
     </AnimatedPressable>
   )
 }
@@ -197,7 +201,8 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
       type="primary"
       style={[
         style,
-        { height: 40, flexDirection: 'row', alignItems: 'center', gap: 10 },
+        { height: 32, flexDirection: 'row', alignItems: 'center', gap: 10 },
+        !!props.title && { minWidth: 75 },
         !props.disabled
           ? {
               backgroundColor: theme.global.accent

@@ -1,13 +1,15 @@
 {
   "cli": {
-    "version": ">= 0.57.0"
+    "version": ">= 0.57.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "production": {
-      "node": "16.15.1"
+      "node": "16.15.1",
+      "autoIncrement": true
     },
     "development": {
-      "extends": "production",
+      "node": "16.15.1",
       "distribution": "internal",
       "developmentClient": true,
       "env": {

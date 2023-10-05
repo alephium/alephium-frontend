@@ -67,7 +67,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       await dispatch(syncAddressesHistoricBalances(newAddress.hash))
 
       posthog?.capture('Address: Generated new address', {
-        note: group === undefined ? 'In default group' : 'In specific group'
+        note: group === undefined ? 'In random group' : 'In specific group'
       })
     } catch (e) {
       console.error(e)

@@ -41,11 +41,7 @@ interface ConfirmWithAuthModalProps {
 
 const pinLength = 6
 
-const firstInstructionSet: Instruction[] = [
-  { text: 'Please enter your pin', type: 'primary' },
-  // TODO: Put correct link
-  { text: 'More info', type: 'link', url: 'https://docs.alephium.org/Frequently-Asked-Questions.html' }
-]
+const firstInstructionSet: Instruction[] = [{ text: 'Please enter your pin', type: 'primary' }]
 
 const errorInstructionSet: Instruction[] = [
   { text: 'Oops, wrong pin!', type: 'error' },

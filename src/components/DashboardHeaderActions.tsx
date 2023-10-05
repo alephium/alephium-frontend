@@ -30,6 +30,7 @@ import BottomModal from '~/components/layout/BottomModal'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import WalletConnectSVG from '~/images/logos/WalletConnectLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import WalletConnectPairingsModal from '~/screens/WalletConnectPairingsModal'
@@ -87,9 +88,9 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
         {isWalletConnectEnabled && walletConnectClient && activeSessions.length > 0 && (
           <Button
             onPress={() => setIsWalletConnectPairingsModalOpen(true)}
-            iconProps={{ name: 'radio' }}
+            customIcon={<WalletConnectSVG width={20} />}
             round
-            variant="accent"
+            style={{ backgroundColor: '#3B99FC' }}
           />
         )}
         <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'qr-code-outline' }} round />

@@ -70,7 +70,14 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   if (!address) return null
 
   return (
-    <ScrollScreen hasNavigationHeader verticalGap usesKeyboard contrastedBg {...props}>
+    <ScrollScreen
+      hasNavigationHeader
+      verticalGap
+      usesKeyboard
+      contrastedBg
+      keyboardShouldPersistTaps="always"
+      {...props}
+    >
       <ScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />
       <ScreenSection>
         <AssetsList>
