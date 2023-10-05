@@ -32,7 +32,7 @@ type CarouselProps<T> = Omit<TCarouselProps<T>, 'width'> & {
   FooterComponent?: ReactNode
   style?: StyleProp<ViewStyle>
   scrollTo?: number
-  onSwiping?: () => void
+  onSwipingStart?: () => void
   onSwipingEnd?: () => void
 }
 
@@ -44,7 +44,7 @@ const Carousel = <T,>({
   FooterComponent,
   style,
   scrollTo,
-  onSwiping,
+  onSwipingStart,
   onSwipingEnd,
   ...props
 }: CarouselProps<T>) => {
@@ -53,6 +53,7 @@ const Carousel = <T,>({
   const ref = useRef<ICarouselInstance>(null)
 
   const [_width, setWidth] = useState(width ?? Dimensions.get('window').width - padding * 2)
+  const [isSwiping, setIsSwiping] = useState(false)
 
   const onLayout = (event: LayoutChangeEvent) => {
     setWidth(width ?? event.nativeEvent.layout.width - padding * 2)
@@ -74,8 +75,12 @@ const Carousel = <T,>({
         onProgressChange={(_, absoluteProgress) => {
           if (Number.isInteger(absoluteProgress)) {
             onSwipingEnd && onSwipingEnd()
+            setIsSwiping(false)
           } else {
-            onSwiping && onSwiping()
+            if (isSwiping === false) {
+              onSwipingStart && onSwipingStart()
+              setIsSwiping(true)
+            }
           }
 
           progressValue.value = absoluteProgress

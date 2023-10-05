@@ -104,7 +104,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
           <Carousel
             data={addressHashes}
             renderItem={renderAddressCard}
-            onSwiping={() => setIsSwiping(true)}
+            onSwipingStart={() => setIsSwiping(true)}
             onScrollEnd={onAddressCardsScrollEnd}
             padding={20}
             distance={10}
