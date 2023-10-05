@@ -54,7 +54,7 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
-const chartHeight = 80
+const chartHeight = 70
 const chartIntervalsRowHeight = 30
 const chartItemsMargin = 15
 
@@ -78,7 +78,8 @@ const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartCh
   const animatedStyle = useAnimatedStyle(() => ({
     height: isLoading
       ? 0
-      : withSpring(chartHeight + chartIntervalsRowHeight + chartItemsMargin, defaultSpringConfiguration)
+      : withSpring(chartHeight + chartIntervalsRowHeight + chartItemsMargin, defaultSpringConfiguration),
+    marginBottom: withSpring(10)
   }))
 
   useEffect(() => {
