@@ -59,7 +59,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
 
   const [isQuickSelectionModalOpen, setIsQuickSelectionModalOpen] = useState(false)
 
-  const [heightCarouselItem, setHeightCarouselItem] = useState(220)
+  const [heightCarouselItem, setHeightCarouselItem] = useState(235)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
   const [isSwiping, setIsSwiping] = useState(false)
 
@@ -79,7 +79,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
   }
 
   const renderAddressCard = ({ item }: { item: string }) => (
-    <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height)} key={item}>
+    <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height + 15)} key={item}>
       <AddressCard
         addressHash={item}
         onSettingsPress={() => navigation.navigate('EditAddressScreen', { addressHash: item })}

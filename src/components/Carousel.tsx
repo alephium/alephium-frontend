@@ -94,7 +94,7 @@ const Carousel = <T,>({
           parallaxScrollingOffset: distance * -1
         }}
       />
-      <CarouselFooter centered={!FooterComponent}>
+      <CarouselFooter>
         {!!progressValue && data.length > 1 && (
           <CarouselPagination>
             {data.map((_, index) => (
@@ -128,12 +128,15 @@ const CarouselPagination = styled.View`
   gap: 9px;
 `
 
-const CarouselFooter = styled(ScreenSection)<{ centered?: boolean }>`
-  height: 70px;
+const CarouselFooter = styled(ScreenSection)`
+  height: 40px;
   flex-direction: row;
   align-items: center;
-  justify-content: ${({ centered }) => (centered ? 'center' : 'space-between')};
-  gap: 10px;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+  width: 85%;
+  align-self: center;
 `
 
 interface CarouselPaginationItemProps {

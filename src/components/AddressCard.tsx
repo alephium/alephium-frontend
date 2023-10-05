@@ -21,7 +21,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { usePostHog } from 'posthog-react-native'
-import { StyleProp, ViewStyle } from 'react-native'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -82,71 +82,87 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   }
 
   return (
-    <LinearGradient style={style} colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
-      <Header>
-        <AddressBadgeContainer>
-          {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
-          <AddressBadgeStyled
-            addressHash={address.hash}
-            hideSymbol
-            color={textColor}
-            textStyle={{
-              fontSize: 23,
-              fontWeight: '700'
-            }}
-            showCopyBtn
-          />
-          <AppText size={14} color={textColor}>
-            Group {address.group}
-          </AppText>
-        </AddressBadgeContainer>
-        <Button
-          iconProps={{ name: 'settings-outline' }}
-          type="transparent"
-          color={textColor}
-          onPress={onSettingsPress}
-        />
-      </Header>
-      <Amounts>
-        <FiatAmount
-          value={totalAmountWorth}
-          isFiat
-          color={textColor}
-          size={30}
-          semiBold
-          suffix={currencies[currency].symbol}
-        />
-        <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
-      </Amounts>
-      <BottomRow>
-        <ButtonsRow sticked hasDivider>
+    <View
+      style={[
+        style,
+        {
+          shadowColor: 'black',
+          shadowOffset: { height: 5, width: 0 },
+          shadowOpacity: theme.name === 'dark' ? 0.5 : 0.2,
+          shadowRadius: 5
+        }
+      ]}
+    >
+      <CardGradientContainer colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
+        <Header>
+          <AddressBadgeContainer>
+            {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
+            <AddressBadgeStyled
+              addressHash={address.hash}
+              hideSymbol
+              color={textColor}
+              textStyle={{
+                fontSize: 23,
+                fontWeight: '700'
+              }}
+              showCopyBtn
+            />
+            <AppText size={14} color={textColor}>
+              Group {address.group}
+            </AppText>
+          </AddressBadgeContainer>
           <Button
-            title="Send"
-            onPress={handleSendPress}
-            iconProps={{ name: 'arrow-up-outline' }}
-            flex
+            iconProps={{ name: 'settings-outline' }}
             type="transparent"
             color={textColor}
+            onPress={onSettingsPress}
           />
-          <Button
-            title="Receive"
-            onPress={handleReceivePress}
-            iconProps={{ name: 'arrow-down-outline' }}
-            flex
-            type="transparent"
+        </Header>
+        <Amounts>
+          <FiatAmount
+            value={totalAmountWorth}
+            isFiat
             color={textColor}
+            size={30}
+            semiBold
+            suffix={currencies[currency].symbol}
           />
-        </ButtonsRow>
-      </BottomRow>
-    </LinearGradient>
+          <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
+        </Amounts>
+        <BottomRow>
+          <ButtonsRow sticked hasDivider>
+            <Button
+              title="Send"
+              onPress={handleSendPress}
+              iconProps={{ name: 'arrow-up-outline' }}
+              flex
+              type="transparent"
+              color={textColor}
+            />
+            <Button
+              title="Receive"
+              onPress={handleReceivePress}
+              iconProps={{ name: 'arrow-down-outline' }}
+              flex
+              type="transparent"
+              color={textColor}
+            />
+          </ButtonsRow>
+        </BottomRow>
+      </CardGradientContainer>
+    </View>
   )
 }
 
 export default styled(AddressCard)`
   border-radius: 16px;
   height: 220px;
+`
+
+const CardGradientContainer = styled(LinearGradient)`
+  flex: 1;
   justify-content: space-between;
-  overflow: hidden;
+  border-radius: 16px;
 `
 
 const Header = styled.View`
