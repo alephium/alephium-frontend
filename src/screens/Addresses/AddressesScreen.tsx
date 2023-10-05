@@ -22,7 +22,7 @@ import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
@@ -46,7 +46,6 @@ import { AddressHash } from '~/types/addresses'
 
 const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const posthog = usePostHog()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 

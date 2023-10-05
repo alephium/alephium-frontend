@@ -89,7 +89,9 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           shadowColor: 'black',
           shadowOffset: { height: 5, width: 0 },
           shadowOpacity: theme.name === 'dark' ? 0.5 : 0.2,
-          shadowRadius: 5
+          shadowRadius: 5,
+          elevation: 10,
+          borderColor: colord(bgColor).lighten(0.1).toHex()
         }
       ]}
     >
@@ -155,14 +157,16 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 }
 
 export default styled(AddressCard)`
-  border-radius: 16px;
+  border-radius: 24px;
   height: 220px;
+  border-width: 1px;
+  background-color: white;
 `
 
 const CardGradientContainer = styled(LinearGradient)`
   flex: 1;
   justify-content: space-between;
-  border-radius: 16px;
+  border-radius: 23px;
 `
 
 const Header = styled.View`

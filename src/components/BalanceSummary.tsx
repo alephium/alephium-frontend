@@ -78,19 +78,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   }
 
   return (
-    <BalanceSummaryContainer
-      style={[
-        {
-          shadowColor: 'black',
-          shadowOffset: { height: 5, width: 0 },
-          shadowOpacity: theme.name === 'dark' ? 0.5 : 0.1,
-          shadowRadius: 8,
-          elevation: 10
-        },
-        style
-      ]}
-      {...props}
-    >
+    <BalanceSummaryContainer style={style} {...props}>
       <LinearGradient
         colors={[
           'transparent',
