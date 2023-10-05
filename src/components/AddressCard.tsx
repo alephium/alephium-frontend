@@ -151,7 +151,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
                   color={isDefaultAddress ? theme.global.accent : textColor}
                 />
               }
-              style={isDefaultAddress ? { backgroundColor: 'rgba(255, 255, 255, 0.5)' } : undefined}
+              style={isDefaultAddress ? { backgroundColor: 'rgba(255, 255, 255, 0.2)' } : undefined}
               round
             />
             <Button iconProps={{ name: 'settings-outline' }} color={textColor} onPress={onSettingsPress} round />
@@ -194,7 +194,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           </ButtonsRow>
         </BottomRow>
       </CardGradientContainer>
-      <SpinnerModal isActive={loading} text="Changing default address..." />
+      <SpinnerModal isActive={loading} text="Updating default address..." />
     </View>
   )
 }
@@ -215,10 +215,11 @@ const CardGradientContainer = styled(LinearGradient)`
 const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   max-width: 100%;
   align-items: center;
   gap: 18px;
-  padding: 15px 15px 0px 15px;
+  padding: 15px 15px 0px 20px;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
@@ -236,7 +237,8 @@ const AddressBadgeContainer = styled.View`
 const HeaderButtons = styled.View`
   flex-direction: row;
   justify-content: flex-end;
-  gap: 10px;
+  align-items: center;
+  gap: 15px;
 `
 
 const Amounts = styled.View`

@@ -83,13 +83,13 @@ export const darkTheme: DefaultTheme = {
     back1: '#111114',
     back2: '#0E0E10',
     accent: 'rgba(93, 108, 243, 0.08)',
-    contrast: 'white'
+    contrast: '#ffffff'
   },
   font: {
     primary: '#E3E3E3',
     secondary: 'rgba(255, 255, 255, 0.75)',
     tertiary: 'rgba(255, 255, 255, 0.40)',
-    contrast: '#19191E',
+    contrast: '#ffffff',
     highlight: '#f0d590'
   },
   button: {

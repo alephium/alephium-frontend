@@ -33,8 +33,12 @@ const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => {
   return (
     <ModalWithBackdrop animationType="fade" visible={isActive}>
       <SpinnerContainer>
-        <ActivityIndicator size={72} color={theme.font.tertiary} />
-        {text && <LoadingText bold>{text}</LoadingText>}
+        <ActivityIndicator size={80} color={theme.font.contrast} />
+        {text && (
+          <LoadingText semiBold size={16}>
+            {text}
+          </LoadingText>
+        )}
       </SpinnerContainer>
     </ModalWithBackdrop>
   )
@@ -43,14 +47,14 @@ const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => {
 export default SpinnerModal
 
 const SpinnerContainer = styled.View`
-  flex: 1
+  flex: 1;
   width: 100%;
-  background-color: ${({ theme }) => colord(theme.bg.secondary).alpha(0.8).toRgbString()};
+  background-color: ${({ theme }) => colord(theme.bg.contrast).alpha(0.3).toRgbString()};
   justify-content: center;
   align-items: center;
 `
 
 const LoadingText = styled(AppText)`
   margin-top: 20px;
-  color: ${({ theme }) => theme.font.tertiary};
+  color: ${({ theme }) => theme.font.contrast};
 `
