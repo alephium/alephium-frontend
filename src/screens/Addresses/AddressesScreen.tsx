@@ -61,6 +61,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(220)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
+  const [isSwiping, setIsSwiping] = useState(false)
 
   useEffect(() => {
     if (defaultAddress?.hash) {
@@ -73,6 +74,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
     if (index < addressHashes.length) {
       setSelectedAddressHash(addressHashes[index])
       setScrollToCarouselPage(index)
+      setIsSwiping(false)
     }
   }
 
@@ -102,6 +104,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
           <Carousel
             data={addressHashes}
             renderItem={renderAddressCard}
+            onSwiping={() => setIsSwiping(true)}
             onScrollEnd={onAddressCardsScrollEnd}
             padding={20}
             distance={10}
@@ -128,7 +131,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
               </>
             }
           />
-          {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} />}
+          {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} isRefreshing={isSwiping} />}
         </Content>
       </BottomBarScrollScreen>
 

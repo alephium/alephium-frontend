@@ -19,37 +19,34 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { Dimensions, LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
-import RNCarousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
+import RNCarousel, { ICarouselInstance, TCarouselProps } from 'react-native-reanimated-carousel'
 import styled, { useTheme } from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
 
-interface CarouselProps<T> {
-  data: Array<T>
+type CarouselProps<T> = Omit<TCarouselProps<T>, 'width'> & {
   renderItem: (itemInfo: { item: T }) => ReactElement
   width?: number
   padding?: number
-  height?: number
   distance?: number
-  onScrollStart?: () => void
-  onScrollEnd?: (index: number) => void
   FooterComponent?: ReactNode
   style?: StyleProp<ViewStyle>
   scrollTo?: number
+  onSwiping?: () => void
+  onSwipingEnd?: () => void
 }
 
 const Carousel = <T,>({
   data,
-  renderItem,
   width,
-  height,
   padding = 0,
   distance = 0,
-  onScrollStart,
-  onScrollEnd,
   FooterComponent,
   style,
-  scrollTo
+  scrollTo,
+  onSwiping,
+  onSwipingEnd,
+  ...props
 }: CarouselProps<T>) => {
   const progressValue = useSharedValue<number>(0)
   const theme = useTheme()
@@ -73,18 +70,24 @@ const Carousel = <T,>({
         ref={ref}
         style={{ width: '100%', justifyContent: 'center' }}
         width={_width}
-        height={height}
         loop={false}
-        onProgressChange={(_, absoluteProgress) => (progressValue.value = absoluteProgress)}
+        onProgressChange={(_, absoluteProgress) => {
+          if (Number.isInteger(absoluteProgress)) {
+            onSwipingEnd && onSwipingEnd()
+          } else {
+            onSwiping && onSwiping()
+          }
+
+          progressValue.value = absoluteProgress
+        }}
+        data={data}
+        {...props}
+        vertical={false}
         mode="parallax"
         modeConfig={{
           parallaxScrollingScale: 1,
           parallaxScrollingOffset: distance * -1
         }}
-        data={data}
-        renderItem={renderItem}
-        onScrollBegin={onScrollStart}
-        onScrollEnd={onScrollEnd}
       />
       <CarouselFooter centered={!FooterComponent}>
         {!!progressValue && data.length > 1 && (
