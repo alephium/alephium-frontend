@@ -154,7 +154,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
           <Footer>
             {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
               confirmedTransactions.length > 0 && (
-                <AppText color="tertiary" bold>
+                <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
                   👏 You reached the end of the transactions&apos; history.
                 </AppText>
               )}
