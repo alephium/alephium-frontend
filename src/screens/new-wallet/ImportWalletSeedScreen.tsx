@@ -21,13 +21,12 @@ import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { KeyboardAvoidingView, Pressable, ScrollView } from 'react-native'
+import { Alert, KeyboardAvoidingView, Pressable, ScrollView } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { ContinueButton } from '~/components/buttons/Button'
-import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
@@ -66,7 +65,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
-  const [isPinModalVisible, setIsPinModalVisible] = useState(false)
 
   useEffect(() => {
     setPossibleMatches(
@@ -97,10 +95,14 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
   const importWallet = useCallback(
     async (pin?: string) => {
-      if (!name) return
-
-      if (!pin) {
-        setIsPinModalVisible(true)
+      // This should never happen, but if it does, let the user restart the process of creating a wallet
+      if (!name || !pin) {
+        Alert.alert('Could not proceed', `Missing ${!name ? 'wallet name' : 'pin'}`, [
+          {
+            text: 'Restart',
+            onPress: () => navigation.navigate('LandingScreen')
+          }
+        ])
         return
       }
 
@@ -171,10 +173,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
             </SecretPhraseBox>
           )}
         </SecretPhraseContainer>
-
-        {isPinModalVisible && (
-          <ConfirmWithAuthModal usePin onConfirm={importWallet} onClose={() => setIsPinModalVisible(false)} />
-        )}
         {loading && <SpinnerModal isActive={loading} text="Importing wallet..." />}
       </ScrollScreenStyled>
 

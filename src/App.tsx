@@ -251,10 +251,10 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && !isCameraOpen) {
+      if (nextAppState === 'background' && walletMnemonic && !isCameraOpen) {
         navigateRootStack('SplashScreen')
         dispatch(appBecameInactive())
-      } else if (nextAppState === 'active' && !walletMnemonic && !isUnlockingApp && !isCameraOpen) {
+      } else if (nextAppState === 'active' && !walletMnemonic && !isCameraOpen && !isUnlockingApp) {
         unlockApp()
       }
 

@@ -23,8 +23,8 @@ import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import animationSrc from '~/animations/lottie/wallet.json'
+import AuthenticationModal from '~/components/AuthenticationModal'
 import Button from '~/components/buttons/Button'
-import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import BottomModal from '~/components/layout/BottomModal'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -72,15 +72,16 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
           />
         </ScreenSection>
       </ScrollScreen>
-      {isAuthenticationModalVisible && (
-        <ConfirmWithAuthModal
-          onConfirm={() => {
-            setIsAuthenticationModalVisible(false)
-            setIsMnemonicModalVisible(true)
-          }}
-          onClose={() => setIsAuthenticationModalVisible(false)}
-        />
-      )}
+
+      <AuthenticationModal
+        visible={isAuthenticationModalVisible}
+        onConfirm={() => {
+          setIsAuthenticationModalVisible(false)
+          setIsMnemonicModalVisible(true)
+        }}
+        onClose={() => setIsAuthenticationModalVisible(false)}
+      />
+
       <Portal>
         <BottomModal
           isOpen={isMnemonicModalVisible}

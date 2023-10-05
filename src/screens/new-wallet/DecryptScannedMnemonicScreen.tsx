@@ -21,10 +21,10 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useRef, useState } from 'react'
+import { Alert } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 import { ContinueButton } from '~/components/buttons/Button'
-import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
@@ -47,7 +47,7 @@ interface DecryptScannedMnemonicScreenProps
 const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScreenProps) => {
   const qrCodeImportedEncryptedMnemonic = useAppSelector((s) => s.walletGeneration.qrCodeImportedEncryptedMnemonic)
   const name = useAppSelector((s) => s.walletGeneration.walletName)
-  const credentials = useAppSelector((s) => s.credentials)
+  const pin = useAppSelector((s) => s.credentials.pin)
   const posthog = usePostHog()
   const dispatch = useAppDispatch()
   const deviceHasBiometricsData = useBiometrics()
@@ -55,7 +55,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [pin, setPin] = useState(credentials.pin)
   const [loading, setLoading] = useState(false)
 
   useFocusEffect(
@@ -66,18 +65,26 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   )
 
   const decryptAndImportWallet = async () => {
-    if (!qrCodeImportedEncryptedMnemonic) return
+    // This should never happen, but if it does, let the user restart the process of creating a wallet
+    if (!qrCodeImportedEncryptedMnemonic || !name || !pin) {
+      Alert.alert(
+        'Could not proceed',
+        `Missing ${!qrCodeImportedEncryptedMnemonic ? 'encrypted mnemonic' : !name ? 'wallet name' : 'pin'}`,
+        [
+          {
+            text: 'Restart',
+            onPress: () => navigation.navigate('LandingScreen')
+          }
+        ]
+      )
+      return
+    }
 
     try {
-      const decryptedData = await decryptAsync(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
-      const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData
-
-      posthog?.capture('Decrypted desktop wallet QR code')
-
-      if (!name || !pin) return
-
       setLoading(true)
 
+      const decryptedData = await decryptAsync(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
+      const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData
       const wallet = await generateAndStoreWallet(name, pin, mnemonic)
 
       try {
@@ -97,11 +104,10 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       deviceHasBiometricsData
         ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
         : navigation.navigate('NewWalletSuccessScreen')
-
-      setLoading(false)
-      setPin('')
     } catch (e) {
       setError('Could not decrypt wallet with the given password.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -143,7 +149,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           onSubmitEditing={decryptAndImportWallet}
         />
       </ScreenSection>
-      {!credentials.pin && <ConfirmWithAuthModal usePin onConfirm={setPin} />}
       {loading && <SpinnerModal isActive={loading} text="Importing wallet..." />}
     </ScrollScreen>
   )

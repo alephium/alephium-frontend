@@ -22,7 +22,7 @@ import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
-import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
+import AuthenticationModal from '~/components/AuthenticationModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
@@ -210,12 +210,11 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           fees={unsignedTxData.fees}
         />
       )}
-      {isAuthenticationModalVisible && (
-        <ConfirmWithAuthModal
-          onConfirm={() => sendTransaction(onSendSuccessCallback)}
-          onClose={() => setIsAuthenticationModalVisible(false)}
-        />
-      )}
+      <AuthenticationModal
+        visible={isAuthenticationModalVisible}
+        onConfirm={() => sendTransaction(onSendSuccessCallback)}
+        onClose={() => setIsAuthenticationModalVisible(false)}
+      />
     </SendContext.Provider>
   )
 }

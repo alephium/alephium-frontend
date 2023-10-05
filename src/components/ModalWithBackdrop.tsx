@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Modal, ModalProps } from 'react-native'
 import styled from 'styled-components/native'
 
-interface ModalWithBackdropProps extends ModalProps {
+export interface ModalWithBackdropProps extends ModalProps {
   closeModal?: () => void
   color?: string
 }

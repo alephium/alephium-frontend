@@ -22,10 +22,11 @@ import { Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import PinCodeInput from '~/components/inputs/PinCodeInput'
 import { ScreenSection } from '~/components/layout/Screen'
-import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import ModalWithBackdrop, { ModalWithBackdropProps } from '~/components/ModalWithBackdrop'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import { getStoredWallet } from '~/persistent-storage/wallet'
@@ -33,10 +34,10 @@ import { ShouldClearPin } from '~/types/misc'
 import { WalletState } from '~/types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
-interface ConfirmWithAuthModalProps {
+interface AuthenticationModalProps extends ModalWithBackdropProps {
   onConfirm: (pin?: string, wallet?: WalletState) => void
   onClose?: () => void
-  usePin?: boolean
+  forcePinUsage?: boolean
 }
 
 const pinLength = 6
@@ -48,22 +49,28 @@ const errorInstructionSet: Instruction[] = [
   { text: 'Please try again 💪', type: 'secondary' }
 ]
 
-const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWithAuthModalProps) => {
+const AuthenticationModal = ({ onConfirm, onClose, forcePinUsage = false, ...props }: AuthenticationModalProps) => {
   const insets = useSafeAreaInsets()
 
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
   const [encryptedWallet, setEncryptedWallet] = useState<WalletState>()
-  const [shouldHideModal, setShouldHideModal] = useState(false)
 
   const getWallet = useCallback(async () => {
     try {
-      const storedWallet = await getStoredWallet(usePin)
-      const usesBiometrics = usePin ? false : await loadBiometricsSettings()
+      const storedWallet = await getStoredWallet(forcePinUsage)
+
+      // This should never happen, but if it does, inform the user instead of being stuck
+      if (!storedWallet) {
+        Alert.alert('Missing wallet', 'Could not find wallet to authenticate. Please, restart the app')
+        return
+      }
+
+      const usesBiometrics = forcePinUsage ? false : await loadBiometricsSettings()
 
       if (usesBiometrics) {
         onConfirm()
-        setShouldHideModal(true)
-      } else if (storedWallet) {
+        onClose && onClose()
+      } else {
         setEncryptedWallet(storedWallet)
       }
     } catch (e: unknown) {
@@ -76,7 +83,7 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
 
       onClose && onClose()
     }
-  }, [onClose, onConfirm, usePin])
+  }, [onClose, onConfirm, forcePinUsage])
 
   const decryptMnemonic = async (pin: string): Promise<ShouldClearPin> => {
     if (!pin || !encryptedWallet) return false
@@ -85,7 +92,6 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
       const decryptedWallet = await walletOpenAsyncUnsafe(pin, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
       onConfirm(pin, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
       onClose && onClose()
-      setShouldHideModal(true)
 
       return false
     } catch (e) {
@@ -96,14 +102,12 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
   }
 
   useEffect(() => {
-    getWallet()
-  }, [getWallet])
-
-  if (shouldHideModal) return null
+    if (props.visible) getWallet()
+  }, [getWallet, props.visible])
 
   return (
-    <ModalWithBackdrop visible closeModal={onClose}>
-      {encryptedWallet && (
+    <ModalWithBackdrop closeModal={onClose} {...props}>
+      {encryptedWallet ? (
         <ModalContent style={{ paddingTop: !onClose ? insets.top + 60 : undefined }}>
           {onClose && (
             <HeaderSection style={{ paddingTop: insets.top }}>
@@ -113,12 +117,16 @@ const ConfirmWithAuthModal = ({ onConfirm, onClose, usePin = false }: ConfirmWit
           <CenteredInstructions instructions={shownInstructions} />
           <PinCodeInput pinLength={pinLength} onPinEntered={decryptMnemonic} />
         </ModalContent>
+      ) : (
+        <Message>
+          <AppText>Loading wallet...</AppText>
+        </Message>
       )}
     </ModalWithBackdrop>
   )
 }
 
-export default ConfirmWithAuthModal
+export default AuthenticationModal
 
 const ModalContent = styled.View`
   flex: 1;
@@ -128,4 +136,10 @@ const ModalContent = styled.View`
 
 const HeaderSection = styled(ScreenSection)`
   padding-bottom: 90px;
+`
+
+const Message = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 `
