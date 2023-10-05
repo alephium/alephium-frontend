@@ -61,23 +61,23 @@ const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderPr
           <HeaderRightContainer>
             {options.headerRight && <HeaderRightOptionWrapper>{options.headerRight({})}</HeaderRightOptionWrapper>}
           </HeaderRightContainer>
+        ),
+        headerTitleRight: () => (
+          <ProgressBar
+            progress={progress}
+            color={progress === 1 ? theme.global.valid : theme.global.accent}
+            unfilledColor={theme.border.primary}
+            fill="transparent"
+            borderWidth={0}
+            size={28}
+            style={{ marginBottom: -1 }}
+            pointerEvents="none"
+            thickness={3}
+          />
         )
       }}
       showCompactComponents
       showBorderBottom
-      headerTitleRight={() => (
-        <ProgressBar
-          progress={progress}
-          color={progress === 1 ? theme.global.valid : theme.global.accent}
-          unfilledColor={theme.border.primary}
-          fill="transparent"
-          borderWidth={0}
-          size={28}
-          style={{ marginBottom: -1 }}
-          pointerEvents="none"
-          thickness={3}
-        />
-      )}
       route={route}
       {...props}
     />
