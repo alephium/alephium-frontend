@@ -116,9 +116,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       headerOptions={{
         headerRight: () => <DashboardHeaderActions />,
         headerLeft: () => <WalletSwitchButton isLoading={isLoading} />,
-        headerTitle: walletName
-      }}
-      headerProps={{
+        headerTitle: walletName,
         headerTitleRight: () => (
           <NetworkBadgeContainer>
             <ActiveNetworkBadge />
