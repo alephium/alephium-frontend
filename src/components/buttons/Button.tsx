@@ -169,14 +169,24 @@ const Button = ({
         <IconContainer
           style={
             variant === 'highlightedIcon'
-              ? { backgroundColor: theme.global.accent, borderRadius: 100, padding: 6, margin: 6, overflow: 'hidden' }
+              ? {
+                  backgroundColor: theme.global.accent,
+                  borderRadius: 100,
+                  padding: compact ? 0 : 6,
+                  marginVertical: compact ? 0 : 6,
+                  marginRight: compact ? -4 : 6,
+                  height: compact ? 20 : undefined,
+                  width: compact ? 20 : undefined,
+                  overflow: 'hidden'
+                }
               : undefined
           }
         >
           <AnimatedIonicons
             layout={LinearTransition}
             color={variant === 'highlightedIcon' ? 'white' : font}
-            size={compact ? 18 : hasOnlyIcon ? 22 : 20}
+            size={compact ? 16 : hasOnlyIcon ? 22 : 20}
+            style={compact ? { marginLeft: 1, marginTop: 1 } : undefined}
             {...iconProps}
           />
         </IconContainer>
@@ -229,4 +239,7 @@ export default styled(Button)`
   flex-direction: row;
 `
 
-const IconContainer = styled.View``
+const IconContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+`

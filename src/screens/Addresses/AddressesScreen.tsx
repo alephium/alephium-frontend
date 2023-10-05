@@ -124,7 +124,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
                   onPress={() => navigation.navigate('NewAddressScreen')}
                   iconProps={{ name: 'add-outline' }}
                   title="New address"
-                  color={theme.global.accent}
+                  variant="highlightedIcon"
                   compact
                   style={{ marginLeft: addresses.length <= 2 ? 'auto' : undefined }}
                 />
