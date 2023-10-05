@@ -117,8 +117,8 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
 
       deviceHasBiometricsData
-        ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
-        : navigation.navigate('NewWalletSuccessScreen')
+        ? navigation.navigate('AddBiometricsScreen')
+        : navigation.navigate('ImportWalletAddressDiscoveryScreen')
 
       setLoading(false)
     },
