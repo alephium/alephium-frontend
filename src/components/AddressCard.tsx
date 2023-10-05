@@ -71,7 +71,8 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   if (!address) return null
 
   const bgColor = address.settings.color ?? theme.font.primary
-  const textColor = colord(bgColor).isDark() ? 'white' : 'black'
+  const isDark = colord(bgColor).isDark()
+  const textColor = isDark ? 'white' : 'black'
   const outterBorderColor = colord(bgColor).lighten(0.15).toHex()
   const innerBorderColor = colord(bgColor).lighten(0.02).toHex()
 
@@ -173,7 +174,12 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             </AppText>
           </AddressGroup>
         </Amounts>
-        <BottomRow style={{ borderTopColor: innerBorderColor }}>
+        <BottomRow
+          style={{
+            borderTopColor: innerBorderColor,
+            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)'
+          }}
+        >
           <ButtonsRow sticked hasDivider dividerColor={innerBorderColor}>
             <Button
               title="Send"
@@ -261,7 +267,5 @@ const BottomRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-
-  background-color: rgba(0, 0, 0, 0.1);
   border-top-width: 1px;
 `
