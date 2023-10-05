@@ -33,6 +33,7 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -77,6 +78,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [isWalletDeleteModalOpen, setIsWalletDeleteModalOpen] = useState(false)
+  const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
 
   const [authCallback, setAuthCallback] = useState<() => void>(() => null)
 
@@ -96,7 +98,14 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
-  const toggleTheme = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
+  const toggleTheme = (value: boolean) => {
+    setIsThemeSwitchOverlayVisible(true)
+
+    setTimeout(() => {
+      dispatch(themeChanged(value ? 'dark' : 'light'))
+      setIsThemeSwitchOverlayVisible(false)
+    }, 500)
+  }
 
   const toggleAuthRequirement = () => dispatch(passwordRequirementToggled())
 
@@ -218,6 +227,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           onClose={() => setIsAuthenticationModalOpen(false)}
         />
       )}
+
+      <ModalWithBackdrop animationType="fade" visible={isThemeSwitchOverlayVisible} color="black" />
 
       <Portal>
         <BottomModal
