@@ -67,6 +67,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const walletName = useAppSelector((s) => s.wallet.name)
   const posthog = usePostHog()
   const theme = useTheme()
 
@@ -140,6 +141,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>
+            <Row onPress={() => navigation.navigate('EditWalletNameScreen')} title="Wallet name">
+              <AppText bold>{walletName}</AppText>
+            </Row>
             <Row onPress={() => setIsCurrencySelectModalOpen(true)} title="Currency">
               <AppText bold>{currentCurrency}</AppText>
             </Row>

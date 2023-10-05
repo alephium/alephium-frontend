@@ -51,6 +51,7 @@ import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
+import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
 import SplashScreen from '~/screens/SplashScreen'
 import { routeChanged } from '~/store/appSlice'
@@ -171,6 +172,7 @@ const RootStackNavigation = () => {
                     <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
                     <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
                     <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
+                    <RootStack.Screen name="EditWalletNameScreen" component={EditWalletNameScreen} />
                     <RootStack.Screen
                       name="ImportWalletAddressDiscoveryScreen"
                       component={ImportWalletAddressDiscoveryScreen}
