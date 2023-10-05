@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import * as Haptics from 'expo-haptics'
 import { useMemo } from 'react'
-import { Pressable, PressableProps } from 'react-native'
+import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -37,7 +38,7 @@ interface AddressBoxProps extends PressableProps {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
+const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const theme = useTheme()
@@ -47,10 +48,15 @@ const AddressBox = ({ addressHash, isSelected, ...props }: AddressBoxProps) => {
     borderWidth: 2
   }))
 
+  const handlePress = (e: GestureResponderEvent) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+    onPress && onPress(e)
+  }
+
   return (
-    <AddressBoxStyled {...props} style={[boxAnimatedStyle, props.style]}>
+    <AddressBoxStyled {...props} onPress={handlePress} style={[boxAnimatedStyle, props.style]}>
       <AddressBoxTop>
-        <AddressBadgeStyled onPress={props.onPress} addressHash={addressHash} textStyle={{ fontSize: 18 }} />
+        <AddressBadgeStyled onPress={handlePress} addressHash={addressHash} textStyle={{ fontSize: 18 }} />
         {isSelected && <Checkmark />}
       </AddressBoxTop>
       <AddressBoxBottom>

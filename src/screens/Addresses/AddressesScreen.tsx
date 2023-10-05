@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import * as Haptics from 'expo-haptics'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
@@ -70,6 +71,8 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
   }, [addressHashes, defaultAddress?.hash])
 
   const onAddressCardsScrollEnd = (index: number) => {
+    Haptics.selectionAsync()
+
     if (index < addressHashes.length) {
       setSelectedAddressHash(addressHashes[index])
       setScrollToCarouselPage(index)

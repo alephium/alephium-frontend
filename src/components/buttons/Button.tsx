@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { colord } from 'colord'
+import * as Haptics from 'expo-haptics'
 import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import Animated, {
@@ -50,6 +51,7 @@ export interface ButtonProps extends PressableProps {
   children?: ReactNode
   compact?: boolean
   animated?: boolean
+  haptics?: boolean
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
@@ -72,6 +74,7 @@ const Button = ({
   compact,
   flex,
   animated,
+  haptics,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -142,6 +145,18 @@ const Button = ({
     style
   ]
 
+  const handlePressIn = () => {
+    if (haptics || ['highlight', 'highlightedIcon'].includes(variant)) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    }
+
+    pressed.value = true
+  }
+
+  const handlePressOut = () => {
+    pressed.value = false
+  }
+
   if (!iconProps && !customIcon && !title && !children)
     throw new Error('At least one of the following properties is required: icon, title, or children')
 
@@ -149,8 +164,8 @@ const Button = ({
     <AnimatedPressable
       style={[buttonAnimatedStyle, buttonStyle]}
       disabled={disabled}
-      onPressIn={() => (pressed.value = true)}
-      onPressOut={() => (pressed.value = false)}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       {...props}
     >
       {title && (
@@ -223,6 +238,7 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
       title={props.title || !props.disabled ? 'Next' : undefined}
       compact
       animated
+      haptics
       {...props}
     />
   )
