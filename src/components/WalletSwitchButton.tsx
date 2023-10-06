@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BlurMask, Canvas, Circle, Group, SweepGradient, vec } from '@shopify/react-native-skia'
-import { useEffect } from 'react'
+import * as Haptics from 'expo-haptics'
+import { useEffect, useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import { useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
@@ -35,6 +36,8 @@ const buttonSize = 40
 
 const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
   const gradientOpacity = useSharedValue(0)
+  const [nbOfTaps, setNbOfTaps] = useState(0)
+  const [isDoingMagic, setIsDoingMagic] = useState(false)
   const theme = useTheme()
 
   const loopAnimation = withRepeat(
@@ -48,11 +51,35 @@ const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
   }, [gradientOpacity, loopAnimation])
 
   const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+
     gradientOpacity.value = withSequence(
       withTiming(1, { duration: 300 }),
       withTiming(0.3, { duration: 1000 }, () => (gradientOpacity.value = loopAnimation))
     )
+
+    setNbOfTaps((p) => p + 1)
+
+    if (isDoingMagic) {
+      setIsDoingMagic(false)
+      setNbOfTaps(0)
+    }
+
+    if (nbOfTaps === 68) {
+      setIsDoingMagic(true)
+    }
   }
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>
+
+    if (isDoingMagic) {
+      interval = setInterval(() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+      }, 30)
+    }
+    return () => clearInterval(interval) // Cleanup interval on component unmount or when isDoingMagic becomes false
+  }, [isDoingMagic])
 
   return (
     <Pressable onPress={handlePress}>
