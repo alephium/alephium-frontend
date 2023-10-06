@@ -23,7 +23,6 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
-import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -41,6 +40,7 @@ import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { currencies } from '~/utils/currencies'
+import { showToast } from '~/utils/layout'
 
 interface AddressCardProps {
   addressHash: AddressHash
@@ -104,7 +104,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
       await persistAddressSettings({ ...address, settings: newSettings })
       dispatch(addressSettingsSaved({ ...address, settings: newSettings }))
 
-      Toast.show('This is now the default address')
+      showToast('This is now the default address')
 
       posthog?.capture('Address: Used address card default toggle')
     } catch (e) {

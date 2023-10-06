@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { MutableRefObject } from 'react'
 import { FlatList, ScrollView } from 'react-native'
+import Toast, { ToastOptions } from 'react-native-root-toast'
 
 export const checkIfScrollView = (view: ScrollView | FlatList): view is ScrollView => 'scrollTo' in view
 
@@ -33,4 +34,12 @@ export const scrollScreenTo = (
   } else {
     viewRef.current.scrollToOffset({ offset: position, animated })
   }
+}
+
+export const showToast = (text: string, settings?: Partial<ToastOptions>) => {
+  Toast.show(text, {
+    position: -100,
+    shadow: false,
+    ...settings
+  })
 }

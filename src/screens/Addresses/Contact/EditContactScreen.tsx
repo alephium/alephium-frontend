@@ -21,7 +21,6 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
-import Toast from 'react-native-root-toast'
 
 import Button from '~/components/buttons/Button'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -32,6 +31,7 @@ import { deleteContact, persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { ContactFormData } from '~/types/contacts'
+import { showToast } from '~/utils/layout'
 
 interface EditContactScreenProps extends StackScreenProps<RootStackParamList, 'EditContactScreen'>, ScrollScreenProps {}
 
@@ -63,7 +63,7 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
 
                     posthog?.capture('Contact: Deleted contact')
                   } catch (e) {
-                    Toast.show(getHumanReadableError(e, 'Could not delete contact'))
+                    showToast(getHumanReadableError(e, 'Could not delete contact'))
 
                     posthog?.capture('Error', { message: 'Could not delete contact' })
                   } finally {
@@ -90,7 +90,7 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
 
       posthog?.capture('Contact: Editted contact')
     } catch (e) {
-      Toast.show(getHumanReadableError(e, 'Could not save contact'))
+      showToast(getHumanReadableError(e, 'Could not save contact'))
 
       posthog?.capture('Error', { message: 'Could not save contact' })
     }

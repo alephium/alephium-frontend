@@ -20,7 +20,6 @@ import { getHumanReadableError } from '@alephium/sdk'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
-import Toast from 'react-native-root-toast'
 
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -28,6 +27,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
 import { ContactFormData } from '~/types/contacts'
+import { showToast } from '~/utils/layout'
 
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 
@@ -50,7 +50,7 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
 
       posthog?.capture('Contact: Created new contact')
     } catch (e) {
-      Toast.show(getHumanReadableError(e, 'Could not save contact'))
+      showToast(getHumanReadableError(e, 'Could not save contact'))
 
       posthog?.capture('Error', { message: 'Could not save contact' })
     }

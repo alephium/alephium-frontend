@@ -25,7 +25,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Portal } from 'react-native-portalize'
 import { interpolateColor, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
-import Toast from 'react-native-root-toast'
 import styled, { useTheme } from 'styled-components/native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
@@ -47,6 +46,7 @@ import { cameraToggled } from '~/store/appSlice'
 import { AddressHash } from '~/types/addresses'
 import { Contact } from '~/types/contacts'
 import { validateIsAddressValid } from '~/utils/forms'
+import { showToast } from '~/utils/layout'
 
 interface DestinationScreenProps extends StackScreenProps<SendNavigationParamList, 'DestinationScreen'>, ScreenProps {}
 
@@ -92,7 +92,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
       posthog?.capture('Send: Captured destination address by scanning QR code')
     } else {
-      Toast.show('This is not a valid Alephium address.')
+      showToast('This is not a valid Alephium address.')
     }
   }
 

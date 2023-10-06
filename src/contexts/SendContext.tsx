@@ -20,7 +20,6 @@ import { APIError, AssetAmount, getHumanReadableError } from '@alephium/sdk'
 import { node } from '@alephium/web3'
 import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
-import Toast from 'react-native-root-toast'
 
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
 import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
@@ -28,6 +27,7 @@ import ConsolidationModal from '~/components/ConsolidationModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
+import { showToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 type UnsignedTxData = {
@@ -108,7 +108,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       const data = await buildSweepTransactions(address, address.hash)
       setUnsignedTxData(data)
     } catch (e) {
-      Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
+      showToast(getHumanReadableError(e, 'Error while building the transaction'))
 
       posthog?.capture('Error', { message: 'Could not build consolidation transactions' })
     }
@@ -131,7 +131,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
           await buildConsolidationTransactions()
         } else {
-          Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
+          showToast(getHumanReadableError(e, 'Error while building the transaction'))
 
           posthog?.capture('Error', { message: 'Could not build transaction' })
         }
@@ -168,7 +168,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
         posthog?.capture('Send: Sent transaction', { tokens: tokens.length })
       } catch (e) {
-        Toast.show(getHumanReadableError(e, 'Could not send transaction'))
+        showToast(getHumanReadableError(e, 'Could not send transaction'))
 
         posthog?.capture('Error', { message: 'Could not send transaction' })
       }
