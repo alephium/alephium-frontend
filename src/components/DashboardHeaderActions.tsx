@@ -22,7 +22,6 @@ import { usePostHog } from 'posthog-react-native'
 import { memo, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import { Portal } from 'react-native-portalize'
-import Toast from 'react-native-root-toast'
 import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
@@ -35,6 +34,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import WalletConnectPairingsModal from '~/screens/WalletConnectPairingsModal'
 import { cameraToggled } from '~/store/appSlice'
+import { showToast } from '~/utils/layout'
 
 interface DashboardHeaderActionsProps {
   style?: StyleProp<ViewStyle>
@@ -56,7 +56,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
   const showOfflineMessage = () =>
-    Toast.show('The app is offline and trying to reconnect. Please, check your network settings.')
+    showToast('The app is offline and trying to reconnect. Please, check your network settings.')
 
   const handleQRCodeScan = async (text: string) => {
     if (isAddressValid(text)) {
@@ -66,7 +66,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
       if (isWalletConnectEnabled) {
         pairWithDapp(text)
       } else {
-        Toast.show('WalletConnect is an experimental feature. You can enable it in the settings.', { duration: 10000 })
+        showToast('WalletConnect is an experimental feature. You can enable it in the settings.', { duration: 10000 })
       }
     }
   }
