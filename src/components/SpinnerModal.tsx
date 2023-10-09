@@ -17,14 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { colord } from 'colord'
 import { ActivityIndicator } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
+type FontColor = keyof DefaultTheme['font']
+
 interface SpinnerProps {
   text?: string
   fadedBg?: boolean
+  color?: FontColor
 }
 
 interface SpinnerModalProps extends SpinnerProps {
@@ -33,20 +36,20 @@ interface SpinnerModalProps extends SpinnerProps {
 
 const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => (
   <ModalWithBackdrop animationType="fade" visible={isActive}>
-    <Spinner fadedBg text={text} />
+    <Spinner fadedBg text={text} color="contrast" />
   </ModalWithBackdrop>
 )
 
 export default SpinnerModal
 
-export const Spinner = ({ text }: SpinnerProps) => {
+export const Spinner = ({ text, color = 'primary' }: SpinnerProps) => {
   const theme = useTheme()
 
   return (
     <SpinnerStyled>
-      <ActivityIndicator size={80} color={theme.font.contrast} />
+      <ActivityIndicator size={80} color={theme.font[color]} />
       {text && (
-        <LoadingText semiBold size={16}>
+        <LoadingText semiBold size={16} color={color}>
           {text}
         </LoadingText>
       )}
@@ -65,5 +68,4 @@ const SpinnerStyled = styled.View<{ fadedBg?: SpinnerProps['fadedBg'] }>`
 
 const LoadingText = styled(AppText)`
   margin-top: 20px;
-  color: ${({ theme }) => theme.font.contrast};
 `
