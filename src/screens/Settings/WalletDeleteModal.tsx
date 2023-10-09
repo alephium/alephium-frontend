@@ -34,6 +34,7 @@ const WalletDeleteModal = (props: ModalContentProps) => {
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
   const walletName = useAppSelector((s) => s.wallet.name)
+
   const [inputWalletName, setInputWalletName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -65,7 +66,7 @@ const WalletDeleteModal = (props: ModalContentProps) => {
           </AppText>
         </ScreenSection>
         <ScreenSection>
-          <Input label="Wallet name" value={inputWalletName} onChangeText={(value) => setInputWalletName(value)} />
+          <Input label="Wallet name" value={inputWalletName} onChangeText={setInputWalletName} />
         </ScreenSection>
         <ScreenSection>
           <Button
@@ -73,6 +74,7 @@ const WalletDeleteModal = (props: ModalContentProps) => {
             variant="alert"
             onPress={handleDeleteConfirmPress}
             disabled={inputWalletName !== walletName}
+            iconProps={{ name: 'trash-outline' }}
           />
         </ScreenSection>
       </ModalContent>
