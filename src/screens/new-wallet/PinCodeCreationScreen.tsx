@@ -33,6 +33,7 @@ import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addres
 import { newPinVerified } from '~/store/credentialsSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { ShouldClearPin } from '~/types/misc'
+import { resetNavigationState } from '~/utils/navigation'
 
 interface PinCodeCreationScreenProps
   extends StackScreenProps<RootStackParamList, 'PinCodeCreationScreen'>,
@@ -108,9 +109,7 @@ const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationS
 
       setLoading(false)
 
-      deviceHasBiometricsData
-        ? navigation.navigate('AddBiometricsScreen', { skipAddressDiscovery: true })
-        : navigation.navigate('NewWalletSuccessScreen')
+      resetNavigationState(deviceHasBiometricsData ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
     }
 
     return true

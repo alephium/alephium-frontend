@@ -37,7 +37,9 @@ const NavigationBaseHeader = (props: NavigationBaseHeaderProps) => {
     return unsubscribe
   }, [navigation, scrollY])
 
-  return <BaseHeaderStyled {...props} scrollY={scrollY} goBack={navigation.goBack} />
+  return (
+    <BaseHeaderStyled {...props} scrollY={scrollY} goBack={navigation.canGoBack() ? navigation.goBack : undefined} />
+  )
 }
 
 export default NavigationBaseHeader

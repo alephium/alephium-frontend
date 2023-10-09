@@ -40,6 +40,7 @@ import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addres
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { BORDER_RADIUS, BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
+import { resetNavigationState } from '~/utils/navigation'
 
 interface ImportWalletSeedScreenProps
   extends StackScreenProps<RootStackParamList, 'ImportWalletSeedScreen'>,
@@ -118,9 +119,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
 
-      deviceHasBiometricsData
-        ? navigation.navigate('AddBiometricsScreen')
-        : navigation.navigate('ImportWalletAddressDiscoveryScreen')
+      resetNavigationState(deviceHasBiometricsData ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen')
 
       setLoading(false)
     },

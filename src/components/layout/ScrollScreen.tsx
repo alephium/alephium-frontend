@@ -111,7 +111,7 @@ const ScrollScreen = ({
       </ScrollView>
       {headerOptions && (
         <HeaderComponent
-          goBack={navigation.goBack}
+          goBack={navigation.canGoBack() ? navigation.goBack : undefined}
           options={headerOptions}
           scrollY={screenScrollY}
           onLayout={screenHeaderLayoutHandler}

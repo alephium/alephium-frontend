@@ -18,12 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressKeyPair, deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/sdk'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
-import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+  EntityState,
+  isAnyOf,
+  PayloadAction
+} from '@reduxjs/toolkit'
 
 import client from '~/api/client'
 import { addressesImported } from '~/store/addressesSlice'
 import { appReset } from '~/store/appSlice'
 import { RootState } from '~/store/store'
+import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
 import { Address, AddressIndex } from '~/types/addresses'
 import {
   findMaxIndexBeforeFirstGap,
@@ -173,16 +181,18 @@ const addressDiscoverySlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(addressesImported, (state, action) => {
-        const addresses = action.payload
+    builder.addCase(addressesImported, (state, action) => {
+      const addresses = action.payload
 
-        addressDiscoveryAdapter.removeMany(
-          state,
-          addresses.map((address) => address.hash)
-        )
-      })
-      .addCase(appReset, () => initialState)
+      addressDiscoveryAdapter.removeMany(
+        state,
+        addresses.map((address) => address.hash)
+      )
+    })
+    builder.addMatcher(
+      isAnyOf(newWalletGenerated, newWalletImportedWithMetadata, appReset, walletDeleted),
+      () => initialState
+    )
   }
 })
 
