@@ -99,7 +99,15 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           <Amount value={totalAmountWorth} isFiat suffix={currencies[currency].symbol} bold size={38} />
         </TextContainer>
 
-        {totalBalance === BigInt(0) && !isLoadingTokenBalances ? (
+        <ChartContainer>
+          <HistoricWorthChart
+            currency={currency}
+            latestWorth={totalAmountWorth}
+            onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
+          />
+        </ChartContainer>
+
+        {totalBalance === BigInt(0) && !isLoadingTokenBalances && (
           <ReceiveFundsButtonContainer>
             <Button
               title="Receive assets"
@@ -109,14 +117,6 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
               short
             />
           </ReceiveFundsButtonContainer>
-        ) : (
-          <ChartContainer>
-            <HistoricWorthChart
-              currency={currency}
-              latestWorth={totalAmountWorth}
-              onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-            />
-          </ChartContainer>
         )}
       </LinearGradient>
     </BalanceSummaryContainer>
