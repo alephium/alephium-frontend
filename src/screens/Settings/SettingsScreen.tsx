@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { capitalize } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
-import { Alert } from 'react-native'
+import { Alert, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
@@ -272,7 +272,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <BottomModal
           isOpen={isWalletDeleteModalOpen}
           onClose={() => setIsWalletDeleteModalOpen(false)}
-          maximisedContent
+          maximisedContent={Platform.OS === 'ios'}
           Content={(props) => <WalletDeleteModal {...props} />}
         />
       </Portal>
