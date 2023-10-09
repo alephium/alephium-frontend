@@ -59,9 +59,9 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
         <Button
           iconProps={{ name: 'exit-outline' }}
           onPress={() => openBrowserAsync(explorerTxUrl)}
-          round
           variant="accent"
           compact
+          title="Explorer"
         />
       </ScreenSectionStyled>
 
@@ -150,6 +150,7 @@ const AppTextStyled = styled(AppText)`
 const ScreenSectionStyled = styled(ScreenSection)`
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
 `
 

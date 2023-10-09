@@ -78,7 +78,7 @@ const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
       }, 30)
     }
-    return () => clearInterval(interval) // Cleanup interval on component unmount or when isDoingMagic becomes false
+    return () => clearInterval(interval)
   }, [isDoingMagic])
 
   return (
