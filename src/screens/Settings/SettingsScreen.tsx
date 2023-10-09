@@ -232,7 +232,13 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <BottomModal
           isOpen={isSwitchNetworkModalOpen}
           onClose={() => setIsSwitchNetworkModalOpen(false)}
-          Content={(props) => <SwitchNetworkModal onClose={() => setIsSwitchNetworkModalOpen(false)} {...props} />}
+          Content={(props) => (
+            <SwitchNetworkModal
+              onClose={() => setIsSwitchNetworkModalOpen(false)}
+              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
+              {...props}
+            />
+          )}
         />
 
         <BottomModal

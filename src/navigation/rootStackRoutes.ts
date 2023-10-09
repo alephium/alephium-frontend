@@ -52,6 +52,7 @@ type RootStackParamList = {
   SelectImportMethodScreen: undefined
   DecryptScannedMnemonicScreen: undefined
   EditWalletNameScreen: undefined
+  CustomNetworkScreen: undefined
 }
 
 export default RootStackParamList
