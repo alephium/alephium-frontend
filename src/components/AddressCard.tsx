@@ -124,8 +124,9 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           shadowOffset: { height: 5, width: 0 },
           shadowOpacity: theme.name === 'dark' ? 0.5 : 0.15,
           shadowRadius: 8,
-          elevation: 10,
-          borderColor: outterBorderColor
+          elevation: 3,
+          borderColor: outterBorderColor,
+          overflow: 'hidden'
         }
       ]}
     >
