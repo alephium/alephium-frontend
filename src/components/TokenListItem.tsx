@@ -20,6 +20,7 @@ import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
+import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import ListItem from '~/components/ListItem'
 
@@ -35,6 +36,15 @@ const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemPro
     style={style}
     isLast={isLast}
     title={asset.name || asset.id}
+    subtitle={
+      !asset.verified && (
+        <UnverifiedBadge>
+          <AppText size={10} color="tertiary">
+            Unverified
+          </AppText>
+        </UnverifiedBadge>
+      )
+    }
     icon={<AssetLogo assetId={asset.id} size={38} />}
     rightSideContent={
       <AmountStyled
@@ -56,4 +66,12 @@ export default TokenListItem
 const AmountStyled = styled(Amount)`
   flex-shrink: 0;
   align-self: center;
+`
+
+const UnverifiedBadge = styled.View`
+  background-color: ${({ theme }) => theme.bg.secondary};
+  padding: 1px 2px;
+  border-radius: 4px;
+  align-self: flex-start;
+  margin-top: 3px;
 `
