@@ -22,11 +22,11 @@ import { Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import PinCodeInput from '~/components/inputs/PinCodeInput'
 import { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop, { ModalWithBackdropProps } from '~/components/ModalWithBackdrop'
+import { Spinner } from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import { getStoredWallet } from '~/persistent-storage/wallet'
@@ -118,9 +118,7 @@ const AuthenticationModal = ({ onConfirm, onClose, forcePinUsage = false, ...pro
           <PinCodeInput pinLength={pinLength} onPinEntered={decryptMnemonic} />
         </ModalContent>
       ) : (
-        <Message>
-          <AppText>Loading wallet...</AppText>
-        </Message>
+        <Spinner text="Loading wallet..." />
       )}
     </ModalWithBackdrop>
   )
@@ -136,10 +134,4 @@ const ModalContent = styled.View`
 
 const HeaderSection = styled(ScreenSection)`
   padding-bottom: 90px;
-`
-
-const Message = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
 `

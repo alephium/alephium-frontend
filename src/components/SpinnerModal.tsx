@@ -22,34 +22,43 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
-interface SpinnerModalProps {
-  isActive: boolean
+interface SpinnerProps {
   text?: string
+  fadedBg?: boolean
 }
 
-const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => {
-  const theme = useTheme()
-
-  return (
-    <ModalWithBackdrop animationType="fade" visible={isActive}>
-      <SpinnerContainer>
-        <ActivityIndicator size={80} color={theme.font.contrast} />
-        {text && (
-          <LoadingText semiBold size={16}>
-            {text}
-          </LoadingText>
-        )}
-      </SpinnerContainer>
-    </ModalWithBackdrop>
-  )
+interface SpinnerModalProps extends SpinnerProps {
+  isActive: boolean
 }
+
+const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => (
+  <ModalWithBackdrop animationType="fade" visible={isActive}>
+    <Spinner fadedBg text={text} />
+  </ModalWithBackdrop>
+)
 
 export default SpinnerModal
 
-const SpinnerContainer = styled.View`
-  flex: 1;
+export const Spinner = ({ text }: SpinnerProps) => {
+  const theme = useTheme()
+
+  return (
+    <SpinnerStyled>
+      <ActivityIndicator size={80} color={theme.font.contrast} />
+      {text && (
+        <LoadingText semiBold size={16}>
+          {text}
+        </LoadingText>
+      )}
+    </SpinnerStyled>
+  )
+}
+
+const SpinnerStyled = styled.View<{ fadedBg?: SpinnerProps['fadedBg'] }>`
+  flex: 1
   width: 100%;
-  background-color: ${({ theme }) => colord(theme.bg.contrast).alpha(0.3).toRgbString()};
+  background-color: ${({ theme, fadedBg }) =>
+    fadedBg ? colord(theme.bg.contrast).alpha(0.3).toRgbString() : undefined};
   justify-content: center;
   align-items: center;
 `

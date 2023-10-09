@@ -19,11 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
-import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deriveWalletStoredAddresses, getWalletMetadata } from '~/persistent-storage/wallet'
@@ -61,19 +60,9 @@ const LoginWithPinScreen = (props: LoginWithPinScreenProps) => {
   return (
     <Screen contrastedBg {...props}>
       <AuthenticationModal visible={isPinModalVisible} forcePinUsage onConfirm={handleSuccessfulLogin} />
-      {!isPinModalVisible && (
-        <Message>
-          <AppText>Nice 👍 Unlocking...</AppText>
-        </Message>
-      )}
+      {!isPinModalVisible && <Spinner text="Unlocking..." />}
     </Screen>
   )
 }
 
 export default LoginWithPinScreen
-
-const Message = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`
