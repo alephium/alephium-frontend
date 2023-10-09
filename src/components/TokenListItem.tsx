@@ -44,6 +44,7 @@ const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemPro
         fadeDecimals
         suffix={asset.symbol}
         bold
+        useTinyAmountShorthand
       />
     }
     hideSeparator={hideSeparator}
