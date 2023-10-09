@@ -39,6 +39,8 @@ const WalletDeleteModal = (props: ModalContentProps) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleDeleteConfirmPress = async () => {
+    props.onClose && props.onClose()
+
     setIsLoading(true)
 
     await deleteWallet()
