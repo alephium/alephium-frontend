@@ -229,7 +229,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
               <Navigation style={modalNavigationAnimatedStyle}>
                 <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
               </Navigation>
-              <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
+              <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
                 <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
               </KeyboardAvoidingView>
             </ContentContainer>

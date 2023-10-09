@@ -38,9 +38,10 @@ import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { deleteWallet, disableBiometrics, enableBiometrics } from '~/persistent-storage/wallet'
+import { disableBiometrics, enableBiometrics } from '~/persistent-storage/wallet'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
+import WalletDeleteModal from '~/screens/Settings/WalletDeleteModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import {
   analyticsToggled,
@@ -50,9 +51,7 @@ import {
   themeChanged,
   walletConnectToggled
 } from '~/store/settingsSlice'
-import { walletDeleted } from '~/store/wallet/walletActions'
 import { VERTICAL_GAP } from '~/style/globalStyle'
-import { resetNavigationState } from '~/utils/navigation'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
 
@@ -76,6 +75,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isAuthenticationModalVisible, setIsAuthenticationModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
+  const [isWalletDeleteModalOpen, setIsWalletDeleteModalOpen] = useState(false)
+
   const [authCallback, setAuthCallback] = useState<() => void>(() => null)
 
   const toggleBiometrics = async () => {
@@ -102,27 +103,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const toggleWalletConnect = () => dispatch(walletConnectToggled())
 
-  const handleDeleteConfirmPress = async () => {
-    await deleteWallet()
-
-    resetNavigationState('LandingScreen')
-
-    dispatch(walletDeleted())
-    posthog?.capture('Deleted wallet')
-  }
-
   const handleDeleteButtonPress = () => {
-    Alert.alert(
-      'Deleting wallet',
-      'Are you sure you want to delete your wallet? Ensure you have a backup of your secret recovery phrase.',
-      [
-        { text: 'Cancel' },
-        {
-          text: 'Delete',
-          onPress: handleDeleteConfirmPress
-        }
-      ]
-    )
+    setIsWalletDeleteModalOpen(true)
   }
 
   const handleWalletConnectEnablePress = () => {
@@ -285,6 +267,13 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               </ScreenSection>
             </ModalContent>
           )}
+        />
+
+        <BottomModal
+          isOpen={isWalletDeleteModalOpen}
+          onClose={() => setIsWalletDeleteModalOpen(false)}
+          maximisedContent
+          Content={(props) => <WalletDeleteModal {...props} />}
         />
       </Portal>
     </>
