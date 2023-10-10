@@ -50,12 +50,20 @@ export const store = configureStore({
     [contactsSlice.name]: contactsSlice.reducer,
     [nftsSlice.name]: nftsSlice.reducer
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
+  middleware: (getDefaultMiddleware) => {
+    const middlewares = getDefaultMiddleware({
       serializableCheck: false
     })
       .prepend(settingsListenerMiddleware.middleware)
       .prepend(priceApi.middleware)
+
+    if (__DEV__) {
+      const createDebugger = require('redux-flipper').default
+      middlewares.push(createDebugger())
+    }
+
+    return middlewares
+  }
 })
 
 export type RootState = ReturnType<typeof store.getState>

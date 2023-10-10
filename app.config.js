@@ -54,7 +54,8 @@ export default {
         {
           ios: {
             deploymentTarget: '13.0',
-            newArchEnabled: false
+            newArchEnabled: false,
+            flipper: true
           },
           android: {
             compileSdkVersion: 33,
