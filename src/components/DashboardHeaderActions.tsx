@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { isAddressValid } from '@alephium/sdk'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
 import { usePostHog } from 'posthog-react-native'
 import { memo, useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
@@ -49,6 +49,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
   const { pairWithDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
+  const isFocused = useIsFocused()
 
   const [isWalletConnectPairingsModalOpen, setIsWalletConnectPairingsModalOpen] = useState(false)
 
@@ -96,7 +97,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
         <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'qr-code-outline' }} round />
         <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings-outline' }} round />
       </View>
-      {isCameraOpen && (
+      {isCameraOpen && isFocused && (
         <QRCodeScannerModal
           onClose={closeQRCodeScannerModal}
           onQRCodeScan={handleQRCodeScan}
