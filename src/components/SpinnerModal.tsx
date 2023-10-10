@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { colord } from 'colord'
+import { BlurView } from 'expo-blur'
 import { ActivityIndicator } from 'react-native'
 import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
@@ -34,15 +35,21 @@ interface SpinnerModalProps extends SpinnerProps {
   isActive: boolean
 }
 
-const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => (
-  <ModalWithBackdrop animationType="fade" visible={isActive}>
-    <Spinner fadedBg text={text} color="contrast" />
-  </ModalWithBackdrop>
-)
+const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => {
+  const theme = useTheme()
+
+  return (
+    <ModalWithBackdrop animationType="fade" visible={isActive}>
+      <BlurView tint={theme.name} intensity={30} style={{ flex: 1, width: '100%' }}>
+        <Spinner fadedBg text={text} color="primary" />
+      </BlurView>
+    </ModalWithBackdrop>
+  )
+}
 
 export default SpinnerModal
 
-export const Spinner = ({ text, color = 'primary' }: SpinnerProps) => {
+export const Spinner = ({ text, color = 'tertiary' }: SpinnerProps) => {
   const theme = useTheme()
 
   return (
