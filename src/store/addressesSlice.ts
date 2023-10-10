@@ -87,6 +87,7 @@ export const syncAddressesDataWhenPendingTxsConfirm = createAsyncThunk(
     for (const { hash, transactions } of results) {
       if (transactions.some((confirmedTx) => pendingTxs.some((pendingTx) => pendingTx.hash === confirmedTx.hash))) {
         await dispatch(syncAddressesData(hash))
+        await dispatch(syncAddressesHistoricBalances(hash))
       }
     }
   }

@@ -44,7 +44,12 @@ import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
-import { selectAddressIds, selectTotalBalance, syncAddressesData } from '~/store/addressesSlice'
+import {
+  selectAddressIds,
+  selectTotalBalance,
+  syncAddressesData,
+  syncAddressesHistoricBalances
+} from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
@@ -84,7 +89,10 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   }, [])
 
   const refreshData = () => {
-    if (!isLoading) dispatch(syncAddressesData(addressHashes))
+    if (!isLoading) {
+      dispatch(syncAddressesData(addressHashes))
+      dispatch(syncAddressesHistoricBalances(addressHashes))
+    }
   }
 
   const handleReceivePress = () => {
