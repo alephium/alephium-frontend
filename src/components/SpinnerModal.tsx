@@ -33,16 +33,21 @@ interface SpinnerProps {
 
 interface SpinnerModalProps extends SpinnerProps {
   isActive: boolean
+  blur?: boolean
 }
 
-const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => {
+const SpinnerModal = ({ isActive, text, blur = true }: SpinnerModalProps) => {
   const theme = useTheme()
 
   return (
     <ModalWithBackdrop animationType="fade" visible={isActive}>
-      <BlurView tint={theme.name} intensity={30} style={{ flex: 1, width: '100%' }}>
-        <Spinner fadedBg text={text} color="primary" />
-      </BlurView>
+      {blur ? (
+        <BlurView tint={theme.name} intensity={30} style={{ flex: 1, width: '100%' }}>
+          <Spinner fadedBg text={text} color="primary" />
+        </BlurView>
+      ) : (
+        <Spinner fadedBg text={text} color={theme.name === 'dark' ? 'primary' : 'contrast'} />
+      )}
     </ModalWithBackdrop>
   )
 }

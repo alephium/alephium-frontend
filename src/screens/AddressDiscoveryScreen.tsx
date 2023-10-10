@@ -55,6 +55,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   const addresses = useAppSelector(selectAllAddresses)
   const discoveredAddresses = useAppSelector(selectAllDiscoveredAddresses)
   const { loading, status, progress } = useAppSelector((s) => s.addressDiscovery)
+  const networkName = useAppSelector((s) => s.network.name)
   const persistAddressSettings = usePersistAddressSettings()
   const posthog = usePostHog()
 
@@ -69,7 +70,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   const stopScan = () => dispatch(addressDiscoveryStopped())
 
   const continueToNextScreen = () =>
-    resetNavigationState(isImporting ? 'NewWalletSuccessScreen' : 'InWalletTabsNavigation')
+    isImporting ? resetNavigationState('NewWalletSuccessScreen') : navigation.goBack()
 
   const importAddresses = async () => {
     setImportLoading(true)
@@ -139,7 +140,10 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   return (
     <ScrollScreen verticalGap fill headerOptions={{ headerTitle: 'Active addresses', type: 'stack' }} {...props}>
       <ScreenSection>
-        <AppText bold>Scan the blockchain to find your active addresses. This process might take a while.</AppText>
+        <AppText bold>
+          Scan the blockchain to find your active addresses on the &quot;{networkName}&quot; network. This process might
+          take a while.
+        </AppText>
       </ScreenSection>
       <ScreenSection fill>
         <ScreenSectionTitle>Current addresses</ScreenSectionTitle>
@@ -233,14 +237,14 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         )}
         {discoveredAddresses.length === 0 && status === 'finished' && !importLoading && (
           <ButtonStyled
-            iconProps={{ name: 'arrow-forward-outline' }}
-            title="Continue"
+            iconProps={{ name: isImporting ? 'arrow-forward-outline' : 'arrow-back-outline' }}
+            title={isImporting ? 'Continue' : 'Go back'}
             onPress={continueToNextScreen}
-            variant="highlight"
+            variant={isImporting ? 'highlight' : 'accent'}
           />
         )}
       </ScreenSection>
-      <SpinnerModal isActive={importLoading} text="Importing addresses..." />
+      <SpinnerModal isActive={importLoading} text="Importing addresses..." blur={false} />
     </ScrollScreen>
   )
 }
