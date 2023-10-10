@@ -210,16 +210,6 @@ const addressesSlice = createSlice({
 
       addressesAdapter.addOne(state, getInitialAddressState(address))
     },
-    defaultAddressChanged: (state, action: PayloadAction<Address>) => {
-      const address = action.payload
-
-      updateOldDefaultAddress(state)
-
-      addressesAdapter.updateOne(state, {
-        id: address.hash,
-        changes: { settings: { ...address.settings, isDefault: true } }
-      })
-    },
     addressSettingsSaved: (state, action: PayloadAction<AddressPartial>) => {
       const address = action.payload
 
@@ -526,7 +516,6 @@ export const selectTotalBalance = createSelector([selectAllAddresses], (addresse
 export const {
   newAddressGenerated,
   addressesImported,
-  defaultAddressChanged,
   addressSettingsSaved,
   transactionSent,
   transactionsLoadingStarted
