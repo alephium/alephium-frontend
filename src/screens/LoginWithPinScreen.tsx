@@ -20,8 +20,9 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
 
-import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
+import AuthenticationModal from '~/components/AuthenticationModal'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deriveWalletStoredAddresses, getWalletMetadata } from '~/persistent-storage/wallet'
@@ -58,7 +59,8 @@ const LoginWithPinScreen = (props: LoginWithPinScreenProps) => {
 
   return (
     <Screen contrastedBg {...props}>
-      {isPinModalVisible && <ConfirmWithAuthModal usePin onConfirm={handleSuccessfulLogin} />}
+      <AuthenticationModal visible={isPinModalVisible} forcePinUsage onConfirm={handleSuccessfulLogin} />
+      {!isPinModalVisible && <Spinner text="Unlocking..." />}
     </Screen>
   )
 }

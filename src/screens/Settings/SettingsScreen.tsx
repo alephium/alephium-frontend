@@ -26,13 +26,14 @@ import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import AuthenticationModal from '~/components/AuthenticationModal'
 import Button from '~/components/buttons/Button'
-import ConfirmWithAuthModal from '~/components/ConfirmWithAuthModal'
 import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -67,6 +68,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const walletName = useAppSelector((s) => s.wallet.name)
   const posthog = usePostHog()
   const theme = useTheme()
 
@@ -76,8 +78,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [isWalletDeleteModalOpen, setIsWalletDeleteModalOpen] = useState(false)
-
-  const [authCallback, setAuthCallback] = useState<() => void>(() => null)
+  const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
+  const [authCallback, setAuthCallback] = useState<() => void>(() => () => null)
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
@@ -95,7 +97,14 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
-  const toggleTheme = (value: boolean) => dispatch(themeChanged(value ? 'dark' : 'light'))
+  const toggleTheme = (value: boolean) => {
+    setIsThemeSwitchOverlayVisible(true)
+
+    setTimeout(() => {
+      dispatch(themeChanged(value ? 'dark' : 'light'))
+      setIsThemeSwitchOverlayVisible(false)
+    }, 500)
+  }
 
   const toggleAuthRequirement = () => dispatch(passwordRequirementToggled())
 
@@ -140,6 +149,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>
+            <Row onPress={() => navigation.navigate('EditWalletNameScreen')} title="Wallet name">
+              <AppText bold>{walletName}</AppText>
+            </Row>
             <Row onPress={() => setIsCurrencySelectModalOpen(true)} title="Currency">
               <AppText bold>{currentCurrency}</AppText>
             </Row>
@@ -204,22 +216,29 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         </ScreenSection>
       </ScrollScreenStyled>
 
-      {isAuthenticationModalVisible && (
-        <ConfirmWithAuthModal
-          onConfirm={() => {
-            setIsAuthenticationModalOpen(false)
-            authCallback()
-            setAuthCallback(() => () => null)
-          }}
-          onClose={() => setIsAuthenticationModalOpen(false)}
-        />
-      )}
+      <AuthenticationModal
+        visible={isAuthenticationModalVisible}
+        onConfirm={() => {
+          setIsAuthenticationModalOpen(false)
+          authCallback()
+          setAuthCallback(() => () => null)
+        }}
+        onClose={() => setIsAuthenticationModalOpen(false)}
+      />
+
+      <ModalWithBackdrop animationType="fade" visible={isThemeSwitchOverlayVisible} color="black" />
 
       <Portal>
         <BottomModal
           isOpen={isSwitchNetworkModalOpen}
           onClose={() => setIsSwitchNetworkModalOpen(false)}
-          Content={(props) => <SwitchNetworkModal onClose={() => setIsSwitchNetworkModalOpen(false)} {...props} />}
+          Content={(props) => (
+            <SwitchNetworkModal
+              onClose={() => setIsSwitchNetworkModalOpen(false)}
+              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
+              {...props}
+            />
+          )}
         />
 
         <BottomModal

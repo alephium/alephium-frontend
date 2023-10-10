@@ -139,7 +139,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
             />
           )
         }}
-        goBack={navigation.goBack}
+        goBack={navigation.canGoBack() ? navigation.goBack : undefined}
         scrollY={screenScrollY}
         onLayout={screenHeaderLayoutHandler}
       />

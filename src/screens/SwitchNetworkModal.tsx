@@ -18,32 +18,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { capitalize } from 'lodash'
 import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
 import { View } from 'react-native'
-import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
-import styled from 'styled-components/native'
 
-import Button from '~/components/buttons/Button'
-import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { networkPresetSwitched } from '~/store/networkSlice'
 import { NetworkName, NetworkPreset } from '~/types/network'
-import { NetworkSettings } from '~/types/settings'
 
 const networkNames = Object.values(NetworkName)
 
-const SwitchNetworkModal = ({ onClose, ...props }: ModalContentProps) => {
+interface SwitchNetworkModalProps extends ModalContentProps {
+  onCustomNetworkPress: () => void
+}
+
+const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchNetworkModalProps) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
-  const currentNetworkSettings = useAppSelector((s) => s.network.settings)
-  const { control, handleSubmit } = useForm<NetworkSettings>({
-    defaultValues: currentNetworkSettings
-  })
+
   const dispatch = useAppDispatch()
 
   const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkName.custom)
@@ -53,20 +47,14 @@ const SwitchNetworkModal = ({ onClose, ...props }: ModalContentProps) => {
     setSelectedNetworkName(newNetworkName)
 
     if (newNetworkName === NetworkName.custom) {
-      setShowCustomNetworkForm(true)
+      onClose && onClose()
+      onCustomNetworkPress()
     } else {
       await persistSettings('network', networkPresetSettings[newNetworkName])
       dispatch(networkPresetSwitched(newNetworkName))
 
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
     }
-  }
-
-  const saveCustomNetwork = async (formData: NetworkSettings) => {
-    await persistSettings('network', formData)
-    dispatch(customNetworkSettingsSaved(formData))
-
-    onClose && onClose()
   }
 
   return (
@@ -85,68 +73,9 @@ const SwitchNetworkModal = ({ onClose, ...props }: ModalContentProps) => {
             />
           ))}
         </BoxSurface>
-
-        {showCustomNetworkForm && (
-          <CustomNetworkFormContainer entering={FadeInDown} exiting={FadeOutDown}>
-            <ScreenSection verticalGap>
-              <Controller
-                name="nodeHost"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    label="Node host"
-                    keyboardType="url"
-                    textContentType="URL"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-                control={control}
-              />
-              <Controller
-                name="explorerApiHost"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    label="Explorer API host"
-                    keyboardType="url"
-                    textContentType="URL"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-                control={control}
-              />
-              <Controller
-                name="explorerUrl"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    label="Explorer URL"
-                    keyboardType="url"
-                    textContentType="URL"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-                control={control}
-              />
-
-              <ButtonStyled centered title="Save custom network" onPress={handleSubmit(saveCustomNetwork)} />
-            </ScreenSection>
-          </CustomNetworkFormContainer>
-        )}
       </View>
     </ModalContent>
   )
 }
 
 export default SwitchNetworkModal
-
-const ButtonStyled = styled(Button)`
-  margin-bottom: 20px;
-`
-
-const CustomNetworkFormContainer = styled(Animated.View)`
-  margin-top: ${DEFAULT_MARGIN}px;
-`

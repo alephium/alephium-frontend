@@ -36,6 +36,7 @@ interface AmountProps extends AppTextProps {
   showPlusMinus?: boolean
   showOnDiscreetMode?: boolean
   fadeSuffix?: boolean
+  useTinyAmountShorthand?: boolean
   style?: StyleProp<TextStyle>
 }
 
@@ -53,6 +54,7 @@ const Amount = ({
   showPlusMinus,
   highlight,
   fadeSuffix,
+  useTinyAmountShorthand,
   ...props
 }: AmountProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
@@ -83,7 +85,12 @@ const Amount = ({
     }
   }
 
-  const [integralPart, fractionalPart] = amount.split('.')
+  let [integralPart, fractionalPart] = amount.split('.')
+
+  if (useTinyAmountShorthand && amount.startsWith('0.0000')) {
+    integralPart = '< 0'
+    fractionalPart = '0001'
+  }
 
   const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'send' : 'receive') : 'primary')
   const fadedColor = fadeDecimals ? 'secondary' : color

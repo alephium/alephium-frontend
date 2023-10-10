@@ -32,7 +32,9 @@ import CenteredInstructions, { Instruction } from '~/components/text/CenteredIns
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { enableBiometrics } from '~/persistent-storage/wallet'
+import { selectAddressIds } from '~/store/addressesSlice'
 import { biometricsToggled } from '~/store/settingsSlice'
+import { resetNavigationState } from '~/utils/navigation'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
 
@@ -45,9 +47,12 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
   const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const addressIds = useAppSelector(selectAddressIds)
   const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
+
+  const skipAddressDiscovery = method === 'create' || addressIds.length > 1
 
   const activateBiometrics = async () => {
     setLoading(true)
@@ -58,9 +63,7 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
 
       posthog?.capture('Activated biometrics from wallet creation flow')
 
-      navigation.navigate(
-        params?.skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen'
-      )
+      resetNavigationState(skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen')
     } finally {
       setLoading(false)
     }
@@ -69,10 +72,8 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
   const handleLaterPress = () => {
     posthog?.capture('Skipped biometrics activation from wallet creation flow')
 
-    navigation.navigate(
-      method === 'import' && !params?.skipAddressDiscovery
-        ? 'ImportWalletAddressDiscoveryScreen'
-        : 'NewWalletSuccessScreen'
+    resetNavigationState(
+      method === 'import' && !skipAddressDiscovery ? 'ImportWalletAddressDiscoveryScreen' : 'NewWalletSuccessScreen'
     )
   }
 

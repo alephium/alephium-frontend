@@ -21,9 +21,7 @@ type RootStackParamList = {
   NewWalletIntroScreen: undefined
   NewWalletNameScreen: undefined
   PinCodeCreationScreen: undefined
-  AddBiometricsScreen?: {
-    skipAddressDiscovery?: boolean
-  }
+  AddBiometricsScreen: undefined
   NewWalletSuccessScreen: undefined
   ImportWalletSeedScreen: undefined
   ImportWalletAddressDiscoveryScreen: undefined
@@ -53,6 +51,8 @@ type RootStackParamList = {
   }
   SelectImportMethodScreen: undefined
   DecryptScannedMnemonicScreen: undefined
+  EditWalletNameScreen: undefined
+  CustomNetworkScreen: undefined
 }
 
 export default RootStackParamList

@@ -126,12 +126,12 @@ export const getWalletMetadata = async (): Promise<WalletMetadata> => {
   return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : generateWalletMetadata('Wallet')
 }
 
-export const getStoredWallet = async (usePin?: boolean): Promise<WalletState | null> => {
+export const getStoredWallet = async (forcePinUsage?: boolean): Promise<WalletState | null> => {
   const { id, name, isMnemonicBackedUp } = await getWalletMetadata()
   const usesBiometrics = await loadBiometricsSettings()
 
   const mnemonic =
-    usePin || !usesBiometrics
+    forcePinUsage || !usesBiometrics
       ? await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
       : await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
 

@@ -16,45 +16,68 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { colord } from 'colord'
+import { BlurView } from 'expo-blur'
 import { ActivityIndicator } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
-interface SpinnerModalProps {
-  isActive: boolean
+type FontColor = keyof DefaultTheme['font']
+
+interface SpinnerProps {
   text?: string
+  fadedBg?: boolean
+  color?: FontColor
 }
 
-const SpinnerModal = ({ isActive, text }: SpinnerModalProps) => {
+interface SpinnerModalProps extends SpinnerProps {
+  isActive: boolean
+  blur?: boolean
+}
+
+const SpinnerModal = ({ isActive, text, blur = true }: SpinnerModalProps) => {
   const theme = useTheme()
 
   return (
     <ModalWithBackdrop animationType="fade" visible={isActive}>
-      <SpinnerContainer>
-        <ActivityIndicator size={80} color={theme.font.contrast} />
-        {text && (
-          <LoadingText semiBold size={16}>
-            {text}
-          </LoadingText>
-        )}
-      </SpinnerContainer>
+      {blur ? (
+        <BlurView tint={theme.name} intensity={30} style={{ flex: 1, width: '100%' }}>
+          <Spinner fadedBg text={text} color="primary" />
+        </BlurView>
+      ) : (
+        <Spinner fadedBg text={text} color={theme.name === 'dark' ? 'primary' : 'contrast'} />
+      )}
     </ModalWithBackdrop>
   )
 }
 
 export default SpinnerModal
 
-const SpinnerContainer = styled.View`
-  flex: 1;
+export const Spinner = ({ text, color = 'tertiary' }: SpinnerProps) => {
+  const theme = useTheme()
+
+  return (
+    <SpinnerStyled>
+      <ActivityIndicator size={80} color={theme.font[color]} />
+      {text && (
+        <LoadingText semiBold size={16} color={color}>
+          {text}
+        </LoadingText>
+      )}
+    </SpinnerStyled>
+  )
+}
+
+const SpinnerStyled = styled.View<{ fadedBg?: SpinnerProps['fadedBg'] }>`
+  flex: 1
   width: 100%;
-  background-color: ${({ theme }) => colord(theme.bg.contrast).alpha(0.3).toRgbString()};
+  background-color: ${({ theme, fadedBg }) =>
+    fadedBg ? colord(theme.bg.contrast).alpha(0.3).toRgbString() : undefined};
   justify-content: center;
   align-items: center;
 `
 
 const LoadingText = styled(AppText)`
   margin-top: 20px;
-  color: ${({ theme }) => theme.font.contrast};
 `

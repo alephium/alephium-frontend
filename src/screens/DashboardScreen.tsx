@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
+import { Pressable } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
@@ -42,6 +43,7 @@ import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
+import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { selectAddressIds, selectTotalBalance, syncAddressesData } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
@@ -64,6 +66,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
 
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
+  const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isNewWallet, setIsNewWallet] = useState(false)
 
   const buttonsRowStyle = useAnimatedStyle(() => ({
@@ -119,7 +122,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         headerTitle: walletName,
         headerTitleRight: () => (
           <NetworkBadgeContainer>
-            <ActiveNetworkBadge />
+            <Pressable onPress={() => setIsSwitchNetworkModalOpen(true)}>
+              <ActiveNetworkBadge />
+            </Pressable>
           </NetworkBadgeContainer>
         )
       }}
@@ -204,6 +209,18 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
                 />
               </ScreenSection>
             </ModalContent>
+          )}
+        />
+
+        <BottomModal
+          isOpen={isSwitchNetworkModalOpen}
+          onClose={() => setIsSwitchNetworkModalOpen(false)}
+          Content={(props) => (
+            <SwitchNetworkModal
+              onClose={() => setIsSwitchNetworkModalOpen(false)}
+              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
+              {...props}
+            />
           )}
         />
       </Portal>
