@@ -129,9 +129,7 @@ const WalletConnectSessionProposalModal = ({
         {metadata?.icons && metadata.icons.length > 0 && metadata.icons[0] && (
           <DAppIcon source={{ uri: metadata.icons[0] }} />
         )}
-        <BottomModalScreenTitle>
-          {metadata?.name ? `Connect to ${metadata?.name}` : 'Connect to the dApp'}
-        </BottomModalScreenTitle>
+        <BottomModalScreenTitle>Connect to dApp</BottomModalScreenTitle>
         {metadata?.description && (
           <AppText color="secondary" size={16}>
             {metadata.description}

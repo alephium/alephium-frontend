@@ -48,8 +48,7 @@ const WalletConnectPairingsModal = ({ onClose, ...props }: ModalContentProps) =>
       {activeSessions.map(({ topic, peer: { metadata } }, index) => (
         <ListItem
           key={topic}
-          title={metadata.name}
-          subtitle={metadata.url}
+          title={metadata.url.replace('https://', '')}
           isLast={index === activeSessions.length - 1}
           icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
           rightSideContent={
