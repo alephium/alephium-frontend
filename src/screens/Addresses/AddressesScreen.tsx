@@ -17,12 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import * as Haptics from 'expo-haptics'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
@@ -46,7 +47,6 @@ import { AddressHash } from '~/types/addresses'
 
 const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const posthog = usePostHog()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
@@ -59,7 +59,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
 
   const [isQuickSelectionModalOpen, setIsQuickSelectionModalOpen] = useState(false)
 
-  const [heightCarouselItem, setHeightCarouselItem] = useState(220)
+  const [heightCarouselItem, setHeightCarouselItem] = useState(235)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
   const [isSwiping, setIsSwiping] = useState(false)
 
@@ -71,6 +71,8 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
   }, [addressHashes, defaultAddress?.hash])
 
   const onAddressCardsScrollEnd = (index: number) => {
+    Haptics.selectionAsync()
+
     if (index < addressHashes.length) {
       setSelectedAddressHash(addressHashes[index])
       setScrollToCarouselPage(index)
@@ -79,7 +81,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
   }
 
   const renderAddressCard = ({ item }: { item: string }) => (
-    <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height)} key={item}>
+    <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height + 15)} key={item}>
       <AddressCard
         addressHash={item}
         onSettingsPress={() => navigation.navigate('EditAddressScreen', { addressHash: item })}
@@ -124,7 +126,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
                   onPress={() => navigation.navigate('NewAddressScreen')}
                   iconProps={{ name: 'add-outline' }}
                   title="New address"
-                  color={theme.global.accent}
+                  variant="highlightedIcon"
                   compact
                   style={{ marginLeft: addresses.length <= 2 ? 'auto' : undefined }}
                 />

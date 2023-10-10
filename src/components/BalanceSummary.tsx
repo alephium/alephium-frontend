@@ -78,19 +78,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   }
 
   return (
-    <BalanceSummaryContainer
-      style={[
-        {
-          shadowColor: 'black',
-          shadowOffset: { height: 5, width: 0 },
-          shadowOpacity: theme.name === 'dark' ? 0.5 : 0.1,
-          shadowRadius: 8,
-          elevation: 10
-        },
-        style
-      ]}
-      {...props}
-    >
+    <BalanceSummaryContainer style={style} {...props}>
       <LinearGradient
         colors={[
           'transparent',
@@ -108,10 +96,18 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
             </AppText>
           </DateLabelContainer>
 
-          <Amount value={totalAmountWorth} isFiat fadeDecimals suffix={currencies[currency].symbol} bold size={38} />
+          <Amount value={totalAmountWorth} isFiat suffix={currencies[currency].symbol} bold size={38} />
         </TextContainer>
 
-        {totalBalance === BigInt(0) && !isLoadingTokenBalances ? (
+        <ChartContainer>
+          <HistoricWorthChart
+            currency={currency}
+            latestWorth={totalAmountWorth}
+            onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
+          />
+        </ChartContainer>
+
+        {totalBalance === BigInt(0) && !isLoadingTokenBalances && (
           <ReceiveFundsButtonContainer>
             <Button
               title="Receive assets"
@@ -121,14 +117,6 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
               short
             />
           </ReceiveFundsButtonContainer>
-        ) : (
-          <ChartContainer>
-            <HistoricWorthChart
-              currency={currency}
-              latestWorth={totalAmountWorth}
-              onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-            />
-          </ChartContainer>
         )}
       </LinearGradient>
     </BalanceSummaryContainer>

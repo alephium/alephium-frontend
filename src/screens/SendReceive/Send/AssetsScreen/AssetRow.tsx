@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
+import * as Haptics from 'expo-haptics'
 import { useRef, useState } from 'react'
 import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
@@ -86,6 +87,8 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   }
 
   const handleOnRowPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+
     const isNowSelected = !isSelected
     setIsSelected(isNowSelected)
 

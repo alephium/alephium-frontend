@@ -21,7 +21,8 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { usePostHog } from 'posthog-react-native'
-import { StyleProp, ViewStyle } from 'react-native'
+import { useState } from 'react'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -29,14 +30,17 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import { useAppSelector } from '~/hooks/redux'
+import SpinnerModal from '~/components/SpinnerModal'
+import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { selectAddressByHash } from '~/store/addressesSlice'
+import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { currencies } from '~/utils/currencies'
+import { showToast } from '~/utils/layout'
 
 interface AddressCardProps {
   addressHash: AddressHash
@@ -46,10 +50,15 @@ interface AddressCardProps {
 
 const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) => {
   const theme = useTheme()
+  const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<SendNavigationParamList>>()
   const posthog = usePostHog()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const currency = useAppSelector((s) => s.settings.currency)
+  const persistAddressSettings = usePersistAddressSettings()
+
+  const [loading, setLoading] = useState(false)
+
   const totalAddressBalance = BigInt(address?.balance ?? 0) + BigInt(address?.lockedBalance ?? 0)
   const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
     pollingInterval: 60000,
@@ -57,11 +66,16 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   })
 
   const totalAmountWorth = calculateAmountWorth(totalAddressBalance, price ?? 0)
+  const isDefaultAddress = address?.settings.isDefault
 
   if (!address) return null
 
   const bgColor = address.settings.color ?? theme.font.primary
-  const textColor = colord(bgColor).isDark() ? 'white' : 'black'
+  const isDark = colord(bgColor).isDark()
+  const textColor = isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.8)'
+  const outterBorderColor = colord(bgColor).lighten(0.3).toHex()
+  const innerBorderColor = isDark ? colord(bgColor).lighten(0.1).toHex() : colord(bgColor).darken(0.05).toHex()
+  const buttonsBackground = isDark ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)'
 
   const handleSendPress = () => {
     posthog?.capture('Address card: Selected address to send funds from')
@@ -81,81 +95,149 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
     })
   }
 
+  const handleDefaultAddressToggle = async () => {
+    if (address.settings.isDefault) return
+
+    setLoading(true)
+
+    try {
+      const newSettings = { ...address.settings, isDefault: true }
+
+      await persistAddressSettings({ ...address, settings: newSettings })
+      dispatch(addressSettingsSaved({ ...address, settings: newSettings }))
+
+      showToast('This is now the default address')
+
+      posthog?.capture('Address: Used address card default toggle')
+    } catch (e) {
+      console.error(e)
+
+      posthog?.capture('Error', { message: 'Could not use address card default toggle' })
+    }
+    setLoading(false)
+  }
+
   return (
-    <LinearGradient style={style} colors={[bgColor, colord(bgColor).darken(0.1).toHex()]} start={{ x: 0.1, y: 0.3 }}>
-      <Header>
-        <AddressBadgeContainer>
-          {address.settings.isDefault && <DefaultAddressBadge size={18} color={textColor} />}
-          <AddressBadgeStyled
-            addressHash={address.hash}
-            hideSymbol
+    <View
+      style={[
+        style,
+        {
+          shadowColor: 'black',
+          shadowOffset: { height: 5, width: 0 },
+          shadowOpacity: theme.name === 'dark' ? 0.5 : 0.15,
+          shadowRadius: 8,
+          elevation: 10,
+          borderColor: outterBorderColor
+        }
+      ]}
+    >
+      <CardGradientContainer
+        colors={[bgColor, colord(bgColor).saturate(0.15).lighten(0.05).toHex()]}
+        start={{ x: 0.1, y: 0.3 }}
+      >
+        <Header>
+          <AddressBadgeContainer>
+            <AddressBadgeStyled
+              addressHash={address.hash}
+              hideSymbol
+              color={textColor}
+              textStyle={{
+                fontSize: 23,
+                fontWeight: '700'
+              }}
+              showCopyBtn
+            />
+          </AddressBadgeContainer>
+          <HeaderButtons>
+            <Button
+              onPress={handleDefaultAddressToggle}
+              customIcon={
+                <DefaultAddressBadge
+                  strokeOnly={!isDefaultAddress}
+                  size={18}
+                  color={isDefaultAddress ? theme.global.accent : textColor}
+                />
+              }
+              style={{ backgroundColor: isDefaultAddress ? 'rgba(255, 255, 255, 0.2)' : buttonsBackground }}
+              round
+            />
+            <Button
+              iconProps={{ name: 'settings-outline' }}
+              color={textColor}
+              onPress={onSettingsPress}
+              style={{ backgroundColor: buttonsBackground }}
+              round
+            />
+          </HeaderButtons>
+        </Header>
+        <Amounts>
+          <FiatAmount
+            value={totalAmountWorth}
+            isFiat
             color={textColor}
-            textStyle={{
-              fontSize: 23,
-              fontWeight: '700'
-            }}
-            showCopyBtn
+            size={32}
+            bold
+            suffix={currencies[currency].symbol}
           />
-          <AppText size={14} color={textColor}>
-            Group {address.group}
-          </AppText>
-        </AddressBadgeContainer>
-        <Button
-          iconProps={{ name: 'settings-outline' }}
-          type="transparent"
-          color={textColor}
-          onPress={onSettingsPress}
-        />
-      </Header>
-      <Amounts>
-        <FiatAmount
-          value={totalAmountWorth}
-          isFiat
-          color={textColor}
-          size={30}
-          semiBold
-          suffix={currencies[currency].symbol}
-        />
-        <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
-      </Amounts>
-      <BottomRow>
-        <ButtonsRow sticked hasDivider>
-          <Button
-            title="Send"
-            onPress={handleSendPress}
-            iconProps={{ name: 'arrow-up-outline' }}
-            flex
-            type="transparent"
-            color={textColor}
-          />
-          <Button
-            title="Receive"
-            onPress={handleReceivePress}
-            iconProps={{ name: 'arrow-down-outline' }}
-            flex
-            type="transparent"
-            color={textColor}
-          />
-        </ButtonsRow>
-      </BottomRow>
-    </LinearGradient>
+          <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
+          <AddressGroup>
+            <AppText style={{ color: textColor }} size={13}>
+              Group {address.group}
+            </AppText>
+          </AddressGroup>
+        </Amounts>
+        <BottomRow
+          style={{
+            borderTopColor: innerBorderColor,
+            backgroundColor: buttonsBackground
+          }}
+        >
+          <ButtonsRow sticked hasDivider dividerColor={innerBorderColor}>
+            <Button
+              title="Send"
+              onPress={handleSendPress}
+              iconProps={{ name: 'arrow-up-outline' }}
+              flex
+              type="transparent"
+              color={textColor}
+            />
+            <Button
+              title="Receive"
+              onPress={handleReceivePress}
+              iconProps={{ name: 'arrow-down-outline' }}
+              flex
+              type="transparent"
+              color={textColor}
+            />
+          </ButtonsRow>
+        </BottomRow>
+      </CardGradientContainer>
+      <SpinnerModal isActive={loading} text="Updating default address..." />
+    </View>
   )
 }
 
 export default styled(AddressCard)`
-  border-radius: 16px;
+  border-radius: 24px;
   height: 220px;
+  border-width: 1px;
+  background-color: white;
+`
+
+const CardGradientContainer = styled(LinearGradient)`
+  flex: 1;
   justify-content: space-between;
-  overflow: hidden;
+  border-radius: 23px;
 `
 
 const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   max-width: 100%;
   align-items: center;
   gap: 18px;
-  padding: 15px 15px 0px 15px;
+  padding: 15px 15px 0px 20px;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
@@ -170,6 +252,13 @@ const AddressBadgeContainer = styled.View`
   gap: 18px;
 `
 
+const HeaderButtons = styled.View`
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+`
+
 const Amounts = styled.View`
   padding: 15px;
   margin-left: ${DEFAULT_MARGIN}px;
@@ -179,10 +268,16 @@ const FiatAmount = styled(Amount)`
   margin-bottom: 5px;
 `
 
+const AddressGroup = styled.View`
+  position: absolute;
+  right: 15px;
+  bottom: 0px;
+  opacity: 0.6;
+`
+
 const BottomRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-
-  background-color: rgba(0, 0, 0, 0.1);
+  border-top-width: 1px;
 `

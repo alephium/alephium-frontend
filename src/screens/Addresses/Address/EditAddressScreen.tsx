@@ -54,7 +54,7 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
       await persistAddressSettings({ ...address, settings })
       dispatch(addressSettingsSaved({ ...address, settings }))
 
-      posthog?.capture('Address: Editted address settings')
+      posthog?.capture('Address: Edited address settings')
     } catch (e) {
       console.error(e)
 

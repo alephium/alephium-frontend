@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dimensions, KeyboardAvoidingView, Pressable } from 'react-native'
+import { Dimensions, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolate,
@@ -229,9 +229,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
               <Navigation style={modalNavigationAnimatedStyle}>
                 <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
               </Navigation>
-              <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
-                <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
-              </KeyboardAvoidingView>
+              <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
             </ContentContainer>
           </BottomModalStyled>
         </Container>
@@ -260,7 +258,7 @@ const Backdrop = styled(AnimatedPressable)`
 
 const BottomModalStyled = styled(Animated.View)`
   justify-content: flex-start;
-  background-color: ${({ theme }) => theme.bg.back1};
+  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.back1 : theme.bg.secondary)};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;

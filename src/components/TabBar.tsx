@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import * as Haptics from 'expo-haptics'
 import { ReactNode } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -38,21 +39,26 @@ export interface TabBarProps {
 const TabBar = ({ items, onTabChange, activeTab, style }: TabBarProps) => {
   const theme = useTheme()
 
+  const handleTabChange = (item: TabItem) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    onTabChange(item)
+  }
+
   return (
     <TabBarStyled style={style}>
       {items.map((item) => {
         const isActive = activeTab.value === item.value
 
         return (
-          <Pressable key={item.value} onPress={() => onTabChange(item)}>
+          <Pressable key={item.value} onPress={() => handleTabChange(item)}>
             <Tab
               isActive={isActive}
               style={{
-                shadowColor: 'black',
+                shadowColor: isActive ? 'black' : 'transparent',
                 shadowOffset: { height: 3, width: 0 },
                 shadowOpacity: theme.name === 'dark' ? 0 : 0.08,
                 shadowRadius: 5,
-                elevation: 10
+                elevation: isActive ? 10 : 0
               }}
             >
               {typeof item.label === 'string' ? (
@@ -83,7 +89,8 @@ export const Tab = styled.View<{ isActive: boolean }>`
   flex-direction: row;
   gap: 10px;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : 'transparent')};
+  background-color: ${({ isActive, theme }) =>
+    isActive ? (theme.name === 'light' ? theme.bg.highlight : theme.button.primary) : 'transparent'};
   padding: 8px 10px;
   border-radius: ${BORDER_RADIUS}px;
   margin-bottom: -1px;

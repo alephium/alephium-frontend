@@ -39,7 +39,6 @@ import { partition } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { Portal } from 'react-native-portalize'
-import Toast from 'react-native-root-toast'
 
 import client from '~/api/client'
 import {
@@ -57,6 +56,7 @@ import { Address, AddressHash } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
+import { showToast } from '~/utils/layout'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 interface WalletConnectContextValue {
@@ -316,7 +316,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       } catch (e) {
         // TODO: Handle consolidation case
         // TODO: Handle authentication requirement
-        Toast.show(getHumanReadableError(e, 'Error while building the transaction'))
+        showToast(getHumanReadableError(e, 'Error while building the transaction'))
 
         posthog?.capture('Error', { message: 'Could not build transaction' })
       }
@@ -510,21 +510,19 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     if (requiredChains?.length !== 1) {
       console.error(`❌ Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains?.length}`)
-      return Toast.show(
-        `Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains?.length}`
-      )
+      return showToast(`Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains?.length}`)
     }
 
     if (!requiredChainInfo) {
       console.error('❌ Could not find chain requirements in WalletConnect proposal')
-      return Toast.show('Could not find chain requirements in WalletConnect proposal')
+      return showToast('Could not find chain requirements in WalletConnect proposal')
     }
 
     if (!isNetworkValid(requiredChainInfo.networkId, currentNetworkId)) {
       console.error(
         `❌ WalletConnect requested the ${requiredChainInfo.networkId} network, but the current network is ${currentNetworkName}.`
       )
-      return Toast.show(
+      return showToast(
         `WalletConnect requested the ${requiredChainInfo.networkId} network, but the current network is ${currentNetworkName}.`
       )
     }
@@ -533,7 +531,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.error(
         `❌ The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChainInfo.addressGroup})`
       )
-      return Toast.show(
+      return showToast(
         `The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChainInfo.addressGroup})`
       )
     }

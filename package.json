@@ -88,7 +88,8 @@
     "victory-native": "^36.6.10",
     "@shopify/react-native-skia": "0.1.196",
     "expo-sensors": "~12.3.0",
-    "expo-splash-screen": "~0.20.5"
+    "expo-splash-screen": "~0.20.5",
+    "expo-haptics": "~12.4.0"
   },
   "expo": {
     "install": {

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH, TokenInfo } from '@alephium/token-list'
+import { Canvas, Circle, SweepGradient, vec } from '@shopify/react-native-skia'
 import { HelpCircle } from 'lucide-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -45,7 +46,14 @@ const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
       {imageUrl ? (
         <LogoImage source={{ uri: imageUrl }} />
       ) : assetId === ALPH.id ? (
-        <AlephiumLogo color={theme.font.tertiary} />
+        <>
+          <AlephiumLogoBackgroundCanvas style={{ height: size, width: size }}>
+            <Circle cx={size / 2} cy={size / 2} r={size / 2}>
+              <SweepGradient c={vec(size / 2, size / 2)} colors={['#FF4385', '#61A1F6', '#FF7D26', '#FF4385']} />
+            </Circle>
+          </AlephiumLogoBackgroundCanvas>
+          <AlephiumLogo color="white" />
+        </>
       ) : token?.name ? (
         <Initials size={size * 0.45}>{token.name.slice(0, 2)}</Initials>
       ) : (
@@ -83,4 +91,12 @@ const LogoImage = styled.Image`
 
 const Initials = styled(AppText)<{ size: number }>`
   text-transform: uppercase;
+`
+
+const AlephiumLogoBackgroundCanvas = styled(Canvas)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 `

@@ -28,7 +28,6 @@ import {
 import { SessionTypes } from '@walletconnect/types'
 import { usePostHog } from 'posthog-react-native'
 import { Image } from 'react-native'
-import Toast from 'react-native-root-toast'
 import styled from 'styled-components/native'
 
 import { signAndSendTransaction } from '~/api/transactions'
@@ -45,6 +44,7 @@ import Row from '~/components/Row'
 import { useAppDispatch } from '~/hooks/redux'
 import { transactionSent } from '~/store/addressesSlice'
 import { SessionRequestData } from '~/types/walletConnect'
+import { showToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> extends ModalContentProps {
@@ -164,7 +164,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
       }
     } catch (e) {
       console.error('Could not send transaction', e)
-      Toast.show(getHumanReadableError(e, 'Could not send transaction'))
+      showToast(getHumanReadableError(e, 'Could not send transaction'))
       posthog?.capture('Error', { message: 'Could not send transaction' })
     }
   }

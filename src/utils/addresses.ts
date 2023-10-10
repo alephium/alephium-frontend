@@ -20,19 +20,19 @@ import { ALPH } from '@alephium/token-list'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
-import Toast from 'react-native-root-toast'
 
 import { persistAddressesMetadata } from '~/persistent-storage/wallet'
 import { getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
 import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '~/types/addresses'
 import { AddressTransaction, PendingTransaction } from '~/types/transactions'
+import { showToast } from '~/utils/layout'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
 
 export const copyAddressToClipboard = async (addressHash: AddressHash) => {
   await Clipboard.setStringAsync(addressHash)
-  Toast.show('Address copied!')
+  showToast('Address copied!')
 }
 
 export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
