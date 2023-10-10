@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { BlurMask, Canvas, Circle, Group, SweepGradient, vec } from '@shopify/react-native-skia'
 import * as Haptics from 'expo-haptics'
+import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import { useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
@@ -35,6 +36,7 @@ interface WalletSwitchButtonProps {
 const buttonSize = 40
 
 const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
+  const posthog = usePostHog()
   const gradientOpacity = useSharedValue(0)
   const [nbOfTaps, setNbOfTaps] = useState(0)
   const [isDoingMagic, setIsDoingMagic] = useState(false)
@@ -67,6 +69,7 @@ const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
 
     if (nbOfTaps === 68) {
       setIsDoingMagic(true)
+      posthog?.capture('Activated magic')
     }
   }
 
