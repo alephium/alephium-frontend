@@ -96,6 +96,8 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   }
 
   const handleDefaultAddressToggle = async () => {
+    if (address.settings.isDefault) return
+
     setLoading(true)
 
     try {
