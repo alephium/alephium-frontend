@@ -32,7 +32,9 @@
     },
     "production": {
       "android": {},
-      "ios": {}
+      "ios": {
+        "companyName": "Panda Software SA"
+      }
     }
   }
 }
