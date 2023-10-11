@@ -23,7 +23,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import animationSrc from '~/animations/lottie/success.json'
 import HighlightButton from '~/components/buttons/HighlightButton'
-import { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppSelector } from '~/hooks/redux'
@@ -57,7 +57,9 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
       </AnimationContainer>
       <CenteredInstructions instructions={instructions} stretch fontSize={19} />
       <ActionsContainer>
-        <HighlightButton title="Let's go!" wide onPress={() => resetNavigationState()} />
+        <ScreenSection centered>
+          <HighlightButton title="Let's go!" wide onPress={() => resetNavigationState()} />
+        </ScreenSection>
       </ActionsContainer>
     </ScrollScreen>
   )
@@ -84,5 +86,4 @@ const StyledAnimation = styled(LottieView)`
 const ActionsContainer = styled.View`
   flex: 1;
   justify-content: flex-end;
-  align-items: center;
 `
