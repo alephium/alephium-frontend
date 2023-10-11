@@ -69,8 +69,8 @@ const AssetLogoStyled = styled.View<AssetLogoProps & { logoURI: TokenInfo['logoU
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   border-radius: ${({ size, isNft }) => (isNft ? BORDER_RADIUS_SMALL : size)}px;
-  padding: 1px;
   background: ${({ theme }) => theme.bg.tertiary};
+  overflow: hidden;
 
   ${({ assetId, logoURI, size }) =>
     assetId === ALPH.id
