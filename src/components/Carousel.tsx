@@ -20,7 +20,7 @@ import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { Dimensions, LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 import RNCarousel, { ICarouselInstance, TCarouselProps } from 'react-native-reanimated-carousel'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import { ScreenSection } from '~/components/layout/Screen'
 
@@ -94,7 +94,7 @@ const Carousel = <T,>({
           parallaxScrollingOffset: distance * -1
         }}
       />
-      <CarouselFooter>
+      <CarouselFooter centered={!FooterComponent}>
         {!!progressValue && data.length > 1 && (
           <CarouselPagination>
             {data.map((_, index) => (
@@ -132,11 +132,16 @@ const CarouselFooter = styled(ScreenSection)`
   height: 40px;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
   gap: 15px;
   margin-bottom: 10px;
   width: 85%;
   align-self: center;
+
+  ${({ centered }) =>
+    !centered &&
+    css`
+      justify-content: space-between;
+    `}
 `
 
 interface CarouselPaginationItemProps {
