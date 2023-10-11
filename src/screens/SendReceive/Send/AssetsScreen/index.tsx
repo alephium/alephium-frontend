@@ -95,7 +95,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
             />
           ))}
           {nfts.map((nft, index) => (
-            <AssetRow key={nft.id} asset={nft} isLast={index === knownFungibleTokens.length - 1} />
+            <AssetRow key={nft.id} asset={nft} isLast={index === nfts.length - 1} />
           ))}
         </AssetsList>
       </ScreenSection>
