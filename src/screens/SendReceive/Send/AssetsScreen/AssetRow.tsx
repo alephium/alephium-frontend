@@ -34,6 +34,7 @@ import Checkmark from '~/components/Checkmark'
 import ListItem from '~/components/ListItem'
 import { useSendContext } from '~/contexts/SendContext'
 import { NFT } from '~/types/assets'
+import { isNft } from '~/utils/assets'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface AssetRowProps {
@@ -127,15 +128,11 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     backgroundColor: isSelected ? theme.bg.highlight : 'transparent'
   }))
 
-  const bottomRowAnimatedStyle = useAnimatedStyle(() =>
-    !assetIsNft
-      ? {
-          height: withSpring(isSelected ? 100 : 0, fastSpringConfiguration),
-          opacity: withSpring(isSelected ? 1 : 0, fastSpringConfiguration),
-          borderTopWidth: withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
-        }
-      : {}
-  )
+  const bottomRowAnimatedStyle = useAnimatedStyle(() => ({
+    height: assetIsNft ? 0 : withSpring(isSelected ? 100 : 0, fastSpringConfiguration),
+    opacity: assetIsNft ? 0 : withSpring(isSelected ? 1 : 0, fastSpringConfiguration),
+    borderTopWidth: assetIsNft ? 0 : withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
+  }))
 
   return (
     <ListItem
@@ -245,5 +242,3 @@ const CheckmarkContainer = styled.View`
   align-items: center;
   justify-content: center;
 `
-
-const isNft = (item: Asset | NFT): item is NFT => (item as NFT).collectionAddress !== undefined

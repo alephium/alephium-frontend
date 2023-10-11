@@ -23,7 +23,7 @@ import { useAppSelector } from '~/hooks/redux'
 
 import AppText, { AppTextProps } from './AppText'
 
-interface AmountProps extends AppTextProps {
+export interface AmountProps extends AppTextProps {
   value?: bigint | number
   decimals?: number
   isFiat?: boolean

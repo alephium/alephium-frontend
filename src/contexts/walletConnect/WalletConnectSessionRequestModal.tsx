@@ -229,6 +229,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
                     assetId={ALPH.id}
                     logoSize={18}
                     amount={BigInt(requestData.wcData.initialAlphAmount.amount)}
+                    fullPrecision
                   />
                 </Row>
               )}

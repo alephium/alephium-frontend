@@ -71,7 +71,9 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           <Row title="Sending" titleColor="secondary">
             <AssetAmounts>
               {assets.map(({ id, amount }) =>
-                amount ? <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} /> : null
+                amount ? (
+                  <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} fullPrecision />
+                ) : null
               )}
             </AssetAmounts>
           </Row>

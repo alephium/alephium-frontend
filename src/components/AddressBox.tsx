@@ -27,8 +27,8 @@ import AddressBadge from '~/components/AddressBadge'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Checkmark from '~/components/Checkmark'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
-import { BORDER_RADIUS } from '~/style/globalStyle'
+import { makeSelectAddressesKnownFungibleTokens, makeSelectAddressesNFTs } from '~/store/addressesSlice'
+import { BORDER_RADIUS, VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 interface AddressBoxProps extends PressableProps {
@@ -41,6 +41,8 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
+  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const theme = useTheme()
 
   const boxAnimatedStyle = useAnimatedStyle(() => ({
@@ -67,9 +69,17 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
               assetId={asset.id}
               logoSize={15}
               amount={asset.balance - asset.lockedBalance}
+              useTinyAmountShorthand
             />
           ))}
         </AssetsRow>
+        {nfts.length > 0 && (
+          <AssetsRow style={{ marginTop: VERTICAL_GAP }}>
+            {nfts.map((nft) => (
+              <AssetAmountWithLogo key={nft.id} assetId={nft.id} logoSize={15} amount={BigInt(1)} />
+            ))}
+          </AssetsRow>
+        )}
       </AddressBoxBottom>
     </AddressBoxStyled>
   )
