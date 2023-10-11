@@ -82,7 +82,7 @@ const NoNFTsMessage = styled.View`
   border: 2px dashed ${({ theme }) => theme.border.primary};
 `
 
-const NFTThumbnail = styled.Image`
-  height: 100px;
+export const NFTThumbnail = styled.Image<{ height?: number }>`
+  height: ${({ height }) => height ?? 100}px;
   border-radius: ${BORDER_RADIUS_SMALL}px;
 `

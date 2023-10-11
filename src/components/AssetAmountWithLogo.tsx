@@ -21,8 +21,9 @@ import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
+import { NFTThumbnail } from '~/components/NFTsGrid'
 import { useAppSelector } from '~/hooks/redux'
-import { selectAssetInfoById } from '~/store/assets/assetsSelectors'
+import { selectAssetInfoById, selectNFTById } from '~/store/assets/assetsSelectors'
 
 interface AssetAmountWithLogoProps {
   assetId: Asset['id']
@@ -32,10 +33,9 @@ interface AssetAmountWithLogoProps {
 
 const AssetAmountWithLogo = ({ assetId, logoSize, amount }: AssetAmountWithLogoProps) => {
   const asset = useAppSelector((s) => selectAssetInfoById(s, assetId))
+  const nft = useAppSelector((s) => selectNFTById(s, assetId))
 
-  if (!asset) return null
-
-  return (
+  return asset ? (
     <AssetStyled key={asset.id}>
       <AssetLogo assetId={asset.id} size={logoSize} />
       <Amount
@@ -48,7 +48,9 @@ const AssetAmountWithLogo = ({ assetId, logoSize, amount }: AssetAmountWithLogoP
         fullPrecision
       />
     </AssetStyled>
-  )
+  ) : nft ? (
+    <NFTThumbnail key={nft.id} style={{ width: 50 }} source={{ uri: nft.image }} height={50} />
+  ) : null
 }
 
 export default AssetAmountWithLogo

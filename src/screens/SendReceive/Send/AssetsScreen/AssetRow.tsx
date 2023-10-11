@@ -33,10 +33,11 @@ import Button from '~/components/buttons/Button'
 import Checkmark from '~/components/Checkmark'
 import ListItem from '~/components/ListItem'
 import { useSendContext } from '~/contexts/SendContext'
+import { NFT } from '~/types/assets'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface AssetRowProps {
-  asset: Asset
+  asset: Asset | NFT
   isLast: boolean
   style?: StyleProp<ViewStyle>
 }
@@ -47,6 +48,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const { assetAmounts, setAssetAmount } = useSendContext()
 
   const assetAmount = assetAmounts.find(({ id }) => id === asset.id)
+  const assetIsNft = isNft(asset)
 
   const [isSelected, setIsSelected] = useState(!!assetAmount)
   const [amount, setAmount] = useState(
@@ -57,6 +59,8 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
 
   const handleOnAmountChange = (inputAmount: string) => {
+    if (assetIsNft) return
+
     const cleanedAmount = isNumericStringValid(inputAmount, true) ? inputAmount : ''
 
     setAmount(cleanedAmount)
@@ -83,6 +87,8 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   }
 
   const handleUseMaxAmountPress = () => {
+    if (assetIsNft) return
+
     setAmount(toHumanReadableAmount(asset.balance - asset.lockedBalance))
   }
 
@@ -93,7 +99,12 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     setIsSelected(isNowSelected)
 
     if (isNowSelected) {
-      setTimeout(() => inputRef.current?.focus(), 500)
+      if (assetIsNft) {
+        setAmount('1')
+        setAssetAmount(asset.id, BigInt(1))
+      } else {
+        setTimeout(() => inputRef.current?.focus(), 500)
+      }
     } else {
       setAmount('')
       setAssetAmount(asset.id, undefined)
@@ -116,11 +127,15 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     backgroundColor: isSelected ? theme.bg.highlight : 'transparent'
   }))
 
-  const bottomRowAnimatedStyle = useAnimatedStyle(() => ({
-    height: withSpring(isSelected ? 100 : 0, fastSpringConfiguration),
-    opacity: withSpring(isSelected ? 1 : 0, fastSpringConfiguration),
-    borderTopWidth: withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
-  }))
+  const bottomRowAnimatedStyle = useAnimatedStyle(() =>
+    !assetIsNft
+      ? {
+          height: withSpring(isSelected ? 100 : 0, fastSpringConfiguration),
+          opacity: withSpring(isSelected ? 1 : 0, fastSpringConfiguration),
+          borderTopWidth: withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
+        }
+      : {}
+  )
 
   return (
     <ListItem
@@ -133,14 +148,18 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       height={64}
       rightSideContent={<CheckmarkContainer>{isSelected && <Checkmark />}</CheckmarkContainer>}
       subtitle={
-        <Amount
-          value={asset.balance - asset.lockedBalance}
-          suffix={asset.symbol}
-          decimals={asset.decimals}
-          isUnknownToken={!asset.symbol}
-          medium
-          color="secondary"
-        />
+        assetIsNft ? (
+          asset.description
+        ) : (
+          <Amount
+            value={asset.balance - asset.lockedBalance}
+            suffix={asset.symbol}
+            decimals={asset.decimals}
+            isUnknownToken={!asset.symbol}
+            medium
+            color="secondary"
+          />
+        )
       }
       icon={<AssetLogo assetId={asset.id} size={38} />}
     >
@@ -161,9 +180,11 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
                 numberOfLines={2}
               />
             </AmountInputValue>
-            <AppText semiBold size={23} color="secondary">
-              {asset.symbol}
-            </AppText>
+            {!assetIsNft && (
+              <AppText semiBold size={23} color="secondary">
+                {asset.symbol}
+              </AppText>
+            )}
           </AmountInputRow>
           <Row>
             <AppText color="alert" size={11}>
@@ -224,3 +245,5 @@ const CheckmarkContainer = styled.View`
   align-items: center;
   justify-content: center;
 `
+
+const isNft = (item: Asset | NFT): item is NFT => (item as NFT).collectionAddress !== undefined
