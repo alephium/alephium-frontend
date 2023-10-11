@@ -210,9 +210,9 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           </Row>
 
           {requestData.type === 'deploy-contract' || requestData.type === 'call-contract' ? (
-            metadata?.name && (
+            metadata?.url && (
               <Row title="To" titleColor="secondary">
-                <AppText semiBold>{metadata.name}</AppText>
+                <AppText semiBold>{metadata.url}</AppText>
               </Row>
             )
           ) : (
@@ -229,6 +229,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
                     assetId={ALPH.id}
                     logoSize={18}
                     amount={BigInt(requestData.wcData.initialAlphAmount.amount)}
+                    fullPrecision
                   />
                 </Row>
               )}

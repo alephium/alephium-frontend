@@ -30,7 +30,11 @@ import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
-import { makeSelectAddressesKnownFungibleTokens, selectAddressByHash } from '~/store/addressesSlice'
+import {
+  makeSelectAddressesKnownFungibleTokens,
+  makeSelectAddressesNFTs,
+  selectAddressByHash
+} from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>, ScrollScreenProps {}
 
@@ -39,6 +43,8 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
+  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+  const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
 
   useScrollToTopOnFocus()
 
@@ -82,7 +88,14 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       <ScreenSection>
         <AssetsList>
           {knownFungibleTokens.map((asset, index) => (
-            <AssetRow key={asset.id} asset={asset} isLast={index === knownFungibleTokens.length - 1} />
+            <AssetRow
+              key={asset.id}
+              asset={asset}
+              isLast={index === knownFungibleTokens.length - 1 && nfts.length === 0}
+            />
+          ))}
+          {nfts.map((nft, index) => (
+            <AssetRow key={nft.id} asset={nft} isLast={index === nfts.length - 1} />
           ))}
         </AssetsList>
       </ScreenSection>
