@@ -23,7 +23,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
-import NavigationStackHeader from '~/components/headers/NavigationStackHeader'
 import ProgressHeader from '~/components/headers/ProgressHeader'
 import AnalyticsProvider from '~/contexts/AnalyticsContext'
 import { NavigationScrollContextProvider } from '~/contexts/NavigationScrollContext'
@@ -89,14 +88,8 @@ const RootStackNavigation = () => {
             <AnalyticsProvider>
               <WalletConnectContextProvider>
                 <RootStack.Navigator initialRouteName="SplashScreen">
-                  {/* Screens with default header */}
-                  <RootStack.Group
-                    screenOptions={{ header: (props) => <NavigationStackHeader {...props} />, headerTransparent: true }}
-                  >
-                    <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
-                  </RootStack.Group>
+                  {/* Sub-navigation with custom header */}
                   <RootStack.Group screenOptions={{ headerTransparent: true }}>
-                    {/* Sub-navigation with custom header */}
                     <RootStack.Screen
                       name="SendNavigation"
                       component={SendNavigation}
@@ -160,6 +153,7 @@ const RootStackNavigation = () => {
                       component={InWalletTabsNavigation}
                       options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
                     />
+                    <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
                     <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
                     <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />
                     <RootStack.Screen name="ContactScreen" component={ContactScreen} />
