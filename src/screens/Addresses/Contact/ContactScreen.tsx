@@ -200,7 +200,7 @@ const ButtonsRow = styled.View`
 
 const ButtonStyled = styled.Pressable`
   padding: 12px 6px;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.button.primary};
   border-radius: 9px;
   justify-content: center;
   align-items: center;
