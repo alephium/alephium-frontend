@@ -39,14 +39,20 @@ const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
   const theme = useTheme()
   const token = useAppSelector((state) => selectAssetInfoById(state, assetId))
   const nft = useAppSelector((s) => selectNFTById(s, assetId))
+  const isNft = !!nft
 
   const imageUrl = token?.logoURI || nft?.image
 
   return (
-    <AssetLogoStyled {...{ assetId, style, size }} logoURI={imageUrl} isNft={!!nft}>
+    <AssetLogoStyled {...{ assetId, style, size }} logoURI={imageUrl} isNft={isNft}>
       {imageUrl ? (
-        <LogoImageContainer>
-          <LogoImage source={{ uri: imageUrl }} transition={500} contentFit="contain" contentPosition="center" />
+        <LogoImageContainer isNft={isNft}>
+          <LogoImage
+            source={{ uri: imageUrl }}
+            transition={500}
+            contentFit={isNft ? 'cover' : 'contain'}
+            contentPosition="center"
+          />
         </LogoImageContainer>
       ) : assetId === ALPH.id ? (
         <>
@@ -87,10 +93,14 @@ const AssetLogoStyled = styled.View<AssetLogoProps & { logoURI: TokenInfo['logoU
         `}
 `
 
-const LogoImageContainer = styled.View`
-  padding: 5px;
+const LogoImageContainer = styled.View<{ isNft: boolean }>`
   height: 100%;
   width: 100%;
+  ${({ isNft }) =>
+    !isNft &&
+    css`
+      padding: 10%;
+    `}
 `
 
 const LogoImage = styled(Image)`
