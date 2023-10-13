@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Image } from 'expo-image'
 import { Skeleton } from 'moti/skeleton'
 import { Dimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -45,7 +46,7 @@ const NFTsGrid = ({ nfts, isLoading, nftWidth, nftsPerRow = 3 }: NFTsGridProps) 
   return (
     <NFTsGridStyled style={{ paddingRight: nfts.length === 0 ? 15 : 0 }}>
       {nfts.map((nft) => (
-        <NFTThumbnail key={nft.id} style={{ width: width }} source={{ uri: nft.image }} />
+        <NFTThumbnail key={nft.id} style={{ width: width }} source={{ uri: nft.image }} transition={500} />
       ))}
       {isLoading && (
         <>
@@ -82,7 +83,7 @@ const NoNFTsMessage = styled.View`
   border: 2px dashed ${({ theme }) => theme.border.primary};
 `
 
-export const NFTThumbnail = styled.Image<{ height?: number }>`
+export const NFTThumbnail = styled(Image)<{ height?: number }>`
   height: ${({ height }) => height ?? 100}px;
   border-radius: ${BORDER_RADIUS_SMALL}px;
 `

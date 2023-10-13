@@ -190,7 +190,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
               onPress={() => selectWord(word)}
               highlight={index === 0}
               entering={FadeIn.delay(index * 100)}
-              style={{ marginBottom: 0 }}
+              style={{ marginBottom: 5 }}
             >
               <Word highlight={index === 0} bold style={{ paddingVertical: 3, paddingHorizontal: 5 }}>
                 {word}
