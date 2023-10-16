@@ -275,8 +275,8 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
       appState.current = nextAppState
     }
 
-    if (!isAppStateChangeCallbackRegistered) {
-      handleAppStateChange(appState.current)
+    if (!isAppStateChangeCallbackRegistered && appState.current === 'active') {
+      handleAppStateChange('active')
     }
 
     const subscription = AppState.addEventListener('change', handleAppStateChange)
