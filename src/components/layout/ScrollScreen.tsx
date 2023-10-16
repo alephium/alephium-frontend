@@ -22,21 +22,18 @@ import { RefObject, useRef } from 'react'
 import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import BaseHeader, { HeaderOptions } from '~/components/headers/BaseHeader'
+import BaseHeader from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
-import Screen from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-export interface ScrollScreenBaseProps {
-  hasNavigationHeader?: boolean
+export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
   fill?: boolean
-  headerOptions?: HeaderOptions
-  contrastedBg?: boolean
 }
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {

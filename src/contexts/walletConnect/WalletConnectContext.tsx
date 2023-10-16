@@ -505,7 +505,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       return
     }
 
-    const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo } =
+    const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
       parseSessionProposalEvent(sessionProposalEvent)
 
     if (requiredChains?.length !== 1) {
@@ -553,6 +553,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     try {
       setLoading('Approving...')
       console.log('⏳ APPROVING PROPOSAL...')
+
+      const existingSession = activeSessions.find((session) => session.peer.metadata.url === metadata.url)
+
+      if (existingSession) {
+        await walletConnectClient.disconnect({ topic: existingSession.topic, reason: getSdkError('USER_DISCONNECTED') })
+      }
+
       const { topic, acknowledged } = await walletConnectClient.approve({ id, relayProtocol, namespaces })
       console.log('👉 APPROVAL TOPIC RECEIVED:', topic)
       console.log('✅ APPROVING: DONE!')

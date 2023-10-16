@@ -83,30 +83,29 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
               />
             )}
           </HeaderScreenSection>
-          <ScreenSection>
-            <ContactList>
-              {filteredContacts.map((contact) => {
-                const iconBgColor = stringToColour(contact.address)
-                const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
-                return (
-                  <ListItem
-                    key={contact.id}
-                    onPress={() => onContactPress(contact.id)}
-                    title={contact.name}
-                    subtitle={contact.address}
-                    icon={
-                      <ContactIcon color={iconBgColor}>
-                        <AppText color={textColor} semiBold size={21}>
-                          {contact.name[0].toUpperCase()}
-                        </AppText>
-                      </ContactIcon>
-                    }
-                  />
-                )
-              })}
-            </ContactList>
-          </ScreenSection>
+          <ContactList>
+            {filteredContacts.map((contact) => {
+              const iconBgColor = stringToColour(contact.address)
+              const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
+
+              return (
+                <ListItem
+                  key={contact.id}
+                  onPress={() => onContactPress(contact.id)}
+                  title={contact.name}
+                  subtitle={contact.address}
+                  icon={
+                    <ContactIcon color={iconBgColor}>
+                      <AppText color={textColor} semiBold size={21}>
+                        {contact.name[0].toUpperCase()}
+                      </AppText>
+                    </ContactIcon>
+                  }
+                />
+              )
+            })}
+          </ContactList>
         </>
       )}
     </Animated.View>

@@ -61,7 +61,7 @@ const TransactionListItem = ({ tx, showInternalInflows = false, ...props }: Tran
           </AssetLogos>
           <AmountColumn>
             {knownAssets.map(({ id, amount, decimals, symbol }) => (
-              <Amount
+              <AmountStyled
                 key={id}
                 value={amount}
                 decimals={decimals}
@@ -111,4 +111,8 @@ const AssetLogos = styled.View`
   flex-wrap: wrap;
   gap: 5px;
   padding: 10px 0;
+`
+
+const AmountStyled = styled(Amount)`
+  text-align: right;
 `

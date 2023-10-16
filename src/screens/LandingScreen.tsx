@@ -20,7 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
 import { DeviceMotion } from 'expo-sensors'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Dimensions, LayoutChangeEvent } from 'react-native'
 import Animated, {
   Extrapolation,
@@ -84,13 +84,6 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
     dispatch(methodSelected(method))
     navigation.navigate('NewWalletIntroScreen')
   }
-
-  useEffect(() => {
-    const routesHistory = navigation.getState().routes.map((route) => route.name)
-    const previousRouteName = routesHistory.length > 1 ? routesHistory[routesHistory.length - 2] : undefined
-
-    if (!previousRouteName || previousRouteName === 'SplashScreen') navigation.setOptions({ headerShown: false })
-  }, [navigation])
 
   const handleScreenLayoutChange = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout

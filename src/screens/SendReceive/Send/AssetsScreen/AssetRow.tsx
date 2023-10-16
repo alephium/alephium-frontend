@@ -53,7 +53,9 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
 
   const [isSelected, setIsSelected] = useState(!!assetAmount)
   const [amount, setAmount] = useState(
-    assetAmount && assetAmount.amount ? toHumanReadableAmount(assetAmount.amount) : ''
+    assetAmount && assetAmount.amount
+      ? toHumanReadableAmount(assetAmount.amount, !assetIsNft ? asset.decimals : undefined)
+      : ''
   )
   const [error, setError] = useState('')
 
@@ -90,7 +92,10 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const handleUseMaxAmountPress = () => {
     if (assetIsNft) return
 
-    setAmount(toHumanReadableAmount(asset.balance - asset.lockedBalance))
+    const maxAmount = asset.balance - asset.lockedBalance
+
+    setAmount(toHumanReadableAmount(maxAmount, asset.decimals))
+    setAssetAmount(asset.id, maxAmount)
   }
 
   const handleOnRowPress = () => {

@@ -36,7 +36,10 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: IS_DEV ? 'org.alephium.mobilewallet.dev' : 'org.alephium.mobilewallet'
+      bundleIdentifier: IS_DEV ? 'org.alephium.mobilewallet.dev' : 'org.alephium.mobilewallet',
+      config: {
+        usesNonExemptEncryption: false
+      }
     },
     android: {
       adaptiveIcon: {
