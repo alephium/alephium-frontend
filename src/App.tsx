@@ -18,11 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
-import { isEnrolledAsync } from 'expo-local-authentication'
 import { StatusBar } from 'expo-status-bar'
 import { difference } from 'lodash'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, AppState, AppStateStatus, ViewProps } from 'react-native'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ViewProps } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
@@ -33,13 +32,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useInterval from '~/hooks/useInterval'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
-import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
-import {
-  deriveWalletStoredAddresses,
-  disableBiometrics,
-  getStoredWallet,
-  getWalletMetadata
-} from '~/persistent-storage/wallet'
 import {
   makeSelectAddressesUnknownTokens,
   selectAddressIds,
@@ -47,17 +39,13 @@ import {
   syncAddressesDataWhenPendingTxsConfirm,
   syncAddressesHistoricBalances
 } from '~/store/addressesSlice'
-import { appBecameInactive } from '~/store/appSlice'
 import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
 import { selectIsTokensMetadataUninitialized } from '~/store/assets/assetsSelectors'
 import { apiClientInitFailed, apiClientInitSucceeded } from '~/store/networkSlice'
 import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
-import { biometricsToggled } from '~/store/settingsSlice'
 import { store } from '~/store/store'
 import { makeSelectAddressesHashesWithPendingTransactions } from '~/store/transactions/transactionSelectors'
-import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
-import { navigateRootStack, resetNavigationState, setNavigationState } from '~/utils/navigation'
 
 dayjs.extend(updateLocale)
 dayjs.updateLocale('en', {
@@ -103,11 +91,6 @@ const App = () => {
 
 const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
-  const appState = useRef(AppState.currentState)
-  const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
-  const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
-  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
-  const walletId = useAppSelector((s) => s.wallet.id)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const network = useAppSelector((s) => s.network)
   const addressIds = useAppSelector(selectAddressIds)
@@ -124,8 +107,6 @@ const Main = ({ children, ...props }: ViewProps) => {
   const checkedUnknownTokenIds = useAppSelector((s) => s.assetsInfo.checkedUnknownTokenIds)
   const unknownTokenIds = unknownTokens.map((token) => token.id)
   const newUnknownTokens = difference(unknownTokenIds, checkedUnknownTokenIds)
-
-  const [isUnlockingApp, setIsUnlockingApp] = useState(false)
 
   useLoadStoredSettings()
 
@@ -185,86 +166,6 @@ const Main = ({ children, ...props }: ViewProps) => {
   }, [addressesWithPendingTxs, dispatch, pendingTxs])
 
   useInterval(refreshAddressDataWhenPendingTxsConfirm, 5000, pendingTxs.length === 0)
-
-  const unlockApp = useCallback(async () => {
-    if (walletMnemonic) return
-
-    setIsUnlockingApp(true)
-
-    try {
-      const deviceHasBiometricsData = await isEnrolledAsync()
-      const walletMetadata = await getWalletMetadata()
-      let isBioEnabled = await loadBiometricsSettings()
-
-      // Disable biometrics if needed
-      if (isBioEnabled && !deviceHasBiometricsData) {
-        await disableBiometrics()
-        await storeBiometricsSettings(false)
-        dispatch(biometricsToggled(false))
-        isBioEnabled = false
-      }
-
-      const wallet = await getStoredWallet()
-
-      if (!wallet) {
-        if (lastNavigationState) {
-          setNavigationState(lastNavigationState)
-        } else {
-          navigateRootStack('LandingScreen')
-        }
-      } else {
-        if (isBioEnabled) {
-          const addressesToInitialize =
-            addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
-          dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: walletMetadata?.contacts ?? [] }))
-
-          lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
-        } else {
-          navigateRootStack('LoginWithPinScreen')
-        }
-      }
-
-      // TODO: Revisit error handling with proper error codes
-    } catch (e: unknown) {
-      const error = e as { message?: string }
-
-      if (error.message?.includes('User canceled')) {
-        Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
-          { text: 'Try again', onPress: unlockApp }
-        ])
-      } else {
-        console.error(e)
-      }
-    } finally {
-      setIsUnlockingApp(false)
-    }
-  }, [walletMnemonic, addressesStatus, dispatch, lastNavigationState])
-
-  useEffect(() => {
-    // We want this to only run 1 time and not every time lastNavigationState changes (dep of unlockApp).
-    if (!walletMnemonic && appState.current === 'active' && !isUnlockingApp) {
-      unlockApp()
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletMnemonic])
-
-  useEffect(() => {
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && walletMnemonic && !isCameraOpen) {
-        navigateRootStack('SplashScreen')
-        dispatch(appBecameInactive())
-      } else if (nextAppState === 'active' && !walletMnemonic && !isCameraOpen && !isUnlockingApp) {
-        unlockApp()
-      }
-
-      appState.current = nextAppState
-    }
-
-    const subscription = AppState.addEventListener('change', handleAppStateChange)
-
-    return subscription.remove
-  }, [walletId, walletMnemonic, dispatch, isCameraOpen, isUnlockingApp, unlockApp])
 
   return (
     <RootSiblingParent>

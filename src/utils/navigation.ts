@@ -20,7 +20,6 @@ import { createNavigationContainerRef } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
 const getInitialNavigationState = (initialRouteName?: string) => ({
   index: 0,
@@ -36,7 +35,7 @@ const getInitialNavigationState = (initialRouteName?: string) => ({
 // well as the RootStackNavigation itself.
 export const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
 
-const excludedRoutesFromRestoring = ['SplashScreen', 'LoginWithPinScreen']
+const excludedRoutesFromRestoring = ['SplashScreen', 'LandingScreen', 'LoginWithPinScreen']
 
 export const isNavStateRestorable = (state: NavigationState) => {
   const routes = state.routes.map((route) => route.name)
@@ -50,15 +49,3 @@ export const setNavigationState = (state: NavigationState) =>
 
 export const resetNavigationState = (initialRouteName?: string) =>
   rootStackNavigationRef.resetRoot(getInitialNavigationState(initialRouteName))
-
-// Navigating without the navigation prop:
-// https://reactnavigation.org/docs/navigating-without-navigation-prop
-export const navigateRootStack = <RouteName extends keyof RootStackParamList & keyof SendNavigationParamList>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  name: any, // TODO: Figure out why we can't use `RouteName` instead
-  params?: RootStackParamList[RouteName] | SendNavigationParamList[RouteName]
-) => {
-  if (rootStackNavigationRef.isReady()) {
-    rootStackNavigationRef.navigate(name, params)
-  }
-}
