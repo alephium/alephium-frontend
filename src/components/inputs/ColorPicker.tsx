@@ -46,7 +46,12 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
         <AppText>Color</AppText>
         <Dot color={value} />
       </HighlightRow>
-      <ModalWithBackdrop animationType="fade" visible={isModalVisible} closeModal={() => setIsModalVisible(false)}>
+      <ModalWithBackdrop
+        animationType="fade"
+        visible={isModalVisible}
+        closeModal={() => setIsModalVisible(false)}
+        showCloseButton
+      >
         <Colors>
           {labelColorPalette.map((c) => (
             <Color key={c} color={c} onPress={() => handleColorPress(c)} />

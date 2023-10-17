@@ -23,11 +23,9 @@ import { areFramesComplete, framesToData, parseFramesReducer, progressOfFrames, 
 import React, { useEffect, useState } from 'react'
 import { Dimensions } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { CloseButton } from '~/components/buttons/Button'
 import InfoBox from '~/components/InfoBox'
 import Screen, { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
@@ -48,8 +46,6 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
   const [hasPermission, setHasPermission] = useState<boolean>()
   const [scanned, setScanned] = useState(false)
   const [progress, setProgress] = useState(0)
-
-  const insets = useSafeAreaInsets()
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -111,7 +107,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
   )
 
   return (
-    <ModalWithBackdrop visible closeModal={onClose} color={theme.bg.primary}>
+    <ModalWithBackdrop visible closeModal={onClose} color={theme.bg.primary} showCloseButton>
       <ScreenStyled>
         {!scanned &&
           hasPermission &&
@@ -135,10 +131,6 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
             </InfoBox>
           </ScreenSection>
         )}
-
-        <ScreenSectionHeader style={{ paddingTop: insets.top }}>
-          <CloseButton onPress={onClose} style={{ marginLeft: 'auto' }} variant="highlight" />
-        </ScreenSectionHeader>
       </ScreenStyled>
     </ModalWithBackdrop>
   )
@@ -177,11 +169,4 @@ const TextContainer = styled.View`
 
 const AppTextCentered = styled(AppText)`
   text-align: center;
-`
-
-const ScreenSectionHeader = styled(ScreenSection)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
 `
