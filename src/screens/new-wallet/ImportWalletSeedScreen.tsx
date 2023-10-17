@@ -21,8 +21,8 @@ import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, KeyboardAvoidingView, Pressable, ScrollView } from 'react-native'
-import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
+import { Alert, KeyboardAvoidingView, ScrollView } from 'react-native'
+import { FadeIn } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -31,6 +31,7 @@ import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import SecretPhraseWordList, { SelectedWord, WordBox } from '~/components/SecretPhraseWordList'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
@@ -38,18 +39,13 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
 import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
-import { BORDER_RADIUS, BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
 import { resetNavigationState } from '~/utils/navigation'
 
 interface ImportWalletSeedScreenProps
   extends StackScreenProps<RootStackParamList, 'ImportWalletSeedScreen'>,
     ScreenProps {}
-
-export type SelectedWord = {
-  word: string
-  timestamp: Date
-}
 
 const enablePasteForDevelopment = false
 
@@ -149,25 +145,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
               style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}
             >
               <ScrollView>
-                <SecretPhraseWords>
-                  {selectedWords.length > 0 ? (
-                    selectedWords.map((word, index) => (
-                      <SelectedWordBox
-                        key={`${word.word}-${word.timestamp}`}
-                        onPress={() => removeSelectedWord(word)}
-                        entering={FadeIn}
-                        exiting={FadeOut}
-                        layout={Layout.duration(200).delay(200)}
-                      >
-                        <AppText color="accent" bold>
-                          {index + 1}. {word.word}
-                        </AppText>
-                      </SelectedWordBox>
-                    ))
-                  ) : (
-                    <AppText color="secondary">Start entering your phrase... 👇</AppText>
-                  )}
-                </SecretPhraseWords>
+                <SecretPhraseWordList words={selectedWords} onWordPress={removeSelectedWord} />
               </ScrollView>
             </SecretPhraseBox>
           )}
@@ -230,12 +208,6 @@ export const SecretPhraseBox = styled.View`
   border-radius: ${BORDER_RADIUS}px;
 `
 
-export const SecretPhraseWords = styled.View`
-  padding: 15px;
-  flex-direction: row;
-  flex-wrap: wrap;
-`
-
 const BottomInputContainer = styled(BlurView)`
   position: absolute;
   bottom: 0;
@@ -260,18 +232,7 @@ export const Word = styled(AppText)<{ highlight?: boolean }>`
   color: ${({ highlight, theme }) => (highlight ? theme.font.contrast : theme.global.accent)};
 `
 
-export const WordBox = styled(Animated.createAnimatedComponent(Pressable))`
-  background-color: ${({ theme }) => theme.bg.primary};
-  padding: 7px 10px;
-  margin: 0 10px 10px 0;
-  border-radius: ${BORDER_RADIUS_SMALL}px;
-`
-
 export const PossibleWordBox = styled(WordBox)<{ highlight?: boolean }>`
   background-color: ${({ highlight, theme }) =>
     highlight ? theme.global.accent : colord(theme.global.accent).alpha(0.1).toHex()};
-`
-
-export const SelectedWordBox = styled(WordBox)`
-  background-color: ${({ theme }) => colord(theme.global.accent).alpha(0.2).toHex()};
 `

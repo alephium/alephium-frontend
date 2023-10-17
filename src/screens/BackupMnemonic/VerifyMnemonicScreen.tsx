@@ -18,13 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { colord } from 'colord'
 import { shuffle } from 'lodash'
 import LottieView from 'lottie-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Dimensions } from 'react-native'
-import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
+import Animated, { FadeIn } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -35,17 +34,11 @@ import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import SecretPhraseWordList, { SelectedWord } from '~/components/SecretPhraseWordList'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
 import { persistWalletMetadata } from '~/persistent-storage/wallet'
-import {
-  PossibleWordBox,
-  SecretPhraseBox,
-  SecretPhraseWords,
-  SelectedWord,
-  Word,
-  WordBox
-} from '~/screens/new-wallet/ImportWalletSeedScreen'
+import { PossibleWordBox, SecretPhraseBox, Word } from '~/screens/new-wallet/ImportWalletSeedScreen'
 import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
@@ -133,20 +126,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
             <SecretPhraseBox
               style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}
             >
-              <SecretPhraseWords>
-                {selectedWords.map((word, index) => (
-                  <SelectedWordBox
-                    key={`${word.word}-${word.timestamp}`}
-                    entering={FadeIn}
-                    exiting={FadeOut}
-                    layout={Layout.duration(200).delay(200)}
-                  >
-                    <AppText color="valid" bold>
-                      {index + 1}. {word.word}
-                    </AppText>
-                  </SelectedWordBox>
-                ))}
-              </SecretPhraseWords>
+              <SecretPhraseWordList words={selectedWords} color="valid" />
             </SecretPhraseBox>
           )}
         </ScreenSection>
@@ -196,11 +176,6 @@ const getRandomizedOptions = (mnemonicWords: string[], allowedWords: string[]) =
 
     return shuffle([mnemonicWord, firstRandomWord, secondRandomWord])
   })
-
-const SelectedWordBox = styled(WordBox)`
-  background-color: ${({ theme }) => colord(theme.global.valid).alpha(0.2).toHex()};
-  padding: 5px 8px;
-`
 
 const ModalContent = styled.View`
   flex: 1;
