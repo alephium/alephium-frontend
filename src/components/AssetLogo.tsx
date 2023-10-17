@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ALPH, TokenInfo } from '@alephium/token-list'
 import { Canvas, Circle, SweepGradient, vec } from '@shopify/react-native-skia'
+import { Image } from 'expo-image'
 import { HelpCircle } from 'lucide-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -38,13 +39,21 @@ const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
   const theme = useTheme()
   const token = useAppSelector((state) => selectAssetInfoById(state, assetId))
   const nft = useAppSelector((s) => selectNFTById(s, assetId))
+  const isNft = !!nft
 
   const imageUrl = token?.logoURI || nft?.image
 
   return (
-    <AssetLogoStyled {...{ assetId, style, size }} logoURI={imageUrl} isNft={!!nft}>
+    <AssetLogoStyled {...{ assetId, style, size }} logoURI={imageUrl} isNft={isNft}>
       {imageUrl ? (
-        <LogoImage source={{ uri: imageUrl }} />
+        <LogoImageContainer isNft={isNft}>
+          <LogoImage
+            source={{ uri: imageUrl }}
+            transition={500}
+            contentFit={isNft ? 'cover' : 'contain'}
+            contentPosition="center"
+          />
+        </LogoImageContainer>
       ) : assetId === ALPH.id ? (
         <>
           <AlephiumLogoBackgroundCanvas style={{ height: size, width: size }}>
@@ -84,9 +93,18 @@ const AssetLogoStyled = styled.View<AssetLogoProps & { logoURI: TokenInfo['logoU
         `}
 `
 
-const LogoImage = styled.Image`
-  width: 100%;
+const LogoImageContainer = styled.View<{ isNft: boolean }>`
   height: 100%;
+  width: 100%;
+  ${({ isNft }) =>
+    !isNft &&
+    css`
+      padding: 10%;
+    `}
+`
+
+const LogoImage = styled(Image)`
+  flex: 1;
 `
 
 const Initials = styled(AppText)<{ size: number }>`
