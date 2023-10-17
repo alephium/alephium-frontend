@@ -139,27 +139,29 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
           </ModalWithBackdrop>
         )}
       </ScrollScreen>
-      <ChoicesBox
-        style={{ padding: possibleMatches.length > 0 ? 15 : 0, paddingBottom: insets.bottom + DEFAULT_MARGIN }}
-        onLayout={(e) => setFooterButtonsHeight(e.nativeEvent.layout.height)}
-        top={Dimensions.get('window').height - footerButtonsHeight}
-      >
-        <AppText size={16} bold color="secondary" style={{ marginBottom: DEFAULT_MARGIN }}>
-          Word {selectedWords.length + 1} is:
-        </AppText>
+      {selectedWords.length < 24 && (
+        <ChoicesBox
+          style={{ padding: possibleMatches.length > 0 ? 15 : 0, paddingBottom: insets.bottom + DEFAULT_MARGIN }}
+          onLayout={(e) => setFooterButtonsHeight(e.nativeEvent.layout.height)}
+          top={Dimensions.get('window').height - footerButtonsHeight}
+        >
+          <AppText size={16} bold color="secondary" style={{ marginBottom: DEFAULT_MARGIN }}>
+            Word {selectedWords.length + 1} is:
+          </AppText>
 
-        <WordsList>
-          {possibleMatches.map((word, index) => (
-            <PossibleWordBox
-              key={`${word}-${index}`}
-              onPress={() => selectWord(word)}
-              entering={FadeIn.delay(index * 100)}
-            >
-              <Word bold>{word}</Word>
-            </PossibleWordBox>
-          ))}
-        </WordsList>
-      </ChoicesBox>
+          <WordsList>
+            {possibleMatches.map((word, index) => (
+              <PossibleWordBox
+                key={`${word}-${index}`}
+                onPress={() => selectWord(word)}
+                entering={FadeIn.delay(index * 100)}
+              >
+                <Word bold>{word}</Word>
+              </PossibleWordBox>
+            ))}
+          </WordsList>
+        </ChoicesBox>
+      )}
     </>
   )
 }
