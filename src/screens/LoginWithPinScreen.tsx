@@ -47,9 +47,9 @@ const LoginWithPinScreen = (props: LoginWithPinScreenProps) => {
       setIsPinModalVisible(false)
 
       const addressesToInitialize = addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
-      const { contacts } = await getWalletMetadata()
+      const metadata = await getWalletMetadata()
 
-      dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts }))
+      dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts: metadata?.contacts ?? [] }))
       lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
 
       posthog?.capture('Unlocked wallet')

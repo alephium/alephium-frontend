@@ -27,8 +27,9 @@ import { store } from '~/store/store'
 import { Contact, ContactFormData } from '~/types/contacts'
 
 export const persistContact = async (contactData: ContactFormData) => {
-  const { contacts } = await getWalletMetadata()
+  const metadata = await getWalletMetadata()
 
+  const contacts = metadata?.contacts ?? []
   let contactId = contactData.id
 
   const indexOfContactWithSameAddress = contacts.findIndex((c: Contact) => c.address === contactData.address)
@@ -67,8 +68,9 @@ export const persistContact = async (contactData: ContactFormData) => {
 }
 
 export const deleteContact = async (contactId: Contact['id']) => {
-  const { contacts } = await getWalletMetadata()
+  const metadata = await getWalletMetadata()
 
+  const contacts = metadata?.contacts ?? []
   const storedContactIndex = contacts.findIndex((c) => c.id === contactId)
 
   if (storedContactIndex < 0) throw new Error('Could not find a contact with this ID')

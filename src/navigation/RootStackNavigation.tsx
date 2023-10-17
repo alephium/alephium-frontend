@@ -218,7 +218,6 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
 
     try {
       const deviceHasBiometricsData = await isEnrolledAsync()
-      const walletMetadata = await getWalletMetadata()
       let isBioEnabled = await loadBiometricsSettings()
 
       // Disable biometrics if needed
@@ -239,9 +238,10 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
         }
       } else {
         if (isBioEnabled) {
+          const metadata = await getWalletMetadata()
           const addressesToInitialize =
             addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
-          dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: walletMetadata?.contacts ?? [] }))
+          dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: metadata?.contacts ?? [] }))
 
           lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
         } else {
