@@ -63,7 +63,6 @@ import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
 import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
-import SplashScreen from '~/screens/SplashScreen'
 import { routeChanged } from '~/store/appSlice'
 import { appBecameInactive } from '~/store/appSlice'
 import { biometricsToggled } from '~/store/settingsSlice'
@@ -102,7 +101,7 @@ const RootStackNavigation = () => {
             <NavigationScrollContextProvider>
               <AnalyticsProvider>
                 <WalletConnectContextProvider>
-                  <RootStack.Navigator initialRouteName="SplashScreen">
+                  <RootStack.Navigator initialRouteName="LandingScreen">
                     {/* Sub-navigation with custom header */}
                     <RootStack.Group screenOptions={{ headerTransparent: true }}>
                       <RootStack.Screen
@@ -150,11 +149,6 @@ const RootStackNavigation = () => {
                       <RootStack.Screen
                         name="LandingScreen"
                         component={LandingScreen}
-                        options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
-                      />
-                      <RootStack.Screen
-                        name="SplashScreen"
-                        component={SplashScreen}
                         options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
                       />
                       <RootStack.Screen
@@ -266,7 +260,7 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' && walletMnemonic && !isCameraOpen) {
-        navigation.navigate('SplashScreen')
+        navigation.navigate('LandingScreen')
         dispatch(appBecameInactive())
       } else if (nextAppState === 'active' && !walletMnemonic && !isCameraOpen) {
         unlockApp()

@@ -20,10 +20,11 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
 import { DeviceMotion } from 'expo-sensors'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Dimensions, LayoutChangeEvent } from 'react-native'
 import Animated, {
   Extrapolation,
+  FadeOut,
   interpolate,
   useAnimatedStyle,
   useDerivedValue,
@@ -38,6 +39,7 @@ import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useAppDispatch } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { getWalletMetadata } from '~/persistent-storage/wallet'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
@@ -46,11 +48,10 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
 
-  const mainbgColor = theme.name === 'light' ? '#fff' : '#000'
-  const logoColor = theme.name === 'dark' ? '#fff' : '#000'
-
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
+  const [showNewWalletButtons, setShowNewWalletButtons] = useState(false)
+  const [isOverlayVisible, setIsOverlayVisible] = useState(true)
 
   const yAxisRotation = useSharedValue(0)
   const zAxisRotation = useSharedValue(0)
@@ -76,7 +77,14 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
         zAxisRotation.value = motionData.rotation?.beta
       })
 
-      return () => motionsListener.remove()
+      const overlayTimeout = setTimeout(() => {
+        setIsOverlayVisible(false)
+      }, 200)
+
+      return () => {
+        motionsListener.remove()
+        clearTimeout(overlayTimeout)
+      }
     }, [yAxisRotation, zAxisRotation])
   )
 
@@ -90,6 +98,19 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
     setDimensions({ width, height })
   }
+
+  useEffect(() => {
+    const checkForExistingWallet = async () => {
+      const walletMetadata = await getWalletMetadata()
+
+      setShowNewWalletButtons(!walletMetadata)
+    }
+
+    checkForExistingWallet()
+  }, [])
+
+  const mainbgColor = theme.name === 'light' ? '#fff' : '#000'
+  const logoColor = theme.name === 'dark' ? '#fff' : '#000'
 
   return (
     <Screen contrastedBg {...props} onLayout={handleScreenLayoutChange}>
@@ -110,23 +131,26 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
         <TitleFirstLine>Welcome to</TitleFirstLine>
         <TitleSecondLine>Alephium</TitleSecondLine>
       </TitleContainer>
-      <ActionsContainer>
-        <ButtonStack>
-          <Button
-            title="New wallet"
-            type="primary"
-            onPress={() => handleButtonPress('create')}
-            variant="contrast"
-            iconProps={{ name: 'flower-outline' }}
-          />
-          <Button
-            title="Import wallet"
-            onPress={() => handleButtonPress('import')}
-            variant="contrast"
-            iconProps={{ name: 'download-outline' }}
-          />
-        </ButtonStack>
-      </ActionsContainer>
+      {showNewWalletButtons && (
+        <ActionsContainer>
+          <ButtonStack>
+            <Button
+              title="New wallet"
+              type="primary"
+              onPress={() => handleButtonPress('create')}
+              variant="contrast"
+              iconProps={{ name: 'flower-outline' }}
+            />
+            <Button
+              title="Import wallet"
+              onPress={() => handleButtonPress('import')}
+              variant="contrast"
+              iconProps={{ name: 'download-outline' }}
+            />
+          </ButtonStack>
+        </ActionsContainer>
+      )}
+      {isOverlayVisible && <Overlay exiting={FadeOut.delay(200)} />}
     </Screen>
   )
 }
@@ -173,4 +197,13 @@ const CanvasStyled = styled(Canvas)`
   bottom: 0;
   right: 0;
   left: 0;
+`
+
+const Overlay = styled(Animated.View)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: black;
 `

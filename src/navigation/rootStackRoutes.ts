@@ -27,7 +27,6 @@ type RootStackParamList = {
   ImportWalletAddressDiscoveryScreen: undefined
   InWalletTabsNavigation: undefined
   LoginWithPinScreen: undefined
-  SplashScreen: undefined
   SwitchWalletScreen?: {
     disableBack?: boolean
   }
