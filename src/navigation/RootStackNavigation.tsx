@@ -226,7 +226,7 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
         isBioEnabled = false
       }
 
-      const wallet = await getStoredWallet()
+      const wallet = await getStoredWallet({ authenticationPrompt: 'Unlock your wallet' })
 
       if (!wallet) {
         if (lastNavigationState) {

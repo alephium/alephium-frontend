@@ -113,12 +113,14 @@ const generateWalletMetadata = (name: string, isMnemonicBackedUp = false) => ({
 })
 
 export const enableBiometrics = async (mnemonic: Mnemonic) => {
+  const options = { ...defaultBiometricsConfig, authenticationPrompt: 'Enable biometrics' }
+
   console.log('💽 Storing biometrics wallet')
-  await SecureStore.setItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, mnemonic, defaultBiometricsConfig)
+  await SecureStore.setItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, mnemonic, options)
 
   if (Platform.OS === 'ios') {
     // Ensure we can actually get the secured mnemonic and force to show prompt
-    await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
+    await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, options)
   }
 }
 
@@ -132,7 +134,12 @@ export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
   return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : null
 }
 
-export const getStoredWallet = async (forcePinUsage?: boolean): Promise<WalletState | null> => {
+export interface GetStoredWalletProps {
+  forcePinUsage?: boolean
+  authenticationPrompt?: SecureStore.SecureStoreOptions['authenticationPrompt']
+}
+
+export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<WalletState | null> => {
   const metadata = await getWalletMetadata()
 
   if (!metadata) {
@@ -144,12 +151,17 @@ export const getStoredWallet = async (forcePinUsage?: boolean): Promise<WalletSt
   const usesBiometrics = await loadBiometricsSettings()
 
   const mnemonic =
-    forcePinUsage || !usesBiometrics
+    props?.forcePinUsage || !usesBiometrics
       ? await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
-      : await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, {
-          ...defaultBiometricsConfig,
-          authenticationPrompt: 'Unlock your wallet'
-        })
+      : await SecureStore.getItemAsync(
+          BIOMETRICS_WALLET_STORAGE_KEY,
+          props?.authenticationPrompt
+            ? {
+                ...defaultBiometricsConfig,
+                authenticationPrompt: props.authenticationPrompt
+              }
+            : defaultBiometricsConfig
+        )
 
   return mnemonic
     ? ({
