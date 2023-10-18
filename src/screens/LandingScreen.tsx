@@ -132,8 +132,8 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
         <TitleFirstLine>Welcome to</TitleFirstLine>
         <TitleSecondLine>Alephium</TitleSecondLine>
       </TitleContainer>
-      {showNewWalletButtons && (
-        <ActionsContainer>
+      <ActionsContainer>
+        {showNewWalletButtons && (
           <ButtonStack>
             <Button
               title="New wallet"
@@ -149,8 +149,8 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
               iconProps={{ name: 'download-outline' }}
             />
           </ButtonStack>
-        </ActionsContainer>
-      )}
+        )}
+      </ActionsContainer>
       {isOverlayVisible && <Overlay exiting={FadeOut.delay(200)} />}
     </Screen>
   )
