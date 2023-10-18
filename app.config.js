@@ -25,6 +25,7 @@ export default {
     version: '0.1.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
+    scheme: 'wc',
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
