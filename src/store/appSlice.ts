@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NavigationState } from '@react-navigation/routers'
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { walletDeleted } from '~/store/wallet/walletActions'
+
 const sliceName = 'app'
 
 export interface AppMetadataState {
@@ -31,6 +33,8 @@ const initialState: AppMetadataState = {
   isCameraOpen: false
 }
 
+const resetState = () => initialState
+
 const appSlice = createSlice({
   name: sliceName,
   initialState,
@@ -41,7 +45,10 @@ const appSlice = createSlice({
     cameraToggled: (state, action: PayloadAction<AppMetadataState['isCameraOpen']>) => {
       state.isCameraOpen = action.payload
     },
-    appReset: () => initialState
+    appReset: resetState
+  },
+  extraReducers(builder) {
+    builder.addCase(walletDeleted, resetState)
   }
 })
 

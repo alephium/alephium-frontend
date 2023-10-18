@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import * as SplashScreen from 'expo-splash-screen'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
 
@@ -59,7 +60,12 @@ const LoginWithPinScreen = (props: LoginWithPinScreenProps) => {
 
   return (
     <Screen contrastedBg {...props}>
-      <AuthenticationModal visible={isPinModalVisible} forcePinUsage onConfirm={handleSuccessfulLogin} />
+      <AuthenticationModal
+        visible={isPinModalVisible}
+        forcePinUsage
+        onConfirm={handleSuccessfulLogin}
+        onLayout={() => SplashScreen.hideAsync()}
+      />
       {!isPinModalVisible && <Spinner text="Unlocking..." />}
     </Screen>
   )

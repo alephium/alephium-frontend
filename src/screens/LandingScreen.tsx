@@ -20,6 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, Rect, SweepGradient, vec } from '@shopify/react-native-skia'
 import { DeviceMotion } from 'expo-sensors'
+import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useEffect, useState } from 'react'
 import { Dimensions, LayoutChangeEvent } from 'react-native'
 import Animated, {
@@ -114,7 +115,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
   return (
     <Screen contrastedBg {...props} onLayout={handleScreenLayoutChange}>
-      <CanvasStyled>
+      <CanvasStyled onLayout={() => SplashScreen.hideAsync()}>
         <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
           <SweepGradient
             c={vec(dimensions.width / 2, dimensions.height / 3.5)}

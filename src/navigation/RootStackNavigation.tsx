@@ -20,6 +20,7 @@ import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from
 import { NavigationState } from '@react-navigation/routers'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { isEnrolledAsync } from 'expo-local-authentication'
+import * as SplashScreen from 'expo-splash-screen'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -71,6 +72,8 @@ import { isNavStateRestorable, rootStackNavigationRef } from '~/utils/navigation
 import { resetNavigationState, setNavigationState } from '~/utils/navigation'
 
 const RootStack = createStackNavigator<RootStackParamList>()
+
+SplashScreen.preventAutoHideAsync()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
@@ -206,6 +209,7 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
+  const [needsWalletUnlock, setNeedsWalletUnlock] = useState(false)
 
   const unlockApp = useCallback(async () => {
     if (walletMnemonic) return
@@ -226,7 +230,9 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
 
       if (!wallet) {
         if (lastNavigationState) {
+          // When we are at the wallet creation flow we want to reset to the last screen
           setNavigationState(lastNavigationState)
+          SplashScreen.hideAsync()
         } else {
           navigation.navigate('LandingScreen')
         }
@@ -238,6 +244,7 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
           dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: metadata?.contacts ?? [] }))
 
           lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
+          SplashScreen.hideAsync()
         } else {
           navigation.navigate('LoginWithPinScreen')
         }
@@ -262,14 +269,18 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
       if (nextAppState === 'background' && walletMnemonic && !isCameraOpen) {
         navigation.navigate('LandingScreen')
         dispatch(appBecameInactive())
+        // The following is needed when the switch between background/active happens so fast that the component didn't
+        // have enough time to re-render after clearning the mnemonic.
+        setNeedsWalletUnlock(true)
       } else if (nextAppState === 'active' && !walletMnemonic && !isCameraOpen) {
+        setNeedsWalletUnlock(false)
         unlockApp()
       }
 
       appState.current = nextAppState
     }
 
-    if (!isAppStateChangeCallbackRegistered && appState.current === 'active') {
+    if ((!isAppStateChangeCallbackRegistered || needsWalletUnlock) && appState.current === 'active') {
       handleAppStateChange('active')
     }
 
@@ -278,7 +289,16 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
     setIsAppStateChangeCallbackRegistered(true)
 
     return subscription.remove
-  }, [dispatch, isAppStateChangeCallbackRegistered, isCameraOpen, navigation, unlockApp, walletMnemonic])
+  }, [
+    dispatch,
+    isAppStateChangeCallbackRegistered,
+    isCameraOpen,
+    lastNavigationState,
+    navigation,
+    needsWalletUnlock,
+    unlockApp,
+    walletMnemonic
+  ])
 
   return children
 }
