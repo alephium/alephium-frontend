@@ -146,7 +146,10 @@ export const getStoredWallet = async (forcePinUsage?: boolean): Promise<WalletSt
   const mnemonic =
     forcePinUsage || !usesBiometrics
       ? await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
-      : await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
+      : await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, {
+          ...defaultBiometricsConfig,
+          authenticationPrompt: 'Unlock your wallet'
+        })
 
   return mnemonic
     ? ({
