@@ -318,12 +318,20 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             // TODO: Support all of the other SignerProvider methods
             respondToWalletConnectWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
         }
-      } catch (e) {
+      } catch (e: unknown) {
+        const error = e as { message?: string }
+
+        setLoading('')
+
+        if (error.message?.includes('NotEnoughApprovedBalance')) {
+          showToast('Your address does not have enough balance for this transaction.')
+        } else {
+          showToast(getHumanReadableError(e, 'Error while building the transaction'))
+          posthog?.capture('Error', { message: 'Could not build transaction' })
+          console.error(e)
+        }
         // TODO: Handle consolidation case
         // TODO: Handle authentication requirement
-        showToast(getHumanReadableError(e, 'Error while building the transaction'))
-
-        posthog?.capture('Error', { message: 'Could not build transaction' })
       }
     },
     // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
