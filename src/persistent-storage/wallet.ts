@@ -163,6 +163,11 @@ export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<Wal
             : defaultBiometricsConfig
         )
 
+  // This should never be the case, but if we have metadata without wallet, we need to clear them
+  if (!mnemonic) {
+    await AsyncStorage.removeItem(WALLET_METADATA_STORAGE_KEY)
+  }
+
   return mnemonic
     ? ({
         id,
