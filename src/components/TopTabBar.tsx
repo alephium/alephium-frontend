@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import * as Haptics from 'expo-haptics'
 import { useState } from 'react'
 import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
@@ -26,6 +25,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
+import { impact, ImpactStyle } from '~/utils/haptics'
 
 type TabsLayout = Record<number, LayoutRectangle>
 
@@ -67,7 +67,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
   }, [tabLayouts, tabLabels.length])
 
   const handleOnTabPress = (tabIndex: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    impact(ImpactStyle.Medium)
     onTabPress(tabIndex)
   }
 

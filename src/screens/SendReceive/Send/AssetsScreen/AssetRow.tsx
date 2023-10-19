@@ -35,6 +35,7 @@ import ListItem from '~/components/ListItem'
 import { useSendContext } from '~/contexts/SendContext'
 import { NFT } from '~/types/assets'
 import { isNft } from '~/utils/assets'
+import { impact } from '~/utils/haptics'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface AssetRowProps {
@@ -99,7 +100,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   }
 
   const handleOnRowPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    impact(Haptics.ImpactFeedbackStyle.Medium)
 
     const isNowSelected = !isSelected
     setIsSelected(isNowSelected)

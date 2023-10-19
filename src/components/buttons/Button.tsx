@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { colord } from 'colord'
-import * as Haptics from 'expo-haptics'
 import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import Animated, {
@@ -34,6 +33,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS } from '~/style/globalStyle'
+import { impact, ImpactStyle } from '~/utils/haptics'
 
 export interface ButtonProps extends PressableProps {
   title?: string
@@ -147,7 +147,7 @@ const Button = ({
 
   const handlePressIn = () => {
     if (haptics || ['highlight', 'highlightedIcon'].includes(variant)) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      impact(ImpactStyle.Light)
     }
 
     pressed.value = true

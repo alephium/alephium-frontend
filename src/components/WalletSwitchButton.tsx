@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BlurMask, Canvas, Circle, Group, SweepGradient, vec } from '@shopify/react-native-skia'
-import * as Haptics from 'expo-haptics'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
@@ -27,6 +26,7 @@ import styled from 'styled-components/native'
 
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { impact, ImpactStyle } from '~/utils/haptics'
 
 interface WalletSwitchButtonProps {
   isLoading: boolean
@@ -53,7 +53,7 @@ const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
   }, [gradientOpacity, loopAnimation])
 
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    impact(ImpactStyle.Light)
 
     gradientOpacity.value = withSequence(
       withTiming(1, { duration: 300 }),
@@ -78,7 +78,7 @@ const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
 
     if (isDoingMagic) {
       interval = setInterval(() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+        impact(ImpactStyle.Heavy)
       }, 30)
     }
     return () => clearInterval(interval)
