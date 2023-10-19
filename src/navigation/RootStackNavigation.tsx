@@ -267,7 +267,9 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' && walletMnemonic && !isCameraOpen) {
-        navigation.navigate('LandingScreen')
+        loadBiometricsSettings().then((isBioEnabled) =>
+          navigation.navigate(isBioEnabled ? 'LandingScreen' : 'LoginWithPinScreen')
+        )
         dispatch(appBecameInactive())
         // The following is needed when the switch between background/active happens so fast that the component didn't
         // have enough time to re-render after clearning the mnemonic.
