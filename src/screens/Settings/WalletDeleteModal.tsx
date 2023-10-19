@@ -61,7 +61,10 @@ const WalletDeleteModal = (props: ModalContentProps) => {
         </ScreenSection>
         <ScreenSection>
           <AppText color="secondary" size={18}>
-            Do you really want to delete this wallet?
+            Do you really want to delete this wallet from your device?
+          </AppText>
+          <AppText color="secondary" size={18}>
+            You can always restore it later using your secret recovery phrase.
           </AppText>
           <AppText color="secondary" size={18}>
             If so, please enter the wallet name below, and hit the delete button.
