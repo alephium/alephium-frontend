@@ -33,7 +33,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS } from '~/style/globalStyle'
-import { impact, ImpactStyle } from '~/utils/haptics'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 export interface ButtonProps extends PressableProps {
   title?: string
@@ -147,7 +147,7 @@ const Button = ({
 
   const handlePressIn = () => {
     if (haptics || ['highlight', 'highlightedIcon'].includes(variant)) {
-      impact(ImpactStyle.Light)
+      vibrate(ImpactStyle.Light)
     }
 
     pressed.value = true

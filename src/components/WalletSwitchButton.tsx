@@ -26,7 +26,7 @@ import styled from 'styled-components/native'
 
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { impact, ImpactStyle } from '~/utils/haptics'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface WalletSwitchButtonProps {
   isLoading: boolean
@@ -53,7 +53,7 @@ const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
   }, [gradientOpacity, loopAnimation])
 
   const handlePress = () => {
-    impact(ImpactStyle.Light)
+    vibrate(ImpactStyle.Light)
 
     gradientOpacity.value = withSequence(
       withTiming(1, { duration: 300 }),
@@ -78,7 +78,7 @@ const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
 
     if (isDoingMagic) {
       interval = setInterval(() => {
-        impact(ImpactStyle.Heavy)
+        vibrate(ImpactStyle.Heavy)
       }, 30)
     }
     return () => clearInterval(interval)

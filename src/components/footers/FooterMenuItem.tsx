@@ -22,7 +22,7 @@ import { TouchableWithoutFeedback } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '~/style/globalStyle'
-import { impact, ImpactStyle } from '~/utils/haptics'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface FooterMenuItemProps {
   options: BottomTabNavigationOptions
@@ -52,7 +52,7 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation }: F
       canPreventDefault: true
     })
 
-    impact(ImpactStyle.Medium)
+    vibrate(ImpactStyle.Medium)
 
     if (!isFocused && !event.defaultPrevented) {
       navigation.navigate(routeName)

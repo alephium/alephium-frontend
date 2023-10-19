@@ -22,7 +22,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS } from '~/style/globalStyle'
-import { impact, ImpactStyle } from '~/utils/haptics'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 export interface TabItem {
   value: string
@@ -40,7 +40,7 @@ const TabBar = ({ items, onTabChange, activeTab, style }: TabBarProps) => {
   const theme = useTheme()
 
   const handleTabChange = (item: TabItem) => {
-    impact(ImpactStyle.Medium)
+    vibrate(ImpactStyle.Medium)
     onTabChange(item)
   }
 

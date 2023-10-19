@@ -23,7 +23,7 @@ import styled from 'styled-components/native'
 
 import { PopInFast, PopOutFast } from '~/animations/reanimated/reanimatedAnimations'
 import NumberKeyboard, { NumberKeyboardKey } from '~/components/keyboard/NumberKeyboard'
-import { impact, ImpactStyle } from '~/utils/haptics'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface PinInputProps {
   pinLength: number
@@ -48,7 +48,7 @@ const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
   const renderSlots = () => [...new Array(pinLength)].map((_, i) => <Slot key={i} value={pin[i]} />)
 
   const handleKeyboardPress = async (key: NumberKeyboardKey) => {
-    impact(ImpactStyle.Medium)
+    vibrate(ImpactStyle.Medium)
 
     const newPin = key === 'delete' ? pin.slice(0, -1) : pin.length < pinLength ? pin + key : pin
     setPin(newPin)

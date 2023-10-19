@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import { Platform } from 'react-native'
 
-export const impact = (impactFeedbackStyle: ImpactFeedbackStyle) =>
+export const vibrate = (impactFeedbackStyle: ImpactFeedbackStyle) =>
   impactAsync(
     Platform.OS === 'ios'
       ? impactFeedbackStyle

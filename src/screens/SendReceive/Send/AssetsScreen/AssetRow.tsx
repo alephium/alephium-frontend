@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import * as Haptics from 'expo-haptics'
 import { useRef, useState } from 'react'
 import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
@@ -35,7 +34,7 @@ import ListItem from '~/components/ListItem'
 import { useSendContext } from '~/contexts/SendContext'
 import { NFT } from '~/types/assets'
 import { isNft } from '~/utils/assets'
-import { impact } from '~/utils/haptics'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface AssetRowProps {
@@ -100,7 +99,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   }
 
   const handleOnRowPress = () => {
-    impact(Haptics.ImpactFeedbackStyle.Medium)
+    vibrate(ImpactStyle.Medium)
 
     const isNowSelected = !isSelected
     setIsSelected(isNowSelected)

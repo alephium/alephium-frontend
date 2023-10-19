@@ -29,7 +29,7 @@ import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesKnownFungibleTokens, makeSelectAddressesNFTs } from '~/store/addressesSlice'
 import { BORDER_RADIUS, VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
-import { impact, ImpactStyle } from '~/utils/haptics'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash
@@ -51,7 +51,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
   }))
 
   const handlePress = (e: GestureResponderEvent) => {
-    impact(ImpactStyle.Heavy)
+    vibrate(ImpactStyle.Heavy)
     onPress && onPress(e)
   }
 

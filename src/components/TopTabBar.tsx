@@ -25,7 +25,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
-import { impact, ImpactStyle } from '~/utils/haptics'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 type TabsLayout = Record<number, LayoutRectangle>
 
@@ -67,7 +67,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
   }, [tabLayouts, tabLabels.length])
 
   const handleOnTabPress = (tabIndex: number) => {
-    impact(ImpactStyle.Medium)
+    vibrate(ImpactStyle.Medium)
     onTabPress(tabIndex)
   }
 
