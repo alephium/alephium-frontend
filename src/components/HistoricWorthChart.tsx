@@ -38,6 +38,7 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 import { ChartLength, chartLengths, DataPoint, LatestAmountPerAddress } from '~/types/charts'
 import { Currency } from '~/types/settings'
+import { CHART_DATE_FORMAT } from '~/utils/constants'
 
 interface HistoricWorthChart {
   latestWorth: number
@@ -87,8 +88,10 @@ const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartCh
   }, [firstItem?.worth, onWorthInBeginningOfChartChange])
 
   useEffect(() => {
-    setChartData(isDataAvailable ? trimInitialZeroDataPoints(computeChartDataPoints(alphPriceHistory, addresses)) : [])
-  }, [addresses, alphPriceHistory, isDataAvailable])
+    setChartData(
+      isDataAvailable ? trimInitialZeroDataPoints(computeChartDataPoints(alphPriceHistory, addresses, latestWorth)) : []
+    )
+  }, [addresses, alphPriceHistory, isDataAvailable, latestWorth])
 
   const worthHasGoneUp = firstItem?.worth ? firstItem.worth < latestWorth : undefined
 
@@ -166,10 +169,14 @@ const getFilteredChartData = (chartData: DataPoint[], startingDate: string) => {
 
 const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
 
-const computeChartDataPoints = (alphPriceHistory: HistoricalPriceResult[], addresses: Address[]): DataPoint[] => {
+const computeChartDataPoints = (
+  alphPriceHistory: HistoricalPriceResult[],
+  addresses: Address[],
+  latestWorth: number
+): DataPoint[] => {
   const addressesLatestAmount: LatestAmountPerAddress = {}
 
-  return alphPriceHistory.map(({ date, price }) => {
+  const dataPoints = alphPriceHistory.map(({ date, price }) => {
     let totalAmountPerDate = BigInt(0)
 
     addresses.forEach(({ hash, balanceHistory }) => {
@@ -189,6 +196,10 @@ const computeChartDataPoints = (alphPriceHistory: HistoricalPriceResult[], addre
       worth: price * parseFloat(toHumanReadableAmount(totalAmountPerDate))
     }
   })
+
+  if (latestWorth !== undefined) dataPoints.push({ date: dayjs().format(CHART_DATE_FORMAT), worth: latestWorth })
+
+  return dataPoints
 }
 
 const DeltaAndChartLengths = styled(Animated.View)`
