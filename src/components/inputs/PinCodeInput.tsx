@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import * as Haptics from 'expo-haptics'
 import { memo, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
@@ -24,6 +23,7 @@ import styled from 'styled-components/native'
 
 import { PopInFast, PopOutFast } from '~/animations/reanimated/reanimatedAnimations'
 import NumberKeyboard, { NumberKeyboardKey } from '~/components/keyboard/NumberKeyboard'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface PinInputProps {
   pinLength: number
@@ -48,7 +48,7 @@ const PinCodeInput = ({ pinLength, onPinEntered, style }: PinInputProps) => {
   const renderSlots = () => [...new Array(pinLength)].map((_, i) => <Slot key={i} value={pin[i]} />)
 
   const handleKeyboardPress = async (key: NumberKeyboardKey) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    vibrate(ImpactStyle.Medium)
 
     const newPin = key === 'delete' ? pin.slice(0, -1) : pin.length < pinLength ? pin + key : pin
     setPin(newPin)

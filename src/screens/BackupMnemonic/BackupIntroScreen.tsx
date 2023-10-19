@@ -75,6 +75,8 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
 
       <AuthenticationModal
         visible={isAuthenticationModalVisible}
+        authenticationPrompt="Verify it's you"
+        loadingText="Verifying..."
         onConfirm={() => {
           setIsAuthenticationModalVisible(false)
           setIsMnemonicModalVisible(true)

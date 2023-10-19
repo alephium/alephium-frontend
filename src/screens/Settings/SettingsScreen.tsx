@@ -79,6 +79,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [isWalletDeleteModalOpen, setIsWalletDeleteModalOpen] = useState(false)
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
+  const [authenticationPrompt, setAuthenticationPrompt] = useState('')
+  const [loadingText, setLoadingText] = useState('')
   const [authCallback, setAuthCallback] = useState<() => void>(() => () => null)
 
   const toggleBiometrics = async () => {
@@ -137,6 +139,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const handleAuthRequimementToggle = () => {
     if (requireAuth) {
       setAuthCallback(() => () => toggleAuthRequirement())
+      setAuthenticationPrompt('Disable authentication')
+      setLoadingText('Disabling...')
       setIsAuthenticationModalOpen(true)
     } else {
       toggleAuthRequirement()
@@ -218,12 +222,21 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
       <AuthenticationModal
         visible={isAuthenticationModalVisible}
+        authenticationPrompt={authenticationPrompt}
+        loadingText={loadingText}
         onConfirm={() => {
           setIsAuthenticationModalOpen(false)
+          setAuthenticationPrompt('')
+          setLoadingText('')
           authCallback()
           setAuthCallback(() => () => null)
         }}
-        onClose={() => setIsAuthenticationModalOpen(false)}
+        onClose={() => {
+          setIsAuthenticationModalOpen(false)
+          setAuthenticationPrompt('')
+          setLoadingText('')
+          setAuthCallback(() => () => null)
+        }}
       />
 
       <ModalWithBackdrop animationType="fade" visible={isThemeSwitchOverlayVisible} color="black" />
@@ -280,6 +293,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   onPress={() => {
                     props.onClose && props.onClose()
                     setAuthCallback(() => () => setIsMnemonicModalVisible(true))
+                    setAuthenticationPrompt("Verify it's you")
+                    setLoadingText('Verifying...')
                     setIsAuthenticationModalOpen(true)
                   }}
                 />

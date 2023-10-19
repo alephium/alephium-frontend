@@ -35,9 +35,10 @@ import SignClient from '@walletconnect/sign-client'
 import { EngineTypes, SignClientTypes } from '@walletconnect/types'
 import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
+import { useURL } from 'expo-linking'
 import { partition } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Portal } from 'react-native-portalize'
 
 import client from '~/api/client'
@@ -80,6 +81,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const addressIds = useAppSelector(selectAddressIds) as AddressHash[]
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
+  const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const url = useURL()
+  const wcDeepLink = useRef<string>()
   const posthog = usePostHog()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
@@ -92,6 +96,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [loading, setLoading] = useState('')
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
+  const isAuthenticated = !!mnemonic
 
   const initializeWalletConnectClient = useCallback(async () => {
     try {
@@ -313,12 +318,20 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             // TODO: Support all of the other SignerProvider methods
             respondToWalletConnectWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
         }
-      } catch (e) {
+      } catch (e: unknown) {
+        const error = e as { message?: string }
+
+        setLoading('')
+
+        if (error.message?.includes('NotEnoughApprovedBalance')) {
+          showToast('Your address does not have enough balance for this transaction.')
+        } else {
+          showToast(getHumanReadableError(e, 'Error while building the transaction'))
+          posthog?.capture('Error', { message: 'Could not build transaction' })
+          console.error(e)
+        }
         // TODO: Handle consolidation case
         // TODO: Handle authentication requirement
-        showToast(getHumanReadableError(e, 'Error while building the transaction'))
-
-        posthog?.capture('Error', { message: 'Could not build transaction' })
       }
     },
     // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
@@ -460,6 +473,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                 ...pendingProposal.request.params
               }
             })
+          } else {
+            showToast('This WalletConnect session is not valid anymore.', { duration: 5000 })
           }
         } else {
           console.log('⏳ PAIRING WITH WALLETCONNECT USING URI:', uri)
@@ -665,6 +680,18 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   useEffect(() => {
     if (sessionRequestEvent === undefined && isSessionRequestModalOpen) setIsSessionRequestModalOpen(false)
   }, [isSessionRequestModalOpen, sessionRequestEvent])
+
+  useEffect(() => {
+    if (!isAuthenticated || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
+
+    if (isWalletConnectEnabled) {
+      pairWithDapp(url)
+
+      wcDeepLink.current = url
+    } else {
+      showToast('WalletConnect is an experimental feature. You can enable it in the settings.', { duration: 10000 })
+    }
+  }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url])
 
   return (
     <WalletConnectContext.Provider value={{ pairWithDapp, unpairFromDapp, walletConnectClient, activeSessions }}>

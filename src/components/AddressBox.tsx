@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import * as Haptics from 'expo-haptics'
 import { useMemo } from 'react'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
@@ -30,6 +29,7 @@ import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesKnownFungibleTokens, makeSelectAddressesNFTs } from '~/store/addressesSlice'
 import { BORDER_RADIUS, VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash
@@ -51,7 +51,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
   }))
 
   const handlePress = (e: GestureResponderEvent) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+    vibrate(ImpactStyle.Heavy)
     onPress && onPress(e)
   }
 

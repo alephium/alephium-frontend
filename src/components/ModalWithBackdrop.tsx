@@ -17,19 +17,33 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Modal, ModalProps } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
+
+import { CloseButton } from '~/components/buttons/Button'
+import { ScreenSection } from '~/components/layout/Screen'
 
 export interface ModalWithBackdropProps extends ModalProps {
   closeModal?: () => void
   color?: string
+  showCloseButton?: boolean
 }
 
-const ModalWithBackdrop = ({ children, closeModal, color, ...props }: ModalWithBackdropProps) => (
-  <Modal transparent={true} animationType="none" {...props}>
-    <ModalBackdrop onPress={closeModal} color={color} />
-    <ModalContent>{children}</ModalContent>
-  </Modal>
-)
+const ModalWithBackdrop = ({ children, closeModal, color, showCloseButton, ...props }: ModalWithBackdropProps) => {
+  const insets = useSafeAreaInsets()
+
+  return (
+    <Modal transparent={true} animationType="none" {...props}>
+      <ModalBackdrop onPress={closeModal} color={color} />
+      <ModalContent>{children}</ModalContent>
+      {showCloseButton && (
+        <ScreenSectionHeader style={{ paddingTop: insets.top }}>
+          <CloseButton onPress={closeModal} style={{ marginLeft: 'auto' }} variant="highlight" />
+        </ScreenSectionHeader>
+      )}
+    </Modal>
+  )
+}
 
 export default ModalWithBackdrop
 
@@ -48,4 +62,11 @@ const ModalBackdrop = styled.Pressable<{ color?: string }>`
   bottom: 0;
   right: 0;
   background-color: ${({ color }) => color || 'rgba(0, 0, 0, 0.5)'};
+`
+
+const ScreenSectionHeader = styled(ScreenSection)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 `

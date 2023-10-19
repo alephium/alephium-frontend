@@ -20,7 +20,7 @@ import { isAddressValid } from '@alephium/sdk'
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
 import { usePostHog } from 'posthog-react-native'
 import { memo, useState } from 'react'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
@@ -32,7 +32,8 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import WalletConnectSVG from '~/images/logos/WalletConnectLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import WalletConnectPairingsModal from '~/screens/WalletConnectPairingsModal'
+import WalletConnectPairingsModal from '~/screens/Dashboard/WalletConnectPairingsModal'
+import WalletConnectPasteUrlModal from '~/screens/Dashboard/WalletConnectPasteUrlModal'
 import { cameraToggled } from '~/store/appSlice'
 import { showToast } from '~/utils/layout'
 
@@ -52,7 +53,9 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isFocused = useIsFocused()
 
   const [isWalletConnectPairingsModalOpen, setIsWalletConnectPairingsModalOpen] = useState(false)
+  const [isWalletConnectPasteUrlModalOpen, setIsWalletConnectPasteUrlModalOpen] = useState(false)
 
+  const hasActiveWCSessions = activeSessions.length > 0
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
@@ -86,12 +89,12 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
             round
           />
         )}
-        {isWalletConnectEnabled && walletConnectClient && activeSessions.length > 0 && (
+        {isWalletConnectEnabled && walletConnectClient && (
           <Button
             onPress={() => setIsWalletConnectPairingsModalOpen(true)}
-            customIcon={<WalletConnectSVG width={20} />}
+            customIcon={<WalletConnectSVG width={20} color={!hasActiveWCSessions ? '#3B99FC' : undefined} />}
             round
-            style={{ backgroundColor: '#3B99FC' }}
+            style={hasActiveWCSessions ? { backgroundColor: '#3B99FC' } : undefined}
           />
         )}
         <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'qr-code-outline' }} round />
@@ -111,7 +114,24 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
 
       <Portal>
         <BottomModal
-          Content={WalletConnectPairingsModal}
+          Content={WalletConnectPasteUrlModal}
+          isOpen={isWalletConnectPasteUrlModalOpen}
+          onClose={() => setIsWalletConnectPasteUrlModalOpen(false)}
+          maximisedContent={Platform.OS === 'ios'}
+        />
+      </Portal>
+
+      <Portal>
+        <BottomModal
+          Content={(props) => (
+            <WalletConnectPairingsModal
+              {...props}
+              onPasteWcUrlPress={() => {
+                props.onClose && props.onClose()
+                setIsWalletConnectPasteUrlModalOpen(true)
+              }}
+            />
+          )}
           isOpen={isWalletConnectPairingsModalOpen}
           onClose={() => setIsWalletConnectPairingsModalOpen(false)}
         />

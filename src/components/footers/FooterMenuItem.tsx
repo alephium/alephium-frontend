@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { BottomTabNavigationEventMap, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs'
 import { NavigationHelpers, ParamListBase } from '@react-navigation/native'
-import * as Haptics from 'expo-haptics'
 import { TouchableWithoutFeedback } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS } from '~/style/globalStyle'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface FooterMenuItemProps {
   options: BottomTabNavigationOptions
@@ -52,7 +52,7 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation }: F
       canPreventDefault: true
     })
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    vibrate(ImpactStyle.Medium)
 
     if (!isFocused && !event.defaultPrevented) {
       navigation.navigate(routeName)

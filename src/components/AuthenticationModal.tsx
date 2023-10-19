@@ -29,15 +29,15 @@ import ModalWithBackdrop, { ModalWithBackdropProps } from '~/components/ModalWit
 import { Spinner } from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
-import { getStoredWallet } from '~/persistent-storage/wallet'
+import { getStoredWallet, GetStoredWalletProps } from '~/persistent-storage/wallet'
 import { ShouldClearPin } from '~/types/misc'
 import { WalletState } from '~/types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
-interface AuthenticationModalProps extends ModalWithBackdropProps {
+interface AuthenticationModalProps extends ModalWithBackdropProps, GetStoredWalletProps {
   onConfirm: (pin?: string, wallet?: WalletState) => void
   onClose?: () => void
-  forcePinUsage?: boolean
+  loadingText?: string
 }
 
 const pinLength = 6
@@ -49,7 +49,14 @@ const errorInstructionSet: Instruction[] = [
   { text: 'Please try again 💪', type: 'secondary' }
 ]
 
-const AuthenticationModal = ({ onConfirm, onClose, forcePinUsage = false, ...props }: AuthenticationModalProps) => {
+const AuthenticationModal = ({
+  onConfirm,
+  onClose,
+  forcePinUsage = false,
+  authenticationPrompt,
+  loadingText,
+  ...props
+}: AuthenticationModalProps) => {
   const insets = useSafeAreaInsets()
 
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
@@ -57,7 +64,7 @@ const AuthenticationModal = ({ onConfirm, onClose, forcePinUsage = false, ...pro
 
   const getWallet = useCallback(async () => {
     try {
-      const storedWallet = await getStoredWallet(forcePinUsage)
+      const storedWallet = await getStoredWallet({ forcePinUsage, authenticationPrompt })
 
       // This should never happen, but if it does, inform the user instead of being stuck
       if (!storedWallet) {
@@ -83,7 +90,7 @@ const AuthenticationModal = ({ onConfirm, onClose, forcePinUsage = false, ...pro
 
       onClose && onClose()
     }
-  }, [onClose, onConfirm, forcePinUsage])
+  }, [authenticationPrompt, forcePinUsage, onConfirm, onClose])
 
   const decryptMnemonic = async (pin: string): Promise<ShouldClearPin> => {
     if (!pin || !encryptedWallet) return false
@@ -118,7 +125,7 @@ const AuthenticationModal = ({ onConfirm, onClose, forcePinUsage = false, ...pro
           <PinCodeInput pinLength={pinLength} onPinEntered={decryptMnemonic} />
         </ModalContent>
       ) : (
-        <Spinner text="Loading wallet..." />
+        <Spinner text={loadingText || 'Loading wallet...'} />
       )}
     </ModalWithBackdrop>
   )

@@ -20,6 +20,7 @@ import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from
 import { NavigationState } from '@react-navigation/routers'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { isEnrolledAsync } from 'expo-local-authentication'
+import * as SplashScreen from 'expo-splash-screen'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, AppState, AppStateStatus } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -63,7 +64,6 @@ import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
 import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
-import SplashScreen from '~/screens/SplashScreen'
 import { routeChanged } from '~/store/appSlice'
 import { appBecameInactive } from '~/store/appSlice'
 import { biometricsToggled } from '~/store/settingsSlice'
@@ -72,6 +72,8 @@ import { isNavStateRestorable, rootStackNavigationRef } from '~/utils/navigation
 import { resetNavigationState, setNavigationState } from '~/utils/navigation'
 
 const RootStack = createStackNavigator<RootStackParamList>()
+
+SplashScreen.preventAutoHideAsync()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
@@ -102,7 +104,7 @@ const RootStackNavigation = () => {
             <NavigationScrollContextProvider>
               <AnalyticsProvider>
                 <WalletConnectContextProvider>
-                  <RootStack.Navigator initialRouteName="SplashScreen">
+                  <RootStack.Navigator initialRouteName="LandingScreen">
                     {/* Sub-navigation with custom header */}
                     <RootStack.Group screenOptions={{ headerTransparent: true }}>
                       <RootStack.Screen
@@ -150,11 +152,6 @@ const RootStackNavigation = () => {
                       <RootStack.Screen
                         name="LandingScreen"
                         component={LandingScreen}
-                        options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
-                      />
-                      <RootStack.Screen
-                        name="SplashScreen"
-                        component={SplashScreen}
                         options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
                       />
                       <RootStack.Screen
@@ -212,13 +209,13 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
+  const [needsWalletUnlock, setNeedsWalletUnlock] = useState(false)
 
   const unlockApp = useCallback(async () => {
     if (walletMnemonic) return
 
     try {
       const deviceHasBiometricsData = await isEnrolledAsync()
-      const walletMetadata = await getWalletMetadata()
       let isBioEnabled = await loadBiometricsSettings()
 
       // Disable biometrics if needed
@@ -229,21 +226,25 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
         isBioEnabled = false
       }
 
-      const wallet = await getStoredWallet()
+      const wallet = await getStoredWallet({ authenticationPrompt: 'Unlock your wallet' })
 
       if (!wallet) {
         if (lastNavigationState) {
+          // When we are at the wallet creation flow we want to reset to the last screen
           setNavigationState(lastNavigationState)
+          SplashScreen.hideAsync()
         } else {
           navigation.navigate('LandingScreen')
         }
       } else {
         if (isBioEnabled) {
+          const metadata = await getWalletMetadata()
           const addressesToInitialize =
             addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
-          dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: walletMetadata?.contacts ?? [] }))
+          dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: metadata?.contacts ?? [] }))
 
           lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
+          SplashScreen.hideAsync()
         } else {
           navigation.navigate('LoginWithPinScreen')
         }
@@ -266,16 +267,22 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' && walletMnemonic && !isCameraOpen) {
-        navigation.navigate('SplashScreen')
+        loadBiometricsSettings().then((isBioEnabled) =>
+          navigation.navigate(isBioEnabled ? 'LandingScreen' : 'LoginWithPinScreen')
+        )
         dispatch(appBecameInactive())
+        // The following is needed when the switch between background/active happens so fast that the component didn't
+        // have enough time to re-render after clearning the mnemonic.
+        setNeedsWalletUnlock(true)
       } else if (nextAppState === 'active' && !walletMnemonic && !isCameraOpen) {
+        setNeedsWalletUnlock(false)
         unlockApp()
       }
 
       appState.current = nextAppState
     }
 
-    if (!isAppStateChangeCallbackRegistered && appState.current === 'active') {
+    if ((!isAppStateChangeCallbackRegistered || needsWalletUnlock) && appState.current === 'active') {
       handleAppStateChange('active')
     }
 
@@ -284,7 +291,16 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
     setIsAppStateChangeCallbackRegistered(true)
 
     return subscription.remove
-  }, [dispatch, isAppStateChangeCallbackRegistered, isCameraOpen, navigation, unlockApp, walletMnemonic])
+  }, [
+    dispatch,
+    isAppStateChangeCallbackRegistered,
+    isCameraOpen,
+    lastNavigationState,
+    navigation,
+    needsWalletUnlock,
+    unlockApp,
+    walletMnemonic
+  ])
 
   return children
 }

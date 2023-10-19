@@ -140,6 +140,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           value={password}
           onChangeText={handleChangeText}
           secureTextEntry
+          autoCapitalize="none"
           error={error}
           returnKeyType="done"
           inputRef={inputRef}

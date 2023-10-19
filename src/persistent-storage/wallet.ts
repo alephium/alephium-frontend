@@ -79,17 +79,23 @@ const persistWallet = async (
 
   console.log('💽 Storing wallet initial metadata')
   const walletMetadata = generateWalletMetadata(walletName, isMnemonicBackedUp)
-  await persistWalletMetadata(walletMetadata)
+  await storeWalletMetadata(walletMetadata)
 
   return walletMetadata.id
+}
+
+const storeWalletMetadata = async (metadata: WalletMetadata) => {
+  await AsyncStorage.setItem(WALLET_METADATA_STORAGE_KEY, JSON.stringify(metadata))
 }
 
 export const persistWalletMetadata = async (partialMetadata: Partial<WalletMetadata>) => {
   const walletMetadata = await getWalletMetadata()
 
+  if (!walletMetadata) throw new Error('Could not persist wallet metadata, no entry found in storage')
+
   const updatedWalletMetadata = { ...walletMetadata, ...partialMetadata }
 
-  await AsyncStorage.setItem(WALLET_METADATA_STORAGE_KEY, JSON.stringify(updatedWalletMetadata))
+  await storeWalletMetadata(updatedWalletMetadata)
 }
 
 const generateWalletMetadata = (name: string, isMnemonicBackedUp = false) => ({
@@ -107,12 +113,14 @@ const generateWalletMetadata = (name: string, isMnemonicBackedUp = false) => ({
 })
 
 export const enableBiometrics = async (mnemonic: Mnemonic) => {
+  const options = { ...defaultBiometricsConfig, authenticationPrompt: 'Enable biometrics' }
+
   console.log('💽 Storing biometrics wallet')
-  await SecureStore.setItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, mnemonic, defaultBiometricsConfig)
+  await SecureStore.setItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, mnemonic, options)
 
   if (Platform.OS === 'ios') {
     // Ensure we can actually get the secured mnemonic and force to show prompt
-    await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
+    await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, options)
   }
 }
 
@@ -120,20 +128,45 @@ export const disableBiometrics = async () => {
   await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
 }
 
-export const getWalletMetadata = async (): Promise<WalletMetadata> => {
+export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
   const rawWalletMetadata = await AsyncStorage.getItem(WALLET_METADATA_STORAGE_KEY)
 
-  return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : generateWalletMetadata('Wallet')
+  return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : null
 }
 
-export const getStoredWallet = async (forcePinUsage?: boolean): Promise<WalletState | null> => {
-  const { id, name, isMnemonicBackedUp } = await getWalletMetadata()
+export interface GetStoredWalletProps {
+  forcePinUsage?: boolean
+  authenticationPrompt?: SecureStore.SecureStoreOptions['authenticationPrompt']
+}
+
+export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<WalletState | null> => {
+  const metadata = await getWalletMetadata()
+
+  if (!metadata) {
+    await deleteWallet()
+    return null
+  }
+
+  const { id, name, isMnemonicBackedUp } = metadata
   const usesBiometrics = await loadBiometricsSettings()
 
   const mnemonic =
-    forcePinUsage || !usesBiometrics
+    props?.forcePinUsage || !usesBiometrics
       ? await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
-      : await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
+      : await SecureStore.getItemAsync(
+          BIOMETRICS_WALLET_STORAGE_KEY,
+          props?.authenticationPrompt
+            ? {
+                ...defaultBiometricsConfig,
+                authenticationPrompt: props.authenticationPrompt
+              }
+            : defaultBiometricsConfig
+        )
+
+  // This should never be the case, but if we have metadata without wallet, we need to clear them
+  if (!mnemonic) {
+    await AsyncStorage.removeItem(WALLET_METADATA_STORAGE_KEY)
+  }
 
   return mnemonic
     ? ({
@@ -157,6 +190,9 @@ export const deleteWallet = async () => {
 export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadata[]) => {
   const walletMetadata = await getWalletMetadata()
 
+  if (!walletMetadata)
+    throw new Error('Could not persist addresses metadata, no wallet metadata entry found in storage')
+
   for (const metadata of addressesMetadata) {
     const addressIndex = walletMetadata.addresses.findIndex((data) => data.index === metadata.index)
 
@@ -169,12 +205,13 @@ export const persistAddressesMetadata = async (walletId: string, addressesMetada
     console.log(`💽 Storing address index ${metadata.index} metadata in persistent storage`)
   }
 
-  await persistWalletMetadata(walletMetadata)
+  await storeWalletMetadata(walletMetadata)
 }
 
 export const deriveWalletStoredAddresses = async (wallet: WalletState): Promise<AddressPartial[]> => {
   const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, wallet.mnemonic)
-  const { addresses } = await getWalletMetadata()
+  const metadata = await getWalletMetadata()
+  const addresses = metadata?.addresses ?? []
 
   console.log(`👀 Found ${addresses.length} addresses metadata in persistent storage`)
 

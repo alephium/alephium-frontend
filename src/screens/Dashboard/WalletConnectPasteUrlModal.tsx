@@ -25,62 +25,53 @@ import Input from '~/components/inputs/Input'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { deleteWallet } from '~/persistent-storage/wallet'
-import { walletDeleted } from '~/store/wallet/walletActions'
-import { resetNavigationState } from '~/utils/navigation'
+import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import { showToast } from '~/utils/layout'
 
-const WalletDeleteModal = (props: ModalContentProps) => {
-  const dispatch = useAppDispatch()
+const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
+  const { pairWithDapp } = useWalletConnectContext()
   const posthog = usePostHog()
-  const walletName = useAppSelector((s) => s.wallet.name)
 
-  const [inputWalletName, setInputWalletName] = useState('')
+  const [inputWcUrl, setInputWcUrl] = useState('')
+  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleDeleteConfirmPress = async () => {
-    props.onClose && props.onClose()
+  const handleInputChange = (url: string) => {
+    setError(!url.startsWith('wc:') ? 'This is not a valid WalletConnect URL' : '')
+    setInputWcUrl(url)
+  }
 
-    setIsLoading(true)
+  const handleConnect = async () => {
+    if (inputWcUrl.startsWith('wc:')) {
+      setIsLoading(true)
 
-    await deleteWallet()
+      await pairWithDapp(inputWcUrl)
 
-    setIsLoading(false)
+      setIsLoading(false)
 
-    resetNavigationState('LandingScreen')
-
-    dispatch(walletDeleted())
-    posthog?.capture('Deleted wallet')
+      props.onClose && props.onClose()
+      posthog?.capture('WC: Connected by manually pasting URL')
+    } else {
+      showToast('This is not a valid WalletConnect URL')
+    }
   }
 
   return (
     <>
       <ModalContent verticalGap {...props}>
         <ScreenSection>
-          <BottomModalScreenTitle>⚠️ Delete &quot;{walletName}&quot;?</BottomModalScreenTitle>
+          <BottomModalScreenTitle>Connect to dApp</BottomModalScreenTitle>
         </ScreenSection>
         <ScreenSection>
           <AppText color="secondary" size={18}>
-            Do you really want to delete this wallet from your device?
-          </AppText>
-          <AppText color="secondary" size={18}>
-            You can always restore it later using your secret recovery phrase.
-          </AppText>
-          <AppText color="secondary" size={18}>
-            If so, please enter the wallet name below, and hit the delete button.
+            Paste the WalletConnect URL you copied from the dApp:
           </AppText>
         </ScreenSection>
         <ScreenSection>
-          <Input label="Wallet name" value={inputWalletName} onChangeText={setInputWalletName} />
+          <Input label="WalletConnect URL" value={inputWcUrl} onChangeText={handleInputChange} error={error} />
         </ScreenSection>
         <ScreenSection>
-          <Button
-            title="Delete"
-            variant="alert"
-            onPress={handleDeleteConfirmPress}
-            disabled={inputWalletName !== walletName}
-            iconProps={{ name: 'trash-outline' }}
-          />
+          <Button title="Connect" variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />
         </ScreenSection>
       </ModalContent>
       <SpinnerModal isActive={isLoading} />
@@ -88,4 +79,4 @@ const WalletDeleteModal = (props: ModalContentProps) => {
   )
 }
 
-export default WalletDeleteModal
+export default WalletConnectPasteUrlModal

@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import * as Haptics from 'expo-haptics'
 import { ReactNode } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS } from '~/style/globalStyle'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 export interface TabItem {
   value: string
@@ -40,7 +40,7 @@ const TabBar = ({ items, onTabChange, activeTab, style }: TabBarProps) => {
   const theme = useTheme()
 
   const handleTabChange = (item: TabItem) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    vibrate(ImpactStyle.Medium)
     onTabChange(item)
   }
 

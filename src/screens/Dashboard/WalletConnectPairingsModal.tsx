@@ -21,18 +21,21 @@ import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 
-const WalletConnectPairingsModal = ({ onClose, ...props }: ModalContentProps) => {
+interface WalletConnectPairingsModalProps extends ModalContentProps {
+  onPasteWcUrlPress: () => void
+}
+
+const WalletConnectPairingsModal = ({ onPasteWcUrlPress, onClose, ...props }: WalletConnectPairingsModalProps) => {
   const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
 
   useEffect(() => {
-    if (!walletConnectClient || activeSessions.length === 0) {
-      onClose && onClose()
-    }
+    if (!walletConnectClient) onClose && onClose()
   }, [activeSessions.length, onClose, walletConnectClient])
 
   const handleDisconnectPress = async (pairingTopic: string) => {
@@ -60,6 +63,10 @@ const WalletConnectPairingsModal = ({ onClose, ...props }: ModalContentProps) =>
           }
         />
       ))}
+      {activeSessions.length === 0 && <EmptyPlaceholder>There are no connections yet. 🔌</EmptyPlaceholder>}
+      <ScreenSection>
+        <Button title="Paste a WalletConnect URL" variant="accent" onPress={onPasteWcUrlPress} />
+      </ScreenSection>
     </ModalContent>
   )
 }
