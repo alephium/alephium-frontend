@@ -211,7 +211,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         />
       )}
       <AuthenticationModal
-        authenticationPrompt="Verify it's you to send"
+        authenticationPrompt="Verify it's you"
         loadingText="Verifying..."
         visible={isAuthenticationModalVisible}
         onConfirm={() => sendTransaction(onSendSuccessCallback)}
