@@ -31,7 +31,6 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="org.alephium.wallet"/>
         <data android:scheme="exp+alephium-mobile-wallet"/>
-        <data android:scheme="org.alephium.wallet.ilias"/>
         <data android:scheme="wc"/>
       </intent-filter>
     </activity>
