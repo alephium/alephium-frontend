@@ -465,6 +465,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                 ...pendingProposal.request.params
               }
             })
+          } else {
+            showToast('This WalletConnect session is not valid anymore.', { duration: 5000 })
           }
         } else {
           console.log('⏳ PAIRING WITH WALLETCONNECT USING URI:', uri)

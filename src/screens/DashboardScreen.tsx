@@ -32,6 +32,7 @@ import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import DashboardHeaderActions from '~/components/DashboardHeaderActions'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import BottomModal from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
@@ -174,13 +175,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         )}
       </BalanceAndButtons>
       <AddressesTokensList />
-      {totalBalance === BigInt(0) && (
-        <EmptyPlaceholder>
-          <AppText semiBold color="secondary">
-            There is so much left to discover! 🌈
-          </AppText>
-        </EmptyPlaceholder>
-      )}
+      {totalBalance === BigInt(0) && <EmptyPlaceholder>There is so much left to discover! 🌈</EmptyPlaceholder>}
       <Portal>
         <BottomModal
           isOpen={isBackupReminderModalOpen}
@@ -257,17 +252,6 @@ const ButtonsRowContainer = styled(Animated.View)`
 
   border-color: ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.primary};
-`
-
-const EmptyPlaceholder = styled.View`
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  padding: 20px;
-  border-radius: 9px;
-  border: 2px dashed ${({ theme }) => theme.border.primary};
-  margin: ${DEFAULT_MARGIN}px;
 `
 
 const NetworkBadgeContainer = styled.View`
