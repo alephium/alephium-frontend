@@ -122,6 +122,11 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
     [name, typedInput, selectedWords, dispatch, posthog, deviceHasBiometricsData, navigation]
   )
 
+  const handleWordInputChange = (inputText: string) => {
+    const parsedInput = inputText.split(' ')[0]
+    setTypedInput(parsedInput)
+  }
+
   const handleWalletImport = () => importWallet(pin)
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
@@ -179,7 +184,8 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
         <WordInput
           value={typedInput}
-          onChangeText={setTypedInput}
+          onChangeText={handleWordInputChange}
+          contextMenuHidden={true}
           onSubmitEditing={handleEnterPress}
           autoFocus
           blurOnSubmit={false}
