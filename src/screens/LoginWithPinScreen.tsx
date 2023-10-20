@@ -29,11 +29,11 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deriveWalletStoredAddresses, getWalletMetadata } from '~/persistent-storage/wallet'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { WalletState } from '~/types/wallet'
-import { resetNavigationState, setNavigationState } from '~/utils/navigation'
+import { resetNavigation, restoreNavigation } from '~/utils/navigation'
 
 interface LoginWithPinScreenProps extends StackScreenProps<RootStackParamList, 'LoginWithPinScreen'>, ScreenProps {}
 
-const LoginWithPinScreen = (props: LoginWithPinScreenProps) => {
+const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) => {
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
@@ -51,11 +51,11 @@ const LoginWithPinScreen = (props: LoginWithPinScreenProps) => {
       const metadata = await getWalletMetadata()
 
       dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts: metadata?.contacts ?? [] }))
-      lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
+      lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
 
       posthog?.capture('Unlocked wallet')
     },
-    [addressesStatus, dispatch, lastNavigationState, posthog]
+    [addressesStatus, dispatch, lastNavigationState, navigation, posthog]
   )
 
   return (

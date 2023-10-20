@@ -41,7 +41,7 @@ import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addres
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
-import { resetNavigationState } from '~/utils/navigation'
+import { resetNavigation } from '~/utils/navigation'
 
 interface ImportWalletSeedScreenProps
   extends StackScreenProps<RootStackParamList, 'ImportWalletSeedScreen'>,
@@ -115,11 +115,14 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
 
-      resetNavigationState(deviceHasBiometricsData ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen')
+      resetNavigation(
+        navigation,
+        deviceHasBiometricsData ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen'
+      )
 
       setLoading(false)
     },
-    [name, typedInput, selectedWords, dispatch, posthog, deviceHasBiometricsData, navigation]
+    [name, typedInput, selectedWords, dispatch, posthog, navigation, deviceHasBiometricsData]
   )
 
   const handleWordInputChange = (inputText: string) => {

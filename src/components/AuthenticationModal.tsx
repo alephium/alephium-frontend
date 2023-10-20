@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError, walletOpenAsyncUnsafe } from '@alephium/sdk'
+import { walletOpenAsyncUnsafe } from '@alephium/sdk'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -85,7 +85,6 @@ const AuthenticationModal = ({
 
       if (!error.message?.includes('User canceled')) {
         console.error(e)
-        Alert.alert(getHumanReadableError(e, 'Could not authenticate'))
       }
 
       onClose && onClose()

@@ -34,7 +34,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { enableBiometrics } from '~/persistent-storage/wallet'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { biometricsToggled } from '~/store/settingsSlice'
-import { resetNavigationState } from '~/utils/navigation'
+import { resetNavigation } from '~/utils/navigation'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
 
@@ -63,7 +63,10 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
 
       posthog?.capture('Activated biometrics from wallet creation flow')
 
-      resetNavigationState(skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen')
+      resetNavigation(
+        navigation,
+        skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen'
+      )
     } finally {
       setLoading(false)
     }
@@ -72,7 +75,8 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
   const handleLaterPress = () => {
     posthog?.capture('Skipped biometrics activation from wallet creation flow')
 
-    resetNavigationState(
+    resetNavigation(
+      navigation,
       method === 'import' && !skipAddressDiscovery ? 'ImportWalletAddressDiscoveryScreen' : 'NewWalletSuccessScreen'
     )
   }
