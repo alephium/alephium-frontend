@@ -23,11 +23,16 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressBadge from '~/components/AddressBadge'
+import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Checkmark from '~/components/Checkmark'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens, makeSelectAddressesNFTs } from '~/store/addressesSlice'
-import { BORDER_RADIUS, VERTICAL_GAP } from '~/style/globalStyle'
+import {
+  makeSelectAddressesKnownFungibleTokens,
+  makeSelectAddressesNFTs,
+  selectAddressByHash
+} from '~/store/addressesSlice'
+import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
@@ -39,6 +44,7 @@ interface AddressBoxProps extends PressableProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxProps) => {
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
@@ -59,7 +65,12 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
     <AddressBoxStyled {...props} onPress={handlePress} style={[boxAnimatedStyle, props.style]}>
       <AddressBoxTop>
         <AddressBadgeStyled onPress={handlePress} addressHash={addressHash} textStyle={{ fontSize: 18 }} />
-        {isSelected && <Checkmark />}
+        <Group>
+          <AppText color="tertiary" size={14}>
+            group {address?.group}
+          </AppText>
+          {isSelected && <Checkmark />}
+        </Group>
       </AddressBoxTop>
       <AddressBoxBottom>
         <AssetsRow>
@@ -99,6 +110,8 @@ const AddressBoxTop = styled.View`
   background-color: ${({ theme }) => theme.bg.highlight};
   border-top-right-radius: 6px;
   border-top-left-radius: 6px;
+  gap: ${DEFAULT_MARGIN}px;
+  align-items: center;
 `
 
 const AddressBoxBottom = styled.View`
@@ -110,10 +123,17 @@ const AddressBoxBottom = styled.View`
 
 const AddressBadgeStyled = styled(AddressBadge)`
   max-width: 80%;
+  flex-shrink: 1;
 `
 
 const AssetsRow = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   gap: 12px;
+`
+
+const Group = styled.View`
+  flex-direction: row;
+  gap: ${DEFAULT_MARGIN}px;
+  flex-shrink: 0;
 `
