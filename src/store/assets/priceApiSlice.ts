@@ -55,7 +55,7 @@ export const priceApi = createApi({
 
         return prices.reduce((acc, [date, price]) => {
           const itemDate = dayjs(date).format(CHART_DATE_FORMAT)
-          const isDuplicatedItem = !!acc.find(({ date }) => dayjs(date).format(CHART_DATE_FORMAT) === itemDate)
+          const isDuplicatedItem = !!acc.find(({ date }) => date === itemDate)
 
           if (!isDuplicatedItem && itemDate !== today)
             acc.push({
