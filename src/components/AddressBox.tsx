@@ -136,4 +136,5 @@ const Group = styled.View`
   flex-direction: row;
   gap: ${DEFAULT_MARGIN}px;
   flex-shrink: 0;
+  align-items: center;
 `
