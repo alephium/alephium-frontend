@@ -53,6 +53,7 @@ import {
   walletConnectToggled
 } from '~/store/settingsSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
+import { resetNavigation } from '~/utils/navigation'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
 
@@ -307,7 +308,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           isOpen={isWalletDeleteModalOpen}
           onClose={() => setIsWalletDeleteModalOpen(false)}
           maximisedContent={Platform.OS === 'ios'}
-          Content={(props) => <WalletDeleteModal {...props} />}
+          Content={(props) => (
+            <WalletDeleteModal onDelete={() => resetNavigation(navigation, 'LandingScreen')} {...props} />
+          )}
         />
       </Portal>
     </>

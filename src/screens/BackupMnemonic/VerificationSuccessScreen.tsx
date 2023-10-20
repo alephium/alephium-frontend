@@ -24,7 +24,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
-import { resetNavigationState } from '~/utils/navigation'
+import { resetNavigation } from '~/utils/navigation'
 
 interface VerificationSuccessScreenProps
   extends StackScreenProps<BackupMnemonicNavigationParamList, 'VerificationSuccessScreen'>,
@@ -46,7 +46,7 @@ const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccess
       />
     </ScreenSection>
     <ScreenSection>
-      <Button variant="highlight" title="Return to my wallet" onPress={() => resetNavigationState()} />
+      <Button variant="highlight" title="Return to my wallet" onPress={() => resetNavigation(navigation.getParent())} />
     </ScreenSection>
   </ScrollScreen>
 )

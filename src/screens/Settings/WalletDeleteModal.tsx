@@ -28,9 +28,12 @@ import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
 import { walletDeleted } from '~/store/wallet/walletActions'
-import { resetNavigationState } from '~/utils/navigation'
 
-const WalletDeleteModal = (props: ModalContentProps) => {
+interface WalletDeleteModalProps extends ModalContentProps {
+  onDelete: () => void
+}
+
+const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
   const walletName = useAppSelector((s) => s.wallet.name)
@@ -47,7 +50,7 @@ const WalletDeleteModal = (props: ModalContentProps) => {
 
     setIsLoading(false)
 
-    resetNavigationState('LandingScreen')
+    onDelete()
 
     dispatch(walletDeleted())
     posthog?.capture('Deleted wallet')

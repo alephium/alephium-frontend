@@ -16,16 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createNavigationContainerRef } from '@react-navigation/native'
+import { CommonActions, createNavigationContainerRef, NavigationProp } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-const getInitialNavigationState = (initialRouteName?: string) => ({
+export const getInitialNavigationState = (initialRouteName: keyof RootStackParamList = 'InWalletTabsNavigation') => ({
   index: 0,
   routes: [
     {
-      name: initialRouteName || 'InWalletTabsNavigation'
+      name: initialRouteName
     }
   ]
 })
@@ -44,8 +44,13 @@ export const isNavStateRestorable = (state: NavigationState) => {
   return latestRoute && !excludedRoutesFromRestoring.includes(latestRoute)
 }
 
-export const setNavigationState = (state: NavigationState) =>
-  rootStackNavigationRef.resetRoot(isNavStateRestorable(state) ? state : getInitialNavigationState())
+export const restoreNavigation = (navigation: NavigationProp<RootStackParamList>, state: NavigationState) => {
+  navigation.dispatch(CommonActions.reset(isNavStateRestorable(state) ? state : getInitialNavigationState()))
+}
 
-export const resetNavigationState = (initialRouteName?: string) =>
-  rootStackNavigationRef.resetRoot(getInitialNavigationState(initialRouteName))
+export const resetNavigation = (
+  navigation: NavigationProp<RootStackParamList>,
+  initialRouteName?: keyof RootStackParamList
+) => {
+  navigation.dispatch(CommonActions.reset(getInitialNavigationState(initialRouteName)))
+}

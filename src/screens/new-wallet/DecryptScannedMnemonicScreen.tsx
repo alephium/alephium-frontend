@@ -39,7 +39,7 @@ import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import { WalletImportData } from '~/types/wallet'
 import { pbkdf2 } from '~/utils/crypto'
-import { resetNavigationState } from '~/utils/navigation'
+import { resetNavigation } from '~/utils/navigation'
 
 interface DecryptScannedMnemonicScreenProps
   extends StackScreenProps<RootStackParamList, 'DecryptScannedMnemonicScreen'>,
@@ -102,7 +102,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
       if (contacts.length > 0) await importContacts(contacts)
 
-      resetNavigationState(deviceHasBiometricsData ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+      resetNavigation(navigation, deviceHasBiometricsData ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
     } catch (e) {
       setError('Could not decrypt wallet with the given password.')
     } finally {

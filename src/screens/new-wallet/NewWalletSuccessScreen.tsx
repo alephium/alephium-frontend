@@ -30,7 +30,7 @@ import { useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { storeIsNewWallet } from '~/persistent-storage/wallet'
-import { resetNavigationState } from '~/utils/navigation'
+import { resetNavigation } from '~/utils/navigation'
 
 interface NewWalletSuccessScreenProps
   extends StackScreenProps<RootStackParamList, 'NewWalletSuccessScreen'>,
@@ -58,7 +58,7 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
       <CenteredInstructions instructions={instructions} stretch fontSize={19} />
       <ActionsContainer>
         <ScreenSection centered>
-          <HighlightButton title="Let's go!" wide onPress={() => resetNavigationState()} />
+          <HighlightButton title="Let's go!" wide onPress={() => resetNavigation(navigation)} />
         </ScreenSection>
       </ActionsContainer>
     </ScrollScreen>

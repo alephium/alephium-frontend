@@ -45,7 +45,7 @@ import {
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
-import { resetNavigationState } from '~/utils/navigation'
+import { resetNavigation } from '~/utils/navigation'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>, ScrollScreenProps {}
 
@@ -70,7 +70,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   const stopScan = () => dispatch(addressDiscoveryStopped())
 
   const continueToNextScreen = () =>
-    isImporting ? resetNavigationState('NewWalletSuccessScreen') : navigation.goBack()
+    isImporting ? resetNavigation(navigation, 'NewWalletSuccessScreen') : navigation.goBack()
 
   const importAddresses = async () => {
     setImportLoading(true)

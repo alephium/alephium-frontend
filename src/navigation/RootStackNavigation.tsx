@@ -22,7 +22,7 @@ import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/
 import { isEnrolledAsync } from 'expo-local-authentication'
 import * as SplashScreen from 'expo-splash-screen'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, AppState, AppStateStatus } from 'react-native'
+import { AppState, AppStateStatus } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
@@ -68,8 +68,8 @@ import { routeChanged } from '~/store/appSlice'
 import { appBecameInactive } from '~/store/appSlice'
 import { biometricsToggled } from '~/store/settingsSlice'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
-import { isNavStateRestorable, rootStackNavigationRef } from '~/utils/navigation'
-import { resetNavigationState, setNavigationState } from '~/utils/navigation'
+import { showToast } from '~/utils/layout'
+import { isNavStateRestorable, resetNavigation, restoreNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
@@ -77,7 +77,10 @@ SplashScreen.preventAutoHideAsync()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
+  const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const dispatch = useAppDispatch()
+
+  const isAuthenticated = !!mnemonic
 
   const handleStateChange = (state?: NavigationState) => {
     if (state && isNavStateRestorable(state)) dispatch(routeChanged(state))
@@ -105,8 +108,9 @@ const RootStackNavigation = () => {
               <AnalyticsProvider>
                 <WalletConnectContextProvider>
                   <RootStack.Navigator initialRouteName="LandingScreen">
-                    {/* Sub-navigation with custom header */}
-                    <RootStack.Group screenOptions={{ headerTransparent: true }}>
+                    {/* Sub-navigation with custom header. Showing the header only when authenticated fixes the
+                    reanimated bug while still allowing animated transitions between screens */}
+                    <RootStack.Group screenOptions={{ headerTransparent: true, headerShown: isAuthenticated }}>
                       <RootStack.Screen
                         name="SendNavigation"
                         component={SendNavigation}
@@ -231,7 +235,7 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
       if (!wallet) {
         if (lastNavigationState) {
           // When we are at the wallet creation flow we want to reset to the last screen
-          setNavigationState(lastNavigationState)
+          restoreNavigation(navigation, lastNavigationState)
           SplashScreen.hideAsync()
         } else {
           navigation.navigate('LandingScreen')
@@ -243,7 +247,7 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
             addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
           dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: metadata?.contacts ?? [] }))
 
-          lastNavigationState ? setNavigationState(lastNavigationState) : resetNavigationState()
+          lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
           SplashScreen.hideAsync()
         } else {
           navigation.navigate('LoginWithPinScreen')
@@ -255,9 +259,7 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
       const error = e as { message?: string }
 
       if (error.message?.includes('User canceled')) {
-        Alert.alert('Authentication required', 'Please authenticate to unlock your wallet.', [
-          { text: 'Try again', onPress: unlockApp }
-        ])
+        showToast('Authentication required. Exit the app and try again.')
       } else {
         console.error(e)
       }
@@ -268,7 +270,7 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' && walletMnemonic && !isCameraOpen) {
         loadBiometricsSettings().then((isBioEnabled) =>
-          navigation.navigate(isBioEnabled ? 'LandingScreen' : 'LoginWithPinScreen')
+          resetNavigation(navigation, isBioEnabled ? 'LandingScreen' : 'LoginWithPinScreen')
         )
         dispatch(appBecameInactive())
         // The following is needed when the switch between background/active happens so fast that the component didn't
