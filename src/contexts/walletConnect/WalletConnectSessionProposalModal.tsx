@@ -69,7 +69,8 @@ const WalletConnectSessionProposalModal = ({
   const dispatch = useAppDispatch()
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const { requiredChainInfo, metadata } = parseSessionProposalEvent(proposalEvent)
-  const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, requiredChainInfo?.addressGroup))
+  const group = requiredChainInfo?.addressGroup
+  const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
 
@@ -99,12 +100,7 @@ const WalletConnectSessionProposalModal = ({
     setLoading('Generating new address...')
 
     const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, walletMnemonic)
-    const newAddressData = deriveNewAddressData(
-      masterKey,
-      requiredChainInfo?.addressGroup,
-      undefined,
-      currentAddressIndexes.current
-    )
+    const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
     const newAddress = { ...newAddressData, settings: { label: '', color: getRandomLabelColor(), isDefault: false } }
 
     try {
@@ -164,7 +160,7 @@ const WalletConnectSessionProposalModal = ({
             <InfoBox title="New address needed" Icon={PlusSquare}>
               <AppText>
                 The dApp asks for an address in group
-                <AppText color="accent"> {requiredChainInfo?.addressGroup}</AppText>. Click below to generate one!
+                <AppText color="accent"> {group}</AppText>. Click below to generate one!
               </AppText>
             </InfoBox>
           </ScreenSection>
@@ -179,10 +175,10 @@ const WalletConnectSessionProposalModal = ({
         <>
           {showAlternativeSignerAddresses ? (
             <ScreenSection>
-              <SectionTitle semiBold>Addresses in group {requiredChainInfo?.addressGroup}</SectionTitle>
+              <SectionTitle semiBold>Addresses{group !== undefined ? ` in group ${group}` : ''}</SectionTitle>
               <SectionSubtitle color="secondary">Tap to select another one</SectionSubtitle>
               <AddressList>
-                {addressesInGroup.map((address, index) => (
+                {addressesInGroup.map((address) => (
                   <AddressBox
                     key={address.hash}
                     addressHash={address.hash}
@@ -206,7 +202,11 @@ const WalletConnectSessionProposalModal = ({
             <ScreenSection>
               <SectionTitle semiBold>Connect with address</SectionTitle>
               <SectionSubtitle color="secondary">Tap to change the address to connect with.</SectionSubtitle>
-              <AddressBox addressHash={signerAddress.hash} onPress={() => setShowAlternativeSignerAddresses(true)} />
+              <AddressBox
+                addressHash={signerAddress.hash}
+                onPress={() => setShowAlternativeSignerAddresses(true)}
+                isSelected
+              />
             </ScreenSection>
           )}
 
