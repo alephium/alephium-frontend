@@ -59,7 +59,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
   const [loading, setLoading] = useState(false)
 
-  const totalAddressBalance = BigInt(address?.balance ?? 0) + BigInt(address?.lockedBalance ?? 0)
+  const totalAddressBalance = BigInt(address?.balance ?? 0)
   const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
     pollingInterval: 60000,
     skip: totalAddressBalance === BigInt(0)
