@@ -38,10 +38,11 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
   const networkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
 
-  const canCaptureUserProperties = settingsLoadedFromStorage && analytics && !!analyticsId
+  const shouldOptOut = !settingsLoadedFromStorage || __DEV__
+  const canCaptureUserProperties = !shouldOptOut && analytics && !!analyticsId
 
   useEffect(() => {
-    if (!settingsLoadedFromStorage || __DEV__) {
+    if (shouldOptOut) {
       posthog?.optOut()
       return
     }
@@ -55,7 +56,7 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
       const newAnalyticsId = nanoid()
       dispatch(analyticsIdGenerated(newAnalyticsId))
     }
-  }, [analytics, analyticsId, dispatch, posthog, settingsLoadedFromStorage])
+  }, [analytics, analyticsId, dispatch, posthog, shouldOptOut])
 
   const captureUserProperties = useCallback(async () => {
     if (!canCaptureUserProperties) return
@@ -74,34 +75,27 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     if (canCaptureUserProperties) captureUserProperties()
-  })
+  }, [canCaptureUserProperties, captureUserProperties])
 
   return children
 }
 
-const AnalyticsProvider = ({ children }: { children: JSX.Element }) => {
-  const analytics = useAppSelector((s) => s.settings.analytics)
-  const analyticsId = useAppSelector((s) => s.settings.analyticsId)
-  const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
-
-  return (
-    <PostHogProvider
-      apiKey={PUBLIC_POSTHOG_KEY}
-      options={{
-        host: PUBLIC_POSTHOG_HOST,
-        disableGeoip: true,
-        enable: settingsLoadedFromStorage && analytics && !!analyticsId,
-        customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' })
-      }}
-      autocapture={{
-        captureTouches: false,
-        captureLifecycleEvents: false,
-        captureScreens: false
-      }}
-    >
-      <AnalyticsSetup>{children}</AnalyticsSetup>
-    </PostHogProvider>
-  )
-}
+const AnalyticsProvider = ({ children }: { children: JSX.Element }) => (
+  <PostHogProvider
+    apiKey={PUBLIC_POSTHOG_KEY}
+    options={{
+      host: PUBLIC_POSTHOG_HOST,
+      disableGeoip: true,
+      customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' })
+    }}
+    autocapture={{
+      captureTouches: false,
+      captureLifecycleEvents: false,
+      captureScreens: false
+    }}
+  >
+    <AnalyticsSetup>{children}</AnalyticsSetup>
+  </PostHogProvider>
+)
 
 export default AnalyticsProvider
