@@ -1,6 +1,6 @@
 {
   "name": "alephium-mobile-wallet",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
     "start": "expo start --dev-client",
