@@ -1,0 +1,9 @@
+{
+  "data": {
+    "balance": "0",
+    "balanceHint": "0 ALPH",
+    "lockedBalance": "0",
+    "lockedBalanceHint": "0 ALPH",
+    "utxoNum": 0
+  }
+}
