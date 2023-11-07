@@ -118,9 +118,8 @@ export const formatAmountForDisplay = ({
   return formatRegularPrecision(amountNumber, numberOfDecimalsToDisplay, minNumberOfDecimals)
 }
 
-const getMinNumberOfDecimals = (amountNumber: number): number => {
-  return amountNumber <= 0 ? 0 : amountNumber < 0.01 && amountNumber >= 0.001 ? 3 : amountNumber < 0.001 ? 4 : 2
-}
+const getMinNumberOfDecimals = (amountNumber: number): number =>
+  amountNumber <= 0 ? 0 : amountNumber < 0.01 && amountNumber >= 0.001 ? 3 : amountNumber < 0.001 ? 4 : 2
 
 const formatFullPrecision = (amount: bigint, amountDecimals: number, numberOfDecimalsToDisplay: number): string => {
   const baseNumString = amount.toString()

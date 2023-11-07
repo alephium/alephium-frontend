@@ -17,16 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import rewire from 'rewire'
+
 import {
-  formatAmountForDisplay,
-  fromHumanReadableAmount,
+  aboveExpLimit,
   addApostrophes,
-  produceZeros,
-  toHumanReadableAmount,
-  formatFiatAmountForDisplay,
   calculateAmountWorth,
   exponentialToLiteral,
-  aboveExpLimit
+  formatAmountForDisplay,
+  formatFiatAmountForDisplay,
+  fromHumanReadableAmount,
+  produceZeros,
+  toHumanReadableAmount
 } from '../lib/numbers'
 
 const minDigits = 3

@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { fromHumanReadableAmount } from '@alephium/sdk'
 import { SignTransferTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { useTranslation } from 'react-i18next'
+import { fromHumanReadableAmount } from 'shared'
 
 import client from '@/api/client'
 import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'

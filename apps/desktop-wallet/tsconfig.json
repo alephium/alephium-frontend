@@ -1,3 +1,11 @@
 {
-  "extends": "tsconfig/react"
+  "extends": "tsconfig/react",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }

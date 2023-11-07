@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 import { posthog } from 'posthog-js'
+import { getHumanReadableError } from 'shared'
 
 import {
   fetchAddressesBalances,

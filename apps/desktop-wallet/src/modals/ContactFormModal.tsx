@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/sdk'
 import { isEmpty } from 'lodash'
 import { UserMinus } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { getHumanReadableError } from 'shared'
 
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'

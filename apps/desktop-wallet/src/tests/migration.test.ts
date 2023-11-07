@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { encrypt, walletGenerate } from '@alephium/sdk'
 import { nanoid } from 'nanoid'
+import { encrypt, walletGenerate } from 'shared'
 
 import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
 import SettingsStorage, { networkPresets } from '@/storage/settings/settingsPersistentStorage'

@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { formatAmountForDisplay, fromHumanReadableAmount, MINIMAL_GAS_AMOUNT, MINIMAL_GAS_PRICE } from '@alephium/sdk'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { formatAmountForDisplay, fromHumanReadableAmount, MINIMAL_GAS_AMOUNT, MINIMAL_GAS_PRICE } from 'shared'
 
 import Input from '@/components/Inputs/Input'
 import AlphAmountInfoBox from '@/modals/SendModals/AlphAmountInfoBox'

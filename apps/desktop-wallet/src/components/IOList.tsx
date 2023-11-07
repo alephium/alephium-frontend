@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { GENESIS_TIMESTAMP } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
 import _ from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { GENESIS_TIMESTAMP } from 'shared'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'

@@ -1,9 +1,11 @@
 {
   "extends": ["tsconfig/base", "expo/tsconfig.base"],
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
     }
-  },
-  "include": ["src/**/*", "tests/**/*"]
+  }
 }

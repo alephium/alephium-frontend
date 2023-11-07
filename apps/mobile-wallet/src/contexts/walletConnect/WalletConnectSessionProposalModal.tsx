@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/sdk'
+import { deriveNewAddressData, walletImportAsyncUnsafe } from 'shared'
 import { AlertTriangle, PlusSquare } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useRef, useState } from 'react'

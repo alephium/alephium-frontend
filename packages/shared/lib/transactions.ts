@@ -16,11 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { explorer } from '@alephium/web3'
-import { uniq } from './utils'
 import { TokenInfo } from '@alephium/token-list'
+import { explorer } from '@alephium/web3'
 import { Optional } from '@alephium/web3'
-import { AddressBalance, Token, Output } from '@alephium/web3/dist/src/api/api-explorer'
+import { AddressBalance, Output, Token } from '@alephium/web3/dist/src/api/api-explorer'
+
+import { uniq } from './utils'
 
 export type TokenBalances = AddressBalance & { id: Token['id'] }
 

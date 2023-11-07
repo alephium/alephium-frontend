@@ -1,7 +1,8 @@
 {
-  "extends": "tsconfig/base",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "React",
+  "extends": "./base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "types": ["vite/client", "vite-plugin-svgr/client", "vitest/globals"],
@@ -15,10 +16,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": ["src"]
+    "noFallthroughCasesInSwitch": true
+  }
 }

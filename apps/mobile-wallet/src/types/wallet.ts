@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair } from '@alephium/sdk'
+import { AddressKeyPair } from 'shared'
 
 import { AddressMetadata, AddressPartial } from '~/types/addresses'
 import { Contact, ContactFormData } from '~/types/contacts'

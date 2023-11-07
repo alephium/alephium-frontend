@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/sdk'
+import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from 'shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useRef, useState } from 'react'

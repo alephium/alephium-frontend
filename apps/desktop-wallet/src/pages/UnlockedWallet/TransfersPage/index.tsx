@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/sdk'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { map } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Asset } from 'shared'
 import styled from 'styled-components'
 
 import ShortcutButtons from '@/components/Buttons/ShortcutButtons'

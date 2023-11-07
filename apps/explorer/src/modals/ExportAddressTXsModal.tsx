@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError, getHumanReadableError } from '@alephium/sdk'
 import dayjs from 'dayjs'
 import { isString } from 'lodash'
 import { ComponentProps, useCallback, useState } from 'react'
 import { RiCheckLine } from 'react-icons/ri'
+import { APIError, getHumanReadableError } from 'shared'
 import styled from 'styled-components'
 
 import client from '@/api/client'

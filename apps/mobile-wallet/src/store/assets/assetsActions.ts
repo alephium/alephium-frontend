@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // TODO: Same as in desktop wallet
 
-import { Asset } from '@alephium/sdk'
+import { Asset } from 'shared'
 import { TokenList } from '@alephium/token-list'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { omit } from 'lodash'

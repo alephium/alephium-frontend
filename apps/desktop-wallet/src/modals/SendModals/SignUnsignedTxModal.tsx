@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/sdk'
 import { SignUnsignedTxResult, transactionSign } from '@alephium/web3'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { getHumanReadableError } from 'shared'
 
 import client from '@/api/client'
 import FooterButton from '@/components/Buttons/FooterButton'
@@ -87,7 +87,7 @@ const SignUnsignedTxModal = ({ onClose, txData, onSignSuccess, onSignFail }: Sig
 
   return (
     <CenteredModal
-      title={'Sign Unsigned Transaction'}
+      title="Sign Unsigned Transaction"
       onClose={onClose}
       isLoading={isLoading}
       dynamicContent
@@ -97,8 +97,8 @@ const SignUnsignedTxModal = ({ onClose, txData, onSignSuccess, onSignFail }: Sig
       {decodedUnsignedTx && (
         <ModalContent>
           <InputFieldsColumn>
-            <InfoBox label={'Transaction Id'} text={decodedUnsignedTx.txId} wordBreak />
-            <InfoBox label={'Unsigned Transaction'} text={decodedUnsignedTx.unsignedTx} wordBreak />
+            <InfoBox label="Transaction Id" text={decodedUnsignedTx.txId} wordBreak />
+            <InfoBox label="Unsigned Transaction" text={decodedUnsignedTx.unsignedTx} wordBreak />
           </InputFieldsColumn>
           <FooterButton onClick={handleSign} disabled={isLoading || !decodedUnsignedTx}>
             {t('Sign')}

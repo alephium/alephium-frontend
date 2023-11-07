@@ -79,11 +79,13 @@ const getChartOptions = (colors: [string, string]): ApexCharts.ApexOptions => ({
         [
           {
             offset: 0,
-            color: colors[0]
+            color: colors[0],
+            opacity: 1
           },
           {
             offset: 100,
-            color: colors[1]
+            color: colors[1],
+            opacity: 1
           }
         ]
       ]

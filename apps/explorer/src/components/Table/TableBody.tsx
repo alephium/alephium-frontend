@@ -49,12 +49,11 @@ export default styled(TableBody)`
     ${({ tdStyles }) =>
       tdStyles
         ? tdStyles.map(
-            (s) =>
-              css`
-                & > td:nth-child(${s.tdPos}) {
-                  ${s.style}
-                }
-              `
+            (s) => css`
+              & > td:nth-child(${s.tdPos}) {
+                ${s.style}
+              }
+            `
           )
         : ''}
 

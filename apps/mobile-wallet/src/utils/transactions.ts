@@ -26,7 +26,7 @@ import {
   TransactionDirection,
   TransactionInfo,
   TransactionInfoType
-} from '@alephium/sdk'
+} from 'shared'
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, explorer } from '@alephium/web3'
 import { sortBy } from 'lodash'

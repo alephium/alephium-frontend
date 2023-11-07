@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from 'shared'
 import styled, { useTheme } from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'

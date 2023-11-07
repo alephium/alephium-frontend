@@ -17,9 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const tryGetString = (obj: any): string | null => {
-  return typeof obj.toString === 'function' ? obj.toString() : null
-}
+const tryGetString = (obj: any): string | null => (typeof obj.toString === 'function' ? obj.toString() : null)
 
 export interface APIError {
   error: {
@@ -30,9 +28,7 @@ export interface APIError {
   statusText: string
 }
 
-const isHTTPError = (e: unknown): e is APIError => {
-  return (e as APIError).error !== undefined
-}
+const isHTTPError = (e: unknown): e is APIError => (e as APIError).error !== undefined
 
 export const getHumanReadableError = (e: unknown, defaultErrorMessage: string) => {
   const stringifiedError = tryGetString(e)

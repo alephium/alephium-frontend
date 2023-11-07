@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, TokenDisplayBalances } from '@alephium/sdk'
+import { Asset, TokenDisplayBalances } from 'shared'
 import { ALPH } from '@alephium/token-list'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {

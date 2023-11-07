@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { GENESIS_TIMESTAMP } from '@alephium/sdk'
+import { GENESIS_TIMESTAMP } from 'shared'
 import { explorer } from '@alephium/web3'
 import _ from 'lodash'
 import { View } from 'react-native'

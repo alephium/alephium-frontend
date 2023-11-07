@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/sdk'
+import { getHumanReadableError } from 'shared'
 import { ALPH } from '@alephium/token-list'
 import {
   binToHex,

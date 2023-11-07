@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/sdk'
 import { node } from '@alephium/web3'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
@@ -24,6 +23,7 @@ import { Check } from 'lucide-react'
 import { PostHog, usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { getHumanReadableError } from 'shared'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'

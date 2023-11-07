@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, AssetAmount } from '@alephium/sdk'
 import { FungibleTokenMetaData, NFTMetaData } from '@alephium/web3'
+import { Asset, AssetAmount } from 'shared'
 
 export type AssetAmountInputType = AssetAmount & { amountInput?: string }
 

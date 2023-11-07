@@ -16,11 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ExplorerProvider } from '@alephium/web3'
+
 import { walletImport } from '../lib'
 import { discoverActiveAddresses, isAddressValid } from '../lib/address'
-import wallets from './fixtures/wallets.json'
 import derivedAddresses from './fixtures/address-discovery.json'
-import { ExplorerProvider } from '@alephium/web3'
+import wallets from './fixtures/wallets.json'
 
 describe('address', function () {
   it('is valid', async () => {

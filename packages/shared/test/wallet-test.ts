@@ -16,16 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
-
 import rewire from 'rewire'
 
 import * as walletUtils from '../lib/wallet'
-
-import wallets from './fixtures/wallets.json'
 import genesis from './fixtures/genesis.json'
-import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import wallets from './fixtures/wallets.json'
 
 describe('Wallet', function () {
   afterEach(() => {

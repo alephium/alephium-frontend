@@ -20,7 +20,8 @@
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "syncTranslationFiles": "node scripts/syncTranslationFiles.js && prettier --write ./locales/**/*.json"
+    "syncTranslationFiles": "node scripts/syncTranslationFiles.js && prettier --write ./locales/**/*.json",
+    "ts:check": "tsc --noEmit"
   },
   "browserslist": [
     ">0.2%",
@@ -33,7 +34,7 @@
     "electron-updater": "^5.3.0"
   },
   "devDependencies": {
-    "@alephium/sdk": "0.7.5",
+    "shared": "*",
     "@alephium/token-list": "^0.0.11",
     "@alephium/walletconnect-provider": "^0.22.0",
     "@alephium/web3": "^0.16.1",
@@ -73,14 +74,6 @@
     "electron-builder": "^23.0.3",
     "electron-builder-notarize": "^1.5.0",
     "electron-devtools-installer": "^3.2.0",
-    "eslint": "^8.29.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-header": "^3.1.1",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.31.11",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "eslint-plugin-simple-import-sort": "^10.0.0",
-    "eslint-plugin-unused-imports": "^2.0.0",
     "events": "^3.3.0",
     "fetch-retry": "^5.0.6",
     "framer-motion": "^10.11.6",
@@ -90,7 +83,6 @@
     "lucide-react": "^0.287.0",
     "nanoid": "^4.0.0",
     "posthog-js": "^1.52.0",
-    "prettier": "^2.7.1",
     "qrloop": "^1.4.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
@@ -110,13 +102,14 @@
     "semver-compare": "^1.0.0",
     "styled-components": "^5.3.1",
     "type-fest": "^3.5.1",
-    "typescript": "^5.0.4",
     "vite": "^4.0.4",
     "vite-plugin-svgr": "^2.4.0",
     "vite-tsconfig-paths": "^4.0.3",
     "vitest": "^0.30.1",
     "wait-on": "^7.0.1",
-    "zxcvbn": "^4.4.2"
+    "zxcvbn": "^4.4.2",
+    "eslint-config-custom": "*",
+    "tsconfig": "*"
   },
   "build": {
     "appId": "org.alephium.alephium-wallet",

@@ -41,7 +41,7 @@ const ConsolidateUTXOsModal = ({ onConsolidateClick, onClose, fee }: Consolidate
     <CenteredModal title={t`Consolidate UTXOs`} onClose={onClose}>
       <HeaderContent>
         <HeaderLogo>
-          <Codesandbox color={theme.global.accent} size={'70%'} strokeWidth={0.7} />
+          <Codesandbox color={theme.global.accent} size="70%" strokeWidth={0.7} />
         </HeaderLogo>
         <Section>
           <InfoBox

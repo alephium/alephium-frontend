@@ -16,6 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
+import { explorer } from '@alephium/web3'
+import { MempoolTransaction, Token, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { groupBy, map, mapValues, reduce, sortBy, uniq } from 'lodash'
 import {
   calcTxAmountsDeltaForAddress,
   getDirection,
@@ -25,11 +29,7 @@ import {
   TransactionDirection,
   TransactionInfo,
   TransactionInfoType
-} from '@alephium/sdk'
-import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
-import { MempoolTransaction, Token, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { groupBy, map, mapValues, reduce, sortBy, uniq } from 'lodash'
+} from 'shared'
 
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 

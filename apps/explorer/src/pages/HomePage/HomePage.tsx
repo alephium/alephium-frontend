@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes } from '@alephium/sdk'
 import { explorer } from '@alephium/web3'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -24,6 +23,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usePageVisibility } from 'react-page-visibility'
+import { addApostrophes } from 'shared'
 import styled, { css } from 'styled-components'
 
 import Card from '@/components/Cards/Card'

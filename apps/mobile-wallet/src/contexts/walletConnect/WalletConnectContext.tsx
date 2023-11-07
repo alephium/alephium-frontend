@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AssetAmount, getHumanReadableError } from '@alephium/sdk'
+import { AssetAmount, getHumanReadableError } from 'shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {

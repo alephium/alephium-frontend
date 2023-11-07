@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { addressToGroup, bs58, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import blake from 'blakejs'
 import { pbkdf2 } from 'crypto'
 
 import { decrypt, decryptAsync, encrypt, encryptAsync, Pbkdf2Function } from './password-crypto'
-import { addressToGroup, bs58, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
 
@@ -201,14 +201,13 @@ export const walletEncrypt = (password: string, mnemonic: string) => {
   return encrypt(password, JSON.stringify(storedState))
 }
 
-const _pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> => {
-  return new Promise((resolve, reject) => {
+const _pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> =>
+  new Promise((resolve, reject) => {
     pbkdf2(password, salt, 10000, 32, 'sha256', (err, data) => {
       if (err) return reject(err)
       resolve(data)
     })
   })
-}
 
 export const walletImportAsyncUnsafe = async (
   mnemonicToSeedCustomFunc: MnemonicToSeedFunction,
