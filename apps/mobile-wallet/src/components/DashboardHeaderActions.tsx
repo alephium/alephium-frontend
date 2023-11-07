@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isAddressValid } from 'shared'
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
 import { usePostHog } from 'posthog-react-native'
 import { memo, useState } from 'react'
 import { Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { Portal } from 'react-native-portalize'
+import { isAddressValid } from 'shared'
 import styled from 'styled-components/native'
 
 import Button from '@/components/buttons/Button'

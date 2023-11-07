@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { toHumanReadableAmount } from 'shared'
 import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import { Defs, LinearGradient, Stop, Svg } from 'react-native-svg'
+import { toHumanReadableAmount } from 'shared'
 import styled, { useTheme } from 'styled-components/native'
 import { VictoryArea } from 'victory-native'
 

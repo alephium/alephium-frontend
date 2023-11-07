@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth } from 'shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useState } from 'react'
 import { ViewProps } from 'react-native'
+import { calculateAmountWorth } from 'shared'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '@/components/Amount'

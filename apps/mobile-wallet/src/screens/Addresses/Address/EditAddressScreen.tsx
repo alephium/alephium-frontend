@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components/native'
 
 import AppText from '@/components/AppText'

@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from 'shared'
 import { StyleProp, TextStyle } from 'react-native'
+import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from 'shared'
 
 import { useAppSelector } from '@/hooks/redux'
 

@@ -16,6 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
+import { DUST_AMOUNT, explorer } from '@alephium/web3'
+import { sortBy } from 'lodash'
 import {
   AssetAmount,
   calcTxAmountsDeltaForAddress,
@@ -27,9 +30,6 @@ import {
   TransactionInfo,
   TransactionInfoType
 } from 'shared'
-import { ALPH } from '@alephium/token-list'
-import { DUST_AMOUNT, explorer } from '@alephium/web3'
-import { sortBy } from 'lodash'
 
 import { store } from '@/store/store'
 import { Address } from '@/types/addresses'

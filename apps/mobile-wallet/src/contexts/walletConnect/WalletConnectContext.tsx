@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AssetAmount, getHumanReadableError } from 'shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -40,6 +39,7 @@ import { partition } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Portal } from 'react-native-portalize'
+import { AssetAmount, getHumanReadableError } from 'shared'
 
 import client from '@/api/client'
 import {

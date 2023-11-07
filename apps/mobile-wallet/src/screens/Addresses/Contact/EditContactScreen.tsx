@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from 'shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
+import { getHumanReadableError } from 'shared'
 
 import Button from '@/components/buttons/Button'
 import { ScrollScreenProps } from '@/components/layout/ScrollScreen'

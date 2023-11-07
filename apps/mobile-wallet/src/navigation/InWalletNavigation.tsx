@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import React from 'react'
 import { Host } from 'react-native-portalize'
 
 import FooterMenu from '@/components/footers/FooterMenu'

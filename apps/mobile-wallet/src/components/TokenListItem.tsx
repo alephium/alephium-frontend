@@ -15,8 +15,8 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { Asset } from 'shared'
 import { StyleProp, ViewStyle } from 'react-native'
+import { Asset } from 'shared'
 import styled from 'styled-components/native'
 
 import Amount from '@/components/Amount'

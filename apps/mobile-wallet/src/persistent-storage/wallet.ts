@@ -16,16 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as SecureStore from 'expo-secure-store'
+import { nanoid } from 'nanoid'
+import { Platform } from 'react-native'
 import {
   deriveAddressAndKeys,
   walletEncryptAsyncUnsafe,
   walletGenerateAsyncUnsafe,
   walletImportAsyncUnsafe
 } from 'shared'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as SecureStore from 'expo-secure-store'
-import { nanoid } from 'nanoid'
-import { Platform } from 'react-native'
 
 import { defaultBiometricsConfig, defaultSecureStoreConfig } from '@/persistent-storage/config'
 import { loadBiometricsSettings, storeBiometricsSettings } from '@/persistent-storage/settings'
