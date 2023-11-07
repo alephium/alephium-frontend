@@ -9,7 +9,6 @@
     "serve": "node docker/init-server-data.js && serve -s build -p 3000",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
@@ -77,5 +76,4 @@
     "eslint-config-custom": "*",
     "tsconfig": "*"
   }
-
 }

@@ -13,7 +13,7 @@
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "ts:check": "turbo run ts:check",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "postinstall": "patch-package"
   },
   "devDependencies": {
