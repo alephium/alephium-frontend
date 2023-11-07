@@ -1,0 +1,71 @@
+/* GLOBAL SETTINGS */
+
+body {
+  font-size: inherit;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+  font-weight: 500;
+  font-size: 13px;
+  font-feature-settings: 'calt' off;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 2.3em;
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+h3 {
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+input,
+button {
+  outline: none;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#app-header {
+  -webkit-app-region: drag;
+}
+
+/* FONTS */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('./style/fonts/Inter.var.woff2') format('woff2');
+  font-weight: 100 1000;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('./style/fonts/RobotoMono-var.ttf') format('truetype');
+  font-weight: 100 1000;
+}
