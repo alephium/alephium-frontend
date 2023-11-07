@@ -34,8 +34,6 @@
     "@types/mock-fs": "^4.13.1",
     "@types/node": "^16.7.8",
     "@types/rewire": "^2.5.28",
-    "@typescript-eslint/eslint-plugin": "^5.53.0",
-    "@typescript-eslint/parser": "^5.53.0",
     "babel-eslint": "^10.1.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
