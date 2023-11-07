@@ -31,9 +31,9 @@ import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, explorer } from '@alephium/web3'
 import { sortBy } from 'lodash'
 
-import { store } from '~/store/store'
-import { Address } from '~/types/addresses'
-import { AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
+import { store } from '@/store/store'
+import { Address } from '@/types/addresses'
+import { AddressPendingTransaction, AddressTransaction } from '@/types/transactions'
 
 export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
   (tx as AddressPendingTransaction).status === 'pending'

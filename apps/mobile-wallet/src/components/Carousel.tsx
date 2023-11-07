@@ -22,7 +22,7 @@ import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } 
 import RNCarousel, { ICarouselInstance, TCarouselProps } from 'react-native-reanimated-carousel'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import { ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '@/components/layout/Screen'
 
 type CarouselProps<T> = Omit<TCarouselProps<T>, 'width'> & {
   renderItem: (itemInfo: { item: T }) => ReactElement

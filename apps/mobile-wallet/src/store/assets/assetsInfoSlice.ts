@@ -23,9 +23,9 @@ import { ALPH } from '@alephium/token-list'
 import { hexToString } from '@alephium/web3'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { loadingStarted, syncNetworkTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
-import { assetsInfoAdapter } from '~/store/assets/assetsAdapter'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
+import { loadingStarted, syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/store/assets/assetsActions'
+import { assetsInfoAdapter } from '@/store/assets/assetsAdapter'
+import { customNetworkSettingsSaved, networkPresetSwitched } from '@/store/networkSlice'
 
 interface AssetsInfoState extends EntityState<AssetInfo> {
   loading: boolean

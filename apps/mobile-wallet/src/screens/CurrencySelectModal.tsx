@@ -18,14 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import React from 'react'
 
-import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { ScreenSection } from '~/components/layout/Screen'
-import RadioButtonRow from '~/components/RadioButtonRow'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { currencySelected } from '~/store/settingsSlice'
-import { Currency } from '~/types/settings'
-import { currencies } from '~/utils/currencies'
+import BoxSurface from '@/components/layout/BoxSurface'
+import { ModalContent, ModalContentProps } from '@/components/layout/ModalContent'
+import { ScreenSection } from '@/components/layout/Screen'
+import RadioButtonRow from '@/components/RadioButtonRow'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { currencySelected } from '@/store/settingsSlice'
+import { Currency } from '@/types/settings'
+import { currencies } from '@/utils/currencies'
 
 const currencyOptions = Object.values(currencies).map((currency) => ({
   label: `${currency.name} (${currency.ticker})`,

@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ExplorerProvider, NodeProvider } from '@alephium/web3'
 import fetchRetry, { RequestInitWithRetry } from 'fetch-retry'
 
-import { defaultNetworkSettings } from '~/persistent-storage/settings'
-import { NetworkSettings } from '~/types/settings'
+import { defaultNetworkSettings } from '@/persistent-storage/settings'
+import { NetworkSettings } from '@/types/settings'
 
 export const exponentialBackoffFetchRetry = fetchRetry(fetch, {
   retryOn: [429],

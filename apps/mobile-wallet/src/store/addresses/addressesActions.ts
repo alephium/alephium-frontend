@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAction } from '@reduxjs/toolkit'
 
-import { Contact } from '~/types/contacts'
+import { Contact } from '@/types/contacts'
 
 // TODO: Same as in desktop wallet
 export const syncingAddressDataStarted = createAction('addresses/syncingAddressDataStarted')

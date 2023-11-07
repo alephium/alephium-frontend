@@ -21,8 +21,8 @@ import { Pressable, StyleProp, ViewProps, ViewStyle } from 'react-native'
 import Animated, { AnimateProps } from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
 
-import AppText, { AppTextProps } from '~/components/AppText'
-import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
+import AppText, { AppTextProps } from '@/components/AppText'
+import { INPUTS_HEIGHT, INPUTS_PADDING } from '@/style/globalStyle'
 
 export interface RowProps {
   children: ReactNode

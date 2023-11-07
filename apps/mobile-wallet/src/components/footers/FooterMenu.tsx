@@ -22,7 +22,7 @@ import { Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import FooterMenuItem from '~/components/footers/FooterMenuItem'
+import FooterMenuItem from '@/components/footers/FooterMenuItem'
 
 interface FooterMenuProps extends BottomTabBarProps {
   style?: StyleProp<ViewStyle>

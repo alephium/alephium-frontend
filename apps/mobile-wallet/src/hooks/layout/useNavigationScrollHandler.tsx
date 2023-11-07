@@ -20,7 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { useCallback } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 
-import { ScrollableViewRef, useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
+import { ScrollableViewRef, useNavigationScrollContext } from '@/contexts/NavigationScrollContext'
 
 const scrollDirectionDeltaThreshold = 10
 

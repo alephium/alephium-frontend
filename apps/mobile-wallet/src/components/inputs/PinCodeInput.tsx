@@ -21,9 +21,9 @@ import { StyleProp, ViewStyle } from 'react-native'
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
-import { PopInFast, PopOutFast } from '~/animations/reanimated/reanimatedAnimations'
-import NumberKeyboard, { NumberKeyboardKey } from '~/components/keyboard/NumberKeyboard'
-import { ImpactStyle, vibrate } from '~/utils/haptics'
+import { PopInFast, PopOutFast } from '@/animations/reanimated/reanimatedAnimations'
+import NumberKeyboard, { NumberKeyboardKey } from '@/components/keyboard/NumberKeyboard'
+import { ImpactStyle, vibrate } from '@/utils/haptics'
 
 interface PinInputProps {
   pinLength: number

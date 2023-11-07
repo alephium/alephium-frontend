@@ -34,9 +34,9 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
-import Button from '~/components/buttons/Button'
-import { ModalContentProps } from '~/components/layout/ModalContent'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import Button from '@/components/buttons/Button'
+import { ModalContentProps } from '@/components/layout/ModalContent'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '@/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
 

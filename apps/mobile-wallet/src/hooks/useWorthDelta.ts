@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calculateAmountWorth } from 'shared'
 
-import { useAppSelector } from '~/hooks/redux'
-import { selectTotalBalance } from '~/store/addressesSlice'
-import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
-import { DataPoint } from '~/types/charts'
-import { currencies } from '~/utils/currencies'
+import { useAppSelector } from '@/hooks/redux'
+import { selectTotalBalance } from '@/store/addressesSlice'
+import { useGetPriceQuery } from '@/store/assets/priceApiSlice'
+import { DataPoint } from '@/types/charts'
+import { currencies } from '@/utils/currencies'
 
 const useWorthDelta = (worthInBeginningOfChart?: DataPoint['worth']) => {
   const currency = useAppSelector((s) => s.settings.currency)

@@ -21,13 +21,13 @@ import LottieView from 'lottie-react-native'
 import { usePostHog } from 'posthog-react-native'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/lottie/wallet.json'
-import Button from '~/components/buttons/Button'
-import ButtonStack from '~/components/buttons/ButtonStack'
-import { ScreenProps } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
-import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import animationSrc from '@/animations/lottie/wallet.json'
+import Button from '@/components/buttons/Button'
+import ButtonStack from '@/components/buttons/ButtonStack'
+import { ScreenProps } from '@/components/layout/Screen'
+import ScrollScreen from '@/components/layout/ScrollScreen'
+import CenteredInstructions, { Instruction } from '@/components/text/CenteredInstructions'
+import RootStackParamList from '@/navigation/rootStackRoutes'
 
 interface ImportWalletAddressDiscoveryScreenProps
   extends StackScreenProps<RootStackParamList, 'ImportWalletAddressDiscoveryScreen'>,

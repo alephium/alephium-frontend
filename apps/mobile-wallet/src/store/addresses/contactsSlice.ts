@@ -21,11 +21,11 @@ import { createSlice, EntityState } from '@reduxjs/toolkit'
 import {
   contactDeletedFromPersistentStorage,
   contactStoredInPersistentStorage
-} from '~/store/addresses/addressesActions'
-import { contactsAdapter } from '~/store/addresses/addressesAdapter'
-import { walletDeleted } from '~/store/wallet/walletActions'
-import { walletUnlocked } from '~/store/wallet/walletSlice'
-import { Contact } from '~/types/contacts'
+} from '@/store/addresses/addressesActions'
+import { contactsAdapter } from '@/store/addresses/addressesAdapter'
+import { walletDeleted } from '@/store/wallet/walletActions'
+import { walletUnlocked } from '@/store/wallet/walletSlice'
+import { Contact } from '@/types/contacts'
 
 type ContactsState = EntityState<Contact>
 

@@ -18,13 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 
-import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import CenteredInstructions from '~/components/text/CenteredInstructions'
-import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
-import { resetNavigation } from '~/utils/navigation'
+import AppText from '@/components/AppText'
+import Button from '@/components/buttons/Button'
+import { ScreenSection } from '@/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '@/components/layout/ScrollScreen'
+import CenteredInstructions from '@/components/text/CenteredInstructions'
+import { BackupMnemonicNavigationParamList } from '@/navigation/BackupMnemonicNavigation'
+import { resetNavigation } from '@/utils/navigation'
 
 interface VerificationSuccessScreenProps
   extends StackScreenProps<BackupMnemonicNavigationParamList, 'VerificationSuccessScreen'>,

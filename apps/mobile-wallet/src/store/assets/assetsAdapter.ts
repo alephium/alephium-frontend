@@ -21,7 +21,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AssetInfo } from 'shared'
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { NFT } from '~/types/assets'
+import { NFT } from '@/types/assets'
 
 export const assetsInfoAdapter = createEntityAdapter<AssetInfo>({
   sortComparer: (a, b) => a.name.localeCompare(b.name)

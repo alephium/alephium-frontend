@@ -24,28 +24,28 @@ import { ActivityIndicator } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
-import Amount from '~/components/Amount'
-import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
-import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import Row from '~/components/Row'
-import SpinnerModal from '~/components/SpinnerModal'
-import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import { addressDiscoveryStopped, discoverAddresses, selectAllDiscoveredAddresses } from '~/store/addressDiscoverySlice'
+import Amount from '@/components/Amount'
+import AppText from '@/components/AppText'
+import Button from '@/components/buttons/Button'
+import BoxSurface from '@/components/layout/BoxSurface'
+import { ScreenSection, ScreenSectionTitle } from '@/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '@/components/layout/ScrollScreen'
+import Row from '@/components/Row'
+import SpinnerModal from '@/components/SpinnerModal'
+import usePersistAddressSettings from '@/hooks/layout/usePersistAddressSettings'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import RootStackParamList from '@/navigation/rootStackRoutes'
+import { addressDiscoveryStopped, discoverAddresses, selectAllDiscoveredAddresses } from '@/store/addressDiscoverySlice'
 import {
   addressesImported,
   selectAllAddresses,
   syncAddressesData,
   syncAddressesHistoricBalances
-} from '~/store/addressesSlice'
-import { VERTICAL_GAP } from '~/style/globalStyle'
-import { AddressHash } from '~/types/addresses'
-import { getRandomLabelColor } from '~/utils/colors'
-import { resetNavigation } from '~/utils/navigation'
+} from '@/store/addressesSlice'
+import { VERTICAL_GAP } from '@/style/globalStyle'
+import { AddressHash } from '@/types/addresses'
+import { getRandomLabelColor } from '@/utils/colors'
+import { resetNavigation } from '@/utils/navigation'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'AddressDiscoveryScreen'>, ScrollScreenProps {}
 

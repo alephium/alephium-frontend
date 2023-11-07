@@ -24,9 +24,9 @@ import { useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
-import AlephiumLogo from '~/images/logos/AlephiumLogo'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { ImpactStyle, vibrate } from '~/utils/haptics'
+import AlephiumLogo from '@/images/logos/AlephiumLogo'
+import { DEFAULT_MARGIN } from '@/style/globalStyle'
+import { ImpactStyle, vibrate } from '@/utils/haptics'
 
 interface WalletSwitchButtonProps {
   isLoading: boolean

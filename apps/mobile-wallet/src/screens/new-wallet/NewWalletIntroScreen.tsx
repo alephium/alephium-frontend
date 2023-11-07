@@ -20,14 +20,14 @@ import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/lottie/wallet.json'
-import Button from '~/components/buttons/Button'
-import ButtonStack from '~/components/buttons/ButtonStack'
-import { ScreenProps } from '~/components/layout/Screen'
-import ScrollScreen from '~/components/layout/ScrollScreen'
-import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
-import { useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import animationSrc from '@/animations/lottie/wallet.json'
+import Button from '@/components/buttons/Button'
+import ButtonStack from '@/components/buttons/ButtonStack'
+import { ScreenProps } from '@/components/layout/Screen'
+import ScrollScreen from '@/components/layout/ScrollScreen'
+import CenteredInstructions, { Instruction } from '@/components/text/CenteredInstructions'
+import { useAppSelector } from '@/hooks/redux'
+import RootStackParamList from '@/navigation/rootStackRoutes'
 
 interface NewWalletIntroScreenProps extends StackScreenProps<RootStackParamList, 'NewWalletIntroScreen'>, ScreenProps {}
 

@@ -20,10 +20,10 @@ import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { map } from 'lodash'
 import React from 'react'
 
-import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { ScreenSection } from '~/components/layout/Screen'
-import RadioButtonRow from '~/components/RadioButtonRow'
+import BoxSurface from '@/components/layout/BoxSurface'
+import { ModalContent, ModalContentProps } from '@/components/layout/ModalContent'
+import { ScreenSection } from '@/components/layout/Screen'
+import RadioButtonRow from '@/components/RadioButtonRow'
 
 interface GroupSelectModalProps extends ModalContentProps {
   selectedGroup?: number

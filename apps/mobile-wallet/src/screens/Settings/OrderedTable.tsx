@@ -20,7 +20,7 @@ import { chunk } from 'lodash'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
+import AppText from '@/components/AppText'
 
 interface OrderedTableProps {
   items: string[]

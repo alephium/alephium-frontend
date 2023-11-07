@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSelector } from '@reduxjs/toolkit'
 
-import { makeSelectAddresses } from '~/store/addressesSlice'
-import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { makeSelectAddresses } from '@/store/addressesSlice'
+import { selectAllPendingTransactions } from '@/store/pendingTransactionsSlice'
 
 export const makeSelectAddressesHashesWithPendingTransactions = () =>
   createSelector([selectAllPendingTransactions, makeSelectAddresses()], (allPendingTransactions, addresses) =>

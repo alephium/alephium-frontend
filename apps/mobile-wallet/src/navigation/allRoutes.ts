@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { InWalletTabsParamList } from '@/navigation/InWalletNavigation'
+import RootStackParamList from '@/navigation/rootStackRoutes'
+import { SendNavigationParamList } from '@/navigation/SendNavigation'
 
 type AllRouteNames = keyof InWalletTabsParamList | keyof RootStackParamList | keyof SendNavigationParamList
 

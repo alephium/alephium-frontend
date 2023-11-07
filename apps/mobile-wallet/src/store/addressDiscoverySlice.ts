@@ -27,20 +27,20 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 
-import client from '~/api/client'
-import { addressesImported } from '~/store/addressesSlice'
-import { appReset } from '~/store/appSlice'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
-import { RootState } from '~/store/store'
-import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
-import { Address, AddressIndex } from '~/types/addresses'
+import client from '@/api/client'
+import { addressesImported } from '@/store/addressesSlice'
+import { appReset } from '@/store/appSlice'
+import { customNetworkSettingsSaved, networkPresetSwitched } from '@/store/networkSlice'
+import { RootState } from '@/store/store'
+import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '@/store/wallet/walletActions'
+import { Address, AddressIndex } from '@/types/addresses'
 import {
   findMaxIndexBeforeFirstGap,
   findNextAvailableAddressIndex,
   initializeAddressDiscoveryGroupsData
-} from '~/utils/addresses'
-import { mnemonicToSeed } from '~/utils/crypto'
-import { sleep } from '~/utils/misc'
+} from '@/utils/addresses'
+import { mnemonicToSeed } from '@/utils/crypto'
+import { sleep } from '@/utils/misc'
 
 const sliceName = 'addressDiscovery'
 

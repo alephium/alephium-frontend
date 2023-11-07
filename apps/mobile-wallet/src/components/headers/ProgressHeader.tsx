@@ -21,10 +21,10 @@ import { useEffect, useState } from 'react'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
-import NavigationStackHeader, { NavigationStackHeaderProps } from '~/components/headers/NavigationStackHeader'
-import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
-import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import NavigationStackHeader, { NavigationStackHeaderProps } from '@/components/headers/NavigationStackHeader'
+import { BackupMnemonicNavigationParamList } from '@/navigation/BackupMnemonicNavigation'
+import { ReceiveNavigationParamList } from '@/navigation/ReceiveNavigation'
+import { SendNavigationParamList } from '@/navigation/SendNavigation'
 
 interface ProgressHeaderProps extends NavigationStackHeaderProps {
   workflow: 'send' | 'receive' | 'backup'

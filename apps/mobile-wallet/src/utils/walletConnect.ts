@@ -19,10 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
 import SignClient from '@walletconnect/sign-client'
 
-import { networkPresetSettings } from '~/persistent-storage/settings'
-import { NetworkPreset } from '~/types/network'
-import { NetworkSettings } from '~/types/settings'
-import { SessionProposalEvent } from '~/types/walletConnect'
+import { networkPresetSettings } from '@/persistent-storage/settings'
+import { NetworkPreset } from '@/types/network'
+import { NetworkSettings } from '@/types/settings'
+import { SessionProposalEvent } from '@/types/walletConnect'
 
 export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['networkId']) =>
   (networkId === 'devnet' && currentNetworkId === 4) ||

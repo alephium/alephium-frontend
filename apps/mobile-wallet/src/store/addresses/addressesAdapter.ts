@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { BalanceHistory } from '~/types/addresses'
-import { Contact } from '~/types/contacts'
+import { BalanceHistory } from '@/types/addresses'
+import { Contact } from '@/types/contacts'
 
 // TODO: Same as in desktop wallet
 export const contactsAdapter = createEntityAdapter<Contact>({

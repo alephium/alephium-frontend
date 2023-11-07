@@ -21,20 +21,20 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
 
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
-import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Address/AddressFormBaseScreen'
+import { ScrollScreenProps } from '@/components/layout/ScrollScreen'
+import SpinnerModal from '@/components/SpinnerModal'
+import usePersistAddressSettings from '@/hooks/layout/usePersistAddressSettings'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import RootStackParamList from '@/navigation/rootStackRoutes'
+import AddressFormBaseScreen, { AddressFormData } from '@/screens/Addresses/Address/AddressFormBaseScreen'
 import {
   newAddressGenerated,
   selectAllAddresses,
   syncAddressesData,
   syncAddressesHistoricBalances
-} from '~/store/addressesSlice'
-import { getRandomLabelColor } from '~/utils/colors'
-import { mnemonicToSeed } from '~/utils/crypto'
+} from '@/store/addressesSlice'
+import { getRandomLabelColor } from '@/utils/colors'
+import { mnemonicToSeed } from '@/utils/crypto'
 
 interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'NewAddressScreen'>, ScrollScreenProps {}
 

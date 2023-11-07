@@ -25,11 +25,11 @@ import {
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage,
   transactionSent
-} from '~/store/addressesSlice'
-import { RootState } from '~/store/store'
-import { AddressHash } from '~/types/addresses'
-import { AddressPendingTransaction, PendingTransaction } from '~/types/transactions'
-import { selectAddressTransactions, selectContactPendingTransactions } from '~/utils/addresses'
+} from '@/store/addressesSlice'
+import { RootState } from '@/store/store'
+import { AddressHash } from '@/types/addresses'
+import { AddressPendingTransaction, PendingTransaction } from '@/types/transactions'
+import { selectAddressTransactions, selectContactPendingTransactions } from '@/utils/addresses'
 
 const sliceName = 'pendingTransactions'
 

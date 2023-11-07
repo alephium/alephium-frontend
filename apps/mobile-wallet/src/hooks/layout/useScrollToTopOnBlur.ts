@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 
-import { ScrollableViewRef } from '~/contexts/NavigationScrollContext'
-import { scrollScreenTo } from '~/utils/layout'
+import { ScrollableViewRef } from '@/contexts/NavigationScrollContext'
+import { scrollScreenTo } from '@/utils/layout'
 
 const useScrollToTopOnBlur = (viewRef: ScrollableViewRef) => {
   const navigation = useNavigation()

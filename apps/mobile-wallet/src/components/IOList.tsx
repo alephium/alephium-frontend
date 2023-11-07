@@ -22,10 +22,10 @@ import _ from 'lodash'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
-import AddressBadge from '~/components/AddressBadge'
-import AppText from '~/components/AppText'
-import { useAppSelector } from '~/hooks/redux'
-import { AddressConfirmedTransaction } from '~/types/transactions'
+import AddressBadge from '@/components/AddressBadge'
+import AppText from '@/components/AppText'
+import { useAppSelector } from '@/hooks/redux'
+import { AddressConfirmedTransaction } from '@/types/transactions'
 
 interface IOListProps {
   isOut: boolean

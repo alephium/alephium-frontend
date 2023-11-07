@@ -21,11 +21,11 @@ import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
 
-import { persistAddressesMetadata } from '~/persistent-storage/wallet'
-import { getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
-import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '~/types/addresses'
-import { AddressTransaction, PendingTransaction } from '~/types/transactions'
-import { showToast } from '~/utils/layout'
+import { persistAddressesMetadata } from '@/persistent-storage/wallet'
+import { getTransactionsOfAddress } from '@/store/transactions/transactionUtils'
+import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '@/types/addresses'
+import { AddressTransaction, PendingTransaction } from '@/types/transactions'
+import { showToast } from '@/utils/layout'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)

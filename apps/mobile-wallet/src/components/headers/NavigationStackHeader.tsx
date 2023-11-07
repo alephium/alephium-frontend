@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackHeaderProps } from '@react-navigation/stack'
 
-import Button from '~/components/buttons/Button'
-import NavigationBaseHeader, { NavigationBaseHeaderProps } from '~/components/headers/NavigationBaseHeader'
+import Button from '@/components/buttons/Button'
+import NavigationBaseHeader, { NavigationBaseHeaderProps } from '@/components/headers/NavigationBaseHeader'
 
 export type NavigationStackHeaderProps = StackHeaderProps & NavigationBaseHeaderProps
 

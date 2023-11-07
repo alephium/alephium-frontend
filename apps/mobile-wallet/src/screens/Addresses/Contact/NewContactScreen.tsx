@@ -21,13 +21,13 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import { persistContact } from '~/persistent-storage/contacts'
-import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
-import { ContactFormData } from '~/types/contacts'
-import { showToast } from '~/utils/layout'
+import { ScrollScreenProps } from '@/components/layout/ScrollScreen'
+import SpinnerModal from '@/components/SpinnerModal'
+import RootStackParamList from '@/navigation/rootStackRoutes'
+import { persistContact } from '@/persistent-storage/contacts'
+import ContactFormBaseScreen from '@/screens/Addresses/Contact/ContactFormBaseScreen'
+import { ContactFormData } from '@/types/contacts'
+import { showToast } from '@/utils/layout'
 
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 

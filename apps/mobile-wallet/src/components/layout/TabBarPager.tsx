@@ -32,12 +32,12 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
 
-import BaseHeader from '~/components/headers/BaseHeader'
-import TopTabBar from '~/components/TopTabBar'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
-import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import BaseHeader from '@/components/headers/BaseHeader'
+import TopTabBar from '@/components/TopTabBar'
+import useNavigationScrollHandler from '@/hooks/layout/useNavigationScrollHandler'
+import useScreenScrollHandler from '@/hooks/layout/useScreenScrollHandler'
+import useTabScrollHandler from '@/hooks/layout/useTabScrollHandler'
+import { DEFAULT_MARGIN } from '@/style/globalStyle'
 
 export interface TabBarPageProps extends AnimatedScrollViewProps {
   contentStyle?: AnimateProps<ScrollViewProps>['style']

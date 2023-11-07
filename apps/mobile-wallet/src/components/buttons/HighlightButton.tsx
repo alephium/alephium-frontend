@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { MotiView } from 'moti'
 import styled, { useTheme } from 'styled-components/native'
 
-import Button, { ButtonProps } from '~/components/buttons/Button'
+import Button, { ButtonProps } from '@/components/buttons/Button'
 
 interface HighlightButtonProps extends ButtonProps {
   title: string

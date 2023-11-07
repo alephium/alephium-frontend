@@ -20,8 +20,8 @@ import { useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 import styled from 'styled-components/native'
 
-import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
-import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
+import BaseHeader, { BaseHeaderProps } from '@/components/headers/BaseHeader'
+import { useNavigationScrollContext } from '@/contexts/NavigationScrollContext'
 
 export type NavigationBaseHeaderProps = Omit<BaseHeaderProps, 'goBack' | 'scrollY'>
 

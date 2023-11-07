@@ -21,9 +21,9 @@ import { FlatListProps, ScrollViewProps } from 'react-native'
 import { FlatList as GHFlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import Screen, { ScreenProps } from '~/components/layout/Screen'
-import ScrollSection, { ScrollSectionProps } from '~/components/layout/ScrollSection'
-import { VERTICAL_GAP } from '~/style/globalStyle'
+import Screen, { ScreenProps } from '@/components/layout/Screen'
+import ScrollSection, { ScrollSectionProps } from '@/components/layout/ScrollSection'
+import { VERTICAL_GAP } from '@/style/globalStyle'
 
 interface ModalContentBaseProps {
   onClose?: () => void

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Linking, StyleProp, TextStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
+import AppText from '@/components/AppText'
 
 interface LinkToWebProps {
   text: string

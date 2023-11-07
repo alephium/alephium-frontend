@@ -24,11 +24,11 @@ import {
   syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
-} from '~/store/addressesSlice'
-import { RootState } from '~/store/store'
-import { AddressHash, AddressTransactionsSyncResult } from '~/types/addresses'
-import { AddressConfirmedTransaction } from '~/types/transactions'
-import { selectAddressTransactions, selectContactConfirmedTransactions } from '~/utils/addresses'
+} from '@/store/addressesSlice'
+import { RootState } from '@/store/store'
+import { AddressHash, AddressTransactionsSyncResult } from '@/types/addresses'
+import { AddressConfirmedTransaction } from '@/types/transactions'
+import { selectAddressTransactions, selectContactConfirmedTransactions } from '@/utils/addresses'
 
 const sliceName = 'confirmedTransactions'
 

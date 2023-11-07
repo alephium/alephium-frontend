@@ -23,9 +23,9 @@ import { TokenList } from '@alephium/token-list'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { omit } from 'lodash'
 
-import client, { exponentialBackoffFetchRetry } from '~/api/client'
-import { RootState } from '~/store/store'
-import { SyncUnknownTokensInfoResult } from '~/types/assets'
+import client, { exponentialBackoffFetchRetry } from '@/api/client'
+import { RootState } from '@/store/store'
+import { SyncUnknownTokensInfoResult } from '@/types/assets'
 
 export const loadingStarted = createAction('assets/loadingStarted')
 

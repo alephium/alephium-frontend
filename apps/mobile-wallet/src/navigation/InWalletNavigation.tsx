@@ -21,10 +21,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { Host } from 'react-native-portalize'
 
-import FooterMenu from '~/components/footers/FooterMenu'
-import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
-import DashboardScreen from '~/screens/DashboardScreen'
-import TransfersScreen from '~/screens/TransfersScreen'
+import FooterMenu from '@/components/footers/FooterMenu'
+import AddressesTabNavigation from '@/navigation/AddressesTabNavigation'
+import DashboardScreen from '@/screens/DashboardScreen'
+import TransfersScreen from '@/screens/TransfersScreen'
 
 export type InWalletTabsParamList = {
   DashboardScreen: undefined

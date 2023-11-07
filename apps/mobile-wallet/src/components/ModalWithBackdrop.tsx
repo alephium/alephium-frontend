@@ -20,8 +20,8 @@ import { Modal, ModalProps } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
-import { CloseButton } from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
+import { CloseButton } from '@/components/buttons/Button'
+import { ScreenSection } from '@/components/layout/Screen'
 
 export interface ModalWithBackdropProps extends ModalProps {
   closeModal?: () => void

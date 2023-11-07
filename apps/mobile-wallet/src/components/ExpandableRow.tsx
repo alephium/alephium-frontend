@@ -22,7 +22,7 @@ import { StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
+import AppText from '@/components/AppText'
 
 interface ExpandableRowProps {
   children: ReactNode

@@ -19,9 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import Amount from '~/components/Amount'
-import { useAppSelector } from '~/hooks/redux'
-import { currencies } from '~/utils/currencies'
+import Amount from '@/components/Amount'
+import { useAppSelector } from '@/hooks/redux'
+import { currencies } from '@/utils/currencies'
 
 interface WorthDeltaProps {
   delta: number

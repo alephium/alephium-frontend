@@ -21,8 +21,8 @@ import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
-import { BORDER_RADIUS } from '~/style/globalStyle'
+import AppText from '@/components/AppText'
+import { BORDER_RADIUS } from '@/style/globalStyle'
 
 export interface ListItemProps extends PressableProps {
   title: string

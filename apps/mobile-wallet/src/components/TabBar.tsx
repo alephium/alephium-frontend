@@ -20,9 +20,9 @@ import { ReactNode } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
-import { BORDER_RADIUS } from '~/style/globalStyle'
-import { ImpactStyle, vibrate } from '~/utils/haptics'
+import AppText from '@/components/AppText'
+import { BORDER_RADIUS } from '@/style/globalStyle'
+import { ImpactStyle, vibrate } from '@/utils/haptics'
 
 export interface TabItem {
   value: string
