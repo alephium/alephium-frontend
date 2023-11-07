@@ -20,4 +20,4 @@ import { Asset } from 'shared'
 
 import { NFT } from '@/types/assets'
 
-export const isNft = (item: Asset | NFT): item is NFT => (item as NFT).collectionAddress !== undefined
+export const isNft = (item: Asset | NFT): item is NFT => (item as NFT).collectionId !== undefined

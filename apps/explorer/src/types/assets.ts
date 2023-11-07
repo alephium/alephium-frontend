@@ -49,4 +49,4 @@ export const isFungibleTokenMetadata = (
 ): meta is FungibleTokenMetaData => (meta as FungibleTokenMetaData).name !== undefined
 
 export const isNFTMetadata = (meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>): meta is NFTMetaData =>
-  (meta as NFTMetaData).collectionAddress !== undefined
+  (meta as NFTMetaData).collectionId !== undefined

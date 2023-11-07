@@ -16,6 +16,10 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "postinstall": "patch-package"
   },
+  "dependencies": {
+    "@alephium/token-list": "^0.0.12",
+    "@alephium/web3": "0.22.0"
+  },
   "devDependencies": {
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
