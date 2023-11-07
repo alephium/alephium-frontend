@@ -1,19 +1,8 @@
 {
   "name": "shared",
   "version": "0.7.6",
-  "description": "A JS/TS library to interact with the Alephium platform",
-  "license": "GPL",
   "main": "lib/index.ts",
   "types": "lib/index.ts",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:alephium/js-sdk.git"
-  },
-  "homepage": "https://github.com/alephium/js-sdk",
-  "bugs": {
-    "url": "https://github.com/alephium/js-sdk/issues"
-  },
-  "author": "Alephium dev <dev@alephium.org>",
   "scripts": {
     "build": "rm -rf dist && npx tsc --build . && webpack",
     "dev": "tsnd --respawn lib/index.ts",
@@ -69,9 +58,5 @@
     "webpack-cli": "^5.0.1",
     "eslint-config-custom": "*",
     "tsconfig": "*"
-  },
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=8.0.0"
   }
 }

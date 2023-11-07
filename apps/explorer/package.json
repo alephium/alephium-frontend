@@ -1,12 +1,32 @@
 {
   "name": "alephium-explorer",
+  "description": "The Alephium explorer frontend",
   "version": "1.8.2",
-  "private": true,
-  "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build --outDir build",
+    "gh-pages-build": "tsc && vite build --outDir build --base=/explorer/",
+    "serve": "node docker/init-server-data.js && serve -s build -p 3000",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
+    "lint:fix": "eslint . --fix --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "ts:check": "tsc --noEmit"
   },
-  "homepage": "/",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "dependencies": {
     "shared": "*",
     "@alephium/token-list": "^0.0.11",
@@ -56,30 +76,6 @@
     "vitest": "^0.31.0",
     "eslint-config-custom": "*",
     "tsconfig": "*"
-  },
-  "scripts": {
-    "start": "vite",
-    "build": "tsc && vite build --outDir build",
-    "gh-pages-build": "tsc && vite build --outDir build --base=/explorer/",
-    "serve": "node docker/init-server-data.js && serve -s build -p 3000",
-    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
-    "lint:fix": "eslint . --fix --ext .ts,.tsx",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage",
-    "ts:check": "tsc --noEmit"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   }
+
 }

@@ -1,6 +1,12 @@
 {
   "name": "alephium-frontend",
-  "private": true,
+  "description": "A monorepo containing all things frontend on Alephium",
+  "author": "Alephium dev <dev@alephium.org>",
+  "packageManager": "bun@1.0.9",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -23,10 +29,5 @@
     "tsconfig": "*",
     "turbo": "latest",
     "typescript": "^5.2.2"
-  },
-  "packageManager": "bun@1.0.9",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  }
 }

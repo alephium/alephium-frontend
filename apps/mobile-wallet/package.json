@@ -92,13 +92,6 @@
     "styled-components": "^5.3.5",
     "victory-native": "^36.6.10"
   },
-  "expo": {
-    "install": {
-      "exclude": [
-        "react-native-reanimated"
-      ]
-    }
-  },
   "devDependencies": {
     "@babel/core": "^7.18.6",
     "@types/lodash": "^4.14.182",
@@ -116,9 +109,11 @@
     "ts-node": "^10.9.1",
     "tsconfig": "*"
   },
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=8.3.0"
-  },
-  "private": true
+  "expo": {
+    "install": {
+      "exclude": [
+        "react-native-reanimated"
+      ]
+    }
+  }
 }
