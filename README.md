@@ -24,3 +24,9 @@ bun format
 ```
 bun ts:check
 ```
+
+### Build
+
+```
+bun run build
+```

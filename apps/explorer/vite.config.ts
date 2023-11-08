@@ -22,6 +22,7 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig({
   resolve: {
@@ -29,7 +30,7 @@ export default defineConfig({
       events: 'rollup-plugin-node-polyfills/polyfills/events'
     }
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+  plugins: [react(), viteTsconfigPaths(), svgrPlugin(), nodePolyfills()],
   test: {
     globals: true,
     environment: 'happy-dom',

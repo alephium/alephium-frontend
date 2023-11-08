@@ -4,7 +4,7 @@
   "version": "1.8.2",
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build --outDir build",
+    "build": "vite build --outDir build",
     "gh-pages-build": "tsc && vite build --outDir build --base=/explorer/",
     "serve": "node docker/init-server-data.js && serve -s build -p 3000",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",

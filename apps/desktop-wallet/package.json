@@ -4,7 +4,7 @@
   "version": "2.1.5",
   "main": "public/electron.js",
   "scripts": {
-    "build": "tsc && cross-env INLINE_RUNTIME_CHUNK=false VITE_VERSION=$npm_package_version vite build",
+    "build": "cross-env INLINE_RUNTIME_CHUNK=false VITE_VERSION=$npm_package_version vite build",
     "start:electron": "concurrently \"cross-env VITE_VERSION=$npm_package_version vite\" \"electron .\"",
     "electron-pack": "npm run build && electron-builder",
     "electron-pack-windows": "npm run build && electron-builder -w",
