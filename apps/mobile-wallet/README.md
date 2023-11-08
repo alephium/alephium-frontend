@@ -10,8 +10,6 @@ Install depedencies:
 npm i
 ```
 
-Install the [Development Client app](development-build.apk) on your Android device (replacement of the Expo Go mobile app).
-
 Start developer tools:
 
 ```shell
