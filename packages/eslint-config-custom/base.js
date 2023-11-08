@@ -30,7 +30,7 @@ module.exports = {
     'no-use-before-define': 'off',
     'unused-imports/no-unused-imports-ts': 'warn',
     'simple-import-sort/imports': 'warn',
-    'header/header': [2, './license-header.js'],
+    'header/header': [2, '../../license-header.js'],
     quotes: [1, 'single', { avoidEscape: true }],
     '@typescript-eslint/member-delimiter-style': [
       'error',
