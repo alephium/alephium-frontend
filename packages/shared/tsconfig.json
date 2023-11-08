@@ -1,5 +1,8 @@
 {
   "extends": "tsconfig/base",
   "include": ["lib/**/*"],
-  "exclude": ["test"]
+  "exclude": ["test"],
+  "compilerOptions": {
+    "resolveJsonModule": true
+  }
 }

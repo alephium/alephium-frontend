@@ -10,8 +10,7 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
-    "lint:fix": "eslint . --fix --ext .ts,.tsx",
-    "test": "jest"
+    "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
   "dependencies": {
     "shared": "*",

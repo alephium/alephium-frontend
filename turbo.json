@@ -12,6 +12,7 @@
       "cache": false,
       "persistent": true
     },
-    "ts:check": {}
+    "ts:check": {},
+    "test": {}
   }
 }
