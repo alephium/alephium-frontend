@@ -30,10 +30,10 @@ import Animated, {
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import { fastestSpringConfiguration } from '@/animations/reanimated/reanimatedAnimations'
-import AppText from '@/components/AppText'
-import { BORDER_RADIUS } from '@/style/globalStyle'
-import { ImpactStyle, vibrate } from '@/utils/haptics'
+import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
+import AppText from '~/components/AppText'
+import { BORDER_RADIUS } from '~/style/globalStyle'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 export interface ButtonProps extends PressableProps {
   title?: string

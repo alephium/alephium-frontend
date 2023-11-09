@@ -33,15 +33,15 @@ import Animated, {
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import Button from '@/components/buttons/Button'
-import ButtonStack from '@/components/buttons/ButtonStack'
-import Screen, { ScreenProps } from '@/components/layout/Screen'
-import { useAppDispatch } from '@/hooks/redux'
-import AlephiumLogo from '@/images/logos/AlephiumLogo'
-import RootStackParamList from '@/navigation/rootStackRoutes'
-import { getWalletMetadata } from '@/persistent-storage/wallet'
-import { methodSelected, WalletGenerationMethod } from '@/store/walletGenerationSlice'
+import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
+import ButtonStack from '~/components/buttons/ButtonStack'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { useAppDispatch } from '~/hooks/redux'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { getWalletMetadata } from '~/persistent-storage/wallet'
+import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 

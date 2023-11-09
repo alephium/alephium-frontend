@@ -20,9 +20,9 @@ import * as SecureStore from 'expo-secure-store'
 import { clone } from 'lodash'
 import { Appearance } from 'react-native'
 
-import { defaultSecureStoreConfig } from '@/persistent-storage/config'
-import { NetworkName, NetworkPreset } from '@/types/network'
-import { GeneralSettings, NetworkSettings, SettingsKey, SettingsPartial } from '@/types/settings'
+import { defaultSecureStoreConfig } from '~/persistent-storage/config'
+import { NetworkName, NetworkPreset } from '~/types/network'
+import { GeneralSettings, NetworkSettings, SettingsKey, SettingsPartial } from '~/types/settings'
 
 const STORAGE_KEY = 'wallet-settings'
 

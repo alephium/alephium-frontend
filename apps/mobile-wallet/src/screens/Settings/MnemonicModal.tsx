@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { usePreventScreenCapture } from 'expo-screen-capture'
 
-import Button from '@/components/buttons/Button'
-import { ModalContent, ModalContentProps } from '@/components/layout/ModalContent'
-import { ScreenSection } from '@/components/layout/Screen'
-import { useAppSelector } from '@/hooks/redux'
-import OrderedTable from '@/screens/Settings/OrderedTable'
+import Button from '~/components/buttons/Button'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import { ScreenSection } from '~/components/layout/Screen'
+import { useAppSelector } from '~/hooks/redux'
+import OrderedTable from '~/screens/Settings/OrderedTable'
 
 interface MnemonicModalProps extends ModalContentProps {
   onVerifyButtonPress?: () => void

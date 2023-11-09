@@ -20,8 +20,8 @@ import { nanoid } from 'nanoid'
 import { PostHogProvider, usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect } from 'react'
 
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { analyticsIdGenerated } from '@/store/settingsSlice'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { analyticsIdGenerated } from '~/store/settingsSlice'
 
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'

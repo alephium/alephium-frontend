@@ -18,14 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
-import { appBecameInactive, appReset } from '@/store/appSlice'
+import { appBecameInactive, appReset } from '~/store/appSlice'
 import {
   newWalletGenerated,
   newWalletImportedWithMetadata,
   walletDeleted,
   walletNameChanged
-} from '@/store/wallet/walletActions'
-import { WalletState, WalletUnlockedPayload } from '@/types/wallet'
+} from '~/store/wallet/walletActions'
+import { WalletState, WalletUnlockedPayload } from '~/types/wallet'
 
 const sliceName = 'wallet'
 

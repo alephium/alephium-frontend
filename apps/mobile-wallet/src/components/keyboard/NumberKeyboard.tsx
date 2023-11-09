@@ -21,7 +21,7 @@ import { PressableProps } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
+import AppText from '~/components/AppText'
 
 interface NumberKeyboardProps {
   onPress: (value: NumberKeyboardKey) => void

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled, { css, DefaultTheme } from 'styled-components/native'
 
-import { BORDER_RADIUS_BIG } from '@/style/globalStyle'
+import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
 interface BoxSurfaceProps {
   type?: keyof DefaultTheme['bg']

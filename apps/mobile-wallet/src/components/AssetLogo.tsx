@@ -23,11 +23,11 @@ import { HelpCircle } from 'lucide-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import { useAppSelector } from '@/hooks/redux'
-import AlephiumLogo from '@/images/logos/AlephiumLogo'
-import { selectAssetInfoById, selectNFTById } from '@/store/assets/assetsSelectors'
-import { BORDER_RADIUS_SMALL } from '@/style/globalStyle'
+import AppText from '~/components/AppText'
+import { useAppSelector } from '~/hooks/redux'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
+import { selectAssetInfoById, selectNFTById } from '~/store/assets/assetsSelectors'
+import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface AssetLogoProps {
   assetId: TokenInfo['id']

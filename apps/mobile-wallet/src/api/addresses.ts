@@ -20,7 +20,7 @@ import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import dayjs from 'dayjs'
 
-import client from '@/api/client'
+import client from '~/api/client'
 import {
   Address,
   AddressBalancesSyncResult,
@@ -28,8 +28,8 @@ import {
   AddressHash,
   AddressTokensSyncResult,
   AddressTransactionsSyncResult
-} from '@/types/addresses'
-import { CHART_DATE_FORMAT } from '@/utils/constants'
+} from '~/types/addresses'
+import { CHART_DATE_FORMAT } from '~/utils/constants'
 
 const PAGE_LIMIT = 100
 

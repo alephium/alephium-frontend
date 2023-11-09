@@ -20,12 +20,12 @@ import { openBrowserAsync } from 'expo-web-browser'
 import { ChevronRightIcon } from 'lucide-react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import AssetLogo from '@/components/AssetLogo'
-import Badge from '@/components/Badge'
-import ListItem from '@/components/ListItem'
-import { useAppSelector } from '@/hooks/redux'
-import { AddressHash } from '@/types/addresses'
+import AppText from '~/components/AppText'
+import AssetLogo from '~/components/AssetLogo'
+import Badge from '~/components/Badge'
+import ListItem from '~/components/ListItem'
+import { useAppSelector } from '~/hooks/redux'
+import { AddressHash } from '~/types/addresses'
 
 export type UnknownTokensEntry = {
   numberOfUnknownTokens: number

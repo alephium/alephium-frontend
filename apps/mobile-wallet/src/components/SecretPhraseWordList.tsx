@@ -22,8 +22,8 @@ import { Pressable } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled, { DefaultTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import { BORDER_RADIUS_SMALL } from '@/style/globalStyle'
+import AppText from '~/components/AppText'
+import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface SecretPhraseWordListProps {
   words: SelectedWord[]

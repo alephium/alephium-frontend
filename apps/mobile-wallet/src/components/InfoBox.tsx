@@ -21,7 +21,7 @@ import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
+import AppText from '~/components/AppText'
 
 interface InfoBoxProps {
   title: string

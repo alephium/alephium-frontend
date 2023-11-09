@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import { ScreenSection, ScreenSectionProps } from '@/components/layout/Screen'
+import AppText from '~/components/AppText'
+import { ScreenSection, ScreenSectionProps } from '~/components/layout/Screen'
 
 interface ScreenIntroProps extends ScreenSectionProps {
   title?: string

@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalContent, ModalContentProps } from '@/components/layout/ModalContent'
-import ContactListScreenBase, { ContactListScreenBaseProps } from '@/screens/ContactListScreenBase'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
 
 type SelectContactModalProps = ModalContentProps & ContactListScreenBaseProps
 

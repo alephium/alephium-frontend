@@ -21,8 +21,8 @@ import { NavigationHelpers, ParamListBase } from '@react-navigation/native'
 import { TouchableWithoutFeedback } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { BORDER_RADIUS } from '@/style/globalStyle'
-import { ImpactStyle, vibrate } from '@/utils/haptics'
+import { BORDER_RADIUS } from '~/style/globalStyle'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface FooterMenuItemProps {
   options: BottomTabNavigationOptions

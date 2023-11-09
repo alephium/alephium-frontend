@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Optional } from '@alephium/web3'
 import { isAddressValid as isAddressHashValid } from 'shared'
 
-import { store } from '@/store/store'
-import { Contact } from '@/types/contacts'
+import { store } from '~/store/store'
+import { Contact } from '~/types/contacts'
 
 // TODO: Same as in desktop wallet
 export const requiredErrorMessage = 'This field is required'

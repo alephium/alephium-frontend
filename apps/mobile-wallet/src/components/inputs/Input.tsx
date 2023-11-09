@@ -29,10 +29,10 @@ import {
 import Animated, { AnimateProps, FadeIn, FadeOut, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import { fastSpringConfiguration } from '@/animations/reanimated/reanimatedAnimations'
-import AppText from '@/components/AppText'
-import Row from '@/components/Row'
-import { BORDER_RADIUS } from '@/style/globalStyle'
+import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
+import AppText from '~/components/AppText'
+import Row from '~/components/Row'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export type InputValue = string | number | undefined | unknown
 export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never

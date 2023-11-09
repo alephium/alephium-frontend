@@ -20,8 +20,8 @@ import { BlurView } from 'expo-blur'
 import { ActivityIndicator } from 'react-native'
 import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import ModalWithBackdrop from '@/components/ModalWithBackdrop'
+import AppText from '~/components/AppText'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 
 type FontColor = keyof DefaultTheme['font']
 

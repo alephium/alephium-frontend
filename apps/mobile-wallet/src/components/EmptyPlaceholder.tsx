@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import { DEFAULT_MARGIN } from '@/style/globalStyle'
+import AppText from '~/components/AppText'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const EmptyPlaceholder = ({ children, ...props }: ViewProps) => (
   <EmptyPlaceholderStyled {...props}>

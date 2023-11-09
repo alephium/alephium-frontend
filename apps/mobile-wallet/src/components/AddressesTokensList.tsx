@@ -23,19 +23,19 @@ import Animated, { CurvedTransition } from 'react-native-reanimated'
 import { Asset } from 'shared'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import Badge from '@/components/Badge'
-import NFTsGrid from '@/components/NFTsGrid'
-import TabBar, { TabItem } from '@/components/TabBar'
-import UnknownTokensListItem, { UnknownTokensEntry } from '@/components/UnknownTokensListItem'
-import { useAppSelector } from '@/hooks/redux'
+import AppText from '~/components/AppText'
+import Badge from '~/components/Badge'
+import NFTsGrid from '~/components/NFTsGrid'
+import TabBar, { TabItem } from '~/components/TabBar'
+import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
+import { useAppSelector } from '~/hooks/redux'
 import {
   makeSelectAddressesCheckedUnknownTokens,
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs
-} from '@/store/addressesSlice'
-import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '@/style/globalStyle'
-import { AddressHash } from '@/types/addresses'
+} from '~/store/addressesSlice'
+import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
+import { AddressHash } from '~/types/addresses'
 
 import TokenListItem from './TokenListItem'
 

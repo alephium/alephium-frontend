@@ -19,12 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { transactionSign } from '@alephium/web3'
 import { AssetAmount } from 'shared'
 
-import client from '@/api/client'
-import { store } from '@/store/store'
-import { Address, AddressHash } from '@/types/addresses'
-import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/types/transactions'
-import { getAddressAssetsAvailableBalance } from '@/utils/addresses'
-import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '@/utils/transactions'
+import client from '~/api/client'
+import { store } from '~/store/store'
+import { Address, AddressHash } from '~/types/addresses'
+import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
+import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
+import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
   const { unsignedTxs } = await client.node.transactions.postTransactionsSweepAddressBuild({

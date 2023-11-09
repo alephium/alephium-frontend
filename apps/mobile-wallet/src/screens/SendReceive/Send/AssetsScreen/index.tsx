@@ -21,20 +21,20 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components/native'
 
-import { BackButton, ContinueButton } from '@/components/buttons/Button'
-import { ScreenSection } from '@/components/layout/Screen'
-import ScreenIntro from '@/components/layout/ScreenIntro'
-import ScrollScreen, { ScrollScreenProps } from '@/components/layout/ScrollScreen'
-import { useSendContext } from '@/contexts/SendContext'
-import useScrollToTopOnFocus from '@/hooks/layout/useScrollToTopOnFocus'
-import { useAppSelector } from '@/hooks/redux'
-import { SendNavigationParamList } from '@/navigation/SendNavigation'
-import AssetRow from '@/screens/SendReceive/Send/AssetsScreen/AssetRow'
+import { BackButton, ContinueButton } from '~/components/buttons/Button'
+import { ScreenSection } from '~/components/layout/Screen'
+import ScreenIntro from '~/components/layout/ScreenIntro'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { useSendContext } from '~/contexts/SendContext'
+import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
+import { useAppSelector } from '~/hooks/redux'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
   selectAddressByHash
-} from '@/store/addressesSlice'
+} from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>, ScrollScreenProps {}
 

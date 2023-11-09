@@ -18,6 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Asset } from 'shared'
 
-import { NFT } from '@/types/assets'
+import { NFT } from '~/types/assets'
 
 export const isNft = (item: Asset | NFT): item is NFT => (item as NFT).collectionId !== undefined

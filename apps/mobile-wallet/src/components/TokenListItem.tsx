@@ -19,10 +19,10 @@ import { StyleProp, ViewStyle } from 'react-native'
 import { Asset } from 'shared'
 import styled from 'styled-components/native'
 
-import Amount from '@/components/Amount'
-import AppText from '@/components/AppText'
-import AssetLogo from '@/components/AssetLogo'
-import ListItem from '@/components/ListItem'
+import Amount from '~/components/Amount'
+import AppText from '~/components/AppText'
+import AssetLogo from '~/components/AssetLogo'
+import ListItem from '~/components/ListItem'
 
 interface TokenListItemProps {
   asset: Asset

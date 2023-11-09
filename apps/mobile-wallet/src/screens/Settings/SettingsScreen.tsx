@@ -25,25 +25,25 @@ import { Portal } from 'react-native-portalize'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import AuthenticationModal from '@/components/AuthenticationModal'
-import Button from '@/components/buttons/Button'
-import BottomModal from '@/components/layout/BottomModal'
-import BoxSurface from '@/components/layout/BoxSurface'
-import { ModalContent } from '@/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection, ScreenSectionTitle } from '@/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '@/components/layout/ScrollScreen'
-import ModalWithBackdrop from '@/components/ModalWithBackdrop'
-import Row from '@/components/Row'
-import Toggle from '@/components/Toggle'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import useBiometrics from '@/hooks/useBiometrics'
-import RootStackParamList from '@/navigation/rootStackRoutes'
-import { disableBiometrics, enableBiometrics } from '@/persistent-storage/wallet'
-import CurrencySelectModal from '@/screens/CurrencySelectModal'
-import MnemonicModal from '@/screens/Settings/MnemonicModal'
-import WalletDeleteModal from '@/screens/Settings/WalletDeleteModal'
-import SwitchNetworkModal from '@/screens/SwitchNetworkModal'
+import AppText from '~/components/AppText'
+import AuthenticationModal from '~/components/AuthenticationModal'
+import Button from '~/components/buttons/Button'
+import BottomModal from '~/components/layout/BottomModal'
+import BoxSurface from '~/components/layout/BoxSurface'
+import { ModalContent } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import Row from '~/components/Row'
+import Toggle from '~/components/Toggle'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useBiometrics from '~/hooks/useBiometrics'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { disableBiometrics, enableBiometrics } from '~/persistent-storage/wallet'
+import CurrencySelectModal from '~/screens/CurrencySelectModal'
+import MnemonicModal from '~/screens/Settings/MnemonicModal'
+import WalletDeleteModal from '~/screens/Settings/WalletDeleteModal'
+import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import {
   analyticsToggled,
   biometricsToggled,
@@ -51,9 +51,9 @@ import {
   passwordRequirementToggled,
   themeChanged,
   walletConnectToggled
-} from '@/store/settingsSlice'
-import { VERTICAL_GAP } from '@/style/globalStyle'
-import { resetNavigation } from '@/utils/navigation'
+} from '~/store/settingsSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
+import { resetNavigation } from '~/utils/navigation'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
 

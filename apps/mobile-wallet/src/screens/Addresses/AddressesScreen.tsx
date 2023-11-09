@@ -25,25 +25,25 @@ import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
-import AddressCard from '@/components/AddressCard'
-import AddressesTokensList from '@/components/AddressesTokensList'
-import Button from '@/components/buttons/Button'
-import Carousel from '@/components/Carousel'
-import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '@/components/layout/BottomBarScrollScreen'
-import BottomModal from '@/components/layout/BottomModal'
-import { TabBarPageProps } from '@/components/layout/TabBarPager'
-import RefreshSpinner from '@/components/RefreshSpinner'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import RootStackParamList from '@/navigation/rootStackRoutes'
-import SelectAddressModal from '@/screens/SendReceive/Send/SelectAddressModal'
+import AddressCard from '~/components/AddressCard'
+import AddressesTokensList from '~/components/AddressesTokensList'
+import Button from '~/components/buttons/Button'
+import Carousel from '~/components/Carousel'
+import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
+import BottomModal from '~/components/layout/BottomModal'
+import { TabBarPageProps } from '~/components/layout/TabBarPager'
+import RefreshSpinner from '~/components/RefreshSpinner'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import {
   selectAddressByHash,
   selectAddressIds,
   selectAllAddresses,
   selectDefaultAddress,
   syncAddressesData
-} from '@/store/addressesSlice'
-import { AddressHash } from '@/types/addresses'
+} from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
 
 const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const dispatch = useAppDispatch()

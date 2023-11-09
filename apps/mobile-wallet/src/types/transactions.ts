@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { explorer } from '@alephium/web3'
 import { AssetAmount } from 'shared'
 
-import { Address, AddressHash } from '@/types/addresses'
+import { Address, AddressHash } from '~/types/addresses'
 
 export type PendingTransaction =
   | {

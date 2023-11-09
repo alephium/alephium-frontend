@@ -20,12 +20,12 @@ import { useEffect } from 'react'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
-import Button from '@/components/buttons/Button'
-import EmptyPlaceholder from '@/components/EmptyPlaceholder'
-import { ModalContent, ModalContentProps } from '@/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '@/components/layout/Screen'
-import ListItem from '@/components/ListItem'
-import { useWalletConnectContext } from '@/contexts/walletConnect/WalletConnectContext'
+import Button from '~/components/buttons/Button'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import ListItem from '~/components/ListItem'
+import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 
 interface WalletConnectPairingsModalProps extends ModalContentProps {
   onPasteWcUrlPress: () => void

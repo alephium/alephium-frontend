@@ -19,10 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { map } from 'lodash'
 
-import BoxSurface from '@/components/layout/BoxSurface'
-import { ModalContent, ModalContentProps } from '@/components/layout/ModalContent'
-import { ScreenSection } from '@/components/layout/Screen'
-import RadioButtonRow from '@/components/RadioButtonRow'
+import BoxSurface from '~/components/layout/BoxSurface'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import { ScreenSection } from '~/components/layout/Screen'
+import RadioButtonRow from '~/components/RadioButtonRow'
 
 interface GroupSelectModalProps extends ModalContentProps {
   selectedGroup?: number

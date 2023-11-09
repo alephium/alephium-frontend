@@ -22,10 +22,10 @@ import { useState } from 'react'
 import { ViewProps } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import BaseHeader, { HeaderOptions } from '@/components/headers/BaseHeader'
-import StackHeader from '@/components/headers/StackHeader'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '@/style/globalStyle'
+import AppText from '~/components/AppText'
+import BaseHeader, { HeaderOptions } from '~/components/headers/BaseHeader'
+import StackHeader from '~/components/headers/StackHeader'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScreenProps extends ViewProps {
   hasNavigationHeader?: boolean

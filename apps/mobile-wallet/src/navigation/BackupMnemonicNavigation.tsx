@@ -19,10 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
-import RootStackParamList from '@/navigation/rootStackRoutes'
-import BackupIntroScreen from '@/screens/BackupMnemonic/BackupIntroScreen'
-import VerificationSuccessScreen from '@/screens/BackupMnemonic/VerificationSuccessScreen'
-import VerifyMnemonicScreen from '@/screens/BackupMnemonic/VerifyMnemonicScreen'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import BackupIntroScreen from '~/screens/BackupMnemonic/BackupIntroScreen'
+import VerificationSuccessScreen from '~/screens/BackupMnemonic/VerificationSuccessScreen'
+import VerifyMnemonicScreen from '~/screens/BackupMnemonic/VerifyMnemonicScreen'
 
 export interface BackupMnemonicNavigationParamList extends ParamListBase {
   BackupIntroScreen: undefined

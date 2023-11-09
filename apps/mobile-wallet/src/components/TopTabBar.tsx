@@ -23,9 +23,9 @@ import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } f
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import { BORDER_RADIUS, DEFAULT_MARGIN } from '@/style/globalStyle'
-import { ImpactStyle, vibrate } from '@/utils/haptics'
+import AppText from '~/components/AppText'
+import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 type TabsLayout = Record<number, LayoutRectangle>
 

@@ -21,14 +21,14 @@ import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import { APIError, AssetAmount, getHumanReadableError } from 'shared'
 
-import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '@/api/transactions'
-import AuthenticationModal from '@/components/AuthenticationModal'
-import ConsolidationModal from '@/components/ConsolidationModal'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAddressByHash, transactionSent } from '@/store/addressesSlice'
-import { AddressHash } from '@/types/addresses'
-import { showToast } from '@/utils/layout'
-import { getTransactionAssetAmounts } from '@/utils/transactions'
+import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
+import AuthenticationModal from '~/components/AuthenticationModal'
+import ConsolidationModal from '~/components/ConsolidationModal'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
+import { AddressHash } from '~/types/addresses'
+import { showToast } from '~/utils/layout'
+import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 type UnsignedTxData = {
   unsignedTxs: {

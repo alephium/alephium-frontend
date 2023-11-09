@@ -21,20 +21,20 @@ import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import { fastestSpringConfiguration } from '@/animations/reanimated/reanimatedAnimations'
-import AddressBadge from '@/components/AddressBadge'
-import AppText from '@/components/AppText'
-import AssetAmountWithLogo from '@/components/AssetAmountWithLogo'
-import Checkmark from '@/components/Checkmark'
-import { useAppSelector } from '@/hooks/redux'
+import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
+import AddressBadge from '~/components/AddressBadge'
+import AppText from '~/components/AppText'
+import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
+import Checkmark from '~/components/Checkmark'
+import { useAppSelector } from '~/hooks/redux'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
   selectAddressByHash
-} from '@/store/addressesSlice'
-import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '@/style/globalStyle'
-import { AddressHash } from '@/types/addresses'
-import { ImpactStyle, vibrate } from '@/utils/haptics'
+} from '~/store/addressesSlice'
+import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { AddressHash } from '~/types/addresses'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash

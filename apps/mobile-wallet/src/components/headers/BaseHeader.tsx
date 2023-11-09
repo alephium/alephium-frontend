@@ -31,10 +31,10 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import { useNavigationScrollContext } from '@/contexts/NavigationScrollContext'
-import { DEFAULT_MARGIN } from '@/style/globalStyle'
-import { scrollScreenTo } from '@/utils/layout'
+import AppText from '~/components/AppText'
+import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { scrollScreenTo } from '~/utils/layout'
 
 export type HeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
   headerTitleRight?: () => ReactNode

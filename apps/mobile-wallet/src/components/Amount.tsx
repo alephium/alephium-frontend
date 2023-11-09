@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StyleProp, TextStyle } from 'react-native'
 import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from 'shared'
 
-import { useAppSelector } from '@/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 
 import AppText, { AppTextProps } from './AppText'
 

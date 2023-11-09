@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import { useAppSelector } from '@/hooks/redux'
-import { NetworkStatus } from '@/types/network'
+import AppText from '~/components/AppText'
+import { useAppSelector } from '~/hooks/redux'
+import { NetworkStatus } from '~/types/network'
 
 const ActiveNetworkBadge = () => {
   const networkStatus = useAppSelector((s) => s.network.status)

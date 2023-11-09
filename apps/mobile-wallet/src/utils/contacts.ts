@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Contact } from '@/types/contacts'
+import { Contact } from '~/types/contacts'
 
 // TODO: Same as in desktop wallet
 export const filterContacts = (contacts: Contact[], text: string) =>

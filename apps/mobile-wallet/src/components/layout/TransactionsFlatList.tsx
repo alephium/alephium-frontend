@@ -21,21 +21,21 @@ import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import BottomModal from '@/components/layout/BottomModal'
-import RefreshSpinner from '@/components/RefreshSpinner'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import TransactionModal from '@/screens/TransactionModal'
+import AppText from '~/components/AppText'
+import BottomModal from '~/components/layout/BottomModal'
+import RefreshSpinner from '~/components/RefreshSpinner'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import TransactionModal from '~/screens/TransactionModal'
 import {
   selectAddressByHash,
   syncAddressesData,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
-} from '@/store/addressesSlice'
-import { DEFAULT_MARGIN } from '@/style/globalStyle'
-import { AddressHash } from '@/types/addresses'
-import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '@/types/transactions'
-import { isPendingTx } from '@/utils/transactions'
+} from '~/store/addressesSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { AddressHash } from '~/types/addresses'
+import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
+import { isPendingTx } from '~/utils/transactions'
 
 import TransactionListItem from '../TransactionListItem'
 import { ScreenSectionTitle } from './Screen'

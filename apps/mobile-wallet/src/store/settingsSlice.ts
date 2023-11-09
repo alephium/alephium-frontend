@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
-import { defaultGeneralSettings, persistSettings } from '@/persistent-storage/settings'
-import { appReset } from '@/store/appSlice'
-import { RootState } from '@/store/store'
-import { GeneralSettings } from '@/types/settings'
+import { defaultGeneralSettings, persistSettings } from '~/persistent-storage/settings'
+import { appReset } from '~/store/appSlice'
+import { RootState } from '~/store/store'
+import { GeneralSettings } from '~/types/settings'
 
 const sliceName = 'settings'
 

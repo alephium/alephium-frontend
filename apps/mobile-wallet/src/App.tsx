@@ -27,25 +27,25 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
-import client from '@/api/client'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import useInterval from '@/hooks/useInterval'
-import useLoadStoredSettings from '@/hooks/useLoadStoredSettings'
-import RootStackNavigation from '@/navigation/RootStackNavigation'
+import client from '~/api/client'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useInterval from '~/hooks/useInterval'
+import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
+import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
   makeSelectAddressesUnknownTokens,
   selectAddressIds,
   syncAddressesData,
   syncAddressesDataWhenPendingTxsConfirm,
   syncAddressesHistoricBalances
-} from '@/store/addressesSlice'
-import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/store/assets/assetsActions'
-import { selectIsTokensMetadataUninitialized } from '@/store/assets/assetsSelectors'
-import { apiClientInitFailed, apiClientInitSucceeded } from '@/store/networkSlice'
-import { selectAllPendingTransactions } from '@/store/pendingTransactionsSlice'
-import { store } from '@/store/store'
-import { makeSelectAddressesHashesWithPendingTransactions } from '@/store/transactions/transactionSelectors'
-import { themes } from '@/style/themes'
+} from '~/store/addressesSlice'
+import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
+import { selectIsTokensMetadataUninitialized } from '~/store/assets/assetsSelectors'
+import { apiClientInitFailed, apiClientInitSucceeded } from '~/store/networkSlice'
+import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { store } from '~/store/store'
+import { makeSelectAddressesHashesWithPendingTransactions } from '~/store/transactions/transactionSelectors'
+import { themes } from '~/style/themes'
 
 dayjs.extend(updateLocale)
 dayjs.updateLocale('en', {

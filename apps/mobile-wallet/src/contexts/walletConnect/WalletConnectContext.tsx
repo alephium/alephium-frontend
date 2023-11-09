@@ -41,24 +41,24 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, u
 import { Portal } from 'react-native-portalize'
 import { AssetAmount, getHumanReadableError } from 'shared'
 
-import client from '@/api/client'
+import client from '~/api/client'
 import {
   buildCallContractTransaction,
   buildDeployContractTransaction,
   buildTransferTransaction
-} from '@/api/transactions'
-import BottomModal from '@/components/layout/BottomModal'
-import SpinnerModal from '@/components/SpinnerModal'
-import WalletConnectSessionProposalModal from '@/contexts/walletConnect/WalletConnectSessionProposalModal'
-import WalletConnectSessionRequestModal from '@/contexts/walletConnect/WalletConnectSessionRequestModal'
-import { useAppSelector } from '@/hooks/redux'
-import { selectAddressIds } from '@/store/addressesSlice'
-import { Address, AddressHash } from '@/types/addresses'
-import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/types/transactions'
-import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '@/types/walletConnect'
-import { WALLETCONNECT_ERRORS } from '@/utils/constants'
-import { showToast } from '@/utils/layout'
-import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
+} from '~/api/transactions'
+import BottomModal from '~/components/layout/BottomModal'
+import SpinnerModal from '~/components/SpinnerModal'
+import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
+import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
+import { useAppSelector } from '~/hooks/redux'
+import { selectAddressIds } from '~/store/addressesSlice'
+import { Address, AddressHash } from '~/types/addresses'
+import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
+import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
+import { WALLETCONNECT_ERRORS } from '~/utils/constants'
+import { showToast } from '~/utils/layout'
+import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 interface WalletConnectContextValue {
   walletConnectClient?: SignClient

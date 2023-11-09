@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { syncUnknownTokensInfo } from '@/store/assets/assetsActions'
-import { nftsAdapter } from '@/store/assets/assetsAdapter'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '@/store/networkSlice'
-import { NFT } from '@/types/assets'
+import { syncUnknownTokensInfo } from '~/store/assets/assetsActions'
+import { nftsAdapter } from '~/store/assets/assetsAdapter'
+import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
+import { NFT } from '~/types/assets'
 
 type NFTsState = EntityState<NFT>
 

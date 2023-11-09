@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Optional } from '@alephium/web3'
 
-import { AddressHash } from '@/types/addresses'
+import { AddressHash } from '~/types/addresses'
 
 // TODO: Same as in desktop wallet
 export type Contact = {

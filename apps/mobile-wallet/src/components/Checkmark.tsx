@@ -20,7 +20,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
-import { PopInFast, PopOutFast } from '@/animations/reanimated/reanimatedAnimations'
+import { PopInFast, PopOutFast } from '~/animations/reanimated/reanimatedAnimations'
 
 const Checkmark = () => (
   <CheckmarkStyled entering={PopInFast} exiting={PopOutFast}>

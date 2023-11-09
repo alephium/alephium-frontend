@@ -25,11 +25,11 @@ import { Dimensions } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '@/components/AppText'
-import InfoBox from '@/components/InfoBox'
-import Screen, { ScreenSection } from '@/components/layout/Screen'
-import ModalWithBackdrop from '@/components/ModalWithBackdrop'
-import { BORDER_RADIUS } from '@/style/globalStyle'
+import AppText from '~/components/AppText'
+import InfoBox from '~/components/InfoBox'
+import Screen, { ScreenSection } from '~/components/layout/Screen'
+import ModalWithBackdrop from '~/components/ModalWithBackdrop'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 interface QRCodeScannerModalProps {
   onClose: () => void

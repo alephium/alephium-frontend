@@ -21,12 +21,12 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
 import styled from 'styled-components/native'
 
-import Amount from '@/components/Amount'
-import AssetLogo from '@/components/AssetLogo'
-import ListItem, { ListItemProps } from '@/components/ListItem'
-import { useTransactionUI } from '@/hooks/useTransactionUI'
-import { AddressTransaction } from '@/types/transactions'
-import { getTransactionInfo } from '@/utils/transactions'
+import Amount from '~/components/Amount'
+import AssetLogo from '~/components/AssetLogo'
+import ListItem, { ListItemProps } from '~/components/ListItem'
+import { useTransactionUI } from '~/hooks/useTransactionUI'
+import { AddressTransaction } from '~/types/transactions'
+import { getTransactionInfo } from '~/utils/transactions'
 
 dayjs.extend(relativeTime)
 

@@ -20,14 +20,14 @@ import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { View } from 'react-native'
 
-import BoxSurface from '@/components/layout/BoxSurface'
-import { ModalContent, ModalContentProps } from '@/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '@/components/layout/Screen'
-import RadioButtonRow from '@/components/RadioButtonRow'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { networkPresetSettings, persistSettings } from '@/persistent-storage/settings'
-import { networkPresetSwitched } from '@/store/networkSlice'
-import { NetworkName, NetworkPreset } from '@/types/network'
+import BoxSurface from '~/components/layout/BoxSurface'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import RadioButtonRow from '~/components/RadioButtonRow'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
+import { networkPresetSwitched } from '~/store/networkSlice'
+import { NetworkName, NetworkPreset } from '~/types/network'
 
 const networkNames = Object.values(NetworkName)
 

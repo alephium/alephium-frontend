@@ -19,15 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 
-import AppText from '@/components/AppText'
-import Button from '@/components/buttons/Button'
-import Input from '@/components/inputs/Input'
-import { ModalContent, ModalContentProps } from '@/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '@/components/layout/Screen'
-import SpinnerModal from '@/components/SpinnerModal'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { deleteWallet } from '@/persistent-storage/wallet'
-import { walletDeleted } from '@/store/wallet/walletActions'
+import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
+import Input from '~/components/inputs/Input'
+import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import SpinnerModal from '~/components/SpinnerModal'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { deleteWallet } from '~/persistent-storage/wallet'
+import { walletDeleted } from '~/store/wallet/walletActions'
 
 interface WalletDeleteModalProps extends ModalContentProps {
   onDelete: () => void

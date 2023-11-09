@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NavigationState } from '@react-navigation/routers'
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { walletDeleted } from '@/store/wallet/walletActions'
+import { walletDeleted } from '~/store/wallet/walletActions'
 
 const sliceName = 'app'
 

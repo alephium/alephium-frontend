@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { deriveNewAddressData, walletImportAsyncUnsafe } from 'shared'
 
-import { newAddressGenerated, syncAddressesData, syncAddressesHistoricBalances } from '@/store/addressesSlice'
-import { store } from '@/store/store'
-import { AddressMetadata } from '@/types/addresses'
-import { Mnemonic, WalletMetadata } from '@/types/wallet'
-import { persistAddressesSettings } from '@/utils/addresses'
-import { mnemonicToSeed } from '@/utils/crypto'
+import { newAddressGenerated, syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
+import { store } from '~/store/store'
+import { AddressMetadata } from '~/types/addresses'
+import { Mnemonic, WalletMetadata } from '~/types/wallet'
+import { persistAddressesSettings } from '~/utils/addresses'
+import { mnemonicToSeed } from '~/utils/crypto'
 
 export const importAddresses = async (
   mnemonic: Mnemonic,

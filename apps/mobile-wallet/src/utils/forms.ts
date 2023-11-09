@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { isAddressValid } from 'shared'
 
-import { isNumericStringValid } from '@/utils/numbers'
+import { isNumericStringValid } from '~/utils/numbers'
 
 export const validateIsAddressValid = (value: string) => isAddressValid(value) || 'This address is not valid.'
 

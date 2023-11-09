@@ -31,9 +31,9 @@ import {
   TransactionInfoType
 } from 'shared'
 
-import { store } from '@/store/store'
-import { Address } from '@/types/addresses'
-import { AddressPendingTransaction, AddressTransaction } from '@/types/transactions'
+import { store } from '~/store/store'
+import { Address } from '~/types/addresses'
+import { AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
 
 export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
   (tx as AddressPendingTransaction).status === 'pending'

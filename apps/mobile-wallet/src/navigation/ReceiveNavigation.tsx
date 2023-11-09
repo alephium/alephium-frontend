@@ -19,10 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
-import RootStackParamList from '@/navigation/rootStackRoutes'
-import AddressScreen from '@/screens/SendReceive/Receive/AddressScreen'
-import QRCodeScreen from '@/screens/SendReceive/Receive/QRCodeScreen'
-import { AddressHash } from '@/types/addresses'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import AddressScreen from '~/screens/SendReceive/Receive/AddressScreen'
+import QRCodeScreen from '~/screens/SendReceive/Receive/QRCodeScreen'
+import { AddressHash } from '~/types/addresses'
 
 export interface ReceiveNavigationParamList extends ParamListBase {
   AddressScreen: undefined

@@ -21,8 +21,8 @@ import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'
 import { AddressKeyPair } from 'shared'
 
-import { TimeInMs } from '@/types/numbers'
-import { PendingTransaction } from '@/types/transactions'
+import { TimeInMs } from '~/types/numbers'
+import { PendingTransaction } from '~/types/transactions'
 
 export type AddressHash = string
 

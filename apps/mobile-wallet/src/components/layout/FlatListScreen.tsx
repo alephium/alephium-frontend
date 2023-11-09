@@ -22,14 +22,14 @@ import { FlatListProps } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import BaseHeader from '@/components/headers/BaseHeader'
-import Screen from '@/components/layout/Screen'
-import { ScrollScreenBaseProps } from '@/components/layout/ScrollScreen'
-import useAutoScrollOnDragEnd from '@/hooks/layout/useAutoScrollOnDragEnd'
-import useNavigationScrollHandler from '@/hooks/layout/useNavigationScrollHandler'
-import useScreenScrollHandler from '@/hooks/layout/useScreenScrollHandler'
-import useScrollToTopOnBlur from '@/hooks/layout/useScrollToTopOnBlur'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '@/style/globalStyle'
+import BaseHeader from '~/components/headers/BaseHeader'
+import Screen from '~/components/layout/Screen'
+import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
+import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
+import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
+import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {}
 

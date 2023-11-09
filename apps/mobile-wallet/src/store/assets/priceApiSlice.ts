@@ -21,8 +21,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import dayjs from 'dayjs'
 
-import { Currency } from '@/types/settings'
-import { CHART_DATE_FORMAT } from '@/utils/constants'
+import { Currency } from '~/types/settings'
+import { CHART_DATE_FORMAT } from '~/utils/constants'
 
 type HistoricalPriceQueryParams = {
   currency: Currency
