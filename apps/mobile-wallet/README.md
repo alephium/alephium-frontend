@@ -4,50 +4,22 @@ The official Alephium mobile wallet.
 
 ## Development
 
-Install depedencies:
+Install depedencies from the root of the monorepo:
 
 ```shell
-npm i
+bun install
 ```
 
-Start developer tools:
+Start a simulator or a physical device (after connecting with USB and enabling USB debugging):
 
 ```shell
-npm start
-```
-
-Launch the Development Client app on your phone and enter the URL you see on your terminal (you can scan the QR code to get the URL).
-
-### Creating development build
-
-```shell
-eas login
-```
-
-Build a development client app (replacement of Expo Go) for local development (useful when installing native modules or upgrading them):
-
-```shell
-eas build -p android --profile preview
-```
-
-Build a production preview apk for Android:
-
-```shell
-eas build --profile development --platform android
-```
-
-## Debugging
-
-To be able to inspect the DOM tree as well as the Redux state with React Native Debugger while using a development client, you need to shake the phone, tap on "Open React Native dev menu" and select "Debug".
-
-### Running on Android with USB debugging
-
-```shell
-npm run android
+bun ios
+# or
+bun android
 ```
 
 If you get an error `SDK location not found.` make sure the `ANDROID_SDK_ROOT` env var has the path to the Android SDK. For example, on macOS, you can run the following:
 
 ```shell
-ANDROID_SDK_ROOT=/Users/<USERNAME>/Library/Android/sdk npm run android
+ANDROID_SDK_ROOT=/Users/<USERNAME>/Library/Android/sdk bun android
 ```

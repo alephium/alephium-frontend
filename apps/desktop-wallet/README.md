@@ -6,22 +6,22 @@ The official Alephium desktop wallet.
 
 ## Development
 
-Install depedencies with:
+Install depedencies from the root of the monorepo with:
 
 ```shell
-npm install
+bun install
 ```
 
 To launch it as an electron app, run:
 
 ```shell
-npm run start:electron
+bun start:electron
 ```
 
 ## Test
 
 ```shell
-npm test
+turbo test
 ```
 
 ## Packaging
@@ -29,13 +29,13 @@ npm test
 The command below will detect your OS and build the corresponding package:
 
 ```shell
-npm run electron-pack
+bun electron-pack
 ```
 
 To build for ARM64 Linux, run:
 
 ```shell
-npm run electron-pack-linux:arm64
+bun electron-pack-linux:arm64
 ```
 
 ## Release

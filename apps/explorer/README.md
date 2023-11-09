@@ -1,6 +1,6 @@
-# Alephium Explorer - Front-end
+# Alephium Explorer - frontend
 
-A blockchain explorer front-end for Alephium.
+A blockchain explorer frontend for Alephium.
 
 ## Features
 
@@ -17,13 +17,11 @@ A blockchain explorer front-end for Alephium.
 
 ## Development
 
-Everything is managed with NPM.
-
-- Install dependencies: `npm install`
-- Starting the project: `env $(cat .env.placeholder | xargs) npm run start`
-- Building the project: `npm run build`
-- Run the tests: `npm run test`
-- Lint and fix: `npm run lint:fix`
+- Install dependencies from the root of the monorepo: `bun install`
+- Starting the project: `env $(cat .env.placeholder | xargs) bun run start`
+- Building the project: `bun run build`
+- Run the tests: `turbo test`
+- Lint and fix: `turbo lint:fix`
 
 See `package.json`'s `script` property for more options.
 
@@ -53,9 +51,3 @@ To release a new version:
    git push [remote] <tag>
    ```
 4. Create a GitHub release
-
-## Notes
-
-This project uses [@alephium/sdk](https://github.com/alephium/js-sdk).
-Please down the package to refer to it as documentation for the network request
-methods (`api/api-explorer.ts`).
