@@ -6,7 +6,6 @@
     "lint:fix": {},
     "ts:check": {},
     "test": {},
-    "clean": {},
     "compile": {
       "outputs": ["dist/**"]
     }
