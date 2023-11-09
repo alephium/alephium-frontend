@@ -9,8 +9,8 @@ We use [Bun](https://bun.sh/) as our package manager and [Turborepo](https://tur
 ### Lint
 
 ```
-bun lint
-bun lint:fix
+turbo lint
+turbo lint:fix
 ```
 
 ### Format
@@ -22,11 +22,17 @@ bun format
 ### Compile TypeScript
 
 ```
-bun ts:check
+turbo ts:check
 ```
 
 ### Build
 
 ```
-bun run build
+turbo run build
+```
+
+### Test
+
+```
+turbo test
 ```

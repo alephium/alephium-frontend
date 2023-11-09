@@ -8,13 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "lint:fix": "turbo run lint:fix",
-    "ts:check": "turbo run ts:check",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "test": "turbo run test",
     "postinstall": "patch-package"
   },
   "dependencies": {
