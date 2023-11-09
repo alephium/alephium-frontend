@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 module.exports = {
   parser: '@typescript-eslint/parser',
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier', 'plugin:prettier/recommended'],
-  plugins: ['react', '@typescript-eslint', 'prettier', 'unused-imports', 'simple-import-sort', 'header'],
+  plugins: ['@typescript-eslint', 'prettier', 'unused-imports', 'simple-import-sort', 'header'],
   rules: {
     'arrow-body-style': [2, 'as-needed'],
     '@typescript-eslint/explicit-function-return-type': 'off',
