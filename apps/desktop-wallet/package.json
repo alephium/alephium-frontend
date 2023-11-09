@@ -2,10 +2,10 @@
   "name": "alephium-wallet",
   "description": "The official Alephium wallet",
   "version": "2.1.5",
-  "main": "public/electron.js",
   "author": "Alephium dev <dev@alephium.org>",
+  "main": "public/electron.js",
   "scripts": {
-    "build": "cross-env INLINE_RUNTIME_CHUNK=false VITE_VERSION=$npm_package_version vite build",
+    "build": "tsc && cross-env INLINE_RUNTIME_CHUNK=false VITE_VERSION=$npm_package_version vite build",
     "start:electron": "concurrently \"cross-env VITE_VERSION=$npm_package_version vite\" \"electron .\"",
     "electron-pack": "bun run build && electron-builder",
     "electron-pack-windows": "bun run build && electron-builder -w",
@@ -32,7 +32,8 @@
     "electron-updater": "^5.3.0"
   },
   "trustedDependencies": [
-    "electron"
+    "electron",
+    "esbuild"
   ],
   "devDependencies": {
     "shared": "*",
