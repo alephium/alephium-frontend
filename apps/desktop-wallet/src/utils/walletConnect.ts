@@ -24,6 +24,7 @@ import { NetworkPreset } from '@/types/network'
 import { NetworkSettings } from '@/types/settings'
 import { SessionProposalEvent } from '@/types/walletConnect'
 
+// TODO: Move to shared
 export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['networkId']) =>
   (networkId === 'devnet' && currentNetworkId === 4) ||
   (Object.keys(networkPresets) as Array<NetworkPreset>).some(
