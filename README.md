@@ -6,6 +6,10 @@ A monorepo containing all things frontend on Alephium.
 
 We use [Bun](https://bun.sh/) as our package manager and [Turborepo](https://turbo.build/repo) as our build system.
 
+```
+bun install
+```
+
 ### Lint
 
 ```
