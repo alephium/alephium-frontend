@@ -8,16 +8,7 @@
     "test": {},
     "clean": {},
     "compile": {
-      "dependsOn": ["clean"],
       "outputs": ["dist/**"]
-    },
-    "build": {
-      "dependsOn": ["ts:check", "compile", "^build"],
-      "outputs": ["dist/**"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
     }
   }
 }

@@ -16,8 +16,7 @@
     "test": "ts-node ../../node_modules/jest/bin/jest.js --useStderr --silent=false --verbose=true --config jestconfig.json",
     "test:watch": "bun run test -- --watch",
     "ts:check": "tsc --noEmit",
-    "compile": "tsc --build . && webpack",
-    "clean": "rm -rf dist"
+    "compile": "rm -rf dist && tsc --build . && webpack"
   },
   "dependencies": {
     "base-x": "^4.0.0",
