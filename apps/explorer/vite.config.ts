@@ -20,9 +20,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig({
   resolve: {

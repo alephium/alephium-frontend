@@ -1,8 +1,15 @@
 {
   "extends": "tsconfig/base",
   "include": ["lib/**/*"],
-  "exclude": ["test"],
+  "exclude": ["node_modules", "test"],
   "compilerOptions": {
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "outDir": "dist",
+    "module": "commonjs",
+    "declaration": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "target": "es6"
   }
 }
