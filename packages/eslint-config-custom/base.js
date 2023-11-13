@@ -18,7 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 module.exports = {
   parser: '@typescript-eslint/parser',
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier', 'plugin:prettier/recommended'],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+    'plugin:prettier/recommended',
+    'turbo'
+  ],
   plugins: ['@typescript-eslint', 'prettier', 'unused-imports', 'simple-import-sort', 'header'],
   rules: {
     'arrow-body-style': [2, 'as-needed'],
@@ -50,7 +56,8 @@ module.exports = {
       {
         endOfLine: 'auto'
       }
-    ]
+    ],
+    'turbo/no-undeclared-env-vars': 'error'
   },
   env: {
     browser: true,
