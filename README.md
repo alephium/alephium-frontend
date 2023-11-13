@@ -4,7 +4,7 @@ A monorepo containing all things frontend on Alephium.
 
 ## Development
 
-We use [Bun](https://bun.sh/) as our package manager and [Turborepo](https://turbo.build/repo) as our build system.
+We use [Bun](https://bun.sh/) as our package manager and [Turborepo](https://turbo.build/repo) as our build system. Turborepo runs the tasks defined in `turbo.json` and Bun installs the npm packages.
 
 Install all dependencies with:
 
