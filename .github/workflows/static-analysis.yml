@@ -9,18 +9,13 @@ jobs:
   static-analysis:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18]
-
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm audit --production
-      - run: npm run lint
-      - run: npm run typecheck
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
+      - run: bun install
+      # - run: bun install --yarn # see https://github.com/oven-sh/bun/issues/5359
+      # - name: Audit
+      #   run: yarn audit
+      - run: bun run lint
+      - run: bun run typecheck
