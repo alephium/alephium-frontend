@@ -8,6 +8,9 @@
     "packages/*"
   ],
   "scripts": {
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "postinstall": "patch-package"
   },

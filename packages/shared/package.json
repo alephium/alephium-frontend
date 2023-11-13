@@ -15,7 +15,7 @@
     "lint:fix": "eslint . --fix --ext .ts",
     "test": "ts-node ../../node_modules/jest/bin/jest.js --useStderr --silent=false --verbose=true --config jestconfig.json",
     "test:watch": "bun run test -- --watch",
-    "ts:check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "compile": "rm -rf dist && tsc --build . && webpack"
   },
   "dependencies": {

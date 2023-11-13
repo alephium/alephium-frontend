@@ -19,7 +19,7 @@
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "syncTranslationFiles": "bun scripts/syncTranslationFiles.js && prettier --write ./locales/**/*.json",
-    "ts:check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "browserslist": [
     ">0.2%",

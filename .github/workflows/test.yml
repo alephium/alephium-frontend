@@ -6,23 +6,22 @@ on:
   pull_request:
 
 jobs:
-  unit-tests:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [16]
+        node-version: [18]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
       - run: npm ci
-      - run: npm run lint
-      - run: npm audit --production
-      - run: npm test
+      - run: npm run test
 
   electron-tests:
     runs-on: ${{ matrix.os }}
@@ -30,21 +29,18 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: get-os
         run: |
           os=$(echo ${{ matrix.os }} | cut -d- -f1)
           echo "::set-output name=os::$os"
         shell: bash
       - run: echo "${{ steps.get-os.outputs.os }}"
-        shell: bash
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: 18
       - run: npm ci
-        shell: bash
-      - run: npm run-script electron-pack-${{ steps.get-os.outputs.os }}
-        shell: bash
+      - run: npm run electron-pack-${{ steps.get-os.outputs.os }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

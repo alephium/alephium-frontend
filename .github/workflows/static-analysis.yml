@@ -1,4 +1,4 @@
-name: Unit Test
+name: Test
 
 on:
   push:
@@ -6,21 +6,21 @@ on:
   pull_request:
 
 jobs:
-  build:
+  static-analysis:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [16, 18]
+        node-version: [18]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
       - run: npm ci
+      - run: npm audit --production
       - run: npm run lint
-      - run: npm audit
-      - run: npm run devnet:start
-      - run: npm test
+      - run: npm run typecheck

@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "expo start --dev-client",
-    "ts:check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "android": "expo run:android",
     "ios": "expo run:ios --device",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",

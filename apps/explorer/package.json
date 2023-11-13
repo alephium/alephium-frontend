@@ -12,7 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "ts:check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "browserslist": {
     "production": [

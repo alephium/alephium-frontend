@@ -6,10 +6,10 @@
     "lint:fix": { "cache": false },
     "test": {},
     "compile": {
-      "dependsOn": ["ts:check", "lint", "test"],
+      "dependsOn": ["typecheck", "lint", "test"],
       "outputs": ["dist/**"]
     },
-    "ts:check": {
+    "typecheck": {
       "dependsOn": ["topo"]
     },
     "topo": {
