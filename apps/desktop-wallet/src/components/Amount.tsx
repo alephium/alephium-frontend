@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
+import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -126,10 +126,10 @@ const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value
     color
       ? color
       : highlight && value !== undefined
-      ? value < 0
-        ? theme.font.highlight
-        : theme.global.valid
-      : 'inherit'};
+        ? value < 0
+          ? theme.font.highlight
+          : theme.global.valid
+        : 'inherit'};
   display: inline-flex;
   white-space: pre;
   font-weight: var(--fontWeight-bold);

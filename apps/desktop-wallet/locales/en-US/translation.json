@@ -460,7 +460,7 @@
   "Select an address to connect with.": "Select an address to connect with.",
   "Accept": "Accept",
   "walletConnectProposalMessage": "Connect to <1>{{ dAppUrl }}</1> with one of your addresses:",
-  "walletConnectProposalMessageWithGroup": "Connect to <1>{{ dAppUrl }}</1> with one of your addresses in group <3>{{ group }}</3>:",
+  "walletConnectProposalMessageWithGroup": "Connect to <1>{{ dAppUrl }}</1> with one of your addresses in group <1>{{ group }}</1>:",
   "Active dApp connections": "Active dApp connections",
   "Connect to {{ dAppUrl }}": "Connect to {{ dAppUrl }}"
 }

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Wallet, walletOpen } from '@alephium/sdk'
+import { Wallet, walletOpen } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { nanoid } from 'nanoid'
 import posthog from 'posthog-js'

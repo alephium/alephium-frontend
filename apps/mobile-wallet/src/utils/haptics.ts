@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@ export const vibrate = (impactFeedbackStyle: ImpactFeedbackStyle) =>
     Platform.OS === 'ios'
       ? impactFeedbackStyle
       : impactFeedbackStyle === ImpactFeedbackStyle.Heavy
-      ? ImpactFeedbackStyle.Medium
-      : ImpactFeedbackStyle.Light
+        ? ImpactFeedbackStyle.Medium
+        : ImpactFeedbackStyle.Light
   )
 
 export const ImpactStyle = ImpactFeedbackStyle

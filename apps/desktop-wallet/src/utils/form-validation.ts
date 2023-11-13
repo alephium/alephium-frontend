@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isAddressValid as isAddressHashValid } from '@alephium/sdk'
+import { isAddressValid as isAddressHashValid } from '@alephium/shared'
 import { Optional } from '@alephium/web3'
 
 import i18n from '@/i18n'
@@ -51,7 +51,7 @@ export const isWalletNameValid = ({ name, previousName }: { name: string; previo
   previousName && name === previousName
     ? true
     : name.length < 3
-    ? i18n.t('Wallet name is too short')
-    : store.getState().global.wallets.some((wallet) => wallet.name === name)
-    ? i18n.t('Wallet name already taken')
-    : true
+      ? i18n.t('Wallet name is too short')
+      : store.getState().global.wallets.some((wallet) => wallet.name === name)
+        ? i18n.t('Wallet name already taken')
+        : true

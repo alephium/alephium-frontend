@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { toHumanReadableAmount } from '@alephium/sdk'
+import { toHumanReadableAmount } from '@alephium/shared'
 import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { memo, useEffect, useMemo, useState } from 'react'
@@ -242,11 +242,13 @@ const getChartOptions = (
         [
           {
             offset: 0,
-            color: colord(chartColor).alpha(0.3).toHex()
+            color: colord(chartColor).alpha(0.3).toHex(),
+            opacity: 1
           },
           {
             offset: 100,
-            color: colord(chartColor).alpha(0).toHex()
+            color: colord(chartColor).alpha(0).toHex(),
+            opacity: 1
           }
         ]
       ]

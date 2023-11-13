@@ -45,12 +45,12 @@ import { Coordinates } from '@/types/numbers'
 type Writable<T> = T extends string
   ? string
   : T extends number
-  ? number
-  : T extends undefined
-  ? undefined
-  : T extends readonly (infer U)[]
-  ? U
-  : never
+    ? number
+    : T extends undefined
+      ? undefined
+      : T extends readonly (infer U)[]
+        ? U
+        : never
 
 export type OptionValue = Writable<OptionHTMLAttributes<HTMLOptionElement>['value']>
 

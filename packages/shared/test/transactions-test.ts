@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calcTxAmountsDeltaForAddress } from '../lib/transactions'
-
 import transactions from './fixtures/transactions.json'
 
 it('should calucate the amount delta between the inputs and outputs of an address in a transaction', () => {

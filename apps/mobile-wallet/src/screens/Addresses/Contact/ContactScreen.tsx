@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -113,7 +113,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
                 {contact.address}
               </ContactAddress>
               <ButtonsRow>
-                <ContactButton Icon={Upload} title={'Send funds'} onPress={handleSendFundsPress} />
+                <ContactButton Icon={Upload} title="Send funds" onPress={handleSendFundsPress} />
                 <ContactButton Icon={Clipboard} title="Copy address" onPress={handleCopyAddressPress} />
                 <ContactButton Icon={Share2Icon} title="Share" onPress={handleShareContactPress} />
               </ButtonsRow>

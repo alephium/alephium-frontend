@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -70,8 +70,8 @@ const appendMagnitudeSymbol = (tier: number, amount: number, numberOfDecimalsToD
   return reachedEndOfMagnitudeSymbols
     ? addApostrophes(scaledRoundedUp) + suffix
     : parseFloat(scaledRoundedUp) < 1000
-    ? scaledRoundedUp + suffix
-    : appendMagnitudeSymbol(tier + 1, amount, numberOfDecimalsToDisplay)
+      ? scaledRoundedUp + suffix
+      : appendMagnitudeSymbol(tier + 1, amount, numberOfDecimalsToDisplay)
 }
 
 interface FormatAmountForDisplayProps {
@@ -118,9 +118,8 @@ export const formatAmountForDisplay = ({
   return formatRegularPrecision(amountNumber, numberOfDecimalsToDisplay, minNumberOfDecimals)
 }
 
-const getMinNumberOfDecimals = (amountNumber: number): number => {
-  return amountNumber <= 0 ? 0 : amountNumber < 0.01 && amountNumber >= 0.001 ? 3 : amountNumber < 0.001 ? 4 : 2
-}
+const getMinNumberOfDecimals = (amountNumber: number): number =>
+  amountNumber <= 0 ? 0 : amountNumber < 0.01 && amountNumber >= 0.001 ? 3 : amountNumber < 0.001 ? 4 : 2
 
 const formatFullPrecision = (amount: bigint, amountDecimals: number, numberOfDecimalsToDisplay: number): string => {
   const baseNumString = amount.toString()

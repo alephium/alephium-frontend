@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/sdk'
+import { Asset } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { omit } from 'lodash'
@@ -41,8 +41,8 @@ export const syncNetworkTokensInfo = createAsyncThunk(
       state.network.settings.networkId === 0
         ? 'mainnet'
         : state.network.settings.networkId === 1
-        ? 'testnet'
-        : undefined
+          ? 'testnet'
+          : undefined
 
     if (network) {
       try {
@@ -82,12 +82,12 @@ export const syncUnknownTokensInfo = createAsyncThunk(
             ...omit(tokenMetadata, ['totalSupply'])
           })
         } else if (type === 'non-fungible') {
-          const { tokenUri, collectionAddress } = await client.node.fetchNFTMetaData(id)
+          const { tokenUri, collectionId } = await client.node.fetchNFTMetaData(id)
           const nftData = await exponentialBackoffFetchRetry(tokenUri).then((res) => res.json())
 
           results.nfts.push({
             id,
-            collectionAddress,
+            collectionId,
             name: nftData?.name,
             description: nftData?.description,
             image: nftData?.image

@@ -74,7 +74,7 @@ const WalletConnectSessionProposalModal = ({
     )
   }, [addressesInGroup])
 
-  const handleSwitchNetworkPress = async () => {
+  const handleSwitchNetworkPress = () => {
     if (requiredChainInfo?.networkId === 'mainnet' || requiredChainInfo?.networkId === 'testnet') {
       dispatch(networkPresetSwitched(requiredChainInfo?.networkId))
     }
@@ -88,7 +88,7 @@ const WalletConnectSessionProposalModal = ({
   }
 
   const rejectAndCloseModal = async () => {
-    rejectProposal()
+    await rejectProposal()
     onClose()
 
     posthog.capture('Rejected WalletConnect connection by closing modal')
@@ -162,11 +162,10 @@ const WalletConnectSessionProposalModal = ({
                   group
                 }}
                 components={{
-                  1: <Highlight />,
-                  3: <Highlight />
+                  1: <Highlight />
                 }}
               >
-                {'Connect to <1>{{ dAppUrl }}</1> with one of your addresses in group <3>{{ group }}</3>:'}
+                {'Connect to <1>{{ dAppUrl }}</1> with one of your addresses in group <1>{{ group }}</1>:'}
               </Trans>
             )}
           </Paragraph>

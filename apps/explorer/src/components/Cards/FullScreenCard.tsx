@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HTMLMotionProps, motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { RiCloseLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
@@ -26,6 +26,7 @@ import { isMobile } from '@/utils/browserSupport'
 interface FullScreenCardProps extends HTMLMotionProps<'div'> {
   label: string
   onClose: () => void
+  children: ReactNode
 }
 
 const FullScreenCard = ({ children, label, onClose, layoutId, ...props }: FullScreenCardProps) => {

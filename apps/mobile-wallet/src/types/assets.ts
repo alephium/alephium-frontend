@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, AssetAmount } from '@alephium/sdk'
+import { Asset, AssetAmount } from '@alephium/shared'
 import { FungibleTokenMetaData, NFTMetaData } from '@alephium/web3'
 
 export type AssetAmountInputType = AssetAmount & { amountInput?: string }
@@ -25,7 +25,7 @@ export type FungibleTokenBasicMetadata = Omit<FungibleTokenMetaData, 'totalSuppl
 
 export type NFT = {
   id: Asset['id']
-  collectionAddress: NFTMetaData['collectionAddress']
+  collectionId: NFTMetaData['collectionId']
   name?: string
   description?: string
   image?: string

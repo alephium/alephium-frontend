@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -85,8 +85,8 @@ const ScrollScreen = ({
             paddingTop: headerOptions
               ? screenHeaderHeight + DEFAULT_MARGIN
               : hasNavigationHeader
-              ? headerheight + DEFAULT_MARGIN
-              : 0,
+                ? headerheight + DEFAULT_MARGIN
+                : 0,
             flexGrow: fill ? 1 : undefined
           },
           contentContainerStyle

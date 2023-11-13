@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ import {
   walletEncryptAsyncUnsafe,
   walletGenerateAsyncUnsafe,
   walletImportAsyncUnsafe
-} from '@alephium/sdk'
+} from '@alephium/shared'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'

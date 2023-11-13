@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isNumber } from '@alephium/sdk'
+import { isNumber } from '@alephium/shared'
 
 export const isNumericStringValid = (str: string, allowFloat = true) =>
   isNumber(str) &&

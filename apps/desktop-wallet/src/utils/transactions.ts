@@ -25,7 +25,7 @@ import {
   isSwap,
   TransactionDirection,
   TransactionInfoType
-} from '@alephium/sdk'
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { explorer } from '@alephium/web3'

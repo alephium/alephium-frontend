@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -17,16 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import rewire from 'rewire'
+
 import {
-  formatAmountForDisplay,
-  fromHumanReadableAmount,
+  aboveExpLimit,
   addApostrophes,
-  produceZeros,
-  toHumanReadableAmount,
-  formatFiatAmountForDisplay,
   calculateAmountWorth,
   exponentialToLiteral,
-  aboveExpLimit
+  formatAmountForDisplay,
+  formatFiatAmountForDisplay,
+  fromHumanReadableAmount,
+  produceZeros,
+  toHumanReadableAmount
 } from '../lib/numbers'
 
 const minDigits = 3
@@ -454,7 +455,7 @@ it('should produce the right number of zeros', () => {
 })
 
 describe('should test not exported functions', () => {
-  const numberUtils = rewire('../dist/numbers')
+  const numberUtils = rewire('../lib/numbers')
   const removeTrailingZeros = numberUtils.__get__('removeTrailingZeros')
   const isNumber = numberUtils.__get__('isNumber')
 

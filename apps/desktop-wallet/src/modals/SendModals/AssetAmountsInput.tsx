@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/sdk'
+import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
@@ -117,10 +117,10 @@ const AssetAmountsInput = ({
       amountValueAsFloat > parseFloat(availableAmount)
         ? t('Amount exceeds available balance')
         : selectedAssetId === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
-        ? t('Amount must be greater than {{ minAmountInAlph }}', { minAmountInAlph })
-        : tooManyDecimals
-        ? t('This asset cannot have more than {{ decimals }} decimals', { decimals: selectedAsset.decimals })
-        : ''
+          ? t('Amount must be greater than {{ minAmountInAlph }}', { minAmountInAlph })
+          : tooManyDecimals
+            ? t('This asset cannot have more than {{ decimals }} decimals', { decimals: selectedAsset.decimals })
+            : ''
     const newErrors = [...errors]
     newErrors.splice(assetRowIndex, 1, newError)
     setErrors(newErrors)

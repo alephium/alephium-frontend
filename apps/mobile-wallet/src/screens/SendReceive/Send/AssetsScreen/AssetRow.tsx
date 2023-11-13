@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/sdk'
+import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useRef, useState } from 'react'
@@ -76,10 +76,10 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       amountValueAsFloat > parseFloat(availableAmount)
         ? 'Amount exceeds available balance'
         : asset.id === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
-        ? `Amount must be greater than ${minAmountInAlph}`
-        : tooManyDecimals
-        ? `This asset cannot have more than ${asset.decimals} decimals`
-        : ''
+          ? `Amount must be greater than ${minAmountInAlph}`
+          : tooManyDecimals
+            ? `This asset cannot have more than ${asset.decimals} decimals`
+            : ''
 
     setError(newError)
 

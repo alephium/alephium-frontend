@@ -1,14 +1,19 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": ["**/.env.*local", "tsconfig.json"],
   "pipeline": {
-    "build": {
-      "dependsOn": ["^build"]
-    },
     "lint": {},
-    "dev": {
-      "cache": false,
-      "persistent": true
+    "lint:fix": { "cache": false },
+    "test": {},
+    "compile": {
+      "dependsOn": ["ts:check", "lint", "test"],
+      "outputs": ["dist/**"]
+    },
+    "ts:check": {
+      "dependsOn": ["topo"]
+    },
+    "topo": {
+      "dependsOn": ["^topo"]
     }
   }
 }

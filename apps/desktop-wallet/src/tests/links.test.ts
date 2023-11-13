@@ -16,9 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import fs from 'fs/promises'
-import http, { IncomingMessage } from 'http'
-import https from 'https'
+import fs from 'node:fs'
+import http, { IncomingMessage } from 'node:http'
+import https from 'node:https'
+
 import { uniq } from 'lodash'
 import path from 'path'
 
@@ -32,12 +33,12 @@ const pathsToUIRelatedCode = [
 ]
 
 async function findLinksInSource(file: string) {
-  const source = await fs.readFile(file, { encoding: 'utf-8' })
+  const source = await fs.promises.readFile(file, { encoding: 'utf-8' })
   return source.match(/http(s)?:\/\/[^ <>\n'"${}]+/g)
 }
 
 async function getFilesRecursively(dir: string): Promise<string[]> {
-  const dirents = await fs.readdir(dir, { withFileTypes: true })
+  const dirents = await fs.promises.readdir(dir, { withFileTypes: true })
   const files = await Promise.all(
     dirents.map((dirent) => {
       const res = path.resolve(dir, dirent.name)

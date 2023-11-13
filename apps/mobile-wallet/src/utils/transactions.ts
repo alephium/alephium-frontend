@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import {
   TransactionDirection,
   TransactionInfo,
   TransactionInfoType
-} from '@alephium/sdk'
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, explorer } from '@alephium/web3'
 import { sortBy } from 'lodash'
@@ -96,8 +96,8 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
       fungibleTokens[token.id]
         ? { ...token, ...fungibleTokens[token.id], type: 'fungible' }
         : nfts[token.id]
-        ? { ...token, ...fungibleTokens[token.id], type: 'non-fungible' }
-        : { ...token, verified: false, type: undefined, name: '' }
+          ? { ...token, ...fungibleTokens[token.id], type: 'non-fungible' }
+          : { ...token, verified: false, type: undefined, name: '' }
     )
   ]
   const sortedTokens = sortBy(tokenAssets, [

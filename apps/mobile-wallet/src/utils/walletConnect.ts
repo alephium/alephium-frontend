@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ import { NetworkPreset } from '~/types/network'
 import { NetworkSettings } from '~/types/settings'
 import { SessionProposalEvent } from '~/types/walletConnect'
 
+// TODO: Move to shared
 export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['networkId']) =>
   (networkId === 'devnet' && currentNetworkId === 4) ||
   (Object.keys(networkPresetSettings) as Array<NetworkPreset>).some(

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetInfo } from '@alephium/sdk'
+import { AssetInfo } from '@alephium/shared'
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
 import { NFT } from '@/types/assets'

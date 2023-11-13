@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 
@@ -29,7 +30,7 @@ export default defineConfig({
       events: 'rollup-plugin-node-polyfills/polyfills/events'
     }
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+  plugins: [react(), viteTsconfigPaths(), svgrPlugin(), nodePolyfills()],
   test: {
     globals: true,
     environment: 'happy-dom',

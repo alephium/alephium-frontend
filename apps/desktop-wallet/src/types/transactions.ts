@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount, TransactionDirection, TransactionInfoAsset, TransactionInfoType } from '@alephium/sdk'
+import { AssetAmount, TransactionDirection, TransactionInfoAsset, TransactionInfoType } from '@alephium/shared'
 import { explorer, node } from '@alephium/web3'
 
 import { Address, AddressHash } from '@/types/addresses'

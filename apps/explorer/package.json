@@ -1,16 +1,33 @@
 {
   "name": "alephium-explorer",
+  "description": "The Alephium explorer frontend",
   "version": "1.8.2",
-  "private": true,
-  "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build --outDir build",
+    "gh-pages-build": "tsc && vite build --outDir build --base=/explorer/",
+    "serve": "node docker/init-server-data.js && serve -s build -p 3000",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
+    "lint:fix": "eslint . --fix --ext .ts,.tsx",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "ts:check": "tsc --noEmit"
   },
-  "homepage": "/",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "dependencies": {
-    "@alephium/sdk": "0.7.6",
-    "@alephium/token-list": "^0.0.11",
-    "@alephium/web3": "0.16.1",
+    "@alephium/shared": "*",
     "@tanstack/query-sync-storage-persister": "4.32.0",
     "@tanstack/react-query": "4.32.0",
     "@tanstack/react-query-persist-client": "^4.32.0",
@@ -20,7 +37,6 @@
     "framer-motion": "^6.5.1",
     "i18next": "^23.4.6",
     "lodash": "^4.17.21",
-    "prettier": "^2.4.1",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
@@ -44,49 +60,16 @@
     "@types/react-page-visibility": "^6.4.1",
     "@types/react-router-dom": "^5.3.0",
     "@types/styled-components": "^5.1.14",
-    "@typescript-eslint/eslint-plugin": "^5.42.0",
-    "@typescript-eslint/parser": "^5.42.0",
     "@vitejs/plugin-react": "^4.0.0",
     "esbuild": "^0.17.11",
-    "eslint": "^8.26.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-header": "^3.1.1",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.26.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "eslint-plugin-simple-import-sort": "^7.0.0",
-    "eslint-plugin-unused-imports": "^2.0.0",
     "happy-dom": "^7.6.6",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "serve": "^14.1.2",
-    "typescript": "^4.4.3",
     "vite": "^4.3.9",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0",
-    "vitest": "^0.31.0"
-  },
-  "scripts": {
-    "start": "vite",
-    "build": "tsc && vite build --outDir build",
-    "gh-pages-build": "tsc && vite build --outDir build --base=/explorer/",
-    "serve": "node docker/init-server-data.js && serve -s build -p 3000",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:fix": "eslint . --fix --ext .ts,.tsx",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "vitest": "^0.31.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*"
   }
 }

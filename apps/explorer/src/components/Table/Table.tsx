@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -95,24 +95,24 @@ const StyledTable = styled.table<TableProps>`
             overflow-x: auto;
           `
         : bodyOnly
-        ? /* Change table structure, stack td vertically */
-          css`
-            tr {
-              display: flex;
-              flex-direction: column;
-              height: auto !important;
+          ? /* Change table structure, stack td vertically */
+            css`
+              tr {
+                display: flex;
+                flex-direction: column;
+                height: auto !important;
 
-              td:first-child {
-                height: 25px !important;
-                font-weight: 600;
+                td:first-child {
+                  height: 25px !important;
+                  font-weight: 600;
+                }
+                td:not(:first-child) {
+                  height: initial !important;
+                  font-weight: 500 !important;
+                }
               }
-              td:not(:first-child) {
-                height: initial !important;
-                font-weight: 500 !important;
-              }
-            }
-          `
-        : null}
+            `
+          : null}
   }
 
   tr td {

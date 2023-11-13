@@ -1,0 +1,26 @@
+diff --git a/node_modules/react-native-aes-crypto/android/src/main/java/com/tectiv3/aes/RCTAes.java b/node_modules/react-native-aes-crypto/android/src/main/java/com/tectiv3/aes/RCTAes.java
+index 5871b6f..b07988f 100755
+--- a/node_modules/react-native-aes-crypto/android/src/main/java/com/tectiv3/aes/RCTAes.java
++++ b/node_modules/react-native-aes-crypto/android/src/main/java/com/tectiv3/aes/RCTAes.java
+@@ -179,7 +179,7 @@ public class RCTAes extends ReactContextBaseJavaModule {
+     throws NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedEncodingException
+     {
+         PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA512Digest());
+-        gen.init(pwd.getBytes("UTF_8"), salt.getBytes("UTF_8"), cost);
++        gen.init(pwd.getBytes("UTF_8"), Base64.decode(salt, Base64.NO_WRAP), cost);
+         byte[] key = ((KeyParameter) gen.generateDerivedParameters(length)).getKey();
+         return bytesToHex(key);
+     }
+diff --git a/node_modules/react-native-aes-crypto/ios/RCTAes/lib/AesCrypt.m b/node_modules/react-native-aes-crypto/ios/RCTAes/lib/AesCrypt.m
+index 4f20b49..46a22c9 100755
+--- a/node_modules/react-native-aes-crypto/ios/RCTAes/lib/AesCrypt.m
++++ b/node_modules/react-native-aes-crypto/ios/RCTAes/lib/AesCrypt.m
+@@ -38,7 +38,7 @@
+ + (NSString *) pbkdf2:(NSString *)password salt: (NSString *)salt cost: (NSInteger)cost length: (NSInteger)length {
+     // Data of String to generate Hash key(hexa decimal string).
+     NSData *passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];
+-    NSData *saltData = [salt dataUsingEncoding:NSUTF8StringEncoding];
++    NSData *saltData = [[NSData alloc] initWithBase64EncodedString:salt options:NSDataBase64DecodingIgnoreUnknownCharacters];
+ 
+     // Hash key (hexa decimal) string data length.
+     NSMutableData *hashKeyData = [NSMutableData dataWithLength:length/8];

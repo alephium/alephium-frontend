@@ -198,38 +198,38 @@ export default styled(Button)`
     const borderColor = borderless
       ? 'transparent'
       : transparent
-      ? {
-          primary: {
-            default: theme.global.accent,
-            contrast: theme.bg.background2,
-            valid: theme.global.valid,
-            alert: theme.global.alert,
-            faded: colord(theme.global.accent).alpha(0.25).toRgbString()
-          }[variant],
-          secondary: {
-            default: theme.border.primary,
-            contrast: theme.bg.background2,
-            valid: theme.global.valid,
-            alert: theme.global.alert,
-            faded: theme.border.secondary
-          }[variant]
-        }[role]
-      : {
-          primary: {
-            default: theme.border.primary,
-            contrast: theme.border.primary,
-            valid: theme.border.primary,
-            alert: theme.border.primary,
-            faded: theme.border.primary
-          }[variant],
-          secondary: {
-            default: theme.border.primary,
-            contrast: theme.border.primary,
-            valid: theme.global.valid,
-            alert: theme.global.alert,
-            faded: theme.border.primary
-          }[variant]
-        }[role]
+        ? {
+            primary: {
+              default: theme.global.accent,
+              contrast: theme.bg.background2,
+              valid: theme.global.valid,
+              alert: theme.global.alert,
+              faded: colord(theme.global.accent).alpha(0.25).toRgbString()
+            }[variant],
+            secondary: {
+              default: theme.border.primary,
+              contrast: theme.bg.background2,
+              valid: theme.global.valid,
+              alert: theme.global.alert,
+              faded: theme.border.secondary
+            }[variant]
+          }[role]
+        : {
+            primary: {
+              default: theme.border.primary,
+              contrast: theme.border.primary,
+              valid: theme.border.primary,
+              alert: theme.border.primary,
+              faded: theme.border.primary
+            }[variant],
+            secondary: {
+              default: theme.border.primary,
+              contrast: theme.border.primary,
+              valid: theme.global.valid,
+              alert: theme.global.alert,
+              faded: theme.border.primary
+            }[variant]
+          }[role]
 
     const hoverColor = transparent
       ? theme.font.primary

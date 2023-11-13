@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -49,4 +49,4 @@ export const isFungibleTokenMetadata = (
 ): meta is FungibleTokenMetaData => (meta as FungibleTokenMetaData).name !== undefined
 
 export const isNFTMetadata = (meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>): meta is NFTMetaData =>
-  (meta as NFTMetaData).collectionAddress !== undefined
+  (meta as NFTMetaData).collectionId !== undefined

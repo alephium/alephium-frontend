@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { formatAmountForDisplay } from '@alephium/sdk'
+import { formatAmountForDisplay } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { colord } from 'colord'
 import { partition } from 'lodash'
