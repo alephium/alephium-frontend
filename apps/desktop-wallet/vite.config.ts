@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /// <reference types="vitest" />
 
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
@@ -36,7 +37,12 @@ export default defineConfig({
       // Node.js global to browser globalThis
       define: {
         global: 'globalThis'
-      }
+      },
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          buffer: true
+        })
+      ]
     }
   },
   plugins: [react(), viteTsconfigPaths(), svgrPlugin(), nodePolyfills()],

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HTMLMotionProps, motion } from 'framer-motion'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
@@ -25,6 +26,7 @@ import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
 export interface CardProps extends HTMLMotionProps<'div'> {
   label: string
   isLoading: boolean
+  children: ReactNode
   className?: string
 }
 
