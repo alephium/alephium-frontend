@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { fromHumanReadableAmount } from '@alephium/shared'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { fromHumanReadableAmount } from 'shared'
 import styled from 'styled-components'
 
 import FooterButton from '@/components/Buttons/FooterButton'

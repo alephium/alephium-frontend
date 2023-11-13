@@ -16,7 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay, MAGNITUDE_SYMBOL } from 'shared'
+import {
+  convertToPositive,
+  formatAmountForDisplay,
+  formatFiatAmountForDisplay,
+  MAGNITUDE_SYMBOL
+} from '@alephium/shared'
 import styled from 'styled-components'
 
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
@@ -161,10 +166,10 @@ export default styled(Amount)`
     color
       ? color
       : highlight && value !== undefined
-      ? value < 0
-        ? theme.global.alert
-        : theme.global.valid
-      : 'inherit'};
+        ? value < 0
+          ? theme.global.alert
+          : theme.global.valid
+        : 'inherit'};
   white-space: nowrap;
   font-weight: 600;
 `

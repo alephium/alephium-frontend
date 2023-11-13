@@ -37,8 +37,8 @@ vi.mock('react-i18next', async () => ({
   })
 }))
 
-vi.mock('shared', async () => ({
-  ...(await vi.importActual<typeof import('shared')>('shared')),
+vi.mock('@alephium/shared', async () => ({
+  ...(await vi.importActual<typeof import('@alephium/shared')>('@alephium/shared')),
   getStorage: vi.fn().mockImplementation(() => ({
     list: () => ['Wallet 1', 'Wallet 2'],
     load: () => 'walletEncrypted'

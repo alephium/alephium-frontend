@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // TODO: Same as in desktop wallet
 
+import { AssetInfo } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { hexToString } from '@alephium/web3'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
-import { AssetInfo } from 'shared'
 
 import { loadingStarted, syncNetworkTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
 import { assetsInfoAdapter } from '~/store/assets/assetsAdapter'

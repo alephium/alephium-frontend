@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { addApostrophes } from '@alephium/shared'
 import { animate } from 'framer-motion'
 import { useEffect, useRef } from 'react'
-import { addApostrophes } from 'shared'
 
 interface CounterProps {
   from?: number

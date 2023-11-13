@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { APIError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
 import { useNavigate, useParams } from 'react-router-dom'
-import { APIError } from 'shared'
 import styled, { css } from 'styled-components'
 
 import client from '@/api/client'

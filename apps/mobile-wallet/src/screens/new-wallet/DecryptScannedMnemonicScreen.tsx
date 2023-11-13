@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { decryptAsync } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useCallback, useRef, useState } from 'react'
 import { Alert } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
-import { decryptAsync } from 'shared'
 
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'

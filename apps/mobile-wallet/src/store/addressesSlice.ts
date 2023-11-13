@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Asset, TokenDisplayBalances } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
@@ -27,7 +28,6 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 import { chunk, sortBy, uniq } from 'lodash'
-import { Asset, TokenDisplayBalances } from 'shared'
 
 import {
   fetchAddressesBalances,
@@ -292,8 +292,8 @@ const addressesSlice = createSlice({
             mempoolTransactions.length > 0
               ? mempoolTransactions[0].lastSeen
               : transactions.length > 0
-              ? transactions[0].timestamp
-              : address.lastUsed
+                ? transactions[0].timestamp
+                : address.lastUsed
 
           return {
             id: hash,

@@ -124,8 +124,8 @@ const PageSwitch = ({ totalNumberOfElements, elementsPerPage, numberOfElementsLo
           totalNumberOfPages
             ? totalNumberOfPages === currentPage
             : numberOfElementsLoaded
-            ? numberOfElementsLoaded < 20
-            : false
+              ? numberOfElementsLoaded < 20
+              : false
         }
         onClick={() => handlePageSwitch('next')}
       >

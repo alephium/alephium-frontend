@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AssetAmount, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -34,7 +35,6 @@ import { partition } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AssetAmount, getHumanReadableError } from 'shared'
 
 import client from '@/api/client'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'

@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AssetAmount, toHumanReadableAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { Info } from 'lucide-react'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AssetAmount, toHumanReadableAmount } from 'shared'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'

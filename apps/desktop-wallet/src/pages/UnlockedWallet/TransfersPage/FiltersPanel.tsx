@@ -15,10 +15,10 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { Asset } from '@alephium/shared'
 import { colord } from 'colord'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Asset } from 'shared'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
@@ -64,26 +64,26 @@ const FiltersPanel = ({
     selectedAddresses.length === 0
       ? ''
       : selectedAddresses.length === 1
-      ? selectedAddresses[0].label || selectedAddresses[0].hash
-      : selectedAddresses.length === addresses.length
-      ? t('All selected')
-      : t('{{ number }} selected', { number: selectedAddresses.length })
+        ? selectedAddresses[0].label || selectedAddresses[0].hash
+        : selectedAddresses.length === addresses.length
+          ? t('All selected')
+          : t('{{ number }} selected', { number: selectedAddresses.length })
 
   const renderDirectionsSelectedValue = () =>
     selectedDirections.length === 0
       ? ''
       : selectedDirections.length === directionOptions.length
-      ? t('All selected')
-      : selectedDirections.map((direction) => t(direction.label)).join(', ')
+        ? t('All selected')
+        : selectedDirections.map((direction) => t(direction.label)).join(', ')
 
   const renderAssetsSelectedValue = () =>
     !selectedAssets
       ? null
       : selectedAssets.length === 0
-      ? ''
-      : selectedAssets.length === assets.length
-      ? t('All selected')
-      : selectedAssets.map((asset) => asset.symbol ?? asset.id).join(', ')
+        ? ''
+        : selectedAssets.length === assets.length
+          ? t('All selected')
+          : selectedAssets.map((asset) => asset.symbol ?? asset.id).join(', ')
 
   const resetFilters = () => {
     setSelectedAddresses(addresses)

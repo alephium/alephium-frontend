@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth } from 'shared'
+import { calculateAmountWorth } from '@alephium/shared'
 
 import { useAppSelector } from '~/hooks/redux'
 import { selectTotalBalance } from '~/store/addressesSlice'

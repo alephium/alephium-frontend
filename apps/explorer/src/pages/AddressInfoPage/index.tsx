@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { addApostrophes, calculateAmountWorth, getHumanReadableError, isAddressValid } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { contractIdFromAddress, groupOfAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
@@ -26,7 +27,6 @@ import { useTranslation } from 'react-i18next'
 import { RiFileDownloadLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
 import { useNavigate, useParams } from 'react-router-dom'
-import { addApostrophes, calculateAmountWorth, getHumanReadableError, isAddressValid } from 'shared'
 import styled, { css, useTheme } from 'styled-components'
 
 import { queries } from '@/api'

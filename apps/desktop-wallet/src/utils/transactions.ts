@@ -16,11 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ALPH } from '@alephium/token-list'
-import { DUST_AMOUNT, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { explorer } from '@alephium/web3'
-import dayjs from 'dayjs'
-import { map } from 'lodash'
 import {
   AssetAmount,
   calcTxAmountsDeltaForAddress,
@@ -30,7 +25,12 @@ import {
   isSwap,
   TransactionDirection,
   TransactionInfoType
-} from 'shared'
+} from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
+import { DUST_AMOUNT, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
+import { explorer } from '@alephium/web3'
+import dayjs from 'dayjs'
+import { map } from 'lodash'
 
 import { SelectOption } from '@/components/Inputs/Select'
 import i18n from '@/i18n'

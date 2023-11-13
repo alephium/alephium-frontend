@@ -84,8 +84,8 @@ const useStepsUI = (currentStep: Step) => {
     steps.indexOf(step) < steps.indexOf(currentStep)
       ? 'completed'
       : steps.indexOf(step) === steps.indexOf(currentStep)
-      ? 'active'
-      : 'next'
+        ? 'active'
+        : 'next'
 
   const textColor: Record<StepStatus, string> = {
     completed: colord(theme.global.accent).alpha(0.7).toHex(),

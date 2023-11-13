@@ -141,8 +141,8 @@ const addressesSlice = createSlice({
             mempoolTransactions.length > 0
               ? mempoolTransactions[0].lastSeen
               : transactions.length > 0
-              ? transactions[0].timestamp
-              : address.lastUsed
+                ? transactions[0].timestamp
+                : address.lastUsed
 
           return {
             id: hash,

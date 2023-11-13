@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getHumanReadableError } from '@alephium/shared'
 import { AlertOctagon, AlertTriangle, Download, FileCode, TerminalSquare } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { getHumanReadableError } from 'shared'
 import styled from 'styled-components'
 
 import AddressRow from '@/components/AddressRow'

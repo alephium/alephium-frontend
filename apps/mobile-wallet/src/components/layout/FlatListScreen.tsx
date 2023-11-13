@@ -64,8 +64,8 @@ const FlatListScreen = <T,>({
             paddingTop: hasNavigationHeader
               ? headerheight + DEFAULT_MARGIN
               : headerOptions
-              ? screenHeaderHeight + DEFAULT_MARGIN
-              : 0,
+                ? screenHeaderHeight + DEFAULT_MARGIN
+                : 0,
             paddingBottom: insets.bottom,
             flex: fill ? 1 : undefined,
             gap: VERTICAL_GAP

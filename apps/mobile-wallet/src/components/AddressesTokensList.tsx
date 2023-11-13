@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Asset } from '@alephium/shared'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
 import Animated, { CurvedTransition } from 'react-native-reanimated'
-import { Asset } from 'shared'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'

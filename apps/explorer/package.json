@@ -27,7 +27,7 @@
     ]
   },
   "dependencies": {
-    "shared": "*",
+    "@alephium/shared": "*",
     "@tanstack/query-sync-storage-persister": "4.32.0",
     "@tanstack/react-query": "4.32.0",
     "@tanstack/react-query-persist-client": "^4.32.0",

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isNumber } from 'shared'
+import { isNumber } from '@alephium/shared'
 
 export const isNumericStringValid = (str: string, allowFloat = true) =>
   isNumber(str) &&

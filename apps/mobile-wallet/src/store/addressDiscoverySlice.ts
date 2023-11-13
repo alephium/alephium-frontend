@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressKeyPair, deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/shared'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,
@@ -25,7 +26,6 @@ import {
   isAnyOf,
   PayloadAction
 } from '@reduxjs/toolkit'
-import { AddressKeyPair, deriveAddressAndKeys, walletImportAsyncUnsafe } from 'shared'
 
 import client from '~/api/client'
 import { addressesImported } from '~/store/addressesSlice'

@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getHumanReadableError } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { getHumanReadableError } from 'shared'
 import styled from 'styled-components'
 
 import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'

@@ -24,8 +24,8 @@ export const vibrate = (impactFeedbackStyle: ImpactFeedbackStyle) =>
     Platform.OS === 'ios'
       ? impactFeedbackStyle
       : impactFeedbackStyle === ImpactFeedbackStyle.Heavy
-      ? ImpactFeedbackStyle.Medium
-      : ImpactFeedbackStyle.Light
+        ? ImpactFeedbackStyle.Medium
+        : ImpactFeedbackStyle.Light
   )
 
 export const ImpactStyle = ImpactFeedbackStyle

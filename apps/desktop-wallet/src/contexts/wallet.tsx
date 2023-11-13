@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Wallet } from '@alephium/shared'
 import { createContext, useContext, useState } from 'react'
-import { Wallet } from 'shared'
 
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 

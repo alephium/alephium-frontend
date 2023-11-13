@@ -70,8 +70,8 @@ const appendMagnitudeSymbol = (tier: number, amount: number, numberOfDecimalsToD
   return reachedEndOfMagnitudeSymbols
     ? addApostrophes(scaledRoundedUp) + suffix
     : parseFloat(scaledRoundedUp) < 1000
-    ? scaledRoundedUp + suffix
-    : appendMagnitudeSymbol(tier + 1, amount, numberOfDecimalsToDisplay)
+      ? scaledRoundedUp + suffix
+      : appendMagnitudeSymbol(tier + 1, amount, numberOfDecimalsToDisplay)
 }
 
 interface FormatAmountForDisplayProps {

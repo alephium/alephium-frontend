@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import {
   binToHex,
@@ -27,7 +28,6 @@ import {
 import { SessionTypes } from '@walletconnect/types'
 import { usePostHog } from 'posthog-react-native'
 import { Image } from 'react-native'
-import { getHumanReadableError } from 'shared'
 import styled from 'styled-components/native'
 
 import { signAndSendTransaction } from '~/api/transactions'

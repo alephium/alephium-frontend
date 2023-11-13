@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { discoverActiveAddresses, Wallet, walletImport } from '@alephium/shared'
 import { ExplorerProvider } from '@alephium/web3'
-import { discoverActiveAddresses, Wallet, walletImport } from 'shared'
 
 import { exponentialBackoffFetchRetry } from '../api/fetchRetry'
 

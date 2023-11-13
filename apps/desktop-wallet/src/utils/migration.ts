@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { encrypt } from '@alephium/shared'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
-import { encrypt } from 'shared'
 
 import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
 import { getEncryptedStoragePropsFromActiveWallet } from '@/storage/encryptedPersistentStorage'

@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { formatAmountForDisplay } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { colord } from 'colord'
 import { partition } from 'lodash'
 import { ArrowLeftRight, ArrowRight as ArrowRightIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
-import { formatAmountForDisplay } from 'shared'
 import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'

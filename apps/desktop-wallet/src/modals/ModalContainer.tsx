@@ -98,10 +98,10 @@ export const ModalBackdrop = styled(motion.div)<{ focusMode?: boolean; light?: b
         ? 'rgba(0, 0, 0, 0.8)'
         : 'rgba(0, 0, 0, 0.15)'
       : focusMode
-      ? 'rgba(0, 0, 0, 0.9)'
-      : light
-      ? 'rgba(0, 0, 0, 0.15)'
-      : 'rgba(0, 0, 0, 0.6)'};
+        ? 'rgba(0, 0, 0, 0.9)'
+        : light
+          ? 'rgba(0, 0, 0, 0.15)'
+          : 'rgba(0, 0, 0, 0.6)'};
 `
 
 export const useMoveFocusOnPreviousModal = () => {

@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Asset } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { omit } from 'lodash'
 import posthog from 'posthog-js'
-import { Asset } from 'shared'
 
 import client from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
@@ -41,8 +41,8 @@ export const syncNetworkTokensInfo = createAsyncThunk(
       state.network.settings.networkId === 0
         ? 'mainnet'
         : state.network.settings.networkId === 1
-        ? 'testnet'
-        : undefined
+          ? 'testnet'
+          : undefined
 
     if (network) {
       try {
