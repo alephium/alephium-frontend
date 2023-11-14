@@ -1,0 +1,14 @@
+{
+  "extends": ["//"],
+  "pipeline": {
+    "electron-pack-windows": {
+      "dependsOn": ["build"]
+    },
+    "electron-pack-macos": {
+      "dependsOn": ["build"]
+    },
+    "electron-pack-ubuntu": {
+      "dependsOn": ["build"]
+    }
+  }
+}

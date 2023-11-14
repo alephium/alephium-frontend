@@ -11,10 +11,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install bun
+      - name: Install Bun package manager
         uses: oven-sh/setup-bun@v1
-      - run: bun install
-      - run: bun run test
+      - name: Install NPM dependencies
+        run: bun install
+      - name: Run test scripts of all workspaces in parallel
+        run: bun run test
 
   electron-tests:
     runs-on: ${{ matrix.os }}
@@ -23,15 +25,16 @@ jobs:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v3
-      - name: Install bun
+      - name: Install Bun package manager
         uses: oven-sh/setup-bun@v1
-      - run: bun install
+      - name: Install NPM dependencies
+        run: bun install
       - id: get-os
         run: |
           os=$(echo ${{ matrix.os }} | cut -d- -f1)
           echo "::set-output name=os::$os"
         shell: bash
       - run: echo "${{ steps.get-os.outputs.os }}"
-      - run: bun run electron-pack-${{ steps.get-os.outputs.os }}
+      - run: cd apps/desktop-wallet && bun run ci:electron-pack-${{ steps.get-os.outputs.os }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

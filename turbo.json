@@ -5,8 +5,11 @@
     "lint": {},
     "lint:fix": { "cache": false },
     "test": {},
+    "build": {
+      "dependsOn": ["^compile"]
+    },
     "compile": {
-      "dependsOn": ["typecheck", "lint", "test"],
+      "dependsOn": ["typecheck"],
       "outputs": ["dist/**"]
     },
     "typecheck": {
