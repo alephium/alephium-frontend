@@ -41,5 +41,12 @@ export default defineConfig({
       reporter: ['text', 'html'],
       exclude: ['node_modules/', 'src/setupTests.js']
     }
+  },
+  build: {
+    target: 'es2020',
+    outDir: 'build',
+    commonjsOptions: {
+      include: [/node_modules/, /shared/]
+    }
   }
 })

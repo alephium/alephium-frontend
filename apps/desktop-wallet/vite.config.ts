@@ -51,7 +51,10 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
-    outDir: 'build'
+    outDir: 'build',
+    commonjsOptions: {
+      include: [/node_modules/, /shared/]
+    }
   },
   base: ''
 })
