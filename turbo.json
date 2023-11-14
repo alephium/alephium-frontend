@@ -4,7 +4,9 @@
   "pipeline": {
     "lint": {},
     "lint:fix": { "cache": false },
-    "test": {},
+    "test": {
+      "dependsOn": ["^compile"]
+    },
     "build": {
       "dependsOn": ["^compile"]
     },

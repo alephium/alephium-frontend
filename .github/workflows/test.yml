@@ -15,6 +15,10 @@ jobs:
         uses: oven-sh/setup-bun@v1
       - name: Install NPM dependencies
         run: bun install
+      - name: Use Node.js for vitest
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
       - name: Run test scripts of all workspaces in parallel
         run: bun run test
 

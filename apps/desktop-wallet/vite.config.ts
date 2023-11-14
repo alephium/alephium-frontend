@@ -23,6 +23,8 @@ import { defineConfig } from 'vite'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 
+/// <reference types="vitest" />
+
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
