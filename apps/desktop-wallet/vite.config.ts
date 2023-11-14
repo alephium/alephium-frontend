@@ -18,10 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /// <reference types="vitest" />
 
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 
@@ -37,15 +35,11 @@ export default defineConfig({
       // Node.js global to browser globalThis
       define: {
         global: 'globalThis'
-      },
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          buffer: true
-        })
-      ]
-    }
+      }
+    },
+    include: ['@alephium/shared'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin(), nodePolyfills()],
+  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
   test: {
     globals: true,
     environment: 'jsdom',
