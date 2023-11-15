@@ -27,7 +27,7 @@ jobs:
         run: bun install
 
       - name: Build frontend
-        run: bun run ci:build && bun docker/init-server-data.js
+        run: cd apps/explorer && bun run ci:build && bun docker/init-server-data.js
 
       - name: Sync files to S3
         run: aws s3 sync ./apps/explorer/build/ s3://$AWS_BUCKET_NAME --acl public-read --delete --cache-control max-age=604800
