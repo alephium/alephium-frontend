@@ -6,6 +6,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build --outDir build",
+    "ci:build": "turbo run build",
     "gh-pages-build": "tsc && vite build --outDir build --base=/explorer/",
     "serve": "node docker/init-server-data.js && serve -s build -p 3000",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
