@@ -18,8 +18,8 @@ A blockchain explorer frontend for Alephium.
 ## Development
 
 - Install dependencies from the root of the monorepo: `bun install`
-- Starting the project: `env $(cat .env.placeholder | xargs) bun run start`
-- Building the project: `bun run build`
+- Starting the project: `env $(cat .env.placeholder | xargs) turbo run start`
+- Building the project: `turbo run build`
 - Run the tests: `turbo test`
 - Lint and fix: `turbo lint:fix`
 
