@@ -15,8 +15,10 @@ bun install
 To launch it as an electron app, run:
 
 ```shell
-bun start:electron
+turbo start:electron
 ```
+
+> :info: Using `turbo` instead of `bun` ensures that the appropriate tasks will be run beforehand (for example the `compile` task so that the shared library gets compiled). See the `turbo.json` config of this workspace for more details.
 
 ## Test
 
@@ -29,13 +31,13 @@ turbo test
 The command below will detect your OS and build the corresponding package:
 
 ```shell
-bun electron-pack
+turbo build:electron
 ```
 
 To build for ARM64 Linux, run:
 
 ```shell
-bun electron-pack-linux:arm64
+turbo build:electron:linux:arm64
 ```
 
 ## Release

@@ -1,13 +1,24 @@
 {
   "extends": ["//"],
   "pipeline": {
-    "electron-pack-windows": {
+    "start:electron": {
+      "dependsOn": ["^compile"],
+      "cache": false,
+      "persistent": true
+    },
+    "build:electron": {
       "dependsOn": ["build"]
     },
-    "electron-pack-macos": {
+    "build:electron:windows": {
       "dependsOn": ["build"]
     },
-    "electron-pack-ubuntu": {
+    "build:electron:macos": {
+      "dependsOn": ["build"]
+    },
+    "build:electron:ubuntu": {
+      "dependsOn": ["build"]
+    },
+    "build:electron:linux:arm64": {
       "dependsOn": ["build"]
     }
   }

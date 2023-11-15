@@ -10,12 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Install bun
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Install Bun package manager
         uses: oven-sh/setup-bun@v1
-      - run: bun install
+
+      - name: Install NPM dependencies
+        run: bun install
+
       # - run: bun install --yarn  # Uncomment when https://github.com/alephium/alephium-frontend/issues/4 is resolved.
       # - name: Audit              # See https://github.com/oven-sh/bun/issues/5359 for more info.
       #   run: yarn audit
-      - run: bun run lint
-      - run: bun run typecheck
+
+      - name: Lint all workspaces in parallel
+        run: bun run lint
+
+      - name: Check that TypeScript compiles in all workspaces in parallel
+        run: bun run typecheck

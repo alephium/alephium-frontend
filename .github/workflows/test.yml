@@ -10,37 +10,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
       - name: Install Bun package manager
         uses: oven-sh/setup-bun@v1
+
       - name: Install NPM dependencies
         run: bun install
+
       - name: Use Node.js for vitest
         uses: actions/setup-node@v4
         with:
           node-version: 16
+
       - name: Run test scripts of all workspaces in parallel
         run: bun run test
 
-  electron-tests:
+  build-electron-app:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest,
-        # windows-latest,
-         ubuntu-latest]
+        os: [macos-latest, ubuntu-latest]
+      # os: [macos-latest, windows-latest, ubuntu-latest]  # See https://github.com/alephium/alephium-frontend/issues/5
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
       - name: Install Bun package manager
         uses: oven-sh/setup-bun@v1
+
       - name: Install NPM dependencies
         run: bun install
-      - id: get-os
+
+      - name: Extract platform name
+        id: get-os
         run: |
           os=$(echo ${{ matrix.os }} | cut -d- -f1)
           echo "::set-output name=os::$os"
         shell: bash
-      - run: echo "${{ steps.get-os.outputs.os }}"
-      - run: cd apps/desktop-wallet && bun run ci:electron-pack-${{ steps.get-os.outputs.os }}
+
+      - name: Building desktop wallet on ${{ steps.get-os.outputs.os }}
+        run: cd apps/desktop-wallet && bun run ci:build:electron:${{ steps.get-os.outputs.os }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
