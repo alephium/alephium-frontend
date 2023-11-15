@@ -2,6 +2,7 @@
   "name": "alephium-explorer",
   "description": "The Alephium explorer frontend",
   "version": "1.8.2",
+  "private": true,
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build --outDir build",
