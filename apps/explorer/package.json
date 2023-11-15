@@ -6,8 +6,9 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build --outDir build",
+    "build:gh-pages": "bun run build -- --base=/explorer/",
     "ci:build": "turbo run build",
-    "gh-pages-build": "tsc && vite build --outDir build --base=/explorer/",
+    "ci:build:gh-pages": "turbo run build:gh-pages",
     "serve": "node docker/init-server-data.js && serve -s build -p 3000",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
