@@ -130,6 +130,7 @@
       "node_modules/**/*"
     ],
     "linux": {
+      "executableName": "alephium-desktop-wallet",
       "category": "Finance",
       "target": [
         "AppImage",
