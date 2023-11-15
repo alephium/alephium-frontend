@@ -14,7 +14,7 @@ env:
   VITE_NODE_URL: https://node.testnet.alephium.org
 
 jobs:
-  build:
+  deploy-testnet-explorer:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository

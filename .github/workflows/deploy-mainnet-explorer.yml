@@ -14,7 +14,7 @@ env:
   VITE_NODE_URL: https://node-v20.mainnet.alephium.org
 
 jobs:
-  build:
+  deploy-mainnet-explorer:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
