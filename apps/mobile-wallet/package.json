@@ -1,5 +1,5 @@
 {
-  "name": "alephium-mobile-wallet",
+  "name": "@alephium/mobile-wallet",
   "version": "1.0.0",
   "private": true,
   "main": "index.ts",
