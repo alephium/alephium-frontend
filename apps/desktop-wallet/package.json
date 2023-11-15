@@ -18,6 +18,7 @@
     "build:electron:macos": "electron-builder --mac --universal",
     "build:electron:ubuntu": "electron-builder -l",
     "build:electron:linux:arm64": "electron-builder -l --arm64",
+    "ci:build": "turbo run build",
     "ci:build:electron:ubuntu": "turbo run build:electron:ubuntu",
     "ci:build:electron:windows": "turbo run build:electron:windows",
     "ci:build:electron:macos": "turbo run build:electron:macos",
