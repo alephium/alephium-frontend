@@ -1,5 +1,5 @@
 {
-  "name": "alephium-wallet",
+  "name": "@alephium/desktop-wallet",
   "description": "The official Alephium wallet",
   "version": "2.1.5",
   "author": "Alephium dev <dev@alephium.org>",
