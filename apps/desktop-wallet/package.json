@@ -1,5 +1,5 @@
 {
-  "name": "@alephium/desktop-wallet",
+  "name": "alephium-desktop-wallet",
   "description": "The official Alephium wallet",
   "version": "2.1.5",
   "author": "Alephium dev <dev@alephium.org>",
@@ -129,9 +129,6 @@
       "public/preload.js",
       "node_modules/**/*"
     ],
-    "extraMetadata": {
-      "name": "alephium-desktop-wallet"
-    },
     "linux": {
       "category": "Finance",
       "target": [
