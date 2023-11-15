@@ -129,8 +129,10 @@
       "public/preload.js",
       "node_modules/**/*"
     ],
+    "extraMetadata": {
+      "name": "alephium-desktop-wallet"
+    },
     "linux": {
-      "executableName": "alephium-desktop-wallet",
       "category": "Finance",
       "target": [
         "AppImage",
@@ -151,7 +153,6 @@
       ]
     },
     "mac": {
-      "executableName": "alephium-desktop-wallet",
       "hardenedRuntime": true,
       "entitlements": "./node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
     },
