@@ -45,9 +45,7 @@ jobs:
 
       - name: Extract platform name
         id: get-os
-        run: |
-          os=$(echo ${{ matrix.os }} | cut -d- -f1)
-          echo "::set-output name=os::$os"
+        run: echo "os=$(echo ${{ matrix.os }} | cut -d- -f1)" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Building desktop wallet on ${{ steps.get-os.outputs.os }}
