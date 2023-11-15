@@ -1,5 +1,5 @@
 {
-  "name": "alephium-explorer",
+  "name": "@alephium/explorer",
   "description": "The Alephium explorer frontend",
   "version": "1.8.2",
   "private": true,
