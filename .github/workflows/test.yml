@@ -93,6 +93,9 @@ jobs:
         with:
           node-version: 16
 
+      - name: Delete bun lockfile because it creates problems with yarn
+        run: rm bun.lockb
+
       - name: Install NPM dependencies
         run: cd apps/desktop-wallet && yarn install --network-timeout 100000
 
