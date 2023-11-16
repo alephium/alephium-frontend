@@ -33,7 +33,7 @@ const ModalWithBackdrop = ({ children, closeModal, color, showCloseButton, ...pr
   const insets = useSafeAreaInsets()
 
   return (
-    <Modal transparent={true} animationType="none" {...props}>
+    <Modal transparent={true} animationType="none" onRequestClose={closeModal} {...props}>
       <ModalBackdrop onPress={closeModal} color={color} />
       <ModalContent>{children}</ModalContent>
       {showCloseButton && (
