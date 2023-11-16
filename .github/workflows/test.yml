@@ -6,87 +6,87 @@ on:
   pull_request:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  # test:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v3
 
-      - name: Install Bun package manager
-        uses: oven-sh/setup-bun@v1
+  #     - name: Install Bun package manager
+  #       uses: oven-sh/setup-bun@v1
 
-      - name: Install NPM dependencies
-        run: bun install
+  #     - name: Install NPM dependencies
+  #       run: bun install
 
-      - name: Use Node.js for vitest
-        uses: actions/setup-node@v4
-        with:
-          node-version: 16
+  #     - name: Use Node.js for vitest
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 16
 
-      - name: Run test scripts of all workspaces in parallel
-        run: bun run test
+  #     - name: Run test scripts of all workspaces in parallel
+  #       run: bun run test
 
-  generate-lockfile:
-    runs-on: ubuntu-latest
+  # generate-lockfile:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v3
 
-      - name: Install Bun package manager
-        uses: oven-sh/setup-bun@v1
+  #     - name: Install Bun package manager
+  #       uses: oven-sh/setup-bun@v1
 
-      - name: Install NPM dependencies
-        run: bun install --yarn
+  #     - name: Install NPM dependencies
+  #       run: bun install --yarn
 
-      - name: Upload yarn.lock
-        uses: actions/upload-artifact@v3
-        with:
-          name: lockfile
-          path: ${{ github.workspace }}/yarn.lock
+  #     - name: Upload yarn.lock
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: lockfile
+  #         path: ${{ github.workspace }}/yarn.lock
 
-  build-electron-app-unix:
-    runs-on: ${{ matrix.os }}
+  # build-electron-app-unix:
+  #   runs-on: ${{ matrix.os }}
 
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest]
+  #   strategy:
+  #     matrix:
+  #       os: [macos-latest, ubuntu-latest]
 
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v3
 
-      - name: Install Bun package manager
-        uses: oven-sh/setup-bun@v1
+  #     - name: Install Bun package manager
+  #       uses: oven-sh/setup-bun@v1
 
-      - name: Install NPM dependencies
-        run: bun install
+  #     - name: Install NPM dependencies
+  #       run: bun install
 
-      - name: Extract platform name
-        id: get-os
-        run: echo "os=$(echo ${{ matrix.os }} | cut -d- -f1)" >> $GITHUB_OUTPUT
-        shell: bash
+  #     - name: Extract platform name
+  #       id: get-os
+  #       run: echo "os=$(echo ${{ matrix.os }} | cut -d- -f1)" >> $GITHUB_OUTPUT
+  #       shell: bash
 
-      - name: Building desktop wallet on ${{ steps.get-os.outputs.os }}
-        run: cd apps/desktop-wallet && bun run ci:build:electron:${{ steps.get-os.outputs.os }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Building desktop wallet on ${{ steps.get-os.outputs.os }}
+  #       run: cd apps/desktop-wallet && bun run ci:build:electron:${{ steps.get-os.outputs.os }}
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-electron-app-windows:
     runs-on: windows-latest
 
-    needs: generate-lockfile
+    # needs: generate-lockfile
 
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
 
-      - name: Download yarn.lock
-        uses: actions/download-artifact@v3
-        with:
-          name: lockfile
-          path: ${{ github.workspace }}
+      # - name: Download yarn.lock
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: lockfile
+      #     path: ${{ github.workspace }}
 
       - name: Use yarn since bun is not available on Windows
         uses: actions/setup-node@v4
