@@ -60,26 +60,26 @@ jobs:
           APPLEIDPASS: ${{ secrets.apple_id_password }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
 
-  release-desktop-wallet-windows:
-    runs-on: ubuntu-latest
+  # release-desktop-wallet-windows:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v3
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 16
+  #     - name: Install Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 16
 
-      - name: Build & release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
-        if: ${{ startsWith(github.ref, 'refs/tags/alephium-desktop-wallet@') }}
-        with:
-          package_root: 'apps/desktop-wallet'
-          build_script_name: 'ci:build'
-          args: '-w'
-          github_token: ${{ secrets.github_token }}
-          release: ${{ startsWith(github.ref, 'refs/tags/alephium-desktop-wallet@') }}
-          windows_certs: ${{ secrets.windows_certs }}
-          windows_certs_password: ${{ secrets.windows_certs_password }}
+  #     - name: Build & release Electron app
+  #       uses: samuelmeuli/action-electron-builder@v1
+  #       if: ${{ startsWith(github.ref, 'refs/tags/alephium-desktop-wallet@') }}
+  #       with:
+  #         package_root: 'apps/desktop-wallet'
+  #         build_script_name: 'ci:build'
+  #         args: '-w'
+  #         github_token: ${{ secrets.github_token }}
+  #         release: ${{ startsWith(github.ref, 'refs/tags/alephium-desktop-wallet@') }}
+  #         windows_certs: ${{ secrets.windows_certs }}
+  #         windows_certs_password: ${{ secrets.windows_certs_password }}
