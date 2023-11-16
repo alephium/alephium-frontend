@@ -1,17 +1,27 @@
 {
-  "name": "alephium-wallet",
+  "name": "alephium-desktop-wallet",
   "description": "The official Alephium wallet",
   "version": "2.1.5",
   "author": "Alephium dev <dev@alephium.org>",
   "main": "public/electron.js",
+  "homepage": "./",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:alephium/alephium-frontend.git"
+  },
   "scripts": {
     "build": "tsc && cross-env INLINE_RUNTIME_CHUNK=false VITE_VERSION=$npm_package_version vite build",
     "start:electron": "concurrently \"cross-env VITE_VERSION=$npm_package_version vite\" \"electron .\"",
-    "electron-pack": "bun run build && electron-builder",
-    "electron-pack-windows": "bun run build && electron-builder -w",
-    "electron-pack-macos": "bun run build && electron-builder --mac --universal",
-    "electron-pack-ubuntu": "bun run build && electron-builder -l",
-    "electron-pack-linux:arm64": "bun run build && electron-builder -l --arm64",
+    "build:electron": "electron-builder",
+    "build:electron:windows": "electron-builder -w",
+    "build:electron:macos": "electron-builder --mac --universal",
+    "build:electron:ubuntu": "electron-builder -l",
+    "build:electron:linux:arm64": "electron-builder -l --arm64",
+    "ci:build": "turbo run build",
+    "ci:build:electron:ubuntu": "turbo run build:electron:ubuntu",
+    "ci:build:electron:windows": "turbo run build:electron:windows",
+    "ci:build:electron:macos": "turbo run build:electron:macos",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest watch",
@@ -19,7 +29,7 @@
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "syncTranslationFiles": "bun scripts/syncTranslationFiles.js && prettier --write ./locales/**/*.json",
-    "ts:check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "browserslist": [
     ">0.2%",
@@ -38,7 +48,6 @@
   "devDependencies": {
     "@alephium/walletconnect-provider": "^0.22.0",
     "@electron/notarize": "^1.2.3",
-    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@json-rpc-tools/utils": "^1.7.6",
     "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.14.1",

@@ -1,12 +1,13 @@
 {
   "name": "@alephium/shared",
   "version": "0.7.6",
-  "main": "lib/index.ts",
+  "private": true,
+  "main": "dist/index.js",
   "browser": "dist/alephium.min.js",
-  "types": "lib/index.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "default": "./lib/index.ts",
+      "default": "./dist/index.js",
       "browser": "./dist/alephium.min.js"
     }
   },
@@ -15,7 +16,7 @@
     "lint:fix": "eslint . --fix --ext .ts",
     "test": "ts-node ../../node_modules/jest/bin/jest.js --useStderr --silent=false --verbose=true --config jestconfig.json",
     "test:watch": "bun run test -- --watch",
-    "ts:check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "compile": "rm -rf dist && tsc --build . && webpack"
   },
   "dependencies": {

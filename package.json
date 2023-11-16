@@ -3,11 +3,15 @@
   "description": "A monorepo containing all things frontend on Alephium",
   "author": "Alephium dev <dev@alephium.org>",
   "packageManager": "bun@1.0.9",
+  "private": true,
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "postinstall": "patch-package"
   },
@@ -29,7 +33,6 @@
     "prettier": "^3.0.3",
     "tsconfig": "*",
     "turbo": "1.10.16",
-    "typescript": "^5.2.2",
-    "vite-plugin-node-polyfills": "^0.16.0"
+    "typescript": "^5.2.2"
   }
 }

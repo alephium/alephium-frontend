@@ -1,0 +1,25 @@
+{
+  "extends": ["//"],
+  "pipeline": {
+    "start:electron": {
+      "dependsOn": ["^compile"],
+      "cache": false,
+      "persistent": true
+    },
+    "build:electron": {
+      "dependsOn": ["build"]
+    },
+    "build:electron:windows": {
+      "dependsOn": ["build"]
+    },
+    "build:electron:macos": {
+      "dependsOn": ["build"]
+    },
+    "build:electron:ubuntu": {
+      "dependsOn": ["build"]
+    },
+    "build:electron:linux:arm64": {
+      "dependsOn": ["build"]
+    }
+  }
+}

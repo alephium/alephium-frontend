@@ -1,4 +1,4 @@
-name: Publish to mainnet
+name: Deploy explorer to mainnet
 
 on:
   workflow_dispatch:
@@ -14,21 +14,23 @@ env:
   VITE_NODE_URL: https://node-v20.mainnet.alephium.org
 
 jobs:
-  build:
+  deploy-mainnet-explorer:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out Git repository
+        uses: actions/checkout@v3
 
-      - name: Setup node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
+      - name: Install Bun package manager
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install NPM dependencies
+        run: bun install
 
       - name: Build frontend
-        run: npm ci && npm run build && node docker/init-server-data.js
+        run: cd apps/explorer && bun run ci:build && bun docker/init-server-data.js
 
       - name: Sync files to S3
-        run: aws s3 sync ./build/ s3://$AWS_BUCKET_NAME --acl public-read --delete --cache-control max-age=604800
+        run: aws s3 sync ./apps/explorer/build/ s3://$AWS_BUCKET_NAME --acl public-read --delete --cache-control max-age=604800
 
       - name: Notify CloudFront about the changes
         run: aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID} --paths "/*"

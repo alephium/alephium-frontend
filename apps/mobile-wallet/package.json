@@ -1,10 +1,11 @@
 {
-  "name": "alephium-mobile-wallet",
+  "name": "@alephium/mobile-wallet",
   "version": "1.0.0",
+  "private": true,
   "main": "index.ts",
   "scripts": {
     "start": "expo start --dev-client",
-    "ts:check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "android": "expo run:android",
     "ios": "expo run:ios --device",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",

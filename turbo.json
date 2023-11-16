@@ -4,13 +4,18 @@
   "pipeline": {
     "lint": {},
     "lint:fix": { "cache": false },
-    "test": {},
+    "test": {
+      "dependsOn": ["^compile"]
+    },
+    "build": {
+      "dependsOn": ["^compile"]
+    },
     "compile": {
-      "dependsOn": ["ts:check", "lint", "test"],
+      "dependsOn": ["typecheck"],
       "outputs": ["dist/**"]
     },
-    "ts:check": {
-      "dependsOn": ["topo"]
+    "typecheck": {
+      "dependsOn": ["topo", "^compile"]
     },
     "topo": {
       "dependsOn": ["^topo"]

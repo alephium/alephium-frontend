@@ -119,23 +119,23 @@ const template = [
       ...(isMac
         ? []
         : isWindows
-        ? [{ role: 'about' }, { type: 'separator' }]
-        : [
-            {
-              label: 'About',
-              click: async () => {
-                dialog.showMessageBox(mainWindow, {
-                  message: `Version ${app.getVersion()}`,
-                  title: 'About',
-                  type: 'info'
-                })
+          ? [{ role: 'about' }, { type: 'separator' }]
+          : [
+              {
+                label: 'About',
+                click: async () => {
+                  dialog.showMessageBox(mainWindow, {
+                    message: `Version ${app.getVersion()}`,
+                    title: 'About',
+                    type: 'info'
+                  })
+                }
               }
-            }
-          ]),
+            ]),
       {
         label: 'Report an issue',
         click: async () => {
-          await shell.openExternal('https://github.com/alephium/alephium-wallet/issues/new')
+          await shell.openExternal('https://github.com/alephium/alephium-frontend/issues/new')
         }
       },
       {

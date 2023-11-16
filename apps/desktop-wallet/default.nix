@@ -1,6 +1,6 @@
 with import <nixpkgs> {}; {
   sdlEnv = stdenv.mkDerivation {
-    name = "alephium-wallet";
+    name = "alephium-desktop-wallet";
     shellHook = ''
     '';
     buildInputs = [

@@ -1,7 +1,7 @@
 { lib, stdenv , fetchurl , appimageTools , makeWrapper , electron }:
 
 appimageTools.wrapType1 rec {
-  name = "alephium-wallet";
+  name = "alephium-desktop-wallet";
   version = "2.0.2";
 
   src = fetchurl {

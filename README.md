@@ -42,7 +42,7 @@ bun format
 ### Compile TypeScript
 
 ```shell
-turbo ts:check
+turbo typecheck
 ```
 
 ### Test

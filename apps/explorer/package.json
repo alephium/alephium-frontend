@@ -1,18 +1,21 @@
 {
-  "name": "alephium-explorer",
+  "name": "@alephium/explorer",
   "description": "The Alephium explorer frontend",
   "version": "1.8.2",
+  "private": true,
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build --outDir build",
-    "gh-pages-build": "tsc && vite build --outDir build --base=/explorer/",
+    "build:gh-pages": "bun run build -- --base=/explorer/",
+    "ci:build": "turbo run build",
+    "ci:build:gh-pages": "turbo run build:gh-pages",
     "serve": "node docker/init-server-data.js && serve -s build -p 3000",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "ts:check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "browserslist": {
     "production": [
