@@ -23,7 +23,7 @@ import { createEntityAdapter } from '@reduxjs/toolkit'
 
 import { NFT } from '~/types/assets'
 
-export const assetsInfoAdapter = createEntityAdapter<AssetInfo>({
+export const fungibleTokensAdapter = createEntityAdapter<AssetInfo>({
   sortComparer: (a, b) => a.name.localeCompare(b.name)
 })
 

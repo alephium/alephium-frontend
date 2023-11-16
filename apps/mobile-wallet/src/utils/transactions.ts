@@ -41,7 +41,7 @@ export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransac
 // TODO: Same as in desktop wallet, move to SDK?
 export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
   const state = store.getState()
-  const fungibleTokens = state.assetsInfo.entities
+  const fungibleTokens = state.fungibleTokens.entities
   const nfts = state.nfts.entities
   const addresses = Object.values(state.addresses.entities) as Address[]
 

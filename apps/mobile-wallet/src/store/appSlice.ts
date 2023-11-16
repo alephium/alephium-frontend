@@ -16,9 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AssetInfo } from '@alephium/shared'
 import { NavigationState } from '@react-navigation/routers'
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { syncUnknownTokensInfo } from '~/store/assets/assetsActions'
 import { walletDeleted } from '~/store/wallet/walletActions'
 
 const sliceName = 'app'
@@ -26,11 +28,13 @@ const sliceName = 'app'
 export interface AppMetadataState {
   lastNavigationState?: NavigationState
   isCameraOpen: boolean
+  checkedUnknownTokenIds: AssetInfo['id'][]
 }
 
 const initialState: AppMetadataState = {
   lastNavigationState: undefined,
-  isCameraOpen: false
+  isCameraOpen: false,
+  checkedUnknownTokenIds: []
 }
 
 const resetState = () => initialState
@@ -48,7 +52,11 @@ const appSlice = createSlice({
     appReset: resetState
   },
   extraReducers(builder) {
-    builder.addCase(walletDeleted, resetState)
+    builder.addCase(walletDeleted, resetState).addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
+      const initiallyUnknownTokenIds = action.meta.arg
+
+      state.checkedUnknownTokenIds = [...initiallyUnknownTokenIds, ...state.checkedUnknownTokenIds]
+    })
   }
 })
 

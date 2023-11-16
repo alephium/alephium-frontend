@@ -23,21 +23,19 @@ import { ALPH } from '@alephium/token-list'
 import { hexToString } from '@alephium/web3'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { loadingStarted, syncNetworkTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
-import { assetsInfoAdapter } from '~/store/assets/assetsAdapter'
+import { loadingStarted, syncNetworkFungibleTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
+import { fungibleTokensAdapter } from '~/store/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 
-interface AssetsInfoState extends EntityState<AssetInfo> {
+interface FungibleTokensState extends EntityState<AssetInfo> {
   loading: boolean
   status: 'initialized' | 'uninitialized'
-  checkedUnknownTokenIds: AssetInfo['id'][]
 }
 
-const initialState: AssetsInfoState = assetsInfoAdapter.addOne(
-  assetsInfoAdapter.getInitialState({
+const initialState: FungibleTokensState = fungibleTokensAdapter.addOne(
+  fungibleTokensAdapter.getInitialState({
     loading: false,
-    status: 'uninitialized',
-    checkedUnknownTokenIds: []
+    status: 'uninitialized'
   }),
   {
     ...ALPH,
@@ -46,7 +44,7 @@ const initialState: AssetsInfoState = assetsInfoAdapter.addOne(
 )
 
 const assetsSlice = createSlice({
-  name: 'assetsInfo',
+  name: 'fungibleTokens',
   initialState,
   reducers: {},
   extraReducers(builder) {
@@ -54,11 +52,11 @@ const assetsSlice = createSlice({
       .addCase(loadingStarted, (state) => {
         state.loading = true
       })
-      .addCase(syncNetworkTokensInfo.fulfilled, (state, action) => {
+      .addCase(syncNetworkFungibleTokensInfo.fulfilled, (state, action) => {
         const metadata = action.payload
 
         if (metadata) {
-          assetsInfoAdapter.upsertMany(
+          fungibleTokensAdapter.upsertMany(
             state,
             metadata.tokens.map((tokenInfo) => ({
               ...tokenInfo,
@@ -71,12 +69,9 @@ const assetsSlice = createSlice({
       })
       .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
         const metadata = action.payload.tokens
-        const initiallyUnknownTokenIds = action.meta.arg
-
-        state.checkedUnknownTokenIds = [...initiallyUnknownTokenIds, ...state.checkedUnknownTokenIds]
 
         if (metadata) {
-          assetsInfoAdapter.upsertMany(
+          fungibleTokensAdapter.upsertMany(
             state,
             metadata.map((token) => ({
               id: token.id,
