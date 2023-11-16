@@ -34,5 +34,8 @@
     "tsconfig": "*",
     "turbo": "1.10.16",
     "typescript": "^5.2.2"
+  },
+  "resolutions": {
+    "semver": "^7.5.2"
   }
 }
