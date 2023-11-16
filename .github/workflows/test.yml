@@ -27,6 +27,25 @@ jobs:
       - name: Run test scripts of all workspaces in parallel
         run: bun run test
 
+  generate-lockfile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Install Bun package manager
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install NPM dependencies
+        run: bun install --yarn
+
+      - name: Upload yarn.lock
+        uses: actions/upload-artifact@v3
+        with:
+          name: lockfile
+          path: ${{ github.workspace }}/yarn.lock
+
   build-electron-app-unix:
     runs-on: ${{ matrix.os }}
 
@@ -55,20 +74,29 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-electron-app-windows:
-    runs-on: ubuntu-latest
-    container: electronuserland/builder:wine
+    runs-on: windows-latest
+
+    needs: generate-lockfile
 
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
 
-      - name: Install Bun package manager
-        uses: oven-sh/setup-bun@v1
+      - name: Download yarn.lock
+        uses: actions/download-artifact@v3
+        with:
+          name: lockfile
+          path: ${{ github.workspace }}
+
+      - name: Use yarn since bun is not available on Windows
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
 
       - name: Install NPM dependencies
-        run: bun install
+        run: cd apps/desktop-wallet && yarn
 
       - name: Building desktop wallet on Windows
-        run: cd apps/desktop-wallet && bun run ci:build:electron:windows
+        run: cd apps/desktop-wallet && yarn run ci:build:electron:windows
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
