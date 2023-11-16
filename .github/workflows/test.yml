@@ -94,7 +94,7 @@ jobs:
           node-version: 16
 
       - name: Install NPM dependencies
-        run: cd apps/desktop-wallet && yarn
+        run: cd apps/desktop-wallet && yarn install --network-timeout 100000
 
       - name: Building desktop wallet on Windows
         run: cd apps/desktop-wallet && yarn run ci:build:electron:windows
