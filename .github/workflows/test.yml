@@ -97,7 +97,7 @@ jobs:
         run: rm bun.lockb
 
       - name: Install NPM dependencies
-        run: cd apps/desktop-wallet && yarn install --network-timeout 100000
+        run: yarn install --network-timeout 100000
 
       - name: Building desktop wallet on Windows
         run: cd apps/desktop-wallet && yarn run ci:build:electron:windows
