@@ -1,4 +1,4 @@
-name: Test
+name: Static analysis
 
 on:
   push:
