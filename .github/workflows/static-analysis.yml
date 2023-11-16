@@ -17,11 +17,10 @@ jobs:
         uses: oven-sh/setup-bun@v1
 
       - name: Install NPM dependencies
-        run: bun install
+        run: bun install --yarn
 
-      # - run: bun install --yarn  # Uncomment when https://github.com/alephium/alephium-frontend/issues/4 is resolved.
-      # - name: Audit              # See https://github.com/oven-sh/bun/issues/5359 for more info.
-      #   run: yarn audit
+      - name: Audit NPM dependencies
+        run: yarn audit --production
 
       - name: Lint all workspaces in parallel
         run: bun run lint
