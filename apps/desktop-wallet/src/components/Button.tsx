@@ -137,7 +137,7 @@ export default styled(Button)`
     const hoverBgColor = transparent
       ? colord(theme.bg.primary).isDark()
         ? colord(theme.bg.primary).lighten(0.02).toRgbString()
-        : colord(theme.bg.primary).darken(0.03).toRgbString()
+        : theme.bg.hover
       : {
           primary: {
             default: colord(theme.global.accent).darken(0.04).toRgbString(),
@@ -265,6 +265,12 @@ export default styled(Button)`
       &:hover {
         color: ${hoverColor};
         background-color: ${hoverBgColor};
+
+        ${ButtonIcon} {
+          svg {
+            stroke: ${hoverColor};
+          }
+        }
       }
 
       &:active {
@@ -297,7 +303,7 @@ export default styled(Button)`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: ${({ squared, short, tall }) => (short ? '35px' : squared ? '40px' : tall ? '55px' : '52px')};
+  height: ${({ squared, short, tall }) => (short ? '32px' : squared ? '40px' : tall ? '55px' : '52px')};
   width: ${({ squared, short, wide }) => (squared ? '40px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
   border-radius: ${({ short }) => (short ? 'var(--radius-medium)' : 'var(--radius-big)')};
