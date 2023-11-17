@@ -44,12 +44,12 @@ import { Coordinates } from '@/types/numbers'
 type Writable<T> = T extends string
   ? string
   : T extends number
-  ? number
-  : T extends undefined
-  ? undefined
-  : T extends readonly (infer U)[]
-  ? U
-  : never
+    ? number
+    : T extends undefined
+      ? undefined
+      : T extends readonly (infer U)[]
+        ? U
+        : never
 
 export type OptionValue = Writable<OptionHTMLAttributes<HTMLOptionElement>['value']>
 
@@ -305,8 +305,8 @@ export function SelectOptionsModal<T extends OptionValue>({
   const width = minWidth
     ? minWidth
     : parentSelectWidth !== undefined && parentSelectWidth > 200
-    ? parentSelectWidth + 10
-    : undefined
+      ? parentSelectWidth + 10
+      : undefined
 
   return (
     <Popup
@@ -456,10 +456,9 @@ export const OptionItem = styled.button<{
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
 
-  ${({ hasCustomOptionRender }) =>
-    css`
-      padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-4)'};
-    `};
+  ${({ hasCustomOptionRender }) => css`
+    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-4)'};
+  `};
 
   ${({ isFloating, selected, theme }) =>
     isFloating
