@@ -23,7 +23,7 @@ import CheckMark from '@/components/CheckMark'
 
 interface SelectOptionItemContentProps {
   MainContent: ReactNode
-  isSelected: boolean
+  isSelected?: boolean
   SecondaryContent?: ReactNode
   contentDirection?: 'row' | 'column'
   className?: string
