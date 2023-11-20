@@ -41,7 +41,7 @@ const SendNavigation = () => (
   <SendContextProvider>
     <SendStack.Navigator
       screenOptions={{
-        headerShown: false // Header is in parent above
+        headerShown: false
       }}
       initialRouteName="DestinationScreen"
     >

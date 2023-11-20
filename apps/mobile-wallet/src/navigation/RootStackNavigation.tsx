@@ -110,18 +110,12 @@ const RootStackNavigation = () => {
                   <RootStack.Navigator initialRouteName="LandingScreen">
                     {/* Sub-navigation with custom header. Showing the header only when authenticated fixes the
                     reanimated bug while still allowing animated transitions between screens */}
-                    <RootStack.Group screenOptions={{ headerTransparent: true, headerShown: isAuthenticated }}>
+                    <RootStack.Group screenOptions={{ headerShown: isAuthenticated }}>
                       <RootStack.Screen
                         name="SendNavigation"
                         component={SendNavigation}
                         options={{
-                          header: (props) => (
-                            <ProgressHeader
-                              workflow="send"
-                              {...props}
-                              options={{ ...props.options, headerTitle: 'Send' }}
-                            />
-                          )
+                          headerShown: false
                         }}
                       />
                       <RootStack.Screen

@@ -24,7 +24,7 @@ import NavigationBaseHeader, { NavigationBaseHeaderProps } from '~/components/he
 export type NavigationStackHeaderProps = StackHeaderProps & NavigationBaseHeaderProps
 
 const NavigationStackHeader = ({ navigation, options, ...props }: NavigationStackHeaderProps) => {
-  const HeaderLeft = props.back ? (
+  const HeaderLeft = navigation.canGoBack() ? (
     <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-back-outline' }} round />
   ) : null
 

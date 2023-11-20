@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useHeaderHeight } from '@react-navigation/elements'
 import { useNavigation } from '@react-navigation/native'
 import { RefObject, useRef } from 'react'
 import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import BaseHeader from '~/components/headers/BaseHeader'
+import ProgressHeader from '~/components/headers/ProgressHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
@@ -59,34 +59,45 @@ const ScrollScreen = ({
   const viewRef = useRef<ScrollView>(null)
   const navigation = useNavigation()
 
-  const headerheight = useHeaderHeight()
   const navigationScrollHandler = useNavigationScrollHandler(viewRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
   const insets = useSafeAreaInsets()
 
   useScrollToTopOnBlur(viewRef)
 
-  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   const screen = (
     <Screen style={containerStyle} contrastedBg={contrastedBg}>
+      {headerOptions ? (
+        headerOptions.progressWorkflow ? (
+          <ProgressHeader
+            goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+            options={headerOptions}
+            scrollY={screenScrollY}
+            onLayout={screenHeaderLayoutHandler}
+            workflow={headerOptions.progressWorkflow}
+          />
+        ) : (
+          <HeaderComponent
+            goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+            options={headerOptions}
+            scrollY={screenScrollY}
+            onLayout={screenHeaderLayoutHandler}
+          />
+        )
+      ) : null}
       <ScrollView
         ref={viewRef}
         scrollEventThrottle={16}
         alwaysBounceVertical={true}
         onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
+        style={{ overflow: 'visible' }}
         contentContainerStyle={[
           {
-            paddingTop: headerOptions
-              ? screenHeaderHeight + DEFAULT_MARGIN
-              : hasNavigationHeader
-                ? headerheight + DEFAULT_MARGIN
-                : 0,
             flexGrow: fill ? 1 : undefined
           },
           contentContainerStyle
@@ -106,14 +117,6 @@ const ScrollScreen = ({
           {children}
         </View>
       </ScrollView>
-      {headerOptions && (
-        <HeaderComponent
-          goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-          options={headerOptions}
-          scrollY={screenScrollY}
-          onLayout={screenHeaderLayoutHandler}
-        />
-      )}
     </Screen>
   )
 

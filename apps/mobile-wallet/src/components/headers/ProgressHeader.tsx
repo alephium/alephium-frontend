@@ -16,17 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
+import { getFocusedRouteNameFromRoute, useRoute } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
-import NavigationStackHeader, { NavigationStackHeaderProps } from '~/components/headers/NavigationStackHeader'
+import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-interface ProgressHeaderProps extends NavigationStackHeaderProps {
+export type ProgressWorkflow = 'send' | 'receive' | 'backup'
+
+interface ProgressHeaderProps extends BaseHeaderProps {
   workflow: 'send' | 'receive' | 'backup'
 }
 
@@ -39,13 +41,15 @@ const workflowSteps: Record<
   backup: ['BackupIntroScreen', 'VerifyMnemonicScreen', 'VerificationSuccessScreen']
 }
 
-const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderProps) => {
+const ProgressHeader = ({ workflow, options, ...props }: ProgressHeaderProps) => {
   const theme = useTheme()
+  const route = useRoute()
 
   const [progress, setProgress] = useState(0)
 
   const steps = workflowSteps[workflow]
 
+  console.log(route)
   useEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? steps[0]
     const currentStepIndex = steps.findIndex((step) => step === routeName)
@@ -54,7 +58,7 @@ const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderPr
   }, [route, steps])
 
   return (
-    <NavigationStackHeader
+    <BaseHeader
       options={{
         ...options,
         headerRight: () => (
@@ -78,7 +82,6 @@ const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderPr
       }}
       showCompactComponents
       showBorderBottom
-      route={route}
       {...props}
     />
   )

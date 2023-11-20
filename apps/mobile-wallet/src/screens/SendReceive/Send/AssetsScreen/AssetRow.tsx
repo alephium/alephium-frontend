@@ -134,7 +134,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   }))
 
   const bottomRowAnimatedStyle = useAnimatedStyle(() => ({
-    height: assetIsNft ? 0 : withSpring(isSelected ? 100 : 0, fastSpringConfiguration),
+    height: assetIsNft ? 0 : withSpring(isSelected ? 90 : 0, fastSpringConfiguration),
     opacity: assetIsNft ? 0 : withSpring(isSelected ? 1 : 0, fastSpringConfiguration),
     borderTopWidth: assetIsNft ? 0 : withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
   }))
@@ -177,9 +177,10 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
                 onChangeText={handleOnAmountChange}
                 keyboardType="number-pad"
                 inputMode="decimal"
-                ref={inputRef}
                 multiline={true}
                 numberOfLines={2}
+                textAlignVertical="center"
+                ref={inputRef}
               />
             </AmountInputValue>
             {!assetIsNft && (
@@ -188,12 +189,12 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
               </AppText>
             )}
           </AmountInputRow>
-          <Row>
-            <AppText color="alert" size={11}>
+          <InputBottomPart>
+            <ErrorText color="alert" size={11}>
               {error}
-            </AppText>
+            </ErrorText>
             <UseMaxButton title="Use max" onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
-          </Row>
+          </InputBottomPart>
         </BottomRow>
       </Pressable>
     </ListItem>
@@ -217,19 +218,21 @@ const AmountInputRow = styled.View`
   gap: 10px;
 `
 
-const Row = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-`
-
 const UseMaxButton = styled(Button)`
   padding: 0;
-  height: auto;
+  height: 23px;
+`
+
+const InputBottomPart = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 35%;
+  overflow: hidden;
 `
 
 const AmountInputValue = styled.View`
-  flex-grow: 1;
-  flex-shrink: 1;
+  flex: 1;
   justify-content: flex-end;
   overflow: hidden;
 `
@@ -237,13 +240,17 @@ const AmountInputValue = styled.View`
 const AmountTextInput = styled(TextInput)`
   color: ${({ theme }) => theme.font.primary};
   font-weight: 600;
-  font-size: 23px;
   text-align: right;
-  flex-grow: 1;
+  font-size: 23px;
+  margin-top: -5px;
 `
 
 const CheckmarkContainer = styled.View`
   width: 30px;
   align-items: center;
   justify-content: center;
+`
+
+const ErrorText = styled(AppText)`
+  max-width: 150px;
 `

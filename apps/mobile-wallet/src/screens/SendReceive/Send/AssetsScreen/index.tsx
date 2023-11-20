@@ -54,9 +54,16 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
   }, [params?.toAddressHash, setToAddress])
 
-  useFocusEffect(
-    useCallback(() => {
-      navigation.getParent()?.setOptions({
+  if (!address) return null
+
+  return (
+    <ScrollScreen
+      verticalGap
+      usesKeyboard
+      contrastedBg
+      keyboardShouldPersistTaps="always"
+      headerOptions={{
+        type: 'progress',
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton
@@ -68,20 +75,10 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
             }
             disabled={isContinueButtonDisabled}
           />
-        )
-      })
-    }, [buildTransaction, isContinueButtonDisabled, navigation])
-  )
-
-  if (!address) return null
-
-  return (
-    <ScrollScreen
-      hasNavigationHeader
-      verticalGap
-      usesKeyboard
-      contrastedBg
-      keyboardShouldPersistTaps="always"
+        ),
+        headerTitle: 'Send',
+        progressWorkflow: 'send'
+      }}
       {...props}
     >
       <ScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />

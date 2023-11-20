@@ -45,19 +45,20 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   useFocusEffect(
     useCallback(() => {
       if (!fromAddress && defaultAddress) setFromAddress(defaultAddress.hash)
-
-      navigation.getParent()?.setOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => (
-          <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} disabled={!fromAddress} />
-        )
-      })
-    }, [defaultAddress, fromAddress, navigation, setFromAddress])
+    }, [defaultAddress, fromAddress, setFromAddress])
   )
 
   return (
     <AddressFlatListScreen
-      hasNavigationHeader
+      headerOptions={{
+        type: 'progress',
+        headerTitle: 'Send',
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        headerRight: () => (
+          <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} disabled={!fromAddress} />
+        ),
+        progressWorkflow: 'send'
+      }}
       onAddressPress={setFromAddress}
       selectedAddress={fromAddress}
       ListHeaderComponent={

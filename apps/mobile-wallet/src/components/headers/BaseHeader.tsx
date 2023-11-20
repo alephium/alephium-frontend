@@ -36,15 +36,14 @@ import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { scrollScreenTo } from '~/utils/layout'
 
-export type HeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
+export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
   headerTitleRight?: () => ReactNode
-  type?: 'default' | 'stack'
 }
 
 export interface BaseHeaderProps extends ViewProps {
   headerBottom?: () => ReactNode
   headerRef?: RefObject<Animated.View>
-  options: HeaderOptions
+  options: BaseHeaderOptions
   showCompactComponents?: boolean
   showBorderBottom?: boolean
   goBack?: () => void
@@ -236,10 +235,8 @@ const BaseHeader = ({
 export default BaseHeader
 
 const BaseHeaderStyled = styled(Animated.View)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
+  z-index: 1;
 `
 
 const ExpandedHeaderContainer = styled(Animated.View)`
