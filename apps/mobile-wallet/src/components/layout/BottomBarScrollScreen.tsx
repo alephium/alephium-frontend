@@ -33,7 +33,6 @@ const BottomBarScrollScreen = ({ hasBottomBar = false, children, ...props }: Bot
       contentContainerStyle={{
         paddingBottom: hasBottomBar ? bottomBarHeight + DEFAULT_MARGIN : 0
       }}
-      showsHorizontalScrollIndicator={false}
       {...props}
     >
       {children}

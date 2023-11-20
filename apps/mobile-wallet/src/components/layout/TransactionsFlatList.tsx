@@ -117,16 +117,15 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
     <>
       <FlatList
         {...props}
-        contentContainerStyle={[props.contentContainerStyle, { paddingTop: headerHeight ? headerHeight : 0 }]}
+        contentContainerStyle={props.contentContainerStyle}
         scrollEventThrottle={16}
         ref={ref}
         data={confirmedTransactions}
         renderItem={renderConfirmedTransactionItem}
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
-        refreshControl={
-          <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
-        }
+        style={{ overflow: 'visible' }}
+        refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} />}
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         ListHeaderComponent={

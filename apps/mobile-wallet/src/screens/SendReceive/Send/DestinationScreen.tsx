@@ -123,6 +123,11 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     sendAnalytics('Send: Selected own address to send funds to')
   }
 
+  const handleContinuePress = (formData: FormData) => {
+    setToAddress(formData.toAddressHash)
+    navigation.navigate(nextScreen)
+  }
+
   useEffect(() => {
     if (params?.fromAddressHash) {
       setFromAddress(params.fromAddressHash)
@@ -145,24 +150,23 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     )
   }))
 
-  useFocusEffect(
-    useCallback(() => {
-      const onContinue = (formData: FormData) => {
-        setToAddress(formData.toAddressHash)
-        navigation.navigate(nextScreen)
-      }
-      navigation.getParent()?.setOptions({
-        headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />,
-        headerRight: () => (
-          <ContinueButton onPress={handleSubmit(onContinue)} disabled={!!errors.toAddressHash?.message} />
-        )
-      })
-    }, [errors.toAddressHash?.message, handleSubmit, navigation, nextScreen, setToAddress])
-  )
-
   return (
     <>
-      <ScrollScreen usesKeyboard hasNavigationHeader verticalGap contrastedBg {...props}>
+      <ScrollScreen
+        usesKeyboard
+        verticalGap
+        contrastedBg
+        headerOptions={{
+          type: 'progress',
+          headerTitle: 'Send',
+          headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />,
+          headerRight: () => (
+            <ContinueButton onPress={handleSubmit(handleContinuePress)} disabled={!!errors.toAddressHash?.message} />
+          ),
+          progressWorkflow: 'send'
+        }}
+        {...props}
+      >
         <ScreenIntro title="Destination" subtitle="Send to an address, a contact, or one of your other addresses." />
         <ScreenSection>
           <Controller
