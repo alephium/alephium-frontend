@@ -106,7 +106,7 @@ jobs:
         uses: jossef/action-set-json-field@v2.1
         with:
           file: package.json
-          field: description
+          field: packageManager
           value: yarn@1
 
       - name: Install NPM dependencies
