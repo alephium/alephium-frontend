@@ -53,6 +53,12 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <Screen contrastedBg>
+      <BaseHeader
+        options={{ headerTitle: 'Transfers' }}
+        scrollY={screenScrollY}
+        onLayout={screenHeaderLayoutHandler}
+        showBorderBottom
+      />
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
@@ -61,13 +67,6 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
         onScrollEndDrag={scrollEndHandler}
         ref={listRef}
         headerHeight={screenHeaderHeight}
-      />
-
-      <BaseHeader
-        options={{ headerTitle: 'Transfers' }}
-        scrollY={screenScrollY}
-        onLayout={screenHeaderLayoutHandler}
-        showBorderBottom
       />
     </Screen>
   )

@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useState } from 'react'
 import { Pressable } from 'react-native'
@@ -64,7 +63,6 @@ interface ScreenProps
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const headerHeight = useHeaderHeight()
   const walletName = useAppSelector((s) => s.wallet.name)
   const totalBalance = useAppSelector(selectTotalBalance)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
@@ -120,9 +118,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <DashboardScreenStyled
-      refreshControl={
-        <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight || 170} />
-      }
+      refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} />}
       hasBottomBar
       verticalGap
       headerOptions={{

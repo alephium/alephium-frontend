@@ -113,7 +113,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
                 {contact.address}
               </ContactAddress>
               <ButtonsRow>
-                <ContactButton Icon={Upload} title="Send funds" onPress={handleSendFundsPress} />
+                <ContactButton Icon={Upload} title={'Send funds'} onPress={handleSendFundsPress} />
                 <ContactButton Icon={Clipboard} title="Copy address" onPress={handleCopyAddressPress} />
                 <ContactButton Icon={Share2Icon} title="Share" onPress={handleShareContactPress} />
               </ButtonsRow>
