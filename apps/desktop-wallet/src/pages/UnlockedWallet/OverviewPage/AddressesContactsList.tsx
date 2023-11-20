@@ -36,7 +36,7 @@ import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
-import { useGetPricesQuery } from '@/storage/assets/priceApiSlice'
+import { useGetPricesQuery } from '@/storage/prices/assetsPriceSlice'
 import { Address } from '@/types/addresses'
 import { currencies } from '@/utils/currencies'
 

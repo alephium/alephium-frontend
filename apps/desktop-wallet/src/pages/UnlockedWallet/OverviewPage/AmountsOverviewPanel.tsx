@@ -37,7 +37,7 @@ import {
   selectAddressIds,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { symbolCoinGeckoMapping, useGetPricesQuery } from '@/storage/assets/priceApiSlice'
+import { symbolCoinGeckoMapping, useGetPricesQuery } from '@/storage/prices/assetsPriceSlice'
 import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
 import { getAvailableBalance } from '@/utils/addresses'
 import { currencies } from '@/utils/currencies'

@@ -42,7 +42,7 @@ import {
   makeSelectAddressesNFTs,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { symbolCoinGeckoMapping, useGetPricesQuery } from '@/storage/assets/priceApiSlice'
+import { symbolCoinGeckoMapping, useGetPricesQuery } from '@/storage/prices/assetsPriceSlice'
 import { deviceBreakPoints } from '@/style/globalStyles'
 import { currencies } from '@/utils/currencies'
 

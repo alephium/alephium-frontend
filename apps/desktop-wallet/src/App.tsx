@@ -35,7 +35,11 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
 import { syncAddressesData, syncAddressesHistoricBalances } from '@/storage/addresses/addressesActions'
-import { makeSelectAddressesUnknownTokens, selectAddressIds } from '@/storage/addresses/addressesSelectors'
+import {
+  makeSelectAddressesKnownFungibleTokens,
+  makeSelectAddressesUnknownTokens,
+  selectAddressIds
+} from '@/storage/addresses/addressesSelectors'
 import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
 import { selectIsTokensMetadataUninitialized } from '@/storage/assets/assetsSelectors'
 import {
@@ -43,6 +47,7 @@ import {
   localStorageDataMigrated,
   localStorageDataMigrationFailed
 } from '@/storage/global/globalActions'
+import { syncTokenPrices } from '@/storage/prices/pricesActions'
 import { apiClientInitFailed, apiClientInitSucceeded } from '@/storage/settings/networkActions'
 import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/storage/settings/settingsActions'
 import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
@@ -76,6 +81,13 @@ const App = () => {
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
   const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
   const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const isLoadingTokens = useAppSelector((s) => s.addresses.loadingTokens)
+
+  const selectAddressesKnownTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const knownTokens = useAppSelector(selectAddressesKnownTokens)
+  const knownTokenSymbols = knownTokens
+    .map((token) => token.symbol)
+    .filter((symbol): symbol is string => symbol !== undefined)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const unknownTokens = useAppSelector(selectAddressesUnknownTokens)
@@ -189,11 +201,17 @@ const App = () => {
 
               restorePendingTransactions(mempoolTxHashes, storedPendingTxs)
             })
-          dispatch(syncAddressesHistoricBalances())
         }
       } else if (addressesStatus === 'initialized') {
-        if (!isTokensMetadataUninitialized && !isLoadingTokensMetadata && newUnknownTokens.length > 0) {
-          dispatch(syncUnknownTokensInfo(newUnknownTokens))
+        if (!isTokensMetadataUninitialized && !isLoadingTokensMetadata) {
+          if (newUnknownTokens.length > 0) {
+            dispatch(syncUnknownTokensInfo(newUnknownTokens))
+          }
+
+          if (!isLoadingTokens) {
+            dispatch(syncAddressesHistoricBalances())
+            dispatch(syncTokenPrices({ knownTokenSymbols, currency: settings.fiatCurrency }))
+          }
         }
       }
     }
@@ -203,10 +221,14 @@ const App = () => {
     assetsInfo.status,
     dispatch,
     isSyncingAddressData,
+    isLoadingTokens,
     isLoadingTokensMetadata,
     isTokensMetadataUninitialized,
     network.status,
-    newUnknownTokens
+    newUnknownTokens,
+    knownTokens,
+    settings.fiatCurrency,
+    knownTokenSymbols
   ])
 
   const refreshAddressesData = useCallback(() => {

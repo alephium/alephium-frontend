@@ -25,7 +25,7 @@ import styled from 'styled-components'
 import { fadeInOut } from '@/animations'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
-import { useGetPricesQuery } from '@/storage/assets/priceApiSlice'
+import { useGetPricesQuery } from '@/storage/prices/assetsPriceSlice'
 import { currencies } from '@/utils/currencies'
 
 interface GreetingMessagesProps {
