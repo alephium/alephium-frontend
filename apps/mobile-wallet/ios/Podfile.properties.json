@@ -1,7 +1,7 @@
 {
-  "expo.jsEngine": "hermes",
   "EX_DEV_CLIENT_NETWORK_INSPECTOR": "true",
-  "ios.deploymentTarget": "13.0",
+  "expo.jsEngine": "hermes",
+  "ios.deploymentTarget": "13.4",
   "newArchEnabled": "false",
   "ios.flipper": "true"
 }
