@@ -107,7 +107,7 @@ jobs:
         with:
           file: package.json
           field: packageManager
-          value: yarn@1
+          value: yarn@1.22.21
 
       - name: Install NPM dependencies
         run: yarn install --network-timeout 100000
