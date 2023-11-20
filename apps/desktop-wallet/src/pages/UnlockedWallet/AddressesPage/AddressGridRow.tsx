@@ -37,7 +37,7 @@ import {
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
 import { selectIsTokensMetadataUninitialized } from '@/storage/assets/assetsSelectors'
-import { useGetPricesQuery } from '@/storage/assets/priceApiSlice'
+import { useGetPricesQuery } from '@/storage/prices/assetsPriceSlice'
 import { currencies } from '@/utils/currencies'
 import { onEnterOrSpace } from '@/utils/misc'
 

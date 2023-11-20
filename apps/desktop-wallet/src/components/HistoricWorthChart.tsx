@@ -30,7 +30,7 @@ import {
   selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { getTokensApiIds, useGetHistoricalPriceQuery } from '@/storage/assets/priceApiSlice'
+import { getTokensApiIds, useGetHistoricalPriceQuery } from '@/storage/prices/assetsPriceSlice'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
 import { Currency } from '@/types/settings'
 
