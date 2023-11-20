@@ -22,7 +22,7 @@ import addressDiscoverySlice from '~/store/addressDiscoverySlice'
 import contactsSlice from '~/store/addresses/contactsSlice'
 import addressesSlice from '~/store/addressesSlice'
 import appSlice from '~/store/appSlice'
-import assetsInfoSlice from '~/store/assets/assetsInfoSlice'
+import fungibleTokensSlice from '~/store/assets/fungibleTokensSlice'
 import nftsSlice from '~/store/assets/nftsSlice'
 import { priceApi } from '~/store/assets/priceApiSlice'
 import confirmedTransactionsSlice from '~/store/confirmedTransactionsSlice'
@@ -43,7 +43,7 @@ export const store = configureStore({
     addresses: addressesSlice.reducer,
     [priceApi.reducerPath]: priceApi.reducer,
     app: appSlice.reducer,
-    [assetsInfoSlice.name]: assetsInfoSlice.reducer,
+    [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
     addressDiscovery: addressDiscoverySlice.reducer,
     confirmedTransactions: confirmedTransactionsSlice.reducer,
     pendingTransactions: pendingTransactionsSlice.reducer,

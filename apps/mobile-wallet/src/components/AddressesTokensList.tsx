@@ -59,7 +59,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
-  const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const isLoadingTokensMetadata = useAppSelector((s) => s.fungibleTokens.loading)
   const theme = useTheme()
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])

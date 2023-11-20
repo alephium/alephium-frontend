@@ -29,8 +29,8 @@ import { SyncUnknownTokensInfoResult } from '~/types/assets'
 
 export const loadingStarted = createAction('assets/loadingStarted')
 
-export const syncNetworkTokensInfo = createAsyncThunk(
-  'assets/syncNetworkTokensInfo',
+export const syncNetworkFungibleTokensInfo = createAsyncThunk(
+  'assets/syncNetworkFungibleTokensInfo',
   async (_, { getState, dispatch }) => {
     const state = getState() as RootState
 
