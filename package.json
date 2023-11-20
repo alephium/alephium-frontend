@@ -2,7 +2,7 @@
   "name": "alephium-frontend",
   "description": "A monorepo containing all things frontend on Alephium",
   "author": "Alephium dev <dev@alephium.org>",
-  "packageManager": "bun@1.0.9",
+  "packageManager": "bun@1.0.12",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -34,5 +34,8 @@
     "tsconfig": "*",
     "turbo": "1.10.16",
     "typescript": "^5.2.2"
+  },
+  "resolutions": {
+    "semver": "^7.5.2"
   }
 }

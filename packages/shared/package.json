@@ -2,15 +2,8 @@
   "name": "@alephium/shared",
   "version": "0.7.6",
   "private": true,
-  "main": "dist/index.js",
-  "browser": "dist/alephium.min.js",
+  "main": "dist/alephium.min.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "default": "./dist/index.js",
-      "browser": "./dist/alephium.min.js"
-    }
-  },
   "scripts": {
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts",

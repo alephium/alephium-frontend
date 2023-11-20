@@ -1,4 +1,4 @@
-name: Test
+name: Static analysis
 
 on:
   push:
@@ -17,14 +17,20 @@ jobs:
         uses: oven-sh/setup-bun@v1
 
       - name: Install NPM dependencies
-        run: bun install
-
-      # - run: bun install --yarn  # Uncomment when https://github.com/alephium/alephium-frontend/issues/4 is resolved.
-      # - name: Audit              # See https://github.com/oven-sh/bun/issues/5359 for more info.
-      #   run: yarn audit
+        run: bun install --yarn
 
       - name: Lint all workspaces in parallel
         run: bun run lint
 
       - name: Check that TypeScript compiles in all workspaces in parallel
         run: bun run typecheck
+
+      - name: Change packageManager field in package.json from bun to yarn
+        uses: jossef/action-set-json-field@v2.1
+        with:
+          file: package.json
+          field: packageManager
+          value: yarn@1.22.21
+
+      - name: Audit NPM dependencies
+        run: yarn audit --production
