@@ -30,7 +30,7 @@ export interface ScreenProps extends ViewProps {
   hasNavigationHeader?: boolean
   contrastedBg?: boolean
   headerOptions?: BaseHeaderOptions & {
-    type?: 'default' | 'stack' | 'progress'
+    type?: 'default' | 'stack'
     progressWorkflow?: ProgressWorkflow
   }
 }
