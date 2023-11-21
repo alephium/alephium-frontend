@@ -20,7 +20,8 @@ import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import ProgressHeader from '~/components/headers/ProgressHeader'
-import { SendContextProvider, useSendContext } from '~/contexts/SendContext'
+import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
+import { SendContextProvider } from '~/contexts/SendContext'
 import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
 import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
 import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
@@ -40,23 +41,25 @@ const SendStack = createStackNavigator<SendNavigationParamList>()
 
 const SendNavigation = () => (
   <SendContextProvider>
-    <SendProgressHeader />
-    <SendStack.Navigator
-      screenOptions={{
-        headerShown: false
-      }}
-      initialRouteName="DestinationScreen"
-    >
-      <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
-      <SendStack.Screen name="OriginScreen" component={OriginScreen} />
-      <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
-      <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
-    </SendStack.Navigator>
+    <HeaderContextProvider>
+      <SendProgressHeader />
+      <SendStack.Navigator
+        screenOptions={{
+          headerShown: false
+        }}
+        initialRouteName="DestinationScreen"
+      >
+        <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
+        <SendStack.Screen name="OriginScreen" component={OriginScreen} />
+        <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
+        <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
+      </SendStack.Navigator>
+    </HeaderContextProvider>
   </SendContextProvider>
 )
 
 const SendProgressHeader = () => {
-  const { headerOptions } = useSendContext()
+  const { headerOptions } = useHeaderContext()
 
   return <ProgressHeader options={{ headerTitle: 'Send', ...headerOptions }} workflow="send" />
 }

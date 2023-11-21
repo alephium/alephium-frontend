@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
+import ProgressHeader from '~/components/headers/ProgressHeader'
+import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressScreen from '~/screens/SendReceive/Receive/AddressScreen'
 import QRCodeScreen from '~/screens/SendReceive/Receive/QRCodeScreen'
@@ -32,10 +34,19 @@ export interface ReceiveNavigationParamList extends ParamListBase {
 const ReceiveStack = createStackNavigator<ReceiveNavigationParamList>()
 
 const ReceiveNavigation = ({ navigation }: StackScreenProps<RootStackParamList, 'ReceiveNavigation'>) => (
-  <ReceiveStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="AddressScreen">
-    <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
-    <ReceiveStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
-  </ReceiveStack.Navigator>
+  <HeaderContextProvider>
+    <ReceiveProgressHeader />
+    <ReceiveStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="AddressScreen">
+      <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
+      <ReceiveStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
+    </ReceiveStack.Navigator>
+  </HeaderContextProvider>
 )
+
+const ReceiveProgressHeader = () => {
+  const { headerOptions } = useHeaderContext()
+
+  return <ProgressHeader options={{ headerTitle: 'Receive', ...headerOptions }} workflow="receive" />
+}
 
 export default ReceiveNavigation
