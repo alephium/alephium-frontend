@@ -24,6 +24,7 @@ import AddressFlatListScreen from '~/components/AddressFlatListScreen'
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
@@ -33,7 +34,8 @@ import { selectDefaultAddress } from '~/store/addressesSlice'
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}
 
 const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const { fromAddress, setFromAddress, setToAddress, setHeaderOptions } = useSendContext()
+  const { fromAddress, setFromAddress, setToAddress } = useSendContext()
+  const { setHeaderOptions } = useHeaderContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
   useScrollToTopOnFocus()
