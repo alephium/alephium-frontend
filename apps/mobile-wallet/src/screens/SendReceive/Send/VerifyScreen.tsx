@@ -26,7 +26,7 @@ import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
-import { ContinueButton } from '~/components/buttons/Button'
+import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
@@ -40,7 +40,7 @@ import { getTransactionAssetAmounts } from '~/utils/transactions'
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'>, ScrollScreenProps {}
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
-  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
+  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction, setHeaderOptions } = useSendContext()
 
   useScrollToTopOnFocus()
 
@@ -49,7 +49,8 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
 
   useFocusEffect(
     useCallback(() => {
-      navigation.getParent()?.setOptions({
+      setHeaderOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton
             onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
@@ -58,13 +59,13 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           />
         )
       })
-    }, [navigation, sendTransaction])
+    }, [navigation, sendTransaction, setHeaderOptions])
   )
 
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <ScrollScreen hasNavigationHeader verticalGap {...props}>
+    <ScrollScreen verticalGap {...props}>
       <ScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
       <ScreenSection>
         <BoxSurface>

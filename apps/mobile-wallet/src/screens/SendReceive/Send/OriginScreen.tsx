@@ -33,7 +33,7 @@ import { selectDefaultAddress } from '~/store/addressesSlice'
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}
 
 const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const { fromAddress, setFromAddress, setToAddress } = useSendContext()
+  const { fromAddress, setFromAddress, setToAddress, setHeaderOptions } = useSendContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
   useScrollToTopOnFocus()
@@ -48,17 +48,19 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     }, [defaultAddress, fromAddress, setFromAddress])
   )
 
-  return (
-    <AddressFlatListScreen
-      headerOptions={{
-        type: 'progress',
-        headerTitle: 'Send',
+  useFocusEffect(
+    useCallback(() => {
+      setHeaderOptions({
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} disabled={!fromAddress} />
-        ),
-        progressWorkflow: 'send'
-      }}
+        )
+      })
+    }, [fromAddress, navigation, setHeaderOptions])
+  )
+
+  return (
+    <AddressFlatListScreen
       onAddressPress={setFromAddress}
       selectedAddress={fromAddress}
       ListHeaderComponent={

@@ -39,7 +39,7 @@ import {
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>, ScrollScreenProps {}
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
+  const { fromAddress, assetAmounts, buildTransaction, setToAddress, setHeaderOptions } = useSendContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
@@ -50,20 +50,9 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   const isContinueButtonDisabled = assetAmounts.length < 1
 
-  useEffect(() => {
-    if (params?.toAddressHash) setToAddress(params.toAddressHash)
-  }, [params?.toAddressHash, setToAddress])
-
-  if (!address) return null
-
-  return (
-    <ScrollScreen
-      verticalGap
-      usesKeyboard
-      contrastedBg
-      keyboardShouldPersistTaps="always"
-      headerOptions={{
-        type: 'progress',
+  useFocusEffect(
+    useCallback(() => {
+      setHeaderOptions({
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton
@@ -75,12 +64,19 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
             }
             disabled={isContinueButtonDisabled}
           />
-        ),
-        headerTitle: 'Send',
-        progressWorkflow: 'send'
-      }}
-      {...props}
-    >
+        )
+      })
+    }, [buildTransaction, isContinueButtonDisabled, navigation, setHeaderOptions])
+  )
+
+  useEffect(() => {
+    if (params?.toAddressHash) setToAddress(params.toAddressHash)
+  }, [params?.toAddressHash, setToAddress])
+
+  if (!address) return null
+
+  return (
+    <ScrollScreen verticalGap usesKeyboard contrastedBg keyboardShouldPersistTaps="always" {...props}>
       <ScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />
       <ScreenSection>
         <AssetsList>

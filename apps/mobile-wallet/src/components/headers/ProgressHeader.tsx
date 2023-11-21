@@ -28,7 +28,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
 export type ProgressWorkflow = 'send' | 'receive' | 'backup'
 
-interface ProgressHeaderProps extends BaseHeaderProps {
+export interface ProgressHeaderProps extends BaseHeaderProps {
   workflow: 'send' | 'receive' | 'backup'
 }
 
@@ -49,7 +49,6 @@ const ProgressHeader = ({ workflow, options, ...props }: ProgressHeaderProps) =>
 
   const steps = workflowSteps[workflow]
 
-  console.log(route)
   useEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? steps[0]
     const currentStepIndex = steps.findIndex((step) => step === routeName)
