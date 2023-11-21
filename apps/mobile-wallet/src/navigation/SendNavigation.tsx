@@ -59,9 +59,9 @@ const SendNavigation = () => (
 )
 
 const SendProgressHeader = () => {
-  const { headerOptions } = useHeaderContext()
+  const { headerOptions, screenScrollY } = useHeaderContext()
 
-  return <ProgressHeader options={{ headerTitle: 'Send', ...headerOptions }} workflow="send" />
+  return <ProgressHeader options={{ headerTitle: 'Send', ...headerOptions }} workflow="send" scrollY={screenScrollY} />
 }
 
 export default SendNavigation
