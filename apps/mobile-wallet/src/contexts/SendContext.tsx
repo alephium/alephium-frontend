@@ -25,7 +25,6 @@ import { sendAnalytics } from '~/analytics'
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
-import { BaseHeaderOptions } from '~/components/headers/BaseHeader'
 import BottomModal from '~/components/layout/BottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
@@ -55,8 +54,6 @@ interface SendContextValue {
   fees: bigint
   buildTransaction: (callbacks: BuildTransactionCallbacks) => Promise<void>
   sendTransaction: (onSendSuccess: () => void) => Promise<void>
-  headerOptions: BaseHeaderOptions
-  setHeaderOptions: (options: BaseHeaderOptions) => void
 }
 
 const initialValues: SendContextValue = {
@@ -68,9 +65,7 @@ const initialValues: SendContextValue = {
   setAssetAmount: () => null,
   fees: BigInt(0),
   buildTransaction: () => Promise.resolve(undefined),
-  sendTransaction: () => Promise.resolve(undefined),
-  headerOptions: {},
-  setHeaderOptions: () => null
+  sendTransaction: () => Promise.resolve(undefined)
 }
 
 const SendContext = createContext(initialValues)
@@ -83,8 +78,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(initialValues.fromAddress)
   const [assetAmounts, setAssetAmounts] = useState<SendContextValue['assetAmounts']>(initialValues.assetAmounts)
   const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
-
-  const [headerOptions, setHeaderOptions] = useState<SendContextValue['headerOptions']>(initialValues.headerOptions)
 
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isConsolidateModalVisible, setIsConsolidateModalVisible] = useState(false)
@@ -207,9 +200,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         setAssetAmount,
         fees: unsignedTxData.fees,
         buildTransaction,
-        sendTransaction: authenticateAndSend,
-        headerOptions,
-        setHeaderOptions
+        sendTransaction: authenticateAndSend
       }}
     >
       {children}

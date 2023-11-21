@@ -123,13 +123,7 @@ const RootStackNavigation = () => {
                         name="ReceiveNavigation"
                         component={ReceiveNavigation}
                         options={{
-                          header: (props) => (
-                            <ProgressHeader
-                              workflow="receive"
-                              {...props}
-                              options={{ ...props.options, headerTitle: 'Receive' }}
-                            />
-                          )
+                          headerShown: false
                         }}
                       />
                       <RootStack.Screen

@@ -25,6 +25,7 @@ import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
@@ -39,7 +40,8 @@ import {
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>, ScrollScreenProps {}
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const { fromAddress, assetAmounts, buildTransaction, setToAddress, setHeaderOptions } = useSendContext()
+  const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
+  const { setHeaderOptions } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))

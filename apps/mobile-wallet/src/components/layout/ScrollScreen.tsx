@@ -22,7 +22,6 @@ import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, Vie
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import BaseHeader from '~/components/headers/BaseHeader'
-import ProgressHeader from '~/components/headers/ProgressHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
@@ -71,24 +70,14 @@ const ScrollScreen = ({
 
   const screen = (
     <Screen style={containerStyle} contrastedBg={contrastedBg}>
-      {headerOptions ? (
-        headerOptions.progressWorkflow ? (
-          <ProgressHeader
-            goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-            options={headerOptions}
-            scrollY={screenScrollY}
-            onLayout={screenHeaderLayoutHandler}
-            workflow={headerOptions.progressWorkflow}
-          />
-        ) : (
-          <HeaderComponent
-            goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-            options={headerOptions}
-            scrollY={screenScrollY}
-            onLayout={screenHeaderLayoutHandler}
-          />
-        )
-      ) : null}
+      {headerOptions && (
+        <HeaderComponent
+          goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+          options={headerOptions}
+          scrollY={screenScrollY}
+          onLayout={screenHeaderLayoutHandler}
+        />
+      )}
       <ScrollView
         ref={viewRef}
         scrollEventThrottle={16}

@@ -36,6 +36,7 @@ import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -63,7 +64,8 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     formState: { errors }
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
   const theme = useTheme()
-  const { setToAddress, setFromAddress, toAddress, setHeaderOptions } = useSendContext()
+  const { setToAddress, setFromAddress, toAddress } = useSendContext()
+  const { setHeaderOptions } = useHeaderContext()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
