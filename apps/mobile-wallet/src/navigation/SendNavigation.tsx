@@ -19,7 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import { SendContextProvider } from '~/contexts/SendContext'
+import ProgressHeader from '~/components/headers/ProgressHeader'
+import { SendContextProvider, useSendContext } from '~/contexts/SendContext'
 import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
 import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
 import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
@@ -39,6 +40,7 @@ const SendStack = createStackNavigator<SendNavigationParamList>()
 
 const SendNavigation = () => (
   <SendContextProvider>
+    <SendProgressHeader />
     <SendStack.Navigator
       screenOptions={{
         headerShown: false
@@ -52,5 +54,11 @@ const SendNavigation = () => (
     </SendStack.Navigator>
   </SendContextProvider>
 )
+
+const SendProgressHeader = () => {
+  const { headerOptions } = useSendContext()
+
+  return <ProgressHeader options={{ headerTitle: 'Send', ...headerOptions }} workflow="send" />
+}
 
 export default SendNavigation
