@@ -32,6 +32,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -40,7 +41,8 @@ import { getTransactionAssetAmounts } from '~/utils/transactions'
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'>, ScrollScreenProps {}
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
-  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction, setHeaderOptions } = useSendContext()
+  const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
+  const { setHeaderOptions } = useHeaderContext()
 
   useScrollToTopOnFocus()
 

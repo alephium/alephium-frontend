@@ -31,6 +31,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
@@ -42,8 +43,9 @@ interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCo
 
 const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const theme = useTheme()
-  const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
+  const { setHeaderOptions } = useHeaderContext()
   const posthog = usePostHog()
+  const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
 
   useScrollToTopOnFocus()
 
@@ -55,10 +57,10 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   useFocusEffect(
     useCallback(() => {
-      navigation.getParent()?.setOptions({
+      setHeaderOptions({
         headerRight: () => <CloseButton onPress={() => navigation.getParent()?.goBack()} />
       })
-    }, [navigation])
+    }, [navigation, setHeaderOptions])
   )
 
   return (
