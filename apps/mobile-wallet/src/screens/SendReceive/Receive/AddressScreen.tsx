@@ -56,6 +56,7 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
         <ScreenIntro title="To address" subtitle="Select the address which you want to receive funds to." />
       }
       contrastedBg
+      contentPaddingTop
       onScroll={screenScrollHandler}
     />
   )

@@ -69,6 +69,7 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
       }
       contrastedBg
+      contentPaddingTop
       onScroll={screenScrollHandler}
     />
   )

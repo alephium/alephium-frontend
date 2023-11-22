@@ -20,10 +20,11 @@ import { useNavigation } from '@react-navigation/native'
 import { RefObject, useRef } from 'react'
 import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import styled from 'styled-components/native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps } from '~/components/layout/Screen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
@@ -39,6 +40,7 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
   containerStyle?: StyleProp<ViewStyle>
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
+  contentPaddingTop?: number | boolean
   usesKeyboard?: boolean
 }
 
@@ -48,6 +50,7 @@ const ScrollScreen = ({
   style,
   containerStyle,
   contentContainerStyle,
+  contentPaddingTop,
   verticalGap,
   contrastedBg,
   fill,
@@ -69,7 +72,7 @@ const ScrollScreen = ({
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   const screen = (
-    <Screen style={containerStyle}>
+    <ScrollViewContainer style={containerStyle}>
       {headerOptions && (
         <HeaderComponent
           goBack={navigation.canGoBack() ? navigation.goBack : undefined}
@@ -84,10 +87,11 @@ const ScrollScreen = ({
         alwaysBounceVertical={true}
         onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
-        style={{ overflow: 'visible' }}
+        style={{ overflow: 'visible', paddingTop: headerOptions ? 15 : 0 }}
         contentContainerStyle={[
           {
-            flexGrow: fill ? 1 : undefined
+            flexGrow: fill ? 1 : undefined,
+            paddingTop: typeof contentPaddingTop === 'boolean' ? 15 : contentPaddingTop
           },
           contentContainerStyle
         ]}
@@ -106,7 +110,7 @@ const ScrollScreen = ({
           {children}
         </View>
       </ScrollView>
-    </Screen>
+    </ScrollViewContainer>
   )
 
   return usesKeyboard ? (
@@ -119,3 +123,7 @@ const ScrollScreen = ({
 }
 
 export default ScrollScreen
+
+const ScrollViewContainer = styled.View`
+  flex: 1;
+`

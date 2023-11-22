@@ -82,6 +82,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       verticalGap
       usesKeyboard
       contrastedBg
+      contentPaddingTop
       keyboardShouldPersistTaps="always"
       onScroll={screenScrollHandler}
       {...props}

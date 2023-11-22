@@ -67,7 +67,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <ScrollScreen verticalGap onScroll={screenScrollHandler} {...props}>
+    <ScrollScreen verticalGap contentPaddingTop onScroll={screenScrollHandler} {...props}>
       <ScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
       <ScreenSection>
         <BoxSurface>
