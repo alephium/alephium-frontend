@@ -28,6 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>wc</string>
+          <string>alephium</string>
           <string>org.alephium.mobilewallet</string>
         </array>
       </dict>

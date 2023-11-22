@@ -25,7 +25,7 @@ export default {
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
-    scheme: 'wc',
+    scheme: ['wc', 'alephium'],
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
