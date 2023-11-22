@@ -25,7 +25,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
-import Button, { CloseButton } from '~/components/buttons/Button'
+import Button, { BackButton, CloseButton, ContinueButton } from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
@@ -43,7 +43,7 @@ interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCo
 
 const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const theme = useTheme()
-  const { setHeaderOptions } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
 
   useScrollToTopOnFocus()
@@ -57,13 +57,20 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   useFocusEffect(
     useCallback(() => {
       setHeaderOptions({
-        headerRight: () => <CloseButton onPress={() => navigation.getParent()?.goBack()} />
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        headerRight: () => (
+          <ContinueButton
+            onPress={() => navigation.getParent()?.goBack()}
+            iconProps={{ name: 'checkmark' }}
+            title="Done"
+          />
+        )
       })
     }, [navigation, setHeaderOptions])
   )
 
   return (
-    <ScrollScreen hasNavigationHeader verticalGap {...props}>
+    <ScrollScreen hasNavigationHeader verticalGap onScroll={screenScrollHandler} {...props}>
       <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." />
       <ScreenSection centered>
         <QRCodeContainer>

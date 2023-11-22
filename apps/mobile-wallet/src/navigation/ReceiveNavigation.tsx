@@ -36,7 +36,10 @@ const ReceiveStack = createStackNavigator<ReceiveNavigationParamList>()
 const ReceiveNavigation = ({ navigation }: StackScreenProps<RootStackParamList, 'ReceiveNavigation'>) => (
   <HeaderContextProvider>
     <ReceiveProgressHeader />
-    <ReceiveStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="AddressScreen">
+    <ReceiveStack.Navigator
+      screenOptions={{ headerShown: false, cardStyle: { overflow: 'visible' } }}
+      initialRouteName="AddressScreen"
+    >
       <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
       <ReceiveStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
     </ReceiveStack.Navigator>
@@ -44,9 +47,11 @@ const ReceiveNavigation = ({ navigation }: StackScreenProps<RootStackParamList, 
 )
 
 const ReceiveProgressHeader = () => {
-  const { headerOptions } = useHeaderContext()
+  const { headerOptions, screenScrollY } = useHeaderContext()
 
-  return <ProgressHeader options={{ headerTitle: 'Receive', ...headerOptions }} workflow="receive" />
+  return (
+    <ProgressHeader options={{ headerTitle: 'Receive', ...headerOptions }} workflow="receive" scrollY={screenScrollY} />
+  )
 }
 
 export default ReceiveNavigation

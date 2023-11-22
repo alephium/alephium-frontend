@@ -45,7 +45,8 @@ const SendNavigation = () => (
       <SendProgressHeader />
       <SendStack.Navigator
         screenOptions={{
-          headerShown: false
+          headerShown: false,
+          cardStyle: { overflow: 'visible' }
         }}
         initialRouteName="DestinationScreen"
       >
