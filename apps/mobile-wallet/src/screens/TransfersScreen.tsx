@@ -24,7 +24,6 @@ import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { useAppSelector } from '~/hooks/redux'
@@ -46,7 +45,6 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
-  useNavigationScrollHandler(listRef)
   useScrollToTopOnBlur(listRef)
 
   const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()

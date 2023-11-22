@@ -35,10 +35,10 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginS
 
 const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, setFromAddress, setToAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
-  useScrollToTopOnFocus()
+  useScrollToTopOnFocus(screenScrollY)
 
   useEffect(() => {
     if (params?.toAddressHash) setToAddress(params.toAddressHash)

@@ -68,7 +68,6 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
       <ScrollScreen
         usesKeyboard
         fill
-        hasNavigationHeader
         headerOptions={{
           type: 'stack',
           headerTitle: 'Edit wallet name',
