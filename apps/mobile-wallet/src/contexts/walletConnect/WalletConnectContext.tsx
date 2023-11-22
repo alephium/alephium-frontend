@@ -107,7 +107,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         metadata: {
           name: 'Alephium mobile wallet',
           description: 'Alephium mobile wallet',
-          url: 'https://github.com/alephium/mobile-wallet',
+          url: 'https://github.com/alephium/alephium-frontend',
           icons: ['https://alephium.org/favicon-32x32.png']
         }
       })
