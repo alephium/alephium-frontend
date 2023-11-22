@@ -137,7 +137,7 @@ const AddressInputs = ({
               borderless
               onClick={() => setIsContactSelectModalOpen(true)}
             >
-              Contacts
+              {t('Contacts')}
             </Button>
             <Button
               Icon={AlbumIcon}
@@ -147,7 +147,7 @@ const AddressInputs = ({
               borderless
               onClick={() => setIsAddressSelectModalOpen(true)}
             >
-              Your addresses
+              {t('Your addresses')}
             </Button>
           </DestinationActions>
         </InputsSection>

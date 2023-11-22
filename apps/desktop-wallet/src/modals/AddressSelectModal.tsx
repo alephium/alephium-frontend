@@ -28,9 +28,9 @@ import { addressHasAssets, filterAddresses, filterAddressesWithoutAssets } from 
 interface AddressSelectModalProps {
   title: string
   options: Address[]
-  selectedAddress?: Address
   onAddressSelect: (address: Address) => void
   onClose: () => void
+  selectedAddress?: Address
   emptyListPlaceholder?: string
   hideAddressesWithoutAssets?: boolean
 }
@@ -49,11 +49,11 @@ const AddressSelectModal = ({
 
   const addresses = hideAddressesWithoutAssets ? filterAddressesWithoutAssets(options) : options
   const [filteredAddresses, setFilteredAddresses] = useState(addresses)
-  const defaultAddressHasAssets = selectedAddress && addressHasAssets(selectedAddress)
+  const selectedAddressHasAssets = selectedAddress && addressHasAssets(selectedAddress)
 
   let initialAddress = selectedAddress
   if (hideAddressesWithoutAssets) {
-    if (!defaultAddressHasAssets && addresses.length > 0) {
+    if (!selectedAddressHasAssets && addresses.length > 0) {
       initialAddress = addresses[0]
     }
   } else if (!initialAddress && addresses.length > 0) {
@@ -69,6 +69,7 @@ const AddressSelectModal = ({
 
   const selectAddress = (option: SelectOption<AddressHash>) => {
     const selectedAddress = addresses.find((address) => address.hash === option.value)
+
     selectedAddress && setAddress(selectedAddress)
     selectedAddress && onAddressSelect(selectedAddress)
   }
