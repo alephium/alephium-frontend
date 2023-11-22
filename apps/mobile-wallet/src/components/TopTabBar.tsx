@@ -21,7 +21,6 @@ import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -38,10 +37,9 @@ interface TopTabBarProps {
 
 const indicatorXPadding = 10
 
-const TabBarHeader = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTabBarProps) => {
+const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
   const theme = useTheme()
-  const insets = useSafeAreaInsets()
 
   const indicatorStyle = useAnimatedStyle(() => {
     const positionsArray = [...Array(tabLabels.length).keys()]
@@ -82,7 +80,7 @@ const TabBarHeader = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: To
   }
 
   return (
-    <HeaderContainer ref={tabBarRef} style={{ marginTop: insets.top }}>
+    <HeaderContainer ref={tabBarRef}>
       <Indicator
         style={[
           indicatorStyle,
@@ -119,7 +117,7 @@ const TabBarItem = ({ label, ...props }: TabBarItemProps) => (
   </TabBarItemStyled>
 )
 
-export default TabBarHeader
+export default TopTabBar
 
 const HeaderContainer = styled(Reanimated.View)`
   flex-direction: row;
