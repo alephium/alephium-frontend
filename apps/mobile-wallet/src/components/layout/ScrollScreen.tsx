@@ -26,7 +26,6 @@ import BaseHeader from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import { ScreenProps } from '~/components/layout/Screen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
@@ -46,7 +45,6 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
 
 const ScrollScreen = ({
   children,
-  hasNavigationHeader,
   style,
   containerStyle,
   contentContainerStyle,
@@ -61,7 +59,6 @@ const ScrollScreen = ({
   const viewRef = useRef<ScrollView>(null)
   const navigation = useNavigation()
 
-  const navigationScrollHandler = useNavigationScrollHandler(viewRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
   const insets = useSafeAreaInsets()
 
@@ -85,7 +82,7 @@ const ScrollScreen = ({
         ref={viewRef}
         scrollEventThrottle={16}
         alwaysBounceVertical={true}
-        onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
+        onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         style={{ overflow: 'visible', paddingTop: headerOptions ? 15 : 0 }}
         contentContainerStyle={[

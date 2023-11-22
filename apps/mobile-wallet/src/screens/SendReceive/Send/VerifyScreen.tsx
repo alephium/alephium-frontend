@@ -42,9 +42,9 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
 
-  useScrollToTopOnFocus()
+  useScrollToTopOnFocus(screenScrollY)
 
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]

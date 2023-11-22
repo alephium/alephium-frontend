@@ -29,7 +29,6 @@ import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -54,8 +53,6 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
   const selectContactPendingTransactions = useMemo(makeSelectContactPendingTransactions, [])
   const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
   const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
-
-  useNavigationScrollHandler(listRef)
 
   const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
 

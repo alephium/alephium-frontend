@@ -32,7 +32,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { scrollScreenTo } from '~/utils/layout'
 
@@ -67,7 +66,6 @@ const BaseHeader = ({
 }: BaseHeaderProps) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
-  const { activeScreenRef } = useNavigationScrollContext()
 
   const isIos = Platform.OS === 'ios'
   const borderColorRange = [showBorderBottom ? theme.border.secondary : 'transparent', theme.border.secondary]
@@ -150,9 +148,13 @@ const BaseHeader = ({
   )
 
   const handleCompactHeaderPress = () => {
+    console.log('TODO: Reimplement scroll to top')
+
+    /*
     if (activeScreenRef?.current) {
       scrollScreenTo(0, activeScreenRef, true)
     }
+    */
   }
 
   const compactHeaderContents = (

@@ -31,7 +31,7 @@ interface VerificationSuccessScreenProps
     ScrollScreenProps {}
 
 const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccessScreenProps) => (
-  <ScrollScreen hasNavigationHeader fill {...props}>
+  <ScrollScreen fill {...props}>
     <ScreenSection centered verticallyCentered style={{ marginTop: 100 }}>
       <AppText size={100}>👍</AppText>
     </ScreenSection>

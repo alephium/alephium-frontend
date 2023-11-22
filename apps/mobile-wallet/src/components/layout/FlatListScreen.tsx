@@ -25,7 +25,6 @@ import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { VERTICAL_GAP } from '~/style/globalStyle'
@@ -38,12 +37,10 @@ const FlatListScreen = <T,>({
   contentContainerStyle,
   style,
   contrastedBg,
-  hasNavigationHeader,
   ...props
 }: FlatListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
   const flatListRef = useRef<FlatList>(null)
-  const navigationScrollHandler = useNavigationScrollHandler(flatListRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
 
   useScrollToTopOnBlur(flatListRef)
@@ -57,7 +54,7 @@ const FlatListScreen = <T,>({
       )}
       <FlatList
         ref={flatListRef}
-        onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
+        onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         scrollEventThrottle={16}
         contentContainerStyle={[
