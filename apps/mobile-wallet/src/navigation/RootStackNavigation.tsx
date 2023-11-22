@@ -93,7 +93,7 @@ const RootStackNavigation = () => {
     colors: {
       ...DefaultTheme.colors,
       primary: theme.font.primary,
-      background: theme.bg.primary,
+      background: theme.bg.back1,
       card: theme.bg.primary,
       text: theme.font.primary,
       border: theme.border.primary

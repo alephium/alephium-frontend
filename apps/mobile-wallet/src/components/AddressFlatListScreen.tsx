@@ -28,9 +28,15 @@ import { Address } from '~/types/addresses'
 export interface AddressFlatListScreenProps extends Partial<FlatListScreenProps<Address>> {
   onAddressPress: (addressHash: AddressHash) => void
   selectedAddress?: AddressHash
+  contentPaddingTop?: boolean | number
 }
 
-const AddressFlatListScreen = ({ onAddressPress, selectedAddress, ...props }: AddressFlatListScreenProps) => {
+const AddressFlatListScreen = ({
+  onAddressPress,
+  selectedAddress,
+  contentPaddingTop,
+  ...props
+}: AddressFlatListScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
   return (
@@ -51,6 +57,9 @@ const AddressFlatListScreen = ({ onAddressPress, selectedAddress, ...props }: Ad
           onPress={() => onAddressPress(address.hash)}
         />
       )}
+      style={{
+        paddingTop: typeof contentPaddingTop === 'boolean' ? 15 : contentPaddingTop
+      }}
       {...props}
     />
   )
