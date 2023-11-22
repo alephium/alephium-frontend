@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
@@ -26,7 +26,7 @@ import { InputProps, inputStyling } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
 import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAddressByHash, selectAllContacts } from '@/storage/addresses/addressesSelectors'
+import { makeSelectContactByAddress, selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 type InputFieldMode = 'view' | 'edit'
 
@@ -37,7 +37,9 @@ const AddressInput = ({ value, ...props }: InputProps) => {
   const cleanedValue = value?.toString() || ''
 
   const ownAddress = useAppSelector((s) => selectAddressByHash(s, cleanedValue))
-  const contact = useAppSelector((s) => selectAllContacts(s)).find((c) => c.address === cleanedValue)
+
+  const selectContactByAddress = useMemo(makeSelectContactByAddress, [])
+  const contact = useAppSelector((s) => selectContactByAddress(s, cleanedValue))
 
   const isContactVisible = contact && inputFieldMode === 'view'
   const isOwnAddressVisible = ownAddress && inputFieldMode === 'view'
