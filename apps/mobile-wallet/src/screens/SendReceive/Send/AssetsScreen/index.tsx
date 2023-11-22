@@ -41,7 +41,7 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsS
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
-  const { setHeaderOptions } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
@@ -78,7 +78,14 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   if (!address) return null
 
   return (
-    <ScrollScreen verticalGap usesKeyboard contrastedBg keyboardShouldPersistTaps="always" {...props}>
+    <ScrollScreen
+      verticalGap
+      usesKeyboard
+      contrastedBg
+      keyboardShouldPersistTaps="always"
+      onScroll={screenScrollHandler}
+      {...props}
+    >
       <ScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />
       <ScreenSection>
         <AssetsList>

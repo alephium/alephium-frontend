@@ -35,7 +35,7 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginS
 
 const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, setFromAddress, setToAddress } = useSendContext()
-  const { setHeaderOptions } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
   useScrollToTopOnFocus()
@@ -69,6 +69,7 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
       }
       contrastedBg
+      onScroll={screenScrollHandler}
     />
   )
 }

@@ -42,7 +42,7 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
-  const { setHeaderOptions } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
 
   useScrollToTopOnFocus()
 
@@ -67,7 +67,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <ScrollScreen verticalGap {...props}>
+    <ScrollScreen verticalGap onScroll={screenScrollHandler} {...props}>
       <ScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
       <ScreenSection>
         <BoxSurface>
