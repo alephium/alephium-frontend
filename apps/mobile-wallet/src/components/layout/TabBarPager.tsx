@@ -30,7 +30,9 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
-import TabBarHeader from '~/components/TabBarHeader'
+import BaseHeader from '~/components/headers/BaseHeader'
+import Screen from '~/components/layout/Screen'
+import TabBarHeader from '~/components/TopTabBar'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
 
@@ -80,12 +82,19 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
   }
 
   return (
-    <>
-      <TabBarHeader
-        tabLabels={tabLabels}
-        pagerScrollEvent={pagerScrollEvent}
-        onTabPress={handleTabPress}
-        tabBarRef={tabBarRef}
+    <Screen>
+      <BaseHeader
+        options={{ headerTitle }}
+        scrollY={screenScrollY}
+        showCompactComponents
+        headerBottom={() => (
+          <TabBarHeader
+            tabLabels={tabLabels}
+            pagerScrollEvent={pagerScrollEvent}
+            onTabPress={handleTabPress}
+            tabBarRef={tabBarRef}
+          />
+        )}
       />
       <StyledPagerView initialPage={0} onPageScroll={pageScrollHandler} ref={pagerRef} {...props}>
         {pages.map((Page, i) => (
@@ -94,7 +103,7 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
           </PageContainer>
         ))}
       </StyledPagerView>
-    </>
+    </Screen>
   )
 }
 
@@ -109,11 +118,7 @@ const WrappedPage = ({
 }) => <Page onScroll={onScroll} />
 
 const StyledPagerView = styled(AnimatedPagerView)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
+  flex: 1;
   background-color: ${({ theme }) => theme.bg.back2};
 `
 
