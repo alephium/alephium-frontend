@@ -16,10 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isAddressValid } from '@alephium/shared'
-import { AlbumIcon, ContactIcon, ScanLineIcon } from 'lucide-react'
-import Scanner from 'qr-scanner'
-import { useCallback, useState } from 'react'
+import { AlbumIcon, ContactIcon } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -30,12 +28,10 @@ import AddressInput from '@/components/Inputs/AddressInput'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
-import QRScanner from '@/components/QRScanner'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
 import AddressSelectModal from '@/modals/AddressSelectModal'
-import CenteredModal from '@/modals/CenteredModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import InputsSection from '@/modals/SendModals/InputsSection'
@@ -73,7 +69,6 @@ const AddressInputs = ({
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
-  const [isScanningModalOpen, setIsScanningModalOpen] = useState(false)
   const [filteredContacts, setFilteredContacts] = useState(contacts)
 
   const contactSelectOptions: SelectOption<AddressHash>[] = contacts.map((contact) => ({
@@ -97,18 +92,6 @@ const AddressInputs = ({
     setFilteredContacts(contacts)
     moveFocusOnPreviousModal()
   }
-
-  const handleQRCodeScan = useCallback(
-    (scanResult: Scanner.ScanResult) => {
-      if (!isAddressValid(scanResult.data)) return // TODO: SHOW SNACKBAR
-
-      if (onToAddressChange) {
-        onToAddressChange(scanResult.data)
-        setIsScanningModalOpen(false)
-      }
-    },
-    [onToAddressChange]
-  )
 
   return (
     <InputsContainer>
@@ -166,16 +149,6 @@ const AddressInputs = ({
             >
               Your addresses
             </Button>
-            <Button
-              Icon={ScanLineIcon}
-              iconColor={theme.global.accent}
-              variant="faded"
-              short
-              borderless
-              onClick={() => setIsScanningModalOpen(true)}
-            >
-              Scan
-            </Button>
           </DestinationActions>
         </InputsSection>
       )}
@@ -207,11 +180,6 @@ const AddressInputs = ({
             onClose={handleToOwnAddressModalClose}
             selectedAddress={fromAddresses.find((a) => a.hash === toAddress?.value)}
           />
-        )}
-        {isScanningModalOpen && onToAddressChange && (
-          <CenteredModal onClose={() => setIsScanningModalOpen(false)} title={t('QR code scanner')}>
-            <QRScanner onScanSuccess={handleQRCodeScan} />
-          </CenteredModal>
         )}
       </ModalPortal>
     </InputsContainer>
