@@ -25,7 +25,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
-import Button, { BackButton, CloseButton, ContinueButton } from '~/components/buttons/Button'
+import Button, { BackButton, ContinueButton } from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
@@ -43,10 +43,10 @@ interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCo
 
 const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const theme = useTheme()
-  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
 
-  useScrollToTopOnFocus()
+  useScrollToTopOnFocus(screenScrollY)
 
   const handleCopyAddressPress = () => {
     sendAnalytics('Copied address', { note: 'Receive screen' })
@@ -70,7 +70,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   )
 
   return (
-    <ScrollScreen hasNavigationHeader verticalGap contentPaddingTop onScroll={screenScrollHandler} {...props}>
+    <ScrollScreen verticalGap contentPaddingTop onScroll={screenScrollHandler} {...props}>
       <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." />
       <ScreenSection centered>
         <QRCodeContainer>

@@ -108,13 +108,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   return (
     <>
-      <ScrollScreen
-        fill
-        verticalGap
-        hasNavigationHeader
-        style={{ paddingBottom: footerButtonsHeight + DEFAULT_MARGIN }}
-        {...props}
-      >
+      <ScrollScreen fill verticalGap style={{ paddingBottom: footerButtonsHeight + DEFAULT_MARGIN }} {...props}>
         <ScreenIntro
           title="Verify secret phrase"
           subtitle="Select the words of your secret recovery phrase in the right order."
