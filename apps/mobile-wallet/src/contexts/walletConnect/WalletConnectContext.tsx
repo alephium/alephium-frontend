@@ -108,7 +108,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           name: 'Alephium mobile wallet',
           description: 'Alephium mobile wallet',
           url: 'https://github.com/alephium/mobile-wallet',
-          icons: ['https://alephium.org/favicon-32x32.png']
+          icons: ['https://alephium.org/favicon-32x32.png'],
+          redirect: {
+            native: 'alephium://'
+          }
         }
       })
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
