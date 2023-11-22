@@ -31,7 +31,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import TabBarHeader from '~/components/TabBarHeader'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
 
@@ -59,8 +58,6 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
     offset: 0
   })
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
-
-  useNavigationScrollHandler()
 
   const updateTabBarY = (newValue?: number) => {
     if (newValue && tabBarPageY.value !== newValue) {
