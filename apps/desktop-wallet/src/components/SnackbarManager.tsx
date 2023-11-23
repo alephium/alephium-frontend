@@ -74,6 +74,7 @@ const SnackbarManagerContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   z-index: 2;
+  max-height: 20vh;
 
   @media ${deviceBreakPoints.mobile} {
     justify-content: center;
@@ -90,6 +91,7 @@ const SnackbarPopup = styled(motion.div)`
   backdrop-filter: blur(10px);
   max-width: 800px;
   word-wrap: break-word;
+  overflow: scroll;
 
   &.alert {
     ${({ theme }) => getSnackbarStyling(theme.global.alert)}
