@@ -170,8 +170,6 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
 
           if (isRequestToApproveContractCall && onTransactionBuildFail) {
             onTransactionBuildFail(errorMessage)
-          } else {
-            onClose()
           }
         }
       }
