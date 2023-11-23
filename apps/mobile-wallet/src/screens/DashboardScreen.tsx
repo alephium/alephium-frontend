@@ -36,6 +36,7 @@ import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/
 import BottomModal from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import ScreenTitle from '~/components/layout/ScreenTitle'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -124,6 +125,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} />}
       hasBottomBar
       verticalGap
+      title={walletName}
       headerOptions={{
         headerRight: () => <DashboardHeaderActions />,
         headerLeft: () => <WalletSwitchButton isLoading={isLoading} />,
