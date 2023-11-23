@@ -16,25 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+export const getHumanReadableError = (e: unknown, defaultErrorMsg: string) => tryGetString(e) || defaultErrorMsg
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const tryGetString = (obj: any): string | null => (typeof obj.toString === 'function' ? obj.toString() : null)
-
-export interface APIError {
-  error: {
-    detail?: string
-    message?: string
-  }
-  status: number
-  statusText: string
-}
-
-const isHTTPError = (e: unknown): e is APIError => (e as APIError).error !== undefined
-
-export const getHumanReadableError = (e: unknown, defaultErrorMessage: string) => {
-  const stringifiedError = tryGetString(e)
-  const serverError = isHTTPError(e)
-    ? e.error.detail || `(${e.status}${e.statusText && `: ${e.statusText}`}) ${e.error.message || ''}`
-    : stringifiedError
-
-  return `${defaultErrorMessage}${serverError && `: ${serverError}`}`
-}
+const tryGetString = (obj: any): string | null =>
+  typeof obj.toString === 'function' ? obj.toString().replace('Error: [API Error] - ', '') : null

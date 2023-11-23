@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { useEffect, useState } from 'react'
@@ -42,6 +41,7 @@ import Timestamp from '@/components/Timestamp'
 import usePageNumber from '@/hooks/usePageNumber'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import transactionIcon from '@/images/transaction-icon.svg'
+import { getHumanReadableError } from '@alephium/shared'
 
 type ParamTypes = {
   id: string
@@ -55,10 +55,8 @@ const BlockInfoPage = () => {
   const [blockInfo, setBlockInfo] = useState<explorer.BlockEntryLite>()
   const [blockInfoError, setBlockInfoError] = useState<{
     message: string
-    code: number
   }>()
   const [txList, setTxList] = useState<explorer.Transaction[]>()
-  const [txListStatus, setTxListStatus] = useState<number>()
 
   const [infoLoading, setInfoLoading] = useState(true)
   const [txLoading, setTxLoading] = useState(true)
@@ -76,10 +74,9 @@ const BlockInfoPage = () => {
         if (data) setBlockInfo(data)
       } catch (e) {
         console.error(e)
-        const { error, status } = e as APIError
+
         setBlockInfoError({
-          message: error.detail || error.message || 'Unknown error',
-          code: status
+          message: getHumanReadableError(e, 'Unknown error')
         })
       }
       setInfoLoading(false)
@@ -100,8 +97,6 @@ const BlockInfoPage = () => {
         if (data) setTxList(data)
       } catch (e) {
         console.error(e)
-        const { status } = e as APIError
-        setTxListStatus(status)
       }
       setTxLoading(false)
     }
@@ -161,8 +156,8 @@ const BlockInfoPage = () => {
       </Table>
 
       {blockInfo?.mainChain ? (
-        !txLoading && (!txList || (txListStatus && txListStatus !== 200)) ? (
-          <InlineErrorMessage message={t('An error occured while fetching transactions')} code={txListStatus} />
+        !txLoading && !txList ? (
+          <InlineErrorMessage message={t('An error occured while fetching transactions')} />
         ) : (
           <>
             <SecondaryTitle>Transactions</SecondaryTitle>

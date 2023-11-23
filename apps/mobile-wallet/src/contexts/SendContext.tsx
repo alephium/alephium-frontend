@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError, AssetAmount, getHumanReadableError } from '@alephium/shared'
+import { AssetAmount, getHumanReadableError } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
@@ -124,8 +124,9 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         callbacks.onBuildSuccess()
       } catch (e) {
         // TODO: When API error codes are available, replace this substring check with a proper error code check
-        const { error } = e as APIError
-        if (error?.detail && (error.detail.includes('consolidating') || error.detail.includes('consolidate'))) {
+        const error = (e as unknown as string).toString()
+
+        if (error.includes('consolidating') || error.includes('consolidate')) {
           setConsolidationRequired(true)
           setIsConsolidateModalVisible(true)
           setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
