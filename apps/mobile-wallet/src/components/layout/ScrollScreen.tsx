@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useNavigation } from '@react-navigation/native'
-import { RefObject, useRef } from 'react'
+import { ReactNode, RefObject, useRef } from 'react'
 import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
@@ -25,6 +25,7 @@ import styled from 'styled-components/native'
 import BaseHeader from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import { ScreenProps } from '~/components/layout/Screen'
+import ScreenTitle from '~/components/layout/ScreenTitle'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
@@ -33,6 +34,8 @@ import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
   fill?: boolean
+  title?: string
+  TitleRightComponent?: ReactNode
 }
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
@@ -54,6 +57,8 @@ const ScrollScreen = ({
   fill,
   headerOptions,
   usesKeyboard,
+  title,
+  TitleRightComponent,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
@@ -94,6 +99,7 @@ const ScrollScreen = ({
         ]}
         {...props}
       >
+        {title && <ScreenTitle title={title} scrollY={screenScrollY} />}
         <View
           style={[
             {
