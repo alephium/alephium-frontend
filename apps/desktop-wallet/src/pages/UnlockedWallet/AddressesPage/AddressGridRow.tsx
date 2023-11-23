@@ -38,9 +38,13 @@ import {
 } from '@/storage/addresses/addressesSelectors'
 import { selectIsTokensMetadataUninitialized } from '@/storage/assets/assetsSelectors'
 import { useGetPriceQuery } from '@/storage/assets/priceApiSlice'
-import { AddressHash } from '@/types/addresses'
+import { Address, AddressHash } from '@/types/addresses'
 import { currencies } from '@/utils/currencies'
 import { onEnterOrSpace } from '@/utils/misc'
+import { selectDevModeStatus } from '@/storage/global/globalSlice'
+import Button from '@/components/Button'
+import client from '@/api/client'
+import { signAndSendTransaction } from '@/api/transactions'
 
 interface AddressGridRowProps {
   addressHash: AddressHash
@@ -58,6 +62,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const { data: price, isLoading: isPriceLoading } = useGetPriceQuery(currencies[fiatCurrency].ticker)
+  const devMode = useAppSelector(selectDevModeStatus)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
@@ -71,6 +76,34 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
 
   const openAddressDetailsModal = () => setIsAddressDetailsModalOpen(true)
 
+  const testConsolidation = async (address: Address) => {
+    for (let i = 0; i < 5; i++) {
+      try {
+        const unsignedTxData = await client.node.transactions.postTransactionsBuild({
+          fromPublicKey: address.publicKey,
+          destinations: Array.from({ length: 135 }, () => ({
+            address: '18xPARoYPLBGF7CPKZCaT6yyvfZ2hwujT3eY6haRhomvq',
+            attoAlphAmount: '1000000000000000',
+            tokens: []
+          }))
+        })
+
+        console.log('unsignedTx', unsignedTxData)
+
+        const signature = await signAndSendTransaction(address, unsignedTxData.txId, unsignedTxData.unsignedTx)
+
+        console.log('signature', signature)
+      } catch (e) {
+        console.log('type of error:', typeof e)
+        console.log('error', e)
+
+        const error = (e as unknown as string).toString()
+
+        console.log(error.includes('consolidating'))
+      }
+    }
+  }
+
   return (
     <>
       <GridRow
@@ -82,6 +115,11 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
         tabIndex={0}
       >
         <AddressNameCell>
+          {devMode && (
+            <Button role="secondary" short onClick={() => testConsolidation(address)}>
+              Test consolidation
+            </Button>
+          )}
           <AddressColorIndicator addressHash={address.hash} size={16} />
           <Column>
             <Label>
