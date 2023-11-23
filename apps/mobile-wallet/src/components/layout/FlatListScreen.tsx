@@ -23,6 +23,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
+import ScreenTitle from '~/components/layout/ScreenTitle'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
@@ -37,6 +38,8 @@ const FlatListScreen = <T,>({
   contentContainerStyle,
   style,
   contrastedBg,
+  title,
+  TitleRightComponent,
   ...props
 }: FlatListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
@@ -57,6 +60,7 @@ const FlatListScreen = <T,>({
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         scrollEventThrottle={16}
+        ListHeaderComponent={() => title && <ScreenTitle title={title} scrollY={screenScrollY} />}
         contentContainerStyle={[
           {
             paddingBottom: insets.bottom,
