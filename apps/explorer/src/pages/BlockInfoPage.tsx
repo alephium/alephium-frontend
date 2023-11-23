@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { useEffect, useState } from 'react'
@@ -41,7 +42,6 @@ import Timestamp from '@/components/Timestamp'
 import usePageNumber from '@/hooks/usePageNumber'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import transactionIcon from '@/images/transaction-icon.svg'
-import { getHumanReadableError } from '@alephium/shared'
 
 type ParamTypes = {
   id: string

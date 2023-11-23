@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getHumanReadableError } from '@alephium/shared'
 import dayjs from 'dayjs'
-import { isString } from 'lodash'
 import { ComponentProps, useCallback, useState } from 'react'
 import { RiCheckLine } from 'react-icons/ri'
 import styled from 'styled-components'
