@@ -22,6 +22,7 @@ import { FlatList } from 'react-native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
+import ScreenTitle from '~/components/layout/ScreenTitle'
 import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
@@ -47,7 +48,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   useScrollToTopOnBlur(listRef)
 
-  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
 
   return (
     <Screen contrastedBg>
@@ -64,7 +65,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         ref={listRef}
-        headerHeight={screenHeaderHeight}
+        ListHeaderComponent={<ScreenTitle title="Transfers" scrollY={screenScrollY} />}
       />
     </Screen>
   )

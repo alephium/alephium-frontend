@@ -22,7 +22,6 @@ import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import BaseHeader, { BaseHeaderOptions } from '~/components/headers/BaseHeader'
-import { ProgressWorkflow } from '~/components/headers/ProgressHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -30,7 +29,6 @@ export interface ScreenProps extends ViewProps {
   contrastedBg?: boolean
   headerOptions?: BaseHeaderOptions & {
     type?: 'default' | 'stack'
-    progressWorkflow?: ProgressWorkflow
   }
 }
 

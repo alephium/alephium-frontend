@@ -44,7 +44,6 @@ interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransac
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
   addressHash?: AddressHash
-  headerHeight?: number
   showInternalInflows?: boolean
 }
 
@@ -64,7 +63,6 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
     ListHeaderComponent,
     showInternalInflows = false,
     style,
-    headerHeight = 0,
     ...props
   }: TransactionsFlatListProps,
   ref: ForwardedRef<FlatList<AddressTransaction>>
