@@ -65,7 +65,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         ref={listRef}
-        ListHeaderComponent={<ScreenTitle title="Transfers" scrollY={screenScrollY} />}
+        ListHeaderComponent={<ScreenTitle title="Transfers" scrollY={screenScrollY} sideDefaultMargin />}
       />
     </Screen>
   )

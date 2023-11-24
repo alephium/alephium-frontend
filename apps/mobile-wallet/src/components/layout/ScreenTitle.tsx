@@ -26,16 +26,17 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 interface ScreenTitleProps {
   title: string
   scrollY?: SharedValue<number>
+  sideDefaultMargin?: boolean
   SideComponent?: ReactNode
 }
 
-const ScreenTitle = ({ title, scrollY, SideComponent }: ScreenTitleProps) => {
+const ScreenTitle = ({ title, scrollY, sideDefaultMargin, SideComponent }: ScreenTitleProps) => {
   const titleAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY?.value || 0, [0, 40], [1, 0], Extrapolate.CLAMP)
   }))
 
   return (
-    <TitleContainer style={titleAnimatedStyle}>
+    <TitleContainer style={[titleAnimatedStyle, { marginHorizontal: sideDefaultMargin ? DEFAULT_MARGIN : 0 }]}>
       <Title>{title}</Title>
       {SideComponent}
     </TitleContainer>
@@ -45,7 +46,7 @@ const ScreenTitle = ({ title, scrollY, SideComponent }: ScreenTitleProps) => {
 export default ScreenTitle
 
 const TitleContainer = styled(Animated.View)`
-  padding: 10px ${DEFAULT_MARGIN}px;
+  padding: 5px 0 10px 0;
   align-self: flex-start;
   flex-direction: row;
   align-items: center;

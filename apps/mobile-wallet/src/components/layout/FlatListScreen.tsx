@@ -60,7 +60,7 @@ const FlatListScreen = <T,>({
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         scrollEventThrottle={16}
-        ListHeaderComponent={() => title && <ScreenTitle title={title} scrollY={screenScrollY} />}
+        ListHeaderComponent={() => title && <ScreenTitle title={title} scrollY={screenScrollY} sideDefaultMargin />}
         contentContainerStyle={[
           {
             paddingBottom: insets.bottom,
