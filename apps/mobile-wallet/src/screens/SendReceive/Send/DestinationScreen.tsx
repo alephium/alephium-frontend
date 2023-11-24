@@ -66,7 +66,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
   const theme = useTheme()
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const posthog = usePostHog()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
@@ -167,7 +167,11 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   return (
     <>
       <ScrollScreen usesKeyboard verticalGap contrastedBg contentPaddingTop onScroll={screenScrollHandler} {...props}>
-        <ScreenIntro title="Destination" subtitle="Send to an address, a contact, or one of your other addresses." />
+        <ScreenIntro
+          title="Destination"
+          subtitle="Send to an address, a contact, or one of your other addresses."
+          scrollY={screenScrollY}
+        />
         <ScreenSection>
           <Controller
             name="toAddressHash"
