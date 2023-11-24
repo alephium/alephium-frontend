@@ -61,9 +61,7 @@ const ProgressHeader = ({ workflow, options, ...props }: ProgressHeaderProps) =>
       options={{
         ...options,
         headerRight: () => (
-          <HeaderRightContainer>
-            {options.headerRight && <HeaderRightOptionWrapper>{options.headerRight({})}</HeaderRightOptionWrapper>}
-          </HeaderRightContainer>
+          <HeaderRightContainer>{options.headerRight && options.headerRight({})}</HeaderRightContainer>
         ),
         headerTitleRight: () => (
           <ProgressBar
@@ -72,14 +70,13 @@ const ProgressHeader = ({ workflow, options, ...props }: ProgressHeaderProps) =>
             unfilledColor={theme.border.primary}
             fill="transparent"
             borderWidth={0}
-            size={28}
+            size={24}
             style={{ marginBottom: -1 }}
             pointerEvents="none"
             thickness={3}
           />
         )
       }}
-      showCompactComponents
       showBorderBottom
       {...props}
     />
@@ -98,15 +95,6 @@ export const BackButtonStyled = styled.Pressable`
 `
 
 const HeaderRightContainer = styled.View`
-  flex: 1;
   align-items: flex-end;
-  justify-content: center;
-`
-
-const HeaderRightOptionWrapper = styled.View`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
   justify-content: center;
 `
