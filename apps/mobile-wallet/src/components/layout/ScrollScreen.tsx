@@ -35,7 +35,7 @@ export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
   fill?: boolean
   title?: string
-  TitleRightComponent?: ReactNode
+  TitleSideComponent?: ReactNode
 }
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
@@ -58,7 +58,7 @@ const ScrollScreen = ({
   headerOptions,
   usesKeyboard,
   title,
-  TitleRightComponent,
+  TitleSideComponent,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
@@ -99,7 +99,7 @@ const ScrollScreen = ({
         ]}
         {...props}
       >
-        {title && <ScreenTitle title={title} scrollY={screenScrollY} />}
+        {title && <ScreenTitle title={title} SideComponent={TitleSideComponent} scrollY={screenScrollY} />}
         <View
           style={[
             {

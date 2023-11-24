@@ -41,11 +41,11 @@ export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' 
 
 export interface BaseHeaderProps extends ViewProps {
   options: BaseHeaderOptions
-  TitleReplacementComponent?: ReactNode
   headerRef?: RefObject<Animated.View>
   showBorderBottom?: boolean
   goBack?: () => void
   scrollY?: SharedValue<number>
+  CustomContent?: ReactNode
 }
 
 export const headerHeight = 90
@@ -59,7 +59,7 @@ const BaseHeader = ({
   showBorderBottom,
   headerRef,
   scrollY,
-  TitleReplacementComponent,
+  CustomContent,
   ...props
 }: BaseHeaderProps) => {
   const theme = useTheme()
@@ -92,7 +92,7 @@ const BaseHeader = ({
       : {}
   )
 
-  const titleContainerAnimatedStyle = useAnimatedStyle(() =>
+  const centerContainerAnimatedStyle = useAnimatedStyle(() =>
     headerTitle
       ? {
           opacity: interpolate(scrollY?.value || 0, [40, 60], [0, 1], Extrapolate.CLAMP)
@@ -115,19 +115,21 @@ const BaseHeader = ({
       <Pressable onPress={handleCompactHeaderPress}>
         <HeaderContainer>
           <ActionAreaBlurred style={{ paddingTop }} tint={theme.name} animatedProps={animatedBlurViewProps}>
-            {HeaderLeft}
-            {!TitleReplacementComponent ? (
-              headerTitle && (
-                <TitleContainer style={titleContainerAnimatedStyle}>
-                  <AppText semiBold size={17}>
-                    {HeaderTitle}
-                  </AppText>
-                </TitleContainer>
-              )
+            {!CustomContent ? (
+              <>
+                {HeaderLeft}
+                {headerTitle && (
+                  <CenterContainer style={centerContainerAnimatedStyle}>
+                    <AppText semiBold size={17}>
+                      {HeaderTitle}
+                    </AppText>
+                  </CenterContainer>
+                )}
+                {HeaderRight}
+              </>
             ) : (
-              <TitleContainer style={titleContainerAnimatedStyle}>{TitleReplacementComponent}</TitleContainer>
+              <CenterContainer>{CustomContent}</CenterContainer>
             )}
-            {HeaderRight}
           </ActionAreaBlurred>
 
           {showBorderBottom && <BottomBorder style={bottomBorderAnimatedStyle} />}
@@ -148,11 +150,10 @@ const HeaderContainer = styled(Animated.View)`
   flex-direction: column;
 `
 
-const TitleContainer = styled(Animated.View)`
+const CenterContainer = styled(Animated.View)`
   flex: 1;
   align-items: center;
   justify-content: center;
-  opacity: 0;
 `
 
 const ActionAreaBlurred = styled(AnimatedBlurView)`
