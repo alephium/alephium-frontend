@@ -25,11 +25,11 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface ScreenTitleProps {
   title: string
-  RightContent?: ReactNode
   scrollY?: SharedValue<number>
+  SideComponent?: ReactNode
 }
 
-const ScreenTitle = ({ title, RightContent, scrollY }: ScreenTitleProps) => {
+const ScreenTitle = ({ title, scrollY, SideComponent }: ScreenTitleProps) => {
   const titleAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY?.value || 0, [0, 40], [1, 0], Extrapolate.CLAMP)
   }))
@@ -37,7 +37,7 @@ const ScreenTitle = ({ title, RightContent, scrollY }: ScreenTitleProps) => {
   return (
     <TitleContainer style={titleAnimatedStyle}>
       <Title>{title}</Title>
-      {RightContent}
+      {SideComponent}
     </TitleContainer>
   )
 }
