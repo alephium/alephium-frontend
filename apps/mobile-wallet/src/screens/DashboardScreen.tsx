@@ -129,15 +129,15 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       headerOptions={{
         headerRight: () => <DashboardHeaderActions />,
         headerLeft: () => <WalletSwitchButton isLoading={isLoading} />,
-        headerTitle: walletName,
-        headerTitleRight: () => (
-          <NetworkBadgeContainer>
-            <Pressable onPress={() => setIsSwitchNetworkModalOpen(true)}>
-              <ActiveNetworkBadge />
-            </Pressable>
-          </NetworkBadgeContainer>
-        )
+        headerTitle: walletName
       }}
+      TitleSideComponent={
+        <NetworkBadgeContainer>
+          <Pressable onPress={() => setIsSwitchNetworkModalOpen(true)}>
+            <ActiveNetworkBadge />
+          </Pressable>
+        </NetworkBadgeContainer>
+      }
       {...props}
     >
       <BalanceAndButtons>
@@ -257,7 +257,7 @@ const ButtonsRowContainer = styled(Animated.View)`
 
 const NetworkBadgeContainer = styled.View`
   flex-grow: 1;
-  align-items: center;
   flex-direction: row;
+  align-items: center;
   justify-content: flex-end;
 `
