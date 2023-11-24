@@ -40,9 +40,9 @@ export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' 
 }
 
 export interface BaseHeaderProps extends ViewProps {
-  headerBottom?: () => ReactNode
-  headerRef?: RefObject<Animated.View>
   options: BaseHeaderOptions
+  TitleReplacementComponent?: ReactNode
+  headerRef?: RefObject<Animated.View>
   showBorderBottom?: boolean
   goBack?: () => void
   scrollY?: SharedValue<number>
@@ -56,10 +56,10 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
 
 const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle, headerTitleRight },
-  headerBottom,
   showBorderBottom,
   headerRef,
   scrollY,
+  TitleReplacementComponent,
   ...props
 }: BaseHeaderProps) => {
   const theme = useTheme()
@@ -72,17 +72,8 @@ const BaseHeader = ({
 
   const HeaderRight = headerRight && headerRight({})
   const HeaderLeft = headerLeft && headerLeft({})
-  const HeaderBottom = headerBottom && headerBottom()
   const HeaderTitle = headerTitle && (typeof headerTitle === 'string' ? headerTitle : headerTitle.arguments['children'])
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
-
-  const bottomContentAnimatedStyle = useAnimatedStyle(() =>
-    HeaderBottomContent !== undefined
-      ? {
-          opacity: interpolate(scrollY?.value || 0, defaultScrollRange, [1, 0], Extrapolate.CLAMP)
-        }
-      : {}
-  )
 
   const animatedBlurViewProps = useAnimatedProps(() =>
     isIos
@@ -125,17 +116,20 @@ const BaseHeader = ({
         <HeaderContainer>
           <ActionAreaBlurred style={{ paddingTop }} tint={theme.name} animatedProps={animatedBlurViewProps}>
             {HeaderLeft}
-            {headerTitle && (
-              <TitleContainer style={titleContainerAnimatedStyle}>
-                <AppText semiBold size={17}>
-                  {HeaderTitle}
-                </AppText>
-              </TitleContainer>
+            {!TitleReplacementComponent ? (
+              headerTitle && (
+                <TitleContainer style={titleContainerAnimatedStyle}>
+                  <AppText semiBold size={17}>
+                    {HeaderTitle}
+                  </AppText>
+                </TitleContainer>
+              )
+            ) : (
+              <TitleContainer style={titleContainerAnimatedStyle}>{TitleReplacementComponent}</TitleContainer>
             )}
             {HeaderRight}
           </ActionAreaBlurred>
 
-          {headerBottom && <HeaderBottomContent style={bottomContentAnimatedStyle}>{HeaderBottom}</HeaderBottomContent>}
           {showBorderBottom && <BottomBorder style={bottomBorderAnimatedStyle} />}
         </HeaderContainer>
       </Pressable>
@@ -175,8 +169,4 @@ const BottomBorder = styled(Animated.View)`
   right: 0;
   left: 0;
   height: 1px;
-`
-
-const HeaderBottomContent = styled(Animated.View)`
-  height: 0px;
 `
