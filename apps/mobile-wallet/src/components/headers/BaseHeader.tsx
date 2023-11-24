@@ -43,6 +43,7 @@ export interface BaseHeaderProps extends ViewProps {
   options: BaseHeaderOptions
   headerRef?: RefObject<Animated.View>
   showBorderBottom?: boolean
+  titleAlwaysVisible?: boolean
   goBack?: () => void
   scrollY?: SharedValue<number>
   CustomContent?: ReactNode
@@ -58,6 +59,7 @@ const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle, headerTitleRight },
   showBorderBottom,
   headerRef,
+  titleAlwaysVisible,
   scrollY,
   CustomContent,
   ...props
@@ -93,7 +95,7 @@ const BaseHeader = ({
   )
 
   const centerContainerAnimatedStyle = useAnimatedStyle(() =>
-    headerTitle
+    headerTitle && !titleAlwaysVisible
       ? {
           opacity: interpolate(scrollY?.value || 0, [40, 60], [0, 1], Extrapolate.CLAMP)
         }
@@ -123,6 +125,7 @@ const BaseHeader = ({
                     <AppText semiBold size={17}>
                       {HeaderTitle}
                     </AppText>
+                    {HeaderTitleRight}
                   </CenterContainer>
                 )}
                 {HeaderRight}
@@ -152,8 +155,11 @@ const HeaderContainer = styled(Animated.View)`
 
 const CenterContainer = styled(Animated.View)`
   flex: 1;
+  flex-direction: row;
+  gap: 15px;
   align-items: center;
   justify-content: center;
+  opacity: 1;
 `
 
 const ActionAreaBlurred = styled(AnimatedBlurView)`
