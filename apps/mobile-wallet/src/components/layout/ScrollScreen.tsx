@@ -99,7 +99,9 @@ const ScrollScreen = ({
         ]}
         {...props}
       >
-        {title && <ScreenTitle title={title} SideComponent={TitleSideComponent} scrollY={screenScrollY} />}
+        {title && (
+          <ScreenTitle title={title} SideComponent={TitleSideComponent} scrollY={screenScrollY} sideDefaultMargin />
+        )}
         <View
           style={[
             {
