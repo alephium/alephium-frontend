@@ -21,9 +21,15 @@ import { ScrollViewProps } from 'react-native'
 import PagerView, { PagerViewOnPageScrollEventData, PagerViewProps } from 'react-native-pager-view'
 import Animated, {
   AnimatedProps,
+  clamp,
+  Extrapolate,
+  interpolate,
   measure,
   runOnJS,
+  useAnimatedProps,
   useAnimatedRef,
+  useAnimatedStyle,
+  useDerivedValue,
   useSharedValue
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -32,6 +38,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
+import ScreenTitle from '~/components/layout/ScreenTitle'
 import TabBarHeader from '~/components/TopTabBar'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
@@ -51,10 +58,10 @@ interface TabBarScreenProps extends Omit<PagerViewProps, 'children'> {
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
+const tabBarHeight = 80
+
 const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenProps) => {
   const pagerRef = useRef<PagerView>(null)
-  const theme = useTheme()
-  const insets = useSafeAreaInsets()
   const tabBarRef = useAnimatedRef<Animated.View>()
   const tabBarPageY = useSharedValue<number>(120)
   const pagerScrollEvent = useSharedValue<PagerViewOnPageScrollEventData>({
@@ -62,6 +69,11 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
     offset: 0
   })
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
+
+  const tabBarAnimatedStyled = useAnimatedStyle(() => ({
+    height: clamp(tabBarHeight - screenScrollY.value, 0, tabBarHeight),
+    opacity: interpolate(screenScrollY.value || 0, [0, tabBarHeight], [1, 0], Extrapolate.CLAMP)
+  }))
 
   const updateTabBarY = (newValue?: number) => {
     if (newValue && tabBarPageY.value !== newValue) {
@@ -83,21 +95,22 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
     pagerRef.current?.setPage(tabIndex)
   }
 
+  const TabBar = (
+    <TabBarHeader
+      tabLabels={tabLabels}
+      pagerScrollEvent={pagerScrollEvent}
+      onTabPress={handleTabPress}
+      tabBarRef={tabBarRef}
+    />
+  )
+
   return (
     <Screen>
-      <BaseHeader
-        options={{ headerTitle }}
-        scrollY={screenScrollY}
-        showCompactComponents
-        headerBottom={() => (
-          <TabBarHeader
-            tabLabels={tabLabels}
-            pagerScrollEvent={pagerScrollEvent}
-            onTabPress={handleTabPress}
-            tabBarRef={tabBarRef}
-          />
-        )}
-      />
+      <BaseHeader options={{ headerTitle }} scrollY={screenScrollY} TitleReplacementComponent={TabBar} />
+      <TabBarContainer style={tabBarAnimatedStyled}>
+        <ScreenTitle title={headerTitle} />
+        {TabBar}
+      </TabBarContainer>
       <StyledPagerView initialPage={0} onPageScroll={pageScrollHandler} ref={pagerRef} {...props}>
         {pages.map((Page, i) => (
           <PageContainer key={i}>
@@ -122,9 +135,15 @@ const WrappedPage = ({
 const StyledPagerView = styled(AnimatedPagerView)`
   flex: 1;
   background-color: ${({ theme }) => theme.bg.back2};
+  overflow: visible;
 `
 
 const PageContainer = styled.View`
   flex: 1;
-  margin-top: 100px;
+  margin-top: 15px;
+`
+
+const TabBarContainer = styled(Animated.View)`
+  justify-content: flex-end;
+  overflow: visible;
 `
