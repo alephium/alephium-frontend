@@ -48,16 +48,11 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   useScrollToTopOnBlur(listRef)
 
-  const { screenScrollY, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   return (
     <Screen contrastedBg>
-      <BaseHeader
-        options={{ headerTitle: 'Transfers' }}
-        scrollY={screenScrollY}
-        onLayout={screenHeaderLayoutHandler}
-        showBorderBottom
-      />
+      <BaseHeader options={{ headerTitle: 'Transfers' }} scrollY={screenScrollY} showBorderBottom />
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
