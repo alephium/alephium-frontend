@@ -46,7 +46,7 @@ const ScreenTitle = ({ title, scrollY, sideDefaultMargin, SideComponent }: Scree
 export default ScreenTitle
 
 const TitleContainer = styled(Animated.View)`
-  padding: 5px 0 10px 0;
+  padding: 5px 0 15px 0;
   align-self: flex-start;
   flex-direction: row;
   align-items: center;
