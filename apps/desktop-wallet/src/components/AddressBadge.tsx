@@ -81,7 +81,7 @@ const AddressBadge = ({
           {address.label ? (
             <>
               <Label truncate={truncate}>
-                {disableCopy ? (
+                {disableCopy || appendHash ? (
                   address.label
                 ) : (
                   <ClipboardButton textToCopy={address.hash} tooltip={t('Copy address')} disableA11y={disableA11y}>

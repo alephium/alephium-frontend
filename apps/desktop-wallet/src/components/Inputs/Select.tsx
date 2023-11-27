@@ -32,6 +32,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
+import CheckMark from '@/components/CheckMark'
 import { inputDefaultStyle, InputHeight, InputLabel, InputProps, inputStyling } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
 import InputArea from '@/components/Inputs/InputArea'
@@ -40,7 +41,6 @@ import Popup from '@/components/Popup'
 import Truncate from '@/components/Truncate'
 import ModalPortal from '@/modals/ModalPortal'
 import { Coordinates } from '@/types/numbers'
-import CheckMark from '@/components/CheckMark'
 
 type Writable<T> = T extends string
   ? string
