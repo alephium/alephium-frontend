@@ -83,7 +83,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   return (
     <>
       <AddressFormBaseScreen
-        headerOptions={{ headerTitle: 'New address' }}
+        screenTitle="New address"
         initialValues={initialValues}
         onSubmit={handleGeneratePress}
         allowGroupSelection

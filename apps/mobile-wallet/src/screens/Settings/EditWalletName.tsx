@@ -68,9 +68,9 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
       <ScrollScreen
         usesKeyboard
         fill
+        screenTitle="Wallet name"
         headerOptions={{
           type: 'stack',
-          headerTitle: 'Edit wallet name',
           headerRight: () => <ContinueButton title="Save" onPress={handleSavePress} iconProps={undefined} />,
           ...headerOptions
         }}
