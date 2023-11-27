@@ -44,6 +44,8 @@ export type NFTFile = {
   image?: string
 }
 
+export type AssetPriceResponse = { [tokenId: string]: { [currency: string]: number } }
+
 export const isFungibleTokenMetadata = (
   meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>
 ): meta is FungibleTokenMetaData => (meta as FungibleTokenMetaData).name !== undefined
