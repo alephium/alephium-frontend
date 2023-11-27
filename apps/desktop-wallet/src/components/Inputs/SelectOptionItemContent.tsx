@@ -57,7 +57,6 @@ const OptionMainContent = styled.div`
   display: flex;
   align-items: center;
   font-weight: var(--fontWeight-semiBold);
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   background-color: ${({ theme }) => theme.bg.primary};
   padding: var(--spacing-3);
 `
