@@ -463,9 +463,9 @@
   "walletConnectProposalMessageWithGroup": "Connect to <1>{{ dAppUrl }}</1> with one of your addresses in group <1>{{ group }}</1>:",
   "Active dApp connections": "Active dApp connections",
   "Connect to {{ dAppUrl }}": "Connect to {{ dAppUrl }}",
-  "The address which will receive the transaction.": "The address which will receive the transaction.",
+  "The address which will receive the assets.": "The address which will receive the assets.",
   "Select the address to send funds to.": "Select the address to send funds to.",
   "Destination": "Destination",
   "Origin": "Origin",
-  "One of your addresses to send the transaction from.": "One of your addresses to send the transaction from."
+  "One of your addresses to send the assets from.": "One of your addresses to send the assets from."
 }
