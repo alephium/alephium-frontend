@@ -39,7 +39,6 @@ const FlatListScreen = <T,>({
   style,
   contrastedBg,
   title,
-  TitleRightComponent,
   ...props
 }: FlatListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
@@ -48,13 +47,11 @@ const FlatListScreen = <T,>({
 
   useScrollToTopOnBlur(flatListRef)
 
-  const { screenScrollY, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   return (
     <Screen contrastedBg={contrastedBg}>
-      {headerOptions && (
-        <BaseHeader options={headerOptions} scrollY={screenScrollY} onLayout={screenHeaderLayoutHandler} />
-      )}
+      {headerOptions && <BaseHeader options={headerOptions} scrollY={screenScrollY} />}
       <FlatList
         ref={flatListRef}
         onScroll={screenScrollHandler}
