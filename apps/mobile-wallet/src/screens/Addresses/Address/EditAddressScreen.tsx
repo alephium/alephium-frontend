@@ -71,7 +71,7 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
         onSubmit={handleSavePress}
         buttonText="Save"
         disableIsMainToggle={address.settings.isDefault}
-        headerOptions={{ headerTitle: 'Address settings ' }}
+        screenTitle="Address settings"
         HeaderComponent={
           <ScreenSection>
             <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">

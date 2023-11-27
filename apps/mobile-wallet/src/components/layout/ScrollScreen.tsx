@@ -34,7 +34,7 @@ import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
   fill?: boolean
-  title?: string
+  screenTitle?: string
   TitleSideComponent?: ReactNode
 }
 
@@ -57,7 +57,7 @@ const ScrollScreen = ({
   fill,
   headerOptions,
   usesKeyboard,
-  title,
+  screenTitle,
   TitleSideComponent,
   ...props
 }: ScrollScreenProps) => {
@@ -78,7 +78,7 @@ const ScrollScreen = ({
       {headerOptions && (
         <HeaderComponent
           goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-          options={headerOptions}
+          options={{ headerTitle: screenTitle, ...headerOptions }}
           scrollY={screenScrollY}
         />
       )}
@@ -98,8 +98,13 @@ const ScrollScreen = ({
         ]}
         {...props}
       >
-        {title && (
-          <ScreenTitle title={title} SideComponent={TitleSideComponent} scrollY={screenScrollY} sideDefaultMargin />
+        {screenTitle && (
+          <ScreenTitle
+            title={screenTitle}
+            SideComponent={TitleSideComponent}
+            scrollY={screenScrollY}
+            sideDefaultMargin
+          />
         )}
         <View
           style={[
