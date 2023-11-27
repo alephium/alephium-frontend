@@ -29,11 +29,10 @@ import Animated, {
   useAnimatedStyle
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { scrollScreenTo } from '~/utils/layout'
 
 export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
   headerTitleRight?: () => ReactNode
