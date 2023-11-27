@@ -70,7 +70,7 @@ const AddressInput = ({ value, ...props }: InputProps) => {
       )}
       {isOwnAddressVisible && (
         <InputStaticOverlay>
-          <AddressBadge addressHash={ownAddress.hash} />
+          <AddressBadge addressHash={ownAddress.hash} appendHash />
         </InputStaticOverlay>
       )}
     </Input>

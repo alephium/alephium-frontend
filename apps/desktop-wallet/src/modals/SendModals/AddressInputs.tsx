@@ -97,7 +97,7 @@ const AddressInputs = ({
     <InputsContainer>
       <InputsSection
         title={t('Origin')}
-        subtitle={t('One of your addresses to send the transaction from.')}
+        subtitle={t('One of your addresses to send the assets from.')}
         className={className}
       >
         <BoxStyled>
@@ -120,7 +120,7 @@ const AddressInputs = ({
       {toAddress && onToAddressChange && (
         <InputsSection
           title={t('Destination')}
-          subtitle={t('The address which will receive the transaction.')}
+          subtitle={t('The address which will receive the assets.')}
           className={className}
         >
           <AddressToInput

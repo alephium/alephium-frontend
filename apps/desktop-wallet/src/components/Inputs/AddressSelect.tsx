@@ -137,7 +137,7 @@ function AddressSelect({
         >
           {(!hideAddressesWithoutAssets || options.find((option) => option.hash === address.hash)) && (
             <>
-              <AddressBadge addressHash={address.hash} showFull />
+              <AddressBadge addressHash={address.hash} showFull appendHash />
               {!!address.label && !simpleMode && <HashEllipsed hash={address.hash} />}
             </>
           )}
