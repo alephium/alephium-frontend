@@ -40,6 +40,7 @@ import Popup from '@/components/Popup'
 import Truncate from '@/components/Truncate'
 import ModalPortal from '@/modals/ModalPortal'
 import { Coordinates } from '@/types/numbers'
+import CheckMark from '@/components/CheckMark'
 
 type Writable<T> = T extends string
   ? string
@@ -352,7 +353,14 @@ export function SelectOptionsModal<T extends OptionValue>({
               isFloating={floatingOptions}
               hasCustomOptionRender={!!optionRender}
             >
-              {optionRender ? optionRender(option, isSelected) : option.label}
+              {optionRender ? (
+                optionRender(option, isSelected)
+              ) : (
+                <>
+                  {option.label}
+                  {isSelected && <CheckMark />}
+                </>
+              )}
             </OptionItem>
           )
         })}
