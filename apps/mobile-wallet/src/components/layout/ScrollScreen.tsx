@@ -69,7 +69,7 @@ const ScrollScreen = ({
 
   useScrollToTopOnBlur(viewRef)
 
-  const { screenScrollY, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
@@ -80,7 +80,6 @@ const ScrollScreen = ({
           goBack={navigation.canGoBack() ? navigation.goBack : undefined}
           options={headerOptions}
           scrollY={screenScrollY}
-          onLayout={screenHeaderLayoutHandler}
         />
       )}
       <ScrollView

@@ -53,7 +53,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
   const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
   const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
 
-  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   if (!contact) return null
 
@@ -85,14 +85,27 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
   const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
   return (
-    <Screen style={style}>
+    <>
+      <StackHeader
+        options={{
+          headerRight: () => (
+            <Button
+              title="Edit"
+              onPress={() => navigation.navigate('EditContactScreen', { contactId: params.contactId })}
+              type="transparent"
+              variant="accent"
+            />
+          )
+        }}
+        goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+        scrollY={screenScrollY}
+      />
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
         initialNumToRender={8}
         contentContainerStyle={{ flexGrow: 1 }}
         onScroll={screenScrollHandler}
-        headerHeight={screenHeaderHeight}
         ref={listRef}
         ListHeaderComponent={
           <>
@@ -109,7 +122,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
                 {contact.address}
               </ContactAddress>
               <ButtonsRow>
-                <ContactButton Icon={Upload} title={'Send funds'} onPress={handleSendFundsPress} />
+                <ContactButton Icon={Upload} title="Send funds" onPress={handleSendFundsPress} />
                 <ContactButton Icon={Clipboard} title="Copy address" onPress={handleCopyAddressPress} />
                 <ContactButton Icon={Share2Icon} title="Share" onPress={handleShareContactPress} />
               </ButtonsRow>
@@ -124,22 +137,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
           </>
         }
       />
-      <StackHeader
-        options={{
-          headerRight: () => (
-            <Button
-              title="Edit"
-              onPress={() => navigation.navigate('EditContactScreen', { contactId: params.contactId })}
-              type="transparent"
-              variant="accent"
-            />
-          )
-        }}
-        goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-        scrollY={screenScrollY}
-        onLayout={screenHeaderLayoutHandler}
-      />
-    </Screen>
+    </>
   )
 }
 
