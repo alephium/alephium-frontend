@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError, getHumanReadableError } from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
 import dayjs from 'dayjs'
-import { isString } from 'lodash'
 import { ComponentProps, useCallback, useState } from 'react'
 import { RiCheckLine } from 'react-icons/ri'
 import styled from 'styled-components'
@@ -77,14 +76,9 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
       })
     } catch (e) {
       console.error(e)
-      const parsedError = e as APIError
-
-      if (isString(parsedError.error)) {
-        parsedError.error = JSON.parse(parsedError.error as string) // we received a "text" format, need to parse the JSON
-      }
 
       displaySnackbar({
-        text: getHumanReadableError(parsedError, 'Problem while downloading the CSV file'),
+        text: getHumanReadableError(e, 'Problem while downloading the CSV file'),
         type: 'alert',
         duration: 5000
       })
