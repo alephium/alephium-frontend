@@ -62,7 +62,6 @@ const AddressBadge = ({
       className={className}
       withBorders={contact || address ? withBorders : false}
       truncate={truncate}
-      showFull={showFull}
     >
       {contact ? (
         <Label truncate={truncate}>
@@ -105,11 +104,10 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'showFull'>>`
+const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate'>>`
   display: flex;
   align-items: center;
   gap: 6px;
-  max-width: ${({ showFull }) => !showFull && 125}px;
 
   ${({ withBorders }) =>
     withBorders &&
@@ -131,6 +129,7 @@ const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 't
 const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
   margin-right: 2px;
   white-space: nowrap;
+  max-width: 125px;
 
   ${({ truncate }) =>
     truncate &&

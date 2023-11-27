@@ -93,7 +93,6 @@ const InputStaticOverlay = styled(motion.div)`
 `
 
 const HashEllipsedStyled = styled(HashEllipsed)`
-  margin-left: auto;
   color: ${({ theme }) => theme.font.secondary};
   max-width: 150px;
 `

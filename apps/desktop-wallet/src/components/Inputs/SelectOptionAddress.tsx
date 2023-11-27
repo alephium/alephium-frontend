@@ -50,7 +50,9 @@ const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAdd
       contentDirection="column"
       MainContent={
         <Header>
-          <AddressBadgeStyled addressHash={address.hash} disableA11y truncate />
+          <AddressBadgeContainer>
+            <AddressBadgeStyled addressHash={address.hash} disableA11y truncate appendHash />
+          </AddressBadgeContainer>
           <Group>
             {t('Group')} {address.group}
           </Group>
@@ -73,7 +75,6 @@ export default SelectOptionAddress
 const Header = styled.div`
   flex: 1;
   display: flex;
-  justify-content: space-between;
   align-items: center;
 `
 
@@ -82,8 +83,11 @@ const Group = styled.div`
   font-weight: 400;
 `
 
+const AddressBadgeContainer = styled.div`
+  flex: 1;
+`
+
 const AddressBadgeStyled = styled(AddressBadge)`
-  max-width: 200px;
   font-size: 17px;
 `
 
