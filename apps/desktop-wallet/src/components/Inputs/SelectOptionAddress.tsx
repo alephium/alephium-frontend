@@ -89,6 +89,7 @@ const AddressBadgeContainer = styled.div`
 
 const AddressBadgeStyled = styled(AddressBadge)`
   font-size: 17px;
+  max-width: 70%;
 `
 
 const AssetList = styled.div`

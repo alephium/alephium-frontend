@@ -36,6 +36,7 @@ interface AddressBadgeProps {
   disableA11y?: boolean
   disableCopy?: boolean
   appendHash?: boolean
+  displayHashUnder?: boolean
   showFull?: boolean
   className?: string
 }
@@ -49,6 +50,7 @@ const AddressBadge = ({
   disableCopy,
   truncate,
   appendHash = false,
+  displayHashUnder = false,
   showFull,
   withBorders
 }: AddressBadgeProps) => {
@@ -79,7 +81,7 @@ const AddressBadge = ({
         <>
           {!hideColorIndication && <AddressColorIndicator addressHash={address.hash} hideMainAddressBadge={hideStar} />}
           {address.label ? (
-            <>
+            <LabelAndHash column={displayHashUnder}>
               <Label truncate={truncate}>
                 {disableCopy || appendHash ? (
                   address.label
@@ -92,7 +94,7 @@ const AddressBadge = ({
               {appendHash && (
                 <ShortHashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
               )}
-            </>
+            </LabelAndHash>
           ) : (
             <HashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
           )}
@@ -126,6 +128,19 @@ const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 't
     `}
 `
 
+const LabelAndHash = styled.div<{ column: boolean }>`
+  display: flex;
+  overflow: auto;
+  gap: 10px;
+
+  ${({ column }) =>
+    column &&
+    css`
+      flex-direction: column;
+      gap: 0px;
+    `}
+`
+
 const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
   margin-right: 2px;
   white-space: nowrap;
@@ -143,7 +158,8 @@ const NotKnownAddress = styled(HashEllipsed)``
 
 const ShortHashEllipsed = styled(HashEllipsed)`
   max-width: 150px;
-  min-width: 90px;
+  min-width: 80px;
   font-size: 12px;
   color: ${({ theme }) => theme.font.secondary};
+  width: 100%;
 `
