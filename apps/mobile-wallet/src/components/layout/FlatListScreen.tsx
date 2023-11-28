@@ -27,7 +27,7 @@ import ScreenTitle from '~/components/layout/ScreenTitle'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import { VERTICAL_GAP } from '~/style/globalStyle'
+import { SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {}
 
@@ -65,7 +65,7 @@ const FlatListScreen = <T,>({
           },
           contentContainerStyle
         ]}
-        style={[{ overflow: 'visible' }, style]}
+        style={[{ overflow: SCREEN_OVERFLOW }, style]}
         {...props}
       />
     </Screen>
