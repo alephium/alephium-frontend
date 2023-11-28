@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useNavigation } from '@react-navigation/native'
 import { ReactNode, RefObject, useRef } from 'react'
-import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+import { KeyboardAvoidingView, Platform, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
@@ -29,7 +29,7 @@ import ScreenTitle from '~/components/layout/ScreenTitle'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
@@ -88,7 +88,7 @@ const ScrollScreen = ({
         alwaysBounceVertical={true}
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
-        style={{ overflow: 'visible', paddingTop: headerOptions ? 15 : 0 }}
+        style={{ overflow: SCREEN_OVERFLOW, paddingTop: headerOptions ? 15 : 0 }}
         contentContainerStyle={[
           {
             flexGrow: fill ? 1 : undefined,
