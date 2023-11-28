@@ -27,7 +27,6 @@ import ScreenTitle from '~/components/layout/ScreenTitle'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {}
@@ -38,14 +37,12 @@ const FlatListScreen = <T,>({
   contentContainerStyle,
   style,
   contrastedBg,
-  title,
+  screenTitle,
   ...props
 }: FlatListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
   const flatListRef = useRef<FlatList>(null)
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
-
-  useScrollToTopOnBlur(flatListRef)
 
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
@@ -57,7 +54,9 @@ const FlatListScreen = <T,>({
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         scrollEventThrottle={16}
-        ListHeaderComponent={() => title && <ScreenTitle title={title} scrollY={screenScrollY} sideDefaultMargin />}
+        ListHeaderComponent={() =>
+          screenTitle && <ScreenTitle title={screenTitle} scrollY={screenScrollY} sideDefaultMargin />
+        }
         contentContainerStyle={[
           {
             paddingBottom: insets.bottom,
