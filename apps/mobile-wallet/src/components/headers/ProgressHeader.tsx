@@ -29,7 +29,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 export type ProgressWorkflow = 'send' | 'receive' | 'backup'
 
 export interface ProgressHeaderProps extends BaseHeaderProps {
-  workflow: 'send' | 'receive' | 'backup'
+  workflow: ProgressWorkflow
 }
 
 const workflowSteps: Record<
