@@ -32,13 +32,13 @@ export interface ScreenProps extends ViewProps {
   }
 }
 
-const Screen = ({ children, headerOptions, style, ...props }: ScreenProps) => {
+const Screen = ({ children, headerOptions, ...props }: ScreenProps) => {
   const navigation = useNavigation()
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   return (
-    <ScreenStyled style={style} {...props}>
+    <ScreenStyled {...props}>
       {headerOptions && (
         <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
       )}

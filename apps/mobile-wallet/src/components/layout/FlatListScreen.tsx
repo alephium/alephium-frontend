@@ -65,7 +65,7 @@ const FlatListScreen = <T,>({
           },
           contentContainerStyle
         ]}
-        style={[style, { overflow: 'visible' }]}
+        style={[{ overflow: 'visible' }, style]}
         {...props}
       />
     </Screen>
