@@ -40,7 +40,7 @@ const AddressRow: FC<AddressRowProps> = ({ address, disableAddressCopy, onClick,
     className={className}
   >
     <Row>
-      <AddressColorIndicator addressHash={address.hash} />
+      <AddressColorIndicatorStyled addressHash={address.hash} />
       <Label>
         <AddressBadge addressHash={address.hash} hideColorIndication truncate appendHash displayHashUnder />
       </Label>
@@ -55,12 +55,14 @@ const Row = styled.div`
   display: flex;
   align-items: center;
   flex-grow: 1;
-  gap: 15px;
+`
+
+const AddressColorIndicatorStyled = styled(AddressColorIndicator)`
+  margin-right: 15px;
 `
 
 const Label = styled.div`
   font-size: 14px;
   font-weight: var(--fontWeight-medium);
-  max-width: 112px;
-  min-width: 0;
+  max-width: 120px;
 `
