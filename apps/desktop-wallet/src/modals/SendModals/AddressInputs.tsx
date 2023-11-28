@@ -174,7 +174,7 @@ const AddressInputs = ({
         )}
         {isAddressSelectModalOpen && onToAddressChange && (
           <AddressSelectModal
-            title={t('Select the address to send funds to.')}
+            title={t('Select the address to send assets to.')}
             options={fromAddresses}
             onAddressSelect={(address) => onToAddressChange(address.hash)}
             onClose={handleToOwnAddressModalClose}

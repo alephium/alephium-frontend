@@ -464,7 +464,7 @@
   "Unlock a wallet to connect to dApp": "Unlock a wallet to connect to dApp",
   "Unlock your wallet to connect to dApp": "Unlock your wallet to connect to dApp",
   "The address which will receive the assets.": "The address which will receive the assets.",
-  "Select the address to send funds to.": "Select the address to send funds to.",
+  "Select the address to send assets to.": "Select the address to send assets to.",
   "Destination": "Destination",
   "Origin": "Origin",
   "One of your addresses to send the assets from.": "One of your addresses to send the assets from."
