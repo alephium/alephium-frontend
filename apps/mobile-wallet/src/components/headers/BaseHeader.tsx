@@ -71,8 +71,8 @@ const BaseHeader = ({
 
   const paddingTop = isIos ? insets.top : insets.top + 10
 
-  const HeaderRight = headerRight && headerRight({})
-  const HeaderLeft = headerLeft && headerLeft({})
+  const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
+  const HeaderLeft = (headerLeft && headerLeft({})) || <HeaderSidePlaceholder />
   const HeaderTitle = headerTitle && (typeof headerTitle === 'string' ? headerTitle : headerTitle.arguments['children'])
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
@@ -175,4 +175,8 @@ const BottomBorder = styled(Animated.View)`
   right: 0;
   left: 0;
   height: 1px;
+`
+
+const HeaderSidePlaceholder = styled.View`
+  width: 40px;
 `
