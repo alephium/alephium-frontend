@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackHeaderProps } from '@react-navigation/stack'
+import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { ReactNode, RefObject } from 'react'
 import { Platform, Pressable, ViewProps } from 'react-native'
@@ -52,7 +53,9 @@ export const headerHeight = 90
 export const scrollEndThreshold = 80
 const defaultScrollRange = [0, scrollEndThreshold]
 
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
+const isIos = Platform.OS === 'ios'
+
+const AnimatedHeader = isIos ? Animated.createAnimatedComponent(BlurView) : Animated.View
 
 const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle, headerTitleRight },
@@ -66,8 +69,8 @@ const BaseHeader = ({
   const theme = useTheme()
   const insets = useSafeAreaInsets()
 
-  const isIos = Platform.OS === 'ios'
   const borderColorRange = [showBorderBottom ? theme.border.secondary : 'transparent', theme.border.secondary]
+  const backgroundColorRange = [colord(theme.bg.back2).alpha(0).toHex(), theme.bg.back2]
 
   const paddingTop = isIos ? insets.top : insets.top + 10
 
@@ -76,12 +79,20 @@ const BaseHeader = ({
   const HeaderTitle = headerTitle && (typeof headerTitle === 'string' ? headerTitle : headerTitle.arguments['children'])
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
-  const animatedBlurViewProps = useAnimatedProps(() =>
+  const animatedHeaderProps = useAnimatedProps(() =>
     isIos
       ? {
           intensity: interpolate(scrollY?.value || 0, defaultScrollRange, [0, 80], Extrapolate.CLAMP)
         }
       : {}
+  )
+
+  const animatedHeaderStyle = useAnimatedStyle(() =>
+    isIos
+      ? {}
+      : {
+          backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, backgroundColorRange)
+        }
   )
 
   const bottomBorderAnimatedStyle = useAnimatedStyle(() =>
@@ -115,7 +126,7 @@ const BaseHeader = ({
     <BaseHeaderStyled ref={headerRef} {...props}>
       <Pressable onPress={handleCompactHeaderPress}>
         <HeaderContainer>
-          <ActionAreaBlurred style={{ paddingTop }} tint={theme.name} animatedProps={animatedBlurViewProps}>
+          <Header style={[{ paddingTop }, animatedHeaderStyle]} tint={theme.name} animatedProps={animatedHeaderProps}>
             {!CustomContent ? (
               <>
                 {HeaderLeft}
@@ -132,7 +143,7 @@ const BaseHeader = ({
             ) : (
               <CenterContainer>{CustomContent}</CenterContainer>
             )}
-          </ActionAreaBlurred>
+          </Header>
 
           {showBorderBottom && <BottomBorder style={bottomBorderAnimatedStyle} />}
         </HeaderContainer>
@@ -161,7 +172,7 @@ const CenterContainer = styled(Animated.View)`
   opacity: 1;
 `
 
-const ActionAreaBlurred = styled(AnimatedBlurView)`
+const Header = styled(AnimatedHeader)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
