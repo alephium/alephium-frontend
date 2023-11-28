@@ -27,6 +27,7 @@ import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
 import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
 import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
 import VerifyScreen from '~/screens/SendReceive/Send/VerifyScreen'
+import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 
 export interface SendNavigationParamList extends ParamListBase {
   DestinationScreen: { fromAddressHash?: AddressHash }
@@ -46,7 +47,7 @@ const SendNavigation = () => (
       <SendStack.Navigator
         screenOptions={{
           headerShown: false,
-          cardStyle: { overflow: 'visible' }
+          cardStyle: { overflow: SCREEN_OVERFLOW }
         }}
         initialRouteName="DestinationScreen"
       >

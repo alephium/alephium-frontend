@@ -116,7 +116,6 @@ const WrappedPage = ({
 const StyledPagerView = styled(AnimatedPagerView)`
   flex: 1;
   background-color: ${({ theme }) => theme.bg.back2};
-  overflow: visible;
 `
 
 const PageContainer = styled.View`
