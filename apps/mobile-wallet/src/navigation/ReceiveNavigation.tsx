@@ -24,6 +24,7 @@ import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContex
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressScreen from '~/screens/SendReceive/Receive/AddressScreen'
 import QRCodeScreen from '~/screens/SendReceive/Receive/QRCodeScreen'
+import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 
 export interface ReceiveNavigationParamList extends ParamListBase {
@@ -37,7 +38,7 @@ const ReceiveNavigation = ({ navigation }: StackScreenProps<RootStackParamList, 
   <HeaderContextProvider>
     <ReceiveProgressHeader />
     <ReceiveStack.Navigator
-      screenOptions={{ headerShown: false, cardStyle: { overflow: 'visible' } }}
+      screenOptions={{ headerShown: false, cardStyle: { overflow: SCREEN_OVERFLOW } }}
       initialRouteName="AddressScreen"
     >
       <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
