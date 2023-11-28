@@ -81,7 +81,7 @@ const AddressBadge = ({
         <>
           {!hideColorIndication && <AddressColorIndicator addressHash={address.hash} hideMainAddressBadge={hideStar} />}
           {address.label ? (
-            <LabelAndHash column={displayHashUnder}>
+            <LabelAndHash isColumn={displayHashUnder}>
               <Label truncate={truncate}>
                 {disableCopy || appendHash ? (
                   address.label
@@ -128,13 +128,13 @@ const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 't
     `}
 `
 
-const LabelAndHash = styled.div<{ column: boolean }>`
+const LabelAndHash = styled.div<{ isColumn: boolean }>`
   display: flex;
   overflow: auto;
   gap: 10px;
 
-  ${({ column }) =>
-    column &&
+  ${({ isColumn }) =>
+    isColumn &&
     css`
       flex-direction: column;
       gap: 0px;
