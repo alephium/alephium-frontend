@@ -32,7 +32,7 @@ import {
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '~/store/addressesSlice'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, SCREEN_OVERFLOW } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
 import { isPendingTx } from '~/utils/transactions'
@@ -122,7 +122,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
         renderItem={renderConfirmedTransactionItem}
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
-        style={{ overflow: 'visible' }}
+        style={{ overflow: SCREEN_OVERFLOW }}
         refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} />}
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
