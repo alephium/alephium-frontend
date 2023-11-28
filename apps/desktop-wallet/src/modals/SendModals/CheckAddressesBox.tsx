@@ -100,7 +100,7 @@ const ContactName = styled(Truncate)`
 `
 
 const HashEllipsedStyled = styled(HashEllipsed)`
-  max-width: 90px;
+  max-width: 150px;
   color: ${({ theme }) => theme.font.secondary};
   font-size: 12px;
 `
