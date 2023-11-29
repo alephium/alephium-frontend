@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts",
-    "test": "ts-node ../../node_modules/jest/bin/jest.js --useStderr --silent=false --verbose=true --config jestconfig.json",
+    "test": "jest --useStderr --silent=false --verbose=true --config jestconfig.json",
     "test:watch": "bun run test -- --watch",
     "typecheck": "tsc --noEmit",
     "compile": "rm -rf dist && tsc --build . && webpack"
@@ -43,7 +43,6 @@
     "shelljs": "^0.8.5",
     "stream-browserify": "^3.0.0",
     "ts-jest": "^29.0.5",
-    "ts-node": "^10.2.1",
     "tsconfig": "*",
     "tslib": "^2.3.1",
     "webpack": "^5.89.0",
