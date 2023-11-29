@@ -31,7 +31,6 @@ import styled, { css, useTheme } from 'styled-components'
 
 import { queries } from '@/api'
 import client from '@/api/client'
-import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import Button from '@/components/Buttons/Button'
@@ -67,7 +66,6 @@ const AddressInfoPage = () => {
   const { displaySnackbar } = useSnackbar()
   const navigate = useNavigate()
 
-  const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
 
   const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
@@ -110,33 +108,12 @@ const AddressInfoPage = () => {
     enabled: !!addressHash
   })
 
+  const { data: alphPrice } = useQuery({
+    ...queries.assets.prices.assetPrice('alephium')
+  })
+
   const addressLatestActivity =
     latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
-
-  // Asset price
-  // TODO: when listed tokens, add resp. prices. ALPH only for now.
-  useEffect(() => {
-    setAddressWorth(undefined)
-
-    const getAddressWorth = async () => {
-      try {
-        const balance = addressBalance?.balance
-        if (!balance) return
-
-        const price = await fetchAssetPrice('alephium')
-
-        setAddressWorth(calculateAmountWorth(BigInt(balance), price))
-      } catch (e) {
-        console.error(e)
-        displaySnackbar({
-          text: getHumanReadableError(e, 'Error while fetching fiat worth'),
-          type: 'alert'
-        })
-      }
-    }
-
-    getAddressWorth()
-  }, [addressBalance?.balance, displaySnackbar])
 
   // Refetch TXs when less txs are found in mempool
   useEffect(() => {
@@ -157,6 +134,10 @@ const AddressInfoPage = () => {
   const totalNbOfAssets =
     addressAssetIds.length +
     ((totalBalance && BigInt(totalBalance) > 0) || (lockedBalance && BigInt(lockedBalance) > 0) ? 1 : 0)
+
+  // Asset price
+  // TODO: when listed tokens, add resp. prices. ALPH only for now.
+  const addressWorth = totalBalance && alphPrice ? calculateAmountWorth(BigInt(totalBalance), alphPrice) : undefined
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)

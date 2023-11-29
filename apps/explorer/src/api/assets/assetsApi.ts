@@ -22,6 +22,7 @@ import { hexToString } from '@alephium/web3'
 import client from '@/api/client'
 import {
   AssetBase,
+  AssetPriceResponse,
   NFTFile,
   UnverifiedFungibleTokenMetadata,
   UnverifiedNFTMetadata,
@@ -107,6 +108,18 @@ export const assetsQueries = createQueriesCollection({
         }
 
         return tokenBalances
+      }
+    })
+  },
+  prices: {
+    assetPrice: (coinGeckoTokenId: string, currency = 'usd') => ({
+      queryKey: ['assetPrice', coinGeckoTokenId, currency],
+      queryFn: async (): Promise<number> => {
+        const res = (await (
+          await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinGeckoTokenId}&vs_currencies=${currency}`)
+        ).json()) as AssetPriceResponse
+
+        return res[coinGeckoTokenId][currency]
       }
     })
   }
