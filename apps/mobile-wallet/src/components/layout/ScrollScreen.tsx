@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useNavigation } from '@react-navigation/native'
 import { ReactNode, RefObject, useRef } from 'react'
-import { KeyboardAvoidingView, Platform, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
