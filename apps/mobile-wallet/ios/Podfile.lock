@@ -521,7 +521,7 @@ PODS:
     - glog
   - react-native-aes (2.0.0):
     - React-Core
-  - react-native-compat (2.11.0):
+  - react-native-compat (2.10.5):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - react-native-flipper (0.212.0):
@@ -654,9 +654,10 @@ PODS:
     - React-perflogger (= 0.72.6)
   - RNCAsyncStorage (1.18.2):
     - React-Core
-  - RNGestureHandler (2.12.1):
+  - RNGestureHandler (2.14.0):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - RNReanimated (3.6.1):
+  - RNReanimated (3.6.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - ReactCommon/turbomodule/core
@@ -1062,7 +1063,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 194e32c6aab382d88713ad3dd0025c5f5c4ee072
   React-logger: cebf22b6cf43434e471dc561e5911b40ac01d289
   react-native-aes: c75c46aa744bef7c2415fdf7f5b2dcb75ca4364d
-  react-native-compat: d411b454141009ceca781cd1ca44132cace77c45
+  react-native-compat: 95163fd7204c68fb0a201d24ad10fbc03a60c67e
   react-native-flipper: 9c1957af24b76493ba74f46d000a5c1d485e7731
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-netinfo: ccbe1085dffd16592791d550189772e13bf479e2
@@ -1087,8 +1088,8 @@ SPEC CHECKSUMS:
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
   RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
-  RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
-  RNReanimated: c114c031ecae76049ad03aeb0f94a2243498a88d
+  RNGestureHandler: 32a01c29ecc9bb0b5bf7bc0a33547f61b4dc2741
+  RNReanimated: 65f5a4ef95b185862a75d34e340509d7f87cbeaa
   RNScreens: 50ffe2fa2342eabb2d0afbe19f7c1af286bc7fb3
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   SDWebImage: cb032eba469c54e0000e78bcb0a13cdde0a52798
