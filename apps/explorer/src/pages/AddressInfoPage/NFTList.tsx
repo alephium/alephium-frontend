@@ -17,13 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { groupBy } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiGhostLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
+import { queries } from '@/api'
 import Card3D, { card3DHoverTransition } from '@/components/Cards/Card3D'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import { useQueriesData } from '@/hooks/useQueriesData'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { UnverifiedNFTMetadataWithFile } from '@/types/assets'
 
@@ -34,6 +37,21 @@ interface NFTListProps {
 
 const NFTList = ({ nfts, isLoading }: NFTListProps) => {
   const { t } = useTranslation()
+
+  const NFTsGroupedByCollection = groupBy(nfts, (nft) => nft.collectionId)
+
+  const collectionIds = Object.keys(NFTsGroupedByCollection)
+
+  console.log(collectionIds)
+
+  const { data: collectionsMatadata } = useQueriesData(
+    collectionIds.map((id) => ({
+      ...queries.assets.metadata.NFTCollection
+    }))
+  )
+
+  console.log(collectionsMatadata)
+
   return (
     <NFTListContainer>
       {isLoading ? (
@@ -43,11 +61,16 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
           <SkeletonLoader height="200px" />
         </NFTListStyled>
       ) : nfts.length > 0 ? (
-        <NFTListStyled>
-          {nfts.map((nft) => (
-            <NFTItem key={nft.id} nft={nft} />
-          ))}
-        </NFTListStyled>
+        Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
+          <>
+            <CollectionHeader>Hey</CollectionHeader>
+            <NFTListStyled>
+              {nfts.map((nft) => (
+                <NFTItem key={nft.id} nft={nft} />
+              ))}
+            </NFTListStyled>
+          </>
+        ))
       ) : (
         <NoNFTsMessage>
           <EmptyIconContainer>
@@ -127,6 +150,11 @@ export default NFTList
 
 const NFTListContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  border-radius: 0 0 9px 9px;
+  overflow-y: auto;
+  max-height: 600px;
+  background-color: ${({ theme }) => theme.bg.secondary};
 `
 
 const NFTListStyled = styled.div`
@@ -135,8 +163,6 @@ const NFTListStyled = styled.div`
   grid-template-columns: repeat(5, 1fr);
   gap: 25px;
   padding: 15px;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border-radius: 0 0 12px 12px;
 
   @media ${deviceBreakPoints.laptop} {
     grid-template-columns: repeat(4, 1fr);
@@ -246,4 +272,18 @@ const EmptyIconContainer = styled.div`
     height: 100%;
     width: 30px;
   }
+`
+
+const CollectionHeader = styled.div`
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  z-index: 1;
+  height: 40px;
+  margin: 10px 15px;
+  border-radius: 4px;
+  background-color: ${({ theme }) => theme.bg.background1};
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
 `

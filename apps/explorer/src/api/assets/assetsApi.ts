@@ -17,13 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenList } from '@alephium/token-list'
-import { hexToString } from '@alephium/web3'
+import { hexToString, NFTCollectionMetaData, NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 
 import client from '@/api/client'
 import {
   AssetBase,
   AssetPriceResponse,
-  NFTFile,
   UnverifiedFungibleTokenMetadata,
   UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
@@ -75,13 +74,25 @@ export const assetsQueries = createQueriesCollection({
           .fetchNFTMetaData(assetId)
           .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
       staleTime: ONE_HOUR_MS
+    }),
+    NFTCollection: (collectionId: string) => ({
+      queryKey: ['NFTCollection', collectionId],
+      queryFn: (): Promise<NFTCollectionMetaData> =>
+        client.node.fetchNFTCollectionMetaData(collectionId).then((r) => ({ ...r, id: collectionId })),
+      staleTime: ONE_HOUR_MS
     })
   },
-  nftFile: {
-    detail: (assetId: string, dataUri: string) => ({
-      queryKey: ['nftFile', assetId],
-      queryFn: (): Promise<NFTFile> | undefined =>
+  NFTsData: {
+    item: (assetId: string, dataUri: string) => ({
+      queryKey: ['nftData', assetId],
+      queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
         fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
+      staleTime: ONE_HOUR_MS
+    }),
+    collection: (collectionId: string, collectionUri: string) => ({
+      queryKey: ['nftCollectionData', collectionId],
+      queryFn: (): Promise<NFTCollectionUriMetaData & { collectionId: string }> | undefined =>
+        fetch(collectionUri).then((res) => res.json().then((f) => ({ ...f, collectionId }))),
       staleTime: ONE_HOUR_MS
     })
   },

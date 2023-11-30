@@ -49,7 +49,7 @@ export const useAssetMetadata = (assetId: string) => {
   })
 
   const { data: nftData } = useQuery({
-    ...queries.assets.nftFile.detail(assetId, unverifiedNFTMetadata?.tokenUri ?? ''),
+    ...queries.assets.NFTsData.item(assetId, unverifiedNFTMetadata?.tokenUri ?? ''),
     enabled: !isAlph && assetType === 'non-fungible' && !!unverifiedNFTMetadata?.tokenUri
   })
 
@@ -101,7 +101,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   )
 
   const { data: NFTFiles } = useQueriesData(
-    flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => queries.assets.nftFile.detail(id, tokenUri))
+    flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => queries.assets.NFTsData.item(id, tokenUri))
   )
 
   const unverifiedNFTsMetadataWithFiles: UnverifiedNFTMetadataWithFile[] = unverifiedNFTsMetadata.flatMap((m) => {
