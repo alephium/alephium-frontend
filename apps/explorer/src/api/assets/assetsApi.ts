@@ -16,15 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
-import { hexToString, NFTCollectionMetaData, NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/web3'
+import { hexToString, NFTCollectionMetaData } from '@alephium/web3'
+import { NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 
 import client from '@/api/client'
 import {
   AssetBase,
   AssetPriceResponse,
   UnverifiedFungibleTokenMetadata,
-  UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
 import { NetworkType } from '@/types/network'
@@ -69,9 +70,9 @@ export const assetsQueries = createQueriesCollection({
     }),
     unverifiedNFT: (assetId: string) => ({
       queryKey: ['unverifiedNFT', assetId],
-      queryFn: (): Promise<UnverifiedNFTMetadata> =>
-        client.node
-          .fetchNFTMetaData(assetId)
+      queryFn: (): Promise<NFTMetadata[]> =>
+        client.explorer.tokens
+          .postTokensNftMetadata([assetId])
           .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
       staleTime: ONE_HOUR_MS
     }),
