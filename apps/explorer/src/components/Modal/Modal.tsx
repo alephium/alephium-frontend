@@ -19,7 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { colord } from 'colord'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode } from 'react'
+import { RiCloseLine } from 'react-icons/ri'
 import styled from 'styled-components'
+
+import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface ModalProps {
   isOpen: boolean
@@ -41,13 +44,14 @@ const Modal = ({ isOpen = false, onClose, children, className, maxWidth = 600 }:
           transition={{ type: 'spring', stiffness: 310, damping: 30 }}
         />
         <ModalContentWrapper
-          initial={{ opacity: 0, scale: 0.98, x: '10%' }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          exit={{ opacity: 0, scale: 0.98, x: '10%' }}
+          initial={{ opacity: 0, x: '10%' }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: '10%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 40 }}
           className={className}
           style={{ maxWidth }}
         >
+          <CloseButton onClick={onClose} />
           {children}
         </ModalContentWrapper>
       </ModalWrapper>
@@ -78,6 +82,11 @@ const ModalContentWrapper = styled(motion.div)`
   overflow-y: auto;
   z-index: 1;
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
+
+  @media ${deviceBreakPoints.mobile} {
+    right: 5%;
+    left: 5%;
+  }
 `
 
 const Backdrop = styled(motion.div)`
@@ -87,4 +96,18 @@ const Backdrop = styled(motion.div)`
   right: 0;
   left: 0;
   background-color: ${({ theme }) => colord(theme.bg.tertiary).alpha(0.5).toHslString()};
+`
+
+const CloseButton = styled(RiCloseLine)`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+  color: ${({ theme }) => theme.font.primary};
+
+  :hover {
+    color: ${({ theme }) => theme.font.secondary};
+  }
 `
