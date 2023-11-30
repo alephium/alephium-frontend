@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenInfo } from '@alephium/token-list'
-import { FungibleTokenMetaData, NFTMetaData } from '@alephium/web3'
+import { FungibleTokenMetaData } from '@alephium/web3'
+import { NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 
 import client from '@/api/client'
 
@@ -31,7 +32,7 @@ export type VerifiedFungibleTokenMetadata = TokenInfo & { type: 'fungible'; veri
 
 export type UnverifiedFungibleTokenMetadata = TokenInfo & { type: 'fungible'; verified: false }
 
-export type UnverifiedNFTMetadata = NFTMetaData & { id: string; type: 'non-fungible'; verified: false }
+export type UnverifiedNFTMetadata = NFTMetadata & { id: string; type: 'non-fungible'; verified: false }
 
 export type UnverifiedNFTMetadataWithFile = UnverifiedNFTMetadata & { file: NFTFile }
 
@@ -47,8 +48,8 @@ export type NFTFile = {
 export type AssetPriceResponse = { [tokenId: string]: { [currency: string]: number } }
 
 export const isFungibleTokenMetadata = (
-  meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>
+  meta: Partial<FungibleTokenMetaData> | Partial<NFTMetadata>
 ): meta is FungibleTokenMetaData => (meta as FungibleTokenMetaData).name !== undefined
 
-export const isNFTMetadata = (meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>): meta is NFTMetaData =>
-  (meta as NFTMetaData).collectionId !== undefined
+export const isNFTMetadata = (meta: Partial<FungibleTokenMetaData> | Partial<NFTMetadata>): meta is NFTMetadata =>
+  (meta as NFTMetadata).collectionId !== undefined
