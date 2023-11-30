@@ -197,6 +197,9 @@ const NFTName = styled.div`
   margin-top: 15px;
   font-weight: 600;
   margin: 15px 0;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const NFTDescription = styled.div`
