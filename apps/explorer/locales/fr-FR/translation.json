@@ -1,4 +1,5 @@
 {
+  "Balance": "Montant",
   "ALPH balance": "Montant ALPH",
   "Address group": "Groupe de l'adresse",
   "Address": "Adresse",
@@ -34,6 +35,7 @@
   "Latest activity": "Dernière activité",
   "Locked": "Vérouillés",
   "NFTs": "NFTs",
+  "NFT": "NFT",
   "Nb. of assets": "Nb d'actifs",
   "Nb. of transactions": "Nb. de transactions",
   "Next": "Suivant",
@@ -58,6 +60,7 @@
   "Supply": "Emission",
   "Timestamp": "Date",
   "Tokens": "Jetons",
+  "Token": "Jeton",
   "Total Amount": "Montant Total",
   "Total Amounts": "Montants Totaux",
   "Total": "Totale",

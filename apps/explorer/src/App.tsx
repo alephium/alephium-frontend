@@ -36,6 +36,7 @@ import PageNotFound from '@/pages/404'
 import AddressInfoSection from '@/pages/AddressInfoPage'
 import BlockInfoSection from '@/pages/BlockInfoPage'
 import HomeSection from '@/pages/HomePage/HomePage'
+import TokenInfoSection from '@/pages/TokenInfoPage'
 import TransactionInfoSection from '@/pages/TransactionInfoPage'
 import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
@@ -110,6 +111,7 @@ const App = () => {
                       <Route path="/" element={<HomeSection />} />
                       <Route path="/blocks/:id" element={<BlockInfoSection />} />
                       <Route path="/addresses/:id" element={<AddressInfoSection />} />
+                      <Route path="/tokens/:id" element={<TokenInfoSection />} />
                       <Route path="/transactions/:id" element={<TransactionInfoSection />} />
                       <Route path="*" element={<PageNotFound />} />
                     </Routes>
