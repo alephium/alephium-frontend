@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import './shim'
 
-import registerRootComponent from 'expo/build/launch/registerRootComponent'
+import { registerRootComponent } from 'expo'
 
 import App from './src/App'
 
