@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ALPH, TokenInfo } from '@alephium/token-list'
+import { ALPH } from '@alephium/token-list'
 import { addressFromTokenId, Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
@@ -30,10 +30,13 @@ import Badge from '@/components/Badge'
 import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
-import { AssetBase, NumericTokenBalance } from '@/types/assets'
+import { AssetBase, FungibleTokenMetadataBase, NumericTokenBalance } from '@/types/assets'
 
 interface TokenListProps {
-  tokens: (Optional<AssetBase, 'type'> & Optional<TokenInfo & NumericTokenBalance, 'decimals' | 'symbol' | 'name'>)[]
+  tokens: Optional<
+    AssetBase & FungibleTokenMetadataBase & NumericTokenBalance,
+    'type' | 'decimals' | 'symbol' | 'name'
+  >[]
   limit?: number
   isLoading?: boolean
   className?: string
