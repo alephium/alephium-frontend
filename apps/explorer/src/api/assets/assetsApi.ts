@@ -18,13 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
-import { hexToString, NFTCollectionMetaData } from '@alephium/web3'
+import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { create, keyResolver } from '@yornaath/batshit'
 
 import client from '@/api/client'
 import {
   AssetBase,
   AssetPriceResponse,
+  AssetType,
   UnverifiedFungibleTokenMetadata,
   UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
@@ -34,9 +35,25 @@ import { createQueriesCollection } from '@/utils/api'
 import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@/utils/time'
 
 // Batched calls
+
+const tokensInfo = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokens(ids),
+  resolver: keyResolver('token')
+})
+
+const fungibleTokensMetadata = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensFungibleMetadata(ids),
+  resolver: keyResolver('id')
+})
+
 const unverifiedNFTsMetadata = create({
   fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftMetadata(ids),
   resolver: keyResolver('id')
+})
+
+const NFTCollectionsMetadata = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftCollectionMetadata(ids),
+  resolver: keyResolver('address')
 })
 
 // Queries
@@ -44,7 +61,8 @@ export const assetsQueries = createQueriesCollection({
   type: {
     one: (assetId: string) => ({
       queryKey: ['assetType', assetId],
-      queryFn: (): Promise<AssetBase> => client.node.guessStdTokenType(assetId).then((r) => ({ id: assetId, type: r })),
+      queryFn: (): Promise<AssetBase> =>
+        tokensInfo.fetch(assetId).then((r) => ({ id: assetId, type: r.stdInterfaceId as AssetType })),
       staleTime: ONE_DAY_MS
     })
   },
@@ -54,7 +72,12 @@ export const assetsQueries = createQueriesCollection({
       queryFn: (): Promise<VerifiedFungibleTokenMetadata[]> => {
         try {
           return fetch(`https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`).then(
-            (r) => r.json().then((j: TokenList) => j.tokens.map((v) => ({ ...v, type: 'fungible', verified: true })))
+            (r) =>
+              r
+                .json()
+                .then((j: TokenList) =>
+                  j.tokens.map((v) => ({ ...v, decimals: v.decimals.toString(), type: 'fungible', verified: true }))
+                )
           )
         } catch (e) {
           console.error(e)
@@ -66,11 +89,8 @@ export const assetsQueries = createQueriesCollection({
     unverifiedFungibleToken: (assetId: string) => ({
       queryKey: ['unverifiedFungibleToken', assetId],
       queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
-        client.node.fetchFungibleTokenMetaData(assetId).then((r) => ({
+        fungibleTokensMetadata.fetch(assetId).then((r) => ({
           ...r,
-          id: assetId,
-          name: hexToString(r.name),
-          symbol: hexToString(r.symbol),
           type: 'fungible',
           verified: false
         })),
@@ -81,12 +101,14 @@ export const assetsQueries = createQueriesCollection({
       queryFn: (): Promise<UnverifiedNFTMetadata> =>
         unverifiedNFTsMetadata
           .fetch(assetId)
-          .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false }))
+          .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
+      staleTime: 0,
+      cacheTime: 0
     }),
     NFTCollection: (collectionId: string) => ({
       queryKey: ['NFTCollection', collectionId],
-      queryFn: (): Promise<NFTCollectionMetaData> =>
-        client.node.fetchNFTCollectionMetaData(collectionId).then((r) => ({ ...r, id: collectionId })),
+      queryFn: (): Promise<NFTCollectionMetadata> =>
+        NFTCollectionsMetadata.fetch(collectionId).then((r) => ({ ...r, id: collectionId })),
       staleTime: ONE_HOUR_MS
     })
   },
@@ -95,7 +117,9 @@ export const assetsQueries = createQueriesCollection({
       queryKey: ['nftData', assetId],
       queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
         fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
-      staleTime: ONE_HOUR_MS
+      staleTime: 0,
+      cacheTime: 0,
+      enabled: !!dataUri
     }),
     collection: (collectionId: string, collectionUri: string) => ({
       queryKey: ['nftCollectionData', collectionId],

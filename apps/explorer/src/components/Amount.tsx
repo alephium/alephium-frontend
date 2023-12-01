@@ -22,6 +22,7 @@ import {
   formatFiatAmountForDisplay,
   MAGNITUDE_SYMBOL
 } from '@alephium/shared'
+import { isString } from 'lodash'
 import styled from 'styled-components'
 
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
@@ -31,7 +32,7 @@ import AssetLogo from './AssetLogo'
 interface AmountProps {
   assetId?: string
   value?: bigint | number
-  decimals?: number
+  decimals?: string | number
   isFiat?: boolean
   fadeDecimals?: boolean
   nbOfDecimalsToShow?: number
@@ -75,7 +76,7 @@ const Amount = ({
 
   if (assetType === 'fungible' || isFiat) {
     if (assetType === 'fungible') {
-      decimals = assetMetadata.decimals
+      decimals = isString(assetMetadata.decimals) ? parseInt(assetMetadata.decimals) : assetMetadata.decimals
       usedSuffix = assetMetadata.symbol
     }
 
@@ -155,7 +156,7 @@ const getAmount = ({
     ? formatFiatAmountForDisplay(value)
     : formatAmountForDisplay({
         amount: convertToPositive(value as bigint),
-        amountDecimals: decimals,
+        amountDecimals: isString(decimals) ? parseInt(decimals) : decimals,
         displayDecimals: nbOfDecimalsToShow,
         fullPrecision,
         smartRounding

@@ -81,7 +81,11 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
         const assetBalance = assets?.find((a) => a.tokenId === id)
 
         if (assetBalance) {
-          return { id, ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) } }
+          return {
+            id,
+            verified: false,
+            ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) }
+          }
         }
 
         return []
