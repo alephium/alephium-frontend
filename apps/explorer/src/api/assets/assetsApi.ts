@@ -19,19 +19,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { hexToString, NFTCollectionMetaData } from '@alephium/web3'
-import { NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { create, keyResolver } from '@yornaath/batshit'
 
 import client from '@/api/client'
 import {
   AssetBase,
   AssetPriceResponse,
   UnverifiedFungibleTokenMetadata,
+  UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
 import { NetworkType } from '@/types/network'
 import { createQueriesCollection } from '@/utils/api'
-import { ONE_DAY_MS, ONE_HOUR_MS } from '@/utils/time'
+import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@/utils/time'
 
+// Batched calls
+const unverifiedNFTsMetadata = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftMetadata(ids),
+  resolver: keyResolver('id')
+})
+
+// Queries
 export const assetsQueries = createQueriesCollection({
   type: {
     one: (assetId: string) => ({
@@ -70,11 +78,10 @@ export const assetsQueries = createQueriesCollection({
     }),
     unverifiedNFT: (assetId: string) => ({
       queryKey: ['unverifiedNFT', assetId],
-      queryFn: (): Promise<NFTMetadata[]> =>
-        client.explorer.tokens
-          .postTokensNftMetadata([assetId])
-          .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
-      staleTime: ONE_HOUR_MS
+      queryFn: (): Promise<UnverifiedNFTMetadata> =>
+        unverifiedNFTsMetadata
+          .fetch(assetId)
+          .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false }))
     }),
     NFTCollection: (collectionId: string) => ({
       queryKey: ['NFTCollection', collectionId],
@@ -132,7 +139,8 @@ export const assetsQueries = createQueriesCollection({
         ).json()) as AssetPriceResponse
 
         return res[coinGeckoTokenId][currency]
-      }
+      },
+      staleTime: ONE_MINUTE_MS
     })
   }
 })

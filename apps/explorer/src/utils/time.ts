@@ -19,3 +19,4 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 export const ONE_DAY_MS = 1000 * 60 * 60 * 24
 export const ONE_HOUR_MS = 1000 * 60 * 60
 export const FIVE_MINUTES_MS = 1000 * 60 * 5
+export const ONE_MINUTE_MS = 1000 * 60
