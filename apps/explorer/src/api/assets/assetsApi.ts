@@ -102,8 +102,7 @@ export const assetsQueries = createQueriesCollection({
         unverifiedNFTsMetadata
           .fetch(assetId)
           .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
-      staleTime: 0,
-      cacheTime: 0
+      staleTime: ONE_HOUR_MS
     }),
     NFTCollection: (collectionId: string) => ({
       queryKey: ['NFTCollection', collectionId],
@@ -117,9 +116,7 @@ export const assetsQueries = createQueriesCollection({
       queryKey: ['nftData', assetId],
       queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
         fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
-      staleTime: 0,
-      cacheTime: 0,
-      enabled: !!dataUri
+      staleTime: ONE_HOUR_MS
     }),
     collection: (collectionId: string, collectionUri: string) => ({
       queryKey: ['nftCollectionData', collectionId],

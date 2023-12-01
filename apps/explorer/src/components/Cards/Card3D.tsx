@@ -111,7 +111,7 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
             rotateY,
             rotateX,
             zIndex: 0,
-            boxShadow: '0 0px 0px rgba(0, 0, 0, 0)'
+            boxShadow: '0 2px 2px rgba(0, 0, 0, 0.05)'
           }}
           animate={{
             boxShadow: isHovered

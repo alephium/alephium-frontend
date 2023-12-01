@@ -100,16 +100,17 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   )
 
   const { data: NFTFiles } = useQueriesData(
-    flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => queries.assets.NFTsData.item(id, tokenUri))
+    flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => ({
+      ...queries.assets.NFTsData.item(id, tokenUri),
+      enabled: !!tokenUri
+    }))
   )
 
-  const unverifiedNFTsMetadataWithFiles = unverifiedNFTsMetadata.flatMap((m) => {
+  const unverifiedNFTsMetadataWithFiles = unverifiedNFTsMetadata.map((m) => {
     const file = NFTFiles.find((f) => f.assetId === m.id)
 
-    return file ? { ...m, file } : []
+    return file ? { ...m, file } : m
   })
-
-  console.log(unverifiedNFTsMetadata)
 
   if (isAlphIn) {
     verifiedTokensMetadata.unshift(alphMetadata)
