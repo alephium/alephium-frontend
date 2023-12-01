@@ -40,7 +40,7 @@ export type UnverifiedFungibleTokenMetadata = FungibleTokenMetadata & { type: 'f
 
 export type UnverifiedNFTMetadata = NFTMetadata & { id: string; type: 'non-fungible'; verified: false }
 
-export type UnverifiedNFTMetadataWithFile = UnverifiedNFTMetadata & { file: NFTFile }
+export type UnverifiedNFTMetadataWithFile = UnverifiedNFTMetadata & { file?: NFTFile }
 
 export type NumericTokenBalance = { balance: bigint; lockedBalance: bigint }
 

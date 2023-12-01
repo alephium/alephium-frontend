@@ -44,9 +44,11 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
 
   const { data: collectionsMatadata } = useQueriesData(
     collectionIds.map((id) => ({
-      ...queries.assets.metadata.NFTCollection
+      ...queries.assets.metadata.NFTCollection(id)
     }))
   )
+
+  console.log(collectionsMatadata)
 
   return (
     <NFTListContainer>
@@ -116,20 +118,30 @@ const NFTItem = ({ nft }: NFTItemProps) => {
         <FrontFace>
           <NFTPictureContainer>
             <PictureContainerShadow animate={{ opacity: isHovered ? 1 : 0 }} />
-            <NFTPicture
-              style={{
-                backgroundImage: `url(${nft.file?.image})`,
-                x: imagePosX,
-                y: imagePosY,
-                scale: 1.5
-              }}
-              animate={{
-                scale: isHovered ? 1 : 1.5
-              }}
-              transition={card3DHoverTransition}
-            />
+            {nft.file?.image ? (
+              <NFTPicture
+                style={{
+                  backgroundImage: `url(${nft.file?.image})`,
+                  x: imagePosX,
+                  y: imagePosY,
+                  scale: 1.5
+                }}
+                animate={{
+                  scale: isHovered ? 1 : 1.5
+                }}
+                transition={card3DHoverTransition}
+              />
+            ) : (
+              <NFTPicture style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <MissingMetadataText>Missing image</MissingMetadataText>
+              </NFTPicture>
+            )}
           </NFTPictureContainer>
-          <NFTName>{nft.file?.name}</NFTName>
+          {nft.file?.name ? (
+            <NFTName>{nft.file?.name}</NFTName>
+          ) : (
+            <MissingMetadataText>Missing metadata</MissingMetadataText>
+          )}
         </FrontFace>
       }
       backFace={
@@ -216,12 +228,16 @@ const NFTPicture = styled(motion.div)`
 `
 
 const NFTName = styled.div`
-  margin-top: 15px;
+  padding: 15px 0;
   font-weight: 600;
-  margin: 15px 0;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
+`
+
+const MissingMetadataText = styled(NFTName)`
+  color: ${({ theme }) => theme.font.secondary};
+  font-style: italic;
 `
 
 const NFTDescription = styled.div`
