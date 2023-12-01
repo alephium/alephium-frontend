@@ -42,15 +42,11 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
 
   const collectionIds = Object.keys(NFTsGroupedByCollection)
 
-  console.log(collectionIds)
-
   const { data: collectionsMatadata } = useQueriesData(
     collectionIds.map((id) => ({
       ...queries.assets.metadata.NFTCollection
     }))
   )
-
-  console.log(collectionsMatadata)
 
   return (
     <NFTListContainer>
@@ -62,14 +58,14 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
         </NFTListStyled>
       ) : nfts.length > 0 ? (
         Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
-          <>
+          <CollectionContainer key={collectionId}>
             <CollectionHeader>Hey</CollectionHeader>
             <NFTListStyled>
               {nfts.map((nft) => (
                 <NFTItem key={nft.id} nft={nft} />
               ))}
             </NFTListStyled>
-          </>
+          </CollectionContainer>
         ))
       ) : (
         <NoNFTsMessage>
@@ -273,6 +269,8 @@ const EmptyIconContainer = styled.div`
     width: 30px;
   }
 `
+
+const CollectionContainer = styled.div``
 
 const CollectionHeader = styled.div`
   position: sticky;
