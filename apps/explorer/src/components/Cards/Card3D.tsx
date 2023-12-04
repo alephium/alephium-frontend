@@ -20,7 +20,7 @@ import { motion, Transition, useMotionValue, useSpring, useTransform } from 'fra
 import { PointerEvent, ReactNode, useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
-import { getPointerRelativePositionInElement } from '@/utils/pointer'
+import { getPointerRelativePositionInElement } from '@/utils/inputs'
 
 interface Card3DProps {
   frontFace: ReactNode

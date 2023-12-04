@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { groupBy } from 'lodash'
 import { useState } from 'react'
@@ -26,9 +27,12 @@ import styled from 'styled-components'
 import { queries } from '@/api'
 import Card3D, { card3DHoverTransition } from '@/components/Cards/Card3D'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import Toggle from '@/components/Toggle'
 import { useQueriesData } from '@/hooks/useQueriesData'
+import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { UnverifiedNFTMetadataWithFile } from '@/types/assets'
+import { OnOff } from '@/types/generics'
 
 interface NFTListProps {
   nfts: UnverifiedNFTMetadataWithFile[]
@@ -37,6 +41,10 @@ interface NFTListProps {
 
 const NFTList = ({ nfts, isLoading }: NFTListProps) => {
   const { t } = useTranslation()
+  const [isCollectionGroupingActive, setIsCollectionGroupingActive] = useStateWithLocalStorage<OnOff>(
+    'NFTCollectionGrouping',
+    'off'
+  )
 
   const NFTsGroupedByCollection = groupBy(nfts, (nft) => nft.collectionId)
 
@@ -48,10 +56,30 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
     }))
   )
 
+  const handleCollectionToggle = () => {
+    setIsCollectionGroupingActive((p) => (p === 'on' ? 'off' : 'on'))
+  }
+
+  const NFTListComponent = (
+    <NFTListStyled>
+      {nfts.map((nft) => (
+        <NFTItem key={nft.id} nft={nft} />
+      ))}
+    </NFTListStyled>
+  )
+
   console.log(collectionsMatadata)
 
   return (
     <NFTListContainer>
+      <Toolbar>
+        <ToggleLabel>{t('Group by collection')}</ToggleLabel>
+        <Toggle
+          label={t('Group by collection')}
+          toggled={isCollectionGroupingActive === 'on'}
+          onToggle={handleCollectionToggle}
+        />
+      </Toolbar>
       {isLoading ? (
         <NFTListStyled>
           <SkeletonLoader height="200px" />
@@ -59,16 +87,18 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
           <SkeletonLoader height="200px" />
         </NFTListStyled>
       ) : nfts.length > 0 ? (
-        Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
-          <CollectionContainer key={collectionId}>
-            <CollectionHeader>Hey</CollectionHeader>
-            <NFTListStyled>
-              {nfts.map((nft) => (
-                <NFTItem key={nft.id} nft={nft} />
-              ))}
-            </NFTListStyled>
-          </CollectionContainer>
-        ))
+        isCollectionGroupingActive === 'on' ? (
+          Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
+            <CollectionContainer key={collectionId}>
+              <CollectionHeader>
+                {t('Collection')} {collectionId}
+              </CollectionHeader>
+              {NFTListComponent}
+            </CollectionContainer>
+          ))
+        ) : (
+          NFTListComponent
+        )
       ) : (
         <NoNFTsMessage>
           <EmptyIconContainer>
@@ -161,8 +191,20 @@ const NFTListContainer = styled.div`
   flex-direction: column;
   border-radius: 0 0 9px 9px;
   overflow-y: auto;
-  max-height: 600px;
+  max-height: 700px;
   background-color: ${({ theme }) => theme.bg.secondary};
+`
+
+const Toolbar = styled.div`
+  flex-shrink: 0;
+  padding: 0 15px;
+  margin: 15px 15px 5px;
+  border-radius: 4px;
+  height: 50px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const NFTListStyled = styled.div`
@@ -290,14 +332,20 @@ const CollectionContainer = styled.div``
 
 const CollectionHeader = styled.div`
   position: sticky;
-  top: 0;
+  top: 15px;
   flex-shrink: 0;
   z-index: 1;
   height: 40px;
   margin: 10px 15px;
   border-radius: 4px;
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => colord(theme.bg.background2).alpha(0.9).toHex()};
   display: flex;
   align-items: center;
   padding: 0 15px;
+
+  backdrop-filter: blur(10px);
+`
+
+const ToggleLabel = styled.div`
+  margin-right: 5px;
 `
