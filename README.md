@@ -71,6 +71,28 @@ bunx changeset add # or `bunx changeset` for short
 
 ## Releasing
 
+### Release candidates
+
+```shell
+bunx changeset pre enter rc # Enters the pre-release mode
+bunx changeset version # Compiles all chancesets into changelogs and bumps the package versions
+git add # Add changelogs and version bumps
+git commit -m "Bump versions"
+bunx changeset tag # Creates tags with new package versions
+
+git push --follow-tags # Push new tags to trigger release candidate GH actions
+```
+
+This will trigger the release GitHub actions, but append the `rc` suffix at the end of the tags.
+
+To move on with the production release, first exit the `pre` mode with:
+
+```shell
+bunx changeset pre exit
+```
+
+and then delete all the files and diff that was generated while in the "pre-release" mode.
+
 ### Production
 
 Create a PR that includes the bump'ed versions:
@@ -96,24 +118,4 @@ git pull origin master
 bunx changeset tag
 
 git push --follow-tags
-```
-
-### Release candidates
-
-The process for release candidates is a bit different.
-
-```shell
-bunx changeset pre enter rc
-bunx changeset version
-bunx changeset tag
-
-git push --follow-tags
-```
-
-This will trigger the release GitHub actions, but append the `rc` suffix at the end of the tags.
-
-To move on with the production release, first exit the `pre` mode with:
-
-```shell
-bunx changeset pre exit
 ```
