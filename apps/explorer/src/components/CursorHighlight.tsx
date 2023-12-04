@@ -20,7 +20,7 @@ import { motion } from 'framer-motion'
 import { PointerEvent, useState } from 'react'
 import styled from 'styled-components'
 
-import { getPointerAbsolutePositionInElement } from '../utils/pointer'
+import { getPointerAbsolutePositionInElement } from '../utils/inputs'
 
 interface CursorHighlightProps {
   className?: string
