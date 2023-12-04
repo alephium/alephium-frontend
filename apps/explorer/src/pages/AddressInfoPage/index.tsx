@@ -50,6 +50,7 @@ import AddressTransactionRow from '@/pages/AddressInfoPage/AddressTransactionRow
 import AssetList from '@/pages/AddressInfoPage/AssetList'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
+import ModalPortal from '@/modals/ModalPortal'
 
 type ParamTypes = {
   id: string
@@ -280,7 +281,9 @@ const AddressInfoPage = () => {
 
       {txNumber ? <PageSwitch totalNumberOfElements={txNumber} elementsPerPage={numberOfTxsPerPage} /> : null}
 
-      <ExportAddressTXsModal addressHash={addressHash} isOpen={exportModalShown} onClose={handleExportModalClose} />
+      <ModalPortal>
+        <ExportAddressTXsModal addressHash={addressHash} isOpen={exportModalShown} onClose={handleExportModalClose} />
+      </ModalPortal>
     </Section>
   )
 }
