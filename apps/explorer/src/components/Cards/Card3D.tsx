@@ -24,10 +24,12 @@ import { getPointerRelativePositionInElement } from '@/utils/inputs'
 
 interface Card3DProps {
   frontFace: ReactNode
-  backFace: ReactNode
+  backFace?: ReactNode
+  onClick?: () => void
   onPointerMove?: (pointerX: number, pointerY: number) => void
   onCardHover?: (isHovered: boolean) => void
   onCardFlip?: (isFlipped: boolean) => void
+  shouldFlip?: boolean
   className?: string
 }
 
@@ -37,7 +39,16 @@ export const card3DHoverTransition: Transition = {
   damping: 100
 }
 
-const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, className }: Card3DProps) => {
+const Card3D = ({
+  frontFace,
+  backFace,
+  onClick,
+  onPointerMove,
+  onCardFlip,
+  onCardHover,
+  shouldFlip = true,
+  className
+}: Card3DProps) => {
   const theme = useTheme()
   const [isHovered, setIsHovered] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
@@ -66,6 +77,13 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
     clamp: true
   })
 
+  const handleClick = () => {
+    if (onClick) onClick()
+    if (shouldFlip) {
+      setIsFlipped((p) => !p)
+    }
+  }
+
   const handlePointerMove = (e: PointerEvent) => {
     const { x: positionX, y: positionY } = getPointerRelativePositionInElement(e)
 
@@ -93,7 +111,7 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
         y.set(0.5, true)
       }}
       onPointerMove={handlePointerMove}
-      onClick={() => setIsFlipped((p) => !p)}
+      onClick={handleClick}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       whileHover={{ zIndex: 3, cursor: 'pointer' }}
@@ -122,7 +140,7 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
           }}
         >
           <FrontFaceContainer>{frontFace}</FrontFaceContainer>
-          <BackFaceContainer>{backFace}</BackFaceContainer>
+          {backFace && <BackFaceContainer>{backFace}</BackFaceContainer>}
           <ReflectionClipper style={{ transform: isFlipped ? 'rotateY(180deg) rotateX(180deg)' : undefined }}>
             <MovingReflection
               style={{ translateX: reflectionTranslationX, translateY: reflectionTranslationY, opacity: 0 }}

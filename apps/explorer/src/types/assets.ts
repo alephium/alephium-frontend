@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FungibleTokenMetadata, NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { FungibleTokenMetadata, NFTMetadata as NFTMetadataBase } from '@alephium/web3/dist/src/api/api-explorer'
 
 import client from '@/api/client'
 
@@ -38,9 +38,11 @@ export type VerifiedFungibleTokenMetadata = FungibleTokenMetadata & {
 
 export type UnverifiedFungibleTokenMetadata = FungibleTokenMetadata & { type: 'fungible'; verified: false }
 
-export type UnverifiedNFTMetadata = NFTMetadata & { id: string; type: 'non-fungible'; verified: false }
+export type NFTMetadata = NFTMetadataBase & { id: string; type: 'non-fungible'; verified: boolean }
 
-export type UnverifiedNFTMetadataWithFile = UnverifiedNFTMetadata & { file?: NFTFile }
+export type NFTMetadataWithFile = NFTMetadata & { file?: NFTFile }
+
+export type UnverifiedNFTMetadata = NFTMetadata & { verified: false }
 
 export type NumericTokenBalance = { balance: bigint; lockedBalance: bigint }
 

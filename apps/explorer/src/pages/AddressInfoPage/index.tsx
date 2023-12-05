@@ -45,12 +45,12 @@ import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
 import usePageNumber from '@/hooks/usePageNumber'
 import { useSnackbar } from '@/hooks/useSnackbar'
-import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
+import ModalPortal from '@/modals/ModalPortal'
 import AddressTransactionRow from '@/pages/AddressInfoPage/AddressTransactionRow'
 import AssetList from '@/pages/AddressInfoPage/AssetList'
+import ExportAddressTXsModal from '@/pages/AddressInfoPage/ExportAddressTXsModal'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import ModalPortal from '@/modals/ModalPortal'
 
 type ParamTypes = {
   id: string

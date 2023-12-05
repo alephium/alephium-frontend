@@ -24,7 +24,7 @@ import styled from 'styled-components'
 
 import { deviceBreakPoints } from '@/styles/globalStyles'
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean
   onClose: () => void
   children: ReactNode
@@ -82,6 +82,12 @@ const ModalContentWrapper = styled(motion.div)`
   overflow-y: auto;
   z-index: 1;
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
+
+  min-width: 400px;
+
+  @media ${deviceBreakPoints.mobile} {
+    min-width: auto;
+  }
 
   @media ${deviceBreakPoints.mobile} {
     right: 5%;
