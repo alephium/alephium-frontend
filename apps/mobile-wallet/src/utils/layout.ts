@@ -36,10 +36,16 @@ export const scrollScreenTo = (
   }
 }
 
+export enum ToastDuration {
+  SHORT = 3000,
+  LONG = 1000
+}
+
 export const showToast = (text: string, settings?: Partial<ToastOptions>) => {
   Toast.show(text, {
     position: -100,
     shadow: false,
+    duration: ToastDuration.LONG,
     ...settings
   })
 }

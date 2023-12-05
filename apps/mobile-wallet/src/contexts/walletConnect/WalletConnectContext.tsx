@@ -696,7 +696,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       wcDeepLink.current = url
     } else {
-      showToast('WalletConnect is an experimental feature. You can enable it in the settings.', { duration: 10000 })
+      showToast('WalletConnect is an experimental feature. You can enable it in the settings.')
     }
   }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url])
 

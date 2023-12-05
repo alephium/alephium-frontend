@@ -25,14 +25,14 @@ import { persistAddressesMetadata } from '~/persistent-storage/wallet'
 import { getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
 import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '~/types/addresses'
 import { AddressTransaction, PendingTransaction } from '~/types/transactions'
-import { showToast } from '~/utils/layout'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
 
 export const copyAddressToClipboard = async (addressHash: AddressHash) => {
   await Clipboard.setStringAsync(addressHash)
-  showToast('Address copied!')
+  showToast('Address copied!', { duration: ToastDuration.SHORT })
 }
 
 export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
