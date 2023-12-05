@@ -102,7 +102,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     try {
       console.log('⏳ INITIALIZING WC CLIENT...')
       const client = await SignClient.init({
-        projectId: '6e2562e43678dd68a9070a62b6d52207',
+        projectId: '2a084aa1d7e09af2b9044a524f39afbe',
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Alephium mobile wallet',
