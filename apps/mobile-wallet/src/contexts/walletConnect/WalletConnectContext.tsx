@@ -595,6 +595,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
+      showToast('👍 Approved, you can go back to your browser.')
     }
   }
 
@@ -609,10 +610,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       setSessionProposalEvent(undefined)
     } catch (e) {
-      console.error('❌ WC: Error while approving and acknowledging', e)
+      console.error('❌ WC: Error while rejecting', e)
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
+      showToast('👍 Rejected, you can go back to your browser.')
     }
   }
 
@@ -647,6 +649,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
       setLoading('')
+      showToast('👍 Approved, you can go back to your browser.')
     }
   }
 
@@ -663,6 +666,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
+      showToast('👍 Rejected, you can go back to your browser.')
     }
   }
 
