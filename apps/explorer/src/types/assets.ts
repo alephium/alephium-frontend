@@ -42,7 +42,9 @@ export type NFTMetadata = NFTMetadataBase & { id: string; type: 'non-fungible'; 
 
 export type NFTMetadataWithFile = NFTMetadata & { file?: NFTFile }
 
-export type UnverifiedNFTMetadata = NFTMetadata & { verified: false }
+export type UnverifiedNFTMetadata = Omit<NFTMetadata, 'verified'> & { verified: false }
+
+export type UnverifiedNFTMetadataWithFile = Omit<NFTMetadata, 'verified'> & { file?: NFTFile; verified: false }
 
 export type NumericTokenBalance = { balance: bigint; lockedBalance: bigint }
 
