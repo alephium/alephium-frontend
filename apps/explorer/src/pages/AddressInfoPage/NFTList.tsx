@@ -30,21 +30,25 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import Toggle from '@/components/Toggle'
 import { useQueriesData } from '@/hooks/useQueriesData'
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
+import ModalPortal from '@/modals/ModalPortal'
+import NFTDetailsModal from '@/pages/AddressInfoPage/NFTDetailsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { UnverifiedNFTMetadataWithFile } from '@/types/assets'
+import { NFTMetadataWithFile } from '@/types/assets'
 import { OnOff } from '@/types/generics'
 
 interface NFTListProps {
-  nfts: UnverifiedNFTMetadataWithFile[]
+  nfts: NFTMetadataWithFile[]
   isLoading?: boolean
 }
 
 const NFTList = ({ nfts, isLoading }: NFTListProps) => {
   const { t } = useTranslation()
+  const [consultedNftId, setConsultedNftId] = useState<string | undefined>(undefined)
   const [isCollectionGroupingActive, setIsCollectionGroupingActive] = useStateWithLocalStorage<OnOff>(
     'NFTCollectionGrouping',
     'off'
   )
+  const consultedNft = nfts.find((nft) => nft.id === consultedNftId)
 
   const NFTsGroupedByCollection = groupBy(nfts, (nft) => nft.collectionId)
 
@@ -56,6 +60,8 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
     }))
   )
 
+  console.log(collectionsMatadata)
+
   const handleCollectionToggle = () => {
     setIsCollectionGroupingActive((p) => (p === 'on' ? 'off' : 'on'))
   }
@@ -63,63 +69,69 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
   const NFTListComponent = (
     <NFTListStyled>
       {nfts.map((nft) => (
-        <NFTItem key={nft.id} nft={nft} />
+        <NFTItem key={nft.id} nft={nft} onClick={() => setConsultedNftId(nft.id)} />
       ))}
     </NFTListStyled>
   )
 
-  console.log(collectionsMatadata)
-
   return (
-    <NFTListContainer>
-      <Toolbar>
-        <ToggleLabel>{t('Group by collection')}</ToggleLabel>
-        <Toggle
-          label={t('Group by collection')}
-          toggled={isCollectionGroupingActive === 'on'}
-          onToggle={handleCollectionToggle}
-        />
-      </Toolbar>
-      {isLoading ? (
-        <NFTListStyled>
-          <SkeletonLoader height="200px" />
-          <SkeletonLoader height="200px" />
-          <SkeletonLoader height="200px" />
-        </NFTListStyled>
-      ) : nfts.length > 0 ? (
-        isCollectionGroupingActive === 'on' ? (
-          Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
-            <CollectionContainer key={collectionId}>
-              <CollectionHeader>
-                {t('Collection')} {collectionId}
-              </CollectionHeader>
-              {NFTListComponent}
-            </CollectionContainer>
-          ))
+    <>
+      <NFTListContainer>
+        <Toolbar>
+          <ToggleLabel>{t('Group by collection')}</ToggleLabel>
+          <Toggle
+            label={t('Group by collection')}
+            toggled={isCollectionGroupingActive === 'on'}
+            onToggle={handleCollectionToggle}
+          />
+        </Toolbar>
+        {isLoading ? (
+          <NFTListStyled>
+            <SkeletonLoader height="200px" />
+            <SkeletonLoader height="200px" />
+            <SkeletonLoader height="200px" />
+          </NFTListStyled>
+        ) : nfts.length > 0 ? (
+          isCollectionGroupingActive === 'on' ? (
+            Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
+              <CollectionContainer key={collectionId}>
+                <CollectionHeader>
+                  {t('Collection')} {collectionId}
+                </CollectionHeader>
+                {NFTListComponent}
+              </CollectionContainer>
+            ))
+          ) : (
+            NFTListComponent
+          )
         ) : (
-          NFTListComponent
-        )
-      ) : (
-        <NoNFTsMessage>
-          <EmptyIconContainer>
-            <RiGhostLine />
-          </EmptyIconContainer>
-          <div>{t('No NFTs yet')}</div>
-        </NoNFTsMessage>
-      )}
-    </NFTListContainer>
+          <NoNFTsMessage>
+            <EmptyIconContainer>
+              <RiGhostLine />
+            </EmptyIconContainer>
+            <div>{t('No NFTs yet')}</div>
+          </NoNFTsMessage>
+        )}
+      </NFTListContainer>
+      <ModalPortal>
+        <NFTDetailsModal
+          nft={consultedNft}
+          isOpen={!!consultedNftId}
+          onClose={() => setConsultedNftId(undefined)}
+          maxWidth={800}
+        />
+      </ModalPortal>
+    </>
   )
 }
 
 interface NFTItemProps {
-  nft: UnverifiedNFTMetadataWithFile
+  nft: NFTMetadataWithFile
+  onClick: (nftId: string) => void
 }
 
-const NFTItem = ({ nft }: NFTItemProps) => {
+const NFTItem = ({ nft, onClick }: NFTItemProps) => {
   const [isHovered, setIsHovered] = useState(false)
-
-  const desc = nft.file?.description
-  const cutDesc = desc && desc?.length > 200 ? nft.file?.description?.substring(0, 200) + '...' : desc
 
   const y = useMotionValue(0.5)
   const x = useMotionValue(0.5)
@@ -144,6 +156,8 @@ const NFTItem = ({ nft }: NFTItemProps) => {
     <NFTCardStyled
       onPointerMove={handlePointerMove}
       onCardHover={setIsHovered}
+      onClick={() => onClick(nft.id)}
+      shouldFlip={false}
       frontFace={
         <FrontFace>
           <NFTPictureContainer>
@@ -173,12 +187,6 @@ const NFTItem = ({ nft }: NFTItemProps) => {
             <MissingMetadataText>Missing metadata</MissingMetadataText>
           )}
         </FrontFace>
-      }
-      backFace={
-        <BackFace>
-          <BackFaceBackground style={{ backgroundImage: `url(${nft.file?.image})` }} />
-          <NFTDescription>{cutDesc}</NFTDescription>
-        </BackFace>
       }
     />
   )
@@ -239,13 +247,6 @@ const FrontFace = styled.div`
   padding: 10px;
 `
 
-const BackFace = styled.div`
-  padding: 20px;
-  height: 100%;
-  background-color: ${({ theme }) => theme.bg.background2};
-  border-radius: 9px;
-`
-
 const NFTPictureContainer = styled(motion.div)`
   position: relative;
   border-radius: 9px;
@@ -280,27 +281,6 @@ const NFTName = styled.div`
 const MissingMetadataText = styled(NFTName)`
   color: ${({ theme }) => theme.font.secondary};
   font-style: italic;
-`
-
-const NFTDescription = styled.div`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  padding: 20px;
-`
-
-const BackFaceBackground = styled.div`
-  position: absolute;
-  background-size: cover;
-  background-repeat: no-repeat;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  border-radius: 9px;
-  opacity: 0.3;
 `
 
 const NoNFTsMessage = styled.div`
