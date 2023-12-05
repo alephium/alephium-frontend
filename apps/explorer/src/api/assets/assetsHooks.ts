@@ -24,6 +24,7 @@ import { useMemo } from 'react'
 import { queries } from '@/api'
 import { useVerifiedTokensMetadata } from '@/contexts/staticDataContext'
 import { useQueriesData } from '@/hooks/useQueriesData'
+import { UnverifiedNFTMetadataWithFile } from '@/types/assets'
 import { alphMetadata } from '@/utils/assets'
 
 export const useAssetMetadata = (assetId: string) => {
@@ -106,10 +107,10 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     }))
   )
 
-  const unverifiedNFTsMetadataWithFiles = unverifiedNFTsMetadata.map((m) => {
+  const unverifiedNFTsMetadataWithFiles: UnverifiedNFTMetadataWithFile[] = unverifiedNFTsMetadata.map((m) => {
     const file = NFTFiles.find((f) => f.assetId === m.id)
 
-    return file ? { ...m, file } : m
+    return { ...m, file }
   })
 
   if (isAlphIn) {
