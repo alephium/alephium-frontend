@@ -1,0 +1,17 @@
+{
+  "mode": "pre",
+  "tag": "rc",
+  "initialVersions": {
+    "alephium-desktop-wallet": "2.1.5",
+    "@alephium/explorer": "1.8.3",
+    "@alephium/mobile-wallet": "1.0.0",
+    "eslint-config-custom": "0.0.0",
+    "@alephium/shared": "0.7.6",
+    "tsconfig": "0.0.0"
+  },
+  "changesets": [
+    "big-ligers-whisper",
+    "tasty-pianos-sit",
+    "wicked-zebras-swim"
+  ]
+}
