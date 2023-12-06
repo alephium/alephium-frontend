@@ -105,7 +105,7 @@ const AddressInfoPage = () => {
   })
 
   const { data: addressAssetIds = [] } = useQuery({
-    ...queries.assets.balances.addressTokens(addressHash),
+    ...queries.address.assets.tokensBalance(addressHash),
     enabled: !!addressHash
   })
 

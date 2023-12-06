@@ -31,7 +31,7 @@ import {
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
 import { NetworkType } from '@/types/network'
-import { browsePages, createQueriesCollection, PAGINATION_PAGE_LIMIT, POST_QUERY_LIMIT } from '@/utils/api'
+import { createQueriesCollection, POST_QUERY_LIMIT } from '@/utils/api'
 import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@/utils/time'
 
 // Batched calls
@@ -79,8 +79,7 @@ export const assetsQueries = createQueriesCollection({
       queryKey: ['assetType', assetId],
       queryFn: (): Promise<AssetBase> =>
         tokensInfo.fetch(assetId).then((r) => ({ id: assetId, type: r.stdInterfaceId as AssetType })),
-      staleTime: 0,
-      cacheTime: 0
+      staleTime: ONE_DAY_MS
     })
   },
   metadata: {
@@ -140,14 +139,6 @@ export const assetsQueries = createQueriesCollection({
       queryFn: (): Promise<NFTCollectionUriMetaData & { collectionId: string }> | undefined =>
         fetch(collectionUri).then((res) => res.json().then((f) => ({ ...f, collectionId }))),
       staleTime: ONE_HOUR_MS
-    })
-  },
-  // TODO: This may be moved in a balancesApi file in the future?
-  balances: {
-    addressTokens: (addressHash: string) => ({
-      queryKey: ['addressTokensBalance', addressHash],
-      queryFn: async () =>
-        browsePages(client.explorer.addresses.getAddressesAddressTokensBalance, addressHash, PAGINATION_PAGE_LIMIT)
     })
   },
   prices: {
