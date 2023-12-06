@@ -47,17 +47,29 @@ const tokensInfo = create({
 
 const fungibleTokensMetadata = create({
   fetcher: async (ids: string[]) => client.explorer.tokens.postTokensFungibleMetadata(ids),
-  resolver: keyResolver('id')
+  resolver: keyResolver('id'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: POST_QUERY_LIMIT
+  })
 })
 
 const unverifiedNFTsMetadata = create({
   fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftMetadata(ids),
-  resolver: keyResolver('id')
+  resolver: keyResolver('id'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: POST_QUERY_LIMIT
+  })
 })
 
 const NFTCollectionsMetadata = create({
   fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftCollectionMetadata(ids),
-  resolver: keyResolver('address')
+  resolver: keyResolver('address'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: POST_QUERY_LIMIT
+  })
 })
 
 // Queries
