@@ -43,7 +43,7 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
   const { t } = useTranslation()
   const theme = useTheme()
 
-  const { data: assets, isLoading: assetsLoading } = useQuery(queries.assets.balances.addressTokens(addressHash))
+  const { data: assets, isLoading: assetsLoading } = useQuery(queries.address.assets.tokensBalance(addressHash))
 
   const assetIds = assets?.map((a) => a.tokenId)
 
