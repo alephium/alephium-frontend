@@ -52,8 +52,6 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
 
   const NFTsGroupedByCollection = groupBy(nfts, (nft) => (nft.collectionId !== 'undefined' ? nft.collectionId : ''))
 
-  console.log(NFTsGroupedByCollection)
-
   const collectionIds = Object.keys(NFTsGroupedByCollection).filter((id) => id !== 'undefined')
 
   const { data: collectionsMatadata } = useQueriesData(
