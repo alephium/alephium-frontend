@@ -25,15 +25,13 @@ export type AssetType = Awaited<ReturnType<typeof client.node.guessStdTokenType>
 export type AssetBase = { id: string; type: AssetType }
 
 export type FungibleTokenMetadataBase = Omit<FungibleTokenMetadata, 'totalSupply'> & {
-  id: string
   verified: boolean
   logoURI?: string
 }
 
-export type VerifiedFungibleTokenMetadata = FungibleTokenMetadata & {
+export type VerifiedFungibleTokenMetadata = TokenListTokenInfo & {
   type: 'fungible'
   verified: true
-  description?: string
 }
 
 export type UnverifiedFungibleTokenMetadata = FungibleTokenMetadata & { type: 'fungible'; verified: false }
@@ -53,6 +51,22 @@ export type NFTFile = {
   name?: string
   description?: string
   image?: string
+}
+
+// TODO: This has been extracted from the token-list. Cleanup types!
+export interface TokenList {
+  networkId: number
+  tokens: TokenListTokenInfo[]
+}
+export interface TokenListTokenInfo {
+  id: string
+  name: string
+  onChainName?: string
+  symbol: string
+  onChainSymbol?: string
+  decimals: string
+  description?: string
+  logoURI?: string
 }
 
 export type AssetPriceResponse = { [tokenId: string]: { [currency: string]: number } }

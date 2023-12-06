@@ -22,15 +22,15 @@ import {
   PAGINATION_PAGE_LIMIT,
   POST_QUERY_LIMIT
 } from '@alephium/shared'
-import { TokenList } from '@alephium/token-list'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
-import { create, keyResolver, maxBatchSizeScheduler, windowedFiniteBatchScheduler } from '@yornaath/batshit'
+import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import client from '@/api/client'
 import {
   AssetBase,
   AssetPriceResponse,
   AssetType,
+  TokenList,
   UnverifiedFungibleTokenMetadata,
   UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
