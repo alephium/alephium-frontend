@@ -595,7 +595,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
-      showToast('👍 Approved, you can go back to your browser.')
+      showGoBackToBrowserMsg()
     }
   }
 
@@ -614,7 +614,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
-      showToast('👍 Rejected, you can go back to your browser.')
+      showGoBackToBrowserMsg()
     }
   }
 
@@ -649,7 +649,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
       setLoading('')
-      showToast('👍 Approved, you can go back to your browser.')
+      showGoBackToBrowserMsg()
     }
   }
 
@@ -666,7 +666,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
-      showToast('👍 Rejected, you can go back to your browser.')
+      showGoBackToBrowserMsg()
     }
   }
 
@@ -740,3 +740,5 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 }
 
 export const useWalletConnectContext = () => useContext(WalletConnectContext)
+
+const showGoBackToBrowserMsg = () => showToast('You can go back to your browser.')
