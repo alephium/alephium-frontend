@@ -5,7 +5,7 @@
     "lint": {},
     "lint:fix": { "cache": false },
     "test": {
-      "dependsOn": ["^compile"]
+      "dependsOn": ["compile", "^compile"]
     },
     "build": {
       "dependsOn": ["^compile"]
