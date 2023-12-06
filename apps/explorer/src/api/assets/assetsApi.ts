@@ -140,7 +140,7 @@ export const assetsQueries = createQueriesCollection({
     addressTokens: (addressHash: string) => ({
       queryKey: ['addressTokensBalance', addressHash],
       queryFn: async () =>
-        browsePages(client.explorer.addresses.getAddressesAddressTokensBalance, PAGINATION_PAGE_LIMIT)
+        browsePages(client.explorer.addresses.getAddressesAddressTokensBalance, addressHash, PAGINATION_PAGE_LIMIT)
     })
   },
   prices: {
