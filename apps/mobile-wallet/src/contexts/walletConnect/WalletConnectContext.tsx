@@ -102,13 +102,16 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     try {
       console.log('⏳ INITIALIZING WC CLIENT...')
       const client = await SignClient.init({
-        projectId: '6e2562e43678dd68a9070a62b6d52207',
+        projectId: '2a084aa1d7e09af2b9044a524f39afbe',
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Alephium mobile wallet',
           description: 'Alephium mobile wallet',
-          url: 'https://github.com/alephium/mobile-wallet',
-          icons: ['https://alephium.org/favicon-32x32.png']
+          url: 'https://github.com/alephium/alephium-frontend',
+          icons: ['https://alephium.org/favicon-32x32.png'],
+          redirect: {
+            native: 'alephium://'
+          }
         }
       })
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
@@ -592,6 +595,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
+      showGoBackToBrowserMsg()
     }
   }
 
@@ -606,10 +610,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       setSessionProposalEvent(undefined)
     } catch (e) {
-      console.error('❌ WC: Error while approving and acknowledging', e)
+      console.error('❌ WC: Error while rejecting', e)
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
+      showGoBackToBrowserMsg()
     }
   }
 
@@ -644,6 +649,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
       setLoading('')
+      showGoBackToBrowserMsg()
     }
   }
 
@@ -660,6 +666,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
+      showGoBackToBrowserMsg()
     }
   }
 
@@ -689,7 +696,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       wcDeepLink.current = url
     } else {
-      showToast('WalletConnect is an experimental feature. You can enable it in the settings.', { duration: 10000 })
+      showToast('WalletConnect is an experimental feature. You can enable it in the settings.')
     }
   }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url])
 
@@ -733,3 +740,5 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 }
 
 export const useWalletConnectContext = () => useContext(WalletConnectContext)
+
+const showGoBackToBrowserMsg = () => showToast('You can go back to your browser.')
