@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFTCollectionUriMetaData, NFTTokenUriMetaData, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import { NFTCollectionUriMetaData, NFTTokenUriMetaData, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { create, keyResolver } from '@yornaath/batshit'
@@ -31,7 +31,7 @@ import {
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
 import { NetworkType } from '@/types/network'
-import { createQueriesCollection } from '@/utils/api'
+import { browsePages, createQueriesCollection } from '@/utils/api'
 import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@/utils/time'
 
 // Batched calls
@@ -129,26 +129,8 @@ export const assetsQueries = createQueriesCollection({
   balances: {
     addressTokens: (addressHash: string) => ({
       queryKey: ['addressTokensBalance', addressHash],
-      queryFn: async () => {
-        let pageTotalResults
-        let page = 1
-
-        const tokenBalances = []
-
-        while (pageTotalResults === undefined || pageTotalResults === TOKENS_QUERY_LIMIT) {
-          const pageResults = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
-            limit: TOKENS_QUERY_LIMIT,
-            page
-          })
-
-          tokenBalances.push(...pageResults)
-
-          pageTotalResults = pageResults.length
-          page += 1
-        }
-
-        return tokenBalances
-      }
+      queryFn: async () =>
+        browsePages(client.explorer.addresses.getAddressesAddressTokensBalance, PAGINATION_PAGE_LIMIT)
     })
   },
   prices: {
