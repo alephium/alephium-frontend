@@ -16,10 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFTCollectionUriMetaData, NFTTokenUriMetaData, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
+import {
+  NFTCollectionUriMetaData,
+  NFTTokenUriMetaData,
+  PAGINATION_PAGE_LIMIT,
+  POST_QUERY_LIMIT
+} from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
-import { create, keyResolver } from '@yornaath/batshit'
+import { create, keyResolver, maxBatchSizeScheduler, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import client from '@/api/client'
 import {
@@ -38,7 +43,11 @@ import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@/utils/time'
 
 const tokensInfo = create({
   fetcher: async (ids: string[]) => client.explorer.tokens.postTokens(ids),
-  resolver: keyResolver('token')
+  resolver: keyResolver('token'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: POST_QUERY_LIMIT
+  })
 })
 
 const fungibleTokensMetadata = create({
@@ -63,7 +72,8 @@ export const assetsQueries = createQueriesCollection({
       queryKey: ['assetType', assetId],
       queryFn: (): Promise<AssetBase> =>
         tokensInfo.fetch(assetId).then((r) => ({ id: assetId, type: r.stdInterfaceId as AssetType })),
-      staleTime: ONE_DAY_MS
+      staleTime: 0,
+      cacheTime: 0
     })
   },
   metadata: {
