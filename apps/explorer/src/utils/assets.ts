@@ -44,4 +44,9 @@ export const getCategorizedAssetIds = (assets: AssetBase[] = []): AssetIdCategor
   }
 }
 
-export const alphMetadata = { ...ALPH, type: 'fungible', verified: true } as VerifiedFungibleTokenMetadata
+export const alphMetadata = {
+  ...ALPH,
+  type: 'fungible',
+  verified: true,
+  decimals: ALPH.decimals.toString()
+} as VerifiedFungibleTokenMetadata

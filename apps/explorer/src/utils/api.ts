@@ -41,6 +41,8 @@ export const browsePages = async <T>(
   let pageTotalResults
   let page = 1
 
+  console.log(pageLimit)
+
   const results = []
 
   while (pageTotalResults === undefined || pageTotalResults === pageLimit) {
