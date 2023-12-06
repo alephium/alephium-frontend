@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/shared'
+import { addressFromContractId } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
@@ -123,7 +124,7 @@ export const assetsQueries = createQueriesCollection({
     NFTCollection: (collectionId: string) => ({
       queryKey: ['NFTCollection', collectionId],
       queryFn: (): Promise<NFTCollectionMetadata> =>
-        NFTCollectionsMetadata.fetch(collectionId).then((r) => ({ ...r, id: collectionId })),
+        NFTCollectionsMetadata.fetch(addressFromContractId(collectionId)).then((r) => ({ ...r, id: collectionId })),
       staleTime: ONE_HOUR_MS
     })
   },
