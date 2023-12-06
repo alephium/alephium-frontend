@@ -64,7 +64,8 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const handleOnAmountChange = (inputAmount: string) => {
     if (assetIsNft) return
 
-    const cleanedAmount = isNumericStringValid(inputAmount, true) ? inputAmount : ''
+    let cleanedAmount = inputAmount.replace(',', '.')
+    cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
 
     setAmount(cleanedAmount)
 
