@@ -133,7 +133,8 @@ export const assetsQueries = createQueriesCollection({
       queryKey: ['nftData', assetId],
       queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
         fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
-      staleTime: ONE_HOUR_MS
+      staleTime: 0,
+      cacheTime: 0
     }),
     collection: (collectionId: string, collectionUri: string) => ({
       queryKey: ['nftCollectionData', collectionId],
