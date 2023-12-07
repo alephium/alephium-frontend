@@ -684,14 +684,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   useEffect(() => {
     if (!isAuthenticated || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
 
-    if (isWalletConnectEnabled) {
+    if (!isWalletConnectEnabled) {
+      showToast('WalletConnect is an experimental feature. You can enable it in the settings.')
+    } else if (walletConnectClient) {
       pairWithDapp(url)
 
       wcDeepLink.current = url
-    } else {
-      showToast('WalletConnect is an experimental feature. You can enable it in the settings.', { duration: 10000 })
     }
-  }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url])
+  }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
 
   return (
     <WalletConnectContext.Provider value={{ pairWithDapp, unpairFromDapp, walletConnectClient, activeSessions }}>
