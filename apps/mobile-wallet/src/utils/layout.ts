@@ -16,9 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getHumanReadableError } from '@alephium/shared'
 import { MutableRefObject } from 'react'
 import { FlatList, ScrollView } from 'react-native'
-import Toast, { ToastOptions } from 'react-native-root-toast'
+import Toast, { ToastShowParams } from 'react-native-toast-message'
 
 export const checkIfScrollView = (view: ScrollView | FlatList): view is ScrollView => 'scrollTo' in view
 
@@ -41,11 +42,23 @@ export enum ToastDuration {
   LONG = 10000
 }
 
-export const showToast = (text: string, settings?: Partial<ToastOptions>) => {
-  Toast.show(text, {
-    position: -100,
-    shadow: false,
-    duration: ToastDuration.LONG,
-    ...settings
+export const showToast = (params: ToastShowParams) => {
+  Toast.show({
+    position: 'bottom',
+    bottomOffset: 100,
+    visibilityTime: ToastDuration.LONG,
+    onPress: Toast.hide,
+    ...params
+  })
+}
+
+export const showExceptionErrorToast = (e: unknown, title: string) => {
+  const humanReadableError = getHumanReadableError(e, '')
+
+  showToast({
+    type: 'error',
+    text1: title,
+    text2: humanReadableError ?? undefined,
+    autoHide: false
   })
 }

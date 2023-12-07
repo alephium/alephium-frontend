@@ -60,7 +60,12 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
   const showOfflineMessage = () =>
-    showToast('The app is offline and trying to reconnect. Please, check your network settings.')
+    showToast({
+      text1: 'Reconnecting...',
+      text2: 'The app is offline and trying to reconnect. Please, check your network settings.',
+      type: 'info',
+      onPress: () => navigation.navigate('SettingsScreen')
+    })
 
   const handleQRCodeScan = async (text: string) => {
     if (isAddressValid(text)) {
@@ -70,7 +75,12 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
       if (isWalletConnectEnabled) {
         pairWithDapp(text)
       } else {
-        showToast('WalletConnect is an experimental feature. You can enable it in the settings.', { duration: 10000 })
+        showToast({
+          text1: 'Experimental feature',
+          text2: 'WalletConnect is an experimental feature. You can enable it in the settings.',
+          type: 'info',
+          onPress: () => navigation.navigate('SettingsScreen')
+        })
       }
     }
   }

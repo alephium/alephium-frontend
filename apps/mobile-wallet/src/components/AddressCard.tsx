@@ -40,7 +40,7 @@ import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { AddressHash } from '~/types/addresses'
 import { currencies } from '~/utils/currencies'
-import { showToast } from '~/utils/layout'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 interface AddressCardProps {
   addressHash: AddressHash
@@ -106,7 +106,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
       await persistAddressSettings({ ...address, settings: newSettings })
       dispatch(addressSettingsSaved({ ...address, settings: newSettings }))
 
-      showToast('This is now the default address')
+      showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })
 
       posthog?.capture('Address: Used address card default toggle')
     } catch (e) {

@@ -16,12 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import Toast from 'react-native-root-toast'
 
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
@@ -33,6 +31,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistSettings } from '~/persistent-storage/settings'
 import { customNetworkSettingsSaved } from '~/store/networkSlice'
 import { NetworkSettings } from '~/types/settings'
+import { showExceptionErrorToast } from '~/utils/layout'
 
 interface CustomNetworkScreenProps
   extends StackScreenProps<RootStackParamList, 'CustomNetworkScreen'>,
@@ -57,7 +56,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
 
       posthog?.capture('Saved custom network settings')
     } catch (e) {
-      Toast.show(getHumanReadableError(e, 'Could not save custom network settings'))
+      showExceptionErrorToast(e, 'Could not save custom network settings')
 
       posthog?.capture('Error', { message: 'Could not save custom network settings' })
     }

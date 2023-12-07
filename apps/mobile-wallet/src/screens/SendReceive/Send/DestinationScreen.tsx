@@ -92,7 +92,11 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
       posthog?.capture('Send: Captured destination address by scanning QR code')
     } else {
-      showToast('This is not a valid Alephium address.')
+      showToast({
+        text1: 'Invalid address',
+        text2: 'This is not a valid Alephium address: ' + addressHash,
+        type: 'error'
+      })
     }
   }
 

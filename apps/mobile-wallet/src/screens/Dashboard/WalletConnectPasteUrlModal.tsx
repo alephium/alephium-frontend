@@ -52,7 +52,11 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
       props.onClose && props.onClose()
       posthog?.capture('WC: Connected by manually pasting URL')
     } else {
-      showToast('This is not a valid WalletConnect URL')
+      showToast({
+        text1: 'Invalid URL',
+        text2: 'This is not a valid WalletConnect URL: ' + inputWcUrl,
+        type: 'error'
+      })
     }
   }
 
