@@ -47,7 +47,20 @@ export default {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#000000'
       },
-      package: IS_DEV ? 'org.alephium.wallet.dev' : 'org.alephium.wallet'
+      package: IS_DEV ? 'org.alephium.wallet.dev' : 'org.alephium.wallet',
+      intentFilters: [
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'alephium.wallet.link'
+            }
+          ],
+          category: ['BROWSABLE', 'DEFAULT']
+        }
+      ]
     },
     web: {
       favicon: './assets/favicon.png'
