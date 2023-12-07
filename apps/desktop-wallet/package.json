@@ -127,7 +127,8 @@
       "build/**/*",
       "public/electron.js",
       "public/preload.js",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "../../node_modules/**/*"
     ],
     "linux": {
       "category": "Finance",
@@ -151,7 +152,7 @@
     },
     "mac": {
       "hardenedRuntime": true,
-      "entitlements": "./node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
+      "entitlements": "../../node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
     },
     "directories": {
       "buildResources": "assets"
