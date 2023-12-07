@@ -50,9 +50,10 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
   )
   const consultedNft = nfts.find((nft) => nft.id === consultedNftId)
 
-  const NFTsGroupedByCollection = groupBy(nfts, (nft) => (nft.collectionId !== 'undefined' ? nft.collectionId : ''))
+  let NFTsGroupedByCollection = groupBy(nfts, 'collectionId')
 
-  console.log(NFTsGroupedByCollection)
+  const { undefined: value, ...rest } = NFTsGroupedByCollection
+  NFTsGroupedByCollection = { ...rest, undefined: value } // Move undefined collection to the end
 
   const collectionIds = Object.keys(NFTsGroupedByCollection).filter((id) => id !== 'undefined')
 
@@ -62,7 +63,11 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
     }))
   )
 
-  console.log(collectionsMatadata)
+  const { data: collectionFiles } = useQueriesData(
+    collectionsMatadata.map((meta) => ({
+      ...queries.assets.NFTsData.collection(meta.collectionUri, meta.id, meta.address)
+    }))
+  )
 
   const handleCollectionToggle = () => {
     setIsCollectionGroupingActive((p) => (p === 'on' ? 'off' : 'on'))
@@ -98,7 +103,9 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
             Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
               <CollectionContainer key={collectionId}>
                 <CollectionHeader>
-                  {collectionId === 'undefined' ? t('Unknown collection') : t('Collection') + ' ' + collectionId}
+                  {collectionId === 'undefined'
+                    ? t('Unknown collection')
+                    : collectionFiles.find((c) => c.collectionId === collectionId)?.name}
                 </CollectionHeader>
                 <NFTListComponent nfts={nfts} />
               </CollectionContainer>
