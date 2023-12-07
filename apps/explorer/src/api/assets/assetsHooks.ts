@@ -102,7 +102,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
 
   const { data: NFTFiles } = useQueriesData(
     flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => ({
-      ...queries.assets.NFTsData.item(id, tokenUri),
+      ...queries.assets.NFTsData.item(tokenUri, id),
       enabled: !!tokenUri
     }))
   )

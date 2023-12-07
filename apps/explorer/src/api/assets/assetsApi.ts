@@ -123,24 +123,27 @@ export const assetsQueries = createQueriesCollection({
     }),
     NFTCollection: (collectionId: string) => ({
       queryKey: ['NFTCollection', collectionId],
-      queryFn: (): Promise<NFTCollectionMetadata> =>
+      queryFn: (): Promise<NFTCollectionMetadata & { id: string }> =>
         NFTCollectionsMetadata.fetch(addressFromContractId(collectionId)).then((r) => ({ ...r, id: collectionId })),
       staleTime: ONE_HOUR_MS
     })
   },
   NFTsData: {
-    item: (assetId: string, dataUri: string) => ({
-      queryKey: ['nftData', assetId],
+    item: (dataUri: string, assetId: string) => ({
+      queryKey: ['nftData', dataUri],
       queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
         fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
       staleTime: 0,
       cacheTime: 0
     }),
-    collection: (collectionId: string, collectionUri: string) => ({
-      queryKey: ['nftCollectionData', collectionId],
-      queryFn: (): Promise<NFTCollectionUriMetaData & { collectionId: string }> | undefined =>
-        fetch(collectionUri).then((res) => res.json().then((f) => ({ ...f, collectionId }))),
-      staleTime: ONE_HOUR_MS
+    collection: (collectionUri: string, collectionId: string, collectionAddress: string) => ({
+      queryKey: ['nftCollectionData', collectionUri],
+      queryFn: ():
+        | Promise<NFTCollectionUriMetaData & { collectionId: string; collectionAddress: string }>
+        | undefined =>
+        fetch(collectionUri).then((res) => res.json().then((f) => ({ ...f, collectionId, collectionAddress }))),
+      staleTime: 0,
+      cacheTime: 0
     })
   },
   prices: {
