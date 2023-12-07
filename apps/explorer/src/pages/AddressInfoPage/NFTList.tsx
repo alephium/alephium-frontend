@@ -52,6 +52,8 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
 
   const NFTsGroupedByCollection = groupBy(nfts, (nft) => (nft.collectionId !== 'undefined' ? nft.collectionId : ''))
 
+  console.log(NFTsGroupedByCollection)
+
   const collectionIds = Object.keys(NFTsGroupedByCollection).filter((id) => id !== 'undefined')
 
   const { data: collectionsMatadata } = useQueriesData(
@@ -66,7 +68,7 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
     setIsCollectionGroupingActive((p) => (p === 'on' ? 'off' : 'on'))
   }
 
-  const NFTListComponent = (
+  const NFTListComponent = ({ nfts }: { nfts: NFTMetadataWithFile[] }) => (
     <NFTListStyled>
       {nfts.map((nft) => (
         <NFTItem key={nft.id} nft={nft} onClick={() => setConsultedNftId(nft.id)} />
@@ -96,13 +98,13 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
             Object.entries(NFTsGroupedByCollection).map(([collectionId, nfts]) => (
               <CollectionContainer key={collectionId}>
                 <CollectionHeader>
-                  {t('Collection')} {collectionId}
+                  {collectionId === 'undefined' ? t('Unknown collection') : t('Collection') + ' ' + collectionId}
                 </CollectionHeader>
-                {NFTListComponent}
+                <NFTListComponent nfts={nfts} />
               </CollectionContainer>
             ))
           ) : (
-            NFTListComponent
+            <NFTListComponent nfts={nfts} />
           )
         ) : (
           <NoNFTsMessage>
