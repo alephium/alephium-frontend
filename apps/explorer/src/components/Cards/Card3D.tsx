@@ -168,7 +168,6 @@ const CardContainer = styled(motion.div)`
   transform-style: preserve-3d;
   flex: 1;
 
-  border-radius: 9px;
   border-style: solid;
   border-width: 1px;
   background-color: ${({ theme }) => theme.bg.primary};
@@ -193,7 +192,6 @@ const ReflectionClipper = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: 9px;
 `
 
 const MovingReflection = styled(motion.div)`

@@ -58,6 +58,10 @@ export default styled(TableRow)`
   td:first-child .row-link {
     padding-left: 20px;
   }
+
+  td:nth-child(2) {
+    font-weight: 600;
+  }
 `
 
 const FullHeightLink = styled(Link)`
