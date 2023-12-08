@@ -23,11 +23,12 @@ import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import Toast, { BaseToastProps, ErrorToast, InfoToast, SuccessToast } from 'react-native-toast-message'
+import { BaseToastProps } from 'react-native-toast-message'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import client from '~/api/client'
+import ToastAnchor from '~/components/ToastAnchor'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useInterval from '~/hooks/useInterval'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
@@ -80,26 +81,13 @@ const App = () => {
     []
   )
 
-  const toastConfig: BaseToastProps = {
-    text1NumberOfLines: 10,
-    text2NumberOfLines: 10,
-    text1Style: { fontSize: 14 },
-    text2Style: { fontSize: 12 }
-  }
-
   return (
     <Provider store={store}>
       <Main>
         <ThemeProvider theme={theme}>
           <RootStackNavigation />
           <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
-          <Toast
-            config={{
-              info: (props) => <InfoToast {...toastConfig} {...props} />,
-              success: (props) => <SuccessToast {...toastConfig} {...props} />,
-              error: (props) => <ErrorToast {...toastConfig} {...props} />
-            }}
-          />
+          <ToastAnchor />
         </ThemeProvider>
       </Main>
     </Provider>
@@ -189,6 +177,13 @@ const Main = ({ children, ...props }: ViewProps) => {
       {children}
     </SafeAreaProvider>
   )
+}
+
+const toastConfig: BaseToastProps = {
+  text1NumberOfLines: 10,
+  text2NumberOfLines: 10,
+  text1Style: { fontSize: 14 },
+  text2Style: { fontSize: 12 }
 }
 
 export default App
