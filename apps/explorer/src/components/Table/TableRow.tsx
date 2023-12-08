@@ -59,8 +59,13 @@ export default styled(TableRow)`
     padding-left: 20px;
   }
 
+  td:first-child {
+    padding-left: 20px;
+    color: ${({ theme }) => theme.font.secondary};
+  }
+
   td:nth-child(2) {
-    font-weight: 600;
+    color: ${({ theme }) => theme.font.primary};
   }
 `
 

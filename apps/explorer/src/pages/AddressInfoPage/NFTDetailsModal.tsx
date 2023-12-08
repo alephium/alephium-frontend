@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NFTCollectionUriMetaData } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -31,9 +32,10 @@ import { NFTMetadataWithFile } from '@/types/assets'
 
 interface NFTDetailsModalProps extends Omit<ModalProps, 'children'> {
   nft?: NFTMetadataWithFile
+  collection?: NFTCollectionUriMetaData
 }
 
-const NFTDetailsModal = ({ nft, ...props }: NFTDetailsModalProps) => {
+const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
 
   return (
@@ -48,45 +50,64 @@ const NFTDetailsModal = ({ nft, ...props }: NFTDetailsModalProps) => {
             <Image src={nft.file?.image} />
           </NFTImageContainer>
 
-          <NFTDetailsContainer>
-            <Table bodyOnly>
-              <TableBody>
-                <TableRow>
-                  <span>{t('Name')}</span>
-                  <span>{nft.file?.name}</span>
-                </TableRow>
-                {nft.file?.description && (
-                  <TableRow>
-                    <span>{t('Description')}</span>
-                    <span>{nft.file.description}</span>
-                  </TableRow>
-                )}
-                {nft.file?.image && (
-                  <TableRow>
-                    <span>{t('Image URL')}</span>
-                    <LinkContainer>
-                      <SimpleLink to={nft.file.image}>{nft.file.image}</SimpleLink>
-                    </LinkContainer>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </NFTDetailsContainer>
-          {nft.file?.attributes && (
+          <MetadataTablesContainer>
             <NFTDetailsContainer>
-              <h3>{t('Attributes')}</h3>
               <Table bodyOnly>
                 <TableBody>
-                  {nft.file.attributes.map((a) => (
+                  <TableRow>
+                    <span>{t('Name')}</span>
+                    <span>{nft.file?.name}</span>
+                  </TableRow>
+                  {nft.file?.description && (
                     <TableRow>
-                      <span>{a.trait_type}</span>
-                      <span>{a.value}</span>
+                      <span>{t('Description')}</span>
+                      <span>{nft.file.description}</span>
                     </TableRow>
-                  ))}
+                  )}
+                  {nft.file?.image && (
+                    <TableRow>
+                      <span>{t('Image URL')}</span>
+                      <LinkContainer>
+                        <SimpleLink to={nft.file.image}>{nft.file.image}</SimpleLink>
+                      </LinkContainer>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </NFTDetailsContainer>
-          )}
+            {nft.file?.attributes && (
+              <NFTDetailsContainer>
+                <h3>{t('Attributes')}</h3>
+                <Table bodyOnly>
+                  <TableBody>
+                    {nft.file.attributes.map((a) => (
+                      <TableRow>
+                        <span>{a.trait_type}</span>
+                        <span>{a.value}</span>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </NFTDetailsContainer>
+            )}
+            {collection && (
+              <NFTDetailsContainer>
+                <h3>{t('Collection')}</h3>
+                <Table bodyOnly>
+                  <TableBody>
+                    <TableRow>
+                      <span>{t('Collection name')}</span>
+                      <span>{collection.name}</span>
+                    </TableRow>
+                    <TableRow>
+                      <span>{t('Collection description')}</span>
+                      <span>{collection.description}</span>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </NFTDetailsContainer>
+            )}
+          </MetadataTablesContainer>
         </>
       ) : (
         <LoadingSpinner />
@@ -105,10 +126,13 @@ const Header = styled.div`
   }
 `
 
+const MetadataTablesContainer = styled.div`
+  margin: 10px 0 20px;
+`
+
 const NFTImageContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 10px;
   padding: 25px;
   background-color: ${({ theme }) => theme.bg.background2};
 `
