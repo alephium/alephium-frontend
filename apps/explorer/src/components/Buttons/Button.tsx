@@ -56,7 +56,7 @@ const Button = ({ accent, big, ...props }: ButtonProps) => {
 }
 
 export default styled(Button)`
-  border-radius: 9px;
+  border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.border.primary};
   padding: 10px 15px;
   cursor: pointer;

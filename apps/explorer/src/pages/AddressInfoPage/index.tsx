@@ -325,7 +325,7 @@ const InfoGridAndQR = styled.div`
   flex-direction: row;
   background-color: ${({ theme }) => theme.bg.primary};
   width: 100%;
-  border-radius: 9px;
+  border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.border.primary};
   overflow: hidden;
 

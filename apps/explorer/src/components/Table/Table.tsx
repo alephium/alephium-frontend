@@ -73,7 +73,7 @@ const Table: FC<TableProps> = ({ children, isLoading, className, ...props }) => 
 const TableWrapper = styled.div<TableProps>`
   border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.border.primary}`};
   overflow: hidden;
-  border-radius: 9px;
+  border-radius: 8px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
   background-color: ${({ theme }) => theme.bg.primary};

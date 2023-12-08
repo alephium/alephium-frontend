@@ -49,7 +49,7 @@ export const useAssetMetadata = (assetId: string) => {
   })
 
   const { data: nftData } = useQuery({
-    ...queries.assets.NFTsData.item(assetId, unverifiedNFTMetadata?.tokenUri ?? ''),
+    ...queries.assets.NFTsData.item(unverifiedNFTMetadata?.tokenUri ?? '', assetId),
     enabled: !isAlph && assetType === 'non-fungible' && !!unverifiedNFTMetadata?.tokenUri
   })
 

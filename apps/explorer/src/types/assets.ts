@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NFTTokenUriMetaData } from '@alephium/shared'
 import { FungibleTokenMetadata, NFTMetadata as NFTMetadataBase } from '@alephium/web3/dist/src/api/api-explorer'
 
 import client from '@/api/client'
@@ -46,11 +47,8 @@ export type UnverifiedNFTMetadataWithFile = Omit<NFTMetadata, 'verified'> & { fi
 
 export type NumericTokenBalance = { balance: bigint; lockedBalance: bigint }
 
-export type NFTFile = {
+export type NFTFile = NFTTokenUriMetaData & {
   assetId: string
-  name?: string
-  description?: string
-  image?: string
 }
 
 // TODO: This has been extracted from the token-list. Cleanup types!

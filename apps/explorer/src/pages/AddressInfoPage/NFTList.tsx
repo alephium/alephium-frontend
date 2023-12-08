@@ -52,8 +52,8 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
 
   let NFTsGroupedByCollection = groupBy(nfts, 'collectionId')
 
-  const { undefined: value, ...rest } = NFTsGroupedByCollection
-  NFTsGroupedByCollection = { ...rest, undefined: value } // Move undefined collection to the end
+  const { undefined: undefinedCollectionNfts, ...rest } = NFTsGroupedByCollection
+  NFTsGroupedByCollection = undefinedCollectionNfts ? { ...rest, undefined: undefinedCollectionNfts } : rest // Move undefined collection to the end
 
   const collectionIds = Object.keys(NFTsGroupedByCollection).filter((id) => id !== 'undefined')
 
@@ -73,11 +73,9 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
     setIsCollectionGroupingActive((p) => (p === 'on' ? 'off' : 'on'))
   }
 
-  const NFTListComponent = ({ nfts }: { nfts: NFTMetadataWithFile[] }) => (
+  const NFTListComponent = ({ nfts }: { nfts?: NFTMetadataWithFile[] }) => (
     <NFTListStyled>
-      {nfts.map((nft) => (
-        <NFTItem key={nft.id} nft={nft} onClick={() => setConsultedNftId(nft.id)} />
-      ))}
+      {nfts ? nfts.map((nft) => <NFTItem key={nft.id} nft={nft} onClick={() => setConsultedNftId(nft.id)} />) : null}
     </NFTListStyled>
   )
 
@@ -206,7 +204,7 @@ export default NFTList
 const NFTListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  border-radius: 0 0 9px 9px;
+  border-radius: 0 0 8px 8px;
   overflow-y: auto;
   max-height: 700px;
   background-color: ${({ theme }) => theme.bg.secondary};
@@ -228,7 +226,7 @@ const NFTListStyled = styled.div`
   flex: 1;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 25px;
+  gap: 15px;
   padding: 15px;
 
   @media ${deviceBreakPoints.laptop} {
@@ -258,7 +256,6 @@ const FrontFace = styled.div`
 
 const NFTPictureContainer = styled(motion.div)`
   position: relative;
-  border-radius: 9px;
   overflow: hidden;
 `
 
@@ -302,7 +299,7 @@ const NoNFTsMessage = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   margin: 20px auto;
   padding: 20px;
-  border-radius: 9px;
+  border-radius: 8px;
   border: 2px dashed ${({ theme }) => theme.border.primary};
   font-size: 1.1em;
 `
@@ -321,16 +318,18 @@ const CollectionContainer = styled.div``
 
 const CollectionHeader = styled.div`
   position: sticky;
-  top: 15px;
+  top: 0;
   flex-shrink: 0;
   z-index: 1;
-  height: 40px;
+  height: 50px;
   margin: 10px 15px;
   border-radius: 4px;
   background-color: ${({ theme }) => colord(theme.bg.background2).alpha(0.9).toHex()};
   display: flex;
   align-items: center;
   padding: 0 15px;
+  font-size: 14px;
+  font-weight: 600;
 
   backdrop-filter: blur(10px);
 `

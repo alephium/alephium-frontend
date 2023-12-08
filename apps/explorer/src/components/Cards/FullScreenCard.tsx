@@ -95,7 +95,7 @@ const CardContent = styled(motion.div)`
   max-width: 1200px;
   max-height: 800px;
   background-color: ${({ theme }) => theme.bg.primary};
-  border-radius: 9px;
+  border-radius: 8px;
   overflow: hidden;
   margin: 0 2vw;
   border: 1px solid ${({ theme }) => theme.border.primary};
