@@ -29,7 +29,7 @@ const _window = window as unknown as AlephiumWindow
 const electron = _window.electron
 
 const currentVersion = import.meta.env.VITE_VERSION
-const semverRegex = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?$/
+const semverRegex = currentVersion.contains('-rc.') ? /^(\d+\.\d+\.\d+)(?:-rc(\.\d+)?)?$/ : /^(\d+\.\d+\.\d+)?$/
 
 const ONE_HOUR = 1000 * 60 * 60
 
