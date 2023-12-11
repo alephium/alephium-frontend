@@ -20,6 +20,7 @@ import { NFTCollectionUriMetaData } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import Card from '@/components/Cards/Card'
 import HighlightedHash from '@/components/HighlightedHash'
 import { SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -47,50 +48,56 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
             <HighlightedHash text={nft.id} middleEllipsis maxWidth="200px" textToCopy={nft.id} />
           </Header>
           <NFTImageContainer>
-            <Image src={nft.file?.image} />
+            {nft.file?.image ? <Image src={nft.file?.image} /> : t('Missing image')}
           </NFTImageContainer>
 
           <MetadataTablesContainer>
-            <NFTDetailsContainer>
-              <Table bodyOnly>
-                <TableBody>
-                  <TableRow>
-                    <span>{t('Name')}</span>
-                    <span>{nft.file?.name}</span>
-                  </TableRow>
-                  {nft.file?.description && (
-                    <TableRow>
-                      <span>{t('Description')}</span>
-                      <span>{nft.file.description}</span>
-                    </TableRow>
-                  )}
-                  {nft.file?.image && (
-                    <TableRow>
-                      <span>{t('Image URL')}</span>
-                      <LinkContainer>
-                        <SimpleLink to={nft.file.image} newTab>
-                          {nft.file.image}
-                        </SimpleLink>
-                      </LinkContainer>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </NFTDetailsContainer>
-            {nft.file?.attributes && (
-              <NFTDetailsContainer>
-                <h3>{t('Attributes')}</h3>
-                <Table bodyOnly>
-                  <TableBody>
-                    {nft.file.attributes.map((a) => (
+            {nft.file ? (
+              <>
+                <NFTDetailsContainer>
+                  <Table bodyOnly>
+                    <TableBody>
                       <TableRow>
-                        <span>{a.trait_type}</span>
-                        <span>{a.value}</span>
+                        <span>{t('Name')}</span>
+                        <span>{nft.file?.name}</span>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </NFTDetailsContainer>
+                      {nft.file?.description && (
+                        <TableRow>
+                          <span>{t('Description')}</span>
+                          <span>{nft.file.description}</span>
+                        </TableRow>
+                      )}
+                      {nft.file?.image && (
+                        <TableRow>
+                          <span>{t('Image URL')}</span>
+                          <LinkContainer>
+                            <SimpleLink to={nft.file.image} newTab>
+                              {nft.file.image}
+                            </SimpleLink>
+                          </LinkContainer>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </NFTDetailsContainer>
+                {nft.file?.attributes && (
+                  <NFTDetailsContainer>
+                    <h3>{t('Attributes')}</h3>
+                    <Table bodyOnly>
+                      <TableBody>
+                        {nft.file.attributes.map((a) => (
+                          <TableRow>
+                            <span>{a.trait_type}</span>
+                            <span>{a.value}</span>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </NFTDetailsContainer>
+                )}
+              </>
+            ) : (
+              <CardStyled>{t('Missing metadata')}</CardStyled>
             )}
             {collection && (
               <NFTDetailsContainer>
@@ -103,7 +110,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                     </TableRow>
                     <TableRow>
                       <span>{t('Collection description')}</span>
-                      <span>{collection.description}</span>
+                      <CollectionDescription>{collection.description}</CollectionDescription>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -121,10 +128,10 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
 export default NFTDetailsModal
 
 const Header = styled.div`
-  padding: 10px 25px;
+  padding: 0px 25px 15px;
 
   @media ${deviceBreakPoints.mobile} {
-    padding: 6px 12px;
+    padding: 0px 12px 15px;
   }
 `
 
@@ -135,8 +142,12 @@ const MetadataTablesContainer = styled.div`
 const NFTImageContainer = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 25px;
   background-color: ${({ theme }) => theme.bg.background2};
+  min-height: 300px;
+  border-top: 1px solid ${({ theme }) => theme.border.primary};
+  border-bottom: 1px solid ${({ theme }) => theme.border.primary};
 `
 
 const Image = styled.img`
@@ -152,4 +163,14 @@ const NFTDetailsContainer = styled.div`
 const LinkContainer = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
+`
+
+const CardStyled = styled(Card)`
+  justify-content: center;
+  align-items: center;
+  margin: 25px;
+`
+
+const CollectionDescription = styled.div`
+  white-space: pre-wrap;
 `

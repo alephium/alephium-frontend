@@ -117,9 +117,9 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
       <ModalPortal>
         <NFTDetailsModal
           nft={consultedNft}
+          collection={collectionFiles.find((c) => c.collectionId === consultedNft?.collectionId)}
           isOpen={!!consultedNftId}
           onClose={() => setConsultedNftId(undefined)}
-          maxWidth={800}
         />
       </ModalPortal>
     </>

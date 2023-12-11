@@ -51,8 +51,10 @@ const Modal = ({ isOpen = false, onClose, children, className, maxWidth = 600 }:
           className={className}
           style={{ maxWidth }}
         >
-          <CloseButton onClick={onClose} />
-          {children}
+          <CloseButton onClick={onClose}>
+            <RiCloseLine />
+          </CloseButton>
+          <ModalChildrenContainer>{children}</ModalChildrenContainer>
         </ModalContentWrapper>
       </ModalWrapper>
     )}
@@ -73,6 +75,7 @@ const ModalWrapper = styled.div`
 
 const ModalContentWrapper = styled(motion.div)`
   position: absolute;
+  display: flex;
   right: 25px;
   top: 25px;
   bottom: 25px;
@@ -82,6 +85,7 @@ const ModalContentWrapper = styled(motion.div)`
   overflow-y: auto;
   z-index: 1;
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
+  overflow: hidden;
 
   min-width: 400px;
 
@@ -106,14 +110,22 @@ const Backdrop = styled(motion.div)`
 
 const CloseButton = styled(RiCloseLine)`
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 12px;
+  right: 12px;
   cursor: pointer;
-  height: 20px;
-  width: 20px;
+  height: 32px;
+  width: 32px;
   color: ${({ theme }) => theme.font.primary};
+  border-radius: 30px;
+  background-color: ${({ theme }) => theme.bg.primary};
+  padding: 5px;
 
   :hover {
     color: ${({ theme }) => theme.font.secondary};
   }
+`
+
+const ModalChildrenContainer = styled.div`
+  flex: 1;
+  overflow-y: auto;
 `
