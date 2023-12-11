@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import {
   binToHex,
@@ -44,7 +43,7 @@ import Row from '~/components/Row'
 import { useAppDispatch } from '~/hooks/redux'
 import { transactionSent } from '~/store/addressesSlice'
 import { SessionRequestData } from '~/types/walletConnect'
-import { showToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> extends ModalContentProps {
@@ -164,7 +163,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
       }
     } catch (e) {
       console.error('Could not send transaction', e)
-      showToast(getHumanReadableError(e, 'Could not send transaction'))
+      showExceptionToast(e, 'Could not send transaction')
       posthog?.capture('Error', { message: 'Could not send transaction' })
     }
   }

@@ -32,7 +32,7 @@ export const getAddressDisplayName = (address: Address): string =>
 
 export const copyAddressToClipboard = async (addressHash: AddressHash) => {
   await Clipboard.setStringAsync(addressHash)
-  showToast('Address copied!', { duration: ToastDuration.SHORT })
+  showToast({ text1: 'Address copied!', visibilityTime: ToastDuration.SHORT })
 }
 
 export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {

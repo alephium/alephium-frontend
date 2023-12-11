@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AssetAmount, getHumanReadableError } from '@alephium/shared'
+import { AssetAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -57,7 +57,7 @@ import { Address, AddressHash } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
-import { showToast } from '~/utils/layout'
+import { showExceptionToast, showToast } from '~/utils/layout'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 interface WalletConnectContextValue {
@@ -327,9 +327,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         setLoading('')
 
         if (error.message?.includes('NotEnoughApprovedBalance')) {
-          showToast('Your address does not have enough balance for this transaction.')
+          showToast({
+            text1: 'Could not build transaction',
+            text2: 'Your address does not have enough balance for this transaction.',
+            type: 'error',
+            autoHide: false
+          })
         } else {
-          showToast(getHumanReadableError(e, 'Error while building the transaction'))
+          showExceptionToast(e, 'Could not build transaction')
           posthog?.capture('Error', { message: 'Could not build transaction' })
           console.error(e)
         }
@@ -477,7 +482,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               }
             })
           } else {
-            showToast('This WalletConnect session is not valid anymore.', { duration: 5000 })
+            showToast({
+              text1: 'Could not connect',
+              text2:
+                'This WalletConnect session is not valid anymore. Try to refresh the dApp and connect again. Session topic: ' +
+                existingPairing.topic,
+              type: 'error',
+              autoHide: false
+            })
           }
         } else {
           console.log('⏳ PAIRING WITH WALLETCONNECT USING URI:', uri)
@@ -528,30 +540,46 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     if (requiredChains?.length !== 1) {
       console.error(`❌ Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains?.length}`)
-      return showToast(`Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains?.length}`)
+      return showToast({
+        text1: 'Could not approve',
+        text2: `Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains?.length}`,
+        type: 'error',
+        autoHide: false
+      })
     }
 
     if (!requiredChainInfo) {
       console.error('❌ Could not find chain requirements in WalletConnect proposal')
-      return showToast('Could not find chain requirements in WalletConnect proposal')
+      return showToast({
+        text1: 'Could not approve',
+        text2: 'Could not find chain requirements in WalletConnect proposal',
+        type: 'error',
+        autoHide: false
+      })
     }
 
     if (!isNetworkValid(requiredChainInfo.networkId, currentNetworkId)) {
       console.error(
         `❌ WalletConnect requested the ${requiredChainInfo.networkId} network, but the current network is ${currentNetworkName}.`
       )
-      return showToast(
-        `WalletConnect requested the ${requiredChainInfo.networkId} network, but the current network is ${currentNetworkName}.`
-      )
+      return showToast({
+        text1: 'Could not approve',
+        text2: `WalletConnect requested the ${requiredChainInfo.networkId} network, but the current network is ${currentNetworkName}.`,
+        type: 'error',
+        autoHide: false
+      })
     }
 
     if (!isCompatibleAddressGroup(signerAddress.group, requiredChainInfo.addressGroup)) {
       console.error(
         `❌ The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChainInfo.addressGroup})`
       )
-      return showToast(
-        `The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChainInfo.addressGroup})`
-      )
+      return showToast({
+        text1: 'Could not approve',
+        text2: `The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChainInfo.addressGroup})`,
+        type: 'error',
+        autoHide: false
+      })
     }
 
     console.log('✅ VERIFIED USER PROVIDED DATA!')
@@ -595,7 +623,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
-      showGoBackToBrowserMsg()
+      showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
     }
   }
 
@@ -614,7 +642,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
-      showGoBackToBrowserMsg()
+      showToast({ text1: 'DApp request rejected', text2: 'You can go back to your browser.' })
     }
   }
 
@@ -649,7 +677,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
       setLoading('')
-      showGoBackToBrowserMsg()
+      showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
     }
   }
 
@@ -666,7 +694,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
-      showGoBackToBrowserMsg()
+      showToast({ text1: 'DApp request rejected', text2: 'You can go back to your browser.' })
     }
   }
 
@@ -691,14 +719,19 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   useEffect(() => {
     if (!isAuthenticated || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
 
-    if (isWalletConnectEnabled) {
+    if (!isWalletConnectEnabled) {
+      showToast({
+        text1: 'Experimental feature',
+        text2: 'WalletConnect is an experimental feature. You can enable it in the settings.',
+        type: 'info'
+        // onPress: () => navigation.navigate('SettingsScreen')
+      })
+    } else if (walletConnectClient) {
       pairWithDapp(url)
 
       wcDeepLink.current = url
-    } else {
-      showToast('WalletConnect is an experimental feature. You can enable it in the settings.')
     }
-  }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url])
+  }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
 
   return (
     <WalletConnectContext.Provider value={{ pairWithDapp, unpairFromDapp, walletConnectClient, activeSessions }}>
@@ -740,5 +773,3 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 }
 
 export const useWalletConnectContext = () => useContext(WalletConnectContext)
-
-const showGoBackToBrowserMsg = () => showToast('You can go back to your browser.')

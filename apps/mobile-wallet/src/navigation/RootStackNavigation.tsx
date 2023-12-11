@@ -259,7 +259,7 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
       const error = e as { message?: string }
 
       if (error.message?.includes('User canceled')) {
-        showToast('Authentication required. Exit the app and try again.')
+        showToast({ text1: 'Authentication required.', text2: 'Exit the app and try again.', type: 'error' })
       } else {
         console.error(e)
       }
