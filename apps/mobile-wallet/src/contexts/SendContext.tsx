@@ -27,7 +27,7 @@ import ConsolidationModal from '~/components/ConsolidationModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
-import { showExceptionErrorToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 type UnsignedTxData = {
@@ -108,7 +108,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       const data = await buildSweepTransactions(address, address.hash)
       setUnsignedTxData(data)
     } catch (e) {
-      showExceptionErrorToast(e, 'Could not build transaction')
+      showExceptionToast(e, 'Could not build transaction')
 
       posthog?.capture('Error', { message: 'Could not build consolidation transactions' })
     }
@@ -132,7 +132,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
           await buildConsolidationTransactions()
         } else {
-          showExceptionErrorToast(e, 'Could not build transaction')
+          showExceptionToast(e, 'Could not build transaction')
 
           posthog?.capture('Error', { message: 'Could not build transaction' })
         }
@@ -169,7 +169,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
         posthog?.capture('Send: Sent transaction', { tokens: tokens.length })
       } catch (e) {
-        showExceptionErrorToast(e, 'Could not send transaction')
+        showExceptionToast(e, 'Could not send transaction')
 
         posthog?.capture('Error', { message: 'Could not send transaction' })
       }

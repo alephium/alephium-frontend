@@ -26,7 +26,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
 import { ContactFormData } from '~/types/contacts'
-import { showExceptionErrorToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 
@@ -49,7 +49,7 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
 
       posthog?.capture('Contact: Created new contact')
     } catch (e) {
-      showExceptionErrorToast(e, 'Could not save contact')
+      showExceptionToast(e, 'Could not save contact')
 
       posthog?.capture('Error', { message: 'Could not save contact' })
     }

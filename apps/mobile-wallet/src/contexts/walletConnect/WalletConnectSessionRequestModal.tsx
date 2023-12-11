@@ -43,7 +43,7 @@ import Row from '~/components/Row'
 import { useAppDispatch } from '~/hooks/redux'
 import { transactionSent } from '~/store/addressesSlice'
 import { SessionRequestData } from '~/types/walletConnect'
-import { showExceptionErrorToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> extends ModalContentProps {
@@ -163,7 +163,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
       }
     } catch (e) {
       console.error('Could not send transaction', e)
-      showExceptionErrorToast(e, 'Could not send transaction')
+      showExceptionToast(e, 'Could not send transaction')
       posthog?.capture('Error', { message: 'Could not send transaction' })
     }
   }

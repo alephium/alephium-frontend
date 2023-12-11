@@ -52,7 +52,7 @@ export const showToast = (params: ToastShowParams) => {
   })
 }
 
-export const showExceptionErrorToast = (e: unknown, title: string) => {
+export const showExceptionToast = (e: unknown, title: string) => {
   const humanReadableError = getHumanReadableError(e, '')
 
   showToast({

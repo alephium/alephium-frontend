@@ -57,7 +57,7 @@ import { Address, AddressHash } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
-import { showExceptionErrorToast, showToast } from '~/utils/layout'
+import { showExceptionToast, showToast } from '~/utils/layout'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 interface WalletConnectContextValue {
@@ -334,7 +334,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             autoHide: false
           })
         } else {
-          showExceptionErrorToast(e, 'Could not build transaction')
+          showExceptionToast(e, 'Could not build transaction')
           posthog?.capture('Error', { message: 'Could not build transaction' })
           console.error(e)
         }

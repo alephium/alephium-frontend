@@ -31,7 +31,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistSettings } from '~/persistent-storage/settings'
 import { customNetworkSettingsSaved } from '~/store/networkSlice'
 import { NetworkSettings } from '~/types/settings'
-import { showExceptionErrorToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 
 interface CustomNetworkScreenProps
   extends StackScreenProps<RootStackParamList, 'CustomNetworkScreen'>,
@@ -56,7 +56,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
 
       posthog?.capture('Saved custom network settings')
     } catch (e) {
-      showExceptionErrorToast(e, 'Could not save custom network settings')
+      showExceptionToast(e, 'Could not save custom network settings')
 
       posthog?.capture('Error', { message: 'Could not save custom network settings' })
     }

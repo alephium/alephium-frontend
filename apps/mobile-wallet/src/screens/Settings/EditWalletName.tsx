@@ -29,7 +29,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistWalletMetadata } from '~/persistent-storage/wallet'
 import { walletNameChanged } from '~/store/wallet/walletActions'
-import { showExceptionErrorToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 
 interface EditWalletNameScreenProps
   extends StackScreenProps<RootStackParamList, 'EditWalletNameScreen'>,
@@ -52,7 +52,7 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
 
       posthog?.capture('Wallet: Editted wallet name')
     } catch (e) {
-      showExceptionErrorToast(e, 'Could not edit wallet name')
+      showExceptionToast(e, 'Could not edit wallet name')
 
       posthog?.capture('Error', { message: 'Could not edit wallet name' })
     }
