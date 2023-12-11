@@ -24,17 +24,19 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
 
 export interface CardProps extends HTMLMotionProps<'div'> {
-  label: string
-  isLoading: boolean
   children: ReactNode
+  label?: string
+  isLoading?: boolean
   className?: string
 }
 
 const Card = ({ label, children, isLoading, ...props }: CardProps) => (
   <Container initial={false} {...props}>
-    <header>
-      <LabelText>{label}</LabelText>
-    </header>
+    {label && (
+      <header>
+        <LabelText>{label}</LabelText>
+      </header>
+    )}
     {isLoading ? <SkeletonLoader height="150px" /> : <Content>{children}</Content>}
   </Container>
 )

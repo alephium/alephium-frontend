@@ -55,13 +55,13 @@ export default styled(TableRow)`
   border: none;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
 
-  td:first-child .row-link {
-    padding-left: 20px;
+  td:first-child {
+    width: 200px;
+    color: ${({ theme }) => theme.font.secondary};
   }
 
-  td:first-child {
+  td:first-child .row-link {
     padding-left: 20px;
-    color: ${({ theme }) => theme.font.secondary};
   }
 
   td:nth-child(2) {
