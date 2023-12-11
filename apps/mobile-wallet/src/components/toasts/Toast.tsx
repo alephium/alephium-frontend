@@ -18,10 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { AlertCircle, CheckCircle, Icon, InfoIcon } from 'lucide-react-native'
-import {} from 'react-native'
 import { ToastConfigParams, ToastType } from 'react-native-toast-message'
-import { useTheme } from 'styled-components'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 
