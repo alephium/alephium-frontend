@@ -68,7 +68,9 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                     <TableRow>
                       <span>{t('Image URL')}</span>
                       <LinkContainer>
-                        <SimpleLink to={nft.file.image}>{nft.file.image}</SimpleLink>
+                        <SimpleLink to={nft.file.image} newTab>
+                          {nft.file.image}
+                        </SimpleLink>
                       </LinkContainer>
                     </TableRow>
                   )}
