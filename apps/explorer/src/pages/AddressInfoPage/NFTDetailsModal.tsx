@@ -109,7 +109,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                       <span>{collection.name}</span>
                     </TableRow>
                     <TableRow>
-                      <span>{t('Collection description')}</span>
+                      <span>{t('Collection desc.')}</span>
                       <CollectionDescription>{collection.description}</CollectionDescription>
                     </TableRow>
                   </TableBody>

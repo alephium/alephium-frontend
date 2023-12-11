@@ -56,7 +56,6 @@ export default styled(TableRow)`
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
 
   td:first-child {
-    width: 200px;
     color: ${({ theme }) => theme.font.secondary};
   }
 

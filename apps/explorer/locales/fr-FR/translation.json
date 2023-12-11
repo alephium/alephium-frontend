@@ -75,5 +75,11 @@
   "is circulating": "en circulation",
   "of all shards": "de tous les shards",
   "to": "à",
-  "with": "avec"
+  "with": "avec",
+  "Missing image": "Image manquante",
+  "Missing metadata": "Metadata manquants",
+  "Image URL": "URL de l'image",
+  "Attributes": "Attributs",
+  "Collection desc.": "Desc. de la collection",
+  "Collection name": "Nom de la collection"
 }
