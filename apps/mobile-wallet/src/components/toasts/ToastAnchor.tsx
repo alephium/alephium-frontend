@@ -23,9 +23,9 @@ import Toast from '~/components/toasts/Toast'
 const ToastAnchor = () => (
   <BaseToast
     config={{
-      info: (props) => <Toast text1={props.text1} type="info" />,
-      success: (props) => <Toast text1={props.text1} type="success" />,
-      error: (props) => <Toast text1={props.text1} type="error" />
+      info: (props) => <Toast {...props} type="info" />,
+      success: (props) => <Toast text1={props.text1} {...props} type="success" />,
+      error: (props) => <Toast {...props} type="error" />
     }}
   />
 )

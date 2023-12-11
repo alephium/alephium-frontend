@@ -18,19 +18,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { AlertCircle, CheckCircle, Icon, InfoIcon } from 'lucide-react-native'
-import { ToastType } from 'react-native-toast-message'
+import {} from 'react-native'
+import { ToastConfigParams, ToastType } from 'react-native-toast-message'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 
-interface ToastProps {
-  type: ToastType
-  text1?: string
-  text2?: string
-}
-
-const Toast = ({ type, text1, text2 }: ToastProps) => {
+const Toast = ({
+  type,
+  text1,
+  text2,
+  onPress
+}: Pick<ToastConfigParams<unknown>, 'text1' | 'text2' | 'onPress' | 'type'>) => {
   const theme = useTheme()
 
   const Icons: Record<ToastType, { color: string; Icon: Icon }> = {
@@ -51,26 +51,31 @@ const Toast = ({ type, text1, text2 }: ToastProps) => {
   const Icon = Icons[type].Icon
 
   return (
-    <ToastContainer>
-      <IconContainer>
-        <Icon />
-      </IconContainer>
-      <TextContainer>
-        <Title>{text1}</Title>
-        {text2 && <Subtitle>{text2}</Subtitle>}
-      </TextContainer>
+    <ToastContainer onPress={onPress}>
+      <ToastContent>
+        <IconContainer>
+          <Icon />
+        </IconContainer>
+        <TextContainer>
+          <Title>{text1}</Title>
+          {text2 && <Subtitle>{text2}</Subtitle>}
+        </TextContainer>
+      </ToastContent>
     </ToastContainer>
   )
 }
 
 export default Toast
 
-const ToastContainer = styled.View`
-  flex-direction: row;
-  background-color: ${({ theme }) => theme.bg.contrast};
-  padding: 15px 20px;
+const ToastContainer = styled.Pressable`
   width: 85%;
   border-radius: 8px;
+  background-color: ${({ theme }) => theme.bg.contrast};
+`
+
+const ToastContent = styled.View`
+  flex-direction: row;
+  padding: 15px 20px;
 `
 
 const IconContainer = styled.View`
@@ -84,6 +89,7 @@ const TextContainer = styled.View`
 
 const Title = styled(AppText)`
   color: ${({ theme }) => theme.font.contrast};
+  font-weight: 500;
 `
 
 const Subtitle = styled(AppText)`
