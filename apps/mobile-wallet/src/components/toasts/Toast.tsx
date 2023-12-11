@@ -49,12 +49,13 @@ const Toast = ({
   }
 
   const Icon = Icons[type].Icon
+  const color = Icons[type].color
 
   return (
     <ToastContainer onPress={onPress}>
       <ToastContent>
         <IconContainer>
-          <Icon />
+          <Icon color={color} />
         </IconContainer>
         <TextContainer>
           <Title>{text1}</Title>
