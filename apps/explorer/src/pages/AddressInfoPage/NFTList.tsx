@@ -73,12 +73,6 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
     setIsCollectionGroupingActive((p) => (p === 'on' ? 'off' : 'on'))
   }
 
-  const NFTListComponent = ({ nfts }: { nfts?: NFTMetadataWithFile[] }) => (
-    <NFTListStyled>
-      {nfts ? nfts.map((nft) => <NFTItem key={nft.id} nft={nft} onClick={() => setConsultedNftId(nft.id)} />) : null}
-    </NFTListStyled>
-  )
-
   return (
     <>
       <NFTListContainer>
@@ -105,11 +99,11 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
                     ? t('Unknown collection')
                     : collectionFiles.find((c) => c.collectionId === collectionId)?.name}
                 </CollectionHeader>
-                <NFTListComponent nfts={nfts} />
+                <NFTListComponent nfts={nfts} onClick={setConsultedNftId} />
               </CollectionContainer>
             ))
           ) : (
-            <NFTListComponent nfts={nfts} />
+            <NFTListComponent nfts={nfts} onClick={setConsultedNftId} />
           )
         ) : (
           <NoNFTsMessage>
@@ -131,6 +125,17 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
     </>
   )
 }
+
+interface NFTListComponentProps {
+  nfts?: NFTMetadataWithFile[]
+  onClick: (nftId: string) => void
+}
+
+const NFTListComponent = ({ nfts, onClick }: NFTListComponentProps) => (
+  <NFTListStyled>
+    {nfts ? nfts.map((nft) => <NFTItem key={nft.id} nft={nft} onClick={() => onClick(nft.id)} />) : null}
+  </NFTListStyled>
+)
 
 interface NFTItemProps {
   nft: NFTMetadataWithFile
