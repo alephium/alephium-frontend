@@ -16,21 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Toast, { BaseToastProps, ErrorToast, InfoToast, SuccessToast } from 'react-native-toast-message'
+import BaseToast from 'react-native-toast-message'
 
-const toastConfig: BaseToastProps = {
-  text1NumberOfLines: 10,
-  text2NumberOfLines: 10,
-  text1Style: { fontSize: 14 },
-  text2Style: { fontSize: 12 }
-}
+import Toast from '~/components/toasts/Toast'
 
 const ToastAnchor = () => (
-  <Toast
+  <BaseToast
     config={{
-      info: (props) => <InfoToast {...toastConfig} {...props} />,
-      success: (props) => <SuccessToast {...toastConfig} {...props} />,
-      error: (props) => <ErrorToast {...toastConfig} {...props} />
+      info: (props) => <Toast text1={props.text1} type="info" />,
+      success: (props) => <Toast text1={props.text1} type="success" />,
+      error: (props) => <Toast text1={props.text1} type="error" />
     }}
   />
 )

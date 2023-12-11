@@ -45,7 +45,7 @@ export enum ToastDuration {
 export const showToast = (params: ToastShowParams) => {
   Toast.show({
     position: 'bottom',
-    bottomOffset: 100,
+    bottomOffset: 50,
     visibilityTime: ToastDuration.LONG,
     onPress: Toast.hide,
     ...params
