@@ -28,6 +28,7 @@ const { autoUpdater } = require('electron-updater')
 const ALEPHIUM = 'alephium'
 const ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX = `${ALEPHIUM}://wc`
 const ALEPHIUM_WALLET_CONNECT_URI_PREFIX = '?uri='
+const CURRECT_VERSION = app.getVersion()
 
 // See https://github.com/alephium/alephium-frontend/issues/176
 const OLD_APP_NAME = 'alephium-wallet'
@@ -45,6 +46,7 @@ if (process.defaultApp) {
 contextMenu()
 
 autoUpdater.autoDownload = false
+autoUpdater.allowPrerelease = CURRECT_VERSION.includes('-rc.')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -129,7 +131,7 @@ const template = [
                 label: 'About',
                 click: async () => {
                   dialog.showMessageBox(mainWindow, {
-                    message: `Version ${app.getVersion()}`,
+                    message: `Version ${CURRECT_VERSION}`,
                     title: 'About',
                     type: 'info'
                   })
