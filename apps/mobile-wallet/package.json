@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@alephium/shared": "*",
-    "@alephium/walletconnect-provider": "^0.18.1",
+    "@alephium/walletconnect-provider": "^0.25.1",
     "@json-rpc-tools/utils": "^1.7.6",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/netinfo": "^9.4.1",
