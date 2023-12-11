@@ -24,6 +24,8 @@ import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import client from '~/api/client'
+import { signAndSendTransaction } from '~/api/transactions'
 
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
