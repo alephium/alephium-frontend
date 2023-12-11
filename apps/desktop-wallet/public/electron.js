@@ -23,19 +23,19 @@ const isDev = require('electron-is-dev')
 const contextMenu = require('electron-context-menu')
 const { autoUpdater } = require('electron-updater')
 
-// Handle deep linking for alephium://
+// Handle deep linking for alephium-desktop://
 
-const ALEPHIUM = 'alephium'
-const ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX = `${ALEPHIUM}://wc`
+const ALEPHIUM_DESKTOP = 'alephium-desktop'
+const ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX = `${ALEPHIUM_DESKTOP}://wc`
 const ALEPHIUM_WALLET_CONNECT_URI_PREFIX = '?uri='
 
-protocol.registerSchemesAsPrivileged([{ scheme: ALEPHIUM, privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([{ scheme: ALEPHIUM_DESKTOP, privileges: { secure: true, standard: true } }])
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
-    app.setAsDefaultProtocolClient(ALEPHIUM, process.execPath, [path.resolve(process.argv[1])])
+    app.setAsDefaultProtocolClient(ALEPHIUM_DESKTOP, process.execPath, [path.resolve(process.argv[1])])
   }
 } else {
-  app.setAsDefaultProtocolClient(ALEPHIUM)
+  app.setAsDefaultProtocolClient(ALEPHIUM_DESKTOP)
 }
 
 contextMenu()
