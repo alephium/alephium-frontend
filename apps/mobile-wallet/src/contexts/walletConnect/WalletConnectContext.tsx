@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AssetAmount } from '@alephium/shared'
+import { AssetAmount, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -337,6 +337,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           showExceptionToast(e, 'Could not build transaction')
           posthog?.capture('Error', { message: 'Could not build transaction' })
           console.error(e)
+          respondToWalletConnectWithError(requestEvent, {
+            message: getHumanReadableError(e, 'Error while parsing WalletConnect session request'),
+            code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
+          })
         }
         // TODO: Handle consolidation case
         // TODO: Handle authentication requirement
