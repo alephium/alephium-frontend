@@ -120,7 +120,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           {stateUninitialized || isPriceLoading ? (
             <SkeletonLoader height="18.5px" />
           ) : (
-            <Amount value={fiatBalance} isFiat suffix={currencies.USD.symbol} />
+            <Amount value={fiatBalance} isFiat suffix={currencies[fiatCurrency].symbol} />
           )}
         </FiatAmountCell>
       </GridRow>
