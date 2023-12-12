@@ -89,12 +89,7 @@ export const assetsQueries = createQueriesCollection({
       queryFn: (): Promise<VerifiedFungibleTokenMetadata[]> => {
         try {
           return fetch(`https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`).then(
-            (r) =>
-              r
-                .json()
-                .then((j: TokenList) =>
-                  j.tokens.map((v) => ({ ...v, decimals: v.decimals.toString(), type: 'fungible', verified: true }))
-                )
+            (r) => r.json().then((j: TokenList) => j.tokens.map((v) => ({ ...v, type: 'fungible', verified: true })))
           )
         } catch (e) {
           console.error(e)
@@ -106,11 +101,16 @@ export const assetsQueries = createQueriesCollection({
     unverifiedFungibleToken: (assetId: string) => ({
       queryKey: ['unverifiedFungibleToken', assetId],
       queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
-        fungibleTokensMetadata.fetch(assetId).then((r) => ({
-          ...r,
-          type: 'fungible',
-          verified: false
-        })),
+        fungibleTokensMetadata.fetch(assetId).then((r) => {
+          const parsedDecimals: number = parseInt(r.decimals)
+
+          return {
+            ...r,
+            type: 'fungible',
+            decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0,
+            verified: false
+          }
+        }),
       staleTime: ONE_HOUR_MS
     }),
     unverifiedNFT: (assetId: string) => ({

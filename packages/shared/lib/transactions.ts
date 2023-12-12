@@ -16,16 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TokenInfo } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { Optional } from '@alephium/web3'
-import {
-  AddressBalance,
-  FungibleTokenMetadata,
-  Output,
-  Token,
-  TokenStdInterfaceId
-} from '@alephium/web3/dist/src/api/api-explorer'
+import { AddressBalance, FungibleTokenMetadata, Output, Token } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { AddressHash } from './address'
 import { uniq } from './utils'
@@ -48,8 +41,8 @@ export type UnverifiedAsset = Required<Asset> & { logoUri: never }
 
 export type AssetAmount = { id: Asset['id']; amount?: bigint }
 
-export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
-  Required<AssetAmount>
+export type TransactionInfoAsset = Omit<Asset, 'balance' | 'lockedBalance' | 'decimals'> &
+  Required<AssetAmount> & { decimals?: number }
 
 export type TransactionInfo = {
   assets: TransactionInfoAsset[]
