@@ -83,7 +83,6 @@ const SnackbarManagerContainer = styled.div`
 
 const SnackbarPopup = styled(motion.div)`
   margin: var(--spacing-3);
-  text-align: center;
   min-width: 200px;
   padding: var(--spacing-4) var(--spacing-3);
   color: ${({ theme }) => theme.font.primary};
@@ -91,7 +90,7 @@ const SnackbarPopup = styled(motion.div)`
   backdrop-filter: blur(10px);
   max-width: 800px;
   word-wrap: break-word;
-  overflow: scroll;
+  overflow-y: auto;
 
   &.alert {
     ${({ theme }) => getSnackbarStyling(theme.global.alert)}
