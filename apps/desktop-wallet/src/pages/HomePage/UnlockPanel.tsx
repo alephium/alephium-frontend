@@ -98,6 +98,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
           onChange={(e) => setPassword(e.target.value)}
           value={password}
           id="password"
+          autoFocus
         />
       </SectionStyled>
       <ButtonsSection>
