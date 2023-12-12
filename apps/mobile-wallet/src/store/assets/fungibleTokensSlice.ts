@@ -20,7 +20,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AssetInfo } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { hexToString } from '@alephium/web3'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { loadingStarted, syncNetworkFungibleTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
@@ -74,10 +73,7 @@ const assetsSlice = createSlice({
           fungibleTokensAdapter.upsertMany(
             state,
             metadata.map((token) => ({
-              id: token.id,
-              name: hexToString(token.name),
-              symbol: hexToString(token.symbol),
-              decimals: token.decimals,
+              ...token,
               verified: false
             }))
           )

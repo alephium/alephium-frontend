@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, TokenDisplayBalances } from '@alephium/shared'
+import { Asset, NFT, TokenDisplayBalances } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
@@ -47,7 +47,6 @@ import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/store/t
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { Address, AddressesHistoricalBalanceResult, AddressHash, AddressPartial } from '~/types/addresses'
-import { NFT } from '~/types/assets'
 import { PendingTransaction } from '~/types/transactions'
 import { getRandomLabelColor } from '~/utils/colors'
 

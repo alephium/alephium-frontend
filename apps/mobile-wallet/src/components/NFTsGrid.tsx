@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NFT } from '@alephium/shared'
 import { Image } from 'expo-image'
 import { Skeleton } from 'moti/skeleton'
 import { Dimensions } from 'react-native'
@@ -23,7 +24,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
-import { NFT } from '~/types/assets'
 
 interface NFTsGridProps {
   nfts: NFT[]
