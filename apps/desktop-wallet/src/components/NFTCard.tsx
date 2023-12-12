@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NFT } from '@alephium/shared'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useState } from 'react'
 import styled from 'styled-components'
 
 import Card3D, { card3DHoverTransition } from '@/components/Card3D'
 import Truncate from '@/components/Truncate'
-import { NFT } from '@/types/assets'
 
 interface NFTCardProps {
   nft: NFT
