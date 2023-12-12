@@ -23,13 +23,13 @@ const isDev = require('electron-is-dev')
 const contextMenu = require('electron-context-menu')
 const { autoUpdater } = require('electron-updater')
 
-// Handle deep linking for alephium://
+const CURRECT_VERSION = app.getVersion()
+const IS_RC = CURRECT_VERSION.includes('-rc.')
 
+// Handle deep linking for alephium://
 const ALEPHIUM = 'alephium'
 const ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX = `${ALEPHIUM}://wc`
 const ALEPHIUM_WALLET_CONNECT_URI_PREFIX = '?uri='
-const CURRECT_VERSION = app.getVersion()
-const IS_RC = CURRECT_VERSION.includes('-rc.')
 
 // See https://github.com/alephium/alephium-frontend/issues/176
 const OLD_APP_NAME = 'alephium-wallet'
