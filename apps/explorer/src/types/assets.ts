@@ -25,8 +25,9 @@ export type AssetType = Awaited<ReturnType<typeof client.node.guessStdTokenType>
 
 export type AssetBase = { id: string; type: AssetType }
 
-export type FungibleTokenMetadataBase = Omit<FungibleTokenMetadata, 'totalSupply'> & {
+export type FungibleTokenMetadataBase = Omit<FungibleTokenMetadata, 'totalSupply' | 'decimals'> & {
   verified: boolean
+  decimals: number
   logoURI?: string
 }
 
@@ -35,7 +36,7 @@ export type VerifiedFungibleTokenMetadata = TokenListTokenInfo & {
   verified: true
 }
 
-export type UnverifiedFungibleTokenMetadata = FungibleTokenMetadata & { type: 'fungible'; verified: false }
+export type UnverifiedFungibleTokenMetadata = FungibleTokenMetadataBase & { type: 'fungible'; verified: false }
 
 export type NFTMetadata = NFTMetadataBase & { id: string; type: 'non-fungible'; verified: boolean }
 
@@ -62,7 +63,7 @@ export interface TokenListTokenInfo {
   onChainName?: string
   symbol: string
   onChainSymbol?: string
-  decimals: string
+  decimals: number
   description?: string
   logoURI?: string
 }
