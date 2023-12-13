@@ -23,8 +23,8 @@ const isDev = require('electron-is-dev')
 const contextMenu = require('electron-context-menu')
 const { autoUpdater } = require('electron-updater')
 
-const CURRECT_VERSION = app.getVersion()
-const IS_RC = CURRECT_VERSION.includes('-rc.')
+const CURRENT_VERSION = app.getVersion()
+const IS_RC = CURRENT_VERSION.includes('-rc.')
 
 // Handle deep linking for alephium://
 const ALEPHIUM = 'alephium'
@@ -132,7 +132,7 @@ const template = [
                 label: 'About',
                 click: async () => {
                   dialog.showMessageBox(mainWindow, {
-                    message: `Version ${CURRECT_VERSION}`,
+                    message: `Version ${CURRENT_VERSION}`,
                     title: 'About',
                     type: 'info'
                   })
