@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
@@ -37,7 +37,6 @@ import {
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
 import { useGetPriceQuery } from '@/storage/assets/priceApiSlice'
-import { AddressHash } from '@/types/addresses'
 import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
 import { getAvailableBalance } from '@/utils/addresses'
 import { currencies } from '@/utils/currencies'

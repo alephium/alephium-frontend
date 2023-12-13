@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { formatAmountForDisplay } from '@alephium/shared'
+import { AddressHash, formatAmountForDisplay } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { colord } from 'colord'
 import { partition } from 'lodash'
@@ -38,7 +38,6 @@ import { useAppSelector } from '@/hooks/redux'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
-import { AddressHash } from '@/types/addresses'
 import { AddressTransaction } from '@/types/transactions'
 import { getTransactionInfo, isPendingTx } from '@/utils/transactions'
 

@@ -16,12 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
+
 import AddressBox from '~/components/AddressBox'
 import FlatListScreen, { FlatListScreenProps } from '~/components/layout/FlatListScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { Address, AddressHash } from '~/types/addresses'
+import { Address } from '~/types/addresses'
 
 export interface AddressFlatListScreenProps extends Partial<FlatListScreenProps<Address>> {
   onAddressPress: (addressHash: AddressHash) => void

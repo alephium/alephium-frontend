@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
 import i18n from '@/i18n'
-import { AddressHash } from '@/types/addresses'
 import { ThemeType } from '@/types/settings'
 import { OptionalMessage, SnackbarMessage } from '@/types/snackbar'
 import { PendingTransaction } from '@/types/transactions'

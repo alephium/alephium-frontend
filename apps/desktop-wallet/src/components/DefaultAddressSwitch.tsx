@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -25,7 +26,6 @@ import Select, { SelectOption } from '@/components/Inputs/Select'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { changeDefaultAddress } from '@/storage/addresses/addressesStorageUtils'
-import { AddressHash } from '@/types/addresses'
 
 interface AddressOption {
   label: string

@@ -21,6 +21,7 @@ import { explorer } from '@alephium/web3'
 import { Optional } from '@alephium/web3'
 import { AddressBalance, Output, Token } from '@alephium/web3/dist/src/api/api-explorer'
 
+import { AddressHash } from './address'
 import { uniq } from './utils'
 
 export type TokenBalances = AddressBalance & { id: Token['id'] }
@@ -160,3 +161,18 @@ export const isSwap = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[])
 
   return !allAmountsArePositive && !allAmountsAreNegative
 }
+
+export const getTransactionsOfAddress = (transactions: explorer.Transaction[], addressHash: AddressHash) =>
+  transactions.filter(
+    (tx) =>
+      tx.inputs?.some((input) => input.address === addressHash) ||
+      tx.outputs?.some((output) => output.address === addressHash)
+  )
+
+export const extractNewTransactionHashes = (
+  incomingTransactions: explorer.Transaction[],
+  existingTransactions: explorer.Transaction['hash'][]
+): explorer.Transaction['hash'][] =>
+  incomingTransactions
+    .filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
+    .map((tx) => tx.hash)

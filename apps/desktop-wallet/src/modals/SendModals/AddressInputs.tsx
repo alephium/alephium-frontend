@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { AlbumIcon, ContactIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -36,7 +37,7 @@ import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import InputsSection from '@/modals/SendModals/InputsSection'
 import { selectAllContacts, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
-import { Address, AddressHash } from '@/types/addresses'
+import { Address } from '@/types/addresses'
 import { filterContacts } from '@/utils/contacts'
 
 interface AddressInputsProps {

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
+import { AddressHash, Asset } from '@alephium/shared'
 import { ChevronRight } from 'lucide-react'
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -44,7 +44,6 @@ import {
   makeSelectAddressesConfirmedTransactions,
   makeSelectAddressesPendingTransactions
 } from '@/storage/transactions/transactionsSelectors'
-import { AddressHash } from '@/types/addresses'
 import { AddressConfirmedTransaction, Direction } from '@/types/transactions'
 import { getTransactionInfo } from '@/utils/transactions'
 

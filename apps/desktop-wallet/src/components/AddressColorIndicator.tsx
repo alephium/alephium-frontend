@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import styled from 'styled-components'
 
 import DotIcon from '@/components/DotIcon'
 import { useAppSelector } from '@/hooks/redux'
 import { ReactComponent as IndicatorLogo } from '@/images/main_address_badge.svg'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
-import { AddressHash } from '@/types/addresses'
 
 interface AddressColorIndicatorProps {
   addressHash: AddressHash
