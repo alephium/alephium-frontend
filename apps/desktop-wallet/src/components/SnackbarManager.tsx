@@ -83,6 +83,7 @@ const SnackbarManagerContainer = styled.div`
 
 const SnackbarPopup = styled(motion.div)`
   margin: var(--spacing-3);
+  text-align: center;
   min-width: 200px;
   padding: var(--spacing-4) var(--spacing-3);
   color: ${({ theme }) => theme.font.primary};
