@@ -111,7 +111,7 @@ const TransactionList = ({
     async () =>
       singleAddress
         ? dispatch(syncAddressTransactionsNextPage(addresses[0].hash))
-        : dispatch(syncAllAddressesTransactionsNextPage()),
+        : dispatch(syncAllAddressesTransactionsNextPage({ minTxs: 10 })),
     [addresses, dispatch, singleAddress]
   )
 

@@ -16,13 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  ADDRESSES_QUERY_LIMIT,
-  AddressHash,
-  extractNewTransactionHashes,
-  getHumanReadableError,
-  getTransactionsOfAddress
-} from '@alephium/shared'
+import { ADDRESSES_QUERY_LIMIT, AddressHash, getHumanReadableError } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
@@ -126,38 +120,43 @@ export const syncAddressTransactionsNextPage = createAsyncThunk(
 
 export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   'addresses/syncAllAddressesTransactionsNextPage',
-  async (_, { getState, dispatch }): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
+  async (
+    payload: { minTxs: number } | undefined,
+    { getState, dispatch }
+  ): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
     dispatch(transactionsLoadingStarted())
 
     const state = getState() as RootState
     const addresses = selectAllAddresses(state)
+    const minimumNewTransactionsNeeded = payload?.minTxs ?? 1
 
     let nextPageToLoad = state.confirmedTransactions.pageLoaded + 1
-    let newTransactionsFound = false
-    let transactions: explorer.Transaction[] = []
+    let enoughNewTransactionsFound = false
+    let newTransactions: explorer.Transaction[] = []
 
-    while (!newTransactionsFound) {
+    while (!enoughNewTransactionsFound) {
       const results = await Promise.all(
         chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
           fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad)
         )
       )
 
-      transactions = results.flat()
+      const nextPageTransactions = results.flat()
 
-      if (transactions.length === 0) break
+      if (nextPageTransactions.length === 0) break
 
-      newTransactionsFound = addresses.some((address) => {
-        const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
-        const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
+      newTransactions = newTransactions.concat(
+        nextPageTransactions.filter(
+          (newTx) =>
+            !addresses.some((address) => address.transactions.some((existingTxHash) => existingTxHash === newTx.hash))
+        )
+      )
 
-        return newTxHashes.length > 0
-      })
-
+      enoughNewTransactionsFound = newTransactions.length >= minimumNewTransactionsNeeded
       nextPageToLoad += 1
     }
 
-    return { pageLoaded: nextPageToLoad - 1, transactions }
+    return { pageLoaded: nextPageToLoad - 1, transactions: newTransactions }
   }
 )
 
