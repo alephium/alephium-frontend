@@ -16,12 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import {
+  convertToPositive,
+  formatAmountForDisplay,
+  formatFiatAmountForDisplay,
+  getLocaleSeparators
+} from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { discreetModeToggled } from '@/storage/settings/settingsActions'
+
+const { decimalsSeparator } = getLocaleSeparators()
 
 interface AmountProps {
   value?: bigint | number
@@ -85,7 +92,7 @@ const Amount = ({
     }
   }
 
-  const [integralPart, fractionalPart] = amount.split('.')
+  const [integralPart, fractionalPart] = amount.split(decimalsSeparator)
 
   return (
     <AmountStyled
@@ -101,11 +108,16 @@ const Amount = ({
           {fadeDecimals ? (
             <>
               <span>{integralPart}</span>
-              {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+              {fractionalPart && (
+                <Decimals>
+                  {decimalsSeparator}
+                  {fractionalPart}
+                </Decimals>
+              )}
               {quantitySymbol && <span>{quantitySymbol}</span>}
             </>
           ) : fractionalPart ? (
-            `${integralPart}.${fractionalPart}`
+            `${integralPart}${decimalsSeparator}${fractionalPart}`
           ) : (
             integralPart
           )}

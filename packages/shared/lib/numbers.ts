@@ -22,6 +22,23 @@ export const MAGNITUDE_SYMBOL = ['K', 'M', 'B', 'T']
 
 const AMOUNT_SUFFIXES = ['', ...MAGNITUDE_SYMBOL]
 
+type LocaleSeparators = {
+  thousandsSeparator: string
+  decimalsSeparator: string
+}
+
+export const getLocaleSeparators = (): LocaleSeparators => {
+  const number = 1234.5
+  const formattedNumber = number.toLocaleString()
+
+  return {
+    thousandsSeparator: formattedNumber[1],
+    decimalsSeparator: formattedNumber[formattedNumber.length - 2]
+  }
+}
+
+const { thousandsSeparator, decimalsSeparator } = getLocaleSeparators()
+
 export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
 const getNumberOfTrailingZeros = (numString: string) => {
@@ -43,13 +60,13 @@ const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) =>
   const numStringWithoutTrailingZeros = numString.substring(0, numString.length - numberOfZeros)
 
   if (!minNumberOfDecimals)
-    return numStringWithoutTrailingZeros.endsWith('.')
+    return numStringWithoutTrailingZeros.endsWith(decimalsSeparator)
       ? numStringWithoutTrailingZeros.slice(0, -1)
       : numStringWithoutTrailingZeros
 
   if (minNumberOfDecimals < 0) throw 'minNumberOfDecimals should be positive'
 
-  const indexOfPoint = numStringWithoutTrailingZeros.indexOf('.')
+  const indexOfPoint = numStringWithoutTrailingZeros.indexOf(decimalsSeparator)
   if (indexOfPoint === -1) throw 'numString should contain decimal point'
 
   const numberOfDecimals = numStringWithoutTrailingZeros.length - 1 - indexOfPoint
@@ -126,8 +143,8 @@ const formatFullPrecision = (amount: bigint, amountDecimals: number, numberOfDec
   const numNonDecimals = baseNumString.length - amountDecimals
   const amountNumberString =
     numNonDecimals > 0
-      ? baseNumString.substring(0, numNonDecimals) + '.' + baseNumString.substring(numNonDecimals)
-      : '0.' + produceZeros(-numNonDecimals) + baseNumString
+      ? baseNumString.substring(0, numNonDecimals) + decimalsSeparator + baseNumString.substring(numNonDecimals)
+      : `0${decimalsSeparator}` + produceZeros(-numNonDecimals) + baseNumString
 
   return removeTrailingZeros(amountNumberString, numberOfDecimalsToDisplay)
 }
@@ -207,7 +224,7 @@ export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_
 
   const numberOfZerosToAdd = decimals - numberOfDecimals
 
-  const cleanedAmount = amountToProcess.replace('.', '') + produceZeros(numberOfZerosToAdd)
+  const cleanedAmount = amountToProcess.replace(decimalsSeparator, '') + produceZeros(numberOfZerosToAdd)
 
   return BigInt(cleanedAmount)
 }
@@ -221,10 +238,10 @@ export const addApostrophes = (numString: string): string => {
     return numString
   }
 
-  const parts = numString.split('.')
+  const parts = numString.split(decimalsSeparator)
   const wholePart = parts[0]
   const fractionalPart = parts.length > 1 ? parts[1] : ''
-  const wholePartWithApostrophes = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, "'")
+  const wholePartWithApostrophes = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSeparator)
 
   return `${wholePartWithApostrophes}${fractionalPart ? `.${fractionalPart}` : ''}`
 }
@@ -239,8 +256,8 @@ export const toHumanReadableAmount = (amount: bigint, decimals = NUM_OF_ZEROS_IN
   const positionForDot = amountStr.length - decimals
   const withDotAdded =
     positionForDot > 0
-      ? amountStr.substring(0, positionForDot) + '.' + amountStr.substring(positionForDot)
-      : '0.' + produceZeros(decimals - amountStr.length) + amountStr
+      ? amountStr.substring(0, positionForDot) + decimalsSeparator + amountStr.substring(positionForDot)
+      : `0${decimalsSeparator}` + produceZeros(decimals - amountStr.length) + amountStr
 
   return removeTrailingZeros(withDotAdded)
 }
@@ -256,15 +273,15 @@ export const exponentialToLiteral = (str: string): string => {
   if (exponent.includes('-')) {
     const e = Number(exponent.slice(1))
 
-    response = base.split('.')[0] + (base.split('.')[1] || '').substring(0, e)
-    response = '0.' + '0'.repeat(e - 1) + response.replace('.', '')
+    response = base.split(decimalsSeparator)[0] + (base.split(decimalsSeparator)[1] || '').substring(0, e)
+    response = `0${decimalsSeparator}` + '0'.repeat(e - 1) + response.replace(decimalsSeparator, '')
   } else {
     const e = Number(exponent)
-    const decimal = base.split('.')[1] || ''
+    const decimal = base.split(decimalsSeparator)[1] || ''
 
-    response = base.split('.')[0] + decimal.substring(0, e)
+    response = base.split(decimalsSeparator)[0] + decimal.substring(0, e)
     if (decimal.length > e) {
-      response += '.' + decimal.substring(e)
+      response += decimalsSeparator + decimal.substring(e)
     } else if (e > decimal.length) {
       response += '0'.repeat(e - decimal.length)
     }
@@ -286,7 +303,7 @@ export const toExponential = (num: number | string, fractionDigits = 0, truncate
 
   const expStr = numValue.toExponential()
   const [base, exponent] = expStr.split('e')
-  const decimalIndex = base.indexOf('.')
+  const decimalIndex = base.indexOf(decimalsSeparator)
 
   let returnedBase = base
 
@@ -303,7 +320,7 @@ export const aboveExpLimit = (num: number | string): boolean => {
   const [base, exponent] = str.toLowerCase().split('e')
 
   if (!exponent) {
-    const numStr = str.split('.')[0]
+    const numStr = str.split(decimalsSeparator)[0]
 
     if (numStr.length > baseStr.length) {
       return true
@@ -320,7 +337,7 @@ export const aboveExpLimit = (num: number | string): boolean => {
   if (isNegativeExponent) {
     return false
   } else {
-    const baseWithoutDecimal = base.split('.')[0]
+    const baseWithoutDecimal = base.split(decimalsSeparator)[0]
     const comparisonLength = baseWithoutDecimal.length + exponentValue
 
     if (comparisonLength > baseStr.length) {
@@ -350,7 +367,7 @@ export const calculateAmountWorth = (
 const isPositiveInt = (number: number) => Number.isInteger(number) && number >= 0
 
 export const getNumberOfDecimals = (amount: string): number =>
-  amount.includes('.') ? amount.length - 1 - amount.indexOf('.') : 0
+  amount.includes(decimalsSeparator) ? amount.length - 1 - amount.indexOf(decimalsSeparator) : 0
 
 export const convertToPositive = (num: bigint): bigint => (num < 0 ? num * BigInt(-1) : num)
 
