@@ -334,7 +334,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             autoHide: false
           })
         } else {
-          showExceptionToast(e, 'Could not build transaction')
+          if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method))
+            showExceptionToast(e, 'Could not build transaction')
           posthog?.capture('Error', { message: 'Could not build transaction' })
           console.error(e)
           respondToWalletConnectWithError(requestEvent, {
