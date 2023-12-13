@@ -33,11 +33,11 @@ import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/pages/AddressInfoPage/NFTDetailsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { NFTMetadataWithFile } from '@/types/assets'
+import { NFTMetadata } from '@/types/assets'
 import { OnOff } from '@/types/generics'
 
 interface NFTListProps {
-  nfts: NFTMetadataWithFile[]
+  nfts: NFTMetadata[]
   isLoading?: boolean
 }
 
@@ -127,7 +127,7 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
 }
 
 interface NFTListComponentProps {
-  nfts?: NFTMetadataWithFile[]
+  nfts?: NFTMetadata[]
   onClick: (nftId: string) => void
 }
 
@@ -138,7 +138,7 @@ const NFTListComponent = ({ nfts, onClick }: NFTListComponentProps) => (
 )
 
 interface NFTItemProps {
-  nft: NFTMetadataWithFile
+  nft: NFTMetadata
   onClick: () => void
 }
 
