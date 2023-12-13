@@ -34,7 +34,8 @@ import {
   syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage,
-  syncingAddressDataStarted
+  syncingAddressDataStarted,
+  transactionsLoadingStarted
 } from '@/storage/addresses/addressesActions'
 import { addressesAdapter, balanceHistoryAdapter } from '@/storage/addresses/addressesAdapters'
 import { receiveTestnetTokens } from '@/storage/global/globalActions'
@@ -72,6 +73,9 @@ const addressesSlice = createSlice({
         state.loadingBalances = true
         state.loadingTransactions = true
         state.loadingTokens = true
+      })
+      .addCase(transactionsLoadingStarted, (state) => {
+        state.loadingTransactions = true
       })
       .addCase(addressSettingsSaved, (state, action) => {
         const { addressHash, settings } = action.payload
