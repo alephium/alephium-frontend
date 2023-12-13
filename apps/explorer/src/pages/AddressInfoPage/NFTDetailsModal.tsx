@@ -29,10 +29,10 @@ import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { NFTMetadataWithFile } from '@/types/assets'
+import { NFTMetadata } from '@/types/assets'
 
 interface NFTDetailsModalProps extends Omit<ModalProps, 'children'> {
-  nft?: NFTMetadataWithFile
+  nft?: NFTMetadata
   collection?: NFTCollectionUriMetaData
 }
 

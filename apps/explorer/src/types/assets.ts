@@ -38,13 +38,13 @@ export type VerifiedFungibleTokenMetadata = TokenListTokenInfo & {
 
 export type UnverifiedFungibleTokenMetadata = FungibleTokenMetadataBase & { type: 'fungible'; verified: false }
 
-export type NFTMetadata = NFTMetadataBase & { id: string; type: 'non-fungible'; verified: boolean }
+export type NFTMetadata = NFTMetadataBase & { id: string; type: 'non-fungible'; file?: NFTFile; verified: boolean }
 
-export type NFTMetadataWithFile = NFTMetadata & { file?: NFTFile }
+export type NFTMetadataWithFile = Omit<NFTMetadata, 'file'> & { file: NFTFile }
 
-export type UnverifiedNFTMetadata = Omit<NFTMetadata, 'verified'> & { verified: false }
+export type UnverifiedNFTMetadata = Omit<NFTMetadata, 'verified'> & { file?: NFTFile; verified: false }
 
-export type UnverifiedNFTMetadataWithFile = Omit<NFTMetadata, 'verified'> & { file?: NFTFile; verified: false }
+export type UnverifiedNFTMetadataWithFile = Omit<UnverifiedNFTMetadata, 'file'> & { file: NFTFile }
 
 export type NumericTokenBalance = { balance: bigint; lockedBalance: bigint }
 
