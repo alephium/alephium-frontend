@@ -155,35 +155,35 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
 
     const state = getState() as RootState
     const addresses = selectAllAddresses(state)
+    const minimumNewTransactionsNeeded = payload?.minTxs ?? 1
 
     let nextPageToLoad = state.confirmedTransactions.pageLoaded + 1
-    let newTransactionsFound = false
-    let transactions: explorer.Transaction[] = []
+    let enoughNewTransactionsFound = false
+    let newTransactions: explorer.Transaction[] = []
 
-    while (!newTransactionsFound) {
+    while (!enoughNewTransactionsFound) {
       const results = await Promise.all(
         chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
           fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad)
         )
       )
 
-      transactions = results.flat()
+      const nextPageTransactions = results.flat()
 
-      if (transactions.length === 0) break
+      if (nextPageTransactions.length === 0) break
 
-      const newTransactions = addresses.filter((address) => {
-        const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
-        const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
+      newTransactions = newTransactions.concat(
+        nextPageTransactions.filter(
+          (newTx) =>
+            !addresses.some((address) => address.transactions.some((existingTxHash) => existingTxHash === newTx.hash))
+        )
+      )
 
-        return newTxHashes.length > 0
-      })
-
-      newTransactionsFound = newTransactions.length > (payload?.minTxs ?? 0)
-
+      enoughNewTransactionsFound = newTransactions.length >= minimumNewTransactionsNeeded
       nextPageToLoad += 1
     }
 
-    return { pageLoaded: nextPageToLoad - 1, transactions }
+    return { pageLoaded: nextPageToLoad - 1, transactions: newTransactions }
   }
 )
 
