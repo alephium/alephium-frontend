@@ -118,7 +118,7 @@ export function MultiSelectOptionsModal<T>({
       }
     >
       <Options>
-        {options.map((option, index) => {
+        {options.map((option) => {
           const isSelected = selectedOptions.some((o) => getOptionId(o) === getOptionId(option))
           return (
             <OptionItem
