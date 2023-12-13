@@ -59,6 +59,7 @@ const OptionMainContent = styled.div`
   font-weight: var(--fontWeight-semiBold);
   background-color: ${({ theme }) => theme.bg.primary};
   padding: var(--spacing-3);
+  gap: var(--spacing-3);
 `
 
 const OptionSecondaryContent = styled.div`
@@ -66,15 +67,14 @@ const OptionSecondaryContent = styled.div`
   padding: var(--spacing-3);
 `
 
-const CheckMarkContainer = styled.div`
-  margin-left: var(--spacing-3);
-`
+const CheckMarkContainer = styled.div``
 
 const OptionContentWrapper = styled.div<{ contentDirection: SelectOptionItemContentProps['contentDirection'] }>`
   flex: 1;
   display: flex;
   flex-direction: ${({ contentDirection }) => contentDirection};
   justify-content: space-between;
+  min-width: 0;
 
   &:hover {
     > div {
