@@ -79,8 +79,6 @@ const Amount = ({
       usedSuffix = assetMetadata.symbol
     }
 
-    console.log(decimals)
-
     if (value !== undefined) {
       amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision, smartRounding })
 
