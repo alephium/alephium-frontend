@@ -76,15 +76,19 @@ const Header = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
+  min-width: 0;
 `
 
 const Group = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-weight: 400;
+  display: flex;
+  flex-shrink: 0;
 `
 
 const AddressBadgeContainer = styled.div`
   flex: 1;
+  min-width: 0;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
