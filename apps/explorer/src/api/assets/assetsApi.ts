@@ -102,7 +102,7 @@ export const assetsQueries = createQueriesCollection({
       queryKey: ['unverifiedFungibleToken', assetId],
       queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
         fungibleTokensMetadata.fetch(assetId).then((r) => {
-          const parsedDecimals: number = parseInt(r.decimals)
+          const parsedDecimals = parseInt(r.decimals)
 
           return {
             ...r,

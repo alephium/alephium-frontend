@@ -29,7 +29,6 @@ interface Card3DProps {
   onPointerMove?: (pointerX: number, pointerY: number) => void
   onCardHover?: (isHovered: boolean) => void
   onCardFlip?: (isFlipped: boolean) => void
-  shouldFlip?: boolean
   className?: string
 }
 
@@ -39,16 +38,7 @@ export const card3DHoverTransition: Transition = {
   damping: 100
 }
 
-const Card3D = ({
-  frontFace,
-  backFace,
-  onClick,
-  onPointerMove,
-  onCardFlip,
-  onCardHover,
-  shouldFlip = true,
-  className
-}: Card3DProps) => {
+const Card3D = ({ frontFace, backFace, onClick, onPointerMove, onCardFlip, onCardHover, className }: Card3DProps) => {
   const theme = useTheme()
   const [isHovered, setIsHovered] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
@@ -79,7 +69,7 @@ const Card3D = ({
 
   const handleClick = () => {
     if (onClick) onClick()
-    if (shouldFlip) {
+    if (backFace) {
       setIsFlipped((p) => !p)
     }
   }
