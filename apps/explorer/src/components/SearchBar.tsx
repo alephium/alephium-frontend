@@ -24,7 +24,8 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useSnackbar } from '@/hooks/useSnackbar'
-import { checkAddressValidity, checkHexStringValidity } from '@/utils/strings'
+import { checkHexStringValidity } from '@/utils/strings'
+import { isAddressValid } from '@alephium/shared'
 
 interface SearchBarProps {
   className?: string
@@ -88,7 +89,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
         displaySnackbar({ text: 'There seems to be an error in the hash format.', type: 'info' })
       }
     } else {
-      if (checkAddressValidity(word)) {
+      if (isAddressValid(word)) {
         redirect(`/addresses/${word}`)
       } else {
         displaySnackbar({ text: 'There seems to be an error in the address format.', type: 'info' })

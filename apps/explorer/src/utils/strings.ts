@@ -21,8 +21,6 @@ export const smartHash = (hash: string) => {
   else return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
 }
 
-export const checkAddressValidity = (addressToTest: string) => /^[1-9A-HJ-NP-Za-km-z]+$/.test(addressToTest)
-
 export const checkHexStringValidity = (stringToTest: string) => /^[a-fA-F0-9]+$/.test(stringToTest)
 
 export const formatNumberForDisplay = (
