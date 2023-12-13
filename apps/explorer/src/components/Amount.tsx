@@ -20,6 +20,7 @@ import {
   convertToPositive,
   formatAmountForDisplay,
   formatFiatAmountForDisplay,
+  getLocaleSeparators,
   MAGNITUDE_SYMBOL
 } from '@alephium/shared'
 import styled from 'styled-components'
@@ -45,6 +46,8 @@ interface AmountProps {
   displaySign?: boolean
   className?: string
 }
+
+const { decimalsSeparator } = getLocaleSeparators()
 
 const Amount = ({
   value,
@@ -91,7 +94,7 @@ const Amount = ({
     amount = getAmount({ value, fullPrecision: true })
   }
 
-  const [integralPart, fractionalPart] = amount.split('.')
+  const [integralPart, fractionalPart] = amount.split(decimalsSeparator)
 
   return (
     <span className={className} tabIndex={tabIndex ?? -1}>
@@ -110,11 +113,16 @@ const Amount = ({
             {fadeDecimals ? (
               <>
                 <span>{integralPart}</span>
-                {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+                {fractionalPart && (
+                  <Decimals>
+                    {decimalsSeparator}
+                    {fractionalPart}
+                  </Decimals>
+                )}
                 {quantitySymbol && <span>{quantitySymbol}</span>}
               </>
             ) : fractionalPart ? (
-              `${integralPart}.${fractionalPart}`
+              `${integralPart}${decimalsSeparator}${fractionalPart}`
             ) : (
               integralPart
             )}

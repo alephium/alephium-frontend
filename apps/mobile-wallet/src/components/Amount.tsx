@@ -16,7 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import {
+  convertToPositive,
+  formatAmountForDisplay,
+  formatFiatAmountForDisplay,
+  getLocaleSeparators
+} from '@alephium/shared'
 import { StyleProp, TextStyle } from 'react-native'
 
 import { useAppSelector } from '~/hooks/redux'
@@ -39,6 +44,8 @@ export interface AmountProps extends AppTextProps {
   useTinyAmountShorthand?: boolean
   style?: StyleProp<TextStyle>
 }
+
+const { decimalsSeparator } = getLocaleSeparators()
 
 const Amount = ({
   value,
@@ -85,9 +92,9 @@ const Amount = ({
     }
   }
 
-  let [integralPart, fractionalPart] = amount.split('.')
+  let [integralPart, fractionalPart] = amount.split(decimalsSeparator)
 
-  if (useTinyAmountShorthand && amount.startsWith('0.0000')) {
+  if (useTinyAmountShorthand && amount.startsWith(`0${decimalsSeparator}0000`)) {
     integralPart = '< 0'
     fractionalPart = '0001'
   }
@@ -109,7 +116,7 @@ const Amount = ({
           <AppText {...props} color={color}>
             {integralPart}
           </AppText>
-          {fractionalPart && <AppText {...props} color={fadedColor}>{`.${fractionalPart}`}</AppText>}
+          {fractionalPart && <AppText {...props} color={fadedColor}>{`${decimalsSeparator}${fractionalPart}`}</AppText>}
           {quantitySymbol && <AppText {...props} color={fadedColor}>{` ${quantitySymbol} `}</AppText>}
           {!isUnknownToken && (
             <AppText {...props} color={fadeSuffix ? 'secondary' : color}>{` ${suffix || 'ALPH'}`}</AppText>

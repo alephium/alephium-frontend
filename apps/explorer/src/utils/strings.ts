@@ -16,6 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getLocaleSeparators } from '@alephium/shared'
+
+const { decimalsSeparator } = getLocaleSeparators()
+
 export const smartHash = (hash: string) => {
   if (hash.length <= 16) return hash
   else return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
@@ -45,9 +49,12 @@ export const formatNumberForDisplay = (
 
   const denominator = maxDecimals === 1 ? 10 : maxDecimals === 2 ? 100 : 1000
   const preciseNumber = (Math.round((formatedNumber + Number.EPSILON) * denominator) / denominator).toString()
-  const numberParts = preciseNumber.split('.')
+  const numberParts = preciseNumber.split(decimalsSeparator)
   const numberInteger = numberParts[0]
-  const numberDecimal = maxDecimals !== 0 ? (numberParts.length > 1 && `.${numberParts[1]}`) || '.0' : undefined
+  const numberDecimal =
+    maxDecimals !== 0
+      ? (numberParts.length > 1 && `${decimalsSeparator}${numberParts[1]}`) || `${decimalsSeparator}0`
+      : undefined
 
   return [numberInteger, numberDecimal, suffixes[suffixIndex], unit]
 }
