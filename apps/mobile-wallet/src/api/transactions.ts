@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount } from '@alephium/shared'
+import { AddressHash, AssetAmount } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
 import client from '~/api/client'
 import { store } from '~/store/store'
-import { Address, AddressHash } from '~/types/addresses'
+import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'

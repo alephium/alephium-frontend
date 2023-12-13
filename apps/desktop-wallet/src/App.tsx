@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { AnimatePresence } from 'framer-motion'
 import { difference } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
@@ -51,7 +52,6 @@ import {
 } from '@/storage/transactions/transactionsStorageUtils'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
-import { AddressHash } from '@/types/addresses'
 import { AlephiumWindow } from '@/types/window'
 import { useInterval } from '@/utils/hooks'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'

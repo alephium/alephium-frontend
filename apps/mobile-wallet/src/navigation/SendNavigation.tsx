@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -24,7 +25,6 @@ import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
 import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
 import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
 import VerifyScreen from '~/screens/SendReceive/Send/VerifyScreen'
-import { AddressHash } from '~/types/addresses'
 
 export interface SendNavigationParamList extends ParamListBase {
   DestinationScreen: { fromAddressHash?: AddressHash }

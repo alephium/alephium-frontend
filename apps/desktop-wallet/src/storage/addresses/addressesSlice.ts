@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash, extractNewTransactionHashes, getTransactionsOfAddress } from '@alephium/shared'
 import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 import { uniq } from 'lodash'
@@ -39,7 +40,6 @@ import { addressesAdapter, balanceHistoryAdapter } from '@/storage/addresses/add
 import { receiveTestnetTokens } from '@/storage/global/globalActions'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@/storage/settings/networkActions'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
-import { extractNewTransactionHashes, getTransactionsOfAddress } from '@/storage/transactions/transactionsUtils'
 import {
   activeWalletDeleted,
   walletLocked,
@@ -47,7 +47,7 @@ import {
   walletSwitched,
   walletUnlocked
 } from '@/storage/wallets/walletActions'
-import { Address, AddressBase, AddressesState, AddressHash } from '@/types/addresses'
+import { Address, AddressBase, AddressesState } from '@/types/addresses'
 import { UnlockedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 
@@ -212,7 +212,7 @@ const addressesSlice = createSlice({
         const addresses = getAddresses(state)
 
         const updatedAddresses = addresses.map((address) => {
-          const transactionsOfAddress = getTransactionsOfAddress(transactions, address)
+          const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
           const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
 
           return {

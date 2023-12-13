@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -25,7 +26,6 @@ import ClipboardButton from '@/components/Buttons/ClipboardButton'
 import HashEllipsed from '@/components/HashEllipsed'
 import { useAppSelector } from '@/hooks/redux'
 import { makeSelectContactByAddress, selectAddressByHash } from '@/storage/addresses/addressesSelectors'
-import { AddressHash } from '@/types/addresses'
 
 interface AddressBadgeProps {
   addressHash: AddressHash

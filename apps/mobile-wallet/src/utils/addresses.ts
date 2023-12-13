@@ -16,14 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash, getTransactionsOfAddress } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
 
 import { persistAddressesMetadata } from '~/persistent-storage/wallet'
-import { getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
-import { Address, AddressDiscoveryGroupData, AddressHash, AddressPartial } from '~/types/addresses'
+import { Address, AddressDiscoveryGroupData, AddressPartial } from '~/types/addresses'
 import { AddressTransaction, PendingTransaction } from '~/types/transactions'
 import { showToast, ToastDuration } from '~/utils/layout'
 

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AssetAmount } from '@alephium/shared'
+import { AddressHash, AssetAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -53,7 +53,7 @@ import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletCo
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAddressIds } from '~/store/addressesSlice'
-import { Address, AddressHash } from '~/types/addresses'
+import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'

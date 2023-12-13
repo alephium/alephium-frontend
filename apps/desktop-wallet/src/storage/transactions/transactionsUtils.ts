@@ -16,10 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calcTxAmountsDeltaForAddress } from '@alephium/shared'
+import { AddressHash, calcTxAmountsDeltaForAddress } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 
-import { Address, AddressHash } from '@/types/addresses'
 import { PendingTransaction } from '@/types/transactions'
 
 // It can currently only take care of sending transactions.
@@ -48,18 +47,3 @@ export const convertUnconfirmedTxToPendingTx = (
     status: 'pending'
   }
 }
-
-export const extractNewTransactionHashes = (
-  incomingTransactions: explorer.Transaction[],
-  existingTransactions: explorer.Transaction['hash'][]
-): explorer.Transaction['hash'][] =>
-  incomingTransactions
-    .filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
-    .map((tx) => tx.hash)
-
-export const getTransactionsOfAddress = (transactions: explorer.Transaction[], address: Address) =>
-  transactions.filter(
-    (tx) =>
-      tx.inputs?.some((input) => input.address === address.hash) ||
-      tx.outputs?.some((output) => output.address === address.hash)
-  )

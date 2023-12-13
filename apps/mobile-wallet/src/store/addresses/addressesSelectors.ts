@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { contactsAdapter } from '~/store/addresses/addressesAdapter'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
-import { AddressHash } from '~/types/addresses'
 
 // TODO: Same as in desktop wallet
 export const selectHaveHistoricBalancesLoaded = createSelector(selectAllAddresses, (addresses) =>

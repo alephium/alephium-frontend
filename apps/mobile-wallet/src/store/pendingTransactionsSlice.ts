@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createEntityAdapter, createSelector, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
@@ -27,7 +28,6 @@ import {
   transactionSent
 } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
-import { AddressHash } from '~/types/addresses'
 import { AddressPendingTransaction, PendingTransaction } from '~/types/transactions'
 import { selectAddressTransactions, selectContactPendingTransactions } from '~/utils/addresses'
 

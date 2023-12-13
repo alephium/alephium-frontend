@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import {
+  ADDRESSES_QUERY_LIMIT,
+  AddressHash,
+  extractNewTransactionHashes,
+  getHumanReadableError,
+  getTransactionsOfAddress
+} from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
@@ -34,11 +40,9 @@ import client from '@/api/client'
 import i18n from '@/i18n'
 import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { RootState } from '@/storage/store'
-import { extractNewTransactionHashes, getTransactionsOfAddress } from '@/storage/transactions/transactionsUtils'
 import {
   Address,
   AddressBase,
-  AddressHash,
   AddressSettings,
   AddressTransactionsSyncResult,
   BalanceHistory,
@@ -133,9 +137,10 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
     let transactions: explorer.Transaction[] = []
 
     while (!newTransactionsFound) {
-      // NOTE: Explorer backend limits this query to 80 addresses
       const results = await Promise.all(
-        chunk(addresses, 80).map((addressesChunk) => fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad))
+        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
+          fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad)
+        )
       )
 
       transactions = results.flat()
@@ -143,7 +148,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
       if (transactions.length === 0) break
 
       newTransactionsFound = addresses.some((address) => {
-        const transactionsOfAddress = getTransactionsOfAddress(transactions, address)
+        const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
         const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
 
         return newTxHashes.length > 0
