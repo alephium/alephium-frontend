@@ -16,8 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
-
-import { NFT } from '~/types/assets'
+import { Asset, NFT } from '@alephium/shared'
 
 export const isNft = (item: Asset | NFT): item is NFT => (item as NFT).collectionId !== undefined
