@@ -43,7 +43,7 @@ interface NFTListProps {
 
 const NFTList = ({ nfts, isLoading }: NFTListProps) => {
   const { t } = useTranslation()
-  const [consultedNftId, setConsultedNftId] = useState<string | undefined>(undefined)
+  const [consultedNftId, setConsultedNftId] = useState<string>()
   const [isCollectionGroupingActive, setIsCollectionGroupingActive] = useStateWithLocalStorage<OnOff>(
     'NFTCollectionGrouping',
     'off'
@@ -55,7 +55,7 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
   const { undefined: undefinedCollectionNfts, ...rest } = NFTsGroupedByCollection
   NFTsGroupedByCollection = undefinedCollectionNfts ? { ...rest, undefined: undefinedCollectionNfts } : rest // Move undefined collection to the end
 
-  const collectionIds = Object.keys(NFTsGroupedByCollection).filter((id) => id !== 'undefined')
+  const collectionIds = Object.keys(rest)
 
   const { data: collectionsMatadata } = useQueriesData(
     collectionIds.map((id) => ({
@@ -139,11 +139,12 @@ const NFTListComponent = ({ nfts, onClick }: NFTListComponentProps) => (
 
 interface NFTItemProps {
   nft: NFTMetadataWithFile
-  onClick: (nftId: string) => void
+  onClick: () => void
 }
 
 const NFTItem = ({ nft, onClick }: NFTItemProps) => {
   const [isHovered, setIsHovered] = useState(false)
+  const { t } = useTranslation()
 
   const y = useMotionValue(0.5)
   const x = useMotionValue(0.5)
@@ -168,8 +169,7 @@ const NFTItem = ({ nft, onClick }: NFTItemProps) => {
     <NFTCardStyled
       onPointerMove={handlePointerMove}
       onCardHover={setIsHovered}
-      onClick={() => onClick(nft.id)}
-      shouldFlip={false}
+      onClick={onClick}
       frontFace={
         <FrontFace>
           <NFTPictureContainer>
@@ -177,7 +177,7 @@ const NFTItem = ({ nft, onClick }: NFTItemProps) => {
             {nft.file?.image ? (
               <NFTPicture
                 style={{
-                  backgroundImage: `url(${nft.file?.image})`,
+                  backgroundImage: `url(${nft.file.image})`,
                   x: imagePosX,
                   y: imagePosY,
                   scale: 1.5
@@ -189,14 +189,14 @@ const NFTItem = ({ nft, onClick }: NFTItemProps) => {
               />
             ) : (
               <NFTPicture style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <MissingMetadataText>Missing image</MissingMetadataText>
+                <MissingMetadataText>{t('Missing image')}</MissingMetadataText>
               </NFTPicture>
             )}
           </NFTPictureContainer>
           {nft.file?.name ? (
-            <NFTName>{nft.file?.name}</NFTName>
+            <NFTName>{nft.file.name}</NFTName>
           ) : (
-            <MissingMetadataText>Missing metadata</MissingMetadataText>
+            <MissingMetadataText>{t('Missing metadata')}</MissingMetadataText>
           )}
         </FrontFace>
       }
