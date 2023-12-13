@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isAddressValid } from '@alephium/shared'
+import { addressFromPublicKey } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import React, { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,7 +26,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useSnackbar } from '@/hooks/useSnackbar'
-import { checkAddressValidity, checkHexStringValidity } from '@/utils/strings'
+import { checkHexStringValidity } from '@/utils/strings'
 
 interface SearchBarProps {
   className?: string
@@ -84,11 +86,19 @@ const SearchBar = ({ className }: SearchBarProps) => {
         } else {
           redirect(`/transactions/${word}`)
         }
+      } else if (word.length === 66) {
+        const addressHash = addressFromPublicKey(word)
+
+        if (isAddressValid(addressHash)) {
+          redirect(`/addresses/${addressHash}`)
+        } else {
+          displaySnackbar({ text: 'There seems to be an error in the public key format.', type: 'info' })
+        }
       } else {
         displaySnackbar({ text: 'There seems to be an error in the hash format.', type: 'info' })
       }
     } else {
-      if (checkAddressValidity(word)) {
+      if (isAddressValid(word)) {
         redirect(`/addresses/${word}`)
       } else {
         displaySnackbar({ text: 'There seems to be an error in the address format.', type: 'info' })
@@ -105,7 +115,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
         value={search}
         onClick={handleInputClick}
         onKeyDown={handleSearchKeyDown}
-        placeholder={t('Search for an address or a tx...')}
+        placeholder={t('Search for an address, a public key, or a tx...')}
       />
       {active && <Backdrop animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
       <SearchIcon onClick={handleSearchClick} />
