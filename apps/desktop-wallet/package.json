@@ -46,7 +46,7 @@
     "esbuild"
   ],
   "devDependencies": {
-    "@alephium/walletconnect-provider": "^0.22.0",
+    "@alephium/walletconnect-provider": "^0.25.2",
     "@electron/notarize": "^1.2.3",
     "@json-rpc-tools/utils": "^1.7.6",
     "@reduxjs/toolkit": "^1.9.1",

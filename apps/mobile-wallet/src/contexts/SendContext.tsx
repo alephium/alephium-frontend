@@ -20,10 +20,12 @@ import { AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
+import { Portal } from 'react-native-portalize'
 
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
+import BottomModal from '~/components/layout/BottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
 import { AddressHash } from '~/types/addresses'
@@ -204,13 +206,22 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-      {isConsolidateModalVisible && (
-        <ConsolidationModal
-          onConsolidate={() => authenticateAndSend(onSendSuccessCallback)}
-          onCancel={() => setIsConsolidateModalVisible(false)}
-          fees={unsignedTxData.fees}
+      <Portal>
+        <BottomModal
+          Content={(props) => (
+            <ConsolidationModal
+              {...props}
+              onConsolidate={() => {
+                authenticateAndSend(onSendSuccessCallback)
+                props.onClose && props.onClose()
+              }}
+              fees={unsignedTxData.fees}
+            />
+          )}
+          isOpen={isConsolidateModalVisible}
+          onClose={() => setIsConsolidateModalVisible(false)}
         />
-      )}
+      </Portal>
       <AuthenticationModal
         authenticationPrompt="Verify it's you"
         loadingText="Verifying..."

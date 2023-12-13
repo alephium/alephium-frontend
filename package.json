@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
-    "@alephium/web3": "0.22.0"
+    "@alephium/web3": "0.25.2"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
