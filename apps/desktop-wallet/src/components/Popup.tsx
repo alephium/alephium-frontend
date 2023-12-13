@@ -149,4 +149,5 @@ const Header = styled.div<{ hasExtraContent: boolean }>`
   display: flex;
   align-items: center;
   z-index: 1;
+  gap: var(--spacing-3);
 `
