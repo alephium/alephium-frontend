@@ -34,7 +34,7 @@ interface ToggleProps {
 }
 
 // TODO: Share component in the shared lib?
-const toggleWidth = 40
+const toggleWidthPx = 40
 
 const Toggle = ({ toggled, onToggle, className, disabled, ToggleIcons, handleColors, label }: ToggleProps) => {
   const theme = useTheme()
@@ -49,7 +49,7 @@ const Toggle = ({ toggled, onToggle, className, disabled, ToggleIcons, handleCol
 
   const handleContainerVariants = {
     off: { left: 0 },
-    on: { left: toggleWidth / 2 }
+    on: { left: toggleWidthPx / 2 }
   }
 
   const handleVariants = {
@@ -78,7 +78,6 @@ const Toggle = ({ toggled, onToggle, className, disabled, ToggleIcons, handleCol
       aria-checked={toggled}
       role="checkbox"
       tabIndex={0}
-      toggled={toggled}
       variants={toggleBackgroundVariants}
       animate={toggleState}
       transition={transition}
@@ -103,13 +102,13 @@ const Toggle = ({ toggled, onToggle, className, disabled, ToggleIcons, handleCol
 
 export default Toggle
 
-export const StyledToggle = styled(motion.div)<Omit<ToggleProps, 'onToggle'>>`
+export const StyledToggle = styled(motion.div)<Pick<ToggleProps, 'disabled'>>`
   position: relative;
   display: flex;
   align-items: center;
-  width: ${toggleWidth}px;
-  height: calc(${toggleWidth}px / 2);
-  border-radius: ${toggleWidth}px;
+  width: ${toggleWidthPx}px;
+  height: ${toggleWidthPx / 2}px;
+  border-radius: ${toggleWidthPx}px;
   overflow: hidden;
   cursor: pointer;
   box-sizing: content-box;
@@ -135,8 +134,8 @@ export const StyledToggle = styled(motion.div)<Omit<ToggleProps, 'onToggle'>>`
 
 const ToggleHandleContainer = styled(motion.div)`
   position: absolute;
-  width: calc(${toggleWidth}px / 2);
-  height: calc(${toggleWidth}px / 2);
+  width: ${toggleWidthPx / 2}px;
+  height: ${toggleWidthPx / 2}px;
   padding: 2px;
 `
 
@@ -144,7 +143,7 @@ const ToggleHandle = styled(motion.div)`
   height: 100%;
   width: 100%;
   background-color: var(--color-white);
-  border-radius: ${toggleWidth}px;
+  border-radius: ${toggleWidthPx}px;
 `
 
 const ToggleContent = styled.div`
