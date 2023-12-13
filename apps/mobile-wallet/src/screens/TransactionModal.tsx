@@ -82,7 +82,9 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           ))}
         </Row>
         <Row title="Timestamp" transparent>
-          <AppTextStyled semiBold>{dayjs(tx.timestamp).toDate().toUTCString()}</AppTextStyled>
+          <AppTextStyled semiBold>
+            {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+          </AppTextStyled>
         </Row>
         <Row title="Status" transparent>
           <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
