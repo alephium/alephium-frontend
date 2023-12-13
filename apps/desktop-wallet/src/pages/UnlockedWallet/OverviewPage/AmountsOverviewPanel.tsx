@@ -180,7 +180,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
         <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
           <HistoricWorthChart
             addressHash={addressHash}
-            currency={currencies.USD.ticker}
+            currency={currencies[fiatCurrency].ticker}
             onDataPointHover={setHoveredDataPoint}
             onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
             latestWorth={totalAmountWorth}

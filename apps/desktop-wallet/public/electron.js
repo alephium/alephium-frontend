@@ -29,6 +29,10 @@ const ALEPHIUM = 'alephium'
 const ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX = `${ALEPHIUM}://wc`
 const ALEPHIUM_WALLET_CONNECT_URI_PREFIX = '?uri='
 
+// See https://github.com/alephium/alephium-frontend/issues/176
+const OLD_APP_NAME = 'alephium-wallet'
+app.setName(OLD_APP_NAME)
+
 protocol.registerSchemesAsPrivileged([{ scheme: ALEPHIUM, privileges: { secure: true, standard: true } }])
 if (process.defaultApp) {
   if (process.argv.length >= 2) {

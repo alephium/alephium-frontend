@@ -91,7 +91,7 @@ const SnackbarPopup = styled(motion.div)`
   backdrop-filter: blur(10px);
   max-width: 800px;
   word-wrap: break-word;
-  overflow: scroll;
+  overflow-y: auto;
 
   &.alert {
     ${({ theme }) => getSnackbarStyling(theme.global.alert)}
