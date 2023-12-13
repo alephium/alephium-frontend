@@ -21,7 +21,6 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
-import CheckMark from '@/components/CheckMark'
 import { inputDefaultStyle, InputLabel } from '@/components/Inputs'
 import InputArea from '@/components/Inputs/InputArea'
 import { OptionItem } from '@/components/Inputs/Select'
@@ -131,7 +130,6 @@ export function MultiSelectOptionsModal<T>({
               aria-label={getOptionText(option)}
             >
               {renderOption ? renderOption(option) : getOptionText(option)}
-              {isSelected && <CheckMark />}
             </OptionItem>
           )
         })}
