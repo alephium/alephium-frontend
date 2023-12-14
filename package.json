@@ -13,7 +13,6 @@
     "test": "turbo test",
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "compile": "turbo compile",
     "postinstall": "patch-package"
   },
   "dependencies": {
