@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
+import { AddressHash, Asset } from '@alephium/shared'
 import { ChevronRight } from 'lucide-react'
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -44,7 +44,6 @@ import {
   makeSelectAddressesConfirmedTransactions,
   makeSelectAddressesPendingTransactions
 } from '@/storage/transactions/transactionsSelectors'
-import { AddressHash } from '@/types/addresses'
 import { AddressConfirmedTransaction, Direction } from '@/types/transactions'
 import { getTransactionInfo } from '@/utils/transactions'
 
@@ -96,12 +95,13 @@ const TransactionList = ({
   const filteredConfirmedTxs = applyFilters({ txs: confirmedTxs, directions, assetIds, hideFromColumn })
   const displayedConfirmedTxs = limit ? filteredConfirmedTxs.slice(0, limit - pendingTxs.length) : filteredConfirmedTxs
   const totalNumberOfTransactions = addresses.map((address) => address.txNumber).reduce((a, b) => a + b, 0)
-  const isFetching = attemptToFindNewFilteredTxs > 0 && attemptToFindNewFilteredTxs <= maxAttemptsToFindNewTxs
+  const userAttemptedToLoadMoreTxs =
+    attemptToFindNewFilteredTxs > 0 && attemptToFindNewFilteredTxs <= maxAttemptsToFindNewTxs
   const allTxsLoaded = singleAddress ? addresses[0].allTransactionPagesLoaded : allAddressTxPagesLoaded
 
-  const lastFilteredTxsLength = useRef(filteredConfirmedTxs.length)
-  const shouldStopFetchingTxs = lastFilteredTxsLength.current < filteredConfirmedTxs.length
-  const shouldContinueFetchingTxs = finishedLoadingData && lastFilteredTxsLength.current === filteredConfirmedTxs.length
+  const nbOfDisplayedTxs = useRef(filteredConfirmedTxs.length)
+  const areNewTransactionsDisplayed = nbOfDisplayedTxs.current < filteredConfirmedTxs.length
+  const shouldContinueFetchingTxs = finishedLoadingData && nbOfDisplayedTxs.current === filteredConfirmedTxs.length
 
   const handleShowMoreClick = () => {
     setAttemptToFindNewFilteredTxs(1)
@@ -112,14 +112,20 @@ const TransactionList = ({
     async () =>
       singleAddress
         ? dispatch(syncAddressTransactionsNextPage(addresses[0].hash))
-        : dispatch(syncAllAddressesTransactionsNextPage()),
+        : dispatch(syncAllAddressesTransactionsNextPage({ minTxs: 10 })),
     [addresses, dispatch, singleAddress]
   )
 
   useEffect(() => {
-    if (!allTxsLoaded && isFetching) {
-      if (shouldStopFetchingTxs) {
-        lastFilteredTxsLength.current = filteredConfirmedTxs.length
+    if (!stateUninitialized) {
+      nbOfDisplayedTxs.current = filteredConfirmedTxs.length
+    }
+  }, [filteredConfirmedTxs.length, stateUninitialized])
+
+  useEffect(() => {
+    if (!allTxsLoaded && userAttemptedToLoadMoreTxs) {
+      if (areNewTransactionsDisplayed) {
+        nbOfDisplayedTxs.current = filteredConfirmedTxs.length
         setAttemptToFindNewFilteredTxs(0)
       } else if (shouldContinueFetchingTxs) {
         setAttemptToFindNewFilteredTxs(attemptToFindNewFilteredTxs + 1)
@@ -132,10 +138,10 @@ const TransactionList = ({
     allTxsLoaded,
     attemptToFindNewFilteredTxs,
     filteredConfirmedTxs.length,
-    isFetching,
+    userAttemptedToLoadMoreTxs,
     loadNextTransactionsPage,
     shouldContinueFetchingTxs,
-    shouldStopFetchingTxs
+    areNewTransactionsDisplayed
   ])
 
   return (
@@ -195,7 +201,7 @@ const TransactionList = ({
             <TableCell align="center" role="gridcell">
               {allTxsLoaded ? (
                 <span>{t('All transactions loaded!')}</span>
-              ) : isFetching ? (
+              ) : userAttemptedToLoadMoreTxs ? (
                 <Spinner size="15px" />
               ) : (
                 <ActionLink onClick={handleShowMoreClick}>{t('Show more')}</ActionLink>

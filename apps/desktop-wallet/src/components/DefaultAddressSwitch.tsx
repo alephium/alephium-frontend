@@ -16,16 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import Button from '@/components/Button'
+import CheckMark from '@/components/CheckMark'
 import Select, { SelectOption } from '@/components/Inputs/Select'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { changeDefaultAddress } from '@/storage/addresses/addressesStorageUtils'
-import { AddressHash } from '@/types/addresses'
 
 interface AddressOption {
   label: string
@@ -56,7 +58,12 @@ const DefaultAddressSwitch = () => {
       onSelect={handleDefaultAddressChange}
       controlledValue={addressOptions.find((n) => n.value === defaultAddress?.hash)}
       title={t('Default address')}
-      optionRender={({ value }) => <AddressBadge addressHash={value} truncate />}
+      optionRender={({ value }, isSelected) => (
+        <OptionContent>
+          <AddressBadgeStyled addressHash={value} truncate />
+          {isSelected && <CheckMark />}
+        </OptionContent>
+      )}
       id="defaultAddress"
       noMargin
       renderCustomComponent={SelectCustomComponent}
@@ -83,3 +90,15 @@ const SelectCustomComponent = (value?: SelectOption<AddressHash>, disablePointer
     </Button>
   )
 }
+
+const AddressBadgeStyled = styled(AddressBadge)`
+  width: 100%;
+`
+
+const OptionContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-4);
+  min-width: 0;
+  gap: var(--spacing-3);
+`

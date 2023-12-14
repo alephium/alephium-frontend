@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -33,7 +34,6 @@ import ModalPortal from '@/modals/ModalPortal'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
-import { AddressHash } from '@/types/addresses'
 import { getAvailableBalance, getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 

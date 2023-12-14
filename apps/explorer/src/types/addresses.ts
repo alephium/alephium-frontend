@@ -16,10 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TokenBalances } from '@alephium/shared'
+import { AddressHash, TokenBalances } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
-
-export type AddressHash = string
 
 export type AddressBalanceResult = {
   addressHash: AddressHash

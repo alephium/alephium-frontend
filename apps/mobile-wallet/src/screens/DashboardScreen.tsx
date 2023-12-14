@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useHeaderHeight } from '@react-navigation/elements'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useState } from 'react'
@@ -52,7 +53,6 @@ import {
   syncAddressesHistoricBalances
 } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { AddressHash } from '~/types/addresses'
 
 interface ScreenProps
   extends StackScreenProps<

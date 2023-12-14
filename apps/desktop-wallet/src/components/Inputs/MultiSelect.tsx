@@ -18,13 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import { inputDefaultStyle, InputLabel } from '@/components/Inputs'
 import InputArea from '@/components/Inputs/InputArea'
-import { OptionItem } from '@/components/Inputs/Select'
+import { OptionItem, OptionSelect } from '@/components/Inputs/Select'
 import Popup from '@/components/Popup'
 import Truncate from '@/components/Truncate'
 import ModalPortal from '@/modals/ModalPortal'
@@ -37,7 +37,8 @@ interface MultiSelectOptionsProps<T> {
   getOptionId: (option: T) => string
   getOptionText: (option: T) => string
   modalTitle: string
-  renderOption?: (option: T) => ReactNode
+  renderOption?: (option: T, isSelected?: boolean) => ReactNode
+  floatingOptions?: boolean
 }
 
 interface MultiSelectProps<T> extends MultiSelectOptionsProps<T> {
@@ -88,9 +89,11 @@ export function MultiSelectOptionsModal<T>({
   getOptionText,
   modalTitle,
   onClose,
-  selectedOptionsSetter
+  selectedOptionsSetter,
+  floatingOptions
 }: MultiSelectOptionsModalProps<T>) {
   const { t } = useTranslation()
+  const theme = useTheme()
 
   const allOptionsAreSelected = selectedOptions.length === options.length
 
@@ -117,8 +120,8 @@ export function MultiSelectOptionsModal<T>({
         </AllButton>
       }
     >
-      <Options>
-        {options.map((option, index) => {
+      <OptionSelect style={floatingOptions ? { backgroundColor: theme.bg.background2, paddingTop: 10 } : undefined}>
+        {options.map((option) => {
           const isSelected = selectedOptions.some((o) => getOptionId(o) === getOptionId(option))
           return (
             <OptionItem
@@ -129,13 +132,21 @@ export function MultiSelectOptionsModal<T>({
               selected={isSelected}
               focusable
               aria-label={getOptionText(option)}
+              isFloating={floatingOptions}
+              hasCustomOptionRender={!!renderOption}
             >
-              {renderOption ? renderOption(option) : getOptionText(option)}
-              {isSelected && <CheckMark />}
+              {renderOption ? (
+                renderOption(option, isSelected)
+              ) : (
+                <>
+                  {getOptionText(option)}
+                  {isSelected && <CheckMark />}
+                </>
+              )}
             </OptionItem>
           )
         })}
-      </Options>
+      </OptionSelect>
     </Popup>
   )
 }
@@ -159,11 +170,6 @@ const SelectedValue = styled.div`
   display: flex;
   align-items: center;
   min-width: 0;
-`
-
-const Options = styled.div`
-  display: flex;
-  flex-direction: column;
 `
 
 const AllButton = styled(Button)`

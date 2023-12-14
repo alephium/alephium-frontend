@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { ArrowDown, ArrowUp, Lock, Settings } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
@@ -31,7 +32,6 @@ import SendModalTransfer from '@/modals/SendModals/Transfer'
 import SettingsModal from '@/modals/SettingsModal'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { walletLocked } from '@/storage/wallets/walletActions'
-import { AddressHash } from '@/types/addresses'
 
 interface ShortcutButtonsProps {
   analyticsOrigin: string

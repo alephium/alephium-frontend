@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AssetAmount, getHumanReadableError } from '@alephium/shared'
+import { AddressHash, AssetAmount, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -53,7 +53,7 @@ import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletCo
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAddressIds } from '~/store/addressesSlice'
-import { Address, AddressHash } from '~/types/addresses'
+import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
@@ -334,7 +334,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             autoHide: false
           })
         } else {
-          showExceptionToast(e, 'Could not build transaction')
+          if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method))
+            showExceptionToast(e, 'Could not build transaction')
           posthog?.capture('Error', { message: 'Could not build transaction' })
           console.error(e)
           respondToWalletConnectWithError(requestEvent, {

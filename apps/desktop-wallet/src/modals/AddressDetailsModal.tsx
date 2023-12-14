@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { FileDown } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -37,7 +38,6 @@ import SideModal from '@/modals/SideModal'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
 import AssetsList from '@/pages/UnlockedWallet/OverviewPage/AssetsList'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
-import { AddressHash } from '@/types/addresses'
 import { openInWebBrowser } from '@/utils/misc'
 
 interface AddressDetailsModalProps {

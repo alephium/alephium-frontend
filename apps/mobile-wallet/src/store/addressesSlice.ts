@@ -16,7 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, NFT, TokenDisplayBalances } from '@alephium/shared'
+import {
+  ADDRESSES_QUERY_LIMIT,
+  AddressHash,
+  Asset,
+  extractNewTransactionHashes,
+  getTransactionsOfAddress,
+  NFT,
+  TokenDisplayBalances
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
@@ -43,10 +51,9 @@ import { appReset } from '~/store/appSlice'
 import { selectAllFungibleTokens, selectAllNFTs, selectNFTIds } from '~/store/assets/assetsSelectors'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 import { RootState } from '~/store/store'
-import { extractNewTransactionHashes, getTransactionsOfAddress } from '~/store/transactions/transactionUtils'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
-import { Address, AddressesHistoricalBalanceResult, AddressHash, AddressPartial } from '~/types/addresses'
+import { Address, AddressesHistoricalBalanceResult, AddressPartial } from '~/types/addresses'
 import { PendingTransaction } from '~/types/transactions'
 import { getRandomLabelColor } from '~/utils/colors'
 
@@ -148,34 +155,35 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
 
     const state = getState() as RootState
     const addresses = selectAllAddresses(state)
+    const minimumNewTransactionsNeeded = payload?.minTxs ?? 1
 
     let nextPageToLoad = state.confirmedTransactions.pageLoaded + 1
-    let newTransactionsFound = false
-    let transactions: explorer.Transaction[] = []
+    let enoughNewTransactionsFound = false
+    let newTransactions: explorer.Transaction[] = []
 
-    while (!newTransactionsFound) {
-      // NOTE: Explorer backend limits this query to 80 addresses
+    while (!enoughNewTransactionsFound) {
       const results = await Promise.all(
-        chunk(addresses, 80).map((addressesChunk) => fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad))
+        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
+          fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad)
+        )
       )
 
-      transactions = results.flat()
+      const nextPageTransactions = results.flat()
 
-      if (transactions.length === 0) break
+      if (nextPageTransactions.length === 0) break
 
-      const newTransactions = addresses.filter((address) => {
-        const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
-        const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
+      newTransactions = newTransactions.concat(
+        nextPageTransactions.filter(
+          (newTx) =>
+            !addresses.some((address) => address.transactions.some((existingTxHash) => existingTxHash === newTx.hash))
+        )
+      )
 
-        return newTxHashes.length > 0
-      })
-
-      newTransactionsFound = newTransactions.length > (payload?.minTxs ?? 0)
-
+      enoughNewTransactionsFound = newTransactions.length >= minimumNewTransactionsNeeded
       nextPageToLoad += 1
     }
 
-    return { pageLoaded: nextPageToLoad - 1, transactions }
+    return { pageLoaded: nextPageToLoad - 1, transactions: newTransactions }
   }
 )
 

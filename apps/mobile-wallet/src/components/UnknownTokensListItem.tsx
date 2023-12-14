@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { openBrowserAsync } from 'expo-web-browser'
 import { ChevronRightIcon } from 'lucide-react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -25,7 +26,6 @@ import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
-import { AddressHash } from '~/types/addresses'
 
 export type UnknownTokensEntry = {
   numberOfUnknownTokens: number

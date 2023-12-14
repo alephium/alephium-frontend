@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -25,7 +26,6 @@ import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { selectAddressByHash } from '~/store/addressesSlice'
-import { AddressHash } from '~/types/addresses'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { stringToColour } from '~/utils/colors'
 

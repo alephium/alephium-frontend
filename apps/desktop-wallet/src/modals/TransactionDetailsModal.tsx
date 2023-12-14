@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes, NFT } from '@alephium/shared'
+import { addApostrophes, AddressHash, NFT } from '@alephium/shared'
 import { partition } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -38,7 +38,6 @@ import { ModalHeader } from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
 import SideModal from '@/modals/SideModal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
-import { AddressHash } from '@/types/addresses'
 import { AddressConfirmedTransaction } from '@/types/transactions'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
 import { getTransactionInfo } from '@/utils/transactions'

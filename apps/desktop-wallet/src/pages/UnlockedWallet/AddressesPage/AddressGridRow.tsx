@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 import { useMemo, useState } from 'react'
@@ -38,7 +38,6 @@ import {
 } from '@/storage/addresses/addressesSelectors'
 import { selectIsTokensMetadataUninitialized } from '@/storage/assets/assetsSelectors'
 import { useGetPriceQuery } from '@/storage/assets/priceApiSlice'
-import { AddressHash } from '@/types/addresses'
 import { currencies } from '@/utils/currencies'
 import { onEnterOrSpace } from '@/utils/misc'
 
@@ -68,6 +67,17 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   if (!address) return null
 
   const fiatBalance = calculateAmountWorth(BigInt(address.balance), price ?? 0)
+
+  const hiddenAssetsSymbols = hiddenAssets.filter(({ symbol }) => !!symbol).map(({ symbol }) => symbol)
+  const nbOfUnknownHiddenAssets = hiddenAssets.filter(({ symbol }) => !symbol).length
+  const hiddenAssetsTooltipText = [
+    ...hiddenAssetsSymbols,
+    nbOfUnknownHiddenAssets > 0
+      ? nbOfUnknownHiddenAssets === 1
+        ? `1 ${t('Unknown token')} `
+        : `${nbOfUnknownHiddenAssets} ${t('Unknown tokens')}`
+      : []
+  ].join(', ')
 
   const openAddressDetailsModal = () => setIsAddressDetailsModalOpen(true)
 
@@ -103,10 +113,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
             <AssetLogos>
               {displayedAssets && displayedAssets.map(({ id }) => <AssetBadge key={id} assetId={id} simple />)}
               {hiddenAssets && hiddenAssets.length > 0 && (
-                <span
-                  data-tooltip-id="default"
-                  data-tooltip-content={hiddenAssets.map(({ symbol }) => symbol || t('Unknown token')).join(', ')}
-                >
+                <span data-tooltip-id="default" data-tooltip-content={hiddenAssetsTooltipText}>
                   +{hiddenAssets.length}
                 </span>
               )}

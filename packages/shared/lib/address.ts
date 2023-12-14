@@ -17,9 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { bs58, ExplorerProvider, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { MaxSizeAddresses } from '@alephium/web3/dist/src/api/api-explorer'
 import { BIP32Interface } from 'bip32'
 
 import { AddressKeyPair, deriveNewAddressData } from './wallet'
+
+export const ADDRESSES_QUERY_LIMIT: MaxSizeAddresses = 80
+
+export type AddressHash = string
 
 export const isAddressValid = (address: string) =>
   !!address && /^[1-9A-HJ-NP-Za-km-z]+$/.test(address) && bs58.decode(address).slice(1).length >= 32

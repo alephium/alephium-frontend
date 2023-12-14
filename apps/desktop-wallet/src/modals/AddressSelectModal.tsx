@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import { useAppSelector } from '@/hooks/redux'
-import { Address, AddressHash } from '@/types/addresses'
+import { Address } from '@/types/addresses'
 import { addressHasAssets, filterAddresses, filterAddressesWithoutAssets } from '@/utils/addresses'
 
 interface AddressSelectModalProps {
