@@ -41,8 +41,7 @@ export type UnverifiedAsset = Required<Asset> & { logoUri: never }
 
 export type AssetAmount = { id: Asset['id']; amount?: bigint }
 
-export type TransactionInfoAsset = Omit<Asset, 'balance' | 'lockedBalance' | 'decimals'> &
-  Required<AssetAmount> & { decimals?: number }
+export type TransactionInfoAsset = Omit<Asset, 'balance' | 'lockedBalance' | 'decimals'> & Required<AssetAmount>
 
 export type TransactionInfo = {
   assets: TransactionInfoAsset[]
