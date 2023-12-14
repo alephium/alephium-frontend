@@ -4,12 +4,15 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "baseConfig": {
+      "bun": "1.0.17"
+    },
     "production": {
-      "node": "16.15.1",
+      "extends": "baseConfig",
       "autoIncrement": true
     },
     "development": {
-      "node": "16.15.1",
+      "extends": "baseConfig",
       "distribution": "internal",
       "developmentClient": true,
       "env": {
