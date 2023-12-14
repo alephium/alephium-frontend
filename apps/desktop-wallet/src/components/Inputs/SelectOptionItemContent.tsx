@@ -46,7 +46,7 @@ const SelectOptionItemContent = ({
         </CheckMarkContainer>
       )}
     </OptionMainContent>
-    <OptionSecondaryContent>{ContentBottom}</OptionSecondaryContent>
+    {ContentBottom && <OptionSecondaryContent>{ContentBottom}</OptionSecondaryContent>}
   </OptionContentWrapper>
 )
 
@@ -56,6 +56,7 @@ const OptionMainContent = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   font-weight: var(--fontWeight-semiBold);
   background-color: ${({ theme }) => theme.bg.primary};
   padding: var(--spacing-3);

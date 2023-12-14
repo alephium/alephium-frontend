@@ -27,13 +27,13 @@ import Truncate from '@/components/Truncate'
 
 interface SelectOptionAssetProps {
   asset: Asset
+  isSelected?: boolean
   hideAmount?: boolean
   className?: string
 }
 
-const SelectOptionAsset = ({ asset, hideAmount, className }: SelectOptionAssetProps) => (
+const SelectOptionAsset = ({ asset, hideAmount, ...props }: SelectOptionAssetProps) => (
   <SelectOptionItemContent
-    className={className}
     MainContent={
       <AssetName>
         <AssetLogo assetId={asset.id} assetImageUrl={asset.logoURI} size={20} assetName={asset.name} />
@@ -52,6 +52,7 @@ const SelectOptionAsset = ({ asset, hideAmount, className }: SelectOptionAssetPr
         />
       )
     }
+    {...props}
   />
 )
 

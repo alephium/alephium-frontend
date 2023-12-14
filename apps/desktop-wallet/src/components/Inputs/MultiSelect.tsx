@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
+import CheckMark from '@/components/CheckMark'
 import { inputDefaultStyle, InputLabel } from '@/components/Inputs'
 import InputArea from '@/components/Inputs/InputArea'
 import { OptionItem, OptionSelect } from '@/components/Inputs/Select'
@@ -134,7 +135,14 @@ export function MultiSelectOptionsModal<T>({
               isFloating={floatingOptions}
               hasCustomOptionRender={!!renderOption}
             >
-              {renderOption ? renderOption(option, isSelected) : getOptionText(option)}
+              {renderOption ? (
+                renderOption(option, isSelected)
+              ) : (
+                <>
+                  {getOptionText(option)}
+                  {isSelected && <CheckMark />}
+                </>
+              )}
             </OptionItem>
           )
         })}

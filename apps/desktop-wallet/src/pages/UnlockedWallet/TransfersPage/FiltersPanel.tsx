@@ -124,8 +124,7 @@ const FiltersPanel = ({
             renderSelectedValue={renderAssetsSelectedValue}
             getOptionId={(asset) => asset.id}
             getOptionText={(asset) => asset.name ?? asset.symbol ?? asset.id}
-            renderOption={(asset) => <SelectOptionAsset asset={asset} hideAmount />}
-            floatingOptions
+            renderOption={(asset, isSelected) => <SelectOptionAsset asset={asset} hideAmount isSelected={isSelected} />}
           />
         </Tile>
         <Tile>
@@ -138,7 +137,6 @@ const FiltersPanel = ({
             renderSelectedValue={renderDirectionsSelectedValue}
             getOptionId={(direction) => direction.value.toString()}
             getOptionText={(direction) => t(direction.label)}
-            floatingOptions
           />
         </Tile>
       </FilterTiles>
