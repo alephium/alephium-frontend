@@ -2,7 +2,7 @@
   "name": "alephium-frontend",
   "description": "A monorepo containing all things frontend on Alephium",
   "author": "Alephium dev <dev@alephium.org>",
-  "packageManager": "bun@1.0.12",
+  "packageManager": "bun@1.0.17",
   "private": true,
   "workspaces": [
     "apps/*",
