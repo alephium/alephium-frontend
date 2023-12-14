@@ -11,13 +11,13 @@
       "extends": "baseConfig",
       "autoIncrement": true
     },
-    "preview": {
+    "internal": {
       "extends": "production",
       "distribution": "internal"
     }
   },
   "submit": {
-    "preview": {
+    "internal": {
       "android": {
         "track": "internal",
         "releaseStatus": "draft",
