@@ -36,7 +36,7 @@ interface MultiSelectOptionsProps<T> {
   getOptionId: (option: T) => string
   getOptionText: (option: T) => string
   modalTitle: string
-  renderOption?: (option: T) => ReactNode
+  renderOption?: (option: T, isSelected?: boolean) => ReactNode
   floatingOptions?: boolean
 }
 
@@ -134,7 +134,7 @@ export function MultiSelectOptionsModal<T>({
               isFloating={floatingOptions}
               hasCustomOptionRender={!!renderOption}
             >
-              {renderOption ? renderOption(option) : getOptionText(option)}
+              {renderOption ? renderOption(option, isSelected) : getOptionText(option)}
             </OptionItem>
           )
         })}

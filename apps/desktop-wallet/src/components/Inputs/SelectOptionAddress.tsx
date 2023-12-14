@@ -30,7 +30,7 @@ import { Address } from '@/types/addresses'
 
 interface SelectOptionAddressProps {
   address: Address
-  isSelected: boolean
+  isSelected?: boolean
   className?: string
 }
 
