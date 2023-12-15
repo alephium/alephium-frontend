@@ -4,25 +4,20 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "baseConfig": {
+      "bun": "1.0.17"
+    },
     "production": {
-      "node": "16.15.1",
+      "extends": "baseConfig",
       "autoIncrement": true
     },
-    "development": {
-      "node": "16.15.1",
-      "distribution": "internal",
-      "developmentClient": true,
-      "env": {
-        "APP_VARIANT": "development"
-      }
-    },
-    "preview": {
+    "internal": {
       "extends": "production",
       "distribution": "internal"
     }
   },
   "submit": {
-    "preview": {
+    "internal": {
       "android": {
         "track": "internal",
         "releaseStatus": "draft",

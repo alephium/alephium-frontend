@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -9,7 +9,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios --device",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
-    "lint:fix": "eslint . --fix --ext .ts,.tsx"
+    "lint:fix": "eslint . --fix --ext .ts,.tsx",
+    "postinstall": "cd ../.. && turbo compile"
   },
   "dependencies": {
     "@alephium/shared": "*",
