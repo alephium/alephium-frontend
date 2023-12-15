@@ -16,8 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { PAGINATION_PAGE_LIMIT } from '@alephium/shared'
+
 import client from '@/api/client'
-import { browsePages, createQueriesCollection, PAGINATION_PAGE_LIMIT } from '@/utils/api'
+import { browsePages, createQueriesCollection } from '@/utils/api'
 
 export const addressQueries = createQueriesCollection({
   balance: {
