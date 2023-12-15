@@ -20,10 +20,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { UseQueryOptions } from '@tanstack/react-query'
 
-// TODO: Trying to import the enum value from the explorer api doesn't work
-export const POST_QUERY_LIMIT = 80
-export const PAGINATION_PAGE_LIMIT = 100
-
 type QueryFn = (...args: any[]) => UseQueryOptions
 
 interface Queries {

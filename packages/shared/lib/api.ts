@@ -16,15 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from './assets'
-export * from './utils'
-export * from './wallet'
-export * from './address'
-export * from './errors'
-export * from './numbers'
-export * from './constants'
-export * from './transactions'
-export * from './password-crypto'
-export * from './walletConnect'
-export * from './tokens'
-export * from './api'
+import { MaxSizeAddresses, MaxSizeTokens } from '@alephium/web3/dist/src/api/api-explorer'
+
+export const TOKENS_QUERY_LIMIT: MaxSizeTokens = 80
+export const ADDRESSES_QUERY_LIMIT: MaxSizeAddresses = 80
+
+export const PAGINATION_PAGE_LIMIT = 100

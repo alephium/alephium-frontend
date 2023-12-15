@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/shared'
+import { TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { addressFromContractId } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
@@ -32,7 +33,7 @@ import {
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
 import { NetworkType } from '@/types/network'
-import { createQueriesCollection, POST_QUERY_LIMIT } from '@/utils/api'
+import { createQueriesCollection } from '@/utils/api'
 import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@/utils/time'
 
 // Batched calls
@@ -42,7 +43,7 @@ const tokensInfo = create({
   resolver: keyResolver('token'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
-    maxBatchSize: POST_QUERY_LIMIT
+    maxBatchSize: TOKENS_QUERY_LIMIT
   })
 })
 
@@ -51,7 +52,7 @@ const fungibleTokensMetadata = create({
   resolver: keyResolver('id'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
-    maxBatchSize: POST_QUERY_LIMIT
+    maxBatchSize: TOKENS_QUERY_LIMIT
   })
 })
 
@@ -60,7 +61,7 @@ const unverifiedNFTsMetadata = create({
   resolver: keyResolver('id'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
-    maxBatchSize: POST_QUERY_LIMIT
+    maxBatchSize: TOKENS_QUERY_LIMIT
   })
 })
 
@@ -69,7 +70,7 @@ const NFTCollectionsMetadata = create({
   resolver: keyResolver('address'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
-    maxBatchSize: POST_QUERY_LIMIT
+    maxBatchSize: TOKENS_QUERY_LIMIT
   })
 })
 

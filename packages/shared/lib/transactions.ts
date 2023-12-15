@@ -41,7 +41,7 @@ export type Asset = TokenDisplayBalances & Optional<AssetInfo, 'symbol' | 'name'
 
 export type VerifiedAsset = Required<Asset>
 
-export type UnverifiedAsset = Omit<VerifiedAsset, 'logoURI'> & { logoURI?: string }
+export type UnverifiedAsset = Optional<VerifiedAsset, 'logoURI'>
 
 export type AssetAmount = { id: Asset['id']; amount?: bigint }
 
