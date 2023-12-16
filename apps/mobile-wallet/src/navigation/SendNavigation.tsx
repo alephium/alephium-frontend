@@ -20,11 +20,14 @@ import { AddressHash } from '@alephium/shared'
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
+import ProgressHeader from '~/components/headers/ProgressHeader'
+import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
 import { SendContextProvider } from '~/contexts/SendContext'
 import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
 import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
 import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
 import VerifyScreen from '~/screens/SendReceive/Send/VerifyScreen'
+import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 
 export interface SendNavigationParamList extends ParamListBase {
   DestinationScreen: { fromAddressHash?: AddressHash }
@@ -39,18 +42,35 @@ const SendStack = createStackNavigator<SendNavigationParamList>()
 
 const SendNavigation = () => (
   <SendContextProvider>
-    <SendStack.Navigator
-      screenOptions={{
-        headerShown: false // Header is in parent above
-      }}
-      initialRouteName="DestinationScreen"
-    >
-      <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
-      <SendStack.Screen name="OriginScreen" component={OriginScreen} />
-      <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
-      <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
-    </SendStack.Navigator>
+    <HeaderContextProvider>
+      <SendProgressHeader />
+      <SendStack.Navigator
+        screenOptions={{
+          headerShown: false,
+          cardStyle: { overflow: SCREEN_OVERFLOW }
+        }}
+        initialRouteName="DestinationScreen"
+      >
+        <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
+        <SendStack.Screen name="OriginScreen" component={OriginScreen} />
+        <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
+        <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
+      </SendStack.Navigator>
+    </HeaderContextProvider>
   </SendContextProvider>
 )
+
+const SendProgressHeader = () => {
+  const { headerOptions, screenScrollY } = useHeaderContext()
+
+  return (
+    <ProgressHeader
+      options={{ headerTitle: 'Send', ...headerOptions }}
+      titleAlwaysVisible
+      workflow="send"
+      scrollY={screenScrollY}
+    />
+  )
+}
 
 export default SendNavigation

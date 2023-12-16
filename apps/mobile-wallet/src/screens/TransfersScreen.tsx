@@ -22,11 +22,10 @@ import { FlatList } from 'react-native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
+import ScreenTitle from '~/components/layout/ScreenTitle'
 import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -46,13 +45,11 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
-  useNavigationScrollHandler(listRef)
-  useScrollToTopOnBlur(listRef)
-
-  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   return (
     <Screen contrastedBg>
+      <BaseHeader options={{ headerTitle: 'Transfers' }} scrollY={screenScrollY} showBorderBottom />
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
@@ -60,14 +57,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         ref={listRef}
-        headerHeight={screenHeaderHeight}
-      />
-
-      <BaseHeader
-        options={{ headerTitle: 'Transfers' }}
-        scrollY={screenScrollY}
-        onLayout={screenHeaderLayoutHandler}
-        showBorderBottom
+        ListHeaderComponent={<ScreenTitle title="Transfers" scrollY={screenScrollY} sideDefaultMargin />}
       />
     </Screen>
   )

@@ -16,51 +16,31 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useHeaderHeight } from '@react-navigation/elements'
 import { useNavigation } from '@react-navigation/native'
-import { useState } from 'react'
 import { ViewProps } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import BaseHeader, { HeaderOptions } from '~/components/headers/BaseHeader'
+import BaseHeader, { BaseHeaderOptions } from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScreenProps extends ViewProps {
-  hasNavigationHeader?: boolean
   contrastedBg?: boolean
-  headerOptions?: HeaderOptions
+  headerOptions?: BaseHeaderOptions & {
+    type?: 'default' | 'stack'
+  }
 }
 
-const Screen = ({ children, hasNavigationHeader, headerOptions, style, ...props }: ScreenProps) => {
-  const headerheight = useHeaderHeight()
+const Screen = ({ children, headerOptions, ...props }: ScreenProps) => {
   const navigation = useNavigation()
-
-  const [screenHeaderHeight, setScreenHeaderHeight] = useState(182)
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   return (
-    <ScreenStyled
-      style={[
-        {
-          paddingTop: headerOptions
-            ? screenHeaderHeight + DEFAULT_MARGIN
-            : hasNavigationHeader
-              ? headerheight + DEFAULT_MARGIN
-              : 0
-        },
-        style
-      ]}
-      {...props}
-    >
+    <ScreenStyled {...props}>
       {headerOptions && (
-        <HeaderComponent
-          goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-          options={headerOptions}
-          onLayout={(e) => setScreenHeaderHeight(e.nativeEvent.layout.height)}
-        />
+        <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
       )}
       {children}
     </ScreenStyled>

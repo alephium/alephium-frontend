@@ -26,12 +26,13 @@ import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
-import { ContinueButton } from '~/components/buttons/Button'
+import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -41,15 +42,17 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
+  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
 
-  useScrollToTopOnFocus()
+  useScrollToTopOnFocus(screenScrollY)
 
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]
 
   useFocusEffect(
     useCallback(() => {
-      navigation.getParent()?.setOptions({
+      setHeaderOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton
             onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
@@ -58,13 +61,13 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           />
         )
       })
-    }, [navigation, sendTransaction])
+    }, [navigation, sendTransaction, setHeaderOptions])
   )
 
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <ScrollScreen hasNavigationHeader verticalGap {...props}>
+    <ScrollScreen verticalGap contentPaddingTop onScroll={screenScrollHandler} {...props}>
       <ScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
       <ScreenSection>
         <BoxSurface>

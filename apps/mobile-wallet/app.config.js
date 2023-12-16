@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -69,13 +69,11 @@ export default {
         {
           ios: {
             deploymentTarget: '13.4',
-            newArchEnabled: false,
-            flipper: true
+            newArchEnabled: false
           },
           android: {
-            compileSdkVersion: 33,
-            targetSdkVersion: 33,
-            buildToolsVersion: '33.0.0',
+            compileSdkVersion: 34,
+            targetSdkVersion: 34,
             newArchEnabled: false
           }
         }
@@ -94,7 +92,8 @@ export default {
             'The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.'
         }
       ],
-      'expo-localization'
+      'expo-localization',
+      'expo-secure-store'
     ],
     extra: {
       eas: {

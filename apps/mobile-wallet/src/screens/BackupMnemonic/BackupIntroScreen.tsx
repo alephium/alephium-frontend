@@ -42,7 +42,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
 
   return (
     <>
-      <ScrollScreen hasNavigationHeader fill {...props}>
+      <ScrollScreen fill {...props}>
         <ScreenSection fill centered verticallyCentered>
           <StyledAnimation source={animationSrc} autoPlay />
         </ScreenSection>

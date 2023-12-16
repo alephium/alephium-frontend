@@ -16,18 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
+import { getFocusedRouteNameFromRoute, useRoute } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
-import NavigationStackHeader, { NavigationStackHeaderProps } from '~/components/headers/NavigationStackHeader'
+import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-interface ProgressHeaderProps extends NavigationStackHeaderProps {
-  workflow: 'send' | 'receive' | 'backup'
+export type ProgressWorkflow = 'send' | 'receive' | 'backup'
+
+export interface ProgressHeaderProps extends BaseHeaderProps {
+  workflow: ProgressWorkflow
 }
 
 const workflowSteps: Record<
@@ -39,8 +41,9 @@ const workflowSteps: Record<
   backup: ['BackupIntroScreen', 'VerifyMnemonicScreen', 'VerificationSuccessScreen']
 }
 
-const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderProps) => {
+const ProgressHeader = ({ workflow, options, ...props }: ProgressHeaderProps) => {
   const theme = useTheme()
+  const route = useRoute()
 
   const [progress, setProgress] = useState(0)
 
@@ -54,13 +57,11 @@ const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderPr
   }, [route, steps])
 
   return (
-    <NavigationStackHeader
+    <BaseHeader
       options={{
         ...options,
         headerRight: () => (
-          <HeaderRightContainer>
-            {options.headerRight && <HeaderRightOptionWrapper>{options.headerRight({})}</HeaderRightOptionWrapper>}
-          </HeaderRightContainer>
+          <HeaderRightContainer>{options.headerRight && options.headerRight({})}</HeaderRightContainer>
         ),
         headerTitleRight: () => (
           <ProgressBar
@@ -69,16 +70,14 @@ const ProgressHeader = ({ route, workflow, options, ...props }: ProgressHeaderPr
             unfilledColor={theme.border.primary}
             fill="transparent"
             borderWidth={0}
-            size={28}
+            size={24}
             style={{ marginBottom: -1 }}
             pointerEvents="none"
             thickness={3}
           />
         )
       }}
-      showCompactComponents
       showBorderBottom
-      route={route}
       {...props}
     />
   )
@@ -96,15 +95,6 @@ export const BackButtonStyled = styled.Pressable`
 `
 
 const HeaderRightContainer = styled.View`
-  flex: 1;
   align-items: flex-end;
-  justify-content: center;
-`
-
-const HeaderRightOptionWrapper = styled.View`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
   justify-content: center;
 `

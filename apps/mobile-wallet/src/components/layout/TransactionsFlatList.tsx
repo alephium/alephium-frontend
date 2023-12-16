@@ -33,7 +33,7 @@ import {
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '~/store/addressesSlice'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, SCREEN_OVERFLOW } from '~/style/globalStyle'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
 import { isPendingTx } from '~/utils/transactions'
 
@@ -44,7 +44,6 @@ interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransac
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
   addressHash?: AddressHash
-  headerHeight?: number
   showInternalInflows?: boolean
 }
 
@@ -64,7 +63,6 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
     ListHeaderComponent,
     showInternalInflows = false,
     style,
-    headerHeight = 0,
     ...props
   }: TransactionsFlatListProps,
   ref: ForwardedRef<FlatList<AddressTransaction>>
@@ -117,16 +115,15 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
     <>
       <FlatList
         {...props}
-        contentContainerStyle={[props.contentContainerStyle, { paddingTop: headerHeight ? headerHeight : 0 }]}
+        contentContainerStyle={props.contentContainerStyle}
         scrollEventThrottle={16}
         ref={ref}
         data={confirmedTransactions}
         renderItem={renderConfirmedTransactionItem}
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
-        refreshControl={
-          <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
-        }
+        style={{ overflow: SCREEN_OVERFLOW }}
+        refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} />}
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         ListHeaderComponent={

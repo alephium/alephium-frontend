@@ -20,9 +20,12 @@ import { AddressHash } from '@alephium/shared'
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
+import ProgressHeader from '~/components/headers/ProgressHeader'
+import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressScreen from '~/screens/SendReceive/Receive/AddressScreen'
 import QRCodeScreen from '~/screens/SendReceive/Receive/QRCodeScreen'
+import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 
 export interface ReceiveNavigationParamList extends ParamListBase {
   AddressScreen: undefined
@@ -32,10 +35,24 @@ export interface ReceiveNavigationParamList extends ParamListBase {
 const ReceiveStack = createStackNavigator<ReceiveNavigationParamList>()
 
 const ReceiveNavigation = ({ navigation }: StackScreenProps<RootStackParamList, 'ReceiveNavigation'>) => (
-  <ReceiveStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="AddressScreen">
-    <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
-    <ReceiveStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
-  </ReceiveStack.Navigator>
+  <HeaderContextProvider>
+    <ReceiveProgressHeader />
+    <ReceiveStack.Navigator
+      screenOptions={{ headerShown: false, cardStyle: { overflow: SCREEN_OVERFLOW } }}
+      initialRouteName="AddressScreen"
+    >
+      <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
+      <ReceiveStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
+    </ReceiveStack.Navigator>
+  </HeaderContextProvider>
 )
+
+const ReceiveProgressHeader = () => {
+  const { headerOptions, screenScrollY } = useHeaderContext()
+
+  return (
+    <ProgressHeader options={{ headerTitle: 'Receive', ...headerOptions }} workflow="receive" scrollY={screenScrollY} />
+  )
+}
 
 export default ReceiveNavigation

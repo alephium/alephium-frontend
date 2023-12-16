@@ -150,7 +150,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <ScrollScreenStyled verticalGap headerOptions={{ headerTitle: 'Settings', type: 'stack' }} {...props}>
+      <ScrollScreenStyled verticalGap screenTitle="Settings" headerOptions={{ type: 'stack' }} {...props}>
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>
@@ -178,7 +178,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>Security</ScreenSectionTitle>
           <BoxSurface>
-            <Row title="Require authentication" subtitle="For important actions">
+            <Row title="Require authentication" subtitle="For important actions" isLast>
               <Toggle value={requireAuth} onValueChange={handleAuthRequimementToggle} />
             </Row>
             {deviceHasBiometricsData && (

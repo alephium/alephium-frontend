@@ -16,24 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
-import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
+import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import { useSharedValue } from 'react-native-reanimated'
 
 const useScreenScrollHandler = () => {
   const screenScrollY = useSharedValue(0)
 
-  const [screenHeaderHeight, setScreenHeaderHeight] = useState(182) // Approx height to avoid jumping glitch (see #238)
-
   const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     screenScrollY.value = e.nativeEvent.contentOffset.y
   }
 
-  const screenHeaderLayoutHandler = (e: LayoutChangeEvent) => {
-    setScreenHeaderHeight(e.nativeEvent.layout.height)
-  }
-
-  return { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler }
+  return { screenScrollY, screenScrollHandler }
 }
 
 export default useScreenScrollHandler

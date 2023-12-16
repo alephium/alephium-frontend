@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode, useState } from 'react'
+import { View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 
 import AppText from '~/components/AppText'
@@ -40,6 +41,7 @@ export type AddressFormData = AddressSettings & {
 interface AddressFormProps extends ScrollScreenProps {
   initialValues: AddressFormData
   onSubmit: (data: AddressFormData) => void
+  screenTitle: string
   allowGroupSelection?: boolean
   buttonText?: string
   disableIsMainToggle?: boolean
@@ -49,6 +51,7 @@ interface AddressFormProps extends ScrollScreenProps {
 const AddressForm = ({
   initialValues,
   onSubmit,
+  screenTitle,
   allowGroupSelection,
   buttonText = 'Generate',
   disableIsMainToggle = false,
@@ -74,6 +77,7 @@ const AddressForm = ({
         usesKeyboard
         fill
         verticalGap
+        screenTitle={screenTitle}
         headerOptions={{
           type: 'stack',
           headerRight: () => (
@@ -83,11 +87,12 @@ const AddressForm = ({
               iconProps={undefined}
             />
           ),
+          headerTitle: screenTitle,
           ...headerOptions
         }}
         {...props}
       >
-        {HeaderComponent}
+        <View>{HeaderComponent}</View>
         <ScreenSection verticalGap fill>
           <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
           <ColorPicker value={color} onChange={setColor} />

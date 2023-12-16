@@ -18,12 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { useCallback } from 'react'
+import { SharedValue } from 'react-native-reanimated'
 
-import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
-
-const useScrollToTopOnFocus = () => {
-  const { scrollY } = useNavigationScrollContext()
-
+const useScrollToTopOnFocus = (scrollY?: SharedValue<number>) => {
   useFocusEffect(
     useCallback(() => {
       if (scrollY) scrollY.value = 0

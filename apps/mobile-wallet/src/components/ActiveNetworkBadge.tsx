@@ -37,7 +37,6 @@ const ActiveNetworkBadge = () => {
 export default ActiveNetworkBadge
 
 const ActiveNetworkContainer = styled.View`
-  margin-bottom: 5px;
   flex-direction: row;
   align-items: center;
   gap: 5px;

@@ -17,18 +17,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
+import { useCallback } from 'react'
 
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
+import { CloseButton } from '~/components/buttons/Button'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'>, ScrollScreenProps {}
 
 const AddressScreen = ({ navigation }: ScreenProps) => {
   const posthog = usePostHog()
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
 
   const handleAddressPress = (addressHash: AddressHash) => {
     posthog?.capture('Pressed on address to see QR code to receive funds')
@@ -36,14 +41,23 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
     navigation.navigate('QRCodeScreen', { addressHash })
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      setHeaderOptions({
+        headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />
+      })
+    }, [navigation, setHeaderOptions])
+  )
+
   return (
     <AddressFlatListScreen
-      hasNavigationHeader
       onAddressPress={(addressHash) => handleAddressPress(addressHash)}
       ListHeaderComponent={
         <ScreenIntro title="To address" subtitle="Select the address which you want to receive funds to." />
       }
       contrastedBg
+      contentPaddingTop
+      onScroll={screenScrollHandler}
     />
   )
 }
