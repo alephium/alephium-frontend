@@ -74,6 +74,8 @@ const initialValues: WalletConnectContextValue = {
   activeSessions: []
 }
 
+type WalletConnectClientStatus = 'uninitialized' | 'initializing' | 'initialized'
+
 const WalletConnectContext = createContext(initialValues)
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
@@ -94,6 +96,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [isSessionProposalModalOpen, setIsSessionProposalModalOpen] = useState(false)
   const [isSessionRequestModalOpen, setIsSessionRequestModalOpen] = useState(false)
   const [loading, setLoading] = useState('')
+  const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
   const isAuthenticated = !!mnemonic
@@ -101,6 +104,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const initializeWalletConnectClient = useCallback(async () => {
     try {
       console.log('⏳ INITIALIZING WC CLIENT...')
+      setWalletConnectClientStatus('initializing')
+
       const client = await SignClient.init({
         projectId: '2a084aa1d7e09af2b9044a524f39afbe',
         relayUrl: 'wss://relay.walletconnect.com',
@@ -114,11 +119,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           }
         }
       })
+
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
 
       setWalletConnectClient(client)
+      setWalletConnectClientStatus('initialized')
       setActiveSessions(getActiveWalletConnectSessions(client))
     } catch (e) {
+      setWalletConnectClientStatus('uninitialized')
       console.error('Could not initialize WalletConnect client', e)
     }
   }, [])
@@ -408,9 +416,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   useEffect(() => {
     if (!isWalletConnectEnabled) return
 
-    if (!walletConnectClient) {
+    if (walletConnectClientStatus === 'uninitialized') {
       initializeWalletConnectClient()
-    } else {
+    } else if (walletConnectClient) {
       console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
 
       walletConnectClient.on('session_proposal', onSessionProposal)
@@ -436,6 +444,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       }
     }
   }, [
+    walletConnectClientStatus,
     initializeWalletConnectClient,
     isWalletConnectEnabled,
     onProposalExpire,
