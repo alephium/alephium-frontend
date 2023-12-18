@@ -29,11 +29,20 @@ import {
   receiveTestnetTokens,
   transfersPageInfoMessageClosed
 } from '@/storage/global/globalActions'
-import { languageChangeFinished, languageChangeStarted, themeToggled } from '@/storage/settings/settingsActions'
-import { themeSettingsChanged } from '@/storage/settings/settingsActions'
+import {
+  languageChangeFinished,
+  languageChangeStarted,
+  themeSettingsChanged,
+  themeToggled
+} from '@/storage/settings/settingsActions'
 import { RootState } from '@/storage/store'
-import { activeWalletDeleted, newWalletNameStored, walletLocked, walletSaved } from '@/storage/wallets/walletActions'
-import { walletDeleted } from '@/storage/wallets/walletActions'
+import {
+  activeWalletDeleted,
+  newWalletNameStored,
+  walletDeleted,
+  walletLocked,
+  walletSaved
+} from '@/storage/wallets/walletActions'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
 import { ThemeType } from '@/types/settings'
 import { StoredWallet } from '@/types/wallet'
