@@ -50,7 +50,7 @@
     "react-middle-ellipsis": "^1.2.1",
     "react-page-visibility": "^7.0.0",
     "react-router-dom": "^6.3.0",
-    "react-tooltip": "^5.20.0",
+    "react-tooltip": "^5.25.0",
     "styled-components": "^5.3.1",
     "styled-normalize": "^8.0.7"
   },

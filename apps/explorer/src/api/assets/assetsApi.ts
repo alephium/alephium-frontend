@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/shared'
-import { TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import { NFTCollectionUriMetaData, NFTTokenUriMetaData, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { addressFromContractId } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
