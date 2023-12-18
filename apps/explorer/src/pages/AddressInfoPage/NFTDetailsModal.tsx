@@ -44,7 +44,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
       {nft ? (
         <>
           <Header>
-            <h2>{nft.file?.name}</h2>
+            {nft.file?.name && <NFTName>{nft.file.name}</NFTName>}
             <HighlightedHash text={nft.id} middleEllipsis maxWidth="200px" textToCopy={nft.id} />
           </Header>
           <NFTImageContainer>
@@ -57,10 +57,12 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                 <NFTDetailsContainer>
                   <Table bodyOnly>
                     <TableBody>
-                      <TableRow>
-                        <span>{t('Name')}</span>
-                        <span>{nft.file?.name}</span>
-                      </TableRow>
+                      {nft.file?.name && (
+                        <TableRow>
+                          <span>{t('Name')}</span>
+                          <span>{nft.file.name}</span>
+                        </TableRow>
+                      )}
                       {nft.file?.description && (
                         <TableRow>
                           <span>{t('Description')}</span>
@@ -128,11 +130,18 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
 export default NFTDetailsModal
 
 const Header = styled.div`
-  padding: 0px 25px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px 25px;
 
   @media ${deviceBreakPoints.mobile} {
     padding: 0px 12px 15px;
   }
+`
+
+const NFTName = styled.h2`
+  margin: 0;
 `
 
 const MetadataTablesContainer = styled.div`
