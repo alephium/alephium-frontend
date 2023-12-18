@@ -32,8 +32,7 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
   lockedBalance: bigint
 }
 
-export type AssetInfo = Omit<TokenInfo, 'decimals'> & {
-  decimals?: number
+export type AssetInfo = Optional<TokenInfo, 'decimals'> & {
   verified?: boolean
 }
 
