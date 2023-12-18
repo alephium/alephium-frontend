@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenInfo } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
-import { Optional } from '@alephium/web3'
+import { explorer, Optional } from '@alephium/web3'
 import { AddressBalance, Output, Token } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { AddressHash } from './address'
