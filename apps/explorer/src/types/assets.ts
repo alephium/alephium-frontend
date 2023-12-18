@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFTTokenUriMetaData } from '@alephium/shared'
+import { TokenInfo } from '@alephium/token-list'
 import { FungibleTokenMetadata, NFTMetadata as NFTMetadataBase } from '@alephium/web3/dist/src/api/api-explorer'
 
 import client from '@/api/client'
@@ -31,41 +32,25 @@ export type FungibleTokenMetadataBase = Omit<FungibleTokenMetadata, 'totalSupply
   logoURI?: string
 }
 
-export type VerifiedFungibleTokenMetadata = TokenListTokenInfo & {
+export type VerifiedFungibleTokenMetadata = TokenInfo & {
   type: 'fungible'
   verified: true
 }
 
 export type UnverifiedFungibleTokenMetadata = FungibleTokenMetadataBase & { type: 'fungible'; verified: false }
 
-export type NFTMetadata = NFTMetadataBase & { id: string; type: 'non-fungible'; file?: NFTFile; verified: boolean }
+export type NFTMetadata = NFTMetadataBase & { type: 'non-fungible'; file?: NFTFile; verified: boolean }
 
 export type NFTMetadataWithFile = Omit<NFTMetadata, 'file'> & { file: NFTFile }
 
-export type UnverifiedNFTMetadata = Omit<NFTMetadata, 'verified'> & { file?: NFTFile; verified: false }
+export type UnverifiedNFTMetadata = NFTMetadata & { file?: NFTFile; verified: false }
 
-export type UnverifiedNFTMetadataWithFile = Omit<UnverifiedNFTMetadata, 'file'> & { file: NFTFile }
+export type UnverifiedNFTMetadataWithFile = UnverifiedNFTMetadata & { file: NFTFile }
 
 export type NumericTokenBalance = { balance: bigint; lockedBalance: bigint }
 
 export type NFTFile = NFTTokenUriMetaData & {
   assetId: string
-}
-
-// TODO: This has been extracted from the token-list. Cleanup types!
-export interface TokenList {
-  networkId: number
-  tokens: TokenListTokenInfo[]
-}
-export interface TokenListTokenInfo {
-  id: string
-  name: string
-  onChainName?: string
-  symbol: string
-  onChainSymbol?: string
-  decimals: number
-  description?: string
-  logoURI?: string
 }
 
 export type AssetPriceResponse = { [tokenId: string]: { [currency: string]: number } }
