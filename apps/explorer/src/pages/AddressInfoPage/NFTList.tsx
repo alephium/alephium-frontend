@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import { groupBy } from 'lodash'
+import { groupBy, orderBy } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiGhostLine } from 'react-icons/ri'
@@ -131,11 +131,17 @@ interface NFTListComponentProps {
   onClick: (nftId: string) => void
 }
 
-const NFTListComponent = ({ nfts, onClick }: NFTListComponentProps) => (
-  <NFTListStyled>
-    {nfts ? nfts.map((nft) => <NFTItem key={nft.id} nft={nft} onClick={() => onClick(nft.id)} />) : null}
-  </NFTListStyled>
-)
+const NFTListComponent = ({ nfts, onClick }: NFTListComponentProps) => {
+  const orderedNFTs = orderBy(nfts, (nft) => !nft.collectionId)
+
+  return (
+    <NFTListStyled>
+      {orderedNFTs
+        ? orderedNFTs.map((nft) => <NFTItem key={nft.id} nft={nft} onClick={() => onClick(nft.id)} />)
+        : null}
+    </NFTListStyled>
+  )
+}
 
 interface NFTItemProps {
   nft: NFTMetadata
