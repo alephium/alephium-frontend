@@ -17,9 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import dayjs from 'dayjs'
+import * as Application from 'expo-application'
 import { capitalize } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Alert, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import { useTheme } from 'styled-components'
@@ -83,6 +85,11 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [authenticationPrompt, setAuthenticationPrompt] = useState('')
   const [loadingText, setLoadingText] = useState('')
   const [authCallback, setAuthCallback] = useState<() => void>(() => () => null)
+  const [latestUpdate, setLatestUpdate] = useState<Date>()
+
+  useEffect(() => {
+    if (Platform.OS === 'android') Application.getLastUpdateTimeAsync().then((date) => setLatestUpdate(date))
+  }, [])
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
@@ -218,6 +225,22 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             variant="alert"
             onPress={handleDeleteButtonPress}
           />
+        </ScreenSection>
+        <ScreenSection>
+          <ScreenSectionTitle>App</ScreenSectionTitle>
+          <BoxSurface>
+            <Row title="App version">
+              <AppText>{Application.nativeApplicationVersion}</AppText>
+            </Row>
+            <Row title="Build version">
+              <AppText>{Application.nativeBuildVersion}</AppText>
+            </Row>
+            {latestUpdate && (
+              <Row title="Latest update">
+                <AppText>{dayjs(latestUpdate).toString()}</AppText>
+              </Row>
+            )}
+          </BoxSurface>
         </ScreenSection>
       </ScrollScreenStyled>
 
