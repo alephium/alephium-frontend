@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AddressHash, AssetAmount, getHumanReadableError } from '@alephium/shared'
+import { AddressHash, AssetAmount, getHumanReadableError, WalletConnectClientStatus } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -74,8 +74,6 @@ const initialValues: WalletConnectContextValue = {
   unpairFromDapp: () => Promise.resolve(),
   activeSessions: []
 }
-
-type WalletConnectClientStatus = 'uninitialized' | 'initializing' | 'initialized' | 'initialization-failed'
 
 const WalletConnectContext = createContext(initialValues)
 
