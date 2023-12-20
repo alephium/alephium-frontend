@@ -140,7 +140,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     if (walletConnectClientInitializationAttempts === 10) {
       showToast({
         text1: 'Could not connect to WalletConnect',
-        text2: 'We tried 10 times... Re-enable to feature in the settings to try again.',
+        text2: 'If you want to use a dApp, please quit the app and try again.',
         type: 'error'
       })
     }
