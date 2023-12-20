@@ -36,7 +36,11 @@ import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import InputsSection from '@/modals/SendModals/InputsSection'
-import { selectAllContacts, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import {
+  selectAllAddresses,
+  selectAllContacts,
+  selectIsStateUninitialized
+} from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 import { filterContacts } from '@/utils/contacts'
 
@@ -66,6 +70,7 @@ const AddressInputs = ({
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
   const isAddressesStateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const addresses = useAppSelector(selectAllAddresses)
   const theme = useTheme()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
@@ -176,7 +181,7 @@ const AddressInputs = ({
         {isAddressSelectModalOpen && onToAddressChange && (
           <AddressSelectModal
             title={t('Select the address to send assets to.')}
-            options={fromAddresses}
+            options={addresses}
             onAddressSelect={(address) => onToAddressChange(address.hash)}
             onClose={handleToOwnAddressModalClose}
             selectedAddress={fromAddresses.find((a) => a.hash === toAddress?.value)}
