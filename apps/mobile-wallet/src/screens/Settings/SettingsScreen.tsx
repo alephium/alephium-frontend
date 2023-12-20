@@ -38,6 +38,7 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
+import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -74,6 +75,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const posthog = usePostHog()
   const theme = useTheme()
+  const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
@@ -135,7 +137,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           { text: 'Cancel' },
           {
             text: 'I understand',
-            onPress: toggleWalletConnect
+            onPress: () => {
+              toggleWalletConnect()
+              resetWalletConnectClientInitializationAttempts()
+            }
           }
         ]
       )

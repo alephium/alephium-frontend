@@ -49,8 +49,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
-  const { pairWithDapp, walletConnectClient, activeSessions, resetWalletConnectClientInitializationAttempts } =
-    useWalletConnectContext()
+  const { pairWithDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
   const isFocused = useIsFocused()
 
   const [isWalletConnectPairingsModalOpen, setIsWalletConnectPairingsModalOpen] = useState(false)
@@ -86,11 +85,6 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
     }
   }
 
-  const handleWalletConnectButtonPress = () => {
-    setIsWalletConnectPairingsModalOpen(true)
-    resetWalletConnectClientInitializationAttempts()
-  }
-
   return (
     <>
       <View style={style}>
@@ -107,7 +101,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
         )}
         {isWalletConnectEnabled && walletConnectClient && (
           <Button
-            onPress={handleWalletConnectButtonPress}
+            onPress={() => setIsWalletConnectPairingsModalOpen(true)}
             customIcon={<WalletConnectSVG width={20} color={!hasActiveWCSessions ? '#3B99FC' : undefined} />}
             round
             style={hasActiveWCSessions ? { backgroundColor: '#3B99FC' } : undefined}

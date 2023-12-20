@@ -139,8 +139,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   useEffect(() => {
     if (walletConnectClientInitializationAttempts === 10) {
       showToast({
-        text1: 'Could not initialize WalletConnect',
-        text2: 'Failed to initialize WalletConnect after 10 retries. Click on the WalletConnect button to try again.',
+        text1: 'Could not connect to WalletConnect',
+        text2: 'We tried 10 times... Re-enable to feature in the settings to try again.',
         type: 'error'
       })
     }
