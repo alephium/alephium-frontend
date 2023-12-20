@@ -113,7 +113,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         metadata: {
           name: 'Alephium desktop wallet',
           description: 'Alephium desktop wallet',
-          url: 'https://github.com/alephium/desktop-wallet',
+          url: 'https://github.com/alephium/alephium-frontend',
           icons: ['https://alephium.org/favicon-32x32.png']
         }
       })
