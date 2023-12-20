@@ -113,7 +113,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
       const client = await SignClient.init({
         projectId: '7b08748da1a3437b3fd587c5a070f11a',
-        relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Alephium desktop wallet',
           description: 'Alephium desktop wallet',

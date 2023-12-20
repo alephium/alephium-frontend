@@ -107,7 +107,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       const client = await SignClient.init({
         projectId: '2a084aa1d7e09af2b9044a524f39afbe',
-        relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Alephium mobile wallet',
           description: 'Alephium mobile wallet',
@@ -444,7 +443,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     console.log('👉 ARGS:', args)
   }, [])
 
-  const shouldInitialize = walletConnectClientStatus === 'initialization-failed'
+  const shouldInitialize = walletConnectClientStatus === 'initialization-failed' && isWalletConnectEnabled
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
 
   useEffect(() => {
