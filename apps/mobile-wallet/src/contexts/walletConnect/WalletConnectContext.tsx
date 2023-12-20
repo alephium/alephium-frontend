@@ -159,10 +159,18 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       const activeSesion = walletConnectClient.session.values.find((s) => s.topic === requestEvent.topic)
 
-      if (activeSesion) {
-        await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
-      } else {
-        await respondToWalletConnectWithError(requestEvent, getSdkError('USER_DISCONNECTED'))
+      try {
+        if (activeSesion) {
+          await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+        } else {
+          await respondToWalletConnectWithError(requestEvent, getSdkError('USER_DISCONNECTED'))
+        }
+      } catch (e: unknown) {
+        if (getHumanReadableError(e, '').includes('No matching key')) {
+          console.log(
+            'WalletConnect threw an exception because it tried to process a response to a session that is not valid because the user has already disconnected.'
+          )
+        }
       }
     },
     [respondToWalletConnect, respondToWalletConnectWithError, walletConnectClient]
@@ -362,10 +370,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             autoHide: false
           })
         } else {
-          if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method))
+          if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
             showExceptionToast(e, 'Could not build transaction')
-          posthog?.capture('Error', { message: 'Could not build transaction' })
-          console.error(e)
+            posthog?.capture('Error', { message: 'Could not build transaction' })
+            console.error(e)
+          }
           respondToWalletConnectWithError(requestEvent, {
             message: getHumanReadableError(e, 'Error while parsing WalletConnect session request'),
             code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
