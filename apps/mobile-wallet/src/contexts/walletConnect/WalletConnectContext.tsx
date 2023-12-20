@@ -52,6 +52,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppSelector } from '~/hooks/redux'
+import useInterval from '~/hooks/useInterval'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
@@ -74,7 +75,7 @@ const initialValues: WalletConnectContextValue = {
   activeSessions: []
 }
 
-type WalletConnectClientStatus = 'uninitialized' | 'initializing' | 'initialized'
+type WalletConnectClientStatus = 'uninitialized' | 'initializing' | 'initialized' | 'initialization-failed'
 
 const WalletConnectContext = createContext(initialValues)
 
@@ -126,7 +127,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setWalletConnectClientStatus('initialized')
       setActiveSessions(getActiveWalletConnectSessions(client))
     } catch (e) {
-      setWalletConnectClientStatus('uninitialized')
+      setWalletConnectClientStatus('initialization-failed')
       console.error('Could not initialize WalletConnect client', e)
       posthog?.capture('Error', {
         message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
@@ -415,6 +416,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     console.log('📣 RECEIVED EVENT TO EXPIRE PROPOSAL')
     console.log('👉 ARGS:', args)
   }, [])
+
+  const shouldInitialize = walletConnectClientStatus === 'initialization-failed'
+  useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
 
   useEffect(() => {
     if (!isWalletConnectEnabled) return
