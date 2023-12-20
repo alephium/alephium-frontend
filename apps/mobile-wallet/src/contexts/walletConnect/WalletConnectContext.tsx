@@ -34,7 +34,7 @@ import { SignResult } from '@alephium/web3/dist/src/api/api-alephium'
 import SignClient from '@walletconnect/sign-client'
 import { EngineTypes, SignClientTypes } from '@walletconnect/types'
 import { SessionTypes } from '@walletconnect/types'
-import { getSdkError } from '@walletconnect/utils'
+import { calcExpiry, getSdkError } from '@walletconnect/utils'
 import { useURL } from 'expo-linking'
 import { partition } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
@@ -308,6 +308,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_requestNodeApi': {
+            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
             const p = requestEvent.params.request.params as ApiRequestArguments
             const result = await client.node.request(p)
 
@@ -317,6 +318,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_requestExplorerApi': {
+            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
             const p = requestEvent.params.request.params as ApiRequestArguments
             const result = await client.explorer.request(p)
 
