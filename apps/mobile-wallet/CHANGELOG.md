@@ -1,5 +1,13 @@
 # @alephium/mobile-wallet
 
+## 1.0.2
+
+### Patch Changes
+
+- 1a85e4a: Display version number in settings screen
+- 789be5a: Fix iOS crash due to WalletConnect client initialization
+- 46d7299: Fix WalletConnect client double initialization
+
 ## 1.0.1
 
 ### Patch Changes
