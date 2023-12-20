@@ -154,6 +154,22 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     [respondToWalletConnect]
   )
 
+  const handleApiResponse = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (requestEvent: SignClientTypes.EventArguments['session_request'], result: any) => {
+      if (!walletConnectClient) return
+
+      const activeSesion = walletConnectClient.session.values.find((s) => s.topic === requestEvent.topic)
+
+      if (activeSesion) {
+        await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+      } else {
+        await respondToWalletConnectWithError(requestEvent, getSdkError('USER_DISCONNECTED'))
+      }
+    },
+    [respondToWalletConnect, respondToWalletConnectWithError, walletConnectClient]
+  )
+
   const onSessionRequest = useCallback(
     async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
       if (!walletConnectClient) return
@@ -315,7 +331,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             const result = await client.node.request(p)
 
             console.log('👉 WALLETCONNECT ASKED FOR THE NODE API')
-            await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+
+            await handleApiResponse(requestEvent, result)
 
             break
           }
@@ -325,7 +342,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             const result = await client.explorer.request(p)
 
             console.log('👉 WALLETCONNECT ASKED FOR THE EXPLORER API')
-            await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+
+            await handleApiResponse(requestEvent, result)
 
             break
           }
@@ -363,7 +381,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
     // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
     // TODO: Separate offline/online address data slices
-    [walletConnectClient, addressIds, posthog, respondToWalletConnect, respondToWalletConnectWithError]
+    [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse, posthog]
   )
 
   const onSessionProposal = useCallback(async (sessionProposalEvent: SessionProposalEvent) => {
