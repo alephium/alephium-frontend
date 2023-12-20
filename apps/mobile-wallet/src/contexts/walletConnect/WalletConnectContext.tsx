@@ -79,6 +79,8 @@ const initialValues: WalletConnectContextValue = {
 
 const WalletConnectContext = createContext(initialValues)
 
+const MAX_WALLETCONNECT_RETRIES = 3
+
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
   const currentNetworkName = useAppSelector((s) => s.network.name)
@@ -137,7 +139,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [posthog])
 
   useEffect(() => {
-    if (walletConnectClientInitializationAttempts === 10) {
+    if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES) {
       showToast({
         text1: 'Could not connect to WalletConnect',
         text2: 'If you want to use a dApp, please quit the app and try again.',
@@ -460,7 +462,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const shouldInitialize =
     isWalletConnectEnabled &&
     walletConnectClientStatus !== 'initialized' &&
-    walletConnectClientInitializationAttempts < 10
+    walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
 
   useEffect(() => {
@@ -793,7 +795,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
 
   const resetWalletConnectClientInitializationAttempts = () => {
-    if (walletConnectClientInitializationAttempts === 10) setWalletConnectClientInitializationAttempts(0)
+    if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)
+      setWalletConnectClientInitializationAttempts(0)
   }
 
   return (
