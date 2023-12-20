@@ -66,13 +66,15 @@ interface WalletConnectContextValue {
   pairWithDapp: (uri: string) => Promise<void>
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
+  resetWalletConnectClientInitializationAttempts: () => void
 }
 
 const initialValues: WalletConnectContextValue = {
   walletConnectClient: undefined,
   pairWithDapp: () => Promise.resolve(),
   unpairFromDapp: () => Promise.resolve(),
-  activeSessions: []
+  activeSessions: [],
+  resetWalletConnectClientInitializationAttempts: () => null
 }
 
 const WalletConnectContext = createContext(initialValues)
@@ -96,6 +98,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [isSessionRequestModalOpen, setIsSessionRequestModalOpen] = useState(false)
   const [loading, setLoading] = useState('')
   const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
+  const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
   const isAuthenticated = !!mnemonic
@@ -104,6 +107,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     try {
       console.log('⏳ INITIALIZING WC CLIENT...')
       setWalletConnectClientStatus('initializing')
+      setWalletConnectClientInitializationAttempts((prevAttempts) => prevAttempts + 1)
 
       const client = await SignClient.init({
         projectId: '2a084aa1d7e09af2b9044a524f39afbe',
@@ -131,6 +135,16 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       })
     }
   }, [posthog])
+
+  useEffect(() => {
+    if (walletConnectClientInitializationAttempts === 10) {
+      showToast({
+        text1: 'Could not initialize WalletConnect',
+        text2: 'Failed to initialize WalletConnect after 10 retries. Click on the WalletConnect button to try again.',
+        type: 'error'
+      })
+    }
+  }, [walletConnectClientInitializationAttempts])
 
   const respondToWalletConnect = useCallback(
     async (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => {
@@ -443,7 +457,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     console.log('👉 ARGS:', args)
   }, [])
 
-  const shouldInitialize = isWalletConnectEnabled && walletConnectClientStatus !== 'initialized'
+  const shouldInitialize =
+    isWalletConnectEnabled &&
+    walletConnectClientStatus !== 'initialized' &&
+    walletConnectClientInitializationAttempts < 10
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
 
   useEffect(() => {
@@ -775,8 +792,20 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
 
+  const resetWalletConnectClientInitializationAttempts = () => {
+    if (walletConnectClientInitializationAttempts === 10) setWalletConnectClientInitializationAttempts(0)
+  }
+
   return (
-    <WalletConnectContext.Provider value={{ pairWithDapp, unpairFromDapp, walletConnectClient, activeSessions }}>
+    <WalletConnectContext.Provider
+      value={{
+        pairWithDapp,
+        unpairFromDapp,
+        walletConnectClient,
+        activeSessions,
+        resetWalletConnectClientInitializationAttempts
+      }}
+    >
       {children}
       <Portal>
         {sessionProposalEvent && (
