@@ -124,7 +124,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setWalletConnectClientStatus('initialized')
       setActiveSessions(getActiveWalletConnectSessions(client))
     } catch (e) {
-      setWalletConnectClientStatus('initialization-failed')
+      setWalletConnectClientStatus('uninitialized')
       console.error('Could not initialize WalletConnect client', e)
       posthog?.capture('Error', {
         message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
@@ -443,42 +443,37 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     console.log('👉 ARGS:', args)
   }, [])
 
-  const shouldInitialize = walletConnectClientStatus === 'initialization-failed' && isWalletConnectEnabled
+  const shouldInitialize = isWalletConnectEnabled && walletConnectClientStatus !== 'initialized'
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
 
   useEffect(() => {
-    if (!isWalletConnectEnabled) return
+    if (!isWalletConnectEnabled || !walletConnectClient || walletConnectClientStatus !== 'initialized') return
 
-    if (walletConnectClientStatus === 'uninitialized') {
-      initializeWalletConnectClient()
-    } else if (walletConnectClient) {
-      console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
+    console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
 
-      walletConnectClient.on('session_proposal', onSessionProposal)
-      walletConnectClient.on('session_request', onSessionRequest)
-      walletConnectClient.on('session_delete', onSessionDelete)
-      walletConnectClient.on('session_update', onSessionUpdate)
-      walletConnectClient.on('session_event', onSessionEvent)
-      walletConnectClient.on('session_ping', onSessionPing)
-      walletConnectClient.on('session_expire', onSessionExpire)
-      walletConnectClient.on('session_extend', onSessionExtend)
-      walletConnectClient.on('proposal_expire', onProposalExpire)
+    walletConnectClient.on('session_proposal', onSessionProposal)
+    walletConnectClient.on('session_request', onSessionRequest)
+    walletConnectClient.on('session_delete', onSessionDelete)
+    walletConnectClient.on('session_update', onSessionUpdate)
+    walletConnectClient.on('session_event', onSessionEvent)
+    walletConnectClient.on('session_ping', onSessionPing)
+    walletConnectClient.on('session_expire', onSessionExpire)
+    walletConnectClient.on('session_extend', onSessionExtend)
+    walletConnectClient.on('proposal_expire', onProposalExpire)
 
-      return () => {
-        walletConnectClient.off('session_proposal', onSessionProposal)
-        walletConnectClient.off('session_request', onSessionRequest)
-        walletConnectClient.off('session_delete', onSessionDelete)
-        walletConnectClient.off('session_update', onSessionUpdate)
-        walletConnectClient.off('session_event', onSessionEvent)
-        walletConnectClient.off('session_ping', onSessionPing)
-        walletConnectClient.off('session_expire', onSessionExpire)
-        walletConnectClient.off('session_extend', onSessionExtend)
-        walletConnectClient.off('proposal_expire', onProposalExpire)
-      }
+    return () => {
+      walletConnectClient.off('session_proposal', onSessionProposal)
+      walletConnectClient.off('session_request', onSessionRequest)
+      walletConnectClient.off('session_delete', onSessionDelete)
+      walletConnectClient.off('session_update', onSessionUpdate)
+      walletConnectClient.off('session_event', onSessionEvent)
+      walletConnectClient.off('session_ping', onSessionPing)
+      walletConnectClient.off('session_expire', onSessionExpire)
+      walletConnectClient.off('session_extend', onSessionExtend)
+      walletConnectClient.off('proposal_expire', onProposalExpire)
     }
   }, [
     walletConnectClientStatus,
-    initializeWalletConnectClient,
     isWalletConnectEnabled,
     onProposalExpire,
     onSessionDelete,
