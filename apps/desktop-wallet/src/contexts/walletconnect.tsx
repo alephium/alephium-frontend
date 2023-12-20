@@ -108,7 +108,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     try {
       console.log('⏳ INITIALIZING WC CLIENT...')
       const client = await SignClient.init({
-        projectId: '6e2562e43678dd68a9070a62b6d52207',
+        projectId: '7b08748da1a3437b3fd587c5a070f11a',
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Alephium desktop wallet',
