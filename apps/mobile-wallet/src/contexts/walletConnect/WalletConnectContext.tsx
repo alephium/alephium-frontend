@@ -128,8 +128,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } catch (e) {
       setWalletConnectClientStatus('uninitialized')
       console.error('Could not initialize WalletConnect client', e)
+      posthog?.capture('Error', {
+        message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
+      })
     }
-  }, [])
+  }, [posthog])
 
   const respondToWalletConnect = useCallback(
     async (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => {
