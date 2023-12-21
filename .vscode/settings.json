@@ -2,7 +2,7 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "always"
   },
   "eslint.validate": ["javascript", "typescript"],
   "cSpell.language": "en,fr"

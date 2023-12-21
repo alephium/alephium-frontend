@@ -17,40 +17,77 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
+
+import CheckMark from '@/components/CheckMark'
 
 interface SelectOptionItemContentProps {
   MainContent: ReactNode
+  isSelected?: boolean
   SecondaryContent?: ReactNode
+  contentDirection?: 'row' | 'column'
   className?: string
   displaysCheckMarkWhenSelected?: boolean
 }
 
 const SelectOptionItemContent = ({
-  MainContent: ContentLeft,
-  SecondaryContent: ContentRight,
+  MainContent: ContentTop,
+  SecondaryContent: ContentBottom,
+  isSelected,
+  contentDirection = 'row',
   className
 }: SelectOptionItemContentProps) => (
-  <div className={className}>
-    <OptionMainContent>{ContentLeft}</OptionMainContent>
-    <OptionSecondaryContent>{ContentRight}</OptionSecondaryContent>
-  </div>
+  <OptionContentWrapper className={className} contentDirection={contentDirection}>
+    <OptionMainContent>
+      {ContentTop}
+      {isSelected && (
+        <CheckMarkContainer>
+          <CheckMark />
+        </CheckMarkContainer>
+      )}
+    </OptionMainContent>
+    {ContentBottom && <OptionSecondaryContent>{ContentBottom}</OptionSecondaryContent>}
+  </OptionContentWrapper>
 )
 
-export default styled(SelectOptionItemContent)`
+export default SelectOptionItemContent
+
+const OptionMainContent = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  width: ${({ displaysCheckMarkWhenSelected }) => (displaysCheckMarkWhenSelected ? 90 : 100)}%;
-`
-
-const OptionMainContent = styled.div`
   font-weight: var(--fontWeight-semiBold);
+  background-color: ${({ theme }) => theme.bg.primary};
+  padding: var(--spacing-3);
+  gap: var(--spacing-3);
 `
 
 const OptionSecondaryContent = styled.div`
-  * {
-    color: ${({ theme }) => theme.font.secondary} !important;
+  background-color: ${({ theme }) => theme.bg.background1};
+  padding: var(--spacing-3);
+`
+
+const CheckMarkContainer = styled.div``
+
+const OptionContentWrapper = styled.div<{ contentDirection: SelectOptionItemContentProps['contentDirection'] }>`
+  flex: 1;
+  display: flex;
+  flex-direction: ${({ contentDirection }) => contentDirection};
+  justify-content: space-between;
+  min-width: 0;
+
+  &:hover {
+    > div {
+      background-color: ${({ theme }) => theme.bg.hover};
+    }
+  }
+
+  ${OptionSecondaryContent} {
+    ${({ contentDirection }) =>
+      contentDirection === 'row' &&
+      css`
+        background-color: ${({ theme }) => theme.bg.primary};
+      `}
   }
 `

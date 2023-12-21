@@ -1,7 +1,7 @@
 {
   "name": "alephium-desktop-wallet",
   "description": "The official Alephium wallet",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "author": "Alephium dev <dev@alephium.org>",
   "main": "public/electron.js",
   "homepage": "./",
@@ -46,7 +46,6 @@
     "esbuild"
   ],
   "devDependencies": {
-    "@alephium/walletconnect-provider": "^0.22.0",
     "@electron/notarize": "^1.2.3",
     "@json-rpc-tools/utils": "^1.7.6",
     "@reduxjs/toolkit": "^1.9.1",
@@ -127,7 +126,8 @@
       "build/**/*",
       "public/electron.js",
       "public/preload.js",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "../../node_modules/**/*"
     ],
     "linux": {
       "category": "Finance",
@@ -151,7 +151,7 @@
     },
     "mac": {
       "hardenedRuntime": true,
-      "entitlements": "./node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
+      "entitlements": "../../node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
     },
     "directories": {
       "buildResources": "assets"

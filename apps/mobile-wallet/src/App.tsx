@@ -22,12 +22,12 @@ import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ViewProps } from 'react-native'
-import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import client from '~/api/client'
+import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useInterval from '~/hooks/useInterval'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
@@ -86,6 +86,7 @@ const App = () => {
         <ThemeProvider theme={theme}>
           <RootStackNavigation />
           <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
+          <ToastAnchor />
         </ThemeProvider>
       </Main>
     </Provider>
@@ -171,11 +172,9 @@ const Main = ({ children, ...props }: ViewProps) => {
   useInterval(refreshAddressDataWhenPendingTxsConfirm, 5000, pendingTxs.length === 0)
 
   return (
-    <RootSiblingParent>
-      <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>
-        {children}
-      </SafeAreaProvider>
-    </RootSiblingParent>
+    <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>
+      {children}
+    </SafeAreaProvider>
   )
 }
 

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -28,7 +29,7 @@ import HashEllipsed from '@/components/HashEllipsed'
 import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
 import { makeSelectContactByAddress } from '@/storage/addresses/addressesSelectors'
-import { Address, AddressHash } from '@/types/addresses'
+import { Address } from '@/types/addresses'
 import { openInWebBrowser } from '@/utils/misc'
 
 interface CheckAddressesBoxProps {
@@ -48,8 +49,7 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, className }: CheckAddre
       <AddressRow>
         <AddressLabel>{t('From')}</AddressLabel>
         <AddressLabelHash>
-          <AddressBadge addressHash={fromAddress.hash} truncate showFull />
-          {fromAddress.label && <HashEllipsedStyled hash={fromAddress.hash} />}
+          <AddressBadge addressHash={fromAddress.hash} truncate showFull appendHash />
         </AddressLabelHash>
       </AddressRow>
       {toAddressHash && (
@@ -101,8 +101,9 @@ const ContactName = styled(Truncate)`
 `
 
 const HashEllipsedStyled = styled(HashEllipsed)`
-  max-width: 90px;
-  color: ${({ theme }) => theme.font.tertiary};
+  max-width: 150px;
+  color: ${({ theme }) => theme.font.secondary};
+  font-size: 12px;
 `
 
 const ActionLinkStyled = styled(ActionLink)`

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
 import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
 import { Portal } from 'react-native-portalize'
@@ -33,7 +34,6 @@ import {
   syncAllAddressesTransactionsNextPage
 } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { AddressHash } from '~/types/addresses'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
 import { isPendingTx } from '~/utils/transactions'
 

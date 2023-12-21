@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, TokenDisplayBalances } from '@alephium/shared'
+import { AddressHash, Asset, NFT, TokenDisplayBalances } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { createSelector } from '@reduxjs/toolkit'
@@ -25,8 +25,7 @@ import { sortBy } from 'lodash'
 import { addressesAdapter, contactsAdapter } from '@/storage/addresses/addressesAdapters'
 import { selectAllAssetsInfo, selectAllNFTs, selectNFTIds } from '@/storage/assets/assetsSelectors'
 import { RootState } from '@/storage/store'
-import { Address, AddressHash } from '@/types/addresses'
-import { NFT } from '@/types/assets'
+import { Address } from '@/types/addresses'
 import { filterAddressesWithoutAssets } from '@/utils/addresses'
 
 export const {

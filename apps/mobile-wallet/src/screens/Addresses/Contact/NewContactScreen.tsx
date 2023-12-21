@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
@@ -27,7 +26,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
 import { ContactFormData } from '~/types/contacts'
-import { showToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 
@@ -50,7 +49,7 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
 
       posthog?.capture('Contact: Created new contact')
     } catch (e) {
-      showToast(getHumanReadableError(e, 'Could not save contact'))
+      showExceptionToast(e, 'Could not save contact')
 
       posthog?.capture('Error', { message: 'Could not save contact' })
     }

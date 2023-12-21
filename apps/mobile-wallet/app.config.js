@@ -16,16 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-const IS_DEV = process.env.APP_VARIANT === 'development'
-
 export default {
   expo: {
-    name: IS_DEV ? 'Alephium (DEV)' : 'Alephium',
+    name: 'Alephium',
     slug: 'alephium-mobile-wallet',
-    version: '1.0.0',
+    version: '1.0.1',
     orientation: 'portrait',
     icon: './assets/icon.png',
-    scheme: 'wc',
+    scheme: ['wc', 'alephium'],
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
@@ -37,7 +35,7 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: IS_DEV ? 'org.alephium.mobilewallet.dev' : 'org.alephium.mobilewallet',
+      bundleIdentifier: 'org.alephium.mobilewallet',
       config: {
         usesNonExemptEncryption: false
       }
@@ -47,7 +45,7 @@ export default {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#000000'
       },
-      package: IS_DEV ? 'org.alephium.wallet.dev' : 'org.alephium.wallet'
+      package: 'org.alephium.wallet'
     },
     web: {
       favicon: './assets/favicon.png'

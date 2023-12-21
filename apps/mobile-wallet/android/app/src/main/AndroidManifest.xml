@@ -32,6 +32,7 @@
         <data android:scheme="org.alephium.wallet"/>
         <data android:scheme="exp+alephium-mobile-wallet"/>
         <data android:scheme="wc"/>
+        <data android:scheme="alephium"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>

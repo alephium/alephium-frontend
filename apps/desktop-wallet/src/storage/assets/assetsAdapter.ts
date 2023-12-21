@@ -16,10 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetInfo } from '@alephium/shared'
+import { AssetInfo, NFT } from '@alephium/shared'
 import { createEntityAdapter } from '@reduxjs/toolkit'
-
-import { NFT } from '@/types/assets'
 
 export const assetsInfoAdapter = createEntityAdapter<AssetInfo>({
   sortComparer: (a, b) => a.name.localeCompare(b.name)

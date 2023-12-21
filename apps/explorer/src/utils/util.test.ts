@@ -16,26 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { checkAddressValidity, checkHexStringValidity, smartHash } from './strings'
+import { checkHexStringValidity, smartHash } from './strings'
 
 it('Should return a "smart hash"', () => {
   expect(smartHash('00002f884288e1f4')).toEqual('00002f884288e1f4'),
     expect(smartHash('00002f884288e1f48')).toEqual('00002f88...288e1f48'),
     expect(smartHash('00002f884288e1f4882b8bba09e7a0f1e6339ebabcef27e58e489090b792a820')).toEqual('00002f88...b792a820')
-})
-
-it('Should return true if address is correct', () => {
-  expect(checkAddressValidity('1EfGPJaeHYN8MQfZmUT58HNbAWkJAbuJ7hCLoAaQwHFX')).toEqual(true),
-    expect(
-      checkAddressValidity(
-        'WzbegYW2DgnouXKdMQGHcXKfgmTkvAomrvG9Dtw4vGpCrHdq4EzoFdaZPsR5zZHuVvEYD5Dw7Yf3X4PapL5M9RF62GsPaTtHdXYuxXfbbynwQ9WkiEai9Q9iD5yE55nNwGZkC9'
-      )
-    ).toEqual(true),
-    expect(checkAddressValidity('1EfGPJaeHYN8MQfZmUT58HNbAWkJAbuJkhCLoAaQwHFX0')).toEqual(false),
-    expect(checkAddressValidity('1EfGPJaeHYN8MQfZmUT58HNbAWkJAbuJkhCLoAaQwHFXl')).toEqual(false),
-    expect(checkAddressValidity('1EfGPJaeHYN8MQfZmUT58HNbAWkJAbuJkhCLoAaQwHFXI')).toEqual(false),
-    expect(checkAddressValidity('1EfGPJaeHYN8MQfZmUT58HNbAW-JAbuJ7hCLoAaQwHFXz')).toEqual(false),
-    expect(checkAddressValidity('1EfGPJaeHYN8MQfZmUT58HNbAWkJAbuJ7hCLoAaQwHFXz ')).toEqual(false)
 })
 
 it('Should return true if is HEX string', () => {

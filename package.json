@@ -2,7 +2,7 @@
   "name": "alephium-frontend",
   "description": "A monorepo containing all things frontend on Alephium",
   "author": "Alephium dev <dev@alephium.org>",
-  "packageManager": "bun@1.0.12",
+  "packageManager": "bun@1.0.17",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -17,9 +17,11 @@
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
-    "@alephium/web3": "0.22.0"
+    "@alephium/walletconnect-provider": "^0.27.2",
+    "@alephium/web3": "^0.27.2"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.26.2",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "eslint": "^8.48.0",
