@@ -104,7 +104,7 @@ jobs:
       - name: Use yarn since bun is not available on Windows
         uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Delete bun lockfile because it creates problems with yarn
         run: rm bun.lockb
