@@ -11,21 +11,13 @@
       "extends": "baseConfig",
       "autoIncrement": true
     },
-    "development": {
-      "extends": "baseConfig",
-      "distribution": "internal",
-      "developmentClient": true,
-      "env": {
-        "APP_VARIANT": "development"
-      }
-    },
-    "preview": {
+    "internal": {
       "extends": "production",
       "distribution": "internal"
     }
   },
   "submit": {
-    "preview": {
+    "internal": {
       "android": {
         "track": "internal",
         "releaseStatus": "draft",

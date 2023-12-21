@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NFT } from '@alephium/shared'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { syncUnknownTokensInfo } from '~/store/assets/assetsActions'
 import { nftsAdapter } from '~/store/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
-import { NFT } from '~/types/assets'
 
 type NFTsState = EntityState<NFT>
 

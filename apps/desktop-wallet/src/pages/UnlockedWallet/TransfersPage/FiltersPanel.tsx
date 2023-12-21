@@ -110,7 +110,8 @@ const FiltersPanel = ({
             renderSelectedValue={renderAddressesSelectedValue}
             getOptionId={(address) => address.hash}
             getOptionText={(address) => address.label || address.hash}
-            renderOption={(address) => <SelectOptionAddress address={address} />}
+            renderOption={(address, isSelected) => <SelectOptionAddress address={address} isSelected={isSelected} />}
+            floatingOptions
           />
         </Tile>
         <Tile>
@@ -123,7 +124,7 @@ const FiltersPanel = ({
             renderSelectedValue={renderAssetsSelectedValue}
             getOptionId={(asset) => asset.id}
             getOptionText={(asset) => asset.name ?? asset.symbol ?? asset.id}
-            renderOption={(asset) => <SelectOptionAsset asset={asset} hideAmount />}
+            renderOption={(asset, isSelected) => <SelectOptionAsset asset={asset} hideAmount isSelected={isSelected} />}
           />
         </Tile>
         <Tile>

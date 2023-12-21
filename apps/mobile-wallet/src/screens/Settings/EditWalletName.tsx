@@ -16,11 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
-import Toast from 'react-native-root-toast'
 
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
@@ -31,6 +29,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistWalletMetadata } from '~/persistent-storage/wallet'
 import { walletNameChanged } from '~/store/wallet/walletActions'
+import { showExceptionToast } from '~/utils/layout'
 
 interface EditWalletNameScreenProps
   extends StackScreenProps<RootStackParamList, 'EditWalletNameScreen'>,
@@ -53,7 +52,7 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
 
       posthog?.capture('Wallet: Editted wallet name')
     } catch (e) {
-      Toast.show(getHumanReadableError(e, 'Could not edit wallet name'))
+      showExceptionToast(e, 'Could not edit wallet name')
 
       posthog?.capture('Error', { message: 'Could not edit wallet name' })
     }

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isAddressValid } from '@alephium/shared'
+import { AddressHash, isAddressValid } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
@@ -43,7 +43,6 @@ import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { cameraToggled } from '~/store/appSlice'
-import { AddressHash } from '~/types/addresses'
 import { Contact } from '~/types/contacts'
 import { validateIsAddressValid } from '~/utils/forms'
 import { showToast } from '~/utils/layout'
@@ -92,7 +91,11 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
       posthog?.capture('Send: Captured destination address by scanning QR code')
     } else {
-      showToast('This is not a valid Alephium address.')
+      showToast({
+        text1: 'Invalid address',
+        text2: 'This is not a valid Alephium address: ' + addressHash,
+        type: 'error'
+      })
     }
   }
 

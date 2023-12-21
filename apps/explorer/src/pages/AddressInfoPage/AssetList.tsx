@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap, sortBy } from 'lodash'
@@ -29,7 +30,6 @@ import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import NFTList from '@/pages/AddressInfoPage/NFTList'
 import TokenList from '@/pages/AddressInfoPage/TokenList'
-import { AddressHash } from '@/types/addresses'
 import { alphMetadata } from '@/utils/assets'
 
 interface AssetListProps {

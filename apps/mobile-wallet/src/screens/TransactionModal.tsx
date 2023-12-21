@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NFT } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
 import { partition } from 'lodash'
@@ -32,7 +33,6 @@ import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Scree
 import NFTsGrid from '~/components/NFTsGrid'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
-import { NFT } from '~/types/assets'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { getTransactionInfo } from '~/utils/transactions'
 
@@ -82,7 +82,9 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           ))}
         </Row>
         <Row title="Timestamp" transparent>
-          <AppTextStyled semiBold>{dayjs(tx.timestamp).toDate().toUTCString()}</AppTextStyled>
+          <AppTextStyled semiBold>
+            {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+          </AppTextStyled>
         </Row>
         <Row title="Status" transparent>
           <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>

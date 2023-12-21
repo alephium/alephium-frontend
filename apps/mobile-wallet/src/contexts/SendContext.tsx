@@ -16,18 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError, AssetAmount, getHumanReadableError } from '@alephium/shared'
+import { AddressHash, AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
+import { Portal } from 'react-native-portalize'
 
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
+import BottomModal from '~/components/layout/BottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
-import { AddressHash } from '~/types/addresses'
-import { showToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 type UnsignedTxData = {
@@ -108,7 +109,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       const data = await buildSweepTransactions(address, address.hash)
       setUnsignedTxData(data)
     } catch (e) {
-      showToast(getHumanReadableError(e, 'Error while building the transaction'))
+      showExceptionToast(e, 'Could not build transaction')
 
       posthog?.capture('Error', { message: 'Could not build consolidation transactions' })
     }
@@ -124,14 +125,15 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         callbacks.onBuildSuccess()
       } catch (e) {
         // TODO: When API error codes are available, replace this substring check with a proper error code check
-        const { error } = e as APIError
-        if (error?.detail && (error.detail.includes('consolidating') || error.detail.includes('consolidate'))) {
+        const error = (e as unknown as string).toString()
+
+        if (error.includes('consolidating') || error.includes('consolidate')) {
           setConsolidationRequired(true)
           setIsConsolidateModalVisible(true)
           setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
           await buildConsolidationTransactions()
         } else {
-          showToast(getHumanReadableError(e, 'Error while building the transaction'))
+          showExceptionToast(e, 'Could not build transaction')
 
           posthog?.capture('Error', { message: 'Could not build transaction' })
         }
@@ -168,7 +170,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
         posthog?.capture('Send: Sent transaction', { tokens: tokens.length })
       } catch (e) {
-        showToast(getHumanReadableError(e, 'Could not send transaction'))
+        showExceptionToast(e, 'Could not send transaction')
 
         posthog?.capture('Error', { message: 'Could not send transaction' })
       }
@@ -203,13 +205,22 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-      {isConsolidateModalVisible && (
-        <ConsolidationModal
-          onConsolidate={() => authenticateAndSend(onSendSuccessCallback)}
-          onCancel={() => setIsConsolidateModalVisible(false)}
-          fees={unsignedTxData.fees}
+      <Portal>
+        <BottomModal
+          Content={(props) => (
+            <ConsolidationModal
+              {...props}
+              onConsolidate={() => {
+                authenticateAndSend(onSendSuccessCallback)
+                props.onClose && props.onClose()
+              }}
+              fees={unsignedTxData.fees}
+            />
+          )}
+          isOpen={isConsolidateModalVisible}
+          onClose={() => setIsConsolidateModalVisible(false)}
         />
-      )}
+      </Portal>
       <AuthenticationModal
         authenticationPrompt="Verify it's you"
         loadingText="Verifying..."

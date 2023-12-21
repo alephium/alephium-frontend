@@ -395,9 +395,7 @@
   "Unknown tokens": "Các token không xác định",
   "Unknown wallet name": "Tên ví không xác định",
   "Unlock": "Mở khoá",
-  "Unlock a wallet to connect to dApp: {{ dAppName }}": "Đăng nhập vào một ví để kết nối đến dApp: {{ dAppName }}",
   "Unlock a wallet to continue.": "Đăng nhập vào một ví để tiếp tục.",
-  "Unlock your wallet to connect to dApp: {{ dAppName }}": "Đăng nhập vào ví của bạn để kết nối đến dApp: {{ dAppName }}",
   "Unlock your wallet to continue.": "Đăng nhập vào ví của bạn để tiếp tục.",
   "Unlocked at": "Đã mở khoá vào",
   "Unlocks at": "Mở khoá vào",
@@ -462,5 +460,12 @@
   "walletConnectProposalMessage": "Connect to <1>{{ dAppUrl }}</1> with one of your addresses:",
   "walletConnectProposalMessageWithGroup": "Connect to <1>{{ dAppUrl }}</1> with one of your addresses in group <1>{{ group }}</1>:",
   "Active dApp connections": "Active dApp connections",
-  "Connect to {{ dAppUrl }}": "Connect to {{ dAppUrl }}"
+  "Connect to {{ dAppUrl }}": "Connect to {{ dAppUrl }}",
+  "Unlock a wallet to connect to dApp": "Unlock a wallet to connect to dApp",
+  "Unlock your wallet to connect to dApp": "Unlock your wallet to connect to dApp",
+  "The address which will receive the assets.": "The address which will receive the assets.",
+  "Select the address to send assets to.": "Select the address to send assets to.",
+  "Destination": "Destination",
+  "Origin": "Origin",
+  "One of your addresses to send the assets from.": "One of your addresses to send the assets from."
 }

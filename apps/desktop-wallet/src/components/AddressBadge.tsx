@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -25,7 +26,6 @@ import ClipboardButton from '@/components/Buttons/ClipboardButton'
 import HashEllipsed from '@/components/HashEllipsed'
 import { useAppSelector } from '@/hooks/redux'
 import { makeSelectContactByAddress, selectAddressByHash } from '@/storage/addresses/addressesSelectors'
-import { AddressHash } from '@/types/addresses'
 
 interface AddressBadgeProps {
   addressHash: AddressHash
@@ -35,6 +35,8 @@ interface AddressBadgeProps {
   hideColorIndication?: boolean
   disableA11y?: boolean
   disableCopy?: boolean
+  appendHash?: boolean
+  displayHashUnder?: boolean
   showFull?: boolean
   className?: string
 }
@@ -47,6 +49,8 @@ const AddressBadge = ({
   disableA11y = false,
   disableCopy,
   truncate,
+  appendHash = false,
+  displayHashUnder = false,
   showFull,
   withBorders
 }: AddressBadgeProps) => {
@@ -60,7 +64,6 @@ const AddressBadge = ({
       className={className}
       withBorders={contact || address ? withBorders : false}
       truncate={truncate}
-      showFull={showFull}
     >
       {contact ? (
         <Label truncate={truncate}>
@@ -78,15 +81,20 @@ const AddressBadge = ({
         <>
           {!hideColorIndication && <AddressColorIndicator addressHash={address.hash} hideMainAddressBadge={hideStar} />}
           {address.label ? (
-            <Label truncate={truncate}>
-              {disableCopy ? (
-                address.label
-              ) : (
-                <ClipboardButton textToCopy={address.hash} tooltip={t('Copy address')} disableA11y={disableA11y}>
-                  {address.label}
-                </ClipboardButton>
+            <LabelAndHash isColumn={displayHashUnder}>
+              <Label truncate={truncate}>
+                {disableCopy || appendHash ? (
+                  address.label
+                ) : (
+                  <ClipboardButton textToCopy={address.hash} tooltip={t('Copy address')} disableA11y={disableA11y}>
+                    {address.label}
+                  </ClipboardButton>
+                )}
+              </Label>
+              {appendHash && (
+                <ShortHashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
               )}
-            </Label>
+            </LabelAndHash>
           ) : (
             <HashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
           )}
@@ -98,11 +106,10 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'showFull'>>`
+const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate'>>`
   display: flex;
   align-items: center;
-  gap: 4px;
-  max-width: ${({ showFull }) => !showFull && 125}px;
+  gap: 6px;
 
   ${({ withBorders }) =>
     withBorders &&
@@ -121,9 +128,23 @@ const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 't
     `}
 `
 
+const LabelAndHash = styled.div<{ isColumn: boolean }>`
+  display: flex;
+  overflow: auto;
+  gap: 10px;
+
+  ${({ isColumn }) =>
+    isColumn &&
+    css`
+      flex-direction: column;
+      gap: 0px;
+    `}
+`
+
 const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
   margin-right: 2px;
   white-space: nowrap;
+  max-width: 125px;
 
   ${({ truncate }) =>
     truncate &&
@@ -134,3 +155,11 @@ const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
 `
 
 const NotKnownAddress = styled(HashEllipsed)``
+
+const ShortHashEllipsed = styled(HashEllipsed)`
+  max-width: 150px;
+  min-width: 80px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.font.secondary};
+  width: 100%;
+`

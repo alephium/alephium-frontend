@@ -214,4 +214,4 @@ const displayMessageImmediately = (state: SnackbarSliceState, message: SnackbarM
 }
 
 const displayError = (state: SnackbarSliceState, action: PayloadAction<Message>) =>
-  displayMessageImmediately(state, { text: action.payload, type: 'alert', duration: 5000 })
+  displayMessageImmediately(state, { text: action.payload, type: 'alert', duration: 10000 })

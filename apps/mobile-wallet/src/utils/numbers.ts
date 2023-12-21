@@ -22,7 +22,6 @@ export const isNumericStringValid = (str: string, allowFloat = true) =>
   isNumber(str) &&
   !str.endsWith(' ') &&
   !str.endsWith('-') &&
-  !str.endsWith(',') &&
   !str.startsWith('.') &&
   !str.endsWith('..') &&
   !(allowFloat && str.length >= 2 && str.startsWith('0') && str.indexOf('.') !== 1) &&

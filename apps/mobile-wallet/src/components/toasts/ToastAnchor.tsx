@@ -16,22 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, AssetAmount } from '@alephium/shared'
-import { FungibleTokenMetaData, NFTMetaData } from '@alephium/web3'
+import BaseToast from 'react-native-toast-message'
 
-export type AssetAmountInputType = AssetAmount & { amountInput?: string }
+import Toast from '~/components/toasts/Toast'
 
-export type FungibleTokenBasicMetadata = Omit<FungibleTokenMetaData, 'totalSupply'> & { id: Asset['id'] }
+const ToastAnchor = () => (
+  <BaseToast
+    config={{
+      info: (props) => <Toast {...props} type="info" />,
+      success: (props) => <Toast text1={props.text1} {...props} type="success" />,
+      error: (props) => <Toast {...props} type="error" />
+    }}
+  />
+)
 
-export type NFT = {
-  id: Asset['id']
-  collectionId: NFTMetaData['collectionId']
-  name?: string
-  description?: string
-  image?: string
-}
-
-export type SyncUnknownTokensInfoResult = {
-  tokens: FungibleTokenBasicMetadata[]
-  nfts: NFT[]
-}
+export default ToastAnchor

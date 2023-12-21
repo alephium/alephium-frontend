@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { GENESIS_TIMESTAMP } from '@alephium/shared'
+import { AddressHash, GENESIS_TIMESTAMP } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import _ from 'lodash'
 import { useState } from 'react'
@@ -30,7 +30,6 @@ import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
-import { AddressHash } from '@/types/addresses'
 import { openInWebBrowser } from '@/utils/misc'
 
 interface IOListProps {

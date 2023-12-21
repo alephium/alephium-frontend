@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import * as Haptics from 'expo-haptics'
 import { usePostHog } from 'posthog-react-native'
@@ -43,7 +44,6 @@ import {
   selectDefaultAddress,
   syncAddressesData
 } from '~/store/addressesSlice'
-import { AddressHash } from '~/types/addresses'
 
 const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
   const dispatch = useAppDispatch()

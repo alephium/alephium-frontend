@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
@@ -28,7 +29,6 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { csvFileGenerationFinished, fetchTransactionsCsv } from '@/storage/transactions/transactionsActions'
-import { AddressHash } from '@/types/addresses'
 import { TransactionTimePeriod } from '@/types/transactions'
 import { getCsvExportTimeRangeQueryParams } from '@/utils/csvExport'
 import { generateCsvFile } from '@/utils/csvExport'

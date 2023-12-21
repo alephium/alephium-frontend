@@ -28,33 +28,30 @@ interface EllipsedProps extends HTMLAttributes<HTMLDivElement> {
 
 const Ellipsed = ({ text, className }: EllipsedProps) => {
   const el = useRef<HTMLDivElement | null>(null)
-  const charWidth = useRef<number>()
   const [_text, setText] = useState(text)
 
   const handleResize = useCallback(() => {
-    if (el?.current === null) return
+    if (el?.current === null) {
+      setText(text.substring(0, 5) + '...')
+    } else {
+      const visibleChars = Math.floor(el.current.clientWidth / (el.current.scrollWidth / text.length))
+      const half = visibleChars / 2
 
-    if (charWidth.current === undefined) {
-      charWidth.current = el.current.scrollWidth / text.length
+      setText(
+        visibleChars >= text.length
+          ? text
+          : text.slice(0, Math.floor(half) - 2) +
+              (visibleChars === text.length ? '' : '...') +
+              text.slice(-Math.ceil(half) + 2)
+      )
     }
-
-    const visibleChars = Math.floor(el.current.clientWidth / charWidth.current)
-    const half = visibleChars / 2
-
-    setText(
-      visibleChars >= text.length
-        ? text
-        : text.slice(0, Math.floor(half)) +
-            (visibleChars == text.length ? '' : '...') +
-            text.slice(-Math.ceil(half) + 3)
-    )
   }, [text])
 
   useWindowResize(handleResize)
 
   useEffect(() => {
     handleResize()
-  }, [handleResize])
+  }, [handleResize, text])
 
   return (
     <div ref={el} className={className}>

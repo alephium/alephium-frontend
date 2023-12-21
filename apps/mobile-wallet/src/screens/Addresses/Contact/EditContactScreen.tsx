@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
@@ -31,7 +30,7 @@ import { deleteContact, persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { ContactFormData } from '~/types/contacts'
-import { showToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 
 interface EditContactScreenProps extends StackScreenProps<RootStackParamList, 'EditContactScreen'>, ScrollScreenProps {}
 
@@ -63,7 +62,7 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
 
                     posthog?.capture('Contact: Deleted contact')
                   } catch (e) {
-                    showToast(getHumanReadableError(e, 'Could not delete contact'))
+                    showExceptionToast(e, 'Could not delete contact')
 
                     posthog?.capture('Error', { message: 'Could not delete contact' })
                   } finally {
@@ -90,7 +89,7 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
 
       posthog?.capture('Contact: Editted contact')
     } catch (e) {
-      showToast(getHumanReadableError(e, 'Could not save contact'))
+      showExceptionToast(e, 'Could not save contact')
 
       posthog?.capture('Error', { message: 'Could not save contact' })
     }

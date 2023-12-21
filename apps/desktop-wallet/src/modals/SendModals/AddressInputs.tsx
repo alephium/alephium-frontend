@@ -16,29 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { motion } from 'framer-motion'
-import { ArrowDown, ContactIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { AddressHash } from '@alephium/shared'
+import { AlbumIcon, ContactIcon } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import Box from '@/components/Box'
+import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
-import { inputStyling } from '@/components/Inputs'
+import AddressInput from '@/components/Inputs/AddressInput'
 import AddressSelect from '@/components/Inputs/AddressSelect'
-import Input from '@/components/Inputs/Input'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
-import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
+import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import InputsSection from '@/modals/SendModals/InputsSection'
 import { selectAllContacts, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
-import { Address, AddressHash } from '@/types/addresses'
-import { Contact } from '@/types/contacts'
+import { Address } from '@/types/addresses'
 import { filterContacts } from '@/utils/contacts'
 
 interface AddressInputsProps {
@@ -51,8 +50,6 @@ interface AddressInputsProps {
   hideFromAddressesWithoutAssets?: boolean
   className?: string
 }
-
-type InputFieldMode = 'view' | 'edit'
 
 const AddressInputs = ({
   defaultFromAddress,
@@ -69,98 +66,96 @@ const AddressInputs = ({
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
   const isAddressesStateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const theme = useTheme()
 
+  const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
-  const [contact, setContact] = useState<Contact>()
   const [filteredContacts, setFilteredContacts] = useState(contacts)
-  const [inputFieldMode, setInputFieldMode] = useState<InputFieldMode>('view')
 
-  const isContactVisible = contact && inputFieldMode === 'view'
   const contactSelectOptions: SelectOption<AddressHash>[] = contacts.map((contact) => ({
     value: contact.address,
     label: contact.name
   }))
 
-  useEffect(() => {
-    const existingContact = contacts.find((c) => c.address === toAddress?.value)
-
-    setContact(existingContact)
-  }, [contacts, toAddress?.value])
-
   const handleContactSelect = (contactAddress: SelectOption<AddressHash>) =>
     onContactSelect && onContactSelect(contactAddress.value)
-
-  const handleFocus = () => {
-    inputRef.current?.focus()
-    setInputFieldMode('edit')
-  }
 
   const handleContactsSearch = (searchInput: string) =>
     setFilteredContacts(filterContacts(contacts, searchInput.toLowerCase()))
 
-  const handleContactSelectModalClose = () => {
+  const handleToOwnAddressModalClose = () => {
     setIsAddressSelectModalOpen(false)
+    moveFocusOnPreviousModal()
+  }
+
+  const handleContactSelectModalClose = () => {
+    setIsContactSelectModalOpen(false)
     setFilteredContacts(contacts)
     moveFocusOnPreviousModal()
   }
 
   return (
-    <InputsSection title={t('Addresses')} className={className}>
-      <BoxStyled>
-        <InputFixedLabel>{t('From')}</InputFixedLabel>
-        <VerticalDivider />
-        {isAddressesStateUninitialized ? (
-          <SkeletonLoader height="55px" />
-        ) : (
-          <AddressSelect
-            title={t('Select the address to send funds from.')}
-            options={fromAddresses}
-            defaultAddress={updatedInitialAddress}
-            onAddressChange={onFromAddressChange}
-            id="from-address"
-            hideAddressesWithoutAssets={hideFromAddressesWithoutAssets}
-            simpleMode
-          />
-        )}
-      </BoxStyled>
-
+    <InputsContainer>
+      <InputsSection
+        title={t('Origin')}
+        subtitle={t('One of your addresses to send the assets from.')}
+        className={className}
+      >
+        <BoxStyled>
+          {isAddressesStateUninitialized ? (
+            <SkeletonLoader height="55px" />
+          ) : (
+            <AddressSelect
+              title={t('Select the address to send funds from.')}
+              options={fromAddresses}
+              defaultAddress={updatedInitialAddress}
+              onAddressChange={onFromAddressChange}
+              id="from-address"
+              hideAddressesWithoutAssets={hideFromAddressesWithoutAssets}
+              simpleMode
+              shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
+            />
+          )}
+        </BoxStyled>
+      </InputsSection>
       {toAddress && onToAddressChange && (
-        <>
-          <DividerArrowRow>
-            <DividerArrow size={20} />
-          </DividerArrowRow>
-
-          <BoxStyled>
-            <InputFixedLabel>{t('To')}</InputFixedLabel>
-            <VerticalDivider />
-            <AddressToInput
-              inputFieldRef={inputRef}
-              value={toAddress.value}
-              error={toAddress.error}
-              onFocus={handleFocus}
-              onBlur={() => setInputFieldMode('view')}
-              onChange={(e) => onToAddressChange(e.target.value.trim())}
-              inputFieldStyle={{
-                color: isContactVisible ? 'transparent' : undefined,
-                transition: 'all 0.2s ease-out'
-              }}
+        <InputsSection
+          title={t('Destination')}
+          subtitle={t('The address which will receive the assets.')}
+          className={className}
+        >
+          <AddressToInput
+            value={toAddress.value}
+            error={toAddress.error}
+            onChange={(e) => onToAddressChange(e.target.value.trim())}
+          />
+          <DestinationActions>
+            <Button
               Icon={ContactIcon}
-              onIconPress={() => setIsAddressSelectModalOpen(true)}
+              iconColor={theme.global.accent}
+              variant="faded"
+              short
+              borderless
+              onClick={() => setIsContactSelectModalOpen(true)}
             >
-              {isContactVisible && (
-                <ContactRow onClick={handleFocus}>
-                  <Truncate>{contact.name}</Truncate>
-                  <HashEllipsedStyled hash={contact.address} disableA11y />
-                </ContactRow>
-              )}
-            </AddressToInput>
-          </BoxStyled>
-        </>
+              {t('Contacts')}
+            </Button>
+            <Button
+              Icon={AlbumIcon}
+              iconColor={theme.global.accent}
+              variant="faded"
+              short
+              borderless
+              onClick={() => setIsAddressSelectModalOpen(true)}
+            >
+              {t('Your addresses')}
+            </Button>
+          </DestinationActions>
+        </InputsSection>
       )}
 
       <ModalPortal>
-        {isAddressSelectModalOpen && (
+        {isContactSelectModalOpen && (
           <SelectOptionsModal
             title={t('Choose a contact')}
             options={contactSelectOptions}
@@ -169,21 +164,36 @@ const AddressInputs = ({
             onClose={handleContactSelectModalClose}
             onSearchInput={handleContactsSearch}
             searchPlaceholder={t('Search for name or a hash...')}
-            parentSelectRef={inputRef}
             optionRender={(contact) => (
               <SelectOptionItemContent
                 MainContent={<Name>{contact.label}</Name>}
                 SecondaryContent={<HashEllipsedStyled hash={contact.value} disableA11y />}
+                isSelected={contact.value === toAddress?.value}
               />
             )}
           />
         )}
+        {isAddressSelectModalOpen && onToAddressChange && (
+          <AddressSelectModal
+            title={t('Select the address to send assets to.')}
+            options={fromAddresses}
+            onAddressSelect={(address) => onToAddressChange(address.hash)}
+            onClose={handleToOwnAddressModalClose}
+            selectedAddress={fromAddresses.find((a) => a.hash === toAddress?.value)}
+          />
+        )}
       </ModalPortal>
-    </InputsSection>
+    </InputsContainer>
   )
 }
 
 export default AddressInputs
+
+const InputsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+`
 
 const Name = styled(Truncate)`
   font-weight: var(--fontWeight-semiBold);
@@ -196,54 +206,18 @@ const HashEllipsedStyled = styled(HashEllipsed)`
   max-width: 150px;
 `
 
-const ContactRow = styled(motion.div)`
-  display: flex;
-  gap: var(--spacing-2);
-  position: absolute;
-  width: 85%;
-  height: 100%;
-  align-items: center;
-  top: 0;
-  left: ${inputStyling.paddingLeftRight};
-  transition: opacity 0.2s ease-out;
-`
-
 const BoxStyled = styled(Box)`
   display: flex;
   align-items: center;
-  padding: 5px;
   gap: 10px;
+  height: var(--inputHeight);
 `
 
-const AddressToInput = styled(Input)`
+const AddressToInput = styled(AddressInput)`
   margin: 0;
-  border: 1px solid transparent;
-
-  &:not(:hover) {
-    background-color: transparent;
-  }
 `
 
-const InputFixedLabel = styled.div`
-  min-width: 12%;
-  padding-left: 20px;
-  color: ${({ theme }) => theme.font.secondary};
-`
-
-const DividerArrowRow = styled.div`
-  height: 20px;
-  margin: -5px 0;
-  width: 100%;
+const DestinationActions = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const DividerArrow = styled(ArrowDown)`
-  padding: 2px;
-  color: ${({ theme }) => theme.font.tertiary};
-  border-radius: var(--radius-full);
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.primary};
-  box-shadow: ${({ theme }) => theme.shadow.primary};
+  gap: 5px;
 `
