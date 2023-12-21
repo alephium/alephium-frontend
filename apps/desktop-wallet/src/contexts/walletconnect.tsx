@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount, getHumanReadableError } from '@alephium/shared'
+import { AssetAmount, getHumanReadableError, WalletConnectClientStatus } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -58,6 +58,7 @@ import {
 import { SessionProposalEvent, SessionRequestEvent } from '@/types/walletConnect'
 import { AlephiumWindow } from '@/types/window'
 import { WALLETCONNECT_ERRORS } from '@/utils/constants'
+import { useInterval } from '@/utils/hooks'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
 export interface WalletConnectContextProps {
@@ -101,29 +102,35 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const [dappTxData, setDappTxData] = useState(initialContext.dappTxData)
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
   const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
+  const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
 
   const isAuthenticated = !!mnemonic
 
   const initializeWalletConnectClient = useCallback(async () => {
     try {
       console.log('⏳ INITIALIZING WC CLIENT...')
+      setWalletConnectClientStatus('initializing')
+
       const client = await SignClient.init({
-        projectId: '6e2562e43678dd68a9070a62b6d52207',
-        relayUrl: 'wss://relay.walletconnect.com',
+        projectId: '7b08748da1a3437b3fd587c5a070f11a',
         metadata: {
           name: 'Alephium desktop wallet',
           description: 'Alephium desktop wallet',
-          url: 'https://github.com/alephium/desktop-wallet',
+          url: 'https://github.com/alephium/alephium-frontend',
           icons: ['https://alephium.org/favicon-32x32.png']
         }
       })
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
 
       setWalletConnectClient(client)
+      setWalletConnectClientStatus('initialized')
       setActiveSessions(getActiveWalletConnectSessions(client))
     } catch (e) {
-      posthog.capture('Error', { message: 'Could not initialize WalletConnect client' })
+      setWalletConnectClientStatus('uninitialized')
       console.error('Could not initialize WalletConnect client', e)
+      posthog.capture('Error', {
+        message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
+      })
     }
   }, [posthog])
 
@@ -406,56 +413,56 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     console.log('👉 ARGS:', args)
   }, [])
 
+  const shouldInitialize = walletConnectClientStatus !== 'initialized'
+  useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
+
   useEffect(() => {
-    if (!walletConnectClient) {
-      initializeWalletConnectClient()
-    } else {
-      console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
+    if (!walletConnectClient || walletConnectClientStatus !== 'initialized') return
 
-      walletConnectClient.on('session_proposal', onSessionProposal)
-      walletConnectClient.on('session_request', onSessionRequest)
-      walletConnectClient.on('session_delete', onSessionDelete)
-      walletConnectClient.on('session_update', onSessionUpdate)
-      walletConnectClient.on('session_event', onSessionEvent)
-      walletConnectClient.on('session_ping', onSessionPing)
-      walletConnectClient.on('session_expire', onSessionExpire)
-      walletConnectClient.on('session_extend', onSessionExtend)
-      walletConnectClient.on('proposal_expire', onProposalExpire)
+    console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
 
-      const connectAndReset = async (uri: string) => {
-        await pairWithDapp(uri)
-        electron?.walletConnect.resetDeepLinkUri()
-      }
+    walletConnectClient.on('session_proposal', onSessionProposal)
+    walletConnectClient.on('session_request', onSessionRequest)
+    walletConnectClient.on('session_delete', onSessionDelete)
+    walletConnectClient.on('session_update', onSessionUpdate)
+    walletConnectClient.on('session_event', onSessionEvent)
+    walletConnectClient.on('session_ping', onSessionPing)
+    walletConnectClient.on('session_expire', onSessionExpire)
+    walletConnectClient.on('session_extend', onSessionExtend)
+    walletConnectClient.on('proposal_expire', onProposalExpire)
 
-      const getDeepLinkAndConnect = async () => {
-        const uri = await electron?.walletConnect.getDeepLinkUri()
+    const connectAndReset = async (uri: string) => {
+      await pairWithDapp(uri)
+      electron?.walletConnect.resetDeepLinkUri()
+    }
 
-        if (uri) {
+    const getDeepLinkAndConnect = async () => {
+      const uri = await electron?.walletConnect.getDeepLinkUri()
+
+      if (uri) {
+        connectAndReset(uri)
+      } else {
+        electron?.walletConnect.onConnect(async (uri: string) => {
           connectAndReset(uri)
-        } else {
-          electron?.walletConnect.onConnect(async (uri: string) => {
-            connectAndReset(uri)
-          })
-        }
+        })
       }
+    }
 
-      getDeepLinkAndConnect()
+    getDeepLinkAndConnect()
 
-      return () => {
-        walletConnectClient.off('session_proposal', onSessionProposal)
-        walletConnectClient.off('session_request', onSessionRequest)
-        walletConnectClient.off('session_delete', onSessionDelete)
-        walletConnectClient.off('session_update', onSessionUpdate)
-        walletConnectClient.off('session_event', onSessionEvent)
-        walletConnectClient.off('session_ping', onSessionPing)
-        walletConnectClient.off('session_expire', onSessionExpire)
-        walletConnectClient.off('session_extend', onSessionExtend)
-        walletConnectClient.off('proposal_expire', onProposalExpire)
-      }
+    return () => {
+      walletConnectClient.off('session_proposal', onSessionProposal)
+      walletConnectClient.off('session_request', onSessionRequest)
+      walletConnectClient.off('session_delete', onSessionDelete)
+      walletConnectClient.off('session_update', onSessionUpdate)
+      walletConnectClient.off('session_event', onSessionEvent)
+      walletConnectClient.off('session_ping', onSessionPing)
+      walletConnectClient.off('session_expire', onSessionExpire)
+      walletConnectClient.off('session_extend', onSessionExtend)
+      walletConnectClient.off('proposal_expire', onProposalExpire)
     }
   }, [
     pairWithDapp,
-    initializeWalletConnectClient,
     onProposalExpire,
     onSessionDelete,
     onSessionEvent,
@@ -465,7 +472,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     onSessionProposal,
     onSessionRequest,
     onSessionUpdate,
-    walletConnectClient
+    walletConnectClient,
+    walletConnectClientStatus
   ])
 
   const unpairFromDapp = useCallback(

@@ -16,27 +16,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef } from 'react'
-
-// TODO: Same as in desktop wallet, move to shared
-const useInterval = (callback: () => void, delay: number, shouldPause = false) => {
-  const savedCallback = useRef<() => void>(() => null)
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback
-  }, [callback])
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current()
-    }
-    if (delay !== null && !shouldPause) {
-      const id = setInterval(tick, delay)
-      return () => clearInterval(id)
-    }
-  }, [delay, shouldPause])
-}
-
-export default useInterval
+export type WalletConnectClientStatus = 'uninitialized' | 'initializing' | 'initialized'

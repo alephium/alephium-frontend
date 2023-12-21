@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AddressHash, AssetAmount, getHumanReadableError } from '@alephium/shared'
+import { AddressHash, AssetAmount, getHumanReadableError, WalletConnectClientStatus } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -34,7 +34,7 @@ import { SignResult } from '@alephium/web3/dist/src/api/api-alephium'
 import SignClient from '@walletconnect/sign-client'
 import { EngineTypes, SignClientTypes } from '@walletconnect/types'
 import { SessionTypes } from '@walletconnect/types'
-import { getSdkError } from '@walletconnect/utils'
+import { calcExpiry, getSdkError } from '@walletconnect/utils'
 import { useURL } from 'expo-linking'
 import { partition } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
@@ -52,6 +52,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppSelector } from '~/hooks/redux'
+import useInterval from '~/hooks/useInterval'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
@@ -65,18 +66,20 @@ interface WalletConnectContextValue {
   pairWithDapp: (uri: string) => Promise<void>
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
+  resetWalletConnectClientInitializationAttempts: () => void
 }
 
 const initialValues: WalletConnectContextValue = {
   walletConnectClient: undefined,
   pairWithDapp: () => Promise.resolve(),
   unpairFromDapp: () => Promise.resolve(),
-  activeSessions: []
+  activeSessions: [],
+  resetWalletConnectClientInitializationAttempts: () => null
 }
 
-type WalletConnectClientStatus = 'uninitialized' | 'initializing' | 'initialized'
-
 const WalletConnectContext = createContext(initialValues)
+
+const MAX_WALLETCONNECT_RETRIES = 3
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
@@ -97,6 +100,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [isSessionRequestModalOpen, setIsSessionRequestModalOpen] = useState(false)
   const [loading, setLoading] = useState('')
   const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
+  const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
   const isAuthenticated = !!mnemonic
@@ -105,10 +109,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     try {
       console.log('⏳ INITIALIZING WC CLIENT...')
       setWalletConnectClientStatus('initializing')
+      setWalletConnectClientInitializationAttempts((prevAttempts) => prevAttempts + 1)
 
       const client = await SignClient.init({
         projectId: '2a084aa1d7e09af2b9044a524f39afbe',
-        relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Alephium mobile wallet',
           description: 'Alephium mobile wallet',
@@ -128,8 +132,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } catch (e) {
       setWalletConnectClientStatus('uninitialized')
       console.error('Could not initialize WalletConnect client', e)
+      posthog?.capture('Error', {
+        message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
+      })
     }
-  }, [])
+  }, [posthog])
+
+  useEffect(() => {
+    if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES) {
+      showToast({
+        text1: 'Could not connect to WalletConnect',
+        text2: 'If you want to use a dApp, please quit the app and try again.',
+        type: 'error'
+      })
+    }
+  }, [walletConnectClientInitializationAttempts])
 
   const respondToWalletConnect = useCallback(
     async (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => {
@@ -150,6 +167,30 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     async (event: SessionRequestEvent, error: ReturnType<typeof getSdkError>) =>
       await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', error }),
     [respondToWalletConnect]
+  )
+
+  const handleApiResponse = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (requestEvent: SignClientTypes.EventArguments['session_request'], result: any) => {
+      if (!walletConnectClient) return
+
+      const activeSesion = walletConnectClient.session.values.find((s) => s.topic === requestEvent.topic)
+
+      try {
+        if (activeSesion) {
+          await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+        } else {
+          await respondToWalletConnectWithError(requestEvent, getSdkError('USER_DISCONNECTED'))
+        }
+      } catch (e: unknown) {
+        if (getHumanReadableError(e, '').includes('No matching key')) {
+          console.log(
+            'WalletConnect threw an exception because it tried to process a response to a session that is not valid because the user has already disconnected.'
+          )
+        }
+      }
+    },
+    [respondToWalletConnect, respondToWalletConnectWithError, walletConnectClient]
   )
 
   const onSessionRequest = useCallback(
@@ -308,20 +349,24 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_requestNodeApi': {
+            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
             const p = requestEvent.params.request.params as ApiRequestArguments
             const result = await client.node.request(p)
 
             console.log('👉 WALLETCONNECT ASKED FOR THE NODE API')
-            await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+
+            await handleApiResponse(requestEvent, result)
 
             break
           }
           case 'alph_requestExplorerApi': {
+            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
             const p = requestEvent.params.request.params as ApiRequestArguments
             const result = await client.explorer.request(p)
 
             console.log('👉 WALLETCONNECT ASKED FOR THE EXPLORER API')
-            await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
+
+            await handleApiResponse(requestEvent, result)
 
             break
           }
@@ -342,10 +387,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             autoHide: false
           })
         } else {
-          if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method))
+          if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
             showExceptionToast(e, 'Could not build transaction')
-          posthog?.capture('Error', { message: 'Could not build transaction' })
-          console.error(e)
+            posthog?.capture('Error', { message: 'Could not build transaction' })
+            console.error(e)
+          }
           respondToWalletConnectWithError(requestEvent, {
             message: getHumanReadableError(e, 'Error while parsing WalletConnect session request'),
             code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
@@ -359,7 +405,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
     // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
     // TODO: Separate offline/online address data slices
-    [walletConnectClient, addressIds, posthog, respondToWalletConnect, respondToWalletConnectWithError]
+    [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse, posthog]
   )
 
   const onSessionProposal = useCallback(async (sessionProposalEvent: SessionProposalEvent) => {
@@ -413,39 +459,40 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     console.log('👉 ARGS:', args)
   }, [])
 
+  const shouldInitialize =
+    isWalletConnectEnabled &&
+    walletConnectClientStatus !== 'initialized' &&
+    walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
+  useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
+
   useEffect(() => {
-    if (!isWalletConnectEnabled) return
+    if (!isWalletConnectEnabled || !walletConnectClient || walletConnectClientStatus !== 'initialized') return
 
-    if (walletConnectClientStatus === 'uninitialized') {
-      initializeWalletConnectClient()
-    } else if (walletConnectClient) {
-      console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
+    console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
 
-      walletConnectClient.on('session_proposal', onSessionProposal)
-      walletConnectClient.on('session_request', onSessionRequest)
-      walletConnectClient.on('session_delete', onSessionDelete)
-      walletConnectClient.on('session_update', onSessionUpdate)
-      walletConnectClient.on('session_event', onSessionEvent)
-      walletConnectClient.on('session_ping', onSessionPing)
-      walletConnectClient.on('session_expire', onSessionExpire)
-      walletConnectClient.on('session_extend', onSessionExtend)
-      walletConnectClient.on('proposal_expire', onProposalExpire)
+    walletConnectClient.on('session_proposal', onSessionProposal)
+    walletConnectClient.on('session_request', onSessionRequest)
+    walletConnectClient.on('session_delete', onSessionDelete)
+    walletConnectClient.on('session_update', onSessionUpdate)
+    walletConnectClient.on('session_event', onSessionEvent)
+    walletConnectClient.on('session_ping', onSessionPing)
+    walletConnectClient.on('session_expire', onSessionExpire)
+    walletConnectClient.on('session_extend', onSessionExtend)
+    walletConnectClient.on('proposal_expire', onProposalExpire)
 
-      return () => {
-        walletConnectClient.off('session_proposal', onSessionProposal)
-        walletConnectClient.off('session_request', onSessionRequest)
-        walletConnectClient.off('session_delete', onSessionDelete)
-        walletConnectClient.off('session_update', onSessionUpdate)
-        walletConnectClient.off('session_event', onSessionEvent)
-        walletConnectClient.off('session_ping', onSessionPing)
-        walletConnectClient.off('session_expire', onSessionExpire)
-        walletConnectClient.off('session_extend', onSessionExtend)
-        walletConnectClient.off('proposal_expire', onProposalExpire)
-      }
+    return () => {
+      walletConnectClient.off('session_proposal', onSessionProposal)
+      walletConnectClient.off('session_request', onSessionRequest)
+      walletConnectClient.off('session_delete', onSessionDelete)
+      walletConnectClient.off('session_update', onSessionUpdate)
+      walletConnectClient.off('session_event', onSessionEvent)
+      walletConnectClient.off('session_ping', onSessionPing)
+      walletConnectClient.off('session_expire', onSessionExpire)
+      walletConnectClient.off('session_extend', onSessionExtend)
+      walletConnectClient.off('proposal_expire', onProposalExpire)
     }
   }, [
     walletConnectClientStatus,
-    initializeWalletConnectClient,
     isWalletConnectEnabled,
     onProposalExpire,
     onSessionDelete,
@@ -747,8 +794,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
 
+  const resetWalletConnectClientInitializationAttempts = () => {
+    if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)
+      setWalletConnectClientInitializationAttempts(0)
+  }
+
   return (
-    <WalletConnectContext.Provider value={{ pairWithDapp, unpairFromDapp, walletConnectClient, activeSessions }}>
+    <WalletConnectContext.Provider
+      value={{
+        pairWithDapp,
+        unpairFromDapp,
+        walletConnectClient,
+        activeSessions,
+        resetWalletConnectClientInitializationAttempts
+      }}
+    >
       {children}
       <Portal>
         {sessionProposalEvent && (

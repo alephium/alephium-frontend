@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import * as Application from 'expo-application'
 import { capitalize } from 'lodash'
 import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
@@ -36,6 +37,7 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
+import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -72,6 +74,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const posthog = usePostHog()
   const theme = useTheme()
+  const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
@@ -128,7 +131,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           { text: 'Cancel' },
           {
             text: 'I understand',
-            onPress: toggleWalletConnect
+            onPress: () => {
+              toggleWalletConnect()
+              resetWalletConnectClientInitializationAttempts()
+            }
           }
         ]
       )
@@ -218,6 +224,11 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             variant="alert"
             onPress={handleDeleteButtonPress}
           />
+        </ScreenSection>
+        <ScreenSection>
+          <AppText style={{ textAlign: 'center' }} color="secondary">
+            Version {Application.nativeApplicationVersion} build {Application.nativeBuildVersion}
+          </AppText>
         </ScreenSection>
       </ScrollScreenStyled>
 

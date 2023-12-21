@@ -106,6 +106,7 @@ const App = () => {
   useEffect(() => {
     if (posthog.__loaded)
       posthog.people.set({
+        desktop_wallet_version: import.meta.env.VITE_VERSION,
         wallets: wallets.length,
         theme: settings.theme,
         devTools: settings.devTools,
