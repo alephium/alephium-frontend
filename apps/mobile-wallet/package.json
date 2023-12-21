@@ -9,8 +9,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios --device",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
-    "lint:fix": "eslint . --fix --ext .ts,.tsx",
-    "postinstall": "cd ../.. && turbo compile"
+    "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
   "dependencies": {
     "@alephium/shared": "*",
