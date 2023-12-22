@@ -28,6 +28,8 @@
     "@walletconnect/react-native-compat": "2.10.6",
     "@walletconnect/sign-client": "2.10.6",
     "@walletconnect/utils": "2.10.6",
+    "@walletconnect/core": "2.10.6",
+    "@walletconnect/keyvaluestorage": "1.1.1",
     "big-integer": "^1.6.51",
     "buffer": "^6.0.3",
     "colord": "^2.9.3",
