@@ -29,8 +29,8 @@ import {
 } from '@alephium/web3'
 import { node } from '@alephium/web3'
 import SignClient from '@walletconnect/sign-client'
-import { SIGN_CLIENT_STORAGE_PREFIX, SESSION_CONTEXT } from '@walletconnect/sign-client'
-import { EngineTypes, SessionTypes, SignClientTypes, JsonRpcRecord, MessageRecord } from '@walletconnect/types'
+import { SIGN_CLIENT_STORAGE_PREFIX, SESSION_CONTEXT, REQUEST_CONTEXT } from '@walletconnect/sign-client'
+import { EngineTypes, SessionTypes, SignClientTypes, JsonRpcRecord, MessageRecord, PendingRequestTypes } from '@walletconnect/types'
 import { getSdkError, objToMap, mapToObj } from '@walletconnect/utils'
 import {
   CORE_STORAGE_OPTIONS,
@@ -783,6 +783,8 @@ async function cleanBeforeInit() {
     await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords)
   }
 
+  await cleanPendingRequest(storage)
+
   const topics = await getSessionTopics(storage)
   if (topics.length > 0) {
     const messageStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, MESSAGES_STORAGE_VERSION, MESSAGES_CONTEXT)
@@ -819,6 +821,18 @@ async function cleanMessages(client: SignClient, topic: string) {
     await client.core.relayer.messages.del(topic)
   } catch (error) {
     console.error(`Failed to clean messages, error: ${error}, topic: ${topic}`)
+  }
+}
+
+async function cleanPendingRequest(storage: KeyValueStorage) {
+  const pendingRequestStorageKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, REQUEST_CONTEXT)
+  const pendingRequests = await storage.getItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey)
+  if (pendingRequests !== undefined) {
+    const remainPendingRequests = pendingRequests.filter((request) => {
+      const method = request.params.request.method
+      return method !== 'alph_requestNodeApi' && method !== 'alph_requestExplorerApi'
+    })
+    await storage.setItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey, remainPendingRequests)
   }
 }
 
