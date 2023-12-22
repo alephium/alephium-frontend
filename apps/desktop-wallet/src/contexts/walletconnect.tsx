@@ -28,20 +28,27 @@ import {
   SignUnsignedTxResult
 } from '@alephium/web3'
 import { node } from '@alephium/web3'
-import SignClient from '@walletconnect/sign-client'
-import { SIGN_CLIENT_STORAGE_PREFIX, SESSION_CONTEXT, REQUEST_CONTEXT } from '@walletconnect/sign-client'
-import { EngineTypes, SessionTypes, SignClientTypes, JsonRpcRecord, MessageRecord, PendingRequestTypes } from '@walletconnect/types'
-import { calcExpiry, getSdkError, objToMap, mapToObj } from '@walletconnect/utils'
 import {
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,
-  HISTORY_STORAGE_VERSION,
   HISTORY_CONTEXT,
-  STORE_STORAGE_VERSION,
+  HISTORY_STORAGE_VERSION,
+  MESSAGES_CONTEXT,
   MESSAGES_STORAGE_VERSION,
-  MESSAGES_CONTEXT
+  STORE_STORAGE_VERSION
 } from '@walletconnect/core'
 import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
+import SignClient from '@walletconnect/sign-client'
+import { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
+import {
+  EngineTypes,
+  JsonRpcRecord,
+  MessageRecord,
+  PendingRequestTypes,
+  SessionTypes,
+  SignClientTypes
+} from '@walletconnect/types'
+import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
 import { partition } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
@@ -149,13 +156,16 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     }
   }, [posthog])
 
-  const cleanStorage = useCallback(async (event: SessionRequestEvent) => {
-    if (!walletConnectClient) return
-    if (event.params.request.method.startsWith('alph_request')) {
-      cleanHistory(walletConnectClient, true)
-    }
-    await cleanMessages(walletConnectClient, event.topic)
-  }, [walletConnectClient])
+  const cleanStorage = useCallback(
+    async (event: SessionRequestEvent) => {
+      if (!walletConnectClient) return
+      if (event.params.request.method.startsWith('alph_request')) {
+        cleanHistory(walletConnectClient, true)
+      }
+      await cleanMessages(walletConnectClient, event.topic)
+    },
+    [walletConnectClient]
+  )
 
   const respondToWalletConnect = useCallback(
     async (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => {
@@ -169,7 +179,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       setSessionRequestEvent(undefined)
       setDappTxData(undefined)
     },
-    [walletConnectClient]
+    [walletConnectClient, cleanStorage]
   )
 
   const respondToWalletConnectWithSuccess = async (event: SessionRequestEvent, result: node.SignResult) =>
@@ -342,7 +352,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         })
       }
     },
-    [addresses, respondToWalletConnectWithError, posthog, walletConnectClient]
+    [addresses, respondToWalletConnectWithError, posthog, walletConnectClient, cleanStorage]
   )
 
   const pairWithDapp = useCallback(
