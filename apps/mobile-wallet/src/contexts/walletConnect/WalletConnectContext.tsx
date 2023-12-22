@@ -34,7 +34,7 @@ import { SignResult } from '@alephium/web3/dist/src/api/api-alephium'
 import SignClient from '@walletconnect/sign-client'
 import { SIGN_CLIENT_STORAGE_PREFIX, SESSION_CONTEXT, REQUEST_CONTEXT } from '@walletconnect/sign-client'
 import { EngineTypes, SessionTypes, SignClientTypes, JsonRpcRecord, MessageRecord, PendingRequestTypes } from '@walletconnect/types'
-import { getSdkError, objToMap, mapToObj } from '@walletconnect/utils'
+import { calcExpiry, getSdkError, objToMap, mapToObj } from '@walletconnect/utils'
 import {
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,
@@ -372,6 +372,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_requestNodeApi': {
+            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
             const p = requestEvent.params.request.params as ApiRequestArguments
             const result = await client.node.request(p)
 
@@ -382,6 +383,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_requestExplorerApi': {
+            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
             const p = requestEvent.params.request.params as ApiRequestArguments
             const result = await client.explorer.request(p)
 

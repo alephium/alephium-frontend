@@ -31,7 +31,7 @@ import { node } from '@alephium/web3'
 import SignClient from '@walletconnect/sign-client'
 import { SIGN_CLIENT_STORAGE_PREFIX, SESSION_CONTEXT, REQUEST_CONTEXT } from '@walletconnect/sign-client'
 import { EngineTypes, SessionTypes, SignClientTypes, JsonRpcRecord, MessageRecord, PendingRequestTypes } from '@walletconnect/types'
-import { getSdkError, objToMap, mapToObj } from '@walletconnect/utils'
+import { calcExpiry, getSdkError, objToMap, mapToObj } from '@walletconnect/utils'
 import {
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,
@@ -302,6 +302,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             break
           }
           case 'alph_requestNodeApi': {
+            walletConnectClient.core.expirer.set(event.id, calcExpiry(5))
             const p = request.params as ApiRequestArguments
             const result = await client.node.request(p)
 
@@ -313,6 +314,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             break
           }
           case 'alph_requestExplorerApi': {
+            walletConnectClient.core.expirer.set(event.id, calcExpiry(5))
             const p = request.params as ApiRequestArguments
             // TODO: Remove following code when using explorer client from web3 library
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
