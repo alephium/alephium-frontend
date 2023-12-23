@@ -1,5 +1,15 @@
 # alephium-desktop-wallet
 
+## 2.2.0
+
+### Minor Changes
+
+- c4238c9: Fix Windows freeze due to WalletConnect storage management
+
+### Patch Changes
+
+- 78aa973: Show all addresses in destination address list
+
 ## 2.1.6
 
 ### Patch Changes
