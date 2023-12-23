@@ -28,9 +28,27 @@ import {
   SignUnsignedTxResult
 } from '@alephium/web3'
 import { node } from '@alephium/web3'
+import {
+  CORE_STORAGE_OPTIONS,
+  CORE_STORAGE_PREFIX,
+  HISTORY_CONTEXT,
+  HISTORY_STORAGE_VERSION,
+  MESSAGES_CONTEXT,
+  MESSAGES_STORAGE_VERSION,
+  STORE_STORAGE_VERSION
+} from '@walletconnect/core'
+import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
 import SignClient from '@walletconnect/sign-client'
-import { EngineTypes, SessionTypes, SignClientTypes } from '@walletconnect/types'
-import { getSdkError } from '@walletconnect/utils'
+import { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
+import {
+  EngineTypes,
+  JsonRpcRecord,
+  MessageRecord,
+  PendingRequestTypes,
+  SessionTypes,
+  SignClientTypes
+} from '@walletconnect/types'
+import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
 import { partition } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
@@ -108,6 +126,9 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
   const initializeWalletConnectClient = useCallback(async () => {
     try {
+      console.log('CLEANING STORAGE')
+      await cleanBeforeInit()
+
       console.log('⏳ INITIALIZING WC CLIENT...')
       setWalletConnectClientStatus('initializing')
 
@@ -121,6 +142,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         }
       })
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
+      cleanHistory(client, false)
 
       setWalletConnectClient(client)
       setWalletConnectClientStatus('initialized')
@@ -134,6 +156,17 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     }
   }, [posthog])
 
+  const cleanStorage = useCallback(
+    async (event: SessionRequestEvent) => {
+      if (!walletConnectClient) return
+      if (event.params.request.method.startsWith('alph_request')) {
+        cleanHistory(walletConnectClient, true)
+      }
+      await cleanMessages(walletConnectClient, event.topic)
+    },
+    [walletConnectClient]
+  )
+
   const respondToWalletConnect = useCallback(
     async (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => {
       if (!walletConnectClient) return
@@ -142,10 +175,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       await walletConnectClient.respond({ topic: event.topic, response })
       console.log('✅ RESPONDING: DONE!')
 
+      await cleanStorage(event)
       setSessionRequestEvent(undefined)
       setDappTxData(undefined)
     },
-    [walletConnectClient]
+    [walletConnectClient, cleanStorage]
   )
 
   const respondToWalletConnectWithSuccess = async (event: SessionRequestEvent, result: node.SignResult) =>
@@ -278,6 +312,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             break
           }
           case 'alph_requestNodeApi': {
+            walletConnectClient.core.expirer.set(event.id, calcExpiry(5))
             const p = request.params as ApiRequestArguments
             const result = await client.node.request(p)
 
@@ -285,9 +320,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
               topic: event.topic,
               response: { id: event.id, jsonrpc: '2.0', result }
             })
+            await cleanStorage(event)
             break
           }
           case 'alph_requestExplorerApi': {
+            walletConnectClient.core.expirer.set(event.id, calcExpiry(5))
             const p = request.params as ApiRequestArguments
             // TODO: Remove following code when using explorer client from web3 library
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -298,6 +335,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
               topic: event.topic,
               response: { id: event.id, jsonrpc: '2.0', result }
             })
+            await cleanStorage(event)
             break
           }
           default:
@@ -314,7 +352,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         })
       }
     },
-    [addresses, respondToWalletConnectWithError, posthog, walletConnectClient]
+    [addresses, respondToWalletConnectWithError, posthog, walletConnectClient, cleanStorage]
   )
 
   const pairWithDapp = useCallback(
@@ -725,6 +763,89 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       </ModalPortal>
     </WalletConnectContext.Provider>
   )
+}
+
+function getWCStorageKey(prefix: string, version: string, name: string): string {
+  return prefix + version + '//' + name
+}
+
+function needToDeleteHistory(record: JsonRpcRecord): boolean {
+  const request = record.request
+  if (request.method !== 'wc_sessionRequest') {
+    return false
+  }
+  const alphRequestMethod = request.params?.request?.method
+  return alphRequestMethod === 'alph_requestNodeApi' || alphRequestMethod === 'alph_requestExplorerApi'
+}
+
+async function getSessionTopics(storage: KeyValueStorage): Promise<string[]> {
+  const sessionKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, SESSION_CONTEXT)
+  const sessions = await storage.getItem<SessionTypes.Struct[]>(sessionKey)
+  return sessions === undefined ? [] : sessions.map((session) => session.topic)
+}
+
+// clean the `history` and `messages` storage before `SignClient` init
+async function cleanBeforeInit() {
+  console.log('Clean storage before SignClient init')
+  const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
+  const historyStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, HISTORY_STORAGE_VERSION, HISTORY_CONTEXT)
+  const historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
+  if (historyRecords !== undefined) {
+    const remainRecords = historyRecords.filter((record) => !needToDeleteHistory(record))
+    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords)
+  }
+
+  await cleanPendingRequest(storage)
+
+  const topics = await getSessionTopics(storage)
+  if (topics.length > 0) {
+    const messageStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, MESSAGES_STORAGE_VERSION, MESSAGES_CONTEXT)
+    const messages = await storage.getItem<Record<string, MessageRecord>>(messageStorageKey)
+    if (messages === undefined) {
+      return
+    }
+
+    const messagesMap = objToMap(messages)
+    topics.forEach((topic) => messagesMap.delete(topic))
+    await storage.setItem<Record<string, MessageRecord>>(messageStorageKey, mapToObj(messagesMap))
+    console.log(`Clean topics from messages storage: ${topics.join(',')}`)
+  }
+}
+
+function cleanHistory(client: SignClient, checkResponse: boolean) {
+  try {
+    const records = client.core.history.records
+    for (const [id, record] of records) {
+      if (checkResponse && record.response === undefined) {
+        continue
+      }
+      if (needToDeleteHistory(record)) {
+        client.core.history.delete(record.topic, id)
+      }
+    }
+  } catch (error) {
+    console.error(`Failed to clean history, error: ${error}`)
+  }
+}
+
+async function cleanMessages(client: SignClient, topic: string) {
+  try {
+    await client.core.relayer.messages.del(topic)
+  } catch (error) {
+    console.error(`Failed to clean messages, error: ${error}, topic: ${topic}`)
+  }
+}
+
+async function cleanPendingRequest(storage: KeyValueStorage) {
+  const pendingRequestStorageKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, REQUEST_CONTEXT)
+  const pendingRequests = await storage.getItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey)
+  if (pendingRequests !== undefined) {
+    const remainPendingRequests = pendingRequests.filter((request) => {
+      const method = request.params.request.method
+      return method !== 'alph_requestNodeApi' && method !== 'alph_requestExplorerApi'
+    })
+    await storage.setItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey, remainPendingRequests)
+  }
 }
 
 export const useWalletConnectContext = () => useContext(WalletConnectContext)

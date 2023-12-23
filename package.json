@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
-    "@alephium/walletconnect-provider": "0.27.2",
-    "@alephium/web3": "0.27.2"
+    "@alephium/walletconnect-provider": "0.27.5",
+    "@alephium/web3": "0.27.5"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
