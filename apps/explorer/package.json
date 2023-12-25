@@ -55,6 +55,8 @@
     "styled-normalize": "^8.0.7"
   },
   "devDependencies": {
+    "@alephium/eslint-config": "workspace:*",
+    "@alephium/typescript-config": "workspace:*",
     "@testing-library/jest-dom": "^5.14.1",
     "@types/lodash": "^4.14.175",
     "@types/node": "^16.10.1",
@@ -71,8 +73,6 @@
     "vite": "^4.3.9",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0",
-    "vitest": "^0.31.0",
-    "eslint-config-custom": "workspace:*",
-    "tsconfig": "workspace:*"
+    "vitest": "^0.31.0"
   }
 }
