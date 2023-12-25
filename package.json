@@ -16,6 +16,7 @@
     "@alephium/web3": "0.27.5"
   },
   "devDependencies": {
+    "@alephium/typescript-config": "workspace:*",
     "@changesets/cli": "^2.26.2",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
@@ -28,7 +29,6 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
     "prettier": "^3.0.3",
-    "tsconfig": "workspace:*",
     "turbo": "1.10.16",
     "typescript": "^5.2.2"
   },

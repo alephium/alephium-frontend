@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/react",
+  "extends": "@alephium/typescript-config/react",
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {

@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/base",
+  "extends": "@alephium/typescript-config/base",
   "include": ["lib/**/*"],
   "exclude": ["node_modules", "test"],
   "compilerOptions": {
