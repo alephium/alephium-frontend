@@ -2,7 +2,7 @@
   "name": "alephium-frontend",
   "description": "A monorepo containing all things frontend on Alephium",
   "author": "Alephium dev <dev@alephium.org>",
-  "packageManager": "pnpm@8.8.0",
+  "packageManager": "pnpm@8.9.0",
   "private": true,
   "scripts": {
     "lint": "turbo lint",
@@ -29,7 +29,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
     "prettier": "^3.0.3",
-    "turbo": "1.10.16",
+    "turbo": "latest",
     "typescript": "^5.2.2"
   },
   "resolutions": {
