@@ -12,10 +12,10 @@ index 5871b6f..b07988f 100755
          return bytesToHex(key);
      }
 diff --git a/node_modules/react-native-aes-crypto/ios/RCTAes/lib/AesCrypt.m b/node_modules/react-native-aes-crypto/ios/RCTAes/lib/AesCrypt.m
-index 4f20b49..46a22c9 100755
+index 4f20b49..67c8b90 100755
 --- a/node_modules/react-native-aes-crypto/ios/RCTAes/lib/AesCrypt.m
 +++ b/node_modules/react-native-aes-crypto/ios/RCTAes/lib/AesCrypt.m
-@@ -38,7 +38,7 @@
+@@ -38,7 +38,7 @@ + (NSData *) fromHex: (NSString *)string {
  + (NSString *) pbkdf2:(NSString *)password salt: (NSString *)salt cost: (NSInteger)cost length: (NSInteger)length {
      // Data of String to generate Hash key(hexa decimal string).
      NSData *passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];

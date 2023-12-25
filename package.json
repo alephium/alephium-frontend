@@ -8,8 +8,7 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "postinstall": "patch-package"
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
