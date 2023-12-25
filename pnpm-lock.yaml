@@ -487,6 +487,9 @@ importers:
       '@alephium/web3':
         specifier: 0.27.5
         version: 0.27.5
+      '@expo/vector-icons':
+        specifier: ^13.0.0
+        version: 13.0.0
       '@json-rpc-tools/utils':
         specifier: ^1.7.6
         version: 1.7.6
