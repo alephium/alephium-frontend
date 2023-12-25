@@ -8,7 +8,7 @@
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts",
     "test": "jest --useStderr --silent=false --verbose=true --config jestconfig.json",
-    "test:watch": "bun run test -- --watch",
+    "test:watch": "pnpm run test -- --watch",
     "typecheck": "tsc --noEmit",
     "compile": "rm -rf dist && tsc --build . && webpack"
   },
