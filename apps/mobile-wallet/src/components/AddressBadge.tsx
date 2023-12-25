@@ -66,11 +66,11 @@ const AddressBadge = ({
             </Symbol>
           )}
           {address.settings.label ? (
-            <Label numberOfLines={1} style={textStyle} color={textColor}>
+            <Label numberOfLines={1} style={[textStyle]} color={textColor}>
               {address.settings.label}
             </Label>
           ) : (
-            <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
+            <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor}>
               {address.hash}
             </Label>
           )}
@@ -82,12 +82,12 @@ const AddressBadge = ({
               <Dot color={stringToColour(contact.address)} />
             </Symbol>
           )}
-          <Label numberOfLines={1} style={textStyle} color={textColor}>
+          <Label numberOfLines={1} style={[textStyle]} color={textColor}>
             {contact.name}
           </Label>
         </>
       ) : (
-        <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor}>
+        <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor}>
           {addressHash}
         </Label>
       )}
