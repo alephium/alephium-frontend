@@ -8,12 +8,14 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "postinstall": "manypkg check"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@changesets/cli": "^2.26.2",
+    "@manypkg/cli": "latest",
     "prettier": "^3.0.3",
     "turbo": "latest"
   },
