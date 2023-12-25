@@ -30,7 +30,7 @@
     ]
   },
   "dependencies": {
-    "@alephium/shared": "*",
+    "@alephium/shared": "workspace:*",
     "@tanstack/query-sync-storage-persister": "4.32.0",
     "@tanstack/react-query": "4.32.0",
     "@tanstack/react-query-persist-client": "^4.32.0",
@@ -72,7 +72,7 @@
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^0.31.0",
-    "eslint-config-custom": "*",
-    "tsconfig": "*"
+    "eslint-config-custom": "workspace:*",
+    "tsconfig": "workspace:*"
   }
 }
