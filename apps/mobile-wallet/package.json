@@ -13,7 +13,10 @@
     "postinstall": "patch-package && cd ../.. && turbo compile"
   },
   "dependencies": {
+    "@alephium/token-list": "^0.0.12",
     "@alephium/shared": "workspace:*",
+    "@alephium/walletconnect-provider": "0.27.5",
+    "@alephium/web3": "0.27.5",
     "@json-rpc-tools/utils": "^1.7.6",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/netinfo": "^9.4.1",

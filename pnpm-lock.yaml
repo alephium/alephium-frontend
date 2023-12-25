@@ -10,16 +10,6 @@ overrides:
 importers:
 
   .:
-    dependencies:
-      '@alephium/token-list':
-        specifier: ^0.0.12
-        version: 0.0.12
-      '@alephium/walletconnect-provider':
-        specifier: 0.27.5
-        version: 0.27.5
-      '@alephium/web3':
-        specifier: 0.27.5
-        version: 0.27.5
     devDependencies:
       '@alephium/typescript-config':
         specifier: workspace:*
@@ -85,9 +75,18 @@ importers:
       '@alephium/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@alephium/token-list':
+        specifier: ^0.0.12
+        version: 0.0.12
       '@alephium/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@alephium/walletconnect-provider':
+        specifier: 0.27.5
+        version: 0.27.5(@react-native-async-storage/async-storage@1.18.2)
+      '@alephium/web3':
+        specifier: 0.27.5
+        version: 0.27.5
       '@electron/notarize':
         specifier: ^1.2.3
         version: 1.2.4
@@ -307,6 +306,12 @@ importers:
       '@alephium/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@alephium/token-list':
+        specifier: ^0.0.12
+        version: 0.0.12
+      '@alephium/web3':
+        specifier: 0.27.5
+        version: 0.27.5
       '@tanstack/query-sync-storage-persister':
         specifier: 4.32.0
         version: 4.32.0
@@ -437,6 +442,15 @@ importers:
       '@alephium/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@alephium/token-list':
+        specifier: ^0.0.12
+        version: 0.0.12
+      '@alephium/walletconnect-provider':
+        specifier: 0.27.5
+        version: 0.27.5(@react-native-async-storage/async-storage@1.18.2)
+      '@alephium/web3':
+        specifier: 0.27.5
+        version: 0.27.5
       '@json-rpc-tools/utils':
         specifier: ^1.7.6
         version: 1.7.6
@@ -717,6 +731,12 @@ importers:
 
   packages/shared:
     dependencies:
+      '@alephium/token-list':
+        specifier: ^0.0.12
+        version: 0.0.12
+      '@alephium/web3':
+        specifier: 0.27.5
+        version: 0.27.5
       base-x:
         specifier: ^4.0.0
         version: 4.0.0
@@ -815,8 +835,6 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.89.0)
 
-  packages/tsconfig: {}
-
   packages/typescript-config: {}
 
 packages:
@@ -841,9 +859,8 @@ packages:
       cross-fetch: 3.1.8
     transitivePeerDependencies:
       - encoding
-    dev: false
 
-  /@alephium/walletconnect-provider@0.27.5:
+  /@alephium/walletconnect-provider@0.27.5(@react-native-async-storage/async-storage@1.18.2):
     resolution: {integrity: sha512-oon4flGQcWqz46oCaT/QmpjbMr7JxuKjOeQQUOVztcyqAxFBxswZuXC37SwC3TaEfK7scDWfnOx1vHcqE/gqEQ==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
     dependencies:
@@ -872,7 +889,6 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
-    dev: false
 
   /@alephium/web3-wallet@0.27.5:
     resolution: {integrity: sha512-bGHBP16+qRUGBZvb0CWNJAQqGRWka39jh3xnS67AwX/dVfMpxPBHpETRECb1JLUjiA0TsM0vl7lBRC4ow35NnA==}
@@ -888,7 +904,6 @@ packages:
       fs-extra: 10.0.1
     transitivePeerDependencies:
       - encoding
-    dev: false
 
   /@alephium/web3@0.27.5:
     resolution: {integrity: sha512-uqKJ5Yp9Kfv+QQN6tFVQBHqCA+SvtRlhqcSuyPjqnFFY8jaTjvbGgUsgU8F9W6X8o7CurZUFHy6T+yd9oEvDHg==}
@@ -908,7 +923,6 @@ packages:
       stream-browserify: 3.0.0
     transitivePeerDependencies:
       - encoding
-    dev: false
 
   /@ampproject/remapping@2.2.1:
     resolution: {integrity: sha512-lFMjJTrFL3j7L9yBxwYfCq2k6qqwHyzuUl/XBnif78PWTJYyL/dfowQHWE3sp6U6ZzqWiiIZnpTMO96zhkjwtg==}
@@ -3965,7 +3979,6 @@ packages:
 
   /@noble/secp256k1@1.7.1:
     resolution: {integrity: sha512-hOUk6AyBFmqVrv7k5WAw/LpszxVbj9gGN4JRkIX52fdFAj1UA61KXmZDvqVEm+pOyec3+fIeZB02LYa/pWOArw==}
-    dev: false
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -5284,7 +5297,6 @@ packages:
 
   /@types/node@11.11.6:
     resolution: {integrity: sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ==}
-    dev: false
 
   /@types/node@12.20.55:
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
@@ -6983,11 +6995,9 @@ packages:
     resolution: {integrity: sha512-H7JU6iBHTal1gp56aKoaa//YUxEaAOUiydvrV/pILqIHXTtqxSkATOnDA2u+jZ/61sD+L/412+7kzXRtWukhpQ==}
     dependencies:
       safe-buffer: 5.2.1
-    dev: false
 
   /base-x@4.0.0:
     resolution: {integrity: sha512-FuwxlW4H5kh37X/oW59pwTzzTKRzfrrQwhmyspRM7swOEZcHtDZSCt45U6oKgtuFE+WYPblePMVIPR4RZrh/hw==}
-    dev: false
 
   /base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
@@ -7026,7 +7036,6 @@ packages:
 
   /bignumber.js@9.1.2:
     resolution: {integrity: sha512-2/mKyZH9K85bzOEfhXDBFZTGd1CTs+5IHpeFQo9luiBG7hghdC851Pj2WAhb6E3R6b9tZj/XKhbg4fum+Kepug==}
-    dev: false
 
   /binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
@@ -7060,7 +7069,6 @@ packages:
       ripemd160: 2.0.2
       typeforce: 1.18.0
       wif: 2.0.6
-    dev: false
 
   /bip39@3.0.4:
     resolution: {integrity: sha512-YZKQlb752TrUWqHWj7XAwCSjYEgGAk+/Aas3V7NyjQeZYsztO8JnQUaCWhcnL4T+jL8nvB8typ2jRPzTlgugNw==}
@@ -7069,7 +7077,6 @@ packages:
       create-hash: 1.2.0
       pbkdf2: 3.1.2
       randombytes: 2.1.0
-    dev: false
 
   /bip39@3.1.0:
     resolution: {integrity: sha512-c9kiwdk45Do5GL0vJMe7tS95VjCii65mYAH7DfWl3uW8AVzXKQVUm64i3hzVybBDMp9r7j9iNxR85+ul8MdN/A==}
@@ -7085,7 +7092,6 @@ packages:
 
   /blakejs@1.2.1:
     resolution: {integrity: sha512-QXUSXI3QVc/gJME0dBpXrag1kbzOqCjCX8/b54ntNyW6sjtoqxqRk3LTmXzaJoh71zMsDCjM+47jS7XiwN/+fQ==}
-    dev: false
 
   /bluebird-lst@1.0.9:
     resolution: {integrity: sha512-7B1Rtx82hjnSD4PGLAjVWeYH3tHAcVUmChh85a3lltKQm6FresXh9ErQo6oAv6CqxttczC3/kEg8SY5NluPuUw==}
@@ -7264,7 +7270,6 @@ packages:
     resolution: {integrity: sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==}
     dependencies:
       base-x: 3.0.9
-    dev: false
 
   /bs58check@2.1.2:
     resolution: {integrity: sha512-0TS1jicxdU09dwJMNZtVAfzPi6Q6QeN0pM1Fkzrjn+XYHvzMKPU3pHVpva+769iNVSfIYWf7LJ6WR+BuuMf8cA==}
@@ -7272,7 +7277,6 @@ packages:
       bs58: 4.0.1
       create-hash: 1.2.0
       safe-buffer: 5.2.1
-    dev: false
 
   /bser@2.1.1:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
@@ -9749,7 +9753,6 @@ packages:
 
   /eventemitter3@4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
-    dev: false
 
   /events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
@@ -10566,7 +10569,6 @@ packages:
       graceful-fs: 4.2.11
       jsonfile: 6.1.0
       universalify: 2.0.1
-    dev: false
 
   /fs-extra@10.1.0:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
@@ -17153,7 +17155,6 @@ packages:
 
   /typeforce@1.18.0:
     resolution: {integrity: sha512-7uc1O8h1M1g0rArakJdf0uLRSSgFcYexrVoKo+bzJd32gd4gDy2L/Z+8/FjPnU9ydY3pEnVPtr9FyscYY60K1g==}
-    dev: false
 
   /typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
@@ -18454,7 +18455,6 @@ packages:
     resolution: {integrity: sha512-HIanZn1zmduSF+BQhkE+YXIbEiH0xPr1012QbFEGB0xsKqJii0/SqJjyn8dFv6y36kOznMgMB+LGcbZTJ1xACQ==}
     dependencies:
       bs58check: 2.1.2
-    dev: false
 
   /wildcard@2.0.1:
     resolution: {integrity: sha512-CC1bOL87PIWSBhDcTrdeLo6eGT7mCFtrg0uIJtqJUFyK+eJnzl8A1niH56uu7KMa5XFrtiV+AQuHO3n7DsHnLQ==}
