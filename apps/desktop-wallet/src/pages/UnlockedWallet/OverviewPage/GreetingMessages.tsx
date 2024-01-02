@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatFiatAmountForDisplay } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,7 +25,7 @@ import styled from 'styled-components'
 import { fadeInOut } from '@/animations'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
-import { selectPriceByTokenId } from '@/storage/prices/pricesSelectors'
+import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { currencies } from '@/utils/currencies'
 
 interface GreetingMessagesProps {
@@ -38,7 +37,7 @@ const swapDelayInSeconds = 8
 const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   const { t } = useTranslation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
-  const price = useAppSelector((s) => selectPriceByTokenId(s, ALPH.id))
+  const price = useAppSelector(selectAlphPrice)
   const isPriceLoading = useAppSelector((s) => s.tokenPrices.loading)
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)

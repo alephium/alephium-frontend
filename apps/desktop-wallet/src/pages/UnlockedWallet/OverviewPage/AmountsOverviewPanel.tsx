@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, calculateAmountWorth } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
@@ -37,7 +36,7 @@ import {
   selectAddressIds,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { selectAllPrices } from '@/storage/prices/pricesSelectors'
+import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
 import { getAvailableBalance } from '@/utils/addresses'
 import { currencies } from '@/utils/currencies'
@@ -70,10 +69,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const selectAddressesHaveHistoricBalances = useMemo(makeSelectAddressesHaveHistoricBalances, [])
   const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const tokenPrices = useAppSelector(selectAllPrices)
+  const alphPrice = useAppSelector(selectAlphPrice)
   const arePricesLoading = useAppSelector((s) => s.tokenPrices.loading)
-
-  const alphPrice = tokenPrices?.find((t) => t.id === ALPH.id)?.price
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
@@ -84,7 +81,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
   const totalAvailableBalance = addresses.reduce((acc, address) => acc + getAvailableBalance(address), BigInt(0))
   const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
-  const totalAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
+  const totalAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice.price) : undefined
   const balanceInFiat = worth ?? totalAmountWorth
 
   const isOnline = network.status === 'online'

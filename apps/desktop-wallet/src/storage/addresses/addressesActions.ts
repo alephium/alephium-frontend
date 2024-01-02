@@ -32,11 +32,7 @@ import {
 } from '@/api/addresses'
 import client from '@/api/client'
 import i18n from '@/i18n'
-import {
-  makeSelectAddressesKnownFungibleTokens,
-  selectAddressByHash,
-  selectAllAddresses
-} from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { RootState } from '@/storage/store'
 import {
   Address,
