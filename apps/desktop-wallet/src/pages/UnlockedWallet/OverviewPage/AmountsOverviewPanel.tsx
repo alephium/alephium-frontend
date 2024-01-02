@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, calculateAmountWorth } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
@@ -33,11 +34,10 @@ import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout
 import {
   makeSelectAddresses,
   makeSelectAddressesHaveHistoricBalances,
-  makeSelectAddressesKnownFungibleTokens,
   selectAddressIds,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { symbolCoinGeckoMapping, useGetPricesQuery } from '@/storage/prices/assetsPriceSlice'
+import { selectAllPrices } from '@/storage/prices/pricesSelectors'
 import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
 import { getAvailableBalance } from '@/utils/addresses'
 import { currencies } from '@/utils/currencies'
@@ -67,24 +67,13 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
   const isBalancesInitialized = useAppSelector((s) => s.addresses.balancesStatus === 'initialized')
 
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
-  const knownFungibleTokenIds = knownFungibleTokens.flatMap((t) => (t.symbol ? symbolCoinGeckoMapping[t.symbol] : []))
-
   const selectAddressesHaveHistoricBalances = useMemo(makeSelectAddressesHaveHistoricBalances, [])
   const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { data: assetPrices, isLoading: arePricesLoading } = useGetPricesQuery(
-    {
-      assets: ['alephium', ...knownFungibleTokenIds],
-      currency: currencies[fiatCurrency].ticker
-    },
-    {
-      pollingInterval: 60000
-    }
-  )
+  const tokenPrices = useAppSelector(selectAllPrices)
+  const arePricesLoading = useAppSelector((s) => s.tokenPrices.loading)
 
-  const alphPrice = assetPrices?.alephium
+  const alphPrice = tokenPrices?.find((t) => t.id === ALPH.id)?.price
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')

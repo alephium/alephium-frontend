@@ -55,26 +55,10 @@ type HistoricalPriceQueryParams = {
   days: number
 }
 
-export const priceApi = createApi({
-  reducerPath: 'priceApi',
+export const priceHistoryApi = createApi({
+  reducerPath: 'priceHistoryApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://api.coingecko.com/api/v3/' }),
   endpoints: (builder) => ({
-    getPrices: builder.query<
-      { [id in CoinGeckoID]: number } | undefined,
-      { assets?: CoinGeckoID[]; currency: Currency }
-    >({
-      query: ({ assets, currency }) => `/simple/price?ids=${assets?.join(',')}&vs_currencies=${currency.toLowerCase()}`,
-      transformResponse: (response: { [key in CoinGeckoID]: { [key: string]: string } }, meta, arg) => {
-        if (!arg.assets) return undefined
-
-        const currency = arg.currency.toLowerCase()
-
-        return Object.entries(response).reduce(
-          (acc, [id, price]) => ({ ...acc, [id]: parseFloat(price[currency]) }),
-          {} as { [id in CoinGeckoID]: number }
-        )
-      }
-    }),
     getHistoricalPrice: builder.query<{ [id in CoinGeckoID]: HistoricalPrice[] }, HistoricalPriceQueryParams>({
       queryFn: async ({ assetIds, currency, days }, _queryApi, _extraOptions, fetchWithBQ) => {
         const results = (await Promise.all(
@@ -114,4 +98,4 @@ export const priceApi = createApi({
   })
 })
 
-export const { useGetPricesQuery, useGetHistoricalPriceQuery } = priceApi
+export const { useGetHistoricalPriceQuery } = priceHistoryApi

@@ -42,9 +42,8 @@ import {
   makeSelectAddressesNFTs,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { symbolCoinGeckoMapping, useGetPricesQuery } from '@/storage/prices/assetsPriceSlice'
+import { selectPriceByTokenId } from '@/storage/prices/pricesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
-import { currencies } from '@/utils/currencies'
 
 interface AssetsListProps {
   className?: string
@@ -171,18 +170,7 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   const theme = useTheme()
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-
-  const assetApiId = asset.symbol ? symbolCoinGeckoMapping[asset.symbol] : undefined
-
-  const { data: priceRes } = useGetPricesQuery(
-    { assets: assetApiId ? [assetApiId] : [], currency: currencies[fiatCurrency].ticker },
-    {
-      skip: !asset.symbol,
-      pollingInterval: 60000
-    }
-  )
-
-  const price = priceRes && assetApiId ? priceRes[assetApiId] : NaN
+  const price = useAppSelector((s) => selectPriceByTokenId(s, asset.id))
 
   return (
     <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>
@@ -225,11 +213,11 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
                 </AmountSubtitle>
               )}
               {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
-              {price && !isNaN(price) ? (
+              {price && (
                 <Price>
-                  <Amount value={calculateAmountWorth(asset.balance, price)} isFiat suffix={fiatCurrency} />
+                  <Amount value={calculateAmountWorth(asset.balance, price.price)} isFiat suffix={fiatCurrency} />
                 </Price>
-              ) : null}
+              )}
             </>
           )}
         </TableCellAmount>

@@ -23,9 +23,10 @@ import addressesSlice from '@/storage/addresses/addressesSlice'
 import contactsSlice from '@/storage/addresses/contactsSlice'
 import assetsInfoSlice from '@/storage/assets/assetsInfoSlice'
 import nftsSlice from '@/storage/assets/nftsSlice'
-import { priceApi } from '@/storage/prices/assetsPriceSlice'
 import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
+import { priceHistoryApi } from '@/storage/prices/pricesHistorySlice'
+import pricesSlice from '@/storage/prices/pricesSlice'
 import networkSlice, { networkListenerMiddleware } from '@/storage/settings/networkSlice'
 import settingsSlice, { settingsListenerMiddleware } from '@/storage/settings/settingsSlice'
 import confirmedTransactionsSlice from '@/storage/transactions/confirmedTransactionsSlice'
@@ -46,12 +47,13 @@ export const store = configureStore({
     [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
     [assetsInfoSlice.name]: assetsInfoSlice.reducer,
     [snackbarSlice.name]: snackbarSlice.reducer,
-    [priceApi.reducerPath]: priceApi.reducer,
-    [nftsSlice.name]: nftsSlice.reducer
+    [pricesSlice.name]: pricesSlice.reducer,
+    [nftsSlice.name]: nftsSlice.reducer,
+    [priceHistoryApi.reducerPath]: priceHistoryApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
-      .concat(priceApi.middleware)
+      .concat(priceHistoryApi.middleware)
       .concat(settingsListenerMiddleware.middleware)
       .concat(networkListenerMiddleware.middleware)
       .concat(pendingTransactionsListenerMiddleware.middleware)

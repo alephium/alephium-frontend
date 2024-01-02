@@ -16,24 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TOKENS_QUERY_LIMIT } from '@alephium/shared'
-import { createAsyncThunk } from '@reduxjs/toolkit'
-import { chunk } from 'lodash'
+import { tokenPricesAdapter } from '@/storage/prices/pricesAdapter'
+import { RootState } from '@/storage/store'
 
-import client from '@/api/client'
-
-export const syncTokenPrices = createAsyncThunk(
-  'assets/syncTokenPrices',
-  async ({ knownTokenSymbols, currency }: { knownTokenSymbols: string[]; currency: string }) => {
-    const tokenPrices = await Promise.all(
-      chunk(knownTokenSymbols, TOKENS_QUERY_LIMIT).map((knownTokenSymbolsChunk) =>
-        client.explorer.market.getMarketPrices({
-          ids: knownTokenSymbolsChunk.map((s) => s.toLowerCase()),
-          currency: currency.toLowerCase()
-        })
-      )
-    )
-
-    return tokenPrices.flat()
-  }
-)
+export const { selectAll: selectAllPrices, selectById: selectPriceByTokenId } =
+  tokenPricesAdapter.getSelectors<RootState>((state) => state.tokenPrices)
