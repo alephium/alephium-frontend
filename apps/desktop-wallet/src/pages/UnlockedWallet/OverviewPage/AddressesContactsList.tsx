@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import { useState } from 'react'
@@ -37,7 +36,7 @@ import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
-import { selectPriceByTokenId } from '@/storage/prices/pricesSelectors'
+import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { Address } from '@/types/addresses'
 import { currencies } from '@/utils/currencies'
 
@@ -79,7 +78,7 @@ const AddressesContactsList = ({ className, maxHeightInPx }: AddressesContactsLi
 const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
   const addresses = useAppSelector(selectAllAddresses)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const price = useAppSelector((s) => selectPriceByTokenId(s, ALPH.id))
+  const price = useAppSelector(selectAlphPrice)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
   const [selectedAddress, setSelectedAddress] = useState<Address>()

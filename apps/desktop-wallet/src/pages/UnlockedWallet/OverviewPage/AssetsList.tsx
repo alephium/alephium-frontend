@@ -42,7 +42,7 @@ import {
   makeSelectAddressesNFTs,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { selectPriceByTokenId } from '@/storage/prices/pricesSelectors'
+import { selectPriceById } from '@/storage/prices/pricesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 interface AssetsListProps {
@@ -170,7 +170,7 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   const theme = useTheme()
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const price = useAppSelector((s) => selectPriceByTokenId(s, asset.id))
+  const price = useAppSelector((s) => selectPriceById(s, asset.id))
 
   return (
     <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>

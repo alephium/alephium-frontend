@@ -16,8 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { createSelector } from '@reduxjs/toolkit'
+
 import { tokenPricesAdapter } from '@/storage/prices/pricesAdapter'
 import { RootState } from '@/storage/store'
 
-export const { selectAll: selectAllPrices, selectById: selectPriceByTokenId } =
-  tokenPricesAdapter.getSelectors<RootState>((state) => state.tokenPrices)
+export const { selectAll: selectAllPrices, selectById: selectPriceById } = tokenPricesAdapter.getSelectors<RootState>(
+  (state) => state.tokenPrices
+)
+
+export const selectAlphPrice = createSelector(selectAllPrices, (prices) => prices.find((price) => price.id === 'alph'))
