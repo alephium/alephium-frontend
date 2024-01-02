@@ -16,24 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TOKENS_QUERY_LIMIT } from '@alephium/shared'
-import { createAsyncThunk } from '@reduxjs/toolkit'
-import { chunk } from 'lodash'
+import { Price } from '@alephium/web3/dist/src/api/api-explorer'
+import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import client from '@/api/client'
-
-export const syncTokenPrices = createAsyncThunk(
-  'assets/syncTokenPrices',
-  async ({ knownTokenSymbols, currency }: { knownTokenSymbols: string[]; currency: string }) => {
-    const tokenPrices = await Promise.all(
-      chunk(knownTokenSymbols, TOKENS_QUERY_LIMIT).map((knownTokenSymbolsChunk) =>
-        client.explorer.market.getMarketPrices({
-          ids: knownTokenSymbolsChunk.map((s) => s.toLowerCase()),
-          currency: currency.toLowerCase()
-        })
-      )
-    )
-
-    return tokenPrices.flat()
-  }
-)
+export const tokenPricesAdapter = createEntityAdapter<Price>({
+  sortComparer: (a, b) => a.name.localeCompare(b.name)
+})

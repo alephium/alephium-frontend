@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, calculateAmountWorth } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 import { useMemo, useState } from 'react'
@@ -37,7 +38,7 @@ import {
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
 import { selectIsTokensMetadataUninitialized } from '@/storage/assets/assetsSelectors'
-import { useGetPricesQuery } from '@/storage/prices/assetsPriceSlice'
+import { selectPriceByTokenId } from '@/storage/prices/pricesSelectors'
 import { currencies } from '@/utils/currencies'
 import { onEnterOrSpace } from '@/utils/misc'
 
@@ -56,12 +57,8 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { data: priceRes, isLoading: isPriceLoading } = useGetPricesQuery({
-    assets: ['alephium'],
-    currency: currencies[fiatCurrency].ticker
-  })
-
-  const price = priceRes?.alephium
+  const price = useAppSelector((s) => selectPriceByTokenId(s, ALPH.id))
+  const isPriceLoading = useAppSelector((s) => s.tokenPrices.loading)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
@@ -71,7 +68,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
 
   if (!address) return null
 
-  const fiatBalance = calculateAmountWorth(BigInt(address.balance), price ?? 0)
+  const fiatBalance = calculateAmountWorth(BigInt(address.balance), price?.price ?? 0)
 
   const hiddenAssetsSymbols = hiddenAssets.filter(({ symbol }) => !!symbol).map(({ symbol }) => symbol)
   const nbOfUnknownHiddenAssets = hiddenAssets.filter(({ symbol }) => !symbol).length
