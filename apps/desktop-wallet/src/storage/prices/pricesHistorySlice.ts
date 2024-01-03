@@ -16,14 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Tuple2LongDouble } from '@alephium/web3/dist/src/api/api-explorer'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { syncTokenPricesHistory } from '@/storage/prices/pricesActions'
 import { tokenPricesHistoryAdapter } from '@/storage/prices/pricesAdapter'
 
 export interface HistoricalPrice {
-  date: string // CHART_DATE_FORMAT
+  date: string
   price: number
 }
 export interface PriceHistoryEntity {

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { AnimatePresence } from 'framer-motion'
 import { difference } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
@@ -47,7 +48,7 @@ import {
   localStorageDataMigrated,
   localStorageDataMigrationFailed
 } from '@/storage/global/globalActions'
-import { syncTokenPrices } from '@/storage/prices/pricesActions'
+import { syncTokenPrices, syncTokenPricesHistory } from '@/storage/prices/pricesActions'
 import { apiClientInitFailed, apiClientInitSucceeded } from '@/storage/settings/networkActions'
 import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/storage/settings/settingsActions'
 import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
@@ -201,6 +202,8 @@ const App = () => {
 
               restorePendingTransactions(mempoolTxHashes, storedPendingTxs)
             })
+
+          dispatch(syncTokenPricesHistory({ tokenSymbol: ALPH.symbol.toLowerCase(), currency: settings.fiatCurrency }))
         }
       } else if (addressesStatus === 'initialized') {
         if (!isTokensMetadataUninitialized && !isLoadingTokensMetadata) {

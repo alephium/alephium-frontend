@@ -44,24 +44,22 @@ export const syncTokenPrices = createAsyncThunk(
 export const syncTokenPricesHistory = createAsyncThunk(
   'assets/syncTokenPricesHistory',
   async ({ tokenSymbol, currency }: { tokenSymbol: string; currency: string }) => {
-    const rawHistory = await client.explorer.market.getMarketPricesIdCharts(tokenSymbol, {
+    const rawHistory = (await client.explorer.market.getMarketPricesIdCharts(tokenSymbol, {
       currency: currency.toLowerCase()
-    })
-
-    console.log(rawHistory)
+    })) as unknown as [number, number][] // TODO: fix type explorer backend type...
 
     const today = dayjs().format(CHART_DATE_FORMAT)
 
     return {
       id: tokenSymbol,
       history: rawHistory.reduce((acc, v) => {
-        const itemDate = dayjs(v._1).format(CHART_DATE_FORMAT)
+        const itemDate = dayjs(v[0]).format(CHART_DATE_FORMAT)
         const isDuplicatedItem = !!acc.find(({ date }) => dayjs(date).format(CHART_DATE_FORMAT) === itemDate)
 
         if (!isDuplicatedItem && itemDate !== today)
           acc.push({
             date: itemDate,
-            price: v._2
+            price: v[1]
           })
 
         return acc
