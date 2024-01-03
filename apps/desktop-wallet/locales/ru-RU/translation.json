@@ -408,7 +408,7 @@
   "Use max amount": "Использовать максимальную сумму",
   "Use optional passphrase": "Использовать дополнительную парольную фразу",
   "Useful for miners or DeFi use.": "Пригодится для майнеров или для использования в DeFi.",
-  "Value today": "Стоимость на сегодня",
+  "Value today (ALPH)": "Стоимость на сегодня (ALPH)",
   "Version": "Версия",
   "Version {{ newVersion }} is available. Click \"Update\" to avoid any issues with the wallet.": "Версия {{ newVersion }} уже доступна. Нажмите, \"Обновить\", чтобы избежать проблем с кошельком.",
   "Version {{ newVersion }} is available. Please, download it and install it to avoid any issues with the wallet.": "Доступна версия {{ newVersion }}. Пожалуйста, скачайте и установите ее, чтобы избежать проблем с кошельком.",

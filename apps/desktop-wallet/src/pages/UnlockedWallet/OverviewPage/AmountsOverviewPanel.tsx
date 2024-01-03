@@ -94,7 +94,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
         <Balances>
           <BalancesRow>
             <BalancesColumn>
-              <Today>{date ? dayjs(date).format('DD/MM/YYYY') : t('Value today')}</Today>
+              <Today>{date ? dayjs(date).format('DD/MM/YYYY') : t('Value today (ALPH)')}</Today>
               {arePricesLoading || showBalancesSkeletonLoader ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
