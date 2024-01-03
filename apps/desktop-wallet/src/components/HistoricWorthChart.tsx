@@ -26,11 +26,10 @@ import styled, { useTheme } from 'styled-components'
 import { useAppSelector } from '@/hooks/redux'
 import {
   makeSelectAddresses,
-  makeSelectAddressesKnownFungibleTokens,
   selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { getTokensApiIds, useGetHistoricalPriceQuery } from '@/storage/prices/pricesHistorySlice'
+import { useGetHistoricalPriceQuery } from '@/storage/prices/pricesHistorySlice'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
 import { Currency } from '@/types/settings'
 import { CHART_DATE_FORMAT } from '@/utils/constants'
@@ -69,16 +68,8 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) =>
-    selectAddressesKnownFungibleTokens(
-      s,
-      addresses.map((a) => a.hash)
-    )
-  )
-
   const { data: priceHistory } = useGetHistoricalPriceQuery({
-    assetIds: ['alephium', ...getTokensApiIds(knownFungibleTokens)],
+    assetIds: ['alephium'],
     currency,
     days: 365
   })
