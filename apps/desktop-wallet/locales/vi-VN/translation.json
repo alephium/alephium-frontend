@@ -406,7 +406,7 @@
   "Use max amount": "Sử dụng tất cả số dư",
   "Use optional passphrase": "Sử dụng cụm từ khôi phục tuỳ chỉnh",
   "Useful for miners or DeFi use.": "Hữu ích cho thợ đào (miner) hoặc sử dụng DeFi.",
-  "Value today": "Giá trị hôm nay",
+  "Value today (ALPH)": "Giá trị hôm nay (ALPH)",
   "Version": "Phiên bản",
   "Version {{ newVersion }} is available. Click \"Update\" to avoid any issues with the wallet.": "Phiên bản {{ newVersion }} vừa mới được phát hành. Vui lòng nhấn \"Cập nhật\" để khắc phục những lỗi đang hiện có.",
   "Version {{ newVersion }} is available. Please, download it and install it to avoid any issues with the wallet.": "Phiên bản {{ newVersion }} vừa mới được phát hành. Vui lòng tải về và cài đặt để khắc phục các lỗi hiện đang có.",
