@@ -16,86 +16,49 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, CHART_DATE_FORMAT } from '@alephium/shared'
-import { createApi, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
-import dayjs from 'dayjs'
-import { uniq } from 'lodash'
+import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { Currency } from '@/types/settings'
+import { syncTokenPricesHistory } from '@/storage/prices/pricesActions'
+import { tokenPricesHistoryAdapter } from '@/storage/prices/pricesAdapter'
 
 export interface HistoricalPrice {
   date: string // CHART_DATE_FORMAT
   price: number
 }
-
-interface MarketChartEnpointResult {
-  market_caps: [number, number][] // date, value
-  prices: [number, number][]
-  total_volumes: [number, number][]
+export interface PriceHistoryEntity {
+  id: string
+  history: HistoricalPrice[]
+}
+interface PricesHistoryState extends EntityState<PriceHistoryEntity> {
+  loading: boolean
 }
 
-// TODO: EXPORT TO SHARED LIB
-export type CoinGeckoID = 'alephium' | 'tether' | 'usdc' | 'dai' | 'ethereum' | 'wrapped-bitcoin'
-
-export const symbolCoinGeckoMapping: { [key: string]: CoinGeckoID } = {
-  ALPH: 'alephium',
-  USDT: 'tether',
-  USDC: 'usdc',
-  DAI: 'dai',
-  WETH: 'ethereum',
-  WBTC: 'wrapped-bitcoin'
-}
-
-export const getTokensApiIds = (tokens: Asset[]) =>
-  uniq(tokens.flatMap((t) => (t.symbol && symbolCoinGeckoMapping[t.symbol] ? symbolCoinGeckoMapping[t.symbol] : [])))
-
-type HistoricalPriceQueryParams = {
-  assetIds: CoinGeckoID[]
-  currency: Currency
-  days: number
-}
-
-export const priceHistoryApi = createApi({
-  reducerPath: 'priceHistoryApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://api.coingecko.com/api/v3/' }),
-  endpoints: (builder) => ({
-    getHistoricalPrice: builder.query<{ [id in CoinGeckoID]: HistoricalPrice[] }, HistoricalPriceQueryParams>({
-      queryFn: async ({ assetIds, currency, days }, _queryApi, _extraOptions, fetchWithBQ) => {
-        const results = (await Promise.all(
-          assetIds.map((id) =>
-            fetchWithBQ(`/coins/${id}/market_chart?vs_currency=${currency.toLowerCase()}&days=${days}`)
-          )
-        )) as { data: MarketChartEnpointResult; error?: string }[]
-
-        const today = dayjs().format(CHART_DATE_FORMAT)
-
-        const errors = results.filter((r) => !!r.error)
-
-        if (errors.length > 0) return { error: { error: errors.join(', ') } as FetchBaseQueryError }
-
-        return {
-          data: results.reduce(
-            (acc, { data: { prices } }, i) => ({
-              ...acc,
-              [assetIds[i]]: prices.reduce((acc, [date, price]) => {
-                const itemDate = dayjs(date).format(CHART_DATE_FORMAT)
-                const isDuplicatedItem = !!acc.find(({ date }) => dayjs(date).format(CHART_DATE_FORMAT) === itemDate)
-
-                if (!isDuplicatedItem && itemDate !== today)
-                  acc.push({
-                    date: itemDate,
-                    price
-                  })
-
-                return acc
-              }, [] as HistoricalPrice[])
-            }),
-            {} as { [id in CoinGeckoID]: HistoricalPrice[] }
-          )
-        }
-      }
-    })
-  })
+const initialState: PricesHistoryState = tokenPricesHistoryAdapter.getInitialState({
+  loading: false
 })
 
-export const { useGetHistoricalPriceQuery } = priceHistoryApi
+const pricesHistorySlice = createSlice({
+  name: 'tokenPricesHistory',
+  initialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(syncTokenPricesHistory.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(syncTokenPricesHistory.fulfilled, (state, action) => {
+        const tokenPriceHistory = action.payload
+
+        if (tokenPriceHistory) {
+          tokenPricesHistoryAdapter.upsertOne(state, tokenPriceHistory)
+        }
+
+        state.loading = false
+      })
+      .addCase(syncTokenPricesHistory.rejected, (state) => {
+        state.loading = false
+      })
+  }
+})
+
+export default pricesHistorySlice

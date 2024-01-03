@@ -18,9 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { createAsyncThunk } from '@reduxjs/toolkit'
+import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 
 import client from '@/api/client'
+import { HistoricalPrice } from '@/storage/prices/pricesHistorySlice'
+import { CHART_DATE_FORMAT } from '@/utils/constants'
 
 export const syncTokenPrices = createAsyncThunk(
   'assets/syncTokenPrices',
@@ -35,5 +38,34 @@ export const syncTokenPrices = createAsyncThunk(
     )
 
     return tokenPrices.flat()
+  }
+)
+
+export const syncTokenPricesHistory = createAsyncThunk(
+  'assets/syncTokenPricesHistory',
+  async ({ tokenSymbol, currency }: { tokenSymbol: string; currency: string }) => {
+    const rawHistory = await client.explorer.market.getMarketPricesIdCharts(tokenSymbol, {
+      currency: currency.toLowerCase()
+    })
+
+    console.log(rawHistory)
+
+    const today = dayjs().format(CHART_DATE_FORMAT)
+
+    return {
+      id: tokenSymbol,
+      history: rawHistory.reduce((acc, v) => {
+        const itemDate = dayjs(v._1).format(CHART_DATE_FORMAT)
+        const isDuplicatedItem = !!acc.find(({ date }) => dayjs(date).format(CHART_DATE_FORMAT) === itemDate)
+
+        if (!isDuplicatedItem && itemDate !== today)
+          acc.push({
+            date: itemDate,
+            price: v._2
+          })
+
+        return acc
+      }, [] as HistoricalPrice[])
+    }
   }
 )

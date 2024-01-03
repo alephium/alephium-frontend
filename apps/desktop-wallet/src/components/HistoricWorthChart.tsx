@@ -29,7 +29,6 @@ import {
   selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { useGetHistoricalPriceQuery } from '@/storage/prices/pricesHistorySlice'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
 import { Currency } from '@/types/settings'
 
