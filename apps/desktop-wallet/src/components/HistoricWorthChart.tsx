@@ -29,6 +29,7 @@ import {
   selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
+import { selectAlphPriceHistory } from '@/storage/prices/pricesSelectors'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
 import { Currency } from '@/types/settings'
 
@@ -65,12 +66,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const addresses = useAppSelector((s) => selectAddresses(s, addressHash ?? (s.addresses.ids as AddressHash[])))
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-
-  const { data: priceHistory } = useGetHistoricalPriceQuery({
-    assetIds: ['alephium'],
-    currency,
-    days: 365
-  })
+  const priceHistory = useAppSelector(selectAlphPriceHistory)
 
   const theme = useTheme()
 
@@ -93,7 +89,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     const computeChartDataPoints = (): DataPoint[] => {
       const addressesLatestAmount: LatestAmountPerAddress = {}
 
-      const dataPoints = priceHistory.alephium.map(({ date, price }) => {
+      const dataPoints = priceHistory.history.map(({ date, price }) => {
         let totalAmountPerDate = BigInt(0)
 
         addresses.forEach(({ hash, balanceHistory }) => {

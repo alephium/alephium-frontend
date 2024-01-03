@@ -53,7 +53,6 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
-      .concat(priceHistoryApi.middleware)
       .concat(settingsListenerMiddleware.middleware)
       .concat(networkListenerMiddleware.middleware)
       .concat(pendingTransactionsListenerMiddleware.middleware)

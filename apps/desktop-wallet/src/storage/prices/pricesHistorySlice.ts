@@ -22,7 +22,7 @@ import { syncTokenPricesHistory } from '@/storage/prices/pricesActions'
 import { tokenPricesHistoryAdapter } from '@/storage/prices/pricesAdapter'
 
 export interface HistoricalPrice {
-  date: string // CHART_DATE_FORMAT
+  date: string
   price: number
 }
 export interface PriceHistoryEntity {
