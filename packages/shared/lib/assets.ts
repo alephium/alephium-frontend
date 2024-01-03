@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 export interface NFTTokenUriMetaData {
   name: string
-  description?: string
   image: string
+  description?: string
   attributes?: {
     trait_type: string
     value: string | number | boolean
