@@ -19,6 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Price } from '@alephium/web3/dist/src/api/api-explorer'
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
+import { PriceHistoryEntity } from '@/storage/prices/pricesHistorySlice'
+
 export const tokenPricesAdapter = createEntityAdapter<Price>({
   sortComparer: (a, b) => a.name.localeCompare(b.name)
 })
+
+export const tokenPricesHistoryAdapter = createEntityAdapter<PriceHistoryEntity>()

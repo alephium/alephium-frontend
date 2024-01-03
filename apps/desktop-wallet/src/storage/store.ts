@@ -25,7 +25,7 @@ import assetsInfoSlice from '@/storage/assets/assetsInfoSlice'
 import nftsSlice from '@/storage/assets/nftsSlice'
 import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
-import { priceHistoryApi } from '@/storage/prices/pricesHistorySlice'
+import pricesHistorySlice from '@/storage/prices/pricesHistorySlice'
 import pricesSlice from '@/storage/prices/pricesSlice'
 import networkSlice, { networkListenerMiddleware } from '@/storage/settings/networkSlice'
 import settingsSlice, { settingsListenerMiddleware } from '@/storage/settings/settingsSlice'
@@ -48,8 +48,8 @@ export const store = configureStore({
     [assetsInfoSlice.name]: assetsInfoSlice.reducer,
     [snackbarSlice.name]: snackbarSlice.reducer,
     [pricesSlice.name]: pricesSlice.reducer,
-    [nftsSlice.name]: nftsSlice.reducer,
-    [priceHistoryApi.reducerPath]: priceHistoryApi.reducer
+    [pricesHistorySlice.name]: pricesHistorySlice.reducer,
+    [nftsSlice.name]: nftsSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
