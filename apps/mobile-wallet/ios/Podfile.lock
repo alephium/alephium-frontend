@@ -13,27 +13,27 @@ PODS:
     - ExpoModulesCore
   - EXConstants (14.4.2):
     - ExpoModulesCore
-  - EXFileSystem (15.4.4):
+  - EXFileSystem (15.4.5):
     - ExpoModulesCore
   - EXFont (11.4.0):
     - ExpoModulesCore
   - EXImageLoader (4.3.0):
     - ExpoModulesCore
     - React-Core
-  - EXJSONUtils (0.12.0)
-  - EXManifests (0.12.0):
+  - EXJSONUtils (0.12.1)
+  - EXManifests (0.13.0):
     - ExpoModulesCore
   - Expo (49.0.13):
     - ExpoModulesCore
-  - expo-dev-client (3.3.0):
+  - expo-dev-client (3.3.4):
     - EXManifests
     - expo-dev-launcher
     - expo-dev-menu
     - expo-dev-menu-interface
     - EXUpdatesInterface
-  - expo-dev-launcher (3.4.0):
+  - expo-dev-launcher (3.6.1):
     - EXManifests
-    - expo-dev-launcher/Main (= 3.4.0)
+    - expo-dev-launcher/Main (= 3.6.1)
     - expo-dev-menu
     - expo-dev-menu-interface
     - ExpoModulesCore
@@ -41,7 +41,7 @@ PODS:
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTAppDelegate
-  - expo-dev-launcher/Main (3.4.0):
+  - expo-dev-launcher/Main (3.6.1):
     - EXManifests
     - expo-dev-launcher/Unsafe
     - expo-dev-menu
@@ -51,7 +51,7 @@ PODS:
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTAppDelegate
-  - expo-dev-launcher/Unsafe (3.4.0):
+  - expo-dev-launcher/Unsafe (3.6.1):
     - EXManifests
     - expo-dev-menu
     - expo-dev-menu-interface
@@ -60,27 +60,27 @@ PODS:
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTAppDelegate
-  - expo-dev-menu (4.4.0):
-    - expo-dev-menu/Main (= 4.4.0)
-    - expo-dev-menu/ReactNativeCompatibles (= 4.4.0)
+  - expo-dev-menu (4.5.2):
+    - expo-dev-menu/Main (= 4.5.2)
+    - expo-dev-menu/ReactNativeCompatibles (= 4.5.2)
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - expo-dev-menu-interface (1.6.0)
-  - expo-dev-menu/Main (4.4.0):
+  - expo-dev-menu-interface (1.7.1)
+  - expo-dev-menu/Main (4.5.2):
     - EXManifests
     - expo-dev-menu-interface
     - expo-dev-menu/Vendored
     - ExpoModulesCore
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - expo-dev-menu/ReactNativeCompatibles (4.4.0):
+  - expo-dev-menu/ReactNativeCompatibles (4.5.2):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - expo-dev-menu/SafeAreaView (4.4.0):
+  - expo-dev-menu/SafeAreaView (4.5.2):
     - ExpoModulesCore
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - expo-dev-menu/Vendored (4.4.0):
+  - expo-dev-menu/Vendored (4.5.2):
     - expo-dev-menu/SafeAreaView
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -124,7 +124,7 @@ PODS:
     - ExpoModulesCore
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - EXUpdatesInterface (0.15.0)
+  - EXUpdatesInterface (0.15.1)
   - FBLazyVector (0.72.3)
   - FBReactNativeSpec (0.72.3):
     - RCT-Folly (= 2021.07.22.00)
@@ -658,38 +658,13 @@ PODS:
     - React-perflogger (= 0.72.3)
   - RNCAsyncStorage (1.18.2):
     - React-Core
-  - RNGestureHandler (2.13.4):
+  - RNGestureHandler (2.14.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - RNReanimated (3.5.4):
-    - DoubleConversion
-    - FBLazyVector
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React-callinvoker
+  - RNReanimated (3.6.1):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
-    - React-Core/DevSupport
-    - React-Core/RCTWebSocket
-    - React-CoreModules
-    - React-cxxreact
-    - React-hermes
-    - React-jsi
-    - React-jsiexecutor
-    - React-jsinspector
-    - React-RCTActionSheet
-    - React-RCTAnimation
-    - React-RCTAppDelegate
-    - React-RCTBlob
-    - React-RCTImage
-    - React-RCTLinking
-    - React-RCTNetwork
-    - React-RCTSettings
-    - React-RCTText
     - ReactCommon/turbomodule/core
-    - Yoga
   - RNScreens (3.22.1):
     - React-Core
     - React-RCTImage
@@ -1029,16 +1004,16 @@ SPEC CHECKSUMS:
   EXBarCodeScanner: 44783bf0be375ab18a838dcfef29dd648397000a
   EXCamera: 6e6e79bf01a2b8190268d93297d8e79a843d5ede
   EXConstants: ce5bbea779da8031ac818c36bea41b10e14d04e1
-  EXFileSystem: 2b826a3bf1071a4b80a8457e97124783d1ac860e
+  EXFileSystem: f8b838a880254de42a5a7da20ed5ce12e2697c1b
   EXFont: 738c44c390953ebcbab075a4848bfbef025fd9ee
   EXImageLoader: 34b214f9387e98f3c73989f15d8d5b399c9ab3f7
-  EXJSONUtils: d138005ee11b84fc4e3bf7119a160034db5d5e20
-  EXManifests: 17fbf8ed7e987cdbc6b93064f427a1bca4732088
+  EXJSONUtils: fbc612ef20c6688be1d67587cbc94cf9d446990a
+  EXManifests: 2355abd4aeacfb75eec5b43393c0aef9c2789fcf
   Expo: e7d2116b947e2e6fdeb09ee4f2754f819426d1b6
-  expo-dev-client: 820f881c0dc8a0f1f4cd1e35a35469d1d0fbc798
-  expo-dev-launcher: a7525a50a580d319309f27c49685920386551071
-  expo-dev-menu: bde507a4305f84117848f0fcee680f38d80e52b9
-  expo-dev-menu-interface: 05d08cc56649636de77253583b4bbb73adce7680
+  expo-dev-client: 21a0596a8b6e51425b0f0006ec942b61a633e643
+  expo-dev-launcher: 9f2f21972fa7c2e72a9af42cafa5b9f2c394c020
+  expo-dev-menu: b51dbf762b7074f2af7cf63902ffeb3521d75a03
+  expo-dev-menu-interface: 7d0d32817413ab639450f7c5f69a8997453bc73c
   ExpoBlur: a2c90bdfa4ff9f459cdb0f83191bddf020e3e2db
   ExpoClipboard: 695f274f8e028cd113837f917da40c76850877eb
   ExpoDevice: 1c1b0c9cad96c292c1de73948649cfd654b2b3c0
@@ -1054,7 +1029,7 @@ SPEC CHECKSUMS:
   EXScreenCapture: 81002ba5fb40a367fba9047d223068abb558594d
   EXSensors: d26e160b5c91ada2df4a638859ef0c5731bf6404
   EXSplashScreen: c0e7f2d4a640f3b875808ed0b88575538daf6d82
-  EXUpdatesInterface: 4f787eeabc62c258f978ea4865c67adfb6b2f19f
+  EXUpdatesInterface: 95d6bc086d7e043c1f33e30762ebc16a5cf4b153
   FBLazyVector: 4cce221dd782d3ff7c4172167bba09d58af67ccb
   FBReactNativeSpec: fcba260bb2e12b92e8d6cc13695388f94957705c
   Flipper: 6edb735e6c3e332975d1b17956bcc584eccf5818
@@ -1117,8 +1092,8 @@ SPEC CHECKSUMS:
   React-utils: bcb57da67eec2711f8b353f6e3d33bd8e4b2efa3
   ReactCommon: 3ccb8fb14e6b3277e38c73b0ff5e4a1b8db017a9
   RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
-  RNGestureHandler: 6e46dde1f87e5f018a54fe5d40cd0e0b942b49ee
-  RNReanimated: 9633f8c2e214b721e35e371b473fbf3a1522948d
+  RNGestureHandler: 32a01c29ecc9bb0b5bf7bc0a33547f61b4dc2741
+  RNReanimated: c114c031ecae76049ad03aeb0f94a2243498a88d
   RNScreens: 50ffe2fa2342eabb2d0afbe19f7c1af286bc7fb3
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   SDWebImage: cb032eba469c54e0000e78bcb0a13cdde0a52798
