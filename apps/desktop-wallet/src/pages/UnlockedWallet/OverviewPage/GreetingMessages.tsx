@@ -25,7 +25,7 @@ import styled from 'styled-components'
 import { fadeInOut } from '@/animations'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
-import { useGetPriceQuery } from '@/storage/assets/priceApiSlice'
+import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { currencies } from '@/utils/currencies'
 
 interface GreetingMessagesProps {
@@ -37,11 +37,10 @@ const swapDelayInSeconds = 8
 const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   const { t } = useTranslation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
+  const price = useAppSelector(selectAlphPrice)
+  const isPriceLoading = useAppSelector((s) => s.tokenPrices.loading)
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { data: price, isLoading: isPriceLoading } = useGetPriceQuery(currencies[fiatCurrency].ticker, {
-    pollingInterval: 60000
-  })
 
   const [currentComponentIndex, setCurrentComponentIndex] = useState(0)
   const [lastClickTime, setLastChangeTime] = useState(Date.now())
@@ -50,7 +49,7 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
     <span key="price">
       {price
         ? '📈 ' +
-          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(price) }) +
+          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(price.price) }) +
           currencies[fiatCurrency].symbol
         : '💜'}
     </span>
@@ -89,7 +88,7 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   }, [lastClickTime, showNextMessage])
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       <motion.div className={className} key={currentComponentIndex} onClick={handleClick} {...fadeInOut}>
         {componentList[currentComponentIndex]}
       </motion.div>

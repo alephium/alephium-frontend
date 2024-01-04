@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset } from '@alephium/shared'
+import { AddressHash, Asset, calculateAmountWorth } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,6 +42,7 @@ import {
   makeSelectAddressesNFTs,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
+import { selectPriceById } from '@/storage/prices/pricesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 interface AssetsListProps {
@@ -168,6 +169,8 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
+  const price = useAppSelector((s) => selectPriceById(s, asset.symbol?.toLowerCase() || ''))
 
   return (
     <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>
@@ -210,6 +213,11 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
                 </AmountSubtitle>
               )}
               {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
+              {price && (
+                <Price>
+                  <Amount value={calculateAmountWorth(asset.balance, price.price)} isFiat suffix={fiatCurrency} />
+                </Price>
+              )}
             </>
           )}
         </TableCellAmount>
@@ -289,6 +297,11 @@ const TokenAmount = styled(Amount)`
 const AmountSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 10px;
+`
+
+const Price = styled.div`
+  font-size: 11px;
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const NameColumn = styled(Column)`

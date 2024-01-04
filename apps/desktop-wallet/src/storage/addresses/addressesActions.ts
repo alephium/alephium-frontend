@@ -182,14 +182,17 @@ export const syncAddressesHistoricBalances = createAsyncThunk(
 
     for (const addressHash of addresses) {
       const balances = []
-      const data = await client.explorer.addresses.getAddressesAddressAmountHistory(
+      const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistory(
         addressHash,
         { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
         { format: 'text' }
       )
 
+      // TODO: Get history of known tokens
+      //const knownFungibleTokens = makeSelectAddressesKnownFungibleTokens()(state, addresses)
+
       try {
-        const { amountHistory } = JSON.parse(data)
+        const { amountHistory } = JSON.parse(alphHistoryData)
 
         for (const [timestamp, balance] of amountHistory) {
           balances.push({

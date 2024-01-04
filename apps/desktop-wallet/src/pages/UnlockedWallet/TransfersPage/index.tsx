@@ -62,7 +62,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
   const closeInfoMessage = () => dispatch(transfersPageInfoMessageClosed())
 
   useEffect(() => {
-    scrollDirection?.on('change', setDirection)
+    scrollDirection?.onChange(setDirection)
 
     return () => scrollDirection?.destroy()
   }, [scrollDirection])

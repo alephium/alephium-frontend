@@ -29,7 +29,7 @@ import {
   selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { useGetHistoricalPriceQuery } from '@/storage/assets/priceApiSlice'
+import { selectAlphPriceHistory } from '@/storage/prices/pricesSelectors'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
 import { Currency } from '@/types/settings'
 import { CHART_DATE_FORMAT } from '@/utils/constants'
@@ -67,15 +67,14 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const addresses = useAppSelector((s) => selectAddresses(s, addressHash ?? (s.addresses.ids as AddressHash[])))
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-
-  const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
+  const priceHistory = useAppSelector(selectAlphPriceHistory)
 
   const theme = useTheme()
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
 
   const startingDate = startingDates[length].format('YYYY-MM-DD')
-  const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
+  const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!priceHistory
   const firstItem = chartData.at(0)
 
   useEffect(() => {
@@ -91,7 +90,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     const computeChartDataPoints = (): DataPoint[] => {
       const addressesLatestAmount: LatestAmountPerAddress = {}
 
-      const dataPoints = alphPriceHistory.map(({ date, price }) => {
+      const dataPoints = priceHistory.history.map(({ date, price }) => {
         let totalAmountPerDate = BigInt(0)
 
         addresses.forEach(({ hash, balanceHistory }) => {
@@ -123,7 +122,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     dataPoints = trimInitialZeroDataPoints(dataPoints)
 
     setChartData(getFilteredChartData(dataPoints, startingDate))
-  }, [addresses, alphPriceHistory, isDataAvailable, latestWorth, startingDate])
+  }, [addresses, priceHistory, isDataAvailable, latestWorth, startingDate])
 
   if (!isDataAvailable || chartData.length < 2 || !firstItem || latestWorth === undefined) return null
 
