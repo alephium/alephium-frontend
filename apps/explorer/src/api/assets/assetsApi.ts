@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFTCollectionUriMetaData, NFTTokenUriMetaData, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { addressFromContractId } from '@alephium/web3'
-import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { NFTCollectionMetadata, Price } from '@alephium/web3/dist/src/api/api-explorer'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import client from '@/api/client'
@@ -36,7 +36,6 @@ import { createQueriesCollection } from '@/utils/api'
 import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@/utils/time'
 
 // Batched calls
-
 const tokensInfo = create({
   fetcher: async (ids: string[]) => client.explorer.tokens.postTokens(ids),
   resolver: keyResolver('token'),
@@ -145,15 +144,10 @@ export const assetsQueries = createQueriesCollection({
     })
   },
   prices: {
-    assetPrice: (coinGeckoTokenId: string, currency = 'usd') => ({
-      queryKey: ['assetPrice', coinGeckoTokenId, currency],
-      queryFn: async (): Promise<number> => {
-        const res = (await (
-          await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinGeckoTokenId}&vs_currencies=${currency}`)
-        ).json()) as AssetPriceResponse
-
-        return res[coinGeckoTokenId][currency]
-      },
+    assetPrice: (tokenSymbol: string, currency = 'usd') => ({
+      queryKey: ['tokenPrice', tokenSymbol, currency],
+      queryFn: async (): Promise<number> =>
+        (await client.explorer.market.getMarketPrices({ ids: [tokenSymbol], currency: 'usd' }))[0].price,
       staleTime: ONE_MINUTE_MS
     })
   }
