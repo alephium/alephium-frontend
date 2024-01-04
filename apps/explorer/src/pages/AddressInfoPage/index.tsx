@@ -110,7 +110,7 @@ const AddressInfoPage = () => {
   })
 
   const { data: alphPrice } = useQuery({
-    ...queries.assets.prices.assetPrice('alephium')
+    ...queries.assets.prices.assetPrice('alph')
   })
 
   const addressLatestActivity =
@@ -191,9 +191,8 @@ const AddressInfoPage = () => {
           />
           <InfoGrid.Cell
             label={t('Fiat price')}
-            value={
-              client.networkType === 'mainnet' ? addressWorth && <Amount value={addressWorth} isFiat suffix="$" /> : '-'
-            }
+            value={addressWorth && <Amount value={addressWorth} isFiat suffix="$" />}
+            sublabel={client.networkType === 'testnet' && t('Worth of mainnet equivalent')}
           />
           <InfoGrid.Cell
             label={t('Nb. of transactions')}
