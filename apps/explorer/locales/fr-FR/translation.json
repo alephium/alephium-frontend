@@ -49,7 +49,7 @@
   "Pending": "En attente",
   "Previous": "Précédent",
   "Script execution failed": "L'exécution du script a échoué",
-  "Search for an address or a tx...": "Rechercher une adresse ou une transaction...",
+  "Search for an address, a public key, or a tx...": "Rechercher une adresse, une clé publique ou une transaction...",
   "Search": "Rechercher",
   "See more": "Voir plus",
   "Self transfer": "Auto-transfert",
