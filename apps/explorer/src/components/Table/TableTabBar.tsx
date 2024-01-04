@@ -72,7 +72,7 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
 export default styled(TableTabBar)`
   display: flex;
   background-color: ${({ theme }) => theme.bg.tertiary};
-  border-radius: 9px 9px 0 0;
+  border-radius: 8px 8px 0 0;
   overflow: hidden;
 `
 
@@ -140,7 +140,7 @@ const NumberOfItems = styled.div`
   padding: 1px 5px;
   background-color: ${({ theme }) => theme.bg.background2};
   color: ${({ theme }) => theme.font.secondary};
-  border-radius: 9px;
+  border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.border.primary};
   font-size: 11px;
 `

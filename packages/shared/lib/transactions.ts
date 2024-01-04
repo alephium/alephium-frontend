@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenInfo } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
-import { Optional } from '@alephium/web3'
+import { explorer, Optional } from '@alephium/web3'
 import { AddressBalance, Output, Token } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { AddressHash } from './address'
@@ -32,7 +31,9 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
   lockedBalance: bigint
 }
 
-export type AssetInfo = TokenInfo & { verified?: boolean }
+export type AssetInfo = Optional<TokenInfo, 'decimals'> & {
+  verified?: boolean
+}
 
 export type Asset = TokenDisplayBalances & Optional<AssetInfo, 'symbol' | 'name'>
 
@@ -42,8 +43,7 @@ export type UnverifiedAsset = Optional<VerifiedAsset, 'logoURI'>
 
 export type AssetAmount = { id: Asset['id']; amount?: bigint }
 
-export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
-  Required<AssetAmount>
+export type TransactionInfoAsset = Omit<Asset, 'balance' | 'lockedBalance'> & Required<AssetAmount>
 
 export type TransactionInfo = {
   assets: TransactionInfoAsset[]

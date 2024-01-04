@@ -23,17 +23,16 @@ import {
   isMempoolTx,
   isSwap,
   TransactionDirection,
-  TransactionInfo,
   TransactionInfoType
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { MempoolTransaction, Token, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { groupBy, map, mapValues, reduce, sortBy, uniq } from 'lodash'
+import { groupBy, map, mapValues, reduce, uniq } from 'lodash'
 
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 
-export const useTransactionInfo = (tx: Transaction | MempoolTransaction, addressHash: string): TransactionInfo => {
+export const useTransactionInfo = (tx: Transaction | MempoolTransaction, addressHash: string) => {
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
   let infoType: TransactionInfoType
@@ -68,23 +67,24 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   )
   lockTime = lockTime?.toISOString() === new Date(0).toISOString() ? undefined : lockTime
 
-  const tokenAssets = [
-    ...tokensDeltaAmounts.map((token) => ({
-      ...token,
-      ...assetsMetadata.fungibleTokens.find((i) => i.id === token.id),
-      ...assetsMetadata.nfts.find((i) => i.id === token.id)
-    }))
-  ]
+  const groupedTokens = tokensDeltaAmounts.reduce(
+    (acc, token) => {
+      const fungibleToken = assetsMetadata.fungibleTokens.find((i) => i.id === token.id)
+      const nonFungibleToken = assetsMetadata.nfts.find((i) => i.id === token.id)
 
-  const sortedTokens = sortBy(tokenAssets, [
-    (v) => !v.type,
-    (v) => !v.verified,
-    (v) => v.type === 'non-fungible',
-    (v) => v.type === 'fungible',
-    (v) => (v.type === 'fungible' ? v.symbol : v.file?.name)
-  ])
+      return fungibleToken
+        ? { ...acc, fungible: [...acc.fungible, { ...fungibleToken, amount: token.amount }] }
+        : nonFungibleToken
+          ? { ...acc, 'non-fungible': [...acc['non-fungible'], { ...nonFungibleToken, amount: token.amount }] }
+          : acc
+    },
+    {
+      fungible: [] as ((typeof assetsMetadata.fungibleTokens)[number] & { amount: bigint })[],
+      'non-fungible': [] as ((typeof assetsMetadata.nfts)[number] & { amount: bigint })[]
+    }
+  )
 
-  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...sortedTokens] : sortedTokens
+  const assets = { alph: { ...ALPH, amount }, ...groupedTokens }
 
   return {
     assets,

@@ -45,9 +45,10 @@ import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
 import usePageNumber from '@/hooks/usePageNumber'
 import { useSnackbar } from '@/hooks/useSnackbar'
-import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
+import ModalPortal from '@/modals/ModalPortal'
 import AddressTransactionRow from '@/pages/AddressInfoPage/AddressTransactionRow'
 import AssetList from '@/pages/AddressInfoPage/AssetList'
+import ExportAddressTXsModal from '@/pages/AddressInfoPage/ExportAddressTXsModal'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 
@@ -104,7 +105,7 @@ const AddressInfoPage = () => {
   })
 
   const { data: addressAssetIds = [] } = useQuery({
-    ...queries.assets.balances.addressTokens(addressHash),
+    ...queries.address.assets.tokensBalance(addressHash),
     enabled: !!addressHash
   })
 
@@ -280,7 +281,9 @@ const AddressInfoPage = () => {
 
       {txNumber ? <PageSwitch totalNumberOfElements={txNumber} elementsPerPage={numberOfTxsPerPage} /> : null}
 
-      <ExportAddressTXsModal addressHash={addressHash} isOpen={exportModalShown} onClose={handleExportModalClose} />
+      <ModalPortal>
+        <ExportAddressTXsModal addressHash={addressHash} isOpen={exportModalShown} onClose={handleExportModalClose} />
+      </ModalPortal>
     </Section>
   )
 }
@@ -322,7 +325,7 @@ const InfoGridAndQR = styled.div`
   flex-direction: row;
   background-color: ${({ theme }) => theme.bg.primary};
   width: 100%;
-  border-radius: 9px;
+  border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.border.primary};
   overflow: hidden;
 

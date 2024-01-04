@@ -32,3 +32,25 @@ type QueriesCollection<T> = {
 
 export const createQueriesCollection = <T extends Record<string, Queries>>(collection: T): QueriesCollection<T> =>
   collection
+
+export const browsePages = async <T>(
+  callback: (arg: T, options: { limit: number; page: number }) => Promise<any>,
+  callbackFirstArg: T,
+  pageLimit: number
+): Promise<any[]> => {
+  let pageTotalResults
+  let page = 1
+
+  const results = []
+
+  while (pageTotalResults === undefined || pageTotalResults === pageLimit) {
+    const pageResults = await callback(callbackFirstArg, { limit: pageLimit, page })
+
+    results.push(...pageResults)
+
+    pageTotalResults = pageResults.length
+    page += 1
+  }
+
+  return results
+}

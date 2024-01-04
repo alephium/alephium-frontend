@@ -16,16 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from './assets'
-export * from './utils'
-export * from './wallet'
-export * from './address'
-export * from './errors'
-export * from './numbers'
-export * from './constants'
-export * from './transactions'
-export * from './password-crypto'
-export * from './walletConnect'
-export * from './tokens'
-export * from './api'
-export * from './walletConnect'
+import { AnimatePresence } from 'framer-motion'
+import { createPortal } from 'react-dom'
+
+import Tooltips from '@/components/Tooltips'
+
+// TODO: Share in shared lib?
+
+const ModalPortal: FC = ({ children }) =>
+  createPortal(
+    <>
+      <AnimatePresence>{children}</AnimatePresence>
+      <Tooltips />
+    </>,
+    document.body
+  )
+
+export default ModalPortal

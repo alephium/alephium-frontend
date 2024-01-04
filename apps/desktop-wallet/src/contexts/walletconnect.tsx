@@ -21,13 +21,13 @@ import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
+  node,
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
   SignTransferTxParams,
   SignUnsignedTxParams,
   SignUnsignedTxResult
 } from '@alephium/web3'
-import { node } from '@alephium/web3'
 import {
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,

@@ -27,8 +27,7 @@ import {
   TransactionInfoType
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { DUST_AMOUNT, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { explorer } from '@alephium/web3'
+import { DUST_AMOUNT, explorer, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import dayjs from 'dayjs'
 import { map } from 'lodash'
 

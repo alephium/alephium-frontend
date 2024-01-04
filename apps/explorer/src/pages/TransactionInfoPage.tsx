@@ -139,7 +139,7 @@ const TransactionInfoPage = () => {
 
         if (nftMetadata) {
           const type: AssetType = 'non-fungible'
-          return { tokenId, type, verified: nftMetadata.verified, title: nftMetadata.file.name }
+          return { tokenId, type, verified: nftMetadata.verified, title: nftMetadata.file?.name }
         }
 
         return { tokenId }
