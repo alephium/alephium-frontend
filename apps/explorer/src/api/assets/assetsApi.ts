@@ -19,13 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFTCollectionUriMetaData, NFTTokenUriMetaData, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { addressFromContractId } from '@alephium/web3'
-import { NFTCollectionMetadata, Price } from '@alephium/web3/dist/src/api/api-explorer'
+import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import client from '@/api/client'
 import {
   AssetBase,
-  AssetPriceResponse,
   AssetType,
   UnverifiedFungibleTokenMetadata,
   UnverifiedNFTMetadata,
