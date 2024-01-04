@@ -21,7 +21,6 @@ import { ScrollViewProps } from 'react-native'
 import PagerView, { PagerViewOnPageScrollEventData, PagerViewProps } from 'react-native-pager-view'
 import Animated, {
   AnimatedProps,
-  AnimatedScrollViewProps,
   measure,
   runOnJS,
   SharedValue,
