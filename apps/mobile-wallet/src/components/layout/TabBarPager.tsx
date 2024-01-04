@@ -20,8 +20,7 @@ import { ReactNode, useRef } from 'react'
 import { ScrollViewProps } from 'react-native'
 import PagerView, { PagerViewOnPageScrollEventData, PagerViewProps } from 'react-native-pager-view'
 import Animated, {
-  AnimatedScrollViewProps,
-  AnimateProps,
+  AnimatedProps,
   measure,
   runOnJS,
   SharedValue,
@@ -39,8 +38,8 @@ import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useTabScrollHandler from '~/hooks/layout/useTabScrollHandler'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-export interface TabBarPageProps extends AnimatedScrollViewProps {
-  contentStyle?: AnimateProps<ScrollViewProps>['style']
+export interface TabBarPageProps {
+  contentStyle?: AnimatedProps<ScrollViewProps>['style']
   onScroll?: Required<ScrollViewProps>['onScroll']
 }
 
