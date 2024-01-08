@@ -24,10 +24,5 @@
     "@manypkg/cli": "latest",
     "prettier": "^3.0.3",
     "turbo": "latest"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react-native": "0.72.3"
-    }
   }
 }
