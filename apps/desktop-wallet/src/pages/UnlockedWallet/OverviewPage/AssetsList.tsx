@@ -170,7 +170,7 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   const theme = useTheme()
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const price = useAppSelector((s) => selectPriceById(s, asset.symbol?.toLowerCase() || ''))
+  const assetPrice = useAppSelector((s) => selectPriceById(s, asset.symbol?.toLowerCase() || ''))
 
   return (
     <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>
@@ -213,9 +213,9 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
                 </AmountSubtitle>
               )}
               {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
-              {price && (
+              {assetPrice && (
                 <Price>
-                  <Amount value={calculateAmountWorth(asset.balance, price.price)} isFiat suffix={fiatCurrency} />
+                  <Amount value={calculateAmountWorth(asset.balance, assetPrice.price)} isFiat suffix={fiatCurrency} />
                 </Price>
               )}
             </>

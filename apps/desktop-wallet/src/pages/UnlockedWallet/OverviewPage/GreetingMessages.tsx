@@ -37,7 +37,7 @@ const swapDelayInSeconds = 8
 const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   const { t } = useTranslation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
-  const price = useAppSelector(selectAlphPrice)
+  const alphPrice = useAppSelector(selectAlphPrice)
   const isPriceLoading = useAppSelector((s) => s.tokenPrices.loading)
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
@@ -47,9 +47,9 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
 
   const priceComponent = (
     <span key="price">
-      {price
+      {alphPrice
         ? '📈 ' +
-          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(price.price) }) +
+          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(alphPrice.price) }) +
           currencies[fiatCurrency].symbol
         : '💜'}
     </span>
@@ -66,13 +66,13 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
 
   const showNextMessage = useCallback(() => {
     setCurrentComponentIndex((prevIndex) => {
-      if (prevIndex === 0 && (isPriceLoading || price == null)) {
+      if (prevIndex === 0 && (isPriceLoading || alphPrice == null)) {
         return prevIndex
       }
       return (prevIndex + 1) % componentList.length
     })
     setLastChangeTime(Date.now())
-  }, [componentList.length, isPriceLoading, price])
+  }, [componentList.length, isPriceLoading, alphPrice])
 
   const handleClick = useCallback(() => {
     showNextMessage()
