@@ -17,10 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -39,7 +39,6 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
   const addressHash = params.addressHash
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
-  const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
 
@@ -54,11 +53,11 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
       await persistAddressSettings({ ...address, settings })
       dispatch(addressSettingsSaved({ ...address, settings }))
 
-      posthog?.capture('Address: Edited address settings')
+      sendAnalytics('Address: Edited address settings')
     } catch (e) {
       console.error(e)
 
-      posthog?.capture('Error', { message: 'Could not edit address settings' })
+      sendAnalytics('Error', { message: 'Could not edit address settings' })
     }
 
     setLoading(false)

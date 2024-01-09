@@ -17,9 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -38,7 +38,6 @@ interface EditWalletNameScreenProps
 const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalletNameScreenProps) => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
 
   const [name, setName] = useState(walletName)
   const [loading, setLoading] = useState(false)
@@ -50,11 +49,11 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
       await persistWalletMetadata({ name })
       dispatch(walletNameChanged(name))
 
-      posthog?.capture('Wallet: Editted wallet name')
+      sendAnalytics('Wallet: Editted wallet name')
     } catch (e) {
       showExceptionToast(e, 'Could not edit wallet name')
 
-      posthog?.capture('Error', { message: 'Could not edit wallet name' })
+      sendAnalytics('Error', { message: 'Could not edit wallet name' })
     }
 
     setLoading(false)

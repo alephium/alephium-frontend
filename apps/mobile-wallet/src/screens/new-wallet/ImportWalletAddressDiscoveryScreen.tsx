@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { usePostHog } from 'posthog-react-native'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import animationSrc from '~/animations/lottie/wallet.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
@@ -42,10 +42,8 @@ const instructions: Instruction[] = [
 ]
 
 const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWalletAddressDiscoveryScreenProps) => {
-  const posthog = usePostHog()
-
   const handleLaterPress = () => {
-    posthog?.capture('Skipped address discovery')
+    sendAnalytics('Skipped address discovery')
 
     navigation.navigate('NewWalletSuccessScreen')
   }

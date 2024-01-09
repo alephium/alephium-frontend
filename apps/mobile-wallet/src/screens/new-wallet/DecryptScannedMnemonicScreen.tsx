@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { decryptAsync } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 import { useCallback, useRef, useState } from 'react'
 import { Alert } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
+import { sendAnalytics } from '~/analytics'
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -49,7 +49,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   const qrCodeImportedEncryptedMnemonic = useAppSelector((s) => s.walletGeneration.qrCodeImportedEncryptedMnemonic)
   const name = useAppSelector((s) => s.walletGeneration.walletName)
   const pin = useAppSelector((s) => s.credentials.pin)
-  const posthog = usePostHog()
   const dispatch = useAppDispatch()
   const deviceHasBiometricsData = useBiometrics()
   const inputRef = useRef<TextInput>(null)
@@ -93,12 +92,12 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       } catch (e) {
         console.error(e)
 
-        posthog?.capture('Error', { message: 'Could not import addresses from QR code scan' })
+        sendAnalytics('Error', { message: 'Could not import addresses from QR code scan' })
       }
 
       dispatch(newWalletImportedWithMetadata(wallet))
 
-      posthog?.capture('Imported wallet', { note: 'Scanned desktop wallet QR code' })
+      sendAnalytics('Imported wallet', { note: 'Scanned desktop wallet QR code' })
 
       if (contacts.length > 0) await importContacts(contacts)
 

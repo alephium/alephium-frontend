@@ -17,10 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
+import { sendAnalytics } from '~/analytics'
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -42,7 +42,6 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
   const { control, handleSubmit } = useForm<NetworkSettings>({
     defaultValues: currentNetworkSettings
   })
-  const posthog = usePostHog()
   const dispatch = useAppDispatch()
 
   const [loading, setLoading] = useState(false)
@@ -54,11 +53,11 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
       await persistSettings('network', formData)
       dispatch(customNetworkSettingsSaved(formData))
 
-      posthog?.capture('Saved custom network settings')
+      sendAnalytics('Saved custom network settings')
     } catch (e) {
       showExceptionToast(e, 'Could not save custom network settings')
 
-      posthog?.capture('Error', { message: 'Could not save custom network settings' })
+      sendAnalytics('Error', { message: 'Could not save custom network settings' })
     }
 
     setLoading(false)

@@ -27,8 +27,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
+import { Analytics } from '~/analytics'
 import ProgressHeader from '~/components/headers/ProgressHeader'
-import AnalyticsProvider from '~/contexts/AnalyticsContext'
 import { NavigationScrollContextProvider } from '~/contexts/NavigationScrollContext'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -105,7 +105,7 @@ const RootStackNavigation = () => {
         <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
           <AppUnlockHandler>
             <NavigationScrollContextProvider>
-              <AnalyticsProvider>
+              <Analytics>
                 <WalletConnectContextProvider>
                   <RootStack.Navigator initialRouteName="LandingScreen">
                     {/* Sub-navigation with custom header. Showing the header only when authenticated fixes the
@@ -192,7 +192,7 @@ const RootStackNavigation = () => {
                     </RootStack.Group>
                   </RootStack.Navigator>
                 </WalletConnectContextProvider>
-              </AnalyticsProvider>
+              </Analytics>
             </NavigationScrollContextProvider>
           </AppUnlockHandler>
         </NavigationContainer>

@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared'
 import { AlertTriangle, PlusSquare } from 'lucide-react-native'
-import { usePostHog } from 'posthog-react-native'
 import { useEffect, useRef, useState } from 'react'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -62,7 +62,6 @@ const WalletConnectSessionProposalModal = ({
   proposalEvent,
   ...props
 }: WalletConnectSessionProposalModalProps) => {
-  const posthog = usePostHog()
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const addresses = useAppSelector(selectAllAddresses)
@@ -109,11 +108,11 @@ const WalletConnectSessionProposalModal = ({
       await dispatch(syncAddressesData(newAddress.hash))
       await dispatch(syncAddressesHistoricBalances(newAddress.hash))
 
-      posthog?.capture('WC: Generated new address')
+      sendAnalytics('WC: Generated new address')
     } catch (e) {
       console.error('WC: Could not save new address', e)
 
-      posthog?.capture('Error', { message: 'WC: Could not save new address' })
+      sendAnalytics('Error', { message: 'WC: Could not save new address' })
     }
 
     setLoading('')
@@ -186,7 +185,7 @@ const WalletConnectSessionProposalModal = ({
                     onPress={() => {
                       setSignerAddress(address)
                       setShowAlternativeSignerAddresses(false)
-                      posthog?.capture('WC: Switched signer address')
+                      sendAnalytics('WC: Switched signer address')
                     }}
                   />
                 ))}

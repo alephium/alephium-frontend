@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import * as SplashScreen from 'expo-splash-screen'
-import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { Spinner } from '~/components/SpinnerModal'
@@ -37,7 +37,6 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
-  const posthog = usePostHog()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
@@ -53,9 +52,9 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
       dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts: metadata?.contacts ?? [] }))
       lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
 
-      posthog?.capture('Unlocked wallet')
+      sendAnalytics('Unlocked wallet')
     },
-    [addressesStatus, dispatch, lastNavigationState, navigation, posthog]
+    [addressesStatus, dispatch, lastNavigationState, navigation]
   )
 
   return (

@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
@@ -45,7 +45,6 @@ export type SelectedWord = {
 const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodScreenProps) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -55,7 +54,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
 
     navigation.navigate('DecryptScannedMnemonicScreen')
 
-    posthog?.capture('Scanned QR code from desktop wallet')
+    sendAnalytics('Scanned QR code from desktop wallet')
   }
 
   return (

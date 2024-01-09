@@ -19,12 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
-import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, KeyboardAvoidingView, ScrollView } from 'react-native'
 import { FadeIn } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
@@ -56,7 +56,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const deviceHasBiometricsData = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
-  const posthog = usePostHog()
 
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
@@ -113,7 +112,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       dispatch(syncAddressesData(wallet.firstAddress.hash))
       dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
 
-      posthog?.capture('Imported wallet', { note: 'Entered mnemonic manually' })
+      sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
 
       resetNavigation(
         navigation,
@@ -122,7 +121,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       setLoading(false)
     },
-    [name, typedInput, selectedWords, dispatch, posthog, navigation, deviceHasBiometricsData]
+    [name, typedInput, selectedWords, dispatch, navigation, deviceHasBiometricsData]
   )
 
   const handleWordInputChange = (inputText: string) => {

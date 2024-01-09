@@ -20,13 +20,13 @@ import { AddressHash, isAddressValid } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
-import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Portal } from 'react-native-portalize'
 import { interpolateColor, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import Button, { CloseButton, ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
@@ -64,7 +64,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
   const theme = useTheme()
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
-  const posthog = usePostHog()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
@@ -82,14 +81,14 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     const text = await Clipboard.getStringAsync()
     setValue('toAddressHash', text)
 
-    posthog?.capture('Send: Pasted destination address')
+    sendAnalytics('Send: Pasted destination address')
   }
 
   const handleQRCodeScan = (addressHash: string) => {
     if (isAddressValid(addressHash)) {
       setValue('toAddressHash', addressHash)
 
-      posthog?.capture('Send: Captured destination address by scanning QR code')
+      sendAnalytics('Send: Captured destination address by scanning QR code')
     } else {
       showToast({
         text1: 'Invalid address',
@@ -112,7 +111,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       setToAddress(contact.address)
       flashInputBg()
 
-      posthog?.capture('Send: Selected contact to send funds to')
+      sendAnalytics('Send: Selected contact to send funds to')
     }
   }
 
@@ -121,7 +120,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     setToAddress(addressHash)
     flashInputBg()
 
-    posthog?.capture('Send: Selected own address to send funds to')
+    sendAnalytics('Send: Selected own address to send funds to')
   }
 
   useEffect(() => {

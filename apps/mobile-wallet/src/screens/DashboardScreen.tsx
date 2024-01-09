@@ -82,8 +82,12 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   useEffect(() => {
     const initializeNewWalletFlag = async () => {
-      setIsNewWallet(await getIsNewWallet())
-      storeIsNewWallet(false)
+      const isNew = await getIsNewWallet()
+
+      if (isNew !== undefined) {
+        setIsNewWallet(isNew)
+        storeIsNewWallet(false)
+      }
     }
 
     initializeNewWalletFlag()
