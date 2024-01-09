@@ -89,7 +89,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     const computeChartDataPoints = (): DataPoint[] => {
       const addressesLatestAmount: LatestAmountPerAddress = {}
 
-      const dataPoints = priceHistory.history.map(({ date, price }) => {
+      const dataPoints = priceHistory.history.map(({ date, value }) => {
         let totalAmountPerDate = BigInt(0)
 
         addresses.forEach(({ hash, balanceHistory }) => {
@@ -106,7 +106,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
 
         return {
           date,
-          worth: price * parseFloat(toHumanReadableAmount(totalAmountPerDate))
+          worth: value * parseFloat(toHumanReadableAmount(totalAmountPerDate))
         }
       })
 

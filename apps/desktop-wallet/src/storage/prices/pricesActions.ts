@@ -59,7 +59,7 @@ export const syncTokenPricesHistory = createAsyncThunk(
         if (!isDuplicatedItem && itemDate !== today)
           acc.push({
             date: itemDate,
-            price: v[1]
+            value: v[1]
           })
 
         return acc
