@@ -53,7 +53,7 @@ const AssetBadge = ({ assetId, amount, simple, className }: AssetBadgeProps) => 
       {nftInfo?.name ? (
         <AssetSymbol>{nftInfo?.name}</AssetSymbol>
       ) : amount !== undefined ? (
-        <Amount value={amount} suffix={assetInfo?.symbol} />
+        <Amount value={amount} suffix={assetInfo?.symbol} decimals={assetInfo?.decimals} />
       ) : (
         !simple && assetInfo?.symbol && <AssetSymbol>{assetInfo.symbol}</AssetSymbol>
       )}
