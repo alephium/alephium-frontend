@@ -26,13 +26,15 @@ export const { selectAll: selectAllPrices, selectById: selectPriceById } = token
   (state) => state.tokenPrices
 )
 
-export const selectAlphPrice = createSelector(selectAllPrices, (p) =>
-  p.find((price) => price.id === ALPH.symbol.toLowerCase())
+export const selectAlphPrice = createSelector(
+  (state: RootState) => state,
+  (state) => selectPriceById(state, ALPH.symbol.toLowerCase())
 )
 
 export const { selectAll: selectAllPricesHistories, selectById: selectPriceHistoryById } =
   tokenPricesHistoryAdapter.getSelectors<RootState>((state) => state.tokenPricesHistory)
 
-export const selectAlphPriceHistory = createSelector(selectAllPricesHistories, (p) =>
-  p.find((price) => price.id === ALPH.symbol.toLowerCase())
+export const selectAlphPriceHistory = createSelector(
+  (state: RootState) => state,
+  (state) => selectPriceHistoryById(state, ALPH.symbol.toLowerCase())
 )
