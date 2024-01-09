@@ -23,7 +23,7 @@ import { tokenPricesHistoryAdapter } from '@/storage/prices/pricesAdapter'
 
 export interface HistoricalPrice {
   date: string
-  price: number
+  value: number
 }
 export interface PriceHistoryEntity {
   id: string
