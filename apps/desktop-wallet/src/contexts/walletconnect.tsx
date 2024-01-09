@@ -139,7 +139,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
           description: 'Alephium desktop wallet',
           url: 'https://github.com/alephium/alephium-frontend',
           icons: ['https://alephium.org/favicon-32x32.png']
-        }
+        },
+        logger: import.meta.env.VITE_VERSION.includes('-rc.') ? 'debug' : undefined
       })
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
       cleanHistory(client, false)
