@@ -27,9 +27,9 @@ export type AssetBase = { id: string; type: AssetType }
 
 export type FungibleTokenMetadata = Omit<FungibleTokenMetaData, 'totalSupply'> & { id: string; verified: boolean }
 
-export type VerifiedFungibleTokenMetadata = TokenInfo & { type: 'fungible'; verified: true }
+export type VerifiedFungibleTokenMetadata = TokenInfo & { type: 'fungible'; verified: true, totalSupply: number}
 
-export type UnverifiedFungibleTokenMetadata = TokenInfo & { type: 'fungible'; verified: false }
+export type UnverifiedFungibleTokenMetadata = TokenInfo & { type: 'fungible'; verified: false, totalSupply: number }
 
 export type UnverifiedNFTMetadata = NFTMetaData & { id: string; type: 'non-fungible'; verified: false }
 
@@ -44,11 +44,9 @@ export type NFTFile = {
   image?: string
 }
 
-export type AssetPriceResponse = { [tokenId: string]: { [currency: string]: number } }
-
 export const isFungibleTokenMetadata = (
   meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>
 ): meta is FungibleTokenMetaData => (meta as FungibleTokenMetaData).name !== undefined
 
 export const isNFTMetadata = (meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>): meta is NFTMetaData =>
-  (meta as NFTMetaData).collectionId !== undefined
+  (meta as NFTMetaData).collectionAddress !== undefined

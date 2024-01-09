@@ -30,6 +30,7 @@ import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { MempoolTransaction, Token, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { groupBy, map, mapValues, reduce, sortBy, uniq } from 'lodash'
+import _ from 'lodash'
 
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 
@@ -92,6 +93,24 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
     infoType,
     outputs,
     lockTime
+  }
+}
+
+export const useTransactionAssetInfo = (tx: Transaction | MempoolTransaction) => {
+  const assetIds = _(tx.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))
+    .uniq()
+    .compact()
+    .value()
+
+  const assetsMetadata = useAssetsMetadata(map(assetIds, 'id'))
+
+  const tokenAssets = assetIds.map((id) => ({
+    ...assetsMetadata.fungibleTokens.find((i) => i.id === id),
+    ...assetsMetadata.nfts.find((i) => i.id === id)
+  }))
+
+  return {
+    tokenAssets
   }
 }
 
