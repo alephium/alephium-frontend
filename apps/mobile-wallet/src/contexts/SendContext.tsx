@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
-import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import { Portal } from 'react-native-portalize'
 
+import { sendAnalytics } from '~/analytics'
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
@@ -73,7 +73,6 @@ const SendContext = createContext(initialValues)
 export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const requiresAuth = useAppSelector((s) => s.settings.requireAuth)
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
   const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(initialValues.fromAddress)
@@ -111,9 +110,9 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
     } catch (e) {
       showExceptionToast(e, 'Could not build transaction')
 
-      posthog?.capture('Error', { message: 'Could not build consolidation transactions' })
+      sendAnalytics('Error', { message: 'Could not build consolidation transactions' })
     }
-  }, [address, posthog])
+  }, [address])
 
   const buildTransaction = useCallback(
     async (callbacks: BuildTransactionCallbacks) => {
@@ -135,11 +134,11 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         } else {
           showExceptionToast(e, 'Could not build transaction')
 
-          posthog?.capture('Error', { message: 'Could not build transaction' })
+          sendAnalytics('Error', { message: 'Could not build transaction' })
         }
       }
     },
-    [address, assetAmounts, buildConsolidationTransactions, posthog, toAddress]
+    [address, assetAmounts, buildConsolidationTransactions, toAddress]
   )
 
   const sendTransaction = useCallback(
@@ -168,14 +167,14 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
         onSendSuccess()
 
-        posthog?.capture('Send: Sent transaction', { tokens: tokens.length })
+        sendAnalytics('Send: Sent transaction', { tokens: tokens.length })
       } catch (e) {
         showExceptionToast(e, 'Could not send transaction')
 
-        posthog?.capture('Error', { message: 'Could not send transaction' })
+        sendAnalytics('Error', { message: 'Could not send transaction' })
       }
     },
-    [address, assetAmounts, consolidationRequired, dispatch, posthog, toAddress, unsignedTxData.unsignedTxs]
+    [address, assetAmounts, consolidationRequired, dispatch, toAddress, unsignedTxData.unsignedTxs]
   )
 
   const authenticateAndSend = useCallback(

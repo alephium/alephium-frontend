@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import animationSrc from '~/animations/lottie/fingerprint.json'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
@@ -48,7 +48,6 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
   const dispatch = useAppDispatch()
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const addressIds = useAppSelector(selectAddressIds)
-  const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
 
@@ -61,7 +60,7 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
       await enableBiometrics(walletMnemonic)
       dispatch(biometricsToggled(true))
 
-      posthog?.capture('Activated biometrics from wallet creation flow')
+      sendAnalytics('Activated biometrics from wallet creation flow')
 
       resetNavigation(
         navigation,
@@ -73,7 +72,7 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
   }
 
   const handleLaterPress = () => {
-    posthog?.capture('Skipped biometrics activation from wallet creation flow')
+    sendAnalytics('Skipped biometrics activation from wallet creation flow')
 
     resetNavigation(
       navigation,

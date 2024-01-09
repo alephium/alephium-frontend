@@ -17,13 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BlurMask, Canvas, Circle, Group, SweepGradient, vec } from '@shopify/react-native-skia'
-import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import { useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
@@ -36,7 +36,6 @@ interface WalletSwitchButtonProps {
 const buttonSize = 40
 
 const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
-  const posthog = usePostHog()
   const gradientOpacity = useSharedValue(0)
   const [nbOfTaps, setNbOfTaps] = useState(0)
   const [isDoingMagic, setIsDoingMagic] = useState(false)
@@ -69,7 +68,7 @@ const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
 
     if (nbOfTaps === 68) {
       setIsDoingMagic(true)
-      posthog?.capture('Activated magic')
+      sendAnalytics('Activated magic')
     }
   }
 

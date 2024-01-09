@@ -17,10 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 
+import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -37,7 +37,6 @@ interface EditContactScreenProps extends StackScreenProps<RootStackParamList, 'E
 const EditContactScreen = ({ navigation, route: { params }, ...props }: EditContactScreenProps) => {
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -60,11 +59,11 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
                   try {
                     await deleteContact(params.contactId)
 
-                    posthog?.capture('Contact: Deleted contact')
+                    sendAnalytics('Contact: Deleted contact')
                   } catch (e) {
                     showExceptionToast(e, 'Could not delete contact')
 
-                    posthog?.capture('Error', { message: 'Could not delete contact' })
+                    sendAnalytics('Error', { message: 'Could not delete contact' })
                   } finally {
                     setIsDeleting(false)
                   }
@@ -77,7 +76,7 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
         />
       )
     })
-  }, [dispatch, navigation, params.contactId, posthog])
+  }, [dispatch, navigation, params.contactId])
 
   if (!contact) return null
 
@@ -87,11 +86,11 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
     try {
       await persistContact(formData)
 
-      posthog?.capture('Contact: Editted contact')
+      sendAnalytics('Contact: Editted contact')
     } catch (e) {
       showExceptionToast(e, 'Could not save contact')
 
-      posthog?.capture('Error', { message: 'Could not save contact' })
+      sendAnalytics('Error', { message: 'Could not save contact' })
     }
 
     setLoading(false)

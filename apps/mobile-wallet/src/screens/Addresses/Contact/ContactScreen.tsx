@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
-import { usePostHog } from 'posthog-react-native'
 import { useMemo, useRef } from 'react'
 import { PressableProps, Share } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
@@ -47,7 +47,6 @@ type ContactScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScre
 
 const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenProps) => {
   const listRef = useRef(null)
-  const posthog = usePostHog()
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const contactAddressHash = contact?.address ?? ''
   const selectContactConfirmedTransactions = useMemo(makeSelectContactConfirmedTransactions, [])
@@ -67,11 +66,11 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
       message: `${contact.name}\n${contact.address}`
     })
 
-    posthog?.capture('Contact: Shared contact')
+    sendAnalytics('Contact: Shared contact')
   }
 
   const handleSendFundsPress = () => {
-    posthog?.capture('Contact: Pressed send funds')
+    sendAnalytics('Contact: Pressed send funds')
 
     navigation.navigate('SendNavigation', {
       screen: 'OriginScreen',
@@ -80,7 +79,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
   }
 
   const handleCopyAddressPress = () => {
-    posthog?.capture('Copied address', { note: 'Contact' })
+    sendAnalytics('Copied address', { note: 'Contact' })
 
     copyAddressToClipboard(contact.address)
   }

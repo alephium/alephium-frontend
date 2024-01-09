@@ -19,12 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'
-import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -57,7 +57,6 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   const { loading, status, progress } = useAppSelector((s) => s.addressDiscovery)
   const networkName = useAppSelector((s) => s.network.name)
   const persistAddressSettings = usePersistAddressSettings()
-  const posthog = usePostHog()
 
   const [addressSelections, setAddressSelections] = useState<Record<AddressHash, boolean>>({})
   const [importLoading, setImportLoading] = useState(false)
@@ -85,14 +84,14 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
       await persistAddressSettings(newAddresses)
       dispatch(addressesImported(newAddresses))
 
-      posthog?.capture('Imported discovered addresses')
+      sendAnalytics('Imported discovered addresses')
 
       await dispatch(syncAddressesData(newAddressHashes))
       await dispatch(syncAddressesHistoricBalances(newAddressHashes))
     } catch (e) {
       console.error(e)
 
-      posthog?.capture('Error', { message: 'Could not import addresses from address discovery' })
+      sendAnalytics('Error', { message: 'Could not import addresses from address discovery' })
     }
 
     continueToNextScreen()
@@ -120,19 +119,19 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }, [discoveredAddresses])
 
   const handleStartScanPress = () => {
-    posthog?.capture('Started address discovery from settings')
+    sendAnalytics('Started address discovery from settings')
 
     startScan()
   }
 
   const handleStopScanPress = () => {
-    posthog?.capture('Stopped address discovery')
+    sendAnalytics('Stopped address discovery')
 
     stopScan()
   }
 
   const handleContinueScanPress = () => {
-    posthog?.capture('Continued address discovery')
+    sendAnalytics('Continued address discovery')
 
     startScan()
   }

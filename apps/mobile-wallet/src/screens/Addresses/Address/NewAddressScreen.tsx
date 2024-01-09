@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 import { useRef, useState } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
@@ -44,7 +44,6 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
-  const posthog = usePostHog()
 
   const [loading, setLoading] = useState(false)
 
@@ -66,13 +65,13 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       await dispatch(syncAddressesData(newAddress.hash))
       await dispatch(syncAddressesHistoricBalances(newAddress.hash))
 
-      posthog?.capture('Address: Generated new address', {
+      sendAnalytics('Address: Generated new address', {
         note: group === undefined ? 'In random group' : 'In specific group'
       })
     } catch (e) {
       console.error(e)
 
-      posthog?.capture('Error', { message: 'Could not save new address' })
+      sendAnalytics('Error', { message: 'Could not save new address' })
     }
 
     setLoading(false)

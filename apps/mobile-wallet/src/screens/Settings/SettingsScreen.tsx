@@ -19,13 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Application from 'expo-application'
 import { capitalize } from 'lodash'
-import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { Alert, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import Button from '~/components/buttons/Button'
@@ -72,7 +72,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const walletName = useAppSelector((s) => s.wallet.name)
-  const posthog = usePostHog()
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
@@ -92,12 +91,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       await disableBiometrics()
       dispatch(biometricsToggled(false))
 
-      posthog?.capture('Deactivated biometrics')
+      sendAnalytics('Deactivated biometrics')
     } else {
       await enableBiometrics(walletMnemonic)
       dispatch(biometricsToggled(true))
 
-      posthog?.capture('Manually activated biometrics')
+      sendAnalytics('Manually activated biometrics')
     }
   }
 

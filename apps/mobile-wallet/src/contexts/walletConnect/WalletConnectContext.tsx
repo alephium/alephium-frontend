@@ -54,10 +54,10 @@ import {
 import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
 import { useURL } from 'expo-linking'
 import { partition } from 'lodash'
-import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Portal } from 'react-native-portalize'
 
+import { sendAnalytics } from '~/analytics'
 import client from '~/api/client'
 import {
   buildCallContractTransaction,
@@ -106,7 +106,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const url = useURL()
   const wcDeepLink = useRef<string>()
-  const posthog = usePostHog()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -153,11 +152,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } catch (e) {
       setWalletConnectClientStatus('uninitialized')
       console.error('Could not initialize WalletConnect client', e)
-      posthog?.capture('Error', {
+      sendAnalytics('Error', {
         message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
       })
     }
-  }, [posthog])
+  }, [])
 
   useEffect(() => {
     if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES) {
@@ -422,7 +421,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         } else {
           if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
             showExceptionToast(e, 'Could not build transaction')
-            posthog?.capture('Error', { message: 'Could not build transaction' })
+            sendAnalytics('Error', { message: 'Could not build transaction' })
             console.error(e)
           }
           respondToWalletConnectWithError(requestEvent, {
@@ -438,7 +437,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
     // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
     // TODO: Separate offline/online address data slices
-    [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse, posthog]
+    [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse]
   )
 
   const onSessionProposal = useCallback(async (sessionProposalEvent: SessionProposalEvent) => {
@@ -610,14 +609,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
         setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
 
-        posthog?.capture('WC: Disconnected from dApp')
+        sendAnalytics('WC: Disconnected from dApp')
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP')
       } finally {
         setLoading('')
       }
     },
-    [posthog, walletConnectClient]
+    [walletConnectClient]
   )
 
   const approveProposal = async (signerAddress: Address) => {
@@ -711,7 +710,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setSessionProposalEvent(undefined)
       setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
 
-      posthog?.capture('WC: Approved connection')
+      sendAnalytics('WC: Approved connection')
     } catch (e) {
       console.error('❌ WC: Error while approving and acknowledging', e)
     } finally {
