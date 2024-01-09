@@ -40,6 +40,7 @@ const PIN_WALLET_STORAGE_KEY = 'wallet-pin'
 const BIOMETRICS_WALLET_STORAGE_KEY = 'wallet-biometrics'
 const WALLET_METADATA_STORAGE_KEY = 'wallet-metadata'
 const IS_NEW_WALLET = 'is-new-wallet'
+const BIOMETRICS_SETTINGS_CHANGED = 'biometrics-settings-changed'
 
 export const generateAndStoreWallet = async (
   name: WalletState['name'],
@@ -119,15 +120,27 @@ const generateWalletMetadata = (name: string, isMnemonicBackedUp = false) => ({
   contacts: []
 })
 
-export const enableBiometrics = async (mnemonic: Mnemonic) => {
-  const options = { ...defaultBiometricsConfig, authenticationPrompt: 'Enable biometrics' }
+export const enableBiometrics = async (mnemonic: Mnemonic, authenticationPrompt = 'Enable biometrics') => {
+  const options = { ...defaultBiometricsConfig, authenticationPrompt }
 
   console.log('💽 Storing biometrics wallet')
+
   await SecureStore.setItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, mnemonic, options)
 
   if (Platform.OS === 'ios') {
     // Ensure we can actually get the secured mnemonic and force to show prompt
     await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, options)
+  }
+
+  try {
+    const biometricsChangedFlag = await AsyncStorage.getItem(BIOMETRICS_SETTINGS_CHANGED)
+    if (biometricsChangedFlag) await AsyncStorage.removeItem(BIOMETRICS_SETTINGS_CHANGED)
+  } catch (e) {
+    sendAnalytics('Error', {
+      message: `Could not read and delete ${BIOMETRICS_SETTINGS_CHANGED} flag from storage`,
+      exception: getHumanReadableError(e, '')
+    })
+    console.error(e)
   }
 }
 
@@ -163,28 +176,38 @@ export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<Wal
   const { id, name, isMnemonicBackedUp } = metadata
   const usesBiometrics = await loadBiometricsSettings()
 
-  const mnemonic =
-    props?.forcePinUsage || !usesBiometrics
-      ? await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
-      : await SecureStore.getItemAsync(
-          BIOMETRICS_WALLET_STORAGE_KEY,
-          props?.authenticationPrompt
-            ? {
-                ...defaultBiometricsConfig,
-                authenticationPrompt: props.authenticationPrompt
-              }
-            : defaultBiometricsConfig
-        )
+  let mnemonic: string | null = null
 
-  // This should never be the case, but if we have metadata without wallet, we need to clear them
+  if (!props?.forcePinUsage && usesBiometrics) {
+    mnemonic = await SecureStore.getItemAsync(
+      BIOMETRICS_WALLET_STORAGE_KEY,
+      props?.authenticationPrompt
+        ? {
+            ...defaultBiometricsConfig,
+            authenticationPrompt: props.authenticationPrompt
+          }
+        : defaultBiometricsConfig
+    )
+  }
+
   if (!mnemonic) {
-    sendAnalytics('Error', { message: 'Found wallet metadata without a wallet' })
+    mnemonic = await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
 
-    try {
-      await AsyncStorage.removeItem(WALLET_METADATA_STORAGE_KEY)
-    } catch (e) {
-      sendAnalytics('Error', { message: 'Could not delete wallet metadata from storage' })
-      console.error(e)
+    // This is the case where biometrics were enabled, but something changed in the security settings of the device (new
+    // fingerprint or face ID was added)
+    if (!props?.forcePinUsage && usesBiometrics) {
+      await disableBiometrics()
+      await storeBiometricsSettings(false)
+
+      try {
+        await AsyncStorage.setItem(BIOMETRICS_SETTINGS_CHANGED, 'true')
+      } catch (e) {
+        sendAnalytics('Error', {
+          message: `Could not set ${BIOMETRICS_SETTINGS_CHANGED} flag to storage`,
+          exception: getHumanReadableError(e, '')
+        })
+        console.error(e)
+      }
     }
   }
 
@@ -196,6 +219,20 @@ export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<Wal
         isMnemonicBackedUp
       } as WalletState)
     : null
+}
+
+export const didBiometricsSettingsChange = async (): Promise<boolean> => {
+  try {
+    return (await AsyncStorage.getItem(BIOMETRICS_SETTINGS_CHANGED)) === 'true'
+  } catch (e) {
+    sendAnalytics('Error', {
+      message: `Could not read ${BIOMETRICS_SETTINGS_CHANGED} flag from storage`,
+      exception: getHumanReadableError(e, '')
+    })
+    console.error(e)
+  }
+
+  return false
 }
 
 export const deleteWallet = async () => {

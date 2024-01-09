@@ -40,6 +40,7 @@ import SendNavigation from '~/navigation/SendNavigation'
 import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deriveWalletStoredAddresses,
+  didBiometricsSettingsChange,
   disableBiometrics,
   getStoredWallet,
   getWalletMetadata
@@ -241,7 +242,9 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
           navigation.navigate('LandingScreen')
         }
       } else {
-        if (isBioEnabled) {
+        const biometricsNeedToBeReenabled = await didBiometricsSettingsChange()
+
+        if (isBioEnabled && !biometricsNeedToBeReenabled) {
           const metadata = await getWalletMetadata()
           const addressesToInitialize =
             addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []

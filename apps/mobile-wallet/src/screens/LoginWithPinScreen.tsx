@@ -26,9 +26,18 @@ import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { deriveWalletStoredAddresses, getWalletMetadata } from '~/persistent-storage/wallet'
+import { storeBiometricsSettings } from '~/persistent-storage/settings'
+import {
+  deriveWalletStoredAddresses,
+  didBiometricsSettingsChange,
+  disableBiometrics,
+  enableBiometrics,
+  getWalletMetadata
+} from '~/persistent-storage/wallet'
+import { biometricsToggled } from '~/store/settingsSlice'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { WalletState } from '~/types/wallet'
+import { showToast } from '~/utils/layout'
 import { resetNavigation, restoreNavigation } from '~/utils/navigation'
 
 interface LoginWithPinScreenProps extends StackScreenProps<RootStackParamList, 'LoginWithPinScreen'>, ScreenProps {}
@@ -45,6 +54,23 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
       if (!pin || !wallet) return
 
       setIsPinModalVisible(false)
+
+      if (await didBiometricsSettingsChange()) {
+        try {
+          await enableBiometrics(wallet.mnemonic, 'Detected biometrics change, please re-activate')
+          await storeBiometricsSettings(true)
+          dispatch(biometricsToggled(true))
+        } catch (e: unknown) {
+          await disableBiometrics()
+          await storeBiometricsSettings(false)
+          dispatch(biometricsToggled(false))
+
+          showToast({
+            text1: 'Biometrics deactivated',
+            text2: 'You can reactivate them in the settings'
+          })
+        }
+      }
 
       const addressesToInitialize = addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
       const metadata = await getWalletMetadata()
