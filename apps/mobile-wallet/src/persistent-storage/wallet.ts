@@ -157,7 +157,6 @@ export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<Wal
   const metadata = await getWalletMetadata()
 
   if (!metadata) {
-    await deleteWallet()
     return null
   }
 
