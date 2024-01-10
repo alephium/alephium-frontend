@@ -126,6 +126,7 @@ const Input = <T extends InputValue>({
           onFocus={handleFocus}
           onBlur={handleBlur}
           ref={usedInputRef}
+          forwardedAs={TextInput}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
           hide={showCustomValueRendering}
           {...props}
