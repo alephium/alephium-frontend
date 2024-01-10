@@ -72,9 +72,6 @@ PODS:
     - ExpoModulesCore
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - expo-dev-menu/ReactNativeCompatibles (4.5.2):
-    - RCT-Folly (= 2021.07.22.00)
-    - React-Core
   - expo-dev-menu/SafeAreaView (3.2.2):
     - ExpoModulesCore
     - RCT-Folly (= 2021.07.22.00)
