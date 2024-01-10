@@ -135,8 +135,8 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
     >
       <Content>
         <AddressSelect
-          label={t`From address`}
-          title={t`Select the address to sweep the funds from.`}
+          label={t('From address')}
+          title={t('Select the address to sweep the funds from.')}
           options={addresses}
           defaultAddress={sweepAddresses.from}
           onAddressChange={(newAddress) => onAddressChange('from', newAddress)}
@@ -145,8 +145,8 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
           hideAddressesWithoutAssets
         />
         <AddressSelect
-          label={t`To address`}
-          title={t`Select the address to sweep the funds to.`}
+          label={t('To address')}
+          title={t('Select the address to sweep the funds to.')}
           options={toAddressOptions}
           defaultAddress={sweepAddresses.to}
           onAddressChange={(newAddress) => onAddressChange('to', newAddress)}
@@ -166,17 +166,17 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
           </Trans>
         </InfoBox>
         <Fee>
-          {t`Fee`}
+          {t('Fee')}
           <Amount value={fee} />
         </Fee>
       </Content>
       <HorizontalDivider narrow />
       <ModalFooterButtons>
         <ModalFooterButton role="secondary" onClick={onClose}>
-          {t`Cancel`}
+          {t('Cancel')}
         </ModalFooterButton>
         <ModalFooterButton onClick={onSweepClick} disabled={builtUnsignedTxs.length === 0}>
-          {sweepAddress ? t`Sweep` : t`Consolidate`}
+          {sweepAddress ? t('Sweep') : t('Consolidate')}
         </ModalFooterButton>
       </ModalFooterButtons>
     </CenteredModal>

@@ -79,7 +79,7 @@ const GasSettings = ({
         id="gas-price"
         label={
           <>
-            {t`Gas price`} (≥ {minimalGasPriceInALPH} ALPH)
+            {t('Gas price')} (≥ {minimalGasPriceInALPH} ALPH)
           </>
         }
         value={gasPrice ?? ''}
@@ -89,7 +89,7 @@ const GasSettings = ({
         step={minimalGasPriceInALPH}
         error={gasPriceError}
       />
-      {expectedFee && <AlphAmountInfoBox label={t`Expected fee`} amount={expectedFee} short />}
+      {expectedFee && <AlphAmountInfoBox label={t('Expected fee')} amount={expectedFee} short />}
     </>
   )
 }

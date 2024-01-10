@@ -48,21 +48,21 @@ const AddressMetadataForm = ({
 
   return (
     <>
-      <ColoredLabelInput label={t`Address label`} onChange={setLabel} value={label} id="label" maxLength={50} />
+      <ColoredLabelInput label={t('Address label')} onChange={setLabel} value={label} id="label" maxLength={50} />
       {singleAddress && (
         <>
           <HorizontalDivider narrow />
           <InlineLabelValueInput
             label={
               <Label>
-                <StyledMainAddressBadge width={11} /> {t`Default address`}
+                <StyledMainAddressBadge width={11} /> {t('Default address')}
               </Label>
             }
             description={defaultAddressMessage}
             InputComponent={
               <Toggle
                 toggled={isDefault}
-                label={t`Make this your default address`}
+                label={t('Make this your default address')}
                 onToggle={() => setIsDefault(!isDefault)}
                 disabled={!isDefaultAddressToggleEnabled}
               />

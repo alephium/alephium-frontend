@@ -204,11 +204,11 @@ const CheckWordsPage = () => {
   return (
     <FloatingPanel enforceMinHeight>
       <PanelTitle color="primary" onBackButtonClick={onButtonBack} size="small">
-        {t`Security Check`}
+        {t('Security Check')}
       </PanelTitle>
       <PanelContentContainer>
         <Section>
-          <Paragraph>{t`Select the words in the right order.`}</Paragraph>
+          <Paragraph>{t('Select the words in the right order.')}</Paragraph>
           <SelectedWordList
             className={selectedWords.length === wordList.current.length ? (areWordsValid ? 'valid' : 'error') : ''}
           >
@@ -222,19 +222,26 @@ const CheckWordsPage = () => {
           <InfoBox
             Icon={AlertTriangle}
             importance="alert"
-            text={t`It seems like you made a mistake in the words' order. But don't worry, you can reorder the words by dragging them around.`}
+            text={t(
+              "It seems like you made a mistake in the words' order. But don't worry, you can reorder the words by dragging them around."
+            )}
           />
         ) : (
-          <InfoBox small Icon={ThumbsUp} importance="accent" text={t`Great job! Remember to keep those words safe.`} />
+          <InfoBox
+            small
+            Icon={ThumbsUp}
+            importance="accent"
+            text={t('Great job! Remember to keep those words safe.')}
+          />
         )
       ) : null}
       {selectedWords.length === wordList.current.length && (
         <FooterActionsContainer>
           <Button role="secondary" onClick={onButtonBack}>
-            {t`Cancel`}
+            {t('Cancel')}
           </Button>
           <Button onClick={handleButtonNext} disabled={!areWordsValid}>
-            {t`Continue`}
+            {t('Continue')}
           </Button>
         </FooterActionsContainer>
       )}

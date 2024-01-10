@@ -49,7 +49,7 @@ const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
   return (
     <ColorPickerContainer ref={ref}>
       <InputAreaStyled
-        aria-label={t`Pick a color`}
+        aria-label={t('Pick a color')}
         onInput={handlePopupOpen}
         onClick={handlePopupOpen}
         onKeyDown={(e) => onEnterOrSpace(e, handlePopupOpen)}

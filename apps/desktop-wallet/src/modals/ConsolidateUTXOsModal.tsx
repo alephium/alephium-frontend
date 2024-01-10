@@ -38,7 +38,7 @@ const ConsolidateUTXOsModal = ({ onConsolidateClick, onClose, fee }: Consolidate
   const theme = useTheme()
 
   return (
-    <CenteredModal title={t`Consolidate UTXOs`} onClose={onClose}>
+    <CenteredModal title={t('Consolidate UTXOs')} onClose={onClose}>
       <HeaderContent>
         <HeaderLogo>
           <Codesandbox color={theme.global.accent} size="70%" strokeWidth={0.7} />
@@ -51,11 +51,11 @@ const ConsolidateUTXOsModal = ({ onConsolidateClick, onClose, fee }: Consolidate
             )}
           />
           <Fee>
-            {t`Fee`}
+            {t('Fee')}
             {fee ? <Amount value={fee} /> : <Spinner size="12px" />}
           </Fee>
           <Button onClick={onConsolidateClick} submit disabled={!fee}>
-            {t`Consolidate`}
+            {t('Consolidate')}
           </Button>
         </Section>
       </HeaderContent>

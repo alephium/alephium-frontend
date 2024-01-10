@@ -49,7 +49,7 @@ const TabBar = ({
   const { t } = useTranslation()
 
   return (
-    <div className={className} role="tablist" aria-label={t`Tab navigation`}>
+    <div className={className} role="tablist" aria-label={t('Tab navigation')}>
       {items.map((item) => {
         const isActive = activeTab.value === item.value
 
