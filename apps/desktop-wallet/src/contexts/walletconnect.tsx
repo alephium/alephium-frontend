@@ -769,7 +769,7 @@ function getWCStorageKey(prefix: string, version: string, name: string): string 
   return prefix + version + '//' + name
 }
 
-function needToDeleteHistory(record: JsonRpcRecord): boolean {
+function isApiRequest(record: JsonRpcRecord): boolean {
   const request = record.request
   if (request.method !== 'wc_sessionRequest') {
     return false
@@ -789,10 +789,24 @@ async function cleanBeforeInit() {
   console.log('Clean storage before SignClient init')
   const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
   const historyStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, HISTORY_STORAGE_VERSION, HISTORY_CONTEXT)
+  // history records are sorted by expiry
   const historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
   if (historyRecords !== undefined) {
-    const remainRecords = historyRecords.filter((record) => !needToDeleteHistory(record))
-    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords)
+    const remainRecords: JsonRpcRecord[] = []
+    let alphSignRequestNum = 0
+    const now = Date.now()
+    for (const record of historyRecords.reverse()) {
+      const msToExpiry = ((record.expiry || 0) * 1000) - now
+      if (msToExpiry <= 0) continue
+      const requestMethod = record.request.params?.request?.method as (string | undefined)
+      if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < 10) {
+        remainRecords.push(record)
+        alphSignRequestNum += 1
+      } else if (record.response === undefined && !isApiRequest(record)) {
+        remainRecords.push(record)
+      }
+    }
+    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
   }
 
   await cleanPendingRequest(storage)
@@ -819,7 +833,7 @@ function cleanHistory(client: SignClient, checkResponse: boolean) {
       if (checkResponse && record.response === undefined) {
         continue
       }
-      if (needToDeleteHistory(record)) {
+      if (isApiRequest(record)) {
         client.core.history.delete(record.topic, id)
       }
     }
