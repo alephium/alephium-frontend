@@ -81,7 +81,8 @@ export default {
             'The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.'
         }
       ],
-      'expo-localization'
+      'expo-localization',
+      'expo-secure-store'
     ],
     extra: {
       eas: {
