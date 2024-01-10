@@ -32,7 +32,7 @@ import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import BottomModal from '~/components/layout/BottomModal'
-import { TabBarPageProps } from '~/components/layout/TabBarPager'
+import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -45,7 +45,7 @@ import {
   syncAddressesData
 } from '~/store/addressesSlice'
 
-const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
+const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
