@@ -20,8 +20,7 @@ import { BlurMask, Canvas, Circle, Group, SweepGradient, vec } from '@shopify/re
 import { useEffect, useState } from 'react'
 import { Pressable, StyleProp, ViewStyle } from 'react-native'
 import { useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
-import { useTheme } from 'styled-components'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
