@@ -800,13 +800,17 @@ async function cleanBeforeInit() {
     let unresponsiveRequestNum = 0
     const now = Date.now()
     for (const record of historyRecords.reverse()) {
-      const msToExpiry = ((record.expiry || 0) * 1000) - now
+      const msToExpiry = (record.expiry || 0) * 1000 - now
       if (msToExpiry <= 0) continue
-      const requestMethod = record.request.params?.request?.method as (string | undefined)
+      const requestMethod = record.request.params?.request?.method as string | undefined
       if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
         remainRecords.push(record)
         alphSignRequestNum += 1
-      } else if (record.response === undefined && !isApiRequest(record) && unresponsiveRequestNum < MaxRequestNumToKeep) {
+      } else if (
+        record.response === undefined &&
+        !isApiRequest(record) &&
+        unresponsiveRequestNum < MaxRequestNumToKeep
+      ) {
         remainRecords.push(record)
         unresponsiveRequestNum += 1
       }
