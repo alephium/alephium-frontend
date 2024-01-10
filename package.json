@@ -8,8 +8,7 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "postinstall": "manypkg check"
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "resolutions": {
     "semver": "^7.5.2"
