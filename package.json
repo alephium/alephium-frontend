@@ -23,5 +23,10 @@
     "@manypkg/cli": "latest",
     "prettier": "^3.0.3",
     "turbo": "latest"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "framer-motion@10.17.12": "patches/framer-motion@10.17.12.patch"
+    }
   }
 }
