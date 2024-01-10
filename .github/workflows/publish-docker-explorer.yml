@@ -15,14 +15,16 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.workflow_run.head_branch }}
 
-      - name: Install Bun package manager
-        uses: oven-sh/setup-bun@v1
+      - name: Install pnpm package manager
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Install NPM dependencies
-        run: bun install
+        run: pnpm install
 
       - name: Build the static website
-        run: cd apps/explorer && bun run ci:build
+        run: cd apps/explorer && pnpm run ci:build
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1

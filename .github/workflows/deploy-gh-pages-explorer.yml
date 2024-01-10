@@ -31,14 +31,16 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v3
 
-      - name: Install Bun package manager
-        uses: oven-sh/setup-bun@v1
+      - name: Install pnpm package manager
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Install NPM dependencies
-        run: bun install
+        run: pnpm install
 
       - name: Build
-        run: cd apps/explorer && bun run ci:build:gh-pages
+        run: cd apps/explorer && pnpm run ci:build:gh-pages
 
       - name: Set up Pages
         uses: actions/configure-pages@v3
