@@ -1,5 +1,7 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require('expo/metro-config')
+// See https://github.com/byCedric/expo-monorepo-example/blob/main/apps/mobile/metro.config.js
+const { FileStore } = require('metro-cache')
 
 // See https://docs.expo.dev/guides/monorepos/#modify-the-metro-config
 const path = require('path')
@@ -18,5 +20,8 @@ config.resolver.nodeModulesPaths = [
 // 3. Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
 // TODO: Remove this after updating to Expo 50
 config.resolver.disableHierarchicalLookup = true
+
+// Use turborepo to restore the cache when possible
+config.cacheStores = [new FileStore({ root: path.join(projectRoot, 'node_modules', '.cache', 'metro') })]
 
 module.exports = config
