@@ -79,6 +79,8 @@ import { WALLETCONNECT_ERRORS } from '@/utils/constants'
 import { useInterval } from '@/utils/hooks'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
+const MaxRequestNumToKeep = 10
+
 export interface WalletConnectContextProps {
   walletConnectClient?: SignClient
   pairWithDapp: (uri: string) => void
@@ -795,16 +797,18 @@ async function cleanBeforeInit() {
   if (historyRecords !== undefined) {
     const remainRecords: JsonRpcRecord[] = []
     let alphSignRequestNum = 0
+    let unresponsiveRequestNum = 0
     const now = Date.now()
     for (const record of historyRecords.reverse()) {
       const msToExpiry = ((record.expiry || 0) * 1000) - now
       if (msToExpiry <= 0) continue
       const requestMethod = record.request.params?.request?.method as (string | undefined)
-      if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < 10) {
+      if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
         remainRecords.push(record)
         alphSignRequestNum += 1
-      } else if (record.response === undefined && !isApiRequest(record)) {
+      } else if (record.response === undefined && !isApiRequest(record) && unresponsiveRequestNum < MaxRequestNumToKeep) {
         remainRecords.push(record)
+        unresponsiveRequestNum += 1
       }
     }
     await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
