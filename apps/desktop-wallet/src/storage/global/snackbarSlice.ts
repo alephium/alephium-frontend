@@ -35,7 +35,9 @@ import {
   receiveTestnetTokens,
   snackbarDisplayTimeExpired,
   storingDataToLocalStorageFailed,
-  userDataMigrationFailed
+  userDataMigrationFailed,
+  walletConnectCacheCleared,
+  walletConnectCacheClearFailed
 } from '@/storage/global/globalActions'
 import { devModeShortcutDetected } from '@/storage/global/globalActions'
 import {
@@ -191,6 +193,18 @@ const snackbarSlice = createSlice({
         const message = action.payload
 
         if (message) displayMessageImmediately(state, message)
+      })
+      .addCase(walletConnectCacheCleared, (state) => {
+        displayMessageImmediately(state, {
+          text: i18n.t('WalletConnect cache cleared successfully.'),
+          type: 'success'
+        })
+      })
+      .addCase(walletConnectCacheClearFailed, (state) => {
+        displayMessageImmediately(state, {
+          text: i18n.t('Could not clear WalletConnect cache.'),
+          type: 'alert'
+        })
       })
   }
 })

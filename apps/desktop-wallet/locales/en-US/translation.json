@@ -467,5 +467,10 @@
   "Select the address to send assets to.": "Select the address to send assets to.",
   "Destination": "Destination",
   "Origin": "Origin",
-  "One of your addresses to send the assets from.": "One of your addresses to send the assets from."
+  "One of your addresses to send the assets from.": "One of your addresses to send the assets from.",
+  "Clear WalletConnect cache": "Clear WalletConnect cache",
+  "Clear": "Clear",
+  "Helps avoid crashes due to WalletConnect": "Helps avoid crashes due to WalletConnect",
+  "WalletConnect cache cleared successfully.": "WalletConnect cache cleared successfully.",
+  "Could not clear WalletConnect cache.": "Could not clear WalletConnect cache."
 }

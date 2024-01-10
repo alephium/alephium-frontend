@@ -54,6 +54,10 @@ export const snackbarDisplayTimeExpired = createAction('app/snackbarDisplayTimeE
 
 export const userDataMigrationFailed = createAction('app/userDataMigrationFailed')
 
+export const walletConnectCacheCleared = createAction('app/walletConnectCacheCleared')
+
+export const walletConnectCacheClearFailed = createAction('app/walletConnectCacheClearFailed')
+
 export const receiveTestnetTokens = createAsyncThunk<PendingTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
   'assets/receiveTestnetTokens',
   async (destinationAddress: AddressHash, { rejectWithValue, fulfillWithValue }) => {
