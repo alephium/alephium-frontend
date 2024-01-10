@@ -26,7 +26,7 @@ import {
   ViewProps,
   ViewStyle
 } from 'react-native'
-import Animated, { AnimateProps, FadeIn, FadeOut, useAnimatedStyle, withSpring } from 'react-native-reanimated'
+import Animated, { AnimatedProps, FadeIn, FadeOut, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
@@ -46,7 +46,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   renderValue?: RenderValueFunc<T>
   error?: string
   style?: StyleProp<ViewStyle>
-  layout?: AnimateProps<ViewProps>['layout']
+  layout?: AnimatedProps<ViewProps>['layout']
   inputRef?: RefObject<TextInput>
 }
 
