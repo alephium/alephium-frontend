@@ -9,7 +9,7 @@ We use [Bun](https://bun.sh/) as our package manager and [Turborepo](https://tur
 Install all dependencies with:
 
 ```shell
-pnpminstall
+pnpm install
 ```
 
 Turbo tasks are defined in `turbo.json`. You can execute them from the root directory of the monorepo:
@@ -42,7 +42,7 @@ turbo lint:fix
 ### Format
 
 ```shell
-pnpmformat
+pnpm format
 ```
 
 ### Compile TypeScript
