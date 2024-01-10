@@ -767,7 +767,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../../../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../../../node_modules/react-native/ReactCommon/logger`)
   - react-native-aes (from `../../../node_modules/react-native-aes-crypto`)
-  - "react-native-compat (from `../node_modules/@walletconnect/react-native-compat`)"
+  - "react-native-compat (from `../../../node_modules/@walletconnect/react-native-compat`)"
   - react-native-flipper (from `../../../node_modules/react-native-flipper`)
   - react-native-get-random-values (from `../../../node_modules/react-native-get-random-values`)
   - "react-native-netinfo (from `../../../node_modules/@react-native-community/netinfo`)"
@@ -934,7 +934,7 @@ EXTERNAL SOURCES:
   react-native-aes:
     :path: "../../../node_modules/react-native-aes-crypto"
   react-native-compat:
-    :path: "../node_modules/@walletconnect/react-native-compat"
+    :path: "../../../node_modules/@walletconnect/react-native-compat"
   react-native-flipper:
     :path: "../../../node_modules/react-native-flipper"
   react-native-get-random-values:
