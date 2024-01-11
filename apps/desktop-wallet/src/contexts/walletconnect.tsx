@@ -31,6 +31,7 @@ import { node } from '@alephium/web3'
 import {
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,
+  Expirer,
   HISTORY_CONTEXT,
   HISTORY_STORAGE_VERSION,
   MESSAGES_CONTEXT,
@@ -86,6 +87,7 @@ export interface WalletConnectContextProps {
   dappTxData?: DappTxData
   activeSessions: SessionTypes.Struct[]
   dAppUrlToConnectTo?: string
+  reset: () => Promise<void>
 }
 
 const initialContext: WalletConnectContextProps = {
@@ -94,7 +96,8 @@ const initialContext: WalletConnectContextProps = {
   unpairFromDapp: () => Promise.resolve(),
   dappTxData: undefined,
   activeSessions: [],
-  dAppUrlToConnectTo: undefined
+  dAppUrlToConnectTo: undefined,
+  reset: () => Promise.resolve()
 }
 
 const WalletConnectContext = createContext<WalletConnectContextProps>(initialContext)
@@ -690,6 +693,45 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       })
   }
 
+  const reset = useCallback(async () => {
+    if (walletConnectClient === undefined) {
+      console.log('Clear walletconnect storage')
+      await clearWCStorage()
+      return
+    }
+
+    try {
+      console.log('Disconnect all sessions')
+      const topics = walletConnectClient.session.keys
+      const reason = getSdkError('USER_DISCONNECTED')
+      for (const topic of topics) {
+        try {
+          await walletConnectClient.disconnect({ topic, reason })
+        } catch (error) {
+          console.error(`Failed to disconnect topic ${topic}, error: ${error}`)
+        }
+      }
+      setActiveSessions([])
+
+      console.log('Clear walletconnect cache')
+      walletConnectClient.proposal.map.clear()
+      walletConnectClient.pendingRequest.map.clear()
+      walletConnectClient.session.map.clear()
+      const expirer = walletConnectClient.core.expirer as Expirer
+      expirer.expirations.clear()
+      walletConnectClient.core.history.records.clear()
+      walletConnectClient.core.crypto.keychain.keychain.clear()
+      walletConnectClient.core.relayer.messages.messages.clear()
+      walletConnectClient.core.pairing.pairings.map.clear()
+      walletConnectClient.core.relayer.subscriber.subscriptions.clear()
+
+      console.log('Clear walletconnect storage')
+      await clearWCStorage()
+    } catch (error) {
+      console.error(`Failed to reset walletconnect, error: ${error}`)
+    }
+  }, [walletConnectClient, setActiveSessions])
+
   return (
     <WalletConnectContext.Provider
       value={{
@@ -698,7 +740,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         dappTxData,
         pairWithDapp,
         activeSessions,
-        dAppUrlToConnectTo: sessionProposalEvent?.params.proposer.metadata.url
+        dAppUrlToConnectTo: sessionProposalEvent?.params.proposer.metadata.url,
+        reset
       }}
     >
       {children}
@@ -845,6 +888,18 @@ async function cleanPendingRequest(storage: KeyValueStorage) {
       return method !== 'alph_requestNodeApi' && method !== 'alph_requestExplorerApi'
     })
     await storage.setItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey, remainPendingRequests)
+  }
+}
+
+async function clearWCStorage() {
+  try {
+    const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
+    const keys = await storage.getKeys()
+    for (const key of keys) {
+      await storage.removeItem(key)
+    }
+  } catch (error) {
+    console.error(`Failed to clear walletconnect storage, error: ${error}`)
   }
 }
 
