@@ -52,7 +52,7 @@ export default {
     },
     plugins: [
       [
-        'expo-build-properties',
+        'expo-build-properties', 
         {
           ios: {
             deploymentTarget: '13.4',
