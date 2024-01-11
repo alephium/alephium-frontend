@@ -80,6 +80,8 @@ import { WALLETCONNECT_ERRORS } from '@/utils/constants'
 import { useInterval } from '@/utils/hooks'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
+const MaxRequestNumToKeep = 10
+
 export interface WalletConnectContextProps {
   walletConnectClient?: SignClient
   pairWithDapp: (uri: string) => void
@@ -142,7 +144,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
           description: 'Alephium desktop wallet',
           url: 'https://github.com/alephium/alephium-frontend',
           icons: ['https://alephium.org/favicon-32x32.png']
-        }
+        },
+        logger: import.meta.env.VITE_VERSION.includes('-rc.') ? 'debug' : undefined
       })
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
       cleanHistory(client, false)
@@ -812,7 +815,7 @@ function getWCStorageKey(prefix: string, version: string, name: string): string 
   return prefix + version + '//' + name
 }
 
-function needToDeleteHistory(record: JsonRpcRecord): boolean {
+function isApiRequest(record: JsonRpcRecord): boolean {
   const request = record.request
   if (request.method !== 'wc_sessionRequest') {
     return false
@@ -832,10 +835,30 @@ async function cleanBeforeInit() {
   console.log('Clean storage before SignClient init')
   const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
   const historyStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, HISTORY_STORAGE_VERSION, HISTORY_CONTEXT)
+  // history records are sorted by expiry
   const historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
   if (historyRecords !== undefined) {
-    const remainRecords = historyRecords.filter((record) => !needToDeleteHistory(record))
-    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords)
+    const remainRecords: JsonRpcRecord[] = []
+    let alphSignRequestNum = 0
+    let unresponsiveRequestNum = 0
+    const now = Date.now()
+    for (const record of historyRecords.reverse()) {
+      const msToExpiry = (record.expiry || 0) * 1000 - now
+      if (msToExpiry <= 0) continue
+      const requestMethod = record.request.params?.request?.method as string | undefined
+      if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
+        remainRecords.push(record)
+        alphSignRequestNum += 1
+      } else if (
+        record.response === undefined &&
+        !isApiRequest(record) &&
+        unresponsiveRequestNum < MaxRequestNumToKeep
+      ) {
+        remainRecords.push(record)
+        unresponsiveRequestNum += 1
+      }
+    }
+    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
   }
 
   await cleanPendingRequest(storage)
@@ -862,7 +885,7 @@ function cleanHistory(client: SignClient, checkResponse: boolean) {
       if (checkResponse && record.response === undefined) {
         continue
       }
-      if (needToDeleteHistory(record)) {
+      if (isApiRequest(record)) {
         client.core.history.delete(record.topic, id)
       }
     }
