@@ -70,7 +70,7 @@ export const Spinner = ({ text, color = 'tertiary' }: SpinnerProps) => {
 }
 
 const SpinnerStyled = styled.View<{ fadedBg?: SpinnerProps['fadedBg'] }>`
-  flex: 1
+  flex: 1;
   width: 100%;
   background-color: ${({ theme, fadedBg }) =>
     fadedBg ? colord(theme.bg.contrast).alpha(0.3).toRgbString() : undefined};

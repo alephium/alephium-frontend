@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useRef } from 'react'
-import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { deviceBreakPoints } from '@/styles/globalStyles'
@@ -38,7 +38,7 @@ interface TableProps {
 
 export interface TDStyle {
   tdPos: number
-  style: FlattenInterpolation<ThemeProps<DefaultTheme>>
+  style: ReturnType<typeof css>
 }
 
 const Table: FC<TableProps> = ({ children, isLoading, className, ...props }) => {

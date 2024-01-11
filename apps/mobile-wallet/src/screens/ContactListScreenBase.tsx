@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { TextInput, ViewProps } from 'react-native'
-import Animated, { AnimateProps } from 'react-native-reanimated'
+import Animated, { AnimatedProps } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -38,7 +38,7 @@ import { filterContacts } from '~/utils/contacts'
 export interface ContactListScreenBaseProps {
   onContactPress: (contactId: Contact['id']) => void
   onNewContactPress?: () => void
-  style?: AnimateProps<ViewProps>['style']
+  style?: AnimatedProps<ViewProps>['style']
 }
 
 // TODO: Should be converted to a FlatList

@@ -90,12 +90,12 @@ const WalletPassphrase = ({ onPassphraseConfirmed, setIsPassphraseConfirmed, cla
             checked={isConsentActive}
             onChange={() => setIsConsentActive(!isConsentActive)}
           />
-          <label htmlFor="passphrase-consent">{t`I have read and understood the documentation`}</label>
+          <label htmlFor="passphrase-consent">{t('I have read and understood the documentation')}</label>
         </ConsentCheckbox>
         <Input
           id="optional-passphrase"
           value={value}
-          label={t`Optional passphrase`}
+          label={t('Optional passphrase')}
           type="password"
           onChange={(e) => setValue(e.target.value)}
           disabled={!isConsentActive}
@@ -103,11 +103,11 @@ const WalletPassphrase = ({ onPassphraseConfirmed, setIsPassphraseConfirmed, cla
         <Input
           id="optional-passphrase-confirm"
           value={confirmValue}
-          label={t`Confirm passphrase`}
+          label={t('Confirm passphrase')}
           type="password"
           onChange={(e) => setConfirmValue(e.target.value)}
           disabled={!isConsentActive || !value}
-          error={showConfirmError && t`Passphrases don't match`}
+          error={showConfirmError && t("Passphrases don't match")}
         />
       </ToggleSection>
     </Container>

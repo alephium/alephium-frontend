@@ -57,21 +57,21 @@ const WalletWordsPage = () => {
   return (
     <FloatingPanel enforceMinHeight>
       <PanelTitle color="primary" onBackButtonClick={onButtonBack}>
-        {t`Your Wallet`}
+        {t('Your Wallet')}
       </PanelTitle>
       <PanelContentContainer>
         <WordsContent inList>
-          <Label>{t`Secret recovery phrase`}</Label>
+          <Label>{t('Secret recovery phrase')}</Label>
           <PhraseBox>{renderFormatedMnemonic(mnemonic)}</PhraseBox>
           <InfoBox
-            text={t`Carefully note down the words! They are your wallet's secret recovery phrase.`}
+            text={t("Carefully note down the words! They are your wallet's secret recovery phrase.")}
             Icon={Edit3}
             importance="alert"
           />
         </WordsContent>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button onClick={onButtonNext}>{t`I've copied the words, continue`}</Button>
+        <Button onClick={onButtonNext}>{t("I've copied the words, continue")}</Button>
       </FooterActionsContainer>
     </FloatingPanel>
   )

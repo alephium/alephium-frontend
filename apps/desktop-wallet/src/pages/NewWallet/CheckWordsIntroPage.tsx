@@ -40,7 +40,7 @@ const CheckWordsIntroPage = () => {
   return (
     <FloatingPanel enforceMinHeight>
       <PanelTitle color="primary" onBackButtonClick={onButtonBack}>
-        {t`Security Check`}
+        {t('Security Check')}
       </PanelTitle>
       <PanelContentContainer>
         <Section>
@@ -58,14 +58,14 @@ const CheckWordsIntroPage = () => {
               </LockBodyContainer>
             </Lock>
           </LockContainer>
-          <Paragraph centered>{t`Alright! Time to check if you got your words right!`}</Paragraph>
+          <Paragraph centered>{t('Alright! Time to check if you got your words right!')}</Paragraph>
           <Paragraph secondary centered>
-            {t`Select the words in the right order. Ready?`}
+            {t('Select the words in the right order. Ready?')}
           </Paragraph>
         </Section>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button onClick={onButtonNext}>{t`Ready!`}</Button>
+        <Button onClick={onButtonNext}>{t('Ready!')}</Button>
       </FooterActionsContainer>
     </FloatingPanel>
   )

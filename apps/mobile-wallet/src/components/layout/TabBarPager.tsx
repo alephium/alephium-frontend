@@ -32,6 +32,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
+import { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import TopTabBar from '~/components/TopTabBar'
 import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
@@ -43,9 +44,11 @@ export interface TabBarPageProps {
   onScroll?: Required<ScrollViewProps>['onScroll']
 }
 
+export type TabBarPageScreenProps = BottomBarScrollScreenProps & TabBarPageProps
+
 interface TabBarScreenProps extends Omit<PagerViewProps, 'children'> {
   headerTitle: string
-  pages: Array<(props: TabBarPageProps) => ReactNode>
+  pages: Array<(props: TabBarPageScreenProps) => ReactNode>
   tabLabels: string[]
 }
 
@@ -133,8 +136,8 @@ const WrappedPage = ({
   pagerScrollEvent,
   tabBarPageY
 }: {
-  Page: (props: TabBarPageProps) => ReactNode
-  onScroll: Required<TabBarPageProps>['onScroll']
+  Page: (props: TabBarPageScreenProps) => ReactNode
+  onScroll: Required<TabBarPageScreenProps>['onScroll']
   index: number
   pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
   tabBarPageY: SharedValue<number>

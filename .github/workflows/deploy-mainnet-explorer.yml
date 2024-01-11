@@ -20,14 +20,16 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v3
 
-      - name: Install Bun package manager
-        uses: oven-sh/setup-bun@v1
+      - name: Install pnpm package manager
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Install NPM dependencies
-        run: bun install
+        run: pnpm install
 
       - name: Build frontend
-        run: cd apps/explorer && bun run ci:build && bun docker/init-server-data.js
+        run: cd apps/explorer && pnpm run ci:build && pnpm docker/init-server-data.js
 
       - name: Sync files to S3
         run: aws s3 sync ./apps/explorer/build/ s3://$AWS_BUCKET_NAME --acl public-read --delete --cache-control max-age=604800

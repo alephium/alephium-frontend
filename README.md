@@ -4,12 +4,12 @@ A monorepo containing all things frontend on Alephium.
 
 ## Development
 
-We use [Bun](https://bun.sh/) as our package manager and [Turborepo](https://turbo.build/repo) as our build system. Turborepo runs the tasks defined in `turbo.json` and Bun installs the npm packages.
+We use [pnpm](https://pnpm.io/) as our package manager and [Turborepo](https://turbo.build/repo) as our build system. Turborepo runs the tasks defined in `turbo.json` and Bun installs the npm packages.
 
 Install all dependencies with:
 
 ```shell
-bun install
+pnpm install
 ```
 
 Turbo tasks are defined in `turbo.json`. You can execute them from the root directory of the monorepo:
@@ -42,7 +42,7 @@ turbo lint:fix
 ### Format
 
 ```shell
-bun format
+pnpm format
 ```
 
 ### Compile TypeScript

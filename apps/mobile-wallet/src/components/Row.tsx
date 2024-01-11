@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import { Pressable, StyleProp, ViewProps, ViewStyle } from 'react-native'
-import Animated, { AnimateProps } from 'react-native-reanimated'
+import Animated, { AnimatedProps } from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
 
 import AppText, { AppTextProps } from '~/components/AppText'
@@ -38,7 +38,7 @@ export interface RowProps {
   transparent?: boolean
   isLast?: boolean
   style?: StyleProp<ViewStyle>
-  layout?: AnimateProps<ViewProps>['layout']
+  layout?: AnimatedProps<ViewProps>['layout']
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)

@@ -44,15 +44,17 @@ const WalletRemovalModal = ({ walletName, onConfirm, onClose }: WalletRemovalMod
       <Section>
         <InfoBox
           importance="alert"
-          text={t`Please make sure to have your recovery phrase saved and stored somewhere secure to restore your wallet in the future. Without the recovery phrase, your wallet will be unrecoverable and permanently lost.`}
+          text={t(
+            'Please make sure to have your recovery phrase saved and stored somewhere secure to restore your wallet in the future. Without the recovery phrase, your wallet will be unrecoverable and permanently lost.'
+          )}
         />
         <Paragraph secondary centered>
-          <b>{t`Not your keys, not your coins.`}</b>
+          <b>{t('Not your keys, not your coins.')}</b>
         </Paragraph>
       </Section>
       <Section inList>
         <Button variant="alert" onClick={onConfirm}>
-          {t`CONFIRM REMOVAL`}
+          {t('CONFIRM REMOVAL')}
         </Button>
       </Section>
     </CenteredModal>
