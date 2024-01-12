@@ -61,3 +61,38 @@ jobs:
           APPLEID: ${{ secrets.APPLE_ID }}
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+
+      - name: Create Artifacts Directory
+        if: startsWith(matrix.os, 'windows')
+        shell: bash
+        run: |
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+
+      - name: Sign Artifact with CodeSignTool
+        uses: sslcom/esigner-codesign@develop
+        if: startsWith(matrix.os, 'windows')
+        with:
+          # Sign and timestamp code object.
+          command: sign
+          # SSL.com account username
+          username: ${{ secrets.ES_USERNAME }}
+          # SSL.com account password.
+          password: ${{ secrets.ES_PASSWORD }}
+          # Credential ID for signing certificate.
+          credential_id: ${{ secrets.CREDENTIAL_ID }}
+          # OAuth TOTP Secret (https://www.ssl.com/how-to/automate-esigner-ev-code-signing)
+          totp_secret: ${{ secrets.ES_TOTP_SECRET }}
+          # Path of code object to be signed. (DLL, JAR, EXE, MSI files vb... )
+          file_path: 'apps/desktop-wallet/Alephium*.exe'
+          # Directory where signed code object(s) will be written.
+          output_path: ${GITHUB_WORKSPACE}/artifacts
+          # Scan code before sign
+          malware_block: false
+          # Environment Name, For Production 'PROD' or For Staging 'TEST'
+          environment_name: PROD
+
+      - name: Upload Signed Files
+        uses: actions/upload-artifact@v2
+        with:
+          name: Alephium-signed.exe
+          path: ./artifacts/Alephium*.exe
