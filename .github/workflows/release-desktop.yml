@@ -61,3 +61,44 @@ jobs:
           APPLEID: ${{ secrets.APPLE_ID }}
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+
+      - name: Create Artifacts Directory
+        if: startsWith(matrix.os, 'windows')
+        shell: bash
+        run: |
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+
+      - name: Find Alephuim-*.exe file
+        if: startsWith(matrix.os, 'windows')
+        id: get-exefile
+        run: echo "exefile=$(find . -name 'Alephium-*.exe')" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Sign Artifact with CodeSignTool
+        uses: sslcom/esigner-codesign@develop
+        if: startsWith(matrix.os, 'windows')
+        with:
+          command: sign
+          username: ${{ secrets.ES_USERNAME }}
+          password: ${{ secrets.ES_PASSWORD }}
+          credential_id: ${{ secrets.CREDENTIAL_ID }}
+          totp_secret: ${{ secrets.ES_TOTP_SECRET }}
+          file_path: ${{ steps.get-exefile.outputs.exefile }}
+          output_path: ${GITHUB_WORKSPACE}/artifacts
+          malware_block: false
+          environment_name: PROD
+
+      - name: Find Alephium-*.exe signed file
+        if: startsWith(matrix.os, 'windows')
+        id: get-signedfile
+        run: |
+          echo "file=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe')" >> $GITHUB_OUTPUT
+          echo "filename=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe' | xargs basename)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Upload Signed Alephuim-*.exe
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.os, 'windows')
+        with:
+          name: signed-${{ steps.get-signedfile.outputs.filename }}
+          path: ${{ steps.get-signedfile.outputs.file }}
