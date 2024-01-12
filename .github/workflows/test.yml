@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: |
           mkdir ${GITHUB_WORKSPACE}/artifacts
-          find dist
+          find .
 
       - name: Sign Artifact with CodeSignTool
         uses: sslcom/esigner-codesign@develop
