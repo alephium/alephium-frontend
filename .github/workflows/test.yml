@@ -93,8 +93,15 @@ jobs:
           # Environment Name, For Production 'PROD' or For Staging 'TEST'
           environment_name: PROD
 
-      - name: List signed exe file
+      - name: Find Alephuim-*.exe signed file
         if: startsWith(matrix.os, 'windows')
+        id: get-signedfile
+        run: echo "filename=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe' | xargs basename)" >> $GITHUB_OUTPUT
         shell: bash
-        run: |
-          find ${GITHUB_WORKSPACE}/artifacts
+
+      - name: Upload Signed Alephuim-*.exe
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.os, 'windows')
+        with:
+          name: signed-${{ steps.get-signedfile.outputs.filename }}
+          path: ${GITHUB_WORKSPACE}/artifacts/${{ steps.get-signedfile.outputs.filename }}
