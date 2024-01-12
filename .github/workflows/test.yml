@@ -63,8 +63,12 @@ jobs:
         shell: bash
         run: |
           mkdir ${GITHUB_WORKSPACE}/artifacts
-          find .
-          find ${GITHUB_WORKSPACE}
+
+      - name: Find Alephuim-*.exe file
+        if: startsWith(matrix.os, 'windows')
+        id: get-exefile
+        run: echo "exefile=$(find . -name 'Alephium-*.exe')" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Sign Artifact with CodeSignTool
         uses: sslcom/esigner-codesign@develop
@@ -81,10 +85,16 @@ jobs:
           # OAuth TOTP Secret (https://www.ssl.com/how-to/automate-esigner-ev-code-signing)
           totp_secret: ${{ secrets.ES_TOTP_SECRET }}
           # Path of code object to be signed. (DLL, JAR, EXE, MSI files vb... )
-          file_path: ./apps/desktop-wallet/dist/Alephium-2.2.0.exe
+          file_path: ${{ steps.get-exefile.outputs.exefile }}
           # Directory where signed code object(s) will be written.
           output_path: ${GITHUB_WORKSPACE}/artifacts
           # Scan code before sign
           malware_block: false
           # Environment Name, For Production 'PROD' or For Staging 'TEST'
           environment_name: PROD
+
+      - name: List signed exe file
+        if: startsWith(matrix.os, 'windows')
+        shell: bash
+        run: |
+          find ${GITHUB_WORKSPACE}/artifacts
