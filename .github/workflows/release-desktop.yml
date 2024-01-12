@@ -68,31 +68,37 @@ jobs:
         run: |
           mkdir ${GITHUB_WORKSPACE}/artifacts
 
+      - name: Find Alephuim-*.exe file
+        if: startsWith(matrix.os, 'windows')
+        id: get-exefile
+        run: echo "exefile=$(find . -name 'Alephium-*.exe')" >> $GITHUB_OUTPUT
+        shell: bash
+
       - name: Sign Artifact with CodeSignTool
         uses: sslcom/esigner-codesign@develop
         if: startsWith(matrix.os, 'windows')
         with:
-          # Sign and timestamp code object.
           command: sign
-          # SSL.com account username
           username: ${{ secrets.ES_USERNAME }}
-          # SSL.com account password.
           password: ${{ secrets.ES_PASSWORD }}
-          # Credential ID for signing certificate.
           credential_id: ${{ secrets.CREDENTIAL_ID }}
-          # OAuth TOTP Secret (https://www.ssl.com/how-to/automate-esigner-ev-code-signing)
           totp_secret: ${{ secrets.ES_TOTP_SECRET }}
-          # Path of code object to be signed. (DLL, JAR, EXE, MSI files vb... )
-          file_path: 'apps/desktop-wallet/Alephium*.exe'
-          # Directory where signed code object(s) will be written.
+          file_path: ${{ steps.get-exefile.outputs.exefile }}
           output_path: ${GITHUB_WORKSPACE}/artifacts
-          # Scan code before sign
           malware_block: false
-          # Environment Name, For Production 'PROD' or For Staging 'TEST'
           environment_name: PROD
 
-      - name: Upload Signed Files
+      - name: Find Alephium-*.exe signed file
+        if: startsWith(matrix.os, 'windows')
+        id: get-signedfile
+        run: |
+          echo "file=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe')" >> $GITHUB_OUTPUT
+          echo "filename=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe' | xargs basename)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Upload Signed Alephuim-*.exe
         uses: actions/upload-artifact@v2
+        if: startsWith(matrix.os, 'windows')
         with:
-          name: Alephium-signed.exe
-          path: ./artifacts/Alephium*.exe
+          name: signed-${{ steps.get-signedfile.outputs.filename }}
+          path: ${{ steps.get-signedfile.outputs.file }}
