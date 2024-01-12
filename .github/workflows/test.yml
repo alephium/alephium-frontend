@@ -96,7 +96,9 @@ jobs:
       - name: Find Alephuim-*.exe signed file
         if: startsWith(matrix.os, 'windows')
         id: get-signedfile
-        run: echo "filename=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe' | xargs basename)" >> $GITHUB_OUTPUT
+        run: |
+          echo "file=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe')" >> $GITHUB_OUTPUT
+          echo "filename=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe' | xargs basename)" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Upload Signed Alephuim-*.exe
@@ -104,4 +106,4 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         with:
           name: signed-${{ steps.get-signedfile.outputs.filename }}
-          path: ${GITHUB_WORKSPACE}/artifacts/${{ steps.get-signedfile.outputs.filename }}
+          path: ${{ steps.get-signedfile.outputs.file }}
