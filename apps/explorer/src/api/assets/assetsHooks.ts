@@ -169,3 +169,18 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     return returnedVerifiedTokensMetadata
   } else return returnedCompleteMetadata
 }
+
+export const useTokensPrices = (assetSymbols: string[] = []) => {
+  const verifiedTokensMetadata = useVerifiedTokensMetadata()
+
+  const knownSymbols = verifiedTokensMetadata ? Array.from(verifiedTokensMetadata.values()).map((m) => m.symbol) : []
+
+  const { data: prices } = useQueriesData(
+    assetSymbols.map((symbol) => ({
+      ...queries.assets.prices.assetPrice(symbol),
+      enabled: !!symbol && knownSymbols.includes(symbol)
+    }))
+  )
+
+  return prices
+}

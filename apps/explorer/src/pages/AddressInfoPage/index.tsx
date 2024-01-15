@@ -51,8 +51,7 @@ import AssetList from '@/pages/AddressInfoPage/AssetList'
 import ExportAddressTXsModal from '@/pages/AddressInfoPage/ExportAddressTXsModal'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { useAssetsMetadata } from '@/api/assets/assetsHooks'
-import { useQueriesData } from '@/hooks/useQueriesData'
+import { useAssetsMetadata, useTokensPrices } from '@/api/assets/assetsHooks'
 
 type ParamTypes = {
   id: string
@@ -111,19 +110,13 @@ const AddressInfoPage = () => {
     enabled: !!addressHash
   })
 
-  console.log(tokenBalances)
+  const { fungibleTokens: fungibleTokensMetadata } = useAssetsMetadata(tokenBalances.map((b) => b.tokenId))
 
-  const { fungibleTokens: fungibleTokensMetadata, isLoading: isFunglibleTokensMetadataLoading } = useAssetsMetadata(
-    tokenBalances.map((b) => b.tokenId)
-  )
-
-  const { data: assetPrices } = useQueriesData(
-    [...fungibleTokensMetadata, ALPH].map((t) => queries.assets.prices.assetPrice(t.symbol))
-  )
+  const tokensPrices = useTokensPrices(fungibleTokensMetadata.map((t) => t.symbol))
 
   const addressWorth = tokenBalances.reduce((acc, b) => {
     const token = fungibleTokensMetadata.find((t) => t.id === b.tokenId)
-    const price = assetPrices.find((p) => p.symbol === token?.symbol)?.price
+    const price = tokensPrices.find((p) => p.symbol === token?.symbol)?.price
 
     return acc + (price ? calculateAmountWorth(BigInt(b.balance), price) : 0)
   }, 0)

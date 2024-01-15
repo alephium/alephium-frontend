@@ -31,6 +31,7 @@ import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import { AssetBase, FungibleTokenMetadataBase, NumericTokenBalance } from '@/types/assets'
+import { useTokensPrices } from '@/api/assets/assetsHooks'
 
 interface TokenListProps {
   tokens: Optional<
@@ -48,6 +49,8 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
   const navigate = useNavigate()
 
   const displayedTokens = limit ? tokens.slice(0, limit) : tokens
+
+  const tokensPrices = useTokensPrices(displayedTokens.flatMap((t) => t.symbol || []))
 
   const handleTokenNameClick = (tokenId: string) => {
     try {
