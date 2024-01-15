@@ -110,7 +110,7 @@ const AddressInfoPage = () => {
   })
 
   const { data: alphPrice } = useQuery({
-    ...queries.assets.prices.assetPrice('alph')
+    ...queries.assets.prices.assetPrice('ALPH')
   })
 
   const addressLatestActivity =

@@ -146,7 +146,7 @@ export const assetsQueries = createQueriesCollection({
     assetPrice: (tokenSymbol: string, currency = 'usd') => ({
       queryKey: ['tokenPrice', tokenSymbol, currency],
       queryFn: async (): Promise<number> =>
-        (await client.explorer.market.getMarketPrices({ ids: [tokenSymbol], currency: 'usd' }))[0].price,
+        (await client.explorer.market.postMarketPrices({ currency: 'usd' }, [tokenSymbol]))[0].price,
       staleTime: ONE_MINUTE_MS
     })
   }
