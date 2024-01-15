@@ -51,6 +51,8 @@ import AssetList from '@/pages/AddressInfoPage/AssetList'
 import ExportAddressTXsModal from '@/pages/AddressInfoPage/ExportAddressTXsModal'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
+import { useAssetsMetadata } from '@/api/assets/assetsHooks'
+import { useQueriesData } from '@/hooks/useQueriesData'
 
 type ParamTypes = {
   id: string
@@ -104,14 +106,27 @@ const AddressInfoPage = () => {
     enabled: !!addressHash
   })
 
-  const { data: addressAssetIds = [] } = useQuery({
+  const { data: tokenBalances = [] } = useQuery({
     ...queries.address.assets.tokensBalance(addressHash),
     enabled: !!addressHash
   })
 
-  const { data: alphPrice } = useQuery({
-    ...queries.assets.prices.assetPrice('ALPH')
-  })
+  console.log(tokenBalances)
+
+  const { fungibleTokens: fungibleTokensMetadata, isLoading: isFunglibleTokensMetadataLoading } = useAssetsMetadata(
+    tokenBalances.map((b) => b.tokenId)
+  )
+
+  const { data: assetPrices } = useQueriesData(
+    [...fungibleTokensMetadata, ALPH].map((t) => queries.assets.prices.assetPrice(t.symbol))
+  )
+
+  const addressWorth = tokenBalances.reduce((acc, b) => {
+    const token = fungibleTokensMetadata.find((t) => t.id === b.tokenId)
+    const price = assetPrices.find((p) => p.symbol === token?.symbol)?.price
+
+    return acc + (price ? calculateAmountWorth(BigInt(b.balance), price) : 0)
+  }, 0)
 
   const addressLatestActivity =
     latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
@@ -133,12 +148,8 @@ const AddressInfoPage = () => {
   const lockedBalance = addressBalance?.lockedBalance
 
   const totalNbOfAssets =
-    addressAssetIds.length +
+    tokenBalances.length +
     ((totalBalance && BigInt(totalBalance) > 0) || (lockedBalance && BigInt(lockedBalance) > 0) ? 1 : 0)
-
-  // Asset price
-  // TODO: when listed tokens, add resp. prices. ALPH only for now.
-  const addressWorth = totalBalance && alphPrice ? calculateAmountWorth(BigInt(totalBalance), alphPrice) : undefined
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
