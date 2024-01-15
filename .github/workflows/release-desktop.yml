@@ -48,7 +48,6 @@ jobs:
           is_monorepo: true
           build_script_name: 'ci:build:${{ steps.get-os.outputs.os }}'
           github_token: ${{ secrets.github_token }}
-          release: ${{ startsWith(github.ref, 'refs/tags/alephium-desktop-wallet@') }}
           mac_certs: ${{ secrets.MAC_CERTS }}
           mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
         env:
@@ -92,9 +91,23 @@ jobs:
           echo "filename=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe' | xargs basename)" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Upload Signed Alephuim-*.exe
-        uses: actions/upload-artifact@v2
-        if: startsWith(matrix.os, 'windows')
+      - name: Get version
+        id: get-version
+        uses: beaconbrigade/package-json-version@v0.3
         with:
-          name: signed-${{ steps.get-signedfile.outputs.filename }}
-          path: ${{ steps.get-signedfile.outputs.file }}
+          path: apps/desktop-wallet/
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          token: ${{ secrets.github_token }}
+          files: |
+            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*.deb
+            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}.AppImage
+            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*.dmg
+            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*mac.zip
+            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*.blockmap
+            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*.checksum
+            apps/desktop-wallet/dist/latest*.yml
+            artifacts/${{ steps.get-signedfile.outputs.filename }}
