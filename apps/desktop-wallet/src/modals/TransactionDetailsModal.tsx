@@ -189,23 +189,23 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
             </DetailsRow>
           </>
         )}
-        <DetailsRow label={t`Status`}>
+        <DetailsRow label={t('Status')}>
           <Badge color={theme.global.valid}>
-            <span tabIndex={0}>{t`Confirmed`}</span>
+            <span tabIndex={0}>{t('Confirmed')}</span>
           </Badge>
         </DetailsRow>
-        <DetailsRow label={t`Timestamp`}>
+        <DetailsRow label={t('Timestamp')}>
           <span tabIndex={0}>{formatDateForDisplay(transaction.timestamp)}</span>
         </DetailsRow>
         {lockTime && (
-          <DetailsRow label={lockTime < new Date() ? t`Unlocked at` : t`Unlocks at`}>
+          <DetailsRow label={lockTime < new Date() ? t('Unlocked at') : t('Unlocks at')}>
             <span tabIndex={0}>{formatDateForDisplay(lockTime)}</span>
           </DetailsRow>
         )}
-        <DetailsRow label={t`Fee`}>
+        <DetailsRow label={t('Fee')}>
           <Amount tabIndex={0} value={BigInt(transaction.gasAmount) * BigInt(transaction.gasPrice)} fullPrecision />
         </DetailsRow>
-        <DetailsRow label={t`Total value`}>
+        <DetailsRow label={t('Total value')}>
           <Amounts>
             {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
               <AmountContainer key={id}>
@@ -245,14 +245,14 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
             </Amounts>
           </DetailsRow>
         )}
-        <ExpandableSectionStyled sectionTitleClosed={t`Click to see more`} sectionTitleOpen={t`Click to see less`}>
-          <DetailsRow label={t`Gas amount`}>
+        <ExpandableSectionStyled sectionTitleClosed={t('Click to see more')} sectionTitleOpen={t('Click to see less')}>
+          <DetailsRow label={t('Gas amount')}>
             <span tabIndex={0}>{addApostrophes(transaction.gasAmount.toString())}</span>
           </DetailsRow>
-          <DetailsRow label={t`Gas price`}>
+          <DetailsRow label={t('Gas price')}>
             <Amount tabIndex={0} value={BigInt(transaction.gasPrice)} fullPrecision />
           </DetailsRow>
-          <DetailsRow label={t`Inputs`}>
+          <DetailsRow label={t('Inputs')}>
             <AddressList>
               {transaction.inputs?.map(
                 (input) =>
@@ -267,7 +267,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               )}
             </AddressList>
           </DetailsRow>
-          <DetailsRow label={t`Outputs`}>
+          <DetailsRow label={t('Outputs')}>
             <AddressList>
               {transaction.outputs?.map((output) => (
                 <ActionLinkStyled key={`${output.key}`} onClick={() => handleShowAddress(output.address ?? '')}>

@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 
+import { sendAnalytics } from '~/analytics'
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -28,10 +28,8 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'>, ScrollScreenProps {}
 
 const AddressScreen = ({ navigation }: ScreenProps) => {
-  const posthog = usePostHog()
-
   const handleAddressPress = (addressHash: AddressHash) => {
-    posthog?.capture('Pressed on address to see QR code to receive funds')
+    sendAnalytics('Pressed on address to see QR code to receive funds')
 
     navigation.navigate('QRCodeScreen', { addressHash })
   }

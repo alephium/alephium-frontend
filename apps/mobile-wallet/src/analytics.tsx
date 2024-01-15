@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { nanoid } from 'nanoid'
-import { PostHogProvider, usePostHog } from 'posthog-react-native'
+import PostHog from 'posthog-react-native'
+import { PosthogCaptureOptions } from 'posthog-react-native/lib/posthog-core/src'
 import { useCallback, useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -26,8 +27,25 @@ import { analyticsIdGenerated } from '~/store/settingsSlice'
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
 
-const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
-  const posthog = usePostHog()
+export const posthogAsync: Promise<PostHog> = PostHog.initAsync(PUBLIC_POSTHOG_KEY, {
+  host: PUBLIC_POSTHOG_HOST,
+  disableGeoip: true,
+  customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' }),
+  captureNativeAppLifecycleEvents: false
+})
+
+// Is there a better way to get the types of the arguments of the capture function of the abstract PostHogCore class
+// from posthog-react-native/lib/posthog-core/src?
+export const sendAnalytics = (
+  event: string,
+  properties?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any
+  },
+  options?: PosthogCaptureOptions
+) => posthogAsync.then((client) => client.capture(event, properties, options))
+
+export const Analytics = ({ children }: { children: JSX.Element }) => {
   const analytics = useAppSelector((s) => s.settings.analytics)
   const analyticsId = useAppSelector((s) => s.settings.analyticsId)
   const usesBiometrics = useAppSelector((s) => s.settings.usesBiometrics)
@@ -43,25 +61,27 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     if (shouldOptOut) {
-      posthog?.optOut()
+      posthogAsync.then((client) => client.optOut())
       return
     }
 
     if (analytics && analyticsId) {
-      posthog?.identify(analyticsId)
-      posthog?.optIn()
+      posthogAsync.then((client) => {
+        client.identify()
+        client.optIn()
+      })
     } else if (!analytics && analyticsId) {
-      posthog?.optOut()
+      posthogAsync.then((client) => client.optOut())
     } else if (!analyticsId) {
       const newAnalyticsId = nanoid()
       dispatch(analyticsIdGenerated(newAnalyticsId))
     }
-  }, [analytics, analyticsId, dispatch, posthog, shouldOptOut])
+  }, [analytics, analyticsId, dispatch, shouldOptOut])
 
   const captureUserProperties = useCallback(async () => {
     if (!canCaptureUserProperties) return
 
-    posthog?.capture('User identified', {
+    sendAnalytics('User identified', {
       $set: {
         requireAuth,
         theme,
@@ -71,7 +91,7 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
         usesBiometrics
       }
     })
-  }, [analytics, canCaptureUserProperties, currency, networkName, posthog, requireAuth, theme, usesBiometrics])
+  }, [analytics, canCaptureUserProperties, currency, networkName, requireAuth, theme, usesBiometrics])
 
   useEffect(() => {
     if (canCaptureUserProperties) captureUserProperties()
@@ -79,23 +99,3 @@ const AnalyticsSetup = ({ children }: { children: JSX.Element }) => {
 
   return children
 }
-
-const AnalyticsProvider = ({ children }: { children: JSX.Element }) => (
-  <PostHogProvider
-    apiKey={PUBLIC_POSTHOG_KEY}
-    options={{
-      host: PUBLIC_POSTHOG_HOST,
-      disableGeoip: true,
-      customAppProperties: (properties) => ({ ...properties, $ip: '', $timezone: '' })
-    }}
-    autocapture={{
-      captureTouches: false,
-      captureLifecycleEvents: false,
-      captureScreens: false
-    }}
-  >
-    <AnalyticsSetup>{children}</AnalyticsSetup>
-  </PostHogProvider>
-)
-
-export default AnalyticsProvider

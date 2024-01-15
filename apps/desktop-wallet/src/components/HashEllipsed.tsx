@@ -48,7 +48,7 @@ const HashEllipsed = ({
   ) : (
     <ClipboardButton
       textToCopy={hash}
-      tooltip={tooltipText ?? t`Copy address`}
+      tooltip={tooltipText ?? t('Copy address')}
       disableA11y={disableA11y}
       className={className}
     >

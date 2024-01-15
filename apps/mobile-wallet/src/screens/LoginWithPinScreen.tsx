@@ -18,17 +18,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import * as SplashScreen from 'expo-splash-screen'
-import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { deriveWalletStoredAddresses, getWalletMetadata } from '~/persistent-storage/wallet'
+import { storeBiometricsSettings } from '~/persistent-storage/settings'
+import {
+  deriveWalletStoredAddresses,
+  didBiometricsSettingsChange,
+  disableBiometrics,
+  enableBiometrics,
+  getWalletMetadata
+} from '~/persistent-storage/wallet'
+import { biometricsToggled } from '~/store/settingsSlice'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { WalletState } from '~/types/wallet'
+import { showToast } from '~/utils/layout'
 import { resetNavigation, restoreNavigation } from '~/utils/navigation'
 
 interface LoginWithPinScreenProps extends StackScreenProps<RootStackParamList, 'LoginWithPinScreen'>, ScreenProps {}
@@ -37,7 +46,6 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
-  const posthog = usePostHog()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
@@ -47,15 +55,32 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
       setIsPinModalVisible(false)
 
+      if (await didBiometricsSettingsChange()) {
+        try {
+          await enableBiometrics(wallet.mnemonic, 'Detected biometrics change, please re-activate')
+          await storeBiometricsSettings(true)
+          dispatch(biometricsToggled(true))
+        } catch (e: unknown) {
+          await disableBiometrics()
+          await storeBiometricsSettings(false)
+          dispatch(biometricsToggled(false))
+
+          showToast({
+            text1: 'Biometrics deactivated',
+            text2: 'You can reactivate them in the settings'
+          })
+        }
+      }
+
       const addressesToInitialize = addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
       const metadata = await getWalletMetadata()
 
       dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts: metadata?.contacts ?? [] }))
       lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
 
-      posthog?.capture('Unlocked wallet')
+      sendAnalytics('Unlocked wallet')
     },
-    [addressesStatus, dispatch, lastNavigationState, navigation, posthog]
+    [addressesStatus, dispatch, lastNavigationState, navigation]
   )
 
   return (

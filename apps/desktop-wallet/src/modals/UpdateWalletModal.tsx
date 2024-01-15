@@ -97,7 +97,7 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
   }[status]
 
   return (
-    <CenteredModal title={t`New version`} onClose={closeModal} focusMode>
+    <CenteredModal title={t('New version')} onClose={closeModal} focusMode>
       <Section>
         <InfoBox Icon={BellPlus}>{error ? error : downloadMessage}</InfoBox>
       </Section>

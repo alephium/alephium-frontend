@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
@@ -35,7 +35,6 @@ interface WalletDeleteModalProps extends ModalContentProps {
 
 const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
   const walletName = useAppSelector((s) => s.wallet.name)
 
   const [inputWalletName, setInputWalletName] = useState('')
@@ -53,7 +52,7 @@ const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
     onDelete()
 
     dispatch(walletDeleted())
-    posthog?.capture('Deleted wallet')
+    sendAnalytics('Deleted wallet')
   }
 
   return (

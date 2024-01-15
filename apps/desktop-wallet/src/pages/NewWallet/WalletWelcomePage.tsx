@@ -83,12 +83,12 @@ const WalletWelcomePage = () => {
         <Confetti width={width} height={height} numberOfPieces={confettiRunning ? 200 : 0} />
       </ConfettiWrapper>
       <Section>
-        <ReadyParagraph>{t`Everything is ready!`}</ReadyParagraph>
-        <SubParagraph>{t`Welcome to Alephium.`}</SubParagraph>
+        <ReadyParagraph>{t('Everything is ready!')}</ReadyParagraph>
+        <SubParagraph>{t('Welcome to Alephium.')}</SubParagraph>
       </Section>
       <FooterActionsContainer>
         <Button onClick={onButtonClick} submit>
-          {t`Let's go!`}
+          {t("Let's go!")}
         </Button>
         <div>
           <AdvancedUserMessage>
@@ -111,14 +111,14 @@ const WalletWelcomePage = () => {
             <InfoIcon size="16px" onClick={() => openInWebBrowser(links.miningWallet)} />
           </AdvancedUserMessage>
           <ExpandableSectionStyled
-            sectionTitleClosed={t`Show advanced options`}
-            sectionTitleOpen={t`Hide advanced options`}
+            sectionTitleClosed={t('Show advanced options')}
+            sectionTitleOpen={t('Hide advanced options')}
             centered
           >
             <InfoBox contrast noBorders>
               <KeyValueInputStyled
-                label={t`Generate one address per group`}
-                description={t`For mining or DeFi use.`}
+                label={t('Generate one address per group')}
+                description={t('For mining or DeFi use.')}
                 InputComponent={
                   <Toggle
                     toggled={shouldGenerateOneAddressPerGroup}

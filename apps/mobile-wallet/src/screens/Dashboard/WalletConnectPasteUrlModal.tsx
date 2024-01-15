@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
@@ -30,7 +30,6 @@ import { showToast } from '~/utils/layout'
 
 const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
   const { pairWithDapp } = useWalletConnectContext()
-  const posthog = usePostHog()
 
   const [inputWcUrl, setInputWcUrl] = useState('')
   const [error, setError] = useState('')
@@ -50,7 +49,7 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
       setIsLoading(false)
 
       props.onClose && props.onClose()
-      posthog?.capture('WC: Connected by manually pasting URL')
+      sendAnalytics('WC: Connected by manually pasting URL')
     } else {
       showToast({
         text1: 'Invalid URL',

@@ -27,8 +27,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
+import { Analytics } from '~/analytics'
 import ProgressHeader from '~/components/headers/ProgressHeader'
-import AnalyticsProvider from '~/contexts/AnalyticsContext'
 import { NavigationScrollContextProvider } from '~/contexts/NavigationScrollContext'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -40,6 +40,7 @@ import SendNavigation from '~/navigation/SendNavigation'
 import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deriveWalletStoredAddresses,
+  didBiometricsSettingsChange,
   disableBiometrics,
   getStoredWallet,
   getWalletMetadata
@@ -104,7 +105,7 @@ const RootStackNavigation = () => {
         <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
           <AppUnlockHandler>
             <NavigationScrollContextProvider>
-              <AnalyticsProvider>
+              <Analytics>
                 <WalletConnectContextProvider>
                   <RootStack.Navigator initialRouteName="LandingScreen">
                     {/* Sub-navigation with custom header. Showing the header only when authenticated fixes the
@@ -191,7 +192,7 @@ const RootStackNavigation = () => {
                     </RootStack.Group>
                   </RootStack.Navigator>
                 </WalletConnectContextProvider>
-              </AnalyticsProvider>
+              </Analytics>
             </NavigationScrollContextProvider>
           </AppUnlockHandler>
         </NavigationContainer>
@@ -240,7 +241,9 @@ const AppUnlockHandler = ({ children }: { children: ReactNode }) => {
           navigation.navigate('LandingScreen')
         }
       } else {
-        if (isBioEnabled) {
+        const biometricsNeedToBeReenabled = await didBiometricsSettingsChange()
+
+        if (isBioEnabled && !biometricsNeedToBeReenabled) {
           const metadata = await getWalletMetadata()
           const addressesToInitialize =
             addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []

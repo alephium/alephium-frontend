@@ -17,5 +17,5 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 module.exports = {
-  extends: ['custom/base']
+  extends: ['@alephium/eslint-config/base']
 }

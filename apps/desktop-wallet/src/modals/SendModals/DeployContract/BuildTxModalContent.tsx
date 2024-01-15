@@ -97,7 +97,7 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
         />
         <Input
           id="issue-token-amount"
-          label={t`Tokens to issue (optional)`}
+          label={t('Tokens to issue (optional)')}
           value={issueTokenAmount}
           type="number"
           onChange={(e) => setTxPrepProp('issueTokenAmount')(e.target.value)}

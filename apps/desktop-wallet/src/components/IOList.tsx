@@ -110,9 +110,9 @@ const IOList = ({
       </Addresses>
     )
   } else if (timestamp === GENESIS_TIMESTAMP) {
-    return <Badge truncate={truncate}>{t`Genesis TX`}</Badge>
+    return <Badge truncate={truncate}>{t('Genesis TX')}</Badge>
   } else {
-    return <Badge truncate={truncate}>{t`Mining Rewards`}</Badge>
+    return <Badge truncate={truncate}>{t('Mining Rewards')}</Badge>
   }
 }
 

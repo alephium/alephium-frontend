@@ -25,10 +25,10 @@ import {
   SignTransferTxResult
 } from '@alephium/web3'
 import { SessionTypes } from '@walletconnect/types'
-import { usePostHog } from 'posthog-react-native'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import { signAndSendTransaction } from '~/api/transactions'
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
@@ -64,7 +64,6 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
   metadata,
   ...props
 }: WalletConnectSessionRequestModalProps<T>) => {
-  const posthog = usePostHog()
   const dispatch = useAppDispatch()
 
   const fees = BigInt(requestData.unsignedTxData.gasAmount) * BigInt(requestData.unsignedTxData.gasPrice)
@@ -96,7 +95,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
             })
           )
 
-          posthog?.capture('WC: Approved transfer')
+          sendAnalytics('WC: Approved transfer')
 
           return {
             fromGroup: requestData.unsignedTxData.fromGroup,
@@ -125,7 +124,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
             })
           )
 
-          posthog?.capture('WC: Approved contract call')
+          sendAnalytics('WC: Approved contract call')
 
           return {
             groupIndex: requestData.unsignedTxData.fromGroup,
@@ -147,7 +146,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
             })
           )
 
-          posthog?.capture('WC: Approved contract deployment')
+          sendAnalytics('WC: Approved contract deployment')
 
           return {
             groupIndex: requestData.unsignedTxData.fromGroup,
@@ -164,7 +163,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
     } catch (e) {
       console.error('Could not send transaction', e)
       showExceptionToast(e, 'Could not send transaction')
-      posthog?.capture('Error', { message: 'Could not send transaction' })
+      sendAnalytics('Error', { message: 'Could not send transaction' })
     }
   }
 

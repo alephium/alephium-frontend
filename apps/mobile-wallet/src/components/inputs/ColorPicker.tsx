@@ -23,7 +23,7 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import HighlightRow from '~/components/Row'
-import { BORDER_RADIUS } from '~/style/globalStyle'
+import { BORDER_RADIUS, INPUTS_HEIGHT } from '~/style/globalStyle'
 import { labelColorPalette } from '~/utils/colors'
 
 interface ColorPickerProps {
@@ -81,8 +81,10 @@ const Colors = styled.View`
   height: 100%;
 `
 
-const Color = memo(styled(HighlightRow)<{ color: string }>`
+const Color = memo(styled.Pressable<{ color: string }>`
   background-color: ${({ color }) => color};
   width: 100%;
   flex: 1;
+  min-height: ${INPUTS_HEIGHT}px;
+  padding: 20px;
 `)

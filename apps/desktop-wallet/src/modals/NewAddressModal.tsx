@@ -85,7 +85,7 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
     onClose()
   }
 
-  let defaultAddressMessage = t('Default address for sending transactions.')
+  let defaultAddressMessage = t('Default address for sending transactions.') as string
 
   if (defaultAddress) {
     defaultAddressMessage +=
@@ -120,33 +120,35 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
           />
           {!singleAddress && (
             <InfoBox Icon={Info} contrast noBorders>
-              {t`The group number will be automatically be appended to the addresses’ label.`}
+              {t('The group number will be automatically be appended to the addresses’ label.')}
             </InfoBox>
           )}
         </Section>
       )}
       {isPassphraseUsed && singleAddress && (
         <InfoBox contrast noBorders>
-          {t`By default, the address is generated in a random group. You can select the group you want the address to be generated in using the Advanced options.`}
+          {t(
+            'By default, the address is generated in a random group. You can select the group you want the address to be generated in using the Advanced options.'
+          )}
         </InfoBox>
       )}
       {singleAddress && (
         <ToggleSection title={t('Advanced options')} subtitle={t('Select address group')}>
           <Select
-            label={t`Group`}
+            label={t('Group')}
             controlledValue={newAddressGroup !== undefined ? generateGroupSelectOption(newAddressGroup) : undefined}
             options={Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) => generateGroupSelectOption(index))}
             onSelect={onSelect}
-            title={t`Select group`}
+            title={t('Select group')}
             id="group"
           />
         </ToggleSection>
       )}
       <ModalFooterButtons>
         <ModalFooterButton role="secondary" onClick={onClose}>
-          {t`Cancel`}
+          {t('Cancel')}
         </ModalFooterButton>
-        <ModalFooterButton onClick={onGenerateClick}>{t`Generate`}</ModalFooterButton>
+        <ModalFooterButton onClick={onGenerateClick}>{t('Generate')}</ModalFooterButton>
       </ModalFooterButtons>
     </CenteredModal>
   )

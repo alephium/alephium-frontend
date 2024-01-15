@@ -20,13 +20,13 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { shuffle } from 'lodash'
 import LottieView from 'lottie-react-native'
-import { usePostHog } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Dimensions } from 'react-native'
 import Animated, { FadeIn } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import animationSrc from '~/animations/lottie/success.json'
 import AppText from '~/components/AppText'
 import { BackButton } from '~/components/buttons/Button'
@@ -55,7 +55,6 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
   const randomizedOptions = useRef(getRandomizedOptions(mnemonicWords.current, allowedWords.current))
-  const posthog = usePostHog()
   const insets = useSafeAreaInsets()
 
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
@@ -68,9 +67,9 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       await persistWalletMetadata({ isMnemonicBackedUp: true })
       dispatch(mnemonicBackedUp())
 
-      posthog?.capture('Backed-up mnemonic')
+      sendAnalytics('Backed-up mnemonic')
     }
-  }, [isMnemonicBackedUp, dispatch, posthog])
+  }, [isMnemonicBackedUp, dispatch])
 
   useEffect(() => {
     if (selectedWords.length < mnemonicWords.current.length) {

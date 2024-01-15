@@ -17,9 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -31,8 +31,6 @@ import { showExceptionToast } from '~/utils/layout'
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 
 const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
-  const posthog = usePostHog()
-
   const [loading, setLoading] = useState(false)
 
   const initialValues = {
@@ -47,11 +45,11 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
     try {
       await persistContact(formData)
 
-      posthog?.capture('Contact: Created new contact')
+      sendAnalytics('Contact: Created new contact')
     } catch (e) {
       showExceptionToast(e, 'Could not save contact')
 
-      posthog?.capture('Error', { message: 'Could not save contact' })
+      sendAnalytics('Error', { message: 'Could not save contact' })
     }
 
     setLoading(false)

@@ -1,5 +1,5 @@
 {
-  "extends": ["tsconfig/base", "expo/tsconfig.base"],
+  "extends": ["@alephium/typescript-config/base", "expo/tsconfig.base"],
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {

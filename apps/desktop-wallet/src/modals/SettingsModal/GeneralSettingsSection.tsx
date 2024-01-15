@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AlertTriangle, Info } from 'lucide-react'
+import { AlertTriangle, Eraser, Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,15 +24,18 @@ import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import Box from '@/components/Box'
+import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Select from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
+import { useWalletConnectContext } from '@/contexts/walletconnect'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
 import AnalyticsStorage from '@/storage/analytics/analyticsPersistentStorage'
+import { walletConnectCacheCleared, walletConnectCacheClearFailed } from '@/storage/global/globalActions'
 import {
   analyticsToggled,
   discreetModeToggled,
@@ -58,6 +61,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const { walletLockTimeInMinutes, discreetMode, passwordRequirement, language, theme, analytics, fiatCurrency } =
     useAppSelector((s) => s.settings)
   const posthog = usePostHog()
+  const { reset } = useWalletConnectContext()
 
   const [isPasswordModelOpen, setIsPasswordModalOpen] = useState(false)
 
@@ -119,6 +123,16 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         posthog.capture('Disabled analytics')
         posthog.opt_out_capturing()
       }
+  }
+
+  const handleClearWCCacheButtonPress = async () => {
+    try {
+      await reset()
+      dispatch(walletConnectCacheCleared())
+    } catch (e) {
+      dispatch(walletConnectCacheClearFailed())
+      console.error(e)
+    }
   }
 
   const discreetModeText = t('Discreet mode')
@@ -246,6 +260,16 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           <Info size={12} /> {t('More info')}
         </ActionLinkStyled>
       </KeyValueInput>
+      <HorizontalDivider />
+      <KeyValueInput
+        label={t('Clear WalletConnect cache')}
+        description={t('Helps avoid crashes due to WalletConnect')}
+        InputComponent={
+          <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearWCCacheButtonPress}>
+            {t('Clear')}
+          </ButtonStyled>
+        }
+      />
       <ModalPortal>
         {isPasswordModelOpen && (
           <CenteredModal title={t('Password')} onClose={() => setIsPasswordModalOpen(false)} focusMode skipFocusOnMount>
@@ -272,4 +296,8 @@ const Disclaimer = styled.div`
   align-items: center;
   gap: 0.3em;
   color: ${({ theme }) => theme.global.highlight};
+`
+
+const ButtonStyled = styled(Button)`
+  margin: 0;
 `

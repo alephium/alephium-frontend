@@ -9,7 +9,7 @@ The official Alephium desktop wallet.
 Install depedencies from the root of the monorepo with:
 
 ```shell
-bun install
+pnpm install
 ```
 
 To launch it as an electron app, run:

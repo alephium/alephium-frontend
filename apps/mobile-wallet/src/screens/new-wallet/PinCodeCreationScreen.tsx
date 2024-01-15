@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { usePostHog } from 'posthog-react-native'
 import { useCallback, useState } from 'react'
 
+import { sendAnalytics } from '~/analytics'
 import PinCodeInput from '~/components/inputs/PinCodeInput'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -62,7 +62,6 @@ const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationS
   const dispatch = useAppDispatch()
   const deviceHasBiometricsData = useBiometrics()
   const { method, walletName: name } = useAppSelector((s) => s.walletGeneration)
-  const posthog = usePostHog()
 
   const [chosenPinCode, setChosenPinCode] = useState('')
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
@@ -105,7 +104,7 @@ const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationS
       dispatch(syncAddressesData(wallet.firstAddress.hash))
       dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
 
-      posthog?.capture('Created new wallet')
+      sendAnalytics('Created new wallet')
 
       setLoading(false)
 

@@ -77,13 +77,13 @@ const WalletSwitcher = ({ onUnlock }: WalletSwitcherProps) => {
   return (
     <>
       {walletSelectOptions.length === 0 ? (
-        <InfoBox text={activeWallet.name} label={t`Wallet`} />
+        <InfoBox text={activeWallet.name} label={t('Wallet')} />
       ) : (
         <Select
           controlledValue={selectedWalletOption}
           options={walletSelectOptions}
           onSelect={handleWalletSelect}
-          title={t`Select a wallet`}
+          title={t('Select a wallet')}
           id="wallet"
           raised
           skipEqualityCheck

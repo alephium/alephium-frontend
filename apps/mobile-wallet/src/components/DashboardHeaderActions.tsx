@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { isAddressValid } from '@alephium/shared'
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
-import { usePostHog } from 'posthog-react-native'
 import { memo, useState } from 'react'
 import { Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
 import BottomModal from '~/components/layout/BottomModal'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
@@ -48,7 +48,6 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
   const { pairWithDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
   const isFocused = useIsFocused()
 
@@ -70,7 +69,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const handleQRCodeScan = async (text: string) => {
     if (isAddressValid(text)) {
       navigation.navigate('SendNavigation', { screen: 'OriginScreen', params: { toAddressHash: text } })
-      posthog?.capture('Send: Captured destination address by scanning QR code from Dashboard')
+      sendAnalytics('Send: Captured destination address by scanning QR code from Dashboard')
     } else if (text.startsWith('wc:')) {
       if (isWalletConnectEnabled) {
         pairWithDapp(text)

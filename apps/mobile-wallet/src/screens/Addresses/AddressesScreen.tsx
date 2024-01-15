@@ -19,20 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import * as Haptics from 'expo-haptics'
-import { usePostHog } from 'posthog-react-native'
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AddressCard from '~/components/AddressCard'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Button from '~/components/buttons/Button'
 import Carousel from '~/components/Carousel'
-import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
+import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import BottomModal from '~/components/layout/BottomModal'
-import { TabBarPageProps } from '~/components/layout/TabBarPager'
+import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -45,9 +45,8 @@ import {
   syncAddressesData
 } from '~/store/addressesSlice'
 
-const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps & TabBarPageProps) => {
+const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
@@ -148,7 +147,7 @@ const AddressesScreen = ({ contentStyle, ...props }: BottomBarScrollScreenProps 
                 setSelectedAddressHash(addressHash)
                 setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === addressHash))
                 props.onClose && props.onClose()
-                posthog?.capture('Used address quick navigation')
+                sendAnalytics('Used address quick navigation')
               }}
               {...props}
             />

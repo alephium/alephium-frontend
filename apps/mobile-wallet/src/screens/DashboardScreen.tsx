@@ -23,8 +23,7 @@ import { useEffect, useState } from 'react'
 import { Pressable } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
-import { useTheme } from 'styled-components'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import ActiveNetworkBadge from '~/components/ActiveNetworkBadge'
@@ -82,8 +81,12 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   useEffect(() => {
     const initializeNewWalletFlag = async () => {
-      setIsNewWallet(await getIsNewWallet())
-      storeIsNewWallet(false)
+      const isNew = await getIsNewWallet()
+
+      if (isNew !== undefined) {
+        setIsNewWallet(isNew)
+        storeIsNewWallet(false)
+      }
     }
 
     initializeNewWalletFlag()

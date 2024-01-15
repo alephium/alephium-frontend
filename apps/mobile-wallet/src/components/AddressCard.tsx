@@ -20,11 +20,11 @@ import { AddressHash, calculateAmountWorth } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
-import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
@@ -51,7 +51,6 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<SendNavigationParamList>>()
-  const posthog = usePostHog()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const currency = useAppSelector((s) => s.settings.currency)
   const persistAddressSettings = usePersistAddressSettings()
@@ -77,7 +76,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const buttonsBackground = isDark ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)'
 
   const handleSendPress = () => {
-    posthog?.capture('Address card: Selected address to send funds from')
+    sendAnalytics('Address card: Selected address to send funds from')
 
     navigation.navigate('SendNavigation', {
       screen: 'DestinationScreen',
@@ -86,7 +85,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   }
 
   const handleReceivePress = () => {
-    posthog?.capture('Address card: Selected address to receive funds to')
+    sendAnalytics('Address card: Selected address to receive funds to')
 
     navigation.navigate('ReceiveNavigation', {
       screen: 'QRCodeScreen',
@@ -107,11 +106,11 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
       showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })
 
-      posthog?.capture('Address: Used address card default toggle')
+      sendAnalytics('Address: Used address card default toggle')
     } catch (e) {
       console.error(e)
 
-      posthog?.capture('Error', { message: 'Could not use address card default toggle' })
+      sendAnalytics('Error', { message: 'Could not use address card default toggle' })
     }
     setLoading(false)
   }

@@ -54,10 +54,10 @@ import {
 import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
 import { useURL } from 'expo-linking'
 import { partition } from 'lodash'
-import { usePostHog } from 'posthog-react-native'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Portal } from 'react-native-portalize'
 
+import { sendAnalytics } from '~/analytics'
 import client from '~/api/client'
 import {
   buildCallContractTransaction,
@@ -77,6 +77,8 @@ import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
+
+const MaxRequestNumToKeep = 10
 
 interface WalletConnectContextValue {
   walletConnectClient?: SignClient
@@ -106,7 +108,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const url = useURL()
   const wcDeepLink = useRef<string>()
-  const posthog = usePostHog()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -153,11 +154,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } catch (e) {
       setWalletConnectClientStatus('uninitialized')
       console.error('Could not initialize WalletConnect client', e)
-      posthog?.capture('Error', {
+      sendAnalytics('Error', {
         message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
       })
     }
-  }, [posthog])
+  }, [])
 
   useEffect(() => {
     if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES) {
@@ -422,7 +423,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         } else {
           if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
             showExceptionToast(e, 'Could not build transaction')
-            posthog?.capture('Error', { message: 'Could not build transaction' })
+            sendAnalytics('Error', { message: 'Could not build transaction' })
             console.error(e)
           }
           respondToWalletConnectWithError(requestEvent, {
@@ -438,7 +439,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
     // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
     // TODO: Separate offline/online address data slices
-    [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse, posthog]
+    [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse]
   )
 
   const onSessionProposal = useCallback(async (sessionProposalEvent: SessionProposalEvent) => {
@@ -610,14 +611,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
         setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
 
-        posthog?.capture('WC: Disconnected from dApp')
+        sendAnalytics('WC: Disconnected from dApp')
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP')
       } finally {
         setLoading('')
       }
     },
-    [posthog, walletConnectClient]
+    [walletConnectClient]
   )
 
   const approveProposal = async (signerAddress: Address) => {
@@ -711,7 +712,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setSessionProposalEvent(undefined)
       setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
 
-      posthog?.capture('WC: Approved connection')
+      sendAnalytics('WC: Approved connection')
     } catch (e) {
       console.error('❌ WC: Error while approving and acknowledging', e)
     } finally {
@@ -883,7 +884,7 @@ function getWCStorageKey(prefix: string, version: string, name: string): string 
   return prefix + version + '//' + name
 }
 
-function needToDeleteHistory(record: JsonRpcRecord): boolean {
+function isApiRequest(record: JsonRpcRecord): boolean {
   const request = record.request
   if (request.method !== 'wc_sessionRequest') {
     return false
@@ -904,9 +905,34 @@ async function cleanBeforeInit() {
   const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
   const historyStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, HISTORY_STORAGE_VERSION, HISTORY_CONTEXT)
   const historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
+
   if (historyRecords !== undefined) {
-    const remainRecords = historyRecords.filter((record) => !needToDeleteHistory(record))
-    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords)
+    const remainRecords: JsonRpcRecord[] = []
+    let alphSignRequestNum = 0
+    let unresponsiveRequestNum = 0
+    const now = Date.now()
+
+    for (const record of historyRecords.reverse()) {
+      const msToExpiry = (record.expiry || 0) * 1000 - now
+
+      if (msToExpiry <= 0) continue
+
+      const requestMethod = record.request.params?.request?.method as string | undefined
+
+      if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
+        remainRecords.push(record)
+        alphSignRequestNum += 1
+      } else if (
+        record.response === undefined &&
+        !isApiRequest(record) &&
+        unresponsiveRequestNum < MaxRequestNumToKeep
+      ) {
+        remainRecords.push(record)
+        unresponsiveRequestNum += 1
+      }
+    }
+
+    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
   }
 
   await cleanPendingRequest(storage)
@@ -933,7 +959,7 @@ function cleanHistory(client: SignClient, checkResponse: boolean) {
       if (checkResponse && record.response === undefined) {
         continue
       }
-      if (needToDeleteHistory(record)) {
+      if (isApiRequest(record)) {
         client.core.history.delete(record.topic, id)
       }
     }
