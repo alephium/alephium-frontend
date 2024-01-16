@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { DefaultTheme } from 'styled-components/native'
 
 export type ThemeType = 'light' | 'dark'
@@ -45,8 +46,8 @@ export const lightTheme: DefaultTheme = {
     tertiary: '#353539'
   },
   header: {
-    hidden: 'transparent',
-    visible: '#212126'
+    hidden: colord('#e6e7eb').alpha(0).toHex(),
+    visible: '#e6e7eb'
   },
   border: {
     primary: 'rgba(36, 34, 32, 0.12)',
@@ -100,6 +101,10 @@ export const darkTheme: DefaultTheme = {
     primary: 'rgba(255, 255, 255, 0.075)',
     secondary: 'rgba(255, 255, 255, 0.04)',
     tertiary: '#28282b'
+  },
+  header: {
+    hidden: colord('#242426').alpha(0).toHex(),
+    visible: '#242426'
   },
   border: {
     primary: 'rgba(255, 255, 255, 0.12)',

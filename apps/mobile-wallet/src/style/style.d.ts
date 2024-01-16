@@ -45,6 +45,10 @@ declare module 'styled-components/native' {
       secondary: string
       tertiary: string
     }
+    header: {
+      hidden: string
+      visible: string
+    }
     shadow: {
       primary: string
       secondary: string

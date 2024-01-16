@@ -70,7 +70,7 @@ const BaseHeader = ({
   const insets = useSafeAreaInsets()
 
   const borderColorRange = [showBorderBottom ? theme.border.secondary : 'transparent', theme.border.secondary]
-  const backgroundColorRange = [colord(theme.bg.back2).alpha(0).toHex(), theme.bg.back2]
+  const backgroundColorRange = [theme.header.hidden, theme.header.visible]
 
   const paddingTop = isIos ? insets.top : insets.top + 10
 
