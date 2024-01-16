@@ -30,6 +30,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
 import { queries } from '@/api'
+import { useAssetsMetadata, useTokensPrices } from '@/api/assets/assetsHooks'
 import client from '@/api/client'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
@@ -51,7 +52,6 @@ import AssetList from '@/pages/AddressInfoPage/AssetList'
 import ExportAddressTXsModal from '@/pages/AddressInfoPage/ExportAddressTXsModal'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { useAssetsMetadata, useTokensPrices } from '@/api/assets/assetsHooks'
 
 type ParamTypes = {
   id: string
@@ -112,18 +112,6 @@ const AddressInfoPage = () => {
 
   const { fungibleTokens: fungibleTokensMetadata } = useAssetsMetadata(tokenBalances.map((b) => b.tokenId))
 
-  const tokensPrices = useTokensPrices(fungibleTokensMetadata.map((t) => t.symbol))
-
-  const addressWorth = tokenBalances.reduce((acc, b) => {
-    const token = fungibleTokensMetadata.find((t) => t.id === b.tokenId)
-    const price = tokensPrices.find((p) => p.symbol === token?.symbol)?.price
-
-    return acc + (price ? calculateAmountWorth(BigInt(b.balance), price) : 0)
-  }, 0)
-
-  const addressLatestActivity =
-    latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
-
   // Refetch TXs when less txs are found in mempool
   useEffect(() => {
     if (addressMempoolTransactions.length < lastKnownMempoolTxs.current.length) {
@@ -137,8 +125,26 @@ const AddressInfoPage = () => {
     navigate('404')
   }
 
+  const tokensPrices = useTokensPrices([ALPH.symbol, ...fungibleTokensMetadata.map((t) => t.symbol)])
+
+  const knownTokensWorth = tokenBalances.reduce((acc, b) => {
+    const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
+    const price = tokensPrices.find((p) => p.symbol === token?.symbol)?.price
+
+    return acc + (price ? calculateAmountWorth(BigInt(b.balance), price) : 0)
+  }, 0)
+
+  const addressLatestActivity =
+    latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
+
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
+
+  const addressWorth =
+    knownTokensWorth +
+    (totalBalance
+      ? calculateAmountWorth(BigInt(totalBalance), tokensPrices.find((p) => p.symbol === ALPH.symbol)?.price || NaN)
+      : 0)
 
   const totalNbOfAssets =
     tokenBalances.length +

@@ -171,14 +171,15 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
 }
 
 export const useTokensPrices = (assetSymbols: string[] = []) => {
-  const verifiedTokensMetadata = useVerifiedTokensMetadata()
-
-  const knownSymbols = verifiedTokensMetadata ? Array.from(verifiedTokensMetadata.values()).map((m) => m.symbol) : []
+  const { data: availableTokensSymbols } = useQuery({
+    ...queries.assets.market.tokenList(),
+    enabled: assetSymbols.length > 0
+  })
 
   const { data: prices } = useQueriesData(
     assetSymbols.map((symbol) => ({
-      ...queries.assets.prices.assetPrice(symbol),
-      enabled: !!symbol && knownSymbols.includes(symbol)
+      ...queries.assets.market.tokenPrice(symbol),
+      enabled: !!symbol && !!availableTokensSymbols && availableTokensSymbols.includes(symbol)
     }))
   )
 
