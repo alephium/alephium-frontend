@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { calculateAmountWorth } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { addressFromTokenId, Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
@@ -24,6 +25,7 @@ import { RiErrorWarningFill } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
+import { useTokensPrices, useTokensWithAvailablePrice } from '@/api/assets/assetsHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
@@ -31,7 +33,6 @@ import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import { AssetBase, FungibleTokenMetadataBase, NumericTokenBalance } from '@/types/assets'
-import { useTokensPrices } from '@/api/assets/assetsHooks'
 
 interface TokenListProps {
   tokens: Optional<
@@ -47,10 +48,11 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const navigate = useNavigate()
+  const tokensWithAvailablePrice = useTokensWithAvailablePrice()
 
   const displayedTokens = limit ? tokens.slice(0, limit) : tokens
 
-  const tokensPrices = useTokensPrices(displayedTokens.flatMap((t) => t.symbol || []))
+  const tokensPrices = useTokensPrices([ALPH.symbol, ...displayedTokens.flatMap((t) => t.symbol || [])])
 
   const handleTokenNameClick = (tokenId: string) => {
     try {
@@ -89,6 +91,17 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
 
             <TableCellAmount>
               <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
+              {token.symbol && token.verified && tokensWithAvailablePrice?.includes(token.symbol) && (
+                <Amount
+                  value={calculateAmountWorth(
+                    token.balance,
+                    tokensPrices.find((p) => p.symbol === token.symbol)?.price || NaN
+                  )}
+                  suffix="$"
+                  isFiat
+                  color={theme.font.secondary}
+                />
+              )}
               {token.lockedBalance > 0 ? (
                 <TokenAmountSublabel>
                   {`${t('Available')} `}

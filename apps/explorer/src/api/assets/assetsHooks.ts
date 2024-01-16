@@ -170,11 +170,13 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   } else return returnedCompleteMetadata
 }
 
+export const useTokensWithAvailablePrice = () => {
+  const { data } = useQuery(queries.assets.market.tokenList())
+  return data
+}
+
 export const useTokensPrices = (assetSymbols: string[] = []) => {
-  const { data: availableTokensSymbols } = useQuery({
-    ...queries.assets.market.tokenList(),
-    enabled: assetSymbols.length > 0
-  })
+  const availableTokensSymbols = useTokensWithAvailablePrice()
 
   const { data: prices } = useQueriesData(
     assetSymbols.map((symbol) => ({
