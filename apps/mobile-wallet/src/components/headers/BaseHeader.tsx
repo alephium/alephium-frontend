@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackHeaderProps } from '@react-navigation/stack'
-import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { ReactNode, RefObject } from 'react'
 import { Platform, Pressable, ViewProps } from 'react-native'
@@ -49,7 +48,7 @@ export interface BaseHeaderProps extends ViewProps {
   CustomContent?: ReactNode
 }
 
-export const headerHeight = 88
+export const headerHeight = 90
 export const scrollEndThreshold = 80
 const defaultScrollRange = [0, scrollEndThreshold]
 

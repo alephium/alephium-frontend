@@ -175,7 +175,13 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         )}
       </BalanceAndButtons>
       <AddressesTokensList />
-      {totalBalance === BigInt(0) && <EmptyPlaceholder>There is so much left to discover! 🌈</EmptyPlaceholder>}
+      {totalBalance === BigInt(0) && (
+        <EmptyPlaceholder>
+          <AppText semiBold color="secondary">
+            There is so much left to discover! 🌈
+          </AppText>
+        </EmptyPlaceholder>
+      )}
       <Portal>
         <BottomModal
           isOpen={isBackupReminderModalOpen}
