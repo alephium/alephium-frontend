@@ -49,7 +49,7 @@ export interface BaseHeaderProps extends ViewProps {
   CustomContent?: ReactNode
 }
 
-export const headerHeight = 90
+export const headerHeight = 86
 export const scrollEndThreshold = 80
 const defaultScrollRange = [0, scrollEndThreshold]
 

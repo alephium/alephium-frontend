@@ -19,17 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode, useRef } from 'react'
 import { ScrollViewProps } from 'react-native'
 import PagerView, { PagerViewOnPageScrollEventData, PagerViewProps } from 'react-native-pager-view'
-import Animated, {
-  AnimatedProps,
-  measure,
-  runOnJS,
-  useAnimatedRef,
-  useSharedValue
-} from 'react-native-reanimated'
+import Animated, { AnimatedProps, measure, runOnJS, useAnimatedRef, useSharedValue } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
-import { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import BaseHeader from '~/components/headers/BaseHeader'
+import { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import Screen from '~/components/layout/Screen'
 import TabBarHeader from '~/components/TopTabBar'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'

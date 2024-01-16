@@ -18,7 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import 'styled-components'
 
-declare module 'styled-components' {
+import { ThemeType } from '~/style/themes'
+
+declare module 'styled-components/native' {
   export interface DefaultTheme {
     name: ThemeType
     bg: {

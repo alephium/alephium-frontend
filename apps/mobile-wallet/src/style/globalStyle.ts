@@ -30,4 +30,4 @@ export const INPUTS_PADDING = 16
 export const DEFAULT_MARGIN = 15
 export const VERTICAL_GAP = 25
 
-export const SCREEN_OVERFLOW = Platform.OS === 'ios' ? 'visible' : 'hidden'
+export const SCREEN_OVERFLOW = Platform.OS === 'ios' ? 'visible' : 'scroll'

@@ -44,6 +44,10 @@ export const lightTheme: DefaultTheme = {
     secondary: 'rgba(0, 0, 0, 0.04)',
     tertiary: '#353539'
   },
+  header: {
+    hidden: 'transparent',
+    visible: '#212126'
+  },
   border: {
     primary: 'rgba(36, 34, 32, 0.12)',
     secondary: 'rgba(36, 34, 32, 0.06)'
