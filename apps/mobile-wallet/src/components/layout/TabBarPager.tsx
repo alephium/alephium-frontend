@@ -88,9 +88,7 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
       <BaseHeader options={{ headerTitle }} scrollY={screenScrollY} CustomContent={TabBar} />
       <StyledPagerView initialPage={0} onPageScroll={pageScrollHandler} ref={pagerRef} {...props}>
         {pages.map((Page, i) => (
-          <PageContainer key={i}>
-            <WrappedPage Page={Page} onScroll={screenScrollHandler} />
-          </PageContainer>
+          <WrappedPage key={i} Page={Page} onScroll={screenScrollHandler} />
         ))}
       </StyledPagerView>
     </Screen>
@@ -105,14 +103,9 @@ const WrappedPage = ({
 }: {
   Page: (props: TabBarPageProps) => ReactNode
   onScroll: Required<TabBarPageProps>['onScroll']
-}) => <Page onScroll={onScroll} />
+}) => <Page onScroll={onScroll} contentStyle={{ marginTop: 15 }} />
 
 const StyledPagerView = styled(AnimatedPagerView)`
   flex: 1;
   background-color: ${({ theme }) => theme.bg.back2};
-`
-
-const PageContainer = styled.View`
-  flex: 1;
-  margin-top: 15px;
 `
