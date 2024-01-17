@@ -25,12 +25,13 @@ import styled, { useTheme } from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
-import Button, { CloseButton } from '~/components/buttons/Button'
+import Button, { BackButton, ContinueButton } from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
@@ -42,9 +43,10 @@ interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCo
 
 const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const theme = useTheme()
+  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
 
-  useScrollToTopOnFocus()
+  useScrollToTopOnFocus(screenScrollY)
 
   const handleCopyAddressPress = () => {
     sendAnalytics('Copied address', { note: 'Receive screen' })
@@ -54,14 +56,21 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   useFocusEffect(
     useCallback(() => {
-      navigation.getParent()?.setOptions({
-        headerRight: () => <CloseButton onPress={() => navigation.getParent()?.goBack()} />
+      setHeaderOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        headerRight: () => (
+          <ContinueButton
+            onPress={() => navigation.getParent()?.goBack()}
+            iconProps={{ name: 'checkmark' }}
+            title="Done"
+          />
+        )
       })
-    }, [navigation])
+    }, [navigation, setHeaderOptions])
   )
 
   return (
-    <ScrollScreen hasNavigationHeader verticalGap {...props}>
+    <ScrollScreen verticalGap contentPaddingTop onScroll={screenScrollHandler} {...props}>
       <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." />
       <ScreenSection centered>
         <QRCodeContainer>

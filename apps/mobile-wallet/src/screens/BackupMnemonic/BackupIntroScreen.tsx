@@ -22,9 +22,10 @@ import { useState } from 'react'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/lottie/wallet.json'
+import backupAnimationSrc from '~/animations/lottie/backup.json'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import Button from '~/components/buttons/Button'
+import FooterButtonContainer from '~/components/buttons/FooterButtonContainer'
 import BottomModal from '~/components/layout/BottomModal'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -42,9 +43,9 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
 
   return (
     <>
-      <ScrollScreen hasNavigationHeader fill {...props}>
+      <ScrollScreen fill {...props}>
         <ScreenSection fill centered verticallyCentered>
-          <StyledAnimation source={animationSrc} autoPlay />
+          <StyledAnimation source={backupAnimationSrc} autoPlay />
         </ScreenSection>
         <ScreenSection fill>
           <CenteredInstructions
@@ -62,7 +63,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
             ]}
           />
         </ScreenSection>
-        <ScreenSection>
+        <FooterButtonContainer>
           <Button
             title="Show secret recovery phrase"
             iconProps={{ name: 'key' }}
@@ -70,7 +71,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
             variant="highlight"
             onPress={() => setIsAuthenticationModalVisible(true)}
           />
-        </ScreenSection>
+        </FooterButtonContainer>
       </ScrollScreen>
 
       <AuthenticationModal
@@ -106,5 +107,5 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
 export default BackupIntroScreen
 
 const StyledAnimation = styled(LottieView)`
-  width: 40%;
+  width: 50%;
 `

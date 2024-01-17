@@ -80,7 +80,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
   }
 
   return (
-    <TabsRow ref={tabBarRef}>
+    <HeaderContainer ref={tabBarRef}>
       <Indicator
         style={[
           indicatorStyle,
@@ -101,7 +101,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
           onLayout={(e) => handleTabLayoutEvent(i, e)}
         />
       ))}
-    </TabsRow>
+    </HeaderContainer>
   )
 }
 
@@ -119,11 +119,11 @@ const TabBarItem = ({ label, ...props }: TabBarItemProps) => (
 
 export default TopTabBar
 
-const TabsRow = styled(Reanimated.View)`
+const HeaderContainer = styled(Reanimated.View)`
   flex-direction: row;
   gap: 25px;
   align-items: center;
-  height: 50px;
+  height: 44px;
   padding: 0 ${DEFAULT_MARGIN + indicatorXPadding}px;
 `
 
@@ -134,7 +134,7 @@ const TabBarItemStyled = styled.Pressable`
 
 const Indicator = styled(Reanimated.View)`
   position: absolute;
-  height: 70%;
+  height: 80%;
   border-radius: ${BORDER_RADIUS}px;
   background-color: ${({ theme }) => theme.bg.highlight};
 `

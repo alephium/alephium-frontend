@@ -25,6 +25,7 @@ import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
@@ -40,23 +41,20 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsS
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
+  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
 
-  useScrollToTopOnFocus()
+  useScrollToTopOnFocus(screenScrollY)
 
   const isContinueButtonDisabled = assetAmounts.length < 1
 
-  useEffect(() => {
-    if (params?.toAddressHash) setToAddress(params.toAddressHash)
-  }, [params?.toAddressHash, setToAddress])
-
   useFocusEffect(
     useCallback(() => {
-      navigation.getParent()?.setOptions({
+      setHeaderOptions({
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton
@@ -70,18 +68,23 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
           />
         )
       })
-    }, [buildTransaction, isContinueButtonDisabled, navigation])
+    }, [buildTransaction, isContinueButtonDisabled, navigation, setHeaderOptions])
   )
+
+  useEffect(() => {
+    if (params?.toAddressHash) setToAddress(params.toAddressHash)
+  }, [params?.toAddressHash, setToAddress])
 
   if (!address) return null
 
   return (
     <ScrollScreen
-      hasNavigationHeader
       verticalGap
       usesKeyboard
       contrastedBg
+      contentPaddingTop
       keyboardShouldPersistTaps="always"
+      onScroll={screenScrollHandler}
       {...props}
     >
       <ScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />

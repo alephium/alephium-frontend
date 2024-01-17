@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useHeaderHeight } from '@react-navigation/elements'
 import { useRef } from 'react'
 import { FlatListProps } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
@@ -24,12 +23,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
+import ScreenTitle from '~/components/layout/ScreenTitle'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {}
 
@@ -39,45 +37,37 @@ const FlatListScreen = <T,>({
   contentContainerStyle,
   style,
   contrastedBg,
-  hasNavigationHeader,
+  screenTitle,
   ...props
 }: FlatListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
   const flatListRef = useRef<FlatList>(null)
-  const headerheight = useHeaderHeight()
-  const navigationScrollHandler = useNavigationScrollHandler(flatListRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
 
-  useScrollToTopOnBlur(flatListRef)
-
-  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   return (
     <Screen contrastedBg={contrastedBg}>
+      {headerOptions && <BaseHeader options={headerOptions} scrollY={screenScrollY} />}
       <FlatList
         ref={flatListRef}
-        onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
+        onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         scrollEventThrottle={16}
+        ListHeaderComponent={() =>
+          screenTitle && <ScreenTitle title={screenTitle} scrollY={screenScrollY} sideDefaultMargin />
+        }
         contentContainerStyle={[
           {
-            paddingTop: hasNavigationHeader
-              ? headerheight + DEFAULT_MARGIN
-              : headerOptions
-                ? screenHeaderHeight + DEFAULT_MARGIN
-                : 0,
             paddingBottom: insets.bottom,
             flex: fill ? 1 : undefined,
             gap: VERTICAL_GAP
           },
           contentContainerStyle
         ]}
-        style={style}
+        style={[{ overflow: SCREEN_OVERFLOW }, style]}
         {...props}
       />
-      {headerOptions && (
-        <BaseHeader options={headerOptions} scrollY={screenScrollY} onLayout={screenHeaderLayoutHandler} />
-      )}
     </Screen>
   )
 }

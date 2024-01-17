@@ -15,22 +15,22 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { ReactNode } from 'react'
+import styled from 'styled-components/native'
 
-import { StackHeaderProps } from '@react-navigation/stack'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-import Button from '~/components/buttons/Button'
-import NavigationBaseHeader, { NavigationBaseHeaderProps } from '~/components/headers/NavigationBaseHeader'
-
-export type NavigationStackHeaderProps = StackHeaderProps & NavigationBaseHeaderProps
-
-const NavigationStackHeader = ({ navigation, options, ...props }: NavigationStackHeaderProps) => {
-  const HeaderLeft = props.back ? (
-    <Button onPress={navigation.goBack} iconProps={{ name: 'arrow-back-outline' }} round />
-  ) : null
-
-  return (
-    <NavigationBaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} showCompactComponents {...props} />
-  )
+interface FooterButtonContainerProps {
+  children: ReactNode
 }
 
-export default NavigationStackHeader
+const FooterButtonContainer = ({ children }: FooterButtonContainerProps) => <Container>{children}</Container>
+
+export default FooterButtonContainer
+
+const Container = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 10% ${DEFAULT_MARGIN}px;
+`

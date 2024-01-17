@@ -45,7 +45,6 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save', headerOptio
     <ScrollScreen
       usesKeyboard
       fill
-      hasNavigationHeader
       headerOptions={{
         type: 'stack',
         headerRight: () => <ContinueButton title={buttonText} onPress={handleSubmit(onSubmit)} iconProps={undefined} />,
