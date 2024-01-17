@@ -22,7 +22,7 @@ import { useState } from 'react'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
-import animationSrc from '~/animations/lottie/wallet.json'
+import backupAnimationSrc from '~/animations/lottie/backup.json'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import Button from '~/components/buttons/Button'
 import BottomModal from '~/components/layout/BottomModal'
@@ -44,7 +44,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
     <>
       <ScrollScreen fill {...props}>
         <ScreenSection fill centered verticallyCentered>
-          <StyledAnimation source={animationSrc} autoPlay />
+          <StyledAnimation source={backupAnimationSrc} autoPlay />
         </ScreenSection>
         <ScreenSection fill>
           <CenteredInstructions
@@ -106,5 +106,5 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
 export default BackupIntroScreen
 
 const StyledAnimation = styled(LottieView)`
-  width: 40%;
+  width: 60%;
 `
