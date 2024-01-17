@@ -48,7 +48,6 @@ export interface BaseHeaderProps extends ViewProps {
   CustomContent?: ReactNode
 }
 
-export const headerHeight = 90
 export const scrollEndThreshold = 80
 const defaultScrollRange = [0, scrollEndThreshold]
 
@@ -71,7 +70,7 @@ const BaseHeader = ({
   const borderColorRange = [showBorderBottom ? theme.border.secondary : 'transparent', theme.border.secondary]
   const backgroundColorRange = [theme.header.hidden, theme.header.visible]
 
-  const paddingTop = isIos ? insets.top : insets.top + 10
+  const paddingTop = isIos ? insets.top : insets.top + 7
 
   const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
   const HeaderLeft = (headerLeft && headerLeft({})) || <HeaderSidePlaceholder />
@@ -175,8 +174,7 @@ const Header = styled(AnimatedHeader)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px ${DEFAULT_MARGIN}px;
-  height: ${headerHeight}px;
+  padding: 0 ${DEFAULT_MARGIN}px 12px;
 `
 
 const BottomBorder = styled(Animated.View)`
