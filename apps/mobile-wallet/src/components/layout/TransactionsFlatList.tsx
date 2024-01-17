@@ -159,16 +159,18 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
         }
         ListFooterComponent={
           <Footer>
-            {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
-              confirmedTransactions.length > 0 && (
-                <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
-                  👏 You reached the end of the transactions&apos; history.
-                </AppText>
-              )}
-            {isLoading &&
-              ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
-                <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
-              )}
+            <InfiniteLoadingIndicator>
+              {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
+                confirmedTransactions.length > 0 && (
+                  <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
+                    👏 You reached the end of the transactions&apos; history.
+                  </AppText>
+                )}
+              {isLoading &&
+                ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
+                  <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
+                )}
+            </InfiniteLoadingIndicator>
             {confirmedTransactions.length === 0 && !isLoading && (
               <EmptyPlaceholder style={{ width: '90%' }}>
                 <AppText color="secondary" semiBold>
@@ -208,9 +210,12 @@ const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
 const TransactionListItemStyled = styled(TransactionListItem)``
 
 const Footer = styled.View`
-  padding-top: 40px;
   padding-bottom: 150px;
   align-items: center;
+`
+
+const InfiniteLoadingIndicator = styled.View`
+  margin-top: 25px;
 `
 
 const PendingTransactionsSectionTitle = styled.View`

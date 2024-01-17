@@ -110,6 +110,7 @@ const SlotContainer = styled.View`
   justify-content: center;
   align-items: center;
   height: 20px;
+  margin-bottom: 15%;
 `
 
 const FilledSlot = styled(Animated.View)`

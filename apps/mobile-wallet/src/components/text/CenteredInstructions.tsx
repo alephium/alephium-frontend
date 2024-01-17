@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { memo } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 
 import LinkToWeb from './LinkToWeb'
 
@@ -52,7 +52,14 @@ const CenteredInstructions = ({ instructions, style, fontSize = 17 }: CenteredIn
 export default memo(styled(CenteredInstructions)`
   justify-content: center;
   align-items: center;
-  ${({ stretch }) => stretch && 'flex: 1;'}
+  ${({ stretch }) =>
+    stretch
+      ? css`
+          flex: 1;
+        `
+      : css`
+          padding-top: 15%;
+        `}
   margin: 0 8%;
 `)
 
