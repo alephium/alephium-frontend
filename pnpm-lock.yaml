@@ -722,7 +722,7 @@ importers:
         version: 2.0.12(react-native-svg@13.14.0)(react@18.2.0)
       react-redux:
         specifier: ^8.0.5
-        version: 8.1.3(@types/react-dom@18.2.18)(@types/react@18.2.45)(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)(redux@4.2.1)
+        version: 8.1.3(@types/react@18.2.45)(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)(redux@4.2.1)
       styled-components:
         specifier: ^6.1.8
         version: 6.1.8(react-dom@18.2.0)(react@18.2.0)
@@ -787,12 +787,6 @@ importers:
       jest:
         specifier: ^29.4.3
         version: 29.7.0(@types/node@16.18.68)(ts-node@10.9.2)
-      react-native-flipper:
-        specifier: ^0.212.0
-        version: 0.212.0(react-native@0.72.6)(react@18.2.0)
-      redux-flipper:
-        specifier: ^2.0.2
-        version: 2.0.2(react-native-flipper@0.212.0)(react-native@0.72.6)(redux@4.2.1)
       ts-node:
         specifier: ^10.9.1
         version: 10.9.2(@types/node@16.18.68)(typescript@5.3.3)
@@ -4573,7 +4567,7 @@ packages:
     dependencies:
       immer: 9.0.21
       react: 18.2.0
-      react-redux: 8.1.3(@types/react-dom@18.2.18)(@types/react@18.2.45)(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)(redux@4.2.1)
+      react-redux: 8.1.3(@types/react@18.2.45)(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)(redux@4.2.1)
       redux: 4.2.1
       redux-thunk: 2.4.2(redux@4.2.1)
       reselect: 4.1.8
@@ -5302,6 +5296,7 @@ packages:
     resolution: {integrity: sha512-TJxDm6OfAX2KJWJdMEVTwWke5Sc/E/RlnPGvGfS0W7+6ocy2xhDVQVh/KvC2Uf7kACs+gDytdusDSdWfWkaNzw==}
     dependencies:
       '@types/react': 18.2.45
+    dev: true
 
   /@types/react-page-visibility@6.4.4:
     resolution: {integrity: sha512-qeL/98+LHVp5vQH4RjzyLwJib5ekUmKGURmJEXWwQYasr/vKJsdHUblHVaOUtV2sdrrXo2aBtd/sfMOorxkdoQ==}
@@ -8096,11 +8091,6 @@ packages:
       csv-stringify: 5.6.5
       stream-transform: 2.1.3
     dev: false
-
-  /cycle@1.0.3:
-    resolution: {integrity: sha512-TVF6svNzeQCOpjCqsy0/CSy8VgObG3wXusJ73xW2GbG5rGx7lC8zxDSURicsXI2UsGdi2L0QNRCi745/wUDvsA==}
-    engines: {node: '>=0.4.0'}
-    dev: true
 
   /d3-array@3.2.4:
     resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
@@ -14577,16 +14567,6 @@ packages:
     dev: false
     patched: true
 
-  /react-native-flipper@0.212.0(react-native@0.72.6)(react@18.2.0):
-    resolution: {integrity: sha512-bDRfIgE3v/jjEEdnvGP0T6maDD+bXhDAQ/SZUYTKd/CQ6YIU1c0EF+e0urU62LNMv6XEFQKz226McdddyVhYZA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '>0.62.0'
-    dependencies:
-      react: 18.2.0
-      react-native: 0.72.6(@babel/core@7.23.6)(@babel/preset-env@7.23.6)(react@18.2.0)
-    dev: true
-
   /react-native-gesture-handler@2.14.0(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-cOmdaqbpzjWrOLUpX3hdSjsMby5wq3PIEdMq7okJeg9DmCzanysHSrktw1cXWNc/B5MAgxAn9J7Km0/4UIqKAQ==}
     peerDependencies:
@@ -14904,6 +14884,40 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.6)(@babel/preset-env@7.23.6)(react@18.2.0)
       redux: 4.2.1
       use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: true
+
+  /react-redux@8.1.3(@types/react@18.2.45)(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)(redux@4.2.1):
+    resolution: {integrity: sha512-n0ZrutD7DaX/j9VscF+uTALI3oUPa/pO4Z3soOBIjuRn/FzVu6aehhysxZCLi6y7duMf52WNZGMl7CtuK5EnRw==}
+    peerDependencies:
+      '@types/react': ^16.8 || ^17.0 || ^18.0
+      '@types/react-dom': ^16.8 || ^17.0 || ^18.0
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+      react-native: '>=0.59'
+      redux: ^4 || ^5.0.0-beta.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+      redux:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.23.6
+      '@types/hoist-non-react-statics': 3.3.5
+      '@types/react': 18.2.45
+      '@types/use-sync-external-store': 0.0.3
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-is: 18.2.0
+      react-native: 0.72.6(@babel/core@7.23.6)(@babel/preset-env@7.23.6)(react@18.2.0)
+      redux: 4.2.1
+      use-sync-external-store: 1.2.0(react@18.2.0)
 
   /react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
@@ -15092,20 +15106,6 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       redis-errors: 1.2.0
-
-  /redux-flipper@2.0.2(react-native-flipper@0.212.0)(react-native@0.72.6)(redux@4.2.1):
-    resolution: {integrity: sha512-X6OD3+Ok8g0SunzrwS5OtbE735eBDxLz3uuK4fdJSwbAzskqOS3SWc+rKuOpqmLkt8pN+Szp7Nof9Etm75B1Rg==}
-    peerDependencies:
-      react-native: '>=0.63.0'
-      react-native-flipper: '>=0.100.0'
-      redux: ^4
-    dependencies:
-      cycle: 1.0.3
-      dayjs: 1.11.10
-      react-native: 0.72.6(@babel/core@7.23.6)(@babel/preset-env@7.23.6)(react@18.2.0)
-      react-native-flipper: 0.212.0(react-native@0.72.6)(react@18.2.0)
-      redux: 4.2.1
-    dev: true
 
   /redux-thunk@2.4.2(redux@4.2.1):
     resolution: {integrity: sha512-+P3TjtnP0k/FEjcBL5FZpoovtvrTNT/UXd4/sluaSyrURlSlhLSzEdfsTBW7WsKB6yPvgd7q/iZPICFjW4o57Q==}

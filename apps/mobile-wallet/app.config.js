@@ -52,12 +52,12 @@ export default {
     },
     plugins: [
       [
-        'expo-build-properties', 
+        'expo-build-properties',
         {
           ios: {
             deploymentTarget: '13.4',
             newArchEnabled: false,
-            flipper: true
+            flipper: false // https://docs.expo.dev/guides/using-flipper/
           },
           android: {
             compileSdkVersion: 33,

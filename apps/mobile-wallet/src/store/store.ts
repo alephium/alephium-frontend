@@ -57,11 +57,6 @@ export const store = configureStore({
       .prepend(settingsListenerMiddleware.middleware)
       .prepend(priceApi.middleware)
 
-    if (__DEV__) {
-      const createDebugger = require('redux-flipper').default
-      middlewares.push(createDebugger())
-    }
-
     return middlewares
   }
 })
