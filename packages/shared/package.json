@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
-    "@alephium/web3": "0.27.5",
+    "@alephium/web3": "0.28.1",
     "base-x": "^4.0.0",
     "bcfg": "~0.1.6",
     "bip32": "^2.0.6",
