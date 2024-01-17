@@ -17,20 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
 import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomModal from '~/components/layout/BottomModal'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import TransactionModal from '~/screens/TransactionModal'
 import {
   selectAddressByHash,
@@ -74,7 +70,6 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
 ) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
-  const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
 
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
@@ -115,10 +110,6 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
 
   const refreshData = () => {
     if (!isLoading) dispatch(syncAddressesData(addressHash))
-  }
-
-  const handleReceivePress = () => {
-    navigation.navigate('ReceiveNavigation')
   }
 
   return (
@@ -176,13 +167,6 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
                 <AppText color="secondary" semiBold>
                   No transactions yet 🤷‍♂️
                 </AppText>
-                <Button
-                  title="Receive assets"
-                  onPress={handleReceivePress}
-                  iconProps={{ name: 'arrow-down-outline' }}
-                  variant="highlight"
-                  short
-                />
               </EmptyPlaceholder>
             )}
           </Footer>
