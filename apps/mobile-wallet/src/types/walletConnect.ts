@@ -48,5 +48,5 @@ export type SessionRequestData =
   | {
       type: 'sign-message'
       wcData: SignMessageData
-      unsignedTxData: undefined
+      unsignedTxData?: undefined
     }

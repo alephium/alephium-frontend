@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import { getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import {
   binToHex,
@@ -47,7 +47,6 @@ import Row from '~/components/Row'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
 import { SessionRequestData } from '~/types/walletConnect'
-import { WALLETCONNECT_ERRORS } from '~/utils/constants'
 import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -59,7 +58,7 @@ interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> ex
     >
   ) => Promise<void>
   onReject: () => Promise<void>
-  onSendTxOrSignFail: (message: string, code: WALLETCONNECT_ERRORS) => Promise<void>
+  onSendTxOrSignFail: (error: WalletConnectError) => Promise<void>
   onSignSuccess: (result: SignMessageResult) => Promise<void>
   metadata?: SessionTypes.Struct['peer']['metadata']
 }
@@ -180,7 +179,10 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
       console.error(message, e)
       showExceptionToast(e, message)
       sendAnalytics('Error', { message })
-      onSendTxOrSignFail(getHumanReadableError(e, message), WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED)
+      onSendTxOrSignFail({
+        message: getHumanReadableError(e, message),
+        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+      })
     }
   }
 
@@ -188,7 +190,10 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
     if (!isSignRequest) return
 
     if (!signAddress) {
-      onSendTxOrSignFail('Signer address doesn\t exist', WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST)
+      onSendTxOrSignFail({
+        message: "Signer address doesn't exist",
+        code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+      })
       return
     }
 
@@ -202,7 +207,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
       console.error(message, e)
       showExceptionToast(e, message)
       sendAnalytics('Error', { message })
-      onSendTxOrSignFail(getHumanReadableError(e, message), WALLETCONNECT_ERRORS.SIGN_MESSAGE_FAILED)
+      onSendTxOrSignFail({ message: getHumanReadableError(e, message), code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED })
     } finally {
       props.onClose && props.onClose()
     }

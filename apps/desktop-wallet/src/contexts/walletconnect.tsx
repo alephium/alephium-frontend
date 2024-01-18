@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount, getHumanReadableError, WalletConnectClientStatus } from '@alephium/shared'
+import {
+  AssetAmount,
+  getHumanReadableError,
+  WALLETCONNECT_ERRORS,
+  WalletConnectClientStatus,
+  WalletConnectError
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -80,7 +86,6 @@ import {
 } from '@/types/transactions'
 import { SessionProposalEvent, SessionRequestEvent } from '@/types/walletConnect'
 import { AlephiumWindow } from '@/types/window'
-import { WALLETCONNECT_ERRORS } from '@/utils/constants'
 import { useInterval } from '@/utils/hooks'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
@@ -243,6 +248,9 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       const {
         params: { request }
       } = event
+
+      console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
+      console.log('👉 REQUESTED METHOD:', request.method)
 
       try {
         switch (request.method as RelayMethod) {
@@ -708,15 +716,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     electron?.app.hide()
   }
 
-  const handleSignFail = async (
-    message: string,
-    code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED | WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
-  ) => {
-    if (sessionRequestEvent)
-      await respondToWalletConnectWithError(sessionRequestEvent, {
-        message,
-        code
-      })
+  const handleSignFail = async (error: WalletConnectError) => {
+    if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, error)
   }
 
   const handleSignReject = async () => {

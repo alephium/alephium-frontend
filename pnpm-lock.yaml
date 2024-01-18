@@ -811,6 +811,9 @@ importers:
       '@alephium/web3':
         specifier: 0.28.1
         version: 0.28.1
+      '@walletconnect/utils':
+        specifier: 2.11.0
+        version: 2.11.0(@react-native-async-storage/async-storage@1.18.2)
       base-x:
         specifier: ^4.0.0
         version: 4.0.0

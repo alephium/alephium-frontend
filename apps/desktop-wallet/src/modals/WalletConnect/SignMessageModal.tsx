@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import { getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
 import { hashMessage, sign, SignMessageResult } from '@alephium/web3'
 import { usePostHog } from 'posthog-js/react'
 import { useTranslation } from 'react-i18next'
@@ -27,13 +27,12 @@ import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { messageSignSucceeded } from '@/storage/transactions/transactionsActions'
 import { SignMessageData } from '@/types/transactions'
-import { WALLETCONNECT_ERRORS } from '@/utils/constants'
 
 interface SignUnsignedTxModalProps {
   onClose: () => void
   txData: SignMessageData
   onSignSuccess: (result: SignMessageResult) => Promise<void>
-  onSignFail: (errorMessage: string, code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED) => Promise<void>
+  onSignFail: (error: WalletConnectError) => Promise<void>
   onSignReject: () => Promise<void>
 }
 
@@ -58,9 +57,13 @@ const SignUnsignedTxModal = ({
       dispatch(messageSignSucceeded)
       onClose()
     } catch (e) {
-      posthog.capture('Error', { message: 'Could not sign message' })
+      const message = 'Could not sign message'
+      posthog.capture('Error', { message })
 
-      onSignFail(getHumanReadableError(e, 'Error while signing message'), WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED)
+      onSignFail({
+        message: getHumanReadableError(e, message),
+        code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+      })
     }
   }
 
