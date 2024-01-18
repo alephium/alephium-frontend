@@ -98,7 +98,7 @@ const SignUnsignedTxModal = ({
 
   return (
     <CenteredModal
-      title="Sign Unsigned Transaction"
+      title={t('Sign Unsigned Transaction')}
       onClose={onClose}
       isLoading={isLoading}
       dynamicContent
@@ -108,8 +108,8 @@ const SignUnsignedTxModal = ({
       {decodedUnsignedTx && (
         <ModalContent>
           <InputFieldsColumn>
-            <InfoBox label="Transaction Id" text={decodedUnsignedTx.txId} wordBreak />
-            <InfoBox label="Unsigned Transaction" text={decodedUnsignedTx.unsignedTx} wordBreak />
+            <InfoBox label={t('Transaction ID')} text={decodedUnsignedTx.txId} wordBreak />
+            <InfoBox label={t('Unsigned transaction')} text={decodedUnsignedTx.unsignedTx} wordBreak />
           </InputFieldsColumn>
           <ModalFooterButtons>
             <ModalFooterButton role="secondary" onClick={handleReject}>
