@@ -29,12 +29,13 @@ import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { unsignedTransactionSignSucceeded } from '@/storage/transactions/transactionsActions'
 import { SignUnsignedTxData } from '@/types/transactions'
+import { WALLETCONNECT_ERRORS } from '@/utils/constants'
 
 interface SignUnsignedTxModalProps {
   onClose: () => void
   txData: SignUnsignedTxData
   onSignSuccess: (result: SignUnsignedTxResult) => Promise<void>
-  onSignFail: (errorMessage: string) => Promise<void>
+  onSignFail: (errorMessage: string, code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED) => Promise<void>
   onSignReject: () => Promise<void>
 }
 
@@ -84,10 +85,14 @@ const SignUnsignedTxModal = ({
       await onSignSuccess(signResult)
 
       dispatch(unsignedTransactionSignSucceeded)
+      onClose()
     } catch (e) {
       posthog.capture('Error', { message: 'Could not sign unsigned tx' })
 
-      onSignFail(getHumanReadableError(e, 'Error while signing unsigned tx'))
+      onSignFail(
+        getHumanReadableError(e, 'Error while signing unsigned tx'),
+        WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
+      )
     }
   }
 

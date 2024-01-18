@@ -33,6 +33,8 @@ export const transactionsSendSucceeded = createAction<{ nbOfTransactionsSent: nu
 
 export const unsignedTransactionSignSucceeded = createAction('tx/unsignedTransactionSignSucceeded')
 
+export const messageSignSucceeded = createAction('tx/messageSignSucceeded')
+
 export const transactionSent = createAction<PendingTransaction>('tx/transactionSent')
 
 export const csvFileGenerationStarted = createAction('tx/csvFileGenerationStarted')

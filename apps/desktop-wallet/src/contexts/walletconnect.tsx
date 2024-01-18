@@ -23,6 +23,8 @@ import {
   ApiRequestArguments,
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
+  SignMessageParams,
+  SignMessageResult,
   SignTransferTxParams,
   SignUnsignedTxParams,
   SignUnsignedTxResult
@@ -60,6 +62,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import SendModalCallContract from '@/modals/SendModals/CallContract'
 import SendModalDeployContract from '@/modals/SendModals/DeployContract'
+import SignMessageModal from '@/modals/WalletConnect/SignMessageModal'
 import SignUnsignedTxModal from '@/modals/WalletConnect/SignUnsignedTxModal'
 import WalletConnectSessionProposalModal from '@/modals/WalletConnect/WalletConnectSessionProposalModal'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
@@ -69,6 +72,7 @@ import {
   CallContractTxData,
   DappTxData,
   DeployContractTxData,
+  SignMessageData,
   SignUnsignedTxData,
   TransferTxData,
   TxDataToModalType,
@@ -119,6 +123,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const [isDeployContractSendModalOpen, setIsDeployContractSendModalOpen] = useState(false)
   const [isCallScriptSendModalOpen, setIsCallScriptSendModalOpen] = useState(false)
   const [isSignUnsignedTxModalOpen, setIsSignUnsignedTxModalOpen] = useState(false)
+  const [isSignMessageModalOpen, setIsSignMessageModalOpen] = useState(false)
 
   const [walletConnectClient, setWalletConnectClient] = useState(initialContext.walletConnectClient)
   const [activeSessions, setActiveSessions] = useState(initialContext.activeSessions)
@@ -228,6 +233,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
           setIsCallScriptSendModalOpen(true)
         } else if (modalType === TxType.SIGN_UNSIGNED_TX) {
           setIsSignUnsignedTxModalOpen(true)
+        } else if (modalType === TxType.SIGN_MESSAGE) {
+          setIsSignMessageModalOpen(true)
         }
 
         electron?.app.show()
@@ -306,6 +313,17 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             }
 
             setTxDataAndOpenModal({ txData, modalType: TxType.SCRIPT })
+            break
+          }
+          case 'alph_signMessage': {
+            const { message, messageHasher, signerAddress } = request.params as SignMessageParams
+            const txData: SignMessageData = {
+              fromAddress: getSignerAddressByHash(signerAddress),
+              message,
+              messageHasher
+            }
+            setTxDataAndOpenModal({ txData, modalType: TxType.SIGN_MESSAGE })
+
             break
           }
           case 'alph_signUnsignedTx': {
@@ -684,21 +702,24 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       })
   }
 
-  const handleSignUnsignedTxSuccess = async (result: SignUnsignedTxResult) => {
+  const handleSignSuccess = async (result: SignUnsignedTxResult | SignMessageResult) => {
     if (sessionRequestEvent) await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
 
     electron?.app.hide()
   }
 
-  const handleSignUnsignedTxFail = async (errorMessage: string) => {
+  const handleSignFail = async (
+    message: string,
+    code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED | WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+  ) => {
     if (sessionRequestEvent)
       await respondToWalletConnectWithError(sessionRequestEvent, {
-        message: errorMessage,
-        code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
+        message,
+        code
       })
   }
 
-  const handleSignUnsignedTxReject = async () => {
+  const handleSignReject = async () => {
     if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))
 
     electron?.app.hide()
@@ -807,11 +828,22 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
                 onClose={() => {
                   handleSessionRequestModalClose()
                   setIsSignUnsignedTxModalOpen(false)
-                  handleSignUnsignedTxReject()
                 }}
-                onSignSuccess={handleSignUnsignedTxSuccess}
-                onSignFail={handleSignUnsignedTxFail}
-                onSignReject={handleSignUnsignedTxReject}
+                onSignSuccess={handleSignSuccess}
+                onSignFail={handleSignFail}
+                onSignReject={handleSignReject}
+              />
+            )}
+            {isSignMessageModalOpen && dappTxData && (
+              <SignMessageModal
+                txData={dappTxData as SignMessageData}
+                onClose={() => {
+                  handleSessionRequestModalClose()
+                  setIsSignMessageModalOpen(false)
+                }}
+                onSignSuccess={handleSignSuccess}
+                onSignFail={handleSignFail}
+                onSignReject={handleSignReject}
               />
             )}
           </>

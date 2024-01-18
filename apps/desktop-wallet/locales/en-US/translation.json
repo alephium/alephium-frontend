@@ -475,5 +475,7 @@
   "Could not clear WalletConnect cache.": "Could not clear WalletConnect cache.",
   "Sign Unsigned Transaction": "Sign Unsigned Transaction",
   "Transaction ID": "Transaction ID",
-  "Unsigned transaction": "Unsigned transaction"
+  "Unsigned transaction": "Unsigned transaction",
+  "Sign Message": "Sign Message",
+  "Message": "Message"
 }
