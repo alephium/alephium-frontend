@@ -16,12 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import {
   binToHex,
   contractIdFromAddress,
+  hashMessage,
+  sign,
   SignDeployContractTxResult,
   SignExecuteScriptTxResult,
+  SignMessageResult,
   SignTransferTxResult
 } from '@alephium/web3'
 import { SessionTypes } from '@walletconnect/types'
@@ -40,9 +44,10 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
-import { useAppDispatch } from '~/hooks/redux'
-import { transactionSent } from '~/store/addressesSlice'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
 import { SessionRequestData } from '~/types/walletConnect'
+import { WALLETCONNECT_ERRORS } from '~/utils/constants'
 import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -54,6 +59,8 @@ interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> ex
     >
   ) => Promise<void>
   onReject: () => Promise<void>
+  onSendTxOrSignFail: (message: string, code: WALLETCONNECT_ERRORS) => Promise<void>
+  onSignSuccess: (result: SignMessageResult) => Promise<void>
   metadata?: SessionTypes.Struct['peer']['metadata']
 }
 
@@ -61,16 +68,24 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
   requestData,
   onApprove,
   onReject,
+  onSendTxOrSignFail,
+  onSignSuccess,
   metadata,
   ...props
 }: WalletConnectSessionRequestModalProps<T>) => {
   const dispatch = useAppDispatch()
+  const signAddress = useAppSelector((s) => selectAddressByHash(s, requestData.wcData.fromAddress))
 
-  const fees = BigInt(requestData.unsignedTxData.gasAmount) * BigInt(requestData.unsignedTxData.gasPrice)
+  const isSignRequest = requestData.type === 'sign-message'
+  const fees = !isSignRequest
+    ? BigInt(requestData.unsignedTxData.gasAmount) * BigInt(requestData.unsignedTxData.gasPrice)
+    : undefined
 
   const handleApprovePress = () => onApprove(sendTransaction)
 
   const sendTransaction = async () => {
+    if (isSignRequest) return
+
     try {
       const data = await signAndSendTransaction(
         requestData.wcData.fromAddress,
@@ -161,9 +176,35 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
         }
       }
     } catch (e) {
-      console.error('Could not send transaction', e)
-      showExceptionToast(e, 'Could not send transaction')
-      sendAnalytics('Error', { message: 'Could not send transaction' })
+      const message = 'Could not send transaction'
+      console.error(message, e)
+      showExceptionToast(e, message)
+      sendAnalytics('Error', { message })
+      onSendTxOrSignFail(getHumanReadableError(e, message), WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED)
+    }
+  }
+
+  const handleSignPress = async () => {
+    if (!isSignRequest) return
+
+    if (!signAddress) {
+      onSendTxOrSignFail('Signer address doesn\t exist', WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST)
+      return
+    }
+
+    try {
+      const messageHash = hashMessage(requestData.wcData.message, requestData.wcData.messageHasher)
+      const signature = sign(messageHash, signAddress.privateKey)
+
+      await onSignSuccess({ signature })
+    } catch (e) {
+      const message = 'Could not sign message'
+      console.error(message, e)
+      showExceptionToast(e, message)
+      sendAnalytics('Error', { message })
+      onSendTxOrSignFail(getHumanReadableError(e, message), WALLETCONNECT_ERRORS.SIGN_MESSAGE_FAILED)
+    } finally {
+      props.onClose && props.onClose()
     }
   }
 
@@ -179,7 +220,8 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
               {
                 transfer: 'Transfer request',
                 'call-contract': 'Smart contract request',
-                'deploy-contract': 'Smart contract request'
+                'deploy-contract': 'Smart contract request',
+                'sign-message': 'Sign message'
               }[requestData.type]
             }
           </BottomModalScreenTitle>
@@ -203,7 +245,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
                 </AssetAmounts>
               </Row>
             )}
-          <Row title="From" titleColor="secondary">
+          <Row title={isSignRequest ? 'Signing with' : 'From'} titleColor="secondary">
             <AddressBadge addressHash={requestData.wcData.fromAddress} />
           </Row>
 
@@ -213,11 +255,11 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
                 <AppText semiBold>{metadata.url}</AppText>
               </Row>
             )
-          ) : (
+          ) : requestData.type === 'transfer' ? (
             <Row title="To" titleColor="secondary">
               <AddressBadge addressHash={requestData.wcData.toAddress} />
             </Row>
-          )}
+          ) : null}
 
           {requestData.type === 'deploy-contract' && (
             <>
@@ -244,20 +286,31 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
               <AppText>{requestData.wcData.bytecode}</AppText>
             </Row>
           )}
+          {requestData.type === 'sign-message' && (
+            <Row title="Message" titleColor="secondary">
+              <AppText>{requestData.wcData.message}</AppText>
+            </Row>
+          )}
         </BoxSurface>
       </ScreenSection>
-      <ScreenSection>
-        <FeeBox>
-          <AppText color="secondary" semiBold>
-            Estimated fees
-          </AppText>
-          <Amount value={fees} suffix="ALPH" medium />
-        </FeeBox>
-      </ScreenSection>
+      {fees !== undefined && (
+        <ScreenSection>
+          <FeeBox>
+            <AppText color="secondary" semiBold>
+              Estimated fees
+            </AppText>
+            <Amount value={fees} suffix="ALPH" medium />
+          </FeeBox>
+        </ScreenSection>
+      )}
       <ScreenSection centered>
         <ButtonsRow>
           <Button title="Reject" variant="alert" onPress={onReject} flex />
-          <Button title="Approve" variant="valid" onPress={handleApprovePress} flex />
+          {isSignRequest ? (
+            <Button title="Sign" variant="valid" onPress={handleSignPress} flex />
+          ) : (
+            <Button title="Approve" variant="valid" onPress={handleApprovePress} flex />
+          )}
         </ButtonsRow>
       </ScreenSection>
     </ModalContent>

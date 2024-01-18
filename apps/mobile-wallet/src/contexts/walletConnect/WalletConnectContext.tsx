@@ -27,6 +27,8 @@ import {
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
+  SignMessageParams,
+  SignMessageResult,
   SignTransferTxParams,
   SignTransferTxResult
 } from '@alephium/web3'
@@ -72,7 +74,7 @@ import { useAppSelector } from '~/hooks/redux'
 import useInterval from '~/hooks/useInterval'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
-import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
+import { CallContractTxData, DeployContractTxData, SignMessageData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { WALLETCONNECT_ERRORS } from '~/utils/constants'
 import { showExceptionToast, showToast } from '~/utils/layout'
@@ -378,6 +380,39 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             setSessionRequestEvent(requestEvent)
 
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
+            setIsSessionRequestModalOpen(true)
+
+            break
+          }
+          case 'alph_signMessage': {
+            console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
+            console.log('👉 REQUESTED METHOD:', requestEvent.params.request.method)
+
+            const { message, messageHasher, signerAddress } = requestEvent.params.request.params as SignMessageParams
+
+            const fromAddress = addressIds.find((address) => address === signerAddress)
+
+            if (!fromAddress) {
+              return respondToWalletConnectWithError(requestEvent, {
+                message: 'Signer address doesn\t exist',
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            const signData: SignMessageData = {
+              fromAddress,
+              message,
+              messageHasher
+            }
+
+            setSessionRequestData({
+              type: 'sign-message',
+              wcData: signData,
+              unsignedTxData: undefined
+            })
+            setSessionRequestEvent(requestEvent)
+
+            console.log('⏳ OPENING MODAL TO SIGN MESSAGE...')
             setIsSessionRequestModalOpen(true)
 
             break
@@ -776,6 +811,19 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }
 
+  const handleSignSuccess = async (result: SignMessageResult) => {
+    if (!sessionRequestEvent) return
+
+    console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
+    await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
+    console.log('✅ INFORMING: DONE!')
+
+    console.log('👉 RESETTING SESSION REQUEST EVENT.')
+    setSessionRequestEvent(undefined)
+    setSessionRequestData(undefined)
+    showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
+  }
+
   const handleRejectPress = async () => {
     if (!sessionRequestEvent) return
 
@@ -790,6 +838,25 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
       showToast({ text1: 'DApp request rejected', text2: 'You can go back to your browser.' })
+    }
+  }
+
+  const handleSendTxOrSignFail = async (message: string, code: WALLETCONNECT_ERRORS) => {
+    if (!sessionRequestEvent) return
+
+    try {
+      console.log('⏳ INFORMING DAPP THAT SESSION REQUEST FAILED...')
+      await respondToWalletConnectWithError(sessionRequestEvent, {
+        message,
+        code
+      })
+      console.log('✅ INFORMING: DONE!')
+    } catch (e) {
+      console.error('❌ INFORMING: FAILED.')
+    } finally {
+      console.log('👉 RESETTING SESSION REQUEST EVENT.')
+      setSessionRequestEvent(undefined)
+      setSessionRequestData(undefined)
     }
   }
 
@@ -868,6 +935,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                 requestData={sessionRequestData}
                 onApprove={handleApprovePress}
                 onReject={handleRejectPress}
+                onSendTxOrSignFail={handleSendTxOrSignFail}
+                onSignSuccess={handleSignSuccess}
                 metadata={activeSessionMetadata}
                 {...props}
               />

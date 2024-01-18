@@ -20,6 +20,7 @@ import { useEffect } from 'react'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
