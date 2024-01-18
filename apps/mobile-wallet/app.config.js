@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 export default {
   expo: {
     name: 'Alephium',
+    owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
     version: '1.0.4',
     orientation: 'portrait',

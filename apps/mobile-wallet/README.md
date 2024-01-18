@@ -34,7 +34,7 @@ In most cases, we'll need to build a production version and submitted to Google 
 
 ```shell
 eas build  --platform android --profile production
-eas submit --platform android --profile internal
+eas submit --platform android
 ```
 
 #### Creating an standalone APK
@@ -53,7 +53,7 @@ In most cases we want to release a TestFlight version so that we can have an ope
 
 ```shell
 eas build --platform ios --profile production
-eas submit --platform ios --profile production
+eas submit --platform ios
 ```
 
 #### Internal release
@@ -62,5 +62,5 @@ Only registered iOS devices will get internal releases.
 
 ```shell
 eas build --platform ios --profile internal
-eas submit --platform ios --profile production
+eas submit --platform ios
 ```
