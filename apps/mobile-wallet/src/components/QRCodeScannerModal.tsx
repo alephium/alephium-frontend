@@ -162,7 +162,7 @@ const QRCodePlaceholder = styled.View`
 `
 
 const TextContainer = styled.View`
-  border: 0px solid transparent; // This is a hack cause I don't freaking understand why the text doesn't expand
+  border: 0px solid transparent;
   align-items: center;
   gap: 10px;
 `
