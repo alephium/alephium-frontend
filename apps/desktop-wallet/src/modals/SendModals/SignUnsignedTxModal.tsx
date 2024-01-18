@@ -23,11 +23,10 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import client from '@/api/client'
-import FooterButton from '@/components/Buttons/FooterButton'
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import { useAppDispatch } from '@/hooks/redux'
-import CenteredModal, { ModalContent } from '@/modals/CenteredModal'
+import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { unsignedTransactionSignSucceeded } from '@/storage/transactions/transactionsActions'
 import { SignUnsignedTxData } from '@/types/transactions'
 
@@ -36,9 +35,16 @@ interface SignUnsignedTxModalProps {
   txData: SignUnsignedTxData
   onSignSuccess: (result: SignUnsignedTxResult) => Promise<void>
   onSignFail: (errorMessage: string) => Promise<void>
+  onSignReject: () => Promise<void>
 }
 
-const SignUnsignedTxModal = ({ onClose, txData, onSignSuccess, onSignFail }: SignUnsignedTxModalProps) => {
+const SignUnsignedTxModal = ({
+  onClose,
+  txData,
+  onSignSuccess,
+  onSignFail,
+  onSignReject
+}: SignUnsignedTxModalProps) => {
   const { t } = useTranslation()
   const posthog = usePostHog()
   const dispatch = useAppDispatch()
@@ -85,6 +91,11 @@ const SignUnsignedTxModal = ({ onClose, txData, onSignSuccess, onSignFail }: Sig
     }
   }
 
+  const handleReject = async () => {
+    onSignReject()
+    onClose()
+  }
+
   return (
     <CenteredModal
       title="Sign Unsigned Transaction"
@@ -100,9 +111,14 @@ const SignUnsignedTxModal = ({ onClose, txData, onSignSuccess, onSignFail }: Sig
             <InfoBox label="Transaction Id" text={decodedUnsignedTx.txId} wordBreak />
             <InfoBox label="Unsigned Transaction" text={decodedUnsignedTx.unsignedTx} wordBreak />
           </InputFieldsColumn>
-          <FooterButton onClick={handleSign} disabled={isLoading || !decodedUnsignedTx}>
-            {t('Sign')}
-          </FooterButton>
+          <ModalFooterButtons>
+            <ModalFooterButton role="secondary" onClick={handleReject}>
+              {t('Reject')}
+            </ModalFooterButton>
+            <ModalFooterButton onClick={handleSign} disabled={isLoading || !decodedUnsignedTx}>
+              {t('Sign')}
+            </ModalFooterButton>
+          </ModalFooterButtons>
         </ModalContent>
       )}
     </CenteredModal>

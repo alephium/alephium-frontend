@@ -684,16 +684,24 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       })
   }
 
-  const handleSignSuccess = async (result: SignUnsignedTxResult) => {
+  const handleSignUnsignedTxSuccess = async (result: SignUnsignedTxResult) => {
     if (sessionRequestEvent) await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
+
+    electron?.app.hide()
   }
 
-  const handleSignFail = async (errorMessage: string) => {
+  const handleSignUnsignedTxFail = async (errorMessage: string) => {
     if (sessionRequestEvent)
       await respondToWalletConnectWithError(sessionRequestEvent, {
         message: errorMessage,
         code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
       })
+  }
+
+  const handleSignUnsignedTxReject = async () => {
+    if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))
+
+    electron?.app.hide()
   }
 
   const reset = useCallback(async () => {
@@ -799,9 +807,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
                 onClose={() => {
                   handleSessionRequestModalClose()
                   setIsSignUnsignedTxModalOpen(false)
+                  handleSignUnsignedTxReject()
                 }}
-                onSignSuccess={handleSignSuccess}
-                onSignFail={handleSignFail}
+                onSignSuccess={handleSignUnsignedTxSuccess}
+                onSignFail={handleSignUnsignedTxFail}
+                onSignReject={handleSignUnsignedTxReject}
               />
             )}
           </>
