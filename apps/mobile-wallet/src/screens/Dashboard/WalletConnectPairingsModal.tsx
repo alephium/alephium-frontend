@@ -64,7 +64,11 @@ const WalletConnectPairingsModal = ({ onPasteWcUrlPress, onClose, ...props }: Wa
           }
         />
       ))}
-      {activeSessions.length === 0 && <EmptyPlaceholder>There are no connections yet. 🔌</EmptyPlaceholder>}
+      {activeSessions.length === 0 && (
+        <EmptyPlaceholder>
+          <AppText>There are no connections yet. 🔌</AppText>
+        </EmptyPlaceholder>
+      )}
       <ScreenSection>
         <Button title="Paste a WalletConnect URL" variant="accent" onPress={onPasteWcUrlPress} />
       </ScreenSection>
