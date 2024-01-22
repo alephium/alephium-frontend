@@ -56,7 +56,12 @@ async function sign(configuration) {
     return
   }
 
-  if (process.env.ES_USERNAME && process.env.ES_PASSWORD && process.env.ES_TOTP_SECRET && process.env.CREDENTIAL_ID) {
+  if (
+    process.env.WINDOWS_SIGN_USER_NAME &&
+    process.env.WINDOWS_SIGN_PASSWORD &&
+    process.env.WINDOWS_SIGN_TOTP_SECRET &&
+    process.env.WINDOWS_SIGN_CREDENTIAL_ID
+  ) {
     console.log(`✍️ Signing ${configuration.path}...`)
 
     if (!fs.existsSync(ARCHIVE_PATH)) {
@@ -109,7 +114,7 @@ async function sign(configuration) {
     // then replacing the original file with the signed file.
     const { name, dir } = path.parse(configuration.path)
     const tempFile = path.join(TEMP_DIR, name)
-    const signFile = `cmd.exe -/c ${execCmd} sign -username="${process.env.ES_USERNAME}" -password="${process.env.ES_PASSWORD}" -credential_id="${process.env.CREDENTIAL_ID}" -totp_secret="${process.env.ES_TOTP_SECRET}" -input_file_path="${configuration.path}" -output_dir_path="${TEMP_DIR}"`
+    const signFile = `cmd.exe -/c ${execCmd} sign -username="${process.env.WINDOWS_SIGN_USER_NAME}" -password="${process.env.WINDOWS_SIGN_PASSWORD}" -credential_id="${process.env.WINDOWS_SIGN_CREDENTIAL_ID}" -totp_secret="${process.env.WINDOWS_SIGN_TOTP_SECRET}" -input_file_path="${configuration.path}" -output_dir_path="${TEMP_DIR}"`
     const moveFile = `move "${tempFile}.exe" "${dir}"`
 
     console.log('🏃‍♂️ Running signing command...')
@@ -117,10 +122,10 @@ async function sign(configuration) {
     console.log('🏁 Finished signing\n🎉🎉🎉')
   } else {
     console.warn(`sign.js - Can't sign file ${configuration.path}, missing value for:
-${process.env.ES_USERNAME ? '' : 'ES_USERNAME'}
-${process.env.ES_PASSWORD ? '' : 'ES_PASSWORD'}
-${process.env.CREDENTIAL_ID ? '' : 'CREDENTIAL_ID'}
-${process.env.ES_TOTP_SECRET ? '' : 'ES_TOTP_SECRET'}
+${process.env.WINDOWS_SIGN_USER_NAME ? '' : 'WINDOWS_SIGN_USER_NAME'}
+${process.env.WINDOWS_SIGN_PASSWORD ? '' : 'WINDOWS_SIGN_PASSWORD'}
+${process.env.WINDOWS_SIGN_CREDENTIAL_ID ? '' : 'WINDOWS_SIGN_CREDENTIAL_ID'}
+${process.env.WINDOWS_SIGN_TOTP_SECRET ? '' : 'WINDOWS_SIGN_TOTP_SECRET'}
 `)
     process.exit(1)
   }
