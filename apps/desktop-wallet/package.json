@@ -46,6 +46,7 @@
     "esbuild"
   ],
   "devDependencies": {
+    "@actions/tool-cache": "^2.0.1",
     "@alephium/eslint-config": "workspace:*",
     "@alephium/shared": "workspace:*",
     "@alephium/token-list": "^0.0.12",

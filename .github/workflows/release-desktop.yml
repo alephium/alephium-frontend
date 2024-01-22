@@ -47,6 +47,7 @@ jobs:
           package_root: 'apps/desktop-wallet'
           build_script_name: 'ci:build:${{ steps.get-os.outputs.os }}'
           is_monorepo: true
+          release: true
           github_token: ${{ secrets.github_token }}
           mac_certs: ${{ secrets.MAC_CERTS }}
           mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
@@ -56,57 +57,7 @@ jobs:
           APPLEID: ${{ secrets.APPLE_ID }}
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
-
-      - name: Create artifacts directory to prepare for signing Windows exe file
-        if: startsWith(matrix.os, 'windows')
-        shell: bash
-        run: mkdir ${GITHUB_WORKSPACE}/artifacts
-
-      - name: Find Alephuim-*.exe file that needs to be signed
-        if: startsWith(matrix.os, 'windows')
-        id: get-exefile
-        run: echo "exefile=$(find . -name 'Alephium-*.exe')" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Sign Alephuim-*.exe with CodeSignTool and upload to artifacts directory
-        uses: sslcom/esigner-codesign@develop
-        if: startsWith(matrix.os, 'windows')
-        with:
-          command: sign
-          username: ${{ secrets.ES_USERNAME }}
-          password: ${{ secrets.ES_PASSWORD }}
-          credential_id: ${{ secrets.CREDENTIAL_ID }}
-          totp_secret: ${{ secrets.ES_TOTP_SECRET }}
-          file_path: ${{ steps.get-exefile.outputs.exefile }}
-          output_path: ${GITHUB_WORKSPACE}/artifacts
-          malware_block: false
-          environment_name: PROD
-
-      - name: Find Alephium-*.exe signed file path and name
-        if: startsWith(matrix.os, 'windows')
-        id: get-signedfile
-        run: |
-          echo "file=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe')" >> $GITHUB_OUTPUT
-          echo "filename=$(find ${GITHUB_WORKSPACE}/artifacts -name 'Alephium-*.exe' | xargs basename)" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Get desktop wallet version
-        id: get-version
-        uses: beaconbrigade/package-json-version@v0.3
-        with:
-          path: apps/desktop-wallet/
-
-      - name: Create draft release and upload artifacts
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: true
-          token: ${{ secrets.github_token }}
-          files: |
-            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*.deb
-            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}.AppImage
-            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*.dmg
-            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*mac.zip
-            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*.blockmap
-            apps/desktop-wallet/dist/*${{ steps.get-version.outputs.version }}*.checksum
-            apps/desktop-wallet/dist/latest*.yml
-            artifacts/${{ steps.get-signedfile.outputs.filename }}
+          ES_USERNAME: ${{ secrets.ES_USERNAME }}
+          ES_PASSWORD: ${{ secrets.ES_PASSWORD }}
+          CREDENTIAL_ID: ${{ secrets.CREDENTIAL_ID }}
+          ES_TOTP_SECRET: ${{ secrets.ES_TOTP_SECRET }}
