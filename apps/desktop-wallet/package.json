@@ -46,6 +46,7 @@
     "esbuild"
   ],
   "devDependencies": {
+    "@actions/tool-cache": "^2.0.1",
     "@alephium/eslint-config": "workspace:*",
     "@alephium/shared": "workspace:*",
     "@alephium/token-list": "^0.0.12",
@@ -161,6 +162,10 @@
     },
     "win": {
       "artifactName": "${productName}-${version}.${ext}",
+      "sign": ".signWindows.js",
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
       "publisherName": [
         "Panda Software SA"
       ]
