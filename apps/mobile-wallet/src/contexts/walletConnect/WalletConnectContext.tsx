@@ -134,6 +134,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
   const isAuthenticated = !!mnemonic
+  const isWalletConnectClientReady =
+    isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
   const initializeWalletConnectClient = useCallback(async () => {
     try {
@@ -539,7 +541,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && walletConnectClient) {
+      if (nextAppState === 'background' && isWalletConnectClientReady) {
         const backgroundTask = async () => {
           while (BackgroundService.isRunning()) {
             console.log('Keeping app alive to be able to respond to WalletConnect')
@@ -569,10 +571,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [onSessionRequest, walletConnectClient])
+  }, [isWalletConnectClientReady])
 
   useEffect(() => {
-    if (!isWalletConnectEnabled || !walletConnectClient || walletConnectClientStatus !== 'initialized') return
+    if (!isWalletConnectClientReady) return
 
     console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
 
@@ -598,8 +600,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       walletConnectClient.off('proposal_expire', onProposalExpire)
     }
   }, [
-    walletConnectClientStatus,
-    isWalletConnectEnabled,
+    isWalletConnectClientReady,
     onProposalExpire,
     onSessionDelete,
     onSessionEvent,
