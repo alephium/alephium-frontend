@@ -64,6 +64,8 @@ import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/util
 import { useURL } from 'expo-linking'
 import { partition } from 'lodash'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { AppState, AppStateStatus } from 'react-native'
+import BackgroundService from 'react-native-background-actions'
 import { Portal } from 'react-native-portalize'
 
 import { sendAnalytics } from '~/analytics'
@@ -84,6 +86,7 @@ import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, SignMessageData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
+import { sleep } from '~/utils/misc'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 const MaxRequestNumToKeep = 10
@@ -116,6 +119,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const url = useURL()
   const wcDeepLink = useRef<string>()
+  const appState = useRef(AppState.currentState)
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -532,6 +536,40 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     walletConnectClientStatus !== 'initialized' &&
     walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
+
+  useEffect(() => {
+    const handleAppStateChange = async (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'background' && walletConnectClient) {
+        const backgroundTask = async () => {
+          while (BackgroundService.isRunning()) {
+            console.log('Keeping app alive to be able to respond to WalletConnect')
+            await sleep(1000)
+          }
+        }
+
+        await BackgroundService.start(backgroundTask, {
+          taskName: 'WalletConnectListener',
+          taskTitle: 'WalletConnect',
+          taskDesc: 'Keeping WalletConnect connection alive',
+          taskIcon: {
+            name: 'ic_launcher',
+            type: 'mipmap'
+          },
+          linkingURI: 'alephium://'
+        })
+      } else if (nextAppState === 'active') {
+        await BackgroundService.stop()
+      }
+
+      appState.current = nextAppState
+    }
+
+    if (BackgroundService.isRunning()) BackgroundService.stop()
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange)
+
+    return subscription.remove
+  }, [onSessionRequest, walletConnectClient])
 
   useEffect(() => {
     if (!isWalletConnectEnabled || !walletConnectClient || walletConnectClientStatus !== 'initialized') return
