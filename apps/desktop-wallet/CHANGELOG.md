@@ -1,5 +1,16 @@
 # alephium-desktop-wallet
 
+## 2.2.1
+
+### Patch Changes
+
+- f98987d: Add clear WalletConnect cache button in general settings
+- f7fb5fe: Fixing decimals in asset badges
+- edc5fcf: Fix list of suggested words in wallet import
+- 60938b2: Fix crash after login
+- a309825: Sign messages through WalletConnect
+- ac9906c: Keep up to 10 unresponsive WalletConnect requests and clear the rest to avoid crashes due to storage overload
+
 ## 2.2.0
 
 ### Minor Changes
