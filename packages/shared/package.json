@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
-    "@alephium/web3": "0.28.1",
+    "@alephium/web3": "0.29.1",
     "@walletconnect/utils": "2.11.0",
     "base-x": "^4.0.0",
     "bcfg": "~0.1.6",

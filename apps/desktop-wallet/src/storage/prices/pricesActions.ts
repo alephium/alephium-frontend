@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -29,10 +29,19 @@ export const syncTokenPrices = createAsyncThunk(
   async ({ knownTokenSymbols, currency }: { knownTokenSymbols: string[]; currency: string }) => {
     const tokenPrices = await Promise.all(
       chunk(knownTokenSymbols, TOKENS_QUERY_LIMIT).map((knownTokenSymbolsChunk) =>
-        client.explorer.market.getMarketPrices({
-          ids: knownTokenSymbolsChunk.map((s) => s.toLowerCase()),
-          currency: currency.toLowerCase()
-        })
+        client.explorer.market
+          .postMarketPrices(
+            {
+              currency: currency.toLowerCase()
+            },
+            knownTokenSymbolsChunk
+          )
+          .then((prices) =>
+            prices.map((price, index) => ({
+              symbol: knownTokenSymbolsChunk[index],
+              price
+            }))
+          )
       )
     )
 
@@ -43,26 +52,33 @@ export const syncTokenPrices = createAsyncThunk(
 export const syncTokenPricesHistory = createAsyncThunk(
   'assets/syncTokenPricesHistory',
   async ({ tokenSymbol, currency }: { tokenSymbol: string; currency: string }) => {
-    const rawHistory = (await client.explorer.market.getMarketPricesIdCharts(tokenSymbol, {
+    const rawHistory = await client.explorer.market.getMarketPricesSymbolCharts(tokenSymbol, {
       currency: currency.toLowerCase()
-    })) as unknown as [number, number][] // TODO: fix type explorer backend type...
+    })
 
     const today = dayjs().format(CHART_DATE_FORMAT)
+    let history = [] as HistoricalPrice[]
 
-    return {
-      id: tokenSymbol,
-      history: rawHistory.reduce((acc, v) => {
-        const itemDate = dayjs(v[0]).format(CHART_DATE_FORMAT)
+    if (rawHistory.timestamps && rawHistory.prices) {
+      const pricesHistoryArray = rawHistory.prices
+
+      history = rawHistory.timestamps.reduce((acc, v, index) => {
+        const itemDate = dayjs(v).format(CHART_DATE_FORMAT)
         const isDuplicatedItem = !!acc.find(({ date }) => dayjs(date).format(CHART_DATE_FORMAT) === itemDate)
 
         if (!isDuplicatedItem && itemDate !== today)
           acc.push({
             date: itemDate,
-            value: v[1]
+            value: pricesHistoryArray[index]
           })
 
         return acc
       }, [] as HistoricalPrice[])
+    }
+
+    return {
+      id: tokenSymbol,
+      history
     }
   }
 )

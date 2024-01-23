@@ -181,7 +181,7 @@ export const syncAddressesHistoricBalances = createAsyncThunk(
 
     for (const addressHash of addresses) {
       const balances = []
-      const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistory(
+      const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
         addressHash,
         { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
         { format: 'text' }

@@ -203,7 +203,7 @@ const App = () => {
               restorePendingTransactions(mempoolTxHashes, storedPendingTxs)
             })
 
-          dispatch(syncTokenPricesHistory({ tokenSymbol: ALPH.symbol.toLowerCase(), currency: settings.fiatCurrency }))
+          dispatch(syncTokenPricesHistory({ tokenSymbol: ALPH.symbol, currency: settings.fiatCurrency }))
         }
       } else if (addressesStatus === 'initialized') {
         if (!isTokensMetadataUninitialized && !isLoadingTokensMetadata) {

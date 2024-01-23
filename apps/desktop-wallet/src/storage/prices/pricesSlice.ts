@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Price } from '@alephium/web3/dist/src/api/api-explorer'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { syncTokenPrices } from '@/storage/prices/pricesActions'
 import { tokenPricesAdapter } from '@/storage/prices/pricesAdapter'
+import { TokenPriceEntity } from '@/types/price'
 
-interface PricesState extends EntityState<Price> {
+interface PricesState extends EntityState<TokenPriceEntity> {
   loading: boolean
 }
 

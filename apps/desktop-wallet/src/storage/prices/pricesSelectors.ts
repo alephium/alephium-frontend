@@ -28,7 +28,7 @@ export const { selectAll: selectAllPrices, selectById: selectPriceById } = token
 
 export const selectAlphPrice = createSelector(
   (state: RootState) => state,
-  (state) => selectPriceById(state, ALPH.symbol.toLowerCase())
+  (state) => selectPriceById(state, ALPH.symbol)
 )
 
 export const { selectAll: selectAllPricesHistories, selectById: selectPriceHistoryById } =
@@ -36,5 +36,5 @@ export const { selectAll: selectAllPricesHistories, selectById: selectPriceHisto
 
 export const selectAlphPriceHistory = createSelector(
   (state: RootState) => state,
-  (state) => selectPriceHistoryById(state, ALPH.symbol.toLowerCase())
+  (state) => selectPriceHistoryById(state, ALPH.symbol)
 )
