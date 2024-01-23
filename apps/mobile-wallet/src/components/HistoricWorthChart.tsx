@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { toHumanReadableAmount } from '@alephium/shared'
+import { CHART_DATE_FORMAT, toHumanReadableAmount } from '@alephium/shared'
 import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
@@ -38,7 +38,6 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 import { ChartLength, chartLengths, DataPoint, LatestAmountPerAddress } from '~/types/charts'
 import { Currency } from '~/types/settings'
-import { CHART_DATE_FORMAT } from '~/utils/constants'
 
 interface HistoricWorthChart {
   latestWorth: number

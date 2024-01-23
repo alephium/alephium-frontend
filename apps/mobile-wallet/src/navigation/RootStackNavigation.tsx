@@ -28,7 +28,6 @@ import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
 import { Analytics } from '~/analytics'
-import ProgressHeader from '~/components/headers/ProgressHeader'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
@@ -128,13 +127,7 @@ const RootStackNavigation = () => {
                       name="BackupMnemonicNavigation"
                       component={BackupMnemonicNavigation}
                       options={{
-                        header: (props) => (
-                          <ProgressHeader
-                            workflow="backup"
-                            {...props}
-                            options={{ ...props.options, headerTitle: 'Backup' }}
-                          />
-                        )
+                        headerShown: false
                       }}
                     />
                   </RootStack.Group>

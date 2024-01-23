@@ -57,7 +57,7 @@
     "expo-local-authentication": "~13.4.1",
     "expo-localization": "~14.3.0",
     "expo-screen-capture": "~5.3.0",
-    "expo-secure-store": "~12.3.1",
+    "expo-secure-store": "~12.5.0",
     "expo-sensors": "~12.3.0",
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",

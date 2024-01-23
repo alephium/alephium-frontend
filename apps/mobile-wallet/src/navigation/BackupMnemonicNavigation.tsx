@@ -19,10 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
+import ProgressHeader from '~/components/headers/ProgressHeader'
+import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import BackupIntroScreen from '~/screens/BackupMnemonic/BackupIntroScreen'
 import VerificationSuccessScreen from '~/screens/BackupMnemonic/VerificationSuccessScreen'
 import VerifyMnemonicScreen from '~/screens/BackupMnemonic/VerifyMnemonicScreen'
+import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 
 export interface BackupMnemonicNavigationParamList extends ParamListBase {
   BackupIntroScreen: undefined
@@ -33,11 +36,25 @@ export interface BackupMnemonicNavigationParamList extends ParamListBase {
 const BackupMnemonicStack = createStackNavigator<BackupMnemonicNavigationParamList>()
 
 const BackupMnemonicNavigation = (props: StackScreenProps<RootStackParamList, 'BackupMnemonicNavigation'>) => (
-  <BackupMnemonicStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="BackupIntroScreen">
-    <BackupMnemonicStack.Screen name="BackupIntroScreen" component={BackupIntroScreen} />
-    <BackupMnemonicStack.Screen name="VerifyMnemonicScreen" component={VerifyMnemonicScreen} />
-    <BackupMnemonicStack.Screen name="VerificationSuccessScreen" component={VerificationSuccessScreen} />
-  </BackupMnemonicStack.Navigator>
+  <HeaderContextProvider>
+    <BackupMnemonicProgressHeader />
+    <BackupMnemonicStack.Navigator
+      screenOptions={{ headerShown: false, cardStyle: { overflow: SCREEN_OVERFLOW } }}
+      initialRouteName="BackupIntroScreen"
+    >
+      <BackupMnemonicStack.Screen name="BackupIntroScreen" component={BackupIntroScreen} />
+      <BackupMnemonicStack.Screen name="VerifyMnemonicScreen" component={VerifyMnemonicScreen} />
+      <BackupMnemonicStack.Screen name="VerificationSuccessScreen" component={VerificationSuccessScreen} />
+    </BackupMnemonicStack.Navigator>
+  </HeaderContextProvider>
 )
+
+const BackupMnemonicProgressHeader = () => {
+  const { headerOptions, screenScrollY } = useHeaderContext()
+
+  return (
+    <ProgressHeader options={{ headerTitle: 'Backup', ...headerOptions }} workflow="backup" scrollY={screenScrollY} />
+  )
+}
 
 export default BackupMnemonicNavigation

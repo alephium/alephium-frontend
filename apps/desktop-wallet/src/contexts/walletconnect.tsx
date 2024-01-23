@@ -16,13 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount, getHumanReadableError, WalletConnectClientStatus } from '@alephium/shared'
+import {
+  AssetAmount,
+  getHumanReadableError,
+  WALLETCONNECT_ERRORS,
+  WalletConnectClientStatus,
+  WalletConnectError
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
+  SignMessageParams,
+  SignMessageResult,
   SignTransferTxParams,
   SignUnsignedTxParams,
   SignUnsignedTxResult
@@ -60,7 +68,8 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import SendModalCallContract from '@/modals/SendModals/CallContract'
 import SendModalDeployContract from '@/modals/SendModals/DeployContract'
-import SignUnsignedTxModal from '@/modals/SendModals/SignUnsignedTxModal'
+import SignMessageModal from '@/modals/WalletConnect/SignMessageModal'
+import SignUnsignedTxModal from '@/modals/WalletConnect/SignUnsignedTxModal'
 import WalletConnectSessionProposalModal from '@/modals/WalletConnect/WalletConnectSessionProposalModal'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
@@ -69,6 +78,7 @@ import {
   CallContractTxData,
   DappTxData,
   DeployContractTxData,
+  SignMessageData,
   SignUnsignedTxData,
   TransferTxData,
   TxDataToModalType,
@@ -76,7 +86,6 @@ import {
 } from '@/types/transactions'
 import { SessionProposalEvent, SessionRequestEvent } from '@/types/walletConnect'
 import { AlephiumWindow } from '@/types/window'
-import { WALLETCONNECT_ERRORS } from '@/utils/constants'
 import { useInterval } from '@/utils/hooks'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
@@ -119,6 +128,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const [isDeployContractSendModalOpen, setIsDeployContractSendModalOpen] = useState(false)
   const [isCallScriptSendModalOpen, setIsCallScriptSendModalOpen] = useState(false)
   const [isSignUnsignedTxModalOpen, setIsSignUnsignedTxModalOpen] = useState(false)
+  const [isSignMessageModalOpen, setIsSignMessageModalOpen] = useState(false)
 
   const [walletConnectClient, setWalletConnectClient] = useState(initialContext.walletConnectClient)
   const [activeSessions, setActiveSessions] = useState(initialContext.activeSessions)
@@ -228,6 +238,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
           setIsCallScriptSendModalOpen(true)
         } else if (modalType === TxType.SIGN_UNSIGNED_TX) {
           setIsSignUnsignedTxModalOpen(true)
+        } else if (modalType === TxType.SIGN_MESSAGE) {
+          setIsSignMessageModalOpen(true)
         }
 
         electron?.app.show()
@@ -236,6 +248,9 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       const {
         params: { request }
       } = event
+
+      console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
+      console.log('👉 REQUESTED METHOD:', request.method)
 
       try {
         switch (request.method as RelayMethod) {
@@ -306,6 +321,17 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             }
 
             setTxDataAndOpenModal({ txData, modalType: TxType.SCRIPT })
+            break
+          }
+          case 'alph_signMessage': {
+            const { message, messageHasher, signerAddress } = request.params as SignMessageParams
+            const txData: SignMessageData = {
+              fromAddress: getSignerAddressByHash(signerAddress),
+              message,
+              messageHasher
+            }
+            setTxDataAndOpenModal({ txData, modalType: TxType.SIGN_MESSAGE })
+
             break
           }
           case 'alph_signUnsignedTx': {
@@ -684,16 +710,20 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       })
   }
 
-  const handleSignSuccess = async (result: SignUnsignedTxResult) => {
+  const handleSignSuccess = async (result: SignUnsignedTxResult | SignMessageResult) => {
     if (sessionRequestEvent) await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
+
+    electron?.app.hide()
   }
 
-  const handleSignFail = async (errorMessage: string) => {
-    if (sessionRequestEvent)
-      await respondToWalletConnectWithError(sessionRequestEvent, {
-        message: errorMessage,
-        code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
-      })
+  const handleSignFail = async (error: WalletConnectError) => {
+    if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, error)
+  }
+
+  const handleSignReject = async () => {
+    if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))
+
+    electron?.app.hide()
   }
 
   const reset = useCallback(async () => {
@@ -802,6 +832,19 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
                 }}
                 onSignSuccess={handleSignSuccess}
                 onSignFail={handleSignFail}
+                onSignReject={handleSignReject}
+              />
+            )}
+            {isSignMessageModalOpen && dappTxData && (
+              <SignMessageModal
+                txData={dappTxData as SignMessageData}
+                onClose={() => {
+                  handleSessionRequestModalClose()
+                  setIsSignMessageModalOpen(false)
+                }}
+                onSignSuccess={handleSignSuccess}
+                onSignFail={handleSignFail}
+                onSignReject={handleSignReject}
               />
             )}
           </>

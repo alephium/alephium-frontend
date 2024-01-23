@@ -23,7 +23,7 @@ import {
 } from '@alephium/web3/dist/src/api/api-alephium'
 import { SignClientTypes } from '@walletconnect/types'
 
-import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
+import { CallContractTxData, DeployContractTxData, SignMessageData, TransferTxData } from '~/types/transactions'
 
 export type SessionRequestEvent = SignClientTypes.EventArguments['session_request']
 
@@ -44,4 +44,9 @@ export type SessionRequestData =
       type: 'deploy-contract'
       wcData: DeployContractTxData
       unsignedTxData: BuildDeployContractTxResult
+    }
+  | {
+      type: 'sign-message'
+      wcData: SignMessageData
+      unsignedTxData?: undefined
     }

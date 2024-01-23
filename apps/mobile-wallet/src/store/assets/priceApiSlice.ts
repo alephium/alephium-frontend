@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // TODO: Same as in desktop wallet
 
+import { CHART_DATE_FORMAT } from '@alephium/shared'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import dayjs from 'dayjs'
 
 import { Currency } from '~/types/settings'
-import { CHART_DATE_FORMAT } from '~/utils/constants'
 
 type HistoricalPriceQueryParams = {
   currency: Currency

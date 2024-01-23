@@ -472,5 +472,10 @@
   "Clear": "Clear",
   "Helps avoid crashes due to WalletConnect": "Helps avoid crashes due to WalletConnect",
   "WalletConnect cache cleared successfully.": "WalletConnect cache cleared successfully.",
-  "Could not clear WalletConnect cache.": "Could not clear WalletConnect cache."
+  "Could not clear WalletConnect cache.": "Could not clear WalletConnect cache.",
+  "Sign Unsigned Transaction": "Sign Unsigned Transaction",
+  "Transaction ID": "Transaction ID",
+  "Unsigned transaction": "Unsigned transaction",
+  "Sign Message": "Sign Message",
+  "Message": "Message"
 }

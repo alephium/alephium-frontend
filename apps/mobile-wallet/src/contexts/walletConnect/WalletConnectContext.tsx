@@ -18,7 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@walletconnect/react-native-compat'
 
-import { AddressHash, AssetAmount, getHumanReadableError, WalletConnectClientStatus } from '@alephium/shared'
+import {
+  AddressHash,
+  AssetAmount,
+  getHumanReadableError,
+  WALLETCONNECT_ERRORS,
+  WalletConnectClientStatus,
+  WalletConnectError
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -27,6 +34,8 @@ import {
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
+  SignMessageParams,
+  SignMessageResult,
   SignTransferTxParams,
   SignTransferTxResult
 } from '@alephium/web3'
@@ -72,9 +81,8 @@ import { useAppSelector } from '~/hooks/redux'
 import useInterval from '~/hooks/useInterval'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
-import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
+import { CallContractTxData, DeployContractTxData, SignMessageData, TransferTxData } from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
-import { WALLETCONNECT_ERRORS } from '~/utils/constants'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
@@ -231,6 +239,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
       if (!walletConnectClient) return
 
+      console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
+      console.log('👉 REQUESTED METHOD:', requestEvent.params.request.method)
+
       try {
         switch (requestEvent.params.request.method as RelayMethod) {
           case 'alph_signAndSubmitTransferTx': {
@@ -246,7 +257,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
-                message: 'Signer address doesn\t exist',
+                message: "Signer address doesn't exist",
                 code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
               })
             }
@@ -279,9 +290,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_signAndSubmitDeployContractTx': {
-            console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
-            console.log('👉 REQUESTED METHOD:', requestEvent.params.request.method)
-
             const { signerAddress, initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice } =
               requestEvent.params.request.params as SignDeployContractTxParams
             const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
@@ -292,7 +300,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
-                message: 'Signer address doesn\t exist',
+                message: "Signer address doesn't exist",
                 code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
               })
             }
@@ -325,9 +333,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           case 'alph_signAndSubmitExecuteScriptTx': {
-            console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
-            console.log('👉 REQUESTED METHOD:', requestEvent.params.request.method)
-
             const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } = requestEvent.params.request
               .params as SignExecuteScriptTxParams
             let assetAmounts: AssetAmount[] = []
@@ -337,7 +342,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
             if (!fromAddress) {
               return respondToWalletConnectWithError(requestEvent, {
-                message: 'Signer address doesn\t exist',
+                message: "Signer address doesn't exist",
                 code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
               })
             }
@@ -378,6 +383,35 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             setSessionRequestEvent(requestEvent)
 
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
+            setIsSessionRequestModalOpen(true)
+
+            break
+          }
+          case 'alph_signMessage': {
+            const { message, messageHasher, signerAddress } = requestEvent.params.request.params as SignMessageParams
+
+            const fromAddress = addressIds.find((address) => address === signerAddress)
+
+            if (!fromAddress) {
+              return respondToWalletConnectWithError(requestEvent, {
+                message: "Signer address doesn't exist",
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            const signData: SignMessageData = {
+              fromAddress,
+              message,
+              messageHasher
+            }
+
+            setSessionRequestData({
+              type: 'sign-message',
+              wcData: signData
+            })
+            setSessionRequestEvent(requestEvent)
+
+            console.log('⏳ OPENING MODAL TO SIGN MESSAGE...')
             setIsSessionRequestModalOpen(true)
 
             break
@@ -776,6 +810,19 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }
 
+  const handleSignSuccess = async (result: SignMessageResult) => {
+    if (!sessionRequestEvent) return
+
+    console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
+    await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
+    console.log('✅ INFORMING: DONE!')
+
+    console.log('👉 RESETTING SESSION REQUEST EVENT.')
+    setSessionRequestEvent(undefined)
+    setSessionRequestData(undefined)
+    showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
+  }
+
   const handleRejectPress = async () => {
     if (!sessionRequestEvent) return
 
@@ -790,6 +837,22 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
       showToast({ text1: 'DApp request rejected', text2: 'You can go back to your browser.' })
+    }
+  }
+
+  const handleSendTxOrSignFail = async (error: WalletConnectError) => {
+    if (!sessionRequestEvent) return
+
+    try {
+      console.log('⏳ INFORMING DAPP THAT SESSION REQUEST FAILED...')
+      await respondToWalletConnectWithError(sessionRequestEvent, error)
+      console.log('✅ INFORMING: DONE!')
+    } catch (e) {
+      console.error('❌ INFORMING: FAILED.')
+    } finally {
+      console.log('👉 RESETTING SESSION REQUEST EVENT.')
+      setSessionRequestEvent(undefined)
+      setSessionRequestData(undefined)
     }
   }
 
@@ -868,6 +931,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                 requestData={sessionRequestData}
                 onApprove={handleApprovePress}
                 onReject={handleRejectPress}
+                onSendTxOrSignFail={handleSendTxOrSignFail}
+                onSignSuccess={handleSignSuccess}
                 metadata={activeSessionMetadata}
                 {...props}
               />
