@@ -17,9 +17,6 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(monorepoRoot, 'node_modules')
 ]
-// 3. Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
-// TODO: Remove this after updating to Expo 50
-config.resolver.disableHierarchicalLookup = true
 
 // Use turborepo to restore the cache when possible
 config.cacheStores = [new FileStore({ root: path.join(projectRoot, 'node_modules', '.cache', 'metro') })]
