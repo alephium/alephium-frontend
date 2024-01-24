@@ -38,7 +38,8 @@ const TextAreaTags = (props: ComponentProps<typeof Tags>) => (
           position: 'all',
           classname: 'tags-dropdown',
           maxItems: 5,
-          highlightFirst: true
+          highlightFirst: true,
+          includeSelectedTags: true // Should the suggestions list Include already-selected tags (after filtering)
         },
         addTagOnBlur: false,
         editTags: false
