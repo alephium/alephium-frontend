@@ -16263,7 +16263,7 @@ packages:
       react-native: '>=0.47.0'
     dependencies:
       eventemitter3: 4.0.7
-      react-native: 0.72.6(@babel/core@7.23.6)(@babel/preset-env@7.23.6)(react@18.2.0)
+      react-native: 0.72.6(@babel/core@7.23.6)(@babel/preset-env@7.23.8)(react@18.2.0)
     dev: false
 
   /react-native-gesture-handler@2.14.0(react-native@0.72.6)(react@18.2.0):
