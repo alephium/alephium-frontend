@@ -114,7 +114,7 @@ const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
             <SidebarFooter>
               <SocialMedias>
                 {socialMediaLogos.map(({ media, img }) => (
-                  <SocialMedia key={media} src={img} onClick={() => openInWebBrowser(links[media])} />
+                  <SocialMedia key={media} $src={img} onClick={() => openInWebBrowser(links[media])} />
                 ))}
               </SocialMedias>
               <Version>v{import.meta.env.VITE_VERSION}</Version>
@@ -228,9 +228,10 @@ const SocialMedias = styled.div`
   gap: 10px;
 `
 
-const SocialMedia = styled.div<{ src: string }>`
-  ${({ src }) => css`
-    mask: url(${src}) no-repeat center;
+const SocialMedia = styled.div<{ $src: string }>`
+  ${({ $src }) => css`
+    -webkit-mask: url(${$src}) no-repeat center;
+    mask: url(${$src}) no-repeat center;
   `}
 
   height: 20px;
