@@ -26,6 +26,7 @@ import { fadeInOut } from '@/animations'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
 import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
+import { messagesLeftMarginPx } from '@/style/globalStyles'
 import { currencies } from '@/utils/currencies'
 
 interface GreetingMessagesProps {
@@ -101,7 +102,7 @@ export default styled(GreetingMessages)`
   align-items: center;
   align-self: flex-start;
   height: 44px;
-  margin-left: 70px;
+  margin-left: ${messagesLeftMarginPx}px;
   font-size: 16px;
   font-weight: var(--fontWeight-normal);
   color: ${({ theme }) => theme.font.secondary};
