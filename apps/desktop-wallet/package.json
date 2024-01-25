@@ -1,7 +1,7 @@
 {
   "name": "alephium-desktop-wallet",
   "description": "The official Alephium wallet",
-  "version": "2.2.1",
+  "version": "2.2.1-rc.7",
   "author": "Alephium dev <dev@alephium.org>",
   "main": "public/electron.js",
   "homepage": "./",
