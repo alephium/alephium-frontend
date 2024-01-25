@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { BellPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
@@ -99,7 +100,10 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
   return (
     <CenteredModal title={t('New version')} onClose={closeModal} focusMode>
       <Section>
-        <InfoBox Icon={BellPlus}>{error ? error : downloadMessage}</InfoBox>
+        <InfoBox Icon={BellPlus}>
+          <div>{error ? error : downloadMessage}</div>
+          {status === 'downloading' && <ProgressBar value={parseFloat(percent) / 100} />}
+        </InfoBox>
       </Section>
       <ModalFooterButtons>
         {status === 'download-available' && requiresManualDownload && (
@@ -118,3 +122,7 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
 }
 
 export default UpdateWalletModal
+
+const ProgressBar = styled.progress`
+  width: 100%;
+`
