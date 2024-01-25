@@ -44,7 +44,7 @@ const useLatestGitHubRelease = () => {
   const checkForManualDownload = async () => {
     const response = await fetch(links.latestReleaseApi)
     const data = await response.json()
-    const version = data.tag_name.replace('v', '')
+    const version = data.tag_name.replace('alephium-desktop-wallet@', '')
 
     if (isVersionNewer(version)) {
       setNewVersion(version)
