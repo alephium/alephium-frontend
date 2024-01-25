@@ -18,14 +18,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 export const KEY_APPMETADATA = 'alephium/desktop-wallet/appmetadata'
 
+export const currentVersion: string = import.meta.env.VITE_VERSION
+export const isRcVersion: boolean = currentVersion.includes('-rc.')
+
 export interface AppMetaData {
-  lastVersionCheckedAt: Date
+  lastCheckedAt: Date
+  lastAnnouncementHashChecked: string
 }
 
 export type TypeConstructors = DateConstructor | StringConstructor | NumberConstructor | BooleanConstructor
 
 export const APPMETADATA_KEYS: Record<string, TypeConstructors> = {
-  lastVersionCheckedAt: Date
+  lastCheckedAt: Date,
+  lastAnnouncementHashChecked: String
 }
 
 export const toAppMetaData = (key: string, value: string): unknown => {
