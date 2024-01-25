@@ -34,8 +34,8 @@ import Animated, {
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import ActionButtonsStack from '~/components/buttons/ActionButtonsStack'
 import Button from '~/components/buttons/Button'
-import ButtonStack from '~/components/buttons/ButtonStack'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useAppDispatch } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
@@ -132,25 +132,25 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
         <TitleFirstLine>Welcome to</TitleFirstLine>
         <TitleSecondLine>Alephium</TitleSecondLine>
       </TitleContainer>
-      <ActionsContainer>
-        {showNewWalletButtons && (
-          <ButtonStack>
-            <Button
-              title="New wallet"
-              type="primary"
-              onPress={() => handleButtonPress('create')}
-              variant="contrast"
-              iconProps={{ name: 'flower-outline' }}
-            />
-            <Button
-              title="Import wallet"
-              onPress={() => handleButtonPress('import')}
-              variant="contrast"
-              iconProps={{ name: 'download-outline' }}
-            />
-          </ButtonStack>
-        )}
-      </ActionsContainer>
+
+      {showNewWalletButtons && (
+        <ActionButtonsStack>
+          <Button
+            title="New wallet"
+            type="primary"
+            onPress={() => handleButtonPress('create')}
+            variant="contrast"
+            iconProps={{ name: 'flower-outline' }}
+          />
+          <Button
+            title="Import wallet"
+            onPress={() => handleButtonPress('import')}
+            variant="contrast"
+            iconProps={{ name: 'download-outline' }}
+          />
+        </ActionButtonsStack>
+      )}
+
       {isOverlayVisible && <Overlay exiting={FadeOut.delay(200)} />}
     </Screen>
   )
@@ -184,12 +184,6 @@ const TitleSecondLine = styled(AppText)`
   font-size: 26px;
   font-weight: bold;
   color: black;
-`
-
-const ActionsContainer = styled.View`
-  flex: 1.5;
-  justify-content: center;
-  align-items: center;
 `
 
 const CanvasStyled = styled(Canvas)`
