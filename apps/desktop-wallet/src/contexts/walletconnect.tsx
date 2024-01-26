@@ -99,6 +99,7 @@ export interface WalletConnectContextProps {
   activeSessions: SessionTypes.Struct[]
   dAppUrlToConnectTo?: string
   reset: () => Promise<void>
+  sessionRequestEvent?: SessionRequestEvent
 }
 
 const initialContext: WalletConnectContextProps = {
@@ -136,6 +137,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
   const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
   const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
+  const [walletLockedBeforeProcessingWCRequest, setWalletLockedBeforeProcessingWCRequest] = useState(false)
 
   const isAuthenticated = !!mnemonic
 
@@ -241,8 +243,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         } else if (modalType === TxType.SIGN_MESSAGE) {
           setIsSignMessageModalOpen(true)
         }
-
-        electron?.app.show()
       }
 
       const {
@@ -251,6 +251,15 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
       console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
       console.log('👉 REQUESTED METHOD:', request.method)
+
+      if (request.method.startsWith('alph_sign')) {
+        electron?.app.show()
+      }
+
+      if (addresses.length === 0) {
+        setWalletLockedBeforeProcessingWCRequest(true)
+        return
+      }
 
       try {
         switch (request.method as RelayMethod) {
@@ -485,6 +494,12 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
   const shouldInitialize = walletConnectClientStatus !== 'initialized'
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
+
+  useEffect(() => {
+    if (walletLockedBeforeProcessingWCRequest && sessionRequestEvent && addresses.length > 0) {
+      onSessionRequest(sessionRequestEvent)
+    }
+  }, [addresses.length, onSessionRequest, sessionRequestEvent, walletLockedBeforeProcessingWCRequest])
 
   useEffect(() => {
     if (!walletConnectClient || walletConnectClientStatus !== 'initialized') return
@@ -774,7 +789,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         pairWithDapp,
         activeSessions,
         dAppUrlToConnectTo: sessionProposalEvent?.params.proposer.metadata.url,
-        reset
+        reset,
+        sessionRequestEvent
       }}
     >
       {children}

@@ -477,5 +477,6 @@
   "Transaction ID": "Transaction ID",
   "Unsigned transaction": "Unsigned transaction",
   "Sign Message": "Sign Message",
-  "Message": "Message"
+  "Message": "Message",
+  "Received dApp request": "Received dApp request"
 }

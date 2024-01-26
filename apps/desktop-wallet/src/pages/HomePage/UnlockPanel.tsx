@@ -42,7 +42,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const { t } = useTranslation()
   const wallets = useAppSelector((state) => state.global.wallets)
   const { unlockWallet } = useGlobalContext()
-  const { dAppUrlToConnectTo } = useWalletConnectContext()
+  const { dAppUrlToConnectTo, sessionRequestEvent } = useWalletConnectContext()
   const navigate = useNavigate()
 
   const walletOptions = wallets.map(({ id, name }) => ({ label: name, value: id }))
@@ -76,7 +76,11 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   return (
     <>
       <PanelTitle useLayoutId={false} size="big" centerText>
-        {dAppUrlToConnectTo ? t('Connect to dApp') : t('Welcome back.')}
+        {dAppUrlToConnectTo
+          ? t('Connect to dApp')
+          : sessionRequestEvent
+            ? t('Received dApp request')
+            : t('Welcome back.')}
       </PanelTitle>
       <ParagraphStyled centered secondary>
         {dAppUrlToConnectTo ||
