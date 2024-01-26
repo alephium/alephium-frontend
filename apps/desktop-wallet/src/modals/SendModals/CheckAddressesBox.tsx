@@ -49,7 +49,7 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, className }: CheckAddre
       <AddressRow>
         <AddressLabel>{t('From')}</AddressLabel>
         <AddressLabelHash>
-          <AddressBadge addressHash={fromAddress.hash} truncate showFull appendHash />
+          <AddressBadge addressHash={fromAddress.hash} $truncate showFull appendHash />
         </AddressLabelHash>
       </AddressRow>
       {toAddressHash && (

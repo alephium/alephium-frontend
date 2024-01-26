@@ -109,7 +109,7 @@ const DevToolsSettingsSection = () => {
 
   return (
     <>
-      <Section align="flex-start">
+      <Section $align="flex-start">
         <Box>
           <InlineLabelValueInput
             label={t('Enable developer tools')}
@@ -120,7 +120,7 @@ const DevToolsSettingsSection = () => {
       </Section>
       {devTools && (
         <>
-          <Section align="flex-start" inList>
+          <Section $align="flex-start" inList>
             <h2 tabIndex={0} role="label">
               {t('Testnet faucet')}
             </h2>
@@ -139,7 +139,7 @@ const DevToolsSettingsSection = () => {
               {t('Receive testnet tokens')}
             </Button>
           </Section>
-          <Section align="flex-start" inList>
+          <Section $align="flex-start" inList>
             <h2 tabIndex={0} role="label">
               {t('Smart contracts')}
             </h2>
@@ -152,7 +152,7 @@ const DevToolsSettingsSection = () => {
               </Button>
             </ButtonsRow>
           </Section>
-          <PrivateKeySection align="flex-start" role="list">
+          <PrivateKeySection $align="flex-start" role="list">
             <h2 tabIndex={0} role="label">
               {t('Address keys export')}
             </h2>

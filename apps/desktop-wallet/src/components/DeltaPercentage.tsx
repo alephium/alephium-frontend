@@ -45,7 +45,7 @@ const DeltaPercentage = ({ initialValue, latestValue, className }: DeltaPercenta
     <DeltaPercentageStyled
       className={className}
       style={{ color }}
-      discreetMode={discreetMode}
+      $discreetMode={discreetMode}
       data-tooltip-id="default"
       data-tooltip-content={discreetMode ? t('Click to deactivate discreet mode') : ''}
       data-tooltip-delay-show={500}
@@ -59,13 +59,13 @@ const DeltaPercentage = ({ initialValue, latestValue, className }: DeltaPercenta
 
 export default DeltaPercentage
 
-const DeltaPercentageStyled = styled.div<{ discreetMode: boolean }>`
+const DeltaPercentageStyled = styled.div<{ $discreetMode: boolean }>`
   display: flex;
   align-items: center;
   height: 24px;
 
-  ${({ discreetMode }) =>
-    discreetMode &&
+  ${({ $discreetMode }) =>
+    $discreetMode &&
     css`
       filter: blur(10px);
       overflow: hidden;

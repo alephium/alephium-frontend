@@ -87,7 +87,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                 value={amount}
                 decimals={decimals}
                 suffix={symbol}
-                highlight={!isMoved}
+                $highlight={!isMoved}
                 showPlusMinus={!isMoved}
               />
             </AmountContainer>
@@ -118,7 +118,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
           )}
           {direction === 'swap' && (
             <>
-              <AddressBadgeStyled addressHash={transaction.address.hash} truncate withBorders />
+              <AddressBadgeStyled addressHash={transaction.address.hash} $truncate $withBorders />
               <FromIn>{t('and')}</FromIn>
               <SwapPartnerAddress>
                 <IOList
@@ -152,7 +152,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                     onClick={() => handleShowAddress(transaction.address.hash)}
                     key={transaction.address.hash}
                   >
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                    <AddressBadge addressHash={transaction.address.hash} $truncate $withBorders />
                   </ActionLinkStyled>
                 </AddressList>
               ) : (
@@ -173,7 +173,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                     onClick={() => handleShowAddress(transaction.address.hash)}
                     key={transaction.address.hash}
                   >
-                    <AddressBadge addressHash={transaction.address.hash} withBorders />
+                    <AddressBadge addressHash={transaction.address.hash} $withBorders />
                   </ActionLinkStyled>
                 </AddressList>
               ) : (
@@ -216,7 +216,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                   decimals={decimals}
                   suffix={symbol}
                   isUnknownToken={!symbol}
-                  highlight={!isMoved}
+                  $highlight={!isMoved}
                   showPlusMinus={!isMoved}
                 />
                 {!symbol && <TokenHash hash={id} />}
@@ -238,7 +238,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
             <Amounts>
               {unknownTokens.map(({ id, amount, symbol }) => (
                 <AmountContainer key={id}>
-                  <Amount tabIndex={0} value={amount} isUnknownToken={!symbol} highlight />
+                  <Amount tabIndex={0} value={amount} isUnknownToken={!symbol} $highlight />
                   {!symbol && <TokenHash hash={id} />}
                 </AmountContainer>
               ))}

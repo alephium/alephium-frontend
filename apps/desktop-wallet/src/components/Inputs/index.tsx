@@ -38,10 +38,10 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   inputFieldRef?: RefObject<HTMLInputElement>
   liftLabel?: boolean
   className?: string
-  heightSize?: InputHeight
-  simpleMode?: boolean
+  $heightSize?: InputHeight
+  $simpleMode?: boolean
   largeText?: boolean
-  showPointer?: boolean
+  $showPointer?: boolean
 }
 
 export interface TextAreaProps extends InputHTMLAttributes<HTMLTextAreaElement> {
@@ -64,12 +64,12 @@ export const inputDefaultStyle = (
   hasIcon?: boolean,
   hasValue?: boolean,
   hasLabel?: boolean,
-  heightSize?: InputHeight,
+  $heightSize?: InputHeight,
   isContrasted?: boolean,
   largeText?: boolean
 ) => css`
   background-image: none;
-  height: ${heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+  height: ${$heightSize === 'small' ? '50px' : $heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: var(--radius-big);
   background-color: ${({ theme }) => (isContrasted && theme.name === 'dark' ? theme.bg.background2 : theme.bg.primary)};

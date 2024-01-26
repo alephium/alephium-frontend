@@ -41,7 +41,7 @@ interface AddressSelectProps {
   label?: string
   disabled?: boolean
   hideAddressesWithoutAssets?: boolean
-  simpleMode?: boolean
+  $simpleMode?: boolean
   noMargin?: boolean
   className?: string
   emptyListPlaceholder?: string
@@ -59,7 +59,7 @@ function AddressSelect({
   onAddressChange,
   hideAddressesWithoutAssets,
   noMargin,
-  simpleMode = false,
+  $simpleMode = false,
   emptyListPlaceholder
 }: AddressSelectProps) {
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
@@ -111,8 +111,8 @@ function AddressSelect({
         onMouseDown={openAddressSelectModal}
         onKeyDown={(e) => onEnterOrSpace(e, openAddressSelectModal)}
         disabled={disabled}
-        heightSize={simpleMode ? 'normal' : 'big'}
-        simpleMode={simpleMode}
+        $heightSize={$simpleMode ? 'normal' : 'big'}
+        $simpleMode={$simpleMode}
         noMargin={noMargin}
       >
         {label && (
@@ -120,7 +120,7 @@ function AddressSelect({
             {label}
           </InputLabel>
         )}
-        {!disabled && !simpleMode && (
+        {!disabled && !$simpleMode && (
           <MoreIcon>
             <MoreVertical size={16} />
           </MoreIcon>
@@ -131,14 +131,14 @@ function AddressSelect({
           className={className}
           disabled={disabled}
           id={id}
-          simpleMode={simpleMode}
+          $simpleMode={$simpleMode}
           value={address.hash}
           label={label}
         >
           {(!hideAddressesWithoutAssets || options.find((option) => option.hash === address.hash)) && (
             <>
               <AddressBadge addressHash={address.hash} showFull appendHash />
-              {!address.label && !simpleMode && <HashEllipsed hash={address.hash} />}
+              {!address.label && !$simpleMode && <HashEllipsed hash={address.hash} />}
             </>
           )}
         </ClickableInput>
@@ -160,7 +160,7 @@ function AddressSelect({
 
 export default AddressSelect
 
-const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
+const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 'disabled' | '$simpleMode'>>`
   ${({ disabled }) =>
     disabled &&
     css`
@@ -168,25 +168,25 @@ const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 
       box-shadow: none;
     `}
 
-  ${({ simpleMode }) =>
-    simpleMode &&
+  ${({ $simpleMode }) =>
+    $simpleMode &&
     css`
       margin: 0;
       box-shadow: none;
     `}
 `
 
-const ClickableInput = styled.div<InputProps & Pick<AddressSelectProps, 'simpleMode'>>`
-  ${({ isValid, Icon, simpleMode, value, label }) =>
-    inputDefaultStyle(isValid || !!Icon, !!value, !!label, simpleMode ? 'normal' : 'big', false, true)};
+const ClickableInput = styled.div<InputProps & Pick<AddressSelectProps, '$simpleMode'>>`
+  ${({ isValid, Icon, $simpleMode, value, label }) =>
+    inputDefaultStyle(isValid || !!Icon, !!value, !!label, $simpleMode ? 'normal' : 'big', false, true)};
   display: flex;
   align-items: center;
   padding-right: 50px;
   gap: var(--spacing-2);
   cursor: ${({ disabled }) => (disabled ? 'auto' : 'pointer')};
 
-  ${({ simpleMode }) =>
-    simpleMode &&
+  ${({ $simpleMode }) =>
+    $simpleMode &&
     css`
       border: 0;
       height: calc(100% - 2px);

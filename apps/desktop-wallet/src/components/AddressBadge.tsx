@@ -29,8 +29,8 @@ import { makeSelectContactByAddress, selectAddressByHash } from '@/storage/addre
 
 interface AddressBadgeProps {
   addressHash: AddressHash
-  truncate?: boolean
-  withBorders?: boolean
+  $truncate?: boolean
+  $withBorders?: boolean
   hideStar?: boolean
   hideColorIndication?: boolean
   disableA11y?: boolean
@@ -48,11 +48,10 @@ const AddressBadge = ({
   hideColorIndication,
   disableA11y = false,
   disableCopy,
-  truncate,
+  $truncate,
   appendHash = false,
   displayHashUnder = false,
-  showFull,
-  withBorders
+  $withBorders
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -62,11 +61,11 @@ const AddressBadge = ({
   return (
     <AddressBadgeStyled
       className={className}
-      withBorders={contact || address ? withBorders : false}
-      truncate={truncate}
+      $withBorders={contact || address ? $withBorders : false}
+      $truncate={$truncate}
     >
       {contact ? (
-        <Label truncate={truncate}>
+        <Label $truncate={$truncate}>
           {disableCopy ? (
             contact.name
           ) : (
@@ -82,7 +81,7 @@ const AddressBadge = ({
           {!hideColorIndication && <AddressColorIndicator addressHash={address.hash} hideMainAddressBadge={hideStar} />}
           {address.label ? (
             <LabelAndHash isColumn={displayHashUnder}>
-              <Label truncate={truncate}>
+              <Label $truncate={$truncate}>
                 {disableCopy || appendHash ? (
                   address.label
                 ) : (
@@ -106,21 +105,21 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate'>>`
+const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, '$withBorders' | '$truncate'>>`
   display: flex;
   align-items: center;
   gap: 6px;
 
-  ${({ withBorders }) =>
-    withBorders &&
+  ${({ $withBorders }) =>
+    $withBorders &&
     css`
       border: 1px solid ${({ theme }) => theme.border.primary};
       border-radius: 25px;
       padding: 5px 10px;
     `}
 
-  ${({ truncate }) =>
-    truncate &&
+  ${({ $truncate }) =>
+    $truncate &&
     css`
       white-space: nowrap;
       overflow: hidden;
@@ -141,13 +140,13 @@ const LabelAndHash = styled.div<{ isColumn: boolean }>`
     `}
 `
 
-const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
+const Label = styled.span<Pick<AddressBadgeProps, '$truncate'>>`
   margin-right: 2px;
   white-space: nowrap;
   max-width: 125px;
 
-  ${({ truncate }) =>
-    truncate &&
+  ${({ $truncate }) =>
+    $truncate &&
     css`
       overflow: hidden;
       text-overflow: ellipsis;

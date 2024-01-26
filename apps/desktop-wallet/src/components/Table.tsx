@@ -32,7 +32,7 @@ export interface TableProps {
 
 interface TableCellProps {
   truncate?: boolean
-  align?: AlignType
+  $align?: AlignType
 }
 
 const Table: FC<TableProps> = ({ className, children, minWidth }) => (
@@ -76,11 +76,11 @@ export const TableCell = styled.div<TableCellProps>`
   &:not(:last-child) {
     padding-right: var(--spacing-5);
   }
-  ${({ align }) =>
-    align &&
+  ${({ $align }) =>
+    $align &&
     css`
-      justify-self: ${align};
-      text-align: ${align === 'end' ? 'right' : 'auto'};
+      justify-self: ${$align};
+      text-align: ${$align === 'end' ? 'right' : 'auto'};
     `};
 `
 
@@ -101,7 +101,7 @@ const TableColumns = styled.div<{ columnWidths?: (string | undefined)[] }>`
   min-height: 55px;
 `
 
-export const TableRow = styled(TableColumns)<{ onClick?: () => void; blinking?: boolean }>`
+export const TableRow = styled(TableColumns)<{ onClick?: () => void; $blinking?: boolean }>`
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
 
   &:last-child {
@@ -119,8 +119,8 @@ export const TableRow = styled(TableColumns)<{ onClick?: () => void; blinking?: 
       }
     `}
 
-  ${({ blinking }) =>
-    blinking &&
+  ${({ $blinking }) =>
+    $blinking &&
     css`
       opacity: 0.5;
 

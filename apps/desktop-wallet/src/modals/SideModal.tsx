@@ -61,7 +61,7 @@ const SideModal = ({
         {!hideHeader && (
           <ModalHeader>
             <HeaderColumn>{header ?? <Title>{title}</Title>}</HeaderColumn>
-            <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={onClose} Icon={X} />
+            <CloseButton aria-label={t('Close')} squared role="secondary" $transparent onClick={onClose} Icon={X} />
           </ModalHeader>
         )}
         <Scrollbar>

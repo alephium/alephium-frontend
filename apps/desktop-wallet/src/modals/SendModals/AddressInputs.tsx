@@ -117,7 +117,7 @@ const AddressInputs = ({
               onAddressChange={onFromAddressChange}
               id="from-address"
               hideAddressesWithoutAssets={hideFromAddressesWithoutAssets}
-              simpleMode
+              $simpleMode
               shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
             />
           )}

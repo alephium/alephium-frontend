@@ -230,7 +230,7 @@ const App = () => {
       {splashScreenVisible && <SplashScreen onSplashScreenShown={() => setSplashScreenVisible(false)} />}
 
       <WalletConnectContextProvider>
-        <AppContainer showDevIndication={showDevIndication}>
+        <AppContainer $showDevIndication={showDevIndication}>
           <CenteredSection>
             <Router />
           </CenteredSection>
@@ -249,15 +249,15 @@ const App = () => {
 
 export default App
 
-const AppContainer = styled.div<{ showDevIndication: boolean }>`
+const AppContainer = styled.div<{ $showDevIndication: boolean }>`
   display: flex;
   flex-direction: column;
   flex: 1;
 
   background-color: ${({ theme }) => theme.bg.secondary};
 
-  ${({ showDevIndication, theme }) =>
-    showDevIndication &&
+  ${({ $showDevIndication, theme }) =>
+    $showDevIndication &&
     css`
       border: 5px solid ${theme.global.valid};
     `};

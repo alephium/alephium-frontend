@@ -124,7 +124,7 @@ const SelectCustomComponent = () => {
   }[network.status]
 
   return (
-    <Button role="secondary" transparent short data-tooltip-id="default" data-tooltip-content={t('Current network')}>
+    <Button role="secondary" $transparent short data-tooltip-id="default" data-tooltip-content={t('Current network')}>
       <NetworkNameLabel>{upperFirst(network.name)}</NetworkNameLabel>
       <DotIcon color={networkStatusColor} />
     </Button>

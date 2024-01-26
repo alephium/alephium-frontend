@@ -52,8 +52,8 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
       borderless={!isActive}
       squared
       role="secondary"
-      transparent={!isActive}
-      isActive={isActive}
+      $transparent={!isActive}
+      $isActive={isActive}
       data-tooltip-id="sidenav"
       data-tooltip-content={label}
       iconColor={theme.font.primary}
@@ -61,9 +61,9 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
   )
 }
 
-const ButtonStyled = styled(Button)<{ isActive: boolean }>`
+const ButtonStyled = styled(Button)<{ $isActive: boolean }>`
   &:not(:hover) {
-    opacity: ${({ isActive }) => (isActive ? 1 : 0.5)} !important;
+    opacity: ${({ $isActive }) => ($isActive ? 1 : 0.5)} !important;
   }
 
   &:hover {

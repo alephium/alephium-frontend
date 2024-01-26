@@ -101,7 +101,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={currencies[fiatCurrency].symbol} />
               )}
-              <Opacity fadeOut={isHoveringChart}>
+              <Opacity $fadeOut={isHoveringChart}>
                 <FiatDeltaPercentage>
                   {isPriceLoading ||
                   stateUninitialized ||
@@ -126,9 +126,9 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                     hasHistoricBalances && (
                       <ButtonStyled
                         key={length}
-                        transparent
+                        $transparent
                         short
-                        isActive={length === chartLength}
+                        $isActive={length === chartLength}
                         onClick={() => setChartLength(length)}
                       >
                         {length}
@@ -141,7 +141,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
             {!singleAddress && (
               <>
                 <Divider />
-                <AvailableLockedBalancesColumn fadeOut={isHoveringChart}>
+                <AvailableLockedBalancesColumn $fadeOut={isHoveringChart}>
                   <AvailableBalanceRow>
                     <BalanceLabel tabIndex={0} role="representation">
                       {t('Available')}
@@ -167,7 +167,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
             )}
           </BalancesRow>
         </Balances>
-        {children && <RightColumnContent fadeOut={isHoveringChart}>{children}</RightColumnContent>}
+        {children && <RightColumnContent $fadeOut={isHoveringChart}>{children}</RightColumnContent>}
       </Panel>
 
       <ChartOuterContainer
@@ -218,9 +218,9 @@ const BalancesRow = styled.div`
   padding: 0 6%;
 `
 
-const Opacity = styled.div<{ fadeOut?: boolean }>`
+const Opacity = styled.div<{ $fadeOut?: boolean }>`
   transition: opacity 0.2s ease-out;
-  opacity: ${({ fadeOut }) => (fadeOut ? 0.23 : 1)};
+  opacity: ${({ $fadeOut }) => ($fadeOut ? 0.23 : 1)};
 `
 
 const RightColumnContent = styled(Opacity)`
@@ -289,9 +289,9 @@ const ChartLengthBadges = styled.div`
   gap: 10px;
 `
 
-const ButtonStyled = styled(Button)<{ isActive: boolean }>`
+const ButtonStyled = styled(Button)<{ $isActive: boolean }>`
   color: ${({ theme }) => theme.font.primary};
-  opacity: ${({ isActive }) => (isActive ? 1 : 0.4)};
+  opacity: ${({ $isActive }) => ($isActive ? 1 : 0.4)};
   border-color: ${({ theme }) => theme.font.primary};
   padding: 3px;
   height: auto;

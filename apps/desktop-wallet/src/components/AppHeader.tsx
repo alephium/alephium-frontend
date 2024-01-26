@@ -122,7 +122,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
           {isAuthenticated && (
             <>
               <Button
-                transparent
+                $transparent
                 squared
                 short
                 role="secondary"

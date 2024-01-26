@@ -37,7 +37,7 @@ interface SectionProps extends HTMLMotionProps<'div'> {
   apparitionDelay?: number
   style?: MotionStyle
   inList?: boolean
-  align?: SectionContentAlignment
+  $align?: SectionContentAlignment
 }
 
 const sectionVariants: Variants = {
@@ -68,7 +68,7 @@ export const FloatingPanel: FC<MainPanelProps> = ({ children, ...props }) => (
   </StyledFloatingPanel>
 )
 
-export const Section = ({ children, apparitionDelay, inList, align = 'center', style, className }: SectionProps) => (
+export const Section = ({ children, apparitionDelay, inList, $align = 'center', style, className }: SectionProps) => (
   <SectionContainer
     variants={sectionVariants}
     initial="hidden"
@@ -76,7 +76,7 @@ export const Section = ({ children, apparitionDelay, inList, align = 'center', s
     exit="hidden"
     custom={apparitionDelay}
     inList={inList}
-    align={align}
+    $align={$align}
     style={style}
     className={className}
   >
@@ -120,9 +120,9 @@ export const PanelContentContainer = styled.div`
   flex-direction: column;
 `
 
-export const SectionContainer = styled(motion.div)<{ align: SectionContentAlignment; inList?: boolean }>`
+export const SectionContainer = styled(motion.div)<{ $align: SectionContentAlignment; inList?: boolean }>`
   display: flex;
-  align-items: ${({ align }) => align};
+  align-items: ${({ $align }) => $align};
   flex-direction: column;
   min-width: 280px;
 

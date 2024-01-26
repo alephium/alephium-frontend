@@ -64,7 +64,7 @@ const WalletPassphrase = ({ onPassphraseConfirmed, setIsPassphraseConfirmed, cla
   }
 
   return (
-    <Container className={className} isOpen={isToggleSectionOpen}>
+    <Container className={className} $isOpen={isToggleSectionOpen}>
       <ToggleSection
         title={t('Use optional passphrase')}
         subtitle={t('Advanced feature')}
@@ -116,10 +116,10 @@ const WalletPassphrase = ({ onPassphraseConfirmed, setIsPassphraseConfirmed, cla
 
 export default WalletPassphrase
 
-const Container = styled.div<{ isOpen: boolean }>`
+const Container = styled.div<{ $isOpen: boolean }>`
   max-width: 350px;
 
-  opacity: ${({ isOpen }) => (isOpen ? 1 : 0.3)};
+  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0.3)};
   transition: opacity 0.2s ease-out;
 
   &:hover {

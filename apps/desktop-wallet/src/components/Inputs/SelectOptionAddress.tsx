@@ -51,7 +51,7 @@ const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAdd
       MainContent={
         <Header>
           <AddressBadgeContainer>
-            <AddressBadgeStyled addressHash={address.hash} disableA11y truncate appendHash />
+            <AddressBadgeStyled addressHash={address.hash} disableA11y $truncate appendHash />
           </AddressBadgeContainer>
           <Group>
             {t('Group')} {address.group}
@@ -63,7 +63,7 @@ const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAdd
           {knownAssetsWithBalance.map((a) => (
             <AssetBadge key={a.id} assetId={a.id} amount={a.balance} withBackground />
           ))}
-          {unknownAssetsNb > 0 && <Badge compact>+ {unknownAssetsNb}</Badge>}
+          {unknownAssetsNb > 0 && <Badge $compact>+ {unknownAssetsNb}</Badge>}
         </AssetList>
       }
     />

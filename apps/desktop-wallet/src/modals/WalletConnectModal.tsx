@@ -81,7 +81,7 @@ const WalletConnectModal = (props: CenteredModalProps) => {
             onChange={(t) => setUri(t.target.value)}
             value={uri}
             label={t('Paste WalletConnect URI copied from the dApp')}
-            heightSize="big"
+            $heightSize="big"
           />
           <ConnectButton onClick={handleConnect} disabled={uri === ''}>
             {t('Connect')}

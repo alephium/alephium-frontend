@@ -70,10 +70,10 @@ const CenteredModal: FC<CenteredModalProps> = ({
   return (
     <ModalContainer onClose={onClose} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
       <CenteredBox role="dialog" {...fadeInOutScaleFast} narrow={narrow}>
-        <ModalHeader transparent={transparentHeader}>
+        <ModalHeader $transparent={transparentHeader}>
           <TitleRow>
             {onBack && !disableBack && (
-              <BackButton aria-label={t('Back')} squared role="secondary" transparent onClick={onBack} borderless>
+              <BackButton aria-label={t('Back')} squared role="secondary" $transparent onClick={onBack} borderless>
                 <ChevronLeft />
               </BackButton>
             )}
@@ -88,7 +88,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
               </span>
               {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
             </PanelTitle>
-            <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={onClose} borderless>
+            <CloseButton aria-label={t('Close')} squared role="secondary" $transparent onClick={onClose} borderless>
               <X />
             </CloseButton>
           </TitleRow>
@@ -162,12 +162,12 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean }>`
   }
 `
 
-export const ModalHeader = styled.header<{ transparent?: boolean }>`
+export const ModalHeader = styled.header<{ $transparent?: boolean }>`
   position: sticky;
   top: 0;
   z-index: 1;
-  ${({ transparent }) =>
-    !transparent &&
+  ${({ $transparent }) =>
+    !$transparent &&
     css`
       background-color: ${({ theme }) => theme.bg.background2};
       border-bottom: 1px solid ${({ theme }) => theme.border.primary};

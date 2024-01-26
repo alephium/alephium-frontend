@@ -28,14 +28,14 @@ export default styled(TableTabBar)`
 
 const TableTab = styled(Tab)`
   min-width: 60px;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.primary : theme.bg.tertiary)};
+  background-color: ${({ $isActive, theme }) => ($isActive ? theme.bg.primary : theme.bg.tertiary)};
   border: none;
 
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   margin-bottom: 0;
 
-  ${({ isActive, theme }) =>
-    isActive &&
+  ${({ $isActive }) =>
+    $isActive &&
     css`
       border-bottom: 1px solid transparent;
     `}

@@ -57,7 +57,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
           </ButtonsGrid>
         </Shortcuts>
       </AmountsOverviewPanel>
-      <UnlockedWalletPanel bottom top>
+      <UnlockedWalletPanel $bottom $top>
         <AssetAndAddressesRow>
           <AssetsListStyled maxHeightInPx={maxPanelHeightInPx} />
           <AddressesContactsListStyled maxHeightInPx={maxPanelHeightInPx} />

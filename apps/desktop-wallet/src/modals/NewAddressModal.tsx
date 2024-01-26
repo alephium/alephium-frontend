@@ -108,7 +108,7 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
   return (
     <CenteredModal title={title} onClose={onClose}>
       {!isPassphraseUsed && (
-        <Section align="flex-start">
+        <Section $align="flex-start">
           <AddressMetadataForm
             label={addressLabel}
             setLabel={setAddressLabel}

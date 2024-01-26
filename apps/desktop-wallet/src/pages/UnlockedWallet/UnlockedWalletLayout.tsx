@@ -158,7 +158,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
             {networkStatus === 'online' && (
               <RefreshButton
                 role="secondary"
-                transparent
+                $transparent
                 squared
                 short
                 onClick={refreshAddressesData}
@@ -181,28 +181,28 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
 }
 
 export const UnlockedWalletPanel = styled.div<{
-  top?: boolean
-  bottom?: boolean
-  doubleTop?: boolean
-  backgroundColor?: keyof Pick<DefaultTheme['bg'], 'background1' | 'background2'>
+  $top?: boolean
+  $bottom?: boolean
+  $doubleTop?: boolean
+  $backgroundColor?: keyof Pick<DefaultTheme['bg'], 'background1' | 'background2'>
 }>`
   padding-left: 60px;
   padding-right: 60px;
 
-  ${({ top, doubleTop }) => css`
-    padding-top: ${top ? 20 : doubleTop ? 40 : 0}px;
+  ${({ $top, $doubleTop }) => css`
+    padding-top: ${$top ? 20 : $doubleTop ? 40 : 0}px;
   `}
 
-  ${({ bottom }) =>
-    bottom &&
+  ${({ $bottom }) =>
+    $bottom &&
     css`
       padding-bottom: 60px;
     `}
 
-  ${({ backgroundColor }) =>
-    backgroundColor &&
+  ${({ $backgroundColor }) =>
+    $backgroundColor &&
     css`
-      background-color: ${({ theme }) => theme.bg[backgroundColor]};
+      background-color: ${({ theme }) => theme.bg[$backgroundColor]};
     `}
 `
 

@@ -31,14 +31,14 @@ interface PopupProps {
   children?: ReactNode | ReactNode[]
   title?: string
   extraHeaderContent?: ReactNode
-  hookCoordinates?: Coordinates
+  $hookCoordinates?: Coordinates
   minWidth?: number
 }
 
 const minMarginToEdge = 20
 const headerHeight = 50
 
-const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, minWidth = 200 }: PopupProps) => {
+const Popup = ({ children, onClose, title, $hookCoordinates, extraHeaderContent, minWidth = 200 }: PopupProps) => {
   const { height: windowHeight, width: windowWidth } = useWindowSize() // Recompute position on window resize
 
   const contentRef = useRef<HTMLDivElement>(null)
@@ -85,7 +85,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
       {...fastTransition}
     >
       {title && (
-        <Header hasExtraContent={!!extraHeaderContent}>
+        <Header $hasExtraContent={!!extraHeaderContent}>
           <h2>{title}</h2>
           {extraHeaderContent}
         </Header>
@@ -96,10 +96,10 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
 
   return (
     <ModalContainer onClose={onClose}>
-      {hookCoordinates ? (
+      {$hookCoordinates ? (
         <Hook
-          hookCoordinates={hookCoordinates}
-          contentWidth={contentRef.current?.clientWidth || 0}
+          $hookCoordinates={$hookCoordinates}
+          $contentWidth={contentRef.current?.clientWidth || 0}
           onClick={handleHookClick}
         >
           {PopupContent}
@@ -113,13 +113,13 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
 
 export default Popup
 
-const Hook = styled.div<{ hookCoordinates: Coordinates; contentWidth: number }>`
+const Hook = styled.div<{ $hookCoordinates: Coordinates; $contentWidth: number }>`
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  top: ${({ hookCoordinates }) => hookCoordinates.y - headerHeight / 2}px;
-  left: ${({ hookCoordinates, contentWidth }) => hookCoordinates.x - contentWidth / 2}px;
+  top: ${({ $hookCoordinates }) => $hookCoordinates.y - headerHeight / 2}px;
+  left: ${({ $hookCoordinates, $contentWidth }) => $hookCoordinates.x - $contentWidth / 2}px;
 `
 
 const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
@@ -140,8 +140,8 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   background-color: ${({ theme }) => theme.bg.primary};
 `
 
-const Header = styled.div<{ hasExtraContent: boolean }>`
-  height: ${({ hasExtraContent }) => (hasExtraContent ? 'auto' : `${headerHeight}px`)};
+const Header = styled.div<{ $hasExtraContent: boolean }>`
+  height: ${({ $hasExtraContent }) => ($hasExtraContent ? 'auto' : `${headerHeight}px`)};
   padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-4);
   border-bottom: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.tertiary};

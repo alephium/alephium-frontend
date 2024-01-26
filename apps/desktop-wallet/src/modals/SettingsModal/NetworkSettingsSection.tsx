@@ -217,7 +217,7 @@ const NetworkSettingsSection = () => {
           />
           <h2 tabIndex={0} role="label">
             {t('Custom proxy (SOCKS5)')}
-            <ExperimentalBadge color={theme.global.accent} compact>
+            <ExperimentalBadge color={theme.global.accent} $compact>
               {t('Experimental')}
             </ExperimentalBadge>
           </h2>

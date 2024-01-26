@@ -69,7 +69,7 @@ const WalletsSettingsSection = () => {
 
   return (
     <>
-      <Section align="flex-start" role="table">
+      <Section $align="flex-start" role="table">
         <h2 tabIndex={0} role="label">
           {t('Wallet list')} ({wallets.length})
         </h2>
@@ -85,7 +85,7 @@ const WalletsSettingsSection = () => {
         </BoxContainerStyled>
       </Section>
       {isAuthenticated && (
-        <CurrentWalletSection align="flex-start">
+        <CurrentWalletSection $align="flex-start">
           <h2>{t('Current wallet')}</h2>
           <InfoBox label={t('Wallet name')} short>
             <CurrentWalletBox>
@@ -95,7 +95,7 @@ const WalletsSettingsSection = () => {
                 tabIndex={0}
                 squared
                 role="secondary"
-                transparent
+                $transparent
                 borderless
                 onClick={() => setIsEditWalletNameModalOpen(true)}
               >
@@ -161,7 +161,7 @@ const WalletItem = ({ wallet, isCurrent, onWalletDelete }: WalletItemProps) => {
         tabIndex={0}
         squared
         role="secondary"
-        transparent
+        $transparent
         borderless
         onClick={() => onWalletDelete(wallet)}
         onBlur={() => setIsShowingDeleteButton(false)}

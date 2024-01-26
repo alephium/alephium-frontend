@@ -52,7 +52,7 @@ const Input = ({
   inputFieldStyle,
   inputFieldRef,
   liftLabel = false,
-  heightSize = 'normal',
+  $heightSize = 'normal',
   largeText,
   ...props
 }: InputProps) => {
@@ -77,7 +77,7 @@ const Input = ({
       custom={disabled}
       noMargin={noMargin}
       className={className}
-      heightSize={heightSize}
+      $heightSize={$heightSize}
     >
       <InputRow>
         {label && (
@@ -96,7 +96,7 @@ const Input = ({
           onWheel={handleScroll}
           Icon={Icon}
           ref={inputFieldRef}
-          heightSize={heightSize}
+          $heightSize={$heightSize}
           contrast={contrast}
           largeText={largeText}
         />
@@ -107,7 +107,7 @@ const Input = ({
         )}
         {!!Icon && !!onIconPress && (
           <InputButtonContainer>
-            <Button onClick={onIconPress} Icon={Icon} transparent squared borderless />
+            <Button onClick={onIconPress} Icon={Icon} $transparent squared borderless />
           </InputButtonContainer>
         )}
         {!disabled && isValid && (
@@ -125,17 +125,17 @@ const Input = ({
 
 export default Input
 
-export const InputContainer = styled(motion.div)<Pick<InputProps, 'noMargin' | 'heightSize'>>`
+export const InputContainer = styled(motion.div)<Pick<InputProps, 'noMargin' | '$heightSize'>>`
   position: relative;
-  min-height: ${({ heightSize }) =>
-    heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+  min-height: ${({ $heightSize }) =>
+    $heightSize === 'small' ? '50px' : $heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
   width: 100%;
   margin: ${({ noMargin }) => (noMargin ? 0 : '16px 0')};
 `
 
 export const InputBase = styled.input<InputProps>`
-  ${({ isValid, value, label, Icon, heightSize, contrast, largeText }) =>
-    inputDefaultStyle(isValid || !!Icon, !!value, !!label, heightSize, contrast, largeText)};
+  ${({ isValid, value, label, Icon, $heightSize, contrast, largeText }) =>
+    inputDefaultStyle(isValid || !!Icon, !!value, !!label, $heightSize, contrast, largeText)};
   color-scheme: ${({ theme }) => (colord(theme.bg.primary).isDark() ? 'dark' : 'light')};
 `
 

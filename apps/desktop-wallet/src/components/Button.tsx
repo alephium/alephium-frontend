@@ -28,7 +28,7 @@ import Spinner from '@/components/Spinner'
 export interface ButtonProps extends HTMLMotionProps<'button'> {
   role?: 'primary' | 'secondary'
   variant?: 'default' | 'contrast' | 'valid' | 'alert' | 'faded'
-  transparent?: boolean
+  $transparent?: boolean
   disabled?: boolean
   squared?: boolean
   submit?: boolean
@@ -109,13 +109,13 @@ export default styled(Button)`
     theme,
     role = 'primary',
     variant = 'default',
-    transparent,
+    $transparent,
     borderless,
     iconBackground,
     iconColor,
     children
   }) => {
-    const bgColor = transparent
+    const bgColor = $transparent
       ? 'transparent'
       : {
           primary: {
@@ -134,7 +134,7 @@ export default styled(Button)`
           }[variant]
         }[role]
 
-    const hoverBgColor = transparent
+    const hoverBgColor = $transparent
       ? colord(theme.bg.primary).isDark()
         ? colord(theme.bg.primary).lighten(0.02).toRgbString()
         : theme.bg.hover
@@ -155,7 +155,7 @@ export default styled(Button)`
           }[variant]
         }[role]
 
-    const activeBgColor = transparent
+    const activeBgColor = $transparent
       ? colord(theme.bg.primary).isDark()
         ? colord(theme.global.accent).alpha(0.4).toRgbString()
         : colord(theme.global.accent).lighten(0.1).alpha(0.15).toRgbString()
@@ -176,7 +176,7 @@ export default styled(Button)`
           }[variant]
         }[role]
 
-    const fontColor = transparent
+    const fontColor = $transparent
       ? theme.font.secondary
       : {
           primary: {
@@ -197,7 +197,7 @@ export default styled(Button)`
 
     const borderColor = borderless
       ? 'transparent'
-      : transparent
+      : $transparent
         ? {
             primary: {
               default: theme.global.accent,
@@ -231,7 +231,7 @@ export default styled(Button)`
             }[variant]
           }[role]
 
-    const hoverColor = transparent
+    const hoverColor = $transparent
       ? theme.font.primary
       : {
           primary: {
@@ -256,7 +256,7 @@ export default styled(Button)`
       border: 1px solid ${borderColor};
       position: relative;
 
-      ${!transparent &&
+      ${!$transparent &&
       !borderless &&
       css`
         box-shadow: ${({ theme }) => theme.shadow.primary};

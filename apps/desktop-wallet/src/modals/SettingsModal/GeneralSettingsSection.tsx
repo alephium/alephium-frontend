@@ -169,7 +169,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             }}
             noMargin
             title={t('Lock time')}
-            heightSize="small"
+            $heightSize="small"
           />
         }
       />
@@ -185,7 +185,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             controlledValue={themeOptions.find((l) => l.value === theme)}
             noMargin
             title={t('Theme')}
-            heightSize="small"
+            $heightSize="small"
           />
         }
       />
@@ -217,7 +217,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             controlledValue={languageOptions.find((l) => l.value === language)}
             noMargin
             title={t('Language')}
-            heightSize="small"
+            $heightSize="small"
           />
         }
       >
@@ -246,7 +246,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             controlledValue={fiatCurrencyOptions.find((l) => l.value === fiatCurrency)}
             noMargin
             title={t('Currency')}
-            heightSize="small"
+            $heightSize="small"
           />
         }
       />

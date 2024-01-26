@@ -72,7 +72,7 @@ const ExpandableSection: FC<ExpandableSectionProps> = ({
   const titleText = isExpanded && sectionTitleOpen ? sectionTitleOpen : sectionTitleClosed
 
   return (
-    <ExpandableSectionContainer className={className} shrinkWhenOpen={shrinkWhenOpen} isOpen={isExpanded}>
+    <ExpandableSectionContainer className={className} shrinkWhenOpen={shrinkWhenOpen} $isOpen={isExpanded}>
       <Title
         onMouseDown={handleTitleExpansion}
         onKeyDown={(e) => onEnterOrSpace(e, handleTitleExpansion)}
@@ -95,7 +95,7 @@ const ExpandableSection: FC<ExpandableSectionProps> = ({
           {...fastTransition}
         >
           <Content>
-            <Section align="stretch">{children}</Section>
+            <Section $align="stretch">{children}</Section>
           </Content>
         </ContentWrapper>
       )}
@@ -105,15 +105,15 @@ const ExpandableSection: FC<ExpandableSectionProps> = ({
 
 export default ExpandableSection
 
-const ExpandableSectionContainer = styled.div<{ shrinkWhenOpen: boolean; isOpen?: boolean }>`
+const ExpandableSectionContainer = styled.div<{ shrinkWhenOpen: boolean; $isOpen?: boolean }>`
   display: flex;
   flex-direction: column;
   margin: var(--spacing-3) 0;
   transition: margin 0.2s ease-in-out;
 
-  ${({ shrinkWhenOpen, isOpen }) =>
+  ${({ shrinkWhenOpen, $isOpen }) =>
     shrinkWhenOpen &&
-    isOpen &&
+    $isOpen &&
     css`
       margin-bottom: 0;
     `}

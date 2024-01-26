@@ -77,7 +77,7 @@ const EditWalletNameModal = (props: CenteredModalProps) => {
               onBlur={onBlur}
               error={errors.name?.type === 'required' ? requiredErrorMessage : errors.name?.message}
               isValid={!!value && !errors.name}
-              heightSize="big"
+              $heightSize="big"
             />
           )}
           rules={{

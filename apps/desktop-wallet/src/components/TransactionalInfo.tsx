@@ -45,7 +45,7 @@ interface TransactionalInfoProps {
   transaction: AddressTransaction
   addressHash?: AddressHash
   showInternalInflows?: boolean
-  compact?: boolean
+  $compact?: boolean
   className?: string
 }
 
@@ -54,7 +54,7 @@ const TransactionalInfo = ({
   addressHash: addressHashProp,
   className,
   showInternalInflows,
-  compact
+  $compact
 }: TransactionalInfoProps) => {
   const { t } = useTranslation()
   const { addressHash: addressHashParam = '' } = useParams<{ addressHash: AddressHash }>()
@@ -72,7 +72,7 @@ const TransactionalInfo = ({
     tx.type === 'contract' ? (
       <Badge>{t('Smart contract')}</Badge>
     ) : (
-      <AddressBadge truncate addressHash={direction === 'in' ? tx.fromAddress : tx.toAddress} withBorders />
+      <AddressBadge $truncate addressHash={direction === 'in' ? tx.fromAddress : tx.toAddress} $withBorders />
     )
   ) : null
 
@@ -97,7 +97,7 @@ const TransactionalInfo = ({
           </AssetTime>
         </DirectionAndTime>
       </CellTime>
-      <CellAssetBadges compact={compact}>
+      <CellAssetBadges $compact={$compact}>
         <AssetBadges>
           {assets.map(({ id }) => (
             <AssetBadge assetId={id} simple key={id} />
@@ -105,12 +105,12 @@ const TransactionalInfo = ({
         </AssetBadges>
       </CellAssetBadges>
       {!showInternalInflows && (
-        <CellAddress alignRight>
+        <CellAddress $alignRight>
           <HiddenLabel text={direction === 'swap' ? t('between') : t('from')} />
           {isPending ? (
-            <AddressBadgeStyled addressHash={tx.fromAddress} truncate disableA11y withBorders />
+            <AddressBadgeStyled addressHash={tx.fromAddress} $truncate disableA11y $withBorders />
           ) : direction === 'out' || direction === 'swap' ? (
-            <AddressBadgeStyled addressHash={addressHash} truncate disableA11y withBorders />
+            <AddressBadgeStyled addressHash={addressHash} $truncate disableA11y $withBorders />
           ) : (
             direction === 'in' && (
               <IOList
@@ -149,7 +149,7 @@ const TransactionalInfo = ({
       <CellAddress>
         <DirectionalAddress>
           {direction === 'in' && !showInternalInflows && (
-            <AddressBadge addressHash={addressHash} truncate disableA11y withBorders />
+            <AddressBadge addressHash={addressHash} $truncate disableA11y $withBorders />
           )}
           {((direction === 'in' && showInternalInflows) || direction === 'out' || direction === 'swap') &&
             (pendingDestinationAddress || (
@@ -169,7 +169,7 @@ const TransactionalInfo = ({
         {knownAssets.map(({ id, amount, decimals, symbol }) => (
           <AmountContainer key={id}>
             {lockTime && lockTime > new Date() && <LockStyled unlockAt={lockTime} />}
-            <Amount value={amount} decimals={decimals} suffix={symbol} highlight={!isMoved} showPlusMinus={!isMoved} />
+            <Amount value={amount} decimals={decimals} suffix={symbol} $highlight={!isMoved} showPlusMinus={!isMoved} />
           </AmountContainer>
         ))}
       </TableCellAmount>
@@ -215,7 +215,7 @@ const AssetTime = styled.div`
   max-width: 120px;
 `
 
-const CellAddress = styled.div<{ alignRight?: boolean }>`
+const CellAddress = styled.div<{ $alignRight?: boolean }>`
   min-width: 0;
   max-width: 120px;
   flex-grow: 1;
@@ -225,8 +225,8 @@ const CellAddress = styled.div<{ alignRight?: boolean }>`
   display: flex;
   width: 100%;
 
-  ${({ alignRight }) =>
-    alignRight &&
+  ${({ $alignRight }) =>
+    $alignRight &&
     css`
       justify-content: flex-end;
     `}
@@ -258,10 +258,10 @@ const LockStyled = styled(Lock)`
   color: ${({ theme }) => theme.font.secondary};
 `
 
-const CellAssetBadges = styled.div<Pick<TransactionalInfoProps, 'compact'>>`
+const CellAssetBadges = styled.div<Pick<TransactionalInfoProps, '$compact'>>`
   flex-grow: 1;
   flex-shrink: 0;
-  width: ${({ compact }) => (compact ? '80px' : '180px')};
+  width: ${({ $compact }) => ($compact ? '80px' : '180px')};
 
   @media ${deviceBreakPoints.desktop} {
     width: 80px;

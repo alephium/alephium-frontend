@@ -60,7 +60,7 @@ const DefaultAddressSwitch = () => {
       title={t('Default address')}
       optionRender={({ value }, isSelected) => (
         <OptionContent>
-          <AddressBadgeStyled addressHash={value} truncate />
+          <AddressBadgeStyled addressHash={value} $truncate />
           {isSelected && <CheckMark />}
         </OptionContent>
       )}
@@ -81,12 +81,12 @@ const SelectCustomComponent = (value?: SelectOption<AddressHash>, disablePointer
     <Button
       role="secondary"
       short
-      transparent
+      $transparent
       data-tooltip-id="default"
       data-tooltip-content={t('Default address')}
       disablePointer={disablePointer}
     >
-      {value?.value && <AddressBadge addressHash={value.value} truncate />}
+      {value?.value && <AddressBadge addressHash={value.value} $truncate />}
     </Button>
   )
 }

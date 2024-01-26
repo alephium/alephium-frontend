@@ -71,7 +71,7 @@ const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps)
                 addressHash={address.hash}
                 hideColorIndication
                 disableCopy={!!address.label}
-                truncate
+                $truncate
               />
               {address.label && <TitleAddressHash hash={address.hash} />}
             </Title>
@@ -81,7 +81,7 @@ const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps)
           </LeftSide>
           <ExplorerButton
             role="secondary"
-            transparent
+            $transparent
             short
             onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)}
           >
@@ -116,7 +116,7 @@ const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps)
         <TransactionList
           title={t('Address transactions')}
           addressHashes={[address.hash]}
-          compact
+          $compact
           hideFromColumn
           headerExtraContent={
             <Button short role="secondary" Icon={FileDown} onClick={() => setIsCSVExportModalOpen(true)}>

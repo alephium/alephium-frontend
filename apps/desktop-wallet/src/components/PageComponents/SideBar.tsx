@@ -49,7 +49,7 @@ const SideBar: FC<SideBarProps> = ({ animateEntry, className, children }) => {
       <BottomButtons>
         <ThemeSwitcher />
         <Button
-          transparent
+          $transparent
           squared
           role="secondary"
           onClick={() => setIsSettingsModalOpen(true)}

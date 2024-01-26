@@ -52,7 +52,7 @@ interface TransactionListProps {
   className?: string
   title?: string
   limit?: number
-  compact?: boolean
+  $compact?: boolean
   hideHeader?: boolean
   hideFromColumn?: boolean
   directions?: Direction[]
@@ -67,7 +67,7 @@ const TransactionList = ({
   addressHashes,
   title,
   limit,
-  compact,
+  $compact,
   hideHeader = false,
   hideFromColumn = false,
   directions,
@@ -171,12 +171,12 @@ const TransactionList = ({
           </>
         )}
         {pendingTxs.map((tx) => (
-          <TableRow key={tx.hash} blinking role="row" tabIndex={0}>
+          <TableRow key={tx.hash} $blinking role="row" tabIndex={0}>
             <TransactionalInfo
               transaction={tx}
               addressHash={tx.address.hash}
               showInternalInflows={hideFromColumn}
-              compact={compact}
+              $compact={$compact}
             />
           </TableRow>
         ))}
@@ -192,13 +192,13 @@ const TransactionList = ({
               transaction={tx}
               addressHash={tx.address.hash}
               showInternalInflows={hideFromColumn}
-              compact={compact}
+              $compact={$compact}
             />
           </TableRow>
         ))}
         {limit === undefined && confirmedTxs.length !== totalNumberOfTransactions && (
           <TableRow role="row">
-            <TableCell align="center" role="gridcell">
+            <TableCell $align="center" role="gridcell">
               {allTxsLoaded ? (
                 <span>{t('All transactions loaded!')}</span>
               ) : userAttemptedToLoadMoreTxs ? (
@@ -211,7 +211,7 @@ const TransactionList = ({
         )}
         {!stateUninitialized && !pendingTxs.length && !displayedConfirmedTxs.length && (
           <TableRow role="row" tabIndex={0}>
-            <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
+            <TableCellPlaceholder $align="center">{t('No transactions to display')}</TableCellPlaceholder>
           </TableRow>
         )}
       </Table>

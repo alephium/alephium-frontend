@@ -133,7 +133,7 @@ export function MultiSelectOptionsModal<T>({
               focusable
               aria-label={getOptionText(option)}
               isFloating={floatingOptions}
-              hasCustomOptionRender={!!renderOption}
+              $hasCustomOptionRender={!!renderOption}
             >
               {renderOption ? (
                 renderOption(option, isSelected)

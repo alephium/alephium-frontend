@@ -73,8 +73,8 @@ interface SelectProps<T extends OptionValue> {
   skipEqualityCheck?: boolean
   noMargin?: boolean
   className?: string
-  simpleMode?: boolean
-  heightSize?: InputHeight
+  $simpleMode?: boolean
+  $heightSize?: InputHeight
   renderCustomComponent?: (value?: SelectOption<T>, disablePointer?: boolean) => ReactNode
   ListBottomComponent?: ReactNode
   allowReselectionOnClickWhenSingleOption?: boolean
@@ -93,9 +93,9 @@ function Select<T extends OptionValue>({
   contrast,
   skipEqualityCheck = false,
   noMargin,
-  simpleMode,
+  $simpleMode,
   className,
-  heightSize,
+  $heightSize,
   renderCustomComponent,
   ListBottomComponent,
   allowReselectionOnClickWhenSingleOption
@@ -105,7 +105,7 @@ function Select<T extends OptionValue>({
   const [canBeAnimated, setCanBeAnimated] = useState(false)
   const [value, setValue] = useState(controlledValue)
   const [showPopup, setShowPopup] = useState(false)
-  const [hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
+  const [$hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
 
   const multipleAvailableOptions = options.length > 1
 
@@ -187,10 +187,10 @@ function Select<T extends OptionValue>({
         onMouseDown={handleClick}
         onKeyDown={handleKeyDown}
         style={{ zIndex: raised && showPopup ? 2 : undefined, boxShadow: disabled ? 'none' : undefined }}
-        heightSize={heightSize}
-        simpleMode={simpleMode}
+        $heightSize={$heightSize}
+        $simpleMode={$simpleMode}
         tabIndex={renderCustomComponent ? -1 : 0}
-        showPointer={multipleAvailableOptions}
+        $showPointer={multipleAvailableOptions}
       >
         {renderCustomComponent ? (
           <CustomComponentContainer ref={selectedValueRef}>
@@ -201,7 +201,7 @@ function Select<T extends OptionValue>({
             <InputLabel isElevated={!!value} htmlFor={id}>
               {label}
             </InputLabel>
-            {multipleAvailableOptions && !simpleMode && (
+            {multipleAvailableOptions && !$simpleMode && (
               <MoreIcon>
                 <MoreVertical size={16} />
               </MoreIcon>
@@ -211,11 +211,11 @@ function Select<T extends OptionValue>({
               className={className}
               ref={selectedValueRef}
               id={id}
-              simpleMode={simpleMode}
+              $simpleMode={$simpleMode}
               label={label}
-              heightSize={heightSize}
+              $heightSize={$heightSize}
               contrast={contrast}
-              showPointer={multipleAvailableOptions}
+              $showPointer={multipleAvailableOptions}
             >
               <Truncate>{value?.label}</Truncate>
             </SelectedValue>
@@ -230,7 +230,7 @@ function Select<T extends OptionValue>({
             selectedOption={value}
             setValue={setInputValue}
             title={title}
-            hookCoordinates={hookCoordinates}
+            $hookCoordinates={$hookCoordinates}
             onClose={handlePopupClose}
             parentSelectRef={selectedValueRef}
             ListBottomComponent={ListBottomComponent}
@@ -246,7 +246,7 @@ interface SelectOptionsModalProps<T extends OptionValue> {
   selectedOption?: SelectOption<T>
   setValue: (value: SelectOption<T>) => void | undefined
   onClose: () => void
-  hookCoordinates?: Coordinates
+  $hookCoordinates?: Coordinates
   title?: string
   optionRender?: (option: SelectOption<T>, isSelected: boolean) => ReactNode
   onSearchInput?: (input: string) => void
@@ -264,7 +264,7 @@ export function SelectOptionsModal<T extends OptionValue>({
   selectedOption,
   setValue,
   onClose,
-  hookCoordinates,
+  $hookCoordinates,
   title,
   optionRender,
   onSearchInput,
@@ -313,7 +313,7 @@ export function SelectOptionsModal<T extends OptionValue>({
     <Popup
       title={title}
       onClose={onClose}
-      hookCoordinates={hookCoordinates}
+      $hookCoordinates={$hookCoordinates}
       minWidth={width}
       extraHeaderContent={
         onSearchInput &&
@@ -322,7 +322,7 @@ export function SelectOptionsModal<T extends OptionValue>({
             placeholder={searchPlaceholder}
             Icon={SearchIcon}
             onChange={(e) => onSearchInput(e.target.value)}
-            heightSize="small"
+            $heightSize="small"
             noMargin
           />
         )
@@ -351,7 +351,7 @@ export function SelectOptionsModal<T extends OptionValue>({
               focusable
               aria-label={option.label}
               isFloating={floatingOptions}
-              hasCustomOptionRender={!!optionRender}
+              $hasCustomOptionRender={!!optionRender}
             >
               {optionRender ? (
                 optionRender(option, isSelected)
@@ -397,20 +397,20 @@ export const MoreIcon = styled.div`
 `
 
 const SelectedValue = styled.div<InputProps>`
-  ${({ heightSize, label, contrast }) => inputDefaultStyle(true, true, !!label, heightSize, contrast)};
+  ${({ $heightSize, label, contrast }) => inputDefaultStyle(true, true, !!label, $heightSize, contrast)};
 
   padding-right: 35px;
   font-weight: var(--fontWeight-semiBold);
 
-  cursor: ${({ showPointer }) => showPointer && 'pointer'};
+  cursor: ${({ $showPointer }) => $showPointer && 'pointer'};
 
   display: flex;
   align-items: center;
   min-width: 0;
   box-shadow: ${({ theme }) => theme.shadow.primary};
 
-  ${({ simpleMode }) =>
-    simpleMode &&
+  ${({ $simpleMode }) =>
+    $simpleMode &&
     css`
       border: 0;
 
@@ -421,12 +421,12 @@ const SelectedValue = styled.div<InputProps>`
 `
 
 export const SelectContainer = styled(InputContainer)<
-  Pick<InputProps, 'noMargin' | 'heightSize' | 'simpleMode' | 'showPointer'>
+  Pick<InputProps, 'noMargin' | '$heightSize' | '$simpleMode' | '$showPointer'>
 >`
-  cursor: ${({ showPointer }) => showPointer && 'pointer'};
-  margin: ${({ noMargin, simpleMode }) => (noMargin || simpleMode ? 0 : '16px 0')};
-  height: ${({ heightSize }) =>
-    heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+  cursor: ${({ $showPointer }) => $showPointer && 'pointer'};
+  margin: ${({ noMargin, $simpleMode }) => (noMargin || $simpleMode ? 0 : '16px 0')};
+  height: ${({ $heightSize }) =>
+    $heightSize === 'small' ? '50px' : $heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
 
   &:focus {
     ${SelectedValue} {
@@ -451,7 +451,7 @@ export const OptionItem = styled.button<{
   focusable?: boolean
   invisible?: boolean
   isFloating?: boolean
-  hasCustomOptionRender?: boolean
+  $hasCustomOptionRender?: boolean
 }>`
   display: flex;
   justify-content: space-between;
@@ -464,8 +464,8 @@ export const OptionItem = styled.button<{
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
 
-  ${({ hasCustomOptionRender }) => css`
-    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-4)'};
+  ${({ $hasCustomOptionRender }) => css`
+    padding: ${$hasCustomOptionRender ? '0px' : 'var(--spacing-4)'};
   `};
 
   ${({ isFloating, selected, theme }) =>

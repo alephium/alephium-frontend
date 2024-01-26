@@ -61,9 +61,9 @@ const TabBar = ({
             role="tab"
             tabIndex={0}
             aria-selected={isActive}
-            isActive={isActive}
+            $isActive={isActive}
           >
-            <TabLabel isActive={isActive}>{item.label}</TabLabel>
+            <TabLabel $isActive={isActive}>{item.label}</TabLabel>
           </TabComponent>
         )
       })}
@@ -81,14 +81,14 @@ export default styled(TabBar)`
   height: 55px;
 `
 
-export const Tab = styled.div<{ isActive: boolean }>`
+export const Tab = styled.div<{ $isActive: boolean }>`
   flex: 1;
   display: flex;
   min-width: 50px;
   text-align: center;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.background1 : 'transparent')};
+  background-color: ${({ $isActive, theme }) => ($isActive ? theme.bg.background1 : 'transparent')};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-bottom: none;
   cursor: pointer;
@@ -96,8 +96,8 @@ export const Tab = styled.div<{ isActive: boolean }>`
   font-weight: var(--fontWeight-semiBold);
   margin-bottom: -1px;
 
-  ${({ isActive, theme }) =>
-    isActive
+  ${({ $isActive, theme }) =>
+    $isActive
       ? css`
           color: ${theme.font.primary};
         `
@@ -114,9 +114,9 @@ export const Tab = styled.div<{ isActive: boolean }>`
   }
 `
 
-const TabLabel = styled.span<{ isActive: boolean }>`
-  ${({ isActive }) =>
-    !isActive &&
+const TabLabel = styled.span<{ $isActive: boolean }>`
+  ${({ $isActive }) =>
+    !$isActive &&
     css`
       filter: saturate(10%);
     `}

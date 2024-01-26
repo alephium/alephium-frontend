@@ -103,7 +103,7 @@ const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
                   key={tab.value}
                   role="secondary"
                   wide
-                  transparent={currentTab.value !== tab.value}
+                  $transparent={currentTab.value !== tab.value}
                   borderless={currentTab.value !== tab.value}
                   onClick={() => setCurrentTab(tab)}
                 >
@@ -124,7 +124,7 @@ const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
         <TabContentsColumn>
           <ColumnHeader>
             <ColumnTitle>{currentTab.label}</ColumnTitle>
-            <Button aria-label={t('Close')} squared role="secondary" transparent onClick={onClose} borderless>
+            <Button aria-label={t('Close')} squared role="secondary" $transparent onClick={onClose} borderless>
               <X />
             </Button>
           </ColumnHeader>

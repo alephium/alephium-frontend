@@ -42,7 +42,7 @@ const AddressRow: FC<AddressRowProps> = ({ address, disableAddressCopy, onClick,
     <Row>
       <AddressColorIndicatorStyled addressHash={address.hash} />
       <Label>
-        <AddressBadge addressHash={address.hash} hideColorIndication truncate appendHash displayHashUnder />
+        <AddressBadge addressHash={address.hash} hideColorIndication $truncate appendHash displayHashUnder />
       </Label>
       {children}
     </Row>

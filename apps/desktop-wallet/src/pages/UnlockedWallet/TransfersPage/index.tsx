@@ -85,7 +85,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
         selectedAssets={selectedAssets}
         setSelectedAssets={setSelectedAssets}
       />
-      <StyledUnlockedWalletPanel doubleTop bottom backgroundColor="background1">
+      <StyledUnlockedWalletPanel $doubleTop $bottom $backgroundColor="background1">
         <TransactionList
           addressHashes={map(selectedAddresses, 'hash')}
           directions={map(selectedDirections, 'value')}
@@ -99,7 +99,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
       >
         <CornerButtons>
           <ButtonsGrid>
-            <ShortcutButtons receive send highlight analyticsOrigin="transfer_page" />
+            <ShortcutButtons receive send isHighlighted analyticsOrigin="transfer_page" />
           </ButtonsGrid>
         </CornerButtons>
       </BottomRow>
