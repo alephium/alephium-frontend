@@ -1,5 +1,11 @@
 # alephium-desktop-wallet
 
+## 2.2.2
+
+### Patch Changes
+
+- e931d9f: Fix address hash overlap introduced in 2.2.1
+
 ## 2.2.1
 
 ### Patch Changes
