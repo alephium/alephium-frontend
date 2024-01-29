@@ -20,6 +20,7 @@ import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { syncTokenPricesHistory } from '@/storage/prices/pricesActions'
 import { tokenPricesHistoryAdapter } from '@/storage/prices/pricesAdapter'
+import { fiatCurrencyChanged } from '@/storage/settings/settingsActions'
 import { TokenPriceHistoryEntity } from '@/types/price'
 
 interface PricesHistoryState extends EntityState<TokenPriceHistoryEntity> {
@@ -50,6 +51,9 @@ const pricesHistorySlice = createSlice({
       })
       .addCase(syncTokenPricesHistory.rejected, (state) => {
         state.loading = false
+      })
+      .addCase(fiatCurrencyChanged, (state) => {
+        tokenPricesHistoryAdapter.removeAll(state)
       })
   }
 })

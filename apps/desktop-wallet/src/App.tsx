@@ -205,7 +205,6 @@ const App = () => {
             })
 
           dispatch(syncAddressesAlphHistoricBalances())
-          dispatch(syncTokenPricesHistory({ tokenSymbol: ALPH.symbol, currency: settings.fiatCurrency }))
         }
       } else if (addressesStatus === 'initialized') {
         if (!isFungibleTokensUninitialized && !isLoadingFungibleTokens) {
@@ -215,6 +214,7 @@ const App = () => {
 
           if (!isLoadingAddressesTokensBalances) {
             dispatch(syncTokenPrices({ knownTokenSymbols, currency: settings.fiatCurrency }))
+            dispatch(syncTokenPricesHistory({ tokenSymbol: ALPH.symbol, currency: settings.fiatCurrency })) // Needs to be here so that currency change triggers it
             // TODO: Get history of known tokens
           }
         }

@@ -31,10 +31,8 @@ import {
 } from '@/storage/addresses/addressesSelectors'
 import { selectAlphPriceHistory } from '@/storage/prices/pricesSelectors'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
-import { Currency } from '@/types/settings'
 
 interface HistoricWorthChartProps {
-  currency: Currency
   length: ChartLength
   onDataPointHover: (dataPoint?: DataPoint) => void
   onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
@@ -57,7 +55,6 @@ const startingDates: Record<ChartLength, Dayjs> = {
 const HistoricWorthChart = memo(function HistoricWorthChart({
   addressHash,
   latestWorth,
-  currency,
   length = '1y',
   onDataPointHover,
   onWorthInBeginningOfChartChange
