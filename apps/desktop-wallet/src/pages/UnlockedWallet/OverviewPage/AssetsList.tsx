@@ -44,6 +44,7 @@ import {
 } from '@/storage/addresses/addressesSelectors'
 import { selectPriceById } from '@/storage/prices/pricesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
+import { currencies } from '@/utils/currencies'
 
 interface AssetsListProps {
   className?: string
@@ -170,7 +171,7 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   const theme = useTheme()
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const assetPrice = useAppSelector((s) => selectPriceById(s, asset.symbol?.toLowerCase() || ''))
+  const assetPrice = useAppSelector((s) => selectPriceById(s, asset.symbol || ''))
 
   return (
     <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>
@@ -213,9 +214,13 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
                 </AmountSubtitle>
               )}
               {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
-              {assetPrice && (
+              {assetPrice && assetPrice.price !== null && (
                 <Price>
-                  <Amount value={calculateAmountWorth(asset.balance, assetPrice.price)} isFiat suffix={fiatCurrency} />
+                  <Amount
+                    value={calculateAmountWorth(asset.balance, assetPrice.price)}
+                    isFiat
+                    suffix={currencies[fiatCurrency].symbol}
+                  />
                 </Price>
               )}
             </>
