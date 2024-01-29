@@ -8,9 +8,6 @@ overrides:
   semver: ^7.5.2
 
 patchedDependencies:
-  '@yaireo/tagify@4.18.3':
-    hash: 5ambhhmmgnn4urodd3x5hkr4wa
-    path: patches/@yaireo__tagify@4.18.3.patch
   framer-motion@10.17.12:
     hash: yqcyqtz6tj5ltmzil3tv7o434i
     path: patches/framer-motion@10.17.12.patch
@@ -151,7 +148,7 @@ importers:
         version: 2.11.0(@react-native-async-storage/async-storage@1.18.2)
       '@yaireo/tagify':
         specifier: ^4.18.3
-        version: 4.18.3(patch_hash=5ambhhmmgnn4urodd3x5hkr4wa)(prop-types@15.8.1)
+        version: 4.18.3(prop-types@15.8.1)
       better-sqlite3:
         specifier: ^8.3.0
         version: 8.7.0
@@ -7551,7 +7548,7 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: true
 
-  /@yaireo/tagify@4.18.3(patch_hash=5ambhhmmgnn4urodd3x5hkr4wa)(prop-types@15.8.1):
+  /@yaireo/tagify@4.18.3(prop-types@15.8.1):
     resolution: {integrity: sha512-K6ksuPKZvVXQMyJXfh1k9TvX3FupqBLY4RUg+153TZQxtENsPxrRSu165va2uYtj2F76KdoY0laOlE5YO0Kqrg==}
     engines: {node: '>=14.20.0', npm: '>=8.0.0'}
     peerDependencies:
@@ -7559,7 +7556,6 @@ packages:
     dependencies:
       prop-types: 15.8.1
     dev: true
-    patched: true
 
   /@yr/monotone-cubic-spline@1.0.3:
     resolution: {integrity: sha512-FQXkOta0XBSUPHndIKON2Y9JeQz5ZeMqLYZVVK93FliNBFm7LNMIZmY6FrMEB9XPcDbE2bekMbZD6kzDkxwYjA==}
