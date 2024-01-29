@@ -34,6 +34,7 @@ import {
   makeSelectAddresses,
   makeSelectAddressesHaveHistoricBalances,
   selectAddressIds,
+  selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
 import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
@@ -70,7 +71,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAppSelector(selectAlphPrice)
-  const arePricesLoading = useAppSelector((s) => s.tokenPrices.loading)
+  const arePricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
+  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
@@ -95,15 +97,16 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
           <BalancesRow>
             <BalancesColumn>
               <Today>{date ? dayjs(date).format('DD/MM/YYYY') : t('Value today (ALPH)')}</Today>
-              {arePricesLoading || showBalancesSkeletonLoader ? (
+              {!arePricesInitialized || showBalancesSkeletonLoader ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={currencies[fiatCurrency].symbol} />
               )}
               <Opacity fadeOut={isHoveringChart}>
                 <FiatDeltaPercentage>
-                  {arePricesLoading ||
+                  {!arePricesInitialized ||
                   stateUninitialized ||
+                  !haveHistoricBalancesLoaded ||
                   (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
                     <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
                   ) : hasHistoricBalances && worthInBeginningOfChart && totalAmountWorth !== undefined ? (
@@ -114,7 +117,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  arePricesLoading || stateUninitialized ? (
+                  !arePricesInitialized || stateUninitialized || !haveHistoricBalancesLoaded ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"

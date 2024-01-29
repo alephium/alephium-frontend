@@ -24,10 +24,12 @@ import { TokenPriceEntity } from '@/types/price'
 
 interface PricesState extends EntityState<TokenPriceEntity> {
   loading: boolean
+  status: 'uninitialized' | 'initialized'
 }
 
 const initialState: PricesState = tokenPricesAdapter.getInitialState({
-  loading: false
+  loading: false,
+  status: 'uninitialized'
 })
 
 const pricesSlice = createSlice({
@@ -47,6 +49,7 @@ const pricesSlice = createSlice({
         }
 
         state.loading = false
+        state.status = 'initialized'
       })
       .addCase(syncTokenPrices.rejected, (state) => {
         state.loading = false
