@@ -41,7 +41,7 @@ interface ShortcutButtonsProps {
   walletSettings?: boolean
   addressSettings?: boolean
   addressHash?: AddressHash
-  isHighlighted?: boolean
+  highlight?: boolean
   solidBackground?: boolean
 }
 
@@ -53,7 +53,7 @@ const ShortcutButtons = ({
   walletSettings,
   addressSettings,
   addressHash,
-  isHighlighted,
+  highlight,
   solidBackground
 }: ShortcutButtonsProps) => {
   const { t } = useTranslation()
@@ -104,53 +104,53 @@ const ShortcutButtons = ({
     <>
       {receive && (
         <ShortcutButton
-          $transparent={!solidBackground}
+          transparent={!solidBackground}
           role="secondary"
           borderless
           onClick={handleReceiveClick}
           Icon={ArrowDown}
           iconColor={theme.global.valid}
           iconBackground
-          isHighlighted={isHighlighted}
+          highlight={highlight}
         >
           <ButtonText>{t('Receive')}</ButtonText>
         </ShortcutButton>
       )}
       {send && (
         <ShortcutButton
-          $transparent={!solidBackground}
+          transparent={!solidBackground}
           role="secondary"
           borderless
           onClick={handleSendClick}
           Icon={ArrowUp}
           iconColor={theme.global.highlight}
           iconBackground
-          isHighlighted={isHighlighted}
+          highlight={highlight}
         >
           <ButtonText>{t('Send')}</ButtonText>
         </ShortcutButton>
       )}
       {walletSettings && (
         <ShortcutButton
-          $transparent={!solidBackground}
+          transparent={!solidBackground}
           role="secondary"
           borderless
           onClick={handleWalletSettingsClick}
           Icon={Settings}
           iconBackground
-          isHighlighted={isHighlighted}
+          highlight={highlight}
         >
           <ButtonText>{t('Settings')}</ButtonText>
         </ShortcutButton>
       )}
       {lock && (
         <ShortcutButton
-          $transparent={!solidBackground}
+          transparent={!solidBackground}
           role="secondary"
           borderless
           onClick={lockWallet}
           Icon={Lock}
-          isHighlighted={isHighlighted}
+          highlight={highlight}
           iconBackground
         >
           <ButtonText>{t('Lock wallet')}</ButtonText>
@@ -158,7 +158,7 @@ const ShortcutButtons = ({
       )}
       {addressSettings && addressHash && (
         <ShortcutButton
-          $transparent={!solidBackground}
+          transparent={!solidBackground}
           role="secondary"
           borderless
           onClick={handleAddressSettingsClick}
@@ -184,7 +184,7 @@ const ShortcutButtons = ({
 
 export default ShortcutButtons
 
-const ShortcutButton = styled(Button)`
+const ShortcutButton = styled(Button)<Pick<ShortcutButtonsProps, 'highlight'>>`
   border-radius: 0;
   margin: 0;
   width: auto;
