@@ -57,7 +57,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const isFungibleTokensUninitialized = useAppSelector(selectIsFungibleTokensUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAppSelector(selectAlphPrice)
-  const isPriceLoading = useAppSelector((s) => s.tokenPrices.loading)
+  const areTokenPricesLoading = useAppSelector((s) => s.tokenPrices.loading)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
@@ -125,7 +125,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           {stateUninitialized ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
         </AmountCell>
         <FiatAmountCell>
-          {stateUninitialized || isPriceLoading ? (
+          {stateUninitialized || areTokenPricesLoading ? (
             <SkeletonLoader height="18.5px" />
           ) : (
             <Amount value={fiatBalance} isFiat suffix={currencies[fiatCurrency].symbol} />
