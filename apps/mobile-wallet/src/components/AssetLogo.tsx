@@ -26,7 +26,7 @@ import styled, { css, useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
-import { selectAssetInfoById, selectNFTById } from '~/store/assets/assetsSelectors'
+import { selectFungibleTokenById, selectNFTById } from '~/store/assets/assetsSelectors'
 import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface AssetLogoProps {
@@ -37,7 +37,7 @@ interface AssetLogoProps {
 
 const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
   const theme = useTheme()
-  const token = useAppSelector((state) => selectAssetInfoById(state, assetId))
+  const token = useAppSelector((state) => selectFungibleTokenById(state, assetId))
   const nft = useAppSelector((s) => selectNFTById(s, assetId))
   const isNft = !!nft
 

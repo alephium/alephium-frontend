@@ -24,7 +24,7 @@ import { networkPresetSettings } from '~/persistent-storage/settings'
 import { fungibleTokensAdapter, nftsAdapter } from '~/store/assets/assetsAdapter'
 import { RootState } from '~/store/store'
 
-export const { selectAll: selectAllFungibleTokens, selectById: selectAssetInfoById } =
+export const { selectAll: selectAllFungibleTokens, selectById: selectFungibleTokenById } =
   fungibleTokensAdapter.getSelectors<RootState>((state) => state.fungibleTokens)
 
 export const selectIsFungibleTokensMetadataUninitialized = createSelector(

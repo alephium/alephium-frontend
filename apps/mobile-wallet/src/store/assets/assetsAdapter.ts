@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // TODO: Same as in desktop wallet
 
-import { AssetInfo, NFT } from '@alephium/shared'
+import { FungibleToken, NFT } from '@alephium/shared'
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-export const fungibleTokensAdapter = createEntityAdapter<AssetInfo>({
+export const fungibleTokensAdapter = createEntityAdapter<FungibleToken>({
   sortComparer: (a, b) => a.name.localeCompare(b.name)
 })
 

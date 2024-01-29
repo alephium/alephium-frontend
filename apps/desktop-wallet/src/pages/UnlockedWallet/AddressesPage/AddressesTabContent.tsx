@@ -40,7 +40,7 @@ interface AddressesTabContentProps {
 
 const AddressesTabContent = ({ tabsRowHeight }: AddressesTabContentProps) => {
   const addresses = useAppSelector(selectAllAddresses)
-  const assetsInfo = useAppSelector((state) => state.assetsInfo.entities)
+  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
   const { t } = useTranslation()
 
   const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)
@@ -50,13 +50,13 @@ const AddressesTabContent = ({ tabsRowHeight }: AddressesTabContentProps) => {
   const [isAdvancedOperationsModalOpen, setIsAdvancedOperationsModalOpen] = useState(false)
 
   useEffect(() => {
-    const filteredByText = filterAddresses(addresses, searchInput.toLowerCase(), assetsInfo)
+    const filteredByText = filterAddresses(addresses, searchInput.toLowerCase(), fungibleTokens)
     const filteredByToggle = hideEmptyAddresses
       ? filteredByText.filter((address) => address.balance !== '0')
       : filteredByText
 
     setVisibleAddresses(filteredByToggle)
-  }, [addresses, assetsInfo, hideEmptyAddresses, searchInput])
+  }, [addresses, fungibleTokens, hideEmptyAddresses, searchInput])
 
   return (
     <TabContent

@@ -134,7 +134,7 @@ export const directionOptions: {
 
 export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
   const state = store.getState()
-  const assetsInfo = state.assetsInfo.entities
+  const fungibleTokens = state.fungibleTokens.entities
   const addresses = Object.values(state.addresses.entities) as Address[]
 
   let amount: bigint | undefined = BigInt(0)
@@ -187,7 +187,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     lockTime = lockTime.toISOString() === new Date(0).toISOString() ? undefined : lockTime
   }
 
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...assetsInfo[token.id] }))]
+  const tokenAssets = [...tokens.map((token) => ({ ...token, ...fungibleTokens[token.id] }))]
   const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
 
   return {

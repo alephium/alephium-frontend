@@ -16,22 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetInfo } from '@alephium/shared'
+import { FungibleToken } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { loadingStarted, syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
-import { assetsInfoAdapter } from '@/storage/assets/assetsAdapter'
+import { fungibleTokensAdapter } from '@/storage/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@/storage/settings/networkActions'
 
-interface AssetsInfoState extends EntityState<AssetInfo> {
+interface FungibleTokensState extends EntityState<FungibleToken> {
   loading: boolean
   status: 'initialized' | 'uninitialized'
-  checkedUnknownTokenIds: AssetInfo['id'][]
+  checkedUnknownTokenIds: FungibleToken['id'][]
 }
 
-const initialState: AssetsInfoState = assetsInfoAdapter.addOne(
-  assetsInfoAdapter.getInitialState({
+const initialState: FungibleTokensState = fungibleTokensAdapter.addOne(
+  fungibleTokensAdapter.getInitialState({
     loading: false,
     status: 'uninitialized',
     checkedUnknownTokenIds: []
@@ -42,8 +42,8 @@ const initialState: AssetsInfoState = assetsInfoAdapter.addOne(
   }
 )
 
-const assetsSlice = createSlice({
-  name: 'assetsInfo',
+const fungibleTokensSlice = createSlice({
+  name: 'fungibleTokens',
   initialState,
   reducers: {},
   extraReducers(builder) {
@@ -55,7 +55,7 @@ const assetsSlice = createSlice({
         const metadata = action.payload
 
         if (metadata) {
-          assetsInfoAdapter.upsertMany(
+          fungibleTokensAdapter.upsertMany(
             state,
             metadata.tokens.map((tokenInfo) => ({
               ...tokenInfo,
@@ -73,7 +73,7 @@ const assetsSlice = createSlice({
         state.checkedUnknownTokenIds = [...initiallyUnknownTokenIds, ...state.checkedUnknownTokenIds]
 
         if (metadata) {
-          assetsInfoAdapter.upsertMany(
+          fungibleTokensAdapter.upsertMany(
             state,
             metadata.map((token) => ({
               ...token,
@@ -89,7 +89,7 @@ const assetsSlice = createSlice({
   }
 })
 
-export default assetsSlice
+export default fungibleTokensSlice
 
 // Reducers helper functions
 

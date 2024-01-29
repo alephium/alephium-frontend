@@ -42,7 +42,7 @@ import {
   selectAddressIds
 } from '@/storage/addresses/addressesSelectors'
 import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
-import { selectIsTokensMetadataUninitialized } from '@/storage/assets/assetsSelectors'
+import { selectIsFungibleTokensUninitialized } from '@/storage/assets/assetsSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrated,
@@ -71,7 +71,7 @@ const App = () => {
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
   const network = useAppSelector((s) => s.network)
   const theme = useAppSelector((s) => s.global.theme)
-  const assetsInfo = useAppSelector((s) => s.assetsInfo)
+  const fungibleTokens = useAppSelector((s) => s.fungibleTokens)
   const loading = useAppSelector((s) => s.global.loading)
   const settings = useAppSelector((s) => s.settings)
   const wallets = useAppSelector((s) => s.global.wallets)
@@ -80,8 +80,8 @@ const App = () => {
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
-  const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const isFungibleTokensUninitialized = useAppSelector(selectIsFungibleTokensUninitialized)
+  const isLoadingFungibleTokens = useAppSelector((s) => s.fungibleTokens.loading)
   const isLoadingAddressTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
 
   const selectAddressesKnownTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
@@ -92,7 +92,7 @@ const App = () => {
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const unknownTokens = useAppSelector(selectAddressesUnknownTokens)
-  const checkedUnknownTokenIds = useAppSelector((s) => s.assetsInfo.checkedUnknownTokenIds)
+  const checkedUnknownTokenIds = useAppSelector((s) => s.fungibleTokens.checkedUnknownTokenIds)
   const unknownTokenIds = unknownTokens.map((token) => token.id)
   const newUnknownTokens = difference(unknownTokenIds, checkedUnknownTokenIds)
 
@@ -188,7 +188,7 @@ const App = () => {
 
   useEffect(() => {
     if (network.status === 'online') {
-      if (assetsInfo.status === 'uninitialized' && !isLoadingTokensMetadata) {
+      if (fungibleTokens.status === 'uninitialized' && !isLoadingFungibleTokens) {
         dispatch(syncNetworkTokensInfo())
       }
 
@@ -207,7 +207,7 @@ const App = () => {
           dispatch(syncTokenPricesHistory({ tokenSymbol: ALPH.symbol, currency: settings.fiatCurrency }))
         }
       } else if (addressesStatus === 'initialized') {
-        if (!isTokensMetadataUninitialized && !isLoadingTokensMetadata) {
+        if (!isFungibleTokensUninitialized && !isLoadingFungibleTokens) {
           if (newUnknownTokens.length > 0) {
             dispatch(syncUnknownTokensInfo(newUnknownTokens))
           }
@@ -222,12 +222,12 @@ const App = () => {
   }, [
     addressHashes.length,
     addressesStatus,
-    assetsInfo.status,
+    fungibleTokens.status,
     dispatch,
     isSyncingAddressData,
     isLoadingAddressTokenBalances,
-    isLoadingTokensMetadata,
-    isTokensMetadataUninitialized,
+    isLoadingFungibleTokens,
+    isFungibleTokensUninitialized,
     network.status,
     newUnknownTokens,
     knownTokens,

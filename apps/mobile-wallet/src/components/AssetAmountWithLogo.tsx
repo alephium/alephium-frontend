@@ -23,7 +23,7 @@ import Amount, { AmountProps } from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
 import { NFTThumbnail } from '~/components/NFTsGrid'
 import { useAppSelector } from '~/hooks/redux'
-import { selectAssetInfoById, selectNFTById } from '~/store/assets/assetsSelectors'
+import { selectFungibleTokenById, selectNFTById } from '~/store/assets/assetsSelectors'
 
 interface AssetAmountWithLogoProps extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand'> {
   assetId: Asset['id']
@@ -38,7 +38,7 @@ const AssetAmountWithLogo = ({
   useTinyAmountShorthand,
   fullPrecision
 }: AssetAmountWithLogoProps) => {
-  const asset = useAppSelector((s) => selectAssetInfoById(s, assetId))
+  const asset = useAppSelector((s) => selectFungibleTokenById(s, assetId))
   const nft = useAppSelector((s) => selectNFTById(s, assetId))
 
   return asset ? (

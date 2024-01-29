@@ -123,7 +123,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const isLoadingFungibleTokens = useAppSelector((s) => s.fungibleTokens.loading)
 
   return (
     <>
@@ -131,7 +131,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
         {knownFungibleTokens.map((asset) => (
           <TokenListRow asset={asset} isExpanded={isExpanded} key={asset.id} />
         ))}
-        {(isLoadingTokensMetadata || stateUninitialized) && (
+        {(isLoadingFungibleTokens || stateUninitialized) && (
           <TableRow>
             <SkeletonLoader height="37.5px" />
           </TableRow>
@@ -231,12 +231,12 @@ const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsList
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHashes))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const isLoadingFungibleTokens = useAppSelector((s) => s.fungibleTokens.loading)
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {isLoadingTokensMetadata || stateUninitialized ? (
+        {isLoadingFungibleTokens || stateUninitialized ? (
           <NFTList>
             <SkeletonLoader height="205px" />
             <SkeletonLoader height="205px" />

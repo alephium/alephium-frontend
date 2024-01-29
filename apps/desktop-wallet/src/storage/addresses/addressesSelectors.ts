@@ -23,7 +23,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import { sortBy } from 'lodash'
 
 import { addressesAdapter, contactsAdapter } from '@/storage/addresses/addressesAdapters'
-import { selectAllAssetsInfo, selectAllNFTs, selectNFTIds } from '@/storage/assets/assetsSelectors'
+import { selectAllFungibleTokens, selectAllNFTs, selectNFTIds } from '@/storage/assets/assetsSelectors'
 import { RootState } from '@/storage/store'
 import { Address } from '@/types/addresses'
 import { filterAddressesWithoutAssets } from '@/utils/addresses'
@@ -72,22 +72,22 @@ export const makeSelectAddressesAlphAsset = () =>
 
 export const makeSelectAddressesTokens = () =>
   createSelector(
-    [selectAllAssetsInfo, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses()],
-    (assetsInfo, nfts, alphAsset, addresses): Asset[] => {
+    [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses()],
+    (fungibleTokens, nfts, alphAsset, addresses): Asset[] => {
       const tokens = getAddressesTokenBalances(addresses).reduce((acc, token) => {
-        const assetInfo = assetsInfo.find((t) => t.id === token.id)
+        const fungibleToken = fungibleTokens.find((t) => t.id === token.id)
         const nftInfo = nfts.find((nft) => nft.id === token.id)
 
         acc.push({
           id: token.id,
           balance: BigInt(token.balance.toString()),
           lockedBalance: BigInt(token.lockedBalance.toString()),
-          name: assetInfo?.name ?? nftInfo?.name,
-          symbol: assetInfo?.symbol,
-          description: assetInfo?.description ?? nftInfo?.description,
-          logoURI: assetInfo?.logoURI ?? nftInfo?.image,
-          decimals: assetInfo?.decimals ?? 0,
-          verified: assetInfo?.verified
+          name: fungibleToken?.name ?? nftInfo?.name,
+          symbol: fungibleToken?.symbol,
+          description: fungibleToken?.description ?? nftInfo?.description,
+          logoURI: fungibleToken?.logoURI ?? nftInfo?.image,
+          decimals: fungibleToken?.decimals ?? 0,
+          verified: fungibleToken?.verified
         })
 
         return acc
@@ -105,10 +105,10 @@ export const makeSelectAddressesKnownFungibleTokens = () =>
 
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector(
-    [selectAllAssetsInfo, selectNFTIds, makeSelectAddresses()],
-    (assetsInfo, nftIds, addresses): Asset[] => {
+    [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
+    (fungibleTokens, nftIds, addresses): Asset[] => {
       const tokensWithoutMetadata = getAddressesTokenBalances(addresses).reduce((acc, token) => {
-        const hasTokenMetadata = !!assetsInfo.find((t) => t.id === token.id)
+        const hasTokenMetadata = !!fungibleTokens.find((t) => t.id === token.id)
         const hasNFTMetadata = nftIds.includes(token.id)
 
         if (!hasTokenMetadata && !hasNFTMetadata) {
@@ -129,7 +129,7 @@ export const makeSelectAddressesUnknownTokens = () =>
 
 export const makeSelectAddressesCheckedUnknownTokens = () =>
   createSelector(
-    [makeSelectAddressesUnknownTokens(), (state: RootState) => state.assetsInfo.checkedUnknownTokenIds],
+    [makeSelectAddressesUnknownTokens(), (state: RootState) => state.fungibleTokens.checkedUnknownTokenIds],
     (tokensWithoutMetadata, checkedUnknownTokenIds) =>
       tokensWithoutMetadata.filter((token) => checkedUnknownTokenIds.includes(token.id))
   )

@@ -21,7 +21,7 @@ import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
 import addressesSlice from '@/storage/addresses/addressesSlice'
 import contactsSlice from '@/storage/addresses/contactsSlice'
-import assetsInfoSlice from '@/storage/assets/assetsInfoSlice'
+import fungibleTokensSlice from '@/storage/assets/fungibleTokensSlice'
 import nftsSlice from '@/storage/assets/nftsSlice'
 import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
@@ -45,7 +45,7 @@ export const store = configureStore({
     [addressesSlice.name]: addressesSlice.reducer,
     [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
     [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
-    [assetsInfoSlice.name]: assetsInfoSlice.reducer,
+    [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
     [snackbarSlice.name]: snackbarSlice.reducer,
     [pricesSlice.name]: pricesSlice.reducer,
     [pricesHistorySlice.name]: pricesHistorySlice.reducer,

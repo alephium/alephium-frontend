@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetInfo } from '@alephium/shared'
+import { FungibleToken } from '@alephium/shared'
 import { NavigationState } from '@react-navigation/routers'
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
@@ -28,7 +28,7 @@ const sliceName = 'app'
 export interface AppMetadataState {
   lastNavigationState?: NavigationState
   isCameraOpen: boolean
-  checkedUnknownTokenIds: AssetInfo['id'][]
+  checkedUnknownTokenIds: FungibleToken['id'][]
 }
 
 const initialState: AppMetadataState = {
