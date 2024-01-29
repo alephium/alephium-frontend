@@ -159,8 +159,8 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   }
 )
 
-export const syncAddressesHistoricBalances = createAsyncThunk(
-  'addresses/syncAddressesHistoricBalances',
+export const syncAddressesAlphHistoricBalances = createAsyncThunk(
+  'addresses/syncAddressesAlphHistoricBalances',
   async (
     payload: AddressHash[] | undefined,
     { getState }
@@ -186,9 +186,6 @@ export const syncAddressesHistoricBalances = createAsyncThunk(
         { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
         { format: 'text' }
       )
-
-      // TODO: Get history of known tokens
-      //const knownFungibleTokens = makeSelectAddressesKnownFungibleTokens()(state, addresses)
 
       try {
         const { amountHistory } = JSON.parse(alphHistoryData)

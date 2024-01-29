@@ -35,7 +35,7 @@ import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
-import { syncAddressesData, syncAddressesHistoricBalances } from '@/storage/addresses/addressesActions'
+import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesUnknownTokens,
@@ -204,6 +204,7 @@ const App = () => {
               restorePendingTransactions(mempoolTxHashes, storedPendingTxs)
             })
 
+          dispatch(syncAddressesAlphHistoricBalances())
           dispatch(syncTokenPricesHistory({ tokenSymbol: ALPH.symbol, currency: settings.fiatCurrency }))
         }
       } else if (addressesStatus === 'initialized') {
@@ -213,8 +214,8 @@ const App = () => {
           }
 
           if (!isLoadingAddressesTokensBalances) {
-            dispatch(syncAddressesHistoricBalances())
             dispatch(syncTokenPrices({ knownTokenSymbols, currency: settings.fiatCurrency }))
+            // TODO: Get history of known tokens
           }
         }
       }

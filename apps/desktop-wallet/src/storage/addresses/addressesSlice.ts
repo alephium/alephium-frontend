@@ -27,9 +27,9 @@ import {
   addressSettingsSaved,
   defaultAddressChanged,
   newAddressesSaved,
+  syncAddressesAlphHistoricBalances,
   syncAddressesBalances,
   syncAddressesData,
-  syncAddressesHistoricBalances,
   syncAddressesTokensBalances,
   syncAddressesTransactions,
   syncAddressTransactionsNextPage,
@@ -238,7 +238,7 @@ const addressesSlice = createSlice({
       .addCase(activeWalletDeleted, () => initialState)
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
-      .addCase(syncAddressesHistoricBalances.fulfilled, (state, { payload: data }) => {
+      .addCase(syncAddressesAlphHistoricBalances.fulfilled, (state, { payload: data }) => {
         data.forEach(({ address, balances }) => {
           const addressState = state.entities[address]
 
