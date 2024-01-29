@@ -47,9 +47,9 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
 
   const priceComponent = (
     <span key="price">
-      {alphPrice
+      {alphPrice !== undefined
         ? '📈 ' +
-          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(alphPrice.price) }) +
+          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(alphPrice) }) +
           currencies[fiatCurrency].symbol
         : '💜'}
     </span>

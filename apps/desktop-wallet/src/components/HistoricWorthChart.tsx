@@ -63,14 +63,14 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const addresses = useAppSelector((s) => selectAddresses(s, addressHash ?? (s.addresses.ids as AddressHash[])))
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const priceHistory = useAppSelector(selectAlphPriceHistory)
+  const alphPriceHistory = useAppSelector(selectAlphPriceHistory)
 
   const theme = useTheme()
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
 
   const startingDate = startingDates[length].format('YYYY-MM-DD')
-  const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!priceHistory
+  const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
   const firstItem = chartData.at(0)
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     const computeChartDataPoints = (): DataPoint[] => {
       const addressesLatestAmount: LatestAmountPerAddress = {}
 
-      const dataPoints = priceHistory.history.map(({ date, value }) => {
+      const dataPoints = alphPriceHistory.map(({ date, value }) => {
         let totalAmountPerDate = BigInt(0)
 
         addresses.forEach(({ hash, alphBalanceHistory }) => {
@@ -118,7 +118,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     dataPoints = trimInitialZeroDataPoints(dataPoints)
 
     setChartData(getFilteredChartData(dataPoints, startingDate))
-  }, [addresses, priceHistory, isDataAvailable, latestWorth, startingDate])
+  }, [addresses, alphPriceHistory, isDataAvailable, latestWorth, startingDate])
 
   if (!isDataAvailable || chartData.length < 2 || !firstItem || latestWorth === undefined) return null
 

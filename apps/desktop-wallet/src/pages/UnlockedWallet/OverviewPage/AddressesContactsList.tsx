@@ -98,7 +98,7 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
                 <SkeletonLoader height="15.5px" width="50%" />
               ) : (
                 <AmountStyled
-                  value={calculateAmountWorth(BigInt(address.balance), alphPrice?.price ?? 0)}
+                  value={calculateAmountWorth(BigInt(address.balance), alphPrice ?? 0)}
                   isFiat
                   suffix={currencies[fiatCurrency].symbol}
                   tabIndex={0}
