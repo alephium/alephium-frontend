@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, SyncUnknownTokensInfoResult, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
+import { createAsyncThunk } from '@reduxjs/toolkit'
 import { chunk, groupBy } from 'lodash'
 import posthog from 'posthog-js'
 
@@ -27,14 +27,10 @@ import client from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { RootState } from '@/storage/store'
 
-export const loadingStarted = createAction('assets/loadingStarted')
-
 export const syncNetworkTokensInfo = createAsyncThunk(
   'assets/syncNetworkTokensInfo',
   async (_, { getState, dispatch }) => {
     const state = getState() as RootState
-
-    dispatch(loadingStarted())
 
     let metadata = undefined
     const network =
@@ -67,8 +63,6 @@ export const syncUnknownTokensInfo = createAsyncThunk(
       tokens: [],
       nfts: []
     } as SyncUnknownTokensInfoResult
-
-    dispatch(loadingStarted())
 
     const tokenTypes = await Promise.all(
       chunk(unknownTokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>

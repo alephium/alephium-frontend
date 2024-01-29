@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { FungibleToken } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { createSlice, EntityState } from '@reduxjs/toolkit'
+import { createSlice, EntityState, isAnyOf } from '@reduxjs/toolkit'
 
-import { loadingStarted, syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
+import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
 import { fungibleTokensAdapter } from '@/storage/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@/storage/settings/networkActions'
 
@@ -48,9 +48,6 @@ const fungibleTokensSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(loadingStarted, (state) => {
-        state.loading = true
-      })
       .addCase(syncNetworkTokensInfo.fulfilled, (state, action) => {
         const metadata = action.payload
 
@@ -86,6 +83,10 @@ const fungibleTokensSlice = createSlice({
       })
       .addCase(networkPresetSwitched, resetState)
       .addCase(customNetworkSettingsSaved, resetState)
+
+    builder.addMatcher(isAnyOf(syncNetworkTokensInfo.pending, syncUnknownTokensInfo.pending), (state) => {
+      state.loading = true
+    })
   }
 })
 
