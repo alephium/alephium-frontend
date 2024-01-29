@@ -59,8 +59,8 @@ export type Address = AddressBase &
     allTransactionPagesLoaded: boolean
     tokens: AddressTokenBalance[]
     lastUsed: TimeInMs
-    balanceHistory: EntityState<BalanceHistory>
-    balanceHistoryInitialized: boolean
+    alphBalanceHistory: EntityState<BalanceHistory>
+    alphBalanceHistoryInitialized: boolean
   }
 
 export type LoadingEnabled = boolean | undefined

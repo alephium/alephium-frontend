@@ -82,7 +82,7 @@ const App = () => {
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
   const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
   const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
-  const isLoadingTokens = useAppSelector((s) => s.addresses.loadingTokens)
+  const isLoadingAddressTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
 
   const selectAddressesKnownTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownTokens = useAppSelector(selectAddressesKnownTokens)
@@ -191,6 +191,7 @@ const App = () => {
       if (assetsInfo.status === 'uninitialized' && !isLoadingTokensMetadata) {
         dispatch(syncNetworkTokensInfo())
       }
+
       if (addressesStatus === 'uninitialized') {
         if (!isSyncingAddressData && addressHashes.length > 0) {
           const storedPendingTxs = getStoredPendingTransactions()
@@ -211,7 +212,7 @@ const App = () => {
             dispatch(syncUnknownTokensInfo(newUnknownTokens))
           }
 
-          if (!isLoadingTokens) {
+          if (!isLoadingAddressTokenBalances) {
             dispatch(syncAddressesHistoricBalances())
             dispatch(syncTokenPrices({ knownTokenSymbols, currency: settings.fiatCurrency }))
           }
@@ -224,7 +225,7 @@ const App = () => {
     assetsInfo.status,
     dispatch,
     isSyncingAddressData,
-    isLoadingTokens,
+    isLoadingAddressTokenBalances,
     isLoadingTokensMetadata,
     isTokensMetadataUninitialized,
     network.status,

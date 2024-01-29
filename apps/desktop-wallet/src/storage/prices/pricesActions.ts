@@ -22,7 +22,7 @@ import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 
 import client from '@/api/client'
-import { HistoricalPrice } from '@/storage/prices/pricesHistorySlice'
+import { TokenHistoricalPrice } from '@/types/price'
 
 export const syncTokenPrices = createAsyncThunk(
   'assets/syncTokenPrices',
@@ -57,7 +57,7 @@ export const syncTokenPricesHistory = createAsyncThunk(
     })
 
     const today = dayjs().format(CHART_DATE_FORMAT)
-    let history = [] as HistoricalPrice[]
+    let history = [] as TokenHistoricalPrice[]
 
     if (rawHistory.timestamps && rawHistory.prices) {
       const pricesHistoryArray = rawHistory.prices
@@ -73,11 +73,11 @@ export const syncTokenPricesHistory = createAsyncThunk(
           })
 
         return acc
-      }, [] as HistoricalPrice[])
+      }, [] as TokenHistoricalPrice[])
     }
 
     return {
-      id: tokenSymbol,
+      symbol: tokenSymbol,
       history
     }
   }

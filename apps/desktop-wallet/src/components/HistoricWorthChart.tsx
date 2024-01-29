@@ -92,8 +92,8 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
       const dataPoints = priceHistory.history.map(({ date, value }) => {
         let totalAmountPerDate = BigInt(0)
 
-        addresses.forEach(({ hash, balanceHistory }) => {
-          const amountOnDate = balanceHistory.entities[date]?.balance
+        addresses.forEach(({ hash, alphBalanceHistory }) => {
+          const amountOnDate = alphBalanceHistory.entities[date]?.balance
 
           if (amountOnDate !== undefined) {
             const amount = BigInt(amountOnDate)

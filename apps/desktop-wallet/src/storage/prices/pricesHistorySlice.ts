@@ -20,16 +20,9 @@ import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { syncTokenPricesHistory } from '@/storage/prices/pricesActions'
 import { tokenPricesHistoryAdapter } from '@/storage/prices/pricesAdapter'
+import { TokenPriceHistoryEntity } from '@/types/price'
 
-export interface HistoricalPrice {
-  date: string
-  value: number
-}
-export interface PriceHistoryEntity {
-  id: string
-  history: HistoricalPrice[]
-}
-interface PricesHistoryState extends EntityState<PriceHistoryEntity> {
+interface PricesHistoryState extends EntityState<TokenPriceHistoryEntity> {
   loading: boolean
 }
 

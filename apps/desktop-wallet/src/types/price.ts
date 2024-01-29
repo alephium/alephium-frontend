@@ -20,3 +20,13 @@ export interface TokenPriceEntity {
   symbol: string
   price: number
 }
+
+export interface TokenHistoricalPrice {
+  date: string
+  value: number
+}
+
+export interface TokenPriceHistoryEntity {
+  symbol: string
+  history: TokenHistoricalPrice[]
+}

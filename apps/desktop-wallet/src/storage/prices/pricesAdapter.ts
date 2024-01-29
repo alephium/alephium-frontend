@@ -18,11 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { PriceHistoryEntity } from '@/storage/prices/pricesHistorySlice'
-import { TokenPriceEntity } from '@/types/price'
+import { TokenPriceEntity, TokenPriceHistoryEntity } from '@/types/price'
 
 export const tokenPricesAdapter = createEntityAdapter<TokenPriceEntity>({
+  selectId: (token) => token.symbol,
   sortComparer: (a, b) => a.symbol.localeCompare(b.symbol)
 })
 
-export const tokenPricesHistoryAdapter = createEntityAdapter<PriceHistoryEntity>()
+export const tokenPricesHistoryAdapter = createEntityAdapter<TokenPriceHistoryEntity>({
+  selectId: (token) => token.symbol,
+  sortComparer: (a, b) => a.symbol.localeCompare(b.symbol)
+})
