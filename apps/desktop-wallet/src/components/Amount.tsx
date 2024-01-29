@@ -35,7 +35,7 @@ interface AmountProps {
   tabIndex?: number
   suffix?: string
   isUnknownToken?: boolean
-  $highlight?: boolean
+  highlight?: boolean
   showPlusMinus?: boolean
   className?: string
 }
@@ -52,7 +52,7 @@ const Amount = ({
   color,
   overrideSuffixColor,
   tabIndex,
-  $highlight,
+  highlight,
   isUnknownToken,
   showPlusMinus = false
 }: AmountProps) => {
@@ -89,8 +89,7 @@ const Amount = ({
 
   return (
     <AmountStyled
-      {...{ className, color, value, $highlight, tabIndex: tabIndex ?? -1 }}
-      $discreetMode={discreetMode}
+      {...{ className, color, value, highlight, tabIndex: tabIndex ?? -1, discreetMode }}
       data-tooltip-id="default"
       data-tooltip-content={discreetMode ? t('Click to deactivate discreet mode') : ''}
       data-tooltip-delay-show={500}
@@ -122,11 +121,11 @@ const Amount = ({
 
 export default Amount
 
-const AmountStyled = styled.div<Pick<AmountProps, 'color' | '$highlight' | 'value'> & { $discreetMode: boolean }>`
-  color: ${({ color, $highlight, value, theme }) =>
+const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value'> & { discreetMode: boolean }>`
+  color: ${({ color, highlight, value, theme }) =>
     color
       ? color
-      : $highlight && value !== undefined
+      : highlight && value !== undefined
         ? value < 0
           ? theme.font.highlight
           : theme.global.valid
@@ -135,8 +134,8 @@ const AmountStyled = styled.div<Pick<AmountProps, 'color' | '$highlight' | 'valu
   white-space: pre;
   font-weight: var(--fontWeight-bold);
   font-feature-settings: 'tnum' on;
-  ${({ $discreetMode }) =>
-    $discreetMode &&
+  ${({ discreetMode }) =>
+    discreetMode &&
     css`
       filter: blur(10px);
       max-width: 100px;
