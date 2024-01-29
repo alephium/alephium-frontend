@@ -1,5 +1,11 @@
 # @alephium/mobile-wallet
 
+## 1.0.5
+
+### Patch Changes
+
+- ad9fd6d: Improve dApp experience by responding to WalletConnect requests while the app is in the background
+
 ## 1.0.4
 
 ### Patch Changes
