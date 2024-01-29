@@ -76,10 +76,7 @@ SplashScreen.preventAutoHideAsync()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
-  const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const dispatch = useAppDispatch()
-
-  const isAuthenticated = !!mnemonic
 
   const handleStateChange = (state?: NavigationState) => {
     if (state && isNavStateRestorable(state)) dispatch(routeChanged(state))
@@ -105,71 +102,36 @@ const RootStackNavigation = () => {
           <AppUnlockHandler>
             <Analytics>
               <WalletConnectContextProvider>
-                <RootStack.Navigator initialRouteName="LandingScreen">
-                  {/* Sub-navigation with custom header. Showing the header only when authenticated fixes the
-                    reanimated bug while still allowing animated transitions between screens */}
-                  <RootStack.Group screenOptions={{ headerShown: isAuthenticated }}>
-                    <RootStack.Screen
-                      name="SendNavigation"
-                      component={SendNavigation}
-                      options={{
-                        headerShown: false
-                      }}
-                    />
-                    <RootStack.Screen
-                      name="ReceiveNavigation"
-                      component={ReceiveNavigation}
-                      options={{
-                        headerShown: false
-                      }}
-                    />
-                    <RootStack.Screen
-                      name="BackupMnemonicNavigation"
-                      component={BackupMnemonicNavigation}
-                      options={{
-                        headerShown: false
-                      }}
-                    />
-                  </RootStack.Group>
-                  {/* Screens without header */}
-                  <RootStack.Group screenOptions={{ headerShown: false }}>
-                    <RootStack.Screen
-                      name="LandingScreen"
-                      component={LandingScreen}
-                      options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
-                    />
-                    <RootStack.Screen
-                      name="LoginWithPinScreen"
-                      component={LoginWithPinScreen}
-                      options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
-                    />
+                <RootStack.Navigator initialRouteName="LandingScreen" screenOptions={{ headerShown: false }}>
+                  <RootStack.Group screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}>
+                    <RootStack.Screen name="LandingScreen" component={LandingScreen} />
+                    <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
                     <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
-                    <RootStack.Screen
-                      name="InWalletTabsNavigation"
-                      component={InWalletTabsNavigation}
-                      options={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}
-                    />
-                    <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
-                    <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
-                    <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />
-                    <RootStack.Screen name="ContactScreen" component={ContactScreen} />
-                    <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
-                    <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
-                    <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} />
-                    <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
-                    <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
-                    <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
-                    <RootStack.Screen name="SelectImportMethodScreen" component={SelectImportMethodScreen} />
-                    <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
-                    <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
-                    <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-                    <RootStack.Screen name="EditWalletNameScreen" component={EditWalletNameScreen} />
-                    <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
-                    <RootStack.Screen
-                      name="ImportWalletAddressDiscoveryScreen"
-                      component={ImportWalletAddressDiscoveryScreen}
-                    />
+                    <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
                   </RootStack.Group>
+                  <RootStack.Screen name="SendNavigation" component={SendNavigation} />
+                  <RootStack.Screen name="ReceiveNavigation" component={ReceiveNavigation} />
+                  <RootStack.Screen name="BackupMnemonicNavigation" component={BackupMnemonicNavigation} />
+                  <RootStack.Screen name="PinCodeCreationScreen" component={PinCodeCreationScreen} />
+                  <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
+                  <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />
+                  <RootStack.Screen name="ContactScreen" component={ContactScreen} />
+                  <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
+                  <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
+                  <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} />
+                  <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
+                  <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
+                  <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
+                  <RootStack.Screen name="SelectImportMethodScreen" component={SelectImportMethodScreen} />
+                  <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
+                  <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
+                  <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
+                  <RootStack.Screen name="EditWalletNameScreen" component={EditWalletNameScreen} />
+                  <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
+                  <RootStack.Screen
+                    name="ImportWalletAddressDiscoveryScreen"
+                    component={ImportWalletAddressDiscoveryScreen}
+                  />
                 </RootStack.Navigator>
               </WalletConnectContextProvider>
             </Analytics>

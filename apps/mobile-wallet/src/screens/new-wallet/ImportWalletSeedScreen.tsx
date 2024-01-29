@@ -47,7 +47,8 @@ interface ImportWalletSeedScreenProps
   extends StackScreenProps<RootStackParamList, 'ImportWalletSeedScreen'>,
     ScreenProps {}
 
-const enablePasteForDevelopment = false
+// Only used for dev
+const devMnemonicToRestore = ''
 
 const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreenProps) => {
   const dispatch = useAppDispatch()
@@ -104,7 +105,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       setLoading(true)
 
-      const mnemonicToImport = enablePasteForDevelopment ? typedInput : selectedWords.map(({ word }) => word).join(' ')
+      const mnemonicToImport = devMnemonicToRestore || selectedWords.map(({ word }) => word).join(' ')
 
       const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
 
@@ -121,7 +122,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       setLoading(false)
     },
-    [name, typedInput, selectedWords, dispatch, navigation, deviceHasBiometricsData]
+    [name, selectedWords, dispatch, navigation, deviceHasBiometricsData]
   )
 
   const handleWordInputChange = (inputText: string) => {
@@ -132,7 +133,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const handleWalletImport = () => importWallet(pin)
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
-  const isImportButtonEnabled = selectedWords.length >= 12 || enablePasteForDevelopment
+  const isImportButtonEnabled = selectedWords.length >= 12 || !!devMnemonicToRestore
 
   return (
     <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>

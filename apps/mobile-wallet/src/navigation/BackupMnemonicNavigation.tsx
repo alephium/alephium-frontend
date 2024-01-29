@@ -53,7 +53,12 @@ const BackupMnemonicProgressHeader = () => {
   const { headerOptions, screenScrollY } = useHeaderContext()
 
   return (
-    <ProgressHeader options={{ headerTitle: 'Backup', ...headerOptions }} workflow="backup" scrollY={screenScrollY} />
+    <ProgressHeader
+      options={{ headerTitle: 'Backup', ...headerOptions }}
+      titleAlwaysVisible
+      workflow="backup"
+      scrollY={screenScrollY}
+    />
   )
 }
 

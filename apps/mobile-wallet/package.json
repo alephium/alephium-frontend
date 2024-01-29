@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -76,6 +76,7 @@
     "react-hook-form": "^7.42.1",
     "react-native": "0.72.6",
     "react-native-aes-crypto": "^2.1.0",
+    "react-native-background-actions": "^3.0.1",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-get-random-values": "~1.9.0",
     "react-native-modalize": "^2.1.1",

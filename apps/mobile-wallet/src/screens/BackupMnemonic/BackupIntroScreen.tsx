@@ -16,20 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import backupAnimationSrc from '~/animations/lottie/backup.json'
 import AuthenticationModal from '~/components/AuthenticationModal'
-import Button from '~/components/buttons/Button'
+import Button, { BackButton } from '~/components/buttons/Button'
 import FooterButtonContainer from '~/components/buttons/FooterButtonContainer'
 import BottomModal from '~/components/layout/BottomModal'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 
@@ -38,12 +40,22 @@ interface BackupIntroScreenProps
     ScrollScreenProps {}
 
 const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => {
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+
   const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
 
+  useFocusEffect(
+    useCallback(() => {
+      setHeaderOptions({
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
+      })
+    }, [navigation, setHeaderOptions])
+  )
+
   return (
     <>
-      <ScrollScreen fill {...props}>
+      <ScrollScreen fill onScroll={screenScrollHandler} {...props}>
         <ScreenSection fill centered verticallyCentered>
           <StyledAnimation source={backupAnimationSrc} autoPlay />
         </ScreenSection>

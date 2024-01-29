@@ -20,7 +20,7 @@ export default {
   expo: {
     name: 'Alephium',
     slug: 'alephium-mobile-wallet',
-    version: '1.0.4',
+    version: '1.0.5',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -36,6 +36,9 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'org.alephium.mobilewallet',
+      infoPlist: {
+        BGTaskSchedulerPermittedIdentifiers: ['$(PRODUCT_BUNDLE_PACKAGE_TYPE)']
+      },
       config: {
         usesNonExemptEncryption: false
       }
@@ -45,6 +48,7 @@ export default {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#000000'
       },
+      permissions: ['android.permission.FOREGROUND_SERVICE', 'android.permission.WAKE_LOCK'],
       package: 'org.alephium.wallet'
     },
     web: {
