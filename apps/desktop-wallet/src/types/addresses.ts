@@ -70,7 +70,7 @@ export type AddressDataSyncResult = AddressBalancesSyncResult & AddressTokensSyn
 export interface AddressesState extends EntityState<Address> {
   loadingBalances: boolean
   loadingTransactions: boolean
-  loadingTokens: boolean
+  loadingTokensBalances: boolean
   syncingAddressData: boolean
   isRestoringAddressesFromMetadata: boolean
   status: 'uninitialized' | 'initialized'

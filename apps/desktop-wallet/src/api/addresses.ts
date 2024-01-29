@@ -30,7 +30,9 @@ import {
 
 const PAGE_LIMIT = 100
 
-export const fetchAddressesTokens = async (addressHashes: AddressHash[]): Promise<AddressTokensSyncResult[]> => {
+export const fetchAddressesTokensBalances = async (
+  addressHashes: AddressHash[]
+): Promise<AddressTokensSyncResult[]> => {
   const results = []
 
   for (const hash of addressHashes) {

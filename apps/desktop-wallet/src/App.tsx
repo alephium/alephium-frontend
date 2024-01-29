@@ -82,7 +82,7 @@ const App = () => {
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
   const isFungibleTokensUninitialized = useAppSelector(selectIsFungibleTokensUninitialized)
   const isLoadingFungibleTokens = useAppSelector((s) => s.fungibleTokens.loading)
-  const isLoadingAddressTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
+  const isLoadingAddressesTokensBalances = useAppSelector((s) => s.addresses.loadingTokensBalances)
 
   const selectAddressesKnownTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownTokens = useAppSelector(selectAddressesKnownTokens)
@@ -212,7 +212,7 @@ const App = () => {
             dispatch(syncUnknownTokensInfo(newUnknownTokens))
           }
 
-          if (!isLoadingAddressTokenBalances) {
+          if (!isLoadingAddressesTokensBalances) {
             dispatch(syncAddressesHistoricBalances())
             dispatch(syncTokenPrices({ knownTokenSymbols, currency: settings.fiatCurrency }))
           }
@@ -225,7 +225,7 @@ const App = () => {
     fungibleTokens.status,
     dispatch,
     isSyncingAddressData,
-    isLoadingAddressTokenBalances,
+    isLoadingAddressesTokensBalances,
     isLoadingFungibleTokens,
     isFungibleTokensUninitialized,
     network.status,
