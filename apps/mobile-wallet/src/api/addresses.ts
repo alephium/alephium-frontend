@@ -131,7 +131,7 @@ export const fetchAddressesHistoricalBalances = async (
 
   for (const addressHash of addresssHashes) {
     const balances = []
-    const data = await client.explorer.addresses.getAddressesAddressAmountHistory(
+    const data = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
       addressHash,
       { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
       { format: 'text' }
