@@ -29,7 +29,7 @@ import { RootState } from '@/storage/store'
 
 export const syncVerifiedFungibleTokens = createAsyncThunk(
   'assets/syncVerifiedFungibleTokens',
-  async (_, { getState, dispatch }) => {
+  async (_, { getState }) => {
     const state = getState() as RootState
 
     let metadata = undefined

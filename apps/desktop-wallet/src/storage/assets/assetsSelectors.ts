@@ -25,11 +25,11 @@ import { RootState } from '@/storage/store'
 export const { selectAll: selectAllFungibleTokens, selectById: selectFungibleTokenById } =
   fungibleTokensAdapter.getSelectors<RootState>((state) => state.fungibleTokens)
 
-export const selectAreVerifiedFungibleTokensInitialized = createSelector(
+export const selectDoVerifiedFungibleTokensNeedInitialization = createSelector(
   [(state: RootState) => state.fungibleTokens.status, (state: RootState) => state.network.settings.networkId],
   (status, networkId) =>
     (networkId === networkPresets.mainnet.networkId || networkId === networkPresets.testnet.networkId) &&
-    status === 'initialized'
+    status === 'uninitialized'
 )
 
 export const {

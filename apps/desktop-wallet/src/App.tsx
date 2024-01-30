@@ -42,7 +42,7 @@ import {
   selectAllAddressVerifiedFungibleTokenSymbols
 } from '@/storage/addresses/addressesSelectors'
 import { syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/storage/assets/assetsActions'
-import { selectAreVerifiedFungibleTokensInitialized } from '@/storage/assets/assetsSelectors'
+import { selectDoVerifiedFungibleTokensNeedInitialization } from '@/storage/assets/assetsSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrated,
@@ -71,7 +71,6 @@ const App = () => {
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
   const network = useAppSelector((s) => s.network)
   const theme = useAppSelector((s) => s.global.theme)
-  const fungibleTokens = useAppSelector((s) => s.fungibleTokens)
   const loading = useAppSelector((s) => s.global.loading)
   const settings = useAppSelector((s) => s.settings)
   const wallets = useAppSelector((s) => s.global.wallets)
@@ -80,7 +79,7 @@ const App = () => {
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const areVerifiedFungibleTokensInitialized = useAppSelector(selectAreVerifiedFungibleTokensInitialized)
+  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
@@ -198,7 +197,11 @@ const App = () => {
           dispatch(syncAddressesAlphHistoricBalances())
         }
       } else if (addressesStatus === 'initialized') {
-        if (areVerifiedFungibleTokensInitialized && !isLoadingUnverifiedFungibleTokens && newUnknownTokens.length > 0) {
+        if (
+          !verifiedFungibleTokensNeedInitialization &&
+          !isLoadingUnverifiedFungibleTokens &&
+          newUnknownTokens.length > 0
+        ) {
           dispatch(syncUnknownTokensInfo(newUnknownTokens))
         }
       }
@@ -206,7 +209,7 @@ const App = () => {
   }, [
     addressHashes.length,
     addressesStatus,
-    areVerifiedFungibleTokensInitialized,
+    verifiedFungibleTokensNeedInitialization,
     dispatch,
     isLoadingUnverifiedFungibleTokens,
     isSyncingAddressData,
@@ -218,7 +221,7 @@ const App = () => {
   // token found in each address
   useEffect(() => {
     if (network.status === 'online' && !isLoadingVerifiedFungibleTokens) {
-      if (fungibleTokens.status === 'uninitialized') {
+      if (verifiedFungibleTokensNeedInitialization) {
         dispatch(syncVerifiedFungibleTokens())
       } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
         const symbols = verifiedFungibleTokenSymbols.uninitialized
@@ -229,11 +232,11 @@ const App = () => {
     }
   }, [
     dispatch,
-    fungibleTokens.status,
     isLoadingVerifiedFungibleTokens,
     network.status,
     settings.fiatCurrency,
-    verifiedFungibleTokenSymbols.uninitialized
+    verifiedFungibleTokenSymbols.uninitialized,
+    verifiedFungibleTokensNeedInitialization
   ])
 
   useEffect(() => {
