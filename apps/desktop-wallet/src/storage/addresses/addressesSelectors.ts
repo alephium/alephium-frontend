@@ -113,18 +113,30 @@ export const makeSelectAddressesKnownFungibleTokens = () =>
     tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
   )
 
-export const makeSelectAllAddressUninitializedVerifiedFungibleTokenSymbols = () =>
-  createSelector(
-    [makeSelectAddressesTokens(), selectAllPricesHistories],
-    (tokens, histories): VerifiedAddressFungibleToken['symbol'][] =>
-      tokens
-        .filter(
-          (token): token is VerifiedAddressFungibleToken =>
-            !!token.verified &&
-            !histories.find(({ symbol, status }) => symbol === token.symbol && status === 'initialized')
-        )
-        .map((token) => token.symbol)
-  )
+export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
+  [makeSelectAddressesTokens(), selectAllPricesHistories],
+  (tokens, histories) =>
+    tokens
+      .filter((token): token is VerifiedAddressFungibleToken => !!token.verified)
+      .map((token) => token.symbol)
+      .reduce(
+        (acc, tokenSymbol) => {
+          const tokenHistory = histories.find(({ symbol }) => symbol === tokenSymbol)
+
+          if (!tokenHistory || tokenHistory.status === 'uninitialized') {
+            acc.uninitialized.push(tokenSymbol)
+          } else if (tokenHistory && tokenHistory.history.length > 0) {
+            acc.withPriceHistory.push(tokenSymbol)
+          }
+
+          return acc
+        },
+        {
+          uninitialized: [] as string[],
+          withPriceHistory: [] as string[]
+        }
+      )
+)
 
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector(

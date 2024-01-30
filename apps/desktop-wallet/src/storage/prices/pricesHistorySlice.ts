@@ -37,7 +37,7 @@ const pricesHistorySlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncTokenPriceHistories.pending, (state, action) => {
+      .addCase(syncTokenPriceHistories.pending, (state) => {
         state.loading = true
       })
       .addCase(syncTokenPriceHistories.fulfilled, (state, action) => {
