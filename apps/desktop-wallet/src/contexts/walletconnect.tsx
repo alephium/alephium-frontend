@@ -47,8 +47,7 @@ import {
   STORE_STORAGE_VERSION
 } from '@walletconnect/core'
 import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
-import SignClient from '@walletconnect/sign-client'
-import { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
+import SignClient, { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
 import {
   EngineTypes,
   JsonRpcRecord,
