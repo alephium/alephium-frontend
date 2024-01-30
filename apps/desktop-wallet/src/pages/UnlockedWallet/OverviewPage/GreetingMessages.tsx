@@ -38,7 +38,7 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   const { t } = useTranslation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
   const alphPrice = useAppSelector(selectAlphPrice)
-  const areTokenPricesLoading = useAppSelector((s) => s.tokenPrices.loading)
+  const tokenPricesStatus = useAppSelector((s) => s.tokenPrices.status)
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
@@ -66,13 +66,13 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
 
   const showNextMessage = useCallback(() => {
     setCurrentComponentIndex((prevIndex) => {
-      if (prevIndex === 0 && (areTokenPricesLoading || alphPrice === undefined)) {
+      if (prevIndex === 0 && (tokenPricesStatus === 'uninitialized' || alphPrice === undefined)) {
         return prevIndex
       }
       return (prevIndex + 1) % componentList.length
     })
     setLastChangeTime(Date.now())
-  }, [componentList.length, areTokenPricesLoading, alphPrice])
+  }, [componentList.length, tokenPricesStatus, alphPrice])
 
   const handleClick = useCallback(() => {
     showNextMessage()
@@ -88,7 +88,7 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   }, [lastClickTime, showNextMessage])
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       <motion.div className={className} key={currentComponentIndex} onClick={handleClick} {...fadeInOut}>
         {componentList[currentComponentIndex]}
       </motion.div>
