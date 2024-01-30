@@ -36,7 +36,7 @@ import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@/utils/time'
 
 // Batched calls
 const tokensInfo = create({
-  fetcher: async (ids: string[]) => client.explorer.tokens.postTokens(ids),
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokens(ids.filter((id) => id !== '')),
   resolver: keyResolver('token'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
@@ -45,7 +45,7 @@ const tokensInfo = create({
 })
 
 const fungibleTokensMetadata = create({
-  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensFungibleMetadata(ids),
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensFungibleMetadata(ids.filter((id) => id !== '')),
   resolver: keyResolver('id'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
@@ -54,7 +54,7 @@ const fungibleTokensMetadata = create({
 })
 
 const unverifiedNFTsMetadata = create({
-  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftMetadata(ids),
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftMetadata(ids.filter((id) => id !== '')),
   resolver: keyResolver('id'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
@@ -63,7 +63,8 @@ const unverifiedNFTsMetadata = create({
 })
 
 const NFTCollectionsMetadata = create({
-  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftCollectionMetadata(ids),
+  fetcher: async (ids: string[]) =>
+    client.explorer.tokens.postTokensNftCollectionMetadata(ids.filter((id) => id !== '')),
   resolver: keyResolver('address'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
