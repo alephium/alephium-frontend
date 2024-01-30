@@ -36,7 +36,7 @@ import {
   selectAddressByHash,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { selectIsFungibleTokensUninitialized } from '@/storage/assets/assetsSelectors'
+import { selectAreVerifiedFungibleTokensInitialized } from '@/storage/assets/assetsSelectors'
 import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { currencies } from '@/utils/currencies'
 import { onEnterOrSpace } from '@/utils/misc'
@@ -54,7 +54,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
   const assets = useAppSelector((s) => selectAddressesTokens(s, addressHash))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isFungibleTokensUninitialized = useAppSelector(selectIsFungibleTokensUninitialized)
+  const areVerifiedFungibleTokensInitialized = useAppSelector(selectAreVerifiedFungibleTokensInitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAppSelector(selectAlphPrice)
   const areTokenPricesLoading = useAppSelector((s) => s.tokenPrices.loading)
@@ -108,7 +108,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           </Column>
         </AddressNameCell>
         <Cell>
-          {isFungibleTokensUninitialized || stateUninitialized ? (
+          {!areVerifiedFungibleTokensInitialized || stateUninitialized ? (
             <SkeletonLoader height="33.5px" />
           ) : (
             <AssetLogos>

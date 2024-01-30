@@ -42,7 +42,7 @@ import {
   selectAllAddressVerifiedFungibleTokenSymbols
 } from '@/storage/addresses/addressesSelectors'
 import { syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/storage/assets/assetsActions'
-import { selectIsFungibleTokensUninitialized } from '@/storage/assets/assetsSelectors'
+import { selectAreVerifiedFungibleTokensInitialized } from '@/storage/assets/assetsSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrated,
@@ -80,7 +80,7 @@ const App = () => {
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const isFungibleTokensUninitialized = useAppSelector(selectIsFungibleTokensUninitialized)
+  const areVerifiedFungibleTokensInitialized = useAppSelector(selectAreVerifiedFungibleTokensInitialized)
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
@@ -198,7 +198,7 @@ const App = () => {
           dispatch(syncAddressesAlphHistoricBalances())
         }
       } else if (addressesStatus === 'initialized') {
-        if (!isFungibleTokensUninitialized && !isLoadingUnverifiedFungibleTokens && newUnknownTokens.length > 0) {
+        if (areVerifiedFungibleTokensInitialized && !isLoadingUnverifiedFungibleTokens && newUnknownTokens.length > 0) {
           dispatch(syncUnknownTokensInfo(newUnknownTokens))
         }
       }
@@ -206,8 +206,8 @@ const App = () => {
   }, [
     addressHashes.length,
     addressesStatus,
+    areVerifiedFungibleTokensInitialized,
     dispatch,
-    isFungibleTokensUninitialized,
     isLoadingUnverifiedFungibleTokens,
     isSyncingAddressData,
     network.status,
