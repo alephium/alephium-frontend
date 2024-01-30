@@ -5,7 +5,7 @@ on:
     tags: ['alephium-desktop-wallet@[0-9]+.[0-9]+.[0-9]+*']
 
 jobs:
-  release-desktop-wallet-unix:
+  release-desktop-wallet:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -31,13 +31,9 @@ jobs:
           echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
           echo '${{ secrets.mac_certs }}' | base64 -d > applecert.p12
 
-      - name: Get build command arguments
-        id: get-args
-        run: |
-          args=$(if ${{ startsWith(matrix.os, 'macos') }}; then echo '--mac --universal'; else echo ''; fi)
-          args=$(if ${{ startsWith(matrix.os, 'windows') }}; then echo '-w'; else echo $args; fi)
-          args=$(if ${{ startsWith(matrix.os, 'ubuntu') }}; then echo '-l'; else echo $args; fi)
-          echo "args=$args" >> $GITHUB_OUTPUT
+      - name: Extract platform name
+        id: get-os
+        run: echo "os=$(echo ${{ matrix.os }} | cut -d- -f1)" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Install Snapcraft
@@ -45,14 +41,14 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
 
       - name: Build & release Electron app
-        uses: coparse-inc/action-electron-builder@v1.0.0
+        uses: nop33/action-electron-builder@v1.8.1
         if: ${{ startsWith(github.ref, 'refs/tags/alephium-desktop-wallet@') }}
         with:
           package_root: 'apps/desktop-wallet'
-          build_script_name: 'ci:build'
-          args: ${{ steps.get-args.outputs.args }}
+          build_script_name: 'ci:build:electron:${{ steps.get-os.outputs.os }}'
+          is_monorepo: true
+          release: true
           github_token: ${{ secrets.github_token }}
-          release: ${{ startsWith(github.ref, 'refs/tags/alephium-desktop-wallet@') }}
           mac_certs: ${{ secrets.MAC_CERTS }}
           mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
         env:
@@ -61,3 +57,7 @@ jobs:
           APPLEID: ${{ secrets.APPLE_ID }}
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+          WINDOWS_SIGN_USER_NAME: ${{ secrets.WINDOWS_SIGN_USER_NAME }}
+          WINDOWS_SIGN_PASSWORD: ${{ secrets.WINDOWS_SIGN_PASSWORD }}
+          WINDOWS_SIGN_CREDENTIAL_ID: ${{ secrets.WINDOWS_SIGN_CREDENTIAL_ID }}
+          WINDOWS_SIGN_TOTP_SECRET: ${{ secrets.WINDOWS_SIGN_TOTP_SECRET }}

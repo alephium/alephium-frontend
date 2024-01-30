@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -38,7 +38,8 @@ const TextAreaTags = (props: ComponentProps<typeof Tags>) => (
           position: 'all',
           classname: 'tags-dropdown',
           maxItems: 5,
-          highlightFirst: true
+          highlightFirst: true,
+          includeSelectedTags: true // Allow duplicated tags to be displayed in the dropdown suggestions list
         },
         addTagOnBlur: false,
         editTags: false

@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -27,9 +27,8 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
-import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -54,9 +53,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
   const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
   const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
 
-  useNavigationScrollHandler(listRef)
-
-  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   if (!contact) return null
 
@@ -88,14 +85,27 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
   const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
   return (
-    <Screen style={style}>
+    <>
+      <StackHeader
+        options={{
+          headerRight: () => (
+            <Button
+              title="Edit"
+              onPress={() => navigation.navigate('EditContactScreen', { contactId: params.contactId })}
+              type="transparent"
+              variant="accent"
+            />
+          )
+        }}
+        goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+        scrollY={screenScrollY}
+      />
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
         initialNumToRender={8}
         contentContainerStyle={{ flexGrow: 1 }}
         onScroll={screenScrollHandler}
-        headerHeight={screenHeaderHeight}
         ref={listRef}
         ListHeaderComponent={
           <>
@@ -127,22 +137,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
           </>
         }
       />
-      <StackHeader
-        options={{
-          headerRight: () => (
-            <Button
-              title="Edit"
-              onPress={() => navigation.navigate('EditContactScreen', { contactId: params.contactId })}
-              type="transparent"
-              variant="accent"
-            />
-          )
-        }}
-        goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-        scrollY={screenScrollY}
-        onLayout={screenHeaderLayoutHandler}
-      />
-    </Screen>
+    </>
   )
 }
 

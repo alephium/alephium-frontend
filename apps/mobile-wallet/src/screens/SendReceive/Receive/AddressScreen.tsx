@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -17,31 +17,46 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
+import { useCallback } from 'react'
 
 import { sendAnalytics } from '~/analytics'
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
+import { CloseButton } from '~/components/buttons/Button'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'>, ScrollScreenProps {}
 
 const AddressScreen = ({ navigation }: ScreenProps) => {
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+
   const handleAddressPress = (addressHash: AddressHash) => {
     sendAnalytics('Pressed on address to see QR code to receive funds')
 
     navigation.navigate('QRCodeScreen', { addressHash })
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      setHeaderOptions({
+        headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />
+      })
+    }, [navigation, setHeaderOptions])
+  )
+
   return (
     <AddressFlatListScreen
-      hasNavigationHeader
       onAddressPress={(addressHash) => handleAddressPress(addressHash)}
       ListHeaderComponent={
         <ScreenIntro title="To address" subtitle="Select the address which you want to receive funds to." />
       }
       contrastedBg
+      contentPaddingTop
+      onScroll={screenScrollHandler}
     />
   )
 }

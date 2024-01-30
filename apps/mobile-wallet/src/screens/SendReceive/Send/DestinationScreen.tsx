@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -64,6 +65,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
   const theme = useTheme()
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
+  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
@@ -123,6 +125,25 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     sendAnalytics('Send: Selected own address to send funds to')
   }
 
+  const handleContinuePress = useCallback(
+    (formData: FormData) => {
+      setToAddress(formData.toAddressHash)
+      navigation.navigate(nextScreen)
+    },
+    [navigation, nextScreen, setToAddress]
+  )
+
+  useFocusEffect(
+    useCallback(() => {
+      setHeaderOptions({
+        headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />,
+        headerRight: () => (
+          <ContinueButton onPress={handleSubmit(handleContinuePress)} disabled={!!errors.toAddressHash?.message} />
+        )
+      })
+    }, [errors.toAddressHash?.message, handleContinuePress, handleSubmit, navigation, setHeaderOptions])
+  )
+
   useEffect(() => {
     if (params?.fromAddressHash) {
       setFromAddress(params.fromAddressHash)
@@ -145,25 +166,14 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     )
   }))
 
-  useFocusEffect(
-    useCallback(() => {
-      const onContinue = (formData: FormData) => {
-        setToAddress(formData.toAddressHash)
-        navigation.navigate(nextScreen)
-      }
-      navigation.getParent()?.setOptions({
-        headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />,
-        headerRight: () => (
-          <ContinueButton onPress={handleSubmit(onContinue)} disabled={!!errors.toAddressHash?.message} />
-        )
-      })
-    }, [errors.toAddressHash?.message, handleSubmit, navigation, nextScreen, setToAddress])
-  )
-
   return (
     <>
-      <ScrollScreen usesKeyboard hasNavigationHeader verticalGap contrastedBg {...props}>
-        <ScreenIntro title="Destination" subtitle="Send to an address, a contact, or one of your other addresses." />
+      <ScrollScreen usesKeyboard verticalGap contrastedBg contentPaddingTop onScroll={screenScrollHandler} {...props}>
+        <ScreenIntro
+          title="Destination"
+          subtitle="Send to an address, a contact, or one of your other addresses."
+          scrollY={screenScrollY}
+        />
         <ScreenSection>
           <Controller
             name="toAddressHash"

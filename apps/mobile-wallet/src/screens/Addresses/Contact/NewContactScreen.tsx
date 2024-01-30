@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -59,11 +59,7 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
 
   return (
     <>
-      <ContactFormBaseScreen
-        initialValues={initialValues}
-        onSubmit={handleSavePress}
-        headerOptions={{ headerTitle: 'New contact' }}
-      />
+      <ContactFormBaseScreen initialValues={initialValues} onSubmit={handleSavePress} screenTitle="New contact" />
       <SpinnerModal isActive={loading} text="Saving contact..." />
     </>
   )

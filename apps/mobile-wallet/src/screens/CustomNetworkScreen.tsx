@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -70,7 +70,6 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
       <ScrollScreen
         usesKeyboard
         fill
-        hasNavigationHeader
         headerOptions={{
           type: 'stack',
           headerTitle: 'Custom network',

@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ const useLatestGitHubRelease = () => {
   const checkForManualDownload = async () => {
     const response = await fetch(links.latestReleaseApi)
     const data = await response.json()
-    const version = data.tag_name.replace('v', '')
+    const version = data.tag_name.replace('alephium-desktop-wallet@', '')
 
     if (isVersionNewer(version)) {
       setNewVersion(version)

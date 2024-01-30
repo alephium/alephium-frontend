@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -19,14 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { RefreshControl, RefreshControlProps } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
-interface RefreshSpinnerProps extends RefreshControlProps {
-  progressViewOffset: Required<RefreshControlProps>['progressViewOffset']
-}
-
-const RefreshSpinner = ({ progressViewOffset, ...props }: RefreshSpinnerProps) => {
+const RefreshSpinner = (props: RefreshControlProps) => {
   const theme = useTheme()
 
-  return <RefreshControl tintColor={theme.font.primary} progressViewOffset={progressViewOffset} {...props} />
+  return <RefreshControl tintColor={theme.font.primary} {...props} />
 }
 
 export default RefreshSpinner

@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -20,10 +20,12 @@ import '@/index.css' // Importing CSS through CSS file to avoid font flickering
 import '@/i18n'
 import '@yaireo/tagify/dist/tagify.css' // Tagify CSS: important to import after index.css file
 
+import isPropValid from '@emotion/is-prop-valid'
 import { StrictMode, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { HashRouter as Router } from 'react-router-dom'
+import { StyleSheetManager } from 'styled-components'
 
 import App from '@/App'
 import Tooltips from '@/components/Tooltips'
@@ -43,10 +45,12 @@ ReactDOM.render(
       <Router>
         <Suspense fallback="loading">
           <AnalyticsProvider>
-            <GlobalContextProvider>
-              <App />
-              <Tooltips />
-            </GlobalContextProvider>
+            <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+              <GlobalContextProvider>
+                <App />
+                <Tooltips />
+              </GlobalContextProvider>
+            </StyleSheetManager>
           </AnalyticsProvider>
         </Suspense>
       </Router>
@@ -60,3 +64,16 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister()
+
+// TODO: Remove when migrating to transient props
+// See: https://styled-components.com/docs/faqs#shouldforwardprop-is-no-longer-provided-by-default
+// This implements the default behavior from styled-components v5
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function shouldForwardProp(propName: any, target: any) {
+  if (typeof target === 'string') {
+    // For HTML elements, forward the prop if it is a valid HTML attribute
+    return isPropValid(propName)
+  }
+  // For other elements, forward all props
+  return true
+}

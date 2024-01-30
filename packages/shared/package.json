@@ -1,6 +1,6 @@
 {
   "name": "@alephium/shared",
-  "version": "0.7.7",
+  "version": "0.7.8",
   "private": true,
   "main": "dist/alephium.min.js",
   "types": "dist/index.d.ts",
@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
-    "@alephium/web3": "0.27.5",
+    "@alephium/web3": "0.28.1",
+    "@walletconnect/utils": "2.11.0",
     "base-x": "^4.0.0",
     "bcfg": "~0.1.6",
     "bip32": "^2.0.6",

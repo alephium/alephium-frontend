@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ export type StackHeaderCustomProps = BaseHeaderProps
 const StackHeader = ({ goBack, options, ...props }: StackHeaderCustomProps) => {
   const HeaderLeft = goBack ? <Button onPress={goBack} iconProps={{ name: 'arrow-back-outline' }} round /> : null
 
-  return <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} showCompactComponents {...props} />
+  return <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} {...props} />
 }
 
 export default StackHeader

@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -32,6 +32,8 @@ export const transactionSendFailed = createAction<Message>('tx/transactionSendFa
 export const transactionsSendSucceeded = createAction<{ nbOfTransactionsSent: number }>('tx/transactionsSendSucceeded')
 
 export const unsignedTransactionSignSucceeded = createAction('tx/unsignedTransactionSignSucceeded')
+
+export const messageSignSucceeded = createAction('tx/messageSignSucceeded')
 
 export const transactionSent = createAction<PendingTransaction>('tx/transactionSent')
 

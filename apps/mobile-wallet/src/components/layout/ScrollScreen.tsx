@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -16,83 +16,96 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useHeaderHeight } from '@react-navigation/elements'
 import { useNavigation } from '@react-navigation/native'
-import { RefObject, useRef } from 'react'
+import { ReactNode, RefObject, useRef } from 'react'
 import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import styled from 'styled-components/native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import { ScreenProps } from '~/components/layout/Screen'
+import ScreenTitle from '~/components/layout/ScreenTitle'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
-import useNavigationScrollHandler from '~/hooks/layout/useNavigationScrollHandler'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
   fill?: boolean
+  screenTitle?: string
+  TitleSideComponent?: ReactNode
 }
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
   containerStyle?: StyleProp<ViewStyle>
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
+  contentPaddingTop?: number | boolean
   usesKeyboard?: boolean
 }
 
 const ScrollScreen = ({
   children,
-  hasNavigationHeader,
   style,
   containerStyle,
   contentContainerStyle,
+  contentPaddingTop,
   verticalGap,
   contrastedBg,
   fill,
   headerOptions,
   usesKeyboard,
+  screenTitle,
+  TitleSideComponent,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
   const navigation = useNavigation()
 
-  const headerheight = useHeaderHeight()
-  const navigationScrollHandler = useNavigationScrollHandler(viewRef)
   const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
   const insets = useSafeAreaInsets()
 
   useScrollToTopOnBlur(viewRef)
 
-  const { screenScrollY, screenHeaderHeight, screenScrollHandler, screenHeaderLayoutHandler } = useScreenScrollHandler()
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   const screen = (
-    <Screen style={containerStyle} contrastedBg={contrastedBg}>
+    <ScrollViewContainer style={containerStyle}>
+      {headerOptions && (
+        <HeaderComponent
+          goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+          options={{ headerTitle: screenTitle, ...headerOptions }}
+          scrollY={screenScrollY}
+        />
+      )}
       <ScrollView
         ref={viewRef}
         scrollEventThrottle={16}
         alwaysBounceVertical={true}
-        onScroll={hasNavigationHeader ? navigationScrollHandler : screenScrollHandler}
+        onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
+        style={{ overflow: SCREEN_OVERFLOW, paddingTop: headerOptions ? 15 : 0 }}
         contentContainerStyle={[
           {
-            paddingTop: headerOptions
-              ? screenHeaderHeight + DEFAULT_MARGIN
-              : hasNavigationHeader
-                ? headerheight + DEFAULT_MARGIN
-                : 0,
-            flexGrow: fill ? 1 : undefined
+            flexGrow: fill ? 1 : undefined,
+            paddingTop: typeof contentPaddingTop === 'boolean' ? 15 : contentPaddingTop
           },
           contentContainerStyle
         ]}
         {...props}
       >
+        {screenTitle && (
+          <ScreenTitle
+            title={screenTitle}
+            SideComponent={TitleSideComponent}
+            scrollY={screenScrollY}
+            sideDefaultMargin
+          />
+        )}
         <View
           style={[
             {
@@ -106,15 +119,7 @@ const ScrollScreen = ({
           {children}
         </View>
       </ScrollView>
-      {headerOptions && (
-        <HeaderComponent
-          goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-          options={headerOptions}
-          scrollY={screenScrollY}
-          onLayout={screenHeaderLayoutHandler}
-        />
-      )}
-    </Screen>
+    </ScrollViewContainer>
   )
 
   return usesKeyboard ? (
@@ -127,3 +132,7 @@ const ScrollScreen = ({
 }
 
 export default ScrollScreen
+
+const ScrollViewContainer = styled.View`
+  flex: 1;
+`

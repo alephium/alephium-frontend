@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { shuffle } from 'lodash'
 import LottieView from 'lottie-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, Dimensions } from 'react-native'
+import { Alert } from 'react-native'
 import Animated, { FadeIn } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
@@ -35,6 +35,7 @@ import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import SecretPhraseWordList, { SelectedWord } from '~/components/SecretPhraseWordList'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
 import { persistWalletMetadata } from '~/persistent-storage/wallet'
@@ -56,11 +57,11 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const allowedWords = useRef(bip39Words.split(' '))
   const randomizedOptions = useRef(getRandomizedOptions(mnemonicWords.current, allowedWords.current))
   const insets = useSafeAreaInsets()
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
 
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const [showSuccess, setShowSuccess] = useState(false)
-  const [footerButtonsHeight, setFooterButtonsHeight] = useState(0)
 
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {
@@ -86,10 +87,10 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   useFocusEffect(
     useCallback(() => {
-      navigation.getParent()?.setOptions({
+      setHeaderOptions({
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
       })
-    }, [navigation])
+    }, [navigation, setHeaderOptions])
   )
 
   const selectWord = (word: string) => {
@@ -108,13 +109,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   return (
     <>
-      <ScrollScreen
-        fill
-        verticalGap
-        hasNavigationHeader
-        style={{ paddingBottom: footerButtonsHeight + DEFAULT_MARGIN }}
-        {...props}
-      >
+      <ScrollScreen fill verticalGap contentPaddingTop onScroll={screenScrollHandler} {...props}>
         <ScreenIntro
           title="Verify secret phrase"
           subtitle="Select the words of your secret recovery phrase in the right order."
@@ -141,8 +136,6 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       {selectedWords.length < 24 && (
         <ChoicesBox
           style={{ padding: possibleMatches.length > 0 ? 15 : 0, paddingBottom: insets.bottom + DEFAULT_MARGIN }}
-          onLayout={(e) => setFooterButtonsHeight(e.nativeEvent.layout.height)}
-          top={Dimensions.get('window').height - footerButtonsHeight}
         >
           <AppText size={16} bold color="secondary" style={{ marginBottom: DEFAULT_MARGIN }}>
             Word {selectedWords.length + 1} is:
@@ -190,15 +183,15 @@ const StyledAnimation = styled(LottieView)`
   width: 80%;
 `
 
-const ChoicesBox = styled(Animated.View)<{ top: number }>`
+const ChoicesBox = styled(Animated.View)`
   background-color: ${({ theme }) => theme.bg.secondary};
   border-top-width: 1px;
   border-top-color: ${({ theme }) => theme.border.primary};
   align-items: center;
   position: absolute;
-  top: ${({ top }) => top}px;
   left: 0;
   right: 0;
+  bottom: 0;
 `
 
 const WordsList = styled.View`

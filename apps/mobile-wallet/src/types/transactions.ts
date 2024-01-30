@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, AssetAmount } from '@alephium/shared'
-import { explorer } from '@alephium/web3'
+import { explorer, SignMessageParams } from '@alephium/web3'
 
 import { Address } from '~/types/addresses'
 
@@ -90,4 +90,8 @@ export interface DeployContractTxData {
   issueTokenAmount?: string
   gasAmount?: number
   gasPrice?: string
+}
+
+export interface SignMessageData extends Pick<SignMessageParams, 'message' | 'messageHasher'> {
+  fromAddress: AddressHash
 }

@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, CHART_DATE_FORMAT } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import dayjs from 'dayjs'
@@ -29,7 +29,6 @@ import {
   AddressTokensSyncResult,
   AddressTransactionsSyncResult
 } from '~/types/addresses'
-import { CHART_DATE_FORMAT } from '~/utils/constants'
 
 const PAGE_LIMIT = 100
 

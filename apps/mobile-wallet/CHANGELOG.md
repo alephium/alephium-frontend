@@ -1,5 +1,26 @@
 # @alephium/mobile-wallet
 
+## 1.0.5
+
+### Patch Changes
+
+- ad9fd6d: Improve dApp experience by responding to WalletConnect requests while the app is in the background
+
+## 1.0.4
+
+### Patch Changes
+
+- 6a7419c: Fix install on OnePlus by handling storage error
+- da74c2d: Fix type issue
+- a5b9592: Fallback to pin when detecting biometrics settings change
+- 14d786b: Greatly simplified the main header component's structure and behaviour, hence simplifying the overall layout of the app.
+- 6a7419c: Fix analytics capturing
+- 432338d: Sign messages through WalletConnect
+- a5b9592: Fix landing screen not showing buttons
+- 4fb65e0: Keep up to 10 unresponsive WalletConnect requests and clear the rest to avoid crashes due to storage overload
+- Updated dependencies [bb782ab]
+  - @alephium/shared@0.7.8
+
 ## 1.0.3
 
 ### Patch Changes

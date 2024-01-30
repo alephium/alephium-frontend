@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -33,7 +33,6 @@ const BottomBarScrollScreen = ({ hasBottomBar = false, children, ...props }: Bot
       contentContainerStyle={{
         paddingBottom: hasBottomBar ? bottomBarHeight + DEFAULT_MARGIN : 0
       }}
-      showsHorizontalScrollIndicator={false}
       {...props}
     >
       {children}

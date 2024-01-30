@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -16,4 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getSdkError } from '@walletconnect/utils'
+
 export type WalletConnectClientStatus = 'uninitialized' | 'initializing' | 'initialized'
+
+export enum WALLETCONNECT_ERRORS {
+  TRANSACTION_SEND_FAILED = -32000,
+  PARSING_SESSION_REQUEST_FAILED = -33000,
+  TRANSACTION_BUILD_FAILED = -34000,
+  TRANSACTION_SIGN_FAILED = -35000,
+  MESSAGE_SIGN_FAILED = -36000,
+  SIGNER_ADDRESS_DOESNT_EXIST = -37000
+}
+
+export type WalletConnectError = ReturnType<typeof getSdkError>

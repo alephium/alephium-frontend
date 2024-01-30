@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 Copyright 2018 - 2023 The Alephium Authors
 This file is part of the alephium project.

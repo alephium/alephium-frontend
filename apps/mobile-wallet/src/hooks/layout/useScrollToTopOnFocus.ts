@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -18,12 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { useCallback } from 'react'
+import { SharedValue } from 'react-native-reanimated'
 
-import { useNavigationScrollContext } from '~/contexts/NavigationScrollContext'
-
-const useScrollToTopOnFocus = () => {
-  const { scrollY } = useNavigationScrollContext()
-
+const useScrollToTopOnFocus = (scrollY?: SharedValue<number>) => {
   useFocusEffect(
     useCallback(() => {
       if (scrollY) scrollY.value = 0

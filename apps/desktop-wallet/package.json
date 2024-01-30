@@ -1,7 +1,7 @@
 {
   "name": "alephium-desktop-wallet",
   "description": "The official Alephium wallet",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "author": "Alephium dev <dev@alephium.org>",
   "main": "public/electron.js",
   "homepage": "./",
@@ -46,12 +46,13 @@
     "esbuild"
   ],
   "devDependencies": {
+    "@actions/tool-cache": "^2.0.1",
     "@alephium/eslint-config": "workspace:*",
     "@alephium/shared": "workspace:*",
     "@alephium/token-list": "^0.0.12",
     "@alephium/typescript-config": "workspace:*",
-    "@alephium/walletconnect-provider": "0.27.5",
-    "@alephium/web3": "0.27.5",
+    "@alephium/walletconnect-provider": "0.28.1",
+    "@alephium/web3": "0.28.1",
     "@electron/notarize": "^1.2.3",
     "@json-rpc-tools/utils": "^1.7.6",
     "@reduxjs/toolkit": "^1.9.1",
@@ -64,7 +65,7 @@
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^18.2.4",
     "@types/semver-compare": "^1.0.1",
-    "@types/yaireo__tagify": "^4.15.1",
+    "@types/yaireo__tagify": "^4.18.0",
     "@types/zxcvbn": "^4.4.1",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
@@ -77,7 +78,7 @@
     "@walletconnect/sign-client": "2.11.0",
     "@walletconnect/types": "2.11.0",
     "@walletconnect/utils": "2.11.0",
-    "@yaireo/tagify": "^4.12.0",
+    "@yaireo/tagify": "^4.18.3",
     "better-sqlite3": "^8.3.0",
     "bip39": "^3.0.4",
     "classnames": "^2.3.1",
@@ -161,6 +162,10 @@
     },
     "win": {
       "artifactName": "${productName}-${version}.${ext}",
+      "sign": ".signWindows.js",
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
       "publisherName": [
         "Panda Software SA"
       ]

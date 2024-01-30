@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ import { useEffect } from 'react'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
@@ -63,7 +64,11 @@ const WalletConnectPairingsModal = ({ onPasteWcUrlPress, onClose, ...props }: Wa
           }
         />
       ))}
-      {activeSessions.length === 0 && <EmptyPlaceholder>There are no connections yet. 🔌</EmptyPlaceholder>}
+      {activeSessions.length === 0 && (
+        <EmptyPlaceholder>
+          <AppText>There are no connections yet. 🔌</AppText>
+        </EmptyPlaceholder>
+      )}
       <ScreenSection>
         <Button title="Paste a WalletConnect URL" variant="accent" onPress={onPasteWcUrlPress} />
       </ScreenSection>

@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -16,18 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import { getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
 import { SignUnsignedTxResult, transactionSign } from '@alephium/web3'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import client from '@/api/client'
-import FooterButton from '@/components/Buttons/FooterButton'
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import { useAppDispatch } from '@/hooks/redux'
-import CenteredModal, { ModalContent } from '@/modals/CenteredModal'
+import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { unsignedTransactionSignSucceeded } from '@/storage/transactions/transactionsActions'
 import { SignUnsignedTxData } from '@/types/transactions'
 
@@ -35,10 +34,17 @@ interface SignUnsignedTxModalProps {
   onClose: () => void
   txData: SignUnsignedTxData
   onSignSuccess: (result: SignUnsignedTxResult) => Promise<void>
-  onSignFail: (errorMessage: string) => Promise<void>
+  onSignFail: (error: WalletConnectError) => Promise<void>
+  onSignReject: () => Promise<void>
 }
 
-const SignUnsignedTxModal = ({ onClose, txData, onSignSuccess, onSignFail }: SignUnsignedTxModalProps) => {
+const SignUnsignedTxModal = ({
+  onClose,
+  txData,
+  onSignSuccess,
+  onSignFail,
+  onSignReject
+}: SignUnsignedTxModalProps) => {
   const { t } = useTranslation()
   const posthog = usePostHog()
   const dispatch = useAppDispatch()
@@ -78,16 +84,26 @@ const SignUnsignedTxModal = ({ onClose, txData, onSignSuccess, onSignFail }: Sig
       await onSignSuccess(signResult)
 
       dispatch(unsignedTransactionSignSucceeded)
+      onClose()
     } catch (e) {
-      posthog.capture('Error', { message: 'Could not sign unsigned tx' })
+      const message = 'Could not sign unsigned tx'
+      posthog.capture('Error', { message })
 
-      onSignFail(getHumanReadableError(e, 'Error while signing unsigned tx'))
+      onSignFail({
+        message: getHumanReadableError(e, message),
+        code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
+      })
     }
+  }
+
+  const handleReject = async () => {
+    onSignReject()
+    onClose()
   }
 
   return (
     <CenteredModal
-      title="Sign Unsigned Transaction"
+      title={t('Sign Unsigned Transaction')}
       onClose={onClose}
       isLoading={isLoading}
       dynamicContent
@@ -97,12 +113,17 @@ const SignUnsignedTxModal = ({ onClose, txData, onSignSuccess, onSignFail }: Sig
       {decodedUnsignedTx && (
         <ModalContent>
           <InputFieldsColumn>
-            <InfoBox label="Transaction Id" text={decodedUnsignedTx.txId} wordBreak />
-            <InfoBox label="Unsigned Transaction" text={decodedUnsignedTx.unsignedTx} wordBreak />
+            <InfoBox label={t('Transaction ID')} text={decodedUnsignedTx.txId} wordBreak />
+            <InfoBox label={t('Unsigned transaction')} text={decodedUnsignedTx.unsignedTx} wordBreak />
           </InputFieldsColumn>
-          <FooterButton onClick={handleSign} disabled={isLoading || !decodedUnsignedTx}>
-            {t('Sign')}
-          </FooterButton>
+          <ModalFooterButtons>
+            <ModalFooterButton role="secondary" onClick={handleReject}>
+              {t('Reject')}
+            </ModalFooterButton>
+            <ModalFooterButton onClick={handleSign} disabled={isLoading || !decodedUnsignedTx}>
+              {t('Sign')}
+            </ModalFooterButton>
+          </ModalFooterButtons>
         </ModalContent>
       )}
     </CenteredModal>

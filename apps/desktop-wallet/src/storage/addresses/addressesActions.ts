@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ADDRESSES_QUERY_LIMIT, AddressHash, getHumanReadableError } from '@alephium/shared'
+import { ADDRESSES_QUERY_LIMIT, AddressHash, CHART_DATE_FORMAT, getHumanReadableError } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
@@ -44,7 +44,6 @@ import {
 } from '@/types/addresses'
 import { Contact } from '@/types/contacts'
 import { Message, SnackbarMessage } from '@/types/snackbar'
-import { CHART_DATE_FORMAT } from '@/utils/constants'
 
 export const syncingAddressDataStarted = createAction('addresses/syncingAddressDataStarted')
 

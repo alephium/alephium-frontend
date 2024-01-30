@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -137,7 +137,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }
 
   return (
-    <ScrollScreen verticalGap fill headerOptions={{ headerTitle: 'Active addresses', type: 'stack' }} {...props}>
+    <ScrollScreen verticalGap fill screenTitle="Active addresses" headerOptions={{ type: 'stack' }} {...props}>
       <ScreenSection>
         <AppText bold>
           Scan the blockchain to find your active addresses on the &quot;{networkName}&quot; network. This process might

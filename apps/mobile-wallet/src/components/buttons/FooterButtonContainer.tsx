@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -15,12 +15,22 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { ReactNode } from 'react'
+import styled from 'styled-components/native'
 
-export const CHART_DATE_FORMAT = 'YYYY-MM-DD'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-export enum WALLETCONNECT_ERRORS {
-  TRANSACTION_SEND_FAILED = -32000,
-  PARSING_SESSION_REQUEST_FAILED = -33000,
-  TRANSACTION_BUILD_FAILED = -34000,
-  SIGNER_ADDRESS_DOESNT_EXIST = -35000
+interface FooterButtonContainerProps {
+  children: ReactNode
 }
+
+const FooterButtonContainer = ({ children }: FooterButtonContainerProps) => <Container>{children}</Container>
+
+export default FooterButtonContainer
+
+const Container = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 10% ${DEFAULT_MARGIN}px;
+`

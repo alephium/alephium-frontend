@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ import {
   TransactionInfoAsset,
   TransactionInfoType
 } from '@alephium/shared'
-import { explorer, node } from '@alephium/web3'
+import { explorer, node, SignMessageParams } from '@alephium/web3'
 
 import { Address } from '@/types/addresses'
 
@@ -31,6 +31,7 @@ export enum TxType {
   TRANSFER,
   DEPLOY_CONTRACT,
   SIGN_UNSIGNED_TX,
+  SIGN_MESSAGE,
   SCRIPT
 }
 
@@ -48,7 +49,12 @@ export type PendingTransaction = {
   status: 'pending'
 }
 
-export type DappTxData = TransferTxData | DeployContractTxData | CallContractTxData | SignUnsignedTxData
+export type DappTxData =
+  | TransferTxData
+  | DeployContractTxData
+  | CallContractTxData
+  | SignUnsignedTxData
+  | SignMessageData
 
 export type TxDataToModalType =
   | {
@@ -62,6 +68,10 @@ export type TxDataToModalType =
   | {
       modalType: TxType.SIGN_UNSIGNED_TX
       txData: SignUnsignedTxData
+    }
+  | {
+      modalType: TxType.SIGN_MESSAGE
+      txData: SignMessageData
     }
   | {
       modalType: TxType.SCRIPT
@@ -99,6 +109,10 @@ export interface TransferTxData {
 export interface SignUnsignedTxData {
   fromAddress: Address
   unsignedTx: string
+}
+
+export interface SignMessageData extends Pick<SignMessageParams, 'message' | 'messageHasher'> {
+  fromAddress: Address
 }
 
 export interface TxPreparation {

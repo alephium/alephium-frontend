@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -71,7 +71,7 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
         onSubmit={handleSavePress}
         buttonText="Save"
         disableIsMainToggle={address.settings.isDefault}
-        headerOptions={{ headerTitle: 'Address settings ' }}
+        screenTitle="Address settings"
         HeaderComponent={
           <ScreenSection>
             <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">

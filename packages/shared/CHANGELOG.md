@@ -1,5 +1,11 @@
 # @alephium/shared
 
+## 0.7.8
+
+### Patch Changes
+
+- bb782ab: Export WalletConnect error types and chart constant
+
 ## 0.7.7
 
 ### Patch Changes

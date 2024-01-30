@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ import AddressFlatListScreen from '~/components/AddressFlatListScreen'
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
@@ -34,9 +35,10 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginS
 
 const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, setFromAddress, setToAddress } = useSendContext()
+  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
-  useScrollToTopOnFocus()
+  useScrollToTopOnFocus(screenScrollY)
 
   useEffect(() => {
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
@@ -45,25 +47,30 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   useFocusEffect(
     useCallback(() => {
       if (!fromAddress && defaultAddress) setFromAddress(defaultAddress.hash)
+    }, [defaultAddress, fromAddress, setFromAddress])
+  )
 
-      navigation.getParent()?.setOptions({
+  useFocusEffect(
+    useCallback(() => {
+      setHeaderOptions({
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} disabled={!fromAddress} />
         )
       })
-    }, [defaultAddress, fromAddress, navigation, setFromAddress])
+    }, [fromAddress, navigation, setHeaderOptions])
   )
 
   return (
     <AddressFlatListScreen
-      hasNavigationHeader
       onAddressPress={setFromAddress}
       selectedAddress={fromAddress}
       ListHeaderComponent={
         <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
       }
       contrastedBg
+      contentPaddingTop
+      onScroll={screenScrollHandler}
     />
   )
 }

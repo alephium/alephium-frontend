@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -66,10 +66,9 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
       <ScrollScreen
         usesKeyboard
         fill
-        hasNavigationHeader
+        screenTitle="Wallet name"
         headerOptions={{
           type: 'stack',
-          headerTitle: 'Edit wallet name',
           headerRight: () => <ContinueButton title="Save" onPress={handleSavePress} iconProps={undefined} />,
           ...headerOptions
         }}

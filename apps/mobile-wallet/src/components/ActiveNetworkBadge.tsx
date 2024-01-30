@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -37,7 +37,6 @@ const ActiveNetworkBadge = () => {
 export default ActiveNetworkBadge
 
 const ActiveNetworkContainer = styled.View`
-  margin-bottom: 5px;
   flex-direction: row;
   align-items: center;
   gap: 5px;

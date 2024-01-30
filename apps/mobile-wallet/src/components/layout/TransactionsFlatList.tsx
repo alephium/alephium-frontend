@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomModal from '~/components/layout/BottomModal'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -33,7 +34,7 @@ import {
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '~/store/addressesSlice'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, SCREEN_OVERFLOW } from '~/style/globalStyle'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
 import { isPendingTx } from '~/utils/transactions'
 
@@ -44,7 +45,6 @@ interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransac
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
   addressHash?: AddressHash
-  headerHeight?: number
   showInternalInflows?: boolean
 }
 
@@ -64,7 +64,6 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
     ListHeaderComponent,
     showInternalInflows = false,
     style,
-    headerHeight = 0,
     ...props
   }: TransactionsFlatListProps,
   ref: ForwardedRef<FlatList<AddressTransaction>>
@@ -117,16 +116,15 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
     <>
       <FlatList
         {...props}
-        contentContainerStyle={[props.contentContainerStyle, { paddingTop: headerHeight ? headerHeight : 0 }]}
+        contentContainerStyle={props.contentContainerStyle}
         scrollEventThrottle={16}
         ref={ref}
         data={confirmedTransactions}
         renderItem={renderConfirmedTransactionItem}
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
-        refreshControl={
-          <RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={headerHeight} />
-        }
+        style={{ overflow: SCREEN_OVERFLOW }}
+        refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} />}
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         ListHeaderComponent={
@@ -152,20 +150,24 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
         }
         ListFooterComponent={
           <Footer>
-            {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
-              confirmedTransactions.length > 0 && (
-                <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
-                  👏 You reached the end of the transactions&apos; history.
-                </AppText>
-              )}
-            {isLoading &&
-              ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
-                <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
-              )}
+            <InfiniteLoadingIndicator>
+              {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
+                confirmedTransactions.length > 0 && (
+                  <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
+                    👏 You reached the end of the transactions&apos; history.
+                  </AppText>
+                )}
+              {isLoading &&
+                ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
+                  <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
+                )}
+            </InfiniteLoadingIndicator>
             {confirmedTransactions.length === 0 && !isLoading && (
-              <AppText color="tertiary" bold>
-                No transactions yet
-              </AppText>
+              <EmptyPlaceholder style={{ width: '90%' }}>
+                <AppText color="secondary" semiBold>
+                  No transactions yet 🤷‍♂️
+                </AppText>
+              </EmptyPlaceholder>
             )}
           </Footer>
         }
@@ -192,9 +194,12 @@ const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
 const TransactionListItemStyled = styled(TransactionListItem)``
 
 const Footer = styled.View`
-  padding-top: 40px;
   padding-bottom: 150px;
   align-items: center;
+`
+
+const InfiniteLoadingIndicator = styled.View`
+  margin-top: 25px;
 `
 
 const PendingTransactionsSectionTitle = styled.View`
