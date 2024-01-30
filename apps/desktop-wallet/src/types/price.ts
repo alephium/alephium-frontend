@@ -29,4 +29,5 @@ export interface TokenHistoricalPrice {
 export interface TokenPriceHistoryEntity {
   symbol: string
   history: TokenHistoricalPrice[]
+  status: 'initialized' | 'uninitialized'
 }

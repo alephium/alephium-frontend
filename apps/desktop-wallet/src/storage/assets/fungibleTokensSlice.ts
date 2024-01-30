@@ -18,21 +18,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { FungibleToken } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { createSlice, EntityState, isAnyOf } from '@reduxjs/toolkit'
+import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
+import { syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/storage/assets/assetsActions'
 import { fungibleTokensAdapter } from '@/storage/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@/storage/settings/networkActions'
 
 interface FungibleTokensState extends EntityState<FungibleToken> {
-  loading: boolean
+  loadingVerified: boolean
+  loadingUnverified: boolean
   status: 'initialized' | 'uninitialized'
   checkedUnknownTokenIds: FungibleToken['id'][]
 }
 
 const initialState: FungibleTokensState = fungibleTokensAdapter.addOne(
   fungibleTokensAdapter.getInitialState({
-    loading: false,
+    loadingVerified: false,
+    loadingUnverified: false,
     status: 'uninitialized',
     checkedUnknownTokenIds: []
   }),
@@ -48,7 +50,10 @@ const fungibleTokensSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncNetworkTokensInfo.fulfilled, (state, action) => {
+      .addCase(syncVerifiedFungibleTokens.pending, (state) => {
+        state.loadingVerified = true
+      })
+      .addCase(syncVerifiedFungibleTokens.fulfilled, (state, action) => {
         const metadata = action.payload
 
         if (metadata) {
@@ -60,8 +65,11 @@ const fungibleTokensSlice = createSlice({
             }))
           )
           state.status = 'initialized'
-          state.loading = false
+          state.loadingVerified = false
         }
+      })
+      .addCase(syncUnknownTokensInfo.pending, (state) => {
+        state.loadingUnverified = true
       })
       .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
         const metadata = action.payload.tokens
@@ -79,14 +87,10 @@ const fungibleTokensSlice = createSlice({
           )
         }
 
-        state.loading = false
+        state.loadingUnverified = false
       })
       .addCase(networkPresetSwitched, resetState)
       .addCase(customNetworkSettingsSaved, resetState)
-
-    builder.addMatcher(isAnyOf(syncNetworkTokensInfo.pending, syncUnknownTokensInfo.pending), (state) => {
-      state.loading = true
-    })
   }
 })
 

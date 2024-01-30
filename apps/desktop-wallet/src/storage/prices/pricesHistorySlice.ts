@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { syncTokenPricesHistory } from '@/storage/prices/pricesActions'
+import { syncTokenPriceHistories } from '@/storage/prices/pricesActions'
 import { tokenPricesHistoryAdapter } from '@/storage/prices/pricesAdapter'
 import { fiatCurrencyChanged } from '@/storage/settings/settingsActions'
 import { TokenPriceHistoryEntity } from '@/types/price'
@@ -37,19 +37,29 @@ const pricesHistorySlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncTokenPricesHistory.pending, (state) => {
+      .addCase(syncTokenPriceHistories.pending, (state, action) => {
         state.loading = true
       })
-      .addCase(syncTokenPricesHistory.fulfilled, (state, action) => {
-        const tokenPriceHistory = action.payload
+      .addCase(syncTokenPriceHistories.fulfilled, (state, action) => {
+        const tokenPriceHistories = action.payload
+        const verifiedFungibleTokenSymbols = action.meta.arg.verifiedFungibleTokenSymbols
 
-        if (tokenPriceHistory) {
-          tokenPricesHistoryAdapter.upsertOne(state, tokenPriceHistory)
+        if (tokenPriceHistories) {
+          tokenPricesHistoryAdapter.upsertMany(state, tokenPriceHistories)
         }
+
+        tokenPricesHistoryAdapter.upsertMany(
+          state,
+          verifiedFungibleTokenSymbols.map((symbol) => ({
+            symbol,
+            history: tokenPriceHistories.find((history) => history.symbol === symbol)?.history ?? [],
+            status: 'initialized'
+          }))
+        )
 
         state.loading = false
       })
-      .addCase(syncTokenPricesHistory.rejected, (state) => {
+      .addCase(syncTokenPriceHistories.rejected, (state) => {
         state.loading = false
       })
       .addCase(fiatCurrencyChanged, (state) => {

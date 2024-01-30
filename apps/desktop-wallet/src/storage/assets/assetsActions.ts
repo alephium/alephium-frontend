@@ -27,8 +27,8 @@ import client from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { RootState } from '@/storage/store'
 
-export const syncNetworkTokensInfo = createAsyncThunk(
-  'assets/syncNetworkTokensInfo',
+export const syncVerifiedFungibleTokens = createAsyncThunk(
+  'assets/syncVerifiedFungibleTokens',
   async (_, { getState, dispatch }) => {
     const state = getState() as RootState
 
@@ -58,7 +58,7 @@ export const syncNetworkTokensInfo = createAsyncThunk(
 
 export const syncUnknownTokensInfo = createAsyncThunk(
   'assets/syncUnknownTokensInfo',
-  async (unknownTokenIds: Asset['id'][], { dispatch }): Promise<SyncUnknownTokensInfoResult> => {
+  async (unknownTokenIds: Asset['id'][]): Promise<SyncUnknownTokensInfoResult> => {
     const results = {
       tokens: [],
       nfts: []

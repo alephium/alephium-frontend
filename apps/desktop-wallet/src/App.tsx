@@ -37,18 +37,18 @@ import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
 import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
 import {
-  makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesUnknownTokens,
+  makeSelectAllAddressUninitializedVerifiedFungibleTokenSymbols,
   selectAddressIds
 } from '@/storage/addresses/addressesSelectors'
-import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
+import { syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/storage/assets/assetsActions'
 import { selectIsFungibleTokensUninitialized } from '@/storage/assets/assetsSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrated,
   localStorageDataMigrationFailed
 } from '@/storage/global/globalActions'
-import { syncTokenPrices, syncTokenPricesHistory } from '@/storage/prices/pricesActions'
+import { syncTokenCurrentPrices, syncTokenPriceHistories } from '@/storage/prices/pricesActions'
 import { apiClientInitFailed, apiClientInitSucceeded } from '@/storage/settings/networkActions'
 import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/storage/settings/settingsActions'
 import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
@@ -81,14 +81,16 @@ const App = () => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
   const isFungibleTokensUninitialized = useAppSelector(selectIsFungibleTokensUninitialized)
-  const isLoadingFungibleTokens = useAppSelector((s) => s.fungibleTokens.loading)
-  const isLoadingAddressesTokensBalances = useAppSelector((s) => s.addresses.loadingTokensBalances)
+  const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
+  const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
 
-  const selectAddressesKnownTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownTokens = useAppSelector(selectAddressesKnownTokens)
-  const knownTokenSymbols = knownTokens
-    .map((token) => token.symbol)
-    .filter((symbol): symbol is string => symbol !== undefined)
+  const selectAddressesUninitializedVerifiedFungibleTokenSymbols = useMemo(
+    makeSelectAllAddressUninitializedVerifiedFungibleTokenSymbols,
+    []
+  )
+  const uninitializedVerifiedFungibleTokenSymbols = useAppSelector(
+    selectAddressesUninitializedVerifiedFungibleTokenSymbols
+  )
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const unknownTokens = useAppSelector(selectAddressesUnknownTokens)
@@ -188,10 +190,6 @@ const App = () => {
 
   useEffect(() => {
     if (network.status === 'online') {
-      if (fungibleTokens.status === 'uninitialized' && !isLoadingFungibleTokens) {
-        dispatch(syncNetworkTokensInfo())
-      }
-
       if (addressesStatus === 'uninitialized') {
         if (!isSyncingAddressData && addressHashes.length > 0) {
           const storedPendingTxs = getStoredPendingTransactions()
@@ -207,34 +205,54 @@ const App = () => {
           dispatch(syncAddressesAlphHistoricBalances())
         }
       } else if (addressesStatus === 'initialized') {
-        if (!isFungibleTokensUninitialized && !isLoadingFungibleTokens) {
-          if (newUnknownTokens.length > 0) {
-            dispatch(syncUnknownTokensInfo(newUnknownTokens))
-          }
-
-          if (!isLoadingAddressesTokensBalances) {
-            dispatch(syncTokenPrices({ knownTokenSymbols, currency: settings.fiatCurrency }))
-            dispatch(syncTokenPricesHistory({ tokenSymbol: ALPH.symbol, currency: settings.fiatCurrency })) // Needs to be here so that currency change triggers it
-            // TODO: Get history of known tokens
-          }
+        if (!isFungibleTokensUninitialized && !isLoadingUnverifiedFungibleTokens && newUnknownTokens.length > 0) {
+          dispatch(syncUnknownTokensInfo(newUnknownTokens))
         }
       }
     }
   }, [
     addressHashes.length,
     addressesStatus,
-    fungibleTokens.status,
     dispatch,
-    isSyncingAddressData,
-    isLoadingAddressesTokensBalances,
-    isLoadingFungibleTokens,
     isFungibleTokensUninitialized,
+    isLoadingUnverifiedFungibleTokens,
+    isSyncingAddressData,
     network.status,
-    newUnknownTokens,
-    knownTokens,
-    settings.fiatCurrency,
-    knownTokenSymbols
+    newUnknownTokens
   ])
+
+  useEffect(() => {
+    if (network.status === 'online' && !isLoadingVerifiedFungibleTokens) {
+      if (fungibleTokens.status === 'uninitialized') {
+        dispatch(syncVerifiedFungibleTokens())
+      } else if (uninitializedVerifiedFungibleTokenSymbols.length > 0) {
+        const verifiedFungibleTokenSymbols = uninitializedVerifiedFungibleTokenSymbols
+
+        dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols, currency: settings.fiatCurrency }))
+        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols, currency: settings.fiatCurrency }))
+      }
+    }
+  }, [
+    dispatch,
+    fungibleTokens.status,
+    isLoadingVerifiedFungibleTokens,
+    network.status,
+    settings.fiatCurrency,
+    uninitializedVerifiedFungibleTokenSymbols
+  ])
+
+  useEffect(() => {
+    if (
+      network.status === 'online' &&
+      !isLoadingVerifiedFungibleTokens &&
+      uninitializedVerifiedFungibleTokenSymbols.length > 1
+    ) {
+      console.log(
+        'TODO: Sync address verified tokens balance histories for',
+        uninitializedVerifiedFungibleTokenSymbols.filter((symbol) => symbol !== ALPH.symbol)
+      )
+    }
+  }, [isLoadingVerifiedFungibleTokens, network.status, uninitializedVerifiedFungibleTokenSymbols])
 
   const refreshAddressesData = useCallback(() => {
     dispatch(syncAddressesData(addressesWithPendingTxs))

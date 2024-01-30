@@ -23,9 +23,13 @@ import { syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
 import { nftsAdapter } from '@/storage/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@/storage/settings/networkActions'
 
-type NFTsState = EntityState<NFT>
+interface NFTsState extends EntityState<NFT> {
+  loading: boolean
+}
 
-const initialState: NFTsState = nftsAdapter.getInitialState()
+const initialState: NFTsState = nftsAdapter.getInitialState({
+  loading: false
+})
 
 const nftsSlice = createSlice({
   name: 'nfts',
@@ -33,10 +37,17 @@ const nftsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
+      .addCase(syncUnknownTokensInfo.pending, (state) => {
+        state.loading = true
+      })
       .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
         const nfts = action.payload.nfts
 
         nftsAdapter.upsertMany(state, nfts)
+        state.loading = false
+      })
+      .addCase(syncUnknownTokensInfo.rejected, (state) => {
+        state.loading = false
       })
       .addCase(networkPresetSwitched, resetState)
       .addCase(customNetworkSettingsSaved, resetState)

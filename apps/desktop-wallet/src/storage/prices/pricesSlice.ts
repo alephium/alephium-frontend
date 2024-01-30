@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { syncTokenPrices } from '@/storage/prices/pricesActions'
+import { syncTokenCurrentPrices } from '@/storage/prices/pricesActions'
 import { tokenPricesAdapter } from '@/storage/prices/pricesAdapter'
 import { TokenPriceEntity } from '@/types/price'
 
@@ -38,10 +38,10 @@ const pricesSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncTokenPrices.pending, (state) => {
+      .addCase(syncTokenCurrentPrices.pending, (state) => {
         state.loading = true
       })
-      .addCase(syncTokenPrices.fulfilled, (state, action) => {
+      .addCase(syncTokenCurrentPrices.fulfilled, (state, action) => {
         const prices = action.payload
 
         if (prices) {
@@ -51,7 +51,7 @@ const pricesSlice = createSlice({
         state.loading = false
         state.status = 'initialized'
       })
-      .addCase(syncTokenPrices.rejected, (state) => {
+      .addCase(syncTokenCurrentPrices.rejected, (state) => {
         state.loading = false
       })
   }

@@ -22,63 +22,81 @@ import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 
 import client from '@/api/client'
-import { TokenHistoricalPrice } from '@/types/price'
+import { TokenHistoricalPrice, TokenPriceEntity, TokenPriceHistoryEntity } from '@/types/price'
+import { isFulfilled } from '@/utils/misc'
 
-export const syncTokenPrices = createAsyncThunk(
-  'assets/syncTokenPrices',
-  async ({ knownTokenSymbols, currency }: { knownTokenSymbols: string[]; currency: string }) => {
-    const tokenPrices = await Promise.all(
-      chunk(knownTokenSymbols, TOKENS_QUERY_LIMIT).map((knownTokenSymbolsChunk) =>
+export const syncTokenCurrentPrices = createAsyncThunk(
+  'assets/syncTokenCurrentPrices',
+  async ({ verifiedFungibleTokenSymbols, currency }: { verifiedFungibleTokenSymbols: string[]; currency: string }) => {
+    let tokenPrices = [] as TokenPriceEntity[]
+
+    const promiseResults = await Promise.allSettled(
+      chunk(verifiedFungibleTokenSymbols, TOKENS_QUERY_LIMIT).map((verifiedFungibleTokenSymbolsChunk) =>
         client.explorer.market
           .postMarketPrices(
             {
               currency: currency.toLowerCase()
             },
-            knownTokenSymbolsChunk
+            verifiedFungibleTokenSymbolsChunk
           )
           .then((prices) =>
             prices.map((price, index) => ({
-              symbol: knownTokenSymbolsChunk[index],
+              symbol: verifiedFungibleTokenSymbolsChunk[index],
               price
             }))
           )
       )
     )
 
-    return tokenPrices.flat()
+    tokenPrices = promiseResults.filter(isFulfilled).flatMap((r) => r.value)
+
+    return tokenPrices
   }
 )
 
-export const syncTokenPricesHistory = createAsyncThunk(
-  'assets/syncTokenPricesHistory',
-  async ({ tokenSymbol, currency }: { tokenSymbol: string; currency: string }) => {
-    const rawHistory = await client.explorer.market.getMarketPricesSymbolCharts(tokenSymbol, {
-      currency: currency.toLowerCase()
-    })
+export const syncTokenPriceHistories = createAsyncThunk(
+  'assets/syncTokenPriceHistories',
+  async ({ verifiedFungibleTokenSymbols, currency }: { verifiedFungibleTokenSymbols: string[]; currency: string }) => {
+    let tokenPriceHistories = [] as TokenPriceHistoryEntity[]
 
-    const today = dayjs().format(CHART_DATE_FORMAT)
-    let history = [] as TokenHistoricalPrice[]
-
-    if (rawHistory.timestamps && rawHistory.prices) {
-      const pricesHistoryArray = rawHistory.prices
-
-      history = rawHistory.timestamps.reduce((acc, v, index) => {
-        const itemDate = dayjs(v).format(CHART_DATE_FORMAT)
-        const isDuplicatedItem = !!acc.find(({ date }) => dayjs(date).format(CHART_DATE_FORMAT) === itemDate)
-
-        if (!isDuplicatedItem && itemDate !== today)
-          acc.push({
-            date: itemDate,
-            value: pricesHistoryArray[index]
+    const promiseResults = await Promise.allSettled(
+      verifiedFungibleTokenSymbols.map((symbol) =>
+        client.explorer.market
+          .getMarketPricesSymbolCharts(symbol, {
+            currency: currency.toLowerCase()
           })
+          .then((rawHistory) => {
+            const today = dayjs().format(CHART_DATE_FORMAT)
+            let history = [] as TokenHistoricalPrice[]
 
-        return acc
-      }, [] as TokenHistoricalPrice[])
-    }
+            if (rawHistory.timestamps && rawHistory.prices) {
+              const pricesHistoryArray = rawHistory.prices
 
-    return {
-      symbol: tokenSymbol,
-      history
-    }
+              history = rawHistory.timestamps.reduce((acc, v, index) => {
+                const itemDate = dayjs(v).format(CHART_DATE_FORMAT)
+                const isDuplicatedItem = !!acc.find(({ date }) => dayjs(date).format(CHART_DATE_FORMAT) === itemDate)
+
+                if (!isDuplicatedItem && itemDate !== today)
+                  acc.push({
+                    date: itemDate,
+                    value: pricesHistoryArray[index]
+                  })
+
+                return acc
+              }, [] as TokenHistoricalPrice[])
+            }
+
+            return {
+              symbol,
+              history,
+              status: 'initialized'
+            } as TokenPriceHistoryEntity
+          })
+      )
+    )
+
+    tokenPriceHistories = promiseResults.filter(isFulfilled).flatMap((r) => r.value)
+
+    return tokenPriceHistories
   }
 )
