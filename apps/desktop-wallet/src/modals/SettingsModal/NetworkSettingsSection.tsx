@@ -54,7 +54,7 @@ const networkSelectOptions: NetworkSelectOption[] = networkNames.map((networkNam
   label: {
     mainnet: i18next.t('Mainnet'),
     testnet: i18next.t('Testnet'),
-    localhost: i18next.t('Localhost'),
+    devnet: i18next.t('Devnet'),
     custom: i18next.t('Custom')
   }[networkName],
   value: networkName

@@ -37,7 +37,7 @@ interface NetworkSelectOption {
   value: NetworkName
 }
 
-type NonCustomNetworkName = Exclude<keyof typeof NetworkNames, 'custom' | 'localhost'>
+type NonCustomNetworkName = Exclude<keyof typeof NetworkNames, 'custom' | 'devnet'>
 
 const NetworkSwitch = () => {
   const { t } = useTranslation()
@@ -48,7 +48,7 @@ const NetworkSwitch = () => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
 
   const networkNames = Object.values(NetworkNames).filter(
-    (n) => !['custom', 'localhost'].includes(n)
+    (n) => !['custom', 'devnet'].includes(n)
   ) as NonCustomNetworkName[]
 
   const networkSelectOptions: NetworkSelectOption[] = networkNames.map((networkName) => ({

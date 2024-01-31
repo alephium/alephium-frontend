@@ -33,7 +33,7 @@ export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
     explorerApiHost: 'https://backend-v115.testnet.alephium.org',
     explorerUrl: 'https://testnet.alephium.org'
   },
-  localhost: {
+  devnet: {
     networkId: 4,
     nodeHost: 'http://localhost:22973',
     explorerApiHost: 'http://localhost:9090',

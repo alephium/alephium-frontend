@@ -42,7 +42,7 @@ const mockSettings = {
 }
 
 it('Should return the network name if all settings match exactly', () => {
-  expect(getNetworkName(networkSettingsPresets.localhost)).toEqual('localhost'),
+  expect(getNetworkName(networkSettingsPresets.devnet)).toEqual('devnet'),
     expect(getNetworkName(networkSettingsPresets.testnet)).toEqual('testnet'),
     expect(getNetworkName(networkSettingsPresets.mainnet)).toEqual('mainnet'),
     expect(
