@@ -26,7 +26,7 @@ import AssetLogo from '~/components/AssetLogo'
 import ListItem, { ListItemProps } from '~/components/ListItem'
 import { useTransactionUI } from '~/hooks/useTransactionUI'
 import { AddressTransaction } from '~/types/transactions'
-import { getTransactionInfo } from '~/utils/transactions'
+import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
 
 dayjs.extend(relativeTime)
 
@@ -37,7 +37,10 @@ interface TransactionListItemProps extends Partial<ListItemProps> {
 
 const TransactionListItem = ({ tx, showInternalInflows = false, ...props }: TransactionListItemProps) => {
   const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
-  const { Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
+  const { Icon, iconColor, iconBgColor, label } = useTransactionUI({
+    infoType,
+    isFailedScriptTx: !isPendingTx(tx) && tx.scriptExecutionOk === false
+  })
 
   const isMoved = infoType === 'move'
   const knownAssets = assets.filter((asset) => !!asset.symbol)

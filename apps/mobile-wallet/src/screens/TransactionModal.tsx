@@ -87,7 +87,9 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           </AppTextStyled>
         </Row>
         <Row title="Status" transparent>
-          <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
+          <AppText semiBold>
+            {!tx.scriptExecutionOk ? 'Script execution failed' : tx.blockHash ? 'Confirmed' : 'Pending'}
+          </AppText>
         </Row>
         <Row title="From" transparent>
           {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}

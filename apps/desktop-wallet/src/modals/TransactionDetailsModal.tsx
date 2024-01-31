@@ -59,7 +59,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const theme = useTheme()
   const { assets, direction, lockTime, infoType } = getTransactionInfo(transaction)
-  const { label, Icon } = useTransactionUI(infoType)
+  const { label, Icon } = useTransactionUI({ infoType, isFailedScriptTx: !transaction.scriptExecutionOk })
 
   const isMoved = infoType === 'move'
 
@@ -190,9 +190,15 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
           </>
         )}
         <DetailsRow label={t('Status')}>
-          <Badge color={theme.global.valid}>
-            <span tabIndex={0}>{t('Confirmed')}</span>
-          </Badge>
+          {transaction.scriptExecutionOk ? (
+            <Badge color={theme.global.valid}>
+              <span tabIndex={0}>{t('Confirmed')}</span>
+            </Badge>
+          ) : (
+            <Badge color={theme.global.alert}>
+              <span tabIndex={0}>{t('Script execution failed')}</span>
+            </Badge>
+          )}
         </DetailsRow>
         <DetailsRow label={t('Timestamp')}>
           <span tabIndex={0}>{formatDateForDisplay(transaction.timestamp)}</span>
