@@ -37,24 +37,26 @@ interface NetworkSelectOption {
   value: NetworkName
 }
 
-type NonCustomNetworkName = Exclude<keyof typeof NetworkNames, 'custom' | 'devnet'>
+type NonCustomNetworkName = Exclude<keyof typeof NetworkNames, 'custom'>
 
 const NetworkSwitch = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const network = useAppSelector((state) => state.network)
+  const isDevToolsEnabled = useAppSelector((s) => s.settings.devTools)
   const posthog = usePostHog()
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
 
+  const excludedNetworks: NetworkName[] = isDevToolsEnabled ? ['custom'] : ['custom', 'devnet']
   const networkNames = Object.values(NetworkNames).filter(
-    (n) => !['custom', 'devnet'].includes(n)
+    (n) => !excludedNetworks.includes(n)
   ) as NonCustomNetworkName[]
-
   const networkSelectOptions: NetworkSelectOption[] = networkNames.map((networkName) => ({
     label: {
       mainnet: t('Mainnet'),
-      testnet: t('Testnet')
+      testnet: t('Testnet'),
+      devnet: t('Devnet')
     }[networkName],
     value: networkName
   }))
