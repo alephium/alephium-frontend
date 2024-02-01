@@ -42,7 +42,7 @@ export const useTransactionUI = ({ infoType, isFailedScriptTx }: TransactionUIPr
           out: 'Sent',
           move: 'Moved',
           pending: 'Pending',
-          swap: 'Swapped'
+          swap: 'dApp'
         }[infoType],
         Icon: {
           in: ArrowDown,
