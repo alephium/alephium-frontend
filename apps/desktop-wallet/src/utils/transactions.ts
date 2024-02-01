@@ -17,11 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  AddressHash,
   AssetAmount,
   calcTxAmountsDeltaForAddress,
   convertToNegative,
   getDirection,
   isConsolidationTx,
+  isInternalTx,
   isSwap,
   TransactionDirection,
   TransactionInfoType
@@ -29,12 +31,10 @@ import {
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, explorer, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import dayjs from 'dayjs'
-import { map } from 'lodash'
 
 import { SelectOption } from '@/components/Inputs/Select'
 import i18n from '@/i18n'
 import { store } from '@/storage/store'
-import { Address } from '@/types/addresses'
 import { TranslationKey } from '@/types/i18next'
 import {
   AddressPendingTransaction,
@@ -49,9 +49,6 @@ export const isAmountWithinRange = (amount: bigint, maxAmount: bigint): boolean 
 
 export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
   (tx as AddressPendingTransaction).status === 'pending'
-
-export const hasOnlyOutputsWith = (outputs: explorer.Output[], addresses: Address[]): boolean =>
-  outputs.every((o) => o?.address && addresses.map((a) => a.hash).indexOf(o.address) >= 0)
 
 export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
   const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
@@ -134,27 +131,21 @@ export const directionOptions: {
 export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
   const state = store.getState()
   const fungibleTokens = state.fungibleTokens.entities
-  const addresses = Object.values(state.addresses.entities) as Address[]
+  const internalAddresses = state.addresses.ids as AddressHash[]
 
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
   let infoType: TransactionInfoType
-  let outputs: explorer.Output[] = []
   let lockTime: Date | undefined
   let tokens: Required<AssetAmount>[] = []
 
   if (isPendingTx(tx)) {
-    direction = map(addresses, 'hash').includes(tx.toAddress)
-      ? tx.address.hash === tx.fromAddress
-        ? 'out'
-        : 'in'
-      : 'out'
+    direction = internalAddresses.includes(tx.toAddress) ? (tx.address.hash === tx.fromAddress ? 'out' : 'in') : 'out'
     infoType = 'pending'
     amount = tx.amount ? convertToNegative(BigInt(tx.amount)) : undefined
     tokens = tx.tokens ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) })) : []
     lockTime = tx.lockTime !== undefined ? new Date(tx.lockTime) : undefined
   } else {
-    outputs = tx.outputs ?? outputs
     const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, tx.address.hash)
 
     amount = alphAmount
@@ -168,7 +159,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
       infoType = 'swap'
     } else {
       direction = getDirection(tx, tx.address.hash)
-      const isInternalTransfer = hasOnlyOutputsWith(outputs, addresses)
+      const isInternalTransfer = isInternalTx(tx, internalAddresses)
       infoType =
         (isInternalTransfer && showInternalInflows && direction === 'out') ||
         (isInternalTransfer && !showInternalInflows)
@@ -176,7 +167,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
           : direction
     }
 
-    lockTime = outputs.reduce(
+    lockTime = (tx.outputs ?? []).reduce(
       (a, b) =>
         a > new Date((b as explorer.AssetOutput).lockTime ?? 0)
           ? a
@@ -193,7 +184,6 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     assets,
     direction,
     infoType,
-    outputs,
     lockTime
   }
 }

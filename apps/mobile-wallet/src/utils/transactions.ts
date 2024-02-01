@@ -17,11 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  AddressHash,
   AssetAmount,
   calcTxAmountsDeltaForAddress,
   convertToNegative,
   getDirection,
   isConsolidationTx,
+  isInternalTx,
   isSwap,
   TransactionDirection,
   TransactionInfo,
@@ -32,7 +34,6 @@ import { DUST_AMOUNT, explorer } from '@alephium/web3'
 import { sortBy } from 'lodash'
 
 import { store } from '~/store/store'
-import { Address } from '~/types/addresses'
 import { AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
 
 export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
@@ -43,13 +44,11 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
   const state = store.getState()
   const fungibleTokens = state.fungibleTokens.entities
   const nfts = state.nfts.entities
-  const addresses = Object.values(state.addresses.entities) as Address[]
+  const internalAddresses = state.addresses.ids as AddressHash[]
 
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
   let infoType: TransactionInfoType
-  let inputs: explorer.Input[] = []
-  let outputs: explorer.Output[] = []
   let lockTime: Date | undefined
   let tokens: Required<AssetAmount>[] = []
 
@@ -60,8 +59,6 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     tokens = tx.tokens ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) })) : []
     lockTime = tx.lockTime !== undefined ? new Date(tx.lockTime) : undefined
   } else {
-    inputs = tx.inputs ?? inputs
-    outputs = tx.outputs ?? outputs
     const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, tx.address.hash)
 
     amount = alphAmount
@@ -75,7 +72,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
       infoType = 'swap'
     } else {
       direction = getDirection(tx, tx.address.hash)
-      const isInternalTransfer = hasOnlyInputsAndOutputsWith(inputs, outputs, addresses)
+      const isInternalTransfer = isInternalTx(tx, internalAddresses)
 
       infoType =
         (isInternalTransfer && showInternalInflows && direction === 'out') ||
@@ -84,7 +81,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
           : direction
     }
 
-    lockTime = outputs.reduce(
+    lockTime = (tx.outputs ?? []).reduce(
       (a, b) =>
         a > new Date((b as explorer.AssetOutput).lockTime ?? 0)
           ? a
@@ -116,20 +113,8 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     assets,
     direction,
     infoType,
-    outputs,
     lockTime
   }
-}
-
-export const hasOnlyInputsAndOutputsWith = (
-  inputs: explorer.Input[],
-  outputs: explorer.Output[],
-  addresses: Address[]
-): boolean => {
-  const isIOInternal = (io: explorer.Input | explorer.Output) =>
-    io?.address && addresses.map((a) => a.hash).indexOf(io.address) >= 0
-
-  return outputs.every(isIOInternal) && inputs.every(isIOInternal)
 }
 
 // TODO: Same as in desktop wallet

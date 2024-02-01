@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TokenInfo } from '@alephium/token-list'
 import { explorer, Optional } from '@alephium/web3'
-import { AddressBalance, Output, Token } from '@alephium/web3/dist/src/api/api-explorer'
+import { AddressBalance, Token } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { AddressHash } from './address'
 import { uniq } from './utils'
@@ -48,7 +48,6 @@ export type TransactionInfo = {
   assets: TransactionInfoAsset[]
   direction: TransactionDirection
   infoType: TransactionInfoType
-  outputs: Output[]
   lockTime?: Date
 }
 
@@ -131,6 +130,9 @@ export const isConsolidationTx = (tx: explorer.Transaction | explorer.MempoolTra
 export const isMempoolTx = (
   transaction: explorer.Transaction | explorer.MempoolTransaction
 ): transaction is explorer.MempoolTransaction => !('blockHash' in transaction)
+
+export const isInternalTx = (tx: explorer.Transaction, internalAddresses: AddressHash[]): boolean =>
+  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every((io) => io?.address && internalAddresses.indexOf(io.address) >= 0)
 
 export const removeConsolidationChangeAmount = (
   totalOutputs: AmountDeltas,
