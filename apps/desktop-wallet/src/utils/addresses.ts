@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount, FungibleToken } from '@alephium/shared'
+import { AddressSettings, AssetAmount, FungibleToken } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { Dictionary } from '@reduxjs/toolkit'
 
-import { Address, AddressSettings } from '@/types/addresses'
+import { Address } from '@/types/addresses'
 import { AddressTransaction, PendingTransaction } from '@/types/transactions'
 import { getRandomLabelColor } from '@/utils/colors'
 

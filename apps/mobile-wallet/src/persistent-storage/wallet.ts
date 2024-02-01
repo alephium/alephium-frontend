@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  AddressMetadata,
   deriveAddressAndKeys,
   getHumanReadableError,
   walletEncryptAsyncUnsafe,
@@ -31,7 +32,7 @@ import { Platform } from 'react-native'
 import { sendAnalytics } from '~/analytics'
 import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
-import { AddressMetadata, AddressPartial } from '~/types/addresses'
+import { AddressPartial } from '~/types/addresses'
 import { GeneratedWallet, Mnemonic, WalletMetadata, WalletState } from '~/types/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'

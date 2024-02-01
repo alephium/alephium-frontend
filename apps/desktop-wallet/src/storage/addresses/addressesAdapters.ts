@@ -16,9 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { BalanceHistory } from '@alephium/shared'
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { Address, BalanceHistory } from '@/types/addresses'
+import { Address } from '@/types/addresses'
 import { Contact } from '@/types/contacts'
 
 export const addressesAdapter = createEntityAdapter<Address>({

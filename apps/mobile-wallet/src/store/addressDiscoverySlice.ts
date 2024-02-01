@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair, deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/shared'
+import { AddressIndex, AddressKeyPair, deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/shared'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,
@@ -33,7 +33,7 @@ import { appReset } from '~/store/appSlice'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 import { RootState } from '~/store/store'
 import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
-import { Address, AddressIndex } from '~/types/addresses'
+import { Address } from '~/types/addresses'
 import {
   findMaxIndexBeforeFirstGap,
   findNextAvailableAddressIndex,
