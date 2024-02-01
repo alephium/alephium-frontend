@@ -165,7 +165,6 @@ export type TransactionInfo = {
   assets: TransactionInfoAsset[]
   direction: TransactionDirection
   infoType: TransactionInfoType
-  outputs: explorer.Output[]
   lockTime?: Date
 }
 

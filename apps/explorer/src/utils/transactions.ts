@@ -37,10 +37,8 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
   let infoType: TransactionInfoType
-  let outputs: explorer.Output[] = []
   let lockTime: Date | undefined
 
-  outputs = tx.outputs ?? outputs
   const { alph: alphDeltaAmount, tokens: tokensDeltaAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
 
   amount = alphDeltaAmount
@@ -61,7 +59,7 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
     infoType = direction
   }
 
-  lockTime = outputs.reduce(
+  lockTime = (tx.outputs ?? []).reduce(
     (a, b) =>
       a > new Date((b as explorer.AssetOutput).lockTime ?? 0) ? a : new Date((b as explorer.AssetOutput).lockTime ?? 0),
     new Date(0)
@@ -90,7 +88,6 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
     assets,
     direction,
     infoType,
-    outputs,
     lockTime
   }
 }
