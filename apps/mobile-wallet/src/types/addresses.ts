@@ -16,26 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-import { AddressKeyPair } from '@alephium/shared'
+import { AddressHash, AddressIndex, AddressKeyPair, AddressSettings, BalanceHistory } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { TimeInMs } from '~/types/numbers'
 import { PendingTransaction } from '~/types/transactions'
-
-export type AddressIndex = number
-
-export type AddressSettings = {
-  isDefault: boolean
-  label?: string
-  color?: string
-}
-
-export type AddressMetadata = AddressSettings & {
-  index: AddressIndex
-}
 
 export type Address = AddressKeyPair &
   Omit<explorer.AddressInfo, 'txNumber'> & {
@@ -61,21 +48,6 @@ export type AddressTransactionsSyncResult = {
   hash: AddressHash
   transactions: explorer.Transaction[]
   mempoolTransactions: explorer.MempoolTransaction[]
-}
-
-export type AddressTokensSyncResult = {
-  hash: AddressHash
-  tokenBalances: AddressTokenBalance[]
-}
-
-export type AddressBalancesSyncResult = Omit<explorer.AddressInfo, 'txNumber'> & {
-  hash: AddressHash
-}
-
-// Same as in desktop wallet
-export type BalanceHistory = {
-  date: string // CHART_DATE_FORMAT
-  balance: string
 }
 
 export type AddressesHistoricalBalanceResult = {

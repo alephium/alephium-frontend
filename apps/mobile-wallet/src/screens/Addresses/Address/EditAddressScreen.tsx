@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressSettings } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import styled from 'styled-components/native'
@@ -30,7 +31,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressFormBaseScreen from '~/screens/Addresses/Address/AddressFormBaseScreen'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
-import { AddressSettings } from '~/types/addresses'
 
 interface EditAddressScreenProps extends StackScreenProps<RootStackParamList, 'EditAddressScreen'>, ScrollScreenProps {}
 

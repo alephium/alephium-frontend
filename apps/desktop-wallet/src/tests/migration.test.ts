@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { encrypt, walletGenerate } from '@alephium/shared'
+import { AddressMetadata, encrypt, walletGenerate } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 
 import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
 import SettingsStorage, { networkPresets } from '@/storage/settings/settingsPersistentStorage'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
-import { AddressMetadata, DeprecatedAddressMetadata } from '@/types/addresses'
+import { DeprecatedAddressMetadata } from '@/types/addresses'
 import { NetworkSettings } from '@/types/settings'
 import * as migrate from '@/utils/migration'
 import { stringToDoubleSHA256HexString } from '@/utils/misc'

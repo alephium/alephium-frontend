@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { encrypt } from '@alephium/shared'
+import { AddressMetadata, encrypt } from '@alephium/shared'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 
@@ -24,7 +24,7 @@ import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersisten
 import { getEncryptedStoragePropsFromActiveWallet } from '@/storage/encryptedPersistentStorage'
 import SettingsStorage, { defaultSettings, networkPresets } from '@/storage/settings/settingsPersistentStorage'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
-import { AddressMetadata, DeprecatedAddressMetadata } from '@/types/addresses'
+import { DeprecatedAddressMetadata } from '@/types/addresses'
 import { GeneralSettings, NetworkSettings, ThemeSettings } from '@/types/settings'
 import { StoredWallet } from '@/types/wallet'
 import { getRandomLabelColor } from '@/utils/colors'

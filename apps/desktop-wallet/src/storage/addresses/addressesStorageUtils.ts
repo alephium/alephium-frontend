@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressSettings } from '@alephium/shared'
+
 import {
   addressSettingsSaved,
   defaultAddressChanged,
@@ -25,7 +27,7 @@ import {
 } from '@/storage/addresses/addressesActions'
 import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
-import { Address, AddressBase, AddressSettings } from '@/types/addresses'
+import { Address, AddressBase } from '@/types/addresses'
 
 export const saveNewAddresses = (addresses: AddressBase[]) => {
   addresses.forEach((address) =>
