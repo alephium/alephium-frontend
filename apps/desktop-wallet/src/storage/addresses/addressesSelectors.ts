@@ -20,9 +20,9 @@ import {
   AddressFungibleToken,
   AddressHash,
   Asset,
+  calculateAmountWorth,
   NFT,
-  TokenDisplayBalances,
-  VerifiedAddressFungibleToken
+  TokenDisplayBalances
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AddressGroup } from '@alephium/walletconnect-provider'
@@ -31,7 +31,7 @@ import { sortBy } from 'lodash'
 
 import { addressesAdapter, contactsAdapter } from '@/storage/addresses/addressesAdapters'
 import { selectAllFungibleTokens, selectAllNFTs, selectNFTIds } from '@/storage/assets/assetsSelectors'
-import { selectAllPricesHistories } from '@/storage/prices/pricesSelectors'
+import { selectAllPrices, selectAllPricesHistories } from '@/storage/prices/pricesSelectors'
 import { RootState } from '@/storage/store'
 import { Address } from '@/types/addresses'
 import { filterAddressesWithoutAssets } from '@/utils/addresses'
@@ -113,11 +113,15 @@ export const makeSelectAddressesKnownFungibleTokens = () =>
     tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
   )
 
+export const makeSelectAddressesVerifiedFungibleTokens = () =>
+  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
+    tokens.filter((token): token is AddressFungibleToken => !!token.verified)
+  )
+
 export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
-  [makeSelectAddressesTokens(), selectAllPricesHistories],
-  (tokens, histories) =>
-    tokens
-      .filter((token): token is VerifiedAddressFungibleToken => !!token.verified)
+  [makeSelectAddressesVerifiedFungibleTokens(), selectAllPricesHistories],
+  (verifiedFungibleTokens, histories) =>
+    verifiedFungibleTokens
       .map((token) => token.symbol)
       .reduce(
         (acc, tokenSymbol) => {
@@ -137,6 +141,17 @@ export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
         }
       )
 )
+
+export const makeSelectAddressesTokensWorth = () =>
+  createSelector([makeSelectAddressesKnownFungibleTokens(), selectAllPrices], (verifiedFungibleTokens, tokenPrices) =>
+    tokenPrices.reduce((totalWorth, { symbol, price }) => {
+      const verifiedFungibleToken = verifiedFungibleTokens.find((t) => t.symbol === symbol)
+
+      return verifiedFungibleToken
+        ? totalWorth + calculateAmountWorth(verifiedFungibleToken.balance, price, verifiedFungibleToken.decimals)
+        : totalWorth
+    }, 0)
+  )
 
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector(
