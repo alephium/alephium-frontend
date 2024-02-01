@@ -64,7 +64,7 @@ const TransactionalInfo = ({
   const isPending = isPendingTx(tx)
   const { label, Icon, iconColor, iconBgColor } = useTransactionUI({
     infoType,
-    isFailedScriptTx: !isPending && tx.scriptExecutionOk === false
+    isFailedScriptTx: !isPending && !tx.scriptExecutionOk
   })
 
   const isMoved = infoType === 'move'
@@ -87,6 +87,9 @@ const TransactionalInfo = ({
         <CellArrow>
           <TransactionIcon color={iconBgColor}>
             <Icon size={13} strokeWidth={3} color={iconColor} />
+            <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
+              !
+            </FailedTXBubble>
           </TransactionIcon>
         </CellArrow>
         <DirectionAndTime>
@@ -277,6 +280,7 @@ const TransactionIcon = styled.span<{ color?: string }>`
   align-items: center;
   width: 30px;
   height: 30px;
+  position: relative;
   border-radius: 30px;
   background-color: ${({ color, theme }) => color || theme.font.primary};
   border: 1px solid
@@ -298,4 +302,18 @@ const AssetBadges = styled.div`
   row-gap: 10px;
   flex-wrap: wrap;
   align-items: center;
+`
+
+const FailedTXBubble = styled.div`
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  border-radius: 14px;
+  background-color: ${({ theme }) => theme.global.alert};
+  color: white;
+  top: -5px;
+  right: -5px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
 `
