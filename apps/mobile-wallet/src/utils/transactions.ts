@@ -48,6 +48,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
   let infoType: TransactionInfoType
+  let inputs: explorer.Input[] = []
   let outputs: explorer.Output[] = []
   let lockTime: Date | undefined
   let tokens: Required<AssetAmount>[] = []
@@ -59,6 +60,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     tokens = tx.tokens ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) })) : []
     lockTime = tx.lockTime !== undefined ? new Date(tx.lockTime) : undefined
   } else {
+    inputs = tx.inputs ?? inputs
     outputs = tx.outputs ?? outputs
     const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, tx.address.hash)
 
@@ -73,7 +75,8 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
       infoType = 'swap'
     } else {
       direction = getDirection(tx, tx.address.hash)
-      const isInternalTransfer = hasOnlyOutputsWith(outputs, addresses)
+      const isInternalTransfer = hasOnlyInputsAndOutputsWith(inputs, outputs, addresses)
+
       infoType =
         (isInternalTransfer && showInternalInflows && direction === 'out') ||
         (isInternalTransfer && !showInternalInflows)
@@ -118,8 +121,16 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
   }
 }
 
-export const hasOnlyOutputsWith = (outputs: explorer.Output[], addresses: Address[]): boolean =>
-  outputs.every((o) => o?.address && addresses.map((a) => a.hash).indexOf(o.address) >= 0)
+export const hasOnlyInputsAndOutputsWith = (
+  inputs: explorer.Input[],
+  outputs: explorer.Output[],
+  addresses: Address[]
+): boolean => {
+  const isIOInternal = (io: explorer.Input | explorer.Output) =>
+    io?.address && addresses.map((a) => a.hash).indexOf(io.address) >= 0
+
+  return outputs.every(isIOInternal) && inputs.every(isIOInternal)
+}
 
 // TODO: Same as in desktop wallet
 export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
