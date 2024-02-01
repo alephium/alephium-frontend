@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { formatFiatAmountForDisplay, selectAlphPrice } from '@alephium/shared'
+import { CURRENCIES, formatFiatAmountForDisplay, selectAlphPrice } from '@alephium/shared'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,7 +25,6 @@ import styled from 'styled-components'
 import { fadeInOut } from '@/animations'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
-import { currencies } from '@/utils/currencies'
 
 interface GreetingMessagesProps {
   className?: string
@@ -49,7 +48,7 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
       {alphPrice !== undefined
         ? '📈 ' +
           t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(alphPrice) }) +
-          currencies[fiatCurrency].symbol
+          CURRENCIES[fiatCurrency].symbol
         : '💜'}
     </span>
   )

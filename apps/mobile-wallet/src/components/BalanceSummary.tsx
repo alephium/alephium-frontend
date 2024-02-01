@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth, selectAlphPrice } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth, CURRENCIES, selectAlphPrice } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -36,7 +36,6 @@ import { makeSelectAddressesTokensWorth, selectHaveHistoricBalancesLoaded } from
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { DataPoint } from '~/types/charts'
-import { currencies } from '~/utils/currencies'
 
 interface BalanceSummaryProps extends ViewProps {
   dateLabel: string
@@ -92,7 +91,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
             </AppText>
           </DateLabelContainer>
 
-          <Amount value={balanceInFiat} isFiat suffix={currencies[currency].symbol} bold size={38} />
+          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={38} />
         </TextContainer>
 
         <ChartContainer>

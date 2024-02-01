@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { CURRENCIES } from '@alephium/shared'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import { useAppSelector } from '~/hooks/redux'
-import { currencies } from '~/utils/currencies'
 
 interface WorthDeltaProps {
   delta: number
@@ -44,7 +44,7 @@ const WorthDelta = ({ delta, style }: WorthDeltaProps) => {
         size={18}
         value={delta}
         isFiat
-        suffix={currencies[currency].symbol}
+        suffix={CURRENCIES[currency].symbol}
         showPlusMinus
       />
     </WorthDeltaStyled>

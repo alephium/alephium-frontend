@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, selectDoVerifiedFungibleTokensNeedInitialization } from '@alephium/shared'
+import { AddressHash, CURRENCIES, selectDoVerifiedFungibleTokensNeedInitialization } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 import { useMemo, useState } from 'react'
@@ -37,7 +37,6 @@ import {
   selectAddressByHash,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { currencies } from '@/utils/currencies'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressGridRowProps {
@@ -126,7 +125,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           {stateUninitialized || !areTokenPricesInitialized ? (
             <SkeletonLoader height="18.5px" />
           ) : (
-            <Amount value={balanceInFiat} isFiat suffix={currencies[fiatCurrency].symbol} />
+            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
           )}
         </FiatAmountCell>
       </GridRow>

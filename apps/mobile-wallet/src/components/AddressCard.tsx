@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -38,7 +38,6 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { currencies } from '~/utils/currencies'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 interface AddressCardProps {
@@ -171,7 +170,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             color={textColor}
             size={32}
             bold
-            suffix={currencies[currency].symbol}
+            suffix={CURRENCIES[currency].symbol}
           />
           <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
           <AddressGroup>

@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   CHART_DATE_FORMAT,
+  Currency,
   selectAlphPriceHistory,
   toHumanReadableAmount,
   TokenHistoricalPrice
@@ -41,7 +42,6 @@ import { selectAllAddresses } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 import { ChartLength, chartLengths, DataPoint, LatestAmountPerAddress } from '~/types/charts'
-import { Currency } from '~/types/settings'
 
 interface HistoricWorthChart {
   latestWorth: number
@@ -62,7 +62,7 @@ const chartHeight = 70
 const chartIntervalsRowHeight = 30
 const chartItemsMargin = 15
 
-const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartChange, style }: HistoricWorthChart) => {
+const HistoricWorthChart = ({ latestWorth, onWorthInBeginningOfChartChange, style }: HistoricWorthChart) => {
   const theme = useTheme()
   const alphPriceHistory = useAppSelector(selectAlphPriceHistory)
   const addresses = useAppSelector(selectAllAddresses)
