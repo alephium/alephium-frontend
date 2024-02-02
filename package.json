@@ -5,6 +5,7 @@
   "packageManager": "pnpm@8.9.0",
   "private": true,
   "scripts": {
+    "watch": "turbo watch",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "test": "turbo test",

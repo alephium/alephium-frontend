@@ -1,0 +1,5 @@
+{
+  "extends": "@alephium/typescript-config/react-library",
+  "include": ["."],
+  "exclude": ["dist", "build", "node_modules"]
+}

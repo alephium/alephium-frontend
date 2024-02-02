@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@alephium/shared": "workspace:*",
+    "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.12",
     "@alephium/web3": "0.29.1",
     "@tanstack/query-sync-storage-persister": "4.32.0",

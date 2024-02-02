@@ -50,6 +50,7 @@
     "@actions/tool-cache": "^2.0.1",
     "@alephium/eslint-config": "workspace:*",
     "@alephium/shared": "workspace:*",
+    "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.12",
     "@alephium/typescript-config": "workspace:*",
     "@alephium/walletconnect-provider": "0.29.1",

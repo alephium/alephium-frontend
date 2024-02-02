@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@alephium/shared": "workspace:*",
+    "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.12",
     "@alephium/walletconnect-provider": "0.29.1",
     "@alephium/web3": "0.29.1",
