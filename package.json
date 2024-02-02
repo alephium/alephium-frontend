@@ -9,7 +9,7 @@
     "lint:fix": "turbo lint:fix",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "check": "turbo typecheck lint format",
     "clean": "turbo clean",
     "clean:node-modules": "rm -rf node_modules && turbo clean:node-modules"
   },

@@ -10,6 +10,7 @@
     "ios": "expo run:ios --device",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "clean:node-modules": "rm -rf node_modules",
     "postinstall": "turbo build:deps"
   },

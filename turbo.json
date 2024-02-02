@@ -4,6 +4,7 @@
   "pipeline": {
     "lint": {},
     "lint:fix": { "cache": false },
+    "format": {},
     "clean": { "cache": false },
     "clean:node-modules": { "cache": false },
     "test": {

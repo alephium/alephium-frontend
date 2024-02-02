@@ -11,6 +11,7 @@
     "test:watch": "pnpm run test -- --watch",
     "typecheck": "tsc --noEmit",
     "build": "tsc --build . && webpack",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "clean": "rm -rf dist",
     "clean:node-modules": "rm -rf node_modules"
   },

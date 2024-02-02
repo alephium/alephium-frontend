@@ -28,6 +28,7 @@
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "syncTranslationFiles": "pnpm scripts/syncTranslationFiles.js && prettier --write ./locales/**/*.json",
     "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "clean": "rm -rf dist build",
     "clean:node-modules": "rm -rf node_modules"
   },
