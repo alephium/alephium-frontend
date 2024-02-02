@@ -18,7 +18,7 @@ To launch it as an electron app, run:
 turbo start:electron
 ```
 
-> :info: Using `turbo` instead of `bun` ensures that the appropriate tasks will be run beforehand (for example the `compile` task so that the shared library gets compiled). See the `turbo.json` config of this workspace for more details.
+> :info: Using `turbo` instead of `pnpm` ensures that the appropriate tasks will be run beforehand (for example the `build` task so that the shared libraries gets compiled). See the `turbo.json` config of this workspace for more details.
 
 ## Test
 

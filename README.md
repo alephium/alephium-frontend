@@ -26,12 +26,6 @@ cd apps/[app]
 turbo [task]
 ```
 
-Compile the packages:
-
-```shell
-turbo compile
-```
-
 ### Lint
 
 ```shell
