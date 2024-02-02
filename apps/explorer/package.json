@@ -4,7 +4,8 @@
   "version": "1.8.3",
   "private": true,
   "scripts": {
-    "start": "vite",
+    "start": "turbo start:app",
+    "start:app": "vite",
     "build": "tsc && vite build --outDir build",
     "build:gh-pages": "pnpm run build -- --base=/explorer/",
     "ci:build": "turbo run build",

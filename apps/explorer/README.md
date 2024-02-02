@@ -17,17 +17,16 @@ A blockchain explorer frontend for Alephium.
 
 ## Development
 
-- Install dependencies from the root of the monorepo: `pnpm install`
-- Starting the project: `env $(cat .env.placeholder | xargs) turbo run start`
-- Building the project: `turbo run build`
-- Run the tests: `turbo test`
-- Lint and fix: `turbo lint:fix`
+Start by following the development instructions in the [README](/README.md) of the monorepo.
 
-See `package.json`'s `script` property for more options.
+Then, create an `.env` file following the template and add values the environmental variables. You can use our [public services](https://docs.alephium.org/dapps/public-services) or your local servers.
 
-**Note**: You will probably want to change the variables in `.env.placeholder`
-to use your local `explorer-backend`.
+```shell
+cp .env.example .env
+```
 
-## Release
+Then, start the app:
 
-Please refer to the instructions visible [in the README](/README.md#releasing) situated at the root of the monorepo.
+```shell
+pnpm start
+```

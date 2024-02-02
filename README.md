@@ -4,51 +4,48 @@ A monorepo containing all things frontend on Alephium.
 
 ## Development
 
-We use [pnpm](https://pnpm.io/) as our package manager and [Turborepo](https://turbo.build/repo) as our build system. Turborepo runs the tasks defined in `turbo.json` and Bun installs the npm packages.
+Make sure you have [pnpm](https://pnpm.io/) installed in your system.
 
-Install all dependencies with:
+Install all dependencies for all apps with:
 
 ```shell
 pnpm install
 ```
 
-Turbo tasks are defined in `turbo.json`. You can execute them from the root directory of the monorepo:
+Start the dev server for all shared packages with:
 
 ```shell
-turbo [task]
+pnpm watch
 ```
 
-or from any workspace directory:
+In a separate terminal window navigate to the app folder you want to work on and follow the instructions there to start developing. The command above will ensure that the apps always get the latest code from the internally shared packages.
+
+### Useful commands
+
+Check if there are any type, linting, or formatting errors in any of the apps and internal packages with:
 
 ```shell
-# equivalent to `turbo [task] --filter=[app]`
-cd apps/[app]
-turbo [task]
+pnpm check
 ```
 
-### Lint
+or more in a more granular approach:
 
 ```shell
-turbo lint
-turbo lint:fix
-```
-
-### Format
-
-```shell
+pnpm typecheck
+pnpm lint
 pnpm format
 ```
 
-### Compile TypeScript
+You can attempt to fix linting errors with:
 
 ```shell
-turbo typecheck
+pnpm lint:fix
 ```
 
-### Test
+#### Test
 
 ```shell
-turbo test
+pnpm test
 ```
 
 ## Contributing

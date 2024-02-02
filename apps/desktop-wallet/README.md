@@ -6,24 +6,12 @@ The official Alephium desktop wallet.
 
 ## Development
 
-Install depedencies from the root of the monorepo with:
+Start by following the development instructions in the [README](../../README.md) of the monorepo.
+
+Then, to start the electron app, run:
 
 ```shell
-pnpm install
-```
-
-To launch it as an electron app, run:
-
-```shell
-turbo start:electron
-```
-
-> :info: Using `turbo` instead of `pnpm` ensures that the appropriate tasks will be run beforehand (for example the `build` task so that the shared libraries gets compiled). See the `turbo.json` config of this workspace for more details.
-
-## Test
-
-```shell
-turbo test
+pnpm start
 ```
 
 ## Packaging
@@ -31,35 +19,11 @@ turbo test
 Based on your OS run the appropriate command:
 
 ```shell
-turbo build:electron:windows
-turbo build:electron:macOS
-turbo build:electron:linux
-turbo build:electron:linux:arm64
+pnpm ci:build:electron:windows
+pnpm ci:build:electron:macOS
+pnpm ci:build:electron:linux
+pnpm ci:build:electron:linux:arm64
 ```
-
-## Release
-
-To release a new version:
-
-1. Checkout the master branch:
-   ```shell
-   git checkout master
-   ```
-2. Create a commit that updates the package version in package.json and package-lock.json and a tag with:
-   ```shell
-   npm version patch # if you want to bump the patch version
-   npm version minor # if you want to bump the minor version
-   npm version major # if you want to bump the major version
-   npm version prepatch --preid=rc # if you want to create a release candidate and bump the patch version
-   npm version preminor --preid=rc # if you want to create a release candidate and bump the minor version
-   npm version premajor --preid=rc # if you want to create a release candidate and bump the major version
-   ```
-3. Push the new commit and new tag to GitHub to trigger the release workflow that will build the downloadable binaries:
-
-   ```shell
-   git push
-   git push [remote] <tag>
-   ```
 
 ## Adding new translation
 
