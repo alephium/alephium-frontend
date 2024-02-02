@@ -29,7 +29,9 @@
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "syncTranslationFiles": "pnpm scripts/syncTranslationFiles.js && prettier --write ./locales/**/*.json",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist build",
+    "clean:node-modules": "rm -rf node_modules"
   },
   "browserslist": [
     ">0.2%",

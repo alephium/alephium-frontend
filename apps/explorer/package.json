@@ -15,7 +15,9 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf build",
+    "clean:node-modules": "rm -rf node_modules"
   },
   "browserslist": {
     "production": [

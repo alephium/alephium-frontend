@@ -10,7 +10,8 @@
     "test": "turbo test",
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "clean-node-modules": "rm -rf node_modules & find ./packages ./apps -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
+    "clean": "turbo clean",
+    "clean:node-modules": "rm -rf node_modules && turbo clean:node-modules"
   },
   "resolutions": {
     "semver": "^7.5.2"
