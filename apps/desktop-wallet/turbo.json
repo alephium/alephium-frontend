@@ -6,9 +6,6 @@
       "cache": false,
       "persistent": true
     },
-    "build:electron": {
-      "dependsOn": ["build"]
-    },
     "build:electron:windows": {
       "dependsOn": ["build"]
     },

@@ -28,15 +28,12 @@ turbo test
 
 ## Packaging
 
-The command below will detect your OS and build the corresponding package:
+Based on your OS run the appropriate command:
 
 ```shell
-turbo build:electron
-```
-
-To build for ARM64 Linux, run:
-
-```shell
+turbo build:electron:windows
+turbo build:electron:macOS
+turbo build:electron:linux
 turbo build:electron:linux:arm64
 ```
 

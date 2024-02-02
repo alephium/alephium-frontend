@@ -13,12 +13,10 @@
   "scripts": {
     "build": "tsc && cross-env INLINE_RUNTIME_CHUNK=false VITE_VERSION=$npm_package_version vite build",
     "start:electron": "concurrently \"cross-env VITE_VERSION=$npm_package_version vite\" \"electron .\"",
-    "build:electron": "electron-builder",
     "build:electron:windows": "electron-builder -w",
     "build:electron:macos": "electron-builder --mac --universal",
     "build:electron:ubuntu": "electron-builder -l",
     "build:electron:linux:arm64": "electron-builder -l --arm64",
-    "ci:build": "turbo run build",
     "ci:build:electron:ubuntu": "turbo run build:electron:ubuntu",
     "ci:build:electron:windows": "turbo run build:electron:windows",
     "ci:build:electron:macos": "turbo run build:electron:macos",
