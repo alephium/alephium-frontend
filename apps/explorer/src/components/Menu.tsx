@@ -132,7 +132,7 @@ const MenuItemsContainer = styled(motion.div)`
 
 const MenuItemsList = styled.div`
   overflow: hidden;
-  border-radius: 9px;
+  border-radius: 8px;
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
 `

@@ -49,7 +49,7 @@
   "Pending": "Pending",
   "Previous": "Previous",
   "Script execution failed": "Script execution failed",
-  "Search for an address or a tx...": "Search for an address or a tx...",
+  "Search for an address, a public key, or a tx...": "Search for an address, a public key, or a tx...",
   "Search": "Search",
   "See more": "See more",
   "Self transfer": "Self transfer",
@@ -75,5 +75,12 @@
   "is circulating": "is circulating",
   "of all shards": "of all shards",
   "to": "to",
-  "with": "with"
+  "with": "with",
+  "Missing image": "Missing image",
+  "Missing metadata": "Missing metadata",
+  "Image URL": "Image URL",
+  "Attributes": "Attributes",
+  "Collection desc.": "Collection desc.",
+  "Collection name": "Collection name",
+  "Worth of mainnet equivalent": "Worth of mainnet equivalent"
 }

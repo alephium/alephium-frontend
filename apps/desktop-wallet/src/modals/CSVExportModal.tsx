@@ -30,8 +30,7 @@ import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { csvFileGenerationFinished, fetchTransactionsCsv } from '@/storage/transactions/transactionsActions'
 import { TransactionTimePeriod } from '@/types/transactions'
-import { getCsvExportTimeRangeQueryParams } from '@/utils/csvExport'
-import { generateCsvFile } from '@/utils/csvExport'
+import { generateCsvFile, getCsvExportTimeRangeQueryParams } from '@/utils/csvExport'
 import { timePeriodsOptions } from '@/utils/transactions'
 
 interface CSVExportModalProps extends CenteredModalProps {

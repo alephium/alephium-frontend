@@ -16,22 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { PointerEvent } from 'react'
-
-export const getPointerAbsolutePositionInElement = (e: PointerEvent) => {
-  const bounds = e.currentTarget.getBoundingClientRect()
-
-  return {
-    x: e.clientX - bounds.x,
-    y: e.clientY - bounds.y
-  }
+export interface NFTTokenUriMetaData {
+  name: string
+  image: string
+  description?: string
+  attributes?: {
+    trait_type: string
+    value: string | number | boolean
+  }[]
 }
 
-export const getPointerRelativePositionInElement = (e: PointerEvent) => {
-  const { x: posX, y: posY } = getPointerAbsolutePositionInElement(e)
-
-  return {
-    x: posX / e.currentTarget.clientWidth,
-    y: posY / e.currentTarget.clientHeight
-  }
+export interface NFTCollectionUriMetaData {
+  name: string
+  description: string
+  image: string
 }

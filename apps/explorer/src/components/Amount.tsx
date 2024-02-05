@@ -70,7 +70,7 @@ const Amount = ({
   const assetType = assetMetadata.type
   const isUnknownToken = assetType === undefined
 
-  let decimals: number | undefined
+  let decimals = 0
   let usedSuffix = suffix
 
   if (assetType === 'fungible' || isFiat) {

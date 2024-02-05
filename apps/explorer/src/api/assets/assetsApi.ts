@@ -16,27 +16,69 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NFTCollectionUriMetaData, NFTTokenUriMetaData, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
-import { hexToString } from '@alephium/web3'
+import { addressFromContractId } from '@alephium/web3'
+import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import client from '@/api/client'
 import {
   AssetBase,
-  AssetPriceResponse,
-  NFTFile,
+  AssetType,
   UnverifiedFungibleTokenMetadata,
   UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
 import { NetworkType } from '@/types/network'
 import { createQueriesCollection } from '@/utils/api'
-import { ONE_DAY_MS, ONE_HOUR_MS } from '@/utils/time'
+import { ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS } from '@/utils/time'
 
+// Batched calls
+const tokensInfo = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokens(ids.filter((id) => id !== '')),
+  resolver: keyResolver('token'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: TOKENS_QUERY_LIMIT
+  })
+})
+
+const fungibleTokensMetadata = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensFungibleMetadata(ids.filter((id) => id !== '')),
+  resolver: keyResolver('id'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: TOKENS_QUERY_LIMIT
+  })
+})
+
+const unverifiedNFTsMetadata = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftMetadata(ids.filter((id) => id !== '')),
+  resolver: keyResolver('id'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: TOKENS_QUERY_LIMIT
+  })
+})
+
+const NFTCollectionsMetadata = create({
+  fetcher: async (ids: string[]) =>
+    client.explorer.tokens.postTokensNftCollectionMetadata(ids.filter((id) => id !== '')),
+  resolver: keyResolver('address'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: TOKENS_QUERY_LIMIT
+  })
+})
+
+// Queries
 export const assetsQueries = createQueriesCollection({
   type: {
     one: (assetId: string) => ({
       queryKey: ['assetType', assetId],
-      queryFn: (): Promise<AssetBase> => client.node.guessStdTokenType(assetId).then((r) => ({ id: assetId, type: r })),
+      queryFn: (): Promise<AssetBase> =>
+        tokensInfo.fetch(assetId).then((r) => ({ id: assetId, type: r.stdInterfaceId as AssetType })),
       staleTime: ONE_DAY_MS
     })
   },
@@ -58,69 +100,55 @@ export const assetsQueries = createQueriesCollection({
     unverifiedFungibleToken: (assetId: string) => ({
       queryKey: ['unverifiedFungibleToken', assetId],
       queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
-        client.node.fetchFungibleTokenMetaData(assetId).then((r) => ({
-          ...r,
-          id: assetId,
-          name: hexToString(r.name),
-          symbol: hexToString(r.symbol),
-          type: 'fungible',
-          verified: false
-        })),
+        fungibleTokensMetadata.fetch(assetId).then((r) => {
+          const parsedDecimals = parseInt(r.decimals)
+
+          return {
+            ...r,
+            type: 'fungible',
+            decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0,
+            verified: false
+          }
+        }),
       staleTime: ONE_HOUR_MS
     }),
     unverifiedNFT: (assetId: string) => ({
       queryKey: ['unverifiedNFT', assetId],
       queryFn: (): Promise<UnverifiedNFTMetadata> =>
-        client.node
-          .fetchNFTMetaData(assetId)
+        unverifiedNFTsMetadata
+          .fetch(assetId)
           .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
       staleTime: ONE_HOUR_MS
-    })
-  },
-  nftFile: {
-    detail: (assetId: string, dataUri: string) => ({
-      queryKey: ['nftFile', assetId],
-      queryFn: (): Promise<NFTFile> | undefined =>
-        fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
+    }),
+    NFTCollection: (collectionId: string) => ({
+      queryKey: ['NFTCollection', collectionId],
+      queryFn: (): Promise<NFTCollectionMetadata & { id: string }> =>
+        NFTCollectionsMetadata.fetch(addressFromContractId(collectionId)).then((r) => ({ ...r, id: collectionId })),
       staleTime: ONE_HOUR_MS
     })
   },
-  // TODO: This may be moved in a balancesApi file in the future?
-  balances: {
-    addressTokens: (addressHash: string) => ({
-      queryKey: ['addressTokensBalance', addressHash],
-      queryFn: async () => {
-        let pageTotalResults
-        let page = 1
-
-        const tokenBalances = []
-
-        while (pageTotalResults === undefined || pageTotalResults === 100) {
-          const pageResults = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
-            limit: 100,
-            page
-          })
-
-          tokenBalances.push(...pageResults)
-
-          pageTotalResults = pageResults.length
-          page += 1
-        }
-
-        return tokenBalances
-      }
+  NFTsData: {
+    item: (dataUri: string, assetId: string) => ({
+      queryKey: ['nftData', dataUri],
+      queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
+        fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
+      staleTime: ONE_DAY_MS
+    }),
+    collection: (collectionUri: string, collectionId: string, collectionAddress: string) => ({
+      queryKey: ['nftCollectionData', collectionUri],
+      queryFn: ():
+        | Promise<NFTCollectionUriMetaData & { collectionId: string; collectionAddress: string }>
+        | undefined =>
+        fetch(collectionUri).then((res) => res.json().then((f) => ({ ...f, collectionId, collectionAddress }))),
+      staleTime: ONE_DAY_MS
     })
   },
   prices: {
-    assetPrice: (coinGeckoTokenId: string, currency = 'usd') => ({
-      queryKey: ['assetPrice', coinGeckoTokenId, currency],
-      queryFn: async (): Promise<number> => {
-        const res = (await (
-          await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinGeckoTokenId}&vs_currencies=${currency}`)
-        ).json()) as AssetPriceResponse
-
-        return res[coinGeckoTokenId][currency]
-      }
+    assetPrice: (tokenSymbol: string, currency = 'usd') => ({
+      queryKey: ['tokenPrice', tokenSymbol, currency],
+      queryFn: async (): Promise<number> =>
+        (await client.explorer.market.postMarketPrices({ currency: 'usd' }, [tokenSymbol]))[0],
+      staleTime: ONE_MINUTE_MS
     })
   }
 })

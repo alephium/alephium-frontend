@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { explorer } from '@alephium/web3'
-import { createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
-import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
+import { createListenerMiddleware, createSlice, EntityState, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 import { xorWith } from 'lodash'
 
 import {

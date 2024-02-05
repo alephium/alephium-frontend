@@ -49,7 +49,7 @@
   "Pending": "Tertunda",
   "Previous": "Sebelumnya",
   "Script execution failed": "Eksekusi skrip gagal",
-  "Search for an address or a tx...": "Cari alamat atau tx...",
+  "Search for an address, a public key, or a tx...": "Cari alamat atau tx...",
   "Search": "Cari",
   "See more": "Lihat lebih lanjut",
   "Self transfer": "Transfer diri sendiri",
@@ -75,5 +75,12 @@
   "is circulating": "sedang beredar",
   "of all shards": "dari semua pecahan",
   "to": "ke",
-  "with": "dengan"
+  "with": "dengan",
+  "Missing image": "Missing image",
+  "Missing metadata": "Missing metadata",
+  "Image URL": "Image URL",
+  "Attributes": "Attributes",
+  "Collection desc.": "Collection desc.",
+  "Collection name": "Collection name",
+  "Worth of mainnet equivalent": "Worth of mainnet equivalent"
 }

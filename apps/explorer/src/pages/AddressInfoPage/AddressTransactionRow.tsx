@@ -126,7 +126,10 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
         </TxLabelBadgeContainer>
 
         <Assets>
-          {assets.map((a) => (
+          {assets.alph.amount !== BigInt(0) && (
+            <AssetLogo key={assets.alph.id} assetId={assets.alph.id} size={21} showTooltip />
+          )}
+          {[...assets.fungible, ...assets['non-fungible']].map((a) => (
             <AssetLogo key={a.id} assetId={a.id} size={21} showTooltip />
           ))}
         </Assets>
@@ -136,16 +139,36 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
         {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
         {!isPending && (
           <AmountCell>
-            {assets.map(({ id, amount, symbol, decimals }) => (
+            <Amount
+              key={assets.alph.id}
+              assetId={assets.alph.id}
+              value={assets.alph.amount}
+              highlight={!isMoved}
+              displaySign={!isMoved}
+              color={isMoved ? theme.font.secondary : undefined}
+              suffix={assets.alph.symbol}
+              decimals={assets.alph.decimals}
+            />
+            {assets.fungible.map((asset) => (
               <Amount
-                key={id}
-                assetId={id}
-                value={amount}
+                key={asset.id}
+                assetId={asset.id}
+                value={asset.amount}
                 highlight={!isMoved}
                 displaySign={!isMoved}
                 color={isMoved ? theme.font.secondary : undefined}
-                suffix={symbol}
-                decimals={decimals}
+                suffix={asset.symbol}
+                decimals={asset.decimals}
+              />
+            ))}
+            {assets['non-fungible'].map((asset) => (
+              <Amount
+                key={asset.id}
+                assetId={asset.id}
+                value={asset.amount}
+                highlight={!isMoved}
+                displaySign={!isMoved}
+                color={isMoved ? theme.font.secondary : undefined}
               />
             ))}
           </AmountCell>
@@ -285,7 +308,7 @@ const IODetailList = styled.div`
   flex-direction: column;
   background-color: ${({ theme }) => theme.bg.secondary};
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 9px;
+  border-radius: 8px;
 `
 
 const IODetailsContainer = styled.div`
