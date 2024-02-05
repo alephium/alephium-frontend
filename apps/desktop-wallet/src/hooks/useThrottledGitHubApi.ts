@@ -21,6 +21,7 @@ import { useState } from 'react'
 import { AppMetaData, isRcVersion, KEY_APPMETADATA, toAppMetaData } from '@/utils/app-data'
 import { useTimeout } from '@/utils/hooks'
 
+// TODO: Move to shared
 const ONE_HOUR = 1000 * 60 * 60
 
 const useThrottledGitHubApi = (callback: (latestAppMetaData: AppMetaData) => Promise<void>) => {
