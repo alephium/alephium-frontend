@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset } from '@alephium/shared'
+import { AddressHash, Asset, calculateAmountWorth } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,7 +42,9 @@ import {
   makeSelectAddressesNFTs,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
+import { selectPriceById } from '@/storage/prices/pricesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
+import { currencies } from '@/utils/currencies'
 
 interface AssetsListProps {
   className?: string
@@ -122,7 +124,9 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const isLoadingFungibleTokens = useAppSelector(
+    (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified
+  )
 
   return (
     <>
@@ -130,7 +134,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
         {knownFungibleTokens.map((asset) => (
           <TokenListRow asset={asset} isExpanded={isExpanded} key={asset.id} />
         ))}
-        {(isLoadingTokensMetadata || stateUninitialized) && (
+        {(isLoadingFungibleTokens || stateUninitialized) && (
           <TableRow>
             <SkeletonLoader height="37.5px" />
           </TableRow>
@@ -168,6 +172,8 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
+  const assetPrice = useAppSelector((s) => selectPriceById(s, asset.symbol || ''))
 
   return (
     <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>
@@ -210,6 +216,15 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
                 </AmountSubtitle>
               )}
               {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
+              {assetPrice && assetPrice.price !== null && (
+                <Price>
+                  <Amount
+                    value={calculateAmountWorth(asset.balance, assetPrice.price)}
+                    isFiat
+                    suffix={currencies[fiatCurrency].symbol}
+                  />
+                </Price>
+              )}
             </>
           )}
         </TableCellAmount>
@@ -223,12 +238,12 @@ const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsList
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHashes))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const isLoadingNFTs = useAppSelector((s) => s.nfts.loading)
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {isLoadingTokensMetadata || stateUninitialized ? (
+        {isLoadingNFTs || stateUninitialized ? (
           <NFTList>
             <SkeletonLoader height="205px" />
             <SkeletonLoader height="205px" />
@@ -289,6 +304,11 @@ const TokenAmount = styled(Amount)`
 const AmountSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 10px;
+`
+
+const Price = styled.div`
+  font-size: 11px;
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const NameColumn = styled(Column)`

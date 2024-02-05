@@ -16,23 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetInfo } from '@alephium/shared'
+import { FungibleToken } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { loadingStarted, syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
-import { assetsInfoAdapter } from '@/storage/assets/assetsAdapter'
+import { syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/storage/assets/assetsActions'
+import { fungibleTokensAdapter } from '@/storage/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@/storage/settings/networkActions'
 
-interface AssetsInfoState extends EntityState<AssetInfo> {
-  loading: boolean
+interface FungibleTokensState extends EntityState<FungibleToken> {
+  loadingVerified: boolean
+  loadingUnverified: boolean
   status: 'initialized' | 'uninitialized'
-  checkedUnknownTokenIds: AssetInfo['id'][]
+  checkedUnknownTokenIds: FungibleToken['id'][]
 }
 
-const initialState: AssetsInfoState = assetsInfoAdapter.addOne(
-  assetsInfoAdapter.getInitialState({
-    loading: false,
+const initialState: FungibleTokensState = fungibleTokensAdapter.addOne(
+  fungibleTokensAdapter.getInitialState({
+    loadingVerified: false,
+    loadingUnverified: false,
     status: 'uninitialized',
     checkedUnknownTokenIds: []
   }),
@@ -42,20 +44,20 @@ const initialState: AssetsInfoState = assetsInfoAdapter.addOne(
   }
 )
 
-const assetsSlice = createSlice({
-  name: 'assetsInfo',
+const fungibleTokensSlice = createSlice({
+  name: 'fungibleTokens',
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(loadingStarted, (state) => {
-        state.loading = true
+      .addCase(syncVerifiedFungibleTokens.pending, (state) => {
+        state.loadingVerified = true
       })
-      .addCase(syncNetworkTokensInfo.fulfilled, (state, action) => {
+      .addCase(syncVerifiedFungibleTokens.fulfilled, (state, action) => {
         const metadata = action.payload
 
         if (metadata) {
-          assetsInfoAdapter.upsertMany(
+          fungibleTokensAdapter.upsertMany(
             state,
             metadata.tokens.map((tokenInfo) => ({
               ...tokenInfo,
@@ -63,8 +65,11 @@ const assetsSlice = createSlice({
             }))
           )
           state.status = 'initialized'
-          state.loading = false
+          state.loadingVerified = false
         }
+      })
+      .addCase(syncUnknownTokensInfo.pending, (state) => {
+        state.loadingUnverified = true
       })
       .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
         const metadata = action.payload.tokens
@@ -73,7 +78,7 @@ const assetsSlice = createSlice({
         state.checkedUnknownTokenIds = [...initiallyUnknownTokenIds, ...state.checkedUnknownTokenIds]
 
         if (metadata) {
-          assetsInfoAdapter.upsertMany(
+          fungibleTokensAdapter.upsertMany(
             state,
             metadata.map((token) => ({
               ...token,
@@ -82,14 +87,14 @@ const assetsSlice = createSlice({
           )
         }
 
-        state.loading = false
+        state.loadingUnverified = false
       })
       .addCase(networkPresetSwitched, resetState)
       .addCase(customNetworkSettingsSaved, resetState)
   }
 })
 
-export default assetsSlice
+export default fungibleTokensSlice
 
 // Reducers helper functions
 

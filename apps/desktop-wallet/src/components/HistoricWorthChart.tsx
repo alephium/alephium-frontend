@@ -29,12 +29,10 @@ import {
   selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { useGetHistoricalPriceQuery } from '@/storage/assets/priceApiSlice'
+import { selectAlphPriceHistory } from '@/storage/prices/pricesSelectors'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
-import { Currency } from '@/types/settings'
 
 interface HistoricWorthChartProps {
-  currency: Currency
   length: ChartLength
   onDataPointHover: (dataPoint?: DataPoint) => void
   onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
@@ -57,7 +55,6 @@ const startingDates: Record<ChartLength, Dayjs> = {
 const HistoricWorthChart = memo(function HistoricWorthChart({
   addressHash,
   latestWorth,
-  currency,
   length = '1y',
   onDataPointHover,
   onWorthInBeginningOfChartChange
@@ -66,8 +63,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const addresses = useAppSelector((s) => selectAddresses(s, addressHash ?? (s.addresses.ids as AddressHash[])))
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-
-  const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
+  const alphPriceHistory = useAppSelector(selectAlphPriceHistory)
 
   const theme = useTheme()
 
@@ -90,11 +86,11 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     const computeChartDataPoints = (): DataPoint[] => {
       const addressesLatestAmount: LatestAmountPerAddress = {}
 
-      const dataPoints = alphPriceHistory.map(({ date, price }) => {
+      const dataPoints = alphPriceHistory.map(({ date, value }) => {
         let totalAmountPerDate = BigInt(0)
 
-        addresses.forEach(({ hash, balanceHistory }) => {
-          const amountOnDate = balanceHistory.entities[date]?.balance
+        addresses.forEach(({ hash, alphBalanceHistory }) => {
+          const amountOnDate = alphBalanceHistory.entities[date]?.balance
 
           if (amountOnDate !== undefined) {
             const amount = BigInt(amountOnDate)
@@ -107,7 +103,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
 
         return {
           date,
-          worth: price * parseFloat(toHumanReadableAmount(totalAmountPerDate))
+          worth: value * parseFloat(toHumanReadableAmount(totalAmountPerDate))
         }
       })
 

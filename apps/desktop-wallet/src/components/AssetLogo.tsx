@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetInfo, NFT } from '@alephium/shared'
+import { FungibleToken, NFT } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { HelpCircle } from 'lucide-react'
 import styled, { css } from 'styled-components'
@@ -24,10 +24,10 @@ import styled, { css } from 'styled-components'
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
 
 interface AssetLogoProps {
-  assetId: AssetInfo['id']
-  assetImageUrl: AssetInfo['logoURI'] | NFT['image']
+  assetId: FungibleToken['id']
+  assetImageUrl: FungibleToken['logoURI'] | NFT['image']
   size: number
-  assetName?: AssetInfo['name']
+  assetName?: FungibleToken['name']
   isNft?: boolean
   className?: string
 }

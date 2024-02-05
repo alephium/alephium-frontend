@@ -46,7 +46,7 @@ const AddressSelectModal = ({
   hideAddressesWithoutAssets
 }: AddressSelectModalProps) => {
   const { t } = useTranslation()
-  const assetsInfo = useAppSelector((state) => state.assetsInfo.entities)
+  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
 
   const addresses = hideAddressesWithoutAssets ? filterAddressesWithoutAssets(options) : options
   const [filteredAddresses, setFilteredAddresses] = useState(addresses)
@@ -76,7 +76,7 @@ const AddressSelectModal = ({
   }
 
   const handleSearch = (searchInput: string) =>
-    setFilteredAddresses(filterAddresses(addresses, searchInput.toLowerCase(), assetsInfo))
+    setFilteredAddresses(filterAddresses(addresses, searchInput.toLowerCase(), fungibleTokens))
 
   return (
     <SelectOptionsModal

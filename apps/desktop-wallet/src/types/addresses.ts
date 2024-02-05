@@ -59,8 +59,8 @@ export type Address = AddressBase &
     allTransactionPagesLoaded: boolean
     tokens: AddressTokenBalance[]
     lastUsed: TimeInMs
-    balanceHistory: EntityState<BalanceHistory>
-    balanceHistoryInitialized: boolean
+    alphBalanceHistory: EntityState<BalanceHistory>
+    alphBalanceHistoryInitialized: boolean
   }
 
 export type LoadingEnabled = boolean | undefined
@@ -70,7 +70,7 @@ export type AddressDataSyncResult = AddressBalancesSyncResult & AddressTokensSyn
 export interface AddressesState extends EntityState<Address> {
   loadingBalances: boolean
   loadingTransactions: boolean
-  loadingTokens: boolean
+  loadingTokensBalances: boolean
   syncingAddressData: boolean
   isRestoringAddressesFromMetadata: boolean
   status: 'uninitialized' | 'initialized'

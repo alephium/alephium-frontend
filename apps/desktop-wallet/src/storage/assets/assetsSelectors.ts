@@ -18,15 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSelector } from '@reduxjs/toolkit'
 
-import { assetsInfoAdapter, nftsAdapter } from '@/storage/assets/assetsAdapter'
+import { fungibleTokensAdapter, nftsAdapter } from '@/storage/assets/assetsAdapter'
 import { networkPresets } from '@/storage/settings/settingsPersistentStorage'
 import { RootState } from '@/storage/store'
 
-export const { selectAll: selectAllAssetsInfo, selectById: selectAssetInfoById } =
-  assetsInfoAdapter.getSelectors<RootState>((state) => state.assetsInfo)
+export const { selectAll: selectAllFungibleTokens, selectById: selectFungibleTokenById } =
+  fungibleTokensAdapter.getSelectors<RootState>((state) => state.fungibleTokens)
 
-export const selectIsTokensMetadataUninitialized = createSelector(
-  [(state: RootState) => state.assetsInfo.status, (state: RootState) => state.network.settings.networkId],
+export const selectDoVerifiedFungibleTokensNeedInitialization = createSelector(
+  [(state: RootState) => state.fungibleTokens.status, (state: RootState) => state.network.settings.networkId],
   (status, networkId) =>
     (networkId === networkPresets.mainnet.networkId || networkId === networkPresets.testnet.networkId) &&
     status === 'uninitialized'

@@ -33,10 +33,12 @@ import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout
 import {
   makeSelectAddresses,
   makeSelectAddressesHaveHistoricBalances,
+  makeSelectAddressesTokensWorth,
   selectAddressIds,
+  selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { useGetPriceQuery } from '@/storage/assets/priceApiSlice'
+import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
 import { getAvailableBalance } from '@/utils/addresses'
 import { currencies } from '@/utils/currencies'
@@ -69,24 +71,30 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const selectAddressesHaveHistoricBalances = useMemo(makeSelectAddressesHaveHistoricBalances, [])
   const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { data: price, isLoading: isPriceLoading } = useGetPriceQuery(currencies[fiatCurrency].ticker, {
-    pollingInterval: 60000
-  })
+  const alphPrice = useAppSelector(selectAlphPrice)
+  const arePricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
+  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
 
-  const { date, worth } = hoveredDataPoint ?? { date: undefined, worth: undefined }
+  const { date: hoveredDataPointDate, worth: hoveredDataPointWorth } = hoveredDataPoint ?? {
+    date: undefined,
+    worth: undefined
+  }
   const singleAddress = !!addressHash
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
   const totalAvailableBalance = addresses.reduce((acc, address) => acc + getAvailableBalance(address), BigInt(0))
   const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
-  const totalAmountWorth = price !== undefined ? calculateAmountWorth(totalBalance, price) : undefined
-  const balanceInFiat = worth ?? totalAmountWorth
+  const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
+
+  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const totalAmountWorth = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
+  const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 
   const isOnline = network.status === 'online'
-  const isHoveringChart = !!worth
+  const isHoveringChart = !!hoveredDataPointWorth
   const showBalancesSkeletonLoader = !isBalancesInitialized || (!isBalancesInitialized && isLoadingBalances)
 
   return (
@@ -95,27 +103,34 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
         <Balances>
           <BalancesRow>
             <BalancesColumn>
-              <Today>{date ? dayjs(date).format('DD/MM/YYYY') : t('Value today')}</Today>
-              {isPriceLoading || showBalancesSkeletonLoader ? (
+              <Today>
+                {hoveredDataPointDate
+                  ? dayjs(hoveredDataPointDate).format('DD/MM/YYYY') + ' (ALPH only)'
+                  : t('Value today')}
+              </Today>
+              {!arePricesInitialized || showBalancesSkeletonLoader ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={currencies[fiatCurrency].symbol} />
               )}
-              <Opacity fadeOut={isHoveringChart}>
-                <FiatDeltaPercentage>
-                  {isPriceLoading ||
-                  stateUninitialized ||
-                  (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
-                    <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
-                  ) : hasHistoricBalances && worthInBeginningOfChart && totalAmountWorth !== undefined ? (
-                    <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={totalAmountWorth} />
-                  ) : null}
-                </FiatDeltaPercentage>
-              </Opacity>
+              {hoveredDataPointWorth !== undefined && (
+                <Opacity>
+                  <FiatDeltaPercentage>
+                    {!arePricesInitialized ||
+                    stateUninitialized ||
+                    !haveHistoricBalancesLoaded ||
+                    (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
+                      <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
+                    ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
+                      <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={hoveredDataPointWorth} />
+                    ) : null}
+                  </FiatDeltaPercentage>
+                </Opacity>
+              )}
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  isPriceLoading || stateUninitialized ? (
+                  !arePricesInitialized || stateUninitialized || !haveHistoricBalancesLoaded ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"
@@ -173,16 +188,15 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
       <ChartOuterContainer
         variants={chartAnimationVariants}
         animate={
-          showChart && hasHistoricBalances && !discreetMode && totalAmountWorth !== undefined ? 'shown' : 'hidden'
+          showChart && hasHistoricBalances && !discreetMode && totalAlphAmountWorth !== undefined ? 'shown' : 'hidden'
         }
       >
         <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
           <HistoricWorthChart
             addressHash={addressHash}
-            currency={currencies[fiatCurrency].ticker}
             onDataPointHover={setHoveredDataPoint}
             onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-            latestWorth={totalAmountWorth}
+            latestWorth={totalAlphAmountWorth}
             length={chartLength}
           />
         </ChartInnerContainer>

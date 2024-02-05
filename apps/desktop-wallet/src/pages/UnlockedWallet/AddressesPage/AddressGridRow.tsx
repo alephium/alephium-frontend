@@ -36,8 +36,8 @@ import {
   selectAddressByHash,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { selectIsTokensMetadataUninitialized } from '@/storage/assets/assetsSelectors'
-import { useGetPriceQuery } from '@/storage/assets/priceApiSlice'
+import { selectDoVerifiedFungibleTokensNeedInitialization } from '@/storage/assets/assetsSelectors'
+import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { currencies } from '@/utils/currencies'
 import { onEnterOrSpace } from '@/utils/misc'
 
@@ -54,9 +54,10 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
   const assets = useAppSelector((s) => selectAddressesTokens(s, addressHash))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
+  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { data: price, isLoading: isPriceLoading } = useGetPriceQuery(currencies[fiatCurrency].ticker)
+  const alphPrice = useAppSelector(selectAlphPrice)
+  const areTokenPricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
@@ -66,7 +67,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
 
   if (!address) return null
 
-  const fiatBalance = calculateAmountWorth(BigInt(address.balance), price ?? 0)
+  const fiatBalance = calculateAmountWorth(BigInt(address.balance), alphPrice ?? 0)
 
   const hiddenAssetsSymbols = hiddenAssets.filter(({ symbol }) => !!symbol).map(({ symbol }) => symbol)
   const nbOfUnknownHiddenAssets = hiddenAssets.filter(({ symbol }) => !symbol).length
@@ -107,7 +108,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           </Column>
         </AddressNameCell>
         <Cell>
-          {isTokensMetadataUninitialized || stateUninitialized ? (
+          {verifiedFungibleTokensNeedInitialization || stateUninitialized ? (
             <SkeletonLoader height="33.5px" />
           ) : (
             <AssetLogos>
@@ -124,7 +125,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           {stateUninitialized ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
         </AmountCell>
         <FiatAmountCell>
-          {stateUninitialized || isPriceLoading ? (
+          {stateUninitialized || !areTokenPricesInitialized ? (
             <SkeletonLoader height="18.5px" />
           ) : (
             <Amount value={fiatBalance} isFiat suffix={currencies[fiatCurrency].symbol} />

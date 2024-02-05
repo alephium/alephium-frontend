@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // TODO: Same as in desktop wallet
 
-import { AssetInfo } from '@alephium/shared'
+import { FungibleToken } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
@@ -26,7 +26,7 @@ import { loadingStarted, syncNetworkFungibleTokensInfo, syncUnknownTokensInfo } 
 import { fungibleTokensAdapter } from '~/store/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 
-interface FungibleTokensState extends EntityState<AssetInfo> {
+interface FungibleTokensState extends EntityState<FungibleToken> {
   loading: boolean
   status: 'initialized' | 'uninitialized'
 }

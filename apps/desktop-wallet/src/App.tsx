@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { AnimatePresence } from 'framer-motion'
 import { difference } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
@@ -34,15 +35,20 @@ import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
-import { syncAddressesData, syncAddressesHistoricBalances } from '@/storage/addresses/addressesActions'
-import { makeSelectAddressesUnknownTokens, selectAddressIds } from '@/storage/addresses/addressesSelectors'
-import { syncNetworkTokensInfo, syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
-import { selectIsTokensMetadataUninitialized } from '@/storage/assets/assetsSelectors'
+import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
+import {
+  makeSelectAddressesUnknownTokens,
+  selectAddressIds,
+  selectAllAddressVerifiedFungibleTokenSymbols
+} from '@/storage/addresses/addressesSelectors'
+import { syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/storage/assets/assetsActions'
+import { selectDoVerifiedFungibleTokensNeedInitialization } from '@/storage/assets/assetsSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrated,
   localStorageDataMigrationFailed
 } from '@/storage/global/globalActions'
+import { syncTokenCurrentPrices, syncTokenPriceHistories } from '@/storage/prices/pricesActions'
 import { apiClientInitFailed, apiClientInitSucceeded } from '@/storage/settings/networkActions'
 import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/storage/settings/settingsActions'
 import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
@@ -57,6 +63,8 @@ import { useInterval } from '@/utils/hooks'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { languageOptions } from '@/utils/settings'
 
+const PRICES_REFRESH_INTERVAL = 60000
+
 const App = () => {
   const { newVersion, newVersionDownloadTriggered } = useGlobalContext()
   const dispatch = useAppDispatch()
@@ -65,7 +73,6 @@ const App = () => {
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
   const network = useAppSelector((s) => s.network)
   const theme = useAppSelector((s) => s.global.theme)
-  const assetsInfo = useAppSelector((s) => s.assetsInfo)
   const loading = useAppSelector((s) => s.global.loading)
   const settings = useAppSelector((s) => s.settings)
   const wallets = useAppSelector((s) => s.global.wallets)
@@ -74,12 +81,14 @@ const App = () => {
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const isTokensMetadataUninitialized = useAppSelector(selectIsTokensMetadataUninitialized)
-  const isLoadingTokensMetadata = useAppSelector((s) => s.assetsInfo.loading)
+  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
+  const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
+  const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
+  const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const unknownTokens = useAppSelector(selectAddressesUnknownTokens)
-  const checkedUnknownTokenIds = useAppSelector((s) => s.assetsInfo.checkedUnknownTokenIds)
+  const checkedUnknownTokenIds = useAppSelector((s) => s.fungibleTokens.checkedUnknownTokenIds)
   const unknownTokenIds = unknownTokens.map((token) => token.id)
   const newUnknownTokens = difference(unknownTokenIds, checkedUnknownTokenIds)
 
@@ -175,9 +184,6 @@ const App = () => {
 
   useEffect(() => {
     if (network.status === 'online') {
-      if (assetsInfo.status === 'uninitialized' && !isLoadingTokensMetadata) {
-        dispatch(syncNetworkTokensInfo())
-      }
       if (addressesStatus === 'uninitialized') {
         if (!isSyncingAddressData && addressHashes.length > 0) {
           const storedPendingTxs = getStoredPendingTransactions()
@@ -189,10 +195,15 @@ const App = () => {
 
               restorePendingTransactions(mempoolTxHashes, storedPendingTxs)
             })
-          dispatch(syncAddressesHistoricBalances())
+
+          dispatch(syncAddressesAlphHistoricBalances())
         }
       } else if (addressesStatus === 'initialized') {
-        if (!isTokensMetadataUninitialized && !isLoadingTokensMetadata && newUnknownTokens.length > 0) {
+        if (
+          !verifiedFungibleTokensNeedInitialization &&
+          !isLoadingUnverifiedFungibleTokens &&
+          newUnknownTokens.length > 0
+        ) {
           dispatch(syncUnknownTokensInfo(newUnknownTokens))
         }
       }
@@ -200,14 +211,63 @@ const App = () => {
   }, [
     addressHashes.length,
     addressesStatus,
-    assetsInfo.status,
+    verifiedFungibleTokensNeedInitialization,
     dispatch,
+    isLoadingUnverifiedFungibleTokens,
     isSyncingAddressData,
-    isLoadingTokensMetadata,
-    isTokensMetadataUninitialized,
     network.status,
     newUnknownTokens
   ])
+
+  // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
+  // token found in each address
+  useEffect(() => {
+    if (network.status === 'online' && !isLoadingVerifiedFungibleTokens) {
+      if (verifiedFungibleTokensNeedInitialization) {
+        dispatch(syncVerifiedFungibleTokens())
+      } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
+        const symbols = verifiedFungibleTokenSymbols.uninitialized
+
+        dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
+        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
+      }
+    }
+  }, [
+    dispatch,
+    isLoadingVerifiedFungibleTokens,
+    network.status,
+    settings.fiatCurrency,
+    verifiedFungibleTokenSymbols.uninitialized,
+    verifiedFungibleTokensNeedInitialization
+  ])
+
+  useEffect(() => {
+    if (
+      network.status === 'online' &&
+      !isLoadingVerifiedFungibleTokens &&
+      verifiedFungibleTokenSymbols.uninitialized.length > 1
+    ) {
+      console.log(
+        'TODO: Sync address verified tokens balance histories for',
+        verifiedFungibleTokenSymbols.uninitialized.filter((symbol) => symbol !== ALPH.symbol)
+      )
+    }
+  }, [isLoadingVerifiedFungibleTokens, network.status, verifiedFungibleTokenSymbols.uninitialized])
+
+  const refreshTokensLatestPrice = useCallback(() => {
+    dispatch(
+      syncTokenCurrentPrices({
+        verifiedFungibleTokenSymbols: verifiedFungibleTokenSymbols.withPriceHistory,
+        currency: settings.fiatCurrency
+      })
+    )
+  }, [dispatch, settings.fiatCurrency, verifiedFungibleTokenSymbols.withPriceHistory])
+
+  useInterval(
+    refreshTokensLatestPrice,
+    PRICES_REFRESH_INTERVAL,
+    network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
+  )
 
   const refreshAddressesData = useCallback(() => {
     dispatch(syncAddressesData(addressesWithPendingTxs))

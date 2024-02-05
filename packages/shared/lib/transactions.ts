@@ -31,19 +31,18 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
   lockedBalance: bigint
 }
 
-export type AssetInfo = Optional<TokenInfo, 'decimals'> & {
-  verified?: boolean
-}
+export type FungibleToken = TokenInfo & { verified?: boolean }
 
-export type Asset = TokenDisplayBalances & Optional<AssetInfo, 'symbol' | 'name'>
+export type Asset = TokenDisplayBalances & Optional<FungibleToken, 'symbol' | 'name'>
 
-export type VerifiedAsset = Required<Asset>
+export type AddressFungibleToken = FungibleToken & TokenDisplayBalances
 
-export type UnverifiedAsset = Optional<VerifiedAsset, 'logoURI'>
+export type VerifiedAddressFungibleToken = AddressFungibleToken & { verified: true }
 
 export type AssetAmount = { id: Asset['id']; amount?: bigint }
 
-export type TransactionInfoAsset = Omit<Asset, 'balance' | 'lockedBalance'> & Required<AssetAmount>
+export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
+  Required<AssetAmount>
 
 export type TransactionInfo = {
   assets: TransactionInfoAsset[]

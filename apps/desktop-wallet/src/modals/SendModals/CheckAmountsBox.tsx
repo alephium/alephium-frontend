@@ -42,7 +42,7 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   const { t } = useTranslation()
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
-  const assetsInfo = useAppSelector((s) => s.assetsInfo.entities)
+  const fungibleTokens = useAppSelector((s) => s.fungibleTokens.entities)
   const nfts = useAppSelector((s) => s.nfts.entities)
 
   const alphAsset = { id: ALPH.id, amount: attoAlphAmount }
@@ -51,7 +51,7 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   return (
     <Box className={className}>
       {assets.map((asset, index) => {
-        const assetInfo = assetsInfo[asset.id]
+        const fungibleToken = fungibleTokens[asset.id]
         const nftInfo = nfts[asset.id]
 
         return (
@@ -60,15 +60,15 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
             <AssetAmountRow>
               <AssetLogo
                 assetId={asset.id}
-                assetImageUrl={assetInfo?.logoURI ?? nftInfo?.image}
+                assetImageUrl={fungibleToken?.logoURI ?? nftInfo?.image}
                 size={30}
-                assetName={assetInfo?.name}
+                assetName={fungibleToken?.name}
               />
               <AssetAmountStyled
                 value={BigInt(asset.amount)}
-                suffix={assetInfo?.symbol}
-                decimals={assetInfo?.decimals}
-                isUnknownToken={!assetInfo?.symbol}
+                suffix={fungibleToken?.symbol}
+                decimals={fungibleToken?.decimals}
+                isUnknownToken={!fungibleToken?.symbol}
                 fullPrecision
               />
               {asset.id === ALPH.id && !!extraAlphForDust && (

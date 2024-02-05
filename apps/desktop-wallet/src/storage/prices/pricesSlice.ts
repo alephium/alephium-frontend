@@ -16,44 +16,45 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT } from '@alephium/shared'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { syncUnknownTokensInfo } from '@/storage/assets/assetsActions'
-import { nftsAdapter } from '@/storage/assets/assetsAdapter'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '@/storage/settings/networkActions'
+import { syncTokenCurrentPrices } from '@/storage/prices/pricesActions'
+import { tokenPricesAdapter } from '@/storage/prices/pricesAdapter'
+import { TokenPriceEntity } from '@/types/price'
 
-interface NFTsState extends EntityState<NFT> {
+interface PricesState extends EntityState<TokenPriceEntity> {
   loading: boolean
+  status: 'uninitialized' | 'initialized'
 }
 
-const initialState: NFTsState = nftsAdapter.getInitialState({
-  loading: false
+const initialState: PricesState = tokenPricesAdapter.getInitialState({
+  loading: false,
+  status: 'uninitialized'
 })
 
-const nftsSlice = createSlice({
-  name: 'nfts',
+const pricesSlice = createSlice({
+  name: 'tokenPrices',
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncUnknownTokensInfo.pending, (state) => {
+      .addCase(syncTokenCurrentPrices.pending, (state) => {
         state.loading = true
       })
-      .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
-        const nfts = action.payload.nfts
+      .addCase(syncTokenCurrentPrices.fulfilled, (state, action) => {
+        const prices = action.payload
 
-        nftsAdapter.upsertMany(state, nfts)
+        if (prices) {
+          tokenPricesAdapter.upsertMany(state, prices)
+        }
+
+        state.loading = false
+        state.status = 'initialized'
+      })
+      .addCase(syncTokenCurrentPrices.rejected, (state) => {
         state.loading = false
       })
-      .addCase(syncUnknownTokensInfo.rejected, (state) => {
-        state.loading = false
-      })
-      .addCase(networkPresetSwitched, resetState)
-      .addCase(customNetworkSettingsSaved, resetState)
   }
 })
 
-export default nftsSlice
-
-const resetState = () => initialState
+export default pricesSlice

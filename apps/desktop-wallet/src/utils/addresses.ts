@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount, AssetInfo } from '@alephium/shared'
+import { AssetAmount, FungibleToken } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { Dictionary } from '@reduxjs/toolkit'
@@ -58,14 +58,14 @@ export const getInitialAddressSettings = (): AddressSettings => ({
   color: getRandomLabelColor()
 })
 
-export const filterAddresses = (addresses: Address[], text: string, assetsInfo: Dictionary<AssetInfo>) =>
+export const filterAddresses = (addresses: Address[], text: string, fungibleTokens: Dictionary<FungibleToken>) =>
   text.length < 2
     ? addresses
     : addresses.filter((address) => {
         const addressTokenIds = address.tokens.filter((token) => token.balance !== '0').map((token) => token.tokenId)
         const addressTokenNames = addressTokenIds
           .map((tokenId) => {
-            const tokenInfo = assetsInfo[tokenId]
+            const tokenInfo = fungibleTokens[tokenId]
             return tokenInfo ? `${tokenInfo.name} ${tokenInfo.symbol}` : undefined
           })
           .filter((searchableText) => searchableText !== undefined)

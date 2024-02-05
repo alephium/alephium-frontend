@@ -25,7 +25,7 @@ import styled from 'styled-components'
 import { fadeInOut } from '@/animations'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
-import { useGetPriceQuery } from '@/storage/assets/priceApiSlice'
+import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { currencies } from '@/utils/currencies'
 
 interface GreetingMessagesProps {
@@ -37,20 +37,19 @@ const swapDelayInSeconds = 8
 const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   const { t } = useTranslation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
+  const alphPrice = useAppSelector(selectAlphPrice)
+  const tokenPricesStatus = useAppSelector((s) => s.tokenPrices.status)
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { data: price, isLoading: isPriceLoading } = useGetPriceQuery(currencies[fiatCurrency].ticker, {
-    pollingInterval: 60000
-  })
 
   const [currentComponentIndex, setCurrentComponentIndex] = useState(0)
   const [lastClickTime, setLastChangeTime] = useState(Date.now())
 
   const priceComponent = (
     <span key="price">
-      {price
+      {alphPrice !== undefined
         ? '📈 ' +
-          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(price) }) +
+          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(alphPrice) }) +
           currencies[fiatCurrency].symbol
         : '💜'}
     </span>
@@ -67,13 +66,13 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
 
   const showNextMessage = useCallback(() => {
     setCurrentComponentIndex((prevIndex) => {
-      if (prevIndex === 0 && (isPriceLoading || price == null)) {
+      if (prevIndex === 0 && (tokenPricesStatus === 'uninitialized' || alphPrice === undefined)) {
         return prevIndex
       }
       return (prevIndex + 1) % componentList.length
     })
     setLastChangeTime(Date.now())
-  }, [componentList.length, isPriceLoading, price])
+  }, [componentList.length, tokenPricesStatus, alphPrice])
 
   const handleClick = useCallback(() => {
     showNextMessage()

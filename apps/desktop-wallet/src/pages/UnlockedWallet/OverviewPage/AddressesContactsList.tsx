@@ -36,7 +36,7 @@ import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
-import { useGetPriceQuery } from '@/storage/assets/priceApiSlice'
+import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { Address } from '@/types/addresses'
 import { currencies } from '@/utils/currencies'
 
@@ -78,7 +78,7 @@ const AddressesContactsList = ({ className, maxHeightInPx }: AddressesContactsLi
 const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
   const addresses = useAppSelector(selectAllAddresses)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { data: price } = useGetPriceQuery(currencies[fiatCurrency].ticker)
+  const alphPrice = useAppSelector(selectAlphPrice)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
   const [selectedAddress, setSelectedAddress] = useState<Address>()
@@ -98,7 +98,7 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
                 <SkeletonLoader height="15.5px" width="50%" />
               ) : (
                 <AmountStyled
-                  value={calculateAmountWorth(BigInt(address.balance), price ?? 0)}
+                  value={calculateAmountWorth(BigInt(address.balance), alphPrice ?? 0)}
                   isFiat
                   suffix={currencies[fiatCurrency].symbol}
                   tabIndex={0}

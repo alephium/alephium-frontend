@@ -22,7 +22,7 @@ import styled, { css } from 'styled-components'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAssetInfoById, selectNFTById } from '@/storage/assets/assetsSelectors'
+import { selectFungibleTokenById, selectNFTById } from '@/storage/assets/assetsSelectors'
 
 interface AssetBadgeProps {
   assetId: Asset['id']
@@ -34,28 +34,28 @@ interface AssetBadgeProps {
 }
 
 const AssetBadge = ({ assetId, amount, simple, className }: AssetBadgeProps) => {
-  const assetInfo = useAppSelector((s) => selectAssetInfoById(s, assetId))
+  const fungibleToken = useAppSelector((s) => selectFungibleTokenById(s, assetId))
   const nftInfo = useAppSelector((s) => selectNFTById(s, assetId))
 
   return (
     <div
       className={className}
       data-tooltip-id="default"
-      data-tooltip-content={assetInfo?.name ?? nftInfo?.name ?? assetId}
+      data-tooltip-content={fungibleToken?.name ?? nftInfo?.name ?? assetId}
     >
       <AssetLogo
         assetId={assetId}
-        assetImageUrl={assetInfo?.logoURI || nftInfo?.image}
+        assetImageUrl={fungibleToken?.logoURI || nftInfo?.image}
         size={20}
-        assetName={assetInfo?.name}
+        assetName={fungibleToken?.name}
         isNft={!!nftInfo}
       />
       {nftInfo?.name ? (
         <AssetSymbol>{nftInfo?.name}</AssetSymbol>
       ) : amount !== undefined ? (
-        <Amount value={amount} suffix={assetInfo?.symbol} decimals={assetInfo?.decimals} />
+        <Amount value={amount} suffix={fungibleToken?.symbol} decimals={fungibleToken?.decimals} />
       ) : (
-        !simple && assetInfo?.symbol && <AssetSymbol>{assetInfo.symbol}</AssetSymbol>
+        !simple && fungibleToken?.symbol && <AssetSymbol>{fungibleToken.symbol}</AssetSymbol>
       )}
     </div>
   )

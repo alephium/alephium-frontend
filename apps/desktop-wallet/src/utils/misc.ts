@@ -87,3 +87,5 @@ export function removeItemFromArray<T>(array: T[], index: number) {
 }
 
 export const cleanUrl = (url: string) => url.replace('https://', '')
+
+export const isFulfilled = <T>(p: PromiseSettledResult<T>): p is PromiseFulfilledResult<T> => p.status === 'fulfilled'

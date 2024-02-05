@@ -25,7 +25,7 @@ import { posthog } from 'posthog-js'
 
 import {
   fetchAddressesBalances,
-  fetchAddressesTokens,
+  fetchAddressesTokensBalances,
   fetchAddressesTransactions,
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
@@ -77,7 +77,7 @@ export const syncAddressesData = createAsyncThunk<
 
   try {
     await dispatch(syncAddressesBalances(addresses))
-    await dispatch(syncAddressesTokens(addresses))
+    await dispatch(syncAddressesTokensBalances(addresses))
     return await dispatch(syncAddressesTransactions(addresses)).unwrap()
   } catch (e) {
     posthog.capture('Error', { message: 'Synching address data' })
@@ -98,9 +98,9 @@ export const syncAddressesTransactions = createAsyncThunk(
   async (addresses: AddressHash[]) => await fetchAddressesTransactions(addresses)
 )
 
-export const syncAddressesTokens = createAsyncThunk(
-  'addresses/syncAddressesTokens',
-  async (addresses: AddressHash[]) => await fetchAddressesTokens(addresses)
+export const syncAddressesTokensBalances = createAsyncThunk(
+  'addresses/syncAddressesTokensBalances',
+  async (addresses: AddressHash[]) => await fetchAddressesTokensBalances(addresses)
 )
 
 export const syncAddressTransactionsNextPage = createAsyncThunk(
@@ -159,8 +159,8 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   }
 )
 
-export const syncAddressesHistoricBalances = createAsyncThunk(
-  'addresses/syncAddressesHistoricBalances',
+export const syncAddressesAlphHistoricBalances = createAsyncThunk(
+  'addresses/syncAddressesAlphHistoricBalances',
   async (
     payload: AddressHash[] | undefined,
     { getState }
@@ -181,14 +181,16 @@ export const syncAddressesHistoricBalances = createAsyncThunk(
 
     for (const addressHash of addresses) {
       const balances = []
-      const data = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
+
+      // TODO: Do not use getAddressesAddressAmountHistoryDeprecated when the new delta endpoints are released
+      const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
         addressHash,
         { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
         { format: 'text' }
       )
 
       try {
-        const { amountHistory } = JSON.parse(data)
+        const { amountHistory } = JSON.parse(alphHistoryData)
 
         for (const [timestamp, balance] of amountHistory) {
           balances.push({

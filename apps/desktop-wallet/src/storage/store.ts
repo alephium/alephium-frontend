@@ -21,11 +21,12 @@ import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
 import addressesSlice from '@/storage/addresses/addressesSlice'
 import contactsSlice from '@/storage/addresses/contactsSlice'
-import assetsInfoSlice from '@/storage/assets/assetsInfoSlice'
+import fungibleTokensSlice from '@/storage/assets/fungibleTokensSlice'
 import nftsSlice from '@/storage/assets/nftsSlice'
-import { priceApi } from '@/storage/assets/priceApiSlice'
 import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
+import pricesHistorySlice from '@/storage/prices/pricesHistorySlice'
+import pricesSlice from '@/storage/prices/pricesSlice'
 import networkSlice, { networkListenerMiddleware } from '@/storage/settings/networkSlice'
 import settingsSlice, { settingsListenerMiddleware } from '@/storage/settings/settingsSlice'
 import confirmedTransactionsSlice from '@/storage/transactions/confirmedTransactionsSlice'
@@ -44,14 +45,14 @@ export const store = configureStore({
     [addressesSlice.name]: addressesSlice.reducer,
     [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
     [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
-    [assetsInfoSlice.name]: assetsInfoSlice.reducer,
+    [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
     [snackbarSlice.name]: snackbarSlice.reducer,
-    [priceApi.reducerPath]: priceApi.reducer,
+    [pricesSlice.name]: pricesSlice.reducer,
+    [pricesHistorySlice.name]: pricesHistorySlice.reducer,
     [nftsSlice.name]: nftsSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
-      .concat(priceApi.middleware)
       .concat(settingsListenerMiddleware.middleware)
       .concat(networkListenerMiddleware.middleware)
       .concat(pendingTransactionsListenerMiddleware.middleware)
