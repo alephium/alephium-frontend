@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { BalanceHistory, Contact } from '../../types/addresses'
+import { BalanceHistory, Contact } from '@/types/addresses'
 
 export const contactsAdapter = createEntityAdapter<Contact>({
   sortComparer: (a, b) => a.name.localeCompare(b.name)

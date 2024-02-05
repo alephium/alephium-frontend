@@ -16,15 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from './assets'
-export * from './utils'
-export * from './errors'
-export * from './numbers'
-export * from './constants'
-export * from './transactions'
-export * from './api'
-export * from './tokens'
-export * from './walletConnect'
-
-export * from './types'
-export * from './store'
+export * from '@/assets'
+export * from '@/api'
+export * from '@/utils'
+export * from '@/errors'
+export * from '@/numbers'
+export * from '@/constants'
+export * from '@/transactions'
+export * from '@/types'
+export * from '@/store'

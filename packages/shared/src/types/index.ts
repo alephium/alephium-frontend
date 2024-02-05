@@ -16,4 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from './addresses'
+export * from '@/types/addresses'
+export * from '@/types/tokens'
+export * from '@/types/transactions'
+export * from '@/types/walletConnect'

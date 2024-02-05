@@ -17,7 +17,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 export const NUM_OF_ZEROS_IN_QUINTILLION = 18
+
 export const MINIMAL_GAS_AMOUNT = 20000
+
 export const MINIMAL_GAS_PRICE = BigInt(100000000000) // 100 nanoALPH for the first year to prevent DoS attacks
+
 export const GENESIS_TIMESTAMP = 1231006505000
+
 export const CHART_DATE_FORMAT = 'YYYY-MM-DD'
+
+export enum WALLETCONNECT_ERRORS {
+  TRANSACTION_SEND_FAILED = -32000,
+  PARSING_SESSION_REQUEST_FAILED = -33000,
+  TRANSACTION_BUILD_FAILED = -34000,
+  TRANSACTION_SIGN_FAILED = -35000,
+  MESSAGE_SIGN_FAILED = -36000,
+  SIGNER_ADDRESS_DOESNT_EXIST = -37000
+}

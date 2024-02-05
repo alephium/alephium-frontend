@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NUM_OF_ZEROS_IN_QUINTILLION } from './constants'
+import { NUM_OF_ZEROS_IN_QUINTILLION } from '@/constants'
 
 export const MAGNITUDE_SYMBOL = ['K', 'M', 'B', 'T']
 

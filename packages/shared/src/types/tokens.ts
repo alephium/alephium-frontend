@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFTMetaData } from '@alephium/web3'
 import { FungibleTokenMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 
-import { Asset } from './transactions'
+import { Asset } from '@/types/transactions'
 
 // We want to convert the type of decimals from string to number because our RAL
 // interface allows U256 but it doesn't make sense to have more than 2 billion

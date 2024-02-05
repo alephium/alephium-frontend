@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAction } from '@reduxjs/toolkit'
 
-import { Contact } from '../../types'
+import { Contact } from '@/types/addresses'
 
 export const syncingAddressDataStarted = createAction('addresses/syncingAddressDataStarted')
 
