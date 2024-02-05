@@ -63,6 +63,8 @@ import { useInterval } from '@/utils/hooks'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { languageOptions } from '@/utils/settings'
 
+const PRICES_REFRESH_INTERVAL = 60000
+
 const App = () => {
   const { newVersion, newVersionDownloadTriggered } = useGlobalContext()
   const dispatch = useAppDispatch()
@@ -263,7 +265,7 @@ const App = () => {
 
   useInterval(
     refreshTokensLatestPrice,
-    60000,
+    PRICES_REFRESH_INTERVAL,
     network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
   )
 
