@@ -19,7 +19,7 @@ import { defineConfig, Options } from 'tsup'
 
 export default defineConfig((options: Options) => ({
   entry: {
-    index: 'lib/index.ts'
+    index: 'src/index.ts'
   },
   clean: true,
   format: ['esm', 'cjs'],

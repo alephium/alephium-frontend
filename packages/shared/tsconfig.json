@@ -1,6 +1,6 @@
 {
   "extends": "@alephium/typescript-config/base",
-  "include": ["lib/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "test"],
   "compilerOptions": {
     "resolveJsonModule": true,
