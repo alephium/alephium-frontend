@@ -20,7 +20,7 @@ import { TokenInfo } from '@alephium/token-list'
 import { explorer, Optional } from '@alephium/web3'
 import { AddressBalance, Token } from '@alephium/web3/dist/src/api/api-explorer'
 
-import { AddressHash } from './address'
+import { AddressHash } from './types/addresses'
 import { uniq } from './utils'
 
 export type TokenBalances = AddressBalance & { id: Token['id'] }

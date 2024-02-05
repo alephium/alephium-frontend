@@ -22,7 +22,9 @@ import {
   AddressSettings,
   BalanceHistory,
   CHART_DATE_FORMAT,
-  getHumanReadableError
+  Contact,
+  getHumanReadableError,
+  syncingAddressDataStarted
 } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
@@ -42,10 +44,7 @@ import i18n from '@/i18n'
 import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { RootState } from '@/storage/store'
 import { Address, AddressBase, AddressTransactionsSyncResult, LoadingEnabled } from '@/types/addresses'
-import { Contact } from '@/types/contacts'
 import { Message, SnackbarMessage } from '@/types/snackbar'
-
-export const syncingAddressDataStarted = createAction('addresses/syncingAddressDataStarted')
 
 export const transactionsLoadingStarted = createAction('addresses/transactionsLoadingStarted')
 
@@ -213,14 +212,8 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
   }
 )
 
-export const contactStoredInPersistentStorage = createAction<Contact>('contacts/contactStoredInPersistentStorage')
-
 export const contactsLoadedFromPersistentStorage = createAction<Contact[]>(
   'contacts/contactsLoadedFromPersistentStorage'
-)
-
-export const contactDeletedFromPeristentStorage = createAction<Contact['id']>(
-  'contacts/contactDeletedFromPeristentStorage'
 )
 
 export const contactStorageFailed = createAction<Message>('contacts/contactStorageFailed')

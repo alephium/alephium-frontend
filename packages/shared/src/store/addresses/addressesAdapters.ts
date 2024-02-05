@@ -16,17 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createAction } from '@reduxjs/toolkit'
+import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { Contact } from '~/types/contacts'
+import { BalanceHistory, Contact } from '../../types/addresses'
 
-// TODO: Same as in desktop wallet
-export const syncingAddressDataStarted = createAction('addresses/syncingAddressDataStarted')
+export const contactsAdapter = createEntityAdapter<Contact>({
+  sortComparer: (a, b) => a.name.localeCompare(b.name)
+})
 
-// TODO: Same as in desktop wallet
-export const contactStoredInPersistentStorage = createAction<Contact>('contacts/contactStoredInPersistentStorage')
-
-// TODO: Same as in desktop wallet
-export const contactDeletedFromPersistentStorage = createAction<Contact['id']>(
-  'contacts/contactDeletedFromPersistentStorage'
-)
+export const balanceHistoryAdapter = createEntityAdapter<BalanceHistory>({
+  selectId: ({ date }) => date,
+  sortComparer: (a, b) => a.date.localeCompare(b.date)
+})

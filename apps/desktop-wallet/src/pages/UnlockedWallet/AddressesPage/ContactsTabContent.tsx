@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Contact } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { ArrowUp, Pencil } from 'lucide-react'
@@ -35,7 +36,6 @@ import ModalPortal from '@/modals/ModalPortal'
 import SendModalTransfer from '@/modals/SendModals/Transfer'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 import { selectAllContacts, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { Contact } from '@/types/contacts'
 import { stringToColour } from '@/utils/colors'
 import { filterContacts } from '@/utils/contacts'
 import { getInitials } from '@/utils/misc'

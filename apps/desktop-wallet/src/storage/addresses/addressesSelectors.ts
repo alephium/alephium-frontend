@@ -21,6 +21,7 @@ import {
   AddressHash,
   Asset,
   calculateAmountWorth,
+  contactsAdapter,
   NFT,
   TokenDisplayBalances
 } from '@alephium/shared'
@@ -29,7 +30,7 @@ import { AddressGroup } from '@alephium/walletconnect-provider'
 import { createSelector } from '@reduxjs/toolkit'
 import { sortBy } from 'lodash'
 
-import { addressesAdapter, contactsAdapter } from '@/storage/addresses/addressesAdapters'
+import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import { selectAllFungibleTokens, selectAllNFTs, selectNFTIds } from '@/storage/assets/assetsSelectors'
 import { selectAllPrices, selectAllPricesHistories } from '@/storage/prices/pricesSelectors'
 import { RootState } from '@/storage/store'

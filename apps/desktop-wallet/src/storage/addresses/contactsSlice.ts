@@ -16,16 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import {
+  Contact,
+  contactDeletedFromPersistentStorage,
+  contactsAdapter,
+  contactStoredInPersistentStorage
+} from '@alephium/shared'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import {
-  contactDeletedFromPeristentStorage,
-  contactsLoadedFromPersistentStorage,
-  contactStoredInPersistentStorage
-} from '@/storage/addresses/addressesActions'
-import { contactsAdapter } from '@/storage/addresses/addressesAdapters'
+import { contactsLoadedFromPersistentStorage } from '@/storage/addresses/addressesActions'
 import { activeWalletDeleted, walletLocked, walletSwitched } from '@/storage/wallets/walletActions'
-import { Contact } from '@/types/contacts'
 
 type ContactsState = EntityState<Contact>
 
@@ -42,7 +42,7 @@ export const contactsSlice = createSlice({
       .addCase(activeWalletDeleted, resetState)
       .addCase(contactStoredInPersistentStorage, contactsAdapter.upsertOne)
       .addCase(contactsLoadedFromPersistentStorage, contactsAdapter.setAll)
-      .addCase(contactDeletedFromPeristentStorage, contactsAdapter.removeOne)
+      .addCase(contactDeletedFromPersistentStorage, contactsAdapter.removeOne)
   }
 })
 

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Contact } from '@alephium/shared'
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { TextInput, ViewProps } from 'react-native'
@@ -31,7 +32,6 @@ import { useAppSelector } from '~/hooks/redux'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
-import { Contact } from '~/types/contacts'
 import { stringToColour } from '~/utils/colors'
 import { filterContacts } from '~/utils/contacts'
 

@@ -16,18 +16,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BalanceHistory } from '@alephium/shared'
-import { createEntityAdapter } from '@reduxjs/toolkit'
-
-import { Contact } from '~/types/contacts'
-
-// TODO: Same as in desktop wallet
-export const contactsAdapter = createEntityAdapter<Contact>({
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
-})
-
-// TODO: Same as in desktop wallet
-export const balanceHistoryAdapter = createEntityAdapter<BalanceHistory>({
-  selectId: ({ date }) => date,
-  sortComparer: (a, b) => a.date.localeCompare(b.date)
-})
+export * from './addresses'

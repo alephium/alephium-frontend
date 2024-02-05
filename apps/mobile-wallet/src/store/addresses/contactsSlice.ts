@@ -16,16 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import {
+  Contact,
+  contactDeletedFromPersistentStorage,
+  contactsAdapter,
+  contactStoredInPersistentStorage
+} from '@alephium/shared'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import {
-  contactDeletedFromPersistentStorage,
-  contactStoredInPersistentStorage
-} from '~/store/addresses/addressesActions'
-import { contactsAdapter } from '~/store/addresses/addressesAdapter'
 import { walletDeleted } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
-import { Contact } from '~/types/contacts'
 
 type ContactsState = EntityState<Contact>
 

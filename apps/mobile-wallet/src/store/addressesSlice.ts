@@ -20,9 +20,11 @@ import {
   ADDRESSES_QUERY_LIMIT,
   AddressHash,
   Asset,
+  balanceHistoryAdapter,
   extractNewTransactionHashes,
   getTransactionsOfAddress,
   NFT,
+  syncingAddressDataStarted,
   TokenDisplayBalances
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
@@ -45,8 +47,6 @@ import {
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
 } from '~/api/addresses'
-import { syncingAddressDataStarted } from '~/store/addresses/addressesActions'
-import { balanceHistoryAdapter } from '~/store/addresses/addressesAdapter'
 import { appReset } from '~/store/appSlice'
 import { selectAllFungibleTokens, selectAllNFTs, selectNFTIds } from '~/store/assets/assetsSelectors'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
