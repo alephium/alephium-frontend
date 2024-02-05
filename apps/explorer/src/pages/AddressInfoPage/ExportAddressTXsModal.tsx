@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getHumanReadableError } from '@alephium/shared'
 import dayjs from 'dayjs'
-import { ComponentProps, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { RiCheckLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
@@ -26,14 +26,14 @@ import client from '@/api/client'
 import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
 import LoadingSpinner from '@/components/LoadingSpinner'
-import Modal from '@/components/Modal/Modal'
+import Modal, { ModalProps } from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
 type TimePeriodValue = '24h' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
 
-interface ExportAddressTXsModalProps extends Omit<ComponentProps<typeof Modal>, 'children'> {
+interface ExportAddressTXsModalProps extends Omit<ModalProps, 'children'> {
   addressHash: string
 }
 
@@ -88,7 +88,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
   return (
     <Modal maxWidth={550} onClose={onClose} {...props}>
       <h2>Export address transactions</h2>
-      <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" />
+      <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" textToCopy={addressHash} />
       <Explanations>
         You can download the address transaction history for a selected time period. This can be useful for tax
         reporting.
@@ -176,7 +176,7 @@ const startCSVFileDownload = (csvContent: string, fileName: string) => {
 }
 
 export default styled(ExportAddressTXsModal)`
-  padding: 30px 50px;
+  padding: 20px 30px;
 `
 
 const Explanations = styled.p`

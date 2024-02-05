@@ -121,7 +121,7 @@ export default createGlobalStyle`
 
   .apexcharts-tooltip {
     box-shadow: ${({ theme }) => theme.shadow.primary} !important;
-    border-radius: 9px !important;
+    border-radius: 8px !important;
     border: 1px solid ${({ theme }) => theme.border.primary};
   }
 `

@@ -43,7 +43,7 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
   const { t } = useTranslation()
   const theme = useTheme()
 
-  const { data: assets, isLoading: assetsLoading } = useQuery(queries.assets.balances.addressTokens(addressHash))
+  const { data: assets, isLoading: assetsLoading } = useQuery(queries.address.assets.tokensBalance(addressHash))
 
   const assetIds = assets?.map((a) => a.tokenId)
 
@@ -81,7 +81,11 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
         const assetBalance = assets?.find((a) => a.tokenId === id)
 
         if (assetBalance) {
-          return { id, ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) } }
+          return {
+            id,
+            verified: false,
+            ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) }
+          }
         }
 
         return []
@@ -145,7 +149,7 @@ export default styled(AssetList)`
   margin-bottom: 35px;
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: 9px;
+  border-radius: 8px;
 `
 
 const EmptyListContainer = styled.div`

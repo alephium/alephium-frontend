@@ -19,9 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { colord } from 'colord'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode } from 'react'
+import { RiCloseLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
-interface ModalProps {
+import { deviceBreakPoints } from '@/styles/globalStyles'
+
+export interface ModalProps {
   isOpen: boolean
   onClose: () => void
   children: ReactNode
@@ -35,20 +38,23 @@ const Modal = ({ isOpen = false, onClose, children, className, maxWidth = 600 }:
       <ModalWrapper>
         <Backdrop
           onClick={onClose}
-          initial={{ backdropFilter: 'blur(0px)', opacity: 0 }}
-          animate={{ backdropFilter: 'blur(5px)', opacity: 1 }}
-          exit={{ backdropFilter: 'blur(0px)', opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          initial={{ WebkitBackdropFilter: 'blur(0px)', backdropFilter: 'blur(0px)', opacity: 0 }}
+          animate={{ WebkitBackdropFilter: 'blur(3px)', backdropFilter: 'blur(3px)', opacity: 1 }}
+          exit={{ WebkitBackdropFilter: 'blur(0px)', backdropFilter: 'blur(0px)', opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 310, damping: 30 }}
         />
         <ModalContentWrapper
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: 0.1 }}
+          initial={{ opacity: 0, x: '10%' }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: '10%' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 40 }}
           className={className}
           style={{ maxWidth }}
         >
-          {children}
+          <CloseButton onClick={onClose}>
+            <RiCloseLine />
+          </CloseButton>
+          <ModalChildrenContainer>{children}</ModalChildrenContainer>
         </ModalContentWrapper>
       </ModalWrapper>
     )}
@@ -68,14 +74,29 @@ const ModalWrapper = styled.div`
 `
 
 const ModalContentWrapper = styled(motion.div)`
-  position: relative;
-  margin: auto;
+  position: absolute;
+  display: flex;
+  right: 25px;
+  top: 25px;
+  bottom: 25px;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.secondary};
   overflow-y: auto;
   z-index: 1;
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
+  overflow: hidden;
+
+  min-width: 400px;
+
+  @media ${deviceBreakPoints.mobile} {
+    min-width: auto;
+  }
+
+  @media ${deviceBreakPoints.mobile} {
+    right: 5%;
+    left: 5%;
+  }
 `
 
 const Backdrop = styled(motion.div)`
@@ -85,4 +106,26 @@ const Backdrop = styled(motion.div)`
   right: 0;
   left: 0;
   background-color: ${({ theme }) => colord(theme.bg.tertiary).alpha(0.5).toHslString()};
+`
+
+const CloseButton = styled(RiCloseLine)`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
+  height: 32px;
+  width: 32px;
+  color: ${({ theme }) => theme.font.primary};
+  border-radius: 30px;
+  background-color: ${({ theme }) => theme.bg.primary};
+  padding: 5px;
+
+  :hover {
+    color: ${({ theme }) => theme.font.secondary};
+  }
+`
+
+const ModalChildrenContainer = styled.div`
+  flex: 1;
+  overflow-y: auto;
 `

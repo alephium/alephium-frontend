@@ -16,8 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { PAGINATION_PAGE_LIMIT } from '@alephium/shared'
+
 import client from '@/api/client'
-import { createQueriesCollection } from '@/utils/api'
+import { browsePages, createQueriesCollection } from '@/utils/api'
 
 export const addressQueries = createQueriesCollection({
   balance: {
@@ -42,6 +44,13 @@ export const addressQueries = createQueriesCollection({
     txNumber: (addressHash: string) => ({
       queryKey: ['addressTxNumber', addressHash],
       queryFn: () => client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
+    })
+  },
+  assets: {
+    tokensBalance: (addressHash: string) => ({
+      queryKey: ['addressTokensBalance', addressHash],
+      queryFn: async () =>
+        browsePages(client.explorer.addresses.getAddressesAddressTokensBalance, addressHash, PAGINATION_PAGE_LIMIT)
     })
   }
 })

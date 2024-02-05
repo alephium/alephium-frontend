@@ -98,4 +98,5 @@ const Value = styled(motion.div)`
 
 const Sublabel = styled.div`
   margin-top: 8px;
+  color: ${({ theme }) => theme.font.tertiary};
 `

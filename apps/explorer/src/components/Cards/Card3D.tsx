@@ -20,11 +20,12 @@ import { motion, Transition, useMotionValue, useSpring, useTransform } from 'fra
 import { PointerEvent, ReactNode, useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
-import { getPointerRelativePositionInElement } from '@/utils/pointer'
+import { getPointerRelativePositionInElement } from '@/utils/inputs'
 
 interface Card3DProps {
   frontFace: ReactNode
-  backFace: ReactNode
+  backFace?: ReactNode
+  onClick?: () => void
   onPointerMove?: (pointerX: number, pointerY: number) => void
   onCardHover?: (isHovered: boolean) => void
   onCardFlip?: (isFlipped: boolean) => void
@@ -37,7 +38,7 @@ export const card3DHoverTransition: Transition = {
   damping: 100
 }
 
-const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, className }: Card3DProps) => {
+const Card3D = ({ frontFace, backFace, onClick, onPointerMove, onCardFlip, onCardHover, className }: Card3DProps) => {
   const theme = useTheme()
   const [isHovered, setIsHovered] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
@@ -66,6 +67,13 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
     clamp: true
   })
 
+  const handleClick = () => {
+    if (onClick) onClick()
+    if (backFace) {
+      setIsFlipped((p) => !p)
+    }
+  }
+
   const handlePointerMove = (e: PointerEvent) => {
     const { x: positionX, y: positionY } = getPointerRelativePositionInElement(e)
 
@@ -93,7 +101,7 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
         y.set(0.5, true)
       }}
       onPointerMove={handlePointerMove}
-      onClick={() => setIsFlipped((p) => !p)}
+      onClick={handleClick}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       whileHover={{ zIndex: 3, cursor: 'pointer' }}
@@ -111,7 +119,7 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
             rotateY,
             rotateX,
             zIndex: 0,
-            boxShadow: '0 0px 0px rgba(0, 0, 0, 0)'
+            boxShadow: '0 2px 2px rgba(0, 0, 0, 0.05)'
           }}
           animate={{
             boxShadow: isHovered
@@ -122,7 +130,7 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
           }}
         >
           <FrontFaceContainer>{frontFace}</FrontFaceContainer>
-          <BackFaceContainer>{backFace}</BackFaceContainer>
+          {backFace && <BackFaceContainer>{backFace}</BackFaceContainer>}
           <ReflectionClipper style={{ transform: isFlipped ? 'rotateY(180deg) rotateX(180deg)' : undefined }}>
             <MovingReflection
               style={{ translateX: reflectionTranslationX, translateY: reflectionTranslationY, opacity: 0 }}
@@ -150,7 +158,6 @@ const CardContainer = styled(motion.div)`
   transform-style: preserve-3d;
   flex: 1;
 
-  border-radius: 9px;
   border-style: solid;
   border-width: 1px;
   background-color: ${({ theme }) => theme.bg.primary};
@@ -175,7 +182,6 @@ const ReflectionClipper = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: 9px;
 `
 
 const MovingReflection = styled(motion.div)`

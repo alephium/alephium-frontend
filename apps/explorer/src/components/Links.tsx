@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AssetAmount } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { map } from 'lodash'
+import { ReactNode } from 'react'
 import { RiExternalLinkLine } from 'react-icons/ri'
 import { Link, LinkProps } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
@@ -31,13 +32,22 @@ import { smartHash } from '@/utils/strings'
 import Ellipsed from './Ellipsed'
 import HashEllipsed from './HashEllipsed'
 
-interface TightLinkProps extends LinkProps {
+interface SimpleLinkProps extends LinkProps {
+  newTab?: boolean
+  chilrend?: ReactNode
+}
+
+interface TightLinkProps extends SimpleLinkProps {
   maxWidth: string
   text: string
   isHash?: boolean
 }
 
-export const SimpleLink: FC<LinkProps> = ({ children, ...props }) => <StyledLink {...props}>{children}</StyledLink>
+export const SimpleLink = ({ children, newTab, ...props }: SimpleLinkProps) => (
+  <StyledLink {...props} {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+    {children}
+  </StyledLink>
+)
 
 export const TightLink: FC<TightLinkProps> = ({ maxWidth, text, isHash, ...props }) => (
   <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>

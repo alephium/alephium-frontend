@@ -125,7 +125,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
 
 export default styled(SearchBar)`
   position: relative;
-  height: 50px;
+  height: 46px;
 `
 
 const SearchIcon = styled(RiSearchLine)`
@@ -143,7 +143,7 @@ const SearchInput = styled.input`
   width: 100%;
   height: 100%;
   border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: 9px;
+  border-radius: 6px;
   padding: 0 50px 0 20px;
   color: ${({ theme }) => theme.font.primary};
   background-color: ${({ theme }) => theme.bg.primary};

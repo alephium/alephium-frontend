@@ -22,14 +22,16 @@ import i18n from '@/i18n'
 import {
   contactDeletedFromPeristentStorage,
   contactDeletionFailed,
+  contactStorageFailed,
+  contactStoredInPersistentStorage,
   syncAddressesData
 } from '@/storage/addresses/addressesActions'
-import { contactStorageFailed, contactStoredInPersistentStorage } from '@/storage/addresses/addressesActions'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
 import {
   copiedToClipboard,
   copyToClipboardFailed,
+  devModeShortcutDetected,
   loadingDataFromLocalStorageFailed,
   localStorageDataMigrationFailed,
   receiveTestnetTokens,
@@ -39,7 +41,6 @@ import {
   walletConnectCacheCleared,
   walletConnectCacheClearFailed
 } from '@/storage/global/globalActions'
-import { devModeShortcutDetected } from '@/storage/global/globalActions'
 import {
   apiClientInitFailed,
   apiClientInitSucceeded,
@@ -54,8 +55,7 @@ import {
   transactionSendFailed,
   transactionsSendSucceeded
 } from '@/storage/transactions/transactionsActions'
-import { newWalletNameStored } from '@/storage/wallets/walletActions'
-import { walletCreationFailed, walletNameStorageFailed } from '@/storage/wallets/walletActions'
+import { newWalletNameStored, walletCreationFailed, walletNameStorageFailed } from '@/storage/wallets/walletActions'
 import { Message, SnackbarMessage } from '@/types/snackbar'
 
 interface SnackbarSliceState {

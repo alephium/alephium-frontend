@@ -55,8 +55,16 @@ export default styled(TableRow)`
   border: none;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
 
+  td:first-child {
+    color: ${({ theme }) => theme.font.secondary};
+  }
+
   td:first-child .row-link {
     padding-left: 20px;
+  }
+
+  td:nth-child(2) {
+    color: ${({ theme }) => theme.font.primary};
   }
 `
 

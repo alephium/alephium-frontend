@@ -27,6 +27,7 @@ import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
+  node,
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
   SignMessageParams,
@@ -35,7 +36,6 @@ import {
   SignUnsignedTxParams,
   SignUnsignedTxResult
 } from '@alephium/web3'
-import { node } from '@alephium/web3'
 import {
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,
@@ -47,8 +47,7 @@ import {
   STORE_STORAGE_VERSION
 } from '@walletconnect/core'
 import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
-import SignClient from '@walletconnect/sign-client'
-import { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
+import SignClient, { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
 import {
   EngineTypes,
   JsonRpcRecord,

@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { SelectOption } from '@/components/Inputs/Select'
-import { networkPresets } from '@/storage/settings/settingsPersistentStorage'
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
+import SettingsStorage, { networkPresets } from '@/storage/settings/settingsPersistentStorage'
 import { NetworkName } from '@/types/network'
 import { Currency, GeneralSettings, Language, NetworkSettings } from '@/types/settings'
 

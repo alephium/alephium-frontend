@@ -36,7 +36,7 @@ export default styled(SkeletonLoader)`
   background-color: rgba(255, 255, 255, 0.05);
   width: ${({ width }) => width || '100%'};
   height: ${({ height }) => height || '20px'};
-  border-radius: 9px;
+  border-radius: 8px;
   overflow: hidden;
 `
 
