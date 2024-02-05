@@ -22,14 +22,14 @@ export const currentVersion: string = import.meta.env.VITE_VERSION
 export const isRcVersion: boolean = currentVersion.includes('-rc.')
 
 export interface AppMetaData {
-  lastCheckedAt: Date
+  lastTimeGitHubApiWasCalled: Date
   lastAnnouncementHashChecked: string
 }
 
 export type TypeConstructors = DateConstructor | StringConstructor | NumberConstructor | BooleanConstructor
 
 export const APPMETADATA_KEYS: Record<string, TypeConstructors> = {
-  lastCheckedAt: Date,
+  lastTimeGitHubApiWasCalled: Date,
   lastAnnouncementHashChecked: String
 }
 

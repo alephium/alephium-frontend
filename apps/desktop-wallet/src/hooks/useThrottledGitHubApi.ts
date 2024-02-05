@@ -22,29 +22,31 @@ import { AppMetaData, isRcVersion, KEY_APPMETADATA, toAppMetaData } from '@/util
 import { useTimeout } from '@/utils/hooks'
 
 // TODO: Move to shared
-const ONE_HOUR = 1000 * 60 * 60
+const ONE_HOUR_IN_MS = 1000 * 60 * 60
 
-const useThrottledGitHubApi = (callback: (latestAppMetaData: AppMetaData) => Promise<void>) => {
-  const [timeUntilNextCheck, setTimeUntilNextCheck] = useState(0)
+const useThrottledGitHubApi = (githubApiCallback: (appMetadata: AppMetaData) => Promise<void>) => {
+  const [timeoutDelay, setTimeoutDelay] = useState(0)
 
   useTimeout(() => {
-    const appData = getAppMetadata()
-    const { lastCheckedAt } = isRcVersion ? { lastCheckedAt: new Date(0) } : appData
-    const timeSinceLastCheck = (lastCheckedAt !== undefined && Date.now() - lastCheckedAt.getTime()) || 0
-    const nextTimeUntilNextCheck = Math.max(0, ONE_HOUR - timeSinceLastCheck)
+    const now = new Date()
+    const lastTimeGitHubApiWasCalled = getLastTimeGitHubApiWasCalled()
+    const timePassedSinceGitHubApiWasCalledInMs = now.getTime() - lastTimeGitHubApiWasCalled.getTime()
 
-    if (timeUntilNextCheck === 0 && nextTimeUntilNextCheck !== 0 && lastCheckedAt !== undefined) {
-      setTimeUntilNextCheck(nextTimeUntilNextCheck)
-      return
+    if (timePassedSinceGitHubApiWasCalledInMs > ONE_HOUR_IN_MS) {
+      const updatedAppMetadata = storeAppMetadata({ lastTimeGitHubApiWasCalled: now })
+
+      setTimeoutDelay(ONE_HOUR_IN_MS)
+      githubApiCallback(updatedAppMetadata)
+    } else {
+      setTimeoutDelay(timePassedSinceGitHubApiWasCalledInMs)
     }
+  }, timeoutDelay)
+}
 
-    const latestAppMetaData = { ...appData, lastCheckedAt: new Date() }
+const getLastTimeGitHubApiWasCalled = (): Date => {
+  const { lastTimeGitHubApiWasCalled } = getAppMetadata()
 
-    storeAppMetadata(latestAppMetaData)
-    setTimeUntilNextCheck(nextTimeUntilNextCheck)
-
-    callback(latestAppMetaData)
-  }, timeUntilNextCheck)
+  return isRcVersion || !lastTimeGitHubApiWasCalled ? new Date(0) : lastTimeGitHubApiWasCalled
 }
 
 export const getAppMetadata = (): AppMetaData => {
@@ -57,7 +59,12 @@ export const getAppMetadata = (): AppMetaData => {
   return {} as AppMetaData
 }
 
-export const storeAppMetadata = (data: Partial<AppMetaData>) =>
-  localStorage.setItem(KEY_APPMETADATA, JSON.stringify({ ...getAppMetadata(), ...data }))
+export const storeAppMetadata = (data: Partial<AppMetaData>): AppMetaData => {
+  const updatedAppMetadata = { ...getAppMetadata(), ...data }
+
+  localStorage.setItem(KEY_APPMETADATA, JSON.stringify(updatedAppMetadata))
+
+  return updatedAppMetadata
+}
 
 export default useThrottledGitHubApi
