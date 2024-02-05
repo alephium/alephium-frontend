@@ -30,14 +30,14 @@ describe('Wallet', function () {
     jest.clearAllMocks()
   })
 
-  it('should encrypt and decrypt using password', async () => {
+  it('should encrypt and decrypt using password', () => {
     const myPassword = 'alephium'
     const myWallet = walletUtils.walletGenerate()
-    const readWallet = await walletUtils.walletOpen(myPassword, myWallet.encrypt(myPassword))
+    const readWallet = walletUtils.walletOpen(myPassword, myWallet.encrypt(myPassword))
     expect(JSON.stringify(myWallet)).toEqual(JSON.stringify(readWallet))
 
     const wrongPassword = 'utopia'
-    await expect(() => {
+    expect(() => {
       walletUtils.walletOpen(wrongPassword, myWallet.encrypt(myPassword))
     }).toThrow('Unsupported state or unable to authenticate data')
   })
@@ -67,10 +67,10 @@ describe('Wallet', function () {
     expect(myWallet.mnemonic.split(' ').length).toEqual(12)
   })
 
-  it('should read wallet file', async () => {
+  it('should read wallet file', () => {
     for (const row of wallets.wallets) {
       const imported = walletUtils.walletImport(row.mnemonic)
-      const opened = await walletUtils.walletOpen(row.password, JSON.stringify(row.file))
+      const opened = walletUtils.walletOpen(row.password, JSON.stringify(row.file))
 
       expect(imported.address).toEqual(opened.address)
       expect(imported.publicKey).toEqual(opened.publicKey)

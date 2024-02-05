@@ -10,12 +10,13 @@
     "ios": "expo run:ios --device",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
     "clean:node-modules": "rm -rf node_modules",
     "postinstall": "turbo build:deps"
   },
   "dependencies": {
     "@alephium/shared": "workspace:*",
+    "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.12",
     "@alephium/walletconnect-provider": "0.29.1",

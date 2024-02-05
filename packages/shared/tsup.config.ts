@@ -15,14 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { defineConfig, Options } from 'tsup'
 
-export * from './assets'
-export * from './utils'
-export * from './address'
-export * from './errors'
-export * from './numbers'
-export * from './constants'
-export * from './transactions'
-export * from './api'
-export * from './tokens'
-export * from './walletConnect'
+export default defineConfig((options: Options) => ({
+  entry: {
+    index: 'lib/index.ts'
+  },
+  clean: true,
+  format: ['esm', 'cjs'],
+  dts: true,
+  ...options
+}))

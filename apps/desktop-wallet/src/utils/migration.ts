@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata, encrypt } from '@alephium/shared'
+import { AddressMetadata } from '@alephium/shared'
+import { encrypt } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 

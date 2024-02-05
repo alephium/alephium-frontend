@@ -16,14 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressMetadata, getHumanReadableError } from '@alephium/shared'
 import {
-  AddressMetadata,
   deriveAddressAndKeys,
-  getHumanReadableError,
   walletEncryptAsyncUnsafe,
   walletGenerateAsyncUnsafe,
   walletImportAsyncUnsafe
-} from '@alephium/shared'
+} from '@alephium/shared-crypto'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
