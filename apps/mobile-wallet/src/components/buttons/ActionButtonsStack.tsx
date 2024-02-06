@@ -16,17 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
-import { View, ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
-export interface ButtonStackProps extends ViewProps {
-  children: ReactNode[]
-}
+import ButtonStack, { ButtonStackProps } from '~/components/buttons/ButtonStack'
 
-const ButtonStack = ({ children, style }: ButtonStackProps) => <View style={style}>{children}</View>
+const ActionButtonsStack = ({ style, ...props }: ButtonStackProps) => (
+  <ActionsContainer style={style}>
+    <ButtonStack {...props} style={{ width: '75%' }} />
+  </ActionsContainer>
+)
 
-export default styled(ButtonStack)`
-  width: 100%;
-  gap: 10px;
+export default ActionButtonsStack
+
+const ActionsContainer = styled.View`
+  flex: 1.5;
+  justify-content: center;
+  align-items: center;
 `

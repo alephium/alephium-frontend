@@ -22,6 +22,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import ButtonStack from '~/components/buttons/ButtonStack'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
@@ -30,9 +31,15 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 
 interface WalletConnectPairingsModalProps extends ModalContentProps {
   onPasteWcUrlPress: () => void
+  onScanQRCodePress: () => void
 }
 
-const WalletConnectPairingsModal = ({ onPasteWcUrlPress, onClose, ...props }: WalletConnectPairingsModalProps) => {
+const WalletConnectPairingsModal = ({
+  onPasteWcUrlPress,
+  onScanQRCodePress,
+  onClose,
+  ...props
+}: WalletConnectPairingsModalProps) => {
   const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
 
   useEffect(() => {
@@ -70,7 +77,20 @@ const WalletConnectPairingsModal = ({ onPasteWcUrlPress, onClose, ...props }: Wa
         </EmptyPlaceholder>
       )}
       <ScreenSection>
-        <Button title="Paste a WalletConnect URL" variant="accent" onPress={onPasteWcUrlPress} />
+        <ButtonStack>
+          <Button
+            title="Paste a WalletConnect URL"
+            variant="accent"
+            onPress={onPasteWcUrlPress}
+            iconProps={{ name: 'clipboard-outline' }}
+          />
+          <Button
+            title="Scan QR code"
+            variant="accent"
+            onPress={onScanQRCodePress}
+            iconProps={{ name: 'qr-code-outline' }}
+          />
+        </ButtonStack>
       </ScreenSection>
     </ModalContent>
   )

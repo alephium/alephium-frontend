@@ -139,6 +139,10 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
                 props.onClose && props.onClose()
                 setIsWalletConnectPasteUrlModalOpen(true)
               }}
+              onScanQRCodePress={() => {
+                props.onClose && props.onClose()
+                openQRCodeScannerModal()
+              }}
             />
           )}
           isOpen={isWalletConnectPairingsModalOpen}
