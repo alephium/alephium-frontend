@@ -19,7 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AssetOutput, Input, MempoolTransaction, Output, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { AddressHash } from '@/types/addresses'
-import { AmountDeltas, AssetAmount, TransactionDirection } from '@/types/transactions'
+import { AssetAmount } from '@/types/assets'
+import { AmountDeltas, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils'
 
 export const calcTxAmountsDeltaForAddress = (

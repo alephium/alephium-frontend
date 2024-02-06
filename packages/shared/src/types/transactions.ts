@@ -16,27 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TokenInfo } from '@alephium/token-list'
 import { Optional } from '@alephium/web3'
-import { AddressBalance, Token } from '@alephium/web3/dist/src/api/api-explorer'
+import { Token } from '@alephium/web3/dist/src/api/api-explorer'
 
-export type TokenBalances = AddressBalance & { id: Token['id'] }
-
-// Same as TokenBalances, but amounts are in BigInt, useful for display purposes
-export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & {
-  balance: bigint
-  lockedBalance: bigint
-}
-
-export type FungibleToken = TokenInfo & { verified?: boolean }
-
-export type Asset = TokenDisplayBalances & Optional<FungibleToken, 'symbol' | 'name'>
-
-export type AddressFungibleToken = FungibleToken & TokenDisplayBalances
-
-export type VerifiedAddressFungibleToken = AddressFungibleToken & { verified: true }
-
-export type AssetAmount = { id: Asset['id']; amount?: bigint }
+import { Asset, AssetAmount } from '@/types/assets'
 
 export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
   Required<AssetAmount>

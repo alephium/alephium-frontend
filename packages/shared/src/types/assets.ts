@@ -16,10 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFTMetaData } from '@alephium/web3'
-import { FungibleTokenMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { TokenInfo } from '@alephium/token-list'
+import { NFTMetaData, Optional } from '@alephium/web3'
+import { AddressBalance, FungibleTokenMetadata, Token } from '@alephium/web3/dist/src/api/api-explorer'
 
-import { Asset } from '@/types/transactions'
+export type TokenBalances = AddressBalance & { id: Token['id'] }
+
+// Same as TokenBalances, but amounts are in BigInt, useful for display purposes
+export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & {
+  balance: bigint
+  lockedBalance: bigint
+}
+
+export type FungibleToken = TokenInfo & { verified?: boolean }
+
+export type Asset = TokenDisplayBalances & Optional<FungibleToken, 'symbol' | 'name'>
+
+export type AddressFungibleToken = FungibleToken & TokenDisplayBalances
+
+export type VerifiedAddressFungibleToken = AddressFungibleToken & { verified: true }
+
+export type AssetAmount = { id: Asset['id']; amount?: bigint }
 
 // We want to convert the type of decimals from string to number because our RAL
 // interface allows U256 but it doesn't make sense to have more than 2 billion
