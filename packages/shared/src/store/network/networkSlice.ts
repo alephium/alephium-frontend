@@ -16,32 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
-import { localStorageDataMigrated } from '@/storage/global/globalActions'
+import { defaultNetworkSettings, getNetworkName, networkSettingsPresets } from '@/network'
+import { appReset } from '@/store/global/globalActions'
 import {
   apiClientInitFailed,
   apiClientInitSucceeded,
   customNetworkSettingsSaved,
+  localStorageNetworkSettingsLoaded,
+  localStorageNetworkSettingsMigrated,
   networkPresetSwitched
-} from '@/storage/settings/networkActions'
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
-import { RootState } from '@/storage/store'
-import { NetworkName, NetworkStatus } from '@/types/network'
-import { getNetworkName } from '@/utils/settings'
-
-interface NetworkState {
-  name: NetworkName
-  settings: NetworkSettings
-  status: NetworkStatus
-}
-
-const storedNetworkSettings = SettingsStorage.load('network') as NetworkSettings
+} from '@/store/network/networkActions'
+import { NetworkNames, NetworkSettings, NetworkState, NetworkStatus } from '@/types/network'
 
 const initialState: NetworkState = {
-  name: getNetworkName(storedNetworkSettings),
-  settings: storedNetworkSettings,
+  name: NetworkNames.mainnet,
+  settings: defaultNetworkSettings,
   status: 'uninitialized'
 }
 
@@ -51,7 +42,8 @@ const networkSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(localStorageDataMigrated, () => parseSettingsUpdate(SettingsStorage.load('network') as NetworkSettings))
+      .addCase(localStorageNetworkSettingsMigrated, (_, action) => parseSettingsUpdate(action.payload))
+      .addCase(localStorageNetworkSettingsLoaded, (_, action) => parseSettingsUpdate(action.payload))
       .addCase(customNetworkSettingsSaved, (_, action) => parseSettingsUpdate(action.payload))
       .addCase(networkPresetSwitched, (_, action) => {
         const networkName = action.payload
@@ -69,18 +61,7 @@ const networkSlice = createSlice({
       .addCase(apiClientInitFailed, (state) => {
         state.status = 'offline'
       })
-  }
-})
-
-export const networkListenerMiddleware = createListenerMiddleware()
-
-// When the network changes, store settings in persistent storage
-networkListenerMiddleware.startListening({
-  matcher: isAnyOf(networkPresetSwitched, customNetworkSettingsSaved, apiClientInitSucceeded),
-  effect: (_, { getState }) => {
-    const state = getState() as RootState
-
-    SettingsStorage.store('network', state.network.settings)
+      .addCase(appReset, () => initialState)
   }
 })
 

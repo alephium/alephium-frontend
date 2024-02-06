@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { clone } from 'lodash'
 
-import { NetworkPreset, NetworkSettings } from '@/types/network'
+import { NetworkName, NetworkPreset, NetworkSettings } from '@/types/network'
 
 export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
   mainnet: {
@@ -42,3 +42,10 @@ export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
 }
 
 export const defaultNetworkSettings = clone(networkSettingsPresets.mainnet) as NetworkSettings
+
+export const isEqualNetwork = (a: NetworkSettings, b: NetworkSettings): boolean =>
+  a.nodeHost === b.nodeHost && a.explorerUrl === b.explorerUrl && a.explorerApiHost === b.explorerApiHost
+
+export const getNetworkName = (settings: NetworkSettings) =>
+  (Object.entries(networkSettingsPresets).find(([, presetSettings]) => isEqualNetwork(presetSettings, settings))?.[0] ||
+    'custom') as NetworkName | 'custom'

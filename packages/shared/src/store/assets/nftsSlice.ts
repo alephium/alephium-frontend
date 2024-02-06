@@ -16,16 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT } from '@alephium/shared'
-import { createSlice, EntityState } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
-import { syncUnknownTokensInfo } from '~/store/assets/assetsActions'
-import { nftsAdapter } from '~/store/assets/assetsAdapter'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
+import { syncUnknownTokensInfo } from '@/store/assets/assetsActions'
+import { nftsAdapter } from '@/store/assets/assetsAdapter'
+import { customNetworkSettingsSaved, networkPresetSwitched } from '@/store/network/networkActions'
+import { NFTsState } from '@/types/assets'
 
-type NFTsState = EntityState<NFT>
-
-const initialState: NFTsState = nftsAdapter.getInitialState()
+const initialState: NFTsState = nftsAdapter.getInitialState({
+  loading: false
+})
 
 const nftsSlice = createSlice({
   name: 'nfts',
@@ -33,10 +33,17 @@ const nftsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
+      .addCase(syncUnknownTokensInfo.pending, (state) => {
+        state.loading = true
+      })
       .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
         const nfts = action.payload.nfts
 
         nftsAdapter.upsertMany(state, nfts)
+        state.loading = false
+      })
+      .addCase(syncUnknownTokensInfo.rejected, (state) => {
+        state.loading = false
       })
       .addCase(networkPresetSwitched, resetState)
       .addCase(customNetworkSettingsSaved, resetState)

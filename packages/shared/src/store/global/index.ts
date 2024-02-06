@@ -16,22 +16,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth, selectAlphPrice } from '@alephium/shared'
-
-import { useAppSelector } from '~/hooks/redux'
-import { selectTotalBalance } from '~/store/addressesSlice'
-import { DataPoint } from '~/types/charts'
-
-const useWorthDelta = (worthInBeginningOfChart?: DataPoint['worth']) => {
-  const totalBalance = useAppSelector(selectTotalBalance)
-  const alphPrice = useAppSelector(selectAlphPrice)
-
-  const latestValue = calculateAmountWorth(totalBalance, alphPrice ?? 0)
-  const initialValue = worthInBeginningOfChart ?? 0
-
-  const delta = latestValue - initialValue
-
-  return delta < 0.01 && delta > -0.01 ? 0 : delta
-}
-
-export default useWorthDelta
+export * from '@/store/global/globalActions'

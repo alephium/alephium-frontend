@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NetworkNames, NetworkPreset, networkSettingsPresets } from '@alephium/shared'
+import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { View } from 'react-native'
@@ -27,7 +27,6 @@ import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Scree
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { persistSettings } from '~/persistent-storage/settings'
-import { networkPresetSwitched } from '~/store/networkSlice'
 
 const networkNames = Object.values(NetworkNames)
 

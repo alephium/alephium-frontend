@@ -16,7 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import {
+  client,
+  customNetworkSettingsSaved,
+  getNetworkName,
+  networkPresetSwitched,
+  NetworkSettings,
+  networkSettingsPresets
+} from '@alephium/shared'
 import { AlertOctagon } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
@@ -32,11 +39,9 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import i18next from '@/i18n'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '@/storage/settings/networkActions'
 import { NetworkName, NetworkNames } from '@/types/network'
 import { AlephiumWindow } from '@/types/window'
 import { useMountEffect } from '@/utils/hooks'
-import { getNetworkName } from '@/utils/settings'
 
 interface NetworkSelectOption {
   label: string

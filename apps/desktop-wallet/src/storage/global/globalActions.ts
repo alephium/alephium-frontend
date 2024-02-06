@@ -30,8 +30,6 @@ export const copiedToClipboard = createAction<OptionalMessage>('app/copiedToClip
 
 export const copyToClipboardFailed = createAction<OptionalMessage>('app/copyToClipboardFailed')
 
-export const localStorageDataMigrated = createAction('app/localStorageDataMigrated')
-
 export const localStorageDataMigrationFailed = createAction('app/localStorageDataMigrationFailed')
 
 export const loadingDataFromLocalStorageFailed = createAction('app/loadingDataFromLocalStorageFailed')

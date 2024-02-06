@@ -16,7 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressIndex, AddressKeyPair, client } from '@alephium/shared'
+import {
+  AddressIndex,
+  AddressKeyPair,
+  appReset,
+  client,
+  customNetworkSettingsSaved,
+  networkPresetSwitched
+} from '@alephium/shared'
 import { deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
@@ -29,8 +36,6 @@ import {
 } from '@reduxjs/toolkit'
 
 import { addressesImported } from '~/store/addressesSlice'
-import { appReset } from '~/store/appSlice'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 import { RootState } from '~/store/store'
 import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
 import { Address } from '~/types/addresses'

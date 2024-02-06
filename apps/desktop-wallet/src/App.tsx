@@ -18,10 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   AddressHash,
+  apiClientInitFailed,
+  apiClientInitSucceeded,
   client,
+  localStorageNetworkSettingsMigrated,
   PRICES_REFRESH_INTERVAL,
+  selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
-  syncTokenPriceHistories
+  syncTokenPriceHistories,
+  syncUnknownTokensInfo,
+  syncVerifiedFungibleTokens
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AnimatePresence } from 'framer-motion'
@@ -46,15 +52,12 @@ import {
   selectAddressIds,
   selectAllAddressVerifiedFungibleTokenSymbols
 } from '@/storage/addresses/addressesSelectors'
-import { syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/storage/assets/assetsActions'
-import { selectDoVerifiedFungibleTokensNeedInitialization } from '@/storage/assets/assetsSelectors'
+import { devModeShortcutDetected, localStorageDataMigrationFailed } from '@/storage/global/globalActions'
 import {
-  devModeShortcutDetected,
-  localStorageDataMigrated,
-  localStorageDataMigrationFailed
-} from '@/storage/global/globalActions'
-import { apiClientInitFailed, apiClientInitSucceeded } from '@/storage/settings/networkActions'
-import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/storage/settings/settingsActions'
+  localStorageGeneralSettingsMigrated,
+  systemLanguageMatchFailed,
+  systemLanguageMatchSucceeded
+} from '@/storage/settings/settingsActions'
 import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import {
   getStoredPendingTransactions,
@@ -102,11 +105,12 @@ const App = () => {
 
   useEffect(() => {
     try {
-      migrateGeneralSettings()
-      migrateNetworkSettings()
+      const generalSettings = migrateGeneralSettings()
+      const networkSettings = migrateNetworkSettings()
       migrateWalletData()
 
-      dispatch(localStorageDataMigrated())
+      dispatch(localStorageGeneralSettingsMigrated(generalSettings))
+      dispatch(localStorageNetworkSettingsMigrated(networkSettings))
     } catch (e) {
       console.error(e)
       posthog.capture('Error', { message: 'Local storage data migration failed' })

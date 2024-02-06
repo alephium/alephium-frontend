@@ -16,7 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth, selectAlphPrice } from '@alephium/shared'
+import {
+  AddressHash,
+  calculateAmountWorth,
+  selectAlphPrice,
+  selectDoVerifiedFungibleTokensNeedInitialization
+} from '@alephium/shared'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 import { useMemo, useState } from 'react'
@@ -36,7 +41,6 @@ import {
   selectAddressByHash,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { selectDoVerifiedFungibleTokensNeedInitialization } from '@/storage/assets/assetsSelectors'
 import { currencies } from '@/utils/currencies'
 import { onEnterOrSpace } from '@/utils/misc'
 

@@ -16,7 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client } from '@alephium/shared'
+import {
+  apiClientInitFailed,
+  apiClientInitSucceeded,
+  client,
+  selectDoVerifiedFungibleTokensNeedInitialization,
+  syncUnknownTokensInfo,
+  syncVerifiedFungibleTokens
+} from '@alephium/shared'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { StatusBar } from 'expo-status-bar'
@@ -39,9 +46,6 @@ import {
   syncAddressesDataWhenPendingTxsConfirm,
   syncAddressesHistoricBalances
 } from '~/store/addressesSlice'
-import { syncNetworkFungibleTokensInfo, syncUnknownTokensInfo } from '~/store/assets/assetsActions'
-import { selectIsFungibleTokensMetadataUninitialized } from '~/store/assets/assetsSelectors'
-import { apiClientInitFailed, apiClientInitSucceeded } from '~/store/networkSlice'
 import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { store } from '~/store/store'
 import {
@@ -99,9 +103,9 @@ const Main = ({ children, ...props }: ViewProps) => {
   const network = useAppSelector((s) => s.network)
   const addressIds = useAppSelector(selectAddressIds)
   const fungibleTokens = useAppSelector((s) => s.fungibleTokens)
-  const isLoadingFungibleTokensMetadata = useAppSelector((s) => s.fungibleTokens.loading)
+  const isLoadingFungibleTokensMetadata = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const isFungibleTokensMetadataUninitialized = useAppSelector(selectIsFungibleTokensMetadataUninitialized)
+  const isFungibleTokensMetadataUninitialized = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
   const pendingTxs = useAppSelector(selectAllPendingTransactions)
@@ -122,11 +126,11 @@ const Main = ({ children, ...props }: ViewProps) => {
       dispatch(apiClientInitSucceeded({ networkId, networkName: network.name }))
       console.log(`Client initialized. Current network: ${network.name}`)
     } catch (e) {
-      dispatch(apiClientInitFailed())
+      dispatch(apiClientInitFailed({ networkName: network.name, networkStatus: network.status }))
       console.error('Could not connect to network: ', network.name)
       console.error(e)
     }
-  }, [network.settings.nodeHost, network.settings.explorerApiHost, network.name, dispatch])
+  }, [network.settings.nodeHost, network.settings.explorerApiHost, network.name, network.status, dispatch])
 
   useEffect(() => {
     if (network.status === 'connecting') {
@@ -140,7 +144,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   useEffect(() => {
     if (network.status === 'online') {
       if (fungibleTokens.status === 'uninitialized' && !isLoadingFungibleTokensMetadata) {
-        dispatch(syncNetworkFungibleTokensInfo())
+        dispatch(syncVerifiedFungibleTokens())
       }
       if (addressesStatus === 'uninitialized') {
         if (!isSyncingAddressData && addressIds.length > 0) {

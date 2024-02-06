@@ -16,20 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NetworkSettings } from '@alephium/shared'
 import { createAction } from '@reduxjs/toolkit'
 
-import { NetworkName, NetworkPreset, NetworkStatus } from '@/types/network'
+export const appReset = createAction('global/appReset')
 
-export const networkPresetSwitched = createAction<NetworkPreset>('network/networkPresetSwitched')
-
-export const customNetworkSettingsSaved = createAction<NetworkSettings>('network/customNetworkSettingsSaved')
-
-export const apiClientInitSucceeded = createAction<{
-  networkId: NetworkSettings['networkId']
-  networkName: NetworkName
-}>('network/apiClientInitSucceeded')
-
-export const apiClientInitFailed = createAction<{ networkName: NetworkName; networkStatus: NetworkStatus }>(
-  'network/apiClientInitFailed'
-)
+export const appBecameInactive = createAction('global/appBecameInactive')

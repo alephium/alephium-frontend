@@ -16,15 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TODO: Same as in desktop wallet
+import { apiClientInitSucceeded, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
+import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
 
-import { FungibleToken, NFT } from '@alephium/shared'
-import { createEntityAdapter } from '@reduxjs/toolkit'
+import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
+import { RootState } from '@/storage/store'
 
-export const fungibleTokensAdapter = createEntityAdapter<FungibleToken>({
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
-})
+export const networkListenerMiddleware = createListenerMiddleware()
 
-export const nftsAdapter = createEntityAdapter<NFT>({
-  sortComparer: (a, b) => (a.name && b.name ? a.name.localeCompare(b.name) : a.id.localeCompare(b.id))
+// When the network changes, store settings in persistent storage
+networkListenerMiddleware.startListening({
+  matcher: isAnyOf(networkPresetSwitched, customNetworkSettingsSaved, apiClientInitSucceeded),
+  effect: (_, { getState }) => {
+    const state = getState() as RootState
+
+    SettingsStorage.store('network', state.network.settings)
+  }
 })

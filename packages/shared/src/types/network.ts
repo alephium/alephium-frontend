@@ -41,3 +41,9 @@ export enum NetworkNames {
 export type NetworkName = keyof typeof NetworkNames
 
 export type NetworkPreset = Exclude<NetworkName, 'custom'>
+
+export interface NetworkState {
+  name: NetworkName
+  settings: NetworkSettings
+  status: NetworkStatus
+}

@@ -16,13 +16,5 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FungibleToken, NFT } from '@alephium/shared'
-import { createEntityAdapter } from '@reduxjs/toolkit'
-
-export const fungibleTokensAdapter = createEntityAdapter<FungibleToken>({
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
-})
-
-export const nftsAdapter = createEntityAdapter<NFT>({
-  sortComparer: (a, b) => (a.name && b.name ? a.name.localeCompare(b.name) : a.id.localeCompare(b.id))
-})
+export * from '@/store/network/networkActions'
+export * from '@/store/network/networkSlice'

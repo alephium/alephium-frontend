@@ -19,11 +19,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   ADDRESSES_QUERY_LIMIT,
   AddressHash,
+  appReset,
   Asset,
   balanceHistoryAdapter,
+  customNetworkSettingsSaved,
   extractNewTransactionHashes,
   getTransactionsOfAddress,
+  networkPresetSwitched,
   NFT,
+  selectAllFungibleTokens,
+  selectAllNFTs,
+  selectNFTIds,
   syncingAddressDataStarted,
   TokenDisplayBalances
 } from '@alephium/shared'
@@ -47,9 +53,6 @@ import {
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
 } from '~/api/addresses'
-import { appReset } from '~/store/appSlice'
-import { selectAllFungibleTokens, selectAllNFTs, selectNFTIds } from '~/store/assets/assetsSelectors'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '~/store/networkSlice'
 import { RootState } from '~/store/store'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'

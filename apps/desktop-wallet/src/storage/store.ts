@@ -22,11 +22,9 @@ import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
 import addressesSlice from '@/storage/addresses/addressesSlice'
 import contactsSlice from '@/storage/addresses/contactsSlice'
-import fungibleTokensSlice from '@/storage/assets/fungibleTokensSlice'
-import nftsSlice from '@/storage/assets/nftsSlice'
 import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
-import networkSlice, { networkListenerMiddleware } from '@/storage/settings/networkSlice'
+import { networkListenerMiddleware } from '@/storage/settings/networkMiddleware'
 import settingsSlice, { settingsListenerMiddleware } from '@/storage/settings/settingsSlice'
 import confirmedTransactionsSlice from '@/storage/transactions/confirmedTransactionsSlice'
 import pendingTransactionsSlice, {
@@ -41,13 +39,10 @@ export const store = configureStore({
     [activeWalletSlice.name]: activeWalletSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
     [settingsSlice.name]: settingsSlice.reducer,
-    [networkSlice.name]: networkSlice.reducer,
     [addressesSlice.name]: addressesSlice.reducer,
     [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
     [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
-    [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
-    [snackbarSlice.name]: snackbarSlice.reducer,
-    [nftsSlice.name]: nftsSlice.reducer
+    [snackbarSlice.name]: snackbarSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

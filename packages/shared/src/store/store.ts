@@ -19,12 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
+import fungibleTokensSlice from '@/store/assets/fungibleTokensSlice'
+import nftsSlice from '@/store/assets/nftsSlice'
+import networkSlice from '@/store/network/networkSlice'
 import pricesHistorySlice from '@/store/prices/pricesHistorySlice'
 import pricesSlice from '@/store/prices/pricesSlice'
 
 export const baseReducer = {
   [pricesSlice.name]: pricesSlice.reducer,
-  [pricesHistorySlice.name]: pricesHistorySlice.reducer
+  [pricesHistorySlice.name]: pricesHistorySlice.reducer,
+  [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
+  [nftsSlice.name]: nftsSlice.reducer,
+  [networkSlice.name]: networkSlice.reducer
 }
 
 const baseStore = configureStore({

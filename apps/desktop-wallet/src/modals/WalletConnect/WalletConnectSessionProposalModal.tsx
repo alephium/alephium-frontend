@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { networkPresetSwitched } from '@alephium/shared'
 import { AlertTriangle, PlusSquare } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
@@ -32,7 +33,6 @@ import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressesInGroup } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
-import { networkPresetSwitched } from '@/storage/settings/networkActions'
 import { Address } from '@/types/addresses'
 import { SessionProposalEvent } from '@/types/walletConnect'
 import { getRandomLabelColor } from '@/utils/colors'

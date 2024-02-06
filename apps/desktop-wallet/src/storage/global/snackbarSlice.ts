@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { contactDeletedFromPersistentStorage, contactStoredInPersistentStorage } from '@alephium/shared'
+import {
+  apiClientInitFailed,
+  apiClientInitSucceeded,
+  contactDeletedFromPersistentStorage,
+  contactStoredInPersistentStorage,
+  customNetworkSettingsSaved
+} from '@alephium/shared'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import i18n from '@/i18n'
@@ -36,11 +42,6 @@ import {
   walletConnectCacheCleared,
   walletConnectCacheClearFailed
 } from '@/storage/global/globalActions'
-import {
-  apiClientInitFailed,
-  apiClientInitSucceeded,
-  customNetworkSettingsSaved
-} from '@/storage/settings/networkActions'
 import {
   csvFileGenerationFinished,
   csvFileGenerationStarted,

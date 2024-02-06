@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TokenInfo } from '@alephium/token-list'
 import { NFTMetaData, Optional } from '@alephium/web3'
 import { AddressBalance, FungibleTokenMetadata, Token } from '@alephium/web3/dist/src/api/api-explorer'
+import { EntityState } from '@reduxjs/toolkit'
 
 export type TokenBalances = AddressBalance & { id: Token['id'] }
 
@@ -60,4 +61,15 @@ export type NFT = {
 export type SyncUnknownTokensInfoResult = {
   tokens: FungibleTokenBasicMetadata[]
   nfts: NFT[]
+}
+
+export interface FungibleTokensState extends EntityState<FungibleToken> {
+  loadingVerified: boolean
+  loadingUnverified: boolean
+  status: 'initialized' | 'uninitialized'
+  checkedUnknownTokenIds: FungibleToken['id'][]
+}
+
+export interface NFTsState extends EntityState<NFT> {
+  loading: boolean
 }

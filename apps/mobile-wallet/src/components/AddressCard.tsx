@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth, selectAlphPrice } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -36,7 +36,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
-import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { currencies } from '~/utils/currencies'
 import { showToast, ToastDuration } from '~/utils/layout'
@@ -58,12 +57,9 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const [loading, setLoading] = useState(false)
 
   const totalAddressBalance = BigInt(address?.balance ?? 0)
-  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
-    pollingInterval: 60000,
-    skip: totalAddressBalance === BigInt(0)
-  })
+  const alphPrice = useAppSelector(selectAlphPrice)
 
-  const totalAmountWorth = calculateAmountWorth(totalAddressBalance, price ?? 0)
+  const totalAmountWorth = calculateAmountWorth(totalAddressBalance, alphPrice ?? 0)
   const isDefaultAddress = address?.settings.isDefault
 
   if (!address) return null

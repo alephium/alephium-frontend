@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NetworkSettings } from '@alephium/shared'
+import { customNetworkSettingsSaved, NetworkSettings } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -30,7 +30,6 @@ import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistSettings } from '~/persistent-storage/settings'
-import { customNetworkSettingsSaved } from '~/store/networkSlice'
 import { showExceptionToast } from '~/utils/layout'
 
 interface CustomNetworkScreenProps

@@ -16,17 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { networkSettingsPresets } from '@alephium/shared'
 import { createSelector } from '@reduxjs/toolkit'
 
-import { fungibleTokensAdapter, nftsAdapter } from '@/storage/assets/assetsAdapter'
-import { RootState } from '@/storage/store'
+import { networkSettingsPresets } from '@/network'
+import { fungibleTokensAdapter, nftsAdapter } from '@/store/assets/assetsAdapter'
+import { BaseRootState } from '@/store/store'
 
 export const { selectAll: selectAllFungibleTokens, selectById: selectFungibleTokenById } =
-  fungibleTokensAdapter.getSelectors<RootState>((state) => state.fungibleTokens)
+  fungibleTokensAdapter.getSelectors<BaseRootState>((state) => state.fungibleTokens)
 
 export const selectDoVerifiedFungibleTokensNeedInitialization = createSelector(
-  [(state: RootState) => state.fungibleTokens.status, (state: RootState) => state.network.settings.networkId],
+  [(state: BaseRootState) => state.fungibleTokens.status, (state: BaseRootState) => state.network.settings.networkId],
   (status, networkId) =>
     (networkId === networkSettingsPresets.mainnet.networkId ||
       networkId === networkSettingsPresets.testnet.networkId) &&
@@ -37,4 +37,4 @@ export const {
   selectAll: selectAllNFTs,
   selectById: selectNFTById,
   selectIds: selectNFTIds
-} = nftsAdapter.getSelectors<RootState>((state) => state.nfts)
+} = nftsAdapter.getSelectors<BaseRootState>((state) => state.nfts)

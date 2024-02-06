@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NetworkNames, networkSettingsPresets } from '@alephium/shared'
+import { NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
 import { AlertTriangle, PlusSquare } from 'lucide-react-native'
 import { useEffect, useRef, useState } from 'react'
@@ -42,7 +42,6 @@ import {
   syncAddressesData,
   syncAddressesHistoricBalances
 } from '~/store/addressesSlice'
-import { networkPresetSwitched } from '~/store/networkSlice'
 import { Address } from '~/types/addresses'
 import { SessionProposalEvent } from '~/types/walletConnect'
 import { getRandomLabelColor } from '~/utils/colors'

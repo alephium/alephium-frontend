@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { selectFungibleTokenById, selectNFTById } from '@alephium/shared'
 import { ALPH, TokenInfo } from '@alephium/token-list'
 import { Canvas, Circle, SweepGradient, vec } from '@shopify/react-native-skia'
 import { Image } from 'expo-image'
@@ -26,7 +27,6 @@ import styled, { css, useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
-import { selectFungibleTokenById, selectNFTById } from '~/store/assets/assetsSelectors'
 import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface AssetLogoProps {
