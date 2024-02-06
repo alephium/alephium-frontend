@@ -30,7 +30,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['@alephium/shared'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
+    include: ['@alephium/shared-crypto'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
   },
   plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
   test: {
@@ -46,7 +46,7 @@ export default defineConfig({
     target: 'es2020',
     outDir: 'build',
     commonjsOptions: {
-      include: [/node_modules/, /shared/]
+      include: [/node_modules/, /shared-crypto/]
     }
   }
 })

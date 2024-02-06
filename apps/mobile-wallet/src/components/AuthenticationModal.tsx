@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletOpenAsyncUnsafe } from '@alephium/shared'
+import { walletOpenAsyncUnsafe } from '@alephium/shared-crypto'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

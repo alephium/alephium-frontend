@@ -4,17 +4,22 @@
   "pipeline": {
     "lint": {},
     "lint:fix": { "cache": false },
+    "format": {},
+    "clean": { "cache": false },
+    "clean:node-modules": { "cache": false },
     "test": {
-      "dependsOn": ["compile", "^compile"]
+      "dependsOn": ["^build"]
     },
     "build": {
-      "dependsOn": ["^compile"]
-    },
-    "compile": {
+      "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
+    "watch": {
+      "cache": false,
+      "persistent": true
+    },
     "typecheck": {
-      "dependsOn": ["topo", "^compile"]
+      "dependsOn": ["topo", "^build"]
     },
     "topo": {
       "dependsOn": ["^topo"]

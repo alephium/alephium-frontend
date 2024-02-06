@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressKeyPair } from '@alephium/shared'
 import { addressToGroup, bs58, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
@@ -100,13 +101,6 @@ export const getWalletFromMnemonicAsyncUnsafe = async (
   const seed = await mnemonicToSeedCustomFunc(mnemonic, passphrase)
 
   return getWalletFromSeed(seed, mnemonic)
-}
-
-export type AddressKeyPair = {
-  hash: string
-  index: number
-  publicKey: string
-  privateKey: string
 }
 
 export const deriveAddressAndKeys = (masterKey: bip32.BIP32Interface, addressIndex?: number): AddressKeyPair => {

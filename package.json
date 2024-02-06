@@ -5,12 +5,17 @@
   "packageManager": "pnpm@8.9.0",
   "private": true,
   "scripts": {
+    "watch": "turbo watch",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "clean-node-modules": "rm -rf node_modules & find ./packages ./apps -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
+    "check": "turbo typecheck lint format",
+    "check:deps": "manypkg check",
+    "check:deps:fix": "manypkg fix",
+    "clean": "turbo clean",
+    "clean:node-modules": "rm -rf node_modules && turbo clean:node-modules",
+    "postinstall": "pnpm check:deps"
   },
   "resolutions": {
     "semver": "^7.5.2"
@@ -31,5 +36,10 @@
       "framer-motion@10.17.12": "patches/framer-motion@10.17.12.patch",
       "react-native-aes-crypto@2.1.1": "patches/react-native-aes-crypto@2.1.1.patch"
     }
+  },
+  "manypkg": {
+    "ignoredRules": [
+      "INTERNAL_MISMATCH"
+    ]
   }
 }

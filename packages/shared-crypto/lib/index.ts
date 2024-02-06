@@ -16,26 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, TokenBalances } from '@alephium/shared'
-import { explorer } from '@alephium/web3'
-
-export type AddressBalanceResult = {
-  addressHash: AddressHash
-  balance: string
-  lockedBalance: string
-}
-
-export type AddressAssetsResult = {
-  addressHash: AddressHash
-  assets: TokenBalances[]
-}
-
-export type AddressTransactionNumberResult = {
-  addressHash: AddressHash
-  txNumber: number
-}
-
-export type AddressTransactionsResult = {
-  addressHash: AddressHash
-  transactions: explorer.Transaction[]
-}
+export * from './wallet'
+export * from './address'
+export * from './password-crypto'

@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { BalanceHistory } from '@alephium/shared'
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { BalanceHistory } from '~/types/addresses'
 import { Contact } from '~/types/contacts'
 
 // TODO: Same as in desktop wallet

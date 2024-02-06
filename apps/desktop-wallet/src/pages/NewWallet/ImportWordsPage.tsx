@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError, walletImport } from '@alephium/shared'
+import { getHumanReadableError } from '@alephium/shared'
+import { walletImport } from '@alephium/shared-crypto'
 import Tagify, { BaseTagData, ChangeEventData, TagData } from '@yaireo/tagify'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useRef, useState } from 'react'

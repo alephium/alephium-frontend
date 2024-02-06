@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isAddressValid } from '@alephium/shared'
+import { isAddressValid } from '@alephium/shared-crypto'
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
 import { memo, useState } from 'react'
 import { Platform, StyleProp, View, ViewStyle } from 'react-native'
