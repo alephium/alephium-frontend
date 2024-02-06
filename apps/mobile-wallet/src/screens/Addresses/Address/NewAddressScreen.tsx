@@ -30,8 +30,8 @@ import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Addr
 import {
   newAddressGenerated,
   selectAllAddresses,
-  syncAddressesData,
-  syncAddressesHistoricBalances
+  syncAddressesAlphHistoricBalances,
+  syncAddressesData
 } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed } from '~/utils/crypto'
@@ -63,7 +63,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
       await dispatch(syncAddressesData(newAddress.hash))
-      await dispatch(syncAddressesHistoricBalances(newAddress.hash))
+      await dispatch(syncAddressesAlphHistoricBalances([newAddress.hash]))
 
       sendAnalytics('Address: Generated new address', {
         note: group === undefined ? 'In random group' : 'In specific group'

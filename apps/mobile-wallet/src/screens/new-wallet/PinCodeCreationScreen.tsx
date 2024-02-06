@@ -29,7 +29,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
-import { syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
+import { syncAddressesAlphHistoricBalances, syncAddressesData } from '~/store/addressesSlice'
 import { newPinVerified } from '~/store/credentialsSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { ShouldClearPin } from '~/types/misc'
@@ -102,7 +102,7 @@ const PinCodeCreationScreen = ({ navigation, style, ...props }: PinCodeCreationS
       const wallet = await generateAndStoreWallet(name, pin)
       dispatch(newWalletGenerated(wallet))
       dispatch(syncAddressesData(wallet.firstAddress.hash))
-      dispatch(syncAddressesHistoricBalances(wallet.firstAddress.hash))
+      dispatch(syncAddressesAlphHistoricBalances([wallet.firstAddress.hash]))
 
       sendAnalytics('Created new wallet')
 

@@ -17,11 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  AddressHash,
+  PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
+  syncTokenCurrentPrices,
+  syncTokenPriceHistories,
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { StatusBar } from 'expo-status-bar'
@@ -39,9 +44,10 @@ import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
   makeSelectAddressesUnknownTokens,
   selectAddressIds,
+  selectAllAddressVerifiedFungibleTokenSymbols,
+  syncAddressesAlphHistoricBalances,
   syncAddressesData,
-  syncAddressesDataWhenPendingTxsConfirm,
-  syncAddressesHistoricBalances
+  syncAddressesDataWhenPendingTxsConfirm
 } from '~/store/addressesSlice'
 import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { store } from '~/store/store'
@@ -98,14 +104,16 @@ const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const network = useAppSelector((s) => s.network)
-  const addressIds = useAppSelector(selectAddressIds)
-  const fungibleTokens = useAppSelector((s) => s.fungibleTokens)
-  const isLoadingFungibleTokensMetadata = useAppSelector((s) => s.fungibleTokens.loadingVerified)
+  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
+  const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
+  const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const isFungibleTokensMetadataUninitialized = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
+  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
   const pendingTxs = useAppSelector(selectAllPendingTransactions)
+  const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
+  const settings = useAppSelector((s) => s.settings)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -118,31 +126,81 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useEffect(() => {
     if (network.status === 'online') {
-      if (fungibleTokens.status === 'uninitialized' && !isLoadingFungibleTokensMetadata) {
-        dispatch(syncVerifiedFungibleTokens())
-      }
       if (addressesStatus === 'uninitialized') {
-        if (!isSyncingAddressData && addressIds.length > 0) {
+        if (!isSyncingAddressData && addressHashes.length > 0) {
           dispatch(syncAddressesData())
-          dispatch(syncAddressesHistoricBalances())
+          dispatch(syncAddressesAlphHistoricBalances())
         }
       } else if (addressesStatus === 'initialized') {
-        if (!isFungibleTokensMetadataUninitialized && !isLoadingFungibleTokensMetadata && newUnknownTokens.length > 0) {
+        if (
+          !verifiedFungibleTokensNeedInitialization &&
+          !isLoadingUnverifiedFungibleTokens &&
+          newUnknownTokens.length > 0
+        ) {
           dispatch(syncUnknownTokensInfo(newUnknownTokens))
         }
       }
     }
   }, [
-    addressIds.length,
+    addressHashes.length,
     addressesStatus,
-    fungibleTokens.status,
     dispatch,
-    isLoadingFungibleTokensMetadata,
+    isLoadingUnverifiedFungibleTokens,
     isSyncingAddressData,
-    isFungibleTokensMetadataUninitialized,
     network.status,
-    newUnknownTokens
+    newUnknownTokens,
+    verifiedFungibleTokensNeedInitialization
   ])
+
+  // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
+  // token found in each address
+  useEffect(() => {
+    if (network.status === 'online' && !isLoadingVerifiedFungibleTokens) {
+      if (verifiedFungibleTokensNeedInitialization) {
+        dispatch(syncVerifiedFungibleTokens())
+      } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
+        const symbols = verifiedFungibleTokenSymbols.uninitialized
+
+        dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols: symbols, currency: settings.currency }))
+        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.currency }))
+      }
+    }
+  }, [
+    dispatch,
+    isLoadingVerifiedFungibleTokens,
+    network.status,
+    settings.currency,
+    verifiedFungibleTokenSymbols.uninitialized,
+    verifiedFungibleTokensNeedInitialization
+  ])
+
+  useEffect(() => {
+    if (
+      network.status === 'online' &&
+      !isLoadingVerifiedFungibleTokens &&
+      verifiedFungibleTokenSymbols.uninitialized.length > 1
+    ) {
+      console.log(
+        'TODO: Sync address verified tokens balance histories for',
+        verifiedFungibleTokenSymbols.uninitialized.filter((symbol) => symbol !== ALPH.symbol)
+      )
+    }
+  }, [isLoadingVerifiedFungibleTokens, network.status, verifiedFungibleTokenSymbols.uninitialized])
+
+  const refreshTokensLatestPrice = useCallback(() => {
+    dispatch(
+      syncTokenCurrentPrices({
+        verifiedFungibleTokenSymbols: verifiedFungibleTokenSymbols.withPriceHistory,
+        currency: settings.currency
+      })
+    )
+  }, [dispatch, settings.currency, verifiedFungibleTokenSymbols.withPriceHistory])
+
+  useInterval(
+    refreshTokensLatestPrice,
+    PRICES_REFRESH_INTERVAL,
+    network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
+  )
 
   const refreshAddressDataWhenPendingTxsConfirm = useCallback(() => {
     dispatch(syncAddressesDataWhenPendingTxsConfirm({ addresses: addressesWithPendingTxs, pendingTxs }))

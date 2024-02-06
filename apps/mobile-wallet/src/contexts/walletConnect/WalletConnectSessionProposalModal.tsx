@@ -39,8 +39,8 @@ import { selectAddressesInGroup } from '~/store/addresses/addressesSelectors'
 import {
   newAddressGenerated,
   selectAllAddresses,
-  syncAddressesData,
-  syncAddressesHistoricBalances
+  syncAddressesAlphHistoricBalances,
+  syncAddressesData
 } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import { SessionProposalEvent } from '~/types/walletConnect'
@@ -105,7 +105,7 @@ const WalletConnectSessionProposalModal = ({
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
       await dispatch(syncAddressesData(newAddress.hash))
-      await dispatch(syncAddressesHistoricBalances(newAddress.hash))
+      await dispatch(syncAddressesAlphHistoricBalances([newAddress.hash]))
 
       sendAnalytics('WC: Generated new address')
     } catch (e) {

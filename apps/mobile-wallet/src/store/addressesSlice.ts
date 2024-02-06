@@ -18,10 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   ADDRESSES_QUERY_LIMIT,
+  AddressFungibleToken,
   AddressHash,
   appReset,
   Asset,
+  BalanceHistory,
   balanceHistoryAdapter,
+  CHART_DATE_FORMAT,
+  client,
   customNetworkSettingsSaved,
   extractNewTransactionHashes,
   getTransactionsOfAddress,
@@ -29,6 +33,7 @@ import {
   NFT,
   selectAllFungibleTokens,
   selectAllNFTs,
+  selectAllPricesHistories,
   selectNFTIds,
   syncingAddressDataStarted,
   TokenDisplayBalances
@@ -43,11 +48,11 @@ import {
   EntityState,
   PayloadAction
 } from '@reduxjs/toolkit'
+import dayjs from 'dayjs'
 import { chunk, sortBy, uniq } from 'lodash'
 
 import {
   fetchAddressesBalances,
-  fetchAddressesHistoricalBalances,
   fetchAddressesTokens,
   fetchAddressesTransactions,
   fetchAddressesTransactionsNextPage,
@@ -56,7 +61,7 @@ import {
 import { RootState } from '~/store/store'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
-import { Address, AddressesHistoricalBalanceResult, AddressPartial } from '~/types/addresses'
+import { Address, AddressPartial } from '~/types/addresses'
 import { PendingTransaction } from '~/types/transactions'
 import { getRandomLabelColor } from '~/utils/colors'
 
@@ -96,7 +101,7 @@ export const syncAddressesDataWhenPendingTxsConfirm = createAsyncThunk(
     for (const { hash, transactions } of results) {
       if (transactions.some((confirmedTx) => pendingTxs.some((pendingTx) => pendingTx.hash === confirmedTx.hash))) {
         await dispatch(syncAddressesData(hash))
-        await dispatch(syncAddressesHistoricBalances(hash))
+        await dispatch(syncAddressesAlphHistoricBalances([hash]))
       }
     }
   }
@@ -191,14 +196,57 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
 )
 
 // TODO: Same as in desktop wallet, share state?
-export const syncAddressesHistoricBalances = createAsyncThunk(
-  'addresses/syncAddressesHistoricBalances',
-  async (payload: AddressHash | AddressHash[] | undefined, { getState }): Promise<AddressesHistoricalBalanceResult> => {
+export const syncAddressesAlphHistoricBalances = createAsyncThunk(
+  'addresses/syncAddressesAlphHistoricBalances',
+  async (
+    payload: AddressHash[] | undefined,
+    { getState }
+  ): Promise<
+    {
+      address: AddressHash
+      balances: BalanceHistory[]
+    }[]
+  > => {
+    const now = dayjs()
+    const thisMoment = now.valueOf()
+    const oneYearAgo = now.subtract(12, 'month').valueOf()
+
+    const addressesBalances = []
     const state = getState() as RootState
 
-    const addresses =
-      payload !== undefined ? (Array.isArray(payload) ? payload : [payload]) : (state.addresses.ids as AddressHash[])
-    return await fetchAddressesHistoricalBalances(addresses)
+    const addresses = payload ?? (state.addresses.ids as AddressHash[])
+
+    for (const addressHash of addresses) {
+      const balances = []
+
+      // TODO: Do not use getAddressesAddressAmountHistoryDeprecated when the new delta endpoints are released
+      const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
+        addressHash,
+        { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
+        { format: 'text' }
+      )
+
+      try {
+        const { amountHistory } = JSON.parse(alphHistoryData)
+
+        for (const [timestamp, balance] of amountHistory) {
+          balances.push({
+            date: dayjs(timestamp).format(CHART_DATE_FORMAT),
+            balance: BigInt(balance).toString()
+          })
+        }
+      } catch (e) {
+        console.error('Could not parse amount history data', e)
+        // posthog.capture('Error', { message: 'Could not parse amount history data' })
+      }
+
+      addressesBalances.push({
+        address: addressHash,
+        balances
+      })
+    }
+
+    return addressesBalances
   }
 )
 
@@ -391,7 +439,7 @@ const addressesSlice = createSlice({
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
       .addCase(appReset, () => initialState)
-      .addCase(syncAddressesHistoricBalances.fulfilled, (state, { payload: data }) => {
+      .addCase(syncAddressesAlphHistoricBalances.fulfilled, (state, { payload: data }) => {
         data.forEach(({ address, balances }) => {
           const addressState = state.entities[address]
 
@@ -594,3 +642,32 @@ const getAddressesTokenBalances = (addresses: Address[]) =>
 
     return acc
   }, [] as TokenDisplayBalances[])
+
+export const makeSelectAddressesVerifiedFungibleTokens = () =>
+  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
+    tokens.filter((token): token is AddressFungibleToken => !!token.verified)
+  )
+
+export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
+  [makeSelectAddressesVerifiedFungibleTokens(), selectAllPricesHistories],
+  (verifiedFungibleTokens, histories) =>
+    verifiedFungibleTokens
+      .map((token) => token.symbol)
+      .reduce(
+        (acc, tokenSymbol) => {
+          const tokenHistory = histories.find(({ symbol }) => symbol === tokenSymbol)
+
+          if (!tokenHistory || tokenHistory.status === 'uninitialized') {
+            acc.uninitialized.push(tokenSymbol)
+          } else if (tokenHistory && tokenHistory.history.length > 0) {
+            acc.withPriceHistory.push(tokenSymbol)
+          }
+
+          return acc
+        },
+        {
+          uninitialized: [] as string[],
+          withPriceHistory: [] as string[]
+        }
+      )
+)
