@@ -30,6 +30,7 @@ import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
 import announcementFile from '../../announcement.json'
+import { colord } from 'colord'
 
 interface AnnouncementBannerProps {
   className?: string
@@ -95,12 +96,13 @@ const AnnouncementBannerStyled = styled(motion.div)`
   position: fixed;
   top: ${appHeaderHeightPx}px;
   left: ${walletSidebarWidthPx + messagesLeftMarginPx}px;
-  border: 1px solid ${({ theme }) => theme.global.accent};
+  border: 2px solid ${({ theme }) => theme.global.accent};
   border-radius: 52px;
-  background-color: ${({ theme }) => theme.bg.primary};
-  padding: 8px 11px;
+  background-color: ${({ theme }) => colord(theme.bg.background2).alpha(0.5).toHex()};
+  padding: 8px 10px;
   z-index: 1;
   max-width: 50%;
+  backdrop-filter: blur(20px);
 `
 
 const Contents = styled.div`
@@ -114,13 +116,13 @@ const Texts = styled.div`
 `
 
 const Title = styled.div`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: var(--fontWeight-medium);
   color: ${({ theme }) => theme.font.primary};
 `
 
 const Description = styled.div`
-  font-size: 12px;
+  font-size: 13px;
   font-weight: var(--fontWeight-medium);
   color: ${({ theme }) => theme.font.tertiary};
   margin-top: 3px;
