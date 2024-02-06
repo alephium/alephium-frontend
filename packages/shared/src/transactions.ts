@@ -88,7 +88,7 @@ export const isMempoolTx = (transaction: Transaction | MempoolTransaction): tran
   !('blockHash' in transaction)
 
 export const isInternalTx = (tx: Transaction, internalAddresses: AddressHash[]): boolean =>
-  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every((io) => io?.address && internalAddresses.indexOf(io.address) >= 0)
+  [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every((io) => io?.address && internalAddresses.includes(io.address))
 
 export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outputs: AssetOutput[] | Output[]) => {
   const lastOutput = outputs[outputs.length - 1]
