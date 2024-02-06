@@ -60,7 +60,7 @@ const TransactionalInfo = ({
   const { addressHash: addressHashParam = '' } = useParams<{ addressHash: AddressHash }>()
   const addressHash = addressHashProp ?? addressHashParam
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const { assets, direction, outputs, lockTime, infoType } = getTransactionInfo(tx, showInternalInflows)
+  const { assets, direction, lockTime, infoType } = getTransactionInfo(tx, showInternalInflows)
   const { label, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
 
   const isMoved = infoType === 'move'
@@ -116,7 +116,7 @@ const TransactionalInfo = ({
               <IOList
                 currentAddress={addressHash}
                 isOut={false}
-                outputs={outputs}
+                outputs={tx.outputs}
                 inputs={(tx as explorer.Transaction).inputs}
                 timestamp={(tx as explorer.Transaction).timestamp}
                 truncate
@@ -156,7 +156,7 @@ const TransactionalInfo = ({
               <IOList
                 currentAddress={addressHash}
                 isOut={direction === 'out'}
-                outputs={outputs}
+                outputs={(tx as explorer.Transaction).outputs}
                 inputs={(tx as explorer.Transaction).inputs}
                 timestamp={(tx as explorer.Transaction).timestamp}
                 truncate
