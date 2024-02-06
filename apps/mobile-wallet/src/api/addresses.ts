@@ -16,12 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, CHART_DATE_FORMAT } from '@alephium/shared'
+import {
+  AddressBalancesSyncResult,
+  AddressHash,
+  AddressTokensSyncResult,
+  CHART_DATE_FORMAT,
+  client
+} from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import dayjs from 'dayjs'
 
-import client from '~/api/client'
 import { Address, AddressesHistoricalBalanceResult, AddressTransactionsSyncResult } from '~/types/addresses'
 
 const PAGE_LIMIT = 100

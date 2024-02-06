@@ -16,16 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice, EntityState } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
-import { syncTokenPriceHistories } from '@/storage/prices/pricesActions'
-import { tokenPricesHistoryAdapter } from '@/storage/prices/pricesAdapter'
-import { fiatCurrencyChanged } from '@/storage/settings/settingsActions'
-import { TokenPriceHistoryEntity } from '@/types/price'
-
-interface PricesHistoryState extends EntityState<TokenPriceHistoryEntity> {
-  loading: boolean
-}
+// import { fiatCurrencyChanged } from '@/storage/settings/settingsActions'
+import { syncTokenPriceHistories } from '@/store/prices/pricesActions'
+import { tokenPricesHistoryAdapter } from '@/store/prices/pricesAdapter'
+import { PricesHistoryState } from '@/types/price'
 
 const initialState: PricesHistoryState = tokenPricesHistoryAdapter.getInitialState({
   loading: false
@@ -62,9 +58,10 @@ const pricesHistorySlice = createSlice({
       .addCase(syncTokenPriceHistories.rejected, (state) => {
         state.loading = false
       })
-      .addCase(fiatCurrencyChanged, (state) => {
-        tokenPricesHistoryAdapter.removeAll(state)
-      })
+    // TODO
+    // .addCase(fiatCurrencyChanged, (state) => {
+    //   tokenPricesHistoryAdapter.removeAll(state)
+    // })
   }
 })
 

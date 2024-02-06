@@ -21,6 +21,7 @@ import '@walletconnect/react-native-compat'
 import {
   AddressHash,
   AssetAmount,
+  client,
   getHumanReadableError,
   WALLETCONNECT_ERRORS,
   WalletConnectClientStatus,
@@ -68,7 +69,6 @@ import BackgroundService from 'react-native-background-actions'
 import { Portal } from 'react-native-portalize'
 
 import { sendAnalytics } from '~/analytics'
-import client from '~/api/client'
 import {
   buildCallContractTransaction,
   buildDeployContractTransaction,

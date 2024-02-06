@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import {
+  AddressHash,
+  client,
+  PRICES_REFRESH_INTERVAL,
+  syncTokenCurrentPrices,
+  syncTokenPriceHistories
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AnimatePresence } from 'framer-motion'
 import { difference } from 'lodash'
@@ -24,7 +30,6 @@ import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
-import client from '@/api/client'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -48,7 +53,6 @@ import {
   localStorageDataMigrated,
   localStorageDataMigrationFailed
 } from '@/storage/global/globalActions'
-import { syncTokenCurrentPrices, syncTokenPriceHistories } from '@/storage/prices/pricesActions'
 import { apiClientInitFailed, apiClientInitSucceeded } from '@/storage/settings/networkActions'
 import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/storage/settings/settingsActions'
 import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
@@ -62,8 +66,6 @@ import { AlephiumWindow } from '@/types/window'
 import { useInterval } from '@/utils/hooks'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { languageOptions } from '@/utils/settings'
-
-const PRICES_REFRESH_INTERVAL = 60000
 
 const App = () => {
   const { newVersion, newVersionDownloadTriggered } = useGlobalContext()

@@ -19,15 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ExplorerProvider, NodeProvider } from '@alephium/web3'
 
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
-import { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
-import { NetworkSettings } from '@/types/settings'
+import { defaultNetworkSettings } from '@/network'
+import { NetworkSettings } from '@/types/network'
 
 export class Client {
   explorer: ExplorerProvider
   node: NodeProvider
 
   constructor() {
-    const { nodeHost, explorerApiHost } = defaultSettings.network
+    const { nodeHost, explorerApiHost } = defaultNetworkSettings
     const { explorer, node } = this.getClients(nodeHost, explorerApiHost)
 
     this.explorer = explorer
@@ -49,6 +49,4 @@ export class Client {
   }
 }
 
-const client = new Client()
-
-export default client
+export const client = new Client()

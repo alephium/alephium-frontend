@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { client } from '@alephium/shared'
 import { binToHex, contractIdFromAddress, SignDeployContractTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import client from '@/api/client'
 import { signAndSendTransaction } from '@/api/transactions'
 import DeployContractAddressesTxModalContent from '@/modals/SendModals/DeployContract/AddressesTxModalContent'
 import DeployContractBuildTxModalContent from '@/modals/SendModals/DeployContract/BuildTxModalContent'

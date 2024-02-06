@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth } from '@alephium/shared'
+import { calculateAmountWorth, selectAlphPrice } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import { useState } from 'react'
@@ -36,7 +36,6 @@ import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
-import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
 import { Address } from '@/types/addresses'
 import { currencies } from '@/utils/currencies'
 

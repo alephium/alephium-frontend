@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NetworkSettings } from '@alephium/shared'
 import { createAction } from '@reduxjs/toolkit'
 
 import { NetworkName, NetworkPreset, NetworkStatus } from '@/types/network'
-import { NetworkSettings } from '@/types/settings'
 
 export const networkPresetSwitched = createAction<NetworkPreset>('network/networkPresetSwitched')
 

@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // TODO: Same as in desktop wallet
 
+import { networkSettingsPresets } from '@alephium/shared'
 import { createSelector } from '@reduxjs/toolkit'
 
-import { networkPresetSettings } from '~/persistent-storage/settings'
 import { fungibleTokensAdapter, nftsAdapter } from '~/store/assets/assetsAdapter'
 import { RootState } from '~/store/store'
 
@@ -30,7 +30,8 @@ export const { selectAll: selectAllFungibleTokens, selectById: selectFungibleTok
 export const selectIsFungibleTokensMetadataUninitialized = createSelector(
   [(state: RootState) => state.fungibleTokens.status, (state: RootState) => state.network.settings.networkId],
   (status, networkId) =>
-    (networkId === networkPresetSettings.mainnet.networkId || networkId === networkPresetSettings.testnet.networkId) &&
+    (networkId === networkSettingsPresets.mainnet.networkId ||
+      networkId === networkSettingsPresets.testnet.networkId) &&
     status === 'uninitialized'
 )
 

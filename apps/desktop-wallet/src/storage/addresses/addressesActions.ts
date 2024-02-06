@@ -22,6 +22,7 @@ import {
   AddressSettings,
   BalanceHistory,
   CHART_DATE_FORMAT,
+  client,
   Contact,
   getHumanReadableError,
   syncingAddressDataStarted
@@ -39,7 +40,6 @@ import {
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
 } from '@/api/addresses'
-import client from '@/api/client'
 import i18n from '@/i18n'
 import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { RootState } from '@/storage/store'

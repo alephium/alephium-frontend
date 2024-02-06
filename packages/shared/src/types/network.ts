@@ -16,18 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export interface TokenPriceEntity {
-  symbol: string
-  price: number
+export interface NetworkSettings {
+  networkId: number
+  nodeHost: string
+  explorerApiHost: string
+  explorerUrl: string
+  proxy?: ProxySettings
 }
 
-export interface TokenHistoricalPrice {
-  date: string
-  value: number
+export interface ProxySettings {
+  address?: string
+  port?: string
 }
 
-export interface TokenPriceHistoryEntity {
-  symbol: string
-  history: TokenHistoricalPrice[]
-  status: 'initialized' | 'uninitialized'
+export type NetworkStatus = 'offline' | 'connecting' | 'online' | 'uninitialized'
+
+export enum NetworkNames {
+  mainnet = 'mainnet',
+  testnet = 'testnet',
+  localhost = 'localhost',
+  custom = 'custom'
 }
+
+export type NetworkName = keyof typeof NetworkNames
+
+export type NetworkPreset = Exclude<NetworkName, 'custom'>

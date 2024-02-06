@@ -18,13 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // TODO: Same as in desktop wallet
 
-import { Asset, SyncUnknownTokensInfoResult, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import {
+  Asset,
+  client,
+  exponentialBackoffFetchRetry,
+  SyncUnknownTokensInfoResult,
+  TOKENS_QUERY_LIMIT
+} from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { chunk, groupBy } from 'lodash'
 
-import client, { exponentialBackoffFetchRetry } from '~/api/client'
 import { RootState } from '~/store/store'
 
 export const loadingStarted = createAction('assets/loadingStarted')

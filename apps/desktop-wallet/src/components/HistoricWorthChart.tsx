@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CHART_DATE_FORMAT, toHumanReadableAmount } from '@alephium/shared'
+import { AddressHash, CHART_DATE_FORMAT, selectAlphPriceHistory, toHumanReadableAmount } from '@alephium/shared'
 import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { memo, useEffect, useMemo, useState } from 'react'
@@ -29,7 +29,6 @@ import {
   selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { selectAlphPriceHistory } from '@/storage/prices/pricesSelectors'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
 
 interface HistoricWorthChartProps {

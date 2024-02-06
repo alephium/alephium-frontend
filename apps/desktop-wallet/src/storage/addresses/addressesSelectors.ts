@@ -23,6 +23,8 @@ import {
   calculateAmountWorth,
   contactsAdapter,
   NFT,
+  selectAllPrices,
+  selectAllPricesHistories,
   TokenDisplayBalances
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
@@ -32,7 +34,6 @@ import { sortBy } from 'lodash'
 
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import { selectAllFungibleTokens, selectAllNFTs, selectNFTIds } from '@/storage/assets/assetsSelectors'
-import { selectAllPrices, selectAllPricesHistories } from '@/storage/prices/pricesSelectors'
 import { RootState } from '@/storage/store'
 import { Address } from '@/types/addresses'
 import { filterAddressesWithoutAssets } from '@/utils/addresses'

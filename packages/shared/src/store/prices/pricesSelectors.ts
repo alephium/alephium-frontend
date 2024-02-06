@@ -19,22 +19,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { createSelector } from '@reduxjs/toolkit'
 
-import { tokenPricesAdapter, tokenPricesHistoryAdapter } from '@/storage/prices/pricesAdapter'
-import { RootState } from '@/storage/store'
+import { tokenPricesAdapter, tokenPricesHistoryAdapter } from '@/store/prices/pricesAdapter'
+import { BaseRootState } from '@/store/store'
 
-export const { selectAll: selectAllPrices, selectById: selectPriceById } = tokenPricesAdapter.getSelectors<RootState>(
-  (state) => state.tokenPrices
-)
+export const { selectAll: selectAllPrices, selectById: selectPriceById } =
+  tokenPricesAdapter.getSelectors<BaseRootState>((state) => state.tokenPrices)
 
 export const selectAlphPrice = createSelector(
-  (state: RootState) => state,
+  (state: BaseRootState) => state,
   (state) => selectPriceById(state, ALPH.symbol)?.price
 )
 
 export const { selectAll: selectAllPricesHistories, selectById: selectPriceHistoryById } =
-  tokenPricesHistoryAdapter.getSelectors<RootState>((state) => state.tokenPricesHistory)
+  tokenPricesHistoryAdapter.getSelectors<BaseRootState>((state) => state.tokenPricesHistory)
 
 export const selectAlphPriceHistory = createSelector(
-  (state: RootState) => state,
+  (state: BaseRootState) => state,
   (state) => selectPriceHistoryById(state, ALPH.symbol)?.history
 )

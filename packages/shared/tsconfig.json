@@ -6,7 +6,6 @@
     "resolveJsonModule": true,
     "outDir": "dist",
     "module": "ESNext",
-    "declaration": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,

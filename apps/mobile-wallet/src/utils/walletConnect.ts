@@ -16,19 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NetworkPreset, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
 import SignClient from '@walletconnect/sign-client'
 
-import { networkPresetSettings } from '~/persistent-storage/settings'
-import { NetworkPreset } from '~/types/network'
-import { NetworkSettings } from '~/types/settings'
 import { SessionProposalEvent } from '~/types/walletConnect'
 
 // TODO: Move to shared
 export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['networkId']) =>
   (networkId === 'devnet' && currentNetworkId === 4) ||
-  (Object.keys(networkPresetSettings) as Array<NetworkPreset>).some(
-    (network) => network === networkId && currentNetworkId === networkPresetSettings[network].networkId
+  (Object.keys(networkSettingsPresets) as Array<NetworkPreset>).some(
+    (network) => network === networkId && currentNetworkId === networkSettingsPresets[network].networkId
   )
 
 export const parseSessionProposalEvent = (proposalEvent: SessionProposalEvent) => {

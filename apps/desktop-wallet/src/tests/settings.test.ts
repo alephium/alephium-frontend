@@ -16,7 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import SettingsStorage, { defaultSettings, networkPresets } from '@/storage/settings/settingsPersistentStorage'
+import { networkSettingsPresets } from '@alephium/shared'
+
+import SettingsStorage, { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
 import { Currency, Language, ThemeSettings } from '@/types/settings'
 import { getNetworkName } from '@/utils/settings'
 
@@ -41,9 +43,9 @@ const mockSettings = {
 }
 
 it('Should return the network name if all settings match exactly', () => {
-  expect(getNetworkName(networkPresets.localhost)).toEqual('localhost'),
-    expect(getNetworkName(networkPresets.testnet)).toEqual('testnet'),
-    expect(getNetworkName(networkPresets.mainnet)).toEqual('mainnet'),
+  expect(getNetworkName(networkSettingsPresets.localhost)).toEqual('localhost'),
+    expect(getNetworkName(networkSettingsPresets.testnet)).toEqual('testnet'),
+    expect(getNetworkName(networkSettingsPresets.mainnet)).toEqual('mainnet'),
     expect(
       getNetworkName({
         nodeHost: '',
@@ -55,7 +57,7 @@ it('Should return the network name if all settings match exactly', () => {
     ).toEqual('custom'),
     expect(
       getNetworkName({
-        ...networkPresets.mainnet,
+        ...networkSettingsPresets.mainnet,
         nodeHost: 'https://mainnet-wallet.alephium2.org'
       })
     ).toEqual('custom')

@@ -16,14 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { CHART_DATE_FORMAT, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 
-import client from '@/api/client'
+import { client } from '@/api/client'
+import { TOKENS_QUERY_LIMIT } from '@/api/limits'
+import { CHART_DATE_FORMAT } from '@/constants'
 import { TokenHistoricalPrice, TokenPriceEntity, TokenPriceHistoryEntity } from '@/types/price'
-import { isFulfilled } from '@/utils/misc'
+import { isFulfilled } from '@/utils'
 
 export const syncTokenCurrentPrices = createAsyncThunk(
   'assets/syncTokenCurrentPrices',

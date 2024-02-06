@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { localStorageDataMigrated } from '@/storage/global/globalActions'
@@ -25,10 +26,9 @@ import {
   customNetworkSettingsSaved,
   networkPresetSwitched
 } from '@/storage/settings/networkActions'
-import SettingsStorage, { networkPresets } from '@/storage/settings/settingsPersistentStorage'
+import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
 import { RootState } from '@/storage/store'
 import { NetworkName, NetworkStatus } from '@/types/network'
-import { NetworkSettings } from '@/types/settings'
 import { getNetworkName } from '@/utils/settings'
 
 interface NetworkState {
@@ -58,7 +58,7 @@ const networkSlice = createSlice({
 
         return {
           name: networkName,
-          settings: networkPresets[networkName],
+          settings: networkSettingsPresets[networkName],
           status: 'connecting'
         }
       })

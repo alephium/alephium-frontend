@@ -16,12 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import {
+  defaultNetworkSettings,
+  NetworkName,
+  NetworkPreset,
+  NetworkSettings,
+  networkSettingsPresets,
+  NetworkStatus
+} from '@alephium/shared'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { defaultNetwork, defaultNetworkSettings, networkPresetSettings } from '~/persistent-storage/settings'
+import { defaultNetwork } from '~/persistent-storage/settings'
 import { appReset } from '~/store/appSlice'
-import { NetworkName, NetworkPreset, NetworkStatus } from '~/types/network'
-import { NetworkSettings } from '~/types/settings'
 import { getNetworkName } from '~/utils/settings'
 
 const sliceName = 'network'
@@ -57,7 +63,7 @@ const networkSlice = createSlice({
 
       return {
         name: networkName,
-        settings: networkPresetSettings[networkName],
+        settings: networkSettingsPresets[networkName],
         status: 'connecting'
       }
     },

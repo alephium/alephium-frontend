@@ -16,15 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, SyncUnknownTokensInfoResult, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import {
+  Asset,
+  client,
+  exponentialBackoffFetchRetry,
+  SyncUnknownTokensInfoResult,
+  TOKENS_QUERY_LIMIT
+} from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { chunk, groupBy } from 'lodash'
 import posthog from 'posthog-js'
 
-import client from '@/api/client'
-import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { RootState } from '@/storage/store'
 
 export const syncVerifiedFungibleTokens = createAsyncThunk(

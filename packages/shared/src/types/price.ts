@@ -16,6 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/store/store'
-export * from '@/store/addresses'
-export * from '@/store/prices'
+import { EntityState } from '@reduxjs/toolkit'
+
+export interface TokenPriceEntity {
+  symbol: string
+  price: number
+}
+
+export interface TokenHistoricalPrice {
+  date: string
+  value: number
+}
+
+export interface TokenPriceHistoryEntity {
+  symbol: string
+  history: TokenHistoricalPrice[]
+  status: 'initialized' | 'uninitialized'
+}
+
+export interface PricesState extends EntityState<TokenPriceEntity> {
+  loading: boolean
+  status: 'uninitialized' | 'initialized'
+}
+
+export interface PricesHistoryState extends EntityState<TokenPriceHistoryEntity> {
+  loading: boolean
+}

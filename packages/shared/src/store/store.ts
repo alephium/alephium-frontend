@@ -16,6 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/store/store'
-export * from '@/store/addresses'
-export * from '@/store/prices'
+import { configureStore } from '@reduxjs/toolkit'
+import { setupListeners } from '@reduxjs/toolkit/dist/query'
+
+import pricesHistorySlice from '@/store/prices/pricesHistorySlice'
+import pricesSlice from '@/store/prices/pricesSlice'
+
+export const baseReducer = {
+  [pricesSlice.name]: pricesSlice.reducer,
+  [pricesHistorySlice.name]: pricesHistorySlice.reducer
+}
+
+const baseStore = configureStore({
+  reducer: baseReducer,
+  devTools: false
+})
+
+setupListeners(baseStore.dispatch)
+
+export type BaseRootState = ReturnType<typeof baseStore.getState>
+// export type AppDispatch = typeof baseStore.dispatch

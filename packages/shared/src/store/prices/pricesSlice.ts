@@ -16,16 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice, EntityState } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
-import { syncTokenCurrentPrices } from '@/storage/prices/pricesActions'
-import { tokenPricesAdapter } from '@/storage/prices/pricesAdapter'
-import { TokenPriceEntity } from '@/types/price'
-
-interface PricesState extends EntityState<TokenPriceEntity> {
-  loading: boolean
-  status: 'uninitialized' | 'initialized'
-}
+import { syncTokenCurrentPrices } from '@/store/prices/pricesActions'
+import { tokenPricesAdapter } from '@/store/prices/pricesAdapter'
+import { PricesState } from '@/types/price'
 
 const initialState: PricesState = tokenPricesAdapter.getInitialState({
   loading: false,

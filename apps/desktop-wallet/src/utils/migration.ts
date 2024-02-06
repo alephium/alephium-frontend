@@ -16,17 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata } from '@alephium/shared'
+import { AddressMetadata, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { encrypt } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 
 import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
 import { getEncryptedStoragePropsFromActiveWallet } from '@/storage/encryptedPersistentStorage'
-import SettingsStorage, { defaultSettings, networkPresets } from '@/storage/settings/settingsPersistentStorage'
+import SettingsStorage, { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
-import { GeneralSettings, NetworkSettings, ThemeSettings } from '@/types/settings'
+import { GeneralSettings, ThemeSettings } from '@/types/settings'
 import { StoredWallet } from '@/types/wallet'
 import { getRandomLabelColor } from '@/utils/colors'
 import { stringToDoubleSHA256HexString } from '@/utils/misc'
@@ -150,45 +150,45 @@ export const _20211220_194004 = () => {
 
 export const _v140_networkSettingsMigration = () =>
   migrateReleaseNetworkSettings({
-    'https://mainnet-wallet.alephium.org': networkPresets.mainnet.nodeHost,
-    'https://testnet-wallet.alephium.org': networkPresets.testnet.nodeHost,
-    'https://mainnet-backend.alephium.org': networkPresets.mainnet.explorerApiHost,
-    'https://testnet-backend.alephium.org': networkPresets.testnet.explorerApiHost,
-    'https://testnet.alephium.org': networkPresets.testnet.explorerUrl
+    'https://mainnet-wallet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
+    'https://testnet-wallet.alephium.org': networkSettingsPresets.testnet.nodeHost,
+    'https://mainnet-backend.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
+    'https://testnet-backend.alephium.org': networkSettingsPresets.testnet.explorerApiHost,
+    'https://testnet.alephium.org': networkSettingsPresets.testnet.explorerUrl
   })
 
 export const _v150_networkSettingsMigration = () =>
   migrateReleaseNetworkSettings({
-    'https://wallet-v18.mainnet.alephium.org': networkPresets.mainnet.nodeHost,
-    'https://wallet-v18.testnet.alephium.org': networkPresets.testnet.nodeHost,
-    'https://backend-v18.mainnet.alephium.org': networkPresets.mainnet.explorerApiHost,
-    'https://backend-v18.testnet.alephium.org': networkPresets.testnet.explorerApiHost,
-    'https://explorer-v18.mainnet.alephium.org': networkPresets.mainnet.explorerUrl,
-    'https://explorer-v18.testnet.alephium.org': networkPresets.testnet.explorerUrl
+    'https://wallet-v18.mainnet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
+    'https://wallet-v18.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
+    'https://backend-v18.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
+    'https://backend-v18.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost,
+    'https://explorer-v18.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerUrl,
+    'https://explorer-v18.testnet.alephium.org': networkSettingsPresets.testnet.explorerUrl
   })
 
 export const _v153_networkSettingsMigration = () =>
   migrateReleaseNetworkSettings({
-    'https://wallet-v16.mainnet.alephium.org': networkPresets.mainnet.nodeHost,
-    'https://wallet-v16.testnet.alephium.org': networkPresets.testnet.nodeHost,
-    'https://backend-v112.mainnet.alephium.org': networkPresets.mainnet.explorerApiHost,
-    'https://backend-v112.testnet.alephium.org': networkPresets.testnet.explorerApiHost
+    'https://wallet-v16.mainnet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
+    'https://wallet-v16.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
+    'https://backend-v112.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
+    'https://backend-v112.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
   })
 
 export const _v200_networkSettingsMigration = () =>
   migrateReleaseNetworkSettings({
-    'https://wallet-v17.mainnet.alephium.org': networkPresets.mainnet.nodeHost,
-    'https://wallet-v17.testnet.alephium.org': networkPresets.testnet.nodeHost,
-    'https://backend-v113.mainnet.alephium.org': networkPresets.mainnet.explorerApiHost,
-    'https://backend-v113.testnet.alephium.org': networkPresets.testnet.explorerApiHost
+    'https://wallet-v17.mainnet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
+    'https://wallet-v17.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
+    'https://backend-v113.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
+    'https://backend-v113.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
   })
 
 export const _v213_networkSettingsMigration = () =>
   migrateReleaseNetworkSettings({
-    'https://wallet-v20.mainnet.alephium.org': networkPresets.mainnet.nodeHost,
-    'https://wallet-v20.testnet.alephium.org': networkPresets.testnet.nodeHost,
-    'https://backend-v113.mainnet.alephium.org': networkPresets.mainnet.explorerApiHost,
-    'https://backend-v113.testnet.alephium.org': networkPresets.testnet.explorerApiHost
+    'https://wallet-v20.mainnet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
+    'https://wallet-v20.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
+    'https://backend-v113.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
+    'https://backend-v113.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
   })
 
 const migrateReleaseNetworkSettings = (migrationsMapping: Record<string, string>) => {

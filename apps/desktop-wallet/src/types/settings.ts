@@ -18,6 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import 'styled-components'
 
+import { NetworkSettings } from '@alephium/shared'
+
 export interface GeneralSettings {
   theme: ThemeSettings
   walletLockTimeInMinutes: number | null
@@ -27,19 +29,6 @@ export interface GeneralSettings {
   devTools: boolean
   analytics: boolean
   fiatCurrency: Currency
-}
-
-export interface ProxySettings {
-  address?: string
-  port?: string
-}
-
-export interface NetworkSettings {
-  networkId: number
-  nodeHost: string
-  explorerApiHost: string
-  explorerUrl: string
-  proxy?: ProxySettings
 }
 
 export interface Settings {

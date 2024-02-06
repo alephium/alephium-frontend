@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, calculateAmountWorth } from '@alephium/shared'
+import { AddressHash, Asset, calculateAmountWorth, selectPriceById } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,7 +42,6 @@ import {
   makeSelectAddressesNFTs,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { selectPriceById } from '@/storage/prices/pricesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 import { currencies } from '@/utils/currencies'
 

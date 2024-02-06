@@ -16,32 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { defaultNetworkSettings, NetworkNames } from '@alephium/shared'
 import * as SecureStore from 'expo-secure-store'
-import { clone } from 'lodash'
 import { Appearance } from 'react-native'
 
 import { defaultSecureStoreConfig } from '~/persistent-storage/config'
-import { NetworkName, NetworkPreset } from '~/types/network'
-import { GeneralSettings, NetworkSettings, SettingsKey, SettingsPartial } from '~/types/settings'
+import { GeneralSettings, SettingsKey, SettingsPartial } from '~/types/settings'
 
 const STORAGE_KEY = 'wallet-settings'
 
-export const networkPresetSettings: Record<NetworkPreset, NetworkSettings> = {
-  [NetworkName.mainnet]: {
-    networkId: 0,
-    nodeHost: 'https://wallet-v20.mainnet.alephium.org',
-    explorerApiHost: 'https://backend-v115.mainnet.alephium.org',
-    explorerUrl: 'https://explorer.alephium.org'
-  },
-  [NetworkName.testnet]: {
-    networkId: 1,
-    nodeHost: 'https://wallet-v20.testnet.alephium.org',
-    explorerApiHost: 'https://backend-v115.testnet.alephium.org',
-    explorerUrl: 'https://testnet.alephium.org'
-  }
-}
-
-export const defaultNetwork = NetworkName.mainnet
+export const defaultNetwork = NetworkNames.mainnet
 
 export const defaultGeneralSettings: GeneralSettings = {
   theme: Appearance.getColorScheme() === 'dark' ? 'dark' : 'light',
@@ -53,8 +37,6 @@ export const defaultGeneralSettings: GeneralSettings = {
   walletConnect: false,
   usesBiometrics: false
 }
-
-export const defaultNetworkSettings: NetworkSettings = clone(networkPresetSettings[defaultNetwork])
 
 const defaultSettings = {
   general: defaultGeneralSettings,

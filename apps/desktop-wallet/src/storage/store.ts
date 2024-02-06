@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { baseReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
@@ -25,8 +26,6 @@ import fungibleTokensSlice from '@/storage/assets/fungibleTokensSlice'
 import nftsSlice from '@/storage/assets/nftsSlice'
 import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
-import pricesHistorySlice from '@/storage/prices/pricesHistorySlice'
-import pricesSlice from '@/storage/prices/pricesSlice'
 import networkSlice, { networkListenerMiddleware } from '@/storage/settings/networkSlice'
 import settingsSlice, { settingsListenerMiddleware } from '@/storage/settings/settingsSlice'
 import confirmedTransactionsSlice from '@/storage/transactions/confirmedTransactionsSlice'
@@ -37,6 +36,7 @@ import activeWalletSlice from '@/storage/wallets/activeWalletSlice'
 
 export const store = configureStore({
   reducer: {
+    ...baseReducer,
     [globalSlice.name]: globalSlice.reducer,
     [activeWalletSlice.name]: activeWalletSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
@@ -47,8 +47,6 @@ export const store = configureStore({
     [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
     [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
     [snackbarSlice.name]: snackbarSlice.reducer,
-    [pricesSlice.name]: pricesSlice.reducer,
-    [pricesHistorySlice.name]: pricesHistorySlice.reducer,
     [nftsSlice.name]: nftsSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>

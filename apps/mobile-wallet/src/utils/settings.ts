@@ -16,12 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NetworkName, NetworkNames, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { isEqual } from 'lodash'
 
-import { networkPresetSettings } from '~/persistent-storage/settings'
-import { NetworkName } from '~/types/network'
-import { NetworkSettings } from '~/types/settings'
-
 export const getNetworkName = (settings: NetworkSettings) =>
-  (Object.entries(networkPresetSettings).find(([, presetSettings]) => isEqual(presetSettings, settings))?.[0] ||
-    NetworkName.custom) as NetworkName
+  (Object.entries(networkSettingsPresets).find(([, presetSettings]) => isEqual(presetSettings, settings))?.[0] ||
+    NetworkNames.custom) as NetworkName
