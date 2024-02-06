@@ -25,13 +25,13 @@ import posthog from 'posthog-js'
 import { client } from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
-import { BaseRootState } from '@/store/store'
+import { SharedRootState } from '@/store/store'
 import { Asset, SyncUnknownTokensInfoResult } from '@/types/assets'
 
 export const syncVerifiedFungibleTokens = createAsyncThunk(
   'assets/syncVerifiedFungibleTokens',
   async (_, { getState }) => {
-    const state = getState() as BaseRootState
+    const state = getState() as SharedRootState
 
     let metadata = undefined
     const network =

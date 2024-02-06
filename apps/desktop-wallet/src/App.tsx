@@ -18,9 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   AddressHash,
-  apiClientInitFailed,
-  apiClientInitSucceeded,
-  client,
   localStorageNetworkSettingsMigrated,
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
@@ -29,6 +26,7 @@ import {
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
+import { useInitializeClient, useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { AnimatePresence } from 'framer-motion'
 import { difference } from 'lodash'
@@ -66,7 +64,6 @@ import {
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
-import { useInterval } from '@/utils/hooks'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { languageOptions } from '@/utils/settings'
 
@@ -102,6 +99,8 @@ const App = () => {
 
   const _window = window as unknown as AlephiumWindow
   const electron = _window.electron
+
+  useInitializeClient()
 
   useEffect(() => {
     try {
@@ -166,27 +165,13 @@ const App = () => {
     if (settings.language === undefined) setSystemLanguage()
   }, [settings.language, setSystemLanguage])
 
-  const initializeClient = useCallback(async () => {
-    try {
-      client.init(network.settings.nodeHost, network.settings.explorerApiHost)
-      const { networkId } = await client.node.infos.getInfosChainParams()
-      // TODO: Check if connection to explorer also works
-      dispatch(apiClientInitSucceeded({ networkId, networkName: network.name }))
-    } catch (e) {
-      dispatch(apiClientInitFailed({ networkName: network.name, networkStatus: network.status }))
-    }
-  }, [network.settings.nodeHost, network.settings.explorerApiHost, network.name, network.status, dispatch])
-
   useEffect(() => {
     const setProxySettings = async () => {
       await electron?.app.setProxySettings(network.settings.proxy)
-      if (network.status === 'connecting') initializeClient()
     }
 
     setProxySettings()
-  }, [electron?.app, initializeClient, network.settings.proxy, network.status])
-
-  useInterval(initializeClient, 2000, network.status !== 'offline')
+  }, [electron?.app, network.settings.proxy])
 
   useEffect(() => {
     if (network.status === 'online') {

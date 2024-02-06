@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useInterval } from '@alephium/shared-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -37,7 +38,6 @@ import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monoch
 import ModalPortal from '@/modals/ModalPortal'
 import NotificationsModal from '@/modals/NotificationsModal'
 import { syncAddressesData } from '@/storage/addresses/addressesActions'
-import { useInterval } from '@/utils/hooks'
 import { getInitials, onEnterOrSpace } from '@/utils/misc'
 
 interface UnlockedWalletLayoutProps {

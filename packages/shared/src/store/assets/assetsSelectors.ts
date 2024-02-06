@@ -20,13 +20,16 @@ import { createSelector } from '@reduxjs/toolkit'
 
 import { networkSettingsPresets } from '@/network'
 import { fungibleTokensAdapter, nftsAdapter } from '@/store/assets/assetsAdapter'
-import { BaseRootState } from '@/store/store'
+import { SharedRootState } from '@/store/store'
 
 export const { selectAll: selectAllFungibleTokens, selectById: selectFungibleTokenById } =
-  fungibleTokensAdapter.getSelectors<BaseRootState>((state) => state.fungibleTokens)
+  fungibleTokensAdapter.getSelectors<SharedRootState>((state) => state.fungibleTokens)
 
 export const selectDoVerifiedFungibleTokensNeedInitialization = createSelector(
-  [(state: BaseRootState) => state.fungibleTokens.status, (state: BaseRootState) => state.network.settings.networkId],
+  [
+    (state: SharedRootState) => state.fungibleTokens.status,
+    (state: SharedRootState) => state.network.settings.networkId
+  ],
   (status, networkId) =>
     (networkId === networkSettingsPresets.mainnet.networkId ||
       networkId === networkSettingsPresets.testnet.networkId) &&
@@ -37,4 +40,4 @@ export const {
   selectAll: selectAllNFTs,
   selectById: selectNFTById,
   selectIds: selectNFTIds
-} = nftsAdapter.getSelectors<BaseRootState>((state) => state.nfts)
+} = nftsAdapter.getSelectors<SharedRootState>((state) => state.nfts)

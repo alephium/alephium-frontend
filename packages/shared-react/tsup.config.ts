@@ -24,7 +24,7 @@ export default defineConfig((options: Options) => ({
   },
   clean: true,
   format: ['esm'],
-  external: ['react'],
+  external: ['react', 'react-redux'],
   dts: true,
   ...options
 }))

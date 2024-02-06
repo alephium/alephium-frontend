@@ -18,8 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useEffect, useRef } from 'react'
 
-// TODO: Same as in desktop wallet, move to shared
-const useInterval = (callback: () => void, delay: number, shouldPause = false) => {
+export const useInterval = (callback: () => void, delay: number, shouldPause = false) => {
   const savedCallback = useRef<() => void>(() => null)
 
   // Remember the latest callback.
@@ -34,9 +33,8 @@ const useInterval = (callback: () => void, delay: number, shouldPause = false) =
     }
     if (delay !== null && !shouldPause) {
       const id = setInterval(tick, delay)
+
       return () => clearInterval(id)
     }
   }, [delay, shouldPause])
 }
-
-export default useInterval

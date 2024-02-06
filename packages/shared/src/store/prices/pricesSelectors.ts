@@ -20,20 +20,20 @@ import { ALPH } from '@alephium/token-list'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { tokenPricesAdapter, tokenPricesHistoryAdapter } from '@/store/prices/pricesAdapter'
-import { BaseRootState } from '@/store/store'
+import { SharedRootState } from '@/store/store'
 
 export const { selectAll: selectAllPrices, selectById: selectPriceById } =
-  tokenPricesAdapter.getSelectors<BaseRootState>((state) => state.tokenPrices)
+  tokenPricesAdapter.getSelectors<SharedRootState>((state) => state.tokenPrices)
 
 export const selectAlphPrice = createSelector(
-  (state: BaseRootState) => state,
+  (state: SharedRootState) => state,
   (state) => selectPriceById(state, ALPH.symbol)?.price
 )
 
 export const { selectAll: selectAllPricesHistories, selectById: selectPriceHistoryById } =
-  tokenPricesHistoryAdapter.getSelectors<BaseRootState>((state) => state.tokenPricesHistory)
+  tokenPricesHistoryAdapter.getSelectors<SharedRootState>((state) => state.tokenPricesHistory)
 
 export const selectAlphPriceHistory = createSelector(
-  (state: BaseRootState) => state,
+  (state: SharedRootState) => state,
   (state) => selectPriceHistoryById(state, ALPH.symbol)?.history
 )

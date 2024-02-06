@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { baseReducer } from '@alephium/shared'
+import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 
 import addressDiscoverySlice from '~/store/addressDiscoverySlice'
@@ -32,7 +32,7 @@ import walletGenerationSlice from '~/store/walletGenerationSlice'
 
 export const store = configureStore({
   reducer: {
-    ...baseReducer,
+    ...sharedReducer,
     walletGeneration: walletGenerationSlice.reducer,
     settings: settingsSlice.reducer,
     credentials: credentialsSlice.reducer,

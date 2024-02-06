@@ -25,7 +25,7 @@ import networkSlice from '@/store/network/networkSlice'
 import pricesHistorySlice from '@/store/prices/pricesHistorySlice'
 import pricesSlice from '@/store/prices/pricesSlice'
 
-export const baseReducer = {
+export const sharedReducer = {
   [pricesSlice.name]: pricesSlice.reducer,
   [pricesHistorySlice.name]: pricesHistorySlice.reducer,
   [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
@@ -33,12 +33,12 @@ export const baseReducer = {
   [networkSlice.name]: networkSlice.reducer
 }
 
-const baseStore = configureStore({
-  reducer: baseReducer,
+const sharedStore = configureStore({
+  reducer: sharedReducer,
   devTools: false
 })
 
-setupListeners(baseStore.dispatch)
+setupListeners(sharedStore.dispatch)
 
-export type BaseRootState = ReturnType<typeof baseStore.getState>
-// export type AppDispatch = typeof baseStore.dispatch
+export type SharedRootState = ReturnType<typeof sharedStore.getState>
+export type SharedDispatch = typeof sharedStore.dispatch

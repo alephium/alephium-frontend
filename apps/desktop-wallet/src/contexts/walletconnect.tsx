@@ -24,6 +24,7 @@ import {
   WalletConnectClientStatus,
   WalletConnectError
 } from '@alephium/shared'
+import { useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -85,7 +86,6 @@ import {
 } from '@/types/transactions'
 import { SessionProposalEvent, SessionRequestEvent } from '@/types/walletConnect'
 import { AlephiumWindow } from '@/types/window'
-import { useInterval } from '@/utils/hooks'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
 const MaxRequestNumToKeep = 10

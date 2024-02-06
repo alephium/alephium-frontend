@@ -17,13 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  apiClientInitFailed,
-  apiClientInitSucceeded,
-  client,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
+import { useInitializeClient, useInterval } from '@alephium/shared-react'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { StatusBar } from 'expo-status-bar'
@@ -36,7 +34,6 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import useInterval from '~/hooks/useInterval'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
@@ -117,29 +114,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const newUnknownTokens = difference(union(addressUnknownTokenIds, txUnknownTokenIds), checkedUnknownTokenIds)
 
   useLoadStoredSettings()
-
-  const initializeClient = useCallback(async () => {
-    try {
-      client.init(network.settings.nodeHost, network.settings.explorerApiHost)
-      const { networkId } = await client.node.infos.getInfosChainParams()
-      // TODO: Check if connection to explorer also works
-      dispatch(apiClientInitSucceeded({ networkId, networkName: network.name }))
-      console.log(`Client initialized. Current network: ${network.name}`)
-    } catch (e) {
-      dispatch(apiClientInitFailed({ networkName: network.name, networkStatus: network.status }))
-      console.error('Could not connect to network: ', network.name)
-      console.error(e)
-    }
-  }, [network.settings.nodeHost, network.settings.explorerApiHost, network.name, network.status, dispatch])
-
-  useEffect(() => {
-    if (network.status === 'connecting') {
-      initializeClient()
-    }
-  }, [initializeClient, network.status])
-
-  const shouldInitialize = network.status === 'offline'
-  useInterval(initializeClient, 2000, !shouldInitialize)
+  useInitializeClient()
 
   useEffect(() => {
     if (network.status === 'online') {
