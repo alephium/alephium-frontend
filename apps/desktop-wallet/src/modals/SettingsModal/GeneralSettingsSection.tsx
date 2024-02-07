@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Currency, fiatCurrencyChanged } from '@alephium/shared'
 import { AlertTriangle, Eraser, Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useState } from 'react'
@@ -39,13 +40,12 @@ import { walletConnectCacheCleared, walletConnectCacheClearFailed } from '@/stor
 import {
   analyticsToggled,
   discreetModeToggled,
-  fiatCurrencyChanged,
   languageChanged,
   passwordRequirementToggled,
   walletLockTimeChanged
 } from '@/storage/settings/settingsActions'
 import { switchTheme } from '@/storage/settings/settingsStorageUtils'
-import { Currency, Language, ThemeSettings } from '@/types/settings'
+import { Language, ThemeSettings } from '@/types/settings'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 import { fiatCurrencyOptions, languageOptions, locktimeInMinutes } from '@/utils/settings'

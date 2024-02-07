@@ -27,6 +27,7 @@ import 'dayjs/locale/ru'
 import 'dayjs/locale/tr'
 import 'dayjs/locale/vi'
 
+import { fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import posthog from 'posthog-js'
@@ -36,7 +37,6 @@ import {
   analyticsToggled,
   devToolsToggled,
   discreetModeToggled,
-  fiatCurrencyChanged,
   languageChanged,
   languageChangeFinished,
   languageChangeStarted,

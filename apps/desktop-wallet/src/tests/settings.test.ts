@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getNetworkName, networkSettingsPresets } from '@alephium/shared'
+import { Currency, getNetworkName, networkSettingsPresets } from '@alephium/shared'
 
 import SettingsStorage, { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
-import { Currency, Language, ThemeSettings } from '@/types/settings'
+import { Language, ThemeSettings } from '@/types/settings'
 
 const mockSettings = {
   general: {

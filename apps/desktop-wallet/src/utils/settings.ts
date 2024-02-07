@@ -16,9 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Currency } from '@alephium/shared'
+
 import { SelectOption } from '@/components/Inputs/Select'
 import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
-import { Currency, GeneralSettings, Language } from '@/types/settings'
+import { GeneralSettings, Language } from '@/types/settings'
 
 export const languageOptions: SelectOption<Language>[] = [
   { label: 'English', value: 'en-US' },

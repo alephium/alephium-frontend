@@ -16,10 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/store/store'
-export * from '@/store/addresses'
-export * from '@/store/prices'
-export * from '@/store/assets'
-export * from '@/store/network'
-export * from '@/store/global'
-export * from '@/store/settings'
+import { createAction } from '@reduxjs/toolkit'
+
+import { Currency } from '@/types/currencies'
+
+// TODO: Temporary until settings get migrated, needed for price slice
+export const fiatCurrencyChanged = createAction<Currency>('settings/fiatCurrencyChanged')

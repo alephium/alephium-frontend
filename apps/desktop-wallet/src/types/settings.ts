@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import 'styled-components'
 
-import { NetworkSettings } from '@alephium/shared'
+import { Currency, NetworkSettings } from '@alephium/shared'
 
 export interface GeneralSettings {
   theme: ThemeSettings
@@ -52,8 +52,6 @@ export type Language =
 export type ThemeType = 'light' | 'dark'
 
 export type ThemeSettings = ThemeType | 'system'
-
-export type Currency = 'CHF' | 'IDR' | 'GBP' | 'EUR' | 'USD' | 'VND' | 'RUB' | 'TRY'
 
 declare module 'styled-components' {
   export interface DefaultTheme {

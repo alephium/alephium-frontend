@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice } from '@reduxjs/toolkit'
 
-// import { fiatCurrencyChanged } from '@/storage/settings/settingsActions'
 import { syncTokenPriceHistories } from '@/store/prices/pricesActions'
 import { tokenPricesHistoryAdapter } from '@/store/prices/pricesAdapter'
+import { fiatCurrencyChanged } from '@/store/settings/settingsActions'
 import { PricesHistoryState } from '@/types/price'
 
 const initialState: PricesHistoryState = tokenPricesHistoryAdapter.getInitialState({
@@ -58,10 +58,9 @@ const pricesHistorySlice = createSlice({
       .addCase(syncTokenPriceHistories.rejected, (state) => {
         state.loading = false
       })
-    // TODO
-    // .addCase(fiatCurrencyChanged, (state) => {
-    //   tokenPricesHistoryAdapter.removeAll(state)
-    // })
+      .addCase(fiatCurrencyChanged, (state) => {
+        tokenPricesHistoryAdapter.removeAll(state)
+      })
   }
 })
 
