@@ -62,7 +62,7 @@ dayjs.updateLocale('en', {
   }
 })
 
-export const numberOfAPIRetries = 10
+export const numberOfAPIRetries = 3
 
 const App = () => {
   const { theme } = useSettings()
