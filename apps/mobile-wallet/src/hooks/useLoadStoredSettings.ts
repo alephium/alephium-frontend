@@ -20,7 +20,7 @@ import { localStorageNetworkSettingsLoaded, NetworkSettings } from '@alephium/sh
 import { useEffect } from 'react'
 
 import { useAppDispatch } from '~/hooks/redux'
-import { loadSettings } from '~/persistent-storage/settings'
+import { loadSettings, persistSettings } from '~/persistent-storage/settings'
 import { storedGeneralSettingsLoaded } from '~/store/settingsSlice'
 import { GeneralSettings } from '~/types/settings'
 
@@ -33,6 +33,16 @@ const useLoadStoredSettings = () => {
       dispatch(storedGeneralSettingsLoaded(generalSettings))
 
       const networkSettings = (await loadSettings('network')) as NetworkSettings
+
+      // TODO: Create proper migration script and tests like on the desktop wallet
+      if (
+        networkSettings.nodeHost === 'https://wallet-v20.mainnet.alephium.org' ||
+        networkSettings.nodeHost === 'https://wallet-v20.testnet.alephium.org'
+      ) {
+        networkSettings.nodeHost = networkSettings.nodeHost.replace('wallet', 'node')
+        await persistSettings('network', networkSettings)
+      }
+
       dispatch(localStorageNetworkSettingsLoaded(networkSettings))
     }
 
