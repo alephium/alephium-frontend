@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { syncUnknownTokensInfo } from '@/store/assets/assetsActions'
 import { nftsAdapter } from '@/store/assets/assetsAdapter'
@@ -40,13 +40,12 @@ const nftsSlice = createSlice({
         const nfts = action.payload.nfts
 
         nftsAdapter.upsertMany(state, nfts)
-        state.loading = false
-      })
-      .addCase(syncUnknownTokensInfo.rejected, (state) => {
-        state.loading = false
       })
       .addCase(networkPresetSwitched, resetState)
       .addCase(customNetworkSettingsSaved, resetState)
+      .addMatcher(isAnyOf(syncUnknownTokensInfo.fulfilled, syncUnknownTokensInfo.rejected), (state) => {
+        state.loading = false
+      })
   }
 })
 
