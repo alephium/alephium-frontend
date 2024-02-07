@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import fetchRetry from 'fetch-retry'
 
 export const exponentialBackoffFetchRetry = fetchRetry(fetch, {
-  retryOn: [429],
+  retryOn: (attempt, error, response) => !!response && response.status === 429,
   retries: 10,
   retryDelay: (attempt) => Math.pow(2, attempt) * 1000
 })
