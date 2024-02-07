@@ -215,7 +215,7 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
                 </AmountSubtitle>
               )}
               {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
-              {assetPrice && assetPrice.price !== null && (
+              {assetPrice && assetPrice.price !== null && asset?.verified && (
                 <Price>
                   <Amount
                     value={calculateAmountWorth(asset.balance, assetPrice.price)}
