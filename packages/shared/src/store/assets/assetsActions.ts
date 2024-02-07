@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TokenList } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
+import { NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { chunk, groupBy } from 'lodash'
 import posthog from 'posthog-js'
@@ -26,7 +27,8 @@ import { client } from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { SharedRootState } from '@/store/store'
-import { Asset, SyncUnknownTokensInfoResult } from '@/types/assets'
+import { Asset, FungibleTokenBasicMetadata, NFT } from '@/types/assets'
+import { isFulfilled } from '@/utils'
 
 export const syncVerifiedFungibleTokens = createAsyncThunk(
   'assets/syncVerifiedFungibleTokens',
@@ -59,12 +61,7 @@ export const syncVerifiedFungibleTokens = createAsyncThunk(
 
 export const syncUnknownTokensInfo = createAsyncThunk(
   'assets/syncUnknownTokensInfo',
-  async (unknownTokenIds: Asset['id'][]): Promise<SyncUnknownTokensInfoResult> => {
-    const results = {
-      tokens: [],
-      nfts: []
-    } as SyncUnknownTokensInfoResult
-
+  async (unknownTokenIds: Asset['id'][], { dispatch }) => {
     const tokenTypes = await Promise.all(
       chunk(unknownTokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
         client.explorer.tokens.postTokens(unknownTokenIdsChunk)
@@ -77,52 +74,78 @@ export const syncUnknownTokensInfo = createAsyncThunk(
       tokenIds: grouped[stdInterfaceId].map(({ token }) => token)
     }))
 
-    try {
-      for await (const entry of tokenIdsByType) {
-        if (entry.stdInterfaceId === explorer.TokenStdInterfaceId.Fungible) {
-          results.tokens = (
-            await Promise.all(
-              chunk(entry.tokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
-                client.explorer.tokens.postTokensFungibleMetadata(unknownTokenIdsChunk)
-              )
-            )
-          )
-            .flat()
-            .map((token) => {
-              const parsedDecimals = parseInt(token.decimals)
-
-              return {
-                ...token,
-                decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0
-              }
-            })
-        } else if (entry.stdInterfaceId === explorer.TokenStdInterfaceId.NonFungible) {
-          const nftResults = (
-            await Promise.all(
-              chunk(entry.tokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
-                client.explorer.tokens.postTokensNftMetadata(unknownTokenIdsChunk)
-              )
-            )
-          ).flat()
-
-          for await (const { tokenUri, id, collectionId } of nftResults) {
-            const nftData = await exponentialBackoffFetchRetry(tokenUri).then((res) => res.json())
-
-            results.nfts.push({
-              id,
-              collectionId,
-              name: nftData?.name,
-              description: nftData?.description,
-              image: nftData?.image
-            })
-          }
-        }
+    for await (const entry of tokenIdsByType) {
+      if (entry.stdInterfaceId === explorer.TokenStdInterfaceId.Fungible) {
+        dispatch(syncFungibleTokensInfo(entry.tokenIds))
+      } else if (entry.stdInterfaceId === explorer.TokenStdInterfaceId.NonFungible) {
+        dispatch(syncNFTsInfo(entry.tokenIds))
       }
-    } catch (e) {
-      console.error(e)
-      posthog.capture('Error', { message: 'Syncing unknown tokens info' })
     }
-
-    return results
   }
 )
+
+export const syncFungibleTokensInfo = createAsyncThunk(
+  'assets/syncFungibleTokensInfo',
+  async (tokenIds: Asset['id'][]): Promise<FungibleTokenBasicMetadata[]> => {
+    let tokensMetadata: FungibleTokenBasicMetadata[] = []
+
+    try {
+      tokensMetadata = (
+        await Promise.all(
+          chunk(tokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
+            client.explorer.tokens.postTokensFungibleMetadata(unknownTokenIdsChunk)
+          )
+        )
+      )
+        .flat()
+        .map((token) => {
+          const parsedDecimals = parseInt(token.decimals)
+
+          return {
+            ...token,
+            decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0
+          }
+        })
+    } catch (e) {
+      console.error(e)
+      posthog.capture('Error', { message: 'Syncing unknown fungible tokens info' })
+    }
+
+    return tokensMetadata
+  }
+)
+
+export const syncNFTsInfo = createAsyncThunk('assets/syncNFTsInfo', async (tokenIds: Asset['id'][]): Promise<NFT[]> => {
+  let nfts: NFT[] = []
+  let nftsMetadata: NFTMetadata[] = []
+
+  try {
+    nftsMetadata = (
+      await Promise.all(
+        chunk(tokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
+          client.explorer.tokens.postTokensNftMetadata(unknownTokenIdsChunk)
+        )
+      )
+    ).flat()
+  } catch (e) {
+    console.error(e)
+    posthog.capture('Error', { message: 'Syncing unknown NFT info' })
+  }
+
+  const promiseResults = await Promise.allSettled(
+    nftsMetadata.map(({ tokenUri, id }) =>
+      exponentialBackoffFetchRetry(tokenUri)
+        .then((res) => res.json())
+        .then((data) => ({ ...data, id }))
+    )
+  )
+  const nftsData = promiseResults.filter(isFulfilled).flatMap((r) => r.value)
+
+  nfts = nftsMetadata.map(({ id, collectionId }) => ({
+    id,
+    collectionId,
+    ...(nftsData.find((nftData) => nftData.id === id) || {})
+  }))
+
+  return nfts
+})

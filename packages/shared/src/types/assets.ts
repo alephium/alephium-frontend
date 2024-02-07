@@ -58,11 +58,6 @@ export type NFT = {
   image?: string
 }
 
-export type SyncUnknownTokensInfoResult = {
-  tokens: FungibleTokenBasicMetadata[]
-  nfts: NFT[]
-}
-
 export interface FungibleTokensState extends EntityState<FungibleToken> {
   loadingVerified: boolean
   loadingUnverified: boolean

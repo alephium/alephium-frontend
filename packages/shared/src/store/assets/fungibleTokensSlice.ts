@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
-import { syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/store/assets/assetsActions'
+import { syncFungibleTokensInfo, syncVerifiedFungibleTokens } from '@/store/assets/assetsActions'
 import { fungibleTokensAdapter } from '@/store/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@/store/network/networkActions'
 import { FungibleTokensState } from '@/types/assets'
@@ -60,11 +60,11 @@ const fungibleTokensSlice = createSlice({
           state.status = 'initialized'
         }
       })
-      .addCase(syncUnknownTokensInfo.pending, (state) => {
+      .addCase(syncFungibleTokensInfo.pending, (state) => {
         state.loadingUnverified = true
       })
-      .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
-        const metadata = action.payload.tokens
+      .addCase(syncFungibleTokensInfo.fulfilled, (state, action) => {
+        const metadata = action.payload
         const initiallyUnknownTokenIds = action.meta.arg
 
         state.checkedUnknownTokenIds = [...initiallyUnknownTokenIds, ...state.checkedUnknownTokenIds]
@@ -81,7 +81,7 @@ const fungibleTokensSlice = createSlice({
       })
       .addCase(networkPresetSwitched, resetState)
       .addCase(customNetworkSettingsSaved, resetState)
-      .addMatcher(isAnyOf(syncUnknownTokensInfo.fulfilled, syncUnknownTokensInfo.rejected), (state) => {
+      .addMatcher(isAnyOf(syncFungibleTokensInfo.fulfilled, syncFungibleTokensInfo.rejected), (state) => {
         state.loadingUnverified = false
       })
       .addMatcher(isAnyOf(syncVerifiedFungibleTokens.fulfilled, syncVerifiedFungibleTokens.rejected), (state) => {

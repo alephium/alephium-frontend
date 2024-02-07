@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
-import { syncUnknownTokensInfo } from '@/store/assets/assetsActions'
+import { syncNFTsInfo } from '@/store/assets/assetsActions'
 import { nftsAdapter } from '@/store/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@/store/network/networkActions'
 import { NFTsState } from '@/types/assets'
@@ -33,17 +33,17 @@ const nftsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncUnknownTokensInfo.pending, (state) => {
+      .addCase(syncNFTsInfo.pending, (state) => {
         state.loading = true
       })
-      .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
-        const nfts = action.payload.nfts
+      .addCase(syncNFTsInfo.fulfilled, (state, action) => {
+        const nfts = action.payload
 
         nftsAdapter.upsertMany(state, nfts)
       })
       .addCase(networkPresetSwitched, resetState)
       .addCase(customNetworkSettingsSaved, resetState)
-      .addMatcher(isAnyOf(syncUnknownTokensInfo.fulfilled, syncUnknownTokensInfo.rejected), (state) => {
+      .addMatcher(isAnyOf(syncNFTsInfo.fulfilled, syncNFTsInfo.rejected), (state) => {
         state.loading = false
       })
   }
