@@ -482,19 +482,19 @@ export const makeSelectAddressesTokens = () =>
     [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses()],
     (fungibleTokens, nfts, alphAsset, addresses): Asset[] => {
       const tokens = getAddressesTokenBalances(addresses).reduce((acc, token) => {
-        const assetInfo = fungibleTokens.find((t) => t.id === token.id)
+        const fungibleToken = fungibleTokens.find((t) => t.id === token.id)
         const nftInfo = nfts.find((nft) => nft.id === token.id)
 
         acc.push({
           id: token.id,
           balance: BigInt(token.balance.toString()),
           lockedBalance: BigInt(token.lockedBalance.toString()),
-          name: assetInfo?.name ?? nftInfo?.name,
-          symbol: assetInfo?.symbol,
-          description: assetInfo?.description ?? nftInfo?.description,
-          logoURI: assetInfo?.logoURI ?? nftInfo?.image,
-          decimals: assetInfo?.decimals ?? 0,
-          verified: assetInfo?.verified
+          name: fungibleToken?.name ?? nftInfo?.name,
+          symbol: fungibleToken?.symbol,
+          description: fungibleToken?.description ?? nftInfo?.description,
+          logoURI: fungibleToken?.logoURI ?? nftInfo?.image,
+          decimals: fungibleToken?.decimals ?? 0,
+          verified: fungibleToken?.verified
         })
 
         return acc
@@ -509,7 +509,9 @@ export const makeSelectAddressesTokens = () =>
 
 // TODO: Same as in desktop wallet
 export const makeSelectAddressesKnownFungibleTokens = () =>
-  createSelector([makeSelectAddressesTokens()], (tokens): Asset[] => tokens.filter((token) => !!token?.symbol))
+  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
+    tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
+  )
 
 // TODO: Same as in desktop wallet
 export const makeSelectAddressesUnknownTokens = () =>
