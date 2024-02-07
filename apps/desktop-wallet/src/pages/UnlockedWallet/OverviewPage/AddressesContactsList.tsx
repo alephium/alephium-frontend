@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth, selectAlphPrice } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -35,7 +35,11 @@ import TableCellAmount from '@/components/TableCellAmount'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
-import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import {
+  makeSelectAddressesTokensWorth,
+  selectAllAddresses,
+  selectIsStateUninitialized
+} from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 import { currencies } from '@/utils/currencies'
 
@@ -76,8 +80,6 @@ const AddressesContactsList = ({ className, maxHeightInPx }: AddressesContactsLi
 
 const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
   const addresses = useAppSelector(selectAllAddresses)
-  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const alphPrice = useAppSelector(selectAlphPrice)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
   const [selectedAddress, setSelectedAddress] = useState<Address>()
@@ -96,12 +98,7 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
               {stateUninitialized ? (
                 <SkeletonLoader height="15.5px" width="50%" />
               ) : (
-                <AmountStyled
-                  value={calculateAmountWorth(BigInt(address.balance), alphPrice ?? 0)}
-                  isFiat
-                  suffix={currencies[fiatCurrency].symbol}
-                  tabIndex={0}
-                />
+                <AddressWorth addressHash={address.hash} />
               )}
             </TableCellAmount>
           </AddressRow>
@@ -117,6 +114,14 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
       </ModalPortal>
     </>
   )
+}
+
+const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
+  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
+
+  return <AmountStyled value={balanceInFiat} isFiat suffix={currencies[fiatCurrency].symbol} tabIndex={0} />
 }
 
 export default styled(AddressesContactsList)`
