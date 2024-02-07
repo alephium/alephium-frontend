@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Megaphone, X } from 'lucide-react'
 import { useState } from 'react'
@@ -26,23 +27,27 @@ import Button from '@/components/Button'
 import useThrottledGitHubApi, { storeAppMetadata } from '@/hooks/useThrottledGitHubApi'
 import { appHeaderHeightPx, messagesLeftMarginPx, walletSidebarWidthPx } from '@/style/globalStyles'
 import { Announcement } from '@/types/announcement'
+import { useTimeout } from '@/utils/hooks'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
 import announcementFile from '../../announcement.json'
-import { colord } from 'colord'
 
 interface AnnouncementBannerProps {
   className?: string
 }
 
 // Meant only for dev. Never commit it with value `true`
-const useLocalAnnouncementFileForDevelopment = false
+const useLocalAnnouncementFileForDevelopment = true
 
 const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   const [announcement, setAnnouncement] = useState<Announcement | undefined>(
     useLocalAnnouncementFileForDevelopment ? announcementFile : undefined
   )
+
+  const [isCompact, setIsCompact] = useState(false)
+
+  useTimeout(() => setIsCompact(true), 5000)
 
   useThrottledGitHubApi(async ({ lastAnnouncementHashChecked }) => {
     const response = await fetch(links.announcement)
@@ -67,22 +72,29 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   return (
     <AnimatePresence mode="wait">
       {announcement && announcement.isActive && (
-        <AnnouncementBannerStyled className={className} onClick={() => setAnnouncement(undefined)} {...fadeInOut}>
-          <Contents>
+        <AnnouncementBannerStyled
+          className={className}
+          animate={{ height: isCompact ? 50 : 70, width: isCompact ? 50 : '45%' }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+        >
+          <Contents animate={{ padding: isCompact ? 0 : 10 }}>
             <Icon>
               <Megaphone size={24} />
             </Icon>
-            <Texts>
-              <Title>{announcement.title}</Title>
-              <Description>{announcement.description}</Description>
-            </Texts>
-            {announcement.button ? (
-              <ButtonStyled short onClick={handleAnnouncementButtonClick}>
-                {announcement.button.title}
-              </ButtonStyled>
-            ) : (
-              <ButtonStyled short role="secondary" Icon={X} squared />
-            )}
+
+            <TextsAndButton>
+              <Texts>
+                <Title>{announcement.title}</Title>
+                <Description>{announcement.description}</Description>
+              </Texts>
+              {announcement.button ? (
+                <ButtonStyled short onClick={handleAnnouncementButtonClick}>
+                  {announcement.button.title}
+                </ButtonStyled>
+              ) : (
+                <ButtonStyled short role="secondary" Icon={X} squared />
+              )}
+            </TextsAndButton>
           </Contents>
         </AnnouncementBannerStyled>
       )}
@@ -93,19 +105,21 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
 export default AnnouncementBanner
 
 const AnnouncementBannerStyled = styled(motion.div)`
+  display: flex;
   position: fixed;
   top: ${appHeaderHeightPx}px;
   left: ${walletSidebarWidthPx + messagesLeftMarginPx}px;
   border: 2px solid ${({ theme }) => theme.global.accent};
   border-radius: 52px;
   background-color: ${({ theme }) => colord(theme.bg.background2).alpha(0.5).toHex()};
-  padding: 8px 10px;
   z-index: 1;
   max-width: 50%;
   backdrop-filter: blur(20px);
+  overflow: hidden;
 `
 
-const Contents = styled.div`
+const Contents = styled(motion.div)`
+  padding: 8px 10px;
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
@@ -136,8 +150,8 @@ const ButtonStyled = styled(Button)`
 `
 
 const Icon = styled.div`
-  width: 43px;
-  height: 43px;
+  width: 48px;
+  height: 48px;
   background-color: ${({ theme }) => theme.global.highlight};
   border-radius: var(--radius-full);
   padding: var(--spacing-2);
@@ -145,4 +159,11 @@ const Icon = styled.div`
   align-items: center;
   justify-content: center;
   display: flex;
+  flex-shrink: 0;
+`
+
+const TextsAndButton = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
