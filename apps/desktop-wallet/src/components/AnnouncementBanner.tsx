@@ -95,7 +95,9 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
     storeAppMetadata({ lastAnnouncementHashChecked: contentHash })
     setAnnouncement(undefined)
   }
+
   const handleMouseEnter = () => setIsHovered(true)
+
   const handleMouseLeave = () => setIsHovered(false)
 
   return (
