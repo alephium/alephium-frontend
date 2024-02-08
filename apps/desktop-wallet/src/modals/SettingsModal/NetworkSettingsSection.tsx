@@ -48,9 +48,7 @@ interface NetworkSelectOption {
   value: NetworkName
 }
 
-const networkNames = Object.values(NetworkNames) as (keyof typeof NetworkNames)[]
-
-const networkSelectOptions: NetworkSelectOption[] = networkNames.map((networkName) => ({
+const networkSelectOptions: NetworkSelectOption[] = Object.values(NetworkNames).map((networkName) => ({
   label: {
     mainnet: i18next.t('Mainnet'),
     testnet: i18next.t('Testnet'),
