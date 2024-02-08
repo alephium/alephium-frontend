@@ -119,14 +119,14 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
                 <Description>{announcement.description}</Description>
               </Texts>
               <ActionButtons>
+                <ButtonStyled short role="secondary" onClick={handleAnnouncementHide}>
+                  {t('Hide')}
+                </ButtonStyled>
                 {announcement.button && (
                   <ButtonStyled short onClick={handleAnnouncementButtonClick}>
                     {announcement.button.title}
                   </ButtonStyled>
                 )}
-                <ButtonStyled short role="secondary" onClick={handleAnnouncementHide}>
-                  {t('Hide')}
-                </ButtonStyled>
               </ActionButtons>
             </TextsAndButtons>
           </Contents>
@@ -142,7 +142,7 @@ const AnnouncementBannerStyled = styled(motion.div)`
   display: flex;
   position: fixed;
   top: ${appHeaderHeightPx}px;
-  left: ${walletSidebarWidthPx + messagesLeftMarginPx}px;
+  right: 20px;
   border: 2px solid ${({ theme }) => theme.global.accent};
   border-radius: 52px;
   background-color: ${({ theme }) => colord(theme.bg.background2).alpha(0.5).toHex()};
