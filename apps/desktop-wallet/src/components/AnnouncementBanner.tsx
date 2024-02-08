@@ -38,12 +38,13 @@ interface AnnouncementBannerProps {
 
 const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   const [announcement, setAnnouncement] = useState<Announcement | undefined>(
-    import.meta.env.VITE_USE_LOCAL_ANNOUNCEMENT_FILE === 'true' ? announcementFile : undefined
+    import.meta.env.VITE_USE_LOCAL_ANNOUNCEMENT_FILE === 'true' ? (announcementFile as Announcement) : undefined
   )
 
-  const [isCompact, setIsCompact] = useState(false)
+  const [isCompact, setIsCompact] = useState(true)
 
-  useTimeout(() => setIsCompact(true), 5000)
+  useTimeout(() => setIsCompact(false), 1000)
+  useTimeout(() => setIsCompact(true), 6000)
 
   useThrottledGitHubApi(async ({ lastAnnouncementHashChecked }) => {
     const response = await fetch(links.announcement)
@@ -65,20 +66,26 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
     if (announcement && announcement.button) openInWebBrowser(announcement.button.link)
   }
 
+  const handleMouseEnter = () => setIsCompact(false)
+  const handleMouseLeave = () => setIsCompact(true)
+
   return (
     <AnimatePresence mode="wait">
       {announcement && announcement.isActive && (
         <AnnouncementBannerStyled
           className={className}
-          animate={{ height: isCompact ? 50 : 70, width: isCompact ? 50 : '45%' }}
+          initial={{ opacity: 0, height: 50, width: 50 }}
+          animate={{ opacity: 1, height: isCompact ? 50 : 70, width: isCompact ? 50 : '45%' }}
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          <Contents animate={{ padding: isCompact ? 0 : 10 }}>
-            <Icon>
+          <Contents>
+            <Icon animate={{ height: isCompact ? 42 : 50, width: isCompact ? 42 : 50, x: isCompact ? -8 : 0 }}>
               <Megaphone size={24} />
             </Icon>
 
-            <TextsAndButton>
+            <TextsAndButton animate={{ opacity: isCompact ? 0 : 1 }}>
               <Texts>
                 <Title>{announcement.title}</Title>
                 <Description>{announcement.description}</Description>
@@ -112,9 +119,10 @@ const AnnouncementBannerStyled = styled(motion.div)`
   max-width: 50%;
   backdrop-filter: blur(20px);
   overflow: hidden;
+  box-shadow: ${({ theme }) => theme.shadow.secondary};
 `
 
-const Contents = styled(motion.div)`
+const Contents = styled.div`
   padding: 8px 10px;
   display: flex;
   align-items: center;
@@ -122,6 +130,7 @@ const Contents = styled(motion.div)`
 `
 
 const Texts = styled.div`
+  min-width: 350px;
   margin-right: var(--spacing-4);
 `
 
@@ -145,9 +154,9 @@ const ButtonStyled = styled(Button)`
   flex-shrink: 0;
 `
 
-const Icon = styled.div`
-  width: 48px;
-  height: 48px;
+const Icon = styled(motion.div)`
+  width: 42px;
+  height: 42px;
   background-color: ${({ theme }) => theme.global.highlight};
   border-radius: var(--radius-full);
   padding: var(--spacing-2);
@@ -158,7 +167,7 @@ const Icon = styled.div`
   flex-shrink: 0;
 `
 
-const TextsAndButton = styled.div`
+const TextsAndButton = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
