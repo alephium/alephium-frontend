@@ -44,7 +44,6 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   )
 
   const [contentHash, setContentHash] = useState<string>()
-
   const [wasShownOnMount, setWasShownOnMount] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [isCompact, setIsCompact] = useState(true)
@@ -73,7 +72,7 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   })
 
   useEffect(() => {
-    let timeoutId
+    let timeoutId: ReturnType<typeof setTimeout> | undefined
 
     if (isHovered && isCompact) {
       setIsCompact(false)
@@ -84,6 +83,8 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
       timeoutId = undefined
       setIsCompact(false)
     }
+
+    return () => clearTimeout(timeoutId)
   }, [isCompact, isHovered, wasShownOnMount])
 
   const handleAnnouncementButtonClick = () => {
