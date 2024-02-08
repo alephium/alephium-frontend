@@ -103,7 +103,7 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
         <AnnouncementBannerStyled
           className={className}
           initial={{ opacity: 0, height: 50, width: 50 }}
-          animate={{ opacity: 1, height: isCompact ? 50 : 70, width: isCompact ? 50 : '45%' }}
+          animate={{ opacity: 1, height: isCompact ? 50 : 70, width: isCompact ? 50 : 650 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -147,7 +147,6 @@ const AnnouncementBannerStyled = styled(motion.div)`
   border-radius: 52px;
   background-color: ${({ theme }) => colord(theme.bg.background2).alpha(0.5).toHex()};
   z-index: 1;
-  max-width: 50%;
   backdrop-filter: blur(20px);
   overflow: hidden;
   box-shadow: ${({ theme }) => theme.shadow.secondary};
