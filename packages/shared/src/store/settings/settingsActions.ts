@@ -20,5 +20,4 @@ import { createAction } from '@reduxjs/toolkit'
 
 import { Currency } from '@/types/currencies'
 
-// TODO: Temporary until settings get migrated, needed for price slice
 export const fiatCurrencyChanged = createAction<Currency>('settings/fiatCurrencyChanged')

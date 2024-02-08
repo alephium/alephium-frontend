@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { appReset } from '@alephium/shared'
+import { appReset, fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { defaultGeneralSettings, persistSettings } from '~/persistent-storage/settings'
@@ -49,9 +49,6 @@ const settingsSlice = createSlice({
     passwordRequirementToggled: (state) => {
       state.requireAuth = !state.requireAuth
     },
-    currencySelected: (state, action: PayloadAction<GeneralSettings['currency']>) => {
-      state.currency = action.payload
-    },
     analyticsIdGenerated: (state, action: PayloadAction<GeneralSettings['analyticsId']>) => {
       state.analyticsId = action.payload
     },
@@ -75,7 +72,6 @@ export const {
   themeChanged,
   discreetModeToggled,
   passwordRequirementToggled,
-  currencySelected,
   analyticsIdGenerated,
   analyticsToggled,
   walletConnectToggled,
@@ -90,7 +86,7 @@ settingsListenerMiddleware.startListening({
     themeChanged,
     discreetModeToggled,
     passwordRequirementToggled,
-    currencySelected,
+    fiatCurrencyChanged,
     analyticsIdGenerated,
     analyticsToggled,
     walletConnectToggled,
