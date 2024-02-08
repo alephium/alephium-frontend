@@ -73,7 +73,9 @@ const App = () => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
-  const network = useAppSelector((s) => s.network)
+  const networkProxy = useAppSelector((s) => s.network.settings.proxy)
+  const networkStatus = useAppSelector((s) => s.network.status)
+  const networkName = useAppSelector((s) => s.network.name)
   const theme = useAppSelector((s) => s.global.theme)
   const loading = useAppSelector((s) => s.global.loading)
   const settings = useAppSelector((s) => s.settings)
@@ -128,10 +130,10 @@ const App = () => {
         language: settings.language,
         passwordRequirement: settings.passwordRequirement,
         fiatCurrency: settings.fiatCurrency,
-        network: network.name
+        network: networkName
       })
   }, [
-    network.name,
+    networkName,
     posthog.__loaded,
     posthog.people,
     settings.devTools,
@@ -166,15 +168,11 @@ const App = () => {
   }, [settings.language, setSystemLanguage])
 
   useEffect(() => {
-    const setProxySettings = async () => {
-      await electron?.app.setProxySettings(network.settings.proxy)
-    }
-
-    setProxySettings()
-  }, [electron?.app, network.settings.proxy])
+    if (networkProxy) electron?.app.setProxySettings(networkProxy)
+  }, [electron?.app, networkProxy])
 
   useEffect(() => {
-    if (network.status === 'online') {
+    if (networkStatus === 'online') {
       if (addressesStatus === 'uninitialized') {
         if (!isSyncingAddressData && addressHashes.length > 0) {
           const storedPendingTxs = getStoredPendingTransactions()
@@ -206,14 +204,14 @@ const App = () => {
     dispatch,
     isLoadingUnverifiedFungibleTokens,
     isSyncingAddressData,
-    network.status,
+    networkStatus,
     newUnknownTokens
   ])
 
   // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
   // token found in each address
   useEffect(() => {
-    if (network.status === 'online' && !isLoadingVerifiedFungibleTokens) {
+    if (networkStatus === 'online' && !isLoadingVerifiedFungibleTokens) {
       if (verifiedFungibleTokensNeedInitialization) {
         dispatch(syncVerifiedFungibleTokens())
       } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
@@ -226,7 +224,7 @@ const App = () => {
   }, [
     dispatch,
     isLoadingVerifiedFungibleTokens,
-    network.status,
+    networkStatus,
     settings.fiatCurrency,
     verifiedFungibleTokenSymbols.uninitialized,
     verifiedFungibleTokensNeedInitialization
@@ -234,7 +232,7 @@ const App = () => {
 
   useEffect(() => {
     if (
-      network.status === 'online' &&
+      networkStatus === 'online' &&
       !isLoadingVerifiedFungibleTokens &&
       verifiedFungibleTokenSymbols.uninitialized.length > 1
     ) {
@@ -243,7 +241,7 @@ const App = () => {
         verifiedFungibleTokenSymbols.uninitialized.filter((symbol) => symbol !== ALPH.symbol)
       )
     }
-  }, [isLoadingVerifiedFungibleTokens, network.status, verifiedFungibleTokenSymbols.uninitialized])
+  }, [isLoadingVerifiedFungibleTokens, networkStatus, verifiedFungibleTokenSymbols.uninitialized])
 
   const refreshTokensLatestPrice = useCallback(() => {
     dispatch(
@@ -257,7 +255,7 @@ const App = () => {
   useInterval(
     refreshTokensLatestPrice,
     PRICES_REFRESH_INTERVAL,
-    network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
+    networkStatus !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
   )
 
   const refreshAddressesData = useCallback(() => {
