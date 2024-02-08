@@ -43,6 +43,8 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
     import.meta.env.VITE_USE_LOCAL_ANNOUNCEMENT_FILE === 'true' ? (announcementFile as Announcement) : undefined
   )
 
+  const [contentHash, setContentHash] = useState<string>()
+
   const [wasShownOnMount, setWasShownOnMount] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [isCompact, setIsCompact] = useState(true)
@@ -55,15 +57,16 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
 
   useThrottledGitHubApi(async ({ lastAnnouncementHashChecked }) => {
     const response = await fetch(links.announcement)
-    const { content: contentBase64, sha: contentHash } = await response.json()
+    const { content: contentBase64, sha: contentSHA } = await response.json()
 
-    if (contentHash === lastAnnouncementHashChecked) return
+    setContentHash(contentSHA)
+
+    if (contentSHA === lastAnnouncementHashChecked) return
 
     try {
       const announcementContent = JSON.parse(atob(contentBase64)) as Announcement
 
       setAnnouncement(announcementContent)
-      storeAppMetadata({ lastAnnouncementHashChecked: contentHash })
     } catch (e) {
       console.error('Could not parse announcement content')
     }
@@ -87,7 +90,10 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
     if (announcement && announcement.button) openInWebBrowser(announcement.button.link)
   }
 
-  const handleAnnouncementHide = () => setAnnouncement(undefined)
+  const handleAnnouncementHide = () => {
+    storeAppMetadata({ lastAnnouncementHashChecked: contentHash })
+    setAnnouncement(undefined)
+  }
   const handleMouseEnter = () => setIsHovered(true)
   const handleMouseLeave = () => setIsHovered(false)
 
