@@ -101,7 +101,7 @@ export default styled(GreetingMessages)`
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  height: 44px;
+  height: 48px;
   margin-left: ${messagesLeftMarginPx}px;
   font-size: 16px;
   font-weight: var(--fontWeight-normal);
