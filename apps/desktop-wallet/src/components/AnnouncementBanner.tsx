@@ -25,7 +25,7 @@ import styled from 'styled-components'
 
 import Button from '@/components/Button'
 import useThrottledGitHubApi, { storeAppMetadata } from '@/hooks/useThrottledGitHubApi'
-import { appHeaderHeightPx, messagesLeftMarginPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Announcement } from '@/types/announcement'
 import { useTimeout } from '@/utils/hooks'
 import { links } from '@/utils/links'
