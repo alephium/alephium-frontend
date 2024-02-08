@@ -22,7 +22,6 @@ import { Megaphone, X } from 'lucide-react'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { fadeInOut } from '@/animations'
 import Button from '@/components/Button'
 import useThrottledGitHubApi, { storeAppMetadata } from '@/hooks/useThrottledGitHubApi'
 import { appHeaderHeightPx, messagesLeftMarginPx, walletSidebarWidthPx } from '@/style/globalStyles'
@@ -37,12 +36,9 @@ interface AnnouncementBannerProps {
   className?: string
 }
 
-// Meant only for dev. Never commit it with value `true`
-const useLocalAnnouncementFileForDevelopment = true
-
 const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   const [announcement, setAnnouncement] = useState<Announcement | undefined>(
-    useLocalAnnouncementFileForDevelopment ? announcementFile : undefined
+    import.meta.env.VITE_USE_LOCAL_ANNOUNCEMENT_FILE === 'true' ? announcementFile : undefined
   )
 
   const [isCompact, setIsCompact] = useState(false)
