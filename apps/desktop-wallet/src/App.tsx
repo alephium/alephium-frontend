@@ -293,10 +293,10 @@ const App = () => {
       <WalletConnectContextProvider>
         <AppContainer showDevIndication={showDevIndication}>
           <CenteredSection>
-            <AnnouncementBanner />
             <Router />
           </CenteredSection>
           <BannerSection>{newVersion && <UpdateWalletBanner />}</BannerSection>
+          <AnnouncementBanner />
         </AppContainer>
       </WalletConnectContextProvider>
 
