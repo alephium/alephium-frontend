@@ -478,5 +478,6 @@
   "Unsigned transaction": "Unsigned transaction",
   "Sign Message": "Sign Message",
   "Message": "Message",
-  "Received dApp request": "Received dApp request"
+  "Received dApp request": "Received dApp request",
+  "Hide": "Hide"
 }

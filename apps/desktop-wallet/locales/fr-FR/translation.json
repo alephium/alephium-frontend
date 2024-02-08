@@ -474,9 +474,10 @@
   "WalletConnect cache cleared successfully.": "WalletConnect cache cleared successfully.",
   "Could not clear WalletConnect cache.": "Could not clear WalletConnect cache.",
   "Sign Unsigned Transaction": "Sign Unsigned Transaction",
-  "Transaction ID": "Transaction ID",
-  "Unsigned transaction": "Unsigned transaction",
-  "Sign Message": "Sign Message",
+  "Transaction ID": "ID de la transaction",
+  "Unsigned transaction": "Transaction non signée",
+  "Sign Message": "Signer le message",
   "Message": "Message",
-  "Received dApp request": "Received dApp request"
+  "Received dApp request": "Received dApp request",
+  "Hide": "Cacher"
 }

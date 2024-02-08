@@ -18,8 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Megaphone, X } from 'lucide-react'
-import { useState } from 'react'
+import { Megaphone } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
@@ -37,14 +38,20 @@ interface AnnouncementBannerProps {
 }
 
 const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
+  const { t } = useTranslation()
   const [announcement, setAnnouncement] = useState<Announcement | undefined>(
     import.meta.env.VITE_USE_LOCAL_ANNOUNCEMENT_FILE === 'true' ? (announcementFile as Announcement) : undefined
   )
 
+  const [wasShownOnMount, setWasShownOnMount] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
   const [isCompact, setIsCompact] = useState(true)
 
-  useTimeout(() => setIsCompact(false), 1000)
-  useTimeout(() => setIsCompact(true), 6000)
+  useTimeout(() => setIsCompact(false), 1500)
+  useTimeout(() => {
+    setIsCompact(true)
+    setWasShownOnMount(true)
+  }, 6000)
 
   useThrottledGitHubApi(async ({ lastAnnouncementHashChecked }) => {
     const response = await fetch(links.announcement)
@@ -62,12 +69,27 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
     }
   })
 
+  useEffect(() => {
+    let timeoutId
+
+    if (isHovered && isCompact) {
+      setIsCompact(false)
+    } else if (wasShownOnMount && !isHovered && !isCompact) {
+      timeoutId = setTimeout(() => setIsCompact(true), 1500)
+    } else if (timeoutId && isHovered) {
+      clearTimeout(timeoutId)
+      timeoutId = undefined
+      setIsCompact(false)
+    }
+  }, [isCompact, isHovered, wasShownOnMount])
+
   const handleAnnouncementButtonClick = () => {
     if (announcement && announcement.button) openInWebBrowser(announcement.button.link)
   }
 
-  const handleMouseEnter = () => setIsCompact(false)
-  const handleMouseLeave = () => setIsCompact(true)
+  const handleAnnouncementHide = () => setAnnouncement(undefined)
+  const handleMouseEnter = () => setIsHovered(true)
+  const handleMouseLeave = () => setIsHovered(false)
 
   return (
     <AnimatePresence mode="wait">
@@ -85,19 +107,22 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
               <Megaphone size={24} />
             </Icon>
 
-            <TextsAndButton animate={{ opacity: isCompact ? 0 : 1 }}>
+            <TextsAndButtons animate={{ opacity: isCompact ? 0 : 1 }}>
               <Texts>
                 <Title>{announcement.title}</Title>
                 <Description>{announcement.description}</Description>
               </Texts>
-              {announcement.button ? (
-                <ButtonStyled short onClick={handleAnnouncementButtonClick}>
-                  {announcement.button.title}
+              <ActionButtons>
+                {announcement.button && (
+                  <ButtonStyled short onClick={handleAnnouncementButtonClick}>
+                    {announcement.button.title}
+                  </ButtonStyled>
+                )}
+                <ButtonStyled short role="secondary" onClick={handleAnnouncementHide}>
+                  {t('Hide')}
                 </ButtonStyled>
-              ) : (
-                <ButtonStyled short role="secondary" Icon={X} squared />
-              )}
-            </TextsAndButton>
+              </ActionButtons>
+            </TextsAndButtons>
           </Contents>
         </AnnouncementBannerStyled>
       )}
@@ -147,6 +172,11 @@ const Description = styled.div`
   margin-top: 3px;
 `
 
+const ActionButtons = styled.div`
+  display: flex;
+  gap: var(--spacing-2);
+`
+
 const ButtonStyled = styled(Button)`
   margin: 0;
   height: 35px;
@@ -167,7 +197,7 @@ const Icon = styled(motion.div)`
   flex-shrink: 0;
 `
 
-const TextsAndButton = styled(motion.div)`
+const TextsAndButtons = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
