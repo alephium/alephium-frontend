@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { configureStore } from '@reduxjs/toolkit'
-import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
 import fungibleTokensSlice from '@/store/assets/fungibleTokensSlice'
 import nftsSlice from '@/store/assets/nftsSlice'
@@ -37,8 +36,6 @@ const sharedStore = configureStore({
   reducer: sharedReducer,
   devTools: false
 })
-
-setupListeners(sharedStore.dispatch)
 
 export type SharedRootState = ReturnType<typeof sharedStore.getState>
 export type SharedDispatch = typeof sharedStore.dispatch
