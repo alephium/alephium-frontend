@@ -75,9 +75,9 @@ export const syncTokenPriceHistories = createAsyncThunk(
 
               history = rawHistory.timestamps.reduce((acc, v, index) => {
                 const itemDate = dayjs(v).format(CHART_DATE_FORMAT)
-                const isDuplicatedItem = !!acc.find(({ date }) => dayjs(date).format(CHART_DATE_FORMAT) === itemDate)
+                const prevItemDate = acc.length > 0 ? acc[index - 1].date : undefined
 
-                if (!isDuplicatedItem && itemDate !== today)
+                if (itemDate !== prevItemDate && itemDate !== today)
                   acc.push({
                     date: itemDate,
                     value: pricesHistoryArray[index]
