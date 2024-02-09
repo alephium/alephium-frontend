@@ -31,7 +31,7 @@ export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
     networkId: 1,
     nodeHost: 'https://node-v20.testnet.alephium.org',
     explorerApiHost: 'https://backend-v115.testnet.alephium.org',
-    explorerUrl: 'https://explorer.testnet.alephium.org'
+    explorerUrl: 'https://testnet.alephium.org'
   },
   localhost: {
     networkId: 4,
