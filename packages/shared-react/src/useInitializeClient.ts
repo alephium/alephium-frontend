@@ -37,9 +37,9 @@ export const useInitializeClient = () => {
       // TODO: Check if connection to explorer also works
       dispatch(apiClientInitSucceeded({ networkId, networkName: network.name }))
     } catch (e) {
-      dispatch(apiClientInitFailed({ networkName: network.name, networkStatus: network.status }))
+      dispatch(apiClientInitFailed({ networkName: network.name }))
     }
-  }, [network.settings.nodeHost, network.settings.explorerApiHost, network.name, network.status, dispatch])
+  }, [network.settings.nodeHost, network.settings.explorerApiHost, network.name, dispatch])
 
   useEffect(() => {
     if (network.status === 'connecting') {

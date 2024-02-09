@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAction } from '@reduxjs/toolkit'
 
-import { NetworkName, NetworkPreset, NetworkSettings, NetworkStatus } from '@/types/network'
+import { NetworkName, NetworkPreset, NetworkSettings } from '@/types/network'
 
 export const networkPresetSwitched = createAction<NetworkPreset>('network/networkPresetSwitched')
 
@@ -37,6 +37,4 @@ export const apiClientInitSucceeded = createAction<{
   networkName: NetworkName
 }>('network/apiClientInitSucceeded')
 
-export const apiClientInitFailed = createAction<{ networkName: NetworkName; networkStatus: NetworkStatus }>(
-  'network/apiClientInitFailed'
-)
+export const apiClientInitFailed = createAction<{ networkName: NetworkName }>('network/apiClientInitFailed')
