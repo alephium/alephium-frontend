@@ -40,10 +40,6 @@ const pricesHistorySlice = createSlice({
         const tokenPriceHistories = action.payload
         const verifiedFungibleTokenSymbols = action.meta.arg.verifiedFungibleTokenSymbols
 
-        if (tokenPriceHistories) {
-          tokenPricesHistoryAdapter.upsertMany(state, tokenPriceHistories)
-        }
-
         tokenPricesHistoryAdapter.upsertMany(
           state,
           verifiedFungibleTokenSymbols.map((symbol) => ({
