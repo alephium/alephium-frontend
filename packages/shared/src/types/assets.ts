@@ -50,12 +50,17 @@ export type AssetAmount = { id: Asset['id']; amount?: bigint }
 // https://github.com/alephium/alephium-web3/blob/master/packages/web3/src/api/types.ts#L296
 export type FungibleTokenBasicMetadata = Omit<FungibleTokenMetadata, 'decimals'> & { decimals: number }
 
+// TODO: Possibly merge with NFTTokenUriMetaData?
 export type NFT = {
   id: Asset['id']
   collectionId: NFTMetaData['collectionId']
   name?: string
   description?: string
   image?: string
+  attributes?: {
+    trait_type: string
+    value: string | number | boolean
+  }[]
 }
 
 export interface FungibleTokensState extends EntityState<FungibleToken> {

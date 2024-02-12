@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFT } from '@alephium/shared'
 import { Image } from 'expo-image'
 import { useState } from 'react'
-import { TouchableOpacity } from 'react-native'
+import { Dimensions, TouchableOpacity } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
@@ -27,7 +27,7 @@ import AppText from '~/components/AppText'
 import BottomModal from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
+import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface NFTThumbnailProps {
   nft: NFT
@@ -35,10 +35,15 @@ interface NFTThumbnailProps {
   height?: number
 }
 
+const attributeGap = 12
+const screenPadding = 20
+
 const NFTThumbnail = ({ nft, width, height = 100 }: NFTThumbnailProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   nft.image && Image.prefetch(nft.image)
+
+  const attributeWidth = (Dimensions.get('window').width - (attributeGap + screenPadding * 2 + DEFAULT_MARGIN * 2)) / 2
 
   return (
     <>
@@ -60,6 +65,18 @@ const NFTThumbnail = ({ nft, width, height = 100 }: NFTThumbnailProps) => {
                   <NFTDescription color="secondary" size={16}>
                     {nft.description}
                   </NFTDescription>
+                )}
+                {nft.attributes && nft.attributes.length > 0 && (
+                  <AttributesGrid>
+                    {nft.attributes.map((attribute) => (
+                      <Attribute key={attribute.trait_type} style={{ width: attributeWidth }}>
+                        <AttributeType color="tertiary" semiBold>
+                          {attribute.trait_type}
+                        </AttributeType>
+                        <AttributeValue semiBold>{attribute.value}</AttributeValue>
+                      </Attribute>
+                    ))}
+                  </AttributesGrid>
                 )}
               </ScreenSection>
             </ModalContent>
@@ -87,6 +104,28 @@ const NFTFullSizeImage = styled(Image)`
 
 const NFTDescription = styled(AppText)`
   margin-top: 20px;
+`
+
+const AttributesGrid = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: ${attributeGap}px;
+  margin-top: 30px;
+`
+
+const Attribute = styled.View`
+  border-radius: ${BORDER_RADIUS_SMALL}px;
+  background-color: ${({ theme }) => theme.bg.highlight};
+  padding: 10px;
+`
+
+const AttributeType = styled(AppText)`
+  text-align: center;
+`
+
+const AttributeValue = styled(AppText)`
+  text-align: center;
+  margin-top: 2px;
 `
 
 export default NFTThumbnail
