@@ -6,7 +6,6 @@ settings:
 
 overrides:
   semver: ^7.5.2
-  minimatch@<3.0.5: '>=3.0.5'
 
 patchedDependencies:
   framer-motion@10.17.12:
@@ -4904,7 +4903,7 @@ packages:
       chalk: 4.1.2
       debug: 4.3.4
       find-up: 5.0.0
-      minimatch: 9.0.3
+      minimatch: 3.1.2
       p-limit: 3.1.0
       resolve-from: 5.0.0
     transitivePeerDependencies:
@@ -10401,7 +10400,7 @@ packages:
       buffer-equal: 1.0.0
       colors: 1.0.3
       commander: 2.9.0
-      minimatch: 9.0.3
+      minimatch: 3.0.4
     dev: true
 
   /dir-glob@3.0.1:
@@ -12546,7 +12545,7 @@ packages:
     dependencies:
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 9.0.3
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
     optional: true
@@ -15220,6 +15219,12 @@ packages:
 
   /minimalistic-crypto-utils@1.0.1:
     resolution: {integrity: sha512-JIYlbt6g8i5jKfJ3xz7rF0LXmv2TkDxBLUkiBeZ7bAx4GnnNMr8xFpGnOxn6GhTEHx3SjRrZEoU+j04prX1ktg==}
+
+  /minimatch@3.0.4:
+    resolution: {integrity: sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==}
+    dependencies:
+      brace-expansion: 1.1.11
+    dev: true
 
   /minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
