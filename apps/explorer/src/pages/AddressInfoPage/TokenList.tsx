@@ -93,10 +93,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
               {token.symbol && token.verified && tokensWithAvailablePrice?.includes(token.symbol) && (
                 <Amount
-                  value={calculateAmountWorth(
-                    token.balance,
-                    tokensPrices.find((p) => p.symbol === token.symbol)?.price || NaN
-                  )}
+                  value={calculateAmountWorth(token.balance, tokensPrices[token.symbol] || NaN)}
                   suffix="$"
                   isFiat
                   color={theme.font.secondary}

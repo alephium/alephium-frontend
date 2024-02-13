@@ -129,7 +129,7 @@ const AddressInfoPage = () => {
 
   const knownTokensWorth = tokenBalances.reduce((acc, b) => {
     const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
-    const price = tokensPrices.find((p) => p.symbol === token?.symbol)?.price
+    const price = tokensPrices[token?.symbol || '']
 
     return acc + (price ? calculateAmountWorth(BigInt(b.balance), price) : 0)
   }, 0)
@@ -141,10 +141,7 @@ const AddressInfoPage = () => {
   const lockedBalance = addressBalance?.lockedBalance
 
   const addressWorth =
-    knownTokensWorth +
-    (totalBalance
-      ? calculateAmountWorth(BigInt(totalBalance), tokensPrices.find((p) => p.symbol === ALPH.symbol)?.price || NaN)
-      : 0)
+    knownTokensWorth + (totalBalance ? calculateAmountWorth(BigInt(totalBalance), tokensPrices[ALPH.symbol] || NaN) : 0)
 
   const totalNbOfAssets =
     tokenBalances.length +

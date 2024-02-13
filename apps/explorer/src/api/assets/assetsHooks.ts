@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
-import { flatMap } from 'lodash'
+import { flatMap, uniq } from 'lodash'
 import { useMemo } from 'react'
 
 import { queries } from '@/api'
@@ -170,20 +170,27 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   } else return returnedCompleteMetadata
 }
 
-export const useTokensWithAvailablePrice = () => {
-  const { data } = useQuery(queries.assets.market.tokenList())
-  return data
-}
+// TODO: get list from backend (enum?)
+// See: https://github.com/alephium/explorer-backend/issues/512
+export const useTokensWithAvailablePrice = () => ['ALPH', 'USDT', 'USDC', 'DAI', 'WBTC', 'WETH', 'AYIN']
 
-export const useTokensPrices = (assetSymbols: string[] = []) => {
+export const useTokensPrices = <T extends string>(assetSymbols: T[] = []) => {
   const availableTokensSymbols = useTokensWithAvailablePrice()
+  const tokensToFetch = uniq(assetSymbols).filter(
+    (symbol) => !!symbol && !!availableTokensSymbols && availableTokensSymbols.includes(symbol)
+  )
 
   const { data: prices } = useQueriesData(
-    assetSymbols.map((symbol) => ({
-      ...queries.assets.market.tokenPrice(symbol),
-      enabled: !!symbol && !!availableTokensSymbols && availableTokensSymbols.includes(symbol)
+    tokensToFetch.map((symbol) => ({
+      ...queries.assets.market.tokenPrice(symbol)
     }))
   )
 
-  return prices
+  return tokensToFetch.reduce(
+    (acc, symbol, i) => {
+      acc[symbol] = prices[i]
+      return acc
+    },
+    {} as Record<T, number>
+  )
 }
