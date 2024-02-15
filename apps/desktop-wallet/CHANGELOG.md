@@ -1,5 +1,12 @@
 # alephium-desktop-wallet
 
+## 2.2.3
+
+### Patch Changes
+
+- 5b3d701: Handle WalletConnect requests when app locks
+- d2636e9: Fetch token prices & ALPH history using new Explorer BE endpoints
+
 ## 2.2.2
 
 ### Patch Changes

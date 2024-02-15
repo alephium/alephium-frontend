@@ -1,5 +1,12 @@
 # @alephium/shared
 
+## 0.7.9
+
+### Patch Changes
+
+- 4e8ab94: Move address types from all apps
+- 798e785: Move code from shared to shared-crypto
+
 ## 0.7.8
 
 ### Patch Changes
