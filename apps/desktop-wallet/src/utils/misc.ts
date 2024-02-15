@@ -98,7 +98,3 @@ const electron = _window.electron
 export const restartElectron = () => {
   electron?.app.restart()
 }
-
-export const clearCache = () => {
-  electron?.app.clearCache()
-}

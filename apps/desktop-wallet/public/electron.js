@@ -320,15 +320,6 @@ app.on('ready', async function () {
     app.exit()
   })
 
-  ipcMain.handle('app:clearCache', async () => {
-    const session = mainWindow.webContents.session
-
-    await session.clearCache()
-    await session.clearStorageData({
-      storages: ['cookies', 'filesystem', 'indexdb', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']
-    })
-  })
-
   ipcMain.handle('wc:getDeepLinkUri', () => deepLinkUri)
 
   ipcMain.handle('wc:resetDeepLinkUri', () => {
