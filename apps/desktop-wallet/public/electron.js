@@ -35,6 +35,9 @@ const ALEPHIUM_WALLET_CONNECT_URI_PREFIX = '?uri='
 const OLD_APP_NAME = 'alephium-wallet'
 app.setName(OLD_APP_NAME)
 
+// Expose Garbage Collector flag for manual trigger
+app.commandLine.appendSwitch('js-flags', '--expose-gc')
+
 protocol.registerSchemesAsPrivileged([{ scheme: ALEPHIUM, privileges: { secure: true, standard: true } }])
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
@@ -310,6 +313,11 @@ app.on('ready', async function () {
     } catch (e) {
       console.error(e)
     }
+  })
+
+  ipcMain.handle('app:restart', () => {
+    app.relaunch()
+    app.exit()
   })
 
   ipcMain.handle('wc:getDeepLinkUri', () => deepLinkUri)

@@ -70,7 +70,8 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
       afterUnlock: () => navigate('/wallet/overview')
     })
 
-    if (passphrase) setPassphrase('')
+    setPassphrase('')
+    setPassword('')
   }
 
   return (
