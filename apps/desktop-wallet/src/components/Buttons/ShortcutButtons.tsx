@@ -32,6 +32,7 @@ import SendModalTransfer from '@/modals/SendModals/Transfer'
 import SettingsModal from '@/modals/SettingsModal'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { walletLocked } from '@/storage/wallets/walletActions'
+import { restartElectron } from '@/utils/misc'
 
 interface ShortcutButtonsProps {
   analyticsOrigin: string
@@ -74,6 +75,8 @@ const ShortcutButtons = ({
     dispatch(walletLocked())
 
     posthog.capture('Locked wallet', { origin: analyticsOrigin })
+
+    restartElectron()
   }
 
   const handleReceiveClick = () => {

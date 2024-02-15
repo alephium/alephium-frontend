@@ -37,6 +37,7 @@ import { activeWalletDeleted, walletLocked } from '@/storage/wallets/walletActio
 import { walletDeleted } from '@/storage/wallets/walletActions'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
 import { ActiveWallet, StoredWallet } from '@/types/wallet'
+import { restartElectron } from '@/utils/misc'
 
 const WalletsSettingsSection = () => {
   const { t } = useTranslation()
@@ -65,6 +66,8 @@ const WalletsSettingsSection = () => {
     dispatch(walletLocked())
 
     posthog.capture('Locked wallet', { origin: 'settings' })
+
+    restartElectron()
   }
 
   return (

@@ -20,6 +20,8 @@ import { createHash } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { KeyboardEvent } from 'react'
 
+import { AlephiumWindow } from '@/types/window'
+
 // ===================== //
 // ==== RUNNING ENV ==== //
 // ===================== //
@@ -87,3 +89,10 @@ export function removeItemFromArray<T>(array: T[], index: number) {
 }
 
 export const cleanUrl = (url: string) => url.replace('https://', '')
+
+const _window = window as unknown as AlephiumWindow
+const electron = _window.electron
+
+export const restartElectron = () => {
+  electron?.app.restart()
+}

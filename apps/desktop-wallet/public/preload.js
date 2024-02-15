@@ -65,6 +65,7 @@ contextBridge.exposeInMainWorld('electron', {
     hide: () => ipcRenderer.invoke('app:hide'),
     show: () => ipcRenderer.invoke('app:show'),
     getSystemLanguage: () => ipcRenderer.invoke('app:getSystemLanguage'),
-    setProxySettings: (proxySettings) => ipcRenderer.invoke('app:setProxySettings', proxySettings)
+    setProxySettings: (proxySettings) => ipcRenderer.invoke('app:setProxySettings', proxySettings),
+    restart: () => ipcRenderer.invoke('app:restart')
   }
 })
