@@ -312,6 +312,11 @@ app.on('ready', async function () {
     }
   })
 
+  ipcMain.handle('app:restart', () => {
+    app.relaunch()
+    app.exit()
+  })
+
   ipcMain.handle('wc:getDeepLinkUri', () => deepLinkUri)
 
   ipcMain.handle('wc:resetDeepLinkUri', () => {

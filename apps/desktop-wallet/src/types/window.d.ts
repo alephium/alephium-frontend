@@ -51,6 +51,7 @@ export interface AlephiumWindow extends Window {
       show: () => void
       getSystemLanguage: () => Promise<string | undefined>
       setProxySettings: (proxySettings: ProxySettings) => Promise<void>
+      restart: () => void
     }
   }
 }
