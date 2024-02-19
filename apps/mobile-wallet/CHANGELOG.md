@@ -1,5 +1,15 @@
 # @alephium/mobile-wallet
 
+## 1.0.6
+
+### Patch Changes
+
+- 782daee: Fix display of failed transactions
+- 9eb2ca9: Fix connecting to devnet through WalletConnect
+- 28f2703: Add button to open camera from WalletConnect pairings modal
+- d409af2: Fix display of received transactions that were displayed as moved
+- 66edd8a: Display token prices
+
 ## 1.0.5
 
 ### Patch Changes
