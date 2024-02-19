@@ -26,7 +26,7 @@ import AssetLogo from '~/components/AssetLogo'
 import ListItem, { ListItemProps } from '~/components/ListItem'
 import { useTransactionUI } from '~/hooks/useTransactionUI'
 import { AddressTransaction } from '~/types/transactions'
-import { getTransactionInfo } from '~/utils/transactions'
+import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
 
 dayjs.extend(relativeTime)
 
@@ -37,7 +37,8 @@ interface TransactionListItemProps extends Partial<ListItemProps> {
 
 const TransactionListItem = ({ tx, showInternalInflows = false, ...props }: TransactionListItemProps) => {
   const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
-  const { Icon, iconColor, iconBgColor, label } = useTransactionUI(infoType)
+  const isFailedScriptTx = !isPendingTx(tx) && !tx.scriptExecutionOk
+  const { Icon, iconColor, iconBgColor, label } = useTransactionUI({ infoType, isFailedScriptTx })
 
   const isMoved = infoType === 'move'
   const knownAssets = assets.filter((asset) => !!asset.symbol)
@@ -50,6 +51,7 @@ const TransactionListItem = ({ tx, showInternalInflows = false, ...props }: Tran
       icon={
         <TransactionIcon color={iconBgColor}>
           <Icon size={16} strokeWidth={3} color={iconColor} />
+          {isFailedScriptTx && <FailedTXBubble>!</FailedTXBubble>}
         </TransactionIcon>
       }
       rightSideContent={
@@ -94,6 +96,7 @@ const TransactionIcon = styled.View<{ color?: string }>`
   height: 34px;
   border-radius: 34px;
   background-color: ${({ color, theme }) => color || theme.font.primary};
+  position: relative;
 `
 
 const AmountColumn = styled.View`
@@ -115,4 +118,18 @@ const AssetLogos = styled.View`
 
 const AmountStyled = styled(Amount)`
   text-align: right;
+`
+
+const FailedTXBubble = styled.Text`
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  border-radius: 14px;
+  background-color: ${({ theme }) => theme.global.alert};
+  color: white;
+  top: -5px;
+  right: -5px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
 `
