@@ -1,5 +1,14 @@
 # @alephium/shared
 
+## 0.7.9
+
+### Patch Changes
+
+- ef604c3: Add currencies
+- 66edd8a: Migrate price Redux state from dw
+- 4e8ab94: Move address types from all apps
+- 798e785: Move code from shared to shared-crypto
+
 ## 0.7.8
 
 ### Patch Changes
