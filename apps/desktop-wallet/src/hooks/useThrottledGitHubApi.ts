@@ -27,7 +27,7 @@ const ONE_HOUR_IN_MS = 1000 * 60 * 60
 const useThrottledGitHubApi = (githubApiCallback: (appMetadata: AppMetaData) => Promise<void>) => {
   const [timeoutDelay, setTimeoutDelay] = useState(0)
 
-  useTimeout(() => {
+  const timeoutCallback = () => {
     const now = new Date()
     const lastTimeGitHubApiWasCalled = getLastTimeGitHubApiWasCalled()
     const timePassedSinceGitHubApiWasCalledInMs = now.getTime() - lastTimeGitHubApiWasCalled.getTime()
@@ -40,7 +40,9 @@ const useThrottledGitHubApi = (githubApiCallback: (appMetadata: AppMetaData) => 
     } else {
       setTimeoutDelay(timePassedSinceGitHubApiWasCalledInMs)
     }
-  }, timeoutDelay)
+  }
+
+  useTimeout(timeoutCallback, timeoutDelay)
 }
 
 const getLastTimeGitHubApiWasCalled = (): Date => {
