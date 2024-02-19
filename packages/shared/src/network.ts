@@ -18,22 +18,22 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { clone } from 'lodash'
 
-import { NetworkName, NetworkPreset, NetworkSettings } from '@/types/network'
+import { NetworkName, NetworkNames, NetworkPreset, NetworkSettings } from '@/types/network'
 
 export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
-  mainnet: {
+  [NetworkNames.mainnet]: {
     networkId: 0,
     nodeHost: 'https://node-v20.mainnet.alephium.org',
     explorerApiHost: 'https://backend-v115.mainnet.alephium.org',
     explorerUrl: 'https://explorer.alephium.org'
   },
-  testnet: {
+  [NetworkNames.testnet]: {
     networkId: 1,
     nodeHost: 'https://node-v20.testnet.alephium.org',
     explorerApiHost: 'https://backend-v115.testnet.alephium.org',
     explorerUrl: 'https://testnet.alephium.org'
   },
-  localhost: {
+  [NetworkNames.devnet]: {
     networkId: 4,
     nodeHost: 'http://localhost:22973',
     explorerApiHost: 'http://localhost:9090',

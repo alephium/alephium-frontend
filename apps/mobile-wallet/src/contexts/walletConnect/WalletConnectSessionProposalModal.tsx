@@ -88,7 +88,11 @@ const WalletConnectSessionProposalModal = ({
   }, [addressesInGroup])
 
   const handleSwitchNetworkPress = async () => {
-    if (requiredChainInfo?.networkId === 'mainnet' || requiredChainInfo?.networkId === 'testnet') {
+    if (
+      requiredChainInfo?.networkId === 'mainnet' ||
+      requiredChainInfo?.networkId === 'testnet' ||
+      requiredChainInfo?.networkId === 'devnet'
+    ) {
       await persistSettings('network', networkSettingsPresets[requiredChainInfo?.networkId])
       dispatch(networkPresetSwitched(NetworkNames[requiredChainInfo?.networkId]))
     }

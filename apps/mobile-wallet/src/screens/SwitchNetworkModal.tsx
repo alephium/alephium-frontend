@@ -28,8 +28,6 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { persistSettings } from '~/persistent-storage/settings'
 
-const networkNames = Object.values(NetworkNames)
-
 interface SwitchNetworkModalProps extends ModalContentProps {
   onCustomNetworkPress: () => void
 }
@@ -63,7 +61,7 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
       </ScreenSection>
       <View>
         <BoxSurface>
-          {networkNames.map((networkName) => (
+          {Object.values(NetworkNames).map((networkName) => (
             <RadioButtonRow
               key={networkName}
               title={capitalize(networkName)}
