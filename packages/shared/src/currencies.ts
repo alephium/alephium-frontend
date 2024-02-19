@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Currency } from '~/types/settings'
+import { Currency } from '@/types/currencies'
 
 type CurrencyData = {
   name: string
@@ -24,7 +24,7 @@ type CurrencyData = {
   symbol: string
 }
 
-export const currencies: Record<Currency, CurrencyData> = {
+export const CURRENCIES: Record<Currency, CurrencyData> = {
   CHF: {
     name: 'Swiss francs',
     ticker: 'CHF',

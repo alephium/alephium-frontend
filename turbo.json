@@ -15,6 +15,7 @@
       "outputs": ["dist/**"]
     },
     "watch": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },

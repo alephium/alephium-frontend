@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Currency } from '@alephium/shared'
+import { CURRENCIES, Currency } from '@alephium/shared'
 
 import { SelectOption } from '@/components/Inputs/Select'
 import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
@@ -36,16 +36,10 @@ export const languageOptions: SelectOption<Language>[] = [
   { label: 'Tiếng Việt', value: 'vi-VN' }
 ]
 
-export const fiatCurrencyOptions: SelectOption<Currency>[] = [
-  { label: 'CHF', value: 'CHF' },
-  { label: 'EUR', value: 'EUR' },
-  { label: 'GBP', value: 'GBP' },
-  { label: 'USD', value: 'USD' },
-  { label: 'IDR', value: 'IDR' },
-  { label: 'VND', value: 'VND' },
-  { label: 'RUB', value: 'RUB' },
-  { label: 'TRY', value: 'TRY' }
-]
+export const fiatCurrencyOptions: SelectOption<Currency>[] = Object.values(CURRENCIES).map((currency) => ({
+  label: currency.ticker,
+  value: currency.ticker
+}))
 
 export const locktimeInMinutes = [0, 2, 5, 10, 30]
 

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -41,7 +41,6 @@ import {
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
-import { currencies } from '@/utils/currencies'
 
 interface AddressesContactsListProps {
   className?: string
@@ -121,7 +120,7 @@ const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
-  return <AmountStyled value={balanceInFiat} isFiat suffix={currencies[fiatCurrency].symbol} tabIndex={0} />
+  return <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />
 }
 
 export default styled(AddressesContactsList)`
