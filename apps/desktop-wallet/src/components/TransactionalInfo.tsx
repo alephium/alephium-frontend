@@ -62,10 +62,8 @@ const TransactionalInfo = ({
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
   const { assets, direction, lockTime, infoType } = getTransactionInfo(tx, showInternalInflows)
   const isPending = isPendingTx(tx)
-  const { label, Icon, iconColor, iconBgColor } = useTransactionUI({
-    infoType,
-    isFailedScriptTx: !isPending && !tx.scriptExecutionOk
-  })
+  const isFailedScriptTx = !isPending && !tx.scriptExecutionOk
+  const { label, Icon, iconColor, iconBgColor } = useTransactionUI({ infoType, isFailedScriptTx })
 
   const isMoved = infoType === 'move'
 
@@ -87,9 +85,11 @@ const TransactionalInfo = ({
         <CellArrow>
           <TransactionIcon color={iconBgColor}>
             <Icon size={13} strokeWidth={3} color={iconColor} />
-            <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
-              !
-            </FailedTXBubble>
+            {isFailedScriptTx && (
+              <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
+                !
+              </FailedTXBubble>
+            )}
           </TransactionIcon>
         </CellArrow>
         <DirectionAndTime>
