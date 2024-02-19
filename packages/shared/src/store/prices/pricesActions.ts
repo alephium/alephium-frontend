@@ -68,23 +68,24 @@ export const syncTokenPriceHistories = createAsyncThunk(
           })
           .then((rawHistory) => {
             const today = dayjs().format(CHART_DATE_FORMAT)
-            let history = [] as TokenHistoricalPrice[]
+            const history = [] as TokenHistoricalPrice[]
 
             if (rawHistory.timestamps && rawHistory.prices) {
-              const pricesHistoryArray = rawHistory.prices
+              for (let index = 0; index < rawHistory.timestamps.length; index++) {
+                const timestamp = rawHistory.timestamps[index]
+                const price = rawHistory.prices[index]
 
-              history = rawHistory.timestamps.reduce((acc, v, index) => {
-                const itemDate = dayjs(v).format(CHART_DATE_FORMAT)
-                const prevItemDate = acc.length > 0 ? acc[index - 1].date : undefined
+                const itemDate = dayjs(timestamp).format(CHART_DATE_FORMAT)
+                const prevItemDate =
+                  index > 1 ? dayjs(rawHistory.timestamps[index - 1]).format(CHART_DATE_FORMAT) : undefined
 
-                if (itemDate !== prevItemDate && itemDate !== today)
-                  acc.push({
+                if (itemDate !== prevItemDate && itemDate !== today) {
+                  history.push({
                     date: itemDate,
-                    value: pricesHistoryArray[index]
+                    value: price
                   })
-
-                return acc
-              }, [] as TokenHistoricalPrice[])
+                }
+              }
             }
 
             return {
