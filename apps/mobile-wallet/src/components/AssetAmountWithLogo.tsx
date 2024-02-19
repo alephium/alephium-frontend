@@ -16,14 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
+import { Asset, selectFungibleTokenById, selectNFTById } from '@alephium/shared'
 import styled from 'styled-components/native'
 
 import Amount, { AmountProps } from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
 import { NFTThumbnail } from '~/components/NFTsGrid'
 import { useAppSelector } from '~/hooks/redux'
-import { selectFungibleTokenById, selectNFTById } from '~/store/assets/assetsSelectors'
 
 interface AssetAmountWithLogoProps extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand'> {
   assetId: Asset['id']

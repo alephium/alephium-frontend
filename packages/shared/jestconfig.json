@@ -6,5 +6,8 @@
   "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
   "collectCoverage": true,
   "coverageDirectory": "./coverage/",
-  "collectCoverageFrom": ["lib/**/*.ts"]
+  "collectCoverageFrom": ["src/**/*.ts"],
+  "moduleNameMapper": {
+    "@/(.*)": "<rootDir>/src/$1"
+  }
 }

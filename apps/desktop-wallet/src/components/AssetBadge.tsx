@@ -16,13 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
+import { Asset, selectFungibleTokenById, selectNFTById } from '@alephium/shared'
 import styled, { css } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import { useAppSelector } from '@/hooks/redux'
-import { selectFungibleTokenById, selectNFTById } from '@/storage/assets/assetsSelectors'
 
 interface AssetBadgeProps {
   assetId: Asset['id']

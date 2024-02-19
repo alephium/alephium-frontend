@@ -28,7 +28,7 @@ import {
   fromHumanReadableAmount,
   produceZeros,
   toHumanReadableAmount
-} from '../lib/numbers'
+} from '../src/numbers'
 
 const minDigits = 3
 

@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import {
+  Contact,
+  contactDeletedFromPersistentStorage,
+  ContactFormData,
+  contactStoredInPersistentStorage,
+  getHumanReadableError
+} from '@alephium/shared'
 import { isEmpty } from 'lodash'
 import { UserMinus } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -30,14 +36,8 @@ import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import ConfirmModal from '@/modals/ConfirmModal'
 import ModalPortal from '@/modals/ModalPortal'
-import {
-  contactDeletedFromPeristentStorage,
-  contactDeletionFailed,
-  contactStorageFailed,
-  contactStoredInPersistentStorage
-} from '@/storage/addresses/addressesActions'
+import { contactDeletionFailed, contactStorageFailed } from '@/storage/addresses/addressesActions'
 import ContactsStorage from '@/storage/addresses/contactsPersistentStorage'
-import { Contact, ContactFormData } from '@/types/contacts'
 import {
   isAddressValid,
   isContactAddressValid,
@@ -84,7 +84,7 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
 
     try {
       ContactsStorage.deleteContact(contact)
-      dispatch(contactDeletedFromPeristentStorage(contact.id))
+      dispatch(contactDeletedFromPersistentStorage(contact.id))
       posthog.capture('Deleted contact')
     } catch (e) {
       dispatch(contactDeletionFailed(getHumanReadableError(e, t('Could not delete contact.'))))

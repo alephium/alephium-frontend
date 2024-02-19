@@ -16,15 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import {
+  Contact,
+  contactDeletedFromPersistentStorage,
+  ContactFormData,
+  contactStoredInPersistentStorage
+} from '@alephium/shared'
 import { nanoid } from 'nanoid'
 
 import { getWalletMetadata, persistWalletMetadata } from '~/persistent-storage/wallet'
-import {
-  contactDeletedFromPersistentStorage,
-  contactStoredInPersistentStorage
-} from '~/store/addresses/addressesActions'
 import { store } from '~/store/store'
-import { Contact, ContactFormData } from '~/types/contacts'
 
 export const persistContact = async (contactData: ContactFormData) => {
   const metadata = await getWalletMetadata()

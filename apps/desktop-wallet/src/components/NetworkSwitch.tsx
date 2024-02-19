@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { upperFirst } from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -29,8 +30,6 @@ import Select from '@/components/Inputs/Select'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import SettingsModal from '@/modals/SettingsModal'
-import { networkPresetSwitched } from '@/storage/settings/networkActions'
-import { networkPresets } from '@/storage/settings/settingsPersistentStorage'
 import { NetworkName, NetworkNames } from '@/types/network'
 
 interface NetworkSelectOption {
@@ -68,7 +67,7 @@ const NetworkSwitch = () => {
           return
         }
 
-        const newNetworkSettings = networkPresets[networkName]
+        const newNetworkSettings = networkSettingsPresets[networkName]
 
         const networkId = newNetworkSettings.networkId
 

@@ -16,12 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
+import { Asset, selectAllFungibleTokens, selectNFTIds } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { makeSelectAddresses } from '~/store/addressesSlice'
-import { selectAllFungibleTokens, selectNFTIds } from '~/store/assets/assetsSelectors'
 import { selectAllConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
 

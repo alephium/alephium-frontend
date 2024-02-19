@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ContactFormData } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 
@@ -25,7 +26,6 @@ import SpinnerModal from '~/components/SpinnerModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
-import { ContactFormData } from '~/types/contacts'
 import { showExceptionToast } from '~/utils/layout'
 
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}

@@ -16,13 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import {
+  client,
+  customNetworkSettingsSaved,
+  getNetworkName,
+  networkPresetSwitched,
+  NetworkSettings,
+  networkSettingsPresets
+} from '@alephium/shared'
 import { AlertOctagon } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import client from '@/api/client'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
@@ -32,13 +39,9 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import i18next from '@/i18n'
-import { customNetworkSettingsSaved, networkPresetSwitched } from '@/storage/settings/networkActions'
-import { networkPresets } from '@/storage/settings/settingsPersistentStorage'
 import { NetworkName, NetworkNames } from '@/types/network'
-import { NetworkSettings } from '@/types/settings'
 import { AlephiumWindow } from '@/types/window'
 import { useMountEffect } from '@/utils/hooks'
-import { getNetworkName } from '@/utils/settings'
 
 interface NetworkSelectOption {
   label: string
@@ -110,7 +113,7 @@ const NetworkSettingsSection = () => {
 
         setAdvancedSectionOpen(false)
 
-        const newNetworkSettings = networkPresets[networkName]
+        const newNetworkSettings = networkSettingsPresets[networkName]
 
         let networkId = newNetworkSettings.networkId
 

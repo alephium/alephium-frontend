@@ -16,7 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { CHART_DATE_FORMAT, toHumanReadableAmount } from '@alephium/shared'
+import {
+  CHART_DATE_FORMAT,
+  selectAlphPriceHistory,
+  toHumanReadableAmount,
+  TokenHistoricalPrice
+} from '@alephium/shared'
 import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
@@ -33,7 +38,6 @@ import { useAppSelector } from '~/hooks/redux'
 import useWorthDelta from '~/hooks/useWorthDelta'
 import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
 import { selectAllAddresses } from '~/store/addressesSlice'
-import { HistoricalPriceResult, useGetHistoricalPriceQuery } from '~/store/assets/priceApiSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 import { ChartLength, chartLengths, DataPoint, LatestAmountPerAddress } from '~/types/charts'
@@ -60,7 +64,7 @@ const chartItemsMargin = 15
 
 const HistoricWorthChart = ({ latestWorth, currency, onWorthInBeginningOfChartChange, style }: HistoricWorthChart) => {
   const theme = useTheme()
-  const { data: alphPriceHistory } = useGetHistoricalPriceQuery({ currency, days: 365 })
+  const alphPriceHistory = useAppSelector(selectAlphPriceHistory)
   const addresses = useAppSelector(selectAllAddresses)
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
@@ -169,13 +173,13 @@ const getFilteredChartData = (chartData: DataPoint[], startingDate: string) => {
 const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
 
 const computeChartDataPoints = (
-  alphPriceHistory: HistoricalPriceResult[],
+  alphPriceHistory: TokenHistoricalPrice[],
   addresses: Address[],
   latestWorth: number
 ): DataPoint[] => {
   const addressesLatestAmount: LatestAmountPerAddress = {}
 
-  const dataPoints = alphPriceHistory.map(({ date, price }) => {
+  const dataPoints = alphPriceHistory.map(({ date, value }) => {
     let totalAmountPerDate = BigInt(0)
 
     addresses.forEach(({ hash, balanceHistory }) => {
@@ -192,7 +196,7 @@ const computeChartDataPoints = (
 
     return {
       date,
-      worth: price * parseFloat(toHumanReadableAmount(totalAmountPerDate))
+      worth: value * parseFloat(toHumanReadableAmount(totalAmountPerDate))
     }
   })
 

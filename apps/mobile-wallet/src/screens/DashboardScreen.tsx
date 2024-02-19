@@ -47,8 +47,8 @@ import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import {
   selectAddressIds,
   selectTotalBalance,
-  syncAddressesData,
-  syncAddressesHistoricBalances
+  syncAddressesAlphHistoricBalances,
+  syncAddressesData
 } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -93,7 +93,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const refreshData = () => {
     if (!isLoading) {
       dispatch(syncAddressesData(addressHashes))
-      dispatch(syncAddressesHistoricBalances(addressHashes))
+      dispatch(syncAddressesAlphHistoricBalances(addressHashes))
     }
   }
 

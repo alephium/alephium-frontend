@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Contact } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import ContactListScreenBase from '~/screens/ContactListScreenBase'
-import { Contact } from '~/types/contacts'
 
 const ContactsScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()

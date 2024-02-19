@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
 import { AlertTriangle, PlusSquare } from 'lucide-react-native'
 import { useEffect, useRef, useState } from 'react'
@@ -33,17 +34,15 @@ import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Scree
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
+import { persistSettings } from '~/persistent-storage/settings'
 import { selectAddressesInGroup } from '~/store/addresses/addressesSelectors'
 import {
   newAddressGenerated,
   selectAllAddresses,
-  syncAddressesData,
-  syncAddressesHistoricBalances
+  syncAddressesAlphHistoricBalances,
+  syncAddressesData
 } from '~/store/addressesSlice'
-import { networkPresetSwitched } from '~/store/networkSlice'
 import { Address } from '~/types/addresses'
-import { NetworkName } from '~/types/network'
 import { SessionProposalEvent } from '~/types/walletConnect'
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed } from '~/utils/crypto'
@@ -90,8 +89,8 @@ const WalletConnectSessionProposalModal = ({
 
   const handleSwitchNetworkPress = async () => {
     if (requiredChainInfo?.networkId === 'mainnet' || requiredChainInfo?.networkId === 'testnet') {
-      await persistSettings('network', networkPresetSettings[requiredChainInfo?.networkId])
-      dispatch(networkPresetSwitched(NetworkName[requiredChainInfo?.networkId]))
+      await persistSettings('network', networkSettingsPresets[requiredChainInfo?.networkId])
+      dispatch(networkPresetSwitched(NetworkNames[requiredChainInfo?.networkId]))
     }
   }
 
@@ -106,7 +105,7 @@ const WalletConnectSessionProposalModal = ({
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
       await dispatch(syncAddressesData(newAddress.hash))
-      await dispatch(syncAddressesHistoricBalances(newAddress.hash))
+      await dispatch(syncAddressesAlphHistoricBalances([newAddress.hash]))
 
       sendAnalytics('WC: Generated new address')
     } catch (e) {

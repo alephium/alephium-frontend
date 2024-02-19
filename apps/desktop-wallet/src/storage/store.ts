@@ -16,18 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
 import addressesSlice from '@/storage/addresses/addressesSlice'
 import contactsSlice from '@/storage/addresses/contactsSlice'
-import fungibleTokensSlice from '@/storage/assets/fungibleTokensSlice'
-import nftsSlice from '@/storage/assets/nftsSlice'
 import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
-import pricesHistorySlice from '@/storage/prices/pricesHistorySlice'
-import pricesSlice from '@/storage/prices/pricesSlice'
-import networkSlice, { networkListenerMiddleware } from '@/storage/settings/networkSlice'
+import { networkListenerMiddleware } from '@/storage/settings/networkMiddleware'
 import settingsSlice, { settingsListenerMiddleware } from '@/storage/settings/settingsSlice'
 import confirmedTransactionsSlice from '@/storage/transactions/confirmedTransactionsSlice'
 import pendingTransactionsSlice, {
@@ -37,19 +34,15 @@ import activeWalletSlice from '@/storage/wallets/activeWalletSlice'
 
 export const store = configureStore({
   reducer: {
+    ...sharedReducer,
     [globalSlice.name]: globalSlice.reducer,
     [activeWalletSlice.name]: activeWalletSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
     [settingsSlice.name]: settingsSlice.reducer,
-    [networkSlice.name]: networkSlice.reducer,
     [addressesSlice.name]: addressesSlice.reducer,
     [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
     [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
-    [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
-    [snackbarSlice.name]: snackbarSlice.reducer,
-    [pricesSlice.name]: pricesSlice.reducer,
-    [pricesHistorySlice.name]: pricesHistorySlice.reducer,
-    [nftsSlice.name]: nftsSlice.reducer
+    [snackbarSlice.name]: snackbarSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

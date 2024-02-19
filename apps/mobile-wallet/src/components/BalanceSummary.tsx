@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth, selectAlphPrice } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ViewProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -32,9 +32,8 @@ import { useAppSelector } from '~/hooks/redux'
 import useWorthDelta from '~/hooks/useWorthDelta'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
+import { makeSelectAddressesTokensWorth, selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
-import { useGetPriceQuery } from '~/store/assets/priceApiSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { DataPoint } from '~/types/charts'
 import { currencies } from '~/utils/currencies'
@@ -49,11 +48,9 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
-
-  const { data: price } = useGetPriceQuery(currencies[currency].ticker, {
-    pollingInterval: 60000,
-    skip: totalBalance === BigInt(0)
-  })
+  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
+  const alphPrice = useAppSelector(selectAlphPrice)
 
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
@@ -61,7 +58,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
   const worthDelta = useWorthDelta(worthInBeginningOfChart)
 
-  const totalAmountWorth = calculateAmountWorth(totalBalance, price ?? 0)
+  const totalAlphAmountWorth = calculateAmountWorth(totalBalance, alphPrice ?? 0)
 
   const deltaColor = worthDelta < 0 ? theme.global.alert : worthDelta > 0 ? theme.global.valid : theme.bg.tertiary
 
@@ -95,13 +92,13 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
             </AppText>
           </DateLabelContainer>
 
-          <Amount value={totalAmountWorth} isFiat suffix={currencies[currency].symbol} bold size={38} />
+          <Amount value={balanceInFiat} isFiat suffix={currencies[currency].symbol} bold size={38} />
         </TextContainer>
 
         <ChartContainer>
           <HistoricWorthChart
             currency={currency}
-            latestWorth={totalAmountWorth}
+            latestWorth={totalAlphAmountWorth}
             onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
           />
         </ChartContainer>
