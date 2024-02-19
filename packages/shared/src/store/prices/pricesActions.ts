@@ -24,7 +24,7 @@ import { client } from '@/api/client'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { CHART_DATE_FORMAT } from '@/constants'
 import { TokenHistoricalPrice, TokenPriceEntity, TokenPriceHistoryEntity } from '@/types/price'
-import { isFulfilled } from '@/utils'
+import { isPromiseFulfilled } from '@/utils'
 
 export const syncTokenCurrentPrices = createAsyncThunk(
   'assets/syncTokenCurrentPrices',
@@ -49,7 +49,7 @@ export const syncTokenCurrentPrices = createAsyncThunk(
       )
     )
 
-    tokenPrices = promiseResults.filter(isFulfilled).flatMap((r) => r.value)
+    tokenPrices = promiseResults.filter(isPromiseFulfilled).flatMap((r) => r.value)
 
     return tokenPrices
   }
@@ -96,7 +96,7 @@ export const syncTokenPriceHistories = createAsyncThunk(
       )
     )
 
-    tokenPriceHistories = promiseResults.filter(isFulfilled).flatMap((r) => r.value)
+    tokenPriceHistories = promiseResults.filter(isPromiseFulfilled).flatMap((r) => r.value)
 
     return tokenPriceHistories
   }

@@ -28,7 +28,7 @@ import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { SharedRootState } from '@/store/store'
 import { Asset, FungibleTokenBasicMetadata, NFT } from '@/types/assets'
-import { isFulfilled } from '@/utils'
+import { isPromiseFulfilled } from '@/utils'
 
 export const syncVerifiedFungibleTokens = createAsyncThunk(
   'assets/syncVerifiedFungibleTokens',
@@ -139,7 +139,7 @@ export const syncNFTsInfo = createAsyncThunk('assets/syncNFTsInfo', async (token
         .then((data) => ({ ...data, id }))
     )
   )
-  const nftsData = promiseResults.filter(isFulfilled).flatMap((r) => r.value)
+  const nftsData = promiseResults.filter(isPromiseFulfilled).flatMap((r) => r.value)
 
   nfts = nftsMetadata.map(({ id, collectionId }) => ({
     id,

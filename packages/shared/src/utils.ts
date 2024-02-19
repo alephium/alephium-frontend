@@ -20,4 +20,5 @@ export function uniq<T>(array: T[]): Array<T> {
   return Array.from(new Set(array))
 }
 
-export const isFulfilled = <T>(p: PromiseSettledResult<T>): p is PromiseFulfilledResult<T> => p.status === 'fulfilled'
+export const isPromiseFulfilled = <T>(p: PromiseSettledResult<T>): p is PromiseFulfilledResult<T> =>
+  p.status === 'fulfilled'
