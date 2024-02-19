@@ -34,7 +34,6 @@ import { walletLocked, walletSwitched, walletUnlocked } from '@/storage/wallets/
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
 import { AlephiumWindow } from '@/types/window'
 import { migrateUserData } from '@/utils/migration'
-import { restartElectron } from '@/utils/misc'
 import { getWalletInitialAddress } from '@/utils/wallet'
 
 interface WalletUnlockProps {
@@ -136,7 +135,6 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
   useIdleForTooLong(
     () => {
       dispatch(walletLocked())
-      restartElectron()
     },
     (settings.walletLockTimeInMinutes || 0) * 60 * 1000
   )

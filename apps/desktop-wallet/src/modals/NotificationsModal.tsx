@@ -29,7 +29,6 @@ import { useAppDispatch } from '@/hooks/redux'
 import ModalContainer, { ModalContainerProps } from '@/modals/ModalContainer'
 import { walletLocked } from '@/storage/wallets/walletActions'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
-import { restartElectron } from '@/utils/misc'
 
 const NotificationsModal = ({ onClose, focusMode }: ModalContainerProps) => {
   const { t } = useTranslation()
@@ -40,8 +39,6 @@ const NotificationsModal = ({ onClose, focusMode }: ModalContainerProps) => {
     dispatch(walletLocked())
 
     posthog.capture('Locked wallet', { origin: 'notifications' })
-
-    restartElectron()
   }
 
   return (
