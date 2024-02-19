@@ -20,6 +20,6 @@ import fetchRetry from 'fetch-retry'
 
 export const exponentialBackoffFetchRetry = fetchRetry(fetch, {
   retryOn: (attempt, error, response) => !!response && response.status === 429,
-  retries: 10,
+  retries: 3,
   retryDelay: (attempt) => Math.pow(2, attempt) * 1000
 })
