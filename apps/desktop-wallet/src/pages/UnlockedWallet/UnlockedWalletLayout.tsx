@@ -229,8 +229,8 @@ const SideNavigation = styled.nav`
 const RefreshButton = styled(Button)``
 
 const CurrentWalletInitials = styled(motion.div)`
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-full);
   border: 1px solid ${({ theme }) => theme.border.primary};
   display: flex;

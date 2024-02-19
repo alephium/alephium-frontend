@@ -34,6 +34,7 @@ import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
+import AnnouncementBanner from '@/components/AnnouncementBanner'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -284,6 +285,7 @@ const App = () => {
             <Router />
           </CenteredSection>
           <BannerSection>{newVersion && <UpdateWalletBanner />}</BannerSection>
+          <AnnouncementBanner />
         </AppContainer>
       </WalletConnectContextProvider>
 

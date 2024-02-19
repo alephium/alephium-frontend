@@ -23,8 +23,8 @@ import tags from '@/style/tags'
 import { isElectron } from '@/utils/misc'
 
 export const appHeaderHeightPx = 60
-
 export const walletSidebarWidthPx = 75
+export const messagesLeftMarginPx = 70
 
 const extensionWindowDimensions = `
   height: 600px;

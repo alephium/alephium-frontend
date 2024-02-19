@@ -25,6 +25,7 @@ import styled from 'styled-components'
 import { fadeInOut } from '@/animations'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
+import { messagesLeftMarginPx } from '@/style/globalStyles'
 
 interface GreetingMessagesProps {
   className?: string
@@ -98,8 +99,8 @@ export default styled(GreetingMessages)`
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  height: 44px;
-  margin-left: 70px;
+  height: 48px;
+  margin-left: ${messagesLeftMarginPx}px;
   font-size: 16px;
   font-weight: var(--fontWeight-normal);
   color: ${({ theme }) => theme.font.secondary};
