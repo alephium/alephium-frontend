@@ -1,10 +1,6 @@
 {
-  "isActive": true,
-  "title": "This is the first announcement!",
-  "description": "Implemented with a very elegant solution, that will make Mikapuccino very happy! Let's see!",
-  "type": "info",
-  "button": {
-    "title": "Download",
-    "link": "https://github.com/alephium/alephium-frontend/"
-  }
+  "isActive": false,
+  "title": "",
+  "description": "",
+  "type": "info"
 }
