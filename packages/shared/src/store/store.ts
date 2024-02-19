@@ -16,13 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { configureStore } from '@reduxjs/toolkit'
+import { AnyAction, Dispatch, ThunkDispatch } from '@reduxjs/toolkit'
 
 import fungibleTokensSlice from '@/store/assets/fungibleTokensSlice'
 import nftsSlice from '@/store/assets/nftsSlice'
 import networkSlice from '@/store/network/networkSlice'
 import pricesHistorySlice from '@/store/prices/pricesHistorySlice'
 import pricesSlice from '@/store/prices/pricesSlice'
+import { FungibleTokensState, NFTsState } from '@/types/assets'
+import { NetworkState } from '@/types/network'
+import { PricesHistoryState, PricesState } from '@/types/price'
 
 export const sharedReducer = {
   [pricesSlice.name]: pricesSlice.reducer,
@@ -32,10 +35,19 @@ export const sharedReducer = {
   [networkSlice.name]: networkSlice.reducer
 }
 
-const sharedStore = configureStore({
-  reducer: sharedReducer,
-  devTools: false
-})
+// The following 2 types could have been extracted by creating a shared redux store. But since every app defines its own
+// store we end up with 2 Redux stores. This can be avoided by defining the 2 types manually.
+//
+// const sharedStore = configureStore({ reducer: sharedReducer })
+// export type SharedRootState = ReturnType<typeof sharedStore.getState>
+// export type SharedDispatch = typeof sharedStore.dispatch
 
-export type SharedRootState = ReturnType<typeof sharedStore.getState>
-export type SharedDispatch = typeof sharedStore.dispatch
+export type SharedRootState = {
+  [pricesSlice.name]: PricesState
+  [pricesHistorySlice.name]: PricesHistoryState
+  [fungibleTokensSlice.name]: FungibleTokensState
+  [nftsSlice.name]: NFTsState
+  [networkSlice.name]: NetworkState
+}
+
+export type SharedDispatch = ThunkDispatch<SharedRootState, undefined, AnyAction> & Dispatch<AnyAction>
