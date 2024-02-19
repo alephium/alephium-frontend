@@ -1,0 +1,41 @@
+name: Build mobile wallet with EAS
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform to build for
+        type: choice
+        required: true
+        default: android
+        options:
+          - android
+          - ios-registered-devices
+          - ios-testflight
+
+jobs:
+  eas-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repository
+        uses: actions/checkout@v3
+
+      - name: 🏗 Setup monorepo
+        uses: ./.github/actions/setup-monorepo
+        with:
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 🤖 Build and submit Android draft release on internal track
+        if: ${{ github.event.inputs.platform == 'android' }}
+        working-directory: apps/mobile-wallet
+        run: eas build --platform=android --profile=production --non-interactive --wait --auto-submit
+
+      - name: 🍏📱 Build iOS internal release for registered devices only
+        if: ${{ github.event.inputs.platform == 'ios-registered-devices' }}
+        working-directory: apps/mobile-wallet
+        run: eas build --platform=ios --profile=internal --non-interactive --wait
+
+      - name: 🍏✈️ Build and submit iOS TestFlight release
+        if: ${{ github.event.inputs.platform == 'ios-testflight' }}
+        working-directory: apps/mobile-wallet
+        run: eas build --platform=ios --profile=production --non-interactive --wait --auto-submit
