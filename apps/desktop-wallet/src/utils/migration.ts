@@ -172,7 +172,8 @@ export const _v153_networkSettingsMigration = () =>
     'https://wallet-v16.mainnet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
     'https://wallet-v16.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
     'https://backend-v112.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
-    'https://backend-v112.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
+    'https://backend-v112.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost,
+    'https://explorer.testnet.alephium.org': networkSettingsPresets.testnet.explorerUrl
   })
 
 export const _v200_networkSettingsMigration = () =>
@@ -180,7 +181,8 @@ export const _v200_networkSettingsMigration = () =>
     'https://wallet-v17.mainnet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
     'https://wallet-v17.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
     'https://backend-v113.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
-    'https://backend-v113.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
+    'https://backend-v113.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost,
+    'https://explorer.testnet.alephium.org': networkSettingsPresets.testnet.explorerUrl
   })
 
 export const _v213_networkSettingsMigration = () =>
@@ -188,7 +190,8 @@ export const _v213_networkSettingsMigration = () =>
     'https://wallet-v20.mainnet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
     'https://wallet-v20.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
     'https://backend-v113.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
-    'https://backend-v113.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
+    'https://backend-v113.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost,
+    'https://explorer.testnet.alephium.org': networkSettingsPresets.testnet.explorerUrl
   })
 
 const migrateReleaseNetworkSettings = (migrationsMapping: Record<string, string>) => {
