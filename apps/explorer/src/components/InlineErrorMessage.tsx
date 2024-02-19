@@ -26,7 +26,9 @@ const InlineErrorMessage = ({ message, code }: { message?: string; code?: number
   if (!message) {
     shownMessage = "Something's wrong"
   } else {
-    shownMessage = message
+    // Clean the error message by removing details that could be used to trick users
+    const regex = /\(([^()]|\([^()]*\))*\)/g
+    shownMessage = message.replace(regex, '')
   }
 
   return (
