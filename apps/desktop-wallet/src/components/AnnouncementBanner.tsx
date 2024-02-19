@@ -102,7 +102,7 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
 
   return (
     <AnimatePresence mode="wait">
-      {announcement && announcement.isActive && (
+      {announcement && announcement.isActive && announcement.title && (
         <AnnouncementBannerStyled
           className={className}
           initial={{ opacity: 0, height: 50, width: 50 }}
@@ -119,7 +119,7 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
             <TextsAndButtons animate={{ opacity: isCompact ? 0 : 1 }}>
               <Texts>
                 <Title>{announcement.title}</Title>
-                <Description>{announcement.description}</Description>
+                {announcement.description && <Description>{announcement.description}</Description>}
               </Texts>
               <ActionButtons>
                 <ButtonStyled short role="secondary" onClick={handleAnnouncementHide}>
@@ -160,10 +160,11 @@ const Contents = styled.div`
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
+  width: 100%;
 `
 
 const Texts = styled.div`
-  min-width: 350px;
+  width: 100%;
   margin-right: var(--spacing-4);
 `
 
@@ -209,4 +210,5 @@ const TextsAndButtons = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
 `
