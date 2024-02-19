@@ -88,7 +88,7 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   }, [isCompact, isHovered, wasShownOnMount])
 
   const handleAnnouncementButtonClick = () => {
-    if (announcement && announcement.button) openInWebBrowser(announcement.button.link)
+    if (announcement?.button?.link) openInWebBrowser(announcement.button.link)
   }
 
   const handleAnnouncementHide = () => {
@@ -125,7 +125,7 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
                 <ButtonStyled short role="secondary" onClick={handleAnnouncementHide}>
                   {t('Hide')}
                 </ButtonStyled>
-                {announcement.button && (
+                {announcement.button?.title && announcement.button.link && (
                   <ButtonStyled short onClick={handleAnnouncementButtonClick}>
                     {announcement.button.title}
                   </ButtonStyled>
