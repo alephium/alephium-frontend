@@ -85,7 +85,7 @@ const TransactionInfoPage = () => {
     retry: (num, e) => {
       const error = (e as Error).message
       displaySnackbar({ text: error, type: 'alert' })
-      return error.includes('not found') && num < MAX_API_RETRIES
+      return error.includes('not found') && num <= MAX_API_RETRIES
     }
   })
 
