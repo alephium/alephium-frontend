@@ -61,7 +61,11 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const isLoadingTokensMetadata = useAppSelector(
     (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified
   )
+  const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
   const theme = useTheme()
+
+  const showTokenListLoading = isLoadingTokenBalances || isLoadingTokensMetadata
+  const showNFTListLoading = showTokenListLoading || isLoadingNfts
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
 
@@ -91,8 +95,6 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
 
   const [activeTab, setActiveTab] = useState(tabItems[0])
 
-  const isLoading = isLoadingTokenBalances || isLoadingTokensMetadata
-
   useEffect(() => {
     const entries: TokensRow[] = [
       ...knownFungibleTokens,
@@ -104,11 +106,11 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
             }
           ]
         : []),
-      ...(isLoading ? [{ isLoadingTokens: true }] : [])
+      ...(showTokenListLoading ? [{ isLoadingTokens: true }] : [])
     ]
 
     setTokenRows(entries)
-  }, [addressHash, isLoading, knownFungibleTokens, unknownTokens.length])
+  }, [addressHash, showTokenListLoading, knownFungibleTokens, unknownTokens.length])
 
   return (
     <ListContainer style={style} layout={CurvedTransition}>
@@ -135,7 +137,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
               )}
             </>
           ),
-          nfts: <NFTsGrid nfts={nfts} isLoading={isLoading} />
+          nfts: <NFTsGrid nfts={nfts} isLoading={showNFTListLoading} />
         }[activeTab.value]
       }
       {isRefreshing && (

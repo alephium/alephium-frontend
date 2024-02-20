@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
-import { syncFungibleTokensInfo, syncVerifiedFungibleTokens } from '@/store/assets/assetsActions'
+import { syncFungibleTokensInfo, syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/store/assets/assetsActions'
 import { fungibleTokensAdapter } from '@/store/assets/assetsAdapter'
 import { customNetworkSettingsSaved, networkPresetSwitched } from '@/store/network/networkActions'
 import { FungibleTokensState } from '@/types/assets'
@@ -60,9 +60,6 @@ const fungibleTokensSlice = createSlice({
           state.status = 'initialized'
         }
       })
-      .addCase(syncFungibleTokensInfo.pending, (state) => {
-        state.loadingUnverified = true
-      })
       .addCase(syncFungibleTokensInfo.fulfilled, (state, action) => {
         const metadata = action.payload
         const initiallyUnknownTokenIds = action.meta.arg
@@ -86,6 +83,9 @@ const fungibleTokensSlice = createSlice({
       })
       .addMatcher(isAnyOf(syncVerifiedFungibleTokens.fulfilled, syncVerifiedFungibleTokens.rejected), (state) => {
         state.loadingVerified = false
+      })
+      .addMatcher(isAnyOf(syncFungibleTokensInfo.pending, syncUnknownTokensInfo.pending), (state) => {
+        state.loadingUnverified = true
       })
   }
 })

@@ -125,28 +125,29 @@ const Main = ({ children, ...props }: ViewProps) => {
   useInitializeClient()
 
   useEffect(() => {
-    if (network.status === 'online') {
-      if (addressesStatus === 'uninitialized') {
-        if (!isSyncingAddressData && addressHashes.length > 0) {
-          dispatch(syncAddressesData())
-          dispatch(syncAddressesAlphHistoricBalances())
-        }
-      } else if (addressesStatus === 'initialized') {
-        if (
-          !verifiedFungibleTokensNeedInitialization &&
-          !isLoadingUnverifiedFungibleTokens &&
-          newUnknownTokens.length > 0
-        ) {
-          dispatch(syncUnknownTokensInfo(newUnknownTokens))
-        }
-      }
+    if (
+      network.status === 'online' &&
+      addressesStatus === 'uninitialized' &&
+      !isSyncingAddressData &&
+      addressHashes.length > 0
+    ) {
+      dispatch(syncAddressesData())
+      dispatch(syncAddressesAlphHistoricBalances())
+    }
+  }, [addressHashes.length, addressesStatus, dispatch, isSyncingAddressData, network.status])
+
+  useEffect(() => {
+    if (
+      network.status === 'online' &&
+      !verifiedFungibleTokensNeedInitialization &&
+      !isLoadingUnverifiedFungibleTokens &&
+      newUnknownTokens.length > 0
+    ) {
+      dispatch(syncUnknownTokensInfo(newUnknownTokens))
     }
   }, [
-    addressHashes.length,
-    addressesStatus,
     dispatch,
     isLoadingUnverifiedFungibleTokens,
-    isSyncingAddressData,
     network.status,
     newUnknownTokens,
     verifiedFungibleTokensNeedInitialization
