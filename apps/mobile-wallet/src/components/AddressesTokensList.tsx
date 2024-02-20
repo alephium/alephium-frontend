@@ -76,7 +76,9 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
         label: (
           <>
             <AppText semiBold>Tokens</AppText>
-            <Badge rounded>{knownFungibleTokens.length + unknownTokens.length}</Badge>
+            <Badge rounded>
+              {showTokenListLoading ? <AssetNumberLoader /> : knownFungibleTokens.length + unknownTokens.length}
+            </Badge>
           </>
         )
       },
@@ -85,7 +87,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
         label: (
           <>
             <AppText semiBold>NFTs</AppText>
-            <Badge rounded>{nfts.length}</Badge>
+            <Badge rounded>{showNFTListLoading ? <AssetNumberLoader /> : nfts.length}</Badge>
           </>
         )
       }
@@ -152,6 +154,12 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   )
 }
 
+const AssetNumberLoader = () => (
+  <AssetNumberLoaderContainer>
+    <ActivityIndicator style={{ transform: [{ scale: 0.6 }] }} />
+  </AssetNumberLoaderContainer>
+)
+
 export default styled(AddressesTokensList)`
   padding-top: 5px;
   padding-bottom: 10px;
@@ -193,6 +201,13 @@ const Loader = styled.View`
   left: 0;
   right: 0;
   align-items: center;
+`
+
+const AssetNumberLoaderContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  width: 16px;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

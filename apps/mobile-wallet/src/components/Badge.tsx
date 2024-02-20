@@ -32,7 +32,7 @@ interface BadgeProps {
 
 const Badge = ({ style, color, children }: BadgeProps) => (
   <View style={style}>
-    <BadgeText color={color}>{children}</BadgeText>
+    {['string', 'number'].includes(typeof children) ? <BadgeText color={color}>{children}</BadgeText> : children}
   </View>
 )
 
