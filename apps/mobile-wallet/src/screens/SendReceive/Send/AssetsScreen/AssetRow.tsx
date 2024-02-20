@@ -31,6 +31,7 @@ import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
 import Checkmark from '~/components/Checkmark'
 import ListItem from '~/components/ListItem'
+import NFTThumbnail from '~/components/NFTThumbnail'
 import { useSendContext } from '~/contexts/SendContext'
 import { isNft } from '~/utils/assets'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
@@ -163,7 +164,9 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
           />
         )
       }
-      icon={<AssetLogo assetId={asset.id} size={38} />}
+      icon={
+        assetIsNft ? <NFTThumbnail nft={asset} width={38} height={38} /> : <AssetLogo assetId={asset.id} size={38} />
+      }
     >
       <Pressable onPress={handleBottomRowPress}>
         <BottomRow entering={FadeIn} style={bottomRowAnimatedStyle}>
