@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { MAX_API_RETRIES } from '@alephium/shared'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
@@ -62,8 +63,6 @@ dayjs.updateLocale('en', {
   }
 })
 
-export const numberOfAPIRetries = 3
-
 const App = () => {
   const { theme } = useSettings()
   const navigate = useNavigate()
@@ -75,8 +74,8 @@ const App = () => {
         refetchOnWindowFocus: false,
         retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
         retry: (failureCount) => {
-          if (failureCount > numberOfAPIRetries) {
-            console.error(`API failed after ${numberOfAPIRetries} retries, won't retry anymore`)
+          if (failureCount > MAX_API_RETRIES) {
+            console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`)
             return false
           } else return true
         },

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { MAX_API_RETRIES } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import {
@@ -35,7 +36,6 @@ import styled from 'styled-components'
 
 import { queries } from '@/api'
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
-import { numberOfAPIRetries } from '@/App'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
@@ -85,7 +85,7 @@ const TransactionInfoPage = () => {
     retry: (num, e) => {
       const error = (e as Error).message
       displaySnackbar({ text: error, type: 'alert' })
-      return error.includes('not found') && num < numberOfAPIRetries
+      return error.includes('not found') && num < MAX_API_RETRIES
     }
   })
 
