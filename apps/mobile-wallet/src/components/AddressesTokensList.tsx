@@ -92,7 +92,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
         )
       }
     ],
-    [knownFungibleTokens.length, nfts.length, unknownTokens.length]
+    [knownFungibleTokens.length, nfts.length, showNFTListLoading, showTokenListLoading, unknownTokens.length]
   )
 
   const [activeTab, setActiveTab] = useState(tabItems[0])
