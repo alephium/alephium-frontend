@@ -28,6 +28,7 @@ const initialState: FungibleTokensState = fungibleTokensAdapter.addOne(
   fungibleTokensAdapter.getInitialState({
     loadingVerified: false,
     loadingUnverified: false,
+    loadingTokenTypes: false,
     status: 'uninitialized',
     checkedUnknownTokenIds: []
   }),
@@ -45,6 +46,12 @@ const fungibleTokensSlice = createSlice({
     builder
       .addCase(syncVerifiedFungibleTokens.pending, (state) => {
         state.loadingVerified = true
+      })
+      .addCase(syncFungibleTokensInfo.pending, (state) => {
+        state.loadingUnverified = true
+      })
+      .addCase(syncUnknownTokensInfo.pending, (state) => {
+        state.loadingTokenTypes = true
       })
       .addCase(syncVerifiedFungibleTokens.fulfilled, (state, action) => {
         const metadata = action.payload
@@ -84,8 +91,8 @@ const fungibleTokensSlice = createSlice({
       .addMatcher(isAnyOf(syncVerifiedFungibleTokens.fulfilled, syncVerifiedFungibleTokens.rejected), (state) => {
         state.loadingVerified = false
       })
-      .addMatcher(isAnyOf(syncFungibleTokensInfo.pending, syncUnknownTokensInfo.pending), (state) => {
-        state.loadingUnverified = true
+      .addMatcher(isAnyOf(syncUnknownTokensInfo.fulfilled, syncUnknownTokensInfo.rejected), (state) => {
+        state.loadingTokenTypes = false
       })
   }
 })

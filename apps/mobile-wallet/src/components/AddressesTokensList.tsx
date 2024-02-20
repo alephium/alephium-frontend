@@ -58,13 +58,13 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
-  const isLoadingTokensMetadata = useAppSelector(
-    (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified
-  )
+  const isLoadingUnverified = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
+  const isLoadingVerified = useAppSelector((s) => s.fungibleTokens.loadingVerified)
+  const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
   const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
   const theme = useTheme()
 
-  const showTokenListLoading = isLoadingTokenBalances || isLoadingTokensMetadata
+  const showTokenListLoading = isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes
   const showNFTListLoading = showTokenListLoading || isLoadingNfts
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
