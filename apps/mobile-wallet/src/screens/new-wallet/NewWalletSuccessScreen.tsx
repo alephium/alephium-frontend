@@ -58,7 +58,7 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
       <CenteredInstructions instructions={instructions} stretch fontSize={19} />
       <ActionsContainer>
         <ScreenSection centered>
-          <HighlightButton title="Let's go!" wide onPress={() => resetNavigation(navigation)} />
+          <HighlightButton title="Let's go!" width="wide" onPress={() => resetNavigation(navigation)} />
         </ScreenSection>
       </ActionsContainer>
     </ScrollScreen>

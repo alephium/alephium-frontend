@@ -22,6 +22,7 @@ import { BlurView } from 'expo-blur'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, KeyboardAvoidingView, ScrollView } from 'react-native'
 import { FadeIn } from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -57,6 +58,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const deviceHasBiometricsData = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
+  const insets = useSafeAreaInsets()
 
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
@@ -166,7 +168,8 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
         intensity={80}
         style={{
           borderTopWidth: possibleMatches.length > 0 ? 1 : 0,
-          paddingTop: possibleMatches.length === 0 ? 10 : 0
+          paddingTop: possibleMatches.length === 0 ? 10 : 0,
+          paddingBottom: insets.bottom
         }}
       >
         <PossibleMatches style={{ padding: possibleMatches.length > 0 ? 15 : 0 }}>

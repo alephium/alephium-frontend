@@ -89,8 +89,8 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
       </AnimationContainer>
       <CenteredInstructions instructions={instructions} stretch />
       <ActionButtonsStack>
-        <Button title="Activate" type="primary" variant="highlight" onPress={activateBiometrics} />
-        <Button title="Later" type="secondary" onPress={handleLaterPress} />
+        <Button title="Activate" type="primary" variant="highlight" onPress={activateBiometrics} width="full" />
+        <Button title="Later" type="secondary" onPress={handleLaterPress} width="full" />
       </ActionButtonsStack>
       <SpinnerModal isActive={loading} text="Enabling biometrics..." />
     </ScrollScreen>

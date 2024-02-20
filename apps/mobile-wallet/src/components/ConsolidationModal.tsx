@@ -50,8 +50,8 @@ const ConsolidationModal = ({ onConsolidate, fees, ...props }: ConsolidationModa
     </ScreenSection>
     <ScreenSection centered>
       <ButtonsRow>
-        <Button title="Cancel" onPress={props.onClose} flex variant="accent" short />
-        <Button title="Consolidate" onPress={onConsolidate} variant="highlight" flex short />
+        <Button title="Cancel" onPress={props.onClose} variant="accent" short width="full" />
+        <Button title="Consolidate" onPress={onConsolidate} variant="highlight" short width="full" />
       </ButtonsRow>
     </ScreenSection>
   </ModalContent>

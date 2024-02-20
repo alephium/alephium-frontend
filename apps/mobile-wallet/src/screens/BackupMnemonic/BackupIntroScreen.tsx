@@ -82,6 +82,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
             type="primary"
             variant="highlight"
             onPress={() => setIsAuthenticationModalVisible(true)}
+            width="full"
           />
         </FooterButtonContainer>
       </ScrollScreen>

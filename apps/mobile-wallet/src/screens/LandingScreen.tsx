@@ -141,12 +141,14 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
             onPress={() => handleButtonPress('create')}
             variant="contrast"
             iconProps={{ name: 'flower-outline' }}
+            width="wide"
           />
           <Button
             title="Import wallet"
             onPress={() => handleButtonPress('import')}
             variant="contrast"
             iconProps={{ name: 'download-outline' }}
+            width="wide"
           />
         </ActionButtonsStack>
       )}

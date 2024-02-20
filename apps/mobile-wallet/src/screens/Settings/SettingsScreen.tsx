@@ -28,6 +28,7 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import AuthenticationModal from '~/components/AuthenticationModal'
 import Button from '~/components/buttons/Button'
+import ButtonStack from '~/components/buttons/ButtonStack'
 import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent } from '~/components/layout/ModalContent'
@@ -204,24 +205,29 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
         <ScreenSection>
           <ScreenSectionTitle>Wallet</ScreenSectionTitle>
-          <ButtonStyled
-            title="Scan for active addresses"
-            iconProps={{ name: 'search-outline' }}
-            variant="accent"
-            onPress={() => navigation.navigate('AddressDiscoveryScreen')}
-          />
-          <ButtonStyled
-            title="View secret recovery phrase"
-            iconProps={{ name: 'key' }}
-            onPress={() => setIsSafePlaceWarningModalOpen(true)}
-            color={theme.global.warning}
-          />
-          <ButtonStyled
-            title="Delete wallet"
-            iconProps={{ name: 'trash-outline' }}
-            variant="alert"
-            onPress={handleDeleteButtonPress}
-          />
+          <ButtonStack>
+            <Button
+              title="Scan for active addresses"
+              iconProps={{ name: 'search-outline' }}
+              variant="accent"
+              onPress={() => navigation.navigate('AddressDiscoveryScreen')}
+              width="full"
+            />
+            <Button
+              title="View secret recovery phrase"
+              iconProps={{ name: 'key' }}
+              onPress={() => setIsSafePlaceWarningModalOpen(true)}
+              color={theme.global.warning}
+              width="full"
+            />
+            <Button
+              title="Delete wallet"
+              iconProps={{ name: 'trash-outline' }}
+              variant="alert"
+              onPress={handleDeleteButtonPress}
+              width="full"
+            />
+          </ButtonStack>
         </ScreenSection>
         <ScreenSection>
           <AppText style={{ textAlign: 'center' }} color="secondary">
@@ -300,6 +306,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                 <Button
                   title="I get it"
                   variant="accent"
+                  width="full"
                   onPress={() => {
                     props.onClose && props.onClose()
                     setAuthCallback(() => () => setIsMnemonicModalVisible(true))
@@ -330,8 +337,4 @@ export default SettingsScreen
 
 const ScrollScreenStyled = styled(ScrollScreen)`
   gap: ${VERTICAL_GAP}px;
-`
-
-const ButtonStyled = styled(Button)`
-  margin-bottom: 24px;
 `

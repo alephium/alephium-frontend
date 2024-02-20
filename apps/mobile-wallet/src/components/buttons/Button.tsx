@@ -40,7 +40,8 @@ export interface ButtonProps extends PressableProps {
   type?: 'primary' | 'secondary' | 'transparent' | 'tint'
   variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight' | 'highlightedIcon'
   style?: StyleProp<TextStyle & ViewStyle>
-  wide?: boolean
+  tappableAreaStyle?: StyleProp<ViewStyle>
+  width?: 'wide' | 'full'
   short?: boolean
   centered?: boolean
   iconProps?: ComponentProps<typeof Ionicons>
@@ -60,6 +61,7 @@ const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons)
 
 const Button = ({
   style,
+  tappableAreaStyle,
   title,
   type = 'primary',
   variant = 'default',
@@ -75,6 +77,7 @@ const Button = ({
   flex,
   animated,
   haptics,
+  width,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -124,7 +127,18 @@ const Button = ({
         tint: undefined
       }[type],
       height: short ? 45 : compact ? 30 : hasOnlyIcon ? 40 : 55,
-      width: round ? (compact ? 30 : 40) : props.wide ? '75%' : hasOnlyIcon ? 40 : 'auto',
+      width:
+        round && hasOnlyIcon
+          ? compact
+            ? 30
+            : 40
+          : hasOnlyIcon
+            ? 40
+            : width === 'wide'
+              ? '75%'
+              : width === 'full'
+                ? '100%'
+                : 'auto',
       justifyContent: round ? 'center' : undefined,
       alignItems: round ? 'center' : undefined,
       gap: compact ? 5 : 10,
@@ -139,8 +153,7 @@ const Button = ({
         secondary: bg,
         transparent: 'transparent',
         tint: color ? colord(color).alpha(0.1).toHex() : ''
-      }[type],
-      flex: flex ? 1 : 0
+      }[type]
     },
     style
   ]
@@ -162,52 +175,64 @@ const Button = ({
 
   return (
     <AnimatedPressable
-      style={[buttonAnimatedStyle, buttonStyle]}
       disabled={disabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
+      style={[
+        {
+          flex: flex ? 1 : 0,
+          margin: -8,
+          padding: 8,
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'row'
+        },
+        tappableAreaStyle
+      ]}
       {...props}
     >
-      {title && (
-        <AnimatedAppText
-          style={{ flexGrow: 1, color: font, textAlign: 'center' }}
-          medium
-          size={compact ? 14 : 16}
-          exiting={FadeOut}
-          entering={FadeIn}
-        >
-          {title}
-        </AnimatedAppText>
-      )}
-      {children}
-      {iconProps ? (
-        <IconContainer
-          style={
-            variant === 'highlightedIcon'
-              ? {
-                  backgroundColor: theme.global.accent,
-                  borderRadius: 100,
-                  padding: compact ? 0 : 6,
-                  marginVertical: compact ? 0 : 6,
-                  marginRight: compact ? -4 : 6,
-                  height: compact ? 20 : undefined,
-                  width: compact ? 20 : undefined,
-                  overflow: 'hidden'
-                }
-              : undefined
-          }
-        >
-          <AnimatedIonicons
-            layout={LinearTransition}
-            color={variant === 'highlightedIcon' ? 'white' : font}
-            size={compact ? 16 : hasOnlyIcon ? 22 : 20}
-            style={compact ? { marginLeft: 1, marginTop: 1 } : undefined}
-            {...iconProps}
-          />
-        </IconContainer>
-      ) : customIcon ? (
-        customIcon
-      ) : null}
+      <Animated.View style={[buttonAnimatedStyle, buttonStyle]}>
+        {title && (
+          <AnimatedAppText
+            style={{ flexGrow: 1, color: font, textAlign: 'center' }}
+            medium
+            size={compact ? 14 : 16}
+            exiting={FadeOut}
+            entering={FadeIn}
+          >
+            {title}
+          </AnimatedAppText>
+        )}
+        {children}
+        {iconProps ? (
+          <IconContainer
+            style={
+              variant === 'highlightedIcon'
+                ? {
+                    backgroundColor: theme.global.accent,
+                    borderRadius: 100,
+                    padding: compact ? 0 : 6,
+                    marginVertical: compact ? 0 : 6,
+                    marginRight: compact ? -4 : 6,
+                    height: compact ? 20 : undefined,
+                    width: compact ? 20 : undefined,
+                    overflow: 'hidden'
+                  }
+                : undefined
+            }
+          >
+            <AnimatedIonicons
+              layout={LinearTransition}
+              color={variant === 'highlightedIcon' ? 'white' : font}
+              size={compact ? 16 : hasOnlyIcon ? 22 : 20}
+              style={compact ? { marginLeft: 1, marginTop: 1 } : undefined}
+              {...iconProps}
+            />
+          </IconContainer>
+        ) : customIcon ? (
+          customIcon
+        ) : null}
+      </Animated.View>
     </AnimatedPressable>
   )
 }

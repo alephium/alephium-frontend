@@ -151,8 +151,8 @@ const WalletConnectSessionProposalModal = ({
           </ScreenSection>
           <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
-              <Button title="Switch network" variant="accent" onPress={handleSwitchNetworkPress} flex />
+              <Button title="Decline" variant="alert" onPress={rejectProposal} flex width="full" />
+              <Button title="Switch network" variant="accent" onPress={handleSwitchNetworkPress} flex width="full" />
             </ButtonsRow>
           </ScreenSection>
         </>
@@ -168,8 +168,14 @@ const WalletConnectSessionProposalModal = ({
           </ScreenSection>
           <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
-              <Button title="Generate new address" variant="accent" onPress={handleAddressGeneratePress} flex />
+              <Button title="Decline" variant="alert" onPress={rejectProposal} flex width="full" />
+              <Button
+                title="Generate new address"
+                variant="accent"
+                onPress={handleAddressGeneratePress}
+                flex
+                width="full"
+              />
             </ButtonsRow>
           </ScreenSection>
         </>
@@ -214,13 +220,13 @@ const WalletConnectSessionProposalModal = ({
 
           <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
+              <Button title="Decline" variant="alert" onPress={rejectProposal} width="full" />
               <Button
                 title="Accept"
                 variant="valid"
                 onPress={() => approveProposal(signerAddress)}
                 disabled={!signerAddress}
-                flex
+                width="full"
               />
             </ButtonsRow>
           </ScreenSection>

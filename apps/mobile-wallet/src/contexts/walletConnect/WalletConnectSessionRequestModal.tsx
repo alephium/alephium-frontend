@@ -310,11 +310,11 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
       )}
       <ScreenSection centered>
         <ButtonsRow>
-          <Button title="Reject" variant="alert" onPress={onReject} flex />
+          <Button title="Reject" variant="alert" onPress={onReject} width="full" />
           {isSignRequest ? (
-            <Button title="Sign" variant="valid" onPress={handleSignPress} flex />
+            <Button title="Sign" variant="valid" onPress={handleSignPress} width="full" />
           ) : (
-            <Button title="Approve" variant="valid" onPress={handleApprovePress} flex />
+            <Button title="Approve" variant="valid" onPress={handleApprovePress} width="full" />
           )}
         </ButtonsRow>
       </ScreenSection>

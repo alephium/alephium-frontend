@@ -158,6 +158,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               iconProps={{ name: 'arrow-up-outline' }}
               title="Send"
               variant="highlightedIcon"
+              width="full"
               round
               short
               flex
@@ -167,6 +168,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               iconProps={{ name: 'arrow-down-outline' }}
               title="Receive"
               variant="highlightedIcon"
+              width="full"
               round
               short
               flex
@@ -215,6 +217,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
                   title="Let's do that!"
                   onPress={() => navigation.navigate('BackupMnemonicNavigation')}
                   variant="highlight"
+                  width="full"
                 />
               </ScreenSection>
             </ModalContent>

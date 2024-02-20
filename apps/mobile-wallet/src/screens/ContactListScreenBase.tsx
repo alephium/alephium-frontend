@@ -73,7 +73,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
           <NoContactMessageBox>
             <EmojiContainer size={60}>🤷‍♀️</EmojiContainer>
             <AppText>No contact yet!</AppText>
-            <Button title="Add contact" onPress={onNewContactPress} variant="highlight" />
+            <Button title="Add contact" onPress={onNewContactPress} variant="highlight" width="full" />
           </NoContactMessageBox>
         </NoContactContainer>
       ) : (

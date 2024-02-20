@@ -83,12 +83,14 @@ const WalletConnectPairingsModal = ({
             variant="accent"
             onPress={onPasteWcUrlPress}
             iconProps={{ name: 'clipboard-outline' }}
+            width="full"
           />
           <Button
             title="Scan QR code"
             variant="accent"
             onPress={onScanQRCodePress}
             iconProps={{ name: 'qr-code-outline' }}
+            width="full"
           />
         </ButtonStack>
       </ScreenSection>

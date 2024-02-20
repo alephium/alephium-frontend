@@ -74,7 +74,13 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
           <Input label="WalletConnect URL" value={inputWcUrl} onChangeText={handleInputChange} error={error} />
         </ScreenSection>
         <ScreenSection>
-          <Button title="Connect" variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />
+          <Button
+            title="Connect"
+            variant="highlight"
+            onPress={handleConnect}
+            disabled={!inputWcUrl || !!error}
+            width="full"
+          />
         </ScreenSection>
       </ModalContent>
       <SpinnerModal isActive={isLoading} />

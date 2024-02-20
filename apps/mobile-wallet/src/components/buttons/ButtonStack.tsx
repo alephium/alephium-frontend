@@ -28,5 +28,5 @@ const ButtonStack = ({ children, style }: ButtonStackProps) => <View style={styl
 
 export default styled(ButtonStack)`
   width: 100%;
-  gap: 10px;
+  gap: 15px;
 `

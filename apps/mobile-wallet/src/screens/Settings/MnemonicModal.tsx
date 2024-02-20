@@ -40,7 +40,7 @@ const MnemonicModal = ({ onVerifyButtonPress, ...props }: MnemonicModalProps) =>
       </ScreenSection>
       {onVerifyButtonPress && (
         <ScreenSection>
-          <Button variant="highlight" title="Verify" onPress={onVerifyButtonPress} />
+          <Button variant="highlight" title="Verify" onPress={onVerifyButtonPress} width="full" />
         </ScreenSection>
       )}
     </ModalContent>

@@ -78,7 +78,12 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         </QRCodeContainer>
       </ScreenSection>
       <ScreenSection centered>
-        <Button title="Copy address" onPress={handleCopyAddressPress} iconProps={{ name: 'copy-outline' }} />
+        <Button
+          title="Copy address"
+          onPress={handleCopyAddressPress}
+          iconProps={{ name: 'copy-outline' }}
+          width="full"
+        />
       </ScreenSection>
       <ScreenSection>
         <BoxSurface>

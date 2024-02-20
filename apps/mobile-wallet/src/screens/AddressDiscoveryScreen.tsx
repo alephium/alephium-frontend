@@ -207,6 +207,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             title="Start scanning"
             onPress={handleStartScanPress}
             variant="highlight"
+            width="full"
           />
         )}
         {status === 'started' && (
@@ -215,6 +216,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             title="Stop scanning"
             onPress={handleStopScanPress}
             variant="highlight"
+            width="full"
           />
         )}
         {status === 'stopped' && (
@@ -223,6 +225,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             title="Continue scanning"
             onPress={handleContinueScanPress}
             variant="highlight"
+            width="full"
           />
         )}
         {discoveredAddresses.length > 0 && (status === 'stopped' || status === 'finished') && (
@@ -232,6 +235,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             onPress={importAddresses}
             disabled={selectedAddressesToImport.length === 0}
             variant="highlight"
+            width="full"
           />
         )}
         {discoveredAddresses.length === 0 && status === 'finished' && !importLoading && (
@@ -240,6 +244,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             title={isImporting ? 'Continue' : 'Go back'}
             onPress={continueToNextScreen}
             variant={isImporting ? 'highlight' : 'accent'}
+            width="full"
           />
         )}
       </ScreenSection>

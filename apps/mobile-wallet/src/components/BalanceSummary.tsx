@@ -110,6 +110,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
               iconProps={{ name: 'arrow-down-outline' }}
               variant="highlight"
               short
+              width="full"
             />
           </ReceiveFundsButtonContainer>
         )}

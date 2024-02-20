@@ -23,10 +23,9 @@ import Button, { ButtonProps } from '~/components/buttons/Button'
 
 interface HighlightButtonProps extends ButtonProps {
   title: string
-  wide?: boolean
 }
 
-const HighlightButton = ({ title, wide, ...props }: HighlightButtonProps) => {
+const HighlightButton = ({ title, ...props }: HighlightButtonProps) => {
   const theme = useTheme()
 
   return (
@@ -43,7 +42,6 @@ const HighlightButton = ({ title, wide, ...props }: HighlightButtonProps) => {
         title={title}
         style={{ backgroundColor: theme.global.accent }}
         color="white"
-        wide={wide}
         variant="accent"
         type="primary"
         {...props}

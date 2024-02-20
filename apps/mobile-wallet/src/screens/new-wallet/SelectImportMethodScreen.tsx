@@ -70,7 +70,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
           <Subtitle size={16} medium color="secondary">
             Export your wallet directly from the Desktop app! Convenient, quick and secure.
           </Subtitle>
-          <Button variant="highlight" title="Scan the QR code" onPress={openQRCodeScannerModal} />
+          <Button variant="highlight" title="Scan the QR code" onPress={openQRCodeScannerModal} width="full" />
         </BoxSurfaceStyled>
       </ScreenSection>
       <ScreenSection fill>
@@ -88,6 +88,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
             variant="highlight"
             title="Type your secret phrase"
             onPress={() => navigation.navigate('ImportWalletSeedScreen')}
+            width="full"
           />
         </BoxSurfaceStyled>
       </ScreenSection>

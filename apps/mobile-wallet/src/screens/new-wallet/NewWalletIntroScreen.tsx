@@ -60,8 +60,9 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
           type="primary"
           variant="highlight"
           onPress={() => navigation.navigate('NewWalletNameScreen')}
+          width="full"
         />
-        <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
+        <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} width="full" />
       </ActionButtonsStackStyled>
     </ScrollScreen>
   )

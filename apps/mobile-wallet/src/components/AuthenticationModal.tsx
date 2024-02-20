@@ -117,7 +117,12 @@ const AuthenticationModal = ({
         <ModalContent style={{ paddingTop: !onClose ? insets.top + 60 : undefined }}>
           {onClose && (
             <HeaderSection style={{ paddingTop: insets.top }}>
-              <Button round iconProps={{ name: 'arrow-back-outline' }} onPress={onClose} />
+              <Button
+                round
+                iconProps={{ name: 'arrow-back-outline' }}
+                onPress={onClose}
+                tappableAreaStyle={{ marginRight: 'auto' }}
+              />
             </HeaderSection>
           )}
           <CenteredInstructions instructions={shownInstructions} />

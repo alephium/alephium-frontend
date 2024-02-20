@@ -64,6 +64,7 @@ const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccess
           variant="highlight"
           title="Return to my wallet"
           onPress={() => resetNavigation(navigation.getParent())}
+          width="full"
         />
       </ScreenSection>
     </ScrollScreen>

@@ -193,6 +193,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
               flex
               type="transparent"
               color={textColor}
+              tappableAreaStyle={{ padding: 0, margin: 0 }}
             />
             <Button
               title="Receive"
@@ -201,6 +202,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
               flex
               type="transparent"
               color={textColor}
+              tappableAreaStyle={{ padding: 0, margin: 0 }}
             />
           </ButtonsRow>
         </BottomRow>
