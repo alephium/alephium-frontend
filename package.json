@@ -2,7 +2,7 @@
   "name": "alephium-frontend",
   "description": "A monorepo containing all things frontend on Alephium",
   "author": "Alephium dev <dev@alephium.org>",
-  "packageManager": "pnpm@8.9.0",
+  "packageManager": "pnpm@8.15.3",
   "private": true,
   "scripts": {
     "watch": "turbo watch",
@@ -35,6 +35,11 @@
     "patchedDependencies": {
       "framer-motion@10.17.12": "patches/framer-motion@10.17.12.patch",
       "react-native-aes-crypto@2.1.1": "patches/react-native-aes-crypto@2.1.1.patch"
+    },
+    "overrides": {
+      "ip@<=2.0.0": ">=2.0.1",
+      "minimatch@<3.0.5": ">=3.0.5",
+      "undici@<=5.28.2": ">=5.28.3"
     }
   },
   "manypkg": {
