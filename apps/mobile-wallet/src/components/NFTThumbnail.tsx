@@ -31,14 +31,13 @@ import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface NFTThumbnailProps {
   nft: NFT
-  width: number
-  height?: number
+  size: number
 }
 
 const attributeGap = 12
 const screenPadding = 20
 
-const NFTThumbnail = ({ nft, width, height = 100 }: NFTThumbnailProps) => {
+const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   nft.image && Image.prefetch(nft.image)
@@ -48,7 +47,7 @@ const NFTThumbnail = ({ nft, width, height = 100 }: NFTThumbnailProps) => {
   return (
     <>
       <TouchableOpacity onPress={() => setIsModalOpen(true)}>
-        <NFTThumbnailStyled style={{ width, height }} transition={500} source={{ uri: nft.image }} />
+        <NFTThumbnailStyled style={{ width: size, height: size }} transition={500} source={{ uri: nft.image }} />
       </TouchableOpacity>
       <Portal>
         <BottomModal
@@ -89,7 +88,9 @@ const NFTThumbnail = ({ nft, width, height = 100 }: NFTThumbnailProps) => {
   )
 }
 
-const NFTThumbnailStyled = styled(Image)<{ height?: number }>`
+export default NFTThumbnail
+
+const NFTThumbnailStyled = styled(Image)`
   border-radius: ${BORDER_RADIUS_SMALL}px;
 `
 
@@ -127,5 +128,3 @@ const AttributeValue = styled(AppText)`
   text-align: center;
   margin-top: 2px;
 `
-
-export default NFTThumbnail

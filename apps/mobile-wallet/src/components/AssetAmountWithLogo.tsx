@@ -55,7 +55,7 @@ const AssetAmountWithLogo = ({
       />
     </AssetStyled>
   ) : nft ? (
-    <NFTThumbnail key={nft.id} nft={nft} width={50} height={50} />
+    <NFTThumbnail key={nft.id} nft={nft} size={50} />
   ) : null
 }
 

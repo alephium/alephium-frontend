@@ -29,30 +29,30 @@ interface NFTsGridProps {
   nfts: NFT[]
   isLoading: boolean
   nftsPerRow?: number
-  nftWidth?: number
+  nftSize?: number
 }
 
 const gap = 12
 const screenPadding = 20
 const nftsGridPadding = DEFAULT_MARGIN
 
-const NFTsGrid = ({ nfts, isLoading, nftWidth, nftsPerRow = 3 }: NFTsGridProps) => {
+const NFTsGrid = ({ nfts, isLoading, nftSize, nftsPerRow = 3 }: NFTsGridProps) => {
   const theme = useTheme()
 
   const { width: windowWidth } = Dimensions.get('window')
   const totalGapSize = (nftsPerRow - 1) * gap + screenPadding * 2 + nftsGridPadding * 2
-  const width = nftWidth ?? (windowWidth - totalGapSize) / nftsPerRow
+  const size = nftSize ?? (windowWidth - totalGapSize) / nftsPerRow
 
   return (
     <NFTsGridStyled style={{ paddingRight: nfts.length === 0 ? 15 : 0 }}>
       {nfts.map((nft) => (
-        <NFTThumbnail key={nft.id} nft={nft} width={width} />
+        <NFTThumbnail key={nft.id} nft={nft} size={size} />
       ))}
       {isLoading && (
         <>
-          <Skeleton show colorMode={theme.name} width={width} height={100} />
-          <Skeleton show colorMode={theme.name} width={width} height={100} />
-          <Skeleton show colorMode={theme.name} width={width} height={100} />
+          <Skeleton show colorMode={theme.name} width={size} height={size} />
+          <Skeleton show colorMode={theme.name} width={size} height={size} />
+          <Skeleton show colorMode={theme.name} width={size} height={size} />
         </>
       )}
       {!isLoading && nfts.length === 0 && (
