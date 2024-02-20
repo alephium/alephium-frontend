@@ -58,10 +58,14 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
-  const isLoadingTokensMetadata = useAppSelector(
-    (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified
-  )
+  const isLoadingUnverified = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
+  const isLoadingVerified = useAppSelector((s) => s.fungibleTokens.loadingVerified)
+  const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
+  const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
   const theme = useTheme()
+
+  const showTokenListLoading = isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes
+  const showNFTListLoading = showTokenListLoading || isLoadingNfts
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
 
@@ -72,7 +76,9 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
         label: (
           <>
             <AppText semiBold>Tokens</AppText>
-            <Badge rounded>{knownFungibleTokens.length + unknownTokens.length}</Badge>
+            <Badge rounded>
+              {showTokenListLoading ? <AssetNumberLoader /> : knownFungibleTokens.length + unknownTokens.length}
+            </Badge>
           </>
         )
       },
@@ -81,17 +87,15 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
         label: (
           <>
             <AppText semiBold>NFTs</AppText>
-            <Badge rounded>{nfts.length}</Badge>
+            <Badge rounded>{showNFTListLoading ? <AssetNumberLoader /> : nfts.length}</Badge>
           </>
         )
       }
     ],
-    [knownFungibleTokens.length, nfts.length, unknownTokens.length]
+    [knownFungibleTokens.length, nfts.length, showNFTListLoading, showTokenListLoading, unknownTokens.length]
   )
 
   const [activeTab, setActiveTab] = useState(tabItems[0])
-
-  const isLoading = isLoadingTokenBalances || isLoadingTokensMetadata
 
   useEffect(() => {
     const entries: TokensRow[] = [
@@ -104,11 +108,11 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
             }
           ]
         : []),
-      ...(isLoading ? [{ isLoadingTokens: true }] : [])
+      ...(showTokenListLoading ? [{ isLoadingTokens: true }] : [])
     ]
 
     setTokenRows(entries)
-  }, [addressHash, isLoading, knownFungibleTokens, unknownTokens.length])
+  }, [addressHash, showTokenListLoading, knownFungibleTokens, unknownTokens.length])
 
   return (
     <ListContainer style={style} layout={CurvedTransition}>
@@ -135,7 +139,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
               )}
             </>
           ),
-          nfts: <NFTsGrid nfts={nfts} isLoading={isLoading} />
+          nfts: <NFTsGrid nfts={nfts} isLoading={showNFTListLoading} />
         }[activeTab.value]
       }
       {isRefreshing && (
@@ -149,6 +153,12 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
     </ListContainer>
   )
 }
+
+const AssetNumberLoader = () => (
+  <AssetNumberLoaderContainer>
+    <ActivityIndicator style={{ transform: [{ scale: 0.6 }] }} />
+  </AssetNumberLoaderContainer>
+)
 
 export default styled(AddressesTokensList)`
   padding-top: 5px;
@@ -191,6 +201,13 @@ const Loader = styled.View`
   left: 0;
   right: 0;
   align-items: center;
+`
+
+const AssetNumberLoaderContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  width: 16px;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

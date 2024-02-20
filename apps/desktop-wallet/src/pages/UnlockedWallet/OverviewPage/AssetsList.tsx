@@ -123,7 +123,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const isLoadingFungibleTokens = useAppSelector(
-    (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified
+    (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified || s.fungibleTokens.loadingTokenTypes
   )
 
   return (
@@ -237,11 +237,12 @@ const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsList
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHashes))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const isLoadingNFTs = useAppSelector((s) => s.nfts.loading)
+  const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {isLoadingNFTs || stateUninitialized ? (
+        {isLoadingNFTs || isLoadingTokenTypes || stateUninitialized ? (
           <NFTList>
             <SkeletonLoader height="205px" />
             <SkeletonLoader height="205px" />
