@@ -31,6 +31,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
 import { queries } from '@/api'
+import { useAssetsMetadata, useTokensPrices } from '@/api/assets/assetsHooks'
 import client from '@/api/client'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
@@ -105,17 +106,12 @@ const AddressInfoPage = () => {
     enabled: !!addressHash
   })
 
-  const { data: addressAssetIds = [] } = useQuery({
+  const { data: tokenBalances = [] } = useQuery({
     ...queries.address.assets.tokensBalance(addressHash),
     enabled: !!addressHash
   })
 
-  const { data: alphPrice } = useQuery({
-    ...queries.assets.prices.assetPrice('ALPH')
-  })
-
-  const addressLatestActivity =
-    latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
+  const { fungibleTokens: fungibleTokensMetadata } = useAssetsMetadata(tokenBalances.map((b) => b.tokenId))
 
   // Refetch TXs when less txs are found in mempool
   useEffect(() => {
@@ -130,16 +126,27 @@ const AddressInfoPage = () => {
     navigate('404')
   }
 
+  const tokensPrices = useTokensPrices([ALPH.symbol, ...fungibleTokensMetadata.map((t) => t.symbol)])
+
+  const knownTokensWorth = tokenBalances.reduce((acc, b) => {
+    const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
+    const price = tokensPrices[token?.symbol || '']
+
+    return acc + (price ? calculateAmountWorth(BigInt(b.balance), price) : 0)
+  }, 0)
+
+  const addressLatestActivity =
+    latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
+
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
 
-  const totalNbOfAssets =
-    addressAssetIds.length +
-    ((totalBalance && BigInt(totalBalance) > 0) || (lockedBalance && BigInt(lockedBalance) > 0) ? 1 : 0)
+  const addressWorth =
+    knownTokensWorth + (totalBalance ? calculateAmountWorth(BigInt(totalBalance), tokensPrices[ALPH.symbol] || NaN) : 0)
 
-  // Asset price
-  // TODO: when listed tokens, add resp. prices. ALPH only for now.
-  const addressWorth = totalBalance && alphPrice ? calculateAmountWorth(BigInt(totalBalance), alphPrice) : undefined
+  const totalNbOfAssets =
+    tokenBalances.length +
+    ((totalBalance && BigInt(totalBalance) > 0) || (lockedBalance && BigInt(lockedBalance) > 0) ? 1 : 0)
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)

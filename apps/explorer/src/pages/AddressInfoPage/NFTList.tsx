@@ -58,15 +58,11 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => {
   const collectionIds = Object.keys(rest)
 
   const { data: collectionsMatadata } = useQueriesData(
-    collectionIds.map((id) => ({
-      ...queries.assets.metadata.NFTCollection(id)
-    }))
+    collectionIds.map((id) => queries.assets.metadata.NFTCollection(id))
   )
 
   const { data: collectionFiles } = useQueriesData(
-    collectionsMatadata.map((meta) => ({
-      ...queries.assets.NFTsData.collection(meta.collectionUri, meta.id, meta.address)
-    }))
+    collectionsMatadata.map((meta) => queries.assets.NFTsData.collection(meta.collectionUri, meta.id, meta.address))
   )
 
   const handleCollectionToggle = () => {

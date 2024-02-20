@@ -33,11 +33,11 @@ type QueriesCollection<T> = {
 export const createQueriesCollection = <T extends Record<string, Queries>>(collection: T): QueriesCollection<T> =>
   collection
 
-export const browsePages = async <T>(
-  callback: (arg: T, options: { limit: number; page: number }) => Promise<any>,
+export const browsePages = async <T, R>(
+  callback: (arg: T, options: { limit: number; page: number }) => Promise<R[]>,
   callbackFirstArg: T,
   pageLimit: number
-): Promise<any[]> => {
+): Promise<R[]> => {
   let pageTotalResults
   let page = 1
 
