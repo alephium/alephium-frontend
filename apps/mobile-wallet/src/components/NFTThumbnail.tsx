@@ -61,9 +61,11 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
                   <NFTFullSizeImage source={{ uri: nft.image }} />
                 </NFTImageContainer>
                 {nft.description && (
-                  <NFTDescription color="secondary" size={16}>
-                    {nft.description}
-                  </NFTDescription>
+                  <NFTDescriptionContainer>
+                    <AppText color="secondary" size={16}>
+                      {nft.description}
+                    </AppText>
+                  </NFTDescriptionContainer>
                 )}
                 {nft.attributes && nft.attributes.length > 0 && (
                   <AttributesGrid>
@@ -103,28 +105,31 @@ const NFTFullSizeImage = styled(Image)`
   border-radius: ${BORDER_RADIUS_SMALL}px;
 `
 
-const NFTDescription = styled(AppText)`
+const NFTDescriptionContainer = styled.View`
   margin-top: 20px;
+  background-color: ${({ theme }) => theme.bg.highlight};
+  padding: 10px;
+  border-radius: ${BORDER_RADIUS_SMALL}px;
 `
 
 const AttributesGrid = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   gap: ${attributeGap}px;
-  margin-top: 30px;
+  margin-top: 20px;
 `
 
 const Attribute = styled.View`
-  border-radius: ${BORDER_RADIUS_SMALL}px;
-  background-color: ${({ theme }) => theme.bg.highlight};
+  background-color: ${({ theme }) => theme.bg.primary};
   padding: 10px;
+  border-radius: ${BORDER_RADIUS_SMALL}px;
 `
 
 const AttributeType = styled(AppText)`
-  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
 `
 
 const AttributeValue = styled(AppText)`
-  text-align: center;
   margin-top: 2px;
 `
