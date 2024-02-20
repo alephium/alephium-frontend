@@ -62,7 +62,7 @@ dayjs.updateLocale('en', {
   }
 })
 
-export const numberOfAPIRetries = 10
+export const numberOfAPIRetries = 3
 
 const App = () => {
   const { theme } = useSettings()
@@ -74,7 +74,12 @@ const App = () => {
       queries: {
         refetchOnWindowFocus: false,
         retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
-        retry: numberOfAPIRetries,
+        retry: (failureCount) => {
+          if (failureCount > numberOfAPIRetries) {
+            console.error(`API failed after ${numberOfAPIRetries} retries, won't retry anymore`)
+            return false
+          } else return true
+        },
         staleTime: 10000, // default ms before cache data is considered stale
         cacheTime: ONE_DAY_MS
       }
