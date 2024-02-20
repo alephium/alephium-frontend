@@ -21,7 +21,7 @@ import styled from 'styled-components/native'
 
 import Amount, { AmountProps } from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
-import { NFTThumbnail } from '~/components/NFTsGrid'
+import NFTThumbnail from '~/components/NFTThumbnail'
 import { useAppSelector } from '~/hooks/redux'
 
 interface AssetAmountWithLogoProps extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand'> {
@@ -55,7 +55,7 @@ const AssetAmountWithLogo = ({
       />
     </AssetStyled>
   ) : nft ? (
-    <NFTThumbnail key={nft.id} style={{ width: 50 }} source={{ uri: nft.image }} height={50} />
+    <NFTThumbnail key={nft.id} nft={nft} size={50} />
   ) : null
 }
 

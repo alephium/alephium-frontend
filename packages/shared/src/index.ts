@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 export * from '@/types'
-export * from '@/assets'
 export * from '@/api'
 export * from '@/utils'
 export * from '@/errors'

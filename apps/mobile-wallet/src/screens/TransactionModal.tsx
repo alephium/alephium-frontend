@@ -133,7 +133,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
         )}
         {nftsData.length > 0 && (
           <Row title="NFTs" noMaxWidth transparent isLast>
-            <NFTsGrid nfts={nftsData} nftsPerRow={2} nftWidth={100} isLoading={false} />
+            <NFTsGrid nfts={nftsData} nftsPerRow={2} nftSize={100} isLoading={false} />
           </Row>
         )}
       </BoxSurface>

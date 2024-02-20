@@ -17,8 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenInfo } from '@alephium/token-list'
-import { NFTMetaData, Optional } from '@alephium/web3'
-import { AddressBalance, FungibleTokenMetadata, Token } from '@alephium/web3/dist/src/api/api-explorer'
+import {
+  FungibleTokenMetaData as FungibleTokenMetaDataBase,
+  NFTTokenUriMetaData as NFTTokenUriMetaDataBase,
+  Optional
+} from '@alephium/web3'
+import { AddressBalance, FungibleTokenMetadata, NFTMetadata, Token } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'
 
 export type TokenBalances = AddressBalance & { id: Token['id'] }
@@ -48,15 +52,18 @@ export type AssetAmount = { id: Asset['id']; amount?: bigint }
 // https://github.com/alephium/alephium-web3/blob/master/packages/web3/std/fungible_token_interface.ral#L7
 // https://github.com/alephium/token-list/blob/master/lib/types.ts#L30
 // https://github.com/alephium/alephium-web3/blob/master/packages/web3/src/api/types.ts#L296
-export type FungibleTokenBasicMetadata = Omit<FungibleTokenMetadata, 'decimals'> & { decimals: number }
+export type FungibleTokenBasicMetadata = Omit<FungibleTokenMetadata, 'decimals'> &
+  Omit<FungibleTokenMetaDataBase, 'totalSupply'>
 
-export type NFT = {
-  id: Asset['id']
-  collectionId: NFTMetaData['collectionId']
-  name?: string
-  description?: string
-  image?: string
+// TODO: Delete when this is merged https://github.com/alephium/alephium-web3/pull/313
+export interface NFTTokenUriMetaData extends Omit<NFTTokenUriMetaDataBase, 'attributes'> {
+  attributes?: {
+    trait_type: string
+    value: string | number | boolean
+  }[]
 }
+
+export type NFT = NFTTokenUriMetaData & Omit<NFTMetadata, 'tokenUri'>
 
 export interface FungibleTokensState extends EntityState<FungibleToken> {
   loadingVerified: boolean
