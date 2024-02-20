@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Contact, ContactFormData } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 
 import i18n from '@/i18n'
@@ -23,7 +24,6 @@ import {
   getEncryptedStoragePropsFromActiveWallet,
   PersistentEncryptedStorage
 } from '@/storage/encryptedPersistentStorage'
-import { Contact, ContactFormData } from '@/types/contacts'
 
 class ContactsStorage extends PersistentEncryptedStorage {
   store(contact: ContactFormData) {

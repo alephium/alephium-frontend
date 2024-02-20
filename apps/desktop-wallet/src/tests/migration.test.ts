@@ -16,14 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { encrypt, walletGenerate } from '@alephium/shared'
+import { AddressMetadata, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { encrypt, walletGenerate } from '@alephium/shared-crypto'
 import { nanoid } from 'nanoid'
 
 import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
-import SettingsStorage, { networkPresets } from '@/storage/settings/settingsPersistentStorage'
+import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
-import { AddressMetadata, DeprecatedAddressMetadata } from '@/types/addresses'
-import { NetworkSettings } from '@/types/settings'
+import { DeprecatedAddressMetadata } from '@/types/addresses'
 import * as migrate from '@/utils/migration'
 import { stringToDoubleSHA256HexString } from '@/utils/misc'
 
@@ -169,9 +169,9 @@ describe('_v140_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.mainnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.mainnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.mainnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.mainnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.mainnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.mainnet.explorerUrl)
   })
 
   it('should migrate pre-v1.4.0 deprecated testnet network settings', () => {
@@ -186,9 +186,9 @@ describe('_v140_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.testnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.testnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.testnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.testnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.testnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.testnet.explorerUrl)
   })
 
   it('should not migrate pre-v1.4.0 custom network settings', () => {
@@ -227,9 +227,9 @@ describe('_v150_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.mainnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.mainnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.mainnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.mainnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.mainnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.mainnet.explorerUrl)
     expect(migratedSettings.proxy?.address).toEqual('foo')
   })
 
@@ -245,9 +245,9 @@ describe('_v150_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.testnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.testnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.testnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.testnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.testnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.testnet.explorerUrl)
   })
 
   it('should not migrate pre-v1.5.0 custom network settings', () => {
@@ -283,9 +283,9 @@ describe('_v153_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.mainnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.mainnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.mainnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.mainnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.mainnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.mainnet.explorerUrl)
   })
 
   it('should migrate pre-v1.5.3 deprecated testnet network settings', () => {
@@ -300,9 +300,9 @@ describe('_v153_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.testnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.testnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.testnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.testnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.testnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.testnet.explorerUrl)
   })
 
   it('should not migrate pre-v1.5.3 custom network settings', () => {
@@ -338,9 +338,9 @@ describe('_v200_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.mainnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.mainnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.mainnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.mainnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.mainnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.mainnet.explorerUrl)
   })
 
   it('should migrate pre-v2.0.0 deprecated testnet network settings', () => {
@@ -355,9 +355,9 @@ describe('_v200_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.testnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.testnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.testnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.testnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.testnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.testnet.explorerUrl)
   })
 
   it('should not migrate pre-v2.0.0 custom network settings', () => {
@@ -393,9 +393,9 @@ describe('_v213_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.mainnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.mainnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.mainnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.mainnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.mainnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.mainnet.explorerUrl)
   })
 
   it('should migrate pre-v2.1.2 deprecated testnet network settings', () => {
@@ -410,9 +410,9 @@ describe('_v213_networkSettingsMigration', () => {
 
     const migratedSettings = SettingsStorage.load('network') as NetworkSettings
 
-    expect(migratedSettings.nodeHost).toEqual(networkPresets.testnet.nodeHost)
-    expect(migratedSettings.explorerApiHost).toEqual(networkPresets.testnet.explorerApiHost)
-    expect(migratedSettings.explorerUrl).toEqual(networkPresets.testnet.explorerUrl)
+    expect(migratedSettings.nodeHost).toEqual(networkSettingsPresets.testnet.nodeHost)
+    expect(migratedSettings.explorerApiHost).toEqual(networkSettingsPresets.testnet.explorerApiHost)
+    expect(migratedSettings.explorerUrl).toEqual(networkSettingsPresets.testnet.explorerUrl)
   })
 
   it('should not migrate pre-v2.1.3 custom network settings', () => {

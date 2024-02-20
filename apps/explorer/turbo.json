@@ -1,13 +1,13 @@
 {
   "extends": ["//"],
   "pipeline": {
-    "start": {
-      "dependsOn": ["^compile"],
+    "start:app": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
     "build:gh-pages": {
-      "dependsOn": ["^compile"]
+      "dependsOn": ["^build"]
     }
   }
 }

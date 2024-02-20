@@ -22,8 +22,8 @@ import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import animationSrc from '~/animations/lottie/wallet.json'
+import ActionButtonsStack from '~/components/buttons/ActionButtonsStack'
 import Button from '~/components/buttons/Button'
-import ButtonStack from '~/components/buttons/ButtonStack'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
@@ -54,17 +54,15 @@ const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWall
         <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
       </AnimationContainer>
       <CenteredInstructions instructions={instructions} stretch />
-      <ActionsContainer>
-        <ButtonStack>
-          <Button
-            title="Scan"
-            type="primary"
-            variant="highlight"
-            onPress={() => navigation.navigate('AddressDiscoveryScreen', { isImporting: true })}
-          />
-          <Button title="Later" type="primary" variant="accent" onPress={handleLaterPress} />
-        </ButtonStack>
-      </ActionsContainer>
+      <ActionButtonsStack>
+        <Button
+          title="Scan"
+          type="primary"
+          variant="highlight"
+          onPress={() => navigation.navigate('AddressDiscoveryScreen', { isImporting: true })}
+        />
+        <Button title="Later" type="primary" variant="accent" onPress={handleLaterPress} />
+      </ActionButtonsStack>
     </ScrollScreen>
   )
 }
@@ -79,10 +77,4 @@ const AnimationContainer = styled.View`
 
 const StyledAnimation = styled(LottieView)`
   width: 60%;
-`
-
-const ActionsContainer = styled.View`
-  flex: 1.5;
-  justify-content: center;
-  align-items: center;
 `

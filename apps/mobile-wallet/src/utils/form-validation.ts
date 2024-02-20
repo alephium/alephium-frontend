@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isAddressValid as isAddressHashValid } from '@alephium/shared'
+import { Contact } from '@alephium/shared'
+import { isAddressValid as isAddressHashValid } from '@alephium/shared-crypto'
 import { Optional } from '@alephium/web3'
 
 import { store } from '~/store/store'
-import { Contact } from '~/types/contacts'
 
 // TODO: Same as in desktop wallet
 export const requiredErrorMessage = 'This field is required'

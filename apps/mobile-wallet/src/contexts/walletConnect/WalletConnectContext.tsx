@@ -21,11 +21,13 @@ import '@walletconnect/react-native-compat'
 import {
   AddressHash,
   AssetAmount,
+  client,
   getHumanReadableError,
   WALLETCONNECT_ERRORS,
   WalletConnectClientStatus,
   WalletConnectError
 } from '@alephium/shared'
+import { useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -68,7 +70,6 @@ import BackgroundService from 'react-native-background-actions'
 import { Portal } from 'react-native-portalize'
 
 import { sendAnalytics } from '~/analytics'
-import client from '~/api/client'
 import {
   buildCallContractTransaction,
   buildDeployContractTransaction,
@@ -79,7 +80,6 @@ import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppSelector } from '~/hooks/redux'
-import useInterval from '~/hooks/useInterval'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, SignMessageData, TransferTxData } from '~/types/transactions'

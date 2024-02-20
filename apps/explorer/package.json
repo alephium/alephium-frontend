@@ -4,7 +4,8 @@
   "version": "1.8.3",
   "private": true,
   "scripts": {
-    "start": "vite",
+    "start": "turbo start:app",
+    "start:app": "vite",
     "build": "tsc && vite build --outDir build",
     "build:gh-pages": "pnpm run build -- --base=/explorer/",
     "ci:build": "turbo run build",
@@ -15,7 +16,10 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
+    "clean": "rm -rf build",
+    "clean:node-modules": "rm -rf node_modules"
   },
   "browserslist": {
     "production": [
@@ -31,6 +35,8 @@
   },
   "dependencies": {
     "@alephium/shared": "workspace:*",
+    "@alephium/shared-crypto": "workspace:*",
+    "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.12",
     "@alephium/web3": "0.29.1",
     "@tanstack/query-sync-storage-persister": "4.32.0",
@@ -84,7 +90,7 @@
     "rollup-plugin-node-polyfills": "^0.2.1",
     "serve": "^14.1.2",
     "typescript": "^5.2.2",
-    "vite": "^4.3.9",
+    "vite": "^4.5.2",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^0.31.0"

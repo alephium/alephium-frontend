@@ -21,8 +21,8 @@ import LottieView from 'lottie-react-native'
 import styled from 'styled-components/native'
 
 import animationSrc from '~/animations/lottie/wallet.json'
+import ActionButtonsStack from '~/components/buttons/ActionButtonsStack'
 import Button from '~/components/buttons/Button'
-import ButtonStack from '~/components/buttons/ButtonStack'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
@@ -54,17 +54,15 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
         <StyledAnimation source={animationSrc} autoPlay />
       </AnimationContainer>
       <CenteredInstructions instructions={instructions[method]} />
-      <ActionsContainer>
-        <ButtonStack>
-          <Button
-            title="Let's go!"
-            type="primary"
-            variant="highlight"
-            onPress={() => navigation.navigate('NewWalletNameScreen')}
-          />
-          <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
-        </ButtonStack>
-      </ActionsContainer>
+      <ActionButtonsStackStyled>
+        <Button
+          title="Let's go!"
+          type="primary"
+          variant="highlight"
+          onPress={() => navigation.navigate('NewWalletNameScreen')}
+        />
+        <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
+      </ActionButtonsStackStyled>
     </ScrollScreen>
   )
 }
@@ -81,8 +79,7 @@ const StyledAnimation = styled(LottieView)`
   width: 40%;
 `
 
-const ActionsContainer = styled.View`
+const ActionButtonsStackStyled = styled(ActionButtonsStack)`
   flex: 2;
   justify-content: flex-end;
-  align-items: center;
 `

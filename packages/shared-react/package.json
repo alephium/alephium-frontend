@@ -1,0 +1,30 @@
+{
+  "name": "@alephium/shared-react",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsup",
+    "watch": "tsup --watch",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
+    "clean": "rm -rf dist",
+    "clean:node-modules": "rm -rf node_modules",
+    "lint": "eslint . --ext .ts --max-warnings=0",
+    "lint:fix": "eslint . --fix --ext .ts"
+  },
+  "dependencies": {
+    "@alephium/shared": "workspace:*",
+    "react": "^18.2.0",
+    "react-redux": "^8.0.5"
+  },
+  "devDependencies": {
+    "@alephium/eslint-config": "workspace:*",
+    "@alephium/typescript-config": "workspace:*",
+    "@types/react": "~18.2.14",
+    "tsup": "^8.0.1",
+    "typescript": "^5.2.2"
+  }
+}

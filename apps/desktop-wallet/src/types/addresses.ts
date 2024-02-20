@@ -16,7 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, AddressKeyPair } from '@alephium/shared'
+import {
+  AddressBalancesSyncResult,
+  AddressHash,
+  AddressKeyPair,
+  AddressSettings,
+  AddressTokensSyncResult,
+  BalanceHistory
+} from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'
@@ -34,22 +41,7 @@ export type DeprecatedAddressMetadata = DeprecatedAddressSettings & {
   index: number
 }
 
-export type AddressSettings = {
-  isDefault: boolean
-  color: string
-  label?: string
-}
-
-export type AddressMetadata = AddressSettings & {
-  index: number
-}
-
 export type AddressBase = AddressKeyPair & AddressSettings
-
-export type BalanceHistory = {
-  date: string // CHART_DATE_FORMAT
-  balance: string
-}
 
 export type Address = AddressBase &
   explorer.AddressInfo & {
@@ -82,13 +74,4 @@ export type AddressTransactionsSyncResult = {
   txNumber: explorer.AddressInfo['txNumber']
   transactions: explorer.Transaction[]
   mempoolTransactions: explorer.MempoolTransaction[]
-}
-
-export type AddressTokensSyncResult = {
-  hash: AddressHash
-  tokenBalances: AddressTokenBalance[]
-}
-
-export type AddressBalancesSyncResult = Omit<explorer.AddressInfo, 'txNumber'> & {
-  hash: AddressHash
 }

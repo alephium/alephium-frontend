@@ -18,42 +18,54 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TransactionInfoType } from '@alephium/shared'
 import { colord } from 'colord'
-import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat } from 'lucide-react'
+import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat, Repeat2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
 
-export const useTransactionUI = (infoType: TransactionInfoType) => {
+interface TransactionUIProps {
+  infoType: TransactionInfoType
+  isFailedScriptTx: boolean
+}
+
+export const useTransactionUI = ({ infoType, isFailedScriptTx }: TransactionUIProps) => {
   const theme = useTheme()
   const { t } = useTranslation()
 
-  return {
-    label: {
-      in: t('Received'),
-      out: t('Sent'),
-      move: t('Moved'),
-      pending: t('Pending'),
-      swap: t('Swapped')
-    }[infoType],
-    Icon: {
-      in: ArrowDown,
-      out: ArrowUp,
-      move: ArrowLeftRight,
-      pending: CircleEllipsis,
-      swap: Repeat
-    }[infoType],
-    iconColor: {
-      in: theme.global.valid,
-      out: theme.font.highlight,
-      move: theme.font.secondary,
-      pending: theme.font.secondary,
-      swap: theme.global.complementary
-    }[infoType],
-    iconBgColor: {
-      in: colord(theme.global.valid).alpha(0.08).toRgbString(),
-      out: colord(theme.font.highlight).alpha(0.08).toRgbString(),
-      move: colord(theme.font.secondary).alpha(0.08).toRgbString(),
-      pending: colord(theme.font.secondary).alpha(0.08).toRgbString(),
-      swap: colord(theme.global.complementary).alpha(0.08).toRgbString()
-    }[infoType]
-  }
+  return isFailedScriptTx
+    ? {
+        label: t('dApp operation'),
+        Icon: Repeat2,
+        iconColor: colord(theme.global.complementary).alpha(0.5).toRgbString(),
+        iconBgColor: colord(theme.global.complementary).alpha(0.05).toRgbString()
+      }
+    : {
+        label: {
+          in: t('Received'),
+          out: t('Sent'),
+          move: t('Moved'),
+          pending: t('Pending'),
+          swap: t('dApp operation')
+        }[infoType],
+        Icon: {
+          in: ArrowDown,
+          out: ArrowUp,
+          move: ArrowLeftRight,
+          pending: CircleEllipsis,
+          swap: Repeat
+        }[infoType],
+        iconColor: {
+          in: theme.global.valid,
+          out: theme.font.highlight,
+          move: theme.font.secondary,
+          pending: theme.font.secondary,
+          swap: theme.global.complementary
+        }[infoType],
+        iconBgColor: {
+          in: colord(theme.global.valid).alpha(0.08).toRgbString(),
+          out: colord(theme.font.highlight).alpha(0.08).toRgbString(),
+          move: colord(theme.font.secondary).alpha(0.08).toRgbString(),
+          pending: colord(theme.font.secondary).alpha(0.08).toRgbString(),
+          swap: colord(theme.global.complementary).alpha(0.08).toRgbString()
+        }[infoType]
+      }
 }

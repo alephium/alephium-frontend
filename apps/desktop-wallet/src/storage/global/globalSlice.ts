@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 
 import { addressDiscoveryFinished, addressDiscoveryStarted } from '@/storage/addresses/addressesActions'
 import {
   addressesPageInfoMessageClosed,
   devModeShortcutDetected,
-  localStorageDataMigrated,
   modalClosed,
   modalOpened,
   osThemeChangeDetected,
@@ -119,7 +119,7 @@ const globalSlice = createSlice({
       .addCase(themeToggled, (state, action) => {
         state.theme = action.payload
       })
-      .addCase(localStorageDataMigrated, refreshWalletList)
+      .addCase(localStorageNetworkSettingsMigrated, refreshWalletList)
       .addCase(newWalletNameStored, refreshWalletList)
       .addCase(receiveTestnetTokens.pending, (state) => {
         state.faucetCallPending = true

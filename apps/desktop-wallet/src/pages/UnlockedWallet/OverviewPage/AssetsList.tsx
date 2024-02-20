@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, calculateAmountWorth } from '@alephium/shared'
+import { AddressHash, Asset, calculateAmountWorth, CURRENCIES, selectPriceById } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,9 +42,7 @@ import {
   makeSelectAddressesNFTs,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { selectPriceById } from '@/storage/prices/pricesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
-import { currencies } from '@/utils/currencies'
 
 interface AssetsListProps {
   className?: string
@@ -216,12 +214,12 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
                 </AmountSubtitle>
               )}
               {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
-              {assetPrice && assetPrice.price !== null && (
+              {assetPrice && assetPrice.price !== null && asset?.verified && (
                 <Price>
                   <Amount
                     value={calculateAmountWorth(asset.balance, assetPrice.price)}
                     isFiat
-                    suffix={currencies[fiatCurrency].symbol}
+                    suffix={CURRENCIES[fiatCurrency].symbol}
                   />
                 </Price>
               )}

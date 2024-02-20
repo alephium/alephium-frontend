@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth } from '@alephium/shared'
+import { AddressHash, CURRENCIES, selectDoVerifiedFungibleTokensNeedInitialization } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 import { useMemo, useState } from 'react'
@@ -33,12 +33,10 @@ import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import {
   makeSelectAddressesTokens,
+  makeSelectAddressesTokensWorth,
   selectAddressByHash,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { selectDoVerifiedFungibleTokensNeedInitialization } from '@/storage/assets/assetsSelectors'
-import { selectAlphPrice } from '@/storage/prices/pricesSelectors'
-import { currencies } from '@/utils/currencies'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressGridRowProps {
@@ -56,8 +54,9 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const alphPrice = useAppSelector(selectAlphPrice)
   const areTokenPricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
+  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
@@ -66,8 +65,6 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const hiddenAssets = hiddenAssetsChunks.flat()
 
   if (!address) return null
-
-  const fiatBalance = calculateAmountWorth(BigInt(address.balance), alphPrice ?? 0)
 
   const hiddenAssetsSymbols = hiddenAssets.filter(({ symbol }) => !!symbol).map(({ symbol }) => symbol)
   const nbOfUnknownHiddenAssets = hiddenAssets.filter(({ symbol }) => !symbol).length
@@ -128,7 +125,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           {stateUninitialized || !areTokenPricesInitialized ? (
             <SkeletonLoader height="18.5px" />
           ) : (
-            <Amount value={fiatBalance} isFiat suffix={currencies[fiatCurrency].symbol} />
+            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
           )}
         </FiatAmountCell>
       </GridRow>

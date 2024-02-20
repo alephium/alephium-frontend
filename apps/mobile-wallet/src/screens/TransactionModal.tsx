@@ -87,7 +87,9 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           </AppTextStyled>
         </Row>
         <Row title="Status" transparent>
-          <AppText semiBold>{tx.blockHash ? 'Confirmed' : 'Pending'}</AppText>
+          <AppText semiBold>
+            {!tx.scriptExecutionOk ? 'Script execution failed' : tx.blockHash ? 'Confirmed' : 'Pending'}
+          </AppText>
         </Row>
         <Row title="From" transparent>
           {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
@@ -131,7 +133,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
         )}
         {nftsData.length > 0 && (
           <Row title="NFTs" noMaxWidth transparent isLast>
-            <NFTsGrid nfts={nftsData} nftsPerRow={2} nftWidth={100} isLoading={false} />
+            <NFTsGrid nfts={nftsData} nftsPerRow={2} nftSize={100} isLoading={false} />
           </Row>
         )}
       </BoxSurface>

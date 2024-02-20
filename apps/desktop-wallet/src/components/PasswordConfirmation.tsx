@@ -62,6 +62,8 @@ const PasswordConfirmation: FC<PasswordConfirmationProps> = ({
       }
     } catch (e) {
       dispatch(passwordValidationFailed())
+    } finally {
+      setPassword('')
     }
   }
 

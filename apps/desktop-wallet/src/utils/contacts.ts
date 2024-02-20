@@ -16,10 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Contact } from '@alephium/shared'
+
 import { contactsLoadedFromPersistentStorage } from '@/storage/addresses/addressesActions'
 import ContactsStorage from '@/storage/addresses/contactsPersistentStorage'
 import { store } from '@/storage/store'
-import { Contact } from '@/types/contacts'
 
 export const filterContacts = (contacts: Contact[], text: string) =>
   text.length < 2

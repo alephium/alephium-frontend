@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { View } from 'react-native'
@@ -25,11 +26,7 @@ import { ModalContent, ModalContentProps } from '~/components/layout/ModalConten
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { networkPresetSettings, persistSettings } from '~/persistent-storage/settings'
-import { networkPresetSwitched } from '~/store/networkSlice'
-import { NetworkName, NetworkPreset } from '~/types/network'
-
-const networkNames = Object.values(NetworkName)
+import { persistSettings } from '~/persistent-storage/settings'
 
 interface SwitchNetworkModalProps extends ModalContentProps {
   onCustomNetworkPress: () => void
@@ -40,17 +37,17 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
 
   const dispatch = useAppDispatch()
 
-  const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkName.custom)
+  const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkNames.custom)
   const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetworkName)
 
-  const handleNetworkItemPress = async (newNetworkName: NetworkPreset | NetworkName.custom) => {
+  const handleNetworkItemPress = async (newNetworkName: NetworkPreset | NetworkNames.custom) => {
     setSelectedNetworkName(newNetworkName)
 
-    if (newNetworkName === NetworkName.custom) {
+    if (newNetworkName === NetworkNames.custom) {
       onClose && onClose()
       onCustomNetworkPress()
     } else {
-      await persistSettings('network', networkPresetSettings[newNetworkName])
+      await persistSettings('network', networkSettingsPresets[newNetworkName])
       dispatch(networkPresetSwitched(newNetworkName))
 
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
@@ -64,7 +61,7 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
       </ScreenSection>
       <View>
         <BoxSurface>
-          {networkNames.map((networkName) => (
+          {Object.values(NetworkNames).map((networkName) => (
             <RadioButtonRow
               key={networkName}
               title={capitalize(networkName)}

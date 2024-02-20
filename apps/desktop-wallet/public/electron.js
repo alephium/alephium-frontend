@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2023 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -34,6 +34,9 @@ const ALEPHIUM_WALLET_CONNECT_URI_PREFIX = '?uri='
 // See https://github.com/alephium/alephium-frontend/issues/176
 const OLD_APP_NAME = 'alephium-wallet'
 app.setName(OLD_APP_NAME)
+
+// Expose Garbage Collector flag for manual trigger
+app.commandLine.appendSwitch('js-flags', '--expose-gc')
 
 protocol.registerSchemesAsPrivileged([{ scheme: ALEPHIUM, privileges: { secure: true, standard: true } }])
 if (process.defaultApp) {
@@ -310,6 +313,11 @@ app.on('ready', async function () {
     } catch (e) {
       console.error(e)
     }
+  })
+
+  ipcMain.handle('app:restart', () => {
+    app.relaunch()
+    app.exit()
   })
 
   ipcMain.handle('wc:getDeepLinkUri', () => deepLinkUri)

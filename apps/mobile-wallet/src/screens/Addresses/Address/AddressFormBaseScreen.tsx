@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressSettings } from '@alephium/shared'
 import { ReactNode, useState } from 'react'
 import { View } from 'react-native'
 import { Portal } from 'react-native-portalize'
@@ -32,7 +33,6 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
-import { AddressSettings } from '~/types/addresses'
 
 export type AddressFormData = AddressSettings & {
   group?: number

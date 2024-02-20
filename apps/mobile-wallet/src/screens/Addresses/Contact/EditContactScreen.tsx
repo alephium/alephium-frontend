@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ContactFormData } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
@@ -29,7 +30,6 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deleteContact, persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
-import { ContactFormData } from '~/types/contacts'
 import { showExceptionToast } from '~/utils/layout'
 
 interface EditContactScreenProps extends StackScreenProps<RootStackParamList, 'EditContactScreen'>, ScrollScreenProps {}

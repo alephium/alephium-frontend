@@ -16,16 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import {
+  apiClientInitFailed,
+  apiClientInitSucceeded,
+  contactDeletedFromPersistentStorage,
+  contactStoredInPersistentStorage,
+  customNetworkSettingsSaved
+} from '@alephium/shared'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import i18n from '@/i18n'
-import {
-  contactDeletedFromPeristentStorage,
-  contactDeletionFailed,
-  contactStorageFailed,
-  contactStoredInPersistentStorage,
-  syncAddressesData
-} from '@/storage/addresses/addressesActions'
+import { contactDeletionFailed, contactStorageFailed, syncAddressesData } from '@/storage/addresses/addressesActions'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
 import {
@@ -41,11 +42,6 @@ import {
   walletConnectCacheCleared,
   walletConnectCacheClearFailed
 } from '@/storage/global/globalActions'
-import {
-  apiClientInitFailed,
-  apiClientInitSucceeded,
-  customNetworkSettingsSaved
-} from '@/storage/settings/networkActions'
 import {
   csvFileGenerationFinished,
   csvFileGenerationStarted,
@@ -105,7 +101,7 @@ const snackbarSlice = createSlice({
       .addCase(contactStoredInPersistentStorage, (state) =>
         displayMessageImmediately(state, { text: i18n.t('Contact saved'), type: 'success' })
       )
-      .addCase(contactDeletedFromPeristentStorage, (state) =>
+      .addCase(contactDeletedFromPersistentStorage, (state) =>
         displayMessageImmediately(state, { text: i18n.t('Contact deleted'), type: 'success' })
       )
       .addCase(customNetworkSettingsSaved, (state) =>

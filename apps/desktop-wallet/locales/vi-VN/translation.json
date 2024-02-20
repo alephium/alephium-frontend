@@ -198,7 +198,7 @@
   "Latest transactions": "Giao dịch gần nhất",
   "Let's go!": "Bắt đầu!",
   "Light": "Sáng",
-  "Localhost": "Localhost",
+  "Devnet": "Devnet",
   "Lock": "Khoá",
   "Lock current wallet": "Khoá bảo vệ ví hiện tại",
   "Lock time": "Thời gian khoá",
@@ -477,5 +477,9 @@
   "Transaction ID": "Transaction ID",
   "Unsigned transaction": "Unsigned transaction",
   "Sign Message": "Sign Message",
-  "Message": "Message"
+  "Message": "Message",
+  "Received dApp request": "Received dApp request",
+  "dApp operation": "dApp operation",
+  "Script execution failed": "Script execution failed",
+  "Hide": "Hide"
 }

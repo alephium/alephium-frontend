@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { appBecameInactive, appReset } from '@alephium/shared'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { appBecameInactive, appReset } from '~/store/appSlice'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { CredentialsState } from '~/types/wallet'
 

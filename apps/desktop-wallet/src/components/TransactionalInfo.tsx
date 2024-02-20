@@ -60,11 +60,12 @@ const TransactionalInfo = ({
   const { addressHash: addressHashParam = '' } = useParams<{ addressHash: AddressHash }>()
   const addressHash = addressHashProp ?? addressHashParam
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const { assets, direction, outputs, lockTime, infoType } = getTransactionInfo(tx, showInternalInflows)
-  const { label, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
+  const { assets, direction, lockTime, infoType } = getTransactionInfo(tx, showInternalInflows)
+  const isPending = isPendingTx(tx)
+  const isFailedScriptTx = !isPending && !tx.scriptExecutionOk
+  const { label, Icon, iconColor, iconBgColor } = useTransactionUI({ infoType, isFailedScriptTx })
 
   const isMoved = infoType === 'move'
-  const isPending = isPendingTx(tx)
 
   if (!address) return null
 
@@ -84,6 +85,11 @@ const TransactionalInfo = ({
         <CellArrow>
           <TransactionIcon color={iconBgColor}>
             <Icon size={13} strokeWidth={3} color={iconColor} />
+            {isFailedScriptTx && (
+              <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
+                !
+              </FailedTXBubble>
+            )}
           </TransactionIcon>
         </CellArrow>
         <DirectionAndTime>
@@ -116,7 +122,7 @@ const TransactionalInfo = ({
               <IOList
                 currentAddress={addressHash}
                 isOut={false}
-                outputs={outputs}
+                outputs={tx.outputs}
                 inputs={(tx as explorer.Transaction).inputs}
                 timestamp={(tx as explorer.Transaction).timestamp}
                 truncate
@@ -156,7 +162,7 @@ const TransactionalInfo = ({
               <IOList
                 currentAddress={addressHash}
                 isOut={direction === 'out'}
-                outputs={outputs}
+                outputs={(tx as explorer.Transaction).outputs}
                 inputs={(tx as explorer.Transaction).inputs}
                 timestamp={(tx as explorer.Transaction).timestamp}
                 truncate
@@ -274,6 +280,7 @@ const TransactionIcon = styled.span<{ color?: string }>`
   align-items: center;
   width: 30px;
   height: 30px;
+  position: relative;
   border-radius: 30px;
   background-color: ${({ color, theme }) => color || theme.font.primary};
   border: 1px solid
@@ -295,4 +302,18 @@ const AssetBadges = styled.div`
   row-gap: 10px;
   flex-wrap: wrap;
   align-items: center;
+`
+
+const FailedTXBubble = styled.div`
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  border-radius: 14px;
+  background-color: ${({ theme }) => theme.global.alert};
+  color: white;
+  top: -5px;
+  right: -5px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
 `

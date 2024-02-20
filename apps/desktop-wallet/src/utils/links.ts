@@ -21,6 +21,8 @@ export const links = {
     'https://docs.alephium.org/wallet/desktop-wallet/advanced-features#2-passphrase-advanced-security-feature',
   latestRelease: 'https://github.com/alephium/alephium-frontend/releases/latest',
   latestReleaseApi: 'https://api.github.com/repos/alephium/alephium-frontend/releases/latest',
+  announcement:
+    'https://api.github.com/repos/alephium/alephium-frontend/contents/apps/desktop-wallet/announcement.json',
   utxoConsolidation: 'https://docs.alephium.org/wallet/desktop-wallet/advanced-features#1-utxo-consolidation',
   miningWallet: 'https://docs.alephium.org/wallet/desktop-wallet/configure-mining-wallet',
   discord: 'https://www.alephium.org/discord',

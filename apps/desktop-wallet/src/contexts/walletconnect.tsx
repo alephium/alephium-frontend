@@ -18,11 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   AssetAmount,
+  client,
   getHumanReadableError,
   WALLETCONNECT_ERRORS,
   WalletConnectClientStatus,
   WalletConnectError
 } from '@alephium/shared'
+import { useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
 import {
@@ -62,7 +64,6 @@ import { usePostHog } from 'posthog-js/react'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import client from '@/api/client'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import SendModalCallContract from '@/modals/SendModals/CallContract'
@@ -85,7 +86,6 @@ import {
 } from '@/types/transactions'
 import { SessionProposalEvent, SessionRequestEvent } from '@/types/walletConnect'
 import { AlephiumWindow } from '@/types/window'
-import { useInterval } from '@/utils/hooks'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
 const MaxRequestNumToKeep = 10
@@ -98,6 +98,7 @@ export interface WalletConnectContextProps {
   activeSessions: SessionTypes.Struct[]
   dAppUrlToConnectTo?: string
   reset: () => Promise<void>
+  sessionRequestEvent?: SessionRequestEvent
 }
 
 const initialContext: WalletConnectContextProps = {
@@ -135,6 +136,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
   const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
   const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
+  const [walletLockedBeforeProcessingWCRequest, setWalletLockedBeforeProcessingWCRequest] = useState(false)
 
   const isAuthenticated = !!mnemonic
 
@@ -240,8 +242,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         } else if (modalType === TxType.SIGN_MESSAGE) {
           setIsSignMessageModalOpen(true)
         }
-
-        electron?.app.show()
       }
 
       const {
@@ -250,6 +250,15 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
       console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
       console.log('👉 REQUESTED METHOD:', request.method)
+
+      if (request.method.startsWith('alph_sign')) {
+        electron?.app.show()
+      }
+
+      if (addresses.length === 0) {
+        setWalletLockedBeforeProcessingWCRequest(true)
+        return
+      }
 
       try {
         switch (request.method as RelayMethod) {
@@ -484,6 +493,12 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
   const shouldInitialize = walletConnectClientStatus !== 'initialized'
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
+
+  useEffect(() => {
+    if (walletLockedBeforeProcessingWCRequest && sessionRequestEvent && addresses.length > 0) {
+      onSessionRequest(sessionRequestEvent)
+    }
+  }, [addresses.length, onSessionRequest, sessionRequestEvent, walletLockedBeforeProcessingWCRequest])
 
   useEffect(() => {
     if (!walletConnectClient || walletConnectClientStatus !== 'initialized') return
@@ -773,7 +788,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         pairWithDapp,
         activeSessions,
         dAppUrlToConnectTo: sessionProposalEvent?.params.proposer.metadata.url,
-        reset
+        reset,
+        sessionRequestEvent
       }}
     >
       {children}

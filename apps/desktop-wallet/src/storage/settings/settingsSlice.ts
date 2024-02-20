@@ -27,20 +27,20 @@ import 'dayjs/locale/ru'
 import 'dayjs/locale/tr'
 import 'dayjs/locale/vi'
 
+import { fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import posthog from 'posthog-js'
 
 import i18next from '@/i18n'
-import { localStorageDataMigrated } from '@/storage/global/globalActions'
 import {
   analyticsToggled,
   devToolsToggled,
   discreetModeToggled,
-  fiatCurrencyChanged,
   languageChanged,
   languageChangeFinished,
   languageChangeStarted,
+  localStorageGeneralSettingsMigrated,
   passwordRequirementToggled,
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded,
@@ -60,7 +60,7 @@ const settingsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(localStorageDataMigrated, () => SettingsStorage.load('general') as GeneralSettings)
+      .addCase(localStorageGeneralSettingsMigrated, (_, { payload: generalSettings }) => generalSettings)
       .addCase(systemLanguageMatchSucceeded, (state, { payload: language }) => {
         state.language = language
       })
@@ -122,7 +122,12 @@ settingsListenerMiddleware.startListening({
 })
 
 settingsListenerMiddleware.startListening({
-  matcher: isAnyOf(localStorageDataMigrated, languageChanged, systemLanguageMatchSucceeded, systemLanguageMatchFailed),
+  matcher: isAnyOf(
+    localStorageGeneralSettingsMigrated,
+    languageChanged,
+    systemLanguageMatchSucceeded,
+    systemLanguageMatchFailed
+  ),
   effect: async (_, { getState, dispatch }) => {
     const state = getState() as RootState
 

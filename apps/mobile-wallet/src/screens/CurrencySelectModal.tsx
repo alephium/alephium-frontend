@@ -16,16 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
+
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { currencySelected } from '~/store/settingsSlice'
-import { Currency } from '~/types/settings'
-import { currencies } from '~/utils/currencies'
 
-const currencyOptions = Object.values(currencies).map((currency) => ({
+const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
   label: `${currency.name} (${currency.ticker})`,
   value: currency.ticker
 }))
@@ -35,7 +34,7 @@ const CurrencySelectModal = ({ onClose, ...props }: ModalContentProps) => {
   const currentCurrency = useAppSelector((s) => s.settings.currency)
 
   const handleCurrencyChange = (currency: Currency) => {
-    dispatch(currencySelected(currency))
+    dispatch(fiatCurrencyChanged(currency))
     onClose && onClose()
   }
 

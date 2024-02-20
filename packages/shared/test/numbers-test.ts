@@ -28,7 +28,7 @@ import {
   fromHumanReadableAmount,
   produceZeros,
   toHumanReadableAmount
-} from '../lib/numbers'
+} from '../src/numbers'
 
 const minDigits = 3
 
@@ -455,7 +455,7 @@ it('should produce the right number of zeros', () => {
 })
 
 describe('should test not exported functions', () => {
-  const numberUtils = rewire('../dist/numbers')
+  const numberUtils = rewire('../dist/index.cjs')
   const removeTrailingZeros = numberUtils.__get__('removeTrailingZeros')
   const isNumber = numberUtils.__get__('isNumber')
 

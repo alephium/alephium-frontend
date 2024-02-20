@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ThemeType } from '~/style/themes'
+import { Currency, NetworkSettings } from '@alephium/shared'
 
-export type Currency = 'CHF' | 'GBP' | 'EUR' | 'USD' | 'TRY' | 'VND' | 'RUB' | 'IDR'
+import { ThemeType } from '~/style/themes'
 
 export interface GeneralSettings {
   theme: ThemeType
@@ -29,13 +29,6 @@ export interface GeneralSettings {
   analyticsId?: string
   walletConnect: boolean
   usesBiometrics: boolean
-}
-
-export interface NetworkSettings {
-  networkId: number
-  nodeHost: string
-  explorerApiHost: string
-  explorerUrl: string
 }
 
 export interface Settings {

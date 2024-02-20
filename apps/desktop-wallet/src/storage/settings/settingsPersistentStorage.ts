@@ -16,34 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { clone, mapValues, merge } from 'lodash'
+import { defaultNetworkSettings } from '@alephium/shared'
+import { merge } from 'lodash'
 import posthog from 'posthog-js'
 
-import { NetworkPreset } from '@/types/network'
-import { NetworkSettings, Settings } from '@/types/settings'
-
-const networkBasePresets: Record<NetworkPreset, NetworkSettings> = {
-  mainnet: {
-    networkId: 0,
-    nodeHost: 'https://node-v20.mainnet.alephium.org',
-    explorerApiHost: 'https://backend-v115.mainnet.alephium.org',
-    explorerUrl: 'https://explorer.alephium.org'
-  },
-  testnet: {
-    networkId: 1,
-    nodeHost: 'https://node-v20.testnet.alephium.org',
-    explorerApiHost: 'https://backend-v115.testnet.alephium.org',
-    explorerUrl: 'https://explorer.testnet.alephium.org'
-  },
-  localhost: {
-    networkId: 4,
-    nodeHost: 'http://localhost:22973',
-    explorerApiHost: 'http://localhost:9090',
-    explorerUrl: 'http://localhost:23000'
-  }
-}
-
-export const networkPresets = mapValues(networkBasePresets, (v) => ({ ...v, proxy: { address: '', port: '' } }))
+import { Settings } from '@/types/settings'
 
 export const defaultSettings: Settings = {
   general: {
@@ -56,7 +33,7 @@ export const defaultSettings: Settings = {
     analytics: true,
     fiatCurrency: 'USD'
   },
-  network: clone(networkPresets.mainnet) as NetworkSettings
+  network: defaultNetworkSettings
 }
 
 type SettingsKey = keyof Settings

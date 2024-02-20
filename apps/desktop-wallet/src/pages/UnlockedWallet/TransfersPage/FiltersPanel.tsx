@@ -15,7 +15,8 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { Asset } from '@alephium/shared'
+
+import { Asset, selectDoVerifiedFungibleTokensNeedInitialization } from '@alephium/shared'
 import { colord } from 'colord'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -27,8 +28,11 @@ import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import { makeSelectAddressesTokens, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
-import { selectDoVerifiedFungibleTokensNeedInitialization } from '@/storage/assets/assetsSelectors'
+import {
+  makeSelectAddressesTokens,
+  selectAllAddresses,
+  selectIsStateUninitialized
+} from '@/storage/addresses/addressesSelectors'
 import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Address } from '@/types/addresses'
 import { directionOptions } from '@/utils/transactions'
@@ -58,7 +62,7 @@ const FiltersPanel = ({
   const assets = useAppSelector(selectAddressesTokens)
 
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
-  const stateUninitialized = useAppSelector((s) => s.addresses.status === 'uninitialized') // TODO: Use selector from next PR
+  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
   const renderAddressesSelectedValue = () =>
     selectedAddresses.length === 0

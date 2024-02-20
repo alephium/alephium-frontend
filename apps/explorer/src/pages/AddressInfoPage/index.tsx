@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes, calculateAmountWorth, getHumanReadableError, isAddressValid } from '@alephium/shared'
+import { addApostrophes, calculateAmountWorth, getHumanReadableError } from '@alephium/shared'
+import { isAddressValid } from '@alephium/shared-crypto'
 import { ALPH } from '@alephium/token-list'
 import { contractIdFromAddress, groupOfAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'

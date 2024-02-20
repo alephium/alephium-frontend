@@ -88,7 +88,7 @@ const ScrollScreen = ({
         alwaysBounceVertical={true}
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
-        style={{ overflow: SCREEN_OVERFLOW, paddingTop: headerOptions ? 15 : 0 }}
+        style={{ overflow: SCREEN_OVERFLOW }}
         contentContainerStyle={[
           {
             flexGrow: fill ? 1 : undefined,

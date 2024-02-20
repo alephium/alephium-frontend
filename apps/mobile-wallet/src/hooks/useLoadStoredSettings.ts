@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { localStorageNetworkSettingsLoaded, NetworkSettings } from '@alephium/shared'
 import { useEffect } from 'react'
 
 import { useAppDispatch } from '~/hooks/redux'
-import { loadSettings } from '~/persistent-storage/settings'
-import { storedNetworkSettingsLoaded } from '~/store/networkSlice'
+import { loadSettings, persistSettings } from '~/persistent-storage/settings'
 import { storedGeneralSettingsLoaded } from '~/store/settingsSlice'
-import { GeneralSettings, NetworkSettings } from '~/types/settings'
+import { GeneralSettings } from '~/types/settings'
 
 const useLoadStoredSettings = () => {
   const dispatch = useAppDispatch()
@@ -33,7 +33,17 @@ const useLoadStoredSettings = () => {
       dispatch(storedGeneralSettingsLoaded(generalSettings))
 
       const networkSettings = (await loadSettings('network')) as NetworkSettings
-      dispatch(storedNetworkSettingsLoaded(networkSettings))
+
+      // TODO: Create proper migration script and tests like on the desktop wallet
+      if (
+        networkSettings.nodeHost === 'https://wallet-v20.mainnet.alephium.org' ||
+        networkSettings.nodeHost === 'https://wallet-v20.testnet.alephium.org'
+      ) {
+        networkSettings.nodeHost = networkSettings.nodeHost.replace('wallet', 'node')
+        await persistSettings('network', networkSettings)
+      }
+
+      dispatch(localStorageNetworkSettingsLoaded(networkSettings))
     }
 
     loadStoredSettingsIntoState()

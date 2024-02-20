@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { upperFirst } from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -29,8 +30,6 @@ import Select from '@/components/Inputs/Select'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import SettingsModal from '@/modals/SettingsModal'
-import { networkPresetSwitched } from '@/storage/settings/networkActions'
-import { networkPresets } from '@/storage/settings/settingsPersistentStorage'
 import { NetworkName, NetworkNames } from '@/types/network'
 
 interface NetworkSelectOption {
@@ -38,24 +37,26 @@ interface NetworkSelectOption {
   value: NetworkName
 }
 
-type NonCustomNetworkName = Exclude<keyof typeof NetworkNames, 'custom' | 'localhost'>
+type NonCustomNetworkName = Exclude<keyof typeof NetworkNames, 'custom'>
 
 const NetworkSwitch = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const network = useAppSelector((state) => state.network)
+  const isDevToolsEnabled = useAppSelector((s) => s.settings.devTools)
   const posthog = usePostHog()
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
 
+  const excludedNetworks: NetworkName[] = isDevToolsEnabled ? ['custom'] : ['custom', 'devnet']
   const networkNames = Object.values(NetworkNames).filter(
-    (n) => !['custom', 'localhost'].includes(n)
+    (n) => !excludedNetworks.includes(n)
   ) as NonCustomNetworkName[]
-
   const networkSelectOptions: NetworkSelectOption[] = networkNames.map((networkName) => ({
     label: {
       mainnet: t('Mainnet'),
-      testnet: t('Testnet')
+      testnet: t('Testnet'),
+      devnet: t('Devnet')
     }[networkName],
     value: networkName
   }))
@@ -68,7 +69,7 @@ const NetworkSwitch = () => {
           return
         }
 
-        const newNetworkSettings = networkPresets[networkName]
+        const newNetworkSettings = networkSettingsPresets[networkName]
 
         const networkId = newNetworkSettings.networkId
 

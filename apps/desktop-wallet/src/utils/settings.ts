@@ -16,17 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { CURRENCIES, Currency } from '@alephium/shared'
+
 import { SelectOption } from '@/components/Inputs/Select'
-import SettingsStorage, { networkPresets } from '@/storage/settings/settingsPersistentStorage'
-import { NetworkName } from '@/types/network'
-import { Currency, GeneralSettings, Language, NetworkSettings } from '@/types/settings'
-
-export const isEqualNetwork = (a: NetworkSettings, b: NetworkSettings): boolean =>
-  a.nodeHost === b.nodeHost && a.explorerUrl === b.explorerUrl && a.explorerApiHost === b.explorerApiHost
-
-export const getNetworkName = (settings: NetworkSettings) =>
-  (Object.entries(networkPresets).find(([, presetSettings]) => isEqualNetwork(presetSettings, settings))?.[0] ||
-    'custom') as NetworkName | 'custom'
+import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
+import { GeneralSettings, Language } from '@/types/settings'
 
 export const languageOptions: SelectOption<Language>[] = [
   { label: 'English', value: 'en-US' },
@@ -42,16 +36,10 @@ export const languageOptions: SelectOption<Language>[] = [
   { label: 'Tiếng Việt', value: 'vi-VN' }
 ]
 
-export const fiatCurrencyOptions: SelectOption<Currency>[] = [
-  { label: 'CHF', value: 'CHF' },
-  { label: 'EUR', value: 'EUR' },
-  { label: 'GBP', value: 'GBP' },
-  { label: 'USD', value: 'USD' },
-  { label: 'IDR', value: 'IDR' },
-  { label: 'VND', value: 'VND' },
-  { label: 'RUB', value: 'RUB' },
-  { label: 'TRY', value: 'TRY' }
-]
+export const fiatCurrencyOptions: SelectOption<Currency>[] = Object.values(CURRENCIES).map((currency) => ({
+  label: currency.ticker,
+  value: currency.ticker
+}))
 
 export const locktimeInMinutes = [0, 2, 5, 10, 30]
 

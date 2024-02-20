@@ -2,12 +2,9 @@
   "extends": ["//"],
   "pipeline": {
     "start:electron": {
-      "dependsOn": ["^compile"],
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
-    },
-    "build:electron": {
-      "dependsOn": ["build"]
     },
     "build:electron:windows": {
       "dependsOn": ["build"]

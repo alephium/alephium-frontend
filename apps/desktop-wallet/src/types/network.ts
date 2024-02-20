@@ -21,7 +21,7 @@ export type NetworkStatus = 'offline' | 'connecting' | 'online' | 'uninitialized
 export enum NetworkNames {
   mainnet = 'mainnet',
   testnet = 'testnet',
-  localhost = 'localhost',
+  devnet = 'devnet',
   custom = 'custom'
 }
 

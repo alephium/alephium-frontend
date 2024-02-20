@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressMetadata, getHumanReadableError } from '@alephium/shared'
 import {
   deriveAddressAndKeys,
-  getHumanReadableError,
   walletEncryptAsyncUnsafe,
   walletGenerateAsyncUnsafe,
   walletImportAsyncUnsafe
-} from '@alephium/shared'
+} from '@alephium/shared-crypto'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
@@ -31,7 +31,7 @@ import { Platform } from 'react-native'
 import { sendAnalytics } from '~/analytics'
 import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
-import { AddressMetadata, AddressPartial } from '~/types/addresses'
+import { AddressPartial } from '~/types/addresses'
 import { GeneratedWallet, Mnemonic, WalletMetadata, WalletState } from '~/types/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'

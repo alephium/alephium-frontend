@@ -198,7 +198,7 @@
   "Latest transactions": "Transaksi terbaru",
   "Let's go!": "Ayo kita bergegas!",
   "Light": "Light",
-  "Localhost": "Localhost",
+  "Devnet": "Devnet",
   "Lock": "Kunci",
   "Lock current wallet": "Kunci dompet saat ini",
   "Lock time": "Waktu penguncian",
@@ -477,5 +477,9 @@
   "Transaction ID": "Transaction ID",
   "Unsigned transaction": "Unsigned transaction",
   "Sign Message": "Sign Message",
-  "Message": "Message"
+  "Message": "Message",
+  "Received dApp request": "Received dApp request",
+  "dApp operation": "dApp operation",
+  "Script execution failed": "Script execution failed",
+  "Hide": "Hide"
 }

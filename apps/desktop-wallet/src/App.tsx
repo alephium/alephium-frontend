@@ -16,7 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import {
+  AddressHash,
+  localStorageNetworkSettingsMigrated,
+  PRICES_REFRESH_INTERVAL,
+  selectDoVerifiedFungibleTokensNeedInitialization,
+  syncTokenCurrentPrices,
+  syncTokenPriceHistories,
+  syncUnknownTokensInfo,
+  syncVerifiedFungibleTokens
+} from '@alephium/shared'
+import { useInitializeClient, useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { AnimatePresence } from 'framer-motion'
 import { difference } from 'lodash'
@@ -24,7 +34,7 @@ import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
-import client from '@/api/client'
+import AnnouncementBanner from '@/components/AnnouncementBanner'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -41,16 +51,12 @@ import {
   selectAddressIds,
   selectAllAddressVerifiedFungibleTokenSymbols
 } from '@/storage/addresses/addressesSelectors'
-import { syncUnknownTokensInfo, syncVerifiedFungibleTokens } from '@/storage/assets/assetsActions'
-import { selectDoVerifiedFungibleTokensNeedInitialization } from '@/storage/assets/assetsSelectors'
+import { devModeShortcutDetected, localStorageDataMigrationFailed } from '@/storage/global/globalActions'
 import {
-  devModeShortcutDetected,
-  localStorageDataMigrated,
-  localStorageDataMigrationFailed
-} from '@/storage/global/globalActions'
-import { syncTokenCurrentPrices, syncTokenPriceHistories } from '@/storage/prices/pricesActions'
-import { apiClientInitFailed, apiClientInitSucceeded } from '@/storage/settings/networkActions'
-import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/storage/settings/settingsActions'
+  localStorageGeneralSettingsMigrated,
+  systemLanguageMatchFailed,
+  systemLanguageMatchSucceeded
+} from '@/storage/settings/settingsActions'
 import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import {
   getStoredPendingTransactions,
@@ -59,11 +65,8 @@ import {
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
-import { useInterval } from '@/utils/hooks'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { languageOptions } from '@/utils/settings'
-
-const PRICES_REFRESH_INTERVAL = 60000
 
 const App = () => {
   const { newVersion, newVersionDownloadTriggered } = useGlobalContext()
@@ -71,7 +74,9 @@ const App = () => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
-  const network = useAppSelector((s) => s.network)
+  const networkProxy = useAppSelector((s) => s.network.settings.proxy)
+  const networkStatus = useAppSelector((s) => s.network.status)
+  const networkName = useAppSelector((s) => s.network.name)
   const theme = useAppSelector((s) => s.global.theme)
   const loading = useAppSelector((s) => s.global.loading)
   const settings = useAppSelector((s) => s.settings)
@@ -98,13 +103,16 @@ const App = () => {
   const _window = window as unknown as AlephiumWindow
   const electron = _window.electron
 
+  useInitializeClient()
+
   useEffect(() => {
     try {
-      migrateGeneralSettings()
-      migrateNetworkSettings()
+      const generalSettings = migrateGeneralSettings()
+      const networkSettings = migrateNetworkSettings()
       migrateWalletData()
 
-      dispatch(localStorageDataMigrated())
+      dispatch(localStorageGeneralSettingsMigrated(generalSettings))
+      dispatch(localStorageNetworkSettingsMigrated(networkSettings))
     } catch (e) {
       console.error(e)
       posthog.capture('Error', { message: 'Local storage data migration failed' })
@@ -123,10 +131,10 @@ const App = () => {
         language: settings.language,
         passwordRequirement: settings.passwordRequirement,
         fiatCurrency: settings.fiatCurrency,
-        network: network.name
+        network: networkName
       })
   }, [
-    network.name,
+    networkName,
     posthog.__loaded,
     posthog.people,
     settings.devTools,
@@ -160,30 +168,12 @@ const App = () => {
     if (settings.language === undefined) setSystemLanguage()
   }, [settings.language, setSystemLanguage])
 
-  const initializeClient = useCallback(async () => {
-    try {
-      client.init(network.settings.nodeHost, network.settings.explorerApiHost)
-      const { networkId } = await client.node.infos.getInfosChainParams()
-      // TODO: Check if connection to explorer also works
-      dispatch(apiClientInitSucceeded({ networkId, networkName: network.name }))
-    } catch (e) {
-      dispatch(apiClientInitFailed({ networkName: network.name, networkStatus: network.status }))
-    }
-  }, [network.settings.nodeHost, network.settings.explorerApiHost, network.name, network.status, dispatch])
+  useEffect(() => {
+    if (networkProxy) electron?.app.setProxySettings(networkProxy)
+  }, [electron?.app, networkProxy])
 
   useEffect(() => {
-    const setProxySettings = async () => {
-      await electron?.app.setProxySettings(network.settings.proxy)
-      if (network.status === 'connecting') initializeClient()
-    }
-
-    setProxySettings()
-  }, [electron?.app, initializeClient, network.settings.proxy, network.status])
-
-  useInterval(initializeClient, 2000, network.status !== 'offline')
-
-  useEffect(() => {
-    if (network.status === 'online') {
+    if (networkStatus === 'online') {
       if (addressesStatus === 'uninitialized') {
         if (!isSyncingAddressData && addressHashes.length > 0) {
           const storedPendingTxs = getStoredPendingTransactions()
@@ -215,14 +205,14 @@ const App = () => {
     dispatch,
     isLoadingUnverifiedFungibleTokens,
     isSyncingAddressData,
-    network.status,
+    networkStatus,
     newUnknownTokens
   ])
 
   // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
   // token found in each address
   useEffect(() => {
-    if (network.status === 'online' && !isLoadingVerifiedFungibleTokens) {
+    if (networkStatus === 'online' && !isLoadingVerifiedFungibleTokens) {
       if (verifiedFungibleTokensNeedInitialization) {
         dispatch(syncVerifiedFungibleTokens())
       } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
@@ -235,7 +225,7 @@ const App = () => {
   }, [
     dispatch,
     isLoadingVerifiedFungibleTokens,
-    network.status,
+    networkStatus,
     settings.fiatCurrency,
     verifiedFungibleTokenSymbols.uninitialized,
     verifiedFungibleTokensNeedInitialization
@@ -243,7 +233,7 @@ const App = () => {
 
   useEffect(() => {
     if (
-      network.status === 'online' &&
+      networkStatus === 'online' &&
       !isLoadingVerifiedFungibleTokens &&
       verifiedFungibleTokenSymbols.uninitialized.length > 1
     ) {
@@ -252,7 +242,7 @@ const App = () => {
         verifiedFungibleTokenSymbols.uninitialized.filter((symbol) => symbol !== ALPH.symbol)
       )
     }
-  }, [isLoadingVerifiedFungibleTokens, network.status, verifiedFungibleTokenSymbols.uninitialized])
+  }, [isLoadingVerifiedFungibleTokens, networkStatus, verifiedFungibleTokenSymbols.uninitialized])
 
   const refreshTokensLatestPrice = useCallback(() => {
     dispatch(
@@ -266,7 +256,7 @@ const App = () => {
   useInterval(
     refreshTokensLatestPrice,
     PRICES_REFRESH_INTERVAL,
-    network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
+    networkStatus !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
   )
 
   const refreshAddressesData = useCallback(() => {
@@ -295,6 +285,7 @@ const App = () => {
             <Router />
           </CenteredSection>
           <BannerSection>{newVersion && <UpdateWalletBanner />}</BannerSection>
+          <AnnouncementBanner />
         </AppContainer>
       </WalletConnectContextProvider>
 

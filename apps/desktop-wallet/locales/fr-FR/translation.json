@@ -198,7 +198,7 @@
   "Latest transactions": "Dernières transactions",
   "Let's go!": "C'est parti !",
   "Light": "Clair",
-  "Localhost": "Localhost",
+  "Devnet": "Devnet",
   "Lock": "Verrouiller",
   "Lock current wallet": "Verrouiller ce portefeuille",
   "Lock time": "Temps de verrouillage",
@@ -474,8 +474,12 @@
   "WalletConnect cache cleared successfully.": "WalletConnect cache cleared successfully.",
   "Could not clear WalletConnect cache.": "Could not clear WalletConnect cache.",
   "Sign Unsigned Transaction": "Sign Unsigned Transaction",
-  "Transaction ID": "Transaction ID",
-  "Unsigned transaction": "Unsigned transaction",
-  "Sign Message": "Sign Message",
-  "Message": "Message"
+  "Transaction ID": "ID de la transaction",
+  "Unsigned transaction": "Transaction non signée",
+  "Sign Message": "Signer le message",
+  "Message": "Message",
+  "Received dApp request": "Received dApp request",
+  "dApp operation": "dApp operation",
+  "Script execution failed": "Script execution failed",
+  "Hide": "Cacher"
 }

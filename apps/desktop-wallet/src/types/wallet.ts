@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair, Wallet } from '@alephium/shared'
+import { AddressKeyPair } from '@alephium/shared'
+import { Wallet } from '@alephium/shared-crypto'
 
 import { AddressBase } from '@/types/addresses'
 import { TimeInMs } from '@/types/numbers'

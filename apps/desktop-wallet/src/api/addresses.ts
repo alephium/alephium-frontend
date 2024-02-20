@@ -16,17 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 
-import client from '@/api/client'
-import {
-  Address,
-  AddressBalancesSyncResult,
-  AddressTokensSyncResult,
-  AddressTransactionsSyncResult
-} from '@/types/addresses'
+import { Address, AddressTransactionsSyncResult } from '@/types/addresses'
 
 const PAGE_LIMIT = 100
 

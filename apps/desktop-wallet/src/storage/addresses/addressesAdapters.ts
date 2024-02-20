@@ -18,8 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { Address, BalanceHistory } from '@/types/addresses'
-import { Contact } from '@/types/contacts'
+import { Address } from '@/types/addresses'
 
 export const addressesAdapter = createEntityAdapter<Address>({
   selectId: (address) => address.hash,
@@ -29,13 +28,4 @@ export const addressesAdapter = createEntityAdapter<Address>({
     if (b.isDefault) return 1
     return (b.lastUsed ?? 0) - (a.lastUsed ?? 0)
   }
-})
-
-export const contactsAdapter = createEntityAdapter<Contact>({
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
-})
-
-export const balanceHistoryAdapter = createEntityAdapter<BalanceHistory>({
-  selectId: ({ date }) => date,
-  sortComparer: (a, b) => a.date.localeCompare(b.date)
 })

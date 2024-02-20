@@ -20,25 +20,19 @@ import { compareVersions } from 'compare-versions'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 
+import useThrottledGitHubApi from '@/hooks/useThrottledGitHubApi'
 import { AlephiumWindow } from '@/types/window'
-import { AppMetaData, KEY_APPMETADATA, toAppMetaData } from '@/utils/app-data'
-import { useTimeout } from '@/utils/hooks'
+import { currentVersion, isRcVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 
 const _window = window as unknown as AlephiumWindow
 const electron = _window.electron
-
-const currentVersion: string = import.meta.env.VITE_VERSION
-const isRc = currentVersion.includes('-rc.')
-const semverRegex = isRc ? /^(\d+\.\d+\.\d+)(?:-rc(\.\d+)?)?$/ : /^(\d+\.\d+\.\d+)?$/
-
-const ONE_HOUR = 1000 * 60 * 60
+const semverRegex = isRcVersion ? /^(\d+\.\d+\.\d+)(?:-rc(\.\d+)?)?$/ : /^(\d+\.\d+\.\d+)?$/
 
 const useLatestGitHubRelease = () => {
   const posthog = usePostHog()
 
   const [newVersion, setNewVersion] = useState('')
-  const [timeUntilNextFetch, setTimeUntilNextFetch] = useState(0)
   const [requiresManualDownload, setRequiresManualDownload] = useState(false)
 
   const checkForManualDownload = async () => {
@@ -52,17 +46,7 @@ const useLatestGitHubRelease = () => {
     }
   }
 
-  useTimeout(async () => {
-    const appData: AppMetaData = JSON.parse(localStorage.getItem(KEY_APPMETADATA) ?? '{}', toAppMetaData) ?? {}
-    const { lastVersionCheckedAt } = isRc ? { lastVersionCheckedAt: new Date(0) } : appData
-    const timeSinceLastCheck = (lastVersionCheckedAt !== undefined && Date.now() - lastVersionCheckedAt.getTime()) || 0
-    const nextTimeUntilNextFetch = Math.max(0, ONE_HOUR - timeSinceLastCheck)
-
-    if (timeUntilNextFetch === 0 && nextTimeUntilNextFetch !== 0 && lastVersionCheckedAt !== undefined) {
-      setTimeUntilNextFetch(nextTimeUntilNextFetch)
-      return
-    }
-
+  useThrottledGitHubApi(async () => {
     const version = await electron?.updater.checkForUpdates()
 
     if (!version) {
@@ -75,10 +59,7 @@ const useLatestGitHubRelease = () => {
     } else if (isVersionNewer(version)) {
       setNewVersion(version)
     }
-
-    localStorage.setItem(KEY_APPMETADATA, JSON.stringify({ ...appData, lastVersionCheckedAt: new Date() }))
-    setTimeUntilNextFetch(nextTimeUntilNextFetch)
-  }, timeUntilNextFetch)
+  })
 
   return { newVersion, requiresManualDownload }
 }

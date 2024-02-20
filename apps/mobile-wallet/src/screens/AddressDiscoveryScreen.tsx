@@ -40,8 +40,8 @@ import { addressDiscoveryStopped, discoverAddresses, selectAllDiscoveredAddresse
 import {
   addressesImported,
   selectAllAddresses,
-  syncAddressesData,
-  syncAddressesHistoricBalances
+  syncAddressesAlphHistoricBalances,
+  syncAddressesData
 } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { getRandomLabelColor } from '~/utils/colors'
@@ -87,7 +87,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
       sendAnalytics('Imported discovered addresses')
 
       await dispatch(syncAddressesData(newAddressHashes))
-      await dispatch(syncAddressesHistoricBalances(newAddressHashes))
+      await dispatch(syncAddressesAlphHistoricBalances(newAddressHashes))
     } catch (e) {
       console.error(e)
 

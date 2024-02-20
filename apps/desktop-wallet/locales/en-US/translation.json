@@ -195,7 +195,7 @@
   "Latest transactions": "Latest transactions",
   "Let's go!": "Let's go!",
   "Light": "Light",
-  "Localhost": "Localhost",
+  "Devnet": "Devnet",
   "Lock": "Lock",
   "Lock current wallet": "Lock current wallet",
   "Lock time": "Lock time",
@@ -477,5 +477,9 @@
   "Transaction ID": "Transaction ID",
   "Unsigned transaction": "Unsigned transaction",
   "Sign Message": "Sign Message",
-  "Message": "Message"
+  "Message": "Message",
+  "Received dApp request": "Received dApp request",
+  "dApp operation": "dApp operation",
+  "Script execution failed": "Script execution failed",
+  "Hide": "Hide"
 }

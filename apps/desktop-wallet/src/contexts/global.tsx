@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getWalletFromMnemonic } from '@alephium/shared'
+import { getWalletFromMnemonic } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { createContext, useContext, useEffect, useState } from 'react'
@@ -132,7 +132,12 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
     afterUnlock()
   }
 
-  useIdleForTooLong(() => dispatch(walletLocked()), (settings.walletLockTimeInMinutes || 0) * 60 * 1000)
+  useIdleForTooLong(
+    () => {
+      dispatch(walletLocked())
+    },
+    (settings.walletLockTimeInMinutes || 0) * 60 * 1000
+  )
 
   useEffect(() => {
     const shouldListenToOSThemeChanges = settings.theme === 'system'

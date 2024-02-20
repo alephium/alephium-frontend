@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared'
+import { AddressMetadata } from '@alephium/shared'
+import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
 
-import { newAddressGenerated, syncAddressesData, syncAddressesHistoricBalances } from '~/store/addressesSlice'
+import { newAddressGenerated, syncAddressesAlphHistoricBalances, syncAddressesData } from '~/store/addressesSlice'
 import { store } from '~/store/store'
-import { AddressMetadata } from '~/types/addresses'
 import { Mnemonic, WalletMetadata } from '~/types/wallet'
 import { persistAddressesSettings } from '~/utils/addresses'
 import { mnemonicToSeed } from '~/utils/crypto'
@@ -44,5 +44,5 @@ export const importAddresses = async (
   }
 
   store.dispatch(syncAddressesData(addressHashes))
-  store.dispatch(syncAddressesHistoricBalances(addressHashes))
+  store.dispatch(syncAddressesAlphHistoricBalances(addressHashes))
 }

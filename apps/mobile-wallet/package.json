@@ -10,10 +10,14 @@
     "ios": "expo run:ios --device",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
-    "postinstall": "cd ../.. && turbo compile"
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
+    "clean:node-modules": "rm -rf node_modules",
+    "postinstall": "turbo build:deps"
   },
   "dependencies": {
     "@alephium/shared": "workspace:*",
+    "@alephium/shared-crypto": "workspace:*",
+    "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.12",
     "@alephium/walletconnect-provider": "0.29.1",
     "@alephium/web3": "0.29.1",
@@ -63,7 +67,6 @@
     "expo-status-bar": "~1.6.0",
     "expo-web-browser": "~12.3.2",
     "fast-text-encoding": "^1.0.6",
-    "fetch-retry": "^5.0.6",
     "lodash": "^4.17.21",
     "lottie-react-native": "^5.1.6",
     "lucide-react-native": "^0.216.0",

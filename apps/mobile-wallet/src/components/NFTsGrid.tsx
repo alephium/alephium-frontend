@@ -17,42 +17,42 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFT } from '@alephium/shared'
-import { Image } from 'expo-image'
 import { Skeleton } from 'moti/skeleton'
 import { Dimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
+import NFTThumbnail from '~/components/NFTThumbnail'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface NFTsGridProps {
   nfts: NFT[]
   isLoading: boolean
   nftsPerRow?: number
-  nftWidth?: number
+  nftSize?: number
 }
 
 const gap = 12
 const screenPadding = 20
 const nftsGridPadding = DEFAULT_MARGIN
 
-const NFTsGrid = ({ nfts, isLoading, nftWidth, nftsPerRow = 3 }: NFTsGridProps) => {
+const NFTsGrid = ({ nfts, isLoading, nftSize, nftsPerRow = 3 }: NFTsGridProps) => {
   const theme = useTheme()
 
   const { width: windowWidth } = Dimensions.get('window')
   const totalGapSize = (nftsPerRow - 1) * gap + screenPadding * 2 + nftsGridPadding * 2
-  const width = nftWidth ?? (windowWidth - totalGapSize) / nftsPerRow
+  const size = nftSize ?? (windowWidth - totalGapSize) / nftsPerRow
 
   return (
     <NFTsGridStyled style={{ paddingRight: nfts.length === 0 ? 15 : 0 }}>
       {nfts.map((nft) => (
-        <NFTThumbnail key={nft.id} style={{ width: width }} source={{ uri: nft.image }} transition={500} />
+        <NFTThumbnail key={nft.id} nft={nft} size={size} />
       ))}
       {isLoading && (
         <>
-          <Skeleton show colorMode={theme.name} width={width} height={100} />
-          <Skeleton show colorMode={theme.name} width={width} height={100} />
-          <Skeleton show colorMode={theme.name} width={width} height={100} />
+          <Skeleton show colorMode={theme.name} width={size} height={size} />
+          <Skeleton show colorMode={theme.name} width={size} height={size} />
+          <Skeleton show colorMode={theme.name} width={size} height={size} />
         </>
       )}
       {!isLoading && nfts.length === 0 && (
@@ -81,9 +81,4 @@ const NoNFTsMessage = styled.View`
   padding: 20px;
   border-radius: 9px;
   border: 2px dashed ${({ theme }) => theme.border.primary};
-`
-
-export const NFTThumbnail = styled(Image)<{ height?: number }>`
-  height: ${({ height }) => height ?? 100}px;
-  border-radius: ${BORDER_RADIUS_SMALL}px;
 `

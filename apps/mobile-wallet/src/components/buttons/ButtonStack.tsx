@@ -20,18 +20,13 @@ import { ReactNode } from 'react'
 import { View, ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
-interface ButtonStackProps extends ViewProps {
+export interface ButtonStackProps extends ViewProps {
   children: ReactNode[]
 }
 
-const ButtonStack = ({ children, style }: ButtonStackProps) => (
-  <View style={style}>{children?.map((child, i) => <ButtonContainer key={i}>{child}</ButtonContainer>)}</View>
-)
+const ButtonStack = ({ children, style }: ButtonStackProps) => <View style={style}>{children}</View>
 
 export default styled(ButtonStack)`
-  width: 75%;
-`
-
-const ButtonContainer = styled.View`
-  padding: 10px;
+  width: 100%;
+  gap: 10px;
 `
