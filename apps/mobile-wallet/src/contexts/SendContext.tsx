@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
-import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { Portal } from 'react-native-portalize'
 
 import { sendAnalytics } from '~/analytics'
@@ -27,7 +27,7 @@ import AuthenticationModal from '~/components/AuthenticationModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import BottomModal from '~/components/layout/BottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressByHash, transactionSent } from '~/store/addressesSlice'
+import { selectAddressByHash, syncAddressesData, transactionSent } from '~/store/addressesSlice'
 import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -85,6 +85,11 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const [onSendSuccessCallback, setOnSendSuccessCallback] = useState<() => void>(() => () => null)
 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
+
+  // Make sure origin address always has latest data to avoid sweeping by accident
+  useEffect(() => {
+    if (fromAddress) dispatch(syncAddressesData(fromAddress))
+  }, [dispatch, fromAddress])
 
   const setAssetAmount = (assetId: string, amount?: bigint) => {
     const existingAmountIndex = assetAmounts.findIndex(({ id }) => id === assetId)
