@@ -22,10 +22,10 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
 import { Dimensions, LayoutChangeEvent } from 'react-native'
 import Animated from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { ThemeProvider, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import ActionButtonsStack from '~/components/buttons/ActionButtonsStack'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useAppDispatch } from '~/hooks/redux'
@@ -33,13 +33,14 @@ import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getWalletMetadata } from '~/persistent-storage/wallet'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
-import { BORDER_RADIUS_BIG, BORDER_RADIUS_HUGE } from '~/style/globalStyle'
+import { BORDER_RADIUS_HUGE } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
+  const insets = useSafeAreaInsets()
 
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
@@ -73,37 +74,36 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
           <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
             <RadialGradient
               c={vec(dimensions.width / 2, dimensions.height)}
-              r={dimensions.width * 1.5}
-              colors={['#ee5353', '#ffa274', '#75b0ec']}
+              r={dimensions.width * 2}
+              colors={['#ee5353', '#ffa274', '#7aa2cb', '#0e3358']}
             />
           </Rect>
         </CanvasStyled>
         <LogoContainer>
-          <AlephiumLogoStyled color="#ffffff" />
+          <AlephiumLogoStyled color="white" />
         </LogoContainer>
-        <TitleContainer>
-          <TitleFirstLine>Welcome to</TitleFirstLine>
-          <TitleSecondLine>Alephium</TitleSecondLine>
-        </TitleContainer>
 
         {showNewWalletButtons && (
-          <ButtonsArea>
+          <BottomArea style={{ marginBottom: insets.bottom }}>
+            <TitleContainer>
+              <TitleFirstLine>Welcome to</TitleFirstLine>
+              <TitleSecondLine>Alephium</TitleSecondLine>
+            </TitleContainer>
             <ButtonsContainer>
               <Button
                 title="New wallet"
                 type="primary"
                 onPress={() => handleButtonPress('create')}
-                variant="contrast"
+                variant="highlight"
                 iconProps={{ name: 'flower-outline' }}
               />
               <Button
                 title="Import wallet"
                 onPress={() => handleButtonPress('import')}
-                variant="contrast"
                 iconProps={{ name: 'download-outline' }}
               />
             </ButtonsContainer>
-          </ButtonsArea>
+          </BottomArea>
         )}
       </Screen>
     </ThemeProvider>
@@ -114,7 +114,6 @@ export default LandingScreen
 
 const LogoContainer = styled(Animated.View)`
   flex: 2;
-  margin-top: 100px;
   justify-content: center;
   align-items: center;
 `
@@ -123,10 +122,27 @@ export const AlephiumLogoStyled = styled(AlephiumLogo)`
   width: 20%;
 `
 
+const CanvasStyled = styled(Canvas)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+`
+
+const BottomArea = styled.View`
+  flex: 1.2;
+  margin: 10px;
+  border-radius: ${BORDER_RADIUS_HUGE}px;
+  background-color: ${({ theme }) => theme.bg.back2};
+  overflow: hidden;
+`
+
 const TitleContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
+  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const TitleFirstLine = styled(AppText)`
@@ -140,22 +156,7 @@ const TitleSecondLine = styled(AppText)`
   color: #ffffff;
 `
 
-const CanvasStyled = styled(Canvas)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-`
-
-const ButtonsArea = styled.View`
-  flex: 1.5;
-`
-
-const ButtonsContainer = styled.View`
-  padding: 22px 20px;
-  margin: 20px;
-  border-radius: ${BORDER_RADIUS_HUGE}px;
-  background-color: ${({ theme }) => theme.bg.contrast};
+const ButtonsContainer = styled(Animated.View)`
   gap: 16px;
+  padding: 22px;
 `
