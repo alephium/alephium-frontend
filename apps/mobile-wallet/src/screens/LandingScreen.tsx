@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
-import { Dimensions, Image, LayoutChangeEvent } from 'react-native'
+import { Dimensions, Image, LayoutChangeEvent, Platform } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { ThemeProvider } from 'styled-components/native'
@@ -108,7 +108,10 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
         </LogoContainer>
 
         {showNewWalletButtons && (
-          <BottomArea style={{ marginBottom: insets.bottom }} entering={FadeIn.delay(500).duration(500)}>
+          <BottomArea
+            style={{ marginBottom: insets.bottom + (Platform.OS === 'android' ? 20 : 0) }}
+            entering={FadeIn.delay(500).duration(500)}
+          >
             <TitleContainer>
               <TitleFirstLine>Welcome to</TitleFirstLine>
               <TitleSecondLine>Alephium 👋</TitleSecondLine>
