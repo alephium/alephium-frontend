@@ -21,7 +21,15 @@ import { Canvas, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
 import { Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
-import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
+import Animated, {
+  FadeIn,
+  interpolateColor,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withDelay,
+  withSpring
+} from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { ThemeProvider, useTheme } from 'styled-components/native'
 
@@ -29,7 +37,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useAppDispatch } from '~/hooks/redux'
-import moonImageSrc from '~/images/illustrations/moon_rocket.png'
+import altLogoSrc from '~/images/logos/alephiumHackLogo.png'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getWalletMetadata } from '~/persistent-storage/wallet'
@@ -39,6 +47,9 @@ import { themes } from '~/style/themes'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
+const gradientColors = ['#ee5368', '#ff8974', '#ffc074', '#7aa8cb', '#0c306a', '#030f33']
+const gradientAltColors = ['#fbe201', '#fb01e6', '#1ec3ff', '#3900aa', '#05064f', '#05064f', '#05064f']
+
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
   const insets = useSafeAreaInsets()
@@ -47,9 +58,10 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
   const [showNewWalletButtons, setShowNewWalletButtons] = useState(false)
-  const [isMoonShown, setIsMoonShown] = useState(false)
+  const [isAltLogoShown, setIsAltLogoShown] = useState(false)
 
   const gradientRadius = useSharedValue(0)
+  const gradientColorsAnimationProgress = useSharedValue(0)
 
   useEffect(() => {
     const unsubscribeBlurListener = navigation.addListener('blur', () => {
@@ -71,14 +83,24 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }, [dimensions.width, gradientRadius])
 
   const logoAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateY: withSpring(isMoonShown ? '180deg' : '0deg') }],
-    opacity: withSpring(isMoonShown ? 0 : 1)
+    transform: [{ rotateY: withSpring(isAltLogoShown ? '180deg' : '0deg') }],
+    opacity: withSpring(isAltLogoShown ? 0 : 1)
   }))
 
-  const moonAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateY: withSpring(isMoonShown ? '0deg' : '180deg') }],
-    opacity: withSpring(isMoonShown ? 1 : 0)
+  const altLogoAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotateY: withSpring(isAltLogoShown ? '0deg' : '180deg') }],
+    opacity: withSpring(isAltLogoShown ? 1 : 0)
   }))
+
+  useEffect(() => {
+    gradientColorsAnimationProgress.value = withSpring(isAltLogoShown ? 1 : 0, { mass: 1, stiffness: 90, damping: 10 })
+  }, [gradientColorsAnimationProgress, isAltLogoShown])
+
+  const animatedColors = useDerivedValue(() =>
+    gradientColors.map((_, index) =>
+      interpolateColor(gradientColorsAnimationProgress.value, [0, 1], [gradientColors[index], gradientAltColors[index]])
+    )
+  )
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
@@ -103,24 +125,25 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
   return (
     <ThemeProvider theme={themes.dark}>
+      <StatusBar barStyle="light-content" />
       <Screen contrastedBg {...props} onLayout={handleScreenLayoutChange}>
         <CanvasStyled onLayout={() => SplashScreen.hideAsync()}>
           <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
             <RadialGradient
               c={vec(dimensions.width / 2, dimensions.height)}
               r={gradientRadius}
-              colors={['#ee5368', '#ff8974', '#ffc074', '#7aa8cb', '#0c306a', '#030f33']}
+              colors={animatedColors}
               positions={[0.1, 0.3, 0.5, 0.7, 0.9, 1]}
             />
           </Rect>
         </CanvasStyled>
-        <LogoContainer onTouchEnd={() => setIsMoonShown(!isMoonShown)}>
+        <LogoContainer onTouchEnd={() => setIsAltLogoShown(!isAltLogoShown)}>
           <LogoArea entering={FadeIn.delay(200).duration(500)} style={[logoAnimatedStyle]}>
             <AlephiumLogo color="white" style={{ width: '20%' }} />
           </LogoArea>
-          <MoonArea style={moonAnimatedStyle}>
-            <MoonImage source={moonImageSrc} style={{ resizeMode: 'center', objectFit: 'contain' }} />
-          </MoonArea>
+          <AltLogoArea style={altLogoAnimatedStyle}>
+            <AltLogo source={altLogoSrc} style={{ resizeMode: 'center', objectFit: 'contain' }} />
+          </AltLogoArea>
         </LogoContainer>
 
         {showNewWalletButtons && (
@@ -172,7 +195,7 @@ const LogoArea = styled(Animated.View)`
   align-items: center;
 `
 
-const MoonArea = styled(Animated.View)`
+const AltLogoArea = styled(Animated.View)`
   position: absolute;
   top: 0;
   right: 0;
@@ -182,7 +205,7 @@ const MoonArea = styled(Animated.View)`
   align-items: center;
 `
 
-const MoonImage = styled(Image)`
+const AltLogo = styled(Image)`
   width: 40%;
   height: 40%;
 `
