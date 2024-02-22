@@ -17,10 +17,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NUM_OF_ZEROS_IN_QUINTILLION } from '@/constants'
+import { LocaleNumberSeparators } from '@/types'
 
 export const MAGNITUDE_SYMBOL = ['K', 'M', 'B', 'T']
 
 const AMOUNT_SUFFIXES = ['', ...MAGNITUDE_SYMBOL]
+
+const getLocaleNumberSeparators = (): LocaleNumberSeparators => {
+  const number = 1234.5
+  const formattedNumber = number.toLocaleString()
+
+  return {
+    thousandsSeparator: formattedNumber[1],
+    decimalsSeparator: formattedNumber[formattedNumber.length - 2]
+  }
+}
+
+export const { thousandsSeparator, decimalsSeparator } = getLocaleNumberSeparators()
+
+const toLocaleNumberForDisplay = (amountForDisplay: string): string =>
+  amountForDisplay.replaceAll("'", thousandsSeparator).replaceAll('.', decimalsSeparator)
 
 export const produceZeros = (numberOfZeros: number): string => (numberOfZeros > 0 ? '0'.repeat(numberOfZeros) : '')
 
@@ -98,7 +114,7 @@ export const formatAmountForDisplay = ({
 
   if (amountNumber < 0.0001) {
     if (smartRounding && !fullPrecision) {
-      return smartRound(amountString)
+      return toLocaleNumberForDisplay(smartRound(amountString))
     } else {
       fullPrecision = true
     }
@@ -107,15 +123,17 @@ export const formatAmountForDisplay = ({
   const minNumberOfDecimals = getMinNumberOfDecimals(amountNumber)
   const numberOfDecimalsToDisplay = displayDecimals ?? minNumberOfDecimals
 
+  let formatedAmount: string
+
   if (aboveExpLimit(amountString)) {
-    return toExponential(amountString, numberOfDecimalsToDisplay, truncate)
+    formatedAmount = toExponential(amountString, numberOfDecimalsToDisplay, truncate)
+  } else if (fullPrecision) {
+    formatedAmount = formatFullPrecision(amount, amountDecimals, numberOfDecimalsToDisplay)
+  } else {
+    formatedAmount = formatRegularPrecision(amountNumber, numberOfDecimalsToDisplay, minNumberOfDecimals)
   }
 
-  if (fullPrecision) {
-    return formatFullPrecision(amount, amountDecimals, numberOfDecimalsToDisplay)
-  }
-
-  return formatRegularPrecision(amountNumber, numberOfDecimalsToDisplay, minNumberOfDecimals)
+  return toLocaleNumberForDisplay(formatedAmount)
 }
 
 const getMinNumberOfDecimals = (amountNumber: number): number =>
@@ -129,7 +147,7 @@ const formatFullPrecision = (amount: bigint, amountDecimals: number, numberOfDec
       ? baseNumString.substring(0, numNonDecimals) + '.' + baseNumString.substring(numNonDecimals)
       : '0.' + produceZeros(-numNonDecimals) + baseNumString
 
-  return removeTrailingZeros(amountNumberString, numberOfDecimalsToDisplay)
+  return addApostrophes(removeTrailingZeros(amountNumberString, numberOfDecimalsToDisplay))
 }
 
 const formatRegularPrecision = (
@@ -183,16 +201,20 @@ export const formatFiatAmountForDisplay = (amount: number): string => {
 
   if (amount < 1000000) {
     const roundedUp = amount.toFixed(2)
-    if (parseFloat(roundedUp) < 1000000) return addApostrophes(roundedUp)
+    if (parseFloat(roundedUp) < 1000000) return toLocaleNumberForDisplay(addApostrophes(roundedUp))
   }
 
   const tier = amount < 1000000000 ? 2 : amount < 1000000000000 ? 3 : amount < 1000000000000000 ? 4 : 5
 
+  let formatedAmount: string
+
   if (tier === 5) {
-    return amount.toExponential()
+    formatedAmount = amount.toExponential()
+  } else {
+    formatedAmount = appendMagnitudeSymbol(tier, amount)
   }
 
-  return appendMagnitudeSymbol(tier, amount)
+  return toLocaleNumberForDisplay(formatedAmount)
 }
 
 export const fromHumanReadableAmount = (amount: string, decimals = NUM_OF_ZEROS_IN_QUINTILLION): bigint => {
