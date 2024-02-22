@@ -20,10 +20,10 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
-import { Dimensions, Image, LayoutChangeEvent, Platform } from 'react-native'
+import { Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { ThemeProvider } from 'styled-components/native'
+import styled, { ThemeProvider, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -42,6 +42,7 @@ interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'Landi
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
   const insets = useSafeAreaInsets()
+  const theme = useTheme()
 
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
@@ -49,6 +50,21 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const [isMoonShown, setIsMoonShown] = useState(false)
 
   const gradientRadius = useSharedValue(0)
+
+  useEffect(() => {
+    const unsubscribeBlurListener = navigation.addListener('blur', () => {
+      StatusBar.setBarStyle(theme.name === 'light' ? 'dark-content' : 'light-content')
+    })
+
+    const unsubscribeFocusListener = navigation.addListener('focus', () => {
+      StatusBar.setBarStyle('light-content')
+    })
+
+    return () => {
+      unsubscribeBlurListener()
+      unsubscribeFocusListener()
+    }
+  }, [navigation, theme.name])
 
   useEffect(() => {
     gradientRadius.value = withDelay(200, withSpring(dimensions.width * 2, { mass: 3, stiffness: 60, damping: 40 }))
