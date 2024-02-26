@@ -61,7 +61,7 @@ const AppFooter = ({ className }: AppFooterProps) => (
 const socialMediaData = [
   {
     name: 'Discord',
-    link: 'https://discord.gg/JErgRBfRSB',
+    link: 'https://alephium.org/discord',
     Icon: DiscordIcon
   },
   {
