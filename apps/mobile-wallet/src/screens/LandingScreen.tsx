@@ -48,8 +48,8 @@ import { themes } from '~/style/themes'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
-const gradientColors = ['#ee5368', '#ff8974', '#ffc074', '#7aa8cb', '#0c306a', '#030f33']
-const gradientAltColors = ['#fbe201', '#fb01e6', '#1ec3ff', '#3900aa', '#05064f', '#05064f']
+const gradientColors = ['#eb3d55', '#ff8772', '#ffcd61', '#3a99e2', '#012a6c', '#000044']
+const gradientAltColors = ['#1effd6', '#fbe201', '#fb01e6', '#3900aa', '#05064f', '#05064f']
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
@@ -140,7 +140,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
               c={vec(dimensions.width / 2, dimensions.height)}
               r={gradientRadius}
               colors={animatedColors}
-              positions={[0.1, 0.3, 0.5, 0.7, 0.9, 1]}
+              positions={[0.1, 0.3, 0.45, 0.6, 0.8, 1]}
             />
           </Rect>
         </CanvasStyled>
