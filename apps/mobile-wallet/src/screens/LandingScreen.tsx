@@ -132,7 +132,6 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
   return (
     <ThemeProvider theme={themes.dark}>
-      <StatusBar barStyle="light-content" />
       <Screen contrastedBg {...props} onLayout={handleScreenLayoutChange}>
         <CanvasStyled onLayout={() => SplashScreen.hideAsync()}>
           <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
