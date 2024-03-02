@@ -130,19 +130,17 @@ export const fetchAddressesHistoricalBalances = async (
 
   for (const addressHash of addresssHashes) {
     const balances = []
-    const data = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
+    const { amountHistory = [] } = await client.explorer.addresses.getAddressesAddressAmountHistory(
       addressHash,
       { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
       { format: 'text' }
     )
 
     try {
-      const { amountHistory } = JSON.parse(data)
-
-      for (const [timestamp, balance] of amountHistory) {
+      for (const { timestamp, amount } of amountHistory) {
         balances.push({
           date: dayjs(timestamp).format(CHART_DATE_FORMAT),
-          balance: BigInt(balance).toString()
+          balance: BigInt(amount).toString()
         })
       }
     } catch (e) {

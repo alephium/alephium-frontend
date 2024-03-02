@@ -22,7 +22,7 @@ import { useAppSelector } from '~/hooks/redux'
 import { selectTotalBalance } from '~/store/addressesSlice'
 import { DataPoint } from '~/types/charts'
 
-const useWorthDelta = (worthInBeginningOfChart?: DataPoint['worth']) => {
+const useWorthDelta = (worthInBeginningOfChart?: DataPoint['value']) => {
   const totalBalance = useAppSelector(selectTotalBalance)
   const alphPrice = useAppSelector(selectAlphPrice)
 
