@@ -18,7 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { StatusBar } from 'expo-status-bar'
 import { Host } from 'react-native-portalize'
+import { useTheme } from 'styled-components'
 
 import FooterMenu from '~/components/footers/FooterMenu'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
@@ -33,46 +35,51 @@ export type InWalletTabsParamList = {
 
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 
-const InWalletTabsNavigation = () => (
-  <Host>
-    <InWalletTabs.Navigator
-      tabBar={(props) => <FooterMenu {...props} />}
-      screenOptions={{
-        headerShown: false
-      }}
-    >
-      <InWalletTabs.Screen
-        name="DashboardScreen"
-        component={DashboardScreen}
-        options={{
-          title: 'Overview',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
-          )
+const InWalletTabsNavigation = () => {
+  const theme = useTheme()
+
+  return (
+    <Host>
+      <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
+      <InWalletTabs.Navigator
+        tabBar={(props) => <FooterMenu {...props} />}
+        screenOptions={{
+          headerShown: false
         }}
-      />
-      <InWalletTabs.Screen
-        name="TransfersScreen"
-        component={TransfersScreen}
-        options={{
-          title: 'Transfers',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
-          )
-        }}
-      />
-      <InWalletTabs.Screen
-        name="AddressesTabNavigation"
-        component={AddressesTabNavigation}
-        options={{
-          title: 'Addresses',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
-          )
-        }}
-      />
-    </InWalletTabs.Navigator>
-  </Host>
-)
+      >
+        <InWalletTabs.Screen
+          name="DashboardScreen"
+          component={DashboardScreen}
+          options={{
+            title: 'Overview',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="TransfersScreen"
+          component={TransfersScreen}
+          options={{
+            title: 'Transfers',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="AddressesTabNavigation"
+          component={AddressesTabNavigation}
+          options={{
+            title: 'Addresses',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
+            )
+          }}
+        />
+      </InWalletTabs.Navigator>
+    </Host>
+  )
+}
 
 export default InWalletTabsNavigation
