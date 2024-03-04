@@ -1,7 +1,7 @@
 {
   "name": "@alephium/explorer",
   "description": "The Alephium explorer frontend",
-  "version": "1.8.3",
+  "version": "1.9.0",
   "private": true,
   "scripts": {
     "start": "turbo start:app",
@@ -10,7 +10,8 @@
     "build:gh-pages": "pnpm run build -- --base=/explorer/",
     "ci:build": "turbo run build",
     "ci:build:gh-pages": "turbo run build:gh-pages",
-    "serve": "node docker/init-server-data.js && serve -s build -p 3000",
+    "init-docker": "node docker/init-server-data.js",
+    "serve": "pnpm init-docker && serve -s build -p 3000",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "test": "vitest run",

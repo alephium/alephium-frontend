@@ -29,7 +29,7 @@ jobs:
         run: pnpm install
 
       - name: Build frontend
-        run: cd apps/explorer && pnpm run ci:build && pnpm docker/init-server-data.js
+        run: cd apps/explorer && pnpm run ci:build && pnpm init-docker
 
       - name: Sync files to S3
         run: aws s3 sync ./apps/explorer/build/ s3://$AWS_BUCKET_NAME --acl public-read --delete --cache-control max-age=604800
