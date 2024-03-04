@@ -143,6 +143,7 @@ const RootStackNavigation = () => {
 
 export default RootStackNavigation
 
+// TODO: create a hook
 const AppUnlockHandler = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
