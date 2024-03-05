@@ -69,7 +69,7 @@ import { AppState, AppStateStatus } from 'react-native'
 import BackgroundService from 'react-native-background-actions'
 import { Portal } from 'react-native-portalize'
 
-import { sendAnalytics } from '~/analytics'
+import { sendAnalytics, sendErrorAnalytics } from '~/analytics'
 import {
   buildCallContractTransaction,
   buildDeployContractTransaction,
@@ -138,15 +138,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
   const initializeWalletConnectClient = useCallback(async () => {
+    let client
+
     try {
       console.log('CLEANING STORAGE')
       await cleanBeforeInit()
+    } catch (e) {
+      sendErrorAnalytics(e, 'Could not clean before initializing WalletConnect client')
+    }
 
-      console.log('⏳ INITIALIZING WC CLIENT...')
-      setWalletConnectClientStatus('initializing')
-      setWalletConnectClientInitializationAttempts((prevAttempts) => prevAttempts + 1)
+    console.log('⏳ INITIALIZING WC CLIENT...')
+    setWalletConnectClientStatus('initializing')
+    setWalletConnectClientInitializationAttempts((prevAttempts) => prevAttempts + 1)
 
-      const client = await SignClient.init({
+    try {
+      client = await SignClient.init({
         projectId: '2a084aa1d7e09af2b9044a524f39afbe',
         metadata: {
           name: 'Alephium mobile wallet',
@@ -160,17 +166,17 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       })
 
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
+    } catch (e) {
+      setWalletConnectClientStatus('uninitialized')
+      sendErrorAnalytics(e, 'Could not initialize WalletConnect client, SignClient.init failed')
+    }
+
+    if (client) {
       cleanHistory(client, false)
 
       setWalletConnectClient(client)
       setWalletConnectClientStatus('initialized')
       setActiveSessions(getActiveWalletConnectSessions(client))
-    } catch (e) {
-      setWalletConnectClientStatus('uninitialized')
-      console.error('Could not initialize WalletConnect client', e)
-      sendAnalytics('Error', {
-        message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
-      })
     }
   }, [])
 
@@ -1072,7 +1078,7 @@ function cleanHistory(client: SignClient, checkResponse: boolean) {
       }
     }
   } catch (error) {
-    console.error(`Failed to clean history, error: ${error}`)
+    sendErrorAnalytics(error, 'Could not clean WalletConnect client history')
   }
 }
 
@@ -1080,7 +1086,7 @@ async function cleanMessages(client: SignClient, topic: string) {
   try {
     await client.core.relayer.messages.del(topic)
   } catch (error) {
-    console.error(`Failed to clean messages, error: ${error}, topic: ${topic}`)
+    sendErrorAnalytics(error, `Could not clean WalletConnect client messages, topic: ${topic}`)
   }
 }
 
