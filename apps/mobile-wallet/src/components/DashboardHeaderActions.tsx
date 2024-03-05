@@ -46,6 +46,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const networkStatus = useAppSelector((s) => s.network.status)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
+  const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnectStatus)
   const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
   const dispatch = useAppDispatch()
   const { pairWithDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
@@ -71,7 +72,7 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
       navigation.navigate('SendNavigation', { screen: 'OriginScreen', params: { toAddressHash: text } })
       sendAnalytics('Send: Captured destination address by scanning QR code from Dashboard')
     } else if (text.startsWith('wc:')) {
-      if (isWalletConnectEnabled) {
+      if (isWalletConnectEnabled && walletConnectClientStatus === 'initialized') {
         pairWithDapp(text)
       } else {
         showToast({
