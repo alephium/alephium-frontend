@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ALPH } from '@alephium/token-list'
 import { orderBy } from 'lodash'
 
 import { calculateAmountWorth } from '@/numbers'
@@ -26,14 +25,13 @@ export const sortAssets = (assets: Asset[]) =>
   orderBy(
     assets,
     [
-      (a) => (a.id === ALPH.id ? 0 : 1),
       (a) => (a.verified ? 0 : 1),
       (a) => a.worth ?? -1,
       (a) => a.verified === undefined,
       (a) => a.name?.toLowerCase(),
       'id'
     ],
-    ['asc', 'asc', 'desc', 'asc', 'asc', 'asc']
+    ['asc', 'desc', 'asc', 'asc', 'asc']
   )
 
 export const calculateAssetsData = (
