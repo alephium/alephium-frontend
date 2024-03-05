@@ -64,7 +64,7 @@ const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemPro
             useTinyAmountShorthand
           />
           {asset.worth !== undefined && (
-            <FiatAmountStyled isFiat value={asset.worth} suffix={CURRENCIES[currency].symbol} />
+            <FiatAmountStyled isFiat value={asset.worth} suffix={CURRENCIES[currency].symbol} color="secondary" />
           )}
         </Amounts>
       }
