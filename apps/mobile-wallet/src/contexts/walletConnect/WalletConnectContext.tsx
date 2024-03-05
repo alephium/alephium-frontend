@@ -24,7 +24,10 @@ import {
   client,
   getHumanReadableError,
   WALLETCONNECT_ERRORS,
-  WalletConnectClientStatus,
+  walletConnectClientInitialized,
+  walletConnectClientInitializeFailed,
+  walletConnectClientInitializing,
+  walletConnectClientMaxRetriesReached,
   WalletConnectError
 } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
@@ -79,7 +82,7 @@ import BottomModal from '~/components/layout/BottomModal'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
-import { useAppSelector } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, SignMessageData, TransferTxData } from '~/types/transactions'
@@ -120,6 +123,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const url = useURL()
   const wcDeepLink = useRef<string>()
   const appState = useRef(AppState.currentState)
+  const dispatch = useAppDispatch()
+  const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnectStatus)
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -129,7 +134,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [isSessionProposalModalOpen, setIsSessionProposalModalOpen] = useState(false)
   const [isSessionRequestModalOpen, setIsSessionRequestModalOpen] = useState(false)
   const [loading, setLoading] = useState('')
-  const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
@@ -148,7 +152,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
 
     console.log('⏳ INITIALIZING WC CLIENT...')
-    setWalletConnectClientStatus('initializing')
+    dispatch(walletConnectClientInitializing())
     setWalletConnectClientInitializationAttempts((prevAttempts) => prevAttempts + 1)
 
     try {
@@ -167,7 +171,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
     } catch (e) {
-      setWalletConnectClientStatus('uninitialized')
+      dispatch(walletConnectClientInitializeFailed())
       sendErrorAnalytics(e, 'Could not initialize WalletConnect client, SignClient.init failed')
     }
 
@@ -175,10 +179,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       cleanHistory(client, false)
 
       setWalletConnectClient(client)
-      setWalletConnectClientStatus('initialized')
+      dispatch(walletConnectClientInitialized())
       setActiveSessions(getActiveWalletConnectSessions(client))
     }
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES) {
@@ -187,8 +191,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         text2: 'If you want to use a dApp, please quit the app and try again.',
         type: 'error'
       })
+      dispatch(walletConnectClientMaxRetriesReached())
     }
-  }, [walletConnectClientInitializationAttempts])
+  }, [dispatch, walletConnectClientInitializationAttempts])
 
   const cleanStorage = useCallback(
     async (event: SessionRequestEvent) => {
