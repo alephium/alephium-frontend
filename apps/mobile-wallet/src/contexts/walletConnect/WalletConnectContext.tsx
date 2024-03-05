@@ -541,7 +541,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   const shouldInitialize =
     isWalletConnectEnabled &&
-    walletConnectClientStatus !== 'initialized' &&
+    walletConnectClientStatus === 'uninitialized' &&
     walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
 
