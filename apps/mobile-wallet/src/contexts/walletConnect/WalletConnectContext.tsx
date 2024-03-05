@@ -1022,7 +1022,14 @@ async function cleanBeforeInit() {
   console.log('Clean storage before SignClient init')
   const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
   const historyStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, HISTORY_STORAGE_VERSION, HISTORY_CONTEXT)
-  const historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
+
+  let historyRecords: JsonRpcRecord[] | undefined
+
+  try {
+    historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
+  } catch (e) {
+    sendErrorAnalytics(e, `Error at storage.getItem - type of storage.getItem is: ${typeof storage}`)
+  }
 
   if (historyRecords !== undefined) {
     const remainRecords: JsonRpcRecord[] = []
