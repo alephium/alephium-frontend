@@ -185,12 +185,23 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [dispatch])
 
   useEffect(() => {
-    if (walletConnectClientInitializationAttempts === 0) initializeWalletConnectClient()
-  }, [initializeWalletConnectClient, walletConnectClientInitializationAttempts])
+    // Trigger first attempt without waiting 3 seconds
+    if (
+      walletConnectClientInitializationAttempts === 0 &&
+      isWalletConnectEnabled &&
+      (walletConnectClientStatus === 'uninitialized' || walletConnectClientStatus === 'initialization-failed')
+    )
+      initializeWalletConnectClient()
+  }, [
+    initializeWalletConnectClient,
+    isWalletConnectEnabled,
+    walletConnectClientInitializationAttempts,
+    walletConnectClientStatus
+  ])
 
   const shouldInitialize =
     isWalletConnectEnabled &&
-    (walletConnectClientStatus === 'uninitialized' || walletConnectClientStatus === 'initialization-failed') &&
+    walletConnectClientStatus === 'uninitialized' &&
     walletConnectClientInitializationAttempts > 0 &&
     walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
@@ -1028,7 +1039,7 @@ async function cleanBeforeInit() {
   try {
     historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
   } catch (e) {
-    sendErrorAnalytics(e, `Error at storage.getItem - type of storage.getItem is: ${typeof storage}`)
+    sendErrorAnalytics(e, 'Error at storage.getItem')
   }
 
   if (historyRecords !== undefined) {
