@@ -1,5 +1,18 @@
 # alephium-desktop-wallet
 
+## 2.2.3
+
+### Patch Changes
+
+- 5b3d701: Handle WalletConnect requests when app locks
+- c20ddc0: Fix connecting to devnet through WalletConnect
+- 01a0ee8: Add CAD fiat currency
+- ed2c8ba: Add announcement banner
+- 782daee: Fix display of failed transactions
+- 9a03ebe: Reduce number of fetch retries to 3
+- 2f808c6: Show devnet network option in dropdown when dev tools are enabled
+- d2636e9: Fetch token prices & ALPH history using new Explorer BE endpoints
+
 ## 2.2.2
 
 ### Patch Changes
