@@ -18,14 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { isAddressValid } from '@alephium/shared-crypto'
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
+import { CheckIcon, XIcon } from 'lucide-react-native'
 import { memo, useState } from 'react'
-import { Platform, StyleProp, View, ViewStyle } from 'react-native'
+import { ActivityIndicator, Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { Portal } from 'react-native-portalize'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import ButtonsRow from '~/components/buttons/ButtonsRow'
 import BottomModal from '~/components/layout/BottomModal'
+import BoxSurface from '~/components/layout/BoxSurface'
+import { ModalContent } from '~/components/layout/ModalContent'
+import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import ListItem from '~/components/ListItem'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -41,20 +48,33 @@ interface DashboardHeaderActionsProps {
   style?: StyleProp<ViewStyle>
 }
 
+type ClientStatus = 'ready' | 'connecting' | 'error'
+
 const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const networkStatus = useAppSelector((s) => s.network.status)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
-  const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnectStatus)
+  const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
+  const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)
   const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
   const dispatch = useAppDispatch()
-  const { pairWithDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
+  const { pairWithDapp, walletConnectClient, activeSessions, resetWalletConnectClientInitializationAttempts } =
+    useWalletConnectContext()
   const isFocused = useIsFocused()
+  const theme = useTheme()
 
   const [isWalletConnectPairingsModalOpen, setIsWalletConnectPairingsModalOpen] = useState(false)
   const [isWalletConnectPasteUrlModalOpen, setIsWalletConnectPasteUrlModalOpen] = useState(false)
+  const [isWalletConnectErrorModalOpen, setIsWalletConnectErrorModalOpen] = useState(false)
+  const [isClientsModalOpen, setIsClientsModalOpen] = useState(false)
 
+  const clientsStatus: ClientStatus =
+    walletConnectClientStatus === 'initialized'
+      ? 'ready'
+      : walletConnectClientStatus === 'initialization-failed'
+        ? 'error'
+        : 'connecting'
   const hasActiveWCSessions = activeSessions.length > 0
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -88,6 +108,12 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
   return (
     <>
       <View style={style}>
+        <Button
+          onPress={() => setIsClientsModalOpen(true)}
+          iconProps={{ name: 'cloud-outline' }}
+          variant={clientsStatus === 'ready' ? 'valid' : clientsStatus === 'connecting' ? 'accent' : 'alert'}
+          round
+        />
         {networkStatus === 'offline' && (
           <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-offline-outline' }} variant="alert" round />
         )}
@@ -150,6 +176,83 @@ const DashboardHeaderActions = ({ style }: DashboardHeaderActionsProps) => {
           onClose={() => setIsWalletConnectPairingsModalOpen(false)}
         />
       </Portal>
+      <Portal>
+        <BottomModal
+          isOpen={isClientsModalOpen}
+          onClose={() => setIsClientsModalOpen(false)}
+          Content={(props) => (
+            <ModalContent verticalGap {...props}>
+              <ScreenSection>
+                <BottomModalScreenTitle>Connected services</BottomModalScreenTitle>
+              </ScreenSection>
+              <BoxSurface>
+                <ListItem
+                  title="WalletConnect"
+                  icon={<WalletConnectSVG width={20} height={20} color="#3B99FC" />}
+                  isLast
+                  onPress={
+                    walletConnectClientStatus === 'initialization-failed'
+                      ? () => setIsWalletConnectErrorModalOpen(true)
+                      : undefined
+                  }
+                  rightSideContent={
+                    walletConnectClientStatus === 'initialized' ? (
+                      <>
+                        <AppText color={theme.global.receive}>Connected</AppText>
+                        <CheckIcon color={theme.global.receive} size={16} strokeWidth={3} />
+                      </>
+                    ) : walletConnectClientStatus === 'initialization-failed' ? (
+                      <>
+                        <AppText color={theme.global.alert}>Not connected</AppText>
+                        <XIcon size={16} strokeWidth={3} color={theme.global.alert} />
+                      </>
+                    ) : (
+                      <>
+                        <AppText color={theme.font.tertiary}>Connecting</AppText>
+                        <ActivityIndicator size={16} color={theme.font.tertiary} />
+                      </>
+                    )
+                  }
+                />
+              </BoxSurface>
+            </ModalContent>
+          )}
+        />
+      </Portal>
+      <Portal>
+        <BottomModal
+          isOpen={isWalletConnectErrorModalOpen}
+          onClose={() => setIsWalletConnectErrorModalOpen(false)}
+          Content={(props) => (
+            <ModalContent verticalGap {...props}>
+              <ScreenSection>
+                <BottomModalScreenTitle>Could not connect to WalletConnect 😭</BottomModalScreenTitle>
+              </ScreenSection>
+              {walletConnectClientError && (
+                <ScreenSection>
+                  <BoxSurface>
+                    <AppTextStyled>{walletConnectClientError}</AppTextStyled>
+                  </BoxSurface>
+                </ScreenSection>
+              )}
+              <ScreenSection centered>
+                <ButtonsRow>
+                  <Button title="Close" onPress={props.onClose && props.onClose} flex />
+                  <Button
+                    title="Retry"
+                    variant="accent"
+                    onPress={() => {
+                      resetWalletConnectClientInitializationAttempts()
+                      props.onClose && props.onClose()
+                    }}
+                    flex
+                  />
+                </ButtonsRow>
+              </ScreenSection>
+            </ModalContent>
+          )}
+        />
+      </Portal>
     </>
   )
 }
@@ -159,3 +262,8 @@ export default memo(styled(DashboardHeaderActions)`
   align-items: center;
   gap: 15px;
 `)
+
+const AppTextStyled = styled(AppText)`
+  font-family: monospace;
+  padding: 10px;
+`

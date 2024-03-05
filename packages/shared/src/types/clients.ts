@@ -19,5 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { WalletConnectClientStatus } from '@/types/walletConnect'
 
 export type ClientsState = {
-  walletConnectStatus: WalletConnectClientStatus
+  walletConnect: {
+    status: WalletConnectClientStatus
+    errorMessage: WalletConnectErrorMessage
+  }
 }
+
+export type WalletConnectErrorMessage = string

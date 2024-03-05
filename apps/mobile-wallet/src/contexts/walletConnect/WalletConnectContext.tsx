@@ -124,7 +124,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const wcDeepLink = useRef<string>()
   const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
-  const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnectStatus)
+  const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -171,7 +171,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
     } catch (e) {
-      dispatch(walletConnectClientInitializeFailed())
+      dispatch(walletConnectClientInitializeFailed(getHumanReadableError(e, '')))
       sendErrorAnalytics(e, 'Could not initialize WalletConnect client, SignClient.init failed')
     }
 
@@ -185,14 +185,19 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [dispatch])
 
   useEffect(() => {
-    if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES) {
-      showToast({
-        text1: 'Could not connect to WalletConnect',
-        text2: 'If you want to use a dApp, please quit the app and try again.',
-        type: 'error'
-      })
+    if (walletConnectClientInitializationAttempts === 0) initializeWalletConnectClient()
+  }, [initializeWalletConnectClient, walletConnectClientInitializationAttempts])
+
+  const shouldInitialize =
+    isWalletConnectEnabled &&
+    (walletConnectClientStatus === 'uninitialized' || walletConnectClientStatus === 'initialization-failed') &&
+    walletConnectClientInitializationAttempts > 0 &&
+    walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
+  useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
+
+  useEffect(() => {
+    if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)
       dispatch(walletConnectClientMaxRetriesReached())
-    }
   }, [dispatch, walletConnectClientInitializationAttempts])
 
   const cleanStorage = useCallback(
@@ -543,12 +548,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     console.log('📣 RECEIVED EVENT TO EXPIRE PROPOSAL')
     console.log('👉 ARGS:', args)
   }, [])
-
-  const shouldInitialize =
-    isWalletConnectEnabled &&
-    walletConnectClientStatus === 'uninitialized' &&
-    walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
-  useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {

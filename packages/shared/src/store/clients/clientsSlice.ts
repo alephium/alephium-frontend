@@ -27,7 +27,10 @@ import {
 import { ClientsState } from '@/types/clients'
 
 const initialState: ClientsState = {
-  walletConnectStatus: 'uninitialized'
+  walletConnect: {
+    status: 'uninitialized',
+    errorMessage: ''
+  }
 }
 
 const clientsSlice = createSlice({
@@ -37,16 +40,18 @@ const clientsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(walletConnectClientInitializing, (state) => {
-        state.walletConnectStatus = 'initializing'
+        state.walletConnect.status = 'initializing'
       })
       .addCase(walletConnectClientInitialized, (state) => {
-        state.walletConnectStatus = 'initialized'
+        state.walletConnect.status = 'initialized'
+        state.walletConnect.errorMessage = ''
       })
-      .addCase(walletConnectClientInitializeFailed, (state) => {
-        state.walletConnectStatus = 'uninitialized'
+      .addCase(walletConnectClientInitializeFailed, (state, { payload: errorMessage }) => {
+        state.walletConnect.status = 'uninitialized'
+        state.walletConnect.errorMessage = errorMessage
       })
       .addCase(walletConnectClientMaxRetriesReached, (state) => {
-        state.walletConnectStatus = 'initialization-failed'
+        state.walletConnect.status = 'initialization-failed'
       })
   }
 })
