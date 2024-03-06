@@ -23,7 +23,8 @@ import {
   syncTokenCurrentPrices,
   syncTokenPriceHistories,
   syncUnknownTokensInfo,
-  syncVerifiedFungibleTokens
+  syncVerifiedFungibleTokens,
+  TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
@@ -41,20 +42,16 @@ import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import {
   makeSelectAddressesUnknownTokens,
   selectAddressIds,
   selectAllAddressVerifiedFungibleTokenSymbols,
   syncAddressesAlphHistoricBalances,
-  syncAddressesData,
-  syncAddressesDataWhenPendingTxsConfirm
+  syncAddressesData
 } from '~/store/addressesSlice'
-import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { store } from '~/store/store'
-import {
-  makeSelectAddressesHashesWithPendingTransactions,
-  selectTransactionUnknownTokenIds
-} from '~/store/transactions/transactionSelectors'
+import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
 import { themes } from '~/style/themes'
 
 dayjs.extend(updateLocale)
@@ -109,9 +106,6 @@ const Main = ({ children, ...props }: ViewProps) => {
   const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
-  const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
-  const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
-  const pendingTxs = useAppSelector(selectAllPendingTransactions)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
 
@@ -203,11 +197,15 @@ const Main = ({ children, ...props }: ViewProps) => {
     network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
   )
 
-  const refreshAddressDataWhenPendingTxsConfirm = useCallback(() => {
-    dispatch(syncAddressesDataWhenPendingTxsConfirm({ addresses: addressesWithPendingTxs, pendingTxs }))
-  }, [addressesWithPendingTxs, dispatch, pendingTxs])
+  const checkForNewTransactions = useCallback(async () => {
+    dispatch(syncLatestTransactions())
+  }, [dispatch])
 
-  useInterval(refreshAddressDataWhenPendingTxsConfirm, 5000, pendingTxs.length === 0)
+  useInterval(
+    checkForNewTransactions,
+    TRANSACTIONS_REFRESH_INTERVAL,
+    network.status !== 'online' || isSyncingAddressData
+  )
 
   return (
     <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>

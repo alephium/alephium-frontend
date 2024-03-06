@@ -44,12 +44,8 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
-import {
-  selectAddressIds,
-  selectTotalBalance,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData
-} from '~/store/addressesSlice'
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
+import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface ScreenProps
@@ -92,8 +88,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const refreshData = () => {
     if (!isLoading) {
-      dispatch(syncAddressesData(addressHashes))
-      dispatch(syncAddressesAlphHistoricBalances(addressHashes))
+      dispatch(syncLatestTransactions(addressHashes))
+      // dispatch(syncAddressesAlphHistoricBalances(addressHashes))
     }
   }
 

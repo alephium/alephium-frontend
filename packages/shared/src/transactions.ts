@@ -124,13 +124,11 @@ export const getTransactionsOfAddress = (transactions: Transaction[], addressHas
       tx.outputs?.some((output) => output.address === addressHash)
   )
 
-export const extractNewTransactionHashes = (
+export const extractNewTransactions = (
   incomingTransactions: Transaction[],
   existingTransactions: Transaction['hash'][]
-): Transaction['hash'][] =>
-  incomingTransactions
-    .filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
-    .map((tx) => tx.hash)
+): Transaction[] =>
+  incomingTransactions.filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
 
 export const extractTokenIds = (tokenIds: Asset['id'][], ios: Transaction['inputs'] | Transaction['outputs']) => {
   ios?.forEach((io) => {

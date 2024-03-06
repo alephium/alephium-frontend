@@ -28,7 +28,7 @@ import {
   CHART_DATE_FORMAT,
   client,
   customNetworkSettingsSaved,
-  extractNewTransactionHashes,
+  extractNewTransactions,
   getTransactionsOfAddress,
   networkPresetSwitched,
   NFT,
@@ -61,11 +61,11 @@ import {
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
 } from '~/api/addresses'
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { RootState } from '~/store/store'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { Address, AddressPartial } from '~/types/addresses'
-import { PendingTransaction } from '~/types/transactions'
 import { getRandomLabelColor } from '~/utils/colors'
 
 const sliceName = 'addresses'
@@ -95,20 +95,6 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
   syncingAddressData: false,
   status: 'uninitialized'
 })
-
-export const syncAddressesDataWhenPendingTxsConfirm = createAsyncThunk(
-  `${sliceName}/syncAddressesDataWhenPendingTxsConfirm`,
-  async ({ addresses, pendingTxs }: { addresses: AddressHash[]; pendingTxs: PendingTransaction[] }, { dispatch }) => {
-    const results = await fetchAddressesTransactions(addresses)
-
-    for (const { hash, transactions } of results) {
-      if (transactions.some((confirmedTx) => pendingTxs.some((pendingTx) => pendingTx.hash === confirmedTx.hash))) {
-        await dispatch(syncAddressesData(hash))
-        await dispatch(syncAddressesAlphHistoricBalances([hash]))
-      }
-    }
-  }
-)
 
 export const syncAddressesData = createAsyncThunk(
   `${sliceName}/syncAddressesData`,
@@ -282,12 +268,6 @@ const addressesSlice = createSlice({
         changes: { settings: address.settings }
       })
     },
-    transactionSent: (state, action: PayloadAction<PendingTransaction>) => {
-      const pendingTransaction = action.payload
-      const address = state.entities[pendingTransaction.fromAddress] as Address
-
-      address.transactions.push(pendingTransaction.hash)
-    },
     transactionsLoadingStarted: (state) => {
       state.loadingTransactions = true
     }
@@ -406,7 +386,7 @@ const addressesSlice = createSlice({
 
         const { hash, transactions, page } = addressTransactionsData
         const address = state.entities[hash] as Address
-        const newTxHashes = extractNewTransactionHashes(transactions, address.transactions)
+        const newTxHashes = extractNewTransactions(transactions, address.transactions).map(({ hash }) => hash)
 
         addressesAdapter.updateOne(state, {
           id: hash,
@@ -419,12 +399,28 @@ const addressesSlice = createSlice({
 
         state.loadingTransactions = false
       })
+      .addCase(syncLatestTransactions.fulfilled, (state, { payload }) => {
+        const changes = payload.map(({ hash, newTransactions }) => {
+          const existingTxs = state.entities[hash]?.transactions
+
+          return {
+            id: hash,
+            changes: {
+              transactions: existingTxs?.concat(newTransactions.map(({ hash }) => hash))
+            }
+          }
+        })
+
+        if (changes.length > 0) addressesAdapter.updateMany(state, changes)
+      })
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, { payload: { transactions } }) => {
         const addresses = getAddresses(state)
 
         const updatedAddresses = addresses.map((address) => {
           const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
-          const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
+          const newTxHashes = extractNewTransactions(transactionsOfAddress, address.transactions).map(
+            ({ hash }) => hash
+          )
 
           return {
             id: address.hash,
@@ -556,13 +552,8 @@ export const selectTotalBalance = createSelector([selectAllAddresses], (addresse
   addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
 )
 
-export const {
-  newAddressGenerated,
-  addressesImported,
-  addressSettingsSaved,
-  transactionSent,
-  transactionsLoadingStarted
-} = addressesSlice.actions
+export const { newAddressGenerated, addressesImported, addressSettingsSaved, transactionsLoadingStarted } =
+  addressesSlice.actions
 
 export default addressesSlice
 

@@ -28,9 +28,9 @@ import BottomModal from '~/components/layout/BottomModal'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import TransactionModal from '~/screens/TransactionModal'
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import {
   selectAddressByHash,
-  syncAddressesData,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '~/store/addressesSlice'
@@ -109,7 +109,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   }, [address, allConfirmedTransactionsLoaded, dispatch, isLoading])
 
   const refreshData = () => {
-    if (!isLoading) dispatch(syncAddressesData(addressHash))
+    if (!isLoading) dispatch(syncLatestTransactions(addressHash))
   }
 
   return (

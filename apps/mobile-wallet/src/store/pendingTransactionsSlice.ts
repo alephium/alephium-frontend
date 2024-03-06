@@ -20,16 +20,17 @@ import { AddressHash } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createEntityAdapter, createSelector, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import {
   selectAllAddresses,
   syncAddressesTransactions,
   syncAddressTransactionsNextPage,
-  syncAllAddressesTransactionsNextPage,
-  transactionSent
+  syncAllAddressesTransactionsNextPage
 } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
+import { transactionSent } from '~/store/transactions/transactionsActions'
 import { AddressPendingTransaction, PendingTransaction } from '~/types/transactions'
-import { selectAddressTransactions, selectContactPendingTransactions } from '~/utils/addresses'
+import { selectAddressPendingTransactions, selectContactPendingTransactions } from '~/utils/addresses'
 
 const sliceName = 'pendingTransactions'
 
@@ -51,6 +52,13 @@ const pendingTransactionsSlice = createSlice({
       .addCase(transactionSent, pendingTransactionsAdapter.addOne)
       .addCase(syncAddressesTransactions.fulfilled, removeTransactions)
       .addCase(syncAddressTransactionsNextPage.fulfilled, removeTransactions)
+      .addCase(syncLatestTransactions.fulfilled, (state, { payload }) => {
+        const transactionsHashes = payload.flatMap(({ newTransactions }) => newTransactions).map(({ hash }) => hash)
+
+        if (transactionsHashes && transactionsHashes.length > 0) {
+          pendingTransactionsAdapter.removeMany(state, transactionsHashes)
+        }
+      })
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, removeTransactions)
   }
 })
@@ -67,7 +75,7 @@ export const makeSelectAddressesPendingTransactions = () =>
       (_, addressHashes?: AddressHash | AddressHash[]) => addressHashes
     ],
     (allAddresses, pendingTransactions, addressHashes): AddressPendingTransaction[] =>
-      selectAddressTransactions(allAddresses, pendingTransactions, addressHashes) as AddressPendingTransaction[]
+      selectAddressPendingTransactions(allAddresses, pendingTransactions, addressHashes) as AddressPendingTransaction[]
   )
 
 export const makeSelectContactPendingTransactions = () =>

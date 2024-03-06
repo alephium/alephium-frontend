@@ -37,13 +37,8 @@ import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
-import {
-  selectAddressByHash,
-  selectAddressIds,
-  selectAllAddresses,
-  selectDefaultAddress,
-  syncAddressesData
-} from '~/store/addressesSlice'
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
+import { selectAddressByHash, selectAddressIds, selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
 
 const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const dispatch = useAppDispatch()
@@ -89,7 +84,7 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   )
 
   const refreshData = () => {
-    if (!isLoading) dispatch(syncAddressesData(addressHashes))
+    if (!isLoading) dispatch(syncLatestTransactions(addressHashes))
   }
 
   if (!selectedAddress) return null
