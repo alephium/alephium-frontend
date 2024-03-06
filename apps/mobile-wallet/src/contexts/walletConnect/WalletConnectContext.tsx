@@ -172,7 +172,12 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
     } catch (e) {
       dispatch(walletConnectClientInitializeFailed(getHumanReadableError(e, '')))
-      sendErrorAnalytics(e, 'Could not initialize WalletConnect client, SignClient.init failed')
+      sendErrorAnalytics(
+        e,
+        `Could not initialize WalletConnect client on attempt ${
+          walletConnectClientInitializationAttempts + 1
+        } (SignClient.init failed)`
+      )
     }
 
     if (client) {
@@ -182,7 +187,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       dispatch(walletConnectClientInitialized())
       setActiveSessions(getActiveWalletConnectSessions(client))
     }
-  }, [dispatch])
+  }, [dispatch, walletConnectClientInitializationAttempts])
 
   const shouldInitializeImmediately =
     isWalletConnectEnabled &&
