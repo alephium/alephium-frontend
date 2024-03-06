@@ -130,7 +130,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           {
             text: 'I understand',
             onPress: () => {
-              resetWalletConnectStorage()
               toggleWalletConnect()
               resetWalletConnectClientInitializationAttempts()
             }
@@ -138,6 +137,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         ]
       )
     } else {
+      resetWalletConnectStorage()
       toggleWalletConnect()
     }
   }
