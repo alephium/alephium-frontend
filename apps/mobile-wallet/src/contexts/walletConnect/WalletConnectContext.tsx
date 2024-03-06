@@ -184,32 +184,28 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }, [dispatch])
 
+  const shouldInitializeImmediately =
+    isWalletConnectEnabled &&
+    walletConnectClientInitializationAttempts === 0 &&
+    (walletConnectClientStatus === 'uninitialized' || walletConnectClientStatus === 'initialization-failed')
   useEffect(() => {
-    // Trigger first attempt without waiting 3 seconds
-    if (
-      walletConnectClientInitializationAttempts === 0 &&
-      isWalletConnectEnabled &&
-      (walletConnectClientStatus === 'uninitialized' || walletConnectClientStatus === 'initialization-failed')
-    )
-      initializeWalletConnectClient()
-  }, [
-    initializeWalletConnectClient,
-    isWalletConnectEnabled,
-    walletConnectClientInitializationAttempts,
-    walletConnectClientStatus
-  ])
+    if (shouldInitializeImmediately) initializeWalletConnectClient()
+  }, [initializeWalletConnectClient, shouldInitializeImmediately])
 
-  const shouldInitialize =
+  const shouldRetryInitializationAfterWaiting =
     isWalletConnectEnabled &&
     walletConnectClientStatus === 'uninitialized' &&
     walletConnectClientInitializationAttempts > 0 &&
     walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
-  useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
+  useInterval(initializeWalletConnectClient, 3000, !shouldRetryInitializationAfterWaiting)
 
   useEffect(() => {
-    if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)
+    if (
+      walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES &&
+      walletConnectClientStatus === 'uninitialized'
+    )
       dispatch(walletConnectClientMaxRetriesReached())
-  }, [dispatch, walletConnectClientInitializationAttempts])
+  }, [dispatch, walletConnectClientInitializationAttempts, walletConnectClientStatus])
 
   const cleanStorage = useCallback(
     async (event: SessionRequestEvent) => {
