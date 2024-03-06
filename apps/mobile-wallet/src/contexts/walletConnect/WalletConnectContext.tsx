@@ -1032,7 +1032,17 @@ async function getSessionTopics(storage: KeyValueStorage): Promise<string[]> {
 // clean the `history` and `messages` storage before `SignClient` init
 async function cleanBeforeInit() {
   console.log('Clean storage before SignClient init')
-  const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
+
+  let storage: KeyValueStorage | undefined
+
+  try {
+    storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
+  } catch (e) {
+    sendErrorAnalytics(e, 'Error at creating storage object')
+  }
+
+  if (!storage) return
+
   const historyStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, HISTORY_STORAGE_VERSION, HISTORY_CONTEXT)
 
   let historyRecords: JsonRpcRecord[] | undefined
@@ -1045,28 +1055,33 @@ async function cleanBeforeInit() {
 
   if (historyRecords !== undefined) {
     const remainRecords: JsonRpcRecord[] = []
-    let alphSignRequestNum = 0
-    let unresponsiveRequestNum = 0
-    const now = Date.now()
 
-    for (const record of historyRecords.reverse()) {
-      const msToExpiry = (record.expiry || 0) * 1000 - now
+    try {
+      let alphSignRequestNum = 0
+      let unresponsiveRequestNum = 0
+      const now = Date.now()
 
-      if (msToExpiry <= 0) continue
+      for (const record of historyRecords.reverse()) {
+        const msToExpiry = (record.expiry || 0) * 1000 - now
 
-      const requestMethod = record.request.params?.request?.method as string | undefined
+        if (msToExpiry <= 0) continue
 
-      if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
-        remainRecords.push(record)
-        alphSignRequestNum += 1
-      } else if (
-        record.response === undefined &&
-        !isApiRequest(record) &&
-        unresponsiveRequestNum < MaxRequestNumToKeep
-      ) {
-        remainRecords.push(record)
-        unresponsiveRequestNum += 1
+        const requestMethod = record.request.params?.request?.method as string | undefined
+
+        if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
+          remainRecords.push(record)
+          alphSignRequestNum += 1
+        } else if (
+          record.response === undefined &&
+          !isApiRequest(record) &&
+          unresponsiveRequestNum < MaxRequestNumToKeep
+        ) {
+          remainRecords.push(record)
+          unresponsiveRequestNum += 1
+        }
       }
+    } catch (e) {
+      sendErrorAnalytics(e, 'Error at building remainingRecords array')
     }
 
     try {
