@@ -100,7 +100,7 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
           onClose={closeQRCodeScannerModal}
           onQRCodeScan={handleQRCodeScan}
           text={
-            isWalletConnectEnabled && walletConnectClientStatus
+            isWalletConnectEnabled
               ? 'Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.'
               : 'Scan an Alephium address QR code to send funds to.'
           }
