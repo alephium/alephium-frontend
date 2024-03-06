@@ -112,7 +112,7 @@ const initialValues: WalletConnectContextValue = {
 
 const WalletConnectContext = createContext(initialValues)
 
-const MAX_WALLETCONNECT_RETRIES = 3
+const MAX_WALLETCONNECT_RETRIES = 5
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
