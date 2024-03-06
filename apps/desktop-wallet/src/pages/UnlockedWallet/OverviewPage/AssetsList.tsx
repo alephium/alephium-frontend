@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, Asset, CURRENCIES } from '@alephium/shared'
 import { motion } from 'framer-motion'
+import { InfoIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -183,11 +184,11 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
           </TokenName>
           {asset.symbol && <TokenSymbol>{asset.symbol}</TokenSymbol>}
         </NameColumn>
-        {/* {asset.verified === false && (
-          <Column>
-            <Badge color={theme.global.highlight}>{t('Unverified')}</Badge>
-          </Column>
-        )} */}
+        {asset.verified === false && (
+          <div data-tooltip-id="default" data-tooltip-content={t('No metadata')}>
+            <InfoIcon size={20} color={theme.font.tertiary} />
+          </div>
+        )}
         <TableCellAmount>
           {stateUninitialized ? (
             <SkeletonLoader height="20px" width="30%" />
