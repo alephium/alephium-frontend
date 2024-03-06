@@ -63,7 +63,11 @@ const settingsSlice = createSlice({
     }
   },
   extraReducers(builder) {
-    builder.addCase(appReset, () => initialState)
+    builder
+      .addCase(appReset, () => initialState)
+      .addCase(fiatCurrencyChanged, (state, { payload: currency }) => {
+        state.currency = currency
+      })
   }
 })
 
