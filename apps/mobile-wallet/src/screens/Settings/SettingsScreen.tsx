@@ -72,7 +72,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
-  const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
+  const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
@@ -130,6 +130,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           {
             text: 'I understand',
             onPress: () => {
+              resetWalletConnectStorage()
               toggleWalletConnect()
               resetWalletConnectClientInitializationAttempts()
             }
