@@ -1040,7 +1040,7 @@ async function cleanBeforeInit() {
   try {
     historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
   } catch (e) {
-    sendErrorAnalytics(e, 'Error at storage.getItem')
+    sendErrorAnalytics(e, 'Error at getting history records from storage')
   }
 
   if (historyRecords !== undefined) {
@@ -1069,23 +1069,50 @@ async function cleanBeforeInit() {
       }
     }
 
-    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
+    try {
+      await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
+    } catch (e) {
+      sendErrorAnalytics(e, 'Error at setting history records to storage')
+    }
   }
 
-  await cleanPendingRequest(storage)
+  try {
+    await cleanPendingRequest(storage)
+  } catch (e) {
+    sendErrorAnalytics(e, 'Error at cleanPendingRequest')
+  }
 
-  const topics = await getSessionTopics(storage)
+  let topics: string[] = []
+
+  try {
+    topics = await getSessionTopics(storage)
+  } catch (e) {
+    sendErrorAnalytics(e, 'Error at getSessionTopics')
+  }
+
   if (topics.length > 0) {
     const messageStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, MESSAGES_STORAGE_VERSION, MESSAGES_CONTEXT)
-    const messages = await storage.getItem<Record<string, MessageRecord>>(messageStorageKey)
+
+    let messages: Record<string, MessageRecord> | undefined
+
+    try {
+      messages = await storage.getItem<Record<string, MessageRecord>>(messageStorageKey)
+    } catch (e) {
+      sendErrorAnalytics(e, 'Error at getting messages from storage')
+    }
+
     if (messages === undefined) {
       return
     }
 
-    const messagesMap = objToMap(messages)
-    topics.forEach((topic) => messagesMap.delete(topic))
-    await storage.setItem<Record<string, MessageRecord>>(messageStorageKey, mapToObj(messagesMap))
-    console.log(`Clean topics from messages storage: ${topics.join(',')}`)
+    try {
+      const messagesMap = objToMap(messages)
+      topics.forEach((topic) => messagesMap.delete(topic))
+      await storage.setItem<Record<string, MessageRecord>>(messageStorageKey, mapToObj(messagesMap))
+      console.log(`Clean topics from messages storage: ${topics.join(',')}`)
+    } catch (e) {
+      sendErrorAnalytics(e, 'Error at setting messages to storage')
+    }
   }
 }
 
