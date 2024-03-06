@@ -99,7 +99,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                 )}
               </>
             ) : (
-              <CardStyled>{t('Incorrect metadata')}</CardStyled>
+              <CardStyled>{t('Wrong / old format')}</CardStyled>
             )}
             {collection && (
               <NFTDetailsContainer>
