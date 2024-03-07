@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, selectAllFungibleTokens, selectNFTIds } from '@alephium/shared'
-import { explorer } from '@alephium/web3'
+import { Asset, extractTokenIds, selectAllFungibleTokens, selectNFTIds } from '@alephium/shared'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { makeSelectAddresses } from '~/store/addressesSlice'
@@ -65,16 +64,3 @@ export const selectTransactionUnknownTokenIds = createSelector(
     return tokensWithoutMetadata
   }
 )
-
-const extractTokenIds = (
-  tokenIds: Asset['id'][],
-  ios: explorer.Transaction['inputs'] | explorer.Transaction['outputs']
-) => {
-  ios?.forEach((io) => {
-    io.tokens?.forEach((token) => {
-      if (!tokenIds.includes(token.id)) {
-        tokenIds.push(token.id)
-      }
-    })
-  })
-}
