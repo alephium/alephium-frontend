@@ -84,7 +84,6 @@ export const syncFungibleTokensInfo = createAsyncThunk(
   async (tokenIds: Asset['id'][]): Promise<FungibleTokenBasicMetadata[]> => {
     let tokensMetadata: FungibleTokenBasicMetadata[] = []
 
-    // TODO: What happens if this fails? Is there an infinite loop again?
     try {
       tokensMetadata = (
         await Promise.all(
@@ -115,7 +114,6 @@ export const syncNFTsInfo = createAsyncThunk('assets/syncNFTsInfo', async (token
   let nfts: NFT[] = []
   let nftsMetadata: NFTMetadata[] = []
 
-  // TODO: What happens if this fails? Is there an infinite loop again?
   try {
     nftsMetadata = (
       await Promise.all(
