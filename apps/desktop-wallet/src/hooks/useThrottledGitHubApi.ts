@@ -18,22 +18,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useState } from 'react'
 
-import { AppMetaData, isRcVersion, KEY_APPMETADATA, toAppMetaData } from '@/utils/app-data'
+import { AppMetaData, AppMetadataGitHub, isRcVersion, KEY_APPMETADATA, toAppMetaData } from '@/utils/app-data'
 import { useTimeout } from '@/utils/hooks'
 
 // TODO: Move to shared
 const ONE_HOUR_IN_MS = 1000 * 60 * 60
 
-const useThrottledGitHubApi = (githubApiCallback: (appMetadata: AppMetaData) => Promise<void>) => {
+interface ThrottledGitHubApiProps {
+  key: keyof AppMetadataGitHub
+  githubApiCallback: (appMetadata: AppMetaData) => Promise<void>
+}
+
+const useThrottledGitHubApi = ({ key, githubApiCallback }: ThrottledGitHubApiProps) => {
   const [timeoutDelay, setTimeoutDelay] = useState(0)
 
   const timeoutCallback = () => {
     const now = new Date()
-    const lastTimeGitHubApiWasCalled = getLastTimeGitHubApiWasCalled()
+    const lastTimeGitHubApiWasCalled = getLastTimeGitHubApiWasCalled(key)
     const timePassedSinceGitHubApiWasCalledInMs = now.getTime() - lastTimeGitHubApiWasCalled.getTime()
 
     if (timePassedSinceGitHubApiWasCalledInMs > ONE_HOUR_IN_MS) {
-      const updatedAppMetadata = storeAppMetadata({ lastTimeGitHubApiWasCalled: now })
+      const updatedAppMetadata = storeAppMetadata({ [key]: now })
 
       setTimeoutDelay(ONE_HOUR_IN_MS)
       githubApiCallback(updatedAppMetadata)
@@ -45,8 +50,9 @@ const useThrottledGitHubApi = (githubApiCallback: (appMetadata: AppMetaData) => 
   useTimeout(timeoutCallback, timeoutDelay)
 }
 
-const getLastTimeGitHubApiWasCalled = (): Date => {
-  const { lastTimeGitHubApiWasCalled } = getAppMetadata()
+const getLastTimeGitHubApiWasCalled = (key: ThrottledGitHubApiProps['key']): Date => {
+  const appMetadata = getAppMetadata()
+  const lastTimeGitHubApiWasCalled = appMetadata[key]
 
   return isRcVersion || !lastTimeGitHubApiWasCalled ? new Date(0) : lastTimeGitHubApiWasCalled
 }

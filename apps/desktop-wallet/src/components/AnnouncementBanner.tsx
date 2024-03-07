@@ -54,20 +54,23 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
     setWasShownOnMount(true)
   }, 6000)
 
-  useThrottledGitHubApi(async ({ lastAnnouncementHashChecked }) => {
-    const response = await fetch(links.announcement)
-    const { content: contentBase64, sha: contentSHA } = await response.json()
+  useThrottledGitHubApi({
+    key: 'lastTimeGitHubApiWasCalledForAnnoumcenent',
+    githubApiCallback: async ({ lastAnnouncementHashChecked }) => {
+      const response = await fetch(links.announcement)
+      const { content: contentBase64, sha: contentSHA } = await response.json()
 
-    setContentHash(contentSHA)
+      setContentHash(contentSHA)
 
-    if (contentSHA === lastAnnouncementHashChecked) return
+      if (contentSHA === lastAnnouncementHashChecked) return
 
-    try {
-      const announcementContent = JSON.parse(atob(contentBase64)) as Announcement
+      try {
+        const announcementContent = JSON.parse(atob(contentBase64)) as Announcement
 
-      setAnnouncement(announcementContent)
-    } catch (e) {
-      console.error('Could not parse announcement content')
+        setAnnouncement(announcementContent)
+      } catch (e) {
+        console.error('Could not parse announcement content')
+      }
     }
   })
 

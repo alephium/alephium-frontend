@@ -21,15 +21,20 @@ export const KEY_APPMETADATA = 'alephium/desktop-wallet/appmetadata'
 export const currentVersion: string = import.meta.env.VITE_VERSION
 export const isRcVersion: boolean = currentVersion.includes('-rc.')
 
-export interface AppMetaData {
-  lastTimeGitHubApiWasCalled: Date
+export interface AppMetadataGitHub {
+  lastTimeGitHubApiWasCalledForLatestVersion: Date
+  lastTimeGitHubApiWasCalledForAnnoumcenent: Date
+}
+
+export interface AppMetaData extends AppMetadataGitHub {
   lastAnnouncementHashChecked: string
 }
 
 export type TypeConstructors = DateConstructor | StringConstructor | NumberConstructor | BooleanConstructor
 
 export const APPMETADATA_KEYS: Record<string, TypeConstructors> = {
-  lastTimeGitHubApiWasCalled: Date,
+  lastTimeGitHubApiWasCalledForLatestVersion: Date,
+  lastTimeGitHubApiWasCalledForAnnoumcenent: Date,
   lastAnnouncementHashChecked: String
 }
 
