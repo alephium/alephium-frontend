@@ -46,7 +46,7 @@ import { ChartLength, chartLengths, DataPoint, LatestAmountPerAddress } from '~/
 interface HistoricWorthChart {
   latestWorth: number
   currency: Currency
-  onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
+  onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['value']) => void
   style?: StyleProp<ViewStyle>
 }
 
@@ -75,7 +75,9 @@ const HistoricWorthChart = ({ latestWorth, onWorthInBeginningOfChartChange, styl
   const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
   const filteredChartData = getFilteredChartData(chartData, startingDate)
   const firstItem = filteredChartData.length > 0 ? filteredChartData[0] : undefined
-  const worthDelta = useWorthDelta(firstItem?.worth)
+  const worthDelta = useWorthDelta(firstItem?.value)
+
+  console.log(JSON.stringify(chartData))
 
   const isLoading = filteredChartData.length === 0
 
@@ -87,8 +89,8 @@ const HistoricWorthChart = ({ latestWorth, onWorthInBeginningOfChartChange, styl
   }))
 
   useEffect(() => {
-    onWorthInBeginningOfChartChange(firstItem?.worth)
-  }, [firstItem?.worth, onWorthInBeginningOfChartChange])
+    onWorthInBeginningOfChartChange(firstItem?.value)
+  }, [firstItem?.value, onWorthInBeginningOfChartChange])
 
   useEffect(() => {
     setChartData(
@@ -96,7 +98,7 @@ const HistoricWorthChart = ({ latestWorth, onWorthInBeginningOfChartChange, styl
     )
   }, [addresses, alphPriceHistory, isDataAvailable, latestWorth])
 
-  const worthHasGoneUp = firstItem?.worth ? firstItem.worth < latestWorth : undefined
+  const worthHasGoneUp = firstItem?.value ? firstItem.value < latestWorth : undefined
 
   const chartColor = colord(
     worthHasGoneUp === undefined ? theme.font.tertiary : worthHasGoneUp ? theme.global.valid : theme.global.alert
@@ -104,9 +106,9 @@ const HistoricWorthChart = ({ latestWorth, onWorthInBeginningOfChartChange, styl
 
   const data =
     filteredChartData.length > 0
-      ? filteredChartData.map(({ date, worth }) => ({
+      ? filteredChartData.map(({ date, value }) => ({
           x: date,
-          y: worth
+          y: value
         }))
       : undefined
 
@@ -170,7 +172,7 @@ const getFilteredChartData = (chartData: DataPoint[], startingDate: string) => {
   return startingPoint > 0 ? chartData.slice(startingPoint) : chartData
 }
 
-const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
+const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.value !== 0))
 
 const computeChartDataPoints = (
   alphPriceHistory: TokenHistoricalPrice[],
@@ -179,8 +181,12 @@ const computeChartDataPoints = (
 ): DataPoint[] => {
   const addressesLatestAmount: LatestAmountPerAddress = {}
 
+  console.log(JSON.stringify(alphPriceHistory))
+
   const dataPoints = alphPriceHistory.map(({ date, value }) => {
     let totalAmountPerDate = BigInt(0)
+
+    console.log(JSON.stringify(value))
 
     addresses.forEach(({ hash, balanceHistory }) => {
       const amountOnDate = balanceHistory.entities[date]?.balance
@@ -196,11 +202,11 @@ const computeChartDataPoints = (
 
     return {
       date,
-      worth: value * parseFloat(toHumanReadableAmount(totalAmountPerDate))
+      value: value * parseFloat(toHumanReadableAmount(totalAmountPerDate))
     }
   })
 
-  if (latestWorth !== undefined) dataPoints.push({ date: dayjs().format(CHART_DATE_FORMAT), worth: latestWorth })
+  if (latestWorth !== undefined) dataPoints.push({ date: dayjs().format(CHART_DATE_FORMAT), value: latestWorth })
 
   return dataPoints
 }

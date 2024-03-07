@@ -54,7 +54,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
 
-  const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
+  const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['value']>()
   const worthDelta = useWorthDelta(worthInBeginningOfChart)
 
   const totalAlphAmountWorth = calculateAmountWorth(totalBalance, alphPrice ?? 0)

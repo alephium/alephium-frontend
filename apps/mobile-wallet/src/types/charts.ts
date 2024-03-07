@@ -24,7 +24,7 @@ export type LatestAmountPerAddress = Record<AddressHash, bigint>
 // TODO: Same as in desktop wallet
 export type DataPoint = {
   date: string
-  worth: number
+  value: number
 }
 
 // TODO: Same as in desktop wallet
