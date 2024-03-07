@@ -25,7 +25,6 @@ import styled, { useTheme } from 'styled-components'
 import { fadeIn } from '@/animations'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
-import Badge from '@/components/Badge'
 import FocusableContent from '@/components/FocusableContent'
 import HashEllipsed from '@/components/HashEllipsed'
 import NFTCard from '@/components/NFTCard'
@@ -185,11 +184,11 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
           </TokenName>
           {asset.symbol && <TokenSymbol>{asset.symbol}</TokenSymbol>}
         </NameColumn>
-        {asset.verified === false && (
+        {/* {asset.verified === false && (
           <Column>
             <Badge color={theme.global.highlight}>{t('Unverified')}</Badge>
           </Column>
-        )}
+        )} */}
         <TableCellAmount>
           {stateUninitialized ? (
             <SkeletonLoader height="20px" width="30%" />
