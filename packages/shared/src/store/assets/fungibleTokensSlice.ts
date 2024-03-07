@@ -47,6 +47,10 @@ const fungibleTokensSlice = createSlice({
       .addCase(syncVerifiedFungibleTokens.pending, (state) => {
         state.loadingVerified = true
       })
+      .addCase(syncVerifiedFungibleTokens.rejected, (state) => {
+        state.loadingVerified = false
+        state.status = 'initialization-failed'
+      })
       .addCase(syncFungibleTokensInfo.pending, (state) => {
         state.loadingUnverified = true
       })
@@ -66,6 +70,7 @@ const fungibleTokensSlice = createSlice({
           )
           state.status = 'initialized'
         }
+        state.loadingVerified = false
       })
       .addCase(syncFungibleTokensInfo.fulfilled, (state, action) => {
         const metadata = action.payload
@@ -87,9 +92,6 @@ const fungibleTokensSlice = createSlice({
       .addCase(customNetworkSettingsSaved, resetState)
       .addMatcher(isAnyOf(syncFungibleTokensInfo.fulfilled, syncFungibleTokensInfo.rejected), (state) => {
         state.loadingUnverified = false
-      })
-      .addMatcher(isAnyOf(syncVerifiedFungibleTokens.fulfilled, syncVerifiedFungibleTokens.rejected), (state) => {
-        state.loadingVerified = false
       })
       .addMatcher(isAnyOf(syncUnknownTokensInfo.fulfilled, syncUnknownTokensInfo.rejected), (state) => {
         state.loadingTokenTypes = false

@@ -44,15 +44,10 @@ export const syncVerifiedFungibleTokens = createAsyncThunk(
           : undefined
 
     if (network) {
-      try {
-        const response = await fetch(
-          `https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`
-        )
-        metadata = (await response.json()) as TokenList
-      } catch (e) {
-        console.warn('No metadata for network ID ', state.network.settings.networkId)
-        posthog.capture('Error', { message: `No metadata for network ID ${state.network.settings.networkId}` })
-      }
+      const response = await exponentialBackoffFetchRetry(
+        `https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`
+      )
+      metadata = (await response.json()) as TokenList
     }
 
     return metadata
@@ -89,6 +84,7 @@ export const syncFungibleTokensInfo = createAsyncThunk(
   async (tokenIds: Asset['id'][]): Promise<FungibleTokenBasicMetadata[]> => {
     let tokensMetadata: FungibleTokenBasicMetadata[] = []
 
+    // TODO: What happens if this fails? Is there an infinite loop again?
     try {
       tokensMetadata = (
         await Promise.all(
@@ -119,6 +115,7 @@ export const syncNFTsInfo = createAsyncThunk('assets/syncNFTsInfo', async (token
   let nfts: NFT[] = []
   let nftsMetadata: NFTMetadata[] = []
 
+  // TODO: What happens if this fails? Is there an infinite loop again?
   try {
     nftsMetadata = (
       await Promise.all(
