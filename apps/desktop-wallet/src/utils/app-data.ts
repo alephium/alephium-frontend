@@ -23,7 +23,7 @@ export const isRcVersion: boolean = currentVersion.includes('-rc.')
 
 export interface AppMetadataGitHub {
   lastTimeGitHubApiWasCalledForLatestVersion: Date
-  lastTimeGitHubApiWasCalledForAnnoumcenent: Date
+  lastTimeGitHubApiWasCalledForAnnouncenent: Date
 }
 
 export interface AppMetaData extends AppMetadataGitHub {
@@ -34,7 +34,7 @@ export type TypeConstructors = DateConstructor | StringConstructor | NumberConst
 
 export const APPMETADATA_KEYS: Record<string, TypeConstructors> = {
   lastTimeGitHubApiWasCalledForLatestVersion: Date,
-  lastTimeGitHubApiWasCalledForAnnoumcenent: Date,
+  lastTimeGitHubApiWasCalledForAnnouncenent: Date,
   lastAnnouncementHashChecked: String
 }
 
