@@ -55,7 +55,7 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   }, 6000)
 
   useThrottledGitHubApi({
-    key: 'lastTimeGitHubApiWasCalledForAnnoumcenent',
+    lastGithubCallTimestampKey: 'lastTimeGitHubApiWasCalledForAnnoumcenent',
     githubApiCallback: async ({ lastAnnouncementHashChecked }) => {
       const response = await fetch(links.announcement)
       const { content: contentBase64, sha: contentSHA } = await response.json()

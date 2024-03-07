@@ -47,7 +47,7 @@ const useLatestGitHubRelease = () => {
   }
 
   useThrottledGitHubApi({
-    key: 'lastTimeGitHubApiWasCalledForLatestVersion',
+    lastGithubCallTimestampKey: 'lastTimeGitHubApiWasCalledForLatestVersion',
     githubApiCallback: async () => {
       const version = await electron?.updater.checkForUpdates()
 

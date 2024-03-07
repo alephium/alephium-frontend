@@ -25,20 +25,20 @@ import { useTimeout } from '@/utils/hooks'
 const ONE_HOUR_IN_MS = 1000 * 60 * 60
 
 interface ThrottledGitHubApiProps {
-  key: keyof AppMetadataGitHub
+  lastGithubCallTimestampKey: keyof AppMetadataGitHub
   githubApiCallback: (appMetadata: AppMetaData) => Promise<void>
 }
 
-const useThrottledGitHubApi = ({ key, githubApiCallback }: ThrottledGitHubApiProps) => {
+const useThrottledGitHubApi = ({ lastGithubCallTimestampKey, githubApiCallback }: ThrottledGitHubApiProps) => {
   const [timeoutDelay, setTimeoutDelay] = useState(0)
 
   const timeoutCallback = () => {
     const now = new Date()
-    const lastTimeGitHubApiWasCalled = getLastTimeGitHubApiWasCalled(key)
+    const lastTimeGitHubApiWasCalled = getLastTimeGitHubApiWasCalled(lastGithubCallTimestampKey)
     const timePassedSinceGitHubApiWasCalledInMs = now.getTime() - lastTimeGitHubApiWasCalled.getTime()
 
     if (timePassedSinceGitHubApiWasCalledInMs > ONE_HOUR_IN_MS) {
-      const updatedAppMetadata = storeAppMetadata({ [key]: now })
+      const updatedAppMetadata = storeAppMetadata({ [lastGithubCallTimestampKey]: now })
 
       setTimeoutDelay(ONE_HOUR_IN_MS)
       githubApiCallback(updatedAppMetadata)
@@ -50,9 +50,9 @@ const useThrottledGitHubApi = ({ key, githubApiCallback }: ThrottledGitHubApiPro
   useTimeout(timeoutCallback, timeoutDelay)
 }
 
-const getLastTimeGitHubApiWasCalled = (key: ThrottledGitHubApiProps['key']): Date => {
+const getLastTimeGitHubApiWasCalled = (lastGithubCallTimestampKey: ThrottledGitHubApiProps['key']): Date => {
   const appMetadata = getAppMetadata()
-  const lastTimeGitHubApiWasCalled = appMetadata[key]
+  const lastTimeGitHubApiWasCalled = appMetadata[lastGithubCallTimestampKey]
 
   return isRcVersion || !lastTimeGitHubApiWasCalled ? new Date(0) : lastTimeGitHubApiWasCalled
 }
