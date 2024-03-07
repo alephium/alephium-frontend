@@ -119,5 +119,6 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
 export default BackupIntroScreen
 
 const StyledAnimation = styled(LottieView)`
-  width: 50%;
+  width: 100%;
+  height: 50%;
 `

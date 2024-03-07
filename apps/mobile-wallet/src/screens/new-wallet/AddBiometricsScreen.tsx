@@ -107,6 +107,7 @@ const AnimationContainer = styled.View`
 
 const StyledAnimation = styled(LottieView)`
   width: 300px;
+  height: 120%;
   margin-left: 0.5px;
 `
 
