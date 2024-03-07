@@ -50,7 +50,9 @@ const useThrottledGitHubApi = ({ lastGithubCallTimestampKey, githubApiCallback }
   useTimeout(timeoutCallback, timeoutDelay)
 }
 
-const getLastTimeGitHubApiWasCalled = (lastGithubCallTimestampKey: ThrottledGitHubApiProps['key']): Date => {
+const getLastTimeGitHubApiWasCalled = (
+  lastGithubCallTimestampKey: ThrottledGitHubApiProps['lastGithubCallTimestampKey']
+): Date => {
   const appMetadata = getAppMetadata()
   const lastTimeGitHubApiWasCalled = appMetadata[lastGithubCallTimestampKey]
 
