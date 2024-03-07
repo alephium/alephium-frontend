@@ -26,9 +26,9 @@ export interface AppMetadataGitHub {
   lastTimeGitHubApiWasCalledForAnnouncenent: Date
 }
 
-export interface AppMetaData extends AppMetadataGitHub {
+export type AppMetaData = {
   lastAnnouncementHashChecked: string
-}
+} & AppMetadataGitHub
 
 export type TypeConstructors = DateConstructor | StringConstructor | NumberConstructor | BooleanConstructor
 
