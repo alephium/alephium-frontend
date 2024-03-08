@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
-import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
