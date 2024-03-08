@@ -24,7 +24,7 @@ import { useTheme } from 'styled-components'
 
 import FooterMenu from '~/components/footers/FooterMenu'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
-import DashboardScreen from '~/screens/DashboardScreen'
+import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
 import TransfersScreen from '~/screens/TransfersScreen'
 
 export type InWalletTabsParamList = {

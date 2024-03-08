@@ -24,7 +24,10 @@ import {
   client,
   getHumanReadableError,
   WALLETCONNECT_ERRORS,
-  WalletConnectClientStatus,
+  walletConnectClientInitialized,
+  walletConnectClientInitializeFailed,
+  walletConnectClientInitializing,
+  walletConnectClientMaxRetriesReached,
   WalletConnectError
 } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
@@ -45,6 +48,7 @@ import { SignResult } from '@alephium/web3/dist/src/api/api-alephium'
 import {
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,
+  Expirer,
   HISTORY_CONTEXT,
   HISTORY_STORAGE_VERSION,
   MESSAGES_CONTEXT,
@@ -69,7 +73,7 @@ import { AppState, AppStateStatus } from 'react-native'
 import BackgroundService from 'react-native-background-actions'
 import { Portal } from 'react-native-portalize'
 
-import { sendAnalytics } from '~/analytics'
+import { sendAnalytics, sendErrorAnalytics } from '~/analytics'
 import {
   buildCallContractTransaction,
   buildDeployContractTransaction,
@@ -79,7 +83,7 @@ import BottomModal from '~/components/layout/BottomModal'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
-import { useAppSelector } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, SignMessageData, TransferTxData } from '~/types/transactions'
@@ -97,6 +101,7 @@ interface WalletConnectContextValue {
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
   resetWalletConnectClientInitializationAttempts: () => void
+  resetWalletConnectStorage: () => void
 }
 
 const initialValues: WalletConnectContextValue = {
@@ -104,12 +109,13 @@ const initialValues: WalletConnectContextValue = {
   pairWithDapp: () => Promise.resolve(),
   unpairFromDapp: () => Promise.resolve(),
   activeSessions: [],
-  resetWalletConnectClientInitializationAttempts: () => null
+  resetWalletConnectClientInitializationAttempts: () => null,
+  resetWalletConnectStorage: () => null
 }
 
 const WalletConnectContext = createContext(initialValues)
 
-const MAX_WALLETCONNECT_RETRIES = 3
+const MAX_WALLETCONNECT_RETRIES = 5
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
@@ -120,6 +126,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const url = useURL()
   const wcDeepLink = useRef<string>()
   const appState = useRef(AppState.currentState)
+  const dispatch = useAppDispatch()
+  const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -129,7 +137,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [isSessionProposalModalOpen, setIsSessionProposalModalOpen] = useState(false)
   const [isSessionRequestModalOpen, setIsSessionRequestModalOpen] = useState(false)
   const [loading, setLoading] = useState('')
-  const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
@@ -138,15 +145,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
   const initializeWalletConnectClient = useCallback(async () => {
+    let client
+
     try {
       console.log('CLEANING STORAGE')
       await cleanBeforeInit()
+    } catch (e) {
+      sendErrorAnalytics(e, 'Could not clean before initializing WalletConnect client')
+    }
 
-      console.log('⏳ INITIALIZING WC CLIENT...')
-      setWalletConnectClientStatus('initializing')
-      setWalletConnectClientInitializationAttempts((prevAttempts) => prevAttempts + 1)
+    console.log('⏳ INITIALIZING WC CLIENT...')
+    dispatch(walletConnectClientInitializing())
+    setWalletConnectClientInitializationAttempts((prevAttempts) => prevAttempts + 1)
 
-      const client = await SignClient.init({
+    try {
+      client = await SignClient.init({
         projectId: '2a084aa1d7e09af2b9044a524f39afbe',
         metadata: {
           name: 'Alephium mobile wallet',
@@ -160,29 +173,47 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       })
 
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
+    } catch (e) {
+      dispatch(walletConnectClientInitializeFailed(getHumanReadableError(e, '')))
+      sendErrorAnalytics(
+        e,
+        `Could not initialize WalletConnect client on attempt ${
+          walletConnectClientInitializationAttempts + 1
+        } (SignClient.init failed)`
+      )
+    }
+
+    if (client) {
       cleanHistory(client, false)
 
       setWalletConnectClient(client)
-      setWalletConnectClientStatus('initialized')
+      dispatch(walletConnectClientInitialized())
       setActiveSessions(getActiveWalletConnectSessions(client))
-    } catch (e) {
-      setWalletConnectClientStatus('uninitialized')
-      console.error('Could not initialize WalletConnect client', e)
-      sendAnalytics('Error', {
-        message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
-      })
     }
-  }, [])
+  }, [dispatch, walletConnectClientInitializationAttempts])
+
+  const shouldInitializeImmediately =
+    isWalletConnectEnabled &&
+    walletConnectClientInitializationAttempts === 0 &&
+    (walletConnectClientStatus === 'uninitialized' || walletConnectClientStatus === 'initialization-failed')
+  useEffect(() => {
+    if (shouldInitializeImmediately) initializeWalletConnectClient()
+  }, [initializeWalletConnectClient, shouldInitializeImmediately])
+
+  const shouldRetryInitializationAfterWaiting =
+    isWalletConnectEnabled &&
+    walletConnectClientStatus === 'uninitialized' &&
+    walletConnectClientInitializationAttempts > 0 &&
+    walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
+  useInterval(initializeWalletConnectClient, 3000, !shouldRetryInitializationAfterWaiting)
 
   useEffect(() => {
-    if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES) {
-      showToast({
-        text1: 'Could not connect to WalletConnect',
-        text2: 'If you want to use a dApp, please quit the app and try again.',
-        type: 'error'
-      })
-    }
-  }, [walletConnectClientInitializationAttempts])
+    if (
+      walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES &&
+      walletConnectClientStatus === 'uninitialized'
+    )
+      dispatch(walletConnectClientMaxRetriesReached())
+  }, [dispatch, walletConnectClientInitializationAttempts, walletConnectClientStatus])
 
   const cleanStorage = useCallback(
     async (event: SessionRequestEvent) => {
@@ -533,15 +564,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     console.log('👉 ARGS:', args)
   }, [])
 
-  const shouldInitialize =
-    isWalletConnectEnabled &&
-    walletConnectClientStatus !== 'initialized' &&
-    walletConnectClientInitializationAttempts < MAX_WALLETCONNECT_RETRIES
-  useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
-
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isWalletConnectClientReady) {
+      if (nextAppState === 'background' && isWalletConnectEnabled) {
         let secondsPassed = 0
 
         // Keep app alive for max 4 hours
@@ -575,7 +600,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [isWalletConnectClientReady])
+  }, [isWalletConnectEnabled])
 
   useEffect(() => {
     if (!isWalletConnectClientReady) return
@@ -939,6 +964,45 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setWalletConnectClientInitializationAttempts(0)
   }
 
+  const resetWalletConnectStorage = useCallback(async () => {
+    if (walletConnectClient === undefined) {
+      console.log('Clear walletconnect storage')
+      await clearWCStorage()
+      return
+    }
+
+    try {
+      console.log('Disconnect all sessions')
+      const topics = walletConnectClient.session.keys
+      const reason = getSdkError('USER_DISCONNECTED')
+      for (const topic of topics) {
+        try {
+          await walletConnectClient.disconnect({ topic, reason })
+        } catch (error) {
+          console.error(`Failed to disconnect topic ${topic}, error: ${error}`)
+        }
+      }
+      setActiveSessions([])
+
+      console.log('Clear walletconnect cache')
+      walletConnectClient.proposal.map.clear()
+      walletConnectClient.pendingRequest.map.clear()
+      walletConnectClient.session.map.clear()
+      const expirer = walletConnectClient.core.expirer as Expirer
+      expirer.expirations.clear()
+      walletConnectClient.core.history.records.clear()
+      walletConnectClient.core.crypto.keychain.keychain.clear()
+      walletConnectClient.core.relayer.messages.messages.clear()
+      walletConnectClient.core.pairing.pairings.map.clear()
+      walletConnectClient.core.relayer.subscriber.subscriptions.clear()
+
+      console.log('Clear walletconnect storage')
+      await clearWCStorage()
+    } catch (error) {
+      sendErrorAnalytics(error, 'Error at resetting WalletConnect storage')
+    }
+  }, [walletConnectClient])
+
   return (
     <WalletConnectContext.Provider
       value={{
@@ -946,7 +1010,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         unpairFromDapp,
         walletConnectClient,
         activeSessions,
-        resetWalletConnectClientInitializationAttempts
+        resetWalletConnectClientInitializationAttempts,
+        resetWalletConnectStorage
       }}
     >
       {children}
@@ -1010,53 +1075,102 @@ async function getSessionTopics(storage: KeyValueStorage): Promise<string[]> {
 // clean the `history` and `messages` storage before `SignClient` init
 async function cleanBeforeInit() {
   console.log('Clean storage before SignClient init')
-  const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
+
+  let storage: KeyValueStorage | undefined
+
+  try {
+    storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
+  } catch (e) {
+    sendErrorAnalytics(e, 'Error at creating storage object')
+  }
+
+  if (!storage) return
+
   const historyStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, HISTORY_STORAGE_VERSION, HISTORY_CONTEXT)
-  const historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
+
+  let historyRecords: JsonRpcRecord[] | undefined
+
+  try {
+    historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
+  } catch (e) {
+    sendErrorAnalytics(e, 'Error at getting history records from storage')
+  }
 
   if (historyRecords !== undefined) {
     const remainRecords: JsonRpcRecord[] = []
-    let alphSignRequestNum = 0
-    let unresponsiveRequestNum = 0
-    const now = Date.now()
 
-    for (const record of historyRecords.reverse()) {
-      const msToExpiry = (record.expiry || 0) * 1000 - now
+    try {
+      let alphSignRequestNum = 0
+      let unresponsiveRequestNum = 0
+      const now = Date.now()
 
-      if (msToExpiry <= 0) continue
+      for (const record of historyRecords.reverse()) {
+        const msToExpiry = (record.expiry || 0) * 1000 - now
 
-      const requestMethod = record.request.params?.request?.method as string | undefined
+        if (msToExpiry <= 0) continue
 
-      if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
-        remainRecords.push(record)
-        alphSignRequestNum += 1
-      } else if (
-        record.response === undefined &&
-        !isApiRequest(record) &&
-        unresponsiveRequestNum < MaxRequestNumToKeep
-      ) {
-        remainRecords.push(record)
-        unresponsiveRequestNum += 1
+        const requestMethod = record.request.params?.request?.method as string | undefined
+
+        if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
+          remainRecords.push(record)
+          alphSignRequestNum += 1
+        } else if (
+          record.response === undefined &&
+          !isApiRequest(record) &&
+          unresponsiveRequestNum < MaxRequestNumToKeep
+        ) {
+          remainRecords.push(record)
+          unresponsiveRequestNum += 1
+        }
       }
+    } catch (e) {
+      sendErrorAnalytics(e, 'Error at building remainingRecords array')
     }
 
-    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
+    try {
+      await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
+    } catch (e) {
+      sendErrorAnalytics(e, 'Error at setting history records to storage')
+    }
   }
 
-  await cleanPendingRequest(storage)
+  try {
+    await cleanPendingRequest(storage)
+  } catch (e) {
+    sendErrorAnalytics(e, 'Error at cleanPendingRequest')
+  }
 
-  const topics = await getSessionTopics(storage)
+  let topics: string[] = []
+
+  try {
+    topics = await getSessionTopics(storage)
+  } catch (e) {
+    sendErrorAnalytics(e, 'Error at getSessionTopics')
+  }
+
   if (topics.length > 0) {
     const messageStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, MESSAGES_STORAGE_VERSION, MESSAGES_CONTEXT)
-    const messages = await storage.getItem<Record<string, MessageRecord>>(messageStorageKey)
+
+    let messages: Record<string, MessageRecord> | undefined
+
+    try {
+      messages = await storage.getItem<Record<string, MessageRecord>>(messageStorageKey)
+    } catch (e) {
+      sendErrorAnalytics(e, 'Error at getting messages from storage')
+    }
+
     if (messages === undefined) {
       return
     }
 
-    const messagesMap = objToMap(messages)
-    topics.forEach((topic) => messagesMap.delete(topic))
-    await storage.setItem<Record<string, MessageRecord>>(messageStorageKey, mapToObj(messagesMap))
-    console.log(`Clean topics from messages storage: ${topics.join(',')}`)
+    try {
+      const messagesMap = objToMap(messages)
+      topics.forEach((topic) => messagesMap.delete(topic))
+      await storage.setItem<Record<string, MessageRecord>>(messageStorageKey, mapToObj(messagesMap))
+      console.log(`Clean topics from messages storage: ${topics.join(',')}`)
+    } catch (e) {
+      sendErrorAnalytics(e, 'Error at setting messages to storage')
+    }
   }
 }
 
@@ -1072,7 +1186,7 @@ function cleanHistory(client: SignClient, checkResponse: boolean) {
       }
     }
   } catch (error) {
-    console.error(`Failed to clean history, error: ${error}`)
+    sendErrorAnalytics(error, 'Could not clean WalletConnect client history')
   }
 }
 
@@ -1080,7 +1194,7 @@ async function cleanMessages(client: SignClient, topic: string) {
   try {
     await client.core.relayer.messages.del(topic)
   } catch (error) {
-    console.error(`Failed to clean messages, error: ${error}, topic: ${topic}`)
+    sendErrorAnalytics(error, `Could not clean WalletConnect client messages, topic: ${topic}`)
   }
 }
 
@@ -1093,6 +1207,18 @@ async function cleanPendingRequest(storage: KeyValueStorage) {
       return method !== 'alph_requestNodeApi' && method !== 'alph_requestExplorerApi'
     })
     await storage.setItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey, remainPendingRequests)
+  }
+}
+
+async function clearWCStorage() {
+  try {
+    const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
+    const keys = await storage.getKeys()
+    for (const key of keys) {
+      await storage.removeItem(key)
+    }
+  } catch (error) {
+    sendErrorAnalytics(error, 'Could not clear WalletConnect storage')
   }
 }
 

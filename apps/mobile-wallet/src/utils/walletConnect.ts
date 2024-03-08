@@ -20,6 +20,7 @@ import { NetworkPreset, NetworkSettings, networkSettingsPresets } from '@alephiu
 import { parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
 import SignClient from '@walletconnect/sign-client'
 
+import { sendErrorAnalytics } from '~/analytics'
 import { SessionProposalEvent } from '~/types/walletConnect'
 
 // TODO: Move to shared
@@ -49,9 +50,15 @@ export const parseSessionProposalEvent = (proposalEvent: SessionProposalEvent) =
 export const getActiveWalletConnectSessions = (walletConnectClient?: SignClient) => {
   if (!walletConnectClient) return []
 
-  const activePairings = walletConnectClient.core.pairing.getPairings().filter((pairing) => pairing.active)
+  try {
+    const activePairings = walletConnectClient.core.pairing.getPairings().filter((pairing) => pairing.active)
 
-  return walletConnectClient.session.values.filter((session) =>
-    activePairings.some((pairing) => pairing.topic === session.pairingTopic)
-  )
+    return walletConnectClient.session.values.filter((session) =>
+      activePairings.some((pairing) => pairing.topic === session.pairingTopic)
+    )
+  } catch (e) {
+    sendErrorAnalytics(e, 'Could not get active WalletConnect sessions')
+  }
+
+  return []
 }

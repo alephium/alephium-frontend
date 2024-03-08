@@ -143,7 +143,8 @@ const RootStackNavigation = () => {
 
 export default RootStackNavigation
 
-// TODO: create a hook
+// TODO: Create a hook. Make sure the hook is inside a component that is a child of the NavigationContainer component
+// instance of the above RootStackNavigation component, otherwise useNavigation inside the hook will not work properly
 const AppUnlockHandler = () => {
   const dispatch = useAppDispatch()
   const appState = useRef(AppState.currentState)
