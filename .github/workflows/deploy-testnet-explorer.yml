@@ -36,9 +36,3 @@ jobs:
 
       - name: Notify CloudFront about the changes
         run: aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID} --paths "/*"
-
-      - name: Deploy testnet via webhook
-        uses: distributhor/workflow-webhook@v3
-        env:
-          webhook_url: ${{ secrets.TESTNET_WEBHOOK_URL }}
-          webhook_secret: ${{ secrets.TESTNET_WEBHOOK_SECRET }}

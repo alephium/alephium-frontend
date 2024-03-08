@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, calculateAmountWorth, CURRENCIES, selectPriceById } from '@alephium/shared'
+import { AddressHash, Asset, CURRENCIES } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -170,7 +170,6 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   const theme = useTheme()
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const assetPrice = useAppSelector((s) => selectPriceById(s, asset.symbol || ''))
 
   return (
     <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>
@@ -213,13 +212,9 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
                 </AmountSubtitle>
               )}
               {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
-              {assetPrice && assetPrice.price !== null && asset?.verified && (
+              {asset.worth !== undefined && (
                 <Price>
-                  <Amount
-                    value={calculateAmountWorth(asset.balance, assetPrice.price)}
-                    isFiat
-                    suffix={CURRENCIES[fiatCurrency].symbol}
-                  />
+                  <Amount value={asset.worth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
                 </Price>
               )}
             </>

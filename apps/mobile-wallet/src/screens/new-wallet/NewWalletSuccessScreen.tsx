@@ -75,12 +75,13 @@ const AnimationContainer = styled.View`
 
 const StyledAlephiumLogo = styled(AlephiumLogo)`
   position: absolute;
-  width: 40%;
-  height: 40%;
+  width: 60%;
+  height: 60%;
 `
 
 const StyledAnimation = styled(LottieView)`
   width: 80%;
+  height: 100%;
 `
 
 const ActionsContainer = styled.View`

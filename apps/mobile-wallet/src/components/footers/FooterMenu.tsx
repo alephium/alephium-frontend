@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
+import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -50,9 +51,12 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
   return (
     <View style={[style]}>
       {Platform.OS === 'ios' ? (
-        <FooterMenuContentBlured tint={theme.name} intensity={100} style={{ paddingBottom: insets.bottom }}>
-          {footerContent}
-        </FooterMenuContentBlured>
+        <>
+          <FooterMenuContrastedBackground />
+          <FooterMenuContentBlured tint={theme.name} intensity={50} style={{ paddingBottom: insets.bottom }}>
+            {footerContent}
+          </FooterMenuContentBlured>
+        </>
       ) : (
         <FooterMenuContent style={{ paddingBottom: insets.bottom }}>{footerContent}</FooterMenuContent>
       )}
@@ -85,4 +89,13 @@ const FooterMenuContent = styled.View`
 
 const FooterMenuContentBlured = styled(BlurView)`
   ${footerMenuStyles}
+`
+
+const FooterMenuContrastedBackground = styled.View`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.75).toHex()};
 `

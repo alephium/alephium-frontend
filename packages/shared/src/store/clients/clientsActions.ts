@@ -16,11 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/store/store'
-export * from '@/store/addresses'
-export * from '@/store/prices'
-export * from '@/store/assets'
-export * from '@/store/network'
-export * from '@/store/global'
-export * from '@/store/settings'
-export * from '@/store/clients'
+import { createAction } from '@reduxjs/toolkit'
+
+import { WalletConnectErrorMessage } from '@/types/clients'
+
+export const walletConnectClientInitialized = createAction('clients/walletConnectClientInitialized')
+export const walletConnectClientInitializing = createAction('clients/walletConnectClientInitializing')
+export const walletConnectClientInitializeFailed = createAction<WalletConnectErrorMessage>(
+  'clients/walletConnectClientInitializeFailed'
+)
+export const walletConnectClientMaxRetriesReached = createAction('clients/walletConnectClientMaxRetriesReached')

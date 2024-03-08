@@ -181,6 +181,7 @@ const ModalContent = styled.View`
 
 const StyledAnimation = styled(LottieView)`
   width: 80%;
+  height: 100%;
 `
 
 const ChoicesBox = styled(Animated.View)`

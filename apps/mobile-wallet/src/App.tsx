@@ -91,8 +91,8 @@ const App = () => {
     <Provider store={store}>
       <Main>
         <ThemeProvider theme={theme}>
+          <StatusBar animated translucent style="light" />
           <RootStackNavigation />
-          <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
           <ToastAnchor />
         </ThemeProvider>
       </Main>

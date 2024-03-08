@@ -30,7 +30,6 @@ import AddressesTokensList from '~/components/AddressesTokensList'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
-import DashboardHeaderActions from '~/components/DashboardHeaderActions'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import BottomModal from '~/components/layout/BottomModal'
@@ -43,6 +42,7 @@ import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
+import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import {
   selectAddressIds,
@@ -126,7 +126,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       verticalGap
       screenTitle={walletName}
       headerOptions={{
-        headerRight: () => <DashboardHeaderActions />,
+        headerRight: () => <HeaderButtons />,
         headerLeft: () => <WalletSwitchButton isLoading={isLoading} />,
         headerTitle: walletName
       }}

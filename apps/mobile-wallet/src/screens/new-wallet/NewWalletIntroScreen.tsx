@@ -70,13 +70,14 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
 export default NewWalletIntroScreen
 
 const AnimationContainer = styled.View`
-  flex: 1;
+  flex: 2;
   justify-content: center;
   align-items: center;
 `
 
 const StyledAnimation = styled(LottieView)`
   width: 40%;
+  height: 100%;
 `
 
 const ActionButtonsStackStyled = styled(ActionButtonsStack)`

@@ -35,7 +35,10 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
 
 export type FungibleToken = TokenInfo & { verified?: boolean }
 
-export type Asset = TokenDisplayBalances & Optional<FungibleToken, 'symbol' | 'name'>
+export type Asset = TokenDisplayBalances &
+  Optional<FungibleToken, 'symbol' | 'name'> & {
+    worth?: number
+  }
 
 export type AddressFungibleToken = FungibleToken & TokenDisplayBalances
 

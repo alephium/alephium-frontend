@@ -18,6 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getSdkError } from '@walletconnect/utils'
 
-export type WalletConnectClientStatus = 'uninitialized' | 'initializing' | 'initialized'
+export type WalletConnectClientStatus = 'uninitialized' | 'initializing' | 'initialized' | 'initialization-failed'
 
 export type WalletConnectError = ReturnType<typeof getSdkError>

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getHumanReadableError } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 import PostHog from 'posthog-react-native'
 import { PosthogCaptureOptions } from 'posthog-react-native/lib/posthog-core/src'
@@ -44,6 +45,13 @@ export const sendAnalytics = (
   },
   options?: PosthogCaptureOptions
 ) => posthogAsync.then((client) => client.capture(event, properties, options))
+
+export const sendErrorAnalytics = (error: unknown, message: string) => {
+  console.error(message, error)
+  sendAnalytics('Error', {
+    message: `${message}: ${getHumanReadableError(error, '')}`
+  })
+}
 
 export const Analytics = ({ children }: { children: JSX.Element }) => {
   const analytics = useAppSelector((s) => s.settings.analytics)
