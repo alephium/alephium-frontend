@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { exponentialBackoffFetchRetry } from '@alephium/shared'
 import { compareVersions } from 'compare-versions'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
@@ -24,7 +25,6 @@ import useThrottledGitHubApi from '@/hooks/useThrottledGitHubApi'
 import { AlephiumWindow } from '@/types/window'
 import { currentVersion, isRcVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
-import { exponentialBackoffFetchRetry } from '@alephium/shared'
 
 const _window = window as unknown as AlephiumWindow
 const electron = _window.electron

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { exponentialBackoffFetchRetry } from '@alephium/shared'
 import { colord } from 'colord'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Megaphone } from 'lucide-react'
@@ -32,7 +33,6 @@ import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
 import announcementFile from '../../announcement.json'
-import { exponentialBackoffFetchRetry } from '@alephium/shared'
 
 interface AnnouncementBannerProps {
   className?: string
