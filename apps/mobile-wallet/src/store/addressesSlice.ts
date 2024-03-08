@@ -24,6 +24,7 @@ import {
   Asset,
   BalanceHistory,
   balanceHistoryAdapter,
+  calculateAssetsData,
   CHART_DATE_FORMAT,
   client,
   customNetworkSettingsSaved,
@@ -33,8 +34,10 @@ import {
   NFT,
   selectAllFungibleTokens,
   selectAllNFTs,
+  selectAllPrices,
   selectAllPricesHistories,
   selectNFTIds,
+  sortAssets,
   syncingAddressDataStarted,
   TokenDisplayBalances
 } from '@alephium/shared'
@@ -49,7 +52,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
-import { chunk, sortBy, uniq } from 'lodash'
+import { chunk, uniq } from 'lodash'
 
 import {
   fetchAddressesBalances,
@@ -479,31 +482,12 @@ export const makeSelectAddressesAlphAsset = () =>
 // TODO: Same as in desktop wallet
 export const makeSelectAddressesTokens = () =>
   createSelector(
-    [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses()],
-    (fungibleTokens, nfts, alphAsset, addresses): Asset[] => {
-      const tokens = getAddressesTokenBalances(addresses).reduce((acc, token) => {
-        const fungibleToken = fungibleTokens.find((t) => t.id === token.id)
-        const nftInfo = nfts.find((nft) => nft.id === token.id)
+    [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses(), selectAllPrices],
+    (fungibleTokens, nfts, alphAsset, addresses, tokenPrices): Asset[] => {
+      const tokenBalances = getAddressesTokenBalances(addresses)
+      const tokens = calculateAssetsData([alphAsset, ...tokenBalances], fungibleTokens, nfts, tokenPrices)
 
-        acc.push({
-          id: token.id,
-          balance: BigInt(token.balance.toString()),
-          lockedBalance: BigInt(token.lockedBalance.toString()),
-          name: fungibleToken?.name ?? nftInfo?.name,
-          symbol: fungibleToken?.symbol,
-          description: fungibleToken?.description ?? nftInfo?.description,
-          logoURI: fungibleToken?.logoURI ?? nftInfo?.image,
-          decimals: fungibleToken?.decimals ?? 0,
-          verified: fungibleToken?.verified
-        })
-
-        return acc
-      }, [] as Asset[])
-
-      return [
-        alphAsset,
-        ...sortBy(tokens, [(a) => !a.verified, (a) => a.verified === undefined, (a) => a.name?.toLowerCase(), 'id'])
-      ]
+      return sortAssets(tokens)
     }
   )
 

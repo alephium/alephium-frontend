@@ -15,7 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { Asset } from '@alephium/shared'
+import { Asset, CURRENCIES } from '@alephium/shared'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -23,6 +23,7 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import ListItem from '~/components/ListItem'
+import { useAppSelector } from '~/hooks/redux'
 
 interface TokenListItemProps {
   asset: Asset
@@ -31,35 +32,46 @@ interface TokenListItemProps {
   hideSeparator?: boolean
 }
 
-const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemProps) => (
-  <ListItem
-    style={style}
-    isLast={isLast}
-    title={asset.name || asset.id}
-    subtitle={
-      !asset.verified && (
-        <UnverifiedBadge>
-          <AppText size={10} color="tertiary">
-            Unverified
-          </AppText>
-        </UnverifiedBadge>
-      )
-    }
-    icon={<AssetLogo assetId={asset.id} size={38} />}
-    rightSideContent={
-      <AmountStyled
-        value={BigInt(asset.balance)}
-        decimals={asset.decimals}
-        isUnknownToken={!asset.symbol}
-        fadeDecimals
-        suffix={asset.symbol}
-        bold
-        useTinyAmountShorthand
-      />
-    }
-    hideSeparator={hideSeparator}
-  />
-)
+const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemProps) => {
+  const currency = useAppSelector((s) => s.settings.currency)
+
+  const balance = BigInt(asset.balance)
+
+  return (
+    <ListItem
+      style={style}
+      isLast={isLast}
+      title={asset.name || asset.id}
+      subtitle={
+        !asset.verified && (
+          <UnverifiedBadge>
+            <AppText size={10} color="tertiary">
+              Unverified
+            </AppText>
+          </UnverifiedBadge>
+        )
+      }
+      icon={<AssetLogo assetId={asset.id} size={38} />}
+      rightSideContent={
+        <Amounts>
+          <AmountStyled
+            value={balance}
+            decimals={asset.decimals}
+            isUnknownToken={!asset.symbol}
+            fadeDecimals
+            suffix={asset.symbol}
+            bold
+            useTinyAmountShorthand
+          />
+          {asset.worth !== undefined && (
+            <FiatAmountStyled isFiat value={asset.worth} suffix={CURRENCIES[currency].symbol} color="secondary" />
+          )}
+        </Amounts>
+      }
+      hideSeparator={hideSeparator}
+    />
+  )
+}
 
 export default TokenListItem
 
@@ -74,4 +86,12 @@ const UnverifiedBadge = styled.View`
   border-radius: 4px;
   align-self: flex-start;
   margin-top: 3px;
+`
+
+const Amounts = styled.View``
+
+const FiatAmountStyled = styled(Amount)`
+  flex-shrink: 0;
+  align-self: flex-end;
+  margin-top: 5px;
 `
