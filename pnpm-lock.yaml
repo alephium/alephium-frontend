@@ -17,6 +17,9 @@ patchedDependencies:
   react-native-aes-crypto@2.1.1:
     hash: sm7rpv6bikakdvmsl6ekayqewu
     path: patches/react-native-aes-crypto@2.1.1.patch
+  react-native-background-actions@3.0.1:
+    hash: tnqysah4biy4sx3b6vswe7bwhu
+    path: patches/react-native-background-actions@3.0.1.patch
 
 importers:
 
@@ -704,7 +707,7 @@ importers:
         version: 2.1.1(patch_hash=sm7rpv6bikakdvmsl6ekayqewu)
       react-native-background-actions:
         specifier: ^3.0.1
-        version: 3.0.1(react-native@0.73.4)
+        version: 3.0.1(patch_hash=tnqysah4biy4sx3b6vswe7bwhu)(react-native@0.73.4)
       react-native-gesture-handler:
         specifier: ^2.12.1
         version: 2.14.0(react-native@0.73.4)(react@18.2.0)
@@ -16488,7 +16491,7 @@ packages:
     dev: false
     patched: true
 
-  /react-native-background-actions@3.0.1(react-native@0.73.4):
+  /react-native-background-actions@3.0.1(patch_hash=tnqysah4biy4sx3b6vswe7bwhu)(react-native@0.73.4):
     resolution: {integrity: sha512-xlEjUM2PP+OEQQkr9Z4c4+dRIzhbCh1xAeakL8FKGDib2a3dki2kMR4ZTw+9oHspHn9VF1Fuu78mWXR5zqkVaA==}
     peerDependencies:
       react-native: '>=0.47.0'
@@ -16496,6 +16499,7 @@ packages:
       eventemitter3: 4.0.7
       react-native: 0.73.4(@babel/core@7.23.6)(@babel/preset-env@7.23.8)(react@18.2.0)
     dev: false
+    patched: true
 
   /react-native-gesture-handler@2.14.0(react-native@0.73.4)(react@18.2.0):
     resolution: {integrity: sha512-cOmdaqbpzjWrOLUpX3hdSjsMby5wq3PIEdMq7okJeg9DmCzanysHSrktw1cXWNc/B5MAgxAn9J7Km0/4UIqKAQ==}
