@@ -29,7 +29,7 @@ import {
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { AnimatePresence } from 'framer-motion'
-import { difference } from 'lodash'
+import { difference, union } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
@@ -57,7 +57,10 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '@/storage/settings/settingsActions'
-import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
+import {
+  makeSelectAddressesHashesWithPendingTransactions,
+  selectTransactionUnknownTokenIds
+} from '@/storage/transactions/transactionsSelectors'
 import {
   getStoredPendingTransactions,
   restorePendingTransactions
@@ -92,10 +95,10 @@ const App = () => {
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
-  const unknownTokens = useAppSelector(selectAddressesUnknownTokens)
+  const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens).map(({ id }) => id)
+  const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
   const checkedUnknownTokenIds = useAppSelector((s) => s.fungibleTokens.checkedUnknownTokenIds)
-  const unknownTokenIds = unknownTokens.map((token) => token.id)
-  const newUnknownTokens = difference(unknownTokenIds, checkedUnknownTokenIds)
+  const newUnknownTokens = difference(union(addressUnknownTokenIds, txUnknownTokenIds), checkedUnknownTokenIds)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
   const [isUpdateWalletModalVisible, setUpdateWalletModalVisible] = useState(!!newVersion)

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AssetOutput, Input, MempoolTransaction, Output, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { AddressHash } from '@/types/addresses'
-import { AssetAmount } from '@/types/assets'
+import { Asset, AssetAmount } from '@/types/assets'
 import { AmountDeltas, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils'
 
@@ -131,3 +131,13 @@ export const extractNewTransactionHashes = (
   incomingTransactions
     .filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
     .map((tx) => tx.hash)
+
+export const extractTokenIds = (tokenIds: Asset['id'][], ios: Transaction['inputs'] | Transaction['outputs']) => {
+  ios?.forEach((io) => {
+    io.tokens?.forEach((token) => {
+      if (!tokenIds.includes(token.id)) {
+        tokenIds.push(token.id)
+      }
+    })
+  })
+}
