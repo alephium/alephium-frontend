@@ -32,6 +32,7 @@ import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
 import announcementFile from '../../announcement.json'
+import { exponentialBackoffFetchRetry } from '@alephium/shared'
 
 interface AnnouncementBannerProps {
   className?: string
@@ -57,7 +58,7 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   useThrottledGitHubApi({
     lastGithubCallTimestampKey: 'lastTimeGitHubApiWasCalledForAnnouncenent',
     githubApiCallback: async ({ lastAnnouncementHashChecked }) => {
-      const response = await fetch(links.announcement)
+      const response = await exponentialBackoffFetchRetry(links.announcement)
       const { content: contentBase64, sha: contentSHA } = await response.json()
 
       setContentHash(contentSHA)

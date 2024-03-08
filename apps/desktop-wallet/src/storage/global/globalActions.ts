@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, exponentialBackoffFetchRetry } from '@alephium/shared'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
 import i18n from '@/i18n'
@@ -59,7 +59,7 @@ export const walletConnectCacheClearFailed = createAction('app/walletConnectCach
 export const receiveTestnetTokens = createAsyncThunk<PendingTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
   'assets/receiveTestnetTokens',
   async (destinationAddress: AddressHash, { rejectWithValue, fulfillWithValue }) => {
-    const response = await fetch('https://faucet.testnet.alephium.org/send', {
+    const response = await exponentialBackoffFetchRetry('https://faucet.testnet.alephium.org/send', {
       method: 'POST',
       body: destinationAddress
     })

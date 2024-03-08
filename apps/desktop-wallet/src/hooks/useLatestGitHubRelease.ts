@@ -24,6 +24,7 @@ import useThrottledGitHubApi from '@/hooks/useThrottledGitHubApi'
 import { AlephiumWindow } from '@/types/window'
 import { currentVersion, isRcVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
+import { exponentialBackoffFetchRetry } from '@alephium/shared'
 
 const _window = window as unknown as AlephiumWindow
 const electron = _window.electron
@@ -36,7 +37,7 @@ const useLatestGitHubRelease = () => {
   const [requiresManualDownload, setRequiresManualDownload] = useState(false)
 
   const checkForManualDownload = async () => {
-    const response = await fetch(links.latestReleaseApi)
+    const response = await exponentialBackoffFetchRetry(links.latestReleaseApi)
     const data = await response.json()
     const version = data.tag_name.replace('alephium-desktop-wallet@', '')
 
