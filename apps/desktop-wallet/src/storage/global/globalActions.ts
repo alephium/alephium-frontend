@@ -74,7 +74,7 @@ export const receiveTestnetTokens = createAsyncThunk<PendingTransaction, Address
       })
     }
 
-    const responseURL = await (await response.text()).trim()
+    const responseURL = (await response.text()).trim()
 
     const hash = responseURL.match(/\/([a-fA-F0-9]+)$/)?.[1] || ''
 

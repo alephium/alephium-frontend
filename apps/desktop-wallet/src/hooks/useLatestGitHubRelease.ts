@@ -37,13 +37,18 @@ const useLatestGitHubRelease = () => {
   const [requiresManualDownload, setRequiresManualDownload] = useState(false)
 
   const checkForManualDownload = async () => {
-    const response = await exponentialBackoffFetchRetry(links.latestReleaseApi)
-    const data = await response.json()
-    const version = data.tag_name.replace('alephium-desktop-wallet@', '')
+    try {
+      const response = await exponentialBackoffFetchRetry(links.latestReleaseApi)
+      const data = await response.json()
+      const version = data.tag_name.replace('alephium-desktop-wallet@', '')
 
-    if (isVersionNewer(version)) {
-      setNewVersion(version)
-      setRequiresManualDownload(true)
+      if (isVersionNewer(version)) {
+        setNewVersion(version)
+        setRequiresManualDownload(true)
+      }
+    } catch (e) {
+      posthog.capture('Error', { message: 'Checking for latest release version for manual download' })
+      console.error(e)
     }
   }
 
@@ -53,12 +58,7 @@ const useLatestGitHubRelease = () => {
       const version = await electron?.updater.checkForUpdates()
 
       if (!version) {
-        try {
-          await checkForManualDownload()
-        } catch (e) {
-          posthog.capture('Error', { message: 'Checking for latest release version for manual download' })
-          console.error(e)
-        }
+        await checkForManualDownload()
       } else if (isVersionNewer(version)) {
         setNewVersion(version)
       }
