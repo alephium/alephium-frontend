@@ -20,7 +20,7 @@
       "persistent": true
     },
     "typecheck": {
-      "dependsOn": ["topo", "^build"]
+      "dependsOn": ["^build", "topo"]
     },
     "topo": {
       "dependsOn": ["^topo"]
