@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
+import { Text } from 'react-native'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -51,7 +52,11 @@ const TransactionListItem = ({ tx, showInternalInflows = false, ...props }: Tran
       icon={
         <TransactionIcon color={iconBgColor}>
           <Icon size={16} strokeWidth={3} color={iconColor} />
-          {isFailedScriptTx && <FailedTXBubble>!</FailedTXBubble>}
+          {isFailedScriptTx && (
+            <FailedTXBubble>
+              <FailedTXBubbleText>!</FailedTXBubbleText>
+            </FailedTXBubble>
+          )}
         </TransactionIcon>
       }
       rightSideContent={
@@ -120,16 +125,21 @@ const AmountStyled = styled(Amount)`
   text-align: right;
 `
 
-const FailedTXBubble = styled.Text`
+const FailedTXBubble = styled.View`
   position: absolute;
   height: 14px;
   width: 14px;
   border-radius: 14px;
   background-color: ${({ theme }) => theme.global.alert};
-  color: white;
   top: -5px;
   right: -5px;
-  text-align: center;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+`
+
+const FailedTXBubbleText = styled.Text`
   font-size: 10px;
   font-weight: 800;
+  color: white;
 `
