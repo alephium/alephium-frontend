@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { exponentialBackoffFetchRetry } from '@alephium/shared'
 import { colord } from 'colord'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Megaphone } from 'lucide-react'
@@ -57,14 +58,14 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
   useThrottledGitHubApi({
     lastGithubCallTimestampKey: 'lastTimeGitHubApiWasCalledForAnnouncenent',
     githubApiCallback: async ({ lastAnnouncementHashChecked }) => {
-      const response = await fetch(links.announcement)
-      const { content: contentBase64, sha: contentSHA } = await response.json()
-
-      setContentHash(contentSHA)
-
-      if (contentSHA === lastAnnouncementHashChecked) return
-
       try {
+        const response = await exponentialBackoffFetchRetry(links.announcement)
+        const { content: contentBase64, sha: contentSHA } = await response.json()
+
+        setContentHash(contentSHA)
+
+        if (contentSHA === lastAnnouncementHashChecked) return
+
         const announcementContent = JSON.parse(atob(contentBase64)) as Announcement
 
         setAnnouncement(announcementContent)
