@@ -69,7 +69,7 @@ export interface FungibleTokensState extends EntityState<FungibleToken> {
   loadingVerified: boolean
   loadingUnverified: boolean
   loadingTokenTypes: boolean
-  status: 'initialized' | 'uninitialized'
+  status: 'initialized' | 'uninitialized' | 'initialization-failed'
   checkedUnknownTokenIds: FungibleToken['id'][]
 }
 

@@ -44,15 +44,10 @@ export const syncVerifiedFungibleTokens = createAsyncThunk(
           : undefined
 
     if (network) {
-      try {
-        const response = await fetch(
-          `https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`
-        )
-        metadata = (await response.json()) as TokenList
-      } catch (e) {
-        console.warn('No metadata for network ID ', state.network.settings.networkId)
-        posthog.capture('Error', { message: `No metadata for network ID ${state.network.settings.networkId}` })
-      }
+      const response = await exponentialBackoffFetchRetry(
+        `https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`
+      )
+      metadata = (await response.json()) as TokenList
     }
 
     return metadata

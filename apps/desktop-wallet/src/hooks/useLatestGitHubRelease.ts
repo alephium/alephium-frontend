@@ -46,18 +46,21 @@ const useLatestGitHubRelease = () => {
     }
   }
 
-  useThrottledGitHubApi(async () => {
-    const version = await electron?.updater.checkForUpdates()
+  useThrottledGitHubApi({
+    lastGithubCallTimestampKey: 'lastTimeGitHubApiWasCalledForLatestVersion',
+    githubApiCallback: async () => {
+      const version = await electron?.updater.checkForUpdates()
 
-    if (!version) {
-      try {
-        await checkForManualDownload()
-      } catch (e) {
-        posthog.capture('Error', { message: 'Checking for latest release version for manual download' })
-        console.error(e)
+      if (!version) {
+        try {
+          await checkForManualDownload()
+        } catch (e) {
+          posthog.capture('Error', { message: 'Checking for latest release version for manual download' })
+          console.error(e)
+        }
+      } else if (isVersionNewer(version)) {
+        setNewVersion(version)
       }
-    } else if (isVersionNewer(version)) {
-      setNewVersion(version)
     }
   })
 
