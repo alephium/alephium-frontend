@@ -74,7 +74,7 @@ const useWalletLock = () => {
       await migrateUserData(encryptedWallet.id, password, version)
     } catch (e) {
       console.error(e)
-      posthog.capture('Error', { message: 'User data migration failed ' })
+      posthog.capture('Error', { message: 'User data migration failed' })
       dispatch(userDataMigrationFailed())
     }
 

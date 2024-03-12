@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Alert, KeyboardAvoidingView, ScrollView } from 'react-native'
 import { FadeIn } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -89,7 +89,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
   const handleEnterPress = () => possibleMatches.length > 0 && selectWord(possibleMatches[0])
 
-  const importWallet = useCallback(async () => {
+  const importWallet = async () => {
     // This should never happen, but if it does, let the user restart the process of creating a wallet
     if (!name) {
       Alert.alert('Could not proceed', 'Missing wallet name', [
@@ -122,7 +122,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
     } finally {
       setLoading(false)
     }
-  }, [name, selectedWords, dispatch, navigation, deviceHasEnrolledBiometrics])
+  }
 
   const handleWordInputChange = (inputText: string) => {
     const parsedInput = inputText.split(' ')[0]
