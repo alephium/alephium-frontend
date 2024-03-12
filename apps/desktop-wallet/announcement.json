@@ -1,6 +1,10 @@
 {
-  "isActive": false,
-  "title": "",
-  "description": "",
-  "type": "info"
+  "isActive": true,
+  "title": "Version 2.2.4 is available!",
+  "description": "There is nothing to do if you are already on it (you can check the version in the settings). Otherwise, download and install it!",
+  "type": "info",
+  "button": {
+    "title": "Get it",
+    "link": "https://github.com/alephium/alephium-frontend/releases/tag/alephium-desktop-wallet%402.2.4"
+  }
 }
