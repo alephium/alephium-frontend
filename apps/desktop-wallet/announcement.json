@@ -1,7 +1,7 @@
 {
   "isActive": true,
   "title": "Version 2.2.4 is available!",
-  "description": "There is nothing to do if you are already on it (you can check the version in the settings). Otherwise, download and install it!",
+  "description": "Please download & update from GitHub. If already on 2.2.4, there's nothing more to do!",
   "type": "info",
   "button": {
     "title": "Get it",
