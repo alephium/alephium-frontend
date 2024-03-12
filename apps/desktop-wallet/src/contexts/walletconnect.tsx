@@ -730,9 +730,12 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     electron?.app.hide()
   }
 
-  const handleSignFail = async (error: WalletConnectError) => {
-    if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, error)
-  }
+  const handleSignFail = useCallback(
+    async (error: WalletConnectError) => {
+      if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, error)
+    },
+    [respondToWalletConnectWithError, sessionRequestEvent]
+  )
 
   const handleSignReject = async () => {
     if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))

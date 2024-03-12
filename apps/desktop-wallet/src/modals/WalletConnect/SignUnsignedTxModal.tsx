@@ -55,24 +55,35 @@ const SignUnsignedTxModal = ({
   useEffect(() => {
     const decodeUnsignedTx = async () => {
       setIsLoading(true)
-      const decodedResult = await client.node.transactions.postTransactionsDecodeUnsignedTx({
-        unsignedTx: txData.unsignedTx
-      })
 
-      setDecodedUnsignedTx({
-        txId: decodedResult.unsignedTx.txId,
-        fromGroup: decodedResult.fromGroup,
-        toGroup: decodedResult.toGroup,
-        unsignedTx: txData.unsignedTx,
-        gasAmount: decodedResult.unsignedTx.gasAmount,
-        gasPrice: BigInt(decodedResult.unsignedTx.gasPrice)
-      })
+      try {
+        const decodedResult = await client.node.transactions.postTransactionsDecodeUnsignedTx({
+          unsignedTx: txData.unsignedTx
+        })
 
-      setIsLoading(false)
+        setDecodedUnsignedTx({
+          txId: decodedResult.unsignedTx.txId,
+          fromGroup: decodedResult.fromGroup,
+          toGroup: decodedResult.toGroup,
+          unsignedTx: txData.unsignedTx,
+          gasAmount: decodedResult.unsignedTx.gasAmount,
+          gasPrice: BigInt(decodedResult.unsignedTx.gasPrice)
+        })
+      } catch (e) {
+        const message = 'Could not decode unsigned tx'
+        posthog.capture('Error', { message })
+
+        onSignFail({
+          message: getHumanReadableError(e, message),
+          code: WALLETCONNECT_ERRORS.TRANSACTION_DECODE_FAILED
+        })
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     decodeUnsignedTx()
-  }, [txData.unsignedTx])
+  }, [onSignFail, posthog, txData.unsignedTx])
 
   const handleSign = async () => {
     if (!decodedUnsignedTx) return
