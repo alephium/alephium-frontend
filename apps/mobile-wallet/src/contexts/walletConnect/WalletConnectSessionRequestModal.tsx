@@ -310,22 +310,22 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           )}
 
           {(requestData.type === 'deploy-contract' || requestData.type === 'call-contract') && (
-            <Row title="Bytecode" titleColor="secondary">
+            <Row isHorizontal title="Bytecode" titleColor="secondary">
               <AppText>{requestData.wcData.bytecode}</AppText>
             </Row>
           )}
           {requestData.type === 'sign-unsigned-tx' && (
             <>
-              <Row title="Unsigned TX ID" titleColor="secondary">
+              <Row isHorizontal title="Unsigned TX ID" titleColor="secondary">
                 <AppText>{requestData.unsignedTxData.unsignedTx.txId}</AppText>
               </Row>
-              <Row title="Unsigned TX" titleColor="secondary">
+              <Row isHorizontal title="Unsigned TX" titleColor="secondary">
                 <AppText>{requestData.wcData.unsignedTx}</AppText>
               </Row>
             </>
           )}
           {requestData.type === 'sign-message' && (
-            <Row title="Message" titleColor="secondary">
+            <Row isHorizontal title="Message" titleColor="secondary">
               <AppText>{requestData.wcData.message}</AppText>
             </Row>
           )}
