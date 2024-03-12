@@ -481,5 +481,8 @@
   "Received dApp request": "Received dApp request",
   "dApp operation": "dApp operation",
   "Script execution failed": "Script execution failed",
-  "Hide": "Cacher"
+  "Hide": "Cacher",
+  "Could not decode unsigned tx": "Could not decode unsigned tx",
+  "Could not sign unsigned tx": "Could not sign unsigned tx",
+  "Could not sign message": "Could not sign message"
 }

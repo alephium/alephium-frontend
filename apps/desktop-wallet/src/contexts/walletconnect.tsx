@@ -195,6 +195,10 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       await cleanStorage(event)
       setSessionRequestEvent(undefined)
       setDappTxData(undefined)
+      setIsSignMessageModalOpen(false)
+      setIsSignUnsignedTxModalOpen(false)
+      setIsCallScriptSendModalOpen(false)
+      setIsDeployContractSendModalOpen(false)
     },
     [walletConnectClient, cleanStorage]
   )

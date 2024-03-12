@@ -47,9 +47,12 @@ import {
   csvFileGenerationStarted,
   fetchTransactionsCsv,
   loadingPendingTransactionsFailed,
+  messageSignFailed,
   transactionBuildFailed,
   transactionSendFailed,
-  transactionsSendSucceeded
+  transactionsSendSucceeded,
+  unsignedTransactionDecodingFailed,
+  unsignedTransactionSignFailed
 } from '@/storage/transactions/transactionsActions'
 import { newWalletNameStored, walletCreationFailed, walletNameStorageFailed } from '@/storage/wallets/walletActions'
 import { Message, SnackbarMessage } from '@/types/snackbar'
@@ -108,6 +111,9 @@ const snackbarSlice = createSlice({
         displayMessageImmediately(state, { text: i18n.t('Custom network settings saved.') })
       )
       .addCase(transactionBuildFailed, displayError)
+      .addCase(unsignedTransactionSignFailed, displayError)
+      .addCase(unsignedTransactionDecodingFailed, displayError)
+      .addCase(messageSignFailed, displayError)
       .addCase(transactionSendFailed, displayError)
       .addCase(contactStorageFailed, displayError)
       .addCase(contactDeletionFailed, displayError)
