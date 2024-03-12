@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Alert, KeyboardAvoidingView, ScrollView } from 'react-native'
 import { FadeIn } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -90,40 +90,34 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
   const handleEnterPress = () => possibleMatches.length > 0 && selectWord(possibleMatches[0])
 
-  const importWallet = useCallback(
-    async (pin?: string) => {
-      // This should never happen, but if it does, let the user restart the process of creating a wallet
-      if (!name || !pin) {
-        Alert.alert('Could not proceed', `Missing ${!name ? 'wallet name' : 'pin'}`, [
-          {
-            text: 'Restart',
-            onPress: () => navigation.navigate('LandingScreen')
-          }
-        ])
-        return
-      }
+  const importWallet = async (pin?: string) => {
+    // This should never happen, but if it does, let the user restart the process of creating a wallet
+    if (!name || !pin) {
+      Alert.alert('Could not proceed', `Missing ${!name ? 'wallet name' : 'pin'}`, [
+        {
+          text: 'Restart',
+          onPress: () => navigation.navigate('LandingScreen')
+        }
+      ])
+      return
+    }
 
-      setLoading(true)
+    setLoading(true)
 
-      const mnemonicToImport = devMnemonicToRestore || selectedWords.map(({ word }) => word).join(' ')
+    const mnemonicToImport = devMnemonicToRestore || selectedWords.map(({ word }) => word).join(' ')
 
-      const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
+    const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
 
-      dispatch(newWalletGenerated(wallet))
-      dispatch(syncAddressesData(wallet.firstAddress.hash))
-      dispatch(syncAddressesAlphHistoricBalances([wallet.firstAddress.hash]))
+    dispatch(newWalletGenerated(wallet))
+    dispatch(syncAddressesData(wallet.firstAddress.hash))
+    dispatch(syncAddressesAlphHistoricBalances([wallet.firstAddress.hash]))
 
-      sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
+    sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
 
-      resetNavigation(
-        navigation,
-        deviceHasBiometricsData ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen'
-      )
+    resetNavigation(navigation, deviceHasBiometricsData ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen')
 
-      setLoading(false)
-    },
-    [name, selectedWords, dispatch, navigation, deviceHasBiometricsData]
-  )
+    setLoading(false)
+  }
 
   const handleWordInputChange = (inputText: string) => {
     const parsedInput = inputText.split(' ')[0]

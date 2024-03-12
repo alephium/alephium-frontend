@@ -109,8 +109,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       setUnsignedTxData(data)
     } catch (e) {
       showExceptionToast(e, 'Could not build transaction')
-
-      sendAnalytics('Error', { message: 'Could not build consolidation transactions' })
     }
   }, [address])
 
@@ -133,8 +131,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           await buildConsolidationTransactions()
         } else {
           showExceptionToast(e, 'Could not build transaction')
-
-          sendAnalytics('Error', { message: 'Could not build transaction' })
         }
       }
     },
