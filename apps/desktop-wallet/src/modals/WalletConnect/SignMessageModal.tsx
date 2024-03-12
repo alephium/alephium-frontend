@@ -76,7 +76,7 @@ const SignUnsignedTxModal = ({
     <CenteredModal title={t('Sign Message')} onClose={onClose} dynamicContent focusMode noPadding>
       <ModalContent>
         <InputFieldsColumn>
-          <InfoBox label={t('Message')} text={txData.message} wordBreak />
+          <InfoBox label={t('Message')} text={txData.message} />
         </InputFieldsColumn>
         <ModalFooterButtons>
           <ModalFooterButton role="secondary" onClick={handleReject}>
