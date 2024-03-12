@@ -19,11 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   BuildDeployContractTxResult,
   BuildExecuteScriptTxResult,
-  BuildTransactionResult
+  BuildTransactionResult,
+  DecodeUnsignedTxResult
 } from '@alephium/web3/dist/src/api/api-alephium'
 import { SignClientTypes } from '@walletconnect/types'
 
-import { CallContractTxData, DeployContractTxData, SignMessageData, TransferTxData } from '~/types/transactions'
+import {
+  CallContractTxData,
+  DeployContractTxData,
+  SignMessageData,
+  SignUnsignedTxData,
+  TransferTxData
+} from '~/types/transactions'
 
 export type SessionRequestEvent = SignClientTypes.EventArguments['session_request']
 
@@ -49,4 +56,9 @@ export type SessionRequestData =
       type: 'sign-message'
       wcData: SignMessageData
       unsignedTxData?: undefined
+    }
+  | {
+      type: 'sign-unsigned-tx'
+      wcData: SignUnsignedTxData
+      unsignedTxData: DecodeUnsignedTxResult
     }

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, AssetAmount } from '@alephium/shared'
-import { explorer, SignMessageParams } from '@alephium/web3'
+import { explorer, SignMessageParams, SignUnsignedTxParams } from '@alephium/web3'
 
 import { Address } from '~/types/addresses'
 
@@ -93,5 +93,9 @@ export interface DeployContractTxData {
 }
 
 export interface SignMessageData extends Pick<SignMessageParams, 'message' | 'messageHasher'> {
+  fromAddress: AddressHash
+}
+
+export interface SignUnsignedTxData extends Pick<SignUnsignedTxParams, 'signerKeyType' | 'unsignedTx'> {
   fromAddress: AddressHash
 }

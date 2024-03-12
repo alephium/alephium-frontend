@@ -42,7 +42,9 @@ import {
   SignMessageParams,
   SignMessageResult,
   SignTransferTxParams,
-  SignTransferTxResult
+  SignTransferTxResult,
+  SignUnsignedTxParams,
+  SignUnsignedTxResult
 } from '@alephium/web3'
 import { SignResult } from '@alephium/web3/dist/src/api/api-alephium'
 import {
@@ -86,7 +88,13 @@ import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletCon
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
-import { CallContractTxData, DeployContractTxData, SignMessageData, TransferTxData } from '~/types/transactions'
+import {
+  CallContractTxData,
+  DeployContractTxData,
+  SignMessageData,
+  SignUnsignedTxData,
+  TransferTxData
+} from '~/types/transactions'
 import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { sleep } from '~/utils/misc'
@@ -449,6 +457,43 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             setSessionRequestEvent(requestEvent)
 
             console.log('⏳ OPENING MODAL TO SIGN MESSAGE...')
+            setIsSessionRequestModalOpen(true)
+
+            break
+          }
+          case 'alph_signUnsignedTx': {
+            const { signerAddress, signerKeyType, unsignedTx } = requestEvent.params.request
+              .params as SignUnsignedTxParams
+
+            const fromAddress = addressIds.find((address) => address === signerAddress)
+
+            if (!fromAddress) {
+              return respondToWalletConnectWithError(requestEvent, {
+                message: "Signer address doesn't exist",
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            const wcTxData: SignUnsignedTxData = {
+              fromAddress,
+              signerKeyType,
+              unsignedTx
+            }
+
+            setLoading('Responding to WalletConnect')
+            console.log('⏳ DECODING TX WITH DATA:', wcTxData)
+            const decodedResult = await client.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
+            console.log('✅ DECODING TX: DONE!')
+            setLoading('')
+
+            setSessionRequestData({
+              type: 'sign-unsigned-tx',
+              wcData: wcTxData,
+              unsignedTxData: decodedResult
+            })
+            setSessionRequestEvent(requestEvent)
+
+            console.log('⏳ OPENING MODAL TO SIGN UNSIGNED TX...')
             setIsSessionRequestModalOpen(true)
 
             break
@@ -878,7 +923,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }
 
-  const handleSignSuccess = async (result: SignMessageResult) => {
+  const handleSignSuccess = async (result: SignMessageResult | SignUnsignedTxResult) => {
     if (!sessionRequestEvent) return
 
     console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
