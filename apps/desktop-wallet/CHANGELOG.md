@@ -1,5 +1,14 @@
 # alephium-desktop-wallet
 
+## 2.2.4
+
+### Patch Changes
+
+- a588dfb: Hide token tag for tokens not in token list
+- a588dfb: Handle failure of token list API call
+- 5985729: Fix display of NFTs in transaction list
+- 548615e: Sort tokens based on fiat worth
+
 ## 2.2.3
 
 ### Patch Changes

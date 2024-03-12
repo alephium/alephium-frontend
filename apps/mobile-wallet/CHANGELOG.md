@@ -9,6 +9,9 @@
 - 28f2703: Add button to open camera from WalletConnect pairings modal
 - d409af2: Fix display of received transactions that were displayed as moved
 - 66edd8a: Display token prices
+- 5dbc07a: Enlarge NFT image on thumbnail tap
+- 29ea755: Display NFT attributes
+- 01a0ee8: Add CAD fiat currency
 
 ## 1.0.5
 
