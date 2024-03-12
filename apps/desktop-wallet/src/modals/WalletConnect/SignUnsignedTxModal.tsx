@@ -26,7 +26,11 @@ import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { unsignedTransactionSignSucceeded } from '@/storage/transactions/transactionsActions'
+import {
+  unsignedTransactionDecodingFailed,
+  unsignedTransactionSignFailed,
+  unsignedTransactionSignSucceeded
+} from '@/storage/transactions/transactionsActions'
 import { SignUnsignedTxData } from '@/types/transactions'
 
 interface SignUnsignedTxModalProps {
@@ -71,7 +75,9 @@ const SignUnsignedTxModal = ({
         })
       } catch (e) {
         const message = 'Could not decode unsigned tx'
+        const errorMessage = getHumanReadableError(e, t(message))
         posthog.capture('Error', { message })
+        dispatch(unsignedTransactionDecodingFailed(errorMessage))
 
         onSignFail({
           message: getHumanReadableError(e, message),
@@ -83,7 +89,7 @@ const SignUnsignedTxModal = ({
     }
 
     decodeUnsignedTx()
-  }, [onSignFail, posthog, txData.unsignedTx])
+  }, [dispatch, onClose, onSignFail, posthog, t, txData.unsignedTx])
 
   const handleSign = async () => {
     if (!decodedUnsignedTx) return
@@ -97,7 +103,9 @@ const SignUnsignedTxModal = ({
       onClose()
     } catch (e) {
       const message = 'Could not sign unsigned tx'
+      const errorMessage = getHumanReadableError(e, t(message))
       posthog.capture('Error', { message })
+      dispatch(unsignedTransactionSignFailed(errorMessage))
 
       onSignFail({
         message: getHumanReadableError(e, message),

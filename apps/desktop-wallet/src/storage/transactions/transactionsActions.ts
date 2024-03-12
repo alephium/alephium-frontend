@@ -33,7 +33,13 @@ export const transactionsSendSucceeded = createAction<{ nbOfTransactionsSent: nu
 
 export const unsignedTransactionSignSucceeded = createAction('tx/unsignedTransactionSignSucceeded')
 
+export const unsignedTransactionSignFailed = createAction<Message>('tx/unsignedTransactionSignFailed')
+
+export const unsignedTransactionDecodingFailed = createAction<Message>('tx/unsignedTransactionDecodingFailed')
+
 export const messageSignSucceeded = createAction('tx/messageSignSucceeded')
+
+export const messageSignFailed = createAction<Message>('tx/messageSignFailed')
 
 export const transactionSent = createAction<PendingTransaction>('tx/transactionSent')
 
