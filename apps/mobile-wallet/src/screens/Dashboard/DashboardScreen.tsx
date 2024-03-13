@@ -114,9 +114,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      {showLoader && (
-        <SpinnerModal isActive={true} text="Syncing blockchain data..." blur={false} bg="full" progress={progress} />
-      )}
+      {showLoader && <SpinnerModal isActive={true} blur={false} bg="full" progress={progress} animated={false} />}
       <DashboardScreenStyled
         refreshControl={<RefreshSpinner />}
         hasBottomBar

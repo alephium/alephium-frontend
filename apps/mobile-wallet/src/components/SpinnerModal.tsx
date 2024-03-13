@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
-import { ActivityIndicator } from 'react-native'
-import { Bar as ProgressBar } from 'react-native-progress'
+import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -31,6 +30,7 @@ interface SpinnerProps {
   bg?: 'faded' | 'full'
   color?: FontColor
   progress?: number
+  animated?: boolean
 }
 
 interface SpinnerModalProps extends SpinnerProps {
@@ -51,7 +51,7 @@ const SpinnerModal = ({ isActive, text, blur = true, bg, progress }: SpinnerModa
         <Spinner
           bg={bg}
           text={text}
-          color={bg === 'full' ? 'primary' : theme.name === 'dark' ? 'primary' : 'contrast'}
+          color={bg === 'full' ? 'secondary' : theme.name === 'dark' ? 'secondary' : 'contrast'}
           progress={progress}
         />
       )}
@@ -61,18 +61,28 @@ const SpinnerModal = ({ isActive, text, blur = true, bg, progress }: SpinnerModa
 
 export default SpinnerModal
 
-export const Spinner = ({ text, color = 'tertiary', bg, progress }: SpinnerProps) => {
+export const Spinner = ({ text, color = 'tertiary', animated = true, bg, progress }: SpinnerProps) => {
   const theme = useTheme()
 
   return (
     <SpinnerStyled bg={bg}>
-      <ActivityIndicator size={80} color={theme.font[color]} />
+      {progress !== undefined && (
+        <ProgressBar
+          progress={progress}
+          color={theme.font.primary}
+          size={100}
+          thickness={6}
+          strokeCap="round"
+          unfilledColor={theme.bg.primary}
+          borderWidth={0}
+          animated={animated}
+        />
+      )}
       {text && (
         <LoadingText semiBold size={16} color={color}>
           {text}
         </LoadingText>
       )}
-      {progress !== undefined && <ProgressBarStyled progress={progress} color={theme.global.accent} />}
     </SpinnerStyled>
   )
 }
@@ -87,9 +97,5 @@ const SpinnerStyled = styled.View<{ bg?: SpinnerProps['bg'] }>`
 `
 
 const LoadingText = styled(AppText)`
-  margin-top: 20px;
-`
-
-const ProgressBarStyled = styled(ProgressBar)`
-  margin-top: 10px;
+  margin-top: 50px;
 `

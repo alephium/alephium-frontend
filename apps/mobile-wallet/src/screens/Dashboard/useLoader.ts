@@ -36,12 +36,27 @@ export const useLoader = () => {
   const [showLoader, setShowLoader] = useState(addressesStatus === 'uninitialized')
 
   useEffect(() => {
-    if (progress === 1) {
-      setTimeout(() => setShowLoader(false), 500)
+    let timeoutID: NodeJS.Timeout
+
+    if (progress >= 1) {
+      timeoutID = setTimeout(() => setShowLoader(false), 300)
     }
+
+    return () => clearTimeout(timeoutID)
   }, [addressesStatus, progress])
 
   const updateProgress = () => setProgress((previousValue) => previousValue + 0.25)
+
+  useEffect(() => {
+    const intervalID = setInterval(() => {
+      if (progress < 1) {
+        // Fake progress ;)
+        setProgress((prev) => prev + 0.025)
+      }
+    }, 300)
+
+    return () => clearTimeout(intervalID)
+  })
 
   useEffect(() => {
     if (isLoadingLatestTxs) {
