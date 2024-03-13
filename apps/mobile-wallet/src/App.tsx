@@ -185,14 +185,17 @@ const Main = ({ children, ...props }: ViewProps) => {
     dispatch(syncLatestTransactions())
   }, [dispatch])
 
-  const dataResyncNeeded =
-    nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs && addressesStatus === 'uninitialized'
+  const dataResyncNeeded = nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs
 
   useEffect(() => {
-    if (dataResyncNeeded) checkForNewTransactions()
+    if (addressesStatus === 'uninitialized' && dataResyncNeeded) checkForNewTransactions()
   }, [addressesStatus, checkForNewTransactions, dataResyncNeeded])
 
-  useInterval(checkForNewTransactions, TRANSACTIONS_REFRESH_INTERVAL, !dataResyncNeeded)
+  useInterval(
+    checkForNewTransactions,
+    TRANSACTIONS_REFRESH_INTERVAL,
+    !dataResyncNeeded || addressesStatus === 'uninitialized'
+  )
 
   return (
     <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>
