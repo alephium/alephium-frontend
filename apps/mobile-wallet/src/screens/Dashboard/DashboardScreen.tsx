@@ -38,14 +38,14 @@ import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Scree
 import RefreshSpinner from '~/components/RefreshSpinner'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
-import { selectAddressIds, selectTotalBalance, syncLatestTransactions } from '~/store/addressesSlice'
+import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface ScreenProps
@@ -56,7 +56,6 @@ interface ScreenProps
     BottomBarScrollScreenProps {}
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
-  const dispatch = useAppDispatch()
   const theme = useTheme()
   const walletName = useAppSelector((s) => s.wallet.name)
   const totalBalance = useAppSelector(selectTotalBalance)
@@ -68,7 +67,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isNewWallet, setIsNewWallet] = useState(false)
-  const [isSpinnerVisible, setIsSpinnerVisible] = useState(false)
 
   const hideButtons = addressesStatus === 'uninitialized' && isLoadingLatestTxs
 
@@ -89,18 +87,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
     initializeNewWalletFlag()
   }, [])
-
-  useEffect(() => {
-    if (!isLoadingLatestTxs) setIsSpinnerVisible(false)
-  }, [isLoadingLatestTxs])
-
-  const refreshData = () => {
-    setIsSpinnerVisible(true)
-
-    if (!isLoadingLatestTxs) {
-      dispatch(syncLatestTransactions(addressHashes)).finally(() => setIsSpinnerVisible(false))
-    }
-  }
 
   const handleReceivePress = () => {
     if (addressHashes.length === 1) {
@@ -127,16 +113,16 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   return (
     <>
       {addressesStatus === 'uninitialized' && isLoadingLatestTxs && (
-        <SpinnerModal isActive={true} text="Syncing latest transactions..." blur={false} bg="full" />
+        <SpinnerModal isActive={true} text="Syncing blockchain data..." blur={false} bg="full" />
       )}
       <DashboardScreenStyled
-        refreshControl={<RefreshSpinner refreshing={isSpinnerVisible} onRefresh={refreshData} />}
+        refreshControl={<RefreshSpinner />}
         hasBottomBar
         verticalGap
         screenTitle={walletName}
         headerOptions={{
           headerRight: () => <HeaderButtons />,
-          headerLeft: () => <WalletSwitchButton isLoading={isSpinnerVisible} />,
+          headerLeft: () => <WalletSwitchButton />,
           headerTitle: walletName
         }}
         TitleSideComponent={

@@ -73,11 +73,7 @@ const SpinnerStyled = styled.View<{ bg?: SpinnerProps['bg'] }>`
   flex: 1;
   width: 100%;
   background-color: ${({ theme, bg }) =>
-    bg === 'faded'
-      ? colord(theme.bg.contrast).alpha(0.3).toRgbString()
-      : bg === 'full'
-        ? theme.bg.contrast
-        : undefined};
+    bg === 'faded' ? colord(theme.bg.contrast).alpha(0.3).toRgbString() : bg === 'full' ? theme.bg.back1 : undefined};
   justify-content: center;
   align-items: center;
 `

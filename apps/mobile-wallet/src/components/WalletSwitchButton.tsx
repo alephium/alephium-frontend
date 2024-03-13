@@ -28,13 +28,12 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface WalletSwitchButtonProps {
-  isLoading: boolean
   style?: StyleProp<ViewStyle>
 }
 
 const buttonSize = 40
 
-const WalletSwitchButton = ({ isLoading, style }: WalletSwitchButtonProps) => {
+const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
   const gradientOpacity = useSharedValue(0)
   const [nbOfTaps, setNbOfTaps] = useState(0)
   const [isDoingMagic, setIsDoingMagic] = useState(false)
