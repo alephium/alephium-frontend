@@ -44,6 +44,7 @@ import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
+import { useLoader } from '~/screens/Dashboard/useLoader'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -63,6 +64,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
+  const { showLoader, progress } = useLoader()
 
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
@@ -112,8 +114,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      {addressesStatus === 'uninitialized' && isLoadingLatestTxs && (
-        <SpinnerModal isActive={true} text="Syncing blockchain data..." blur={false} bg="full" />
+      {showLoader && (
+        <SpinnerModal isActive={true} text="Syncing blockchain data..." blur={false} bg="full" progress={progress} />
       )}
       <DashboardScreenStyled
         refreshControl={<RefreshSpinner />}

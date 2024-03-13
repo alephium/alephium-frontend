@@ -78,6 +78,7 @@ interface AddressesState extends EntityState<Address> {
   loadingTokens: boolean
   loadingLatestTransactions: boolean
   loadingTransactionsNextPage: boolean
+  loadingAlphHistoricBalances: boolean
   status: 'uninitialized' | 'initialized'
 }
 
@@ -86,6 +87,7 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
   loadingTokens: false,
   loadingLatestTransactions: false,
   loadingTransactionsNextPage: false,
+  loadingAlphHistoricBalances: false,
   status: 'uninitialized'
 })
 
@@ -406,6 +408,10 @@ const addressesSlice = createSlice({
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
       .addCase(appReset, () => initialState)
+
+      .addCase(syncAddressesAlphHistoricBalances.pending, (state) => {
+        state.loadingAlphHistoricBalances = true
+      })
       .addCase(syncAddressesAlphHistoricBalances.fulfilled, (state, { payload: data }) => {
         data.forEach(({ address, balances }) => {
           const addressState = state.entities[address]
@@ -414,6 +420,11 @@ const addressesSlice = createSlice({
             balanceHistoryAdapter.upsertMany(addressState.balanceHistory, balances)
           }
         })
+
+        state.loadingAlphHistoricBalances = false
+      })
+      .addCase(syncAddressesAlphHistoricBalances.rejected, (state) => {
+        state.loadingAlphHistoricBalances = false
       })
   }
 })
