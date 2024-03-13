@@ -21,6 +21,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useAppSelector } from '~/hooks/redux'
 
 export const useLoader = () => {
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
   const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
   const isLoadingTokens = useAppSelector((s) => s.addresses.loadingTokens)
@@ -32,11 +33,13 @@ export const useLoader = () => {
   const historyLoadingCompleted = useRef<boolean>()
 
   const [progress, setProgress] = useState(0)
-  const [showLoader, setShowLoader] = useState(true)
+  const [showLoader, setShowLoader] = useState(addressesStatus === 'uninitialized')
 
   useEffect(() => {
-    if (progress === 1) setTimeout(() => setShowLoader(false), 1000)
-  }, [progress])
+    if (progress === 1) {
+      setTimeout(() => setShowLoader(false), 500)
+    }
+  }, [addressesStatus, progress])
 
   const updateProgress = () => setProgress((previousValue) => previousValue + 0.25)
 
