@@ -99,6 +99,8 @@ const Main = ({ children, ...props }: ViewProps) => {
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
   const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
+  const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
@@ -183,7 +185,14 @@ const Main = ({ children, ...props }: ViewProps) => {
     dispatch(syncLatestTransactions())
   }, [dispatch])
 
-  useInterval(checkForNewTransactions, TRANSACTIONS_REFRESH_INTERVAL, network.status !== 'online' || isLoadingLatestTxs)
+  const dataResyncNeeded =
+    nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs && addressesStatus === 'uninitialized'
+
+  useEffect(() => {
+    if (dataResyncNeeded) checkForNewTransactions()
+  }, [addressesStatus, checkForNewTransactions, dataResyncNeeded])
+
+  useInterval(checkForNewTransactions, TRANSACTIONS_REFRESH_INTERVAL, !dataResyncNeeded)
 
   return (
     <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>

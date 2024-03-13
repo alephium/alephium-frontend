@@ -36,6 +36,7 @@ import BottomModal from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
+import SpinnerModal from '~/components/SpinnerModal'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
@@ -124,120 +125,127 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   return (
-    <DashboardScreenStyled
-      refreshControl={<RefreshSpinner refreshing={isSpinnerVisible} onRefresh={refreshData} />}
-      hasBottomBar
-      verticalGap
-      screenTitle={walletName}
-      headerOptions={{
-        headerRight: () => <HeaderButtons />,
-        headerLeft: () => <WalletSwitchButton isLoading={isSpinnerVisible} />,
-        headerTitle: walletName
-      }}
-      TitleSideComponent={
-        <NetworkBadgeContainer>
-          <Pressable onPress={() => setIsSwitchNetworkModalOpen(true)}>
-            <ActiveNetworkBadge />
-          </Pressable>
-        </NetworkBadgeContainer>
-      }
-      {...props}
-    >
-      <BalanceAndButtons>
-        <BalanceSummary dateLabel="VALUE TODAY" />
-        {totalBalance > BigInt(0) && (
-          <ButtonsRowContainer
-            style={[
-              buttonsRowStyle,
-              {
-                shadowColor: 'black',
-                shadowOffset: { height: 5, width: 0 },
-                shadowOpacity: theme.name === 'dark' ? 0.5 : 0.05,
-                shadowRadius: 5
-              }
-            ]}
-          >
-            <Button
-              onPress={handleSendPress}
-              iconProps={{ name: 'arrow-up-outline' }}
-              title="Send"
-              variant="highlightedIcon"
-              round
-              short
-              flex
-            />
-            <Button
-              onPress={handleReceivePress}
-              iconProps={{ name: 'arrow-down-outline' }}
-              title="Receive"
-              variant="highlightedIcon"
-              round
-              short
-              flex
-            />
-          </ButtonsRowContainer>
-        )}
-      </BalanceAndButtons>
-      <AddressesTokensList />
-      {totalBalance === BigInt(0) && (
-        <EmptyPlaceholder>
-          <AppText semiBold color="secondary">
-            There is so much left to discover! 🌈
-          </AppText>
-        </EmptyPlaceholder>
+    <>
+      {addressesStatus === 'uninitialized' && isLoadingLatestTxs && (
+        <SpinnerModal isActive={true} text="Syncing latest transactions..." blur={false} bg="full" />
       )}
-      <Portal>
-        <BottomModal
-          isOpen={isBackupReminderModalOpen}
-          onClose={() => setIsBackupReminderModalOpen(false)}
-          Content={(props) => (
-            <ModalContent verticalGap {...props}>
-              <ScreenSection>
-                <BottomModalScreenTitle>{isNewWallet ? 'Hello there! 👋' : "Let's verify! 😌"}</BottomModalScreenTitle>
-              </ScreenSection>
-              <ScreenSection>
-                {isNewWallet ? (
-                  <AppText color="secondary" size={18}>
-                    The first and most important step is to{' '}
-                    <AppText size={18} bold>
-                      write down your secret recovery phrase
-                    </AppText>{' '}
-                    and store it in a safe place.
-                  </AppText>
-                ) : (
-                  <AppText color="secondary" size={18}>
-                    Have peace of mind by verifying that you{' '}
-                    <AppText size={18} bold>
-                      wrote your secret recovery phrase down
-                    </AppText>{' '}
-                    correctly.
-                  </AppText>
-                )}
-              </ScreenSection>
-              <ScreenSection>
-                <Button
-                  title="Let's do that!"
-                  onPress={() => navigation.navigate('BackupMnemonicNavigation')}
-                  variant="highlight"
-                />
-              </ScreenSection>
-            </ModalContent>
+      <DashboardScreenStyled
+        refreshControl={<RefreshSpinner refreshing={isSpinnerVisible} onRefresh={refreshData} />}
+        hasBottomBar
+        verticalGap
+        screenTitle={walletName}
+        headerOptions={{
+          headerRight: () => <HeaderButtons />,
+          headerLeft: () => <WalletSwitchButton isLoading={isSpinnerVisible} />,
+          headerTitle: walletName
+        }}
+        TitleSideComponent={
+          <NetworkBadgeContainer>
+            <Pressable onPress={() => setIsSwitchNetworkModalOpen(true)}>
+              <ActiveNetworkBadge />
+            </Pressable>
+          </NetworkBadgeContainer>
+        }
+        {...props}
+      >
+        <BalanceAndButtons>
+          <BalanceSummary dateLabel="VALUE TODAY" />
+          {totalBalance > BigInt(0) && (
+            <ButtonsRowContainer
+              style={[
+                buttonsRowStyle,
+                {
+                  shadowColor: 'black',
+                  shadowOffset: { height: 5, width: 0 },
+                  shadowOpacity: theme.name === 'dark' ? 0.5 : 0.05,
+                  shadowRadius: 5
+                }
+              ]}
+            >
+              <Button
+                onPress={handleSendPress}
+                iconProps={{ name: 'arrow-up-outline' }}
+                title="Send"
+                variant="highlightedIcon"
+                round
+                short
+                flex
+              />
+              <Button
+                onPress={handleReceivePress}
+                iconProps={{ name: 'arrow-down-outline' }}
+                title="Receive"
+                variant="highlightedIcon"
+                round
+                short
+                flex
+              />
+            </ButtonsRowContainer>
           )}
-        />
+        </BalanceAndButtons>
+        <AddressesTokensList />
+        {totalBalance === BigInt(0) && (
+          <EmptyPlaceholder>
+            <AppText semiBold color="secondary">
+              There is so much left to discover! 🌈
+            </AppText>
+          </EmptyPlaceholder>
+        )}
+        <Portal>
+          <BottomModal
+            isOpen={isBackupReminderModalOpen}
+            onClose={() => setIsBackupReminderModalOpen(false)}
+            Content={(props) => (
+              <ModalContent verticalGap {...props}>
+                <ScreenSection>
+                  <BottomModalScreenTitle>
+                    {isNewWallet ? 'Hello there! 👋' : "Let's verify! 😌"}
+                  </BottomModalScreenTitle>
+                </ScreenSection>
+                <ScreenSection>
+                  {isNewWallet ? (
+                    <AppText color="secondary" size={18}>
+                      The first and most important step is to{' '}
+                      <AppText size={18} bold>
+                        write down your secret recovery phrase
+                      </AppText>{' '}
+                      and store it in a safe place.
+                    </AppText>
+                  ) : (
+                    <AppText color="secondary" size={18}>
+                      Have peace of mind by verifying that you{' '}
+                      <AppText size={18} bold>
+                        wrote your secret recovery phrase down
+                      </AppText>{' '}
+                      correctly.
+                    </AppText>
+                  )}
+                </ScreenSection>
+                <ScreenSection>
+                  <Button
+                    title="Let's do that!"
+                    onPress={() => navigation.navigate('BackupMnemonicNavigation')}
+                    variant="highlight"
+                  />
+                </ScreenSection>
+              </ModalContent>
+            )}
+          />
 
-        <BottomModal
-          isOpen={isSwitchNetworkModalOpen}
-          onClose={() => setIsSwitchNetworkModalOpen(false)}
-          Content={(props) => (
-            <SwitchNetworkModal
-              onClose={() => setIsSwitchNetworkModalOpen(false)}
-              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
-              {...props}
-            />
-          )}
-        />
-      </Portal>
-    </DashboardScreenStyled>
+          <BottomModal
+            isOpen={isSwitchNetworkModalOpen}
+            onClose={() => setIsSwitchNetworkModalOpen(false)}
+            Content={(props) => (
+              <SwitchNetworkModal
+                onClose={() => setIsSwitchNetworkModalOpen(false)}
+                onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
+                {...props}
+              />
+            )}
+          />
+        </Portal>
+      </DashboardScreenStyled>
+    </>
   )
 }
 

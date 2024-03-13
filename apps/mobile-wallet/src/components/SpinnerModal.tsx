@@ -27,7 +27,7 @@ type FontColor = keyof DefaultTheme['font']
 
 interface SpinnerProps {
   text?: string
-  fadedBg?: boolean
+  bg?: 'faded' | 'full'
   color?: FontColor
 }
 
@@ -36,17 +36,17 @@ interface SpinnerModalProps extends SpinnerProps {
   blur?: boolean
 }
 
-const SpinnerModal = ({ isActive, text, blur = true }: SpinnerModalProps) => {
+const SpinnerModal = ({ isActive, text, blur = true, bg }: SpinnerModalProps) => {
   const theme = useTheme()
 
   return (
     <ModalWithBackdrop animationType="fade" visible={isActive}>
       {blur ? (
         <BlurView tint={theme.name} intensity={30} style={{ flex: 1, width: '100%' }}>
-          <Spinner fadedBg text={text} color="primary" />
+          <Spinner bg={bg} text={text} color="primary" />
         </BlurView>
       ) : (
-        <Spinner fadedBg text={text} color={theme.name === 'dark' ? 'primary' : 'contrast'} />
+        <Spinner bg={bg} text={text} color={theme.name === 'dark' ? 'primary' : 'contrast'} />
       )}
     </ModalWithBackdrop>
   )
@@ -54,11 +54,11 @@ const SpinnerModal = ({ isActive, text, blur = true }: SpinnerModalProps) => {
 
 export default SpinnerModal
 
-export const Spinner = ({ text, color = 'tertiary' }: SpinnerProps) => {
+export const Spinner = ({ text, color = 'tertiary', bg }: SpinnerProps) => {
   const theme = useTheme()
 
   return (
-    <SpinnerStyled>
+    <SpinnerStyled bg={bg}>
       <ActivityIndicator size={80} color={theme.font[color]} />
       {text && (
         <LoadingText semiBold size={16} color={color}>
@@ -69,11 +69,15 @@ export const Spinner = ({ text, color = 'tertiary' }: SpinnerProps) => {
   )
 }
 
-const SpinnerStyled = styled.View<{ fadedBg?: SpinnerProps['fadedBg'] }>`
+const SpinnerStyled = styled.View<{ bg?: SpinnerProps['bg'] }>`
   flex: 1;
   width: 100%;
-  background-color: ${({ theme, fadedBg }) =>
-    fadedBg ? colord(theme.bg.contrast).alpha(0.3).toRgbString() : undefined};
+  background-color: ${({ theme, bg }) =>
+    bg === 'faded'
+      ? colord(theme.bg.contrast).alpha(0.3).toRgbString()
+      : bg === 'full'
+        ? theme.bg.contrast
+        : undefined};
   justify-content: center;
   align-items: center;
 `
