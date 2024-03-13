@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
+import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
@@ -65,9 +65,10 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
 
   const isLoading = useAppSelector((s) => s.addresses.loadingTransactionsNextPage)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
+  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
 
   const [txModalOpen, setTxModalOpen] = useState(false)
-
+  const [isSpinnerVisible, setIsSpinnerVisible] = useState(false)
   const [selectedTx, setSelectedTx] = useState<AddressConfirmedTransaction>()
 
   const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
@@ -93,10 +94,17 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
     dispatch(syncAllAddressesTransactionsNextPage({ minTxs: 10 }))
   }, [allConfirmedTransactionsLoaded, dispatch, isLoading])
 
-  const refreshData = () => {
-    if (!isLoading) dispatch(syncLatestTransactions())
-  }
+  useEffect(() => {
+    if (!isLoadingLatestTxs) setIsSpinnerVisible(false)
+  }, [isLoadingLatestTxs])
 
+  const refreshData = () => {
+    setIsSpinnerVisible(true)
+
+    if (!isLoadingLatestTxs) {
+      dispatch(syncLatestTransactions()).finally(() => setIsSpinnerVisible(false))
+    }
+  }
   return (
     <>
       <FlatList
@@ -109,7 +117,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
         style={{ overflow: SCREEN_OVERFLOW }}
-        refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} />}
+        refreshControl={<RefreshSpinner refreshing={isSpinnerVisible} onRefresh={refreshData} />}
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         ListHeaderComponent={
