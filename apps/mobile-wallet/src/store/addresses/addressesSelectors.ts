@@ -24,24 +24,6 @@ import { makeSelectAddressesKnownFungibleTokens, selectAllAddresses } from '~/st
 import { RootState } from '~/store/store'
 
 // TODO: Same as in desktop wallet
-export const selectHaveHistoricBalancesLoaded = createSelector(selectAllAddresses, (addresses) =>
-  addresses.every((address) => address.balanceHistoryInitialized)
-)
-
-export const selectAddressesHaveHistoricBalances = createSelector(
-  selectAllAddresses,
-  (addresses) =>
-    addresses.every((address) => address.balanceHistoryInitialized) &&
-    addresses.some((address) => address.balanceHistory.ids.length > 0)
-)
-
-// TODO: Same as in desktop wallet
-export const selectIsStateUninitialized = createSelector(
-  (state: RootState) => state.addresses.status,
-  (status) => status === 'uninitialized'
-)
-
-// TODO: Same as in desktop wallet
 export const { selectAll: selectAllContacts, selectById: selectContactById } = contactsAdapter.getSelectors<RootState>(
   (state) => state.contacts
 )

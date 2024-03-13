@@ -37,14 +37,19 @@ import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
-import { selectAddressByHash, selectAddressIds, selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
+import {
+  selectAddressByHash,
+  selectAddressIds,
+  selectAllAddresses,
+  selectDefaultAddress,
+  syncLatestTransactions
+} from '~/store/addressesSlice'
 
 const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
-  const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
+  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
   const addresses = useAppSelector(selectAllAddresses)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -56,6 +61,7 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const [heightCarouselItem, setHeightCarouselItem] = useState(235)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
   const [isSwiping, setIsSwiping] = useState(false)
+  const [isSpinnerVisible, setIsSpinnerVisible] = useState(false)
 
   useEffect(() => {
     if (defaultAddress?.hash) {
@@ -83,8 +89,16 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
     </View>
   )
 
+  useEffect(() => {
+    if (!isLoadingLatestTxs) setIsSpinnerVisible(false)
+  }, [isLoadingLatestTxs])
+
   const refreshData = () => {
-    if (!isLoading) dispatch(syncLatestTransactions(addressHashes))
+    setIsSpinnerVisible(true)
+
+    if (!isLoadingLatestTxs) {
+      dispatch(syncLatestTransactions(addressHashes)).finally(() => setIsSpinnerVisible(false))
+    }
   }
 
   if (!selectedAddress) return null
@@ -92,7 +106,9 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   return (
     <>
       <BottomBarScrollScreen
-        refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={190} />}
+        refreshControl={
+          <RefreshSpinner refreshing={isSpinnerVisible} onRefresh={refreshData} progressViewOffset={190} />
+        }
         hasBottomBar
         {...props}
       >

@@ -20,12 +20,10 @@ import { AddressHash } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createEntityAdapter, createSelector, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import {
   selectAllAddresses,
-  syncAddressesTransactions,
-  syncAddressTransactionsNextPage,
-  syncAllAddressesTransactionsNextPage
+  syncAllAddressesTransactionsNextPage,
+  syncLatestTransactions
 } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
 import { transactionSent } from '~/store/transactions/transactionsActions'
@@ -50,8 +48,6 @@ const pendingTransactionsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(transactionSent, pendingTransactionsAdapter.addOne)
-      .addCase(syncAddressesTransactions.fulfilled, removeTransactions)
-      .addCase(syncAddressTransactionsNextPage.fulfilled, removeTransactions)
       .addCase(syncLatestTransactions.fulfilled, (state, { payload }) => {
         const transactionsHashes = payload.flatMap(({ newTransactions }) => newTransactions).map(({ hash }) => hash)
 

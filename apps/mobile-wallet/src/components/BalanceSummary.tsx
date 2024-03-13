@@ -32,7 +32,7 @@ import { useAppSelector } from '~/hooks/redux'
 import useWorthDelta from '~/hooks/useWorthDelta'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { makeSelectAddressesTokensWorth, selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
+import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { DataPoint } from '~/types/charts'
@@ -46,7 +46,8 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const totalBalance = useAppSelector(selectTotalBalance)
   const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
+  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
   const alphPrice = useAppSelector(selectAlphPrice)
@@ -77,7 +78,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
       <LinearGradient
         colors={[
           'transparent',
-          isLoadingTokenBalances || !haveHistoricBalancesLoaded
+          addressesStatus === 'uninitialized' && isLoadingLatestTxs
             ? 'transparent'
             : colord(deltaColor).alpha(0.05).toHex(),
           'transparent'

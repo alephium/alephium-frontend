@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  AddressHash,
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
@@ -42,13 +41,10 @@ import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import {
   makeSelectAddressesUnknownTokens,
-  selectAddressIds,
   selectAllAddressVerifiedFungibleTokenSymbols,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData
+  syncLatestTransactions
 } from '~/store/addressesSlice'
 import { store } from '~/store/store'
 import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
@@ -99,12 +95,10 @@ const App = () => {
 
 const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const network = useAppSelector((s) => s.network)
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
-  const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
+  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
@@ -117,18 +111,6 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useLoadStoredSettings()
   useInitializeClient()
-
-  useEffect(() => {
-    if (
-      network.status === 'online' &&
-      addressesStatus === 'uninitialized' &&
-      !isSyncingAddressData &&
-      addressHashes.length > 0
-    ) {
-      dispatch(syncAddressesData())
-      dispatch(syncAddressesAlphHistoricBalances())
-    }
-  }, [addressHashes.length, addressesStatus, dispatch, isSyncingAddressData, network.status])
 
   useEffect(() => {
     if (
@@ -197,15 +179,11 @@ const Main = ({ children, ...props }: ViewProps) => {
     network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
   )
 
-  const checkForNewTransactions = useCallback(async () => {
+  const checkForNewTransactions = useCallback(() => {
     dispatch(syncLatestTransactions())
   }, [dispatch])
 
-  useInterval(
-    checkForNewTransactions,
-    TRANSACTIONS_REFRESH_INTERVAL,
-    network.status !== 'online' || isSyncingAddressData
-  )
+  useInterval(checkForNewTransactions, TRANSACTIONS_REFRESH_INTERVAL, network.status !== 'online' || isLoadingLatestTxs)
 
   return (
     <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>

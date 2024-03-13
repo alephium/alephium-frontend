@@ -37,7 +37,6 @@ import AppText from '~/components/AppText'
 import WorthDelta from '~/components/WorthDelta'
 import { useAppSelector } from '~/hooks/redux'
 import useWorthDelta from '~/hooks/useWorthDelta'
-import { selectHaveHistoricBalancesLoaded } from '~/store/addresses/addressesSelectors'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
@@ -66,13 +65,13 @@ const HistoricWorthChart = ({ latestWorth, onWorthInBeginningOfChartChange, styl
   const theme = useTheme()
   const alphPriceHistory = useAppSelector(selectAlphPriceHistory)
   const addresses = useAppSelector(selectAllAddresses)
-  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
 
   const startingDate = startingDates[chartLength].format('YYYY-MM-DD')
-  const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
+  const isDataAvailable = addressesStatus === 'initialized' && !!alphPriceHistory
   const filteredChartData = getFilteredChartData(chartData, startingDate)
   const firstItem = filteredChartData.length > 0 ? filteredChartData[0] : undefined
   const worthDelta = useWorthDelta(firstItem?.worth)
@@ -115,7 +114,7 @@ const HistoricWorthChart = ({ latestWorth, onWorthInBeginningOfChartChange, styl
   return (
     <Animated.View style={[style, animatedStyle]}>
       <Row style={{ marginBottom: chartItemsMargin }}>
-        {haveHistoricBalancesLoaded && (
+        {isDataAvailable && (
           <DeltaAndChartLengths entering={FadeIn}>
             <WorthDelta delta={worthDelta} />
             <ChartLengthBadges>

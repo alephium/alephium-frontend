@@ -94,25 +94,6 @@ export const fetchAddressesBalances = async (addressHashes: AddressHash[]): Prom
 }
 
 // TODO: Same as in desktop wallet, move to SDK?
-export const fetchAddressTransactionsNextPage = async (address: Address) => {
-  let nextPage = address.transactionsPageLoaded
-  let nextPageTransactions = [] as explorer.Transaction[]
-
-  if (!address.allTransactionPagesLoaded) {
-    nextPage += 1
-    nextPageTransactions = await client.explorer.addresses.getAddressesAddressTransactions(address.hash, {
-      page: nextPage
-    })
-  }
-
-  return {
-    hash: address.hash,
-    transactions: nextPageTransactions,
-    page: nextPage
-  }
-}
-
-// TODO: Same as in desktop wallet, move to SDK?
 export const fetchAddressesTransactionsNextPage = async (addresses: Address[], nextPage: number) => {
   const addressHashes = addresses.filter((address) => !address.allTransactionPagesLoaded).map((address) => address.hash)
   const transactions = await client.explorer.addresses.postAddressesTransactions({ page: nextPage }, addressHashes)

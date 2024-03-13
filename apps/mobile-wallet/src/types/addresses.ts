@@ -29,12 +29,10 @@ export type Address = AddressKeyPair &
     group: number
     settings: AddressSettings
     transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
-    transactionsPageLoaded: number
     allTransactionPagesLoaded: boolean
     tokens: AddressTokenBalance[]
     lastUsed: TimeInMs
     balanceHistory: EntityState<BalanceHistory>
-    balanceHistoryInitialized: boolean
   }
 
 export type AddressPartial = AddressKeyPair & { settings: AddressSettings }

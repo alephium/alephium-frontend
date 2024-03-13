@@ -38,11 +38,11 @@ import {
   selectAllPricesHistories,
   selectNFTIds,
   sortAssets,
-  syncingAddressDataStarted,
   TokenDisplayBalances
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import {
   createAsyncThunk,
   createEntityAdapter,
@@ -52,16 +52,9 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
-import { chunk, uniq } from 'lodash'
+import { chunk } from 'lodash'
 
-import {
-  fetchAddressesBalances,
-  fetchAddressesTokens,
-  fetchAddressesTransactions,
-  fetchAddressesTransactionsNextPage,
-  fetchAddressTransactionsNextPage
-} from '~/api/addresses'
-import { syncLatestTransactions } from '~/store/addresses/addressesActions'
+import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
 import { RootState } from '~/store/store'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
@@ -82,32 +75,71 @@ const addressesAdapter = createEntityAdapter<Address>({
 
 interface AddressesState extends EntityState<Address> {
   loadingBalances: boolean
-  loadingTransactions: boolean
   loadingTokens: boolean
-  syncingAddressData: boolean
+  loadingLatestTransactions: boolean
+  loadingTransactionsNextPage: boolean
   status: 'uninitialized' | 'initialized'
 }
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
   loadingBalances: false,
-  loadingTransactions: false,
   loadingTokens: false,
-  syncingAddressData: false,
+  loadingLatestTransactions: false,
+  loadingTransactionsNextPage: false,
   status: 'uninitialized'
 })
 
-export const syncAddressesData = createAsyncThunk(
-  `${sliceName}/syncAddressesData`,
+export const syncLatestTransactions = createAsyncThunk(
+  'addresses/syncLatestTransactions',
   async (payload: AddressHash | AddressHash[] | undefined, { getState, dispatch }) => {
-    dispatch(syncingAddressDataStarted())
+    console.log('Checking for new transactions')
 
     const state = getState() as RootState
     const addresses =
       payload !== undefined ? (Array.isArray(payload) ? payload : [payload]) : (state.addresses.ids as AddressHash[])
 
-    await dispatch(syncAddressesBalances(addresses))
-    await dispatch(syncAddressesTokens(addresses))
-    await dispatch(syncAddressesTransactions(addresses))
+    const results = await Promise.all(
+      chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
+        client.explorer.addresses.postAddressesTransactions({ page: 1 }, addressesChunk)
+      )
+    )
+
+    const latestTransactions = results.flat()
+
+    const newTransactionsResults = addresses.reduce(
+      (acc, addressHash) => {
+        const transactionsOfAddress = getTransactionsOfAddress(latestTransactions, addressHash)
+        const address = selectAddressByHash(state, addressHash)
+
+        if (!address) return acc
+
+        const newTransactions = extractNewTransactions(transactionsOfAddress, address.transactions)
+
+        if (newTransactions.length > 0)
+          acc.push({
+            hash: address.hash,
+            newTransactions
+          })
+
+        return acc
+      },
+      [] as {
+        hash: AddressHash
+        newTransactions: Transaction[]
+      }[]
+    )
+
+    const addressesWithNewTransactions = newTransactionsResults.map(({ hash }) => hash)
+
+    if (addressesWithNewTransactions.length > 0) {
+      await Promise.all([
+        dispatch(syncAddressesBalances(addressesWithNewTransactions)),
+        dispatch(syncAddressesTokens(addressesWithNewTransactions)),
+        dispatch(syncAddressesAlphHistoricBalances(addressesWithNewTransactions))
+      ])
+    }
+
+    return newTransactionsResults
   }
 )
 
@@ -116,29 +148,9 @@ export const syncAddressesBalances = createAsyncThunk(
   async (addresses: AddressHash[]) => await fetchAddressesBalances(addresses)
 )
 
-export const syncAddressesTransactions = createAsyncThunk(
-  `${sliceName}/syncAddressesTransactions`,
-  async (addresses: AddressHash[]) => await fetchAddressesTransactions(addresses)
-)
-
 export const syncAddressesTokens = createAsyncThunk(
   `${sliceName}/syncAddressesTokens`,
   async (addresses: AddressHash[]) => await fetchAddressesTokens(addresses)
-)
-
-// TODO: Same as in desktop wallet, share state?
-export const syncAddressTransactionsNextPage = createAsyncThunk(
-  'addresses/syncAddressTransactionsNextPage',
-  async (payload: AddressHash, { getState, dispatch }) => {
-    dispatch(transactionsLoadingStarted())
-
-    const state = getState() as RootState
-    const address = selectAddressByHash(state, payload)
-
-    if (!address) return
-
-    return await fetchAddressTransactionsNextPage(address)
-  }
 )
 
 // TODO: Same as in desktop wallet, share state?
@@ -146,10 +158,8 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   'addresses/syncAllAddressesTransactionsNextPage',
   async (
     payload: { minTxs: number } | undefined,
-    { getState, dispatch }
+    { getState }
   ): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
-    dispatch(transactionsLoadingStarted())
-
     const state = getState() as RootState
     const addresses = selectAllAddresses(state)
     const minimumNewTransactionsNeeded = payload?.minTxs ?? 1
@@ -207,11 +217,17 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
 
     for (const addressHash of addresses) {
       const balances = []
+      const address = state.addresses.entities[addressHash] as Address
+
+      const lastDate =
+        address.balanceHistory.entities[address.balanceHistory.ids[address.balanceHistory.ids.length - 1]]?.date
+
+      const fromTs = lastDate ? dayjs(lastDate).valueOf() : oneYearAgo
 
       // TODO: Do not use getAddressesAddressAmountHistoryDeprecated when the new delta endpoints are released
       const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
         addressHash,
-        { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
+        { fromTs, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
         { format: 'text' }
       )
 
@@ -267,30 +283,16 @@ const addressesSlice = createSlice({
         id: address.hash,
         changes: { settings: address.settings }
       })
-    },
-    transactionsLoadingStarted: (state) => {
-      state.loadingTransactions = true
     }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(syncingAddressDataStarted, (state) => {
-        state.syncingAddressData = true
-        state.loadingBalances = true
-        state.loadingTransactions = true
-        state.loadingTokens = true
-      })
       .addCase(walletUnlocked, (state, action) => {
         const { addressesToInitialize } = action.payload
 
         if (addressesToInitialize.length > 0) {
           addressesAdapter.setAll(state, [])
           addressesAdapter.addMany(state, addressesToInitialize.map(getInitialAddressState))
-          state.status = 'uninitialized'
-          state.syncingAddressData = false
-          state.loadingBalances = false
-          state.loadingTransactions = false
-          state.loadingTokens = false
         }
       })
       .addCase(newWalletGenerated, (state, action) => {
@@ -305,12 +307,9 @@ const addressesSlice = createSlice({
         addressesAdapter.setAll(state, [])
         addressesAdapter.addOne(state, firstWalletAddress)
       })
-      .addCase(syncAddressesData.fulfilled, (state, action) => {
-        state.status = 'initialized'
-        state.syncingAddressData = false
-        state.loadingBalances = false
-        state.loadingTransactions = false
-        state.loadingTokens = false
+
+      .addCase(syncAddressesTokens.pending, (state) => {
+        state.loadingTokens = true
       })
       .addCase(syncAddressesTokens.fulfilled, (state, action) => {
         const addressData = action.payload
@@ -325,30 +324,12 @@ const addressesSlice = createSlice({
 
         state.loadingTokens = false
       })
-      .addCase(syncAddressesTransactions.fulfilled, (state, action) => {
-        const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, transactions, mempoolTransactions }) => {
-          const address = state.entities[hash] as Address
-          const lastUsed =
-            mempoolTransactions.length > 0
-              ? mempoolTransactions[0].lastSeen
-              : transactions.length > 0
-                ? transactions[0].timestamp
-                : address.lastUsed
+      .addCase(syncAddressesTokens.rejected, (state) => {
+        state.loadingTokens = false
+      })
 
-          return {
-            id: hash,
-            changes: {
-              transactions: uniq(address.transactions.concat(transactions.map((tx) => tx.hash))),
-              transactionsPageLoaded: address.transactionsPageLoaded === 0 ? 1 : address.transactionsPageLoaded,
-              lastUsed
-            }
-          }
-        })
-
-        addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingTransactions = false
+      .addCase(syncAddressesBalances.pending, (state) => {
+        state.loadingBalances = true
       })
       .addCase(syncAddressesBalances.fulfilled, (state, action) => {
         const addressData = action.payload
@@ -364,54 +345,37 @@ const addressesSlice = createSlice({
 
         state.loadingBalances = false
       })
-      .addCase(syncAddressesData.rejected, (state) => {
-        state.syncingAddressData = false
-        state.loadingBalances = false
-        state.loadingTransactions = false
-        state.loadingTokens = false
-      })
       .addCase(syncAddressesBalances.rejected, (state) => {
         state.loadingBalances = false
       })
-      .addCase(syncAddressesTransactions.rejected, (state) => {
-        state.loadingTransactions = false
-      })
-      .addCase(syncAddressesTokens.rejected, (state) => {
-        state.loadingTokens = false
-      })
-      .addCase(syncAddressTransactionsNextPage.fulfilled, (state, action) => {
-        const addressTransactionsData = action.payload
 
-        if (!addressTransactionsData) return
-
-        const { hash, transactions, page } = addressTransactionsData
-        const address = state.entities[hash] as Address
-        const newTxHashes = extractNewTransactions(transactions, address.transactions).map(({ hash }) => hash)
-
-        addressesAdapter.updateOne(state, {
-          id: hash,
-          changes: {
-            transactions: address.transactions.concat(newTxHashes),
-            transactionsPageLoaded: newTxHashes.length > 0 ? page : address.transactionsPageLoaded,
-            allTransactionPagesLoaded: transactions.length === 0
-          }
-        })
-
-        state.loadingTransactions = false
+      .addCase(syncLatestTransactions.pending, (state) => {
+        state.loadingLatestTransactions = true
       })
       .addCase(syncLatestTransactions.fulfilled, (state, { payload }) => {
         const changes = payload.map(({ hash, newTransactions }) => {
-          const existingTxs = state.entities[hash]?.transactions
+          const existingData = state.entities[hash]
 
           return {
             id: hash,
             changes: {
-              transactions: existingTxs?.concat(newTransactions.map(({ hash }) => hash))
+              transactions: existingData?.transactions?.concat(newTransactions.map(({ hash }) => hash)),
+              lastUsed: newTransactions[0]?.timestamp ?? existingData?.lastUsed
             }
           }
         })
 
         if (changes.length > 0) addressesAdapter.updateMany(state, changes)
+
+        state.status = 'initialized'
+        state.loadingLatestTransactions = false
+      })
+      .addCase(syncLatestTransactions.rejected, (state) => {
+        state.loadingLatestTransactions = false
+      })
+
+      .addCase(syncAllAddressesTransactionsNextPage.pending, (state) => {
+        state.loadingTransactionsNextPage = true
       })
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, { payload: { transactions } }) => {
         const addresses = getAddresses(state)
@@ -433,8 +397,12 @@ const addressesSlice = createSlice({
 
         addressesAdapter.updateMany(state, updatedAddresses)
 
-        state.loadingTransactions = false
+        state.loadingTransactionsNextPage = false
       })
+      .addCase(syncAllAddressesTransactionsNextPage.rejected, (state) => {
+        state.loadingTransactionsNextPage = false
+      })
+
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
       .addCase(appReset, () => initialState)
@@ -444,7 +412,6 @@ const addressesSlice = createSlice({
 
           if (addressState) {
             balanceHistoryAdapter.upsertMany(addressState.balanceHistory, balances)
-            addressState.balanceHistoryInitialized = true
           }
         })
       })
@@ -552,8 +519,7 @@ export const selectTotalBalance = createSelector([selectAllAddresses], (addresse
   addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
 )
 
-export const { newAddressGenerated, addressesImported, addressSettingsSaved, transactionsLoadingStarted } =
-  addressesSlice.actions
+export const { newAddressGenerated, addressesImported, addressSettingsSaved } = addressesSlice.actions
 
 export default addressesSlice
 
@@ -565,14 +531,12 @@ const getInitialAddressState = (addressData: AddressPartial): Address => ({
   },
   group: addressToGroup(addressData.hash, TOTAL_NUMBER_OF_GROUPS),
   transactions: [],
-  transactionsPageLoaded: 0,
   allTransactionPagesLoaded: false,
   balance: '0',
   lockedBalance: '0',
   lastUsed: 0,
   tokens: [],
-  balanceHistory: balanceHistoryAdapter.getInitialState(),
-  balanceHistoryInitialized: false
+  balanceHistory: balanceHistoryAdapter.getInitialState()
 })
 
 const getAddresses = (state: AddressesState) => Object.values(state.entities) as Address[]

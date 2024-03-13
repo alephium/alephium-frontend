@@ -184,10 +184,6 @@ export const getAddressAssetsAvailableBalance = (address: Address) => [
   }))
 ]
 
-// TODO: Same as in desktop wallet
-const isPendingTransaction = (tx: explorer.Transaction | PendingTransaction): tx is PendingTransaction =>
-  (tx as PendingTransaction).status === 'pending'
-
 const associateTxsWithAddresses = (transactions: (explorer.Transaction | PendingTransaction)[], addresses: Address[]) =>
   transactions.reduce((txs, tx) => {
     const address = addresses.find((address) => address.transactions.includes(tx.hash))
