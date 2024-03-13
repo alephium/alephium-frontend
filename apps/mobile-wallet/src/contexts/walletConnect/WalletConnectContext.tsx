@@ -140,7 +140,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
-  const isAuthenticated = !!mnemonic
+  const walletIsUnlocked = !!mnemonic
   const isWalletConnectClientReady =
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
@@ -566,7 +566,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isWalletConnectEnabled) {
+      if (nextAppState === 'background' && isWalletConnectEnabled && walletIsUnlocked) {
         let secondsPassed = 0
 
         // Keep app alive for max 4 hours
@@ -600,7 +600,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [isWalletConnectEnabled])
+  }, [isWalletConnectEnabled, walletIsUnlocked])
 
   useEffect(() => {
     if (!isWalletConnectClientReady) return
@@ -943,7 +943,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [isSessionRequestModalOpen, sessionRequestEvent])
 
   useEffect(() => {
-    if (!isAuthenticated || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
+    if (!walletIsUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
 
     if (!isWalletConnectEnabled) {
       showToast({
@@ -957,7 +957,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       wcDeepLink.current = url
     }
-  }, [isAuthenticated, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
+  }, [walletIsUnlocked, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
 
   const resetWalletConnectClientInitializationAttempts = () => {
     if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)

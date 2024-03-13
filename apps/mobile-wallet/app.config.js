@@ -45,11 +45,16 @@ export default {
       }
     },
     android: {
+      allowBackup: false,
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#000000'
       },
-      permissions: ['android.permission.FOREGROUND_SERVICE', 'android.permission.WAKE_LOCK'],
+      permissions: [
+        'android.permission.FOREGROUND_SERVICE',
+        'android.permission.FOREGROUND_SERVICE_DATA_SYNC',
+        'android.permission.WAKE_LOCK'
+      ],
       package: 'org.alephium.wallet'
     },
     web: {

@@ -23,6 +23,7 @@
         "releaseStatus": "draft"
       },
       "ios": {
+        "ascAppId": "6469043072",
         "companyName": "Panda Software SA"
       }
     }
