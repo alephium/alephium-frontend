@@ -37,6 +37,10 @@ export const useLoader = () => {
   const [showLoader, setShowLoader] = useState(addressesStatus === 'uninitialized')
 
   useEffect(() => {
+    if (addressesStatus === 'initialized') setProgress(1)
+  }, [addressesStatus])
+
+  useEffect(() => {
     if (progress >= 1) {
       const timeoutId = setTimeout(() => setShowLoader(false), 300)
 
