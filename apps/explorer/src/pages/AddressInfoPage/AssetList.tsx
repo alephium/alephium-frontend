@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap, sortBy } from 'lodash'
@@ -26,7 +27,7 @@ import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import styled, { useTheme } from 'styled-components'
 
 import { queries } from '@/api'
-import { useAssetsMetadata } from '@/api/assets/assetsHooks'
+import { useAssetsMetadata, useTokensPrices, useTokensWithAvailablePrice } from '@/api/assets/assetsHooks'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import NFTList from '@/pages/AddressInfoPage/NFTList'
 import TokenList from '@/pages/AddressInfoPage/TokenList'
@@ -53,13 +54,28 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
     unknown: unknownAssetsIds
   } = useAssetsMetadata(assetIds)
 
+  const tokensWithAvailablePrice = useTokensWithAvailablePrice()
+  const tokensPrices = useTokensPrices([
+    ALPH.symbol,
+    ...fungibleTokensMetadata.flatMap((t) => (tokensWithAvailablePrice.includes(t.symbol) && t.symbol) || [])
+  ])
+
   const isLoading = assetsLoading
 
   const fungibleTokens = useMemo(() => {
     const unsorted = flatMap(fungibleTokensMetadata, (t) => {
       const balance = assets?.find((a) => a.tokenId === t.id)
 
-      return balance ? [{ ...t, balance: BigInt(balance.balance), lockedBalance: BigInt(balance.lockedBalance) }] : []
+      return balance
+        ? [
+            {
+              ...t,
+              balance: BigInt(balance.balance),
+              lockedBalance: BigInt(balance.lockedBalance),
+              worth: (t.verified && calculateAmountWorth(BigInt(balance.balance), tokensPrices[t.symbol])) || undefined
+            }
+          ]
+        : []
     })
 
     // Add ALPH
@@ -67,12 +83,19 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
       unsorted.unshift({
         ...alphMetadata,
         balance: BigInt(addressBalance.balance),
-        lockedBalance: BigInt(addressBalance.lockedBalance)
+        lockedBalance: BigInt(addressBalance.lockedBalance),
+        worth: calculateAmountWorth(BigInt(addressBalance.balance), tokensPrices[ALPH.symbol]) || undefined
       })
     }
 
-    return sortBy(unsorted, [(t) => !t.verified, (t) => !t.name, (t) => t.name.toLowerCase(), 'id'])
-  }, [addressBalance, assets, fungibleTokensMetadata])
+    return sortBy(unsorted, [
+      (t) => !t.verified,
+      (t) => t.worth && 1 / t.worth,
+      (t) => !t.name,
+      (t) => t.name.toLowerCase(),
+      'id'
+    ])
+  }, [addressBalance, assets, fungibleTokensMetadata, tokensPrices])
 
   const unknownAssets = useMemo(
     () =>
