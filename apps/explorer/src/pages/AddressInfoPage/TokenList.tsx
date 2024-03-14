@@ -77,7 +77,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
                   {token.name || <HashEllipsed hash={token.id} copyTooltipText={t('Copy token ID')} />}
                 </TokenName>
                 {!isAlph && !token.logoURI && token.name && (
-                  <UnverifiedIcon data-tooltip-id="default" data-tooltip-content="Unverified token" />
+                  <UnverifiedIcon data-tooltip-id="default" data-tooltip-content="No metadata" />
                 )}
               </TokenNameAndTag>
               {token.name && !isAlph && (
