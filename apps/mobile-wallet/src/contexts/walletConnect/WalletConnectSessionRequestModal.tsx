@@ -26,7 +26,9 @@ import {
   SignDeployContractTxResult,
   SignExecuteScriptTxResult,
   SignMessageResult,
-  SignTransferTxResult
+  SignTransferTxResult,
+  SignUnsignedTxResult,
+  transactionSign
 } from '@alephium/web3'
 import { SessionTypes } from '@walletconnect/types'
 import { Image } from 'react-native'
@@ -75,7 +77,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
   const dispatch = useAppDispatch()
   const signAddress = useAppSelector((s) => selectAddressByHash(s, requestData.wcData.fromAddress))
 
-  const isSignRequest = requestData.type === 'sign-message'
+  const isSignRequest = requestData.type === 'sign-message' || requestData.type === 'sign-unsigned-tx'
   const fees = !isSignRequest
     ? BigInt(requestData.unsignedTxData.gasAmount) * BigInt(requestData.unsignedTxData.gasPrice)
     : undefined
@@ -197,17 +199,37 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
       return
     }
 
-    try {
-      const messageHash = hashMessage(requestData.wcData.message, requestData.wcData.messageHasher)
-      const signature = sign(messageHash, signAddress.privateKey)
+    let signResult: SignUnsignedTxResult | SignMessageResult
 
-      await onSignSuccess({ signature })
+    try {
+      if (requestData.type === 'sign-message') {
+        const messageHash = hashMessage(requestData.wcData.message, requestData.wcData.messageHasher)
+        signResult = { signature: sign(messageHash, signAddress.privateKey) }
+      } else {
+        const signature = transactionSign(requestData.unsignedTxData.unsignedTx.txId, signAddress.privateKey)
+        signResult = {
+          ...requestData.unsignedTxData,
+          signature,
+          txId: requestData.unsignedTxData.unsignedTx.txId,
+          gasAmount: requestData.unsignedTxData.unsignedTx.gasAmount,
+          gasPrice: BigInt(requestData.unsignedTxData.unsignedTx.gasPrice),
+          unsignedTx: requestData.wcData.unsignedTx
+        }
+      }
+
+      await onSignSuccess(signResult)
     } catch (e) {
-      const message = 'Could not sign message'
+      const message = requestData.type === 'sign-message' ? 'Could not sign message' : 'Count not sign unsigned tx'
       console.error(message, e)
       showExceptionToast(e, message)
       sendAnalytics('Error', { message })
-      onSendTxOrSignFail({ message: getHumanReadableError(e, message), code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED })
+      onSendTxOrSignFail({
+        message: getHumanReadableError(e, message),
+        code:
+          requestData.type === 'sign-message'
+            ? WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
+            : WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
+      })
     } finally {
       props.onClose && props.onClose()
     }
@@ -226,7 +248,8 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
                 transfer: 'Transfer request',
                 'call-contract': 'Smart contract request',
                 'deploy-contract': 'Smart contract request',
-                'sign-message': 'Sign message'
+                'sign-message': 'Sign message',
+                'sign-unsigned-tx': 'Sign unsigned transaction'
               }[requestData.type]
             }
           </BottomModalScreenTitle>
@@ -287,12 +310,22 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           )}
 
           {(requestData.type === 'deploy-contract' || requestData.type === 'call-contract') && (
-            <Row title="Bytecode" titleColor="secondary">
+            <Row isVertical title="Bytecode" titleColor="secondary">
               <AppText>{requestData.wcData.bytecode}</AppText>
             </Row>
           )}
+          {requestData.type === 'sign-unsigned-tx' && (
+            <>
+              <Row isVertical title="Unsigned TX ID" titleColor="secondary">
+                <AppText>{requestData.unsignedTxData.unsignedTx.txId}</AppText>
+              </Row>
+              <Row isVertical isLast title="Unsigned TX" titleColor="secondary">
+                <AppText>{requestData.wcData.unsignedTx}</AppText>
+              </Row>
+            </>
+          )}
           {requestData.type === 'sign-message' && (
-            <Row title="Message" titleColor="secondary">
+            <Row isVertical isLast title="Message" titleColor="secondary">
               <AppText>{requestData.wcData.message}</AppText>
             </Row>
           )}

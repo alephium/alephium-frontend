@@ -39,14 +39,26 @@ export interface RowProps {
   isLast?: boolean
   style?: StyleProp<ViewStyle>
   layout?: AnimatedProps<ViewProps>['layout']
+  isVertical?: boolean
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const Row = ({ title, subtitle, children, onPress, truncate, noMaxWidth, style, titleColor, layout }: RowProps) => {
+const Row = ({
+  title,
+  subtitle,
+  children,
+  onPress,
+  truncate,
+  noMaxWidth,
+  style,
+  titleColor,
+  layout,
+  isVertical
+}: RowProps) => {
   const componentContent = title ? (
     <>
-      <LeftContent>
+      <LeftContent isVertical={isVertical}>
         <AppText medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle" color={titleColor}>
           {title}
         </AppText>
@@ -56,7 +68,9 @@ const Row = ({ title, subtitle, children, onPress, truncate, noMaxWidth, style, 
           </Subtitle>
         )}
       </LeftContent>
-      <RightContent noMaxWidth={noMaxWidth}>{children}</RightContent>
+      <RightContent noMaxWidth={noMaxWidth} isVertical={isVertical}>
+        {children}
+      </RightContent>
     </>
   ) : (
     children
@@ -74,7 +88,7 @@ const Row = ({ title, subtitle, children, onPress, truncate, noMaxWidth, style, 
 }
 
 export default styled(Row)`
-  ${({ theme, isInput, isSecondary, transparent, isLast }) =>
+  ${({ theme, isInput, isSecondary, transparent, isLast, isVertical }) =>
     isInput
       ? css`
           justify-content: center;
@@ -84,14 +98,18 @@ export default styled(Row)`
           background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.highlight};
         `
       : css`
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
           min-height: ${INPUTS_HEIGHT}px;
           padding: 20px;
           background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.primary};
           border-bottom-width: ${isLast ? 0 : 1}px;
           border-bottom-color: ${theme.border.secondary};
+
+          ${!isVertical &&
+          css`
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+          `}
         `}
 
   ${({ isInput, hasRightContent }) =>
@@ -109,16 +127,28 @@ const Subtitle = styled(AppText)`
   padding-top: 5px;
 `
 
-const LeftContent = styled.View`
-  flex: 1;
+const LeftContent = styled.View<Pick<RowProps, 'isVertical'>>`
+  ${({ isVertical }) =>
+    !isVertical &&
+    css`
+      flex: 1;
+    `}
 `
 
-const RightContent = styled.View<{ noMaxWidth?: boolean }>`
-  padding-left: ${INPUTS_PADDING}px;
+const RightContent = styled.View<Pick<RowProps, 'isVertical' | 'noMaxWidth'>>`
+  ${({ isVertical }) =>
+    isVertical
+      ? css`
+          margin-top: 10px;
+        `
+      : css`
+          padding-left: ${INPUTS_PADDING}px;
+        `}
 
-  ${({ noMaxWidth }) =>
+  ${({ noMaxWidth, isVertical }) =>
     !noMaxWidth &&
+    !isVertical &&
     css`
       max-width: 200px;
-    `}
+    `};
 `
