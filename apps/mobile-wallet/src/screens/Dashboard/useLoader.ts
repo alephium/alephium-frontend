@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useInterval } from '@alephium/shared-react'
 import { useEffect, useRef, useState } from 'react'
 
 import { useAppSelector } from '~/hooks/redux'
@@ -36,33 +37,24 @@ export const useLoader = () => {
   const [showLoader, setShowLoader] = useState(addressesStatus === 'uninitialized')
 
   useEffect(() => {
-    let timeoutID: NodeJS.Timeout
-
     if (progress >= 1) {
-      timeoutID = setTimeout(() => setShowLoader(false), 300)
-    }
+      const timeoutId = setTimeout(() => setShowLoader(false), 300)
 
-    return () => clearTimeout(timeoutID)
+      return () => clearTimeout(timeoutId)
+    }
   }, [addressesStatus, progress])
 
-  const updateProgress = () => setProgress((previousValue) => previousValue + 0.25)
+  const updateProgress = (num: number) => setProgress((previousValue) => previousValue + num)
 
-  useEffect(() => {
-    const intervalID = setInterval(() => {
-      if (progress < 1) {
-        // Fake progress ;)
-        setProgress((prev) => prev + 0.025)
-      }
-    }, 300)
-
-    return () => clearTimeout(intervalID)
-  })
+  // Fake initial progress to show some movement for better UX ;)
+  const stopFakeProgress = progress >= 0.5
+  useInterval(() => updateProgress(0.025), 300, stopFakeProgress)
 
   useEffect(() => {
     if (isLoadingLatestTxs) {
       txsLoadingCompleted.current = false
     } else if (txsLoadingCompleted.current === false) {
-      updateProgress()
+      updateProgress(0.25)
     }
   }, [isLoadingLatestTxs])
 
@@ -70,7 +62,7 @@ export const useLoader = () => {
     if (isLoadingBalances) {
       balancesLoadingCompleted.current = false
     } else if (balancesLoadingCompleted.current === false) {
-      updateProgress()
+      updateProgress(0.25)
     }
   }, [isLoadingBalances])
 
@@ -78,7 +70,7 @@ export const useLoader = () => {
     if (isLoadingTokens) {
       tokensLoadingCompleted.current = false
     } else if (tokensLoadingCompleted.current === false) {
-      updateProgress()
+      updateProgress(0.25)
     }
   }, [isLoadingTokens])
 
@@ -86,7 +78,7 @@ export const useLoader = () => {
     if (isLoadingAlphHistoricBalances) {
       historyLoadingCompleted.current = false
     } else if (historyLoadingCompleted.current === false) {
-      updateProgress()
+      updateProgress(0.25)
     }
   }, [isLoadingAlphHistoricBalances])
 
