@@ -87,7 +87,9 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               )}
             </NameColumn>
 
-            {!token.name && token.type && <IncompleteMetadataBadge compact type="neutral" content="Missing metadata" />}
+            {!token.name && token.type && (
+              <IncompleteMetadataBadge compact type="neutral" content="Incorrect metadata" />
+            )}
 
             <TableCellAmount>
               <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />

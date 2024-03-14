@@ -50,11 +50,10 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
   const {
     fungibleTokens: fungibleTokensMetadata,
     nfts: nftsMetadata,
-    unknown: unknownAssetsIds,
-    isLoading: assetsMetadataLoading
+    unknown: unknownAssetsIds
   } = useAssetsMetadata(assetIds)
 
-  const isLoading = assetsLoading || assetsMetadataLoading
+  const isLoading = assetsLoading
 
   const fungibleTokens = useMemo(() => {
     const unsorted = flatMap(fungibleTokensMetadata, (t) => {
