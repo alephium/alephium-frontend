@@ -51,8 +51,9 @@ export const useLoader = () => {
   const updateProgress = (num: number) => setProgress((previousValue) => previousValue + num)
 
   // Fake initial progress to show some movement for better UX ;)
-  const stopFakeProgress = progress >= 0.5
-  useInterval(() => updateProgress(0.025), 300, stopFakeProgress)
+  const stopFakeProgress = progress >= 0.9
+  const decelaratedProgressUpdate = () => setProgress((p) => p + 0.025 * (1 - p))
+  useInterval(decelaratedProgressUpdate, 300, stopFakeProgress)
 
   useEffect(() => {
     if (isLoadingLatestTxs) {
