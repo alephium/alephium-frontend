@@ -39,7 +39,7 @@ export interface RowProps {
   isLast?: boolean
   style?: StyleProp<ViewStyle>
   layout?: AnimatedProps<ViewProps>['layout']
-  isHorizontal?: boolean
+  isVertical?: boolean
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
@@ -54,11 +54,11 @@ const Row = ({
   style,
   titleColor,
   layout,
-  isHorizontal
+  isVertical
 }: RowProps) => {
   const componentContent = title ? (
     <>
-      <LeftContent isHorizontal={isHorizontal}>
+      <LeftContent isVertical={isVertical}>
         <AppText medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle" color={titleColor}>
           {title}
         </AppText>
@@ -68,7 +68,7 @@ const Row = ({
           </Subtitle>
         )}
       </LeftContent>
-      <RightContent noMaxWidth={noMaxWidth} isHorizontal={isHorizontal}>
+      <RightContent noMaxWidth={noMaxWidth} isVertical={isVertical}>
         {children}
       </RightContent>
     </>
@@ -88,7 +88,7 @@ const Row = ({
 }
 
 export default styled(Row)`
-  ${({ theme, isInput, isSecondary, transparent, isLast, isHorizontal }) =>
+  ${({ theme, isInput, isSecondary, transparent, isLast, isVertical }) =>
     isInput
       ? css`
           justify-content: center;
@@ -104,7 +104,7 @@ export default styled(Row)`
           border-bottom-width: ${isLast ? 0 : 1}px;
           border-bottom-color: ${theme.border.secondary};
 
-          ${!isHorizontal &&
+          ${!isVertical &&
           css`
             flex-direction: row;
             align-items: center;
@@ -127,17 +127,17 @@ const Subtitle = styled(AppText)`
   padding-top: 5px;
 `
 
-const LeftContent = styled.View<Pick<RowProps, 'isHorizontal'>>`
-  ${({ isHorizontal }) =>
-    !isHorizontal &&
+const LeftContent = styled.View<Pick<RowProps, 'isVertical'>>`
+  ${({ isVertical }) =>
+    !isVertical &&
     css`
       flex: 1;
     `}
 `
 
-const RightContent = styled.View<Pick<RowProps, 'isHorizontal' | 'noMaxWidth'>>`
-  ${({ isHorizontal }) =>
-    isHorizontal
+const RightContent = styled.View<Pick<RowProps, 'isVertical' | 'noMaxWidth'>>`
+  ${({ isVertical }) =>
+    isVertical
       ? css`
           margin-top: 10px;
         `
@@ -145,9 +145,9 @@ const RightContent = styled.View<Pick<RowProps, 'isHorizontal' | 'noMaxWidth'>>`
           padding-left: ${INPUTS_PADDING}px;
         `}
 
-  ${({ noMaxWidth, isHorizontal }) =>
+  ${({ noMaxWidth, isVertical }) =>
     !noMaxWidth &&
-    !isHorizontal &&
+    !isVertical &&
     css`
       max-width: 200px;
     `};
