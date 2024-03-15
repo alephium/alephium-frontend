@@ -16,13 +16,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useEffect, useState } from 'react'
 import { RefreshControl, RefreshControlProps } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
-const RefreshSpinner = (props: RefreshControlProps) => {
-  const theme = useTheme()
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { syncLatestTransactions } from '~/store/addressesSlice'
 
-  return <RefreshControl tintColor={theme.font.primary} {...props} />
+const RefreshSpinner = (props: Partial<RefreshControlProps>) => {
+  const theme = useTheme()
+  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
+  const dispatch = useAppDispatch()
+
+  const [isSpinnerVisible, setIsSpinnerVisible] = useState(false)
+
+  useEffect(() => {
+    if (!isLoadingLatestTxs) setIsSpinnerVisible(false)
+  }, [isLoadingLatestTxs])
+
+  const refreshData = () => {
+    setIsSpinnerVisible(true)
+
+    if (!isLoadingLatestTxs) {
+      dispatch(syncLatestTransactions()).finally(() => setIsSpinnerVisible(false))
+    }
+  }
+
+  return (
+    <RefreshControl {...props} refreshing={isSpinnerVisible} onRefresh={refreshData} tintColor={theme.font.primary} />
+  )
 }
 
 export default RefreshSpinner

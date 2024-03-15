@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { groupBy } from 'lodash'
 import { useMemo } from 'react'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
@@ -61,6 +62,9 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
     onPress && onPress(e)
   }
 
+  const nftsGroupedByCollection = groupBy(nfts, 'collectionId')
+  const nbOfNftCollections = Object.keys(nftsGroupedByCollection).length
+
   return (
     <AddressBoxStyled {...props} onPress={handlePress} style={[boxAnimatedStyle, props.style]}>
       <AddressBoxTop>
@@ -86,9 +90,11 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
         </AssetsRow>
         {nfts.length > 0 && (
           <AssetsRow style={{ marginTop: VERTICAL_GAP }}>
-            {nfts.map((nft) => (
-              <AssetAmountWithLogo key={nft.id} assetId={nft.id} logoSize={15} amount={BigInt(1)} />
-            ))}
+            <NbOfNftsBadge>
+              <AppText>
+                +<AppText bold>{nfts.length}</AppText> NFTs in <AppText bold>{nbOfNftCollections}</AppText> collections
+              </AppText>
+            </NbOfNftsBadge>
           </AssetsRow>
         )}
       </AddressBoxBottom>
@@ -136,5 +142,13 @@ const Group = styled.View`
   flex-direction: row;
   gap: ${DEFAULT_MARGIN}px;
   flex-shrink: 0;
+  align-items: center;
+`
+
+const NbOfNftsBadge = styled.View`
+  flex-direction: row;
+  padding: 3px 7px 3px 3px;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border-radius: 24px;
   align-items: center;
 `

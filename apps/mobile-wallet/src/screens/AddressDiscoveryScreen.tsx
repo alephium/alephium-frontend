@@ -37,12 +37,7 @@ import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { addressDiscoveryStopped, discoverAddresses, selectAllDiscoveredAddresses } from '~/store/addressDiscoverySlice'
-import {
-  addressesImported,
-  selectAllAddresses,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData
-} from '~/store/addressesSlice'
+import { addressesImported, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { getRandomLabelColor } from '~/utils/colors'
 import { resetNavigation } from '~/utils/navigation'
@@ -86,8 +81,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
 
       sendAnalytics('Imported discovered addresses')
 
-      await dispatch(syncAddressesData(newAddressHashes))
-      await dispatch(syncAddressesAlphHistoricBalances(newAddressHashes))
+      await dispatch(syncLatestTransactions(newAddressHashes))
     } catch (e) {
       console.error(e)
 

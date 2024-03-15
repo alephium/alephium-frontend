@@ -34,22 +34,14 @@ import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import BottomModal from '~/components/layout/BottomModal'
 import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
-import {
-  selectAddressByHash,
-  selectAddressIds,
-  selectAllAddresses,
-  selectDefaultAddress,
-  syncAddressesData
-} from '~/store/addressesSlice'
+import { selectAddressByHash, selectAddressIds, selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
 
 const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
-  const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
-  const isLoading = useAppSelector((s) => s.addresses.syncingAddressData)
   const addresses = useAppSelector(selectAllAddresses)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -88,19 +80,11 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
     </View>
   )
 
-  const refreshData = () => {
-    if (!isLoading) dispatch(syncAddressesData(addressHashes))
-  }
-
   if (!selectedAddress) return null
 
   return (
     <>
-      <BottomBarScrollScreen
-        refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} progressViewOffset={190} />}
-        hasBottomBar
-        {...props}
-      >
+      <BottomBarScrollScreen refreshControl={<RefreshSpinner progressViewOffset={190} />} hasBottomBar {...props}>
         <Content style={contentStyle}>
           <Carousel
             data={addressHashes}

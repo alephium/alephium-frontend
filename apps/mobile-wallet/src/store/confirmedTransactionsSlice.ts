@@ -22,14 +22,13 @@ import { createEntityAdapter, createSelector, createSlice, EntityState, PayloadA
 
 import {
   selectAllAddresses,
-  syncAddressesTransactions,
-  syncAddressTransactionsNextPage,
-  syncAllAddressesTransactionsNextPage
+  syncAllAddressesTransactionsNextPage,
+  syncLatestTransactions
 } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
 import { AddressTransactionsSyncResult } from '~/types/addresses'
 import { AddressConfirmedTransaction } from '~/types/transactions'
-import { selectAddressTransactions, selectContactConfirmedTransactions } from '~/utils/addresses'
+import { selectAddressConfirmedTransactions, selectContactConfirmedTransactions } from '~/utils/addresses'
 
 const sliceName = 'confirmedTransactions'
 
@@ -54,8 +53,13 @@ const confirmedTransactionsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncAddressesTransactions.fulfilled, addTransactions)
-      .addCase(syncAddressTransactionsNextPage.fulfilled, addTransactions)
+      .addCase(syncLatestTransactions.fulfilled, (state, { payload }) => {
+        const transactions = payload.flatMap(({ newTransactions }) => newTransactions)
+
+        if (transactions && transactions.length > 0) {
+          confirmedTransactionsAdapter.upsertMany(state, transactions)
+        }
+      })
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, action) => {
         const { transactions, pageLoaded } = action.payload
 
@@ -81,7 +85,11 @@ export const makeSelectAddressesConfirmedTransactions = () =>
       (_, addressHashes?: AddressHash | AddressHash[]) => addressHashes
     ],
     (allAddresses, confirmedTransactions, addressHashes): AddressConfirmedTransaction[] =>
-      selectAddressTransactions(allAddresses, confirmedTransactions, addressHashes) as AddressConfirmedTransaction[]
+      selectAddressConfirmedTransactions(
+        allAddresses,
+        confirmedTransactions,
+        addressHashes
+      ) as AddressConfirmedTransaction[]
   )
 
 export const makeSelectContactConfirmedTransactions = () =>

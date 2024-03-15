@@ -45,6 +45,7 @@ interface LoginWithPinScreenProps extends StackScreenProps<RootStackParamList, '
 const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) => {
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
+  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
@@ -72,7 +73,8 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
         }
       }
 
-      const addressesToInitialize = addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
+      const addressesToInitialize =
+        addressesStatus === 'uninitialized' && !isLoadingLatestTxs ? await deriveWalletStoredAddresses(wallet) : []
       const metadata = await getWalletMetadata()
 
       dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts: metadata?.contacts ?? [] }))
@@ -80,7 +82,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
       sendAnalytics('Unlocked wallet')
     },
-    [addressesStatus, dispatch, lastNavigationState, navigation]
+    [addressesStatus, dispatch, isLoadingLatestTxs, lastNavigationState, navigation]
   )
 
   return (

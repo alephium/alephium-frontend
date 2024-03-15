@@ -17,13 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  AddressHash,
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
   syncTokenPriceHistories,
   syncUnknownTokensInfo,
-  syncVerifiedFungibleTokens
+  syncVerifiedFungibleTokens,
+  TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
@@ -43,18 +43,11 @@ import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
   makeSelectAddressesUnknownTokens,
-  selectAddressIds,
   selectAllAddressVerifiedFungibleTokenSymbols,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData,
-  syncAddressesDataWhenPendingTxsConfirm
+  syncLatestTransactions
 } from '~/store/addressesSlice'
-import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { store } from '~/store/store'
-import {
-  makeSelectAddressesHashesWithPendingTransactions,
-  selectTransactionUnknownTokenIds
-} from '~/store/transactions/transactionSelectors'
+import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
 import { themes } from '~/style/themes'
 
 dayjs.extend(updateLocale)
@@ -102,16 +95,13 @@ const App = () => {
 
 const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const network = useAppSelector((s) => s.network)
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
-  const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
+  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
+  const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
-  const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
-  const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
-  const pendingTxs = useAppSelector(selectAllPendingTransactions)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
 
@@ -123,18 +113,6 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useLoadStoredSettings()
   useInitializeClient()
-
-  useEffect(() => {
-    if (
-      network.status === 'online' &&
-      addressesStatus === 'uninitialized' &&
-      !isSyncingAddressData &&
-      addressHashes.length > 0
-    ) {
-      dispatch(syncAddressesData())
-      dispatch(syncAddressesAlphHistoricBalances())
-    }
-  }, [addressHashes.length, addressesStatus, dispatch, isSyncingAddressData, network.status])
 
   useEffect(() => {
     if (
@@ -203,11 +181,21 @@ const Main = ({ children, ...props }: ViewProps) => {
     network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
   )
 
-  const refreshAddressDataWhenPendingTxsConfirm = useCallback(() => {
-    dispatch(syncAddressesDataWhenPendingTxsConfirm({ addresses: addressesWithPendingTxs, pendingTxs }))
-  }, [addressesWithPendingTxs, dispatch, pendingTxs])
+  const checkForNewTransactions = useCallback(() => {
+    dispatch(syncLatestTransactions())
+  }, [dispatch])
 
-  useInterval(refreshAddressDataWhenPendingTxsConfirm, 5000, pendingTxs.length === 0)
+  const dataResyncNeeded = nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs
+
+  useEffect(() => {
+    if (addressesStatus === 'uninitialized' && dataResyncNeeded) checkForNewTransactions()
+  }, [addressesStatus, checkForNewTransactions, dataResyncNeeded])
+
+  useInterval(
+    checkForNewTransactions,
+    TRANSACTIONS_REFRESH_INTERVAL,
+    !dataResyncNeeded || addressesStatus === 'uninitialized'
+  )
 
   return (
     <SafeAreaProvider {...props} style={[{ backgroundColor: 'black' }, props.style]}>

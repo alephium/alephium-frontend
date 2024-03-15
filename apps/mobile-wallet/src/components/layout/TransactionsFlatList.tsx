@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
 import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
 import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
 import { Portal } from 'react-native-portalize'
@@ -28,12 +27,7 @@ import BottomModal from '~/components/layout/BottomModal'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import TransactionModal from '~/screens/TransactionModal'
-import {
-  selectAddressByHash,
-  syncAddressesData,
-  syncAddressTransactionsNextPage,
-  syncAllAddressesTransactionsNextPage
-} from '~/store/addressesSlice'
+import { syncAllAddressesTransactionsNextPage } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN, SCREEN_OVERFLOW } from '~/style/globalStyle'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
 import { isPendingTx } from '~/utils/transactions'
@@ -44,7 +38,6 @@ import { ScreenSectionTitle } from './Screen'
 interface TransactionsFlatListProps extends Partial<FlatListProps<AddressTransaction>> {
   confirmedTransactions: AddressConfirmedTransaction[]
   pendingTransactions: AddressPendingTransaction[]
-  addressHash?: AddressHash
   showInternalInflows?: boolean
 }
 
@@ -60,7 +53,6 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   {
     confirmedTransactions,
     pendingTransactions,
-    addressHash,
     ListHeaderComponent,
     showInternalInflows = false,
     style,
@@ -71,12 +63,10 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   const theme = useTheme()
   const dispatch = useAppDispatch()
 
-  const isLoading = useAppSelector((s) => s.addresses.loadingTransactions)
+  const isLoading = useAppSelector((s) => s.addresses.loadingTransactionsNextPage)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
 
   const [txModalOpen, setTxModalOpen] = useState(false)
-
   const [selectedTx, setSelectedTx] = useState<AddressConfirmedTransaction>()
 
   const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
@@ -97,20 +87,10 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   )
 
   const loadNextTransactionsPage = useCallback(async () => {
-    if (isLoading) return
+    if (isLoading || allConfirmedTransactionsLoaded) return
 
-    if (address) {
-      if (!address.allTransactionPagesLoaded) {
-        dispatch(syncAddressTransactionsNextPage(address.hash))
-      }
-    } else if (!allConfirmedTransactionsLoaded) {
-      dispatch(syncAllAddressesTransactionsNextPage({ minTxs: 10 }))
-    }
-  }, [address, allConfirmedTransactionsLoaded, dispatch, isLoading])
-
-  const refreshData = () => {
-    if (!isLoading) dispatch(syncAddressesData(addressHash))
-  }
+    dispatch(syncAllAddressesTransactionsNextPage({ minTxs: 10 }))
+  }, [allConfirmedTransactionsLoaded, dispatch, isLoading])
 
   return (
     <>
@@ -124,7 +104,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
         style={{ overflow: SCREEN_OVERFLOW }}
-        refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} />}
+        refreshControl={<RefreshSpinner />}
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         ListHeaderComponent={
@@ -151,16 +131,14 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
         ListFooterComponent={
           <Footer>
             <InfiniteLoadingIndicator>
-              {((address && address.allTransactionPagesLoaded) || (!address && allConfirmedTransactionsLoaded)) &&
-                confirmedTransactions.length > 0 && (
-                  <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
-                    👏 You reached the end of the transactions&apos; history.
-                  </AppText>
-                )}
-              {isLoading &&
-                ((address && !address.allTransactionPagesLoaded) || (!address && !allConfirmedTransactionsLoaded)) && (
-                  <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
-                )}
+              {allConfirmedTransactionsLoaded && confirmedTransactions.length > 0 && (
+                <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
+                  👏 You reached the end of the transactions&apos; history.
+                </AppText>
+              )}
+              {isLoading && !allConfirmedTransactionsLoaded && (
+                <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
+              )}
             </InfiniteLoadingIndicator>
             {confirmedTransactions.length === 0 && !isLoading && (
               <EmptyPlaceholder style={{ width: '90%' }}>

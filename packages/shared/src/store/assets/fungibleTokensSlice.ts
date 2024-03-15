@@ -88,12 +88,12 @@ const fungibleTokensSlice = createSlice({
       .addCase(networkPresetSwitched, resetState)
       .addCase(customNetworkSettingsSaved, resetState)
       .addMatcher(isAnyOf(syncFungibleTokensInfo.fulfilled, syncFungibleTokensInfo.rejected), (state, action) => {
+        state.loadingUnverified = false
+      })
+      .addMatcher(isAnyOf(syncUnknownTokensInfo.fulfilled, syncUnknownTokensInfo.rejected), (state, action) => {
         const initiallyUnknownTokenIds = action.meta.arg
 
         state.checkedUnknownTokenIds = [...initiallyUnknownTokenIds, ...state.checkedUnknownTokenIds]
-        state.loadingUnverified = false
-      })
-      .addMatcher(isAnyOf(syncUnknownTokensInfo.fulfilled, syncUnknownTokensInfo.rejected), (state) => {
         state.loadingTokenTypes = false
       })
   }

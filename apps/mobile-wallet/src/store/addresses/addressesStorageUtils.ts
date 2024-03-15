@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressMetadata } from '@alephium/shared'
 import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
 
-import { newAddressGenerated, syncAddressesAlphHistoricBalances, syncAddressesData } from '~/store/addressesSlice'
+import { newAddressGenerated, syncLatestTransactions } from '~/store/addressesSlice'
 import { store } from '~/store/store'
 import { Mnemonic, WalletMetadata } from '~/types/wallet'
 import { persistAddressesSettings } from '~/utils/addresses'
@@ -43,6 +43,5 @@ export const importAddresses = async (
     addressHashes.push(newAddress.hash)
   }
 
-  store.dispatch(syncAddressesData(addressHashes))
-  store.dispatch(syncAddressesAlphHistoricBalances(addressHashes))
+  store.dispatch(syncLatestTransactions(addressHashes))
 }
