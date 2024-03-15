@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, NFT } from '@alephium/shared'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Dimensions } from 'react-native'
 
 import { ModalContentProps, ModalFlatListContent } from '~/components/layout/ModalContent'
@@ -44,12 +44,6 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...pro
   const { width: windowWidth } = Dimensions.get('window')
   const totalGapSize = (columns - 1) * gap + screenPadding * 2
   const size = nftSize ?? (windowWidth - totalGapSize) / columns
-
-  useEffect(() => {
-    console.log('nfts changed')
-  }, [nfts])
-
-  console.log('re-rendering')
 
   return (
     <ModalFlatListContent
