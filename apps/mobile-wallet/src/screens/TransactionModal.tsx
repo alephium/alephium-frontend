@@ -20,6 +20,8 @@ import { NFT } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
 import { partition } from 'lodash'
+import { useState } from 'react'
+import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -27,9 +29,12 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
+import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import NFTsGrid from '~/components/NFTsGrid'
+import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
@@ -42,6 +47,8 @@ interface TransactionModalProps extends ModalContentProps {
 const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
+
+  const [isNftsModalOpen, setIsNftsModalOpen] = useState(false)
 
   const { direction, infoType, assets } = getTransactionInfo(tx)
   const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
@@ -130,11 +137,23 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
             ))}
           </Row>
         )}
-        {/* {nftsData.length > 0 && (
-          <Row title="NFTs" noMaxWidth transparent isLast>
-            <NFTsGrid nfts={nftsData} nftsPerRow={2} nftSize={100} isLoading={false} />
+        {nftsData.length === 1 && (
+          <Row title="NFT" noMaxWidth transparent isLast>
+            <NFTThumbnail nft={nftsData[0]} size={100} />
           </Row>
-        )} */}
+        )}
+        {nftsData.length > 1 && (
+          <Row title="NFTs" noMaxWidth transparent isLast>
+            <Button title="See NFTs" onPress={() => setIsNftsModalOpen(true)} />
+            <Portal>
+              <BottomModal
+                Content={(props) => <NFTsGrid nfts={nftsData} {...props} />}
+                isOpen={isNftsModalOpen}
+                onClose={() => setIsNftsModalOpen(false)}
+              />
+            </Portal>
+          </Row>
+        )}
       </BoxSurface>
     </ModalContent>
   )

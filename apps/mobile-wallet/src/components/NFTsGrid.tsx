@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, NFT } from '@alephium/shared'
 import { useEffect, useMemo } from 'react'
 import { Dimensions } from 'react-native'
 
@@ -27,6 +27,7 @@ import { makeSelectAddressesNFTs } from '~/store/addressesSlice'
 
 interface NFTsGridProps extends ModalContentProps {
   addressHash?: AddressHash
+  nfts?: NFT[]
   nftsPerRow?: number
   nftSize?: number
 }
@@ -34,13 +35,15 @@ interface NFTsGridProps extends ModalContentProps {
 const gap = 12
 const screenPadding = 20
 
-const NFTsGrid = ({ addressHash, nftSize, nftsPerRow = 3, ...props }: NFTsGridProps) => {
+const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...props }: NFTsGridProps) => {
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
 
+  const data = nftsProp ?? nfts
+  const columns = data.length < nftsPerRow ? data.length : nftsPerRow
   const { width: windowWidth } = Dimensions.get('window')
-  const totalGapSize = (nftsPerRow - 1) * gap + screenPadding * 2
-  const size = nftSize ?? (windowWidth - totalGapSize) / nftsPerRow
+  const totalGapSize = (columns - 1) * gap + screenPadding * 2
+  const size = nftSize ?? (windowWidth - totalGapSize) / columns
 
   useEffect(() => {
     console.log('nfts changed')
@@ -50,12 +53,12 @@ const NFTsGrid = ({ addressHash, nftSize, nftsPerRow = 3, ...props }: NFTsGridPr
 
   return (
     <ModalFlatListContent
-      data={nfts}
+      data={data}
       verticalGap
       keyExtractor={(item) => item.id}
       renderItem={({ item: nft }) => <NFTThumbnail key={nft.id} nft={nft} size={size} />}
-      numColumns={nftsPerRow}
-      columnWrapperStyle={{ justifyContent: 'space-between' }}
+      numColumns={columns}
+      columnWrapperStyle={{ justifyContent: 'space-between', gap: 15 }}
       {...props}
     />
   )
