@@ -52,7 +52,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...pro
       keyExtractor={(item) => item.id}
       renderItem={({ item: nft }) => <NFTThumbnail key={nft.id} nft={nft} size={size} />}
       numColumns={columns}
-      columnWrapperStyle={{ justifyContent: 'space-between', gap: 15 }}
+      columnWrapperStyle={columns > 1 ? { justifyContent: 'space-between', gap: 15 } : undefined}
       {...props}
     />
   )
