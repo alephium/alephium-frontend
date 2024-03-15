@@ -47,7 +47,12 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
   return (
     <>
       <TouchableOpacity onPress={() => setIsModalOpen(true)}>
-        <NFTThumbnailStyled style={{ width: size, height: size }} transition={500} source={{ uri: nft.image }} />
+        <NFTThumbnailStyled
+          style={{ width: size, height: size }}
+          transition={500}
+          source={{ uri: nft.image }}
+          allowDownscaling
+        />
       </TouchableOpacity>
       <Portal>
         <BottomModal

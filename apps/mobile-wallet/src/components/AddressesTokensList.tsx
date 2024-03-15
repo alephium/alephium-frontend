@@ -20,11 +20,13 @@ import { AddressHash, Asset } from '@alephium/shared'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
+import { Portal } from 'react-native-portalize'
 import Animated, { CurvedTransition } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Badge from '~/components/Badge'
+import BottomModal from '~/components/layout/BottomModal'
 import NFTsGrid from '~/components/NFTsGrid'
 import TabBar, { TabItem } from '~/components/TabBar'
 import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
@@ -57,7 +59,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
-  const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
+  const isLoadingTokenBalances = useAppSelector((s) => s.loaders.loadingTokens)
   const isLoadingUnverified = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
   const isLoadingVerified = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
@@ -68,6 +70,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const showNFTListLoading = showTokenListLoading || isLoadingNfts
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
+  const [isNftsModalOpen, setIsNftsModalOpen] = useState(false)
 
   const tabItems: TabItem[] = useMemo(
     () => [
@@ -114,9 +117,17 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
     setTokenRows(entries)
   }, [addressHash, showTokenListLoading, knownFungibleTokens, unknownTokens.length])
 
+  const handleTabChange = (tab: TabItem) => {
+    if (tab.value === 'nfts' && nfts.length > 0) {
+      setIsNftsModalOpen(true)
+    } else {
+      setActiveTab(tab)
+    }
+  }
+
   return (
     <ListContainer style={style} layout={CurvedTransition}>
-      <TabBarStyled items={tabItems} onTabChange={setActiveTab} activeTab={activeTab} />
+      <TabBarStyled items={tabItems} onTabChange={handleTabChange} activeTab={activeTab} />
       {
         {
           tokens: (
@@ -139,7 +150,11 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
               )}
             </>
           ),
-          nfts: <NFTsGrid nfts={nfts} isLoading={showNFTListLoading} />
+          nfts: (
+            <NoNFTsMessage>
+              <AppText color={theme.font.tertiary}>No NFTs yet 🖼️</AppText>
+            </NoNFTsMessage>
+          )
         }[activeTab.value]
       }
       {isRefreshing && (
@@ -150,6 +165,13 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
           </Loader>
         </>
       )}
+      <Portal>
+        <BottomModal
+          Content={(props) => <NFTsGrid addressHash={addressHash} {...props} />}
+          isOpen={isNftsModalOpen}
+          onClose={() => setIsNftsModalOpen(false)}
+        />
+      </Portal>
     </ListContainer>
   )
 }
@@ -208,6 +230,17 @@ const AssetNumberLoaderContainer = styled.View`
   justify-content: center;
   height: 16px;
   width: 16px;
+`
+
+const NoNFTsMessage = styled.View`
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 20px;
+  border-radius: 9px;
+  border: 2px dashed ${({ theme }) => theme.border.primary};
+  margin: 15px;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

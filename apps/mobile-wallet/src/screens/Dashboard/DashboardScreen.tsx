@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
+import { AnimatePresence } from 'moti'
 import { useEffect, useState } from 'react'
 import { Pressable } from 'react-native'
 import { Portal } from 'react-native-portalize'
@@ -36,7 +37,6 @@ import BottomModal from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import SpinnerModal from '~/components/SpinnerModal'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
@@ -44,7 +44,7 @@ import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
-import { useLoader } from '~/screens/Dashboard/useLoader'
+import InitialDataLoader from '~/screens/Dashboard/InitialDataLoader'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -62,20 +62,25 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const totalBalance = useAppSelector(selectTotalBalance)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
-  const { showLoader, progress } = useLoader()
 
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isNewWallet, setIsNewWallet] = useState(false)
-
-  const hideButtons = addressesStatus === 'uninitialized' && isLoadingLatestTxs
+  const [isInitialDataLoaderVisible, setIsInitialDataLoaderVisible] = useState(addressesStatus === 'uninitialized')
 
   const buttonsRowStyle = useAnimatedStyle(() => ({
-    height: withDelay(hideButtons ? 100 : 800, withSpring(hideButtons ? 0 : 65, defaultSpringConfiguration)),
-    opacity: withDelay(hideButtons ? 100 : 800, withSpring(hideButtons ? 0 : 1, defaultSpringConfiguration))
+    height: withDelay(800, withSpring(65, defaultSpringConfiguration)),
+    opacity: withDelay(800, withSpring(1, defaultSpringConfiguration))
   }))
+
+  useEffect(() => {
+    if (addressesStatus === 'initialized') {
+      const timeoutId = setTimeout(() => setIsInitialDataLoaderVisible(false), 300)
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [addressesStatus])
 
   useEffect(() => {
     const initializeNewWalletFlag = async () => {
@@ -114,7 +119,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      {showLoader && <SpinnerModal isActive={true} blur={false} bg="full" progress={progress} animated={false} />}
+      <AnimatePresence>{isInitialDataLoaderVisible && <InitialDataLoader />}</AnimatePresence>
       <DashboardScreenStyled
         refreshControl={<RefreshSpinner />}
         hasBottomBar

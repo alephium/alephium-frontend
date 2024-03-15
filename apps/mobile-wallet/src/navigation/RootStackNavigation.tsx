@@ -152,7 +152,7 @@ const AppUnlockHandler = () => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
+  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)

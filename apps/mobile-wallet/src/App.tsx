@@ -98,7 +98,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const network = useAppSelector((s) => s.network)
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
-  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
+  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)

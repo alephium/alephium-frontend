@@ -30,7 +30,6 @@ import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import NFTsGrid from '~/components/NFTsGrid'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
@@ -131,11 +130,11 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
             ))}
           </Row>
         )}
-        {nftsData.length > 0 && (
+        {/* {nftsData.length > 0 && (
           <Row title="NFTs" noMaxWidth transparent isLast>
             <NFTsGrid nfts={nftsData} nftsPerRow={2} nftSize={100} isLoading={false} />
           </Row>
-        )}
+        )} */}
       </BoxSurface>
     </ModalContent>
   )

@@ -19,14 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useInterval } from '@alephium/shared-react'
 import { useEffect, useRef, useState } from 'react'
 
+import SpinnerModal from '~/components/SpinnerModal'
 import { useAppSelector } from '~/hooks/redux'
 
-export const useLoader = () => {
+const InitialDataLoader = () => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
-  const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
-  const isLoadingTokens = useAppSelector((s) => s.addresses.loadingTokens)
-  const isLoadingAlphHistoricBalances = useAppSelector((s) => s.addresses.loadingAlphHistoricBalances)
+  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
+  const isLoadingBalances = useAppSelector((s) => s.loaders.loadingBalances)
+  const isLoadingTokens = useAppSelector((s) => s.loaders.loadingTokens)
+  const isLoadingAlphHistoricBalances = useAppSelector((s) => s.loaders.loadingAlphHistoricBalances)
 
   const txsLoadingCompleted = useRef<boolean>()
   const balancesLoadingCompleted = useRef<boolean>()
@@ -34,19 +35,10 @@ export const useLoader = () => {
   const historyLoadingCompleted = useRef<boolean>()
 
   const [progress, setProgress] = useState(0)
-  const [showLoader, setShowLoader] = useState(addressesStatus === 'uninitialized')
 
   useEffect(() => {
     if (addressesStatus === 'initialized') setProgress(1)
   }, [addressesStatus])
-
-  useEffect(() => {
-    if (progress >= 1) {
-      const timeoutId = setTimeout(() => setShowLoader(false), 300)
-
-      return () => clearTimeout(timeoutId)
-    }
-  }, [addressesStatus, progress])
 
   const updateProgress = (num: number) => setProgress((previousValue) => previousValue + num)
 
@@ -60,6 +52,7 @@ export const useLoader = () => {
       txsLoadingCompleted.current = false
     } else if (txsLoadingCompleted.current === false) {
       updateProgress(0.25)
+      txsLoadingCompleted.current = true
     }
   }, [isLoadingLatestTxs])
 
@@ -68,6 +61,7 @@ export const useLoader = () => {
       balancesLoadingCompleted.current = false
     } else if (balancesLoadingCompleted.current === false) {
       updateProgress(0.25)
+      balancesLoadingCompleted.current = true
     }
   }, [isLoadingBalances])
 
@@ -76,6 +70,7 @@ export const useLoader = () => {
       tokensLoadingCompleted.current = false
     } else if (tokensLoadingCompleted.current === false) {
       updateProgress(0.25)
+      tokensLoadingCompleted.current = true
     }
   }, [isLoadingTokens])
 
@@ -84,8 +79,11 @@ export const useLoader = () => {
       historyLoadingCompleted.current = false
     } else if (historyLoadingCompleted.current === false) {
       updateProgress(0.25)
+      historyLoadingCompleted.current = true
     }
   }, [isLoadingAlphHistoricBalances])
 
-  return { showLoader, progress }
+  return <SpinnerModal isActive={true} blur={false} bg="full" progress={progress} animated={false} />
 }
+
+export default InitialDataLoader

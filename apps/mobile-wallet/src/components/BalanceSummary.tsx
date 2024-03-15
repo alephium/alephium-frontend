@@ -44,10 +44,10 @@ interface BalanceSummaryProps extends ViewProps {
 const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
-  const isLoadingTokenBalances = useAppSelector((s) => s.addresses.loadingTokens)
+  const isLoadingTokenBalances = useAppSelector((s) => s.loaders.loadingTokens)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
+  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
   const alphPrice = useAppSelector(selectAlphPrice)

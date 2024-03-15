@@ -16,69 +16,49 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT } from '@alephium/shared'
-import { Skeleton } from 'moti/skeleton'
+import { AddressHash } from '@alephium/shared'
+import { useEffect, useMemo } from 'react'
 import { Dimensions } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
+import { ModalContentProps, ModalFlatListContent } from '~/components/layout/ModalContent'
 import NFTThumbnail from '~/components/NFTThumbnail'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { useAppSelector } from '~/hooks/redux'
+import { makeSelectAddressesNFTs } from '~/store/addressesSlice'
 
-interface NFTsGridProps {
-  nfts: NFT[]
-  isLoading: boolean
+interface NFTsGridProps extends ModalContentProps {
+  addressHash?: AddressHash
   nftsPerRow?: number
   nftSize?: number
 }
 
 const gap = 12
 const screenPadding = 20
-const nftsGridPadding = DEFAULT_MARGIN
 
-const NFTsGrid = ({ nfts, isLoading, nftSize, nftsPerRow = 3 }: NFTsGridProps) => {
-  const theme = useTheme()
+const NFTsGrid = ({ addressHash, nftSize, nftsPerRow = 3, ...props }: NFTsGridProps) => {
+  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
 
   const { width: windowWidth } = Dimensions.get('window')
-  const totalGapSize = (nftsPerRow - 1) * gap + screenPadding * 2 + nftsGridPadding * 2
+  const totalGapSize = (nftsPerRow - 1) * gap + screenPadding * 2
   const size = nftSize ?? (windowWidth - totalGapSize) / nftsPerRow
 
+  useEffect(() => {
+    console.log('nfts changed')
+  }, [nfts])
+
+  console.log('re-rendering')
+
   return (
-    <NFTsGridStyled style={{ paddingRight: nfts.length === 0 ? 15 : 0 }}>
-      {nfts.map((nft) => (
-        <NFTThumbnail key={nft.id} nft={nft} size={size} />
-      ))}
-      {isLoading && (
-        <>
-          <Skeleton show colorMode={theme.name} width={size} height={size} />
-          <Skeleton show colorMode={theme.name} width={size} height={size} />
-          <Skeleton show colorMode={theme.name} width={size} height={size} />
-        </>
-      )}
-      {!isLoading && nfts.length === 0 && (
-        <NoNFTsMessage>
-          <AppText color={theme.font.tertiary}>No NFTs yet 🖼️</AppText>
-        </NoNFTsMessage>
-      )}
-    </NFTsGridStyled>
+    <ModalFlatListContent
+      data={nfts}
+      verticalGap
+      keyExtractor={(item) => item.id}
+      renderItem={({ item: nft }) => <NFTThumbnail key={nft.id} nft={nft} size={size} />}
+      numColumns={nftsPerRow}
+      columnWrapperStyle={{ justifyContent: 'space-between' }}
+      {...props}
+    />
   )
 }
 
 export default NFTsGrid
-
-const NFTsGridStyled = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding: 20px 0 0 ${nftsGridPadding}px;
-  gap: ${gap}px;
-`
-
-const NoNFTsMessage = styled.View`
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  padding: 20px;
-  border-radius: 9px;
-  border: 2px dashed ${({ theme }) => theme.border.primary};
-`
