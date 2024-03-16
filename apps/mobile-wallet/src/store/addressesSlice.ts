@@ -132,12 +132,14 @@ export const syncLatestTransactions = createAsyncThunk(
     )
 
     const addressesWithNewTransactions = newTransactionsResults.map(({ hash }) => hash)
+    const addressesToFetchData =
+      state.addresses.status === 'uninitialized' ? (state.addresses.ids as AddressHash[]) : addressesWithNewTransactions
 
-    if (addressesWithNewTransactions.length > 0) {
+    if (addressesToFetchData.length > 0) {
       await Promise.all([
-        dispatch(syncAddressesBalances(addressesWithNewTransactions)),
-        dispatch(syncAddressesTokens(addressesWithNewTransactions)),
-        dispatch(syncAddressesAlphHistoricBalances(addressesWithNewTransactions))
+        dispatch(syncAddressesBalances(addressesToFetchData)),
+        dispatch(syncAddressesTokens(addressesToFetchData)),
+        dispatch(syncAddressesAlphHistoricBalances(addressesToFetchData))
       ])
     }
 
