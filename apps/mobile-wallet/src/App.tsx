@@ -101,6 +101,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
+  const isUnlocked = !!useAppSelector((s) => s.wallet.mnemonic)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
@@ -185,7 +186,7 @@ const Main = ({ children, ...props }: ViewProps) => {
     dispatch(syncLatestTransactions())
   }, [dispatch])
 
-  const dataResyncNeeded = nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs
+  const dataResyncNeeded = nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs && isUnlocked
 
   useEffect(() => {
     if (addressesStatus === 'uninitialized' && dataResyncNeeded) checkForNewTransactions()
