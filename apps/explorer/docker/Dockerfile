@@ -10,10 +10,10 @@ ENV PATH /app/node_modules/.bin:$PATH
 # install app dependencies
 RUN npm install -g serve
 
-COPY ./apps/explorer/docker/init-server-data.js ./init-server-data.js
-COPY ./apps/explorer/docker/entrypoint.sh ./entrypoint.sh
+COPY ./docker/init-server-data.js ./init-server-data.js
+COPY ./docker/entrypoint.sh ./entrypoint.sh
 RUN mkdir build
-COPY ./apps/explorer/build ./build
+COPY ./build ./build
 
 # start app
 ENTRYPOINT ./entrypoint.sh
