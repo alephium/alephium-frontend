@@ -128,8 +128,8 @@ export const syncLatestTransactions = createAsyncThunk(
     if (addressesToFetchData.length > 0) {
       await Promise.all([
         dispatch(syncAddressesBalances(addressesToFetchData)),
-        dispatch(syncAddressesTokens(addressesToFetchData)),
-        dispatch(syncAddressesAlphHistoricBalances(addressesToFetchData))
+        dispatch(syncAddressesTokens(addressesToFetchData))
+        // dispatch(syncAddressesAlphHistoricBalances(addressesToFetchData))
       ])
     }
 
