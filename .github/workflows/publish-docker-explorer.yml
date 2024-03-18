@@ -1,6 +1,7 @@
 name: Build and publish explorer docker image
 
 on:
+  workflow_dispatch:
   push:
     tags: ['@alephium/explorer@[0-9]+.[0-9]+.[0-9]+*']
 
