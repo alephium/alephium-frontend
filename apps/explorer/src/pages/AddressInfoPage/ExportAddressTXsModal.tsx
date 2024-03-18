@@ -76,12 +76,10 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 
       if (!data) throw 'Something wrong happened while fetching the data.'
 
-      startCSVFileDownload(
-        data,
-        `${addressHash}__${dayjs(timePeriods[timePeriodValue].from).format(SIMPLE_DATE_FORMAT)}-${dayjs(
-          timePeriods[timePeriodValue].to
-        ).format(SIMPLE_DATE_FORMAT)}`
-      )
+      const fileDateFrom = dayjs(timePeriods[timePeriodValue].from).format(SIMPLE_DATE_FORMAT)
+      const fileDateTo = dayjs(timePeriods[timePeriodValue].to).format(SIMPLE_DATE_FORMAT)
+
+      startCSVFileDownload(data, `${addressHash}__${fileDateFrom}-${fileDateTo}`)
 
       displaySnackbar({
         text: 'Your CSV has been successfully downloaded.',

@@ -72,7 +72,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
                   {token.name || <HashEllipsed hash={token.id} copyTooltipText={t('Copy token ID')} />}
                 </TokenName>
                 {!isAlph && !token.logoURI && token.name && (
-                  <UnverifiedIcon data-tooltip-id="default" data-tooltip-content="No metadata" />
+                  <UnverifiedIcon data-tooltip-id="default" data-tooltip-content={t('No metadata')} />
                 )}
               </TokenNameAndTag>
               {token.name && !isAlph && (
@@ -83,7 +83,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
             </NameColumn>
 
             {!token.name && token.type && (
-              <IncompleteMetadataBadge compact type="neutral" content="Incorrect metadata" />
+              <IncompleteMetadataBadge compact type="neutral" content={t('Incorrect metadata')} />
             )}
 
             <TableCellAmount>

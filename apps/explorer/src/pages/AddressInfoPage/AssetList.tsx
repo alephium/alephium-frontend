@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth, sortAssets } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
-import { flatMap, sortBy } from 'lodash'
+import { flatMap } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
@@ -88,13 +88,7 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
       })
     }
 
-    return sortBy(unsorted, [
-      (t) => !t.verified,
-      (t) => t.worth && 1 / t.worth,
-      (t) => !t.name,
-      (t) => t.name.toLowerCase(),
-      'id'
-    ])
+    return sortAssets(unsorted)
   }, [addressBalance, assets, fungibleTokensMetadata, tokensPrices])
 
   const unknownAssets = useMemo(
