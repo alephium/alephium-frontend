@@ -1,5 +1,20 @@
 # @alephium/mobile-wallet
 
+## 1.0.7
+
+### Patch Changes
+
+- 548615e: Sort tokens based on fiat worth
+- 7a92003: Always display WalletConnect icon if enabled in settings
+- 8f8040c: Clear WalletConnect cache when disabling WalletConnect
+- 7a92003: Display error when WalletConnect connection failed
+- 9a03ebe: Reduce number of fetch retries to 3
+- 982edcf: Upgrade to Expo 50
+- 26abdbc: Disable app backup on Android
+- 6b66a61: Fix currency selection
+- 4ab6ed8: Refactored the LandingScreen
+- f5cdfbb: Sign unsigned transactions
+
 ## 1.0.6
 
 ### Patch Changes
