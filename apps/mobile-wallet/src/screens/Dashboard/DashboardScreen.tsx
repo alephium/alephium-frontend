@@ -251,7 +251,7 @@ const BalanceAndButtons = styled.View`
 `
 
 const ButtonsRowContainer = styled(Animated.View)`
-  margin: 0 ${DEFAULT_MARGIN}px 10px ${DEFAULT_MARGIN}px;
+  margin: 10px ${DEFAULT_MARGIN}px 20px ${DEFAULT_MARGIN}px;
   flex-direction: row;
   border-radius: 100px;
   align-items: center;
