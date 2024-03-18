@@ -27,12 +27,10 @@ const InitialDataLoader = () => {
   const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const isLoadingBalances = useAppSelector((s) => s.loaders.loadingBalances)
   const isLoadingTokens = useAppSelector((s) => s.loaders.loadingTokens)
-  const isLoadingAlphHistoricBalances = useAppSelector((s) => s.loaders.loadingAlphHistoricBalances)
 
   const txsLoadingCompleted = useRef<boolean>()
   const balancesLoadingCompleted = useRef<boolean>()
   const tokensLoadingCompleted = useRef<boolean>()
-  const historyLoadingCompleted = useRef<boolean>()
 
   const [progress, setProgress] = useState(0)
 
@@ -40,7 +38,7 @@ const InitialDataLoader = () => {
     if (addressesStatus === 'initialized') setProgress(1)
   }, [addressesStatus])
 
-  const updateProgress = (num: number) => setProgress((previousValue) => previousValue + num)
+  const updateProgress = () => setProgress((previousValue) => previousValue + (1 - previousValue) / 3)
 
   // Fake initial progress to show some movement for better UX ;)
   const stopFakeProgress = progress >= 0.9
@@ -51,7 +49,8 @@ const InitialDataLoader = () => {
     if (isLoadingLatestTxs) {
       txsLoadingCompleted.current = false
     } else if (txsLoadingCompleted.current === false) {
-      updateProgress(0.25)
+      // This is always the last to complete
+      setProgress(1)
       txsLoadingCompleted.current = true
     }
   }, [isLoadingLatestTxs])
@@ -60,7 +59,7 @@ const InitialDataLoader = () => {
     if (isLoadingBalances) {
       balancesLoadingCompleted.current = false
     } else if (balancesLoadingCompleted.current === false) {
-      updateProgress(0.25)
+      updateProgress()
       balancesLoadingCompleted.current = true
     }
   }, [isLoadingBalances])
@@ -69,19 +68,10 @@ const InitialDataLoader = () => {
     if (isLoadingTokens) {
       tokensLoadingCompleted.current = false
     } else if (tokensLoadingCompleted.current === false) {
-      updateProgress(0.25)
+      updateProgress()
       tokensLoadingCompleted.current = true
     }
   }, [isLoadingTokens])
-
-  useEffect(() => {
-    if (isLoadingAlphHistoricBalances) {
-      historyLoadingCompleted.current = false
-    } else if (historyLoadingCompleted.current === false) {
-      updateProgress(0.25)
-      historyLoadingCompleted.current = true
-    }
-  }, [isLoadingAlphHistoricBalances])
 
   return <SpinnerModal isActive={true} blur={false} bg="full" progress={progress} animated={false} />
 }
