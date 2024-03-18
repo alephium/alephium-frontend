@@ -1577,7 +1577,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
+  DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   EXApplication: 137189a3f149b4e8e546884629392c3efc94cbd3
   EXBarCodeScanner: d59fd943cebee3f913ebf4ffde0d05d344da8b78
   EXConstants: 988aa430ca0f76b43cd46b66e7fae3287f9cc2fc
@@ -1611,7 +1611,7 @@ SPEC CHECKSUMS:
   FBLazyVector: 84f6edbe225f38aebd9deaf1540a4160b1f087d7
   FBReactNativeSpec: dd7ff1f4ea433fb1820e5ea80da25a0e65ea9de2
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
+  glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: b2669ce35fc4ac14f523b307aff8896799829fe2
   libaom: 144606b1da4b5915a1054383c3a4459ccdb3c661
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
@@ -1684,4 +1684,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 595f099defc45d3f3fbd6e5ddddf7dec7626b524
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.14.3

@@ -39,3 +39,11 @@ export enum WALLETCONNECT_ERRORS {
 export const PRICES_REFRESH_INTERVAL = 60000
 
 export const TRANSACTIONS_REFRESH_INTERVAL = 10000
+
+export const ONE_DAY_MS = 1000 * 60 * 60 * 24
+
+export const ONE_HOUR_MS = 1000 * 60 * 60
+
+export const FIVE_MINUTES_MS = 1000 * 60 * 5
+
+export const ONE_MINUTE_MS = 1000 * 60

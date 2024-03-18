@@ -20,7 +20,9 @@
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
     "@alephium/web3": "0.29.1",
+    "@legendapp/state": "^2.1.8",
     "@reduxjs/toolkit": "^1.9.1",
+    "@tanstack/react-query": "5.28.4",
     "@walletconnect/utils": "2.11.0",
     "cross-fetch": "^3.1.5",
     "dayjs": "^1.10.7",
