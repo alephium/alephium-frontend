@@ -35,7 +35,7 @@ import { AssetBase, FungibleTokenMetadataBase, NumericTokenBalance } from '@/typ
 interface TokenListProps {
   tokens: Optional<
     AssetBase & FungibleTokenMetadataBase & NumericTokenBalance,
-    'type' | 'decimals' | 'symbol' | 'name'
+    'type' | 'decimals' | 'symbol' | 'name' | 'verified'
   >[]
   limit?: number
   isLoading?: boolean
