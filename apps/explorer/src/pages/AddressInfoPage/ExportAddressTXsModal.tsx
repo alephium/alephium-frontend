@@ -31,7 +31,16 @@ import Select, { SelectListItem } from '@/components/Select'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
-type TimePeriodValue = '24h' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
+type TimePeriodValue =
+  | '24h'
+  | '1w'
+  | '1m'
+  | '6m'
+  | '12m'
+  | 'currentYear'
+  | 'oneYearAgo'
+  | 'twoYearsAgo'
+  | 'threeYearsAgo'
 
 interface ExportAddressTXsModalProps extends Omit<ModalProps, 'children'> {
   addressHash: string
@@ -67,7 +76,10 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 
       if (!data) throw 'Something wrong happened while fetching the data.'
 
-      startCSVFileDownload(data, `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}`)
+      const fileDateFrom = dayjs(timePeriods[timePeriodValue].from).format(SIMPLE_DATE_FORMAT)
+      const fileDateTo = dayjs(timePeriods[timePeriodValue].to).format(SIMPLE_DATE_FORMAT)
+
+      startCSVFileDownload(data, `${addressHash}__${fileDateFrom}-${fileDateTo}`)
 
       displaySnackbar({
         text: 'Your CSV has been successfully downloaded.',
@@ -112,8 +124,9 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 
 const now = dayjs()
 const thisMoment = now.valueOf()
-const currentYear = now.year()
 const lastYear = now.subtract(1, 'year')
+const twoYearsAgo = now.subtract(2, 'year')
+const threeYearsAgo = now.subtract(3, 'year')
 const today = now.format(SIMPLE_DATE_FORMAT)
 
 const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
@@ -135,18 +148,25 @@ const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
   },
   {
     value: '12m',
-    label: `Last 12 months
-    (${dayjs().subtract(1, 'year').format(SIMPLE_DATE_FORMAT)}
-    - ${today})`
+    label: 'Last 12 months'
   },
   {
-    value: 'previousYear',
-    label: `Previous year
-    (01/01/${currentYear - 1} - 31/12/${currentYear - 1})`
+    value: 'currentYear',
+    label: `This year so far (01/01/${now.year()} - ${today})`
   },
   {
-    value: 'thisYear',
-    label: `This year (01/01/${currentYear - 1} - ${today})`
+    value: 'oneYearAgo',
+    label: `Last year (${lastYear.year()})`
+  },
+  {
+    value: 'twoYearsAgo',
+    label: `Two years ago
+    (${twoYearsAgo.year()})`
+  },
+  {
+    value: 'threeYearsAgo',
+    label: `Three years ago
+    (${threeYearsAgo.year()})`
   }
 ]
 
@@ -156,11 +176,19 @@ const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
   '1m': { from: now.subtract(30, 'day').valueOf(), to: thisMoment },
   '6m': { from: now.subtract(6, 'month').valueOf(), to: thisMoment },
   '12m': { from: now.subtract(12, 'month').valueOf(), to: thisMoment },
-  previousYear: {
+  currentYear: { from: now.startOf('year').valueOf(), to: thisMoment },
+  oneYearAgo: {
     from: lastYear.startOf('year').valueOf(),
     to: lastYear.endOf('year').valueOf()
   },
-  thisYear: { from: now.startOf('year').valueOf(), to: thisMoment }
+  twoYearsAgo: {
+    from: twoYearsAgo.startOf('year').valueOf(),
+    to: twoYearsAgo.endOf('year').valueOf()
+  },
+  threeYearsAgo: {
+    from: threeYearsAgo.startOf('year').valueOf(),
+    to: threeYearsAgo.endOf('year').valueOf()
+  }
 }
 
 const startCSVFileDownload = (csvContent: string, fileName: string) => {
