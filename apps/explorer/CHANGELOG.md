@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.9.1
+
+### Patch Changes
+
+- a871a17: More export options, NFT details fixes, better loading and order by token worth
+
 ## 1.9.0
 
 ### Minor Changes
