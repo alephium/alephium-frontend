@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { Pressable, StyleProp, ViewProps, ViewStyle } from 'react-native'
 import Animated, { AnimatedProps } from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
@@ -56,6 +56,17 @@ const Row = ({
   layout,
   isVertical
 }: RowProps) => {
+  const [isPressed, setIsPressed] = useState(false)
+
+  const handleTouchStart = () => {
+    setIsPressed(true)
+  }
+
+  const handleTouchEnd = () => {
+    setIsPressed(false)
+    onPress && onPress()
+  }
+
   const componentContent = title ? (
     <>
       <LeftContent isVertical={isVertical}>
@@ -77,7 +88,11 @@ const Row = ({
   )
 
   return onPress ? (
-    <AnimatedPressable onPress={onPress} style={style}>
+    <AnimatedPressable
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      style={[style, { opacity: isPressed ? 0.8 : 1 }]}
+    >
       {componentContent}
     </AnimatedPressable>
   ) : (

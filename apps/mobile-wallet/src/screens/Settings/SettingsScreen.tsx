@@ -20,7 +20,6 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Application from 'expo-application'
 import { capitalize } from 'lodash'
-import { ChevronRight } from 'lucide-react-native'
 import { useState } from 'react'
 import { Alert, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
@@ -337,8 +336,4 @@ export default SettingsScreen
 
 const ScrollScreenStyled = styled(ScrollScreen)`
   gap: ${VERTICAL_GAP}px;
-`
-
-const ButtonStyled = styled(Button)`
-  margin-bottom: 24px;
 `
