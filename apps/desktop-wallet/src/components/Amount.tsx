@@ -16,7 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import {
+  convertToPositive,
+  decimalsSeparator as localeDecimalsSeparator,
+  formatAmountForDisplay,
+  formatFiatAmountForDisplay
+} from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -63,12 +68,14 @@ const Amount = ({
   let quantitySymbol = ''
   let amount = ''
   let isNegative = false
+  let decimalsSeparator = localeDecimalsSeparator
 
   if (value !== undefined) {
     if (isFiat && typeof value === 'number') {
       amount = formatFiatAmountForDisplay(value)
     } else if (isUnknownToken) {
       amount = value.toString()
+      decimalsSeparator = '.'
     } else {
       isNegative = value < 0
       amount = formatAmountForDisplay({
@@ -85,7 +92,7 @@ const Amount = ({
     }
   }
 
-  const [integralPart, fractionalPart] = amount.split('.')
+  const [integralPart, fractionalPart] = amount.split(decimalsSeparator)
 
   return (
     <AmountStyled
@@ -101,11 +108,16 @@ const Amount = ({
           {fadeDecimals ? (
             <>
               <span>{integralPart}</span>
-              {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+              {fractionalPart && (
+                <Decimals>
+                  {decimalsSeparator}
+                  {fractionalPart}
+                </Decimals>
+              )}
               {quantitySymbol && <span>{quantitySymbol}</span>}
             </>
           ) : fractionalPart ? (
-            `${integralPart}.${fractionalPart}`
+            `${integralPart}${decimalsSeparator}${fractionalPart}`
           ) : (
             integralPart
           )}

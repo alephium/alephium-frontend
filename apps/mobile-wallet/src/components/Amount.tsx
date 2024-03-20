@@ -16,7 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import {
+  convertToPositive,
+  decimalsSeparator as localeDecimalsSeparator,
+  formatAmountForDisplay,
+  formatFiatAmountForDisplay
+} from '@alephium/shared'
 import { StyleProp, TextStyle } from 'react-native'
 
 import { useAppSelector } from '~/hooks/redux'
@@ -62,6 +67,7 @@ const Amount = ({
   let quantitySymbol = ''
   let amount = ''
   let isNegative = false
+  let decimalsSeparator = localeDecimalsSeparator
 
   if (value !== undefined) {
     if (isFiat && typeof value === 'number') {
@@ -69,6 +75,7 @@ const Amount = ({
       amount = formatFiatAmountForDisplay(isNegative ? value * -1 : value)
     } else if (isUnknownToken) {
       amount = value.toString()
+      decimalsSeparator = '.'
     } else {
       isNegative = value < 0
       amount = formatAmountForDisplay({
@@ -85,7 +92,7 @@ const Amount = ({
     }
   }
 
-  let [integralPart, fractionalPart] = amount.split('.')
+  let [integralPart, fractionalPart] = amount.split(decimalsSeparator)
 
   if (useTinyAmountShorthand && amount.startsWith('0.0000')) {
     integralPart = '< 0'
@@ -109,7 +116,7 @@ const Amount = ({
           <AppText {...props} color={color}>
             {integralPart}
           </AppText>
-          {fractionalPart && <AppText {...props} color={fadedColor}>{`.${fractionalPart}`}</AppText>}
+          {fractionalPart && <AppText {...props} color={fadedColor}>{`${decimalsSeparator}${fractionalPart}`}</AppText>}
           {quantitySymbol && <AppText {...props} color={fadedColor}>{` ${quantitySymbol} `}</AppText>}
           {!isUnknownToken && (
             <AppText {...props} color={fadeSuffix ? 'secondary' : color}>{` ${suffix || 'ALPH'}`}</AppText>

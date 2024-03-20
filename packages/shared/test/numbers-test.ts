@@ -22,152 +22,161 @@ import {
   aboveExpLimit,
   addApostrophes,
   calculateAmountWorth,
+  decimalsSeparator,
   exponentialToLiteral,
   formatAmountForDisplay,
   formatFiatAmountForDisplay,
   fromHumanReadableAmount,
   produceZeros,
+  thousandsSeparator,
   toHumanReadableAmount
 } from '../src/numbers'
 
 const minDigits = 3
 
+// Replace separators
+const rs = (str: string) => str.replaceAll("'", thousandsSeparator).replaceAll('.', decimalsSeparator)
+
 it('Should abbreviate ALPH amount', () => {
-  expect(formatAmountForDisplay({ amount: BigInt('-1') })).toEqual('???'),
-    expect(formatAmountForDisplay({ amount: BigInt('0') })).toEqual('0'),
-    expect(formatAmountForDisplay({ amount: BigInt('1') })).toEqual('0.000000000000000001'),
-    expect(formatAmountForDisplay({ amount: BigInt('100000') })).toEqual('0.0000000000001'),
-    expect(formatAmountForDisplay({ amount: BigInt('900000000000') })).toEqual('0.0000009'),
-    expect(formatAmountForDisplay({ amount: BigInt('4000000000000') })).toEqual('0.000004'),
-    expect(formatAmountForDisplay({ amount: BigInt('6000000000000') })).toEqual('0.000006'),
-    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000') })).toEqual('0.002'),
-    expect(formatAmountForDisplay({ amount: BigInt('20000000000000000') })).toEqual('0.02'),
-    expect(formatAmountForDisplay({ amount: BigInt('200000000000000000') })).toEqual('0.20'),
-    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000000') })).toEqual('2.00'),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000') })).toEqual("1'230.00"),
-    expect(formatAmountForDisplay({ amount: BigInt('10230000000000000000000') })).toEqual("10'230.00"),
-    expect(formatAmountForDisplay({ amount: BigInt('100230000000000000000000') })).toEqual("100'230.00"),
-    expect(formatAmountForDisplay({ amount: BigInt('999999990000000000000000') })).toEqual("999'999.99"),
-    expect(formatAmountForDisplay({ amount: BigInt('999999999000000000000000') })).toEqual('1.00M'),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000') })).toEqual('1.23M'),
-    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000000000') })).toEqual('1.00M'),
-    expect(formatAmountForDisplay({ amount: BigInt('1234000000000000000000000') })).toEqual('1.23M'),
-    expect(formatAmountForDisplay({ amount: BigInt('9996000000000000000000000') })).toEqual('10.00M'),
-    expect(formatAmountForDisplay({ amount: BigInt('99996000000000000000000000') })).toEqual('100.00M'),
-    expect(formatAmountForDisplay({ amount: BigInt('999996000000000000000000000') })).toEqual('1.00B'),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000') })).toEqual('1.23B'),
-    expect(formatAmountForDisplay({ amount: BigInt('1235000000000000000000000000') })).toEqual('1.24B'),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000') })).toEqual('1.23T'),
-    expect(formatAmountForDisplay({ amount: BigInt('1237000000000000000000000000000') })).toEqual('1.24T'),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000') })).toEqual("1'230.00T"),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000000') })).toEqual('1.23e+18'),
+  expect(formatAmountForDisplay({ amount: BigInt('-1') })).toEqual(rs('???')),
+    expect(formatAmountForDisplay({ amount: BigInt('0') })).toEqual(rs('0')),
+    expect(formatAmountForDisplay({ amount: BigInt('1') })).toEqual(rs('0.000000000000000001')),
+    expect(formatAmountForDisplay({ amount: BigInt('100000') })).toEqual(rs('0.0000000000001')),
+    expect(formatAmountForDisplay({ amount: BigInt('900000000000') })).toEqual(rs('0.0000009')),
+    expect(formatAmountForDisplay({ amount: BigInt('4000000000000') })).toEqual(rs('0.000004')),
+    expect(formatAmountForDisplay({ amount: BigInt('6000000000000') })).toEqual(rs('0.000006')),
+    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000') })).toEqual(rs('0.002')),
+    expect(formatAmountForDisplay({ amount: BigInt('20000000000000000') })).toEqual(rs('0.02')),
+    expect(formatAmountForDisplay({ amount: BigInt('200000000000000000') })).toEqual(rs('0.20')),
+    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000000') })).toEqual(rs('2.00')),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000') })).toEqual(rs("1'230.00")),
+    expect(formatAmountForDisplay({ amount: BigInt('10230000000000000000000') })).toEqual(rs("10'230.00")),
+    expect(formatAmountForDisplay({ amount: BigInt('100230000000000000000000') })).toEqual(rs("100'230.00")),
+    expect(formatAmountForDisplay({ amount: BigInt('999999990000000000000000') })).toEqual(rs("999'999.99")),
+    expect(formatAmountForDisplay({ amount: BigInt('999999999000000000000000') })).toEqual(rs('1.00M')),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000') })).toEqual(rs('1.23M')),
+    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000000000') })).toEqual(rs('1.00M')),
+    expect(formatAmountForDisplay({ amount: BigInt('1234000000000000000000000') })).toEqual(rs('1.23M')),
+    expect(formatAmountForDisplay({ amount: BigInt('9996000000000000000000000') })).toEqual(rs('10.00M')),
+    expect(formatAmountForDisplay({ amount: BigInt('99996000000000000000000000') })).toEqual(rs('100.00M')),
+    expect(formatAmountForDisplay({ amount: BigInt('999996000000000000000000000') })).toEqual(rs('1.00B')),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000') })).toEqual(rs('1.23B')),
+    expect(formatAmountForDisplay({ amount: BigInt('1235000000000000000000000000') })).toEqual(rs('1.24B')),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000') })).toEqual(rs('1.23T')),
+    expect(formatAmountForDisplay({ amount: BigInt('1237000000000000000000000000000') })).toEqual(rs('1.24T')),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000') })).toEqual(rs("1'230.00T")),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000000') })).toEqual(rs('1.23e+18')),
     expect(
       formatAmountForDisplay({ amount: BigInt('999999999990000000000000000000000000000'), truncate: true })
-    ).toEqual('9.99e+20'),
-    expect(formatAmountForDisplay({ amount: BigInt('999999999990000000000000000000000000000') })).toEqual('1.00e+21'),
-    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000') })).toEqual('1.00'),
-    expect(formatAmountForDisplay({ amount: BigInt('-1000000000000000000') })).toEqual('???')
+    ).toEqual(rs('9.99e+20')),
+    expect(formatAmountForDisplay({ amount: BigInt('999999999990000000000000000000000000000') })).toEqual(
+      rs('1.00e+21')
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000') })).toEqual(rs('1.00')),
+    expect(formatAmountForDisplay({ amount: BigInt('-1000000000000000000') })).toEqual(rs('???'))
 })
 
 it('Should abbreviate token amount', () => {
-  expect(formatAmountForDisplay({ amount: BigInt('-1'), amountDecimals: 17 })).toEqual('???'),
-    expect(formatAmountForDisplay({ amount: BigInt('0'), amountDecimals: 17 })).toEqual('0'),
-    expect(formatAmountForDisplay({ amount: BigInt('1'), amountDecimals: 17 })).toEqual('0.00000000000000001'),
-    expect(formatAmountForDisplay({ amount: BigInt('100000'), amountDecimals: 17 })).toEqual('0.000000000001'),
-    expect(formatAmountForDisplay({ amount: BigInt('9000000'), amountDecimals: 17 })).toEqual('0.00000000009'),
-    expect(formatAmountForDisplay({ amount: BigInt('90000000'), amountDecimals: 17 })).toEqual('0.0000000009'),
-    expect(formatAmountForDisplay({ amount: BigInt('900000000'), amountDecimals: 17 })).toEqual('0.000000009'),
-    expect(formatAmountForDisplay({ amount: BigInt('9000000000'), amountDecimals: 17 })).toEqual('0.00000009'),
-    expect(formatAmountForDisplay({ amount: BigInt('90000000000'), amountDecimals: 17 })).toEqual('0.0000009'),
-    expect(formatAmountForDisplay({ amount: BigInt('400000000000'), amountDecimals: 17 })).toEqual('0.000004'),
-    expect(formatAmountForDisplay({ amount: BigInt('4000000000000'), amountDecimals: 17 })).toEqual('0.00004'),
-    expect(formatAmountForDisplay({ amount: BigInt('5000000000000'), amountDecimals: 17 })).toEqual('0.00005'),
-    expect(formatAmountForDisplay({ amount: BigInt('6000000000000'), amountDecimals: 17 })).toEqual('0.00006'),
-    expect(formatAmountForDisplay({ amount: BigInt('60000000000000'), amountDecimals: 17 })).toEqual('0.0006'),
-    expect(formatAmountForDisplay({ amount: BigInt('600000000000000'), amountDecimals: 17 })).toEqual('0.006'),
-    expect(formatAmountForDisplay({ amount: BigInt('6000000000000000'), amountDecimals: 17 })).toEqual('0.06'),
-    expect(formatAmountForDisplay({ amount: BigInt('60000000000000000'), amountDecimals: 17 })).toEqual('0.60'),
-    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000'), amountDecimals: 17 })).toEqual('0.02'),
-    expect(formatAmountForDisplay({ amount: BigInt('20000000000000000'), amountDecimals: 17 })).toEqual('0.20'),
-    expect(formatAmountForDisplay({ amount: BigInt('200000000000000000'), amountDecimals: 17 })).toEqual('2.00'),
-    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000000'), amountDecimals: 17 })).toEqual('20.00'),
+  expect(formatAmountForDisplay({ amount: BigInt('-1'), amountDecimals: 17 })).toEqual(rs('???')),
+    expect(formatAmountForDisplay({ amount: BigInt('0'), amountDecimals: 17 })).toEqual(rs('0')),
+    expect(formatAmountForDisplay({ amount: BigInt('1'), amountDecimals: 17 })).toEqual(rs('0.00000000000000001')),
+    expect(formatAmountForDisplay({ amount: BigInt('100000'), amountDecimals: 17 })).toEqual(rs('0.000000000001')),
+    expect(formatAmountForDisplay({ amount: BigInt('9000000'), amountDecimals: 17 })).toEqual(rs('0.00000000009')),
+    expect(formatAmountForDisplay({ amount: BigInt('90000000'), amountDecimals: 17 })).toEqual(rs('0.0000000009')),
+    expect(formatAmountForDisplay({ amount: BigInt('900000000'), amountDecimals: 17 })).toEqual(rs('0.000000009')),
+    expect(formatAmountForDisplay({ amount: BigInt('9000000000'), amountDecimals: 17 })).toEqual(rs('0.00000009')),
+    expect(formatAmountForDisplay({ amount: BigInt('90000000000'), amountDecimals: 17 })).toEqual(rs('0.0000009')),
+    expect(formatAmountForDisplay({ amount: BigInt('400000000000'), amountDecimals: 17 })).toEqual(rs('0.000004')),
+    expect(formatAmountForDisplay({ amount: BigInt('4000000000000'), amountDecimals: 17 })).toEqual(rs('0.00004')),
+    expect(formatAmountForDisplay({ amount: BigInt('5000000000000'), amountDecimals: 17 })).toEqual(rs('0.00005')),
+    expect(formatAmountForDisplay({ amount: BigInt('6000000000000'), amountDecimals: 17 })).toEqual(rs('0.00006')),
+    expect(formatAmountForDisplay({ amount: BigInt('60000000000000'), amountDecimals: 17 })).toEqual(rs('0.0006')),
+    expect(formatAmountForDisplay({ amount: BigInt('600000000000000'), amountDecimals: 17 })).toEqual(rs('0.006')),
+    expect(formatAmountForDisplay({ amount: BigInt('6000000000000000'), amountDecimals: 17 })).toEqual(rs('0.06')),
+    expect(formatAmountForDisplay({ amount: BigInt('60000000000000000'), amountDecimals: 17 })).toEqual(rs('0.60')),
+    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000'), amountDecimals: 17 })).toEqual(rs('0.02')),
+    expect(formatAmountForDisplay({ amount: BigInt('20000000000000000'), amountDecimals: 17 })).toEqual(rs('0.20')),
+    expect(formatAmountForDisplay({ amount: BigInt('200000000000000000'), amountDecimals: 17 })).toEqual(rs('2.00')),
+    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000000'), amountDecimals: 17 })).toEqual(rs('20.00')),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000'), amountDecimals: 17 })).toEqual(
-      "12'300.00"
+      rs("12'300.00")
     ),
     expect(formatAmountForDisplay({ amount: BigInt('10230000000000000000000'), amountDecimals: 17 })).toEqual(
-      "102'300.00"
+      rs("102'300.00")
     ),
-    expect(formatAmountForDisplay({ amount: BigInt('100230000000000000000000'), amountDecimals: 17 })).toEqual('1.00M'),
+    expect(formatAmountForDisplay({ amount: BigInt('100230000000000000000000'), amountDecimals: 17 })).toEqual(
+      rs('1.00M')
+    ),
     expect(formatAmountForDisplay({ amount: BigInt('999999990000000000000000'), amountDecimals: 17 })).toEqual(
-      '10.00M'
+      rs('10.00M')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('999999999000000000000000'), amountDecimals: 17 })).toEqual(
-      '10.00M'
+      rs('10.00M')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '12.30M'
+      rs('12.30M')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '10.00M'
+      rs('10.00M')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1234000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '12.34M'
+      rs('12.34M')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('9996000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '99.96M'
+      rs('99.96M')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('99996000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '999.96M'
+      rs('999.96M')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('999996000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '10.00B'
+      rs('10.00B')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '12.30B'
+      rs('12.30B')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1235000000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '12.35B'
+      rs('12.35B')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '12.30T'
+      rs('12.30T')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1237000000000000000000000000000'), amountDecimals: 17 })).toEqual(
-      '12.37T'
+      rs('12.37T')
     ),
     expect(
       formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000'), amountDecimals: 17 })
-    ).toEqual("12'300.00T"),
+    ).toEqual(rs("12'300.00T")),
     expect(
       formatAmountForDisplay({
         amount: BigInt('10000000000000000000000000000000000'),
         amountDecimals: 17
       })
-    ).toEqual("100'000.00T"),
+    ).toEqual(rs("100'000.00T")),
     expect(
       formatAmountForDisplay({
         amount: BigInt('99999999999999999999999999999999999'),
         amountDecimals: 17
       })
-    ).toEqual('1.00e+18'),
+    ).toEqual(rs('1.00e+18')),
     expect(
       formatAmountForDisplay({ amount: BigInt('100000000000000000000000000000000000'), amountDecimals: 17 })
-    ).toEqual('1.00e+18'),
+    ).toEqual(rs('1.00e+18')),
     expect(
       formatAmountForDisplay({
         amount: BigInt('100000000000000000000000000000000000'),
         amountDecimals: 17,
         displayDecimals: 0
       })
-    ).toEqual('1e+18'),
+    ).toEqual(rs('1e+18')),
     expect(
       formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000000'), amountDecimals: 17 })
-    ).toEqual('1.23e+19'),
+    ).toEqual(rs('1.23e+19')),
     expect(
       formatAmountForDisplay({
         amount: BigInt('999999999990000000000000000000000000000'),
         amountDecimals: 17
       })
-    ).toEqual('1.00e+22'),
+    ).toEqual(rs('1.00e+22')),
     expect(
       formatAmountForDisplay({
         amount: BigInt('999999999990000000000000000000000000000'),
@@ -175,7 +184,7 @@ it('Should abbreviate token amount', () => {
         displayDecimals: 1,
         truncate: true
       })
-    ).toEqual('9.9e+21'),
+    ).toEqual(rs('9.9e+21')),
     expect(
       formatAmountForDisplay({
         amount: BigInt('999999999990000000000000000000000000000'),
@@ -183,129 +192,133 @@ it('Should abbreviate token amount', () => {
         displayDecimals: 3,
         truncate: true
       })
-    ).toEqual('9.999e+21'),
-    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000'), amountDecimals: 17 })).toEqual('10.00'),
-    expect(formatAmountForDisplay({ amount: BigInt('-1000000000000000000'), amountDecimals: 17 })).toEqual('???'),
+    ).toEqual(rs('9.999e+21')),
+    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000'), amountDecimals: 17 })).toEqual(rs('10.00')),
+    expect(formatAmountForDisplay({ amount: BigInt('-1000000000000000000'), amountDecimals: 17 })).toEqual(rs('???')),
     expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000000000000000'), amountDecimals: 30 })).toEqual(
-      '1.00'
+      rs('1.00')
     ),
     expect(
       formatAmountForDisplay({
         amount: BigInt('1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'),
         amountDecimals: 90
       })
-    ).toEqual('1.00'),
+    ).toEqual(rs('1.00')),
     expect(
       formatAmountForDisplay({
         amount: BigInt('1999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999'),
         amountDecimals: 90
       })
-    ).toEqual('2.00'),
-    expect(formatAmountForDisplay({ amount: BigInt('1'), amountDecimals: 0 })).toEqual('1.00'),
+    ).toEqual(rs('2.00')),
+    expect(formatAmountForDisplay({ amount: BigInt('1'), amountDecimals: 0 })).toEqual(rs('1.00')),
     expect(formatAmountForDisplay({ amount: BigInt('12'), amountDecimals: 17, smartRounding: false })).toEqual(
-      '0.00000000000000012'
+      rs('0.00000000000000012')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('12'), amountDecimals: 17, smartRounding: true })).toEqual(
-      '0.0000000000000001'
+      rs('0.0000000000000001')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('15'), amountDecimals: 17, smartRounding: true })).toEqual(
-      '0.000000000000002'
+      rs('0.000000000000002')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('99100000'), amountDecimals: 17, smartRounding: true })).toEqual(
-      '0.000000001'
+      rs('0.000000001')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('4590000000'), amountDecimals: 17, smartRounding: true })).toEqual(
-      '0.0000005'
+      rs('0.0000005')
     ),
     expect(formatAmountForDisplay({ amount: BigInt('4110000000'), amountDecimals: 17, smartRounding: true })).toEqual(
-      '0.00000004'
+      rs('0.00000004')
     )
 })
 
 it('Should keep full amount precision', () => {
-  expect(formatAmountForDisplay({ amount: BigInt('0'), fullPrecision: true })).toEqual('0'),
-    expect(formatAmountForDisplay({ amount: BigInt('1'), fullPrecision: true })).toEqual('0.000000000000000001'),
-    expect(formatAmountForDisplay({ amount: BigInt('100001'), fullPrecision: true })).toEqual('0.000000000000100001'),
-    expect(formatAmountForDisplay({ amount: BigInt('1000000000'), fullPrecision: true })).toEqual('0.000000001'),
+  expect(formatAmountForDisplay({ amount: BigInt('0'), fullPrecision: true })).toEqual(rs('0')),
+    expect(formatAmountForDisplay({ amount: BigInt('1'), fullPrecision: true })).toEqual(rs('0.000000000000000001')),
+    expect(formatAmountForDisplay({ amount: BigInt('100001'), fullPrecision: true })).toEqual(
+      rs('0.000000000000100001')
+    ),
+    expect(formatAmountForDisplay({ amount: BigInt('1000000000'), fullPrecision: true })).toEqual(rs('0.000000001')),
     expect(formatAmountForDisplay({ amount: BigInt('1000000001'), fullPrecision: true })).toEqual(
-      '0.000000001000000001'
+      rs('0.000000001000000001')
     ),
-    expect(formatAmountForDisplay({ amount: BigInt('2000000000'), fullPrecision: true })).toEqual('0.000000002'),
+    expect(formatAmountForDisplay({ amount: BigInt('2000000000'), fullPrecision: true })).toEqual(rs('0.000000002')),
     expect(formatAmountForDisplay({ amount: BigInt('2000000002'), fullPrecision: true })).toEqual(
-      '0.000000002000000002'
+      rs('0.000000002000000002')
     ),
-    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000'), fullPrecision: true })).toEqual('0.002'),
-    expect(formatAmountForDisplay({ amount: BigInt('20000000000000000'), fullPrecision: true })).toEqual('0.02'),
-    expect(formatAmountForDisplay({ amount: BigInt('200000000000000000'), fullPrecision: true })).toEqual('0.20'),
-    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000000'), fullPrecision: true })).toEqual('2.00'),
+    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000'), fullPrecision: true })).toEqual(rs('0.002')),
+    expect(formatAmountForDisplay({ amount: BigInt('20000000000000000'), fullPrecision: true })).toEqual(rs('0.02')),
+    expect(formatAmountForDisplay({ amount: BigInt('200000000000000000'), fullPrecision: true })).toEqual(rs('0.20')),
+    expect(formatAmountForDisplay({ amount: BigInt('2000000000000000000'), fullPrecision: true })).toEqual(rs('2.00')),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000'), fullPrecision: true })).toEqual(
-      '1230.00'
+      rs("1'230.00")
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000'), fullPrecision: true })).toEqual(
-      '1230000.00'
+      rs("1'230'000.00")
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000'), fullPrecision: true })).toEqual(
-      '1230000000.00'
+      rs("1'230'000'000.00")
     ),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000'), fullPrecision: true })).toEqual(
-      '1230000000000.00'
+      rs("1'230'000'000'000.00")
     ),
     expect(
       formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000'), fullPrecision: true })
-    ).toEqual('1230000000000000.00'),
-    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000'), fullPrecision: true })).toEqual('1.00'),
+    ).toEqual(rs("1'230'000'000'000'000.00")),
+    expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000'), fullPrecision: true })).toEqual(rs('1.00')),
     expect(
       formatAmountForDisplay({ amount: BigInt('1000000000000000000'), fullPrecision: true, displayDecimals: 3 })
-    ).toEqual('1.000')
+    ).toEqual(rs('1.000'))
 })
 
 it('Should display a defined number of decimals', () => {
-  expect(formatAmountForDisplay({ amount: BigInt('20053549281751930708'), displayDecimals: 5 })).toEqual('20.05355'),
+  expect(formatAmountForDisplay({ amount: BigInt('20053549281751930708'), displayDecimals: 5 })).toEqual(
+    rs('20.05355')
+  ),
     expect(
       formatAmountForDisplay({ amount: BigInt('20053549281751930708'), displayDecimals: 5, amountDecimals: 17 })
-    ).toEqual('200.53549'),
+    ).toEqual(rs('200.53549')),
     expect(
       formatAmountForDisplay({ amount: BigInt('20053549281751930708'), displayDecimals: 5, amountDecimals: 0 })
-    ).toEqual('2.00535e+19'),
+    ).toEqual(rs('2.00535e+19')),
     expect(
       formatAmountForDisplay({ amount: BigInt('20053549281751930708'), displayDecimals: 5, amountDecimals: 17 })
-    ).toEqual('200.53549')
+    ).toEqual(rs('200.53549'))
 })
 
 it('Should format fiat amount for display', () => {
-  expect(formatFiatAmountForDisplay(0)).toEqual('0.00'),
-    expect(formatFiatAmountForDisplay(0.1)).toEqual('0.10'),
-    expect(formatFiatAmountForDisplay(0.11)).toEqual('0.11'),
-    expect(formatFiatAmountForDisplay(0.111)).toEqual('0.11'),
-    expect(formatFiatAmountForDisplay(0.114)).toEqual('0.11'),
-    expect(formatFiatAmountForDisplay(0.115)).toEqual('0.12'),
-    expect(formatFiatAmountForDisplay(1.005)).toEqual('1.00'),
-    expect(formatFiatAmountForDisplay(1.006)).toEqual('1.01'),
-    expect(formatFiatAmountForDisplay(1000)).toEqual("1'000.00"),
-    expect(formatFiatAmountForDisplay(1000.09)).toEqual("1'000.09"),
-    expect(formatFiatAmountForDisplay(1000.099)).toEqual("1'000.10"),
-    expect(formatFiatAmountForDisplay(1000.095)).toEqual("1'000.10"),
-    expect(formatFiatAmountForDisplay(10000)).toEqual("10'000.00"),
-    expect(formatFiatAmountForDisplay(100000)).toEqual("100'000.00"),
-    expect(formatFiatAmountForDisplay(999999.99)).toEqual("999'999.99"),
-    expect(formatFiatAmountForDisplay(999999.999)).toEqual('1.00M'),
-    expect(formatFiatAmountForDisplay(1000000)).toEqual('1.00M'),
-    expect(formatFiatAmountForDisplay(1990000)).toEqual('1.99M'),
-    expect(formatFiatAmountForDisplay(1996000)).toEqual('2.00M'),
-    expect(formatFiatAmountForDisplay(1100000)).toEqual('1.10M'),
-    expect(formatFiatAmountForDisplay(1110000)).toEqual('1.11M'),
-    expect(formatFiatAmountForDisplay(1119000)).toEqual('1.12M'),
-    expect(formatFiatAmountForDisplay(1116000)).toEqual('1.12M'),
-    expect(formatFiatAmountForDisplay(1115000)).toEqual('1.11M'),
-    expect(formatFiatAmountForDisplay(10000000)).toEqual('10.00M'),
-    expect(formatFiatAmountForDisplay(100000000)).toEqual('100.00M'),
-    expect(formatFiatAmountForDisplay(999999000)).toEqual('1.00B'),
-    expect(formatFiatAmountForDisplay(1000000000)).toEqual('1.00B'),
-    expect(formatFiatAmountForDisplay(10000000000)).toEqual('10.00B'),
-    expect(formatFiatAmountForDisplay(100000000000)).toEqual('100.00B'),
-    expect(formatFiatAmountForDisplay(1000000000000)).toEqual('1.00T'),
-    expect(formatFiatAmountForDisplay(10000000000000)).toEqual('10.00T'),
-    expect(formatFiatAmountForDisplay(100000000000000)).toEqual('100.00T'),
+  expect(formatFiatAmountForDisplay(0)).toEqual(rs('0.00')),
+    expect(formatFiatAmountForDisplay(0.1)).toEqual(rs('0.10')),
+    expect(formatFiatAmountForDisplay(0.11)).toEqual(rs('0.11')),
+    expect(formatFiatAmountForDisplay(0.111)).toEqual(rs('0.11')),
+    expect(formatFiatAmountForDisplay(0.114)).toEqual(rs('0.11')),
+    expect(formatFiatAmountForDisplay(0.115)).toEqual(rs('0.12')),
+    expect(formatFiatAmountForDisplay(1.005)).toEqual(rs('1.00')),
+    expect(formatFiatAmountForDisplay(1.006)).toEqual(rs('1.01')),
+    expect(formatFiatAmountForDisplay(1000)).toEqual(rs("1'000.00")),
+    expect(formatFiatAmountForDisplay(1000.09)).toEqual(rs("1'000.09")),
+    expect(formatFiatAmountForDisplay(1000.099)).toEqual(rs("1'000.10")),
+    expect(formatFiatAmountForDisplay(1000.095)).toEqual(rs("1'000.10")),
+    expect(formatFiatAmountForDisplay(10000)).toEqual(rs("10'000.00")),
+    expect(formatFiatAmountForDisplay(100000)).toEqual(rs("100'000.00")),
+    expect(formatFiatAmountForDisplay(999999.99)).toEqual(rs("999'999.99")),
+    expect(formatFiatAmountForDisplay(999999.999)).toEqual(rs('1.00M')),
+    expect(formatFiatAmountForDisplay(1000000)).toEqual(rs('1.00M')),
+    expect(formatFiatAmountForDisplay(1990000)).toEqual(rs('1.99M')),
+    expect(formatFiatAmountForDisplay(1996000)).toEqual(rs('2.00M')),
+    expect(formatFiatAmountForDisplay(1100000)).toEqual(rs('1.10M')),
+    expect(formatFiatAmountForDisplay(1110000)).toEqual(rs('1.11M')),
+    expect(formatFiatAmountForDisplay(1119000)).toEqual(rs('1.12M')),
+    expect(formatFiatAmountForDisplay(1116000)).toEqual(rs('1.12M')),
+    expect(formatFiatAmountForDisplay(1115000)).toEqual(rs('1.11M')),
+    expect(formatFiatAmountForDisplay(10000000)).toEqual(rs('10.00M')),
+    expect(formatFiatAmountForDisplay(100000000)).toEqual(rs('100.00M')),
+    expect(formatFiatAmountForDisplay(999999000)).toEqual(rs('1.00B')),
+    expect(formatFiatAmountForDisplay(1000000000)).toEqual(rs('1.00B')),
+    expect(formatFiatAmountForDisplay(10000000000)).toEqual(rs('10.00B')),
+    expect(formatFiatAmountForDisplay(100000000000)).toEqual(rs('100.00B')),
+    expect(formatFiatAmountForDisplay(1000000000000)).toEqual(rs('1.00T')),
+    expect(formatFiatAmountForDisplay(10000000000000)).toEqual(rs('10.00T')),
+    expect(formatFiatAmountForDisplay(100000000000000)).toEqual(rs('100.00T')),
     expect(() => formatFiatAmountForDisplay(-1)).toThrow('Invalid fiat amount: -1. Fiat amount cannot be negative.'),
     expect(() => formatFiatAmountForDisplay(-1.01)).toThrow(
       'Invalid fiat amount: -1.01. Fiat amount cannot be negative.'

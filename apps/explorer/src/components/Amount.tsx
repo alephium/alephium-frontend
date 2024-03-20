@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   convertToPositive,
+  decimalsSeparator,
   formatAmountForDisplay,
   formatFiatAmountForDisplay,
   MAGNITUDE_SYMBOL
@@ -91,7 +92,7 @@ const Amount = ({
     amount = getAmount({ value, fullPrecision: true })
   }
 
-  const [integralPart, fractionalPart] = amount.split('.')
+  const [integralPart, fractionalPart] = amount.split(decimalsSeparator)
 
   return (
     <span className={className} tabIndex={tabIndex ?? -1}>
@@ -110,11 +111,16 @@ const Amount = ({
             {fadeDecimals ? (
               <>
                 <span>{integralPart}</span>
-                {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+                {fractionalPart && (
+                  <Decimals>
+                    {decimalsSeparator}
+                    {fractionalPart}
+                  </Decimals>
+                )}
                 {quantitySymbol && <span>{quantitySymbol}</span>}
               </>
             ) : fractionalPart ? (
-              `${integralPart}.${fractionalPart}`
+              `${integralPart}${decimalsSeparator}${fractionalPart}`
             ) : (
               integralPart
             )}
