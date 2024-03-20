@@ -137,7 +137,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
           ? customMinHeight
           : shouldMaximizeOnOpen.value
             ? maxHeight
-            : contentHeight.value + insets.bottom + VERTICAL_GAP
+            : contentHeight.value + VERTICAL_GAP
 
         shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
       })()

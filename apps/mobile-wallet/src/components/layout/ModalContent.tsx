@@ -44,30 +44,44 @@ export const ModalContent = ({
   onLayout,
   contentContainerStyle,
   ...props
-}: ModalContentProps) => (
-  <GHScrollView
-    {...scrollDefaultProps}
-    {...props}
-    contentContainerStyle={getDefaultContentContainerStyle({ verticalGap, contentContainerStyle })}
-  >
-    {children}
-  </GHScrollView>
-)
+}: ModalContentProps) => {
+  const insets = useSafeAreaInsets()
+
+  return (
+    <GHScrollView
+      {...scrollDefaultProps}
+      {...props}
+      contentContainerStyle={getDefaultContentContainerStyle({
+        verticalGap,
+        contentContainerStyle: [contentContainerStyle, { paddingBottom: insets.bottom }]
+      })}
+    >
+      {children}
+    </GHScrollView>
+  )
+}
 
 export const ModalFlatListContent = <T,>({
   children,
   verticalGap,
   contentContainerStyle,
   ...props
-}: ModalFlatListContentProps<T>) => (
-  <GHFlatList
-    contentContainerStyle={getDefaultContentContainerStyle({ verticalGap, contentContainerStyle })}
-    {...scrollDefaultProps}
-    {...props}
-  >
-    {children}
-  </GHFlatList>
-)
+}: ModalFlatListContentProps<T>) => {
+  const insets = useSafeAreaInsets()
+
+  return (
+    <GHFlatList
+      contentContainerStyle={getDefaultContentContainerStyle({
+        verticalGap,
+        contentContainerStyle: [contentContainerStyle, { paddingBottom: insets.bottom }]
+      })}
+      {...scrollDefaultProps}
+      {...props}
+    >
+      {children}
+    </GHFlatList>
+  )
+}
 
 export const Modal = ({ children, style, ...props }: ScreenProps) => {
   const insets = useSafeAreaInsets()
@@ -92,8 +106,7 @@ export const ScrollModal = ({ children, style, ...props }: ScrollSectionProps) =
 const getDefaultContentContainerStyle = ({ verticalGap, contentContainerStyle }: ModalContentProps) => [
   {
     gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
-    paddingTop: 10,
-    paddingBottom: 20
+    paddingTop: 10
   },
   contentContainerStyle
 ]
