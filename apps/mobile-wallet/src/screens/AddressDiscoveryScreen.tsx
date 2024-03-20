@@ -133,7 +133,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   return (
     <ScrollScreen verticalGap fill screenTitle="Active addresses" headerOptions={{ type: 'stack' }} {...props}>
       <ScreenSection>
-        <AppText bold>
+        <AppText>
           Scan the blockchain to find your active addresses on the &quot;{networkName}&quot; network. This process might
           take a while.
         </AppText>

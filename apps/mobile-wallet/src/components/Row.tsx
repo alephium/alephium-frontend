@@ -25,7 +25,7 @@ import AppText, { AppTextProps } from '~/components/AppText'
 import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
 export interface RowProps {
-  children: ReactNode
+  children?: ReactNode
   isInput?: boolean
   isSecondary?: boolean
   title?: string
