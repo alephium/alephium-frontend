@@ -1258,7 +1258,7 @@ async function cleanPendingRequest(storage: KeyValueStorage) {
 async function clearWCStorage() {
   try {
     const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
-    const keys = await storage.getKeys()
+    const keys = (await storage.getKeys()).filter((key) => key.startsWith('wc@'))
     for (const key of keys) {
       await storage.removeItem(key)
     }
