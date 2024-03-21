@@ -37,10 +37,15 @@ const PublicKeyScreen = ({ navigation, ...props }: ScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
   const handleAddressPress = async (publicKey: string) => {
-    await Clipboard.setStringAsync(publicKey)
+    try {
+      await Clipboard.setStringAsync(publicKey)
 
-    sendAnalytics('Copied public key')
-    showToast({ text1: 'Public key copied!', visibilityTime: ToastDuration.SHORT })
+      sendAnalytics('Copied public key')
+      showToast({ text1: 'Public key copied!', visibilityTime: ToastDuration.SHORT })
+    } catch (error) {
+      console.log(error)
+      showToast({ text1: 'Error while copying ', visibilityTime: ToastDuration.SHORT, type: 'error' })
+    }
   }
 
   return (
