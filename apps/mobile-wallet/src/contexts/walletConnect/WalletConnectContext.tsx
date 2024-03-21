@@ -1012,7 +1012,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const resetWalletConnectStorage = useCallback(async () => {
     if (walletConnectClient === undefined) {
       console.log('Clear walletconnect storage')
-      // await clearWCStorage()
+      await clearWCStorage()
       return
     }
 
@@ -1042,7 +1042,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       walletConnectClient.core.relayer.subscriber.subscriptions.clear()
 
       console.log('Clear walletconnect storage')
-      // await clearWCStorage()
+      await clearWCStorage()
     } catch (error) {
       sendErrorAnalytics(error, 'Error at resetting WalletConnect storage')
     }
@@ -1258,7 +1258,7 @@ async function cleanPendingRequest(storage: KeyValueStorage) {
 async function clearWCStorage() {
   try {
     const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
-    const keys = await storage.getKeys()
+    const keys = (await storage.getKeys()).filter((key) => key.startsWith('wc@'))
     for (const key of keys) {
       await storage.removeItem(key)
     }
