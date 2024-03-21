@@ -51,7 +51,7 @@ const PublicKeyScreen = ({ navigation, ...props }: ScreenProps) => {
   return (
     <ScrollScreen verticalGap fill screenTitle="Public keys" headerOptions={{ type: 'stack' }} {...props}>
       <ScreenSection>
-        <AppText>Click on an address to copy its public key to the clipboard.</AppText>
+        <AppText>Tap on an address to copy its public key to the clipboard.</AppText>
       </ScreenSection>
       <ScreenSection>
         <BoxSurface>
