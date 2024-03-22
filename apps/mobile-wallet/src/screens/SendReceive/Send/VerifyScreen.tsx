@@ -29,7 +29,6 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import { useHeaderContext } from '~/contexts/HeaderContext'
@@ -67,8 +66,15 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
   return (
-    <ScrollScreen verticalGap contentPaddingTop onScroll={screenScrollHandler} {...props}>
-      <ScreenIntro title="Verify" subtitle="Please, double check that everything is correct before sending." />
+    <ScrollScreen
+      verticalGap
+      contentPaddingTop
+      screenTitle="Verify"
+      screenIntro="Please, double check that everything is correct before sending."
+      onScroll={screenScrollHandler}
+      screenIntroPaddingBottom
+      {...props}
+    >
       <ScreenSection>
         <BoxSurface>
           <Row title="Sending" titleColor="secondary">

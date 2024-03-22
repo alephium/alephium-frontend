@@ -84,10 +84,12 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       contrastedBg
       contentPaddingTop
       keyboardShouldPersistTaps="always"
+      screenTitle="Assets"
+      screenIntro="With Alephium, you can send multiple assets in one transaction."
       onScroll={screenScrollHandler}
+      screenIntroPaddingBottom
       {...props}
     >
-      <ScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />
       <ScreenSection>
         <AssetsList>
           {knownFungibleTokens.map((asset, index) => (

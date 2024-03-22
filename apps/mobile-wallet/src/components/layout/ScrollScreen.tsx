@@ -25,7 +25,7 @@ import styled from 'styled-components/native'
 import BaseHeader from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import { ScreenProps } from '~/components/layout/Screen'
-import ScreenTitle from '~/components/layout/ScreenTitle'
+import ScreenIntro from '~/components/layout/ScreenIntro'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import useScrollToTopOnBlur from '~/hooks/layout/useScrollToTopOnBlur'
@@ -35,6 +35,7 @@ export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
   fill?: boolean
   screenTitle?: string
+  screenIntro?: string
   TitleSideComponent?: ReactNode
 }
 
@@ -43,6 +44,7 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
   contentPaddingTop?: number | boolean
+  screenIntroPaddingBottom?: boolean
   usesKeyboard?: boolean
 }
 
@@ -52,12 +54,14 @@ const ScrollScreen = ({
   containerStyle,
   contentContainerStyle,
   contentPaddingTop,
+  screenIntroPaddingBottom,
   verticalGap,
   contrastedBg,
   fill,
   headerOptions,
   usesKeyboard,
   screenTitle,
+  screenIntro,
   TitleSideComponent,
   ...props
 }: ScrollScreenProps) => {
@@ -99,11 +103,12 @@ const ScrollScreen = ({
         {...props}
       >
         {screenTitle && (
-          <ScreenTitle
+          <ScreenIntro
             title={screenTitle}
-            SideComponent={TitleSideComponent}
+            subtitle={screenIntro}
+            TitleSideComponent={TitleSideComponent}
             scrollY={screenScrollY}
-            sideDefaultMargin
+            paddingBottom={screenIntroPaddingBottom}
           />
         )}
         <View

@@ -23,15 +23,16 @@ import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import BoxSurface from '~/components/layout/BoxSurface'
+import FlatListScreen, { FlatListScreenProps } from '~/components/layout/FlatListScreen'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAllAddresses } from '~/store/addressesSlice'
+import { Address } from '~/types/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
-interface ScreenProps extends StackScreenProps<RootStackParamList, 'PublicKeysScreen'>, ScrollScreenProps {}
+interface ScreenProps extends StackScreenProps<RootStackParamList, 'PublicKeysScreen'>, FlatListScreenProps<Address> {}
 
 const PublicKeyScreen = ({ navigation, ...props }: ScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
@@ -49,7 +50,7 @@ const PublicKeyScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   return (
-    <ScrollScreen verticalGap fill screenTitle="Public keys" headerOptions={{ type: 'stack' }} {...props}>
+    <FlatListScreen fill screenTitle="Public keys" headerOptions={{ type: 'stack' }} {...props}>
       <ScreenSection>
         <AppText>Tap on an address to copy its public key to the clipboard.</AppText>
       </ScreenSection>
@@ -62,7 +63,7 @@ const PublicKeyScreen = ({ navigation, ...props }: ScreenProps) => {
           ))}
         </BoxSurface>
       </ScreenSection>
-    </ScrollScreen>
+    </FlatListScreen>
   )
 }
 

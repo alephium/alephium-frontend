@@ -28,7 +28,6 @@ import AppText from '~/components/AppText'
 import Button, { BackButton, ContinueButton } from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import { useHeaderContext } from '~/contexts/HeaderContext'
@@ -70,8 +69,15 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   )
 
   return (
-    <ScrollScreen verticalGap contentPaddingTop onScroll={screenScrollHandler} {...props}>
-      <ScreenIntro title="Scan" subtitle="Scan the QR code to send funds to this address." />
+    <ScrollScreen
+      verticalGap
+      contentPaddingTop
+      onScroll={screenScrollHandler}
+      screenTitle="Scan"
+      screenIntro="Scan the QR code to send funds to this address."
+      screenIntroPaddingBottom
+      {...props}
+    >
       <ScreenSection centered>
         <QRCodeContainer>
           <QRCode size={200} bgColor={theme.bg.highlight} fgColor={theme.font.primary} value={params.addressHash} />
