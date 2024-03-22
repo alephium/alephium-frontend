@@ -30,16 +30,22 @@ export type AppMetaData = {
   lastAnnouncementHashChecked: string
 } & AppMetadataGitHub
 
-export type TypeConstructors = DateConstructor | StringConstructor | NumberConstructor | BooleanConstructor
-
-export const APPMETADATA_KEYS: Record<string, TypeConstructors> = {
-  lastTimeGitHubApiWasCalledForLatestVersion: Date,
-  lastTimeGitHubApiWasCalledForAnnouncenent: Date,
-  lastAnnouncementHashChecked: String
+export const initialAppMetadataValues: AppMetaData = {
+  lastTimeGitHubApiWasCalledForLatestVersion: new Date(0),
+  lastTimeGitHubApiWasCalledForAnnouncenent: new Date(0),
+  lastAnnouncementHashChecked: ''
 }
 
-export const toAppMetaData = (key: string, value: string): unknown => {
-  if (key === '') return value
-  const TypeConstructor = APPMETADATA_KEYS[key]
-  return (TypeConstructor && new TypeConstructor(value)) || undefined
+type TypeConstructors = DateConstructor | undefined
+
+const APPMETADATA_KEYS: Record<keyof AppMetaData, TypeConstructors> = {
+  lastTimeGitHubApiWasCalledForLatestVersion: Date,
+  lastTimeGitHubApiWasCalledForAnnouncenent: Date,
+  lastAnnouncementHashChecked: undefined
+}
+
+export const appMetadataJsonParseReviver = (key: string, value: string): unknown => {
+  const TypeConstructor = APPMETADATA_KEYS[key as keyof AppMetaData]
+
+  return TypeConstructor ? new TypeConstructor(value) : value
 }
