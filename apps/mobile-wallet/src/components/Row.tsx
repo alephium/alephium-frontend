@@ -58,12 +58,10 @@ const Row = ({
 }: RowProps) => {
   const [isPressed, setIsPressed] = useState(false)
 
-  const handleTouchStart = () => {
-    setIsPressed(true)
-  }
+  const handleTouchStart = () => setIsPressed(true)
+  const handleTouchEnd = () => setIsPressed(false)
 
-  const handleTouchEnd = () => {
-    setIsPressed(false)
+  const handlePress = () => {
     onPress && onPress()
   }
 
@@ -89,6 +87,7 @@ const Row = ({
 
   return onPress ? (
     <AnimatedPressable
+      onPress={handlePress}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={[style, { opacity: isPressed ? 0.8 : 1 }]}
