@@ -30,7 +30,7 @@ import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {
-  gap?: boolean
+  shouldUseGaps?: boolean
 }
 
 const FlatListScreen = <T,>({
@@ -41,7 +41,7 @@ const FlatListScreen = <T,>({
   contrastedBg,
   screenTitle,
   screenIntro,
-  gap,
+  shouldUseGaps,
   ...props
 }: FlatListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
@@ -64,7 +64,7 @@ const FlatListScreen = <T,>({
               title={screenTitle}
               subtitle={screenIntro}
               scrollY={screenScrollY}
-              paddingBottom={!!screenIntro && !gap}
+              paddingBottom={!!screenIntro && !shouldUseGaps}
             />
           )
         }
@@ -72,7 +72,7 @@ const FlatListScreen = <T,>({
           {
             paddingBottom: insets.bottom,
             flex: fill ? 1 : undefined,
-            gap: gap ? VERTICAL_GAP : 0
+            gap: shouldUseGaps ? VERTICAL_GAP : 0
           },
           contentContainerStyle
         ]}

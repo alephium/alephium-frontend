@@ -22,7 +22,6 @@ import { useCallback, useEffect } from 'react'
 
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'

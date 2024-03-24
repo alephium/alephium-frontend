@@ -57,7 +57,7 @@ const AddressFlatListScreen = ({
           onPress={() => onAddressPress(address.hash)}
         />
       )}
-      gap
+      shouldUseGaps
       style={{
         paddingTop: typeof contentPaddingTop === 'boolean' ? 15 : contentPaddingTop
       }}

@@ -64,7 +64,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
   const theme = useTheme()
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
