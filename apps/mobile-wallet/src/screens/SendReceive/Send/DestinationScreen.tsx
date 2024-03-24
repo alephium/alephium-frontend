@@ -175,7 +175,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
         screenTitle="Destination"
         screenIntro="Send to an address, a contact, or one of your other addresses."
         onScroll={screenScrollHandler}
-        screenIntroPaddingBottom
         {...props}
       >
         <ScreenSection>

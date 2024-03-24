@@ -44,7 +44,6 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
   contentPaddingTop?: number | boolean
-  screenIntroPaddingBottom?: boolean
   usesKeyboard?: boolean
 }
 
@@ -54,7 +53,6 @@ const ScrollScreen = ({
   containerStyle,
   contentContainerStyle,
   contentPaddingTop,
-  screenIntroPaddingBottom,
   verticalGap,
   contrastedBg,
   fill,
@@ -108,7 +106,7 @@ const ScrollScreen = ({
             subtitle={screenIntro}
             TitleSideComponent={TitleSideComponent}
             scrollY={screenScrollY}
-            paddingBottom={screenIntroPaddingBottom}
+            paddingBottom={!!screenIntro}
           />
         )}
         <View

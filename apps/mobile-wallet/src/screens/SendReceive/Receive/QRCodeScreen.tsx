@@ -75,7 +75,6 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       onScroll={screenScrollHandler}
       screenTitle="Scan"
       screenIntro="Scan the QR code to send funds to this address."
-      screenIntroPaddingBottom
       {...props}
     >
       <ScreenSection centered>

@@ -115,7 +115,6 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         onScroll={screenScrollHandler}
         screenTitle="Verify secret phrase"
         screenIntro="Select the words of your secret recovery phrase in the right order."
-        screenIntroPaddingBottom
         {...props}
       >
         <ScreenSection fill>

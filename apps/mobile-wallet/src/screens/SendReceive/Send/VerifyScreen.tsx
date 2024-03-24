@@ -72,7 +72,6 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       screenTitle="Verify"
       screenIntro="Please, double check that everything is correct before sending."
       onScroll={screenScrollHandler}
-      screenIntroPaddingBottom
       {...props}
     >
       <ScreenSection>

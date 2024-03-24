@@ -86,7 +86,6 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       screenTitle="Assets"
       screenIntro="With Alephium, you can send multiple assets in one transaction."
       onScroll={screenScrollHandler}
-      screenIntroPaddingBottom
       {...props}
     >
       <ScreenSection>

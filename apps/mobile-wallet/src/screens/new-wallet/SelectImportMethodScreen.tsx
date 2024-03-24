@@ -64,7 +64,6 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
       headerOptions={{ headerTitle: 'Import', type: 'stack' }}
       screenTitle="Import method"
       screenIntro="Choose how you want to import your wallet."
-      screenIntroPaddingBottom
       {...props}
     >
       <ScreenSection fill>

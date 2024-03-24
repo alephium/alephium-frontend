@@ -16,11 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import { Pressable, StyleProp, ViewProps, ViewStyle } from 'react-native'
-import Animated, { AnimatedProps } from 'react-native-reanimated'
+import Animated, { AnimatedProps, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
 
+import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText, { AppTextProps } from '~/components/AppText'
 import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
@@ -56,10 +57,14 @@ const Row = ({
   layout,
   isVertical
 }: RowProps) => {
-  const [isPressed, setIsPressed] = useState(false)
+  const rowOpacity = useSharedValue(1)
 
-  const handleTouchStart = () => setIsPressed(true)
-  const handleTouchEnd = () => setIsPressed(false)
+  const handleTouchStart = () => {
+    rowOpacity.value = withSpring(0.8, fastestSpringConfiguration)
+  }
+  const handleTouchEnd = () => {
+    rowOpacity.value = withSpring(1, fastestSpringConfiguration)
+  }
 
   const componentContent = title ? (
     <>
@@ -86,7 +91,7 @@ const Row = ({
       onPress={onPress}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      style={[style, { opacity: isPressed ? 0.8 : 1 }]}
+      style={[style, { opacity: rowOpacity }]}
     >
       {componentContent}
     </AnimatedPressable>
