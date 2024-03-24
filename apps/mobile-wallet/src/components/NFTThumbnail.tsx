@@ -40,8 +40,6 @@ const screenPadding = 20
 const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  nft.image && Image.prefetch(nft.image)
-
   const attributeWidth = (Dimensions.get('window').width - (attributeGap + screenPadding * 2 + DEFAULT_MARGIN * 2)) / 2
 
   return (
