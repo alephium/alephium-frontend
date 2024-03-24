@@ -24,13 +24,13 @@ import { useAppSelector } from '~/hooks/redux'
 
 const InitialDataLoader = () => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
+  // const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const isLoadingBalances = useAppSelector((s) => s.loaders.loadingBalances)
-  const isLoadingTokens = useAppSelector((s) => s.loaders.loadingTokens)
+  // const isLoadingTokens = useAppSelector((s) => s.loaders.loadingTokens)
 
-  const txsLoadingCompleted = useRef<boolean>()
+  // const txsLoadingCompleted = useRef<boolean>()
   const balancesLoadingCompleted = useRef<boolean>()
-  const tokensLoadingCompleted = useRef<boolean>()
+  // const tokensLoadingCompleted = useRef<boolean>()
 
   const [progress, setProgress] = useState(0)
 
@@ -38,40 +38,40 @@ const InitialDataLoader = () => {
     if (addressesStatus === 'initialized') setProgress(1)
   }, [addressesStatus])
 
-  const updateProgress = () => setProgress((previousValue) => previousValue + (1 - previousValue) / 3)
+  // const updateProgress = () => setProgress((previousValue) => previousValue + (1 - previousValue) / 3)
 
   // Fake initial progress to show some movement for better UX ;)
   const stopFakeProgress = progress >= 0.9
   const decelaratedProgressUpdate = () => setProgress((p) => p + 0.025 * (1 - p))
   useInterval(decelaratedProgressUpdate, 300, stopFakeProgress)
 
-  useEffect(() => {
-    if (isLoadingLatestTxs) {
-      txsLoadingCompleted.current = false
-    } else if (txsLoadingCompleted.current === false) {
-      // This is always the last to complete
-      setProgress(1)
-      txsLoadingCompleted.current = true
-    }
-  }, [isLoadingLatestTxs])
+  // useEffect(() => {
+  //   if (isLoadingLatestTxs) {
+  //     txsLoadingCompleted.current = false
+  //   } else if (txsLoadingCompleted.current === false) {
+  //     // This is always the last to complete
+  //     setProgress(1)
+  //     txsLoadingCompleted.current = true
+  //   }
+  // }, [isLoadingLatestTxs])
 
   useEffect(() => {
     if (isLoadingBalances) {
       balancesLoadingCompleted.current = false
     } else if (balancesLoadingCompleted.current === false) {
-      updateProgress()
+      setProgress(1)
       balancesLoadingCompleted.current = true
     }
   }, [isLoadingBalances])
 
-  useEffect(() => {
-    if (isLoadingTokens) {
-      tokensLoadingCompleted.current = false
-    } else if (tokensLoadingCompleted.current === false) {
-      updateProgress()
-      tokensLoadingCompleted.current = true
-    }
-  }, [isLoadingTokens])
+  // useEffect(() => {
+  //   if (isLoadingTokens) {
+  //     tokensLoadingCompleted.current = false
+  //   } else if (tokensLoadingCompleted.current === false) {
+  //     updateProgress()
+  //     tokensLoadingCompleted.current = true
+  //   }
+  // }, [isLoadingTokens])
 
   return <SpinnerModal isActive={true} blur={false} bg="full" progress={progress} animated={false} />
 }

@@ -39,7 +39,8 @@ interface BalanceSummaryProps extends ViewProps {
 const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
-  const isLoadingTokenBalances = useAppSelector((s) => s.loaders.loadingTokens)
+  const isLoadingAlphBalances = useAppSelector((s) => s.loaders.loadingBalances)
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   // const addressesStatus = useAppSelector((s) => s.addresses.status)
   // const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
@@ -98,7 +99,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           />
         </ChartContainer> */}
 
-      {totalBalance === BigInt(0) && !isLoadingTokenBalances && (
+      {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
         <ReceiveFundsButtonContainer>
           <Button
             title="Receive assets"
