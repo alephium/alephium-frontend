@@ -75,10 +75,12 @@ const addressesAdapter = createEntityAdapter<Address>({
 
 interface AddressesState extends EntityState<Address> {
   status: 'uninitialized' | 'initialized'
+  balancesStatus: 'uninitialized' | 'initialized'
 }
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
-  status: 'uninitialized'
+  status: 'uninitialized',
+  balancesStatus: 'uninitialized'
 })
 
 export const syncLatestTransactions = createAsyncThunk(
@@ -323,6 +325,7 @@ const addressesSlice = createSlice({
         }))
 
         addressesAdapter.updateMany(state, updatedAddresses)
+        state.balancesStatus = 'initialized'
       })
       .addCase(syncLatestTransactions.fulfilled, (state, { payload }) => {
         const changes = payload.map(({ hash, newTransactions }) => {

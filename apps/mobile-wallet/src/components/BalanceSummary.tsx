@@ -18,9 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { Skeleton } from 'moti/skeleton'
 import { useMemo } from 'react'
-import { ViewProps } from 'react-native'
-import styled from 'styled-components/native'
+import { View, ViewProps } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
@@ -41,11 +42,13 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const totalBalance = useAppSelector(selectTotalBalance)
   const isLoadingAlphBalances = useAppSelector((s) => s.loaders.loadingBalances)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
+  const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   // const addressesStatus = useAppSelector((s) => s.addresses.status)
   // const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
+  const theme = useTheme()
   // const alphPrice = useAppSelector(selectAlphPrice)
 
   // const theme = useTheme()
@@ -88,7 +91,13 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           </AppText>
         </DateLabelContainer>
 
-        <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={38} />
+        {addressesBalancesStatus === 'uninitialized' ? (
+          <View style={{ marginTop: 13 }}>
+            <Skeleton show colorMode={theme.name} width={200} height={38} />
+          </View>
+        ) : (
+          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={38} />
+        )}
       </TextContainer>
 
       {/* <ChartContainer>
