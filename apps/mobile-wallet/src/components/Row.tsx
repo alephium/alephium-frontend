@@ -61,10 +61,6 @@ const Row = ({
   const handleTouchStart = () => setIsPressed(true)
   const handleTouchEnd = () => setIsPressed(false)
 
-  const handlePress = () => {
-    onPress && onPress()
-  }
-
   const componentContent = title ? (
     <>
       <LeftContent isVertical={isVertical}>
@@ -87,7 +83,7 @@ const Row = ({
 
   return onPress ? (
     <AnimatedPressable
-      onPress={handlePress}
+      onPress={onPress}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={[style, { opacity: isPressed ? 0.8 : 1 }]}

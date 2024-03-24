@@ -51,9 +51,8 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
   return (
     <AddressFlatListScreen
       onAddressPress={(addressHash) => handleAddressPress(addressHash)}
-      ListHeaderComponent={
-        <ScreenIntro title="To address" subtitle="Select the address which you want to receive funds to." />
-      }
+      screenTitle="To address"
+      screenIntro="Select the address which you want to receive funds to."
       contrastedBg
       contentPaddingTop
       onScroll={screenScrollHandler}

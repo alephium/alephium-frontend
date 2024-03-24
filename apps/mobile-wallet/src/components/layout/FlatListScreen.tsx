@@ -23,13 +23,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
-import ScreenTitle from '~/components/layout/ScreenTitle'
+import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
 
-export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {}
+export interface FlatListScreenProps<T> extends FlatListProps<T>, ScrollScreenBaseProps {
+  gap?: boolean
+}
 
 const FlatListScreen = <T,>({
   headerOptions,
@@ -38,6 +40,8 @@ const FlatListScreen = <T,>({
   style,
   contrastedBg,
   screenTitle,
+  screenIntro,
+  gap,
   ...props
 }: FlatListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
@@ -55,13 +59,20 @@ const FlatListScreen = <T,>({
         onScrollEndDrag={scrollEndHandler}
         scrollEventThrottle={16}
         ListHeaderComponent={() =>
-          screenTitle && <ScreenTitle title={screenTitle} scrollY={screenScrollY} sideDefaultMargin />
+          screenTitle && (
+            <ScreenIntro
+              title={screenTitle}
+              subtitle={screenIntro}
+              scrollY={screenScrollY}
+              paddingBottom={!!screenIntro && !gap}
+            />
+          )
         }
         contentContainerStyle={[
           {
             paddingBottom: insets.bottom,
             flex: fill ? 1 : undefined,
-            gap: VERTICAL_GAP
+            gap: gap ? VERTICAL_GAP : 0
           },
           contentContainerStyle
         ]}

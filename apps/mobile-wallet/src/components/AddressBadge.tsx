@@ -34,6 +34,7 @@ interface AddressBadgeProps extends PressableProps {
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
   color?: string
+  canCopy?: boolean
   showCopyBtn?: boolean
   style?: StyleProp<ViewStyle>
 }
@@ -43,6 +44,7 @@ const AddressBadge = ({
   hideSymbol = false,
   textStyle,
   color,
+  canCopy = true,
   showCopyBtn,
   ...props
 }: AddressBadgeProps) => {
@@ -53,7 +55,11 @@ const AddressBadge = ({
   const textColor = color || theme.font.primary
 
   return (
-    <Pressable onLongPress={() => !showCopyBtn && copyAddressToClipboard(addressHash)} {...props}>
+    <Pressable
+      onLongPress={() => canCopy && !showCopyBtn && copyAddressToClipboard(addressHash)}
+      disabled={!canCopy}
+      {...props}
+    >
       {address ? (
         <>
           {!hideSymbol && (

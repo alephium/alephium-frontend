@@ -16,33 +16,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
+import { useCallback } from 'react'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
-import AppText from '~/components/AppText'
-import BoxSurface from '~/components/layout/BoxSurface'
+import { BackButton } from '~/components/buttons/Button'
 import FlatListScreen, { FlatListScreenProps } from '~/components/layout/FlatListScreen'
-import { ScreenSection } from '~/components/layout/Screen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
+import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
-interface ScreenProps extends StackScreenProps<RootStackParamList, 'PublicKeysScreen'>, FlatListScreenProps<Address> {}
+interface PublicKeysScreenProps extends StackScreenProps<RootStackParamList, 'PublicKeysScreen'>, ScrollScreenProps {}
 
-const PublicKeyScreen = ({ navigation, ...props }: ScreenProps) => {
+const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
   const handleAddressPress = async (publicKey: string) => {
     try {
       await Clipboard.setStringAsync(publicKey)
 
-      sendAnalytics('Copied public key')
       showToast({ text1: 'Public key copied!', visibilityTime: ToastDuration.SHORT })
+      sendAnalytics('Copied public key')
     } catch (error) {
       console.log(error)
       showToast({ text1: 'Error while copying ', visibilityTime: ToastDuration.SHORT, type: 'error' })
@@ -50,21 +52,23 @@ const PublicKeyScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   return (
-    <FlatListScreen fill screenTitle="Public keys" headerOptions={{ type: 'stack' }} {...props}>
-      <ScreenSection>
-        <AppText>Tap on an address to copy its public key to the clipboard.</AppText>
-      </ScreenSection>
-      <ScreenSection>
-        <BoxSurface>
-          {addresses.map((address) => (
-            <Row key={address.hash} onPress={() => handleAddressPress(address.publicKey)}>
-              <AddressBadge addressHash={address.hash} />
-            </Row>
-          ))}
-        </BoxSurface>
-      </ScreenSection>
-    </FlatListScreen>
+    <FlatListScreen
+      headerOptions={{
+        headerTitle: 'Public keys',
+        type: 'stack',
+        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
+      }}
+      screenTitle="Public keys"
+      screenIntro="Tap on an address to copy its public key to the clipboard."
+      data={addresses}
+      keyExtractor={(item) => item.hash}
+      renderItem={({ item: address }) => (
+        <Row key={address.hash} onPress={() => handleAddressPress(address.publicKey)}>
+          <AddressBadge addressHash={address.hash} canCopy={false} />
+        </Row>
+      )}
+    />
   )
 }
 
-export default PublicKeyScreen
+export default PublicKeysScreen
