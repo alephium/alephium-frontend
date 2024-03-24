@@ -19,7 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, NFT } from '@alephium/shared'
 import { useMemo } from 'react'
 import { Dimensions } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
+import AppText from '~/components/AppText'
 import { ModalContentProps, ModalFlatListContent } from '~/components/layout/ModalContent'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import { useAppSelector } from '~/hooks/redux'
@@ -38,6 +40,7 @@ const screenPadding = 20
 const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...props }: NFTsGridProps) => {
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
+  const theme = useTheme()
 
   const data = nftsProp ?? nfts
   const columns = data.length < nftsPerRow ? data.length : nftsPerRow
@@ -53,9 +56,25 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...pro
       renderItem={({ item: nft }) => <NFTThumbnail key={nft.id} nft={nft} size={size} />}
       numColumns={columns}
       columnWrapperStyle={columns > 1 ? { justifyContent: 'space-between', gap: 15 } : undefined}
+      ListEmptyComponent={
+        <NoNFTsMessage>
+          <AppText color={theme.font.tertiary}>No NFTs yet 🖼️</AppText>
+        </NoNFTsMessage>
+      }
       {...props}
     />
   )
 }
 
 export default NFTsGrid
+
+const NoNFTsMessage = styled.View`
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 20px;
+  border-radius: 9px;
+  border: 2px dashed ${({ theme }) => theme.border.primary};
+  margin: 15px;
+`

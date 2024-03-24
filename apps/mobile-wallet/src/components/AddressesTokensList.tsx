@@ -66,8 +66,9 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
   const theme = useTheme()
 
-  const showTokenListLoading = isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes
-  const showNFTListLoading = showTokenListLoading || isLoadingNfts
+  const showTokensSkeleton = isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes
+  const showNFTListLoading = showTokensSkeleton || isLoadingNfts
+  const showTokensSpinner = showTokensSkeleton || showNFTListLoading
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
   const [isNftsModalOpen, setIsNftsModalOpen] = useState(false)
@@ -80,7 +81,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
           <>
             <AppText semiBold>Tokens</AppText>
             <Badge rounded>
-              {showTokenListLoading ? <AssetNumberLoader /> : knownFungibleTokens.length + unknownTokens.length}
+              {showTokensSpinner ? <AssetNumberLoader /> : knownFungibleTokens.length + unknownTokens.length}
             </Badge>
           </>
         )
@@ -95,7 +96,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
         )
       }
     ],
-    [knownFungibleTokens.length, nfts.length, showNFTListLoading, showTokenListLoading, unknownTokens.length]
+    [knownFungibleTokens.length, nfts.length, showNFTListLoading, showTokensSpinner, unknownTokens.length]
   )
 
   const [activeTab, setActiveTab] = useState(tabItems[0])
@@ -111,14 +112,14 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
             }
           ]
         : []),
-      ...(showTokenListLoading ? [{ isLoadingTokens: true }] : [])
+      ...(showTokensSkeleton ? [{ isLoadingTokens: true }] : [])
     ]
 
     setTokenRows(entries)
-  }, [addressHash, showTokenListLoading, knownFungibleTokens, unknownTokens.length])
+  }, [addressHash, showTokensSkeleton, knownFungibleTokens, unknownTokens.length])
 
   const handleTabChange = (tab: TabItem) => {
-    if (tab.value === 'nfts' && nfts.length > 0) {
+    if (tab.value === 'nfts' && !showNFTListLoading) {
       setIsNftsModalOpen(true)
     } else {
       setActiveTab(tab)
@@ -150,11 +151,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
               )}
             </>
           ),
-          nfts: (
-            <NoNFTsMessage>
-              <AppText color={theme.font.tertiary}>No NFTs yet 🖼️</AppText>
-            </NoNFTsMessage>
-          )
+          nfts: null
         }[activeTab.value]
       }
       {isRefreshing && (
@@ -230,17 +227,6 @@ const AssetNumberLoaderContainer = styled.View`
   justify-content: center;
   height: 16px;
   width: 16px;
-`
-
-const NoNFTsMessage = styled.View`
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  padding: 20px;
-  border-radius: 9px;
-  border: 2px dashed ${({ theme }) => theme.border.primary};
-  margin: 15px;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined
