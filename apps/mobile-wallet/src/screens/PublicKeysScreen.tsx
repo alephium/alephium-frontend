@@ -56,8 +56,9 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
       }}
       screenTitle="Public keys"
       screenIntro="Tap on an address to copy its public key to the clipboard."
-      data={addresses}
       keyExtractor={(item) => item.hash}
+      {...props}
+      data={addresses}
       renderItem={({ item: address }) => (
         <Row key={address.hash} onPress={() => handleAddressPress(address.publicKey)}>
           <AddressBadge addressHash={address.hash} canCopy={false} />

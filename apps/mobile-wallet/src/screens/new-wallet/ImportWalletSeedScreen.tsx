@@ -143,7 +143,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
         }}
         keyboardShouldPersistTaps="always"
         screenTitle="Secret phrase"
-        screenIntro={`Enter the secret phrase for the ${name} wallet.`}
+        screenIntro={`Enter the secret phrase for the "${name}" wallet.`}
         {...props}
       >
         <SecretPhraseContainer>
