@@ -18,8 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { groupBy } from 'lodash'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
+import { Portal } from 'react-native-portalize'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -28,6 +29,8 @@ import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Checkmark from '~/components/Checkmark'
+import BottomModal from '~/components/layout/BottomModal'
+import NFTsGrid from '~/components/NFTsGrid'
 import { useAppSelector } from '~/hooks/redux'
 import {
   makeSelectAddressesKnownFungibleTokens,
@@ -51,6 +54,8 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const theme = useTheme()
+
+  const [isNftsModalOpen, setIsNftsModalOpen] = useState(false)
 
   const boxAnimatedStyle = useAnimatedStyle(() => ({
     borderColor: withSpring(isSelected ? theme.global.accent : theme.border.primary, fastestSpringConfiguration),
@@ -89,15 +94,25 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
           ))}
         </AssetsRow>
         {nfts.length > 0 && (
-          <AssetsRow style={{ marginTop: VERTICAL_GAP }}>
-            <NbOfNftsBadge>
-              <AppText>
-                +<AppText bold>{nfts.length}</AppText> NFTs in <AppText bold>{nbOfNftCollections}</AppText> collections
-              </AppText>
-            </NbOfNftsBadge>
-          </AssetsRow>
+          <Pressable onPress={() => setIsNftsModalOpen(true)}>
+            <AssetsRow style={{ marginTop: VERTICAL_GAP }}>
+              <NbOfNftsBadge>
+                <AppText>
+                  +<AppText bold>{nfts.length}</AppText> NFTs in <AppText bold>{nbOfNftCollections}</AppText>{' '}
+                  collections
+                </AppText>
+              </NbOfNftsBadge>
+            </AssetsRow>
+          </Pressable>
         )}
       </AddressBoxBottom>
+      <Portal>
+        <BottomModal
+          Content={(props) => <NFTsGrid addressHash={addressHash} {...props} />}
+          isOpen={isNftsModalOpen}
+          onClose={() => setIsNftsModalOpen(false)}
+        />
+      </Portal>
     </AddressBoxStyled>
   )
 }

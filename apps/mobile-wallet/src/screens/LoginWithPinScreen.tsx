@@ -45,7 +45,7 @@ interface LoginWithPinScreenProps extends StackScreenProps<RootStackParamList, '
 const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) => {
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
+  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)

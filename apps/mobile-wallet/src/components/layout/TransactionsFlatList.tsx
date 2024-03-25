@@ -63,7 +63,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   const theme = useTheme()
   const dispatch = useAppDispatch()
 
-  const isLoading = useAppSelector((s) => s.addresses.loadingTransactionsNextPage)
+  const isLoading = useAppSelector((s) => s.loaders.loadingTransactionsNextPage)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
 
   const [txModalOpen, setTxModalOpen] = useState(false)

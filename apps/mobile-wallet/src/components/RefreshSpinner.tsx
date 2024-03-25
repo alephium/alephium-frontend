@@ -25,7 +25,7 @@ import { syncLatestTransactions } from '~/store/addressesSlice'
 
 const RefreshSpinner = (props: Partial<RefreshControlProps>) => {
   const theme = useTheme()
-  const isLoadingLatestTxs = useAppSelector((s) => s.addresses.loadingLatestTransactions)
+  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const dispatch = useAppDispatch()
 
   const [isSpinnerVisible, setIsSpinnerVisible] = useState(false)
