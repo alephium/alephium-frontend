@@ -52,6 +52,7 @@ type RootStackParamList = {
   DecryptScannedMnemonicScreen: undefined
   EditWalletNameScreen: undefined
   CustomNetworkScreen: undefined
+  PublicKeysScreen: undefined
 }
 
 export default RootStackParamList

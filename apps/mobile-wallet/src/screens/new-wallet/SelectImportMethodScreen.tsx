@@ -58,9 +58,16 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
   }
 
   return (
-    <ScrollScreen fill verticalGap headerOptions={{ headerTitle: 'Import', type: 'stack' }} {...props}>
+    <ScrollScreen
+      fill
+      verticalGap
+      headerOptions={{ headerTitle: 'Import', type: 'stack' }}
+      screenTitle="Import method"
+      screenIntro="Choose how you want to import your wallet."
+      {...props}
+    >
       <ScreenSection fill>
-        <BoxSurfaceStyled border="primary" type="highlight">
+        <BoxSurfaceStyled type="highlight">
           <IconBox style={{ backgroundColor: 'rgba(61, 149, 190, 0.1)' }}>
             <Ionicons size={35} name="desktop" color="rgb(86, 201, 254)" />
           </IconBox>

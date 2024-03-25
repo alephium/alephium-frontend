@@ -29,7 +29,6 @@ import AppText from '~/components/AppText'
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import SecretPhraseWordList, { SelectedWord, WordBox } from '~/components/SecretPhraseWordList'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -143,9 +142,10 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           headerRight: () => <ContinueButton onPress={handleWalletImport} disabled={!isImportButtonEnabled} />
         }}
         keyboardShouldPersistTaps="always"
+        screenTitle="Secret phrase"
+        screenIntro={`Enter the secret phrase for the "${name}" wallet.`}
         {...props}
       >
-        <ScreenIntro title="Secret phrase" subtitle={`Enter the secret phrase for the "${name}" wallet.`} />
         <SecretPhraseContainer>
           {selectedWords.length > 0 && (
             <SecretPhraseBox
