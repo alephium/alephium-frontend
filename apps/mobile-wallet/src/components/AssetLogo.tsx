@@ -46,7 +46,7 @@ const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
   return (
     <AssetLogoStyled {...{ assetId, style, size }} logoURI={imageUrl} isNft={isNft}>
       {imageUrl ? (
-        <LogoImageContainer isNft={isNft}>
+        <LogoImageContainer>
           <LogoImage
             source={{ uri: imageUrl }}
             transition={500}
@@ -54,15 +54,6 @@ const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
             contentPosition="center"
           />
         </LogoImageContainer>
-      ) : assetId === ALPH.id ? (
-        <>
-          <AlephiumLogoBackgroundCanvas style={{ height: size, width: size }}>
-            <Circle cx={size / 2} cy={size / 2} r={size / 2}>
-              <SweepGradient c={vec(size / 2, size / 2)} colors={['#FF4385', '#61A1F6', '#FF7D26', '#FF4385']} />
-            </Circle>
-          </AlephiumLogoBackgroundCanvas>
-          <AlephiumLogo color="white" />
-        </>
       ) : token?.name ? (
         <Initials size={size * 0.45}>{token.name.slice(0, 2)}</Initials>
       ) : (
@@ -81,26 +72,17 @@ const AssetLogoStyled = styled.View<AssetLogoProps & { logoURI: TokenInfo['logoU
   background: ${({ theme }) => theme.bg.tertiary};
   overflow: hidden;
 
-  ${({ assetId, logoURI, size }) =>
-    assetId === ALPH.id
-      ? css`
-          padding: ${size * 0.2}px;
-        `
-      : !logoURI &&
-        css`
-          align-items: center;
-          justify-content: center;
-        `}
+  ${({ logoURI }) =>
+    !logoURI &&
+    css`
+      align-items: center;
+      justify-content: center;
+    `}
 `
 
-const LogoImageContainer = styled.View<{ isNft: boolean }>`
+const LogoImageContainer = styled.View`
   height: 100%;
   width: 100%;
-  ${({ isNft }) =>
-    !isNft &&
-    css`
-      padding: 10%;
-    `}
 `
 
 const LogoImage = styled(Image)`
