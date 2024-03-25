@@ -76,11 +76,11 @@
   "of all shards": "dari semua pecahan",
   "to": "ke",
   "with": "dengan",
-  "Missing image": "Missing image",
-  "Incorrect metadata": "Incorrect metadata",
-  "Image URL": "Image URL",
-  "Attributes": "Attributes",
-  "Collection desc.": "Collection desc.",
-  "Collection name": "Collection name",
-  "Worth of mainnet equivalent": "Worth of mainnet equivalent"
+  "Missing image": "Gambar hilang",
+  "Incorrect metadata": "Metadata salah",
+  "Image URL": "URL gambar",
+  "Attributes": "Atribut",
+  "Collection desc.": "Deskripsi koleksi.",
+  "Collection name": "Nama koleksi",
+  "Worth of mainnet equivalent": "Nilai setara dengan mainnet"
 }
