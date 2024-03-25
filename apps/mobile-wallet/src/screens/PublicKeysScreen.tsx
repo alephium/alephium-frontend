@@ -23,14 +23,13 @@ import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import { BackButton } from '~/components/buttons/Button'
 import FlatListScreen from '~/components/layout/FlatListScreen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { showToast, ToastDuration } from '~/utils/layout'
 
-interface PublicKeysScreenProps extends StackScreenProps<RootStackParamList, 'PublicKeysScreen'>, ScrollScreenProps {}
+interface PublicKeysScreenProps extends StackScreenProps<RootStackParamList, 'PublicKeysScreen'> {}
 
 const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
@@ -57,13 +56,13 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
       screenTitle="Public keys"
       screenIntro="Tap on an address to copy its public key to the clipboard."
       keyExtractor={(item) => item.hash}
-      {...props}
       data={addresses}
       renderItem={({ item: address }) => (
         <Row key={address.hash} onPress={() => handleAddressPress(address.publicKey)}>
           <AddressBadge addressHash={address.hash} canCopy={false} />
         </Row>
       )}
+      {...props}
     />
   )
 }
