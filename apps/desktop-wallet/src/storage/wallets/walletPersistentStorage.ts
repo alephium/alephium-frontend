@@ -16,12 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Wallet, walletOpen } from '@alephium/shared-crypto'
 import { orderBy } from 'lodash'
 import { nanoid } from 'nanoid'
 import posthog from 'posthog-js'
 
-import { StoredWallet, UnencryptedWallet } from '@/types/wallet'
+import { StoredWallet } from '@/types/wallet'
 
 class WalletStorage {
   private static localStorageKey = 'wallet'
@@ -59,30 +58,21 @@ class WalletStorage {
     return orderBy(wallets, (w) => w.name.toLowerCase())
   }
 
-  load(id: StoredWallet['id'], password: string): UnencryptedWallet {
-    if (!password) throw new Error(`Unable to load wallet ${id}, password not set.`)
-
+  load(id: StoredWallet['id']): StoredWallet {
     const data = localStorage.getItem(this.getKey(id))
 
     if (!data) throw new Error(`Unable to load wallet ${id}, wallet doesn't exist.`)
 
-    const wallet = JSON.parse(data) as StoredWallet
-
-    return {
-      name: wallet.name,
-      ...walletOpen(password, wallet.encrypted)
-    }
+    return JSON.parse(data) as StoredWallet
   }
 
-  store(name: StoredWallet['name'], password: string, wallet: Wallet): StoredWallet {
-    if (!password) throw new Error(`Unable to store wallet ${name}, password not set.`)
-
+  store(name: StoredWallet['name'], encrypted: string): StoredWallet {
     const id = nanoid()
 
     const dataToStore: StoredWallet = {
       id,
       name,
-      encrypted: wallet.encrypt(password),
+      encrypted,
       lastUsed: Date.now()
     }
 
@@ -95,7 +85,7 @@ class WalletStorage {
     localStorage.removeItem(this.getKey(id))
   }
 
-  update(id: StoredWallet['id'], data: Omit<Partial<StoredWallet>, 'encrypted' | 'id'>) {
+  update(id: StoredWallet['id'], data: Omit<Partial<StoredWallet>, 'id'>) {
     const key = this.getKey(id)
     const walletRaw = localStorage.getItem(key)
 

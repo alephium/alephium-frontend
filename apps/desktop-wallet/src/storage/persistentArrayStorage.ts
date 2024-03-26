@@ -16,28 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { decrypt, encrypt } from '@alephium/shared-crypto'
-
 import { StoredWallet } from '@/types/wallet'
 
-export interface EncryptedStorageProps {
-  mnemonic: string
-  walletId: string
-  passphrase?: string
-}
-
-type LocalStorageEncryptedValue = {
-  version: string
-  encrypted: string
-}
-
-export class StatelessPersistentEncryptedStorage {
+export class PersistentArrayStorage<T> {
   private localStorageKeyPrefix: string
-  private version: string
 
-  constructor(localStorageKeyPrefix: string, version: string) {
+  constructor(localStorageKeyPrefix: string) {
     this.localStorageKeyPrefix = localStorageKeyPrefix
-    this.version = version
   }
 
   getKey(id: StoredWallet['id']) {
@@ -46,30 +31,17 @@ export class StatelessPersistentEncryptedStorage {
     return `${this.localStorageKeyPrefix}-${id}`
   }
 
-  protected _load({ walletId, mnemonic, passphrase }: EncryptedStorageProps) {
-    if (passphrase) return []
-
+  load(walletId: StoredWallet['id']) {
     const json = localStorage.getItem(this.getKey(walletId))
 
-    if (json === null) return []
-
-    const { encrypted } = JSON.parse(json) as LocalStorageEncryptedValue
-
-    return JSON.parse(decrypt(mnemonic, encrypted))
+    return json === null ? [] : (JSON.parse(json) as T[])
   }
 
-  protected _storeStateless(data: string, { mnemonic, walletId, passphrase }: EncryptedStorageProps) {
-    if (passphrase) return
-
-    const encryptedValue: LocalStorageEncryptedValue = {
-      version: this.version,
-      encrypted: encrypt(mnemonic, data)
-    }
-
-    localStorage.setItem(this.getKey(walletId), JSON.stringify(encryptedValue))
+  store(walletId: StoredWallet['id'], data: T[]) {
+    localStorage.setItem(this.getKey(walletId), JSON.stringify(data))
   }
 
-  delete(walletId: EncryptedStorageProps['walletId']) {
+  delete(walletId: StoredWallet['id']) {
     localStorage.removeItem(this.getKey(walletId))
   }
 }

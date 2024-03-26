@@ -17,26 +17,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { exponentialBackoffFetchRetry } from '@alephium/shared'
-import { discoverActiveAddresses, Wallet, walletImport } from '@alephium/shared-crypto'
+import { keyring } from '@alephium/shared-crypto'
 import { ExplorerProvider } from '@alephium/web3'
 
 interface WorkerPayload {
   data: {
-    mnemonic: Wallet['mnemonic']
     clientUrl: string
     skipIndexes?: number[]
-    passphrase?: string
   }
 }
 
-self.onmessage = ({ data: { mnemonic, passphrase, clientUrl, skipIndexes } }: WorkerPayload) => {
-  const { masterKey } = walletImport(mnemonic, passphrase)
+self.onmessage = ({ data: { clientUrl, skipIndexes } }: WorkerPayload) => {
   const client = new ExplorerProvider(clientUrl, undefined, exponentialBackoffFetchRetry)
 
-  discover(masterKey, client, skipIndexes)
+  discover(client, skipIndexes)
 }
 
-const discover = async (masterKey: Wallet['masterKey'], client: ExplorerProvider, skipIndexes?: number[]) => {
-  const activeAddresses = await discoverActiveAddresses(masterKey, client, skipIndexes)
-  self.postMessage(activeAddresses)
+const discover = async (client: ExplorerProvider, skipIndexes?: number[]) => {
+  try {
+    const activeAddresses = await keyring.discoverAndCacheActiveAddresses(client, skipIndexes)
+    self.postMessage(activeAddresses)
+  } catch (e) {
+    console.error(e)
+  }
 }

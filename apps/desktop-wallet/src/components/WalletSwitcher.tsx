@@ -71,7 +71,9 @@ const WalletSwitcher = ({ onUnlock }: WalletSwitcherProps) => {
         if (location.pathname !== nextPageLocation) navigate(nextPageLocation)
       }
     })
-    if (passphrase) setPassphrase('')
+
+    setPassphrase('')
+    password = ''
   }
 
   return (

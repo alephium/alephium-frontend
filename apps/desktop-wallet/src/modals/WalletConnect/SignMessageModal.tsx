@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
-import { hashMessage, sign, SignMessageResult } from '@alephium/web3'
+import { keyring } from '@alephium/shared-crypto'
+import { hashMessage, SignMessageResult } from '@alephium/web3'
 import { usePostHog } from 'posthog-js/react'
 import { useTranslation } from 'react-i18next'
 
@@ -50,7 +51,7 @@ const SignUnsignedTxModal = ({
   const handleSign = async () => {
     try {
       const messageHash = hashMessage(txData.message, txData.messageHasher)
-      const signature = sign(messageHash, txData.fromAddress.privateKey)
+      const signature = keyring.signMessage(messageHash, txData.fromAddress.hash)
 
       await onSignSuccess({ signature })
 

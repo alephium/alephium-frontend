@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/shared-crypto'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -57,7 +58,7 @@ const PasswordConfirmation: FC<PasswordConfirmationProps> = ({
 
   const validatePassword = () => {
     try {
-      if (WalletStorage.load(storedWalletId, password)) {
+      if (keyring.verifyPassword(WalletStorage.load(storedWalletId).encrypted, password)) {
         onCorrectPasswordEntered(password)
       }
     } catch (e) {

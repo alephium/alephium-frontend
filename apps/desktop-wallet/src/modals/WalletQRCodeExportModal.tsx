@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { encrypt } from '@alephium/shared-crypto'
+import { encrypt, keyring } from '@alephium/shared-crypto'
 import { ScanLine } from 'lucide-react'
 import { dataToFrames } from 'qrloop'
 import { useEffect, useState } from 'react'
@@ -40,7 +40,6 @@ const FPS = 5
 const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const activeWalletMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
   const addresses = useAppSelector(selectAllAddresses)
   const contacts = useAppSelector(selectAllContacts)
 
@@ -70,15 +69,18 @@ const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
     }
   }, [frames.length])
 
-  if (!activeWalletMnemonic) return null
+  if (!keyring.exportMnemonic()) return null
 
   const handleCorrectPasswordEntered = (password: string) => {
-    const dataToEncrypt = {
-      mnemonic: activeWalletMnemonic,
-      addresses: addresses.map(({ index, label, color, isDefault }) => ({ index, label, color, isDefault })),
-      contacts: contacts.map(({ name, address }) => ({ name, address }))
-    }
-    const encryptedData = encrypt(password, JSON.stringify(dataToEncrypt), 'sha512')
+    const encryptedData = encrypt(
+      password,
+      JSON.stringify({
+        mnemonic: keyring.exportMnemonic()?.toString(),
+        addresses: addresses.map(({ index, label, color, isDefault }) => ({ index, label, color, isDefault })),
+        contacts: contacts.map(({ name, address }) => ({ name, address }))
+      }),
+      'sha512'
+    )
 
     setFrames(dataToFrames(encryptedData, 160, 4))
   }

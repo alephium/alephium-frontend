@@ -21,7 +21,7 @@ import { decrypt } from '../lib/password-crypto'
 describe('password-crypto', () => {
   it('should raise an error if payload version is not 1', () => {
     const password = 'passw0rd'
-    const payloadRaw = '{"version":2}'
-    expect(() => decrypt(password, payloadRaw)).toThrow('Invalid version: got 2, expected: 1')
+    const payloadRaw = '{"version":3}'
+    expect(() => decrypt(password, payloadRaw)).toThrow('Invalid version: got 3, expected 1 or 2')
   })
 })

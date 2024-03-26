@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair, AddressMetadata } from '@alephium/shared'
-import { deriveNewAddressData, getWalletFromMnemonic } from '@alephium/shared-crypto'
+import { AddressMetadata } from '@alephium/shared'
+import { keyring, NonSensitiveAddressData } from '@alephium/shared-crypto'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -29,9 +29,9 @@ import {
 } from '@/storage/addresses/addressesActions'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
-import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
-import { getEncryptedStoragePropsFromActiveWallet } from '@/storage/encryptedPersistentStorage'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { AddressBase } from '@/types/addresses'
+import { StoredWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -40,7 +40,6 @@ interface GenerateAddressProps {
 }
 
 interface DiscoverUsedAddressesProps {
-  mnemonic?: string
   walletId?: string
   skipIndexes?: number[]
   enableLoading?: boolean
@@ -66,19 +65,12 @@ const deriveAddressesFromIndexesWorker = new Worker(
 const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
-  const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const passphrase = useAppSelector((s) => s.activeWallet.passphrase)
   const explorerApiHost = useAppSelector((s) => s.network.settings.explorerApiHost)
 
   const currentAddressIndexes = addresses.map(({ index }) => index)
 
-  const generateAddress = ({ group }: GenerateAddressProps = {}): AddressKeyPair => {
-    if (!mnemonic) throw new Error('Could not generate address, mnemonic not found')
-
-    const { masterKey } = getWalletFromMnemonic(mnemonic, passphrase)
-
-    return deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes)
-  }
+  const generateAddress = ({ group }: GenerateAddressProps = {}): NonSensitiveAddressData =>
+    keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes })
 
   const generateAndSaveOneAddressPerGroup = (
     { labelPrefix, labelColor, skipGroups = [] }: GenerateOneAddressPerGroupProps = { skipGroups: [] }
@@ -87,7 +79,7 @@ const useAddressGeneration = () => {
       (group) => !skipGroups.includes(group)
     )
 
-    deriveAddressesInGroupsWorker.onmessage = ({ data }: { data: (AddressKeyPair & { group: number })[] }) => {
+    deriveAddressesInGroupsWorker.onmessage = ({ data }: { data: (NonSensitiveAddressData & { group: number })[] }) => {
       const randomLabelColor = getRandomLabelColor()
       const addresses: AddressBase[] = data.map((address) => ({
         ...address,
@@ -96,34 +88,29 @@ const useAddressGeneration = () => {
         color: labelColor ?? randomLabelColor
       }))
 
-      saveNewAddresses(addresses)
+      try {
+        saveNewAddresses(addresses)
+      } catch (e) {
+        console.error(e)
+      }
     }
 
-    deriveAddressesInGroupsWorker.postMessage({
-      mnemonic,
-      passphrase,
-      groups,
-      skipIndexes: currentAddressIndexes
-    })
+    deriveAddressesInGroupsWorker.postMessage({ groups, skipIndexes: currentAddressIndexes })
   }
 
-  const restoreAddressesFromMetadata = async () => {
-    const { mnemonic, passphrase } = getEncryptedStoragePropsFromActiveWallet()
-
-    if (passphrase) return
-
-    const addressesMetadata: AddressMetadata[] = AddressMetadataStorage.load()
+  const restoreAddressesFromMetadata = async (walletId: StoredWallet['id']) => {
+    const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
 
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
     if (addressesMetadata.length === 0) {
       const initialAddressSettings = getInitialAddressSettings()
-      AddressMetadataStorage.store({ index: 0, settings: initialAddressSettings })
+      addressMetadataStorage.storeOne(walletId, { index: 0, settings: initialAddressSettings })
       addressesMetadata.push({ index: 0, ...initialAddressSettings })
     }
 
     dispatch(addressRestorationStarted())
 
-    deriveAddressesFromIndexesWorker.onmessage = async ({ data }: { data: AddressKeyPair[] }) => {
+    deriveAddressesFromIndexesWorker.onmessage = async ({ data }: { data: NonSensitiveAddressData[] }) => {
       const restoredAddresses: AddressBase[] = data.map((address) => ({
         ...address,
         ...(addressesMetadata.find((metadata) => metadata.index === address.index) as AddressMetadata)
@@ -133,33 +120,32 @@ const useAddressGeneration = () => {
     }
 
     deriveAddressesFromIndexesWorker.postMessage({
-      mnemonic,
-      passphrase,
       indexesToDerive: addressesMetadata.map((metadata) => metadata.index)
     })
   }
 
   const discoverAndSaveUsedAddresses = async ({
-    mnemonic: mnemonicProp,
     skipIndexes,
     enableLoading = true
   }: DiscoverUsedAddressesProps = {}) => {
-    addressDiscoveryWorker.onmessage = ({ data }: { data: AddressKeyPair[] }) => {
+    addressDiscoveryWorker.onmessage = ({ data }: { data: NonSensitiveAddressData[] }) => {
       const addresses: AddressBase[] = data.map((address) => ({
         ...address,
         isDefault: false,
         color: getRandomLabelColor()
       }))
 
-      saveNewAddresses(addresses)
-      dispatch(addressDiscoveryFinished(enableLoading))
+      try {
+        saveNewAddresses(addresses)
+        dispatch(addressDiscoveryFinished(enableLoading))
+      } catch (e) {
+        console.error(e)
+      }
     }
 
     dispatch(addressDiscoveryStarted(enableLoading))
 
     addressDiscoveryWorker.postMessage({
-      mnemonic: mnemonicProp ?? mnemonic,
-      passphrase,
       skipIndexes: skipIndexes && skipIndexes.length > 0 ? skipIndexes : currentAddressIndexes,
       clientUrl: explorerApiHost
     })

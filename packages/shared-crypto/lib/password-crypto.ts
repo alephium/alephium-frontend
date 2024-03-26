@@ -78,8 +78,8 @@ export const decrypt = (password: string, payloadRaw: string, digest: Digest = '
   const payload = JSON.parse(payloadRaw)
 
   const version = payload.version
-  if (version !== 1) {
-    throw new Error(`Invalid version: got ${version}, expected: 1`)
+  if (version !== 1 && version !== 2) {
+    throw new Error(`Invalid version: got ${version}, expected 1 or 2`)
   }
 
   const salt = Buffer.from(payload.salt, 'hex')

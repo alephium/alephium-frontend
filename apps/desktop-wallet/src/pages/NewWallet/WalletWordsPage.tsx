@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletGenerate } from '@alephium/shared-crypto'
+import { keyring } from '@alephium/shared-crypto'
 import { colord } from 'colord'
 import { Edit3 } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -33,36 +33,46 @@ import {
 } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import { useStepsContext } from '@/contexts/steps'
-import { useWalletContext } from '@/contexts/wallet'
 
 const WalletWordsPage = () => {
-  const { mnemonic, setPlainWallet, setMnemonic } = useWalletContext()
   const { onButtonBack, onButtonNext } = useStepsContext()
   const { t } = useTranslation()
+  const [mnemonic, setMnemonic] = useState<Buffer | null>(null)
 
   useEffect(() => {
-    const wallet = walletGenerate()
-    setPlainWallet(wallet)
-    setMnemonic(wallet.mnemonic)
-  }, [setMnemonic, setPlainWallet])
+    try {
+      setMnemonic(keyring.exportMnemonic() ?? keyring.generateAndCacheRandomMnemonic())
+    } catch (e) {
+      console.error(e)
+    }
+  }, [])
 
-  const renderFormatedMnemonic = (mnemonic: string) =>
-    mnemonic.split(' ').map((w, i) => (
-      <MnemonicWordContainer key={i}>
-        <MnemonicNumber>{i + 1}</MnemonicNumber>
-        <MnemonicWord>{w}</MnemonicWord>
-      </MnemonicWordContainer>
-    ))
+  const renderMnemonicWords = () =>
+    mnemonic
+      ?.toString()
+      .split(' ')
+      .map((w, i) => (
+        <MnemonicWordContainer key={i}>
+          <MnemonicNumber>{i + 1}</MnemonicNumber>
+          <MnemonicWord>{w}</MnemonicWord>
+        </MnemonicWordContainer>
+      ))
+
+  const handleBackPress = () => {
+    keyring.clearCachedSecrets()
+    setMnemonic(null)
+    onButtonBack()
+  }
 
   return (
     <FloatingPanel enforceMinHeight>
-      <PanelTitle color="primary" onBackButtonClick={onButtonBack}>
+      <PanelTitle color="primary" onBackButtonClick={handleBackPress}>
         {t('Your Wallet')}
       </PanelTitle>
       <PanelContentContainer>
         <WordsContent inList>
           <Label>{t('Secret recovery phrase')}</Label>
-          <PhraseBox>{renderFormatedMnemonic(mnemonic)}</PhraseBox>
+          <PhraseBox>{renderMnemonicWords()}</PhraseBox>
           <InfoBox
             text={t("Carefully note down the words! They are your wallet's secret recovery phrase.")}
             Icon={Edit3}

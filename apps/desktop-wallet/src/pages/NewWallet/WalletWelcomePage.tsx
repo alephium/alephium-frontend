@@ -65,13 +65,17 @@ const WalletWelcomePage = () => {
         skipGroups: [defaultAddress.group]
       })
 
-      saveAddressSettings(defaultAddress, {
-        isDefault: true,
-        color: defaultAddress.color,
-        label: `Address ${defaultAddress.group}`
-      })
+      try {
+        saveAddressSettings(defaultAddress, {
+          isDefault: true,
+          color: defaultAddress.color,
+          label: `Address ${defaultAddress.group}`
+        })
 
-      posthog.capture('Generated one address per group on wallet creation')
+        posthog.capture('Generated one address per group on wallet creation')
+      } catch (e) {
+        console.error(e)
+      }
     }
 
     navigate('/wallet/overview')

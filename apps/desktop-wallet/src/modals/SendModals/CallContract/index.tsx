@@ -76,6 +76,7 @@ const handleSend = async ({ fromAddress, assetAmounts }: CallContractTxData, ctx
   if (!ctx.unsignedTransaction) throw Error('No unsignedTransaction available')
 
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
+
   const data = await signAndSendTransaction(fromAddress, ctx.unsignedTxId, ctx.unsignedTransaction.unsignedTx)
 
   store.dispatch(

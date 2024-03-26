@@ -16,22 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { encrypt } from '@alephium/shared-crypto'
+import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { decrypt, keyring } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 
-import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
-import { getEncryptedStoragePropsFromActiveWallet } from '@/storage/encryptedPersistentStorage'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
+import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import SettingsStorage, { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
+import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import { GeneralSettings, ThemeSettings } from '@/types/settings'
 import { StoredWallet } from '@/types/wallet'
 import { getRandomLabelColor } from '@/utils/colors'
 import { stringToDoubleSHA256HexString } from '@/utils/misc'
-
-export const latestAddressMetadataVersion = '2022-05-27T12:00:00Z'
 
 //
 // ANY CHANGES TO THIS FILE MUST BE REVIEWED BY AT LEAST ONE CORE CONTRIBUTOR
@@ -74,11 +73,11 @@ export const migrateNetworkSettings = (): NetworkSettings => {
 }
 
 // Then we run user data migrations after the user has authenticated
-export const migrateUserData = () => {
+export const migrateUserData = (walletId: StoredWallet['id']) => {
   console.log('🚚 Migrating user data')
 
-  _20220527_120000()
-  _20230209_124300()
+  _20240326_181900(walletId)
+  _20230209_124300(walletId)
 }
 
 // Change localStorage address metadata key from "{walletName}-addresses-metadata" to "addresses-metadata-{walletName}"
@@ -107,30 +106,6 @@ export const _20220511_074100 = () => {
         localStorage.removeItem(keyDeprecated)
       }
     }
-  }
-}
-
-// Encrypt address metadata value
-export const _20220527_120000 = () => {
-  const { mnemonic, walletId } = getEncryptedStoragePropsFromActiveWallet()
-  const addressesMetadataLocalStorageKeyPrefix = 'addresses-metadata'
-  const key = `${addressesMetadataLocalStorageKeyPrefix}-${walletId}`
-
-  const json = localStorage.getItem(key)
-  if (json === null) return
-
-  const addressSettingsList = JSON.parse(json)
-
-  // The old format is not encrypted and is a list. The data structure can be deserialized and then encrypted. We can
-  // also take this opportunity to start versioning our data.
-  if (Array.isArray(addressSettingsList)) {
-    localStorage.setItem(
-      key,
-      JSON.stringify({
-        version: '2022-05-27T12:00:00Z',
-        encrypted: encrypt(mnemonic, JSON.stringify(addressSettingsList))
-      })
-    )
   }
 }
 
@@ -276,7 +251,7 @@ export const _20230228_155100 = () => {
               }
             }
 
-            localStorage.setItem(AddressMetadataStorage.getKey(id), JSON.stringify(addressesMetadata))
+            localStorage.setItem(addressMetadataStorage.getKey(id), JSON.stringify(addressesMetadata))
             localStorage.removeItem(oldKey)
           }
         })
@@ -286,8 +261,8 @@ export const _20230228_155100 = () => {
 }
 
 // Change isMain to isDefault settings of each address and ensure it has a color
-export const _20230209_124300 = () => {
-  const currentAddressMetadata: (AddressMetadata | DeprecatedAddressMetadata)[] = AddressMetadataStorage.load()
+export const _20230209_124300 = (walletId: StoredWallet['id']) => {
+  const currentAddressMetadata: (AddressMetadata | DeprecatedAddressMetadata)[] = addressMetadataStorage.load(walletId)
   const newAddressesMetadata: AddressMetadata[] = []
 
   currentAddressMetadata.forEach((currentMetadata: AddressMetadata | DeprecatedAddressMetadata) => {
@@ -302,5 +277,37 @@ export const _20230209_124300 = () => {
     newAddressesMetadata.push(newMetadata)
   })
 
-  AddressMetadataStorage.storeAll(newAddressesMetadata)
+  addressMetadataStorage.store(walletId, newAddressesMetadata)
+}
+
+// Migrate address metadata and contacts from encrypted to unencrypted
+export const _20240326_181900 = (walletId: StoredWallet['id']) => {
+  const metadataJson = localStorage.getItem(`addresses-metadata-${walletId}`)
+  const contactsJson = localStorage.getItem(`contacts-${walletId}`)
+  pendingTransactionsStorage.delete(walletId)
+
+  try {
+    const parsedMetadataJson = metadataJson ? JSON.parse(metadataJson) : undefined
+    const parsedContactsJson = contactsJson ? JSON.parse(contactsJson) : undefined
+
+    if (parsedMetadataJson?.encrypted || parsedContactsJson?.encrypted) {
+      let mnemonic = keyring.exportMnemonic()
+
+      if (!mnemonic) throw new Error('Migration: Could not migrate user data, mnemonic is not provided')
+
+      if (parsedMetadataJson?.encrypted) {
+        const metadata = JSON.parse(decrypt(mnemonic.toString(), parsedMetadataJson.encrypted)) as AddressMetadata[]
+        addressMetadataStorage.store(walletId, metadata)
+      }
+
+      if (parsedContactsJson?.encrypted) {
+        const contacts = JSON.parse(decrypt(mnemonic.toString(), parsedContactsJson.encrypted)) as Contact[]
+        contactsStorage.store(walletId, contacts)
+      }
+
+      mnemonic = null
+    }
+  } catch (e) {
+    console.error(e)
+  }
 }

@@ -29,7 +29,7 @@ type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise
 
 type MnemonicLength = 12 | 24
 
-class StoredState {
+class StoredStateV1 {
   readonly version = 1
   readonly mnemonic: string
 
@@ -182,13 +182,13 @@ export const walletImport = (mnemonic: string, passphrase?: string) => {
 
 export const walletOpen = (password: string, encryptedWallet: string) => {
   const dataDecrypted = decrypt(password, encryptedWallet)
-  const config = JSON.parse(dataDecrypted) as StoredState
+  const config = JSON.parse(dataDecrypted) as StoredStateV1
 
   return getWalletFromMnemonic(config.mnemonic)
 }
 
 export const walletEncrypt = (password: string, mnemonic: string) => {
-  const storedState = new StoredState({
+  const storedState = new StoredStateV1({
     mnemonic
   })
 
@@ -222,7 +222,7 @@ export const walletOpenAsyncUnsafe = async (
   mnemonicToSeedCustomFunc: MnemonicToSeedFunction
 ): Promise<Wallet> => {
   const data = await decryptAsync(password, encryptedWallet, pbkdf2CustomFunc ?? _pbkdf2)
-  const config = JSON.parse(data) as StoredState
+  const config = JSON.parse(data) as StoredStateV1
 
   return getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, config.mnemonic)
 }
@@ -232,7 +232,7 @@ export const walletEncryptAsyncUnsafe = (
   mnemonic: string,
   pbkdf2CustomFunc: Pbkdf2Function
 ): Promise<string> => {
-  const storedState = new StoredState({
+  const storedState = new StoredStateV1({
     mnemonic
   })
 

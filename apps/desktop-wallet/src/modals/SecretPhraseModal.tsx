@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/shared-crypto'
 import { Edit3 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,15 +25,13 @@ import styled from 'styled-components'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
-import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 
 const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation()
-  const activeWalletMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
   const [isDisplayingPhrase, setIsDisplayingPhrase] = useState(false)
 
-  if (!activeWalletMnemonic) return null
+  if (!keyring.exportMnemonic()) return null
 
   return (
     <CenteredModal
@@ -57,7 +56,7 @@ const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
             Icon={Edit3}
             importance="alert"
           />
-          <PhraseBox>{activeWalletMnemonic}</PhraseBox>
+          <PhraseBox>{keyring.exportMnemonic()?.toString()}</PhraseBox>
         </Section>
       )}
     </CenteredModal>

@@ -120,7 +120,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
   const currentNetwork = useAppSelector((s) => s.network)
-  const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
+  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.id)
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
 
@@ -137,8 +137,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
   const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
   const [walletLockedBeforeProcessingWCRequest, setWalletLockedBeforeProcessingWCRequest] = useState(false)
-
-  const isAuthenticated = !!mnemonic
 
   const initializeWalletConnectClient = useCallback(async () => {
     try {
