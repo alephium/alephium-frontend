@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { selectFungibleTokenById, selectNFTById } from '@alephium/shared'
-import { ALPH, TokenInfo } from '@alephium/token-list'
-import { Canvas, Circle, SweepGradient, vec } from '@shopify/react-native-skia'
+import { TokenInfo } from '@alephium/token-list'
 import { Image } from 'expo-image'
 import { HelpCircle } from 'lucide-react-native'
 import { StyleProp, ViewStyle } from 'react-native'
@@ -26,7 +25,6 @@ import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
-import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface AssetLogoProps {
@@ -91,12 +89,4 @@ const LogoImage = styled(Image)`
 
 const Initials = styled(AppText)<{ size: number }>`
   text-transform: uppercase;
-`
-
-const AlephiumLogoBackgroundCanvas = styled(Canvas)`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
 `

@@ -17,9 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { FungibleToken, NFT } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
 import { HelpCircle } from 'lucide-react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 interface AssetLogoProps {
   assetId: FungibleToken['id']
