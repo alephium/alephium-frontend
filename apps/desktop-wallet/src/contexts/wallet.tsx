@@ -16,53 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Wallet } from '@alephium/shared-crypto'
 import { createContext, useContext, useState } from 'react'
 
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 
 export interface WalletContextType {
-  plainWallet?: Wallet | undefined
-  setPlainWallet: (w: Wallet | undefined) => void
-  mnemonic: string
-  setMnemonic: (m: string) => void
-  walletName: string
-  setWalletName: (w: string) => void
-  password: string
-  setPassword: (password: string) => void
+  mnemonic: Buffer | null
+  setMnemonic: (mnemonic: Buffer | null) => void
 }
 
 export const initialWalletContext: WalletContextType = {
-  mnemonic: '',
-  setMnemonic: () => null,
-  walletName: '',
-  setWalletName: () => null,
-  password: '',
-  setPassword: () => null,
-  setPlainWallet: () => null
+  mnemonic: null,
+  setMnemonic: () => null
 }
 
 export const WalletContext = createContext<WalletContextType>(initialWalletContext)
 
 export const WalletContextProvider: FC = ({ children }) => {
-  const [walletName, setWalletName] = useState('')
-  const [password, setPassword] = useState('')
-  const [plainWallet, setPlainWallet] = useState<Wallet>()
-  const [mnemonic, setMnemonic] = useState('')
+  const [mnemonic, setMnemonic] = useState<WalletContextType['mnemonic']>(null)
 
   return (
-    <WalletContext.Provider
-      value={{
-        walletName,
-        setWalletName,
-        password,
-        setPassword,
-        mnemonic,
-        setMnemonic,
-        plainWallet,
-        setPlainWallet
-      }}
-    >
+    <WalletContext.Provider value={{ mnemonic, setMnemonic }}>
       <CenteredSection>{children}</CenteredSection>
     </WalletContext.Provider>
   )

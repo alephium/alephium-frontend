@@ -28,7 +28,7 @@ import {
 } from '@/storage/addresses/addressesActions'
 import { receiveTestnetTokens } from '@/storage/global/globalActions'
 import { RootState } from '@/storage/store'
-import PendingTransactionsStorage from '@/storage/transactions/pendingTransactionsPersistentStorage'
+import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
 import { storedPendingTransactionsLoaded, transactionSent } from '@/storage/transactions/transactionsActions'
 import { pendingTransactionsAdapter } from '@/storage/transactions/transactionsAdapters'
 import { activeWalletDeleted, walletLocked, walletSwitched } from '@/storage/wallets/walletActions'
@@ -72,15 +72,14 @@ pendingTransactionsListenerMiddleware.startListening({
   effect: (_, { getState }) => {
     const state = getState() as RootState
     const pendingTxsInState = Object.values(state.pendingTransactions.entities) as PendingTransaction[]
-    const { id: walletId, mnemonic, passphrase } = state.activeWallet
+    const { id: walletId } = state.activeWallet
 
-    if (!walletId || !mnemonic || passphrase) return
+    if (!walletId) return
 
-    const encryptionProps = { walletId, mnemonic, passphrase }
-    const storedPendingTxs = PendingTransactionsStorage.load(encryptionProps)
+    const storedPendingTxs = pendingTransactionsStorage.load(walletId)
     const uniqueTransactions = xorWith(pendingTxsInState, storedPendingTxs, (a, b) => a.hash === b.hash)
 
-    if (uniqueTransactions.length > 0) PendingTransactionsStorage.store(pendingTxsInState, encryptionProps)
+    if (uniqueTransactions.length > 0) pendingTransactionsStorage.store(walletId, pendingTxsInState)
   }
 })
 

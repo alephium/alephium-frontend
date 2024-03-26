@@ -25,6 +25,7 @@ import { deriveNewAddressData } from './wallet'
 export const isAddressValid = (address: string) =>
   !!address && /^[1-9A-HJ-NP-Za-km-z]+$/.test(address) && bs58.decode(address).slice(1).length >= 32
 
+// TODO: Delete
 export const discoverActiveAddresses = async (
   masterKey: BIP32Interface,
   client: ExplorerProvider,
@@ -75,6 +76,7 @@ export const discoverActiveAddresses = async (
   return activeAddresses
 }
 
+// TODO: Delete
 const deriveAddressesInGroup = (
   group: number,
   amount: number,
@@ -93,6 +95,7 @@ const deriveAddressesInGroup = (
   return addresses
 }
 
+// TODO: Delete
 const splitResultsArrayIntoOneArrayPerGroup = (array: boolean[], chunkSize: number): boolean[][] => {
   const chunks = []
   let i = 0
@@ -105,6 +108,7 @@ const splitResultsArrayIntoOneArrayPerGroup = (array: boolean[], chunkSize: numb
   return chunks
 }
 
+// TODO: Delete
 const getGapFromLastActiveAddress = (
   addresses: AddressKeyPair[],
   results: boolean[],
@@ -131,6 +135,7 @@ const getGapFromLastActiveAddress = (
   }
 }
 
+// TODO: Delete
 const getActiveAddressesResults = async (
   addressesToCheckIfActive: string[],
   client: ExplorerProvider
@@ -147,4 +152,17 @@ const getActiveAddressesResults = async (
   }
 
   return results
+}
+
+export const isAddressIndexValid = (addressIndex: number) =>
+  addressIndex >= 0 && Number.isInteger(addressIndex) && !addressIndex.toString().includes('e')
+
+export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+  let nextAvailableAddressIndex = startIndex
+
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
 }

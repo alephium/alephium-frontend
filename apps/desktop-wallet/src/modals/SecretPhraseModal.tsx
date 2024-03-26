@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { dangerouslyConvertBufferMnemonicToString, decryptMnemonic } from '@alephium/shared-crypto'
 import { Edit3 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,18 +27,40 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
 const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation()
-  const activeWalletMnemonic = useAppSelector((state) => state.activeWallet.mnemonic)
+  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const [isDisplayingPhrase, setIsDisplayingPhrase] = useState(false)
+  const [mnemonic, setMnemonic] = useState<string>()
 
-  if (!activeWalletMnemonic) return null
+  if (!activeWalletId) return null
+
+  const handleCorrectPasswordEntered = (password: string) => {
+    try {
+      setMnemonic(
+        dangerouslyConvertBufferMnemonicToString(
+          decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password).decryptedMnemonic
+        )
+      )
+      setIsDisplayingPhrase(true)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      password = ''
+    }
+  }
+
+  const handleClose = () => {
+    setMnemonic('')
+    onClose()
+  }
 
   return (
     <CenteredModal
       title={t('Secret recovery phrase')}
-      onClose={onClose}
+      onClose={handleClose}
       focusMode
       narrow={!isDisplayingPhrase}
       skipFocusOnMount
@@ -47,7 +70,7 @@ const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
           <PasswordConfirmation
             text={t('Type your password to show the phrase.')}
             buttonText={t('Show')}
-            onCorrectPasswordEntered={() => setIsDisplayingPhrase(true)}
+            onCorrectPasswordEntered={handleCorrectPasswordEntered}
           />
         </div>
       ) : (
@@ -57,7 +80,7 @@ const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
             Icon={Edit3}
             importance="alert"
           />
-          <PhraseBox>{activeWalletMnemonic}</PhraseBox>
+          <PhraseBox>{mnemonic}</PhraseBox>
         </Section>
       )}
     </CenteredModal>

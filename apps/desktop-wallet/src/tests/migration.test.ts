@@ -16,25 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { encrypt, walletGenerate } from '@alephium/shared-crypto'
+import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { encrypt, keyring, walletGenerate } from '@alephium/shared-crypto'
 import { nanoid } from 'nanoid'
 
-import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
+import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import * as migrate from '@/utils/migration'
 import { stringToDoubleSHA256HexString } from '@/utils/misc'
 
 const testWallet = walletGenerate()
 const encryptedTestWallet = testWallet.encrypt('x')
+keyring.importMnemonicString(testWallet.mnemonic)
 
 const activeWallet = {
   id: nanoid(),
-  name: 'Test wallet',
-  mnemonic: testWallet.mnemonic,
-  passphrase: undefined
+  name: 'Test wallet'
 }
 
 const activeWalletAddressSettings = { index: 0, isMain: true, label: 'test', color: 'blue' }
@@ -101,7 +101,7 @@ describe('_20230228_155100', () => {
   const _migrateWalletData = () => {
     migrate._20230228_155100()
 
-    const wallets = WalletStorage.list()
+    const wallets = walletStorage.list()
     expect(wallets).toHaveLength(1)
 
     const data = localStorage.getItem(`wallet-${wallets[0].id}`)
@@ -129,19 +129,6 @@ describe('_20230228_155100', () => {
     expect(addressesMetadata).toHaveProperty('encrypted')
     expect(addressesMetadata).not.toHaveProperty('encryptedSettings')
   }
-})
-
-describe('_20220527_120000', () => {
-  it('properly encrypts and decrypts a wallet', () => {
-    localStorage.setItem('wallet-' + activeWallet.id, 'test')
-    localStorage.setItem(`addresses-metadata-${activeWallet.id}`, JSON.stringify([activeWalletAddressSettings]))
-
-    migrate._20220527_120000()
-
-    const addresses = AddressMetadataStorage.load()
-    expect(addresses).toHaveLength(1)
-    expect(addresses[0]).toStrictEqual(activeWalletAddressSettings)
-  })
 })
 
 describe('_20211220_194004', () => {
@@ -505,17 +492,11 @@ describe('_20230209_124300', () => {
       }
     ]
 
-    localStorage.setItem(
-      `addresses-metadata-${activeWallet.id}`,
-      JSON.stringify({
-        version: '2022-05-27T12:00:00Z',
-        encrypted: encrypt(activeWallet.mnemonic, JSON.stringify(deprecatedAddressMetadata))
-      })
-    )
+    localStorage.setItem(`addresses-metadata-${activeWallet.id}`, JSON.stringify(deprecatedAddressMetadata))
 
-    migrate._20230209_124300()
+    migrate._20230209_124300_migrateIsMainToIsDefault(activeWallet.id)
 
-    const metadata = AddressMetadataStorage.load() as AddressMetadata[]
+    const metadata = addressMetadataStorage.load(activeWallet.id)
 
     expect(metadata[0]).not.toHaveProperty('isMain')
     expect(metadata[0].isDefault).toEqual(false)
@@ -527,6 +508,104 @@ describe('_20230209_124300', () => {
     expect(metadata[1].index).toEqual(1)
     expect(metadata[1].color).toEqual('red')
     expect(metadata[1].label).toEqual('My main one')
+  })
+})
+
+describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
+  it('should decrypt encrypted address metadata', () => {
+    const localStorageKey = `addresses-metadata-${activeWallet.id}`
+    const addressMetadata: AddressMetadata[] = [
+      {
+        index: 0,
+        isDefault: false,
+        color: 'pink'
+      },
+      {
+        index: 1,
+        isDefault: true,
+        color: 'red',
+        label: 'My main one'
+      }
+    ]
+
+    localStorage.setItem(
+      localStorageKey,
+      JSON.stringify({ encrypted: encrypt(testWallet.mnemonic, JSON.stringify(addressMetadata)) })
+    )
+    localStorage.setItem(`wallet-${activeWallet.id}`, JSON.stringify({ encrypted: encryptedTestWallet }))
+
+    expect(() => migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')).toThrowError(
+      'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'
+    )
+
+    migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x', 1)
+    migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
+
+    const rawData = localStorage.getItem(localStorageKey)
+
+    expect(rawData).toBeDefined()
+
+    if (rawData) {
+      expect(JSON.parse(rawData)).not.toHaveProperty('encrypted')
+    }
+
+    const metadata = addressMetadataStorage.load(activeWallet.id)
+
+    expect(metadata[0].isDefault).toEqual(false)
+    expect(metadata[0].index).toEqual(0)
+    expect(metadata[0].color).toBeDefined()
+    expect(metadata[0].color).toBeTruthy()
+    expect(metadata[1].isDefault).toEqual(true)
+    expect(metadata[1].index).toEqual(1)
+    expect(metadata[1].color).toEqual('red')
+    expect(metadata[1].label).toEqual('My main one')
+  })
+
+  it('should decrypt encrypted contacts', () => {
+    const localStorageKey = `contacts-${activeWallet.id}`
+    const contacts: Contact[] = [
+      {
+        id: '0',
+        name: 'John',
+        address: '1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH'
+      },
+      {
+        id: '1',
+        name: 'David',
+        address: '1TrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH'
+      }
+    ]
+
+    localStorage.setItem(
+      localStorageKey,
+      JSON.stringify({ encrypted: encrypt(testWallet.mnemonic, JSON.stringify(contacts)) })
+    )
+
+    localStorage.setItem(`wallet-${activeWallet.id}`, JSON.stringify({ encrypted: encryptedTestWallet }))
+
+    expect(() => migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')).toThrowError(
+      'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'
+    )
+
+    migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x', 1)
+    migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
+
+    const rawData = localStorage.getItem(localStorageKey)
+
+    expect(rawData).toBeDefined()
+
+    if (rawData) {
+      expect(JSON.parse(rawData)).not.toHaveProperty('encrypted')
+    }
+
+    const contactsData = contactsStorage.load(activeWallet.id)
+
+    expect(contactsData[0].id).toEqual('0')
+    expect(contactsData[0].name).toEqual('John')
+    expect(contactsData[0].address).toEqual('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
+    expect(contactsData[1].id).toEqual('1')
+    expect(contactsData[1].name).toEqual('David')
+    expect(contactsData[1].address).toEqual('1TrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
   })
 })
 
