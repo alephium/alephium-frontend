@@ -16,9 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT } from '@alephium/shared'
+import { NFT, selectNFTById } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
+import DataRow from '@/components/DataRow'
+import NFTThumbnail from '@/components/NFTThumbnail'
+import { BoxContainer } from '@/components/PageComponents/PageContainers'
+import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 
 interface TransactionDetailsModalProps {
@@ -26,10 +31,27 @@ interface TransactionDetailsModalProps {
   onClose: () => void
 }
 
-const NFTDetailsModal = ({ onClose }: TransactionDetailsModalProps) => {
+const NFTDetailsModal = ({ NFTId, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
+  const nft = useAppSelector((s) => selectNFTById(s, NFTId))
 
-  return <SideModal onClose={onClose} title={t('NFT details')} hideHeader></SideModal>
+  return nft ? (
+    <SideModal onClose={onClose} title={t('NFT details')}>
+      <NFTImageContainer>
+        <NFTThumbnail size="100%" nft={nft} />
+        <h2>{}</h2>
+        <BoxContainer>
+          <DataRow label={t('Name')}>{nft.name}</DataRow>
+          <DataRow label={t('Description')}>{nft.description}</DataRow>
+          <DataRow label={t('Image URL')}>{nft.image}</DataRow>
+        </BoxContainer>
+      </NFTImageContainer>
+    </SideModal>
+  ) : null
 }
 
 export default NFTDetailsModal
+
+const NFTImageContainer = styled.div`
+  padding: 20px;
+`

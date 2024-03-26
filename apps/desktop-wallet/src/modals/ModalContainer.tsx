@@ -79,7 +79,7 @@ export default styled(ModalContainer)<{ hasPadding?: boolean }>`
   left: 0;
   display: flex;
   padding: ${({ hasPadding }) => hasPadding && 'var(--spacing-4)'};
-  z-index: 1;
+  z-index: 2;
 
   &:focus {
     outline: none;
@@ -96,11 +96,11 @@ export const ModalBackdrop = styled(motion.div)<{ focusMode?: boolean; light?: b
     theme.name === 'light'
       ? focusMode
         ? 'rgba(0, 0, 0, 0.8)'
-        : 'rgba(0, 0, 0, 0.15)'
+        : 'rgba(0, 0, 0, 0.25)'
       : focusMode
         ? 'rgba(0, 0, 0, 0.9)'
         : light
-          ? 'rgba(0, 0, 0, 0.15)'
+          ? 'rgba(0, 0, 0, 0.25)'
           : 'rgba(0, 0, 0, 0.6)'};
 `
 

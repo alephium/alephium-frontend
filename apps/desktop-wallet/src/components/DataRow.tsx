@@ -16,28 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-export default styled.div`
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: var(--radius-small);
-  background-color: ${({ theme }) => theme.bg.primary};
-  box-shadow: ${({ theme }) => theme.shadow.primary};
-`
+interface DataRowProps {
+  label: string
+  className?: string
+  children: ReactNode
+}
 
-export const DataListRow = styled.div`
-  display: grid;
-  grid-auto-columns: minmax(0, 1fr);
-  grid-auto-flow: column;
-  height: var(--tableCellHeight);
+const DataRow = ({ children, label, className }: DataRowProps) => (
+  <div className={className} role="row">
+    <DetailsRowLabel tabIndex={0} role="cell">
+      {label}
+    </DetailsRowLabel>
+    {children || '-'}
+  </div>
+)
 
-  &:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.primary};
+export default styled(DataRow)`
+  padding: 12px var(--spacing-3);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  justify-content: space-between;
+  min-height: 52px;
+
+  &:not(:first-child) {
+    border-top: 1px solid ${({ theme }) => theme.border.secondary};
   }
 `
 
-export const DataListCell = styled.div`
-  padding: 0 var(--spacing-4);
-  display: flex;
-  align-items: center;
+const DetailsRowLabel = styled.div`
+  font-weight: var(--fontWeight-medium);
 `
