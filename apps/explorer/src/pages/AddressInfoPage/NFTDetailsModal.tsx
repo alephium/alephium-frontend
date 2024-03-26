@@ -66,7 +66,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                       {nft.file?.description && (
                         <TableRow>
                           <span>{t('Description')}</span>
-                          <span>{nft.file.description}</span>
+                          <Paragraph>{nft.file.description}</Paragraph>
                         </TableRow>
                       )}
                       {nft.file?.image && (
@@ -90,7 +90,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                         {nft.file.attributes.map((a) => (
                           <TableRow>
                             <span>{a.trait_type}</span>
-                            <span>{a.value}</span>
+                            <span>{a.value.toString()}</span>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -99,7 +99,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                 )}
               </>
             ) : (
-              <CardStyled>{t('Missing metadata')}</CardStyled>
+              <CardStyled>{t('Incorrect metadata')}</CardStyled>
             )}
             {collection && (
               <NFTDetailsContainer>
@@ -112,7 +112,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                     </TableRow>
                     <TableRow>
                       <span>{t('Collection desc.')}</span>
-                      <CollectionDescription>{collection.description}</CollectionDescription>
+                      <Paragraph>{collection.description}</Paragraph>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -180,6 +180,6 @@ const CardStyled = styled(Card)`
   margin: 25px;
 `
 
-const CollectionDescription = styled.div`
+const Paragraph = styled.div`
   white-space: pre-wrap;
 `

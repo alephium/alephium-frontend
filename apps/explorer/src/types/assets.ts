@@ -29,6 +29,7 @@ export type AssetBase = { id: string; type: AssetType }
 export type FungibleTokenMetadataBase = Omit<FungibleTokenMetadata, 'totalSupply' | 'decimals'> & {
   verified: boolean
   decimals: number
+  worth?: number
   logoURI?: string
 }
 
