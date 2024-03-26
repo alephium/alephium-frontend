@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, CURRENCIES } from '@alephium/shared'
+import { AddressHash, Asset, CURRENCIES, NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -35,6 +35,8 @@ import TableCellAmount from '@/components/TableCellAmount'
 import TableTabBar from '@/components/TableTabBar'
 import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
+import ModalPortal from '@/modals/ModalPortal'
+import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import {
   makeSelectAddressesCheckedUnknownTokens,
   makeSelectAddressesKnownFungibleTokens,
@@ -232,6 +234,7 @@ const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsList
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const isLoadingNFTs = useAppSelector((s) => s.nfts.loading)
   const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
+  const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
 
   return (
     <>
@@ -254,6 +257,10 @@ const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsList
       </motion.div>
 
       {!isExpanded && nfts.length > 4 && onExpand && <ExpandRow onClick={onExpand} />}
+
+      <ModalPortal>
+        {selectedNFTId && <NFTDetailsModal NFTId={selectedNFTId} onClose={() => setSelectedNFTId(undefined)} />}
+      </ModalPortal>
     </>
   )
 }

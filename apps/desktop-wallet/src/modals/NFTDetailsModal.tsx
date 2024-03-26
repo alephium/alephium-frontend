@@ -17,21 +17,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFT } from '@alephium/shared'
-import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
-interface NFTThumbnailProps {
-  nft: NFT
-  size?: string
-  className?: string
+import SideModal from '@/modals/SideModal'
+
+interface TransactionDetailsModalProps {
+  NFTId: NFT['id']
+  onClose: () => void
 }
 
-const NFTThumbnail = ({ nft, size = '100', className }: NFTThumbnailProps) => (
-  <NFTThumbnailStyled src={nft.image} alt={nft.description} width={size} height={size} className={className} />
-)
+const NFTDetailsModal = ({ onClose }: TransactionDetailsModalProps) => {
+  const { t } = useTranslation()
 
-export default NFTThumbnail
+  return <SideModal onClose={onClose} title={t('NFT details')} hideHeader></SideModal>
+}
 
-const NFTThumbnailStyled = styled.img`
-  border-radius: var(--radius-medium);
-  object-fit: cover;
-`
+export default NFTDetailsModal
