@@ -249,7 +249,7 @@ const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsList
         ) : (
           <NFTList role="row" tabIndex={isExpanded ? 0 : -1}>
             {nfts.map((nft) => (
-              <NFTCard key={nft.id} nft={nft} />
+              <NFTCard key={nft.id} nft={nft} onClick={() => setSelectedNFTId(nft.id)} />
             ))}
             {nfts.length === 0 && <PlaceholderText>{t('No NFTs found.')}</PlaceholderText>}
           </NFTList>

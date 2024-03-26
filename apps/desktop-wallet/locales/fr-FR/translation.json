@@ -484,5 +484,6 @@
   "Hide": "Cacher",
   "Could not decode unsigned tx": "Could not decode unsigned tx",
   "Could not sign unsigned tx": "Could not sign unsigned tx",
-  "Could not sign message": "Could not sign message"
+  "Could not sign message": "Could not sign message",
+  "NFT details": "NFT details"
 }

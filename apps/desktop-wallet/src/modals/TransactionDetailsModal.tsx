@@ -26,6 +26,7 @@ import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
+import DataRow from '@/components/DataRow'
 import ExpandableSection from '@/components/ExpandableSection'
 import HashEllipsed from '@/components/HashEllipsed'
 import IOList from '@/components/IOList'
@@ -45,11 +46,6 @@ import { getTransactionInfo } from '@/utils/transactions'
 interface TransactionDetailsModalProps {
   transaction: AddressConfirmedTransaction
   onClose: () => void
-}
-
-interface DetailsRowProps {
-  label: string
-  className?: string
 }
 
 const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsModalProps) => {
@@ -77,7 +73,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const nftsData = nfts.map((nft) => allNFTs[nft.id] as NFT)
 
   return (
-    <SideModal onClose={onClose} title={t('Transaction details')} hideHeader>
+    <SideModal onClose={onClose} title={t('Transaction details')}>
       <Header>
         <AmountWrapper tabIndex={0}>
           {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
@@ -140,12 +136,12 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
       <Details role="table">
         {direction !== 'swap' && (
           <>
-            <DetailsRow label={t('Transaction hash')}>
+            <DataRow label={t('Transaction hash')}>
               <TransactionHash onClick={handleShowTxInExplorer}>
                 <HashEllipsed hash={transaction.hash} tooltipText={t('Copy hash')} />
               </TransactionHash>
-            </DetailsRow>
-            <DetailsRow label={t('From')}>
+            </DataRow>
+            <DataRow label={t('From')}>
               {direction === 'out' ? (
                 <AddressList>
                   <ActionLinkStyled
@@ -165,8 +161,8 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                   linkToExplorer
                 />
               )}
-            </DetailsRow>
-            <DetailsRow label={t('To')}>
+            </DataRow>
+            <DataRow label={t('To')}>
               {direction !== 'out' ? (
                 <AddressList>
                   <ActionLinkStyled
@@ -186,10 +182,10 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                   linkToExplorer
                 />
               )}
-            </DetailsRow>
+            </DataRow>
           </>
         )}
-        <DetailsRow label={t('Status')}>
+        <DataRow label={t('Status')}>
           {transaction.scriptExecutionOk ? (
             <Badge color={theme.global.valid}>
               <span tabIndex={0}>{t('Confirmed')}</span>
@@ -199,19 +195,19 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               <span tabIndex={0}>{t('Script execution failed')}</span>
             </Badge>
           )}
-        </DetailsRow>
-        <DetailsRow label={t('Timestamp')}>
+        </DataRow>
+        <DataRow label={t('Timestamp')}>
           <span tabIndex={0}>{formatDateForDisplay(transaction.timestamp)}</span>
-        </DetailsRow>
+        </DataRow>
         {lockTime && (
-          <DetailsRow label={lockTime < new Date() ? t('Unlocked at') : t('Unlocks at')}>
+          <DataRow label={lockTime < new Date() ? t('Unlocked at') : t('Unlocks at')}>
             <span tabIndex={0}>{formatDateForDisplay(lockTime)}</span>
-          </DetailsRow>
+          </DataRow>
         )}
-        <DetailsRow label={t('Fee')}>
+        <DataRow label={t('Fee')}>
           <Amount tabIndex={0} value={BigInt(transaction.gasAmount) * BigInt(transaction.gasPrice)} fullPrecision />
-        </DetailsRow>
-        <DetailsRow label={t('Total value')}>
+        </DataRow>
+        <DataRow label={t('Total value')}>
           <Amounts>
             {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
               <AmountContainer key={id}>
@@ -229,18 +225,18 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               </AmountContainer>
             ))}
           </Amounts>
-        </DetailsRow>
+        </DataRow>
         {nftsData.length > 0 && (
-          <DetailsRow label={t('NFTs')}>
+          <DataRow label={t('NFTs')}>
             <NFTThumbnails>
               {nftsData.map((nft) => (
                 <NFTThumbnail nft={nft} key={nft.id} />
               ))}
             </NFTThumbnails>
-          </DetailsRow>
+          </DataRow>
         )}
         {unknownTokens.length > 0 && (
-          <DetailsRow label={t('Unknown tokens')}>
+          <DataRow label={t('Unknown tokens')}>
             <Amounts>
               {unknownTokens.map(({ id, amount, symbol }) => (
                 <AmountContainer key={id}>
@@ -249,16 +245,16 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                 </AmountContainer>
               ))}
             </Amounts>
-          </DetailsRow>
+          </DataRow>
         )}
         <ExpandableSectionStyled sectionTitleClosed={t('Click to see more')} sectionTitleOpen={t('Click to see less')}>
-          <DetailsRow label={t('Gas amount')}>
+          <DataRow label={t('Gas amount')}>
             <span tabIndex={0}>{addApostrophes(transaction.gasAmount.toString())}</span>
-          </DetailsRow>
-          <DetailsRow label={t('Gas price')}>
+          </DataRow>
+          <DataRow label={t('Gas price')}>
             <Amount tabIndex={0} value={BigInt(transaction.gasPrice)} fullPrecision />
-          </DetailsRow>
-          <DetailsRow label={t('Inputs')}>
+          </DataRow>
+          <DataRow label={t('Inputs')}>
             <AddressList>
               {transaction.inputs?.map(
                 (input) =>
@@ -272,8 +268,8 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                   )
               )}
             </AddressList>
-          </DetailsRow>
-          <DetailsRow label={t('Outputs')}>
+          </DataRow>
+          <DataRow label={t('Outputs')}>
             <AddressList>
               {transaction.outputs?.map((output) => (
                 <ActionLinkStyled key={`${output.key}`} onClick={() => handleShowAddress(output.address ?? '')}>
@@ -281,7 +277,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                 </ActionLinkStyled>
               ))}
             </AddressList>
-          </DetailsRow>
+          </DataRow>
         </ExpandableSectionStyled>
       </Details>
       <Tooltip />
@@ -295,28 +291,6 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
 }
 
 export default TransactionDetailsModal
-
-let DetailsRow: FC<DetailsRowProps> = ({ children, label, className }) => (
-  <div className={className} role="row">
-    <DetailsRowLabel tabIndex={0} role="cell">
-      {label}
-    </DetailsRowLabel>
-    {children}
-  </div>
-)
-
-DetailsRow = styled(DetailsRow)`
-  padding: 12px var(--spacing-3);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  justify-content: space-between;
-  min-height: 52px;
-
-  &:not(:first-child) {
-    border-top: 1px solid ${({ theme }) => theme.border.secondary};
-  }
-`
 
 const Direction = styled.span`
   flex-shrink: 0;
@@ -353,10 +327,6 @@ const FromIn = styled.span`
 
 const Details = styled.div`
   padding: var(--spacing-2) var(--spacing-3);
-`
-
-const DetailsRowLabel = styled.div`
-  font-weight: var(--fontWeight-medium);
 `
 
 const ExpandableSectionStyled = styled(ExpandableSection)`

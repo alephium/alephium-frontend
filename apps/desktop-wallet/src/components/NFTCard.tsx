@@ -29,8 +29,6 @@ interface NFTCardProps {
   onClick?: () => void
 }
 
-// TODO: Copied from explorer
-
 const NFTCard = ({ nft, onClick }: NFTCardProps) => (
   <NFTCardStyled onClick={onClick}>
     <CardContent>
