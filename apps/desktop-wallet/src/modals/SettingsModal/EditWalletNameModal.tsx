@@ -27,7 +27,7 @@ import Input from '@/components/Inputs/Input'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { CenteredModalProps, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { newWalletNameStored, walletNameStorageFailed } from '@/storage/wallets/walletActions'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { ActiveWallet } from '@/types/wallet'
 import { isWalletNameValid, requiredErrorMessage } from '@/utils/form-validation'
 
@@ -52,7 +52,7 @@ const EditWalletNameModal = (props: CenteredModalProps) => {
     if (!activeWallet.id) return
 
     try {
-      WalletStorage.update(activeWallet.id, data)
+      walletStorage.update(activeWallet.id, data)
       dispatch(newWalletNameStored(data.name))
       props.onClose()
 

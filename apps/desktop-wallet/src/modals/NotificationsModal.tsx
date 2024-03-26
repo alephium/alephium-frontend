@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/shared-crypto'
 import { motion } from 'framer-motion'
 import { Lock } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -36,6 +37,7 @@ const NotificationsModal = ({ onClose, focusMode }: ModalContainerProps) => {
   const posthog = usePostHog()
 
   const lockWallet = () => {
+    keyring.clearCachedSecrets()
     dispatch(walletLocked())
 
     posthog.capture('Locked wallet', { origin: 'notifications' })

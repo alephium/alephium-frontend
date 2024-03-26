@@ -29,15 +29,15 @@ import WalletWordsPage from '@/pages/NewWallet/WalletWordsPage'
 import UnlockedWalletRoutes from '@/routes/UnlockedWalletRoutes'
 
 const createWalletSteps = [
-  <CreateWalletPage key="create-wallet" />,
   <WalletWordsPage key="wallet-words" />,
   <CheckWordsIntroPage key="check-words-intro" />,
   <CheckWordsPage key="check-words" />,
+  <CreateWalletPage key="create-wallet" />,
   <WalletWelcomePage key="welcome" />
 ]
 const importWalletSteps = [
-  <CreateWalletPage key="create-wallet" isRestoring />,
   <ImportWordsPage key="import-words" />,
+  <CreateWalletPage key="create-wallet" isRestoring />,
   <WalletWelcomePage key="welcome" />
 ]
 
