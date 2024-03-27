@@ -44,7 +44,7 @@ export default NFTCard
 
 const NFTCardStyled = styled.div`
   background-color: ${({ theme }) => theme.bg.background2};
-  border-radius: 16px;
+  border-radius: var(--radius-huge);
   transition: all cubic-bezier(0.2, 0.65, 0.5, 1) 0.1s;
 
   &:hover {
@@ -60,7 +60,7 @@ const CardContent = styled.div`
 
 const NFTPictureContainer = styled(motion.div)`
   position: relative;
-  border-radius: 12px;
+  border-radius: var(--radius-big);
   overflow: hidden;
 `
 

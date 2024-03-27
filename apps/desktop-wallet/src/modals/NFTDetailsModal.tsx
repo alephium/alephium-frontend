@@ -21,9 +21,8 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
-import DataRow from '@/components/DataRow'
+import DataList from '@/components/DataList'
 import NFTThumbnail from '@/components/NFTThumbnail'
-import { BoxContainer } from '@/components/PageComponents/PageContainers'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import { openInWebBrowser } from '@/utils/misc'
@@ -43,24 +42,26 @@ const NFTDetailsModal = ({ NFTId, onClose }: TransactionDetailsModalProps) => {
         <NFTThumbnail size="100%" nft={nft} />
       </NFTImageContainer>
       <NFTMetadataContainer>
-        <BoxContainer>
-          <DataRow label={t('Name')}>
-            <b>{nft.name}</b>
-          </DataRow>
-          <DataRow label={t('Description')}>{nft.description}</DataRow>
-          <DataRow label={t('Image URL')}>
-            <ActionLink ellipsed onClick={() => openInWebBrowser(nft.image)}>
-              {nft.image}
-            </ActionLink>
-          </DataRow>
-        </BoxContainer>
-        <BoxContainer>
-          {nft.attributes?.map((attr) => (
-            <DataRow key={attr.trait_type} label={attr.trait_type}>
-              {attr.value.toString()}
-            </DataRow>
-          ))}
-        </BoxContainer>
+        <DataList
+          items={[
+            { label: 'Name', value: <b>{nft.name}</b> },
+            { label: 'Description', value: nft.description },
+            {
+              label: 'Image URL',
+              value: (
+                <ActionLink ellipsed onClick={() => openInWebBrowser(nft.image)}>
+                  {nft.image}
+                </ActionLink>
+              )
+            }
+          ]}
+        />
+        {nft.attributes && (
+          <DataList
+            title={t('Attributes')}
+            items={nft.attributes?.map((a) => ({ label: a.trait_type, value: a.value }))}
+          />
+        )}
       </NFTMetadataContainer>
     </SideModal>
   ) : null
