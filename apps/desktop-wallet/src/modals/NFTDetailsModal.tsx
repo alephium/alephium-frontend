@@ -20,11 +20,13 @@ import { NFT, selectNFTById } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import ActionLink from '@/components/ActionLink'
 import DataRow from '@/components/DataRow'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import { BoxContainer } from '@/components/PageComponents/PageContainers'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
+import { openInWebBrowser } from '@/utils/misc'
 
 interface TransactionDetailsModalProps {
   NFTId: NFT['id']
@@ -39,13 +41,27 @@ const NFTDetailsModal = ({ NFTId, onClose }: TransactionDetailsModalProps) => {
     <SideModal onClose={onClose} title={t('NFT details')}>
       <NFTImageContainer>
         <NFTThumbnail size="100%" nft={nft} />
-        <h2>{}</h2>
-        <BoxContainer>
-          <DataRow label={t('Name')}>{nft.name}</DataRow>
-          <DataRow label={t('Description')}>{nft.description}</DataRow>
-          <DataRow label={t('Image URL')}>{nft.image}</DataRow>
-        </BoxContainer>
       </NFTImageContainer>
+      <NFTMetadataContainer>
+        <BoxContainer>
+          <DataRow label={t('Name')}>
+            <b>{nft.name}</b>
+          </DataRow>
+          <DataRow label={t('Description')}>{nft.description}</DataRow>
+          <DataRow label={t('Image URL')}>
+            <ActionLink ellipsed onClick={() => openInWebBrowser(nft.image)}>
+              {nft.image}
+            </ActionLink>
+          </DataRow>
+        </BoxContainer>
+        <BoxContainer>
+          {nft.attributes?.map((attr) => (
+            <DataRow key={attr.trait_type} label={attr.trait_type}>
+              {attr.value.toString()}
+            </DataRow>
+          ))}
+        </BoxContainer>
+      </NFTMetadataContainer>
     </SideModal>
   ) : null
 }
@@ -53,5 +69,12 @@ const NFTDetailsModal = ({ NFTId, onClose }: TransactionDetailsModalProps) => {
 export default NFTDetailsModal
 
 const NFTImageContainer = styled.div`
-  padding: 20px;
+  padding: var(--spacing-3);
+`
+
+const NFTMetadataContainer = styled.div`
+  padding: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
 `
