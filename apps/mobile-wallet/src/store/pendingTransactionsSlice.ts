@@ -27,6 +27,7 @@ import {
 } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
 import { transactionSent } from '~/store/transactions/transactionsActions'
+import { walletDeleted } from '~/store/wallet/walletActions'
 import { AddressPendingTransaction, PendingTransaction } from '~/types/transactions'
 import { selectAddressPendingTransactions, selectContactPendingTransactions } from '~/utils/addresses'
 
@@ -56,6 +57,7 @@ const pendingTransactionsSlice = createSlice({
         }
       })
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, removeTransactions)
+      .addCase(walletDeleted, () => initialState)
   }
 })
 
