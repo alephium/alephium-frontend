@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById } from '@alephium/shared'
+import { NFT, selectNFTById, useGetNFTCollectionMetadataQuery, useGetNFTCollectionDataQuery } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -26,6 +26,7 @@ import NFTThumbnail from '@/components/NFTThumbnail'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import { openInWebBrowser } from '@/utils/misc'
+import { skipToken } from '@reduxjs/toolkit/query'
 
 interface TransactionDetailsModalProps {
   nftId: NFT['id']
@@ -35,6 +36,9 @@ interface TransactionDetailsModalProps {
 const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
+
+  const nftCollectionMetadata = useGetNFTCollectionMetadataQuery(nft?.collectionId ?? skipToken)
+  const nftCollectionData = useGetNFTCollectionDataQuery(nftCollectionMetadata.data?.collectionUri ?? skipToken)
 
   if (!nft) return null
 
@@ -62,6 +66,12 @@ const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
                 {attribute.value}
               </DataList.Row>
             ))}
+          </DataList>
+        )}
+        {nftCollectionData?.data && (
+          <DataList title={t('Collection')}>
+            <DataList.Row label={t('Name')}>{nftCollectionData.data.name}</DataList.Row>
+            <DataList.Row label={t('Description')}>{nftCollectionData.data.description}</DataList.Row>
           </DataList>
         )}
       </NFTMetadataContainer>
