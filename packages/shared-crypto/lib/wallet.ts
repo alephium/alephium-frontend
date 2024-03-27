@@ -27,13 +27,29 @@ import { decrypt, decryptAsync, encrypt, encryptAsync, Pbkdf2Function } from './
 
 type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
 
-type MnemonicLength = 12 | 24
+export type MnemonicLength = 12 | 24
+
+export type ValidEncryptedWalletVersions = 1 | 2
+
+export type DecryptMnemonicResult = {
+  decryptedMnemonic: Buffer
+  version: ValidEncryptedWalletVersions
+}
 
 class StoredStateV1 {
-  readonly version = 1
+  readonly version: ValidEncryptedWalletVersions = 1
   readonly mnemonic: string
 
   constructor({ mnemonic }: { mnemonic: string }) {
+    this.mnemonic = mnemonic
+  }
+}
+
+export class StoredStateV2 {
+  readonly version: ValidEncryptedWalletVersions = 2
+  readonly mnemonic: Buffer
+
+  constructor(mnemonic: Buffer) {
     this.mnemonic = mnemonic
   }
 }
@@ -237,4 +253,36 @@ export const walletEncryptAsyncUnsafe = (
   })
 
   return encryptAsync(password, JSON.stringify(storedState), pbkdf2CustomFunc ?? _pbkdf2)
+}
+
+export const encryptMnemonic = (mnemonic: Buffer | null, password: string) => {
+  if (!mnemonic) throw new Error('Keyring: Cannot encrypt mnemonic, mnemonic not provided')
+
+  const result = encrypt(password, JSON.stringify(new StoredStateV2(mnemonic)))
+
+  password = ''
+  mnemonic = null
+
+  return result
+}
+
+export const decryptMnemonic = (encryptedMnemonic: string, password: string): DecryptMnemonicResult => {
+  const dataDecrypted = decrypt(password, encryptedMnemonic)
+
+  const { version, mnemonic } = JSON.parse(dataDecrypted) // StoredStateV1 or StoredStateV2
+
+  if (
+    !version ||
+    (version !== 1 && version !== 2) ||
+    // In version 1 the encrypted mnemonic used to be stored as a string before we started using Buffer
+    (version === 1 && typeof mnemonic !== 'string') ||
+    // When a Buffer gets stringified it is turned into an object with properties `data` and `type`.
+    (version === 2 && (!mnemonic?.type || mnemonic.type !== 'Buffer' || !mnemonic?.data))
+  )
+    throw new Error('Encryptor: Cannot decrypt mnemonic, the provided mnemonic is invalid')
+
+  password = ''
+  encryptedMnemonic = ''
+
+  return { version, decryptedMnemonic: Buffer.from(version === 2 ? mnemonic.data : mnemonic) }
 }

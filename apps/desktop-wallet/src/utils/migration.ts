@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { decrypt, keyring } from '@alephium/shared-crypto'
+import { decrypt, decryptMnemonic, DecryptMnemonicResult, encryptMnemonic } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 
@@ -25,7 +25,7 @@ import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersi
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import SettingsStorage, { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
 import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import { GeneralSettings, ThemeSettings } from '@/types/settings'
 import { StoredEncryptedWallet } from '@/types/wallet'
@@ -73,11 +73,14 @@ export const migrateNetworkSettings = (): NetworkSettings => {
 }
 
 // Then we run user data migrations after the user has authenticated
-export const migrateUserData = (walletId: StoredEncryptedWallet['id']) => {
+export const migrateUserData = (walletId: StoredEncryptedWallet['id'], password: string) => {
   console.log('🚚 Migrating user data')
 
-  _20240326_181900(walletId)
-  _20230209_124300(walletId)
+  _20240328_1200_migrateEncryptedWalletFromV1ToV2(walletId, password)
+  _20240328_1221_migrateAddressAndContactsToUnencrypted(walletId, password)
+  _20230209_124300_migrateIsMainToIsDefault(walletId)
+
+  password = ''
 }
 
 // Change localStorage address metadata key from "{walletName}-addresses-metadata" to "addresses-metadata-{walletName}"
@@ -216,7 +219,7 @@ export const _20230228_155100 = () => {
       ) {
         const id = nanoid()
         const name = nameOrId // Since the wallet didn't have a "name" property, we know that the name was used as key
-        const newKey = WalletStorage.getKey(id)
+        const newKey = walletStorage.getKey(id)
         const newValue: StoredEncryptedWallet = {
           id,
           name,
@@ -261,7 +264,7 @@ export const _20230228_155100 = () => {
 }
 
 // Change isMain to isDefault settings of each address and ensure it has a color
-export const _20230209_124300 = (walletId: StoredEncryptedWallet['id']) => {
+export const _20230209_124300_migrateIsMainToIsDefault = (walletId: StoredEncryptedWallet['id']) => {
   const currentAddressMetadata: (AddressMetadata | DeprecatedAddressMetadata)[] = addressMetadataStorage.load(walletId)
   const newAddressesMetadata: AddressMetadata[] = []
 
@@ -280,34 +283,88 @@ export const _20230209_124300 = (walletId: StoredEncryptedWallet['id']) => {
   addressMetadataStorage.store(walletId, newAddressesMetadata)
 }
 
+// In version 1 the encrypted mnemonic used to be stored as a string before we started using Buffer. This migrates
+// the encrypted wallet from StoredStateV1 to StoredStateV2.
+export const _20240328_1200_migrateEncryptedWalletFromV1ToV2 = (
+  walletId: StoredEncryptedWallet['id'],
+  password: string
+) => {
+  try {
+    let result: DecryptMnemonicResult | null
+
+    result = decryptMnemonic(walletStorage.load(walletId).encrypted, password)
+
+    if (result.version === 1) {
+      walletStorage.update(walletId, { encrypted: encryptMnemonic(result.decryptedMnemonic, password) })
+
+      console.log('Migrated stored mnemonic from version 1 to version 2')
+    }
+
+    result = null
+  } catch (e) {
+    console.error('Failed migrating stored mnemonic from version 1 to version 2', e)
+  } finally {
+    password = ''
+  }
+}
+
 // Migrate address metadata and contacts from encrypted to unencrypted
-export const _20240326_181900 = (walletId: StoredEncryptedWallet['id']) => {
+export const _20240328_1221_migrateAddressAndContactsToUnencrypted = (
+  walletId: StoredEncryptedWallet['id'],
+  password: string
+) => {
   const metadataJson = localStorage.getItem(`addresses-metadata-${walletId}`)
   const contactsJson = localStorage.getItem(`contacts-${walletId}`)
   pendingTransactionsStorage.delete(walletId)
 
+  let parsedMetadataJson
+  let parsedContactsJson
+
   try {
-    const parsedMetadataJson = metadataJson ? JSON.parse(metadataJson) : undefined
-    const parsedContactsJson = contactsJson ? JSON.parse(contactsJson) : undefined
+    parsedMetadataJson = metadataJson ? JSON.parse(metadataJson) : undefined
+  } catch (e) {
+    console.error(e)
+  }
 
-    if (parsedMetadataJson?.encrypted || parsedContactsJson?.encrypted) {
-      let mnemonic = keyring.exportMnemonic()
+  try {
+    parsedContactsJson = contactsJson ? JSON.parse(contactsJson) : undefined
+  } catch (e) {
+    console.error(e)
+  }
 
-      if (!mnemonic) throw new Error('Migration: Could not migrate user data, mnemonic is not provided')
+  if (parsedMetadataJson?.encrypted || parsedContactsJson?.encrypted) {
+    let result: DecryptMnemonicResult | null
 
+    result = decryptMnemonic(walletStorage.load(walletId).encrypted, password)
+    password = ''
+
+    if (result.version !== 2) {
+      throw new Error(
+        'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'
+      )
+    }
+    if (!result.decryptedMnemonic) throw new Error('Migration: Could not migrate user data, mnemonic is not provided')
+
+    try {
       if (parsedMetadataJson?.encrypted) {
-        const metadata = JSON.parse(decrypt(mnemonic.toString(), parsedMetadataJson.encrypted)) as AddressMetadata[]
+        const metadata = JSON.parse(
+          decrypt(result.decryptedMnemonic.toString(), parsedMetadataJson.encrypted)
+        ) as AddressMetadata[]
         addressMetadataStorage.store(walletId, metadata)
       }
 
       if (parsedContactsJson?.encrypted) {
-        const contacts = JSON.parse(decrypt(mnemonic.toString(), parsedContactsJson.encrypted)) as Contact[]
+        const contacts = JSON.parse(
+          decrypt(result.decryptedMnemonic.toString(), parsedContactsJson.encrypted)
+        ) as Contact[]
         contactsStorage.store(walletId, contacts)
       }
 
-      mnemonic = null
+      result = null
+    } catch (e) {
+      console.error(e)
     }
-  } catch (e) {
-    console.error(e)
+  } else {
+    password = ''
   }
 }

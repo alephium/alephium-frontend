@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keyring } from '@alephium/shared-crypto'
 import { colord } from 'colord'
 import { motion, PanInfo } from 'framer-motion'
 import { throttle } from 'lodash'
@@ -37,6 +36,7 @@ import {
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
+import { useWalletContext } from '@/contexts/wallet'
 
 interface WordKey {
   word: string
@@ -46,6 +46,7 @@ interface WordKey {
 const CheckWordsPage = () => {
   const { t } = useTranslation()
   const { onButtonBack, onButtonNext } = useStepsContext()
+  const { mnemonic, setMnemonic } = useWalletContext()
 
   const [wordList, setWordList] = useState<WordKey[]>([])
   const [selectedElements, setSelectedElements] = useState<{ [wordKey: string]: Element | null }>({})
@@ -57,8 +58,6 @@ const CheckWordsPage = () => {
   const [closestWordKey, setClosestWordKey] = useState<string>('')
 
   useEffect(() => {
-    let mnemonic = keyring.exportMnemonic()
-
     if (!mnemonic) return
 
     setWordList(
@@ -74,19 +73,13 @@ const CheckWordsPage = () => {
         .split(' ')
         .reduce((p, c) => ({ ...p, [c]: null }), {})
     )
-
-    mnemonic = null
-  }, [])
+  }, [mnemonic])
 
   useEffect(() => {
-    let mnemonic = keyring.exportMnemonic()
-
     if (!mnemonic) return
 
     setIsValid(selectedWords.map(({ word }) => word).join(' ') === mnemonic.toString())
-
-    mnemonic = null
-  }, [selectedWords])
+  }, [mnemonic, selectedWords])
 
   // === Actions ===
   // ===============
@@ -199,6 +192,7 @@ const CheckWordsPage = () => {
 
   const handleNextButtonPress = () => {
     cleanup()
+    setMnemonic(null)
     onButtonNext()
   }
 

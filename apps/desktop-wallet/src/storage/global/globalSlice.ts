@@ -43,7 +43,7 @@ import {
   walletLocked,
   walletSaved
 } from '@/storage/wallets/walletActions'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { ThemeType } from '@/types/settings'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getThemeType } from '@/utils/settings'
@@ -64,7 +64,7 @@ const initialState: AppState = {
   visibleModals: [],
   addressesPageInfoMessageClosed: true, // See: https://github.com/alephium/desktop-wallet/issues/644
   transfersPageInfoMessageClosed: true, // See: https://github.com/alephium/desktop-wallet/issues/644
-  wallets: WalletStorage.list(),
+  wallets: walletStorage.list(),
   theme: getThemeType(),
   devMode: false,
   faucetCallPending: false
@@ -146,8 +146,8 @@ const toggleLoading = (state: AppState, toggle: boolean, enableLoading?: boolean
   if (enableLoading !== false) state.loading = toggle
 }
 
-const resetState = ({ theme }: AppState) => ({ ...initialState, wallets: WalletStorage.list(), theme })
+const resetState = ({ theme }: AppState) => ({ ...initialState, wallets: walletStorage.list(), theme })
 
 const refreshWalletList = (state: AppState) => {
-  state.wallets = WalletStorage.list()
+  state.wallets = walletStorage.list()
 }

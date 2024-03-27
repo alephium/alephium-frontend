@@ -74,7 +74,7 @@ const DevToolsSettingsSection = () => {
     if (!selectedAddress) return
 
     try {
-      await navigator.clipboard.writeText(keyring.exportAndCachePrivateKeyForAddress(selectedAddress.hash).toString())
+      await navigator.clipboard.writeText(keyring.exportPrivateKeyOfAddress(selectedAddress.hash).toString())
       dispatch(copiedToClipboard(t('Private key copied.')))
 
       posthog.capture('Copied address private key')

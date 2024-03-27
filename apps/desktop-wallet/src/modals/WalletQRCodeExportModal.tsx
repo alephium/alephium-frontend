@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { encrypt, keyring } from '@alephium/shared-crypto'
+import { decryptMnemonic, encrypt } from '@alephium/shared-crypto'
 import { ScanLine } from 'lucide-react'
 import { dataToFrames } from 'qrloop'
 import { useEffect, useState } from 'react'
@@ -30,6 +30,7 @@ import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import { selectAllAddresses, selectAllContacts } from '@/storage/addresses/addressesSelectors'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
 // Inspired by:
 // - https://github.com/LedgerHQ/ledger-live/blob/edc7cc4091969564f8fe295ff2bf0a3e425a4ba6/apps/ledger-live-desktop/src/renderer/components/Exporter/QRCodeExporter.tsx
@@ -40,6 +41,7 @@ const FPS = 5
 const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation()
   const theme = useTheme()
+  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const addresses = useAppSelector(selectAllAddresses)
   const contacts = useAppSelector(selectAllContacts)
 
@@ -69,24 +71,42 @@ const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
     }
   }, [frames.length])
 
-  if (!keyring.exportMnemonic()) return null
+  if (!activeWalletId) return null
 
   const handleCorrectPasswordEntered = (password: string) => {
-    const encryptedData = encrypt(
-      password,
-      JSON.stringify({
-        mnemonic: keyring.exportMnemonic()?.toString(),
-        addresses: addresses.map(({ index, label, color, isDefault }) => ({ index, label, color, isDefault })),
-        contacts: contacts.map(({ name, address }) => ({ name, address }))
-      }),
-      'sha512'
-    )
+    try {
+      const encryptedData = encrypt(
+        password,
+        JSON.stringify({
+          mnemonic: decryptMnemonic(
+            walletStorage.load(activeWalletId).encrypted,
+            password
+          ).decryptedMnemonic.toString(),
+          addresses: addresses.map(({ index, label, color, isDefault }) => ({ index, label, color, isDefault })),
+          contacts: contacts.map(({ name, address }) => ({ name, address }))
+        }),
+        'sha512'
+      )
 
-    setFrames(dataToFrames(encryptedData, 160, 4))
+      setFrames(dataToFrames(encryptedData, 160, 4))
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const handleClose = () => {
+    setFrames([])
+    onClose()
   }
 
   return (
-    <CenteredModal title={t('Export wallet')} onClose={onClose} focusMode narrow={frames.length === 0} skipFocusOnMount>
+    <CenteredModal
+      title={t('Export wallet')}
+      onClose={handleClose}
+      focusMode
+      narrow={frames.length === 0}
+      skipFocusOnMount
+    >
       {frames.length === 0 ? (
         <div>
           <PasswordConfirmation

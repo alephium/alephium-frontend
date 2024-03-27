@@ -103,6 +103,4 @@ class WalletStorage {
   }
 }
 
-const Storage = new WalletStorage()
-
-export default Storage
+export const walletStorage = new WalletStorage()

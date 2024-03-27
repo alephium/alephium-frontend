@@ -131,7 +131,7 @@ const useAddressGeneration = () => {
     // deriveAddressesFromIndexesWorker.postMessage({ indexesToDerive: addressesMetadata.map(({ index }) => index) })
 
     // Moving the address derivation work from the web worker:
-    const data = keyring.generateAndCacheAddresses(addressesMetadata.map(({ index }) => index))
+    const data = addressesMetadata.map(({ index }) => keyring.generateAndCacheAddress({ addressIndex: index }))
     onAddressesDerivedCallback({ data })
   }
 

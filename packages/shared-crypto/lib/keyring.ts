@@ -23,9 +23,7 @@ import * as bip39 from 'bip39'
 import blake from 'blakejs'
 
 import { findNextAvailableAddressIndex, isAddressIndexValid } from './address'
-import { decrypt, encrypt } from './password-crypto'
-
-type MnemonicLength = 12 | 24
+import { decryptMnemonic, MnemonicLength } from './wallet'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -37,128 +35,69 @@ type SensitiveAddressData = NonSensitiveAddressData & {
   privateKey: Buffer
 }
 
-type NullableSensitiveAddressData = NonSensitiveAddressData & {
-  privateKey: SensitiveAddressData['privateKey'] | null
-}
-
 type GenerateAddressProps = {
   group?: number
   addressIndex?: number
   skipAddressIndexes?: number[]
 }
 
-class StoredStateV2 {
-  readonly version = 2
-  readonly mnemonic: Buffer
-
-  constructor(mnemonic: Buffer) {
-    this.mnemonic = mnemonic
-  }
-}
-
 class Keyring {
   private hdPath = "m/44'/1234'/0'/0"
-  private mnemonic: Buffer | null
   private root: bip32.BIP32Interface | null
-  private addresses: NullableSensitiveAddressData[]
-  private password?: string
-  private passphrase?: string
+  private addresses: SensitiveAddressData[]
 
   constructor() {
     this.addresses = []
-    this.mnemonic = null
     this.root = null
   }
 
   // PUBLIC METHODS
 
   public clearCachedSecrets = () => {
-    this.addresses.forEach((keyPair) => (keyPair.privateKey = null))
-    this.mnemonic = null
+    this.addresses = []
     this.root = null
-    delete this.password
-    delete this.passphrase
   }
 
-  public generateAndCacheRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Buffer => {
+  public generateRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Buffer => {
     const strength = mnemonicLength === 24 ? 256 : 128
+    const mnemonic = Buffer.from(bip39.generateMnemonic(strength))
 
-    this._initAndCacheFromMnemonic(Buffer.from(bip39.generateMnemonic(strength)), '')
+    this._initFromMnemonic(mnemonic, '')
 
-    if (!this.mnemonic) throw new Error('Keyring: Could not generate mnemonic')
-
-    return this.mnemonic
+    return mnemonic
   }
 
-  public importAndCacheMnemonic = (mnemonic: string | Buffer | null) => {
-    if (!mnemonic) return
+  public importMnemonicString = (mnemonic: string) => {
+    if (!mnemonic) throw new Error('Keyring: Cannot import mnemonic, mnemonic not provided')
 
     this.clearCachedSecrets()
-    this._initAndCacheFromMnemonic(typeof mnemonic === 'string' ? Buffer.from(mnemonic) : mnemonic, '')
+    this._initFromMnemonic(Buffer.from(mnemonic), '')
 
-    mnemonic = null
+    mnemonic = ''
   }
 
-  public exportMnemonic = (): Buffer | null => this.mnemonic
-
-  public encryptMnemonicForStorageAndCachePassword = (password: string): string => {
-    if (!this.mnemonic) throw new Error('Keyring: Cannot encrypt mnemonic, mnemonic not provided')
-
-    this.password = password
-
-    password = ''
-
-    return encrypt(this.password, JSON.stringify(new StoredStateV2(this.mnemonic)))
-  }
-
-  public decryptAndCacheMnemonicAndPassword = (
-    encryptedMnemonic: string,
-    password: string,
-    passphrase: string
-  ): 1 | 2 => {
-    const dataDecrypted = decrypt(password, encryptedMnemonic)
-
-    const { version, mnemonic } = JSON.parse(dataDecrypted) // StoredStateV1 or StoredStateV2
-
-    if (
-      !version ||
-      (version !== 1 && version !== 2) ||
-      // In version 1 the encrypted mnemonic used to be stored as a string before we started using Buffer
-      (version === 1 && typeof mnemonic !== 'string') ||
-      // When a Buffer gets stringified it is turned into an object with properties `data` and `type`.
-      (version === 2 && (!mnemonic?.type || mnemonic.type !== 'Buffer' || !mnemonic?.data))
-    )
-      throw new Error('Keyring: The provided mnemonic is invalid')
-
+  public initFromEncryptedMnemonic = (encryptedMnemonic: string, password: string, passphrase: string) => {
+    let decryptedMnemonic: Buffer | null = decryptMnemonic(encryptedMnemonic, password).decryptedMnemonic
     this.clearCachedSecrets()
-    this._initAndCacheFromMnemonic(Buffer.from(version === 2 ? mnemonic.data : mnemonic), passphrase)
-
-    this.password = password
+    this._initFromMnemonic(decryptedMnemonic, passphrase)
 
     encryptedMnemonic = ''
     password = ''
     passphrase = ''
-
-    return version
-  }
-
-  public verifyPassword = (encryptedMnemonic: string, password: string) => {
-    try {
-      decrypt(password, encryptedMnemonic)
-      return true
-    } catch {
-      return false
-    } finally {
-      encryptedMnemonic = ''
-      password = ''
-    }
+    decryptedMnemonic = null
   }
 
   public generateAndCacheAddress = (props: GenerateAddressProps): NonSensitiveAddressData =>
     this._getNonSensitiveAddressData(this._generateAndCacheAddress(props))
 
-  public generateAndCacheAddresses = (addressIndexes: number[]): NonSensitiveAddressData[] =>
-    addressIndexes.map((addressIndex) => this.generateAndCacheAddress({ addressIndex }))
+  public signTransaction = (txId: string, addressHash: AddressHash): string =>
+    transactionSign(txId, this.exportPrivateKeyOfAddress(addressHash).toString('hex'))
+
+  public signMessage = (message: string, addressHash: AddressHash): string =>
+    sign(message, this.exportPrivateKeyOfAddress(addressHash).toString('hex'))
+
+  public exportPrivateKeyOfAddress = (addressHash: AddressHash): SensitiveAddressData['privateKey'] =>
+    this._getAddress(addressHash).privateKey
 
   public discoverAndCacheActiveAddresses = async (
     client: ExplorerProvider,
@@ -211,21 +150,9 @@ class Keyring {
     return activeAddresses.map(this._getNonSensitiveAddressData)
   }
 
-  public signTransaction = (txId: string, addressHash: AddressHash): string =>
-    transactionSign(txId, this.exportAndCachePrivateKeyForAddress(addressHash).toString('hex'))
-
-  public signMessage = (message: string, addressHash: AddressHash): string =>
-    sign(message, this.exportAndCachePrivateKeyForAddress(addressHash).toString('hex'))
-
-  public exportAndCachePrivateKeyForAddress = (addressHash: AddressHash): SensitiveAddressData['privateKey'] => {
-    const address = this._getAddress(addressHash)
-
-    return address.privateKey ?? this._generateAndCacheAddress({ addressIndex: address.index }).privateKey
-  }
-
   // PRIVATE METHODS
 
-  private _getAddress = (addressHash: AddressHash): NullableSensitiveAddressData => {
+  private _getAddress = (addressHash: AddressHash): SensitiveAddressData => {
     const address = this.addresses.find(({ hash }) => hash === addressHash)
 
     if (!address) throw new Error(`Keyring: Could not find address with hash ${addressHash}`)
@@ -234,15 +161,9 @@ class Keyring {
   }
 
   private _generateAndCacheAddress = (props: GenerateAddressProps): SensitiveAddressData => {
-    const cachedAddressIndex = this.addresses.findIndex(({ index }) => index === props.addressIndex)
+    const cachedAddress = this.addresses.find(({ index }) => index === props.addressIndex)
 
-    if (cachedAddressIndex >= 0) {
-      if (this.addresses[cachedAddressIndex].privateKey) {
-        return this.addresses[cachedAddressIndex] as SensitiveAddressData
-      } else {
-        this.addresses.splice(cachedAddressIndex, 1)
-      }
-    }
+    if (cachedAddress) return cachedAddress
 
     const address = this._generateAddress(props)
 
@@ -291,15 +212,13 @@ class Keyring {
     publicKey
   }: SensitiveAddressData): NonSensitiveAddressData => ({ hash, index, publicKey })
 
-  private _initAndCacheFromMnemonic = (mnemonic: Buffer, passphrase: string) => {
-    if (this.mnemonic) throw new Error('Keyring: Secret recovery phrase already provided')
+  private _initFromMnemonic = (mnemonic: Buffer, passphrase: string) => {
+    if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
 
     const isValid = bip39.validateMnemonic(mnemonic.toString())
     if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
 
-    this.mnemonic = mnemonic
-
-    const seed = bip39.mnemonicToSeedSync(this.mnemonic.toString(), passphrase)
+    const seed = bip39.mnemonicToSeedSync(mnemonic.toString(), passphrase)
     this.root = bip32.fromSeed(seed)
 
     passphrase = ''

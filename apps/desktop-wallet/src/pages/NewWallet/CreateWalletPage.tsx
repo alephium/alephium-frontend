@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { getHumanReadableError } from '@alephium/shared'
-import { keyring } from '@alephium/shared-crypto'
+import { encryptMnemonic } from '@alephium/shared-crypto'
 import { AlertCircle } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
@@ -37,6 +37,7 @@ import {
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
+import { useWalletContext } from '@/contexts/wallet'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { selectDevModeStatus } from '@/storage/global/globalSlice'
@@ -51,6 +52,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
   const { discoverAndSaveUsedAddresses } = useAddressGeneration()
+  const { mnemonic } = useWalletContext()
 
   const [walletName, setWalletNameState] = useState('')
   const [walletNameError, setWalletNameError] = useState('')
@@ -87,7 +89,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
 
   const handleNextButtonClick = () => {
     try {
-      saveNewWallet({ walletName, encrypted: keyring.encryptMnemonicForStorageAndCachePassword(password) })
+      saveNewWallet({ walletName, encrypted: encryptMnemonic(mnemonic, password) })
 
       if (isRestoring) {
         discoverAndSaveUsedAddresses({ skipIndexes: [0], enableLoading: false })

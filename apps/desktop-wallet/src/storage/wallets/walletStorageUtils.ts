@@ -22,7 +22,7 @@ import { syncAddressesData } from '@/storage/addresses/addressesActions'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
 import { walletSaved } from '@/storage/wallets/walletActions'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 
@@ -32,7 +32,7 @@ interface SaveNewWalletProps {
 }
 
 export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): StoredEncryptedWallet['id'] => {
-  const storedWallet = WalletStorage.store(walletName, encrypted)
+  const storedWallet = walletStorage.store(walletName, encrypted)
   const initialAddressSettings = getInitialAddressSettings()
 
   store.dispatch(

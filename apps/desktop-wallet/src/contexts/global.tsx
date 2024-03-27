@@ -31,7 +31,7 @@ import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { osThemeChangeDetected, userDataMigrationFailed } from '@/storage/global/globalActions'
 import { walletLocked, walletSwitched, walletUnlocked } from '@/storage/wallets/walletActions'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { AlephiumWindow } from '@/types/window'
 import { migrateUserData } from '@/utils/migration'
@@ -89,27 +89,23 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
     let { password, passphrase } = props
     let encryptedWallet: StoredEncryptedWallet | null
     let initialAddress: NonSensitiveAddressData
-    let version: number
 
     try {
-      encryptedWallet = WalletStorage.load(walletId)
+      encryptedWallet = walletStorage.load(walletId)
 
-      version = keyring.decryptAndCacheMnemonicAndPassword(encryptedWallet.encrypted, password, passphrase ?? '')
+      keyring.initFromEncryptedMnemonic(encryptedWallet.encrypted, password, passphrase ?? '')
     } catch (e) {
       console.error(e)
       dispatch(passwordValidationFailed())
       return
     }
 
-    // In version 1 the encrypted mnemonic used to be stored as a string before we started using Buffer. This migrates
-    // the encrypted wallet from StoredStateV1 to StoredStateV2.
-    if (version === 1) {
-      try {
-        WalletStorage.update(walletId, { encrypted: keyring.encryptMnemonicForStorageAndCachePassword(password) })
-        console.log('Migrated stored mnemonic from version 1 to version 2')
-      } catch (e) {
-        console.error('Failed migrating stored mnemonic from version 1 to version 2', e)
-      }
+    try {
+      migrateUserData(encryptedWallet.id, password)
+    } catch (e) {
+      console.error(e)
+      posthog.capture('Error', { message: 'User data migration failed ' })
+      dispatch(userDataMigrationFailed())
     }
 
     try {
@@ -131,17 +127,9 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
     dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
 
     if (!passphrase) {
-      try {
-        migrateUserData(encryptedWallet.id)
-      } catch (e) {
-        console.error(e)
-        posthog.capture('Error', { message: 'User data migration failed ' })
-        dispatch(userDataMigrationFailed())
-      }
-
       restoreAddressesFromMetadata(encryptedWallet.id)
 
-      WalletStorage.update(walletId, { lastUsed: Date.now() })
+      walletStorage.update(walletId, { lastUsed: Date.now() })
 
       posthog.capture(event === 'unlock' ? 'Wallet unlocked' : 'Wallet switched', {
         wallet_name_length: encryptedWallet.name.length,

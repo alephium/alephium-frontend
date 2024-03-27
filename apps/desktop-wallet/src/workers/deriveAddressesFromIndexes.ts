@@ -30,7 +30,7 @@ self.onmessage = ({ data: { indexesToDerive } }: WorkerPayload) => {
 
 const derive = (indexesToDerive: number[]) => {
   try {
-    self.postMessage(keyring.generateAndCacheAddresses(indexesToDerive))
+    self.postMessage(indexesToDerive.map((index) => keyring.generateAndCacheAddress({ addressIndex: index })))
   } catch (e) {
     console.error(e)
   }

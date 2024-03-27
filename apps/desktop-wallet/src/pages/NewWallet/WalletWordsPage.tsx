@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring } from '@alephium/shared-crypto'
 import { colord } from 'colord'
 import { Edit3 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -33,23 +33,28 @@ import {
 } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import { useStepsContext } from '@/contexts/steps'
+import { useWalletContext } from '@/contexts/wallet'
 
 const WalletWordsPage = () => {
   const { onButtonBack, onButtonNext } = useStepsContext()
+  const { mnemonic, setMnemonic } = useWalletContext()
   const { t } = useTranslation()
-  const [mnemonic, setMnemonic] = useState<Buffer | null>(null)
 
   useEffect(() => {
-    try {
-      setMnemonic(keyring.exportMnemonic() ?? keyring.generateAndCacheRandomMnemonic())
-    } catch (e) {
-      console.error(e)
+    if (!mnemonic) {
+      try {
+        setMnemonic(keyring.generateRandomMnemonic())
+      } catch (e) {
+        console.error(e)
+      }
     }
-  }, [])
+  }, [mnemonic, setMnemonic])
+
+  if (!mnemonic) return null
 
   const renderMnemonicWords = () =>
     mnemonic
-      ?.toString()
+      .toString()
       .split(' ')
       .map((w, i) => (
         <MnemonicWordContainer key={i}>

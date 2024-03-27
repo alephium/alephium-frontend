@@ -21,34 +21,22 @@ import { createContext, useContext, useState } from 'react'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 
 export interface WalletContextType {
-  walletName: string
-  setWalletName: (w: string) => void
-  password: string
-  setPassword: (password: string) => void
+  mnemonic: Buffer | null
+  setMnemonic: (mnemonic: Buffer | null) => void
 }
 
 export const initialWalletContext: WalletContextType = {
-  walletName: '',
-  setWalletName: () => null,
-  password: '',
-  setPassword: () => null
+  mnemonic: null,
+  setMnemonic: () => null
 }
 
 export const WalletContext = createContext<WalletContextType>(initialWalletContext)
 
 export const WalletContextProvider: FC = ({ children }) => {
-  const [walletName, setWalletName] = useState('')
-  const [password, setPassword] = useState('')
+  const [mnemonic, setMnemonic] = useState<WalletContextType['mnemonic']>(null)
 
   return (
-    <WalletContext.Provider
-      value={{
-        walletName,
-        setWalletName,
-        password,
-        setPassword
-      }}
-    >
+    <WalletContext.Provider value={{ mnemonic, setMnemonic }}>
       <CenteredSection>{children}</CenteredSection>
     </WalletContext.Provider>
   )

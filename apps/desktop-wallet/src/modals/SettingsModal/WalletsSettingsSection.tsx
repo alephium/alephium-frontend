@@ -35,7 +35,7 @@ import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { activeWalletDeleted, walletDeleted, walletLocked } from '@/storage/wallets/walletActions'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { ActiveWallet, StoredEncryptedWallet } from '@/types/wallet'
 
 const WalletsSettingsSection = () => {
@@ -53,7 +53,7 @@ const WalletsSettingsSection = () => {
   const isAuthenticated = !!activeWallet.id
 
   const handleRemoveWallet = (walletId: string) => {
-    WalletStorage.delete(walletId)
+    walletStorage.delete(walletId)
     addressMetadataStorage.delete(walletId)
     dispatch(walletId === activeWallet.id ? activeWalletDeleted() : walletDeleted(walletId))
     setWalletToRemove(undefined)
