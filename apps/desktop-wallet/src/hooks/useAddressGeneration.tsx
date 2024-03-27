@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata } from '@alephium/shared'
+import { AddressMetadata, client } from '@alephium/shared'
 import { keyring, NonSensitiveAddressData } from '@alephium/shared-crypto'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
@@ -51,21 +51,21 @@ interface GenerateOneAddressPerGroupProps {
   skipGroups?: number[]
 }
 
-const addressDiscoveryWorker = new Worker(new URL('../workers/addressDiscovery.ts', import.meta.url), {
-  type: 'module'
-})
-const deriveAddressesInGroupsWorker = new Worker(new URL('../workers/deriveAddressesInGroups.ts', import.meta.url), {
-  type: 'module'
-})
-const deriveAddressesFromIndexesWorker = new Worker(
-  new URL('../workers/deriveAddressesFromIndexes.ts', import.meta.url),
-  { type: 'module' }
-)
+// const addressDiscoveryWorker = new Worker(new URL('../workers/addressDiscovery.ts', import.meta.url), {
+//   type: 'module'
+// })
+// const deriveAddressesInGroupsWorker = new Worker(new URL('../workers/deriveAddressesInGroups.ts', import.meta.url), {
+//   type: 'module'
+// })
+// const deriveAddressesFromIndexesWorker = new Worker(
+//   new URL('../workers/deriveAddressesFromIndexes.ts', import.meta.url),
+//   { type: 'module' }
+// )
 
 const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
-  const explorerApiHost = useAppSelector((s) => s.network.settings.explorerApiHost)
+  // const explorerApiHost = useAppSelector((s) => s.network.settings.explorerApiHost)
 
   const currentAddressIndexes = addresses.map(({ index }) => index)
 
@@ -79,7 +79,7 @@ const useAddressGeneration = () => {
       (group) => !skipGroups.includes(group)
     )
 
-    deriveAddressesInGroupsWorker.onmessage = ({ data }: { data: (NonSensitiveAddressData & { group: number })[] }) => {
+    const onAddressesDerivedCallback = ({ data }: { data: (NonSensitiveAddressData & { group: number })[] }) => {
       const randomLabelColor = getRandomLabelColor()
       const addresses: AddressBase[] = data.map((address) => ({
         ...address,
@@ -95,7 +95,15 @@ const useAddressGeneration = () => {
       }
     }
 
-    deriveAddressesInGroupsWorker.postMessage({ groups, skipIndexes: currentAddressIndexes })
+    // deriveAddressesInGroupsWorker.onmessage = onAddressesDerivedCallback
+    // deriveAddressesInGroupsWorker.postMessage({ groups, skipIndexes: currentAddressIndexes })
+
+    // Moving the address derivation work from the web worker:
+    const data = groups.map((group) => ({
+      ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
+      group
+    }))
+    onAddressesDerivedCallback({ data })
   }
 
   const restoreAddressesFromMetadata = async (walletId: StoredWallet['id']) => {
@@ -110,7 +118,7 @@ const useAddressGeneration = () => {
 
     dispatch(addressRestorationStarted())
 
-    deriveAddressesFromIndexesWorker.onmessage = async ({ data }: { data: NonSensitiveAddressData[] }) => {
+    const onAddressesDerivedCallback = async ({ data }: { data: NonSensitiveAddressData[] }) => {
       const restoredAddresses: AddressBase[] = data.map((address) => ({
         ...address,
         ...(addressesMetadata.find((metadata) => metadata.index === address.index) as AddressMetadata)
@@ -119,16 +127,19 @@ const useAddressGeneration = () => {
       dispatch(addressesRestoredFromMetadata(restoredAddresses))
     }
 
-    deriveAddressesFromIndexesWorker.postMessage({
-      indexesToDerive: addressesMetadata.map((metadata) => metadata.index)
-    })
+    // deriveAddressesFromIndexesWorker.onmessage = onAddressesDerivedCallback
+    // deriveAddressesFromIndexesWorker.postMessage({ indexesToDerive: addressesMetadata.map(({ index }) => index) })
+
+    // Moving the address derivation work from the web worker:
+    const data = keyring.generateAndCacheAddresses(addressesMetadata.map(({ index }) => index))
+    onAddressesDerivedCallback({ data })
   }
 
   const discoverAndSaveUsedAddresses = async ({
     skipIndexes,
     enableLoading = true
   }: DiscoverUsedAddressesProps = {}) => {
-    addressDiscoveryWorker.onmessage = ({ data }: { data: NonSensitiveAddressData[] }) => {
+    const onAddressesDerivedCallback = ({ data }: { data: NonSensitiveAddressData[] }) => {
       const addresses: AddressBase[] = data.map((address) => ({
         ...address,
         isDefault: false,
@@ -143,12 +154,18 @@ const useAddressGeneration = () => {
       }
     }
 
+    // addressDiscoveryWorker.onmessage = onAddressesDerivedCallback
+
     dispatch(addressDiscoveryStarted(enableLoading))
 
-    addressDiscoveryWorker.postMessage({
-      skipIndexes: skipIndexes && skipIndexes.length > 0 ? skipIndexes : currentAddressIndexes,
-      clientUrl: explorerApiHost
-    })
+    // addressDiscoveryWorker.postMessage({
+    //   skipIndexes: skipIndexes && skipIndexes.length > 0 ? skipIndexes : currentAddressIndexes,
+    //   clientUrl: explorerApiHost
+    // })
+
+    // Moving the address derivation work from the web worker:
+    const data = await keyring.discoverAndCacheActiveAddresses(client.explorer, skipIndexes)
+    onAddressesDerivedCallback({ data })
   }
 
   return {
