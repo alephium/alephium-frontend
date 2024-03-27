@@ -26,27 +26,35 @@ interface DataRowProps {
 }
 
 const DataRow = ({ children, label, className }: DataRowProps) => (
-  <div className={className} role="row">
+  <DataRowStyled className={className} role="row">
     <DetailsRowLabel tabIndex={0} role="cell">
       {label}
     </DetailsRowLabel>
-    {children || '-'}
-  </div>
+    <ChildrenWrapper>{children || '-'}</ChildrenWrapper>
+  </DataRowStyled>
 )
 
-export default styled(DataRow)`
+export default DataRow
+
+const DataRowStyled = styled.div`
   padding: 12px var(--spacing-3);
   display: flex;
-  align-items: center;
   gap: var(--spacing-3);
-  justify-content: space-between;
   min-height: 52px;
+  align-items: center;
 
-  &:not(:first-child) {
-    border-top: 1px solid ${({ theme }) => theme.border.secondary};
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
 `
 
 const DetailsRowLabel = styled.div`
   font-weight: var(--fontWeight-medium);
+  width: max(100px, 30%);
+  color: ${({ theme }) => theme.font.secondary};
+`
+
+const ChildrenWrapper = styled.div`
+  flex: 1;
+  overflow: hidden;
 `
