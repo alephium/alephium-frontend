@@ -487,5 +487,6 @@
   "Could not sign message": "Could not sign message",
   "NFT details": "NFT details",
   "Image URL": "Image URL",
-  "Attributes": "Attributes"
+  "Attributes": "Attributes",
+  "Collection": "Collection"
 }
