@@ -486,5 +486,6 @@
   "Could not sign unsigned tx": "Could not sign unsigned tx",
   "Could not sign message": "Could not sign message",
   "NFT details": "NFT details",
-  "Image URL": "Image URL"
+  "Image URL": "Image URL",
+  "Attributes": "Attributes"
 }

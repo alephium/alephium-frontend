@@ -56,7 +56,7 @@ export const GlobalStyle = createGlobalStyle`
     --radius-small: 7px;
     --radius-medium: 9px;
     --radius-big: 12px;
-    --radius-huge: 17px;
+    --radius-huge: 16px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;
