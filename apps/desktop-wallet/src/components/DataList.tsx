@@ -19,28 +19,48 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-interface DataRowProps {
+export type DataListItem = {
   label: string
-  className?: string
-  children: ReactNode
+  value?: ReactNode
 }
 
-const DataRow = ({ children, label, className }: DataRowProps) => (
-  <DataRowStyled className={className} role="row">
-    <DetailsRowLabel tabIndex={0} role="cell">
-      {label}
-    </DetailsRowLabel>
-    <ChildrenWrapper>{children || '-'}</ChildrenWrapper>
-  </DataRowStyled>
+interface DataListProps {
+  items: DataListItem[]
+  title?: string
+}
+
+const DataList = ({ items, title }: DataListProps) => (
+  <DataListStyled>
+    {title && <DataListTitle>{title}</DataListTitle>}
+    {items.map(({ label, value }) => (
+      <DataRowStyled role="row" tabIndex={0}>
+        <DetailsRowLabel tabIndex={0} role="cell">
+          {label}
+        </DetailsRowLabel>
+        <ChildrenWrapper>{value || '-'}</ChildrenWrapper>
+      </DataRowStyled>
+    ))}
+  </DataListStyled>
 )
 
-export default DataRow
+export default DataList
+
+const DataListStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.bg.primary};
+  border-radius: var(--radius-big);
+  padding: 0 var(--spacing-4);
+`
+
+const DataListTitle = styled.h2`
+  padding-top: var(--spacing-2);
+`
 
 const DataRowStyled = styled.div`
-  padding: 12px var(--spacing-3);
+  padding: var(--spacing-4) 0;
   display: flex;
   gap: var(--spacing-3);
-  min-height: 52px;
   align-items: center;
 
   &:not(:last-child) {
