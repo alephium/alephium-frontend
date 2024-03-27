@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 export class PersistentArrayStorage<T> {
   private localStorageKeyPrefix: string
@@ -25,23 +25,23 @@ export class PersistentArrayStorage<T> {
     this.localStorageKeyPrefix = localStorageKeyPrefix
   }
 
-  getKey(id: StoredWallet['id']) {
+  getKey(id: StoredEncryptedWallet['id']) {
     if (!id) throw new Error('Wallet ID not set.')
 
     return `${this.localStorageKeyPrefix}-${id}`
   }
 
-  load(walletId: StoredWallet['id']) {
+  load(walletId: StoredEncryptedWallet['id']) {
     const json = localStorage.getItem(this.getKey(walletId))
 
     return json === null ? [] : (JSON.parse(json) as T[])
   }
 
-  store(walletId: StoredWallet['id'], data: T[]) {
+  store(walletId: StoredEncryptedWallet['id'], data: T[]) {
     localStorage.setItem(this.getKey(walletId), JSON.stringify(data))
   }
 
-  delete(walletId: StoredWallet['id']) {
+  delete(walletId: StoredEncryptedWallet['id']) {
     localStorage.removeItem(this.getKey(walletId))
   }
 }

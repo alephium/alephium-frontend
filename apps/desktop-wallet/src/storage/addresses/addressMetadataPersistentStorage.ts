@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressMetadata, AddressSettings } from '@alephium/shared'
 
 import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface AddressMetadataStorageStoreProps {
   index: number
@@ -27,7 +27,7 @@ interface AddressMetadataStorageStoreProps {
 }
 
 class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
-  storeOne(walletId: StoredWallet['id'], { index, settings }: AddressMetadataStorageStoreProps) {
+  storeOne(walletId: StoredEncryptedWallet['id'], { index, settings }: AddressMetadataStorageStoreProps) {
     const addressesMetadata = this.load(walletId)
     const existingAddressMetadata: AddressMetadata | undefined = addressesMetadata.find(
       (data: AddressMetadata) => data.index === index

@@ -29,7 +29,7 @@ import { useGlobalContext } from '@/contexts/global'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface WalletSwitcherProps {
   onUnlock: () => void
@@ -51,7 +51,7 @@ const WalletSwitcher = ({ onUnlock }: WalletSwitcherProps) => {
   const walletSelectOptions = wallets.map((wallet) => ({ value: wallet.id, label: wallet.name }))
   const selectedWalletOption = walletSelectOptions.find((wallet) => wallet.value === selectedWalletId)
 
-  const handleWalletSelect = (walletId: StoredWallet['id']) => {
+  const handleWalletSelect = (walletId: StoredEncryptedWallet['id']) => {
     setSelectedWalletId(walletId)
     setIsPasswordModalOpen(true)
   }

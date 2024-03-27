@@ -28,7 +28,7 @@ import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransa
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import { GeneralSettings, ThemeSettings } from '@/types/settings'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 import { getRandomLabelColor } from '@/utils/colors'
 import { stringToDoubleSHA256HexString } from '@/utils/misc'
 
@@ -73,7 +73,7 @@ export const migrateNetworkSettings = (): NetworkSettings => {
 }
 
 // Then we run user data migrations after the user has authenticated
-export const migrateUserData = (walletId: StoredWallet['id']) => {
+export const migrateUserData = (walletId: StoredEncryptedWallet['id']) => {
   console.log('🚚 Migrating user data')
 
   _20240326_181900(walletId)
@@ -217,7 +217,7 @@ export const _20230228_155100 = () => {
         const id = nanoid()
         const name = nameOrId // Since the wallet didn't have a "name" property, we know that the name was used as key
         const newKey = WalletStorage.getKey(id)
-        const newValue: StoredWallet = {
+        const newValue: StoredEncryptedWallet = {
           id,
           name,
           encrypted: typeof wallet === 'string' ? wallet : JSON.stringify(wallet),
@@ -261,7 +261,7 @@ export const _20230228_155100 = () => {
 }
 
 // Change isMain to isDefault settings of each address and ensure it has a color
-export const _20230209_124300 = (walletId: StoredWallet['id']) => {
+export const _20230209_124300 = (walletId: StoredEncryptedWallet['id']) => {
   const currentAddressMetadata: (AddressMetadata | DeprecatedAddressMetadata)[] = addressMetadataStorage.load(walletId)
   const newAddressesMetadata: AddressMetadata[] = []
 
@@ -281,7 +281,7 @@ export const _20230209_124300 = (walletId: StoredWallet['id']) => {
 }
 
 // Migrate address metadata and contacts from encrypted to unencrypted
-export const _20240326_181900 = (walletId: StoredWallet['id']) => {
+export const _20240326_181900 = (walletId: StoredEncryptedWallet['id']) => {
   const metadataJson = localStorage.getItem(`addresses-metadata-${walletId}`)
   const contactsJson = localStorage.getItem(`contacts-${walletId}`)
   pendingTransactionsStorage.delete(walletId)

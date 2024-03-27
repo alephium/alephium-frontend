@@ -26,10 +26,10 @@ import {
   storedPendingTransactionsLoaded
 } from '@/storage/transactions/transactionsActions'
 import { PendingTransaction } from '@/types/transactions'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 export const restorePendingTransactions = (
-  walletId: StoredWallet['id'],
+  walletId: StoredEncryptedWallet['id'],
   mempoolTxHashes: MempoolTransaction['hash'][],
   storedPendingTxs: PendingTransaction[]
 ) => {

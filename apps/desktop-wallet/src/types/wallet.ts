@@ -28,7 +28,7 @@ export type ActiveWallet = {
 }
 
 export type GeneratedWallet = {
-  wallet: StoredWallet
+  wallet: StoredEncryptedWallet
   initialAddress: AddressBase
 }
 
@@ -37,7 +37,7 @@ export type UnlockedWallet = {
   initialAddress: NonSensitiveAddressData
 }
 
-export type StoredWallet = Omit<ActiveWallet, 'isPassphraseUsed'> & {
+export type StoredEncryptedWallet = Omit<ActiveWallet, 'isPassphraseUsed'> & {
   encrypted: string
   lastUsed: TimeInMs
 }

@@ -32,7 +32,7 @@ import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { osThemeChangeDetected, userDataMigrationFailed } from '@/storage/global/globalActions'
 import { walletLocked, walletSwitched, walletUnlocked } from '@/storage/wallets/walletActions'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 import { AlephiumWindow } from '@/types/window'
 import { migrateUserData } from '@/utils/migration'
 
@@ -87,7 +87,7 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
 
     const { event, walletId, afterUnlock } = props
     let { password, passphrase } = props
-    let encryptedWallet: StoredWallet | null
+    let encryptedWallet: StoredEncryptedWallet | null
     let initialAddress: NonSensitiveAddressData
     let version: number
 

@@ -21,10 +21,10 @@ import { nanoid } from 'nanoid'
 
 import i18n from '@/i18n'
 import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 class ContactsStorage extends PersistentArrayStorage<Contact> {
-  storeOne(walletId: StoredWallet['id'], contact: ContactFormData) {
+  storeOne(walletId: StoredEncryptedWallet['id'], contact: ContactFormData) {
     let contactId = contact.id
     const contacts: Contact[] = this.load(walletId)
 
@@ -58,7 +58,7 @@ class ContactsStorage extends PersistentArrayStorage<Contact> {
     return contactId
   }
 
-  deleteContact(walletId: StoredWallet['id'], contact: Contact) {
+  deleteContact(walletId: StoredEncryptedWallet['id'], contact: Contact) {
     const contacts: Contact[] = this.load(walletId)
     const storedContactIndex = contacts.findIndex((c) => c.id === contact.id)
 

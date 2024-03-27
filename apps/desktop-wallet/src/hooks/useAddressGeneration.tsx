@@ -31,7 +31,7 @@ import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { AddressBase } from '@/types/addresses'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -106,7 +106,7 @@ const useAddressGeneration = () => {
     onAddressesDerivedCallback({ data })
   }
 
-  const restoreAddressesFromMetadata = async (walletId: StoredWallet['id']) => {
+  const restoreAddressesFromMetadata = async (walletId: StoredEncryptedWallet['id']) => {
     const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
 
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address

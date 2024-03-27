@@ -45,7 +45,7 @@ import {
 } from '@/storage/wallets/walletActions'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
 import { ThemeType } from '@/types/settings'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 import { getThemeType } from '@/utils/settings'
 
 interface AppState {
@@ -53,7 +53,7 @@ interface AppState {
   visibleModals: string[]
   addressesPageInfoMessageClosed: boolean
   transfersPageInfoMessageClosed: boolean
-  wallets: StoredWallet[]
+  wallets: StoredEncryptedWallet[]
   theme: ThemeType
   devMode: boolean
   faucetCallPending: boolean

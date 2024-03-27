@@ -23,7 +23,7 @@ import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersi
 import { store } from '@/storage/store'
 import { walletSaved } from '@/storage/wallets/walletActions'
 import WalletStorage from '@/storage/wallets/walletPersistentStorage'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 
 interface SaveNewWalletProps {
@@ -31,7 +31,7 @@ interface SaveNewWalletProps {
   encrypted: string
 }
 
-export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): StoredWallet['id'] => {
+export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): StoredEncryptedWallet['id'] => {
   const storedWallet = WalletStorage.store(walletName, encrypted)
   const initialAddressSettings = getInitialAddressSettings()
 
