@@ -28,6 +28,7 @@ import { ClientsState } from '@/types'
 import { FungibleTokensState, NFTsState } from '@/types/assets'
 import { NetworkState } from '@/types/network'
 import { PricesHistoryState, PricesState } from '@/types/price'
+import { nftsApi } from '@/api'
 
 export const sharedReducer = {
   [pricesSlice.name]: pricesSlice.reducer,
@@ -35,8 +36,11 @@ export const sharedReducer = {
   [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
   [nftsSlice.name]: nftsSlice.reducer,
   [networkSlice.name]: networkSlice.reducer,
-  [clientsSlice.name]: clientsSlice.reducer
+  [clientsSlice.name]: clientsSlice.reducer,
+  [nftsApi.reducerPath]: nftsApi.reducer
 }
+
+export const sharedMiddleware = [nftsApi.middleware]
 
 // The following 2 types could have been extracted by creating a shared redux store. But since every app defines its own
 // store we end up with 2 Redux stores. This can be avoided by defining the 2 types manually.

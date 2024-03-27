@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById } from '@alephium/shared'
+import { NFT, selectNFTById, useGetNFTCollectionMetadataQuery } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -35,6 +35,9 @@ interface TransactionDetailsModalProps {
 const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const nftCollectionData = useGetNFTCollectionMetadataQuery(nft?.collectionId || '')
+
+  console.log(nftCollectionData)
 
   if (!nft) return null
 
