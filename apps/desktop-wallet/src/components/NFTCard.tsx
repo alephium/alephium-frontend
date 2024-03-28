@@ -16,29 +16,50 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT } from '@alephium/shared'
+import { NFT, selectNFTById } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
+import { useAppSelector } from '@/hooks/redux'
+import ModalPortal from '@/modals/ModalPortal'
+import NFTDetailsModal from '@/modals/NFTDetailsModal'
 
 interface NFTCardProps {
-  nft: NFT
+  nftId: NFT['id']
   onClick?: () => void
 }
 
-const NFTCard = ({ nft, onClick }: NFTCardProps) => (
-  <NFTCardStyled onClick={onClick}>
-    <CardContent>
-      <NFTPictureContainer>
-        <NFTThumbnail nft={nft} size="100%" />
-      </NFTPictureContainer>
-      <NFTName>{nft?.name}</NFTName>
-    </CardContent>
-  </NFTCardStyled>
-)
+const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
+  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleClick = () => {
+    setIsModalOpen(true)
+    onClick && onClick()
+  }
+
+  if (!nft) return null
+  return (
+    <>
+      <NFTCardStyled onClick={handleClick}>
+        <CardContent>
+          <NFTPictureContainer>
+            <NFTThumbnail nft={nft} size="100%" />
+          </NFTPictureContainer>
+          {nft?.name && <NFTName>{nft.name}</NFTName>}
+        </CardContent>
+      </NFTCardStyled>
+
+      <ModalPortal>
+        {isModalOpen && <NFTDetailsModal nftId={nftId} onClose={() => setIsModalOpen(false)} />}
+      </ModalPortal>
+    </>
+  )
+}
 
 export default NFTCard
 
