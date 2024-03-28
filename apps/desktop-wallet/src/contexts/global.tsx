@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keyring, NonSensitiveAddressData } from '@alephium/shared-crypto'
+import { keyring, NonSensitiveAddressData, ValidEncryptedWalletVersions } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { createContext, useContext, useEffect, useState } from 'react'
@@ -89,11 +89,11 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
     let { password, passphrase } = props
     let encryptedWallet: StoredEncryptedWallet | null
     let initialAddress: NonSensitiveAddressData
+    let version: ValidEncryptedWalletVersions
 
     try {
       encryptedWallet = walletStorage.load(walletId)
-
-      keyring.initFromEncryptedMnemonic(encryptedWallet.encrypted, password, passphrase ?? '')
+      version = keyring.initFromEncryptedMnemonic(encryptedWallet.encrypted, password, passphrase ?? '')
     } catch (e) {
       console.error(e)
       dispatch(passwordValidationFailed())
@@ -101,7 +101,7 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
     }
 
     try {
-      migrateUserData(encryptedWallet.id, password)
+      migrateUserData(encryptedWallet.id, password, version)
     } catch (e) {
       console.error(e)
       posthog.capture('Error', { message: 'User data migration failed ' })

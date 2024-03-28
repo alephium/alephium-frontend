@@ -23,7 +23,7 @@ import * as bip39 from 'bip39'
 import blake from 'blakejs'
 
 import { findNextAvailableAddressIndex, isAddressIndexValid } from './address'
-import { decryptMnemonic, MnemonicLength } from './wallet'
+import { decryptMnemonic, DecryptMnemonicResult, MnemonicLength } from './wallet'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -79,14 +79,18 @@ class Keyring {
   }
 
   public initFromEncryptedMnemonic = (encryptedMnemonic: string, password: string, passphrase: string) => {
-    let decryptedMnemonic: Buffer | null = decryptMnemonic(encryptedMnemonic, password).decryptedMnemonic
+    let result: DecryptMnemonicResult | null = decryptMnemonic(encryptedMnemonic, password)
+    const version = result.version
+
     this.clearCachedSecrets()
-    this._initFromMnemonic(decryptedMnemonic, passphrase)
+    this._initFromMnemonic(result.decryptedMnemonic, passphrase)
 
     encryptedMnemonic = ''
     password = ''
     passphrase = ''
-    decryptedMnemonic = null
+    result = null
+
+    return version
   }
 
   public generateAndCacheAddress = (props: GenerateAddressProps): NonSensitiveAddressData =>
@@ -214,8 +218,9 @@ class Keyring {
     publicKey
   }: SensitiveAddressData): NonSensitiveAddressData => ({ hash, index, publicKey })
 
-  private _initFromMnemonic = (mnemonic: Buffer, passphrase: string) => {
+  private _initFromMnemonic = (mnemonic: Buffer | null, passphrase: string) => {
     if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
+    if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
 
     const isValid = bip39.validateMnemonic(mnemonic.toString())
     if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
@@ -224,6 +229,7 @@ class Keyring {
     this.root = bip32.fromSeed(seed)
 
     passphrase = ''
+    mnemonic = null
   }
 
   private _getPath = (addressIndex: number = 0) => {

@@ -17,7 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { decrypt, decryptMnemonic, DecryptMnemonicResult, encryptMnemonic } from '@alephium/shared-crypto'
+import {
+  decrypt,
+  decryptMnemonic,
+  DecryptMnemonicResult,
+  encryptMnemonic,
+  ValidEncryptedWalletVersions
+} from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 
@@ -73,10 +79,14 @@ export const migrateNetworkSettings = (): NetworkSettings => {
 }
 
 // Then we run user data migrations after the user has authenticated
-export const migrateUserData = (walletId: StoredEncryptedWallet['id'], password: string) => {
+export const migrateUserData = (
+  walletId: StoredEncryptedWallet['id'],
+  password: string,
+  version: ValidEncryptedWalletVersions
+) => {
   console.log('🚚 Migrating user data')
 
-  _20240328_1200_migrateEncryptedWalletFromV1ToV2(walletId, password)
+  _20240328_1200_migrateEncryptedWalletFromV1ToV2(walletId, password, version)
   _20240328_1221_migrateAddressAndContactsToUnencrypted(walletId, password)
   _20230209_124300_migrateIsMainToIsDefault(walletId)
 
@@ -287,20 +297,21 @@ export const _20230209_124300_migrateIsMainToIsDefault = (walletId: StoredEncryp
 // the encrypted wallet from StoredStateV1 to StoredStateV2.
 export const _20240328_1200_migrateEncryptedWalletFromV1ToV2 = (
   walletId: StoredEncryptedWallet['id'],
-  password: string
+  password: string,
+  version: ValidEncryptedWalletVersions
 ) => {
   try {
-    let result: DecryptMnemonicResult | null
+    if (version === 1) {
+      let decryptedMnemonic: Buffer | null = decryptMnemonic(
+        walletStorage.load(walletId).encrypted,
+        password
+      ).decryptedMnemonic
 
-    result = decryptMnemonic(walletStorage.load(walletId).encrypted, password)
-
-    if (result.version === 1) {
-      walletStorage.update(walletId, { encrypted: encryptMnemonic(result.decryptedMnemonic, password) })
+      walletStorage.update(walletId, { encrypted: encryptMnemonic(decryptedMnemonic, password) })
 
       console.log('Migrated stored mnemonic from version 1 to version 2')
+      decryptedMnemonic = null
     }
-
-    result = null
   } catch (e) {
     console.error('Failed migrating stored mnemonic from version 1 to version 2', e)
   } finally {

@@ -483,7 +483,7 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
       'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'
     )
 
-    migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x')
+    migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x', 1)
     migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
 
     const rawData = localStorage.getItem(localStorageKey)
@@ -532,7 +532,7 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
       'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'
     )
 
-    migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x')
+    migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x', 1)
     migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
 
     const rawData = localStorage.getItem(localStorageKey)
