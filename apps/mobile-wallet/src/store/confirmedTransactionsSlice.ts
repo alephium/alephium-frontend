@@ -26,6 +26,7 @@ import {
   syncLatestTransactions
 } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
+import { walletDeleted } from '~/store/wallet/walletActions'
 import { AddressTransactionsSyncResult } from '~/types/addresses'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { selectAddressConfirmedTransactions, selectContactConfirmedTransactions } from '~/utils/addresses'
@@ -71,6 +72,7 @@ const confirmedTransactionsSlice = createSlice({
 
         addTransactions(state, action)
       })
+      .addCase(walletDeleted, () => initialState)
   }
 })
 

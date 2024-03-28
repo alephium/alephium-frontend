@@ -56,7 +56,7 @@ import { chunk } from 'lodash'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
 import { RootState } from '~/store/store'
-import { newWalletGenerated } from '~/store/wallet/walletActions'
+import { newWalletGenerated, walletDeleted } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { Address, AddressPartial } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
@@ -376,6 +376,7 @@ const addressesSlice = createSlice({
           }
         })
       })
+      .addCase(walletDeleted, () => initialState)
   }
 })
 
