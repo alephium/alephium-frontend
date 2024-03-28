@@ -61,3 +61,10 @@ jobs:
           WINDOWS_SIGN_PASSWORD: ${{ secrets.WINDOWS_SIGN_PASSWORD }}
           WINDOWS_SIGN_CREDENTIAL_ID: ${{ secrets.WINDOWS_SIGN_CREDENTIAL_ID }}
           WINDOWS_SIGN_TOTP_SECRET: ${{ secrets.WINDOWS_SIGN_TOTP_SECRET }}
+
+      - name: Upload notarization-error.log
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: notarization-error-log
+          path: ${{ github.workspace }}/apps/desktop-wallet/notarization-error.log
