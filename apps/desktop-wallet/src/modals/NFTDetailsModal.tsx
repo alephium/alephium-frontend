@@ -42,25 +42,25 @@ const NFTDetailsModal = ({ NFTId, onClose }: TransactionDetailsModalProps) => {
         <NFTThumbnail size="100%" nft={nft} />
       </NFTImageContainer>
       <NFTMetadataContainer>
-        <DataList
-          items={[
-            { label: 'Name', value: <b>{nft.name}</b> },
-            { label: 'Description', value: nft.description },
-            {
-              label: 'Image URL',
-              value: (
-                <ActionLink ellipsed onClick={() => openInWebBrowser(nft.image)}>
-                  {nft.image}
-                </ActionLink>
-              )
-            }
-          ]}
-        />
+        <DataList>
+          <DataList.Row label={t('Name')}>
+            <b>{nft.name}</b>
+          </DataList.Row>
+          <DataList.Row label={t('Description')}>{nft.description}</DataList.Row>
+          <DataList.Row label={t('Image URL')}>
+            <ActionLink ellipsed onClick={() => openInWebBrowser(nft.image)}>
+              {nft.image}
+            </ActionLink>
+          </DataList.Row>
+        </DataList>
         {nft.attributes && (
-          <DataList
-            title={t('Attributes')}
-            items={nft.attributes?.map((a) => ({ label: a.trait_type, value: a.value }))}
-          />
+          <DataList title={t('Attributes')}>
+            {nft.attributes.map((attribute, index) => (
+              <DataList.Row key={index} label={attribute.trait_type}>
+                {attribute.value}
+              </DataList.Row>
+            ))}
+          </DataList>
         )}
       </NFTMetadataContainer>
     </SideModal>
