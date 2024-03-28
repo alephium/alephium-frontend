@@ -21,18 +21,17 @@ import styled from 'styled-components'
 
 interface NFTThumbnailProps {
   nft: NFT
+  size?: string
   className?: string
 }
 
-const NFTThumbnail = ({ nft, className }: NFTThumbnailProps) => (
-  <NFTThumbnailStyled src={nft.image} alt={nft.description} className={className} />
+const NFTThumbnail = ({ nft, size = '100', className }: NFTThumbnailProps) => (
+  <NFTThumbnailStyled src={nft.image} alt={nft.description} width={size} height={size} className={className} />
 )
 
 export default NFTThumbnail
 
 const NFTThumbnailStyled = styled.img`
-  width: 100px;
-  height: 100px;
   border-radius: var(--radius-medium);
   object-fit: cover;
 `

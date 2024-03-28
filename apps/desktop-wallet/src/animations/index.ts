@@ -44,6 +44,10 @@ export const slowTransition = {
   transition: { duration: 0.8 }
 }
 
+export const normalTransition = {
+  transition: { type: 'spring', damping: 50, stiffness: 400 }
+}
+
 export const fastTransition = {
   transition: { type: 'spring', damping: 40, stiffness: 500 }
 }

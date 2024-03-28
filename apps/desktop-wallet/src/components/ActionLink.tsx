@@ -18,30 +18,35 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { LucideIcon } from 'lucide-react'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import { HasTooltip } from '@/components/Tooltip'
 
 interface ActionLinkProps {
+  children: ReactNode
   onClick: () => void
   Icon?: LucideIcon
   iconPosition?: 'right' | 'left'
   withBackground?: boolean
+  ellipsed?: boolean
   className?: string
 }
 
-const ActionLink: FC<HasTooltip<ActionLinkProps>> = ({ className, Icon, children, onClick, tooltip }) => (
-  <button className={className} onClick={onClick} data-tooltip-id="default" data-tooltip-content={tooltip}>
-    {children}
+const ActionLink = ({ className, Icon, children, onClick, ellipsed, tooltip }: HasTooltip<ActionLinkProps>) => (
+  <ActionLinkStyled className={className} onClick={onClick} data-tooltip-id="default" data-tooltip-content={tooltip}>
+    <ChildrenContainer ellipsed={ellipsed}>{children}</ChildrenContainer>
     {Icon && (
       <IconContainer>
         <Icon size={14} />
       </IconContainer>
     )}
-  </button>
+  </ActionLinkStyled>
 )
 
-export default styled(ActionLink)`
+export default ActionLink
+
+const ActionLinkStyled = styled.button<ActionLinkProps>`
   color: ${({ theme }) => theme.global.accent};
   cursor: pointer;
   display: inline-flex;
@@ -51,6 +56,7 @@ export default styled(ActionLink)`
   flex-direction: ${({ iconPosition }) => (iconPosition === 'left' ? 'row-reverse' : 'row')};
   gap: 5px;
   padding: 0;
+  max-width: 100%;
 
   &:hover {
     color: ${({ theme }) => colord(theme.global.accent).darken(0.1).toRgbString()};
@@ -66,6 +72,17 @@ export default styled(ActionLink)`
       background-color: ${({ theme }) => theme.bg.accent};
       padding: 8px;
       border-radius: var(--radius-medium);
+    `}
+`
+
+const ChildrenContainer = styled.div<Pick<ActionLinkProps, 'ellipsed'>>`
+  width: 100%;
+
+  ${({ ellipsed }) =>
+    ellipsed &&
+    css`
+      overflow: hidden;
+      text-overflow: ellipsis;
     `}
 `
 
