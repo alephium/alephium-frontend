@@ -78,6 +78,7 @@ export const decrypt = (password: string, payloadRaw: string, digest: Digest = '
   const payload = JSON.parse(payloadRaw)
 
   const version = payload.version
+
   if (version !== 1) {
     throw new Error(`Invalid version: got ${version}, expected: 1`)
   }
@@ -86,6 +87,8 @@ export const decrypt = (password: string, payloadRaw: string, digest: Digest = '
   const iv = Buffer.from(payload.iv, 'hex')
   const encrypted = Buffer.from(payload.encrypted, 'hex')
   const derivedKey = keyFromPassword(password, salt, digest)
+
+  password = ''
 
   return _decrypt(iv, encrypted, derivedKey)
 }

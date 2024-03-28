@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { keyring } from '@alephium/shared-crypto'
 import { ArrowDown, ArrowUp, Lock, Settings } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
@@ -71,6 +72,7 @@ const ShortcutButtons = ({
   const [isAddressOptionsModalOpen, setIsAddressOptionsModalOpen] = useState(false)
 
   const lockWallet = () => {
+    keyring.clearCachedSecrets()
     dispatch(walletLocked())
 
     posthog.capture('Locked wallet', { origin: analyticsOrigin })

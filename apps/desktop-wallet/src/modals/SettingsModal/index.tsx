@@ -63,7 +63,7 @@ interface SettingsModalProps {
 const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.mnemonic)
+  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.id)
 
   const settingsModalTabs: SettingsTabItem[] = useMemo(
     () => [

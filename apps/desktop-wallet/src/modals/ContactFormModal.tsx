@@ -32,12 +32,12 @@ import { useTranslation } from 'react-i18next'
 
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
-import { useAppDispatch } from '@/hooks/redux'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import ConfirmModal from '@/modals/ConfirmModal'
 import ModalPortal from '@/modals/ModalPortal'
 import { contactDeletionFailed, contactStorageFailed } from '@/storage/addresses/addressesActions'
-import ContactsStorage from '@/storage/addresses/contactsPersistentStorage'
+import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import {
   isAddressValid,
   isContactAddressValid,
@@ -52,6 +52,7 @@ interface ContactFormModalProps {
 
 const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
   const { t } = useTranslation()
+  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const dispatch = useAppDispatch()
   const { control, handleSubmit, formState } = useForm<ContactFormData>({
     defaultValues: contact ?? { name: '', address: '', id: undefined },
@@ -61,12 +62,14 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
 
   const [isDeleteContactModalOpen, setIsDeleteContactModalOpen] = useState(false)
 
+  if (!activeWalletId) return null
+
   const errors = formState.errors
   const isFormValid = isEmpty(errors)
 
   const saveContact = (contactData: ContactFormData) => {
     try {
-      const id = ContactsStorage.store(contactData)
+      const id = contactsStorage.storeOne(activeWalletId, contactData)
       dispatch(contactStoredInPersistentStorage({ ...contactData, id }))
       onClose()
 
@@ -83,7 +86,7 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
     if (!contact) return
 
     try {
-      ContactsStorage.deleteContact(contact)
+      contactsStorage.deleteContact(activeWalletId, contact)
       dispatch(contactDeletedFromPersistentStorage(contact.id))
       posthog.capture('Deleted contact')
     } catch (e) {

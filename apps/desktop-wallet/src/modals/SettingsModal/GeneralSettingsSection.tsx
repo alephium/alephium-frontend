@@ -57,7 +57,7 @@ interface GeneralSettingsSectionProps {
 const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.mnemonic)
+  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.id)
   const { walletLockTimeInMinutes, discreetMode, passwordRequirement, language, theme, analytics, fiatCurrency } =
     useAppSelector((s) => s.settings)
   const posthog = usePostHog()

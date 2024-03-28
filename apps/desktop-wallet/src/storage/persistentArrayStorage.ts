@@ -16,22 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Contact } from '@alephium/shared'
-
-import { contactsLoadedFromPersistentStorage } from '@/storage/addresses/addressesActions'
-import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
-import { store } from '@/storage/store'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
-export const filterContacts = (contacts: Contact[], text: string) =>
-  text.length < 2
-    ? contacts
-    : contacts.filter(
-        (contact) => contact.name.toLowerCase().includes(text) || contact.address.toLowerCase().includes(text)
-      )
+export class PersistentArrayStorage<T> {
+  private localStorageKeyPrefix: string
 
-export const loadContacts = (walletId: StoredEncryptedWallet['id']) => {
-  const contacts: Contact[] = contactsStorage.load(walletId)
+  constructor(localStorageKeyPrefix: string) {
+    this.localStorageKeyPrefix = localStorageKeyPrefix
+  }
 
-  if (contacts.length > 0) store.dispatch(contactsLoadedFromPersistentStorage(contacts))
+  getKey(id: StoredEncryptedWallet['id']) {
+    if (!id) throw new Error('Wallet ID not set.')
+
+    return `${this.localStorageKeyPrefix}-${id}`
+  }
+
+  load(walletId: StoredEncryptedWallet['id']) {
+    const json = localStorage.getItem(this.getKey(walletId))
+
+    return json === null ? [] : (JSON.parse(json) as T[])
+  }
+
+  store(walletId: StoredEncryptedWallet['id'], data: T[]) {
+    localStorage.setItem(this.getKey(walletId), JSON.stringify(data))
+  }
+
+  delete(walletId: StoredEncryptedWallet['id']) {
+    localStorage.removeItem(this.getKey(walletId))
+  }
 }

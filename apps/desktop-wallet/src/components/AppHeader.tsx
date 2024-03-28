@@ -52,8 +52,8 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const isPassphraseUsed = useAppSelector((s) => s.activeWallet.passphrase)
+  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.id)
+  const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const networkStatus = useAppSelector((s) => s.network.status)
   const addresses = useAppSelector(selectAllAddresses)
@@ -61,7 +61,6 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
 
   const [isWalletConnectModalOpen, setIsWalletConnectModalOpen] = useState(false)
 
-  const isAuthenticated = !!mnemonic
   const offlineText = t('The wallet is offline.')
 
   const toggleDiscreetMode = () => dispatch(discreetModeToggled())

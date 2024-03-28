@@ -32,7 +32,7 @@ import Paragraph from '@/components/Paragraph'
 import { useGlobalContext } from '@/contexts/global'
 import { useWalletConnectContext } from '@/contexts/walletconnect'
 import { useAppSelector } from '@/hooks/redux'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface UnlockPanelProps {
   onNewWalletLinkClick: () => void
@@ -47,7 +47,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
 
   const walletOptions = wallets.map(({ id, name }) => ({ label: name, value: id }))
 
-  const [selectedWallet, setSelectedWallet] = useState<StoredWallet['id']>(
+  const [selectedWallet, setSelectedWallet] = useState<StoredEncryptedWallet['id']>(
     maxBy(wallets, 'lastUsed')?.id || wallets[0]?.id
   )
   const selectedWalletOption = walletOptions.find((option) => option.value === selectedWallet)

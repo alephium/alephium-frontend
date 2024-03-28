@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   AddressBalancesSyncResult,
   AddressHash,
-  AddressKeyPair,
   AddressSettings,
   AddressTokensSyncResult,
   BalanceHistory
 } from '@alephium/shared'
+import { NonSensitiveAddressData } from '@alephium/shared-crypto'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'
@@ -41,7 +41,7 @@ export type DeprecatedAddressMetadata = DeprecatedAddressSettings & {
   index: number
 }
 
-export type AddressBase = AddressKeyPair & AddressSettings
+export type AddressBase = AddressSettings & NonSensitiveAddressData
 
 export type Address = AddressBase &
   explorer.AddressInfo & {

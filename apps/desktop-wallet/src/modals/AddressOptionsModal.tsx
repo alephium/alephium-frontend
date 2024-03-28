@@ -45,7 +45,7 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
   const { t } = useTranslation()
   const theme = useTheme()
   const posthog = usePostHog()
-  const isPassphraseUsed = useAppSelector((state) => state.activeWallet.passphrase)
+  const isPassphraseUsed = useAppSelector((state) => state.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const addresses = useAppSelector(selectAllAddresses)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -64,18 +64,22 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
   const isSweepButtonEnabled = addresses.length > 1 && availableBalance > 0
 
   const onSaveClick = () => {
-    const settings = {
-      isDefault: isDefaultAddressToggleEnabled ? isDefaultAddress : address.isDefault,
-      label: addressLabel.title,
-      color: addressLabel.color
+    try {
+      const settings = {
+        isDefault: isDefaultAddressToggleEnabled ? isDefaultAddress : address.isDefault,
+        label: addressLabel.title,
+        color: addressLabel.color
+      }
+
+      saveAddressSettings(address, settings)
+
+      onClose()
+
+      posthog.capture('Changed address settings', { label_length: settings.label.length })
+      isDefaultAddressToggleEnabled && posthog.capture('Changed default address')
+    } catch (e) {
+      console.error(e)
     }
-
-    saveAddressSettings(address, settings)
-
-    onClose()
-
-    posthog.capture('Changed address settings', { label_length: settings.label.length })
-    isDefaultAddressToggleEnabled && posthog.capture('Changed default address')
   }
 
   let defaultAddressMessage = `${t('Default address for sending transactions.')} `

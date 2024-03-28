@@ -25,13 +25,17 @@ import {
   syncAddressesAlphHistoricBalances,
   syncAddressesData
 } from '@/storage/addresses/addressesActions'
-import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
 import { Address, AddressBase } from '@/types/addresses'
 
 export const saveNewAddresses = (addresses: AddressBase[]) => {
+  const walletId = store.getState().activeWallet.id
+
+  if (!walletId) throw new Error('Could not save address, wallet ID not found')
+
   addresses.forEach((address) =>
-    AddressMetadataStorage.store({
+    addressMetadataStorage.storeOne(walletId, {
       index: address.index,
       settings: {
         isDefault: address.isDefault,
@@ -49,7 +53,11 @@ export const saveNewAddresses = (addresses: AddressBase[]) => {
 }
 
 export const changeDefaultAddress = (address: Address) => {
-  AddressMetadataStorage.store({
+  const walletId = store.getState().activeWallet.id
+
+  if (!walletId) throw new Error('Could not change default address, wallet ID not found')
+
+  addressMetadataStorage.storeOne(walletId, {
     index: address.index,
     settings: {
       isDefault: true,
@@ -62,6 +70,10 @@ export const changeDefaultAddress = (address: Address) => {
 }
 
 export const saveAddressSettings = (address: AddressBase, settings: AddressSettings) => {
-  AddressMetadataStorage.store({ index: address.index, settings })
+  const walletId = store.getState().activeWallet.id
+
+  if (!walletId) throw new Error('Could not save address settings, wallet ID not found')
+
+  addressMetadataStorage.storeOne(walletId, { index: address.index, settings })
   store.dispatch(addressSettingsSaved({ addressHash: address.hash, settings }))
 }
