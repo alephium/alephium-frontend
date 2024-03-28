@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import {
+  dangerouslyConvertBufferMnemonicToString,
   decrypt,
   decryptMnemonic,
   DecryptMnemonicResult,
@@ -359,14 +360,14 @@ export const _20240328_1221_migrateAddressAndContactsToUnencrypted = (
     try {
       if (parsedMetadataJson?.encrypted) {
         const metadata = JSON.parse(
-          decrypt(result.decryptedMnemonic.toString(), parsedMetadataJson.encrypted)
+          decrypt(dangerouslyConvertBufferMnemonicToString(result.decryptedMnemonic), parsedMetadataJson.encrypted)
         ) as AddressMetadata[]
         addressMetadataStorage.store(walletId, metadata)
       }
 
       if (parsedContactsJson?.encrypted) {
         const contacts = JSON.parse(
-          decrypt(result.decryptedMnemonic.toString(), parsedContactsJson.encrypted)
+          decrypt(dangerouslyConvertBufferMnemonicToString(result.decryptedMnemonic), parsedContactsJson.encrypted)
         ) as Contact[]
         contactsStorage.store(walletId, contacts)
       }

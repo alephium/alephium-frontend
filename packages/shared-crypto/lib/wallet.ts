@@ -271,6 +271,10 @@ export const decryptMnemonic = (encryptedMnemonic: string, password: string): De
 
   const { version, mnemonic } = JSON.parse(dataDecrypted) // StoredStateV1 or StoredStateV2
 
+  if (version === 1) {
+    console.log('Mnemonic is leaked to memory as a string, needs to be stored as a buffer (StoredStateV2).')
+  }
+
   if (
     !version ||
     (version !== 1 && version !== 2) ||
@@ -286,3 +290,7 @@ export const decryptMnemonic = (encryptedMnemonic: string, password: string): De
 
   return { version, decryptedMnemonic: Buffer.from(version === 2 ? mnemonic.data : mnemonic) }
 }
+
+// It will convert the mnemonic from Buffer to string, leaking it to the memory. Use only when absolutely needed,
+// ie: displaying the mnemonic for backup, etc
+export const dangerouslyConvertBufferMnemonicToString = (mnemonic: Buffer) => mnemonic.toString()

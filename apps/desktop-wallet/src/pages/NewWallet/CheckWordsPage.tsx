@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { dangerouslyConvertBufferMnemonicToString } from '@alephium/shared-crypto'
 import { colord } from 'colord'
 import { motion, PanInfo } from 'framer-motion'
 import { throttle } from 'lodash'
@@ -78,7 +79,7 @@ const CheckWordsPage = () => {
   useEffect(() => {
     if (!mnemonic) return
 
-    setIsValid(selectedWords.map(({ word }) => word).join(' ') === mnemonic.toString())
+    setIsValid(selectedWords.map(({ word }) => word).join(' ') === dangerouslyConvertBufferMnemonicToString(mnemonic))
   }, [mnemonic, selectedWords])
 
   // === Actions ===

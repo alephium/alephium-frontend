@@ -23,7 +23,12 @@ import * as bip39 from 'bip39'
 import blake from 'blakejs'
 
 import { findNextAvailableAddressIndex, isAddressIndexValid } from './address'
-import { decryptMnemonic, DecryptMnemonicResult, MnemonicLength } from './wallet'
+import {
+  dangerouslyConvertBufferMnemonicToString,
+  decryptMnemonic,
+  DecryptMnemonicResult,
+  MnemonicLength
+} from './wallet'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -222,10 +227,10 @@ class Keyring {
     if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
     if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
 
-    const isValid = bip39.validateMnemonic(mnemonic.toString())
+    const isValid = bip39.validateMnemonic(dangerouslyConvertBufferMnemonicToString(mnemonic))
     if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
 
-    const seed = bip39.mnemonicToSeedSync(mnemonic.toString(), passphrase)
+    const seed = bip39.mnemonicToSeedSync(dangerouslyConvertBufferMnemonicToString(mnemonic), passphrase)
     this.root = bip32.fromSeed(seed)
 
     passphrase = ''
