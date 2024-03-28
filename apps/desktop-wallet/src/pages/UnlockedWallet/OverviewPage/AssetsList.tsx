@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, Asset, CURRENCIES } from '@alephium/shared'
 import { motion } from 'framer-motion'
-import { InfoIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -181,14 +180,14 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
             {asset.name ?? (
               <HashEllipsed hash={asset.id} tooltipText={t('Copy token hash')} disableCopy={!isExpanded} />
             )}
+            {asset.verified === false && (
+              <InfoIcon data-tooltip-id="default" data-tooltip-content={t('No metadata')}>
+                i
+              </InfoIcon>
+            )}
           </TokenName>
           {asset.symbol && <TokenSymbol>{asset.symbol}</TokenSymbol>}
         </NameColumn>
-        {asset.verified === false && (
-          <div data-tooltip-id="default" data-tooltip-content={t('No metadata')}>
-            <InfoIcon size={20} color={theme.font.tertiary} />
-          </div>
-        )}
         <TableCellAmount>
           {stateUninitialized ? (
             <SkeletonLoader height="20px" width="30%" />
@@ -274,8 +273,11 @@ const AssetLogoStyled = styled(AssetLogo)`
 `
 
 const TokenName = styled(Truncate)`
+  display: flex;
   font-size: 14px;
   font-weight: var(--fontWeight-medium);
+  gap: 5px;
+  align-items: center;
   width: 200px;
 `
 
@@ -283,6 +285,20 @@ const TokenSymbol = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 12px;
   width: 200px;
+`
+
+const InfoIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 14px;
+  width: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.font.secondary};
+  background-color: ${({ theme }) => theme.bg.highlight};
+  border-radius: 50%;
+  cursor: default;
 `
 
 const Column = styled.div`
