@@ -26,5 +26,5 @@ export type HasTooltip<T> = T & { tooltip?: string }
 export default styled(Tooltip)`
   background-color: rgb(10, 10, 10);
   color: #fff;
-  z-index: 1;
+  z-index: 3;
 `
