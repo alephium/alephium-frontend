@@ -28,15 +28,17 @@ import SideModal from '@/modals/SideModal'
 import { openInWebBrowser } from '@/utils/misc'
 
 interface TransactionDetailsModalProps {
-  NFTId: NFT['id']
+  nftId: NFT['id']
   onClose: () => void
 }
 
-const NFTDetailsModal = ({ NFTId, onClose }: TransactionDetailsModalProps) => {
+const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
-  const nft = useAppSelector((s) => selectNFTById(s, NFTId))
+  const nft = useAppSelector((s) => selectNFTById(s, nftId))
 
-  return nft ? (
+  if (!nft) return null
+
+  return (
     <SideModal onClose={onClose} title={t('NFT details')}>
       <NFTImageContainer>
         <NFTThumbnail size="100%" nft={nft} />
@@ -64,7 +66,7 @@ const NFTDetailsModal = ({ NFTId, onClose }: TransactionDetailsModalProps) => {
         )}
       </NFTMetadataContainer>
     </SideModal>
-  ) : null
+  )
 }
 
 export default NFTDetailsModal
