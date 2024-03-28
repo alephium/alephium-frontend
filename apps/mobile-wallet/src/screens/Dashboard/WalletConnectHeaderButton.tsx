@@ -46,45 +46,37 @@ const WalletConnectHeaderButton = () => {
   const [isWalletConnectPasteUrlModalOpen, setIsWalletConnectPasteUrlModalOpen] = useState(false)
   const [isWalletConnectErrorModalOpen, setIsWalletConnectErrorModalOpen] = useState(false)
 
-  const isPendingWalletConnect =
-    walletConnectClientStatus !== 'initialized' && walletConnectClientStatus !== 'initialization-failed'
-  const hasActiveWCSessions = activeSessions.length > 0
-
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
 
   return (
     <>
-      <Button
-        onPress={() =>
-          walletConnectClientStatus === 'initialization-failed'
-            ? setIsWalletConnectErrorModalOpen(true)
-            : isPendingWalletConnect
-              ? undefined
-              : setIsWalletConnectPairingsModalOpen(true)
-        }
-        customIcon={
-          <>
-            <WalletConnectSVG
-              width={20}
-              color={
-                walletConnectClientStatus === 'initialization-failed'
-                  ? theme.global.alert
-                  : isPendingWalletConnect
-                    ? theme.font.secondary
-                    : !hasActiveWCSessions
-                      ? '#3B99FC'
-                      : undefined
-              }
-            />
-            {isPendingWalletConnect && <ActivityIndicator size={16} color={theme.font.tertiary} />}
-          </>
-        }
-        round
-        variant={walletConnectClientStatus === 'initialization-failed' ? 'alert' : 'default'}
-        style={
-          isPendingWalletConnect ? { width: 80 } : hasActiveWCSessions ? { backgroundColor: '#3B99FC' } : undefined
-        }
-      />
+      {walletConnectClientStatus === 'initialization-failed' ? (
+        <Button
+          variant="alert"
+          onPress={() => setIsWalletConnectErrorModalOpen(true)}
+          customIcon={<WalletConnectSVG width={20} color={theme.global.alert} />}
+          round
+        />
+      ) : walletConnectClientStatus === 'initialized' ? (
+        <Button
+          onPress={() => setIsWalletConnectPairingsModalOpen(true)}
+          style={activeSessions.length ? { backgroundColor: '#3B99FC' } : undefined}
+          customIcon={<WalletConnectSVG width={20} color={activeSessions.length ? '#fff' : '#3B99FC'} />}
+          round
+        />
+      ) : (
+        <Button
+          style={{ width: 80 }}
+          customIcon={
+            <>
+              <WalletConnectSVG width={20} color={theme.font.secondary} />
+              <ActivityIndicator size={16} color={theme.font.tertiary} />
+            </>
+          }
+          round
+        />
+      )}
+
       <Portal>
         <BottomModal
           Content={WalletConnectPasteUrlModal}
