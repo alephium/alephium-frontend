@@ -67,13 +67,15 @@ class Keyring {
     return mnemonic
   }
 
-  public importMnemonicString = (mnemonic: string) => {
-    if (!mnemonic) throw new Error('Keyring: Cannot import mnemonic, mnemonic not provided')
+  public importMnemonicString = (mnemonicStr: string): Buffer => {
+    if (!mnemonicStr) throw new Error('Keyring: Cannot import mnemonic, mnemonic not provided')
+
+    const mnemonic = Buffer.from(mnemonicStr)
 
     this.clearCachedSecrets()
     this._initFromMnemonic(Buffer.from(mnemonic), '')
 
-    mnemonic = ''
+    return mnemonic
   }
 
   public initFromEncryptedMnemonic = (encryptedMnemonic: string, password: string, passphrase: string) => {

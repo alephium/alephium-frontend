@@ -46,7 +46,7 @@ interface WordKey {
 const CheckWordsPage = () => {
   const { t } = useTranslation()
   const { onButtonBack, onButtonNext } = useStepsContext()
-  const { mnemonic, setMnemonic } = useWalletContext()
+  const { mnemonic } = useWalletContext()
 
   const [wordList, setWordList] = useState<WordKey[]>([])
   const [selectedElements, setSelectedElements] = useState<{ [wordKey: string]: Element | null }>({})
@@ -192,7 +192,6 @@ const CheckWordsPage = () => {
 
   const handleNextButtonPress = () => {
     cleanup()
-    setMnemonic(null)
     onButtonNext()
   }
 

@@ -52,7 +52,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
   const { discoverAndSaveUsedAddresses } = useAddressGeneration()
-  const { mnemonic } = useWalletContext()
+  const { mnemonic, setMnemonic } = useWalletContext()
 
   const [walletName, setWalletNameState] = useState('')
   const [walletNameError, setWalletNameError] = useState('')
@@ -63,6 +63,8 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   useEffect(() => {
     if (!password && !!passwordCheck) setPasswordCheck('')
   }, [password, passwordCheck])
+
+  if (!mnemonic) return null
 
   const onUpdatePassword = (password: string): void => {
     let passwordError = ''
@@ -90,6 +92,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   const handleNextButtonClick = () => {
     try {
       saveNewWallet({ walletName, encrypted: encryptMnemonic(mnemonic, password) })
+      setMnemonic(null)
 
       if (isRestoring) {
         discoverAndSaveUsedAddresses({ skipIndexes: [0], enableLoading: false })

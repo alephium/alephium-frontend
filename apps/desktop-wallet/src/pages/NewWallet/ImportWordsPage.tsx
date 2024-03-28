@@ -32,11 +32,13 @@ import {
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
+import { useWalletContext } from '@/contexts/wallet'
 import { bip39Words } from '@/utils/bip39'
 
 const ImportWordsPage = () => {
   const { t } = useTranslation()
   const { onButtonBack, onButtonNext } = useStepsContext()
+  const { setMnemonic } = useWalletContext()
 
   const [phrase, setPhrase] = useState<{ value: string }[]>([])
   const allowedWords = useRef(bip39Words.split(' '))
@@ -66,7 +68,7 @@ const ImportWordsPage = () => {
     if (!isPhraseLongEnough) return
 
     try {
-      keyring.importMnemonicString(phrase.map((word) => word.value).join(' '))
+      setMnemonic(keyring.importMnemonicString(phrase.map((word) => word.value).join(' ')))
 
       onButtonNext()
     } catch (e) {
