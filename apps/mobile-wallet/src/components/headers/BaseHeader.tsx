@@ -174,7 +174,7 @@ const Header = styled(AnimatedHeader)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 ${DEFAULT_MARGIN}px 12px;
+  padding: 0 ${DEFAULT_MARGIN - 4}px 12px;
 `
 
 const BottomBorder = styled(Animated.View)`

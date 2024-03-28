@@ -46,7 +46,7 @@ const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemPro
         !asset.verified && (
           <UnverifiedBadge>
             <AppText size={10} color="tertiary">
-              Unverified
+              No metadata
             </AppText>
           </UnverifiedBadge>
         )

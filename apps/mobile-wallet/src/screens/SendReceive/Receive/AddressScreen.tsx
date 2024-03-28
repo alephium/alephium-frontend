@@ -24,7 +24,6 @@ import { useCallback } from 'react'
 import { sendAnalytics } from '~/analytics'
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
 import { CloseButton } from '~/components/buttons/Button'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -51,9 +50,8 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
   return (
     <AddressFlatListScreen
       onAddressPress={(addressHash) => handleAddressPress(addressHash)}
-      ListHeaderComponent={
-        <ScreenIntro title="To address" subtitle="Select the address which you want to receive funds to." />
-      }
+      screenTitle="To address"
+      screenIntro="Select the address which you want to receive funds to."
       contrastedBg
       contentPaddingTop
       onScroll={screenScrollHandler}

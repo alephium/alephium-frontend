@@ -101,7 +101,7 @@ import { sleep } from '~/utils/misc'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 const MaxRequestNumToKeep = 10
-const FOUR_HOURS_IN_SECONDS = 60 * 60 * 4
+const ONE_HOURS_IN_SECONDS = 60 * 60
 
 interface WalletConnectContextValue {
   walletConnectClient?: SignClient
@@ -616,7 +616,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
         // Keep app alive for max 4 hours
         const backgroundTask = async () => {
-          while (BackgroundService.isRunning() && secondsPassed < FOUR_HOURS_IN_SECONDS) {
+          while (BackgroundService.isRunning() && secondsPassed < ONE_HOURS_IN_SECONDS) {
             console.log('Keeping app alive to be able to respond to WalletConnect')
             secondsPassed += 1
             await sleep(1000)

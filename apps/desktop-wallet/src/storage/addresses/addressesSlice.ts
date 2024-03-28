@@ -20,7 +20,7 @@ import {
   AddressHash,
   balanceHistoryAdapter,
   customNetworkSettingsSaved,
-  extractNewTransactionHashes,
+  extractNewTransactions,
   getTransactionsOfAddress,
   networkPresetSwitched,
   syncingAddressDataStarted
@@ -205,7 +205,7 @@ const addressesSlice = createSlice({
 
         const { hash, transactions, page } = addressTransactionsData
         const address = state.entities[hash] as Address
-        const newTxHashes = extractNewTransactionHashes(transactions, address.transactions)
+        const newTxHashes = extractNewTransactions(transactions, address.transactions).map(({ hash }) => hash)
 
         addressesAdapter.updateOne(state, {
           id: hash,
@@ -223,7 +223,9 @@ const addressesSlice = createSlice({
 
         const updatedAddresses = addresses.map((address) => {
           const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
-          const newTxHashes = extractNewTransactionHashes(transactionsOfAddress, address.transactions)
+          const newTxHashes = extractNewTransactions(transactionsOfAddress, address.transactions).map(
+            ({ hash }) => hash
+          )
 
           return {
             id: address.hash,

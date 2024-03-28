@@ -37,12 +37,7 @@ import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { addressDiscoveryStopped, discoverAddresses, selectAllDiscoveredAddresses } from '~/store/addressDiscoverySlice'
-import {
-  addressesImported,
-  selectAllAddresses,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData
-} from '~/store/addressesSlice'
+import { addressesImported, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { getRandomLabelColor } from '~/utils/colors'
 import { resetNavigation } from '~/utils/navigation'
@@ -86,8 +81,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
 
       sendAnalytics('Imported discovered addresses')
 
-      await dispatch(syncAddressesData(newAddressHashes))
-      await dispatch(syncAddressesAlphHistoricBalances(newAddressHashes))
+      await dispatch(syncLatestTransactions(newAddressHashes))
     } catch (e) {
       console.error(e)
 
@@ -137,13 +131,14 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }
 
   return (
-    <ScrollScreen verticalGap fill screenTitle="Active addresses" headerOptions={{ type: 'stack' }} {...props}>
-      <ScreenSection>
-        <AppText bold>
-          Scan the blockchain to find your active addresses on the &quot;{networkName}&quot; network. This process might
-          take a while.
-        </AppText>
-      </ScreenSection>
+    <ScrollScreen
+      verticalGap
+      fill
+      screenTitle="Active addresses"
+      screenIntro={`Scan the blockchain to find your active addresses on the ${networkName} network. This process might take a while.`}
+      headerOptions={{ type: 'stack' }}
+      {...props}
+    >
       <ScreenSection fill>
         <ScreenSectionTitle>Current addresses</ScreenSectionTitle>
         <BoxSurface>

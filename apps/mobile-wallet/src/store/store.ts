@@ -25,6 +25,7 @@ import addressesSlice from '~/store/addressesSlice'
 import appSlice from '~/store/appSlice'
 import confirmedTransactionsSlice from '~/store/confirmedTransactionsSlice'
 import credentialsSlice from '~/store/credentialsSlice'
+import loadersSlice from '~/store/loadersSlice'
 import pendingTransactionsSlice from '~/store/pendingTransactionsSlice'
 import settingsSlice, { settingsListenerMiddleware } from '~/store/settingsSlice'
 import walletSlice from '~/store/wallet/walletSlice'
@@ -42,7 +43,8 @@ export const store = configureStore({
     addressDiscovery: addressDiscoverySlice.reducer,
     confirmedTransactions: confirmedTransactionsSlice.reducer,
     pendingTransactions: pendingTransactionsSlice.reducer,
-    [contactsSlice.name]: contactsSlice.reducer
+    [contactsSlice.name]: contactsSlice.reducer,
+    [loadersSlice.name]: loadersSlice.reducer
   },
   middleware: (getDefaultMiddleware) => {
     const middlewares = getDefaultMiddleware({

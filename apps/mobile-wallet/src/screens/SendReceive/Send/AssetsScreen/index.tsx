@@ -23,7 +23,6 @@ import styled from 'styled-components/native'
 
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
@@ -84,10 +83,11 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       contrastedBg
       contentPaddingTop
       keyboardShouldPersistTaps="always"
+      screenTitle="Assets"
+      screenIntro="With Alephium, you can send multiple assets in one transaction."
       onScroll={screenScrollHandler}
       {...props}
     >
-      <ScreenIntro title="Assets" subtitle="With Alephium, you can send multiple assets in one transaction." />
       <ScreenSection>
         <AssetsList>
           {knownFungibleTokens.map((asset, index) => (

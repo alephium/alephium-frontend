@@ -25,6 +25,7 @@ import Input from '~/components/inputs/Input'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
+import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
 import { walletDeleted } from '~/store/wallet/walletActions'
@@ -36,6 +37,7 @@ interface WalletDeleteModalProps extends ModalContentProps {
 const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
   const dispatch = useAppDispatch()
   const walletName = useAppSelector((s) => s.wallet.name)
+  const { resetWalletConnectStorage } = useWalletConnectContext()
 
   const [inputWalletName, setInputWalletName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -52,6 +54,7 @@ const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
     onDelete()
 
     dispatch(walletDeleted())
+    resetWalletConnectStorage()
     sendAnalytics('Deleted wallet')
   }
 

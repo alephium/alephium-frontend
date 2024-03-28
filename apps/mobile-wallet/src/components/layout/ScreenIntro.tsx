@@ -21,23 +21,34 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { ScreenSection, ScreenSectionProps } from '~/components/layout/Screen'
-import ScreenTitle from '~/components/layout/ScreenTitle'
+import ScreenTitle, { ScreenTitleProps } from '~/components/layout/ScreenTitle'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenIntroProps extends ScreenSectionProps {
   title?: string
+  TitleSideComponent?: ScreenTitleProps['SideComponent']
   surtitle?: 'SEND' | 'RECEIVE'
   subtitle?: string
   scrollY?: SharedValue<number>
+  paddingBottom?: boolean
 }
 
-const ScreenIntro = ({ surtitle, title, subtitle, scrollY, ...props }: ScreenIntroProps) => (
-  <ScreenSection {...props}>
+const ScreenIntro = ({
+  surtitle,
+  title,
+  subtitle,
+  scrollY,
+  TitleSideComponent,
+  paddingBottom,
+  ...props
+}: ScreenIntroProps) => (
+  <ScreenSection {...props} style={[props.style, { paddingBottom: paddingBottom ? VERTICAL_GAP : 0 }]}>
     {surtitle && (
       <AppText size={15} semiBold color="secondary">
         {surtitle}
       </AppText>
     )}
-    {title && <ScreenTitle title={title} scrollY={scrollY} />}
+    {title && <ScreenTitle title={title} scrollY={scrollY} SideComponent={TitleSideComponent} />}
     {subtitle && (
       <Subtitle size={16} medium color="secondary">
         {subtitle}
@@ -49,5 +60,5 @@ const ScreenIntro = ({ surtitle, title, subtitle, scrollY, ...props }: ScreenInt
 export default ScreenIntro
 
 const Subtitle = styled(AppText)`
-  width: 70%;
+  width: 90%;
 `

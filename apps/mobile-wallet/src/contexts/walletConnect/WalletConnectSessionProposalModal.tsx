@@ -36,12 +36,7 @@ import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { persistSettings } from '~/persistent-storage/settings'
 import { selectAddressesInGroup } from '~/store/addresses/addressesSelectors'
-import {
-  newAddressGenerated,
-  selectAllAddresses,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData
-} from '~/store/addressesSlice'
+import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import { SessionProposalEvent } from '~/types/walletConnect'
 import { getRandomLabelColor } from '~/utils/colors'
@@ -108,8 +103,7 @@ const WalletConnectSessionProposalModal = ({
     try {
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
-      await dispatch(syncAddressesData(newAddress.hash))
-      await dispatch(syncAddressesAlphHistoricBalances([newAddress.hash]))
+      await dispatch(syncLatestTransactions(newAddress.hash))
 
       sendAnalytics('WC: Generated new address')
     } catch (e) {

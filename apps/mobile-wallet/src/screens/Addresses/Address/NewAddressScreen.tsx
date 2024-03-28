@@ -27,12 +27,7 @@ import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Address/AddressFormBaseScreen'
-import {
-  newAddressGenerated,
-  selectAllAddresses,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData
-} from '~/store/addressesSlice'
+import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed } from '~/utils/crypto'
 
@@ -62,8 +57,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
     try {
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
-      await dispatch(syncAddressesData(newAddress.hash))
-      await dispatch(syncAddressesAlphHistoricBalances([newAddress.hash]))
+      await dispatch(syncLatestTransactions(newAddress.hash))
 
       sendAnalytics('Address: Generated new address', {
         note: group === undefined ? 'In random group' : 'In specific group'

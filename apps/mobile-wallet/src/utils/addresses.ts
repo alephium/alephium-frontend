@@ -24,15 +24,25 @@ import * as Clipboard from 'expo-clipboard'
 
 import { persistAddressesMetadata } from '~/persistent-storage/wallet'
 import { Address, AddressDiscoveryGroupData, AddressPartial } from '~/types/addresses'
-import { AddressTransaction, PendingTransaction } from '~/types/transactions'
+import {
+  AddressConfirmedTransaction,
+  AddressPendingTransaction,
+  AddressTransaction,
+  PendingTransaction
+} from '~/types/transactions'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 export const getAddressDisplayName = (address: Address): string =>
   address.settings.label || address.hash.substring(0, 6)
 
 export const copyAddressToClipboard = async (addressHash: AddressHash) => {
-  await Clipboard.setStringAsync(addressHash)
-  showToast({ text1: 'Address copied!', visibilityTime: ToastDuration.SHORT })
+  try {
+    await Clipboard.setStringAsync(addressHash)
+    showToast({ text1: 'Address copied!', visibilityTime: ToastDuration.SHORT })
+  } catch (error) {
+    console.log(error)
+    showToast({ text1: 'Error while copying address', visibilityTime: ToastDuration.SHORT, type: 'error' })
+  }
 }
 
 export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
@@ -94,10 +104,36 @@ export const initializeAddressDiscoveryGroupsData = (addresses: Address[]): Addr
 export const getAddressAvailableBalance = (address: Address): bigint =>
   BigInt(bigInteger(address.balance).minus(bigInteger(address.lockedBalance)).toString())
 
-// TODO: Move into store directory
-export const selectAddressTransactions = (
+export const selectAddressPendingTransactions = (
   allAddresses: Address[],
-  transactions: (explorer.Transaction | PendingTransaction)[],
+  transactions: PendingTransaction[],
+  addressHashes?: AddressHash | AddressHash[]
+) => {
+  const addresses =
+    addressHashes !== undefined
+      ? Array.isArray(addressHashes)
+        ? allAddresses.filter((address) => addressHashes.includes(address.hash))
+        : allAddresses.filter((address) => addressHashes === address.hash)
+      : allAddresses
+
+  return transactions.reduce((acc, tx) => {
+    const address = addresses.find((address) => address.hash === tx.fromAddress)
+
+    if (address) {
+      acc.push({
+        ...tx,
+        address
+      })
+    }
+    return acc
+  }, [] as AddressPendingTransaction[])
+}
+
+// TODO: Move into store directory
+// TODO: Simplify logic
+export const selectAddressConfirmedTransactions = (
+  allAddresses: Address[],
+  transactions: explorer.Transaction[],
   addressHashes?: AddressHash | AddressHash[]
 ) => {
   const addresses =
@@ -109,21 +145,18 @@ export const selectAddressTransactions = (
   const addressesTxs = addresses.flatMap((address) => address.transactions.map((txHash) => ({ txHash, address })))
   const processedTxHashes: explorer.Transaction['hash'][] = []
 
-  return transactions.reduce((txs, tx) => {
+  return transactions.reduce((acc, tx) => {
     const addressTxs = addressesTxs.filter(({ txHash }) => txHash === tx.hash)
 
     addressTxs.forEach((addressTx) => {
-      if (
-        (!isPendingTransaction(tx) || tx.fromAddress === addressTx.address.hash) &&
-        !processedTxHashes.includes(tx.hash)
-      ) {
+      if (!processedTxHashes.includes(tx.hash)) {
         processedTxHashes.push(tx.hash)
-        txs.push({ ...tx, address: addressTx.address })
+        acc.push({ ...tx, address: addressTx.address })
       }
     })
 
-    return txs
-  }, [] as AddressTransaction[])
+    return acc
+  }, [] as AddressConfirmedTransaction[])
 }
 
 export const selectContactConfirmedTransactions = (
@@ -155,10 +188,6 @@ export const getAddressAssetsAvailableBalance = (address: Address) => [
     availableBalance: BigInt(token.balance) - BigInt(token.lockedBalance)
   }))
 ]
-
-// TODO: Same as in desktop wallet
-const isPendingTransaction = (tx: explorer.Transaction | PendingTransaction): tx is PendingTransaction =>
-  (tx as PendingTransaction).status === 'pending'
 
 const associateTxsWithAddresses = (transactions: (explorer.Transaction | PendingTransaction)[], addresses: Address[]) =>
   transactions.reduce((txs, tx) => {

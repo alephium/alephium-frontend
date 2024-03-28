@@ -93,6 +93,7 @@ const AnnouncementBanner = ({ className }: AnnouncementBannerProps) => {
 
   const handleAnnouncementButtonClick = () => {
     if (announcement?.button?.link) openInWebBrowser(announcement.button.link)
+    handleAnnouncementHide()
   }
 
   const handleAnnouncementHide = () => {

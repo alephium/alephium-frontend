@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Application from 'expo-application'
 import { capitalize } from 'lodash'
@@ -159,9 +160,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>General</ScreenSectionTitle>
           <BoxSurface>
-            <Row onPress={() => navigation.navigate('EditWalletNameScreen')} title="Wallet name">
-              <AppText bold>{walletName}</AppText>
-            </Row>
             <Row onPress={() => setIsCurrencySelectModalOpen(true)} title="Currency">
               <AppText bold>{currentCurrency}</AppText>
             </Row>
@@ -205,24 +203,31 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
         <ScreenSection>
           <ScreenSectionTitle>Wallet</ScreenSectionTitle>
-          <ButtonStyled
-            title="Scan for active addresses"
-            iconProps={{ name: 'search-outline' }}
-            variant="accent"
-            onPress={() => navigation.navigate('AddressDiscoveryScreen')}
-          />
-          <ButtonStyled
-            title="View secret recovery phrase"
-            iconProps={{ name: 'key' }}
-            onPress={() => setIsSafePlaceWarningModalOpen(true)}
-            color={theme.global.warning}
-          />
-          <ButtonStyled
-            title="Delete wallet"
-            iconProps={{ name: 'trash-outline' }}
-            variant="alert"
-            onPress={handleDeleteButtonPress}
-          />
+          <BoxSurface>
+            <Row onPress={() => navigation.navigate('EditWalletNameScreen')} title="Wallet name">
+              <AppText bold>{walletName}</AppText>
+            </Row>
+            <Row onPress={() => navigation.navigate('AddressDiscoveryScreen')} title="Scan for active addresses">
+              <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
+            </Row>
+            <Row onPress={() => navigation.navigate('PublicKeysScreen')} title="Get public keys" isLast>
+              <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
+            </Row>
+          </BoxSurface>
+        </ScreenSection>
+        <ScreenSection>
+          <BoxSurface>
+            <Row
+              onPress={() => setIsSafePlaceWarningModalOpen(true)}
+              title="View secret recovery phrase"
+              titleColor={theme.global.warning}
+            >
+              <Ionicons name="key" size={18} color={theme.global.warning} />
+            </Row>
+            <Row onPress={handleDeleteButtonPress} title="Delete wallet" titleColor={theme.global.alert} isLast>
+              <Ionicons name="trash" size={18} color={theme.global.alert} />
+            </Row>
+          </BoxSurface>
         </ScreenSection>
         <ScreenSection>
           <AppText style={{ textAlign: 'center' }} color="secondary">
@@ -331,8 +336,4 @@ export default SettingsScreen
 
 const ScrollScreenStyled = styled(ScrollScreen)`
   gap: ${VERTICAL_GAP}px;
-`
-
-const ButtonStyled = styled(Button)`
-  margin-bottom: 24px;
 `
