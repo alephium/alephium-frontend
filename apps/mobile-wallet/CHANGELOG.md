@@ -1,5 +1,17 @@
 # @alephium/mobile-wallet
 
+## 1.0.8
+
+### Patch Changes
+
+- 128b45f: Faster data loading
+- 01a4c12: Simplify address picker
+- f6df862: Delete cached data after deleting a wallet
+- 128b45f: Do not re-initialize data if the app goes to the background while it is still syncing data
+- efaa540: Improve image loading performance
+- 898c4ca: Remove chart for better app performance
+- 17b7ef0: Add screen allowing public keys copy
+
 ## 1.0.7
 
 ### Patch Changes
