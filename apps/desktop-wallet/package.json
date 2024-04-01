@@ -50,6 +50,7 @@
   "devDependencies": {
     "@actions/tool-cache": "^2.0.1",
     "@alephium/eslint-config": "workspace:*",
+    "@alephium/keyring": "workspace:*",
     "@alephium/shared": "workspace:*",
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",

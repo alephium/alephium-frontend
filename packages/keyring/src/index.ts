@@ -16,6 +16,5 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from './wallet'
-export * from './address'
-export * from './password-crypto'
+export * from '@/keyring'
+export * from '@/mnemonic'
