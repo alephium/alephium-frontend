@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import {
-  dangerouslyConvertBufferMnemonicToString,
+  dangerouslyConvertUint8ArrayMnemonicToString,
   decrypt,
   decryptMnemonic,
   DecryptMnemonicResult,
-  encryptMnemonic,
-  ValidEncryptedWalletVersions
+  EncryptedMnemonicVersion,
+  encryptMnemonic
 } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
@@ -83,7 +83,7 @@ export const migrateNetworkSettings = (): NetworkSettings => {
 export const migrateUserData = (
   walletId: StoredEncryptedWallet['id'],
   password: string,
-  version: ValidEncryptedWalletVersions
+  version: EncryptedMnemonicVersion
 ) => {
   console.log('🚚 Migrating user data')
 
@@ -294,16 +294,16 @@ export const _20230209_124300_migrateIsMainToIsDefault = (walletId: StoredEncryp
   addressMetadataStorage.store(walletId, newAddressesMetadata)
 }
 
-// In version 1 the encrypted mnemonic used to be stored as a string before we started using Buffer. This migrates
+// In version 1 the encrypted mnemonic used to be stored as a string before we started using Uint8Array. This migrates
 // the encrypted wallet from StoredStateV1 to StoredStateV2.
 export const _20240328_1200_migrateEncryptedWalletFromV1ToV2 = (
   walletId: StoredEncryptedWallet['id'],
   password: string,
-  version: ValidEncryptedWalletVersions
+  version: EncryptedMnemonicVersion
 ) => {
   try {
     if (version === 1) {
-      let decryptedMnemonic: Buffer | null = decryptMnemonic(
+      let decryptedMnemonic: Uint8Array | null = decryptMnemonic(
         walletStorage.load(walletId).encrypted,
         password
       ).decryptedMnemonic
@@ -360,14 +360,14 @@ export const _20240328_1221_migrateAddressAndContactsToUnencrypted = (
     try {
       if (parsedMetadataJson?.encrypted) {
         const metadata = JSON.parse(
-          decrypt(dangerouslyConvertBufferMnemonicToString(result.decryptedMnemonic), parsedMetadataJson.encrypted)
+          decrypt(dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic), parsedMetadataJson.encrypted)
         ) as AddressMetadata[]
         addressMetadataStorage.store(walletId, metadata)
       }
 
       if (parsedContactsJson?.encrypted) {
         const contacts = JSON.parse(
-          decrypt(dangerouslyConvertBufferMnemonicToString(result.decryptedMnemonic), parsedContactsJson.encrypted)
+          decrypt(dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic), parsedContactsJson.encrypted)
         ) as Contact[]
         contactsStorage.store(walletId, contacts)
       }

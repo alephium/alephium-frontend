@@ -24,11 +24,12 @@ import blake from 'blakejs'
 
 import { findNextAvailableAddressIndex, isAddressIndexValid } from './address'
 import {
-  dangerouslyConvertBufferMnemonicToString,
+  dangerouslyConvertUint8ArrayMnemonicToString,
   decryptMnemonic,
   DecryptMnemonicResult,
-  MnemonicLength
-} from './wallet'
+  MnemonicLength,
+  mnemonicStringToUint8Array
+} from './mnemonic'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -63,24 +64,24 @@ class Keyring {
     this.root = null
   }
 
-  public generateRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Buffer => {
+  public generateRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Uint8Array => {
     const strength = mnemonicLength === 24 ? 256 : 128
-    const mnemonic = Buffer.from(bip39.generateMnemonic(strength))
+    const mnemonic = mnemonicStringToUint8Array(bip39.generateMnemonic(strength))
 
     this._initFromMnemonic(mnemonic, '')
 
     return mnemonic
   }
 
-  public importMnemonicString = (mnemonicStr: string): Buffer => {
+  public importMnemonicString = (mnemonicStr: string): Uint8Array => {
     if (!mnemonicStr) throw new Error('Keyring: Cannot import mnemonic, mnemonic not provided')
 
     console.log('Mnemonic leaked to memory as a string while importing wallet. This is expected.')
 
-    const mnemonic = Buffer.from(mnemonicStr)
+    const mnemonic = mnemonicStringToUint8Array(mnemonicStr)
 
     this.clearCachedSecrets()
-    this._initFromMnemonic(Buffer.from(mnemonic), '')
+    this._initFromMnemonic(mnemonic, '')
 
     return mnemonic
   }
@@ -225,14 +226,14 @@ class Keyring {
     publicKey
   }: SensitiveAddressData): NonSensitiveAddressData => ({ hash, index, publicKey })
 
-  private _initFromMnemonic = (mnemonic: Buffer | null, passphrase: string) => {
+  private _initFromMnemonic = (mnemonic: Uint8Array | null, passphrase: string) => {
     if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
     if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
 
-    const isValid = bip39.validateMnemonic(dangerouslyConvertBufferMnemonicToString(mnemonic))
+    const isValid = bip39.validateMnemonic(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic))
     if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
 
-    const seed = bip39.mnemonicToSeedSync(dangerouslyConvertBufferMnemonicToString(mnemonic), passphrase)
+    const seed = bip39.mnemonicToSeedSync(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic))
     this.root = bip32.fromSeed(seed)
 
     passphrase = ''

@@ -21,8 +21,8 @@ import { createContext, useContext, useState } from 'react'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 
 export interface WalletContextType {
-  mnemonic: Buffer | null
-  setMnemonic: (mnemonic: Buffer | null) => void
+  mnemonic: Uint8Array | null
+  setMnemonic: (mnemonic: Uint8Array | null) => void
 }
 
 export const initialWalletContext: WalletContextType = {

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { dangerouslyConvertBufferMnemonicToString, decryptMnemonic } from '@alephium/shared-crypto'
+import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic } from '@alephium/shared-crypto'
 import { Edit3 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -40,7 +40,7 @@ const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
   const handleCorrectPasswordEntered = (password: string) => {
     try {
       setMnemonic(
-        dangerouslyConvertBufferMnemonicToString(
+        dangerouslyConvertUint8ArrayMnemonicToString(
           decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password).decryptedMnemonic
         )
       )
