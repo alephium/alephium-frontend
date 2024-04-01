@@ -1029,9 +1029,6 @@ importers:
       '@alephium/web3':
         specifier: 0.29.1
         version: 0.29.1
-      '@metamask/scure-bip39':
-        specifier: ^2.1.1
-        version: 2.1.1
       base-x:
         specifier: ^4.0.0
         version: 4.0.0
