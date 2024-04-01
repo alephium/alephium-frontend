@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic, encrypt } from '@alephium/shared-crypto'
+import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic } from '@alephium/keyring'
+import { encrypt } from '@alephium/shared-crypto'
 import { ScanLine } from 'lucide-react'
 import { dataToFrames } from 'qrloop'
 import { useEffect, useState } from 'react'

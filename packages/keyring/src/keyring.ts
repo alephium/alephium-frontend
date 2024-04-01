@@ -18,18 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { addressToGroup, bs58, ExplorerProvider, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
-import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import blake from 'blakejs'
+import { HDKey } from 'ethereum-cryptography/hdkey'
+import { bytesToHex } from 'ethereum-cryptography/utils'
 
-import { findNextAvailableAddressIndex, isAddressIndexValid } from './address'
 import {
   dangerouslyConvertUint8ArrayMnemonicToString,
   decryptMnemonic,
   DecryptMnemonicResult,
   MnemonicLength,
   mnemonicStringToUint8Array
-} from './mnemonic'
+} from '@/mnemonic'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -38,7 +38,7 @@ export type NonSensitiveAddressData = {
 }
 
 type SensitiveAddressData = NonSensitiveAddressData & {
-  privateKey: Buffer
+  privateKey: Uint8Array
 }
 
 type GenerateAddressProps = {
@@ -49,11 +49,13 @@ type GenerateAddressProps = {
 
 class Keyring {
   private hdPath = "m/44'/1234'/0'/0"
-  private root: bip32.BIP32Interface | null
+  private hdWallet: HDKey | null
+  private root: HDKey | null
   private addresses: SensitiveAddressData[]
 
   constructor() {
     this.addresses = []
+    this.hdWallet = null
     this.root = null
   }
 
@@ -61,6 +63,7 @@ class Keyring {
 
   public clearCachedSecrets = () => {
     this.addresses = []
+    this.hdWallet = null
     this.root = null
   }
 
@@ -105,13 +108,13 @@ class Keyring {
     this._getNonSensitiveAddressData(this._generateAndCacheAddress(props))
 
   public signTransaction = (txId: string, addressHash: AddressHash): string =>
-    transactionSign(txId, this.exportPrivateKeyOfAddress(addressHash).toString('hex'))
+    transactionSign(txId, this.exportPrivateKeyOfAddress(addressHash))
 
   public signMessage = (message: string, addressHash: AddressHash): string =>
-    sign(message, this.exportPrivateKeyOfAddress(addressHash).toString('hex'))
+    sign(message, this.exportPrivateKeyOfAddress(addressHash))
 
-  public exportPrivateKeyOfAddress = (addressHash: AddressHash): SensitiveAddressData['privateKey'] =>
-    this._getAddress(addressHash).privateKey
+  public exportPrivateKeyOfAddress = (addressHash: AddressHash): string =>
+    bytesToHex(this._getAddress(addressHash).privateKey)
 
   public discoverAndCacheActiveAddresses = async (
     client: ExplorerProvider,
@@ -234,31 +237,29 @@ class Keyring {
     if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
 
     const seed = bip39.mnemonicToSeedSync(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic))
-    this.root = bip32.fromSeed(seed)
+    this.hdWallet = HDKey.fromMasterSeed(seed)
+    this.root = this.hdWallet.derive(this.hdPath)
 
     passphrase = ''
     mnemonic = null
   }
 
-  private _getPath = (addressIndex: number = 0) => {
-    if (!isAddressIndexValid(addressIndex)) throw new Error('Invalid address index path level')
-
-    return `${this.hdPath}/${addressIndex}`
-  }
-
   private _deriveAddressAndKeys = (addressIndex: number): SensitiveAddressData => {
     if (!this.root) throw new Error('Keyring: Cannot derive address and keys, secret recovery phrase is not provided')
+    if (!isAddressIndexValid(addressIndex)) throw new Error('Invalid address index path level')
 
-    const keyPair = this.root.derivePath(this._getPath(addressIndex))
+    const keyPair = this.root.deriveChild(addressIndex)
 
+    if (!keyPair.publicKey) throw new Error('Keyring: Missing public key')
     if (!keyPair.privateKey) throw new Error('Keyring: Missing private key')
 
-    const publicKey = keyPair.publicKey.toString('hex')
+    const publicKey = bytesToHex(keyPair.publicKey)
     const privateKey = keyPair.privateKey
     const hash = blake.blake2b(Uint8Array.from(keyPair.publicKey), undefined, 32)
-    const pkhash = Buffer.from(hash)
-    const type = Buffer.from([0])
-    const bytes = Buffer.concat([type, pkhash])
+    const type = new Uint8Array([0])
+    const bytes = new Uint8Array(type.length + hash.length)
+    bytes.set(type, 0)
+    bytes.set(hash, type.length)
     const address = bs58.encode(bytes)
 
     return { hash: address, publicKey, privateKey, index: addressIndex }
@@ -322,3 +323,16 @@ const getActiveAddressesResults = async (
 
   return results
 }
+
+export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+  let nextAvailableAddressIndex = startIndex
+
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
+}
+
+export const isAddressIndexValid = (addressIndex: number) =>
+  addressIndex >= 0 && Number.isInteger(addressIndex) && !addressIndex.toString().includes('e')

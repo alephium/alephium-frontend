@@ -16,15 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import {
   dangerouslyConvertUint8ArrayMnemonicToString,
-  decrypt,
   decryptMnemonic,
   DecryptMnemonicResult,
   EncryptedMnemonicVersion,
   encryptMnemonic
-} from '@alephium/shared-crypto'
+} from '@alephium/keyring'
+import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { decrypt } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 

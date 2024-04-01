@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { dangerouslyConvertUint8ArrayMnemonicToString } from '@alephium/shared-crypto'
+import { dangerouslyConvertUint8ArrayMnemonicToString } from '@alephium/keyring'
 import { colord } from 'colord'
 import { motion, PanInfo } from 'framer-motion'
 import { throttle } from 'lodash'

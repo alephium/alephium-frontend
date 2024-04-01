@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { decrypt, encrypt } from '@alephium/shared-crypto'
 import * as bip39 from 'bip39'
-
-import { decrypt, encrypt } from './password-crypto'
 
 const wordlist = bip39.wordlists['english']
 
@@ -38,6 +37,14 @@ export class EncryptedMnemonicStoredAsUint8Array {
   constructor(mnemonic: Uint8Array) {
     this.mnemonic = mnemonic
   }
+}
+
+// It will convert the mnemonic from Uint8Array to string, leaking it to the memory. Use only when absolutely needed,
+// ie: displaying the mnemonic for backup, etc
+export const dangerouslyConvertUint8ArrayMnemonicToString = (mnemonic: Uint8Array) => {
+  const recoveredIndices = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
+
+  return recoveredIndices.map((i) => wordlist[i]).join(' ')
 }
 
 export const encryptMnemonic = (mnemonic: Uint8Array | null, password: string) => {
@@ -84,14 +91,6 @@ export const mnemonicStringToUint8Array = (mnemonicStr: string): Uint8Array => {
   const indices = mnemonicStr.split(' ').map((word) => wordlist.indexOf(word))
 
   return new Uint8Array(new Uint16Array(indices).buffer)
-}
-
-// It will convert the mnemonic from Uint8Array to string, leaking it to the memory. Use only when absolutely needed,
-// ie: displaying the mnemonic for backup, etc
-export const dangerouslyConvertUint8ArrayMnemonicToString = (mnemonic: Uint8Array) => {
-  const recoveredIndices = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
-
-  return recoveredIndices.map((i) => wordlist[i]).join(' ')
 }
 
 // When JSON.stringify an Uint8Array it becomes a JS object that we need to cast back to an Uint8Array
