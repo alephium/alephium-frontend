@@ -18,18 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { addressToGroup, bs58, ExplorerProvider, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
+import bip39 from '@metamask/scure-bip39'
+import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import * as bip32 from 'bip32'
-import * as bip39 from 'bip39'
 import blake from 'blakejs'
 
 import { findNextAvailableAddressIndex, isAddressIndexValid } from './address'
-import {
-  dangerouslyConvertUint8ArrayMnemonicToString,
-  decryptMnemonic,
-  DecryptMnemonicResult,
-  MnemonicLength,
-  mnemonicStringToUint8Array
-} from './mnemonic'
+import { decryptMnemonic, DecryptMnemonicResult, MnemonicLength, mnemonicStringToUint8Array } from './mnemonic'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -65,8 +60,8 @@ class Keyring {
   }
 
   public generateRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Uint8Array => {
-    const strength = mnemonicLength === 24 ? 256 : 128
-    const mnemonic = mnemonicStringToUint8Array(bip39.generateMnemonic(strength))
+    // const strength = mnemonicLength === 24 ? 256 : 128
+    const mnemonic = bip39.generateMnemonic(wordlist)
 
     this._initFromMnemonic(mnemonic, '')
 
@@ -230,11 +225,11 @@ class Keyring {
     if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
     if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
 
-    const isValid = bip39.validateMnemonic(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic))
+    const isValid = bip39.validateMnemonic(mnemonic, wordlist)
     if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
 
-    const seed = bip39.mnemonicToSeedSync(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic))
-    this.root = bip32.fromSeed(seed)
+    const seed = bip39.mnemonicToSeedSync(mnemonic, wordlist, passphrase)
+    this.root = bip32.fromSeed(Buffer.from(seed))
 
     passphrase = ''
     mnemonic = null
