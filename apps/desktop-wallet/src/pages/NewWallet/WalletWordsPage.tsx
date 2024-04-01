@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { dangerouslyConvertBufferMnemonicToString, keyring } from '@alephium/shared-crypto'
+import { dangerouslyConvertUint8ArrayMnemonicToString, keyring } from '@alephium/shared-crypto'
 import { colord } from 'colord'
 import { Edit3 } from 'lucide-react'
 import { useEffect } from 'react'
@@ -53,7 +53,7 @@ const WalletWordsPage = () => {
   if (!mnemonic) return null
 
   const renderMnemonicWords = () =>
-    dangerouslyConvertBufferMnemonicToString(mnemonic)
+    dangerouslyConvertUint8ArrayMnemonicToString(mnemonic)
       .split(' ')
       .map((w, i) => (
         <MnemonicWordContainer key={i}>

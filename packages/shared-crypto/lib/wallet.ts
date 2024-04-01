@@ -23,21 +23,13 @@ import * as bip39 from 'bip39'
 import blake from 'blakejs'
 import { pbkdf2 } from 'crypto'
 
+import { EncryptedMnemonicVersion, MnemonicLength } from './mnemonic'
 import { decrypt, decryptAsync, encrypt, encryptAsync, Pbkdf2Function } from './password-crypto'
 
 type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
 
-export type MnemonicLength = 12 | 24
-
-export type ValidEncryptedWalletVersions = 1 | 2
-
-export type DecryptMnemonicResult = {
-  decryptedMnemonic: Buffer
-  version: ValidEncryptedWalletVersions
-}
-
-class StoredStateV1 {
-  readonly version: ValidEncryptedWalletVersions = 1
+class EncryptedMnemonicStoredAsString {
+  readonly version: EncryptedMnemonicVersion = 1
   readonly mnemonic: string
 
   constructor({ mnemonic }: { mnemonic: string }) {
@@ -45,15 +37,7 @@ class StoredStateV1 {
   }
 }
 
-export class StoredStateV2 {
-  readonly version: ValidEncryptedWalletVersions = 2
-  readonly mnemonic: Buffer
-
-  constructor(mnemonic: Buffer) {
-    this.mnemonic = mnemonic
-  }
-}
-
+// Deprecated, delete when mobile wallet get adapted
 type WalletProps = {
   address: string
   publicKey: string
@@ -63,6 +47,7 @@ type WalletProps = {
   masterKey: bip32.BIP32Interface
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export class Wallet {
   readonly address: string
   readonly publicKey: string
@@ -83,6 +68,7 @@ export class Wallet {
   encrypt = (password: string) => walletEncrypt(password, this.mnemonic)
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const getPath = (addressIndex?: number) => {
   if (
     addressIndex !== undefined &&
@@ -96,6 +82,7 @@ export const getPath = (addressIndex?: number) => {
   return `m/44'/${coinType}/0'/0/${addressIndex || '0'}`
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const getWalletFromSeed = (seed: Buffer, mnemonic: string): Wallet => {
   const masterKey = bip32.fromSeed(seed)
   const { hash, publicKey, privateKey } = deriveAddressAndKeys(masterKey)
@@ -103,12 +90,14 @@ export const getWalletFromSeed = (seed: Buffer, mnemonic: string): Wallet => {
   return new Wallet({ seed, address: hash, publicKey, privateKey, mnemonic, masterKey })
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const getWalletFromMnemonic = (mnemonic: string, passphrase = ''): Wallet => {
   const seed = bip39.mnemonicToSeedSync(mnemonic, passphrase)
 
   return getWalletFromSeed(seed, mnemonic)
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const getWalletFromMnemonicAsyncUnsafe = async (
   mnemonicToSeedCustomFunc: MnemonicToSeedFunction,
   mnemonic: string,
@@ -119,6 +108,7 @@ export const getWalletFromMnemonicAsyncUnsafe = async (
   return getWalletFromSeed(seed, mnemonic)
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const deriveAddressAndKeys = (masterKey: bip32.BIP32Interface, addressIndex?: number): AddressKeyPair => {
   const keyPair = masterKey.derivePath(getPath(addressIndex))
 
@@ -198,13 +188,13 @@ export const walletImport = (mnemonic: string, passphrase?: string) => {
 
 export const walletOpen = (password: string, encryptedWallet: string) => {
   const dataDecrypted = decrypt(password, encryptedWallet)
-  const config = JSON.parse(dataDecrypted) as StoredStateV1
+  const config = JSON.parse(dataDecrypted) as EncryptedMnemonicStoredAsString
 
   return getWalletFromMnemonic(config.mnemonic)
 }
 
 export const walletEncrypt = (password: string, mnemonic: string) => {
-  const storedState = new StoredStateV1({
+  const storedState = new EncryptedMnemonicStoredAsString({
     mnemonic
   })
 
@@ -238,7 +228,7 @@ export const walletOpenAsyncUnsafe = async (
   mnemonicToSeedCustomFunc: MnemonicToSeedFunction
 ): Promise<Wallet> => {
   const data = await decryptAsync(password, encryptedWallet, pbkdf2CustomFunc ?? _pbkdf2)
-  const config = JSON.parse(data) as StoredStateV1
+  const config = JSON.parse(data) as EncryptedMnemonicStoredAsString
 
   return getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, config.mnemonic)
 }
@@ -248,51 +238,9 @@ export const walletEncryptAsyncUnsafe = (
   mnemonic: string,
   pbkdf2CustomFunc: Pbkdf2Function
 ): Promise<string> => {
-  const storedState = new StoredStateV1({
+  const storedState = new EncryptedMnemonicStoredAsString({
     mnemonic
   })
 
   return encryptAsync(password, JSON.stringify(storedState), pbkdf2CustomFunc ?? _pbkdf2)
 }
-
-export const encryptMnemonic = (mnemonic: Buffer | null, password: string) => {
-  if (!mnemonic) throw new Error('Keyring: Cannot encrypt mnemonic, mnemonic not provided')
-
-  const result = encrypt(password, JSON.stringify(new StoredStateV2(mnemonic)))
-
-  password = ''
-  mnemonic = null
-
-  return result
-}
-
-export const decryptMnemonic = (encryptedMnemonic: string, password: string): DecryptMnemonicResult => {
-  const dataDecrypted = decrypt(password, encryptedMnemonic)
-
-  const { version, mnemonic } = JSON.parse(dataDecrypted) // StoredStateV1 or StoredStateV2
-
-  if (version === 1) {
-    console.warn(
-      '☣️ Mnemonic is leaked to memory as a string while decrypting, needs to be stored as a buffer (StoredStateV2).'
-    )
-  }
-
-  if (
-    !version ||
-    (version !== 1 && version !== 2) ||
-    // In version 1 the encrypted mnemonic used to be stored as a string before we started using Buffer
-    (version === 1 && typeof mnemonic !== 'string') ||
-    // When a Buffer gets stringified it is turned into an object with properties `data` and `type`.
-    (version === 2 && (!mnemonic?.type || mnemonic.type !== 'Buffer' || !mnemonic?.data))
-  )
-    throw new Error('Encryptor: Cannot decrypt mnemonic, the provided mnemonic is invalid')
-
-  password = ''
-  encryptedMnemonic = ''
-
-  return { version, decryptedMnemonic: Buffer.from(version === 2 ? mnemonic.data : mnemonic) }
-}
-
-// It will convert the mnemonic from Buffer to string, leaking it to the memory. Use only when absolutely needed,
-// ie: displaying the mnemonic for backup, etc
-export const dangerouslyConvertBufferMnemonicToString = (mnemonic: Buffer) => mnemonic.toString()

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { dangerouslyConvertBufferMnemonicToString } from '@alephium/shared-crypto'
+import { dangerouslyConvertUint8ArrayMnemonicToString } from '@alephium/shared-crypto'
 import { colord } from 'colord'
 import { motion, PanInfo } from 'framer-motion'
 import { throttle } from 'lodash'
@@ -62,15 +62,16 @@ const CheckWordsPage = () => {
     if (!mnemonic) return
 
     setWordList(
-      getAlphabeticallyOrderedList(mnemonic.toString().split(' ')).map((wordString, i) => ({
-        word: wordString,
-        key: `${wordString}-${i}`
-      }))
+      getAlphabeticallyOrderedList(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic).split(' ')).map(
+        (wordString, i) => ({
+          word: wordString,
+          key: `${wordString}-${i}`
+        })
+      )
     )
 
     setSelectedElements(
-      mnemonic
-        .toString()
+      dangerouslyConvertUint8ArrayMnemonicToString(mnemonic)
         .split(' ')
         .reduce((p, c) => ({ ...p, [c]: null }), {})
     )
@@ -79,7 +80,9 @@ const CheckWordsPage = () => {
   useEffect(() => {
     if (!mnemonic) return
 
-    setIsValid(selectedWords.map(({ word }) => word).join(' ') === dangerouslyConvertBufferMnemonicToString(mnemonic))
+    setIsValid(
+      selectedWords.map(({ word }) => word).join(' ') === dangerouslyConvertUint8ArrayMnemonicToString(mnemonic)
+    )
   }, [mnemonic, selectedWords])
 
   // === Actions ===

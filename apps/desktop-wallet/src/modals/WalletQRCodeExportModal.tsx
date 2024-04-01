@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { dangerouslyConvertBufferMnemonicToString, decryptMnemonic, encrypt } from '@alephium/shared-crypto'
+import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic, encrypt } from '@alephium/shared-crypto'
 import { ScanLine } from 'lucide-react'
 import { dataToFrames } from 'qrloop'
 import { useEffect, useState } from 'react'
@@ -78,7 +78,7 @@ const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
       const encryptedData = encrypt(
         password,
         JSON.stringify({
-          mnemonic: dangerouslyConvertBufferMnemonicToString(
+          mnemonic: dangerouslyConvertUint8ArrayMnemonicToString(
             decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password).decryptedMnemonic
           ),
           addresses: addresses.map(({ index, label, color, isDefault }) => ({ index, label, color, isDefault })),
