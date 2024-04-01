@@ -272,7 +272,9 @@ export const decryptMnemonic = (encryptedMnemonic: string, password: string): De
   const { version, mnemonic } = JSON.parse(dataDecrypted) // StoredStateV1 or StoredStateV2
 
   if (version === 1) {
-    console.log('Mnemonic is leaked to memory as a string, needs to be stored as a buffer (StoredStateV2).')
+    console.warn(
+      '☣️ Mnemonic is leaked to memory as a string while decrypting, needs to be stored as a buffer (StoredStateV2).'
+    )
   }
 
   if (

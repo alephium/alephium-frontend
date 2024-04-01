@@ -310,7 +310,7 @@ export const _20240328_1200_migrateEncryptedWalletFromV1ToV2 = (
 
       walletStorage.update(walletId, { encrypted: encryptMnemonic(decryptedMnemonic, password) })
 
-      console.log('Migrated stored mnemonic from version 1 to version 2')
+      console.log('✅ Migrated stored mnemonic from version 1 to version 2')
       decryptedMnemonic = null
     }
   } catch (e) {

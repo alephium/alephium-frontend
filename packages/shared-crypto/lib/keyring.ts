@@ -75,6 +75,8 @@ class Keyring {
   public importMnemonicString = (mnemonicStr: string): Buffer => {
     if (!mnemonicStr) throw new Error('Keyring: Cannot import mnemonic, mnemonic not provided')
 
+    console.log('Mnemonic leaked to memory as a string while importing wallet. This is expected.')
+
     const mnemonic = Buffer.from(mnemonicStr)
 
     this.clearCachedSecrets()
