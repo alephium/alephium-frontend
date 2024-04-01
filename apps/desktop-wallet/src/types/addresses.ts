@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NonSensitiveAddressData } from '@alephium/keyring'
 import {
   AddressBalancesSyncResult,
   AddressHash,
@@ -23,7 +24,6 @@ import {
   AddressTokensSyncResult,
   BalanceHistory
 } from '@alephium/shared'
-import { NonSensitiveAddressData } from '@alephium/shared-crypto'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'

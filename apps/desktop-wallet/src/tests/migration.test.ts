@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { encrypt, keyring, walletGenerate } from '@alephium/shared-crypto'
+import { encrypt, walletGenerate } from '@alephium/shared-crypto'
 import { nanoid } from 'nanoid'
 
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'

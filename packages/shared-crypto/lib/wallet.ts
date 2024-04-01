@@ -23,8 +23,11 @@ import * as bip39 from 'bip39'
 import blake from 'blakejs'
 import { pbkdf2 } from 'crypto'
 
-import { EncryptedMnemonicVersion, MnemonicLength } from './mnemonic'
 import { decrypt, decryptAsync, encrypt, encryptAsync, Pbkdf2Function } from './password-crypto'
+
+type MnemonicLength = 12 | 24
+
+type EncryptedMnemonicVersion = 1 | 2
 
 type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
 

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic } from '@alephium/shared-crypto'
+import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic } from '@alephium/keyring'
 import { Edit3 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'

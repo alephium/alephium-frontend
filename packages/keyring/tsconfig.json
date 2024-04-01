@@ -1,0 +1,18 @@
+{
+  "extends": "@alephium/typescript-config/base",
+  "include": ["src/**/*", "test"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "outDir": "dist",
+    "module": "ESNext",
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "target": "ESNext",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

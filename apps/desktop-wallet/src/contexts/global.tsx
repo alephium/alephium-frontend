@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/shared-crypto'
+import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { merge } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { createContext, useContext, useEffect, useState } from 'react'
