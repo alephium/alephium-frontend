@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { appReset } from '@alephium/shared'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
-import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
+import { newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
 
 const sliceName = 'walletGeneration'
@@ -56,7 +56,7 @@ const walletGenerationSlice = createSlice({
     builder.addCase(newWalletImportedWithMetadata, (state) => {
       state.qrCodeImportedEncryptedMnemonic = ''
     })
-    builder.addMatcher(isAnyOf(appReset, walletUnlocked), () => initialState)
+    builder.addMatcher(isAnyOf(appReset, walletUnlocked, walletDeleted), () => initialState)
   }
 })
 

@@ -62,6 +62,7 @@ import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import PinCodeCreationScreen from '~/screens/new-wallet/PinCodeCreationScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
+import PublicKeysScreen from '~/screens/PublicKeysScreen'
 import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
 import { routeChanged } from '~/store/appSlice'
@@ -128,6 +129,7 @@ const RootStackNavigation = () => {
                 <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
                 <RootStack.Screen name="EditWalletNameScreen" component={EditWalletNameScreen} />
                 <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
+                <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
                 <RootStack.Screen
                   name="ImportWalletAddressDiscoveryScreen"
                   component={ImportWalletAddressDiscoveryScreen}
@@ -152,6 +154,7 @@ const AppUnlockHandler = () => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
+  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
@@ -188,7 +191,7 @@ const AppUnlockHandler = () => {
         if (isBioEnabled && !biometricsNeedToBeReenabled) {
           const metadata = await getWalletMetadata()
           const addressesToInitialize =
-            addressesStatus === 'uninitialized' ? await deriveWalletStoredAddresses(wallet) : []
+            addressesStatus === 'uninitialized' && !isLoadingLatestTxs ? await deriveWalletStoredAddresses(wallet) : []
           dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: metadata?.contacts ?? [] }))
 
           lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
@@ -208,7 +211,7 @@ const AppUnlockHandler = () => {
         console.error(e)
       }
     }
-  }, [addressesStatus, dispatch, lastNavigationState, navigation, walletMnemonic])
+  }, [addressesStatus, dispatch, isLoadingLatestTxs, lastNavigationState, navigation, walletMnemonic])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {

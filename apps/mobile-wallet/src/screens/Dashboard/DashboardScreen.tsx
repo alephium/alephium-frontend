@@ -37,19 +37,14 @@ import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
-import {
-  selectAddressIds,
-  selectTotalBalance,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData
-} from '~/store/addressesSlice'
+import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface ScreenProps
@@ -60,12 +55,11 @@ interface ScreenProps
     BottomBarScrollScreenProps {}
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
-  const dispatch = useAppDispatch()
   const theme = useTheme()
   const walletName = useAppSelector((s) => s.wallet.name)
   const totalBalance = useAppSelector(selectTotalBalance)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const isLoading = useAppSelector((s) => s.addresses.loadingBalances)
+  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
 
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
@@ -73,8 +67,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isNewWallet, setIsNewWallet] = useState(false)
 
   const buttonsRowStyle = useAnimatedStyle(() => ({
-    height: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 65, defaultSpringConfiguration)),
-    opacity: withDelay(isLoading ? 100 : 800, withSpring(isLoading ? 0 : 1, defaultSpringConfiguration))
+    height: withDelay(800, withSpring(65, defaultSpringConfiguration)),
+    opacity: withDelay(800, withSpring(1, defaultSpringConfiguration))
   }))
 
   useEffect(() => {
@@ -89,13 +83,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
     initializeNewWalletFlag()
   }, [])
-
-  const refreshData = () => {
-    if (!isLoading) {
-      dispatch(syncAddressesData(addressHashes))
-      dispatch(syncAddressesAlphHistoricBalances(addressHashes))
-    }
-  }
 
   const handleReceivePress = () => {
     if (addressHashes.length === 1) {
@@ -121,13 +108,13 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <DashboardScreenStyled
-      refreshControl={<RefreshSpinner refreshing={isLoading} onRefresh={refreshData} />}
+      refreshControl={<RefreshSpinner />}
       hasBottomBar
       verticalGap
       screenTitle={walletName}
       headerOptions={{
         headerRight: () => <HeaderButtons />,
-        headerLeft: () => <WalletSwitchButton isLoading={isLoading} />,
+        headerLeft: () => <WalletSwitchButton />,
         headerTitle: walletName
       }}
       TitleSideComponent={
@@ -175,7 +162,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         )}
       </BalanceAndButtons>
       <AddressesTokensList />
-      {totalBalance === BigInt(0) && (
+      {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
         <EmptyPlaceholder>
           <AppText semiBold color="secondary">
             There is so much left to discover! 🌈
@@ -248,7 +235,7 @@ const BalanceAndButtons = styled.View`
 `
 
 const ButtonsRowContainer = styled(Animated.View)`
-  margin: 0 ${DEFAULT_MARGIN}px 10px ${DEFAULT_MARGIN}px;
+  margin: 10px ${DEFAULT_MARGIN}px 20px ${DEFAULT_MARGIN}px;
   flex-direction: row;
   border-radius: 100px;
   align-items: center;

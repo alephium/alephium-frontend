@@ -31,7 +31,6 @@ import animationSrc from '~/animations/lottie/success.json'
 import AppText from '~/components/AppText'
 import { BackButton } from '~/components/buttons/Button'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import SecretPhraseWordList, { SelectedWord } from '~/components/SecretPhraseWordList'
@@ -109,12 +108,15 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   return (
     <>
-      <ScrollScreen fill verticalGap contentPaddingTop onScroll={screenScrollHandler} {...props}>
-        <ScreenIntro
-          title="Verify secret phrase"
-          subtitle="Select the words of your secret recovery phrase in the right order."
-        />
-
+      <ScrollScreen
+        fill
+        verticalGap
+        contentPaddingTop
+        onScroll={screenScrollHandler}
+        screenTitle="Verify secret phrase"
+        screenIntro="Select the words of your secret recovery phrase in the right order."
+        {...props}
+      >
         <ScreenSection fill>
           {selectedWords.length > 0 && (
             <SecretPhraseBox

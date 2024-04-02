@@ -34,7 +34,6 @@ import Input from '~/components/inputs/Input'
 import BottomModal from '~/components/layout/BottomModal'
 import { ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useHeaderContext } from '~/contexts/HeaderContext'
@@ -65,7 +64,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
   const theme = useTheme()
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
+  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
@@ -168,12 +167,16 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
   return (
     <>
-      <ScrollScreen usesKeyboard verticalGap contrastedBg contentPaddingTop onScroll={screenScrollHandler} {...props}>
-        <ScreenIntro
-          title="Destination"
-          subtitle="Send to an address, a contact, or one of your other addresses."
-          scrollY={screenScrollY}
-        />
+      <ScrollScreen
+        usesKeyboard
+        verticalGap
+        contrastedBg
+        contentPaddingTop
+        screenTitle="Destination"
+        screenIntro="Send to an address, a contact, or one of your other addresses."
+        onScroll={screenScrollHandler}
+        {...props}
+      >
         <ScreenSection>
           <Controller
             name="toAddressHash"

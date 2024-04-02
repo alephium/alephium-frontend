@@ -23,7 +23,7 @@ import styled from 'styled-components'
 import AppText from '~/components/AppText'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-interface ScreenTitleProps {
+export interface ScreenTitleProps {
   title: string
   scrollY?: SharedValue<number>
   sideDefaultMargin?: boolean

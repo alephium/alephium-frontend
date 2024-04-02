@@ -18,14 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import { Pressable, StyleProp, ViewProps, ViewStyle } from 'react-native'
-import Animated, { AnimatedProps } from 'react-native-reanimated'
+import Animated, { AnimatedProps, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
 
+import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText, { AppTextProps } from '~/components/AppText'
 import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
 export interface RowProps {
-  children: ReactNode
+  children?: ReactNode
   isInput?: boolean
   isSecondary?: boolean
   title?: string
@@ -56,6 +57,15 @@ const Row = ({
   layout,
   isVertical
 }: RowProps) => {
+  const rowOpacity = useSharedValue(1)
+
+  const handleTouchStart = () => {
+    rowOpacity.value = withSpring(0.8, fastestSpringConfiguration)
+  }
+  const handleTouchEnd = () => {
+    rowOpacity.value = withSpring(1, fastestSpringConfiguration)
+  }
+
   const componentContent = title ? (
     <>
       <LeftContent isVertical={isVertical}>
@@ -77,7 +87,12 @@ const Row = ({
   )
 
   return onPress ? (
-    <AnimatedPressable onPress={onPress} style={style}>
+    <AnimatedPressable
+      onPress={onPress}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      style={[style, { opacity: rowOpacity }]}
+    >
       {componentContent}
     </AnimatedPressable>
   ) : (

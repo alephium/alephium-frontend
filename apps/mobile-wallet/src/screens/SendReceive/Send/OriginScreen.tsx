@@ -22,7 +22,6 @@ import { useCallback, useEffect } from 'react'
 
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
@@ -65,9 +64,8 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     <AddressFlatListScreen
       onAddressPress={setFromAddress}
       selectedAddress={fromAddress}
-      ListHeaderComponent={
-        <ScreenIntro title="Origin" subtitle="Select the address from which to send the transaction." />
-      }
+      screenTitle="Origin"
+      screenIntro="Select the address from which to send the transaction."
       contrastedBg
       contentPaddingTop
       onScroll={screenScrollHandler}

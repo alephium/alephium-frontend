@@ -27,7 +27,6 @@ import { sendAnalytics } from '~/analytics'
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -131,8 +130,8 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
         type: 'stack',
         headerRight: () => <ContinueButton onPress={decryptAndImportWallet} disabled={!password || !!error} />
       }}
+      screenIntro="Enter your desktop wallet password to decrypt the secret recovery phrase."
     >
-      <ScreenIntro subtitle="Enter your desktop wallet password to decrypt the secret recovery phrase." />
       <ScreenSection fill>
         <Input
           label="Password"

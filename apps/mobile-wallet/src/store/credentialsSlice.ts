@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { appBecameInactive, appReset } from '@alephium/shared'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { walletDeleted } from '~/store/wallet/walletActions'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
 import { CredentialsState } from '~/types/wallet'
 
@@ -42,6 +43,7 @@ const credentialsSlice = createSlice({
     builder
       .addCase(appBecameInactive, resetState)
       .addCase(appReset, resetState)
+      .addCase(walletDeleted, resetState)
       .addCase(walletUnlocked, (state, action) => {
         if (action.payload.pin) state.pin = action.payload.pin
       })

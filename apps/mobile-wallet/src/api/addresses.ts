@@ -16,18 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressBalancesSyncResult,
-  AddressHash,
-  AddressTokensSyncResult,
-  CHART_DATE_FORMAT,
-  client
-} from '@alephium/shared'
-import { explorer } from '@alephium/web3'
+import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
-import dayjs from 'dayjs'
 
-import { Address, AddressesHistoricalBalanceResult, AddressTransactionsSyncResult } from '~/types/addresses'
+import { Address, AddressTransactionsSyncResult } from '~/types/addresses'
 
 const PAGE_LIMIT = 100
 
@@ -94,66 +86,9 @@ export const fetchAddressesBalances = async (addressHashes: AddressHash[]): Prom
 }
 
 // TODO: Same as in desktop wallet, move to SDK?
-export const fetchAddressTransactionsNextPage = async (address: Address) => {
-  let nextPage = address.transactionsPageLoaded
-  let nextPageTransactions = [] as explorer.Transaction[]
-
-  if (!address.allTransactionPagesLoaded) {
-    nextPage += 1
-    nextPageTransactions = await client.explorer.addresses.getAddressesAddressTransactions(address.hash, {
-      page: nextPage
-    })
-  }
-
-  return {
-    hash: address.hash,
-    transactions: nextPageTransactions,
-    page: nextPage
-  }
-}
-
-// TODO: Same as in desktop wallet, move to SDK?
 export const fetchAddressesTransactionsNextPage = async (addresses: Address[], nextPage: number) => {
   const addressHashes = addresses.filter((address) => !address.allTransactionPagesLoaded).map((address) => address.hash)
   const transactions = await client.explorer.addresses.postAddressesTransactions({ page: nextPage }, addressHashes)
 
   return transactions
-}
-
-export const fetchAddressesHistoricalBalances = async (
-  addresssHashes: AddressHash[]
-): Promise<AddressesHistoricalBalanceResult> => {
-  const addressesBalances = []
-  const now = dayjs()
-  const thisMoment = now.valueOf()
-  const oneYearAgo = now.subtract(12, 'month').valueOf()
-
-  for (const addressHash of addresssHashes) {
-    const balances = []
-    const data = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
-      addressHash,
-      { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
-      { format: 'text' }
-    )
-
-    try {
-      const { amountHistory } = JSON.parse(data)
-
-      for (const [timestamp, balance] of amountHistory) {
-        balances.push({
-          date: dayjs(timestamp).format(CHART_DATE_FORMAT),
-          balance: BigInt(balance).toString()
-        })
-      }
-    } catch (e) {
-      console.error('Could not parse amount history data', e)
-    }
-
-    addressesBalances.push({
-      address: addressHash,
-      balances
-    })
-  }
-
-  return addressesBalances
 }

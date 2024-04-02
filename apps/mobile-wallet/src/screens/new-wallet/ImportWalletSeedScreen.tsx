@@ -29,7 +29,6 @@ import AppText from '~/components/AppText'
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
-import ScreenIntro from '~/components/layout/ScreenIntro'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import SecretPhraseWordList, { SelectedWord, WordBox } from '~/components/SecretPhraseWordList'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -37,7 +36,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
-import { syncAddressesAlphHistoricBalances, syncAddressesData } from '~/store/addressesSlice'
+import { syncLatestTransactions } from '~/store/addressesSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
@@ -110,8 +109,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
 
       dispatch(newWalletGenerated(wallet))
-      dispatch(syncAddressesData(wallet.firstAddress.hash))
-      dispatch(syncAddressesAlphHistoricBalances([wallet.firstAddress.hash]))
+      dispatch(syncLatestTransactions(wallet.firstAddress.hash))
 
       sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
 
@@ -144,9 +142,10 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           headerRight: () => <ContinueButton onPress={handleWalletImport} disabled={!isImportButtonEnabled} />
         }}
         keyboardShouldPersistTaps="always"
+        screenTitle="Secret phrase"
+        screenIntro={`Enter the secret phrase for the "${name}" wallet.`}
         {...props}
       >
-        <ScreenIntro title="Secret phrase" subtitle={`Enter the secret phrase for the "${name}" wallet.`} />
         <SecretPhraseContainer>
           {selectedWords.length > 0 && (
             <SecretPhraseBox

@@ -18,7 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useState } from 'react'
 
-import { AppMetaData, AppMetadataGitHub, isRcVersion, KEY_APPMETADATA, toAppMetaData } from '@/utils/app-data'
+import {
+  AppMetaData,
+  AppMetadataGitHub,
+  appMetadataJsonParseReviver,
+  initialAppMetadataValues,
+  isRcVersion,
+  KEY_APPMETADATA
+} from '@/utils/app-data'
 import { useTimeout } from '@/utils/hooks'
 
 // TODO: Move to shared
@@ -60,13 +67,15 @@ const getLastTimeGitHubApiWasCalled = (
 }
 
 export const getAppMetadata = (): AppMetaData => {
+  const appMetadata = localStorage.getItem(KEY_APPMETADATA)
+
   try {
-    return JSON.parse(localStorage.getItem(KEY_APPMETADATA) ?? '{}', toAppMetaData) ?? {}
+    return appMetadata ? JSON.parse(appMetadata, appMetadataJsonParseReviver) : initialAppMetadataValues
   } catch (e) {
     console.error(e)
   }
 
-  return {} as AppMetaData
+  return initialAppMetadataValues
 }
 
 export const storeAppMetadata = (data: Partial<AppMetaData>): AppMetaData => {
