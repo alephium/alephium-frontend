@@ -23,6 +23,7 @@ import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
+import HashEllipsed from '@/components/HashEllipsed'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
@@ -36,6 +37,8 @@ interface TransactionDetailsModalProps {
 const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
+
+  console.log(nft)
 
   const nftCollectionMetadata = useGetNFTCollectionMetadataQuery(nft?.collectionId ?? skipToken)
   const nftCollectionData = useGetNFTCollectionDataQuery(nftCollectionMetadata.data?.collectionUri ?? skipToken)
@@ -53,6 +56,9 @@ const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
             <b>{nft.name}</b>
           </DataList.Row>
           <DataList.Row label={t('Description')}>{nft.description}</DataList.Row>
+          <DataList.Row label={t('Id')}>
+            <HashEllipsed hash={nft.id} />
+          </DataList.Row>
           <DataList.Row label={t('Image URL')}>
             <ActionLink ellipsed onClick={() => openInWebBrowser(nft.image)}>
               {nft.image}

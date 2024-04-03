@@ -40,7 +40,7 @@ const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
         <NFTPictureContainer>
           <NFTThumbnail nft={nft} size="100%" />
         </NFTPictureContainer>
-        {nft?.name && <NFTName>{nft.name}</NFTName>}
+        <NFTName>{nft.name || '-'}</NFTName>
       </CardContent>
     </NFTCardStyled>
   )
@@ -49,9 +49,11 @@ const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
 export default NFTCard
 
 const NFTCardStyled = styled.div`
+  display: flex;
   background-color: ${({ theme }) => theme.bg.background2};
   border-radius: var(--radius-huge);
   transition: all cubic-bezier(0.2, 0.65, 0.5, 1) 0.1s;
+  height: 100%;
 
   &:hover {
     cursor: pointer;
@@ -61,13 +63,19 @@ const NFTCardStyled = styled.div`
 `
 
 const CardContent = styled.div`
-  padding: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 0 10px;
 `
 
 const NFTPictureContainer = styled(motion.div)`
+  flex: 1;
   position: relative;
   border-radius: var(--radius-big);
   overflow: hidden;
+  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
+  min-height: 140px;
 `
 
 const NFTName = styled(Truncate)`
