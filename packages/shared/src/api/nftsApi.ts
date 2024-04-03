@@ -1,5 +1,6 @@
 import { alephiumBaseQuery } from '@/api/alephiumBaseQuery'
 import { client } from '@/api/client'
+import { ONE_HOUR_MS } from '@/constants'
 import { NFTCollectionUriMetaData, addressFromContractId } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { createApi } from '@reduxjs/toolkit/query/react'
@@ -17,7 +18,8 @@ export const nftsApi = createApi({
     getNFTCollectionData: build.query<NFTCollectionUriMetaData, string>({
       queryFn: (collectionUri) =>
         fetch(collectionUri).then((res) => ({ data: res.json() as unknown as NFTCollectionUriMetaData })),
-      providesTags: (result, error, collectionUri) => [{ type: 'NFTCollectionUriMetaData', collectionUri }]
+      providesTags: (result, error, collectionUri) => [{ type: 'NFTCollectionUriMetaData', collectionUri }],
+      keepUnusedDataFor: ONE_HOUR_MS * 1000
     })
   })
 })

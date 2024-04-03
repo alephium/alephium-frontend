@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ONE_HOUR_MS } from '@alephium/shared'
 import { useState } from 'react'
 
 import {
@@ -27,10 +28,6 @@ import {
   KEY_APPMETADATA
 } from '@/utils/app-data'
 import { useTimeout } from '@/utils/hooks'
-
-// TODO: Move to shared
-const ONE_HOUR_IN_MS = 1000 * 60 * 60
-
 interface ThrottledGitHubApiProps {
   lastGithubCallTimestampKey: keyof AppMetadataGitHub
   githubApiCallback: (appMetadata: AppMetaData) => Promise<void>
@@ -44,10 +41,10 @@ const useThrottledGitHubApi = ({ lastGithubCallTimestampKey, githubApiCallback }
     const lastTimeGitHubApiWasCalled = getLastTimeGitHubApiWasCalled(lastGithubCallTimestampKey)
     const timePassedSinceGitHubApiWasCalledInMs = now.getTime() - lastTimeGitHubApiWasCalled.getTime()
 
-    if (timePassedSinceGitHubApiWasCalledInMs > ONE_HOUR_IN_MS) {
+    if (timePassedSinceGitHubApiWasCalledInMs > ONE_HOUR_MS) {
       const updatedAppMetadata = storeAppMetadata({ [lastGithubCallTimestampKey]: now })
 
-      setTimeoutDelay(ONE_HOUR_IN_MS)
+      setTimeoutDelay(ONE_HOUR_MS)
       githubApiCallback(updatedAppMetadata)
     } else {
       setTimeoutDelay(timePassedSinceGitHubApiWasCalledInMs)
