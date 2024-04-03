@@ -17,6 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFT } from '@alephium/shared'
+import { colord } from 'colord'
+import { CameraOff } from 'lucide-react'
 import styled from 'styled-components'
 
 interface NFTThumbnailProps {
@@ -25,13 +27,28 @@ interface NFTThumbnailProps {
   className?: string
 }
 
-const NFTThumbnail = ({ nft, size = '100', className }: NFTThumbnailProps) => (
-  <NFTThumbnailStyled src={nft.image} alt={nft.description} width={size} height={size} className={className} />
-)
+const NFTThumbnail = ({ nft, size = '100', className }: NFTThumbnailProps) =>
+  nft.image ? (
+    <NFTThumbnailStyled src={nft.image} alt={nft.description} width={size} height={size} className={className} />
+  ) : (
+    <NoImagePlaceHolder>
+      <CameraOff opacity={0.8} />
+    </NoImagePlaceHolder>
+  )
 
 export default NFTThumbnail
 
 const NFTThumbnailStyled = styled.img`
   border-radius: var(--radius-medium);
   object-fit: cover;
+`
+
+const NoImagePlaceHolder = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.07).toHex()};
+  min-height: 140px;
+  border-radius: var(--radius-big);
 `
