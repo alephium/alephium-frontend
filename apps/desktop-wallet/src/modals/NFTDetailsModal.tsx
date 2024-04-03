@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById, useGetNFTCollectionMetadataQuery, useGetNFTCollectionDataQuery } from '@alephium/shared'
+import { NFT, selectNFTById, useGetNFTCollectionDataQuery, useGetNFTCollectionMetadataQuery } from '@alephium/shared'
+import { skipToken } from '@reduxjs/toolkit/query'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -26,7 +27,6 @@ import NFTThumbnail from '@/components/NFTThumbnail'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import { openInWebBrowser } from '@/utils/misc'
-import { skipToken } from '@reduxjs/toolkit/query'
 
 interface TransactionDetailsModalProps {
   nftId: NFT['id']
@@ -63,7 +63,7 @@ const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
           <DataList title={t('Attributes')}>
             {nft.attributes.map((attribute, index) => (
               <DataList.Row key={index} label={attribute.trait_type}>
-                {attribute.value}
+                {attribute.value.toString()}
               </DataList.Row>
             ))}
           </DataList>

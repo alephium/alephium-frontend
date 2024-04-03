@@ -5,6 +5,6 @@ export const alephiumBaseQuery: BaseQueryFn<() => Promise<any>, unknown, { messa
     const result = await fn()
     return { data: result }
   } catch (error: any) {
-    return { error: { message: error.message || 'An error occurred' } }
+    return { error: { message: error || 'An error occurred' } }
   }
 }
