@@ -20,15 +20,16 @@ import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
 import { CameraOff } from 'lucide-react'
 import { useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 interface NFTThumbnailProps {
   nft: NFT
   size?: string
+  onClick?: () => void
   className?: string
 }
 
-const NFTThumbnail = ({ nft, size = '100', className }: NFTThumbnailProps) => {
+const NFTThumbnail = ({ nft, size = '100', onClick, className }: NFTThumbnailProps) => {
   const [error, setError] = useState(false)
 
   return nft.image && !error ? (
@@ -38,6 +39,7 @@ const NFTThumbnail = ({ nft, size = '100', className }: NFTThumbnailProps) => {
       width={size}
       height={size}
       className={className}
+      onClick={onClick}
       onError={() => setError(true)}
     />
   ) : (
@@ -49,9 +51,15 @@ const NFTThumbnail = ({ nft, size = '100', className }: NFTThumbnailProps) => {
 
 export default NFTThumbnail
 
-const NFTThumbnailStyled = styled.img`
+const NFTThumbnailStyled = styled.img<Pick<NFTThumbnailProps, 'onClick'>>`
   border-radius: var(--radius-medium);
   object-fit: cover;
+
+  ${({ onClick }) =>
+    onClick &&
+    css`
+      cursor: pointer;
+    `}
 `
 
 const NoImagePlaceHolder = styled.div`
