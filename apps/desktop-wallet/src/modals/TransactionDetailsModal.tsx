@@ -57,7 +57,10 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const allNFTs = useAppSelector((s) => s.nfts.entities)
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const { assets, direction, lockTime, infoType } = getTransactionInfo(transaction)
-  const { label, Icon } = useTransactionUI({ infoType, isFailedScriptTx: !transaction.scriptExecutionOk })
+  const { label, Icon, iconColor } = useTransactionUI({
+    infoType,
+    isFailedScriptTx: !transaction.scriptExecutionOk
+  })
 
   const isMoved = infoType === 'move'
 
@@ -76,6 +79,10 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
     <SideModal onClose={onClose} title={t('Transaction details')}>
       <Summary>
         <SummaryContent>
+          <TransactionType short color={iconColor}>
+            <Icon size={14} color={iconColor} />
+            {label}
+          </TransactionType>
           <AmountWrapper tabIndex={0}>
             {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
               <AmountContainer key={id}>
@@ -91,10 +98,6 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
             ))}
           </AmountWrapper>
           <TransactionDirectionInfo>
-            <Direction>
-              <Icon size={14} />
-              {label}
-            </Direction>
             <AddressesInvolved>
               <FromIn>
                 {
@@ -302,11 +305,13 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
 
 export default TransactionDetailsModal
 
-const Direction = styled.span`
+const TransactionType = styled(Badge)`
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-4);
 `
 
 const AmountWrapper = styled.div`
@@ -327,7 +332,8 @@ const SummaryContent = styled.div`
   align-items: center;
   justify-content: center;
   padding: var(--spacing-5);
-  background-color: ${({ theme }) => theme.bg.highlight};
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
 `
 
@@ -335,7 +341,7 @@ const TransactionDirectionInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
   font-weight: var(--fontWeight-semiBold);
   margin-top: var(--spacing-5);
   margin-bottom: var(--spacing-5);

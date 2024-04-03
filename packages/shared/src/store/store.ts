@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AnyAction, Dispatch, ThunkDispatch } from '@reduxjs/toolkit'
 
+import { nftsApi } from '@/api'
 import fungibleTokensSlice from '@/store/assets/fungibleTokensSlice'
 import nftsSlice from '@/store/assets/nftsSlice'
 import clientsSlice from '@/store/clients/clientsSlice'
@@ -28,7 +29,6 @@ import { ClientsState } from '@/types'
 import { FungibleTokensState, NFTsState } from '@/types/assets'
 import { NetworkState } from '@/types/network'
 import { PricesHistoryState, PricesState } from '@/types/price'
-import { nftsApi } from '@/api'
 
 export const sharedReducer = {
   [pricesSlice.name]: pricesSlice.reducer,
