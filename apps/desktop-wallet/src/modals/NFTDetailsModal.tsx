@@ -29,12 +29,12 @@ import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface TransactionDetailsModalProps {
+interface NFTDetailsModalProps {
   nftId: NFT['id']
   onClose: () => void
 }
 
-const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
+const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
 

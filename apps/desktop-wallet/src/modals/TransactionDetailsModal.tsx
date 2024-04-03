@@ -36,6 +36,7 @@ import { useAppSelector } from '@/hooks/redux'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
+import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import SideModal from '@/modals/SideModal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { AddressConfirmedTransaction } from '@/types/transactions'
@@ -49,16 +50,16 @@ interface TransactionDetailsModalProps {
 
 const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
+  const theme = useTheme()
+  const [selectedAddressHash, setSelectedAddressHash] = useState<AddressHash>()
+  const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const theme = useTheme()
   const { assets, direction, lockTime, infoType } = getTransactionInfo(transaction)
   const { label, Icon } = useTransactionUI({ infoType, isFailedScriptTx: !transaction.scriptExecutionOk })
 
   const isMoved = infoType === 'move'
-
-  const [selectedAddressHash, setSelectedAddressHash] = useState<AddressHash>()
 
   const handleShowTxInExplorer = () => openInWebBrowser(`${explorerUrl}/#/transactions/${transaction.hash}`)
 
@@ -235,7 +236,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
             <DataList.Row label={t('NFTs')}>
               <NFTThumbnails>
                 {nftsData.map((nft) => (
-                  <NFTThumbnail nft={nft} key={nft.id} />
+                  <NFTThumbnail nft={nft} key={nft.id} onClick={() => setSelectedNFTId(nft.id)} />
                 ))}
               </NFTThumbnails>
             </DataList.Row>
@@ -293,6 +294,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
         {selectedAddressHash && (
           <AddressDetailsModal addressHash={selectedAddressHash} onClose={() => setSelectedAddressHash(undefined)} />
         )}
+        {selectedNFTId && <NFTDetailsModal nftId={selectedNFTId} onClose={() => setSelectedNFTId(undefined)} />}
       </ModalPortal>
     </SideModal>
   )
