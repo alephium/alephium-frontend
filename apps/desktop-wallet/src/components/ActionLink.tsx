@@ -33,8 +33,22 @@ interface ActionLinkProps {
   className?: string
 }
 
-const ActionLink = ({ className, Icon, children, onClick, ellipsed, tooltip }: HasTooltip<ActionLinkProps>) => (
-  <ActionLinkStyled className={className} onClick={onClick} data-tooltip-id="default" data-tooltip-content={tooltip}>
+const ActionLink = ({
+  className,
+  Icon,
+  children,
+  onClick,
+  ellipsed,
+  tooltip,
+  withBackground
+}: HasTooltip<ActionLinkProps>) => (
+  <ActionLinkStyled
+    className={className}
+    onClick={onClick}
+    data-tooltip-id="default"
+    data-tooltip-content={tooltip}
+    withBackground={withBackground}
+  >
     <ChildrenContainer ellipsed={ellipsed}>{children}</ChildrenContainer>
     {Icon && (
       <IconContainer>
@@ -77,6 +91,7 @@ const ActionLinkStyled = styled.button<ActionLinkProps>`
 
 const ChildrenContainer = styled.div<Pick<ActionLinkProps, 'ellipsed'>>`
   width: 100%;
+  text-align: initial;
 
   ${({ ellipsed }) =>
     ellipsed &&
