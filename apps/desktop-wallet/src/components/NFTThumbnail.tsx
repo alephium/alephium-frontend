@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
 import { CameraOff } from 'lucide-react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 interface NFTThumbnailProps {
@@ -27,14 +28,24 @@ interface NFTThumbnailProps {
   className?: string
 }
 
-const NFTThumbnail = ({ nft, size = '100', className }: NFTThumbnailProps) =>
-  nft.image ? (
-    <NFTThumbnailStyled src={nft.image} alt={nft.description} width={size} height={size} className={className} />
+const NFTThumbnail = ({ nft, size = '100', className }: NFTThumbnailProps) => {
+  const [error, setError] = useState(false)
+
+  return nft.image && !error ? (
+    <NFTThumbnailStyled
+      src={nft.image}
+      alt={nft.description}
+      width={size}
+      height={size}
+      className={className}
+      onError={() => setError(true)}
+    />
   ) : (
     <NoImagePlaceHolder>
       <CameraOff opacity={0.8} />
     </NoImagePlaceHolder>
   )
+}
 
 export default NFTThumbnail
 
