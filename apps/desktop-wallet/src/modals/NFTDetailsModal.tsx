@@ -38,8 +38,6 @@ const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
 
-  console.log(nft)
-
   const nftCollectionMetadata = useGetNFTCollectionMetadataQuery(nft?.collectionId ?? skipToken)
   const nftCollectionData = useGetNFTCollectionDataQuery(nftCollectionMetadata.data?.collectionUri ?? skipToken)
 
