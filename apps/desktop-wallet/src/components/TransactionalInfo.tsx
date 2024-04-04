@@ -106,12 +106,12 @@ const TransactionalInfo = ({
       <CellAssetBadges compact={compact}>
         <AssetBadges>
           {assets.map(({ id }) => (
-            <AssetBadge assetId={id} simple key={id} />
+            <AssetBadge assetId={id} simple key={id} hideNftName />
           ))}
         </AssetBadges>
       </CellAssetBadges>
       {!showInternalInflows && (
-        <CellAddress alignRight>
+        <CellAddress alignRight hasMargins>
           <HiddenLabel text={direction === 'swap' ? t('between') : t('from')} />
           {isPending ? (
             <AddressBadgeStyled addressHash={tx.fromAddress} truncate disableA11y withBorders />
@@ -132,45 +132,47 @@ const TransactionalInfo = ({
           )}
         </CellAddress>
       )}
-      <CellDirection>
-        <HiddenLabel text={direction === 'swap' ? t('and') : t('to')} />
-        {!showInternalInflows ? (
-          direction === 'swap' ? (
-            <ArrowLeftRight size={15} strokeWidth={2} />
+      <DirectionAndAddress stackVertically={showInternalInflows}>
+        <CellDirection>
+          <HiddenLabel text={direction === 'swap' ? t('and') : t('to')} />
+          {!showInternalInflows ? (
+            direction === 'swap' ? (
+              <ArrowLeftRight size={15} strokeWidth={2} />
+            ) : (
+              <ArrowRightIcon size={15} strokeWidth={2} />
+            )
           ) : (
-            <ArrowRightIcon size={15} strokeWidth={2} />
-          )
-        ) : (
-          <DirectionText>
-            {
+            <DirectionText>
               {
-                in: t('from'),
-                out: t('to'),
-                swap: t('with')
-              }[direction]
-            }
-          </DirectionText>
-        )}
-      </CellDirection>
-      <CellAddress>
-        <DirectionalAddress>
-          {direction === 'in' && !showInternalInflows && (
-            <AddressBadge addressHash={addressHash} truncate disableA11y withBorders />
+                {
+                  in: t('from'),
+                  out: t('to'),
+                  swap: t('with')
+                }[direction]
+              }
+            </DirectionText>
           )}
-          {((direction === 'in' && showInternalInflows) || direction === 'out' || direction === 'swap') &&
-            (pendingDestinationAddress || (
-              <IOList
-                currentAddress={addressHash}
-                isOut={direction === 'out'}
-                outputs={(tx as explorer.Transaction).outputs}
-                inputs={(tx as explorer.Transaction).inputs}
-                timestamp={(tx as explorer.Transaction).timestamp}
-                truncate
-                disableA11y
-              />
-            ))}
-        </DirectionalAddress>
-      </CellAddress>
+        </CellDirection>
+        <CellAddress hasMargins={!showInternalInflows}>
+          <DirectionalAddress>
+            {direction === 'in' && !showInternalInflows && (
+              <AddressBadge addressHash={addressHash} truncate disableA11y withBorders />
+            )}
+            {((direction === 'in' && showInternalInflows) || direction === 'out' || direction === 'swap') &&
+              (pendingDestinationAddress || (
+                <IOList
+                  currentAddress={addressHash}
+                  isOut={direction === 'out'}
+                  outputs={(tx as explorer.Transaction).outputs}
+                  inputs={(tx as explorer.Transaction).inputs}
+                  timestamp={(tx as explorer.Transaction).timestamp}
+                  truncate
+                  disableA11y
+                />
+              ))}
+          </DirectionalAddress>
+        </CellAddress>
+      </DirectionAndAddress>
       <TableCellAmount aria-hidden="true">
         {knownAssets.map(({ id, amount, decimals, symbol }) => (
           <AmountContainer key={id}>
@@ -221,15 +223,19 @@ const AssetTime = styled.div`
   max-width: 120px;
 `
 
-const CellAddress = styled.div<{ alignRight?: boolean }>`
+const CellAddress = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
   min-width: 0;
   max-width: 120px;
   flex-grow: 1;
   align-items: baseline;
-  margin-right: 21px;
-  margin-left: 21px;
   display: flex;
   width: 100%;
+
+  ${({ hasMargins }) =>
+    hasMargins &&
+    css`
+      margin: 0 21px;
+    `}
 
   ${({ alignRight }) =>
     alignRight &&
@@ -238,10 +244,22 @@ const CellAddress = styled.div<{ alignRight?: boolean }>`
     `}
 `
 
+const DirectionAndAddress = styled.div<{ stackVertically?: boolean }>`
+  display: flex;
+  align-items: center;
+
+  ${({ stackVertically }) =>
+    stackVertically &&
+    css`
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    `}
+`
+
 const DirectionText = styled.div`
   min-width: 50px;
   display: flex;
-  justify-content: flex-end;
 `
 
 const CellDirection = styled.div`
@@ -268,6 +286,7 @@ const CellAssetBadges = styled.div<Pick<TransactionalInfoProps, 'compact'>>`
   flex-grow: 1;
   flex-shrink: 0;
   width: ${({ compact }) => (compact ? '80px' : '180px')};
+  margin-right: var(--spacing-4);
 
   @media ${deviceBreakPoints.desktop} {
     width: 80px;
@@ -298,7 +317,7 @@ const AmountContainer = styled.div`
 
 const AssetBadges = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 10px;
   row-gap: 10px;
   flex-wrap: wrap;
   align-items: center;
