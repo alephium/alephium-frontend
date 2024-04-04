@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic } from '@alephium/keyring'
+import { resetArray } from '@alephium/shared'
 import { encrypt } from '@alephium/shared-crypto'
 import { ScanLine } from 'lucide-react'
 import { dataToFrames } from 'qrloop'
@@ -76,18 +77,18 @@ const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
 
   const handleCorrectPasswordEntered = (password: string) => {
     try {
+      const { decryptedMnemonic } = decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password)
       const encryptedData = encrypt(
         password,
         JSON.stringify({
-          mnemonic: dangerouslyConvertUint8ArrayMnemonicToString(
-            decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password).decryptedMnemonic
-          ),
+          mnemonic: dangerouslyConvertUint8ArrayMnemonicToString(decryptedMnemonic),
           addresses: addresses.map(({ index, label, color, isDefault }) => ({ index, label, color, isDefault })),
           contacts: contacts.map(({ name, address }) => ({ name, address }))
         }),
         'sha512'
       )
 
+      resetArray(decryptedMnemonic)
       setFrames(dataToFrames(encryptedData, 160, 4))
     } catch (e) {
       console.error(e)

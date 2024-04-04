@@ -31,7 +31,7 @@ type EncryptedMnemonicVersion = 1 | 2
 
 type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
 
-class EncryptedMnemonicStoredAsString {
+export class EncryptedMnemonicStoredAsString {
   readonly version: EncryptedMnemonicVersion = 1
   readonly mnemonic: string
 

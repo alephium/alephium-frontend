@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, resetArray } from '@alephium/shared'
 import { addressToGroup, bs58, ExplorerProvider, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
 import * as metamaskBip39 from '@metamask/scure-bip39'
 import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
@@ -24,7 +24,7 @@ import blake from 'blakejs'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
-import { decryptMnemonic, DecryptMnemonicResult, MnemonicLength, mnemonicStringToUint8Array } from '@/mnemonic'
+import { decryptMnemonic, MnemonicLength, mnemonicStringToUint8Array } from '@/mnemonic'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -57,6 +57,7 @@ class Keyring {
   // PUBLIC METHODS
 
   public clearCachedSecrets = () => {
+    this.addresses.map((address) => resetArray(address.privateKey))
     this.addresses = []
     this.hdWallet = null
     this.root = null
@@ -75,7 +76,7 @@ class Keyring {
     if (!mnemonicStr) throw new Error('Keyring: Cannot import mnemonic, mnemonic not provided')
 
     if (!metamaskBip39.validateMnemonic(mnemonicStr, wordlist))
-      throw new Error('Keyring: Invalid secret recovery phrase provided')
+      throw new Error('Keyring: Cannot import mnemonic, invalid mnemonic provided')
 
     console.log('Mnemonic leaked to memory as a string while importing wallet. This is expected.')
 
@@ -88,16 +89,15 @@ class Keyring {
   }
 
   public initFromEncryptedMnemonic = (encryptedMnemonic: string, password: string, passphrase: string) => {
-    let result: DecryptMnemonicResult | null = decryptMnemonic(encryptedMnemonic, password)
-    const version = result.version
+    const { version, decryptedMnemonic } = decryptMnemonic(encryptedMnemonic, password)
 
     this.clearCachedSecrets()
-    this._initFromMnemonic(result.decryptedMnemonic, passphrase)
+    this._initFromMnemonic(decryptedMnemonic, passphrase)
 
     encryptedMnemonic = ''
     password = ''
     passphrase = ''
-    result = null
+    resetArray(decryptedMnemonic)
 
     return version
   }
@@ -236,7 +236,6 @@ class Keyring {
     this.root = this.hdWallet.derive(this.hdPath)
 
     passphrase = ''
-    mnemonic = null
   }
 
   private _deriveAddressAndKeys = (addressIndex: number): SensitiveAddressData => {

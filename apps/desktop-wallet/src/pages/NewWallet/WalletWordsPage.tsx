@@ -37,7 +37,7 @@ import { useWalletContext } from '@/contexts/wallet'
 
 const WalletWordsPage = () => {
   const { onButtonBack, onButtonNext } = useStepsContext()
-  const { mnemonic, setMnemonic } = useWalletContext()
+  const { mnemonic, setMnemonic, resetCachedMnemonic } = useWalletContext()
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const WalletWordsPage = () => {
 
   const handleBackPress = () => {
     keyring.clearCachedSecrets()
-    setMnemonic(null)
+    resetCachedMnemonic()
     onButtonBack()
   }
 
