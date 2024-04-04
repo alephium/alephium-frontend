@@ -29,13 +29,12 @@ interface ActionLinkProps {
   Icon?: LucideIcon
   iconPosition?: 'right' | 'left'
   withBackground?: boolean
-  ellipsed?: boolean
   className?: string
 }
 
-const ActionLink = ({ Icon, children, ellipsed, tooltip, ...props }: HasTooltip<ActionLinkProps>) => (
+const ActionLink = ({ Icon, children, tooltip, ...props }: HasTooltip<ActionLinkProps>) => (
   <ActionLinkStyled {...props} data-tooltip-id="default" data-tooltip-content={tooltip}>
-    <ChildrenContainer ellipsed={ellipsed}>{children}</ChildrenContainer>
+    <ChildrenContainer>{children}</ChildrenContainer>
     {Icon && (
       <IconContainer>
         <Icon size={14} />
@@ -48,9 +47,9 @@ export default ActionLink
 
 const ActionLinkStyled = styled.button<ActionLinkProps>`
   color: ${({ theme }) => theme.global.accent};
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
+  cursor: pointer;
   font-size: inherit;
   font-weight: inherit;
   flex-direction: ${({ iconPosition }) => (iconPosition === 'left' ? 'row-reverse' : 'row')};
@@ -75,16 +74,11 @@ const ActionLinkStyled = styled.button<ActionLinkProps>`
     `}
 `
 
-const ChildrenContainer = styled.div<Pick<ActionLinkProps, 'ellipsed'>>`
-  width: 100%;
+const ChildrenContainer = styled.div`
+  display: flex;
+  align-items: center;
   text-align: initial;
-
-  ${({ ellipsed }) =>
-    ellipsed &&
-    css`
-      overflow: hidden;
-      text-overflow: ellipsis;
-    `}
+  width: 100%;
 `
 
 const IconContainer = styled.div`

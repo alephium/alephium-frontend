@@ -79,7 +79,6 @@ export default styled(ModalContainer)<{ hasPadding?: boolean }>`
   left: 0;
   display: flex;
   padding: ${({ hasPadding }) => hasPadding && 'var(--spacing-4)'};
-  z-index: 1;
 
   &:focus {
     outline: none;

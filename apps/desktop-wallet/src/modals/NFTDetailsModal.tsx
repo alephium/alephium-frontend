@@ -25,6 +25,7 @@ import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import NFTThumbnail from '@/components/NFTThumbnail'
+import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import { openInWebBrowser } from '@/utils/misc'
@@ -58,8 +59,8 @@ const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
             <HashEllipsed hash={nft.id} />
           </DataList.Row>
           <DataList.Row label={t('Image URL')}>
-            <ActionLink ellipsed onClick={() => openInWebBrowser(nft.image)}>
-              {nft.image}
+            <ActionLink onClick={() => openInWebBrowser(nft.image)}>
+              <Truncate>{nft.image}</Truncate>
             </ActionLink>
           </DataList.Row>
         </DataList>

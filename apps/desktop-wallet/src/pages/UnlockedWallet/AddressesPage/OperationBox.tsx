@@ -65,7 +65,7 @@ const OperationBox = ({
           </Button>
         )}
         {infoLink && (
-          <ActionLink onClick={() => openInWebBrowser(infoLink)}>
+          <ActionLink onClick={() => openInWebBrowser(infoLink)} withBackground>
             <InfoIcon size={12} /> {t('More info')}
           </ActionLink>
         )}
