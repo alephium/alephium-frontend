@@ -20,8 +20,8 @@ import { Children, isValidElement, ReactNode } from 'react'
 import styled from 'styled-components'
 
 interface DataListProps {
-  title?: string
   children: ReactNode
+  title?: string
 }
 
 const DataList = ({ children, title }: DataListProps) => {

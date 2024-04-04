@@ -22,8 +22,8 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 
 import { baseQuery } from '@/api/baseQuery'
 import { client } from '@/api/client'
-import { ONE_DAY_MS } from '@/constants'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
+import { ONE_DAY_MS } from '@/constants'
 
 export const nftsApi = createApi({
   baseQuery,
