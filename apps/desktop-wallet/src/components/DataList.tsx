@@ -45,7 +45,7 @@ export interface DataListRowProps {
   children?: ReactNode
 }
 
-export const DataListRow = ({ label, children }: DataListRowProps) => (
+const DataListRow = ({ label, children }: DataListRowProps) => (
   <DataRowStyled role="row" tabIndex={0}>
     <DetailsRowLabel tabIndex={0} role="cell">
       {label}
