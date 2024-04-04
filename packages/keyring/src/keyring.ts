@@ -18,18 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { addressToGroup, bs58, ExplorerProvider, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
-import * as bip39 from 'bip39'
+import * as metamaskBip39 from '@metamask/scure-bip39'
+import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import blake from 'blakejs'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
-import {
-  dangerouslyConvertUint8ArrayMnemonicToString,
-  decryptMnemonic,
-  DecryptMnemonicResult,
-  MnemonicLength,
-  mnemonicStringToUint8Array
-} from '@/mnemonic'
+import { decryptMnemonic, DecryptMnemonicResult, MnemonicLength, mnemonicStringToUint8Array } from '@/mnemonic'
 
 export type NonSensitiveAddressData = {
   hash: AddressHash
@@ -69,7 +64,7 @@ class Keyring {
 
   public generateRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Uint8Array => {
     const strength = mnemonicLength === 24 ? 256 : 128
-    const mnemonic = mnemonicStringToUint8Array(bip39.generateMnemonic(strength))
+    const mnemonic = metamaskBip39.generateMnemonic(wordlist, strength)
 
     this._initFromMnemonic(mnemonic, '')
 
@@ -78,6 +73,9 @@ class Keyring {
 
   public importMnemonicString = (mnemonicStr: string): Uint8Array => {
     if (!mnemonicStr) throw new Error('Keyring: Cannot import mnemonic, mnemonic not provided')
+
+    if (!metamaskBip39.validateMnemonic(mnemonicStr, wordlist))
+      throw new Error('Keyring: Invalid secret recovery phrase provided')
 
     console.log('Mnemonic leaked to memory as a string while importing wallet. This is expected.')
 
@@ -233,10 +231,7 @@ class Keyring {
     if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
     if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
 
-    const isValid = bip39.validateMnemonic(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic))
-    if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
-
-    const seed = bip39.mnemonicToSeedSync(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic))
+    const seed = metamaskBip39.mnemonicToSeedSync(mnemonic, wordlist, passphrase)
     this.hdWallet = HDKey.fromMasterSeed(seed)
     this.root = this.hdWallet.derive(this.hdPath)
 
