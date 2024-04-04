@@ -54,7 +54,7 @@ const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
             <b>{nft.name}</b>
           </DataList.Row>
           <DataList.Row label={t('Description')}>{nft.description}</DataList.Row>
-          <DataList.Row label={t('Id')}>
+          <DataList.Row label={t('ID')}>
             <HashEllipsed hash={nft.id} />
           </DataList.Row>
           <DataList.Row label={t('Image URL')}>
