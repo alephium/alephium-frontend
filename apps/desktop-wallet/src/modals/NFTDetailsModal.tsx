@@ -46,7 +46,7 @@ const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
   return (
     <SideModal onClose={onClose} title={t('NFT details')}>
       <NFTImageContainer>
-        <NFTThumbnail size="100%" nft={nft} />
+        <NFTThumbnail size="100%" nftId={nftId} />
       </NFTImageContainer>
       <NFTMetadataContainer>
         <DataList>
