@@ -74,15 +74,10 @@ export default styled(FocusableContent)`
     outline: none;
   }
 
-  ${ModalBackdrop} {
-    z-index: 2;
-  }
-
   ${({ isFocused }) =>
     isFocused &&
     css`
       ${Content} {
-        z-index: 2;
         position: relative;
       }
     `}
