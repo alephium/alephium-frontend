@@ -20,12 +20,12 @@ import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-import { alephiumBaseQuery } from '@/api/alephiumBaseQuery'
+import { baseQuery } from '@/api/baseQuery'
 import { client } from '@/api/client'
 import { ONE_DAY_MS } from '@/constants'
 
 export const nftsApi = createApi({
-  baseQuery: alephiumBaseQuery,
+  baseQuery,
   tagTypes: ['NFTCollectionMetadata', 'NFTCollectionUriMetaData'],
   endpoints: (build) => ({
     getNFTCollectionMetadata: build.query<NFTCollectionMetadata, string>({

@@ -20,7 +20,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { BaseQueryFn } from '@reduxjs/toolkit/query'
 
-export const alephiumBaseQuery: BaseQueryFn<() => Promise<any>, unknown, { message: string }> = async (fn) => {
+export const baseQuery: BaseQueryFn<() => Promise<any>, unknown, { message: string }> = async (fn) => {
   try {
     const result = await fn()
     return { data: result }
