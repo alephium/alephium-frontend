@@ -116,7 +116,8 @@ const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 't
     css`
       border: 1px solid ${({ theme }) => theme.border.primary};
       border-radius: 25px;
-      padding: 5px 10px;
+      padding: 4px 10px;
+      background: ${({ theme }) => theme.bg.highlight};
     `}
 
   ${({ truncate }) =>

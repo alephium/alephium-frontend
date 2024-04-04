@@ -152,14 +152,9 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               </DataList.Row>
               <DataList.Row label={t('From')}>
                 {direction === 'out' ? (
-                  <AddressList>
-                    <ActionLinkStyled
-                      onClick={() => handleShowAddress(transaction.address.hash)}
-                      key={transaction.address.hash}
-                    >
-                      <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
-                    </ActionLinkStyled>
-                  </AddressList>
+                  <ActionLinkStyled onClick={() => handleShowAddress(transaction.address.hash)}>
+                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  </ActionLinkStyled>
                 ) : (
                   <IOList
                     currentAddress={transaction.address.hash}
@@ -173,14 +168,12 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               </DataList.Row>
               <DataList.Row label={t('To')}>
                 {direction !== 'out' ? (
-                  <AddressList>
-                    <ActionLinkStyled
-                      onClick={() => handleShowAddress(transaction.address.hash)}
-                      key={transaction.address.hash}
-                    >
-                      <AddressBadge addressHash={transaction.address.hash} withBorders />
-                    </ActionLinkStyled>
-                  </AddressList>
+                  <ActionLinkStyled
+                    onClick={() => handleShowAddress(transaction.address.hash)}
+                    key={transaction.address.hash}
+                  >
+                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  </ActionLinkStyled>
                 ) : (
                   <IOList
                     currentAddress={transaction.address.hash}
@@ -349,7 +342,7 @@ const TransactionDirectionInfo = styled.div`
 
 const AddressesInvolved = styled.div`
   display: flex;
-  gap: 5px;
+  gap: 10px;
   align-items: center;
   max-width: 80%;
 `
@@ -400,7 +393,7 @@ const AddressBadgeStyled = styled(AddressBadge)`
 `
 
 const SwapPartnerAddress = styled.div`
-  max-width: 80px;
+  max-width: 120px;
 `
 
 const NFTThumbnails = styled.div`
