@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { dangerouslyConvertUint8ArrayMnemonicToString, decryptMnemonic } from '@alephium/keyring'
+import { resetArray } from '@alephium/shared'
 import { Edit3 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -39,11 +40,9 @@ const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
 
   const handleCorrectPasswordEntered = (password: string) => {
     try {
-      setMnemonic(
-        dangerouslyConvertUint8ArrayMnemonicToString(
-          decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password).decryptedMnemonic
-        )
-      )
+      const { decryptedMnemonic } = decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password)
+      setMnemonic(dangerouslyConvertUint8ArrayMnemonicToString(decryptedMnemonic))
+      resetArray(decryptedMnemonic)
       setIsDisplayingPhrase(true)
     } catch (e) {
       console.error(e)
