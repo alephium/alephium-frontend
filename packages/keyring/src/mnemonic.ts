@@ -17,9 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { decrypt, encrypt } from '@alephium/shared-crypto'
-import * as bip39 from 'bip39'
-
-const wordlist = bip39.wordlists['english']
+import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 
 export type MnemonicLength = 12 | 24
 
