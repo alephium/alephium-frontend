@@ -198,7 +198,7 @@ const NFTItem = ({ nft, onClick }: NFTItemProps) => {
           {nft.file?.name ? (
             <NFTName>{nft.file.name}</NFTName>
           ) : (
-            <MissingMetadataText>{t('Incorrect metadata')}</MissingMetadataText>
+            <MissingMetadataText>{t('Wrong/old format')}</MissingMetadataText>
           )}
         </FrontFace>
       }

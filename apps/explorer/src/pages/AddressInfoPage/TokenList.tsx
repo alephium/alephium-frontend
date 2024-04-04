@@ -20,7 +20,7 @@ import { ALPH } from '@alephium/token-list'
 import { addressFromTokenId, Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { RiErrorWarningFill } from 'react-icons/ri'
+import { RiInformationFill } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -82,9 +82,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               )}
             </NameColumn>
 
-            {!token.name && token.type && (
-              <IncompleteMetadataBadge compact type="neutral" content={t('Incorrect metadata')} />
-            )}
+            {!token.name && token.type && <IncompleteMetadataBadge compact type="neutral" content="Wrong/old format" />}
 
             <TableCellAmount>
               <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
@@ -165,7 +163,7 @@ const TokenName = styled.span<{ isAlph: boolean }>`
     `}
 `
 
-const UnverifiedIcon = styled(RiErrorWarningFill)`
+const UnverifiedIcon = styled(RiInformationFill)`
   fill: ${({ theme }) => theme.font.tertiary};
   margin-top: 1px;
 `
