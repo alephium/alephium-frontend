@@ -295,8 +295,8 @@ const InfoIcon = styled.div`
   width: 14px;
   font-size: 11px;
   font-weight: 600;
-  color: ${({ theme }) => theme.font.secondary};
-  background-color: ${({ theme }) => theme.bg.highlight};
+  color: ${({ theme }) => theme.font.tertiary};
+  background-color: ${({ theme }) => theme.bg.background2};
   border-radius: 50%;
   cursor: default;
 `
