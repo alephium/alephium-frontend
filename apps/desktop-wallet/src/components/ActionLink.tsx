@@ -33,22 +33,8 @@ interface ActionLinkProps {
   className?: string
 }
 
-const ActionLink = ({
-  className,
-  Icon,
-  children,
-  onClick,
-  ellipsed,
-  tooltip,
-  withBackground
-}: HasTooltip<ActionLinkProps>) => (
-  <ActionLinkStyled
-    className={className}
-    onClick={onClick}
-    data-tooltip-id="default"
-    data-tooltip-content={tooltip}
-    withBackground={withBackground}
-  >
+const ActionLink = ({ Icon, children, ellipsed, tooltip, ...props }: HasTooltip<ActionLinkProps>) => (
+  <ActionLinkStyled {...props} data-tooltip-id="default" data-tooltip-content={tooltip}>
     <ChildrenContainer ellipsed={ellipsed}>{children}</ChildrenContainer>
     {Icon && (
       <IconContainer>
