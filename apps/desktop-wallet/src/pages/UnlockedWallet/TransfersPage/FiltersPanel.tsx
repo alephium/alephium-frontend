@@ -163,6 +163,7 @@ export default styled(FiltersPanel)`
   top: ${appHeaderHeightPx}px;
   background-color: ${({ theme }) => colord(theme.bg.secondary).alpha(0.9).toHex()};
   backdrop-filter: blur(10px);
+  z-index: 1;
 `
 
 const FilterTiles = styled.div`
