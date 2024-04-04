@@ -153,7 +153,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               <DataList.Row label={t('From')}>
                 {direction === 'out' ? (
                   <ActionLinkStyled onClick={() => handleShowAddress(transaction.address.hash)}>
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                    <AddressBadgeStyled addressHash={transaction.address.hash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
@@ -172,7 +172,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                     onClick={() => handleShowAddress(transaction.address.hash)}
                     key={transaction.address.hash}
                   >
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                    <AddressBadgeStyled addressHash={transaction.address.hash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
@@ -389,7 +389,7 @@ const TokenHash = styled(HashEllipsed)`
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
-  max-width: 200px;
+  max-width: 220px;
 `
 
 const SwapPartnerAddress = styled.div`
