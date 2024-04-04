@@ -23,6 +23,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQuery } from '@/api/baseQuery'
 import { client } from '@/api/client'
 import { ONE_DAY_MS } from '@/constants'
+import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 
 export const nftsApi = createApi({
   baseQuery,
@@ -37,7 +38,9 @@ export const nftsApi = createApi({
     }),
     getNFTCollectionData: build.query<NFTCollectionUriMetaData, string>({
       queryFn: (collectionUri) =>
-        fetch(collectionUri).then((res) => ({ data: res.json() as unknown as NFTCollectionUriMetaData })),
+        exponentialBackoffFetchRetry(collectionUri).then((res) => ({
+          data: res.json() as unknown as NFTCollectionUriMetaData
+        })),
       providesTags: (result, error, collectionUri) => [{ type: 'NFTCollectionUriMetaData', collectionUri }],
       keepUnusedDataFor: ONE_DAY_MS / 1000
     })
