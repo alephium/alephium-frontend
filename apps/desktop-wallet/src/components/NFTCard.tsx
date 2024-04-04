@@ -34,11 +34,12 @@ const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
 
   if (!nft) return null
+
   return (
     <NFTCardStyled onClick={onClick}>
       <CardContent>
         <NFTPictureContainer>
-          <NFTThumbnail nft={nft} size="100%" />
+          <NFTThumbnail nftId={nftId} size="100%" />
         </NFTPictureContainer>
         <NFTName>{nft.name || '-'}</NFTName>
       </CardContent>

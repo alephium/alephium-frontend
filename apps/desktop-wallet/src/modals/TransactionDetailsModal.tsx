@@ -239,7 +239,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
             <DataList.Row label={t('NFTs')}>
               <NFTThumbnails>
                 {nftsData.map((nft) => (
-                  <NFTThumbnail nft={nft} key={nft.id} onClick={() => setSelectedNFTId(nft.id)} />
+                  <NFTThumbnail nftId={nft.id} key={nft.id} onClick={() => setSelectedNFTId(nft.id)} />
                 ))}
               </NFTThumbnails>
             </DataList.Row>
