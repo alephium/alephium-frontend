@@ -60,7 +60,7 @@ const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps)
     <SideModal
       onClose={onClose}
       title={t('Address details')}
-      width={700}
+      width={800}
       onAnimationComplete={() => setShowChart(true)}
       header={
         <Header>
@@ -112,6 +112,7 @@ const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps)
           tokensTabTitle={`💰 ${t('Address tokens')}`}
           unknownTokensTabTitle={`❔ ${t('Address unknown tokens')}`}
           nftsTabTitle={`🖼️ ${t('Address NFTs')}`}
+          nftColumns={4}
         />
         <TransactionList
           title={t('Address transactions')}

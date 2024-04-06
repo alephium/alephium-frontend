@@ -16,7 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export const ONE_DAY_MS = 1000 * 60 * 60 * 24
-export const ONE_HOUR_MS = 1000 * 60 * 60
-export const FIVE_MINUTES_MS = 1000 * 60 * 5
-export const ONE_MINUTE_MS = 1000 * 60
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { BaseQueryFn } from '@reduxjs/toolkit/query'
+
+export const baseQuery: BaseQueryFn<() => Promise<any>, unknown, { message: string }> = async (fn) => {
+  try {
+    const result = await fn()
+    return { data: result }
+  } catch (error: any) {
+    return { error: { message: error || 'An error occurred' } }
+  }
+}

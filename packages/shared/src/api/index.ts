@@ -19,3 +19,5 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 export * from '@/api/client'
 export * from '@/api/fetchRetry'
 export * from '@/api/limits'
+export * from '@/api/nftsApi'
+export * from '@/api/baseQuery'

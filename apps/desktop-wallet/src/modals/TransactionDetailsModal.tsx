@@ -26,6 +26,7 @@ import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
+import DataList from '@/components/DataList'
 import ExpandableSection from '@/components/ExpandableSection'
 import HashEllipsed from '@/components/HashEllipsed'
 import IOList from '@/components/IOList'
@@ -34,8 +35,8 @@ import Tooltip from '@/components/Tooltip'
 import { useAppSelector } from '@/hooks/redux'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
-import { ModalHeader } from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
+import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import SideModal from '@/modals/SideModal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { AddressConfirmedTransaction } from '@/types/transactions'
@@ -47,23 +48,21 @@ interface TransactionDetailsModalProps {
   onClose: () => void
 }
 
-interface DetailsRowProps {
-  label: string
-  className?: string
-}
-
 const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
+  const theme = useTheme()
+  const [selectedAddressHash, setSelectedAddressHash] = useState<AddressHash>()
+  const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const theme = useTheme()
   const { assets, direction, lockTime, infoType } = getTransactionInfo(transaction)
-  const { label, Icon } = useTransactionUI({ infoType, isFailedScriptTx: !transaction.scriptExecutionOk })
+  const { label, Icon, iconColor } = useTransactionUI({
+    infoType,
+    isFailedScriptTx: !transaction.scriptExecutionOk
+  })
 
   const isMoved = infoType === 'move'
-
-  const [selectedAddressHash, setSelectedAddressHash] = useState<AddressHash>()
 
   const handleShowTxInExplorer = () => openInWebBrowser(`${explorerUrl}/#/transactions/${transaction.hash}`)
 
@@ -77,211 +76,213 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const nftsData = nfts.map((nft) => allNFTs[nft.id] as NFT)
 
   return (
-    <SideModal onClose={onClose} title={t('Transaction details')} hideHeader>
-      <Header>
-        <AmountWrapper tabIndex={0}>
-          {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
-            <AmountContainer key={id}>
-              <Amount
-                tabIndex={0}
-                value={amount}
-                decimals={decimals}
-                suffix={symbol}
-                highlight={!isMoved}
-                showPlusMinus={!isMoved}
-              />
-            </AmountContainer>
-          ))}
-        </AmountWrapper>
-        <HeaderInfo>
-          <Direction>
-            <Icon size={14} />
+    <SideModal onClose={onClose} title={t('Transaction details')}>
+      <Summary>
+        <SummaryContent>
+          <TransactionType short color={iconColor}>
+            <Icon size={14} color={iconColor} />
             {label}
-          </Direction>
-          <FromIn>
-            {
-              {
-                in: t('from'),
-                out: t('to'),
-                swap: t('between')
-              }[direction]
-            }
-          </FromIn>
-          {(direction === 'in' || direction === 'out') && (
-            <IOList
-              currentAddress={transaction.address.hash}
-              isOut={direction === 'out'}
-              outputs={transaction.outputs}
-              inputs={transaction.inputs}
-              timestamp={transaction.timestamp}
-            />
-          )}
-          {direction === 'swap' && (
-            <>
-              <AddressBadgeStyled addressHash={transaction.address.hash} truncate withBorders />
-              <FromIn>{t('and')}</FromIn>
-              <SwapPartnerAddress>
-                <IOList
-                  currentAddress={transaction.address.hash}
-                  isOut={false}
-                  outputs={transaction.outputs}
-                  inputs={transaction.inputs}
-                  timestamp={transaction.timestamp}
-                  linkToExplorer
+          </TransactionType>
+          <AmountWrapper tabIndex={0}>
+            {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
+              <AmountContainer key={id}>
+                <Amount
+                  tabIndex={0}
+                  value={amount}
+                  decimals={decimals}
+                  suffix={symbol}
+                  highlight={!isMoved}
+                  showPlusMinus={!isMoved}
                 />
-              </SwapPartnerAddress>
-            </>
-          )}
-        </HeaderInfo>
-        <ActionLink onClick={handleShowTxInExplorer} withBackground>
-          {t('Show in explorer')} ↗
-        </ActionLink>
-      </Header>
-      <Details role="table">
-        {direction !== 'swap' && (
-          <>
-            <DetailsRow label={t('Transaction hash')}>
-              <TransactionHash onClick={handleShowTxInExplorer}>
-                <HashEllipsed hash={transaction.hash} tooltipText={t('Copy hash')} />
-              </TransactionHash>
-            </DetailsRow>
-            <DetailsRow label={t('From')}>
-              {direction === 'out' ? (
-                <AddressList>
-                  <ActionLinkStyled
-                    onClick={() => handleShowAddress(transaction.address.hash)}
-                    key={transaction.address.hash}
-                  >
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
-                  </ActionLinkStyled>
-                </AddressList>
-              ) : (
-                <IOList
-                  currentAddress={transaction.address.hash}
-                  isOut={false}
-                  outputs={transaction.outputs}
-                  inputs={transaction.inputs}
-                  timestamp={transaction.timestamp}
-                  linkToExplorer
-                />
-              )}
-            </DetailsRow>
-            <DetailsRow label={t('To')}>
-              {direction !== 'out' ? (
-                <AddressList>
-                  <ActionLinkStyled
-                    onClick={() => handleShowAddress(transaction.address.hash)}
-                    key={transaction.address.hash}
-                  >
-                    <AddressBadge addressHash={transaction.address.hash} withBorders />
-                  </ActionLinkStyled>
-                </AddressList>
-              ) : (
+              </AmountContainer>
+            ))}
+          </AmountWrapper>
+          <TransactionDirectionInfo>
+            <AddressesInvolved>
+              <FromIn>
+                {
+                  {
+                    in: t('from'),
+                    out: t('to'),
+                    swap: t('between')
+                  }[direction]
+                }
+              </FromIn>
+              {(direction === 'in' || direction === 'out') && (
                 <IOList
                   currentAddress={transaction.address.hash}
                   isOut={direction === 'out'}
                   outputs={transaction.outputs}
                   inputs={transaction.inputs}
                   timestamp={transaction.timestamp}
-                  linkToExplorer
+                  truncate
                 />
               )}
-            </DetailsRow>
-          </>
-        )}
-        <DetailsRow label={t('Status')}>
-          {transaction.scriptExecutionOk ? (
-            <Badge color={theme.global.valid}>
-              <span tabIndex={0}>{t('Confirmed')}</span>
-            </Badge>
-          ) : (
-            <Badge color={theme.global.alert}>
-              <span tabIndex={0}>{t('Script execution failed')}</span>
-            </Badge>
+              {direction === 'swap' && (
+                <>
+                  <AddressBadge addressHash={transaction.address.hash} truncate withBorders isShort />
+                  <FromIn>{t('and')}</FromIn>
+                  <SwapPartnerAddress>
+                    <IOList
+                      currentAddress={transaction.address.hash}
+                      isOut={false}
+                      outputs={transaction.outputs}
+                      inputs={transaction.inputs}
+                      timestamp={transaction.timestamp}
+                      linkToExplorer
+                    />
+                  </SwapPartnerAddress>
+                </>
+              )}
+            </AddressesInvolved>
+          </TransactionDirectionInfo>
+          <ActionLink onClick={handleShowTxInExplorer} withBackground>
+            {t('Show in explorer')} ↗
+          </ActionLink>
+        </SummaryContent>
+      </Summary>
+      <Details role="table">
+        <DataList>
+          {direction !== 'swap' && (
+            <>
+              <DataList.Row label={t('Transaction hash')}>
+                <TransactionHash onClick={handleShowTxInExplorer}>
+                  <HashEllipsed hash={transaction.hash} tooltipText={t('Copy hash')} />
+                </TransactionHash>
+              </DataList.Row>
+              <DataList.Row label={t('From')}>
+                {direction === 'out' ? (
+                  <ActionLinkStyled onClick={() => handleShowAddress(transaction.address.hash)}>
+                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  </ActionLinkStyled>
+                ) : (
+                  <IOList
+                    currentAddress={transaction.address.hash}
+                    isOut={false}
+                    outputs={transaction.outputs}
+                    inputs={transaction.inputs}
+                    timestamp={transaction.timestamp}
+                    linkToExplorer
+                  />
+                )}
+              </DataList.Row>
+              <DataList.Row label={t('To')}>
+                {direction !== 'out' ? (
+                  <ActionLinkStyled
+                    onClick={() => handleShowAddress(transaction.address.hash)}
+                    key={transaction.address.hash}
+                  >
+                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  </ActionLinkStyled>
+                ) : (
+                  <IOList
+                    currentAddress={transaction.address.hash}
+                    isOut={direction === 'out'}
+                    outputs={transaction.outputs}
+                    inputs={transaction.inputs}
+                    timestamp={transaction.timestamp}
+                    linkToExplorer
+                  />
+                )}
+              </DataList.Row>
+            </>
           )}
-        </DetailsRow>
-        <DetailsRow label={t('Timestamp')}>
-          <span tabIndex={0}>{formatDateForDisplay(transaction.timestamp)}</span>
-        </DetailsRow>
-        {lockTime && (
-          <DetailsRow label={lockTime < new Date() ? t('Unlocked at') : t('Unlocks at')}>
-            <span tabIndex={0}>{formatDateForDisplay(lockTime)}</span>
-          </DetailsRow>
-        )}
-        <DetailsRow label={t('Fee')}>
-          <Amount tabIndex={0} value={BigInt(transaction.gasAmount) * BigInt(transaction.gasPrice)} fullPrecision />
-        </DetailsRow>
-        <DetailsRow label={t('Total value')}>
-          <Amounts>
-            {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
-              <AmountContainer key={id}>
-                <Amount
-                  tabIndex={0}
-                  value={amount}
-                  fullPrecision
-                  decimals={decimals}
-                  suffix={symbol}
-                  isUnknownToken={!symbol}
-                  highlight={!isMoved}
-                  showPlusMinus={!isMoved}
-                />
-                {!symbol && <TokenHash hash={id} />}
-              </AmountContainer>
-            ))}
-          </Amounts>
-        </DetailsRow>
-        {nftsData.length > 0 && (
-          <DetailsRow label={t('NFTs')}>
-            <NFTThumbnails>
-              {nftsData.map((nft) => (
-                <NFTThumbnail nft={nft} key={nft.id} />
-              ))}
-            </NFTThumbnails>
-          </DetailsRow>
-        )}
-        {unknownTokens.length > 0 && (
-          <DetailsRow label={t('Unknown tokens')}>
+          <DataList.Row label={t('Status')}>
+            {transaction.scriptExecutionOk ? (
+              <Badge color={theme.global.valid}>
+                <span tabIndex={0}>{t('Confirmed')}</span>
+              </Badge>
+            ) : (
+              <Badge color={theme.global.alert}>
+                <span tabIndex={0}>{t('Script execution failed')}</span>
+              </Badge>
+            )}
+          </DataList.Row>
+          <DataList.Row label={t('Timestamp')}>
+            <span tabIndex={0}>{formatDateForDisplay(transaction.timestamp)}</span>
+          </DataList.Row>
+          {lockTime && (
+            <DataList.Row label={lockTime < new Date() ? t('Unlocked at') : t('Unlocks at')}>
+              <span tabIndex={0}>{formatDateForDisplay(lockTime)}</span>
+            </DataList.Row>
+          )}
+          <DataList.Row label={t('Fee')}>
+            <Amount tabIndex={0} value={BigInt(transaction.gasAmount) * BigInt(transaction.gasPrice)} fullPrecision />
+          </DataList.Row>
+          <DataList.Row label={t('Total value')}>
             <Amounts>
-              {unknownTokens.map(({ id, amount, symbol }) => (
+              {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
                 <AmountContainer key={id}>
-                  <Amount tabIndex={0} value={amount} isUnknownToken={!symbol} highlight />
+                  <Amount
+                    tabIndex={0}
+                    value={amount}
+                    fullPrecision
+                    decimals={decimals}
+                    suffix={symbol}
+                    isUnknownToken={!symbol}
+                    highlight={!isMoved}
+                    showPlusMinus={!isMoved}
+                  />
                   {!symbol && <TokenHash hash={id} />}
                 </AmountContainer>
               ))}
             </Amounts>
-          </DetailsRow>
-        )}
+          </DataList.Row>
+          {nftsData.length > 0 && (
+            <DataList.Row label={t('NFTs')}>
+              <NFTThumbnails>
+                {nftsData.map((nft) => (
+                  <NFTThumbnail nftId={nft.id} key={nft.id} onClick={() => setSelectedNFTId(nft.id)} />
+                ))}
+              </NFTThumbnails>
+            </DataList.Row>
+          )}
+          {unknownTokens.length > 0 && (
+            <DataList.Row label={t('Unknown tokens')}>
+              <Amounts>
+                {unknownTokens.map(({ id, amount, symbol }) => (
+                  <AmountContainer key={id}>
+                    <Amount tabIndex={0} value={amount} isUnknownToken={!symbol} highlight />
+                    {!symbol && <TokenHash hash={id} />}
+                  </AmountContainer>
+                ))}
+              </Amounts>
+            </DataList.Row>
+          )}
+        </DataList>
         <ExpandableSectionStyled sectionTitleClosed={t('Click to see more')} sectionTitleOpen={t('Click to see less')}>
-          <DetailsRow label={t('Gas amount')}>
-            <span tabIndex={0}>{addApostrophes(transaction.gasAmount.toString())}</span>
-          </DetailsRow>
-          <DetailsRow label={t('Gas price')}>
-            <Amount tabIndex={0} value={BigInt(transaction.gasPrice)} fullPrecision />
-          </DetailsRow>
-          <DetailsRow label={t('Inputs')}>
-            <AddressList>
-              {transaction.inputs?.map(
-                (input) =>
-                  input.address && (
-                    <ActionLinkStyled
-                      key={`${input.outputRef.key}`}
-                      onClick={() => handleShowAddress(input.address as string)}
-                    >
-                      <HashEllipsed key={`${input.outputRef.key}`} hash={input.address} />
-                    </ActionLinkStyled>
-                  )
-              )}
-            </AddressList>
-          </DetailsRow>
-          <DetailsRow label={t('Outputs')}>
-            <AddressList>
-              {transaction.outputs?.map((output) => (
-                <ActionLinkStyled key={`${output.key}`} onClick={() => handleShowAddress(output.address ?? '')}>
-                  <HashEllipsed key={`${output.key}`} hash={output.address} />
-                </ActionLinkStyled>
-              ))}
-            </AddressList>
-          </DetailsRow>
+          <DataList>
+            <DataList.Row label={t('Gas amount')}>
+              <span tabIndex={0}>{addApostrophes(transaction.gasAmount.toString())}</span>
+            </DataList.Row>
+            <DataList.Row label={t('Gas price')}>
+              <Amount tabIndex={0} value={BigInt(transaction.gasPrice)} fullPrecision />
+            </DataList.Row>
+            <DataList.Row label={t('Inputs')}>
+              <AddressList>
+                {transaction.inputs?.map(
+                  (input) =>
+                    input.address && (
+                      <ActionLinkStyled
+                        key={`${input.outputRef.key}`}
+                        onClick={() => handleShowAddress(input.address as string)}
+                      >
+                        <HashEllipsed key={`${input.outputRef.key}`} hash={input.address} />
+                      </ActionLinkStyled>
+                    )
+                )}
+              </AddressList>
+            </DataList.Row>
+            <DataList.Row label={t('Outputs')}>
+              <AddressList>
+                {transaction.outputs?.map((output) => (
+                  <ActionLinkStyled key={`${output.key}`} onClick={() => handleShowAddress(output.address ?? '')}>
+                    <HashEllipsed key={`${output.key}`} hash={output.address} />
+                  </ActionLinkStyled>
+                ))}
+              </AddressList>
+            </DataList.Row>
+          </DataList>
         </ExpandableSectionStyled>
       </Details>
       <Tooltip />
@@ -289,6 +290,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
         {selectedAddressHash && (
           <AddressDetailsModal addressHash={selectedAddressHash} onClose={() => setSelectedAddressHash(undefined)} />
         )}
+        {selectedNFTId && <NFTDetailsModal nftId={selectedNFTId} onClose={() => setSelectedNFTId(undefined)} />}
       </ModalPortal>
     </SideModal>
   )
@@ -296,55 +298,53 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
 
 export default TransactionDetailsModal
 
-let DetailsRow: FC<DetailsRowProps> = ({ children, label, className }) => (
-  <div className={className} role="row">
-    <DetailsRowLabel tabIndex={0} role="cell">
-      {label}
-    </DetailsRowLabel>
-    {children}
-  </div>
-)
-
-DetailsRow = styled(DetailsRow)`
-  padding: 12px var(--spacing-3);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  justify-content: space-between;
-  min-height: 52px;
-
-  &:not(:first-child) {
-    border-top: 1px solid ${({ theme }) => theme.border.secondary};
-  }
-`
-
-const Direction = styled.span`
+const TransactionType = styled(Badge)`
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-4);
 `
 
 const AmountWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-size: 26px;
   font-weight: var(--fontWeight-semiBold);
 `
 
-const Header = styled(ModalHeader)`
-  padding: 35px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+const Summary = styled.div`
+  padding: var(--spacing-3) var(--spacing-3) var(--spacing-1);
 `
 
-const HeaderInfo = styled.div`
+const SummaryContent = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-5);
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-radius: var(--radius-big);
+`
+
+const TransactionDirectionInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 8px;
   font-weight: var(--fontWeight-semiBold);
-  align-items: center;
-  margin-top: var(--spacing-3);
+  margin-top: var(--spacing-5);
   margin-bottom: var(--spacing-5);
-  max-width: 100%;
+`
+
+const AddressesInvolved = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  max-width: 80%;
 `
 
 const FromIn = styled.span`
@@ -355,12 +355,8 @@ const Details = styled.div`
   padding: var(--spacing-2) var(--spacing-3);
 `
 
-const DetailsRowLabel = styled.div`
-  font-weight: var(--fontWeight-medium);
-`
-
 const ExpandableSectionStyled = styled(ExpandableSection)`
-  margin-top: 28px;
+  margin-top: var(--spacing-2);
 `
 
 const AddressList = styled.div`
@@ -369,7 +365,7 @@ const AddressList = styled.div`
 
 const ActionLinkStyled = styled(ActionLink)`
   width: 100%;
-  justify-content: right;
+  justify-content: flex-end;
 
   &:not(:last-child) {
     margin-bottom: 5px;
@@ -385,7 +381,6 @@ const AmountContainer = styled.div`
 const Amounts = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
 `
 
 const TokenHash = styled(HashEllipsed)`
@@ -393,19 +388,14 @@ const TokenHash = styled(HashEllipsed)`
   color: ${({ theme }) => theme.font.primary};
 `
 
-const AddressBadgeStyled = styled(AddressBadge)`
-  max-width: 200px;
-`
-
 const SwapPartnerAddress = styled.div`
-  max-width: 80px;
+  max-width: 120px;
 `
 
 const NFTThumbnails = styled.div`
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  justify-content: flex-end;
 `
 
 const TransactionHash = styled(ActionLink)`
