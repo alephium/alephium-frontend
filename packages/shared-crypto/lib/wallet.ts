@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair } from '@alephium/shared'
+import { AddressKeyPair, findNextAvailableAddressIndex } from '@alephium/shared'
 import { addressToGroup, bs58, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
@@ -126,16 +126,6 @@ export const deriveAddressAndKeys = (masterKey: bip32.BIP32Interface, addressInd
   const address = bs58.encode(bytes)
 
   return { hash: address, publicKey, privateKey, index: addressIndex || 0 }
-}
-
-const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
-  let nextAvailableAddressIndex = startIndex
-
-  do {
-    nextAvailableAddressIndex++
-  } while (skipIndexes.includes(nextAvailableAddressIndex))
-
-  return nextAvailableAddressIndex
 }
 
 export const deriveNewAddressData = (
