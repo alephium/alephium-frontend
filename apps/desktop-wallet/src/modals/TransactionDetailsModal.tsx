@@ -120,7 +120,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               )}
               {direction === 'swap' && (
                 <>
-                  <AddressBadgeStyled addressHash={transaction.address.hash} truncate withBorders />
+                  <AddressBadge addressHash={transaction.address.hash} truncate withBorders isShort />
                   <FromIn>{t('and')}</FromIn>
                   <SwapPartnerAddress>
                     <IOList
@@ -153,7 +153,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               <DataList.Row label={t('From')}>
                 {direction === 'out' ? (
                   <ActionLinkStyled onClick={() => handleShowAddress(transaction.address.hash)}>
-                    <AddressBadgeStyled addressHash={transaction.address.hash} truncate withBorders />
+                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
@@ -172,7 +172,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                     onClick={() => handleShowAddress(transaction.address.hash)}
                     key={transaction.address.hash}
                   >
-                    <AddressBadgeStyled addressHash={transaction.address.hash} truncate withBorders />
+                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
@@ -365,7 +365,7 @@ const AddressList = styled.div`
 
 const ActionLinkStyled = styled(ActionLink)`
   width: 100%;
-  justify-content: right;
+  justify-content: flex-end;
 
   &:not(:last-child) {
     margin-bottom: 5px;
@@ -386,10 +386,6 @@ const Amounts = styled.div`
 const TokenHash = styled(HashEllipsed)`
   max-width: 80px;
   color: ${({ theme }) => theme.font.primary};
-`
-
-const AddressBadgeStyled = styled(AddressBadge)`
-  max-width: 220px;
 `
 
 const SwapPartnerAddress = styled.div`

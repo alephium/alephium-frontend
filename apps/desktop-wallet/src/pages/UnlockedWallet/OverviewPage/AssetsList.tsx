@@ -20,7 +20,7 @@ import { AddressHash, Asset, CURRENCIES, NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import Amount from '@/components/Amount'
@@ -56,6 +56,7 @@ interface AssetsListProps {
   isExpanded?: boolean
   onExpand?: () => void
   maxHeightInPx?: number
+  nftColumns?: number
 }
 
 const AssetsList = ({
@@ -64,7 +65,8 @@ const AssetsList = ({
   tokensTabTitle,
   unknownTokensTabTitle,
   nftsTabTitle,
-  maxHeightInPx
+  maxHeightInPx,
+  nftColumns
 }: AssetsListProps) => {
   const { t } = useTranslation()
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
@@ -103,6 +105,7 @@ const AssetsList = ({
                 addressHashes={addressHashes}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
+                nftColumns={nftColumns}
               />
             ),
             unknownTokens: (
@@ -227,7 +230,7 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   )
 }
 
-const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsListProps) => {
+const NFTsList = ({ className, addressHashes, isExpanded, onExpand, nftColumns }: AssetsListProps) => {
   const { t } = useTranslation()
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHashes))
@@ -247,7 +250,7 @@ const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsList
             <SkeletonLoader height="205px" />
           </NFTList>
         ) : (
-          <NFTList role="row" tabIndex={isExpanded ? 0 : -1}>
+          <NFTList role="row" tabIndex={isExpanded ? 0 : -1} columns={nftColumns}>
             {nfts.map((nft) => (
               <NFTCard key={nft.id} nftId={nft.id} onClick={() => setSelectedNFTId(nft.id)} />
             ))}
@@ -339,15 +342,19 @@ const PlaceholderText = styled.div`
   justify-content: center;
 `
 
-const NFTList = styled(TableRow)`
+const NFTList = styled(TableRow)<{ columns?: number }>`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(${({ columns }) => columns ?? 5}, 1fr);
   grid-auto-flow: initial;
   gap: 25px;
   padding: 15px;
   border-radius: 0 0 12px 12px;
 
-  @media ${deviceBreakPoints.desktop} {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  ${({ columns }) =>
+    !columns &&
+    css`
+      @media ${deviceBreakPoints.desktop} {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    `}
 `
