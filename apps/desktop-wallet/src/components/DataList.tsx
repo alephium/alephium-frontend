@@ -16,8 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Children, isValidElement, ReactNode } from 'react'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
+
+import { validateChildrenType } from '@/utils/misc'
 
 interface DataListProps {
   children: ReactNode
@@ -25,12 +27,7 @@ interface DataListProps {
 }
 
 const DataList = ({ children, title }: DataListProps) => {
-  // TODO: If we like this approach, let's create a hook to check children types on runtime?
-  Children.forEach(children, (child) => {
-    if (child && isValidElement(child) && child.type !== DataListRow) {
-      console.error('DataList only accepts DataList.Row as children.')
-    }
-  })
+  validateChildrenType({ children, childType: DataListRow, parentName: 'DataList' })
 
   return (
     <DataListStyled>
