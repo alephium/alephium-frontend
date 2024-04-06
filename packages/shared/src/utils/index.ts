@@ -16,15 +16,5 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/types'
-export * from '@/api'
-export * from '@/utils'
-export * from '@/errors'
-export * from '@/numbers'
-export * from '@/constants'
-export * from '@/transactions'
-export * from '@/store'
-export * from '@/network'
-export * from '@/currencies'
-export * from '@/assets'
-export * from '@/utils'
+export * from '@/utils/addresses'
+export * from '@/utils/utils'
