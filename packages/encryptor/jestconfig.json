@@ -1,0 +1,13 @@
+{
+  "transform": {
+    "^.+\\.(t|j)sx?$": "ts-jest"
+  },
+  "testRegex": "(/test/(?!fixtures).*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "collectCoverage": true,
+  "coverageDirectory": "./coverage/",
+  "collectCoverageFrom": ["src/**/*.ts"],
+  "moduleNameMapper": {
+    "@/(.*)": "<rootDir>/src/$1"
+  }
+}
