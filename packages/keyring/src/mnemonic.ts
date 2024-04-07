@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import * as encryptor from '@alephium/encryptor'
 import { resetArray } from '@alephium/shared'
-import { decrypt, encrypt, EncryptedMnemonicStoredAsString } from '@alephium/shared-crypto'
 import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 
 export type MnemonicLength = 12 | 24
@@ -27,6 +27,12 @@ export type EncryptedMnemonicVersion = 1 | 2
 export type DecryptMnemonicResult = {
   decryptedMnemonic: Uint8Array
   version: EncryptedMnemonicVersion
+}
+
+// Deprecated
+type EncryptedMnemonicStoredAsString = {
+  version: 1
+  mnemonic: string
 }
 
 export class EncryptedMnemonicStoredAsUint8Array {
@@ -45,10 +51,10 @@ export const dangerouslyConvertUint8ArrayMnemonicToString = (mnemonic: Uint8Arra
     .map((i) => wordlist[i])
     .join(' ')
 
-export const encryptMnemonic = (mnemonic: Uint8Array, password: string) => {
+export const encryptMnemonic = async (mnemonic: Uint8Array, password: string) => {
   if (!mnemonic) throw new Error('Keyring: Cannot encrypt mnemonic, mnemonic not provided')
 
-  const result = encrypt(password, JSON.stringify(new EncryptedMnemonicStoredAsUint8Array(mnemonic)))
+  const result = await encryptor.encrypt(password, new EncryptedMnemonicStoredAsUint8Array(mnemonic))
 
   password = ''
   resetArray(mnemonic)
@@ -56,8 +62,8 @@ export const encryptMnemonic = (mnemonic: Uint8Array, password: string) => {
   return result
 }
 
-export const decryptMnemonic = (encryptedMnemonic: string, password: string): DecryptMnemonicResult => {
-  const { version, mnemonic } = JSON.parse(decrypt(password, encryptedMnemonic)) as
+export const decryptMnemonic = async (encryptedMnemonic: string, password: string): Promise<DecryptMnemonicResult> => {
+  const { version, mnemonic } = (await encryptor.decrypt(password, encryptedMnemonic)) as
     | EncryptedMnemonicStoredAsUint8Array
     | EncryptedMnemonicStoredAsString
 

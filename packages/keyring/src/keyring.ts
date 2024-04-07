@@ -88,8 +88,8 @@ class Keyring {
     return mnemonic
   }
 
-  public initFromEncryptedMnemonic = (encryptedMnemonic: string, password: string, passphrase: string) => {
-    const { version, decryptedMnemonic } = decryptMnemonic(encryptedMnemonic, password)
+  public initFromEncryptedMnemonic = async (encryptedMnemonic: string, password: string, passphrase: string) => {
+    const { version, decryptedMnemonic } = await decryptMnemonic(encryptedMnemonic, password)
 
     this.clearCachedSecrets()
     this._initFromMnemonic(decryptedMnemonic, passphrase)

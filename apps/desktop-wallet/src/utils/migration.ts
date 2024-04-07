@@ -81,15 +81,15 @@ export const migrateNetworkSettings = (): NetworkSettings => {
 }
 
 // Then we run user data migrations after the user has authenticated
-export const migrateUserData = (
+export const migrateUserData = async (
   walletId: StoredEncryptedWallet['id'],
   password: string,
   version: EncryptedMnemonicVersion
 ) => {
   console.log('🚚 Migrating user data')
 
-  _20240328_1200_migrateEncryptedWalletFromV1ToV2(walletId, password, version)
-  _20240328_1221_migrateAddressAndContactsToUnencrypted(walletId, password)
+  await _20240328_1200_migrateEncryptedWalletFromV1ToV2(walletId, password, version)
+  await _20240328_1221_migrateAddressAndContactsToUnencrypted(walletId, password)
   _20230209_124300_migrateIsMainToIsDefault(walletId)
 
   password = ''
@@ -305,19 +305,18 @@ export const _20230209_124300_migrateIsMainToIsDefault = (walletId: StoredEncryp
 
 // In version 1 the encrypted mnemonic used to be stored as a string before we started using Uint8Array. This migrates
 // the encrypted wallet from StoredStateV1 to StoredStateV2.
-export const _20240328_1200_migrateEncryptedWalletFromV1ToV2 = (
+export const _20240328_1200_migrateEncryptedWalletFromV1ToV2 = async (
   walletId: StoredEncryptedWallet['id'],
   password: string,
   version: EncryptedMnemonicVersion
 ) => {
   try {
     if (version === 1) {
-      let decryptedMnemonic: Uint8Array | null = decryptMnemonic(
-        walletStorage.load(walletId).encrypted,
-        password
+      let decryptedMnemonic: Uint8Array | null = (
+        await decryptMnemonic(walletStorage.load(walletId).encrypted, password)
       ).decryptedMnemonic
 
-      walletStorage.update(walletId, { encrypted: encryptMnemonic(decryptedMnemonic, password) })
+      walletStorage.update(walletId, { encrypted: await encryptMnemonic(decryptedMnemonic, password) })
 
       console.log('✅ Migrated stored mnemonic from version 1 to version 2')
       decryptedMnemonic = null
@@ -330,7 +329,7 @@ export const _20240328_1200_migrateEncryptedWalletFromV1ToV2 = (
 }
 
 // Migrate address metadata and contacts from encrypted to unencrypted
-export const _20240328_1221_migrateAddressAndContactsToUnencrypted = (
+export const _20240328_1221_migrateAddressAndContactsToUnencrypted = async (
   walletId: StoredEncryptedWallet['id'],
   password: string
 ) => {
@@ -356,7 +355,7 @@ export const _20240328_1221_migrateAddressAndContactsToUnencrypted = (
   if (parsedMetadataJson?.encrypted || parsedContactsJson?.encrypted) {
     let result: DecryptMnemonicResult | null
 
-    result = decryptMnemonic(walletStorage.load(walletId).encrypted, password)
+    result = await decryptMnemonic(walletStorage.load(walletId).encrypted, password)
     password = ''
 
     if (result.version !== 2) {

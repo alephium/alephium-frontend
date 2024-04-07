@@ -18,8 +18,8 @@
     "typecheck": "tsup"
   },
   "dependencies": {
+    "@alephium/encryptor": "workspace:*",
     "@alephium/shared": "workspace:*",
-    "@alephium/shared-crypto": "workspace:*",
     "@alephium/web3": "0.29.1",
     "@metamask/scure-bip39": "^2.1.1",
     "@scure/bip32": "^1.4.0",
