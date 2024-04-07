@@ -16,28 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { validateAddress } from '@alephium/web3'
+import { isAddressValid } from '@/utils/addresses'
 
-import { AddressHash } from '@/types'
-
-export const isAddressValid = (address: AddressHash) => {
-  try {
-    validateAddress(address)
-    return true
-  } catch {
-    return false
-  }
-}
-
-export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
-  let nextAvailableAddressIndex = startIndex
-
-  do {
-    nextAvailableAddressIndex++
-  } while (skipIndexes.includes(nextAvailableAddressIndex))
-
-  return nextAvailableAddressIndex
-}
-
-export const isAddressIndexValid = (addressIndex: number) =>
-  addressIndex >= 0 && Number.isInteger(addressIndex) && !addressIndex.toString().includes('e')
+describe('addresses', () => {
+  it('is valid', async () => {
+    expect(isAddressValid('16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3')).toBeTruthy()
+    expect(isAddressValid('19XWyoWy6DjrRp7erWqPfBnh7HL1Sb2Ub8SVjux2d71Eb')).toBeTruthy()
+    expect(isAddressValid('1CsutTzw8WVhqr1PB6F1tYinuLihAsAm9FxE7rVkC3Z2u')).toBeTruthy()
+    expect(isAddressValid('1CwD52BrUj9e4WDJSZ7RXLU2A8us4ZFSmYBDKu98p7szi')).toBeTruthy()
+    expect(isAddressValid('1BHSQ8JMeYHZe2kj3KmLjuQCSM3mvzYjNutz14uRPbxZM')).toBeTruthy()
+    expect(isAddressValid('')).toBeFalsy()
+    expect(isAddressValid('123')).toBeFalsy()
+  })
+})
