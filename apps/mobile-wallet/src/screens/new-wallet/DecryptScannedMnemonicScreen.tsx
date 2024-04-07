@@ -87,7 +87,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       const wallet = await generateAndStoreWallet(name, pin, mnemonic)
 
       try {
-        await importAddresses(wallet.mnemonic, wallet.id, addresses)
+        await importAddresses(wallet.id, addresses)
       } catch (e) {
         console.error(e)
 

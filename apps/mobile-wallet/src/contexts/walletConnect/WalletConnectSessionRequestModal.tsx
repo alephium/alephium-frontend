@@ -16,19 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import {
   binToHex,
   contractIdFromAddress,
-  hashMessage,
-  sign,
   SignDeployContractTxResult,
   SignExecuteScriptTxResult,
   SignMessageResult,
   SignTransferTxResult,
-  SignUnsignedTxResult,
-  transactionSign
+  SignUnsignedTxResult
 } from '@alephium/web3'
 import { SessionTypes } from '@walletconnect/types'
 import { Image } from 'react-native'
@@ -204,10 +202,9 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
 
     try {
       if (requestData.type === 'sign-message') {
-        const messageHash = hashMessage(requestData.wcData.message, requestData.wcData.messageHasher)
-        signResult = { signature: sign(messageHash, signAddress.privateKey) }
+        signResult = { signature: keyring.signMessage(requestData.wcData.message, signAddress.hash) }
       } else {
-        const signature = transactionSign(requestData.unsignedTxData.unsignedTx.txId, signAddress.privateKey)
+        const signature = keyring.signTransaction(requestData.unsignedTxData.unsignedTx.txId, signAddress.hash)
         signResult = {
           ...requestData.unsignedTxData,
           signature,

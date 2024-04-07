@@ -16,11 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair, AddressMetadata, Contact, ContactFormData } from '@alephium/shared'
+import { NonSensitiveAddressData } from '@alephium/keyring'
+import { AddressMetadata, Contact, ContactFormData } from '@alephium/shared'
 
 import { AddressPartial } from '~/types/addresses'
-
-export type Mnemonic = string
 
 export type WalletMetadata = {
   id: string
@@ -31,21 +30,28 @@ export type WalletMetadata = {
 }
 
 export interface WalletState {
-  name: string
-  mnemonic: Mnemonic
   id: string
+  name: string
+  isUnlocked: boolean
   isMnemonicBackedUp?: boolean
 }
 
-export type GeneratedWallet = WalletState & { firstAddress: AddressKeyPair }
+export interface StoredWallet {
+  id: string
+  name: string
+  mnemonic: string
+  isMnemonicBackedUp?: boolean
+}
+
+export type GeneratedWallet = StoredWallet & { firstAddress: NonSensitiveAddressData }
 
 export type WalletImportData = {
-  mnemonic: Mnemonic
+  mnemonic: string
   addresses: AddressMetadata[]
   contacts: ContactFormData[]
 }
 
-export type ImportedWalletWithMetadata = WalletState & Omit<WalletImportData, 'mnemonic'>
+export type ImportedWalletWithMetadata = StoredWallet & WalletImportData
 
 export interface CredentialsState {
   pin?: string

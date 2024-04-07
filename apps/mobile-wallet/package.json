@@ -15,6 +15,7 @@
     "postinstall": "turbo build:deps"
   },
   "dependencies": {
+    "@alephium/keyring": "workspace:*",
     "@alephium/shared": "workspace:*",
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",

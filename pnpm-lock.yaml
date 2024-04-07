@@ -519,6 +519,9 @@ importers:
 
   apps/mobile-wallet:
     dependencies:
+      '@alephium/keyring':
+        specifier: workspace:*
+        version: link:../../packages/keyring
       '@alephium/shared':
         specifier: workspace:*
         version: link:../../packages/shared

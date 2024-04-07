@@ -16,15 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressIndex,
-  AddressKeyPair,
-  appReset,
-  client,
-  customNetworkSettingsSaved,
-  networkPresetSwitched
-} from '@alephium/shared'
-import { deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
+import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
+import { AddressIndex, appReset, client, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
 import { explorer, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,
@@ -44,12 +37,11 @@ import {
   findNextAvailableAddressIndex,
   initializeAddressDiscoveryGroupsData
 } from '~/utils/addresses'
-import { mnemonicToSeed } from '~/utils/crypto'
 import { sleep } from '~/utils/misc'
 
 const sliceName = 'addressDiscovery'
 
-export type DiscoveredAddress = AddressKeyPair & { balance: explorer.AddressInfo['balance'] }
+export type DiscoveredAddress = NonSensitiveAddressData & { balance: explorer.AddressInfo['balance'] }
 
 interface AddressDiscoveryState extends EntityState<DiscoveredAddress> {
   loading: boolean
@@ -75,11 +67,10 @@ export const discoverAddresses = createAsyncThunk(
     const minGap = 5
     const state = getState() as RootState
     await sleep(1) // Allow execution to continue to not block rendering
-    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, state.wallet.mnemonic)
     const addresses = Object.values(state.addresses.entities) as Address[]
     const activeAddressIndexes: AddressIndex[] = addresses.map((address) => address.index)
     const groupsData = initializeAddressDiscoveryGroupsData(addresses)
-    const derivedDataCache = new Map<AddressIndex, AddressKeyPair & { group: number }>()
+    const derivedDataCache = new Map<AddressIndex, NonSensitiveAddressData & { group: number }>()
 
     let group = 0
     let checkedIndexes = Array.from(activeAddressIndexes)
@@ -92,7 +83,7 @@ export const discoverAddresses = createAsyncThunk(
         const groupData = groupsData[group]
         let newAddressGroup: number | undefined = undefined
         let index = groupData.highestIndex ?? maxIndexBeforeFirstGap
-        let newAddressData: AddressKeyPair | undefined = undefined
+        let newAddressData: NonSensitiveAddressData | undefined = undefined
 
         while (newAddressGroup !== group) {
           index = findNextAvailableAddressIndex(index, checkedIndexes)
@@ -109,7 +100,7 @@ export const discoverAddresses = createAsyncThunk(
             newAddressGroup = cachedData.group
           } else {
             await sleep(1) // Allow execution to continue to not block rendering
-            newAddressData = deriveAddressAndKeys(masterKey, index)
+            newAddressData = keyring.generateAndCacheAddress({ addressIndex: index })
             newAddressGroup = groupOfAddress(newAddressData.hash)
             derivedDataCache.set(index, { ...newAddressData, group: newAddressGroup })
           }

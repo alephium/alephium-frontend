@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { appBecameInactive } from '@alephium/shared'
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
@@ -152,7 +153,7 @@ const AppUnlockHandler = () => {
   const appState = useRef(AppState.currentState)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
-  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const isUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
@@ -161,7 +162,7 @@ const AppUnlockHandler = () => {
   const [needsWalletUnlock, setNeedsWalletUnlock] = useState(false)
 
   const unlockApp = useCallback(async () => {
-    if (walletMnemonic) return
+    if (isUnlocked) return
 
     try {
       const deviceHasBiometricsData = await isEnrolledAsync()
@@ -189,10 +190,18 @@ const AppUnlockHandler = () => {
         const biometricsNeedToBeReenabled = await didBiometricsSettingsChange()
 
         if (isBioEnabled && !biometricsNeedToBeReenabled) {
+          keyring.importMnemonicString(wallet.mnemonic)
+
           const metadata = await getWalletMetadata()
           const addressesToInitialize =
             addressesStatus === 'uninitialized' && !isLoadingLatestTxs ? await deriveWalletStoredAddresses(wallet) : []
-          dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts: metadata?.contacts ?? [] }))
+          dispatch(
+            walletUnlocked({
+              wallet: { ...wallet, isUnlocked: true },
+              addressesToInitialize,
+              contacts: metadata?.contacts ?? []
+            })
+          )
 
           lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
           SplashScreen.hideAsync()
@@ -211,11 +220,11 @@ const AppUnlockHandler = () => {
         console.error(e)
       }
     }
-  }, [addressesStatus, dispatch, isLoadingLatestTxs, lastNavigationState, navigation, walletMnemonic])
+  }, [addressesStatus, dispatch, isLoadingLatestTxs, lastNavigationState, navigation, isUnlocked])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && walletMnemonic && !isCameraOpen) {
+      if (nextAppState === 'background' && isUnlocked && !isCameraOpen) {
         loadBiometricsSettings().then((isBioEnabled) =>
           resetNavigation(navigation, isBioEnabled ? 'LandingScreen' : 'LoginWithPinScreen')
         )
@@ -223,7 +232,7 @@ const AppUnlockHandler = () => {
         // The following is needed when the switch between background/active happens so fast that the component didn't
         // have enough time to re-render after clearning the mnemonic.
         setNeedsWalletUnlock(true)
-      } else if (nextAppState === 'active' && !walletMnemonic && !isCameraOpen) {
+      } else if (nextAppState === 'active' && !isUnlocked && !isCameraOpen) {
         setNeedsWalletUnlock(false)
         unlockApp()
       }
@@ -248,7 +257,7 @@ const AppUnlockHandler = () => {
     navigation,
     needsWalletUnlock,
     unlockApp,
-    walletMnemonic
+    isUnlocked
   ])
 
   return null

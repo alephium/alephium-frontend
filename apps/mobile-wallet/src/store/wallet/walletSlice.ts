@@ -32,7 +32,7 @@ const sliceName = 'wallet'
 const initialState: WalletState = {
   id: '',
   name: '',
-  mnemonic: '',
+  isUnlocked: false,
   isMnemonicBackedUp: undefined
 }
 
@@ -54,10 +54,10 @@ const walletSlice = createSlice({
     builder.addMatcher(isAnyOf(appBecameInactive, appReset, walletDeleted), resetState)
     builder.addMatcher(
       isAnyOf(newWalletGenerated, newWalletImportedWithMetadata),
-      (_, { payload: { name, mnemonic, id, isMnemonicBackedUp } }) => ({
+      (_, { payload: { name, id, isMnemonicBackedUp } }) => ({
         id,
         name,
-        mnemonic,
+        isUnlocked: true,
         isMnemonicBackedUp
       })
     )

@@ -32,7 +32,7 @@ import { sendAnalytics } from '~/analytics'
 import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
 import { AddressPartial } from '~/types/addresses'
-import { GeneratedWallet, Mnemonic, WalletMetadata, WalletState } from '~/types/wallet'
+import { GeneratedWallet, StoredWallet, WalletMetadata } from '~/types/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
@@ -43,9 +43,9 @@ const IS_NEW_WALLET = 'is-new-wallet'
 const BIOMETRICS_SETTINGS_CHANGED = 'biometrics-settings-changed'
 
 export const generateAndStoreWallet = async (
-  name: WalletState['name'],
+  name: StoredWallet['name'],
   pin: string,
-  mnemonicToImport?: WalletState['mnemonic']
+  mnemonicToImport?: StoredWallet['mnemonic']
 ): Promise<GeneratedWallet> => {
   const isMnemonicBackedUp = !!mnemonicToImport
 
@@ -63,15 +63,14 @@ export const generateAndStoreWallet = async (
     firstAddress: {
       index: 0,
       hash: generatedWallet.address,
-      publicKey: generatedWallet.publicKey,
-      privateKey: generatedWallet.privateKey
+      publicKey: generatedWallet.publicKey
     }
   }
 }
 
 const persistWallet = async (
   walletName: string,
-  mnemonic: Mnemonic,
+  mnemonic: string,
   pin: string,
   isMnemonicBackedUp: boolean
 ): Promise<string> => {
@@ -120,7 +119,7 @@ const generateWalletMetadata = (name: string, isMnemonicBackedUp = false) => ({
   contacts: []
 })
 
-export const enableBiometrics = async (mnemonic: Mnemonic, authenticationPrompt = 'Enable biometrics') => {
+export const enableBiometrics = async (mnemonic: string, authenticationPrompt = 'Enable biometrics') => {
   const options = { ...defaultBiometricsConfig, authenticationPrompt }
 
   console.log('💽 Storing biometrics wallet')
@@ -166,7 +165,7 @@ export interface GetStoredWalletProps {
   authenticationPrompt?: SecureStore.SecureStoreOptions['authenticationPrompt']
 }
 
-export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<WalletState | null> => {
+export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<StoredWallet | null> => {
   const metadata = await getWalletMetadata()
 
   if (!metadata) {
@@ -217,7 +216,7 @@ export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<Wal
         name,
         mnemonic,
         isMnemonicBackedUp
-      } as WalletState)
+      } as StoredWallet)
     : null
 }
 
@@ -276,7 +275,7 @@ export const persistAddressesMetadata = async (walletId: string, addressesMetada
   await storeWalletMetadata(walletMetadata)
 }
 
-export const deriveWalletStoredAddresses = async (wallet: WalletState): Promise<AddressPartial[]> => {
+export const deriveWalletStoredAddresses = async (wallet: StoredWallet): Promise<AddressPartial[]> => {
   const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, wallet.mnemonic)
   const metadata = await getWalletMetadata()
   const addresses = metadata?.addresses ?? []

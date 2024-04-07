@@ -31,11 +31,11 @@ import CenteredInstructions, { Instruction } from '~/components/text/CenteredIns
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import { getStoredWallet, GetStoredWalletProps } from '~/persistent-storage/wallet'
 import { ShouldClearPin } from '~/types/misc'
-import { WalletState } from '~/types/wallet'
+import { StoredWallet } from '~/types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
 interface AuthenticationModalProps extends ModalWithBackdropProps, GetStoredWalletProps {
-  onConfirm: (pin?: string, wallet?: WalletState) => void
+  onConfirm: (pin?: string, wallet?: StoredWallet) => void
   onClose?: () => void
   loadingText?: string
 }
@@ -60,7 +60,7 @@ const AuthenticationModal = ({
   const insets = useSafeAreaInsets()
 
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const [encryptedWallet, setEncryptedWallet] = useState<WalletState>()
+  const [encryptedWallet, setEncryptedWallet] = useState<StoredWallet>()
 
   const getWallet = useCallback(async () => {
     try {

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useState } from 'react'
@@ -36,7 +37,7 @@ import {
 } from '~/persistent-storage/wallet'
 import { biometricsToggled } from '~/store/settingsSlice'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
-import { WalletState } from '~/types/wallet'
+import { StoredWallet } from '~/types/wallet'
 import { showToast } from '~/utils/layout'
 import { resetNavigation, restoreNavigation } from '~/utils/navigation'
 
@@ -51,7 +52,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
   const handleSuccessfulLogin = useCallback(
-    async (pin?: string, wallet?: WalletState) => {
+    async (pin?: string, wallet?: StoredWallet) => {
       if (!pin || !wallet) return
 
       setIsPinModalVisible(false)
@@ -73,11 +74,20 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
         }
       }
 
+      keyring.importMnemonicString(wallet.mnemonic)
+
       const addressesToInitialize =
         addressesStatus === 'uninitialized' && !isLoadingLatestTxs ? await deriveWalletStoredAddresses(wallet) : []
       const metadata = await getWalletMetadata()
 
-      dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts: metadata?.contacts ?? [] }))
+      dispatch(
+        walletUnlocked({
+          wallet: { ...wallet, isUnlocked: true },
+          addressesToInitialize,
+          pin,
+          contacts: metadata?.contacts ?? []
+        })
+      )
       lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
 
       sendAnalytics('Unlocked wallet')
