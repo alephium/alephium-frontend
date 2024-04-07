@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressIndex, appReset, client, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
 import { AddressKeyPair, deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
-import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { explorer, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,
   createEntityAdapter,
@@ -103,7 +103,7 @@ export const discoverAddresses = createAsyncThunk(
           } else {
             await sleep(1) // Allow execution to continue to not block rendering
             newAddressData = deriveAddressAndKeys(masterKey, index)
-            newAddressGroup = addressToGroup(newAddressData.hash, TOTAL_NUMBER_OF_GROUPS)
+            newAddressGroup = groupOfAddress(newAddressData.hash)
             derivedDataCache.set(index, { ...newAddressData, group: newAddressGroup })
           }
         }
