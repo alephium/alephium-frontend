@@ -42,7 +42,7 @@ type GenerateAddressProps = {
   skipAddressIndexes?: number[]
 }
 
-class Keyring {
+export class Keyring {
   private hdPath = "m/44'/1234'/0'/0"
   private hdWallet: HDKey | null
   private root: HDKey | null
