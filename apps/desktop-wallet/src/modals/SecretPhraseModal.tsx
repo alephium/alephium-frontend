@@ -38,9 +38,9 @@ const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
 
   if (!activeWalletId) return null
 
-  const handleCorrectPasswordEntered = (password: string) => {
+  const handleCorrectPasswordEntered = async (password: string) => {
     try {
-      const { decryptedMnemonic } = decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password)
+      const { decryptedMnemonic } = await decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password)
       setMnemonic(dangerouslyConvertUint8ArrayMnemonicToString(decryptedMnemonic))
       resetArray(decryptedMnemonic)
       setIsDisplayingPhrase(true)

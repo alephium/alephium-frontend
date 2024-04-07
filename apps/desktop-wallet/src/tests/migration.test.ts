@@ -458,7 +458,7 @@ describe('_20230209_124300', () => {
 })
 
 describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
-  it('should decrypt encrypted address metadata', () => {
+  it('should decrypt encrypted address metadata', async () => {
     const localStorageKey = `addresses-metadata-${activeWallet.id}`
     const addressMetadata: AddressMetadata[] = [
       {
@@ -480,12 +480,14 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
     )
     localStorage.setItem(`wallet-${activeWallet.id}`, JSON.stringify({ encrypted: encryptedTestWallet }))
 
-    expect(() => migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')).toThrowError(
+    expect(() =>
+      migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
+    ).rejects.toThrowError(
       'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'
     )
 
-    migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x', 1)
-    migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
+    await migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x', 1)
+    await migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
 
     const rawData = localStorage.getItem(localStorageKey)
 
@@ -507,7 +509,7 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
     expect(metadata[1].label).toEqual('My main one')
   })
 
-  it('should decrypt encrypted contacts', () => {
+  it('should decrypt encrypted contacts', async () => {
     const localStorageKey = `contacts-${activeWallet.id}`
     const contacts: Contact[] = [
       {
@@ -529,12 +531,14 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
 
     localStorage.setItem(`wallet-${activeWallet.id}`, JSON.stringify({ encrypted: encryptedTestWallet }))
 
-    expect(() => migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')).toThrowError(
+    expect(() =>
+      migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
+    ).rejects.toThrowError(
       'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'
     )
 
-    migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x', 1)
-    migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
+    await migrate._20240328_1200_migrateEncryptedWalletFromV1ToV2(activeWallet.id, 'x', 1)
+    await migrate._20240328_1221_migrateAddressAndContactsToUnencrypted(activeWallet.id, 'x')
 
     const rawData = localStorage.getItem(localStorageKey)
 

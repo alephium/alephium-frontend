@@ -89,9 +89,9 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
     setWalletNameError(isValidOrError !== true ? isValidOrError : '')
   }
 
-  const handleNextButtonClick = () => {
+  const handleNextButtonClick = async () => {
     try {
-      saveNewWallet({ walletName, encrypted: encryptMnemonic(mnemonic, password) })
+      saveNewWallet({ walletName, encrypted: await encryptMnemonic(mnemonic, password) })
       resetCachedMnemonic()
 
       if (isRestoring) {

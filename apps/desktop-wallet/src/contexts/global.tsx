@@ -93,7 +93,7 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
 
     try {
       encryptedWallet = walletStorage.load(walletId)
-      version = keyring.initFromEncryptedMnemonic(encryptedWallet.encrypted, password, passphrase ?? '')
+      version = await keyring.initFromEncryptedMnemonic(encryptedWallet.encrypted, password, passphrase ?? '')
     } catch (e) {
       console.error(e)
       dispatch(passwordValidationFailed())
