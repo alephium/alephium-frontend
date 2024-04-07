@@ -25,7 +25,7 @@ import {
   networkPresetSwitched,
   syncingAddressDataStarted
 } from '@alephium/shared'
-import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { groupOfAddress } from '@alephium/web3'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 import { uniq } from 'lodash'
 
@@ -279,7 +279,7 @@ const getAddresses = (state: AddressesState, addressHashes?: AddressHash[]) => {
 
 const getDefaultAddressState = (address: AddressBase): Address => ({
   ...address,
-  group: addressToGroup(address.hash, TOTAL_NUMBER_OF_GROUPS),
+  group: groupOfAddress(address.hash),
   balance: '0',
   lockedBalance: '0',
   txNumber: 0,

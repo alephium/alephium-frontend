@@ -41,7 +41,7 @@ import {
   TokenDisplayBalances
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { explorer, groupOfAddress } from '@alephium/web3'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import {
   createAsyncThunk,
@@ -490,7 +490,7 @@ const getInitialAddressState = (addressData: AddressPartial): Address => ({
     isDefault: false,
     color: getRandomLabelColor()
   },
-  group: addressToGroup(addressData.hash, TOTAL_NUMBER_OF_GROUPS),
+  group: groupOfAddress(addressData.hash),
   transactions: [],
   allTransactionPagesLoaded: false,
   balance: '0',

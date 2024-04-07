@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressKeyPair, findNextAvailableAddressIndex } from '@alephium/shared'
-import { addressToGroup, bs58, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { bs58, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import blake from 'blakejs'
@@ -145,7 +145,7 @@ export const deriveNewAddressData = (
     : initialAddressIndex
   let newAddressData = deriveAddressAndKeys(masterKey, nextAddressIndex)
 
-  while (forGroup !== undefined && addressToGroup(newAddressData.hash, TOTAL_NUMBER_OF_GROUPS) !== forGroup) {
+  while (forGroup !== undefined && groupOfAddress(newAddressData.hash) !== forGroup) {
     nextAddressIndex = findNextAvailableAddressIndex(newAddressData.index, skipAddressIndexes)
     newAddressData = deriveAddressAndKeys(masterKey, nextAddressIndex)
   }
