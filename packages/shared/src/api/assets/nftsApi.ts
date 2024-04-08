@@ -18,16 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
-import { createApi } from '@reduxjs/toolkit/query/react'
 
-import { baseQuery } from '@/api/baseQuery'
+import { baseApi } from '@/api/baseApi'
 import { client } from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { ONE_DAY_MS } from '@/constants'
 
-export const nftsApi = createApi({
-  baseQuery,
-  tagTypes: ['NFTCollectionMetadata', 'NFTCollectionUriMetaData'],
+export const nftsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getNFTCollectionMetadata: build.query<NFTCollectionMetadata, string>({
       queryFn: async (collectionId) => ({

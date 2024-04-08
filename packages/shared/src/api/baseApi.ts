@@ -16,9 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/api/client'
-export * from '@/api/fetchRetry'
-export * from '@/api/limits'
-export * from '@/api/baseQuery'
-export * from '@/api/assets/nftsApi'
-export * from '@/api/assets/fungibleTokensApi'
+import { createApi } from '@reduxjs/toolkit/query/react'
+
+import { baseQuery } from '@/api/baseQuery'
+
+export const baseApi = createApi({
+  baseQuery,
+  tagTypes: ['TokenList', 'NFTCollectionMetadata', 'NFTCollectionUriMetaData'],
+  endpoints: () => ({})
+})
