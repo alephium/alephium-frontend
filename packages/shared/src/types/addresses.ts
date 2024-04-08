@@ -54,10 +54,3 @@ export type BalanceHistory = {
   date: string // CHART_DATE_FORMAT
   balance: string
 }
-
-export type AddressKeyPair = {
-  hash: string
-  index: number
-  publicKey: string
-  privateKey: string
-}

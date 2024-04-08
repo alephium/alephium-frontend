@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair, findNextAvailableAddressIndex } from '@alephium/shared'
 import { addressToGroup, bs58, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
@@ -30,6 +29,14 @@ type MnemonicLength = 12 | 24
 type EncryptedMnemonicVersion = 1 | 2
 
 type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
+
+// TODO: Delete
+export type AddressKeyPair = {
+  hash: string
+  index: number
+  publicKey: string
+  privateKey: string
+}
 
 export class EncryptedMnemonicStoredAsString {
   readonly version: EncryptedMnemonicVersion = 1
@@ -236,4 +243,15 @@ export const walletEncryptAsyncUnsafe = (
   })
 
   return encryptAsync(password, JSON.stringify(storedState), pbkdf2CustomFunc ?? _pbkdf2)
+}
+
+// TODO: Delete
+export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+  let nextAvailableAddressIndex = startIndex
+
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
 }
