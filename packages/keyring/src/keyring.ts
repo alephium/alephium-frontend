@@ -108,8 +108,8 @@ export class Keyring {
   public signTransaction = (txId: string, addressHash: AddressHash): string =>
     transactionSign(txId, this.exportPrivateKeyOfAddress(addressHash))
 
-  public signMessage = (message: string, addressHash: AddressHash): string =>
-    sign(message, this.exportPrivateKeyOfAddress(addressHash))
+  public signMessageHash = (messageHash: string, addressHash: AddressHash): string =>
+    sign(messageHash, this.exportPrivateKeyOfAddress(addressHash))
 
   public exportPrivateKeyOfAddress = (addressHash: AddressHash): string =>
     bytesToHex(this._getAddress(addressHash).privateKey)
@@ -189,15 +189,29 @@ export class Keyring {
 
   private _generateAddress = ({
     group,
-    addressIndex = 0,
+    addressIndex,
     skipAddressIndexes = []
   }: GenerateAddressProps): SensitiveAddressData => {
     if (group !== undefined && (!Number.isInteger(group) || group < 0 || group >= TOTAL_NUMBER_OF_GROUPS))
       throw new Error(`Keyring: Could not generate address in group ${group}, group is invalid`)
 
-    let nextAddressIndex = skipAddressIndexes.includes(addressIndex)
-      ? findNextAvailableAddressIndex(addressIndex, skipAddressIndexes)
-      : addressIndex
+    if (addressIndex !== undefined) {
+      if (!Number.isInteger(addressIndex) || addressIndex < 0)
+        throw new Error(`Keyring: Could not generate address, ${addressIndex} is not a valid addressIndex`)
+
+      if (group !== undefined || skipAddressIndexes.length > 0)
+        throw new Error(
+          'Keyring: Could not generate address, invalid arguments passed: when addressIndex is provided the group and skipAddressIndexes should not be provided.'
+        )
+
+      return this._deriveAddressAndKeys(addressIndex)
+    }
+
+    const initialAddressIndex = 0
+
+    let nextAddressIndex = skipAddressIndexes.includes(initialAddressIndex)
+      ? findNextAvailableAddressIndex(initialAddressIndex, skipAddressIndexes)
+      : initialAddressIndex
     let newAddressData = this._deriveAddressAndKeys(nextAddressIndex)
 
     while (group !== undefined && addressToGroup(newAddressData.hash, TOTAL_NUMBER_OF_GROUPS) !== group) {
