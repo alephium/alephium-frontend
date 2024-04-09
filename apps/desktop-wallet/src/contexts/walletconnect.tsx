@@ -65,6 +65,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { useTranslation } from 'react-i18next'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import useIsAuthenticated from '@/hooks/useIsAuthenticated'
 import ModalPortal from '@/modals/ModalPortal'
 import SendModalCallContract from '@/modals/SendModals/CallContract'
 import SendModalDeployContract from '@/modals/SendModals/DeployContract'
@@ -120,7 +121,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
   const currentNetwork = useAppSelector((s) => s.network)
-  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.id)
+  const isAuthenticated = useIsAuthenticated()
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
 
