@@ -17,12 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenList } from '@alephium/token-list'
-import { NetworkId } from '@alephium/web3'
 
 import { baseApi } from '@/api/baseApi'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { ONE_DAY_MS } from '@/constants'
-import { FungibleTokenBasicMetadata } from '@/types'
+import { FungibleTokenBasicMetadata, NetworkName } from '@/types'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { chunk } from 'lodash'
 import { client } from '@/api/client'
@@ -30,19 +29,19 @@ import posthog from 'posthog-js'
 
 export const fungibleTokensApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getTokenList: build.query<TokenList, NetworkId>({
-      queryFn: (networkId) => {
-        if (!(['mainnet', 'testnet'] as NetworkId[]).includes(networkId)) {
-          return { error: { message: 'Invalid networkId' } }
+    getTokenList: build.query<TokenList, NetworkName>({
+      queryFn: (networkName) => {
+        if (!(['mainnet', 'testnet', 'devnet'] as NetworkName[]).includes(networkName)) {
+          return { error: { message: 'Invalid network ' + networkName } }
         }
 
         return exponentialBackoffFetchRetry(
-          `https://raw.githubusercontent.com/alephium/token-list/master/tokens/${networkId}.json`
+          `https://raw.githubusercontent.com/alephium/token-list/master/tokens/${networkName}.json`
         ).then((res) => ({
           data: res.json() as unknown as TokenList
         }))
       },
-      providesTags: (result, error, networkId) => [{ type: 'TokenList', networkId }],
+      providesTags: (result, error, networkName) => [{ type: 'TokenList', networkName }],
       keepUnusedDataFor: ONE_DAY_MS / 1000
     }),
     getFungibleTokenMetadata: build.query<FungibleTokenBasicMetadata[], string[]>({
@@ -83,4 +82,4 @@ export const fungibleTokensApi = baseApi.injectEndpoints({
   })
 })
 
-export const { useGetTokenListQuery } = fungibleTokensApi
+export const { useGetTokenListQuery, useGetFungibleTokenMetadataQuery } = fungibleTokensApi

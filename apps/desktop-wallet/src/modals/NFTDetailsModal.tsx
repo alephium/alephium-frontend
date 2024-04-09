@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById, useGetNFTCollectionDataQuery, useGetNFTCollectionMetadataQuery } from '@alephium/shared'
+import { NFT, selectNFTById, useGetNftCollectionDataQuery, useGetNftCollectionMetadataQuery } from '@alephium/shared'
 import { skipToken } from '@reduxjs/toolkit/query'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -39,8 +39,8 @@ const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
 
-  const nftCollectionMetadata = useGetNFTCollectionMetadataQuery(nft?.collectionId ?? skipToken)
-  const nftCollectionData = useGetNFTCollectionDataQuery(nftCollectionMetadata.data?.collectionUri ?? skipToken)
+  const nftCollectionMetadata = useGetNftCollectionMetadataQuery(nft?.collectionId ?? skipToken)
+  const nftCollectionData = useGetNftCollectionDataQuery(nftCollectionMetadata.data?.collectionUri ?? skipToken)
 
   if (!nft) return null
 

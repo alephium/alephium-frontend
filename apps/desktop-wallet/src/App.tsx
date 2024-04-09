@@ -24,7 +24,8 @@ import {
   syncTokenCurrentPrices,
   syncTokenPriceHistories,
   syncUnknownTokensInfo,
-  syncVerifiedFungibleTokens
+  syncVerifiedFungibleTokens,
+  useGetTokenListQuery
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
@@ -88,10 +89,8 @@ const App = () => {
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
-  const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
-  const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
-  const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
+  const { data: tokenList } = useGetTokenListQuery(networkName)
+  const tokenListSymbols = tokenList?.tokens.map((token) => token.symbol)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens).map(({ id }) => id)
@@ -190,77 +189,30 @@ const App = () => {
 
           dispatch(syncAddressesAlphHistoricBalances())
         }
-      } else if (addressesStatus === 'initialized') {
-        if (
-          !verifiedFungibleTokensNeedInitialization &&
-          !isLoadingUnverifiedFungibleTokens &&
-          newUnknownTokens.length > 0
-        ) {
-          dispatch(syncUnknownTokensInfo(newUnknownTokens))
-        }
       }
     }
   }, [
     addressHashes.length,
     addressesStatus,
-    verifiedFungibleTokensNeedInitialization,
     dispatch,
-    isLoadingUnverifiedFungibleTokens,
     isSyncingAddressData,
     networkStatus,
     newUnknownTokens,
     activeWalletId
   ])
 
-  // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
+  // Sync current and historical prices for each verified fungible
   // token found in each address
   useEffect(() => {
-    if (networkStatus === 'online' && !isLoadingVerifiedFungibleTokens) {
-      if (verifiedFungibleTokensNeedInitialization) {
-        dispatch(syncVerifiedFungibleTokens())
-      } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
-        const symbols = verifiedFungibleTokenSymbols.uninitialized
-
-        dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
-        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
-      }
-    }
-  }, [
-    dispatch,
-    isLoadingVerifiedFungibleTokens,
-    networkStatus,
-    settings.fiatCurrency,
-    verifiedFungibleTokenSymbols.uninitialized,
-    verifiedFungibleTokensNeedInitialization
-  ])
-
-  useEffect(() => {
-    if (
-      networkStatus === 'online' &&
-      !isLoadingVerifiedFungibleTokens &&
-      verifiedFungibleTokenSymbols.uninitialized.length > 1
-    ) {
-      console.log(
-        'TODO: Sync address verified tokens balance histories for',
-        verifiedFungibleTokenSymbols.uninitialized.filter((symbol) => symbol !== ALPH.symbol)
+    if (networkStatus === 'online' && tokenListSymbols) {
+      dispatch(
+        syncTokenCurrentPrices({ verifiedFungibleTokenSymbols: tokenListSymbols, currency: settings.fiatCurrency })
+      )
+      dispatch(
+        syncTokenPriceHistories({ verifiedFungibleTokenSymbols: tokenListSymbols, currency: settings.fiatCurrency })
       )
     }
-  }, [isLoadingVerifiedFungibleTokens, networkStatus, verifiedFungibleTokenSymbols.uninitialized])
-
-  const refreshTokensLatestPrice = useCallback(() => {
-    dispatch(
-      syncTokenCurrentPrices({
-        verifiedFungibleTokenSymbols: verifiedFungibleTokenSymbols.withPriceHistory,
-        currency: settings.fiatCurrency
-      })
-    )
-  }, [dispatch, settings.fiatCurrency, verifiedFungibleTokenSymbols.withPriceHistory])
-
-  useInterval(
-    refreshTokensLatestPrice,
-    PRICES_REFRESH_INTERVAL,
-    networkStatus !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
-  )
+  }, [])
 
   const refreshAddressesData = useCallback(() => {
     dispatch(syncAddressesData(addressesWithPendingTxs))

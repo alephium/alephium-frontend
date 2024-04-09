@@ -16,18 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createApi } from '@reduxjs/toolkit/query/react'
+import { baseApi } from '@/api/baseApi'
+import { ONE_DAY_MS } from '@/constants'
+import { client } from '@/api/client'
+import { TokenInfo } from '@alephium/web3/dist/src/api/api-explorer'
 
-import { baseQuery } from '@/api/baseQuery'
-
-export const baseApi = createApi({
-  baseQuery,
-  tagTypes: [
-    'TokenInfo',
-    'TokenList',
-    'NFTCollectionMetadata',
-    'NFTCollectionUriMetaData',
-    'FungibleTokenBasicMetadata'
-  ],
-  endpoints: () => ({})
+export const genericAssetsApi = baseApi.injectEndpoints({
+  endpoints: (build) => ({
+    getAssetsGenericInfo: build.query<TokenInfo[], string[]>({
+      queryFn: async (assetIds) => ({ data: await client.explorer.tokens.postTokens(assetIds) }),
+      providesTags: (result, error, assetIds) =>
+        assetIds.map((id) => ({
+          type: 'TokenInfo',
+          id
+        })),
+      keepUnusedDataFor: ONE_DAY_MS / 1000
+    })
+  })
 })
+
+export const { useGetAssetsGenericInfoQuery } = genericAssetsApi
