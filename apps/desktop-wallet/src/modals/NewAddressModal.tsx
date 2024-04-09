@@ -109,7 +109,7 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
     if (group === undefined) return
 
     try {
-      const address = generateAddress({ group })
+      const address = generateAddress(group)
       setNewAddressData(address)
       setNewAddressGroup(group)
     } catch (e) {
