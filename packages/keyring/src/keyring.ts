@@ -78,8 +78,6 @@ export class Keyring {
     if (!metamaskBip39.validateMnemonic(mnemonicStr, wordlist))
       throw new Error('Keyring: Cannot import mnemonic, invalid mnemonic provided')
 
-    console.log('Mnemonic leaked to memory as a string while importing wallet. This is expected.')
-
     const mnemonic = mnemonicStringToUint8Array(mnemonicStr)
 
     this.clearCachedSecrets()
