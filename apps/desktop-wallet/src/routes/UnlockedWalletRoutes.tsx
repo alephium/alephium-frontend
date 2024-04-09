@@ -40,9 +40,7 @@ const WalletRoutes = () => {
   }
 
   useEffect(() => {
-    const isAuthenticated = !!activeWalletId
-
-    if (!isAuthenticated) {
+    if (!activeWalletId) {
       navigate('/')
     } else {
       loadContacts(activeWalletId)

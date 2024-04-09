@@ -86,7 +86,7 @@ const WalletConnectSessionProposalModal = ({
 
   const generateAddressInGroup = () => {
     try {
-      const address = generateAddress({ group })
+      const address = generateAddress(group)
       saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
       posthog.capture('New address created through WalletConnect modal')

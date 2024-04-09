@@ -51,7 +51,7 @@ const SignUnsignedTxModal = ({
   const handleSign = async () => {
     try {
       const messageHash = hashMessage(txData.message, txData.messageHasher)
-      const signature = keyring.signMessage(messageHash, txData.fromAddress.hash)
+      const signature = keyring.signMessageHash(messageHash, txData.fromAddress.hash)
 
       await onSignSuccess({ signature })
 

@@ -31,6 +31,7 @@ import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useScrollContext } from '@/contexts/scroll'
 import { useWalletConnectContext } from '@/contexts/walletconnect'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
 import ModalPortal from '@/modals/ModalPortal'
 import WalletConnectModal from '@/modals/WalletConnectModal'
@@ -52,7 +53,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.id)
+  const { isWalletUnlocked } = useWalletLock()
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const networkStatus = useAppSelector((s) => s.network.status)
@@ -118,7 +119,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
           />
           <VerticalDivider />
 
-          {isAuthenticated && (
+          {isWalletUnlocked && (
             <>
               <Button
                 transparent
