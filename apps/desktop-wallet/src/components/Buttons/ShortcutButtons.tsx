@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keyring } from '@alephium/keyring'
 import { AddressHash } from '@alephium/shared'
 import { ArrowDown, ArrowUp, Lock, Settings } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -25,14 +24,14 @@ import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppSelector } from '@/hooks/redux'
+import useWalletLock from '@/hooks/useWalletLock'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SendModalTransfer from '@/modals/SendModals/Transfer'
 import SettingsModal from '@/modals/SettingsModal'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { walletLocked } from '@/storage/wallets/walletActions'
 
 interface ShortcutButtonsProps {
   analyticsOrigin: string
@@ -59,8 +58,8 @@ const ShortcutButtons = ({
 }: ShortcutButtonsProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const dispatch = useAppDispatch()
   const posthog = usePostHog()
+  const { lockWallet } = useWalletLock()
 
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
   const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -70,13 +69,6 @@ const ShortcutButtons = ({
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
   const [isAddressOptionsModalOpen, setIsAddressOptionsModalOpen] = useState(false)
-
-  const lockWallet = () => {
-    keyring.clearCachedSecrets()
-    dispatch(walletLocked())
-
-    posthog.capture('Locked wallet', { origin: analyticsOrigin })
-  }
 
   const handleReceiveClick = () => {
     setIsReceiveModalOpen(true)
@@ -150,7 +142,7 @@ const ShortcutButtons = ({
           transparent={!solidBackground}
           role="secondary"
           borderless
-          onClick={lockWallet}
+          onClick={() => lockWallet(analyticsOrigin)}
           Icon={Lock}
           highlight={highlight}
           iconBackground

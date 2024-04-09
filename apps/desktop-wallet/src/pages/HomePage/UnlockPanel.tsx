@@ -29,9 +29,9 @@ import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
-import { useGlobalContext } from '@/contexts/global'
 import { useWalletConnectContext } from '@/contexts/walletconnect'
 import { useAppSelector } from '@/hooks/redux'
+import useWalletLock from '@/hooks/useWalletLock'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface UnlockPanelProps {
@@ -41,7 +41,7 @@ interface UnlockPanelProps {
 const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const { t } = useTranslation()
   const wallets = useAppSelector((state) => state.global.wallets)
-  const { unlockWallet } = useGlobalContext()
+  const { unlockWallet } = useWalletLock()
   const { dAppUrlToConnectTo, sessionRequestEvent } = useWalletConnectContext()
   const navigate = useNavigate()
 

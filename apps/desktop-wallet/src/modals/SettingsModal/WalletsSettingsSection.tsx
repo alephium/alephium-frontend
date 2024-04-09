@@ -28,6 +28,7 @@ import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
 import { BoxContainer, Section } from '@/components/PageComponents/PageContainers'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
 import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
@@ -44,13 +45,12 @@ const WalletsSettingsSection = () => {
   const activeWallet = useAppSelector((s) => s.activeWallet)
   const wallets = useAppSelector((s) => s.global.wallets)
   const posthog = usePostHog()
+  const { isWalletUnlocked } = useWalletLock()
 
   const [walletToRemove, setWalletToRemove] = useState<StoredEncryptedWallet | ActiveWallet>()
   const [isDisplayingSecretModal, setIsDisplayingSecretModal] = useState(false)
   const [isQRCodeModalVisible, setIsQRCodeModalVisible] = useState(false)
   const [isEditWalletNameModalOpen, setIsEditWalletNameModalOpen] = useState(false)
-
-  const isAuthenticated = !!activeWallet.id
 
   const handleRemoveWallet = (walletId: string) => {
     walletStorage.delete(walletId)
@@ -85,7 +85,7 @@ const WalletsSettingsSection = () => {
           ))}
         </BoxContainerStyled>
       </Section>
-      {isAuthenticated && (
+      {isWalletUnlocked && (
         <CurrentWalletSection align="flex-start">
           <h2>{t('Current wallet')}</h2>
           <InfoBox label={t('Wallet name')} short>

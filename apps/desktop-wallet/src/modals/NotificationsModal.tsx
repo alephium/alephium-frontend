@@ -16,39 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keyring } from '@alephium/keyring'
 import { motion } from 'framer-motion'
 import { Lock } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInOutScaleFast } from '@/animations'
 import Button from '@/components/Button'
 import WalletSwitcher from '@/components/WalletSwitcher'
-import { useAppDispatch } from '@/hooks/redux'
+import useWalletLock from '@/hooks/useWalletLock'
 import ModalContainer, { ModalContainerProps } from '@/modals/ModalContainer'
-import { walletLocked } from '@/storage/wallets/walletActions'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 const NotificationsModal = ({ onClose, focusMode }: ModalContainerProps) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const posthog = usePostHog()
-
-  const lockWallet = () => {
-    keyring.clearCachedSecrets()
-    dispatch(walletLocked())
-
-    posthog.capture('Locked wallet', { origin: 'notifications' })
-  }
+  const { lockWallet } = useWalletLock()
 
   return (
     <ModalContainer onClose={onClose} focusMode={focusMode}>
       <NotificationsBox role="dialog" {...fadeInOutScaleFast}>
         <h2>{t('Current wallet')}</h2>
         <WalletSwitcher onUnlock={onClose} />
-        <Button onClick={lockWallet} wide transparent Icon={Lock}>
+        <Button onClick={() => lockWallet('notifications')} wide transparent Icon={Lock}>
           {t('Lock wallet')}
         </Button>
       </NotificationsBox>
