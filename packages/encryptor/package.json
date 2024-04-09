@@ -1,5 +1,5 @@
 {
-  "name": "@alephium/keyring",
+  "name": "@alephium/encryptor",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -18,13 +18,8 @@
     "typecheck": "tsup"
   },
   "dependencies": {
-    "@alephium/encryptor": "workspace:*",
-    "@alephium/shared": "workspace:*",
-    "@alephium/web3": "0.29.1",
-    "@metamask/scure-bip39": "^2.1.1",
-    "@scure/bip32": "^1.4.0",
-    "blakejs": "^1.1.1",
-    "ethereum-cryptography": "^2.1.2"
+    "@metamask/browser-passworder": "^4.3.0",
+    "buffer": "^6.0.3"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",

@@ -38,7 +38,7 @@ export type AddressKeyPair = {
   privateKey: string
 }
 
-export class EncryptedMnemonicStoredAsString {
+class EncryptedMnemonicStoredAsString {
   readonly version: EncryptedMnemonicVersion = 1
   readonly mnemonic: string
 
