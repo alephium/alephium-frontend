@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import * as encryptor from '@alephium/encryptor'
 import { resetArray } from '@alephium/shared'
+import * as metamaskBip39 from '@metamask/scure-bip39'
 import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 
 export type MnemonicLength = 12 | 24
@@ -52,7 +53,8 @@ export const dangerouslyConvertUint8ArrayMnemonicToString = (mnemonic: Uint8Arra
     .join(' ')
 
 export const encryptMnemonic = async (mnemonic: Uint8Array, password: string) => {
-  if (!mnemonic) throw new Error('Keyring: Cannot encrypt mnemonic, mnemonic not provided')
+  if (!metamaskBip39.validateMnemonic(mnemonic, wordlist))
+    throw new Error('Keyring: Cannot encrypt mnemonic, invalid mnemonic provided')
 
   const result = await encryptor.encrypt(password, new EncryptedMnemonicStoredAsUint8Array(mnemonic))
 

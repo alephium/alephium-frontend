@@ -24,7 +24,13 @@ import { hashMessage } from '@alephium/web3'
 import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
-import { dangerouslyConvertUint8ArrayMnemonicToString, Keyring, keyring } from '@/index'
+import {
+  dangerouslyConvertUint8ArrayMnemonicToString,
+  decryptMnemonic,
+  encryptMnemonic,
+  Keyring,
+  keyring
+} from '@/index'
 
 const valid24WordMnemonicString =
   'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava'
@@ -324,5 +330,26 @@ describe('keyring', function () {
   it('should convert Uint8Array mnemonic to string', () => {
     const mnemonic = keyring.importMnemonicString(valid24WordMnemonicString)
     expect(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic)).toBe(valid24WordMnemonicString)
+  })
+
+  it('should encrypt a Uint8Array mnemonic', async () => {
+    keyring.clearCachedSecrets()
+    const mnemonic = keyring.generateRandomMnemonic()
+    const mnemonicStr = dangerouslyConvertUint8ArrayMnemonicToString(mnemonic)
+    const encryptedMnemonic = await encryptMnemonic(mnemonic, correctPassword)
+
+    expect(encryptedMnemonic).toBeDefined()
+
+    const decrypted = await decryptMnemonic(encryptedMnemonic, correctPassword)
+
+    expect(decrypted.version).toBe(2)
+    expect(dangerouslyConvertUint8ArrayMnemonicToString(decrypted.decryptedMnemonic)).toBe(mnemonicStr)
+  })
+
+  it('should fail to encrypt an invalid Uint8Array mnemonic', () => {
+    keyring.clearCachedSecrets()
+    const mnemonic = keyring.generateRandomMnemonic()
+    mnemonic[0] = -1
+    expect(() => encryptMnemonic(mnemonic, correctPassword)).rejects.toThrow()
   })
 })
