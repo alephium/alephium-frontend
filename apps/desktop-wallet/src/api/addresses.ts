@@ -16,12 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
+import { NonSensitiveAddressData } from '@alephium/keyring'
 import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { Address, AddressTransactionsSyncResult } from '@/types/addresses'
+import {
+  deriveAddressesInGroup,
+  getGapFromLastActiveAddress,
+  splitResultsArrayIntoOneArrayPerGroup
+} from '@/utils/addresses'
 
 const PAGE_LIMIT = 100
 
@@ -164,19 +169,6 @@ export const discoverAndCacheActiveAddresses = async (
   return activeAddresses
 }
 
-const deriveAddressesInGroup = (group: number, amount: number, skipIndexes: number[]): NonSensitiveAddressData[] => {
-  const addresses = []
-  const skipAddressIndexes = Array.from(skipIndexes)
-
-  for (let j = 0; j < amount; j++) {
-    const newAddress = keyring.generateAndCacheAddress({ group, skipAddressIndexes })
-    addresses.push(newAddress)
-    skipAddressIndexes.push(newAddress.index)
-  }
-
-  return addresses
-}
-
 const getActiveAddressesResults = async (addressesToCheckIfActive: string[]): Promise<boolean[]> => {
   const QUERY_LIMIT = 80
   const results: boolean[] = []
@@ -190,42 +182,4 @@ const getActiveAddressesResults = async (addressesToCheckIfActive: string[]): Pr
   }
 
   return results
-}
-
-const splitResultsArrayIntoOneArrayPerGroup = (array: boolean[], chunkSize: number): boolean[][] => {
-  const chunks = []
-  let i = 0
-
-  while (i < array.length) {
-    chunks.push(array.slice(i, i + chunkSize))
-    i += chunkSize
-  }
-
-  return chunks
-}
-
-const getGapFromLastActiveAddress = (
-  addresses: NonSensitiveAddressData[],
-  results: boolean[],
-  startingGap = 0
-): { gap: number; activeAddresses: NonSensitiveAddressData[] } => {
-  let gap = startingGap
-  const activeAddresses = []
-
-  for (let j = 0; j < addresses.length; j++) {
-    const address = addresses[j]
-    const isActive = results[j]
-
-    if (isActive) {
-      activeAddresses.push(address)
-      gap = 0
-    } else {
-      gap++
-    }
-  }
-
-  return {
-    gap,
-    activeAddresses
-  }
 }
