@@ -34,7 +34,13 @@ export class PersistentArrayStorage<T> {
   load(walletId: StoredEncryptedWallet['id']) {
     const json = localStorage.getItem(this.getKey(walletId))
 
-    return json === null ? [] : (JSON.parse(json) as T[])
+    if (json === null) return [] as T[]
+
+    try {
+      return JSON.parse(json) as T[]
+    } catch {
+      return [] as T[]
+    }
   }
 
   store(walletId: StoredEncryptedWallet['id'], data: T[]) {
