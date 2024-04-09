@@ -22,10 +22,15 @@ import { NetworkId } from '@alephium/web3'
 import { baseApi } from '@/api/baseApi'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { ONE_DAY_MS } from '@/constants'
+import { FungibleTokenBasicMetadata } from '@/types'
+import { TOKENS_QUERY_LIMIT } from '@/api/limits'
+import { chunk } from 'lodash'
+import { client } from '@/api/client'
+import posthog from 'posthog-js'
 
 export const fungibleTokensApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getTokenListFungibleTokens: build.query<TokenList, NetworkId>({
+    getTokenList: build.query<TokenList, NetworkId>({
       queryFn: (networkId) => {
         if (!(['mainnet', 'testnet'] as NetworkId[]).includes(networkId)) {
           return { error: { message: 'Invalid networkId' } }
@@ -39,8 +44,43 @@ export const fungibleTokensApi = baseApi.injectEndpoints({
       },
       providesTags: (result, error, networkId) => [{ type: 'TokenList', networkId }],
       keepUnusedDataFor: ONE_DAY_MS / 1000
+    }),
+    getFungibleTokenMetadata: build.query<FungibleTokenBasicMetadata[], string[]>({
+      queryFn: async (tokenIds) => {
+        let tokensMetadata: FungibleTokenBasicMetadata[] = []
+
+        try {
+          tokensMetadata = (
+            await Promise.all(
+              chunk(tokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
+                client.explorer.tokens.postTokensFungibleMetadata(unknownTokenIdsChunk)
+              )
+            )
+          )
+            .flat()
+            .map((token) => {
+              const parsedDecimals = parseInt(token.decimals)
+
+              return {
+                ...token,
+                decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0
+              }
+            })
+        } catch (e) {
+          console.error(e)
+          posthog.capture('Error', { message: 'Syncing unknown fungible tokens info' })
+        }
+
+        return { data: tokensMetadata }
+      },
+      providesTags: (result, error, tokenIds) =>
+        tokenIds.map((id) => ({
+          type: 'FungibleTokenBasicMetadata',
+          id
+        })),
+      keepUnusedDataFor: ONE_DAY_MS / 1000
     })
   })
 })
 
-export const { useGetTokenListFungibleTokensQuery } = fungibleTokensApi
+export const { useGetTokenListQuery } = fungibleTokensApi

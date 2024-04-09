@@ -22,6 +22,6 @@ import { baseQuery } from '@/api/baseQuery'
 
 export const baseApi = createApi({
   baseQuery,
-  tagTypes: ['TokenList', 'NFTCollectionMetadata', 'NFTCollectionUriMetaData'],
+  tagTypes: ['TokenList', 'NFTCollectionMetadata', 'NFTCollectionUriMetaData', 'FungibleTokenBasicMetadata'],
   endpoints: () => ({})
 })
