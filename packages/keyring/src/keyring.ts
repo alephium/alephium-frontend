@@ -147,8 +147,8 @@ export class Keyring {
         const newAddresses = this._deriveAddressesInGroup(group, remainingGap, skipIndexes)
         skipIndexes.push(...newAddresses.map((address) => address.index))
 
-        const addressesToCheckIfActive = newAddresses.map((address) => address.hash)
-        const results = await getActiveAddressesResults(addressesToCheckIfActive, client)
+        const newAddressesToCheckIfActive = newAddresses.map((address) => address.hash)
+        const results = await getActiveAddressesResults(newAddressesToCheckIfActive, client)
 
         const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
           newAddresses,
