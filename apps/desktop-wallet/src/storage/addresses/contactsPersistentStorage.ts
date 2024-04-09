@@ -20,19 +20,13 @@ import { Contact, ContactFormData } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 
 import i18n from '@/i18n'
-import {
-  getEncryptedStoragePropsFromActiveWallet,
-  PersistentEncryptedStorage
-} from '@/storage/encryptedPersistentStorage'
+import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
-class ContactsStorage extends PersistentEncryptedStorage {
-  store(contact: ContactFormData) {
-    const encryptedStorageProps = getEncryptedStoragePropsFromActiveWallet()
-
-    if (encryptedStorageProps.passphrase) throw new Error('Cannot use contact feature in passphrase-enabled wallets')
-
+class ContactsStorage extends PersistentArrayStorage<Contact> {
+  storeOne(walletId: StoredEncryptedWallet['id'], contact: ContactFormData) {
     let contactId = contact.id
-    const contacts: Contact[] = this.load()
+    const contacts: Contact[] = this.load(walletId)
 
     const indexOfContactWithSameAddress = contacts.findIndex((c: Contact) => c.address === contact.address)
     const indexOfContactWithSameName = contacts.findIndex(
@@ -59,17 +53,13 @@ class ContactsStorage extends PersistentEncryptedStorage {
     }
 
     console.log(`🟠 Storing contact ${contact.name} locally`)
-    super._store(JSON.stringify(contacts))
+    super.store(walletId, contacts)
 
     return contactId
   }
 
-  deleteContact(contact: Contact) {
-    const encryptedStorageProps = getEncryptedStoragePropsFromActiveWallet()
-
-    if (encryptedStorageProps.passphrase) throw new Error('Cannot use contact feature in passphrase-enabled wallets')
-
-    const contacts: Contact[] = this.load()
+  deleteContact(walletId: StoredEncryptedWallet['id'], contact: Contact) {
+    const contacts: Contact[] = this.load(walletId)
     const storedContactIndex = contacts.findIndex((c) => c.id === contact.id)
 
     if (storedContactIndex < 0) throw new Error(i18n.t('Could not find a contact with this ID'))
@@ -77,11 +67,8 @@ class ContactsStorage extends PersistentEncryptedStorage {
     contacts.splice(storedContactIndex, 1)
 
     console.log(`🟠 Deleting contact ${contact.name}`)
-    super._store(JSON.stringify(contacts))
+    super.store(walletId, contacts)
   }
 }
 
-const version = '1'
-const Storage = new ContactsStorage('contacts', version)
-
-export default Storage
+export const contactsStorage = new ContactsStorage('contacts')

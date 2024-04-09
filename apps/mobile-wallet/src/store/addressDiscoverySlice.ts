@@ -16,15 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressIndex,
-  AddressKeyPair,
-  appReset,
-  client,
-  customNetworkSettingsSaved,
-  networkPresetSwitched
-} from '@alephium/shared'
-import { deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
+import { AddressIndex, appReset, client, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
+import { AddressKeyPair, deriveAddressAndKeys, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
 import { addressToGroup, explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,

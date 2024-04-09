@@ -16,9 +16,5 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export function uniq<T>(array: T[]): Array<T> {
-  return Array.from(new Set(array))
-}
-
-export const isPromiseFulfilled = <T>(p: PromiseSettledResult<T>): p is PromiseFulfilledResult<T> =>
-  p.status === 'fulfilled'
+export * from '@/keyring'
+export * from '@/mnemonic'

@@ -15,7 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { AddressKeyPair } from '@alephium/shared'
+import { NonSensitiveAddressData } from '@alephium/keyring'
 import { addressToGroup, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -43,21 +43,25 @@ interface NewAddressModalProps {
 
 const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps) => {
   const { t } = useTranslation()
-  const isPassphraseUsed = useAppSelector((state) => state.activeWallet.passphrase)
+  const isPassphraseUsed = useAppSelector((state) => state.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { generateAddress, generateAndSaveOneAddressPerGroup } = useAddressGeneration()
   const posthog = usePostHog()
 
   const [addressLabel, setAddressLabel] = useState({ title: '', color: isPassphraseUsed ? '' : getRandomLabelColor() })
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
-  const [newAddressData, setNewAddressData] = useState<AddressKeyPair>()
+  const [newAddressData, setNewAddressData] = useState<NonSensitiveAddressData>()
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
 
   useEffect(() => {
     if (singleAddress) {
-      const address = generateAddress()
-      setNewAddressData(address)
-      setNewAddressGroup(addressToGroup(address.hash, TOTAL_NUMBER_OF_GROUPS))
+      try {
+        const address = generateAddress()
+        setNewAddressData(address)
+        setNewAddressGroup(addressToGroup(address.hash, TOTAL_NUMBER_OF_GROUPS))
+      } catch (e) {
+        console.error(e)
+      }
     }
     // Without disabling eslint, we need to add `generateAddress` in the deps. Doing so results in infinite renders,
     // even after wrapping it in a useCallback. The only solution would be to implement generateAddress in this
@@ -74,9 +78,13 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
         label: addressLabel.title
       }
 
-      saveNewAddresses([{ ...newAddressData, ...settings }])
+      try {
+        saveNewAddresses([{ ...newAddressData, ...settings }])
 
-      posthog.capture('New address created', { label_length: settings.label.length })
+        posthog.capture('New address created', { label_length: settings.label.length })
+      } catch (e) {
+        console.error(e)
+      }
     } else {
       generateAndSaveOneAddressPerGroup({ labelPrefix: addressLabel.title, labelColor: addressLabel.color })
 
@@ -100,9 +108,13 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
   function onSelect(group?: number) {
     if (group === undefined) return
 
-    const address = generateAddress({ group })
-    setNewAddressData(address)
-    setNewAddressGroup(group)
+    try {
+      const address = generateAddress({ group })
+      setNewAddressData(address)
+      setNewAddressGroup(group)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return (

@@ -18,27 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressMetadata, AddressSettings } from '@alephium/shared'
 
-import {
-  getEncryptedStoragePropsFromActiveWallet,
-  PersistentEncryptedStorage
-} from '@/storage/encryptedPersistentStorage'
-import { latestAddressMetadataVersion } from '@/utils/migration'
+import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface AddressMetadataStorageStoreProps {
   index: number
   settings: AddressSettings
 }
 
-class AddressMetadataStorage extends PersistentEncryptedStorage {
-  store({ index, settings }: AddressMetadataStorageStoreProps) {
-    const encryptedStorageProps = getEncryptedStoragePropsFromActiveWallet()
-    if (encryptedStorageProps.passphrase) return
-
-    const addressesMetadata = this.load()
+class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
+  storeOne(walletId: StoredEncryptedWallet['id'], { index, settings }: AddressMetadataStorageStoreProps) {
+    const addressesMetadata = this.load(walletId)
     const existingAddressMetadata: AddressMetadata | undefined = addressesMetadata.find(
       (data: AddressMetadata) => data.index === index
     )
-    const currentDefaultAddress: AddressMetadata = addressesMetadata.find((data: AddressMetadata) => data.isDefault)
+    const currentDefaultAddress = addressesMetadata.find((data) => data.isDefault)
 
     if (!existingAddressMetadata) {
       addressesMetadata.push({
@@ -60,14 +54,8 @@ class AddressMetadataStorage extends PersistentEncryptedStorage {
 
     console.log(`🟠 Storing address index ${index} metadata locally`)
 
-    super._store(JSON.stringify(addressesMetadata))
-  }
-
-  storeAll(addressesMetadata: AddressMetadata[]) {
-    super._store(JSON.stringify(addressesMetadata))
+    super.store(walletId, addressesMetadata)
   }
 }
 
-const Storage = new AddressMetadataStorage('addresses-metadata', latestAddressMetadataVersion)
-
-export default Storage
+export const addressMetadataStorage = new AddressMetadataStorage('addresses-metadata')

@@ -16,11 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Wallet } from '@alephium/shared-crypto'
+export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+  let nextAvailableAddressIndex = startIndex
 
-export const getWalletInitialAddress = (wallet: Wallet) => ({
-  index: 0,
-  hash: wallet.address,
-  publicKey: wallet.publicKey,
-  privateKey: wallet.privateKey
-})
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
+}
+
+export const isAddressIndexValid = (addressIndex: number) =>
+  addressIndex >= 0 && Number.isInteger(addressIndex) && !addressIndex.toString().includes('e')

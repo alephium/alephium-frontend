@@ -16,35 +16,33 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Wallet } from '@alephium/shared-crypto'
+import { keyring } from '@alephium/keyring'
 
 import { syncAddressesData } from '@/storage/addresses/addressesActions'
-import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
 import { walletSaved } from '@/storage/wallets/walletActions'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
-import { StoredWallet } from '@/types/wallet'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
+import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
-import { getWalletInitialAddress } from '@/utils/wallet'
 
 interface SaveNewWalletProps {
   walletName: string
-  password: string
-  wallet: Wallet
+  encrypted: string
 }
 
-export const saveNewWallet = ({ walletName, password, wallet }: SaveNewWalletProps): StoredWallet['id'] => {
+export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): StoredEncryptedWallet['id'] => {
+  const storedWallet = walletStorage.store(walletName, encrypted)
   const initialAddressSettings = getInitialAddressSettings()
-  const storedWallet = WalletStorage.store(walletName, password, wallet)
 
   store.dispatch(
     walletSaved({
-      wallet: { ...storedWallet, mnemonic: wallet.mnemonic },
-      initialAddress: { ...getWalletInitialAddress(wallet), ...initialAddressSettings }
+      wallet: storedWallet,
+      initialAddress: { ...keyring.generateAndCacheAddress({ addressIndex: 0 }), ...initialAddressSettings }
     })
   )
 
-  AddressMetadataStorage.store({ index: 0, settings: initialAddressSettings })
+  addressMetadataStorage.storeOne(storedWallet.id, { index: 0, settings: initialAddressSettings })
   store.dispatch(syncAddressesData())
 
   return storedWallet.id

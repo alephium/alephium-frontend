@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { dangerouslyConvertUint8ArrayMnemonicToString } from '@alephium/keyring'
 import { colord } from 'colord'
 import { motion, PanInfo } from 'framer-motion'
 import { throttle } from 'lodash'
 import { AlertTriangle, ThumbsUp } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -38,9 +38,6 @@ import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
-import { useAppDispatch } from '@/hooks/redux'
-import { walletCreationFailed } from '@/storage/wallets/walletActions'
-import { saveNewWallet } from '@/storage/wallets/walletStorageUtils'
 
 interface WordKey {
   word: string
@@ -49,28 +46,44 @@ interface WordKey {
 
 const CheckWordsPage = () => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const { mnemonic, plainWallet, password, walletName } = useWalletContext()
   const { onButtonBack, onButtonNext } = useStepsContext()
-  const posthog = usePostHog()
+  const { mnemonic } = useWalletContext()
 
-  const splitMnemonic = mnemonic.split(' ')
-
-  const wordList = useRef<WordKey[]>(
-    getAlphabeticallyOrderedList(splitMnemonic).map((wordString, i) => ({
-      word: wordString,
-      key: `${wordString}-${i}`
-    }))
-  )
-
+  const [wordList, setWordList] = useState<WordKey[]>([])
+  const [selectedElements, setSelectedElements] = useState<{ [wordKey: string]: Element | null }>({})
   const [selectedWords, setSelectedWords] = useState<WordKey[]>([])
-  const selectedElements = useRef<{ [wordKey: string]: Element | null }>(
-    splitMnemonic.reduce((p, c) => ({ ...p, [c]: null }), {})
-  )
+  const [isValid, setIsValid] = useState(false)
 
   // === Drag interaction ===
   const [isDragging, setIsDragging] = useState(false)
   const [closestWordKey, setClosestWordKey] = useState<string>('')
+
+  useEffect(() => {
+    if (!mnemonic) return
+
+    setWordList(
+      getAlphabeticallyOrderedList(dangerouslyConvertUint8ArrayMnemonicToString(mnemonic).split(' ')).map(
+        (wordString, i) => ({
+          word: wordString,
+          key: `${wordString}-${i}`
+        })
+      )
+    )
+
+    setSelectedElements(
+      dangerouslyConvertUint8ArrayMnemonicToString(mnemonic)
+        .split(' ')
+        .reduce((p, c) => ({ ...p, [c]: null }), {})
+    )
+  }, [mnemonic])
+
+  useEffect(() => {
+    if (!mnemonic) return
+
+    setIsValid(
+      selectedWords.map(({ word }) => word).join(' ') === dangerouslyConvertUint8ArrayMnemonicToString(mnemonic)
+    )
+  }, [mnemonic, selectedWords])
 
   // === Actions ===
   // ===============
@@ -82,7 +95,7 @@ const CheckWordsPage = () => {
     setSelectedWords(selectedWords.filter((word) => w.key !== word.key))
 
     // Remove from element list
-    selectedElements.current[w.key] = null
+    selectedElements[w.key] = null
   }
 
   const handleSelectedWordDrag = throttle(
@@ -90,7 +103,7 @@ const CheckWordsPage = () => {
       event: MouseEvent | TouchEvent | PointerEvent,
       info: PanInfo,
       word: WordKey,
-      currentSelectedElements: typeof selectedElements.current
+      currentSelectedElements: typeof selectedElements
     ) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [word.key]: _currentElement, ...otherElements } = currentSelectedElements
@@ -154,7 +167,7 @@ const CheckWordsPage = () => {
   // === Renders
 
   const renderRemainingWords = () =>
-    wordList.current
+    wordList
       .filter((w) => !selectedWords?.includes(w))
       .map((w) => (
         <RemainingWord onClick={() => setSelectedWords([...selectedWords, w])} key={w.key} layoutId={w.key}>
@@ -170,10 +183,10 @@ const CheckWordsPage = () => {
         layoutId={w.key}
         drag
         ref={(element) => {
-          if (selectedElements.current && element) selectedElements.current[w.key] = element
+          if (selectedElements && element) selectedElements[w.key] = element
         }}
         onDragStart={() => setIsDragging(true)}
-        onDrag={(e, info) => handleSelectedWordDrag(e, info, w, selectedElements.current)}
+        onDrag={(e, info) => handleSelectedWordDrag(e, info, w, selectedElements)}
         onDragEnd={() => handleSelectedWordDragEnd(w, closestWordKey)}
       >
         {isDragging && closestWordKey === w.key && <DragCursor layoutId="cursor" />}
@@ -181,24 +194,20 @@ const CheckWordsPage = () => {
       </SelectedWord>
     ))
 
-  const areWordsValid = selectedWords.map((w) => w.word).toString() == splitMnemonic.toString()
-
-  const createEncryptedWallet = () => {
-    if (areWordsValid && plainWallet) {
-      saveNewWallet({ wallet: plainWallet, walletName, password })
-
-      posthog.capture('New wallet created', { wallet_name_length: walletName.length })
-
-      return true
-    }
+  const handleNextButtonPress = () => {
+    cleanup()
+    onButtonNext()
   }
 
-  const handleButtonNext = () => {
-    const success = createEncryptedWallet()
-    if (success) onButtonNext()
-    else {
-      dispatch(walletCreationFailed(t('Something went wrong when creating encrypted wallet.')))
-    }
+  const handleBackButtonPress = () => {
+    cleanup()
+    onButtonBack()
+  }
+
+  const cleanup = () => {
+    setWordList([])
+    setSelectedElements({})
+    setSelectedWords([])
   }
 
   return (
@@ -209,16 +218,14 @@ const CheckWordsPage = () => {
       <PanelContentContainer>
         <Section>
           <Paragraph>{t('Select the words in the right order.')}</Paragraph>
-          <SelectedWordList
-            className={selectedWords.length === wordList.current.length ? (areWordsValid ? 'valid' : 'error') : ''}
-          >
+          <SelectedWordList className={selectedWords.length === wordList.length ? (isValid ? 'valid' : 'error') : ''}>
             {renderSelectedWords()}
           </SelectedWordList>
           <RemainingWordList>{renderRemainingWords()}</RemainingWordList>
         </Section>
       </PanelContentContainer>
-      {selectedWords.length === wordList.current.length ? (
-        !areWordsValid ? (
+      {selectedWords.length === wordList.length ? (
+        !isValid ? (
           <InfoBox
             Icon={AlertTriangle}
             importance="alert"
@@ -235,12 +242,12 @@ const CheckWordsPage = () => {
           />
         )
       ) : null}
-      {selectedWords.length === wordList.current.length && (
+      {selectedWords.length === wordList.length && (
         <FooterActionsContainer>
-          <Button role="secondary" onClick={onButtonBack}>
+          <Button role="secondary" onClick={handleBackButtonPress}>
             {t('Cancel')}
           </Button>
-          <Button onClick={handleButtonNext} disabled={!areWordsValid}>
+          <Button onClick={handleNextButtonPress} disabled={!isValid}>
             {t('Continue')}
           </Button>
         </FooterActionsContainer>

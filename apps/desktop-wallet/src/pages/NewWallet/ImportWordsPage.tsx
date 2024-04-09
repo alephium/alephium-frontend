@@ -16,10 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
-import { walletImport } from '@alephium/shared-crypto'
+import { keyring } from '@alephium/keyring'
 import Tagify, { BaseTagData, ChangeEventData, TagData } from '@yaireo/tagify'
-import { usePostHog } from 'posthog-js/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -35,25 +33,21 @@ import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
-import { useAppDispatch } from '@/hooks/redux'
-import useAddressGeneration from '@/hooks/useAddressGeneration'
-import { walletCreationFailed } from '@/storage/wallets/walletActions'
-import { saveNewWallet } from '@/storage/wallets/walletStorageUtils'
 import { bip39Words } from '@/utils/bip39'
 
 const ImportWordsPage = () => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const { password, walletName } = useWalletContext()
   const { onButtonBack, onButtonNext } = useStepsContext()
-  const { discoverAndSaveUsedAddresses } = useAddressGeneration()
-  const posthog = usePostHog()
+  const { setMnemonic } = useWalletContext()
 
   const [phrase, setPhrase] = useState<{ value: string }[]>([])
   const allowedWords = useRef(bip39Words.split(' '))
   const defaultPlaceholder = t('Type your recovery phrase')
   const [customPlaceholder, setCustomPlaceholder] = useState(defaultPlaceholder)
   const tagifyRef = useRef<Tagify<TagData> | undefined>()
+
+  // Alephium's node code uses 12 as the minimal mnemomic length.
+  const isPhraseLongEnough = phrase.length >= 12
 
   const handlePhraseChange = (event: CustomEvent<ChangeEventData<BaseTagData>>) => {
     // Split words where spaces are
@@ -70,29 +64,19 @@ const ImportWordsPage = () => {
     }
   }, [customPlaceholder])
 
-  const handleWalletImport = () => {
-    const formatedPhrase = phrase
-      .map((w) => w.value)
-      .toString()
-      .replace(/,/g, ' ')
+  const handleNextButtonPress = () => {
+    if (!isPhraseLongEnough) return
 
     try {
-      const wallet = walletImport(formatedPhrase)
+      setMnemonic(keyring.importMnemonicString(phrase.map((word) => word.value).join(' ')))
 
-      saveNewWallet({ wallet, walletName, password })
-
-      posthog.capture('New wallet imported', { wallet_name_length: walletName.length })
-
-      discoverAndSaveUsedAddresses({ mnemonic: wallet.mnemonic, skipIndexes: [0], enableLoading: false })
       onButtonNext()
     } catch (e) {
-      dispatch(walletCreationFailed(getHumanReadableError(e, t('Error while importing wallet'))))
-      posthog.capture('Error', { message: 'Could not import wallet' })
+      console.error(e)
+    } finally {
+      setPhrase([])
     }
   }
-
-  // Alephium's node code uses 12 as the minimal mnemomic length.
-  const isNextButtonActive = phrase.length >= 12
 
   return (
     <FloatingPanel>
@@ -107,7 +91,7 @@ const ImportWordsPage = () => {
           />
         </Section>
         <Paragraph secondary centered>
-          {!isNextButtonActive
+          {!isPhraseLongEnough
             ? t("Make sure to store the words in a secure location! They are your wallet's secret recovery phrase.")
             : t("All good? Let's continue!")}
         </Paragraph>
@@ -116,7 +100,7 @@ const ImportWordsPage = () => {
         <Button role="secondary" onClick={onButtonBack}>
           {t('Cancel')}
         </Button>
-        <Button onClick={handleWalletImport} disabled={!isNextButtonActive}>
+        <Button onClick={handleNextButtonPress} disabled={!isPhraseLongEnough}>
           {t('Continue')}
         </Button>
       </FooterActionsContainer>

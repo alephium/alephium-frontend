@@ -16,22 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { deriveNewAddressData, Wallet, walletImport } from '@alephium/shared-crypto'
+import { keyring } from '@alephium/keyring'
 
 interface WorkerPayload {
   data: {
-    mnemonic: Wallet['mnemonic']
     indexesToDerive: number[]
-    passphrase?: string
   }
 }
 
-self.onmessage = ({ data: { mnemonic, passphrase, indexesToDerive } }: WorkerPayload) => {
-  const { masterKey } = walletImport(mnemonic, passphrase)
-
-  derive(masterKey, indexesToDerive)
+self.onmessage = ({ data: { indexesToDerive } }: WorkerPayload) => {
+  derive(indexesToDerive)
 }
 
-const derive = (masterKey: Wallet['masterKey'], indexesToDerive: number[]) => {
-  self.postMessage(indexesToDerive.map((index) => deriveNewAddressData(masterKey, undefined, index)))
+const derive = (indexesToDerive: number[]) => {
+  try {
+    self.postMessage(indexesToDerive.map((index) => keyring.generateAndCacheAddress({ addressIndex: index })))
+  } catch (e) {
+    console.error(e)
+  }
 }

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getWalletFromMnemonic } from '@alephium/shared-crypto'
+import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { merge } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { createContext, useContext, useEffect, useState } from 'react'
@@ -26,15 +26,15 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import useIdleForTooLong from '@/hooks/useIdleForTooLong'
 import useLatestGitHubRelease from '@/hooks/useLatestGitHubRelease'
-import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
-import ContactsStorage from '@/storage/addresses/contactsPersistentStorage'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
+import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { osThemeChangeDetected, userDataMigrationFailed } from '@/storage/global/globalActions'
 import { walletLocked, walletSwitched, walletUnlocked } from '@/storage/wallets/walletActions'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
+import { StoredEncryptedWallet } from '@/types/wallet'
 import { AlephiumWindow } from '@/types/window'
 import { migrateUserData } from '@/utils/migration'
-import { getWalletInitialAddress } from '@/utils/wallet'
 
 interface WalletUnlockProps {
   event: 'unlock' | 'switch'
@@ -82,58 +82,73 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
   const triggerNewVersionDownload = () => setNewVersionDownloadTriggered(true)
   const resetNewVersionDownloadTrigger = () => setNewVersionDownloadTriggered(false)
 
-  const unlockWallet = async ({ event, walletId, password, afterUnlock, passphrase }: WalletUnlockProps) => {
-    let wallet
+  const unlockWallet = async (props: WalletUnlockProps | null) => {
+    if (!props) return
+
+    const { event, walletId, afterUnlock } = props
+    let { password, passphrase } = props
+    let encryptedWallet: StoredEncryptedWallet | null
+    let initialAddress: NonSensitiveAddressData
+    let version: EncryptedMnemonicVersion
 
     try {
-      wallet = WalletStorage.load(walletId, password)
+      encryptedWallet = walletStorage.load(walletId)
+      version = keyring.initFromEncryptedMnemonic(encryptedWallet.encrypted, password, passphrase ?? '')
     } catch (e) {
       console.error(e)
       dispatch(passwordValidationFailed())
       return
     }
 
-    if (passphrase) {
-      wallet = { ...wallet, ...getWalletFromMnemonic(wallet.mnemonic, passphrase) }
+    try {
+      migrateUserData(encryptedWallet.id, password, version)
+    } catch (e) {
+      console.error(e)
+      posthog.capture('Error', { message: 'User data migration failed ' })
+      dispatch(userDataMigrationFailed())
+    }
+
+    try {
+      initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0 })
+    } catch (e) {
+      console.error(e)
+      return
     }
 
     const payload = {
       wallet: {
-        id: walletId,
-        name: wallet.name,
-        mnemonic: wallet.mnemonic,
-        passphrase
+        id: encryptedWallet.id,
+        name: encryptedWallet.name,
+        isPassphraseUsed: !!passphrase
       },
-      initialAddress: getWalletInitialAddress(wallet)
+      initialAddress
     }
 
     dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
 
     if (!passphrase) {
-      try {
-        migrateUserData()
-      } catch (e) {
-        console.error(e)
-        posthog.capture('Error', { message: 'User data migration failed ' })
-        dispatch(userDataMigrationFailed())
-      }
+      restoreAddressesFromMetadata(encryptedWallet.id)
 
-      restoreAddressesFromMetadata()
-
-      WalletStorage.update(walletId, { lastUsed: Date.now() })
+      walletStorage.update(walletId, { lastUsed: Date.now() })
 
       posthog.capture(event === 'unlock' ? 'Wallet unlocked' : 'Wallet switched', {
-        wallet_name_length: wallet.name.length,
-        number_of_addresses: (AddressMetadataStorage.load() as []).length,
-        number_of_contacts: (ContactsStorage.load() as []).length
+        wallet_name_length: encryptedWallet.name.length,
+        number_of_addresses: (addressMetadataStorage.load(encryptedWallet.id) as []).length,
+        number_of_contacts: (contactsStorage.load(encryptedWallet.id) as []).length
       })
     }
 
     afterUnlock()
+
+    encryptedWallet = null
+    passphrase = ''
+    password = ''
+    props = null
   }
 
   useIdleForTooLong(
     () => {
+      keyring.clearCachedSecrets()
       dispatch(walletLocked())
     },
     (settings.walletLockTimeInMinutes || 0) * 60 * 1000

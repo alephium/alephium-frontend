@@ -1,0 +1,40 @@
+diff --git a/dist/index.js b/dist/index.js
+index e0c500c44b31f83a5f043c78805be1f7accbef08..7a371349418318473ba19207c0d0d8844a689bee 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -132,7 +132,11 @@ const salt = (passphrase) => nfkd(`mnemonic${passphrase}`);
+  */
+ function mnemonicToSeed(mnemonic, wordlist, passphrase = '') {
+     const encodedMnemonicUint8Array = encodeMnemonicForSeedDerivation(mnemonic, wordlist);
+-    return (0, pbkdf2_1.pbkdf2Async)(sha512_1.sha512, encodedMnemonicUint8Array, salt(passphrase), { c: 2048, dkLen: 64 });
++    const seed = (0, pbkdf2_1.pbkdf2Async)(sha512_1.sha512, encodedMnemonicUint8Array, salt(passphrase), { c: 2048, dkLen: 64 });
++
++    resetUint8Array(encodedMnemonicUint8Array)
++
++    return seed
+ }
+ exports.mnemonicToSeed = mnemonicToSeed;
+ /**
+@@ -148,7 +152,11 @@ exports.mnemonicToSeed = mnemonicToSeed;
+  */
+ function mnemonicToSeedSync(mnemonic, wordlist, passphrase = '') {
+     const encodedMnemonicUint8Array = encodeMnemonicForSeedDerivation(mnemonic, wordlist);
+-    return (0, pbkdf2_1.pbkdf2)(sha512_1.sha512, encodedMnemonicUint8Array, salt(passphrase), { c: 2048, dkLen: 64 });
++    const seed = (0, pbkdf2_1.pbkdf2)(sha512_1.sha512, encodedMnemonicUint8Array, salt(passphrase), { c: 2048, dkLen: 64 });
++
++    resetUint8Array(encodedMnemonicUint8Array)
++
++    return seed
+ }
+ exports.mnemonicToSeedSync = mnemonicToSeedSync;
+ /**
+@@ -166,3 +174,9 @@ function encodeMnemonicForSeedDerivation(mnemonic, wordlist) {
+     }
+     return encodedMnemonicUint8Array;
+ }
++
++function resetUint8Array(array) {
++    for (let i = 0; i < array.length; i++) {
++        array[i] = 0;
++    }
++}

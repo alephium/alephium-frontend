@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { AddressHash } from '@alephium/shared'
 import { ArrowDown, ArrowUp, Lock, Settings } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -71,6 +72,7 @@ const ShortcutButtons = ({
   const [isAddressOptionsModalOpen, setIsAddressOptionsModalOpen] = useState(false)
 
   const lockWallet = () => {
+    keyring.clearCachedSecrets()
     dispatch(walletLocked())
 
     posthog.capture('Locked wallet', { origin: analyticsOrigin })

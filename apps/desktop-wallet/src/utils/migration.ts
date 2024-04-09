@@ -16,22 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { encrypt } from '@alephium/shared-crypto'
+import {
+  dangerouslyConvertUint8ArrayMnemonicToString,
+  decryptMnemonic,
+  DecryptMnemonicResult,
+  EncryptedMnemonicVersion,
+  encryptMnemonic
+} from '@alephium/keyring'
+import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { decrypt } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 
-import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
-import { getEncryptedStoragePropsFromActiveWallet } from '@/storage/encryptedPersistentStorage'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
+import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import SettingsStorage, { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import { GeneralSettings, ThemeSettings } from '@/types/settings'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 import { getRandomLabelColor } from '@/utils/colors'
 import { stringToDoubleSHA256HexString } from '@/utils/misc'
-
-export const latestAddressMetadataVersion = '2022-05-27T12:00:00Z'
 
 //
 // ANY CHANGES TO THIS FILE MUST BE REVIEWED BY AT LEAST ONE CORE CONTRIBUTOR
@@ -75,11 +81,18 @@ export const migrateNetworkSettings = (): NetworkSettings => {
 }
 
 // Then we run user data migrations after the user has authenticated
-export const migrateUserData = () => {
+export const migrateUserData = (
+  walletId: StoredEncryptedWallet['id'],
+  password: string,
+  version: EncryptedMnemonicVersion
+) => {
   console.log('🚚 Migrating user data')
 
-  _20220527_120000()
-  _20230209_124300()
+  _20240328_1200_migrateEncryptedWalletFromV1ToV2(walletId, password, version)
+  _20240328_1221_migrateAddressAndContactsToUnencrypted(walletId, password)
+  _20230209_124300_migrateIsMainToIsDefault(walletId)
+
+  password = ''
 }
 
 // Change localStorage address metadata key from "{walletName}-addresses-metadata" to "addresses-metadata-{walletName}"
@@ -108,30 +121,6 @@ export const _20220511_074100 = () => {
         localStorage.removeItem(keyDeprecated)
       }
     }
-  }
-}
-
-// Encrypt address metadata value
-export const _20220527_120000 = () => {
-  const { mnemonic, walletId } = getEncryptedStoragePropsFromActiveWallet()
-  const addressesMetadataLocalStorageKeyPrefix = 'addresses-metadata'
-  const key = `${addressesMetadataLocalStorageKeyPrefix}-${walletId}`
-
-  const json = localStorage.getItem(key)
-  if (json === null) return
-
-  const addressSettingsList = JSON.parse(json)
-
-  // The old format is not encrypted and is a list. The data structure can be deserialized and then encrypted. We can
-  // also take this opportunity to start versioning our data.
-  if (Array.isArray(addressSettingsList)) {
-    localStorage.setItem(
-      key,
-      JSON.stringify({
-        version: '2022-05-27T12:00:00Z',
-        encrypted: encrypt(mnemonic, JSON.stringify(addressSettingsList))
-      })
-    )
   }
 }
 
@@ -250,8 +239,8 @@ export const _20230228_155100 = () => {
       ) {
         const id = nanoid()
         const name = nameOrId // Since the wallet didn't have a "name" property, we know that the name was used as key
-        const newKey = WalletStorage.getKey(id)
-        const newValue: StoredWallet = {
+        const newKey = walletStorage.getKey(id)
+        const newValue: StoredEncryptedWallet = {
           id,
           name,
           encrypted: typeof wallet === 'string' ? wallet : JSON.stringify(wallet),
@@ -285,7 +274,7 @@ export const _20230228_155100 = () => {
               }
             }
 
-            localStorage.setItem(AddressMetadataStorage.getKey(id), JSON.stringify(addressesMetadata))
+            localStorage.setItem(addressMetadataStorage.getKey(id), JSON.stringify(addressesMetadata))
             localStorage.removeItem(oldKey)
           }
         })
@@ -295,8 +284,8 @@ export const _20230228_155100 = () => {
 }
 
 // Change isMain to isDefault settings of each address and ensure it has a color
-export const _20230209_124300 = () => {
-  const currentAddressMetadata: (AddressMetadata | DeprecatedAddressMetadata)[] = AddressMetadataStorage.load()
+export const _20230209_124300_migrateIsMainToIsDefault = (walletId: StoredEncryptedWallet['id']) => {
+  const currentAddressMetadata: (AddressMetadata | DeprecatedAddressMetadata)[] = addressMetadataStorage.load(walletId)
   const newAddressesMetadata: AddressMetadata[] = []
 
   currentAddressMetadata.forEach((currentMetadata: AddressMetadata | DeprecatedAddressMetadata) => {
@@ -311,5 +300,92 @@ export const _20230209_124300 = () => {
     newAddressesMetadata.push(newMetadata)
   })
 
-  AddressMetadataStorage.storeAll(newAddressesMetadata)
+  addressMetadataStorage.store(walletId, newAddressesMetadata)
+}
+
+// In version 1 the encrypted mnemonic used to be stored as a string before we started using Uint8Array. This migrates
+// the encrypted wallet from StoredStateV1 to StoredStateV2.
+export const _20240328_1200_migrateEncryptedWalletFromV1ToV2 = (
+  walletId: StoredEncryptedWallet['id'],
+  password: string,
+  version: EncryptedMnemonicVersion
+) => {
+  try {
+    if (version === 1) {
+      let decryptedMnemonic: Uint8Array | null = decryptMnemonic(
+        walletStorage.load(walletId).encrypted,
+        password
+      ).decryptedMnemonic
+
+      walletStorage.update(walletId, { encrypted: encryptMnemonic(decryptedMnemonic, password) })
+
+      console.log('✅ Migrated stored mnemonic from version 1 to version 2')
+      decryptedMnemonic = null
+    }
+  } catch (e) {
+    console.error('Failed migrating stored mnemonic from version 1 to version 2', e)
+  } finally {
+    password = ''
+  }
+}
+
+// Migrate address metadata and contacts from encrypted to unencrypted
+export const _20240328_1221_migrateAddressAndContactsToUnencrypted = (
+  walletId: StoredEncryptedWallet['id'],
+  password: string
+) => {
+  const metadataJson = localStorage.getItem(`addresses-metadata-${walletId}`)
+  const contactsJson = localStorage.getItem(`contacts-${walletId}`)
+  pendingTransactionsStorage.delete(walletId)
+
+  let parsedMetadataJson
+  let parsedContactsJson
+
+  try {
+    parsedMetadataJson = metadataJson ? JSON.parse(metadataJson) : undefined
+  } catch (e) {
+    console.error(e)
+  }
+
+  try {
+    parsedContactsJson = contactsJson ? JSON.parse(contactsJson) : undefined
+  } catch (e) {
+    console.error(e)
+  }
+
+  if (parsedMetadataJson?.encrypted || parsedContactsJson?.encrypted) {
+    let result: DecryptMnemonicResult | null
+
+    result = decryptMnemonic(walletStorage.load(walletId).encrypted, password)
+    password = ''
+
+    if (result.version !== 2) {
+      throw new Error(
+        'Migration: Could not migrate address metadata and contacts before first migrating the wallet from v1 to v2'
+      )
+    }
+    if (!result.decryptedMnemonic) throw new Error('Migration: Could not migrate user data, mnemonic is not provided')
+
+    try {
+      if (parsedMetadataJson?.encrypted) {
+        const metadata = JSON.parse(
+          decrypt(dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic), parsedMetadataJson.encrypted)
+        ) as AddressMetadata[]
+        addressMetadataStorage.store(walletId, metadata)
+      }
+
+      if (parsedContactsJson?.encrypted) {
+        const contacts = JSON.parse(
+          decrypt(dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic), parsedContactsJson.encrypted)
+        ) as Contact[]
+        contactsStorage.store(walletId, contacts)
+      }
+
+      result = null
+    } catch (e) {
+      console.error(e)
+    }
+  } else {
+    password = ''
+  }
 }

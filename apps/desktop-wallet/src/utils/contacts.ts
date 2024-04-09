@@ -19,8 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Contact } from '@alephium/shared'
 
 import { contactsLoadedFromPersistentStorage } from '@/storage/addresses/addressesActions'
-import ContactsStorage from '@/storage/addresses/contactsPersistentStorage'
+import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import { store } from '@/storage/store'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 export const filterContacts = (contacts: Contact[], text: string) =>
   text.length < 2
@@ -29,8 +30,8 @@ export const filterContacts = (contacts: Contact[], text: string) =>
         (contact) => contact.name.toLowerCase().includes(text) || contact.address.toLowerCase().includes(text)
       )
 
-export const loadContacts = () => {
-  const contacts: Contact[] = ContactsStorage.load()
+export const loadContacts = (walletId: StoredEncryptedWallet['id']) => {
+  const contacts: Contact[] = contactsStorage.load(walletId)
 
   if (contacts.length > 0) store.dispatch(contactsLoadedFromPersistentStorage(contacts))
 }

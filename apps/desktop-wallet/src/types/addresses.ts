@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NonSensitiveAddressData } from '@alephium/keyring'
 import {
   AddressBalancesSyncResult,
   AddressHash,
-  AddressKeyPair,
   AddressSettings,
   AddressTokensSyncResult,
   BalanceHistory
@@ -41,7 +41,7 @@ export type DeprecatedAddressMetadata = DeprecatedAddressSettings & {
   index: number
 }
 
-export type AddressBase = AddressKeyPair & AddressSettings
+export type AddressBase = AddressSettings & NonSensitiveAddressData
 
 export type Address = AddressBase &
   explorer.AddressInfo & {

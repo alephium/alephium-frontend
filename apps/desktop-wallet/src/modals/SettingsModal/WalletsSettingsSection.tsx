@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { Pencil, Trash } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
@@ -32,10 +33,10 @@ import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
-import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { activeWalletDeleted, walletDeleted, walletLocked } from '@/storage/wallets/walletActions'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
-import { ActiveWallet, StoredWallet } from '@/types/wallet'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
+import { ActiveWallet, StoredEncryptedWallet } from '@/types/wallet'
 
 const WalletsSettingsSection = () => {
   const { t } = useTranslation()
@@ -44,16 +45,16 @@ const WalletsSettingsSection = () => {
   const wallets = useAppSelector((s) => s.global.wallets)
   const posthog = usePostHog()
 
-  const [walletToRemove, setWalletToRemove] = useState<StoredWallet | ActiveWallet>()
+  const [walletToRemove, setWalletToRemove] = useState<StoredEncryptedWallet | ActiveWallet>()
   const [isDisplayingSecretModal, setIsDisplayingSecretModal] = useState(false)
   const [isQRCodeModalVisible, setIsQRCodeModalVisible] = useState(false)
   const [isEditWalletNameModalOpen, setIsEditWalletNameModalOpen] = useState(false)
 
-  const isAuthenticated = !!activeWallet.mnemonic && !!activeWallet.id
+  const isAuthenticated = !!activeWallet.id
 
   const handleRemoveWallet = (walletId: string) => {
-    WalletStorage.delete(walletId)
-    AddressMetadataStorage.delete(walletId)
+    walletStorage.delete(walletId)
+    addressMetadataStorage.delete(walletId)
     dispatch(walletId === activeWallet.id ? activeWalletDeleted() : walletDeleted(walletId))
     setWalletToRemove(undefined)
 
@@ -61,6 +62,7 @@ const WalletsSettingsSection = () => {
   }
 
   const lockWallet = () => {
+    keyring.clearCachedSecrets()
     dispatch(walletLocked())
 
     posthog.capture('Locked wallet', { origin: 'settings' })
@@ -135,9 +137,9 @@ const WalletsSettingsSection = () => {
 }
 
 interface WalletItemProps {
-  wallet: StoredWallet
+  wallet: StoredEncryptedWallet
   isCurrent: boolean
-  onWalletDelete: (wallet: StoredWallet) => void
+  onWalletDelete: (wallet: StoredEncryptedWallet) => void
 }
 
 const WalletItem = ({ wallet, isCurrent, onWalletDelete }: WalletItemProps) => {
