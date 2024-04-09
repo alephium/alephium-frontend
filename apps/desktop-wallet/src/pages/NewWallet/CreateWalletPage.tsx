@@ -72,9 +72,9 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
     if (password.length && !devMode) {
       const strength = zxcvbn(password)
       if (strength.score < 1) {
-        passwordError = t`Password is too weak`
+        passwordError = t('Password is too weak')
       } else if (strength.score < 3) {
-        passwordError = t`Insecure password`
+        passwordError = t('Insecure password')
       }
     }
 
