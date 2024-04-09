@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, findNextAvailableAddressIndex, isAddressIndexValid, resetArray } from '@alephium/shared'
-import { addressToGroup, bs58, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
+import { bs58, groupOfAddress, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
 import * as metamaskBip39 from '@metamask/scure-bip39'
 import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import blake from 'blakejs'
@@ -161,7 +161,7 @@ export class Keyring {
       : initialAddressIndex
     let newAddressData = this._deriveAddressAndKeys(nextAddressIndex)
 
-    while (group !== undefined && addressToGroup(newAddressData.hash, TOTAL_NUMBER_OF_GROUPS) !== group) {
+    while (group !== undefined && groupOfAddress(newAddressData.hash) !== group) {
       nextAddressIndex = findNextAvailableAddressIndex(newAddressData.index, skipAddressIndexes)
       newAddressData = this._deriveAddressAndKeys(nextAddressIndex)
     }

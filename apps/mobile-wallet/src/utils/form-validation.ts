@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Contact } from '@alephium/shared'
-import { isAddressValid as isAddressHashValid } from '@alephium/shared-crypto'
+import { Contact, isAddressValid as isAddressHashValid } from '@alephium/shared'
 import { Optional } from '@alephium/web3'
 
 import { store } from '~/store/store'
