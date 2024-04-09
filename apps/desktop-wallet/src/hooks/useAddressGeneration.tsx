@@ -17,9 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressMetadata, client } from '@alephium/shared'
+import { AddressMetadata } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
+import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   addressDiscoveryFinished,
@@ -113,7 +114,7 @@ const useAddressGeneration = () => {
     dispatch(addressDiscoveryStarted(enableLoading))
 
     try {
-      const derivedAddresses = await keyring.discoverAndCacheActiveAddresses(client.explorer, skipIndexes)
+      const derivedAddresses = await discoverAndCacheActiveAddresses(skipIndexes)
       const newAddresses = derivedAddresses.map((address) => ({
         ...address,
         isDefault: false,

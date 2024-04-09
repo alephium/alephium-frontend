@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, findNextAvailableAddressIndex, isAddressIndexValid, resetArray } from '@alephium/shared'
-import { addressToGroup, bs58, ExplorerProvider, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
+import { addressToGroup, bs58, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
 import * as metamaskBip39 from '@metamask/scure-bip39'
 import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import blake from 'blakejs'
@@ -114,57 +114,6 @@ export class Keyring {
   public exportPrivateKeyOfAddress = (addressHash: AddressHash): string =>
     bytesToHex(this._getAddress(addressHash).privateKey)
 
-  public discoverAndCacheActiveAddresses = async (
-    client: ExplorerProvider,
-    addressIndexesToSkip: number[] = [],
-    minGap = 5
-  ): Promise<NonSensitiveAddressData[]> => {
-    const addressesPerGroup = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (): SensitiveAddressData[] => [])
-    const activeAddresses: SensitiveAddressData[] = []
-    const skipIndexes = Array.from(addressIndexesToSkip)
-
-    for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
-      const newAddresses = this._deriveAddressesInGroup(group, minGap, skipIndexes)
-      addressesPerGroup[group] = newAddresses
-      skipIndexes.push(...newAddresses.map((address) => address.index))
-    }
-
-    const addressesToCheckIfActive = addressesPerGroup.flat().map((address) => address.hash)
-    const results = await getActiveAddressesResults(addressesToCheckIfActive, client)
-    const resultsPerGroup = splitResultsArrayIntoOneArrayPerGroup(results, minGap)
-
-    for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
-      const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
-        addressesPerGroup[group],
-        resultsPerGroup[group]
-      )
-
-      let gapPerGroup = gap
-      activeAddresses.push(...newActiveAddresses)
-
-      while (gapPerGroup < minGap) {
-        const remainingGap = minGap - gapPerGroup
-        const newAddresses = this._deriveAddressesInGroup(group, remainingGap, skipIndexes)
-        skipIndexes.push(...newAddresses.map((address) => address.index))
-
-        const newAddressesToCheckIfActive = newAddresses.map((address) => address.hash)
-        const results = await getActiveAddressesResults(newAddressesToCheckIfActive, client)
-
-        const { gap, activeAddresses: newActiveAddresses } = getGapFromLastActiveAddress(
-          newAddresses,
-          results,
-          gapPerGroup
-        )
-        gapPerGroup = gap
-        activeAddresses.push(...newActiveAddresses)
-      }
-    }
-
-    this.addresses = [...this.addresses, ...activeAddresses]
-
-    return activeAddresses.map(this._getNonSensitiveAddressData)
-  }
-
   // PRIVATE METHODS
 
   private _getAddress = (addressHash: AddressHash): SensitiveAddressData => {
@@ -222,19 +171,6 @@ export class Keyring {
     return newAddressData
   }
 
-  private _deriveAddressesInGroup = (group: number, amount: number, skipIndexes: number[]): SensitiveAddressData[] => {
-    const addresses = []
-    const skipAddressIndexes = Array.from(skipIndexes)
-
-    for (let j = 0; j < amount; j++) {
-      const newAddress = this._generateAddress({ group, skipAddressIndexes })
-      addresses.push(newAddress)
-      skipAddressIndexes.push(newAddress.index)
-    }
-
-    return addresses
-  }
-
   private _getNonSensitiveAddressData = ({
     hash,
     index,
@@ -275,59 +211,3 @@ export class Keyring {
 }
 
 export const keyring = new Keyring()
-
-const splitResultsArrayIntoOneArrayPerGroup = (array: boolean[], chunkSize: number): boolean[][] => {
-  const chunks = []
-  let i = 0
-
-  while (i < array.length) {
-    chunks.push(array.slice(i, i + chunkSize))
-    i += chunkSize
-  }
-
-  return chunks
-}
-
-const getGapFromLastActiveAddress = (
-  addresses: SensitiveAddressData[],
-  results: boolean[],
-  startingGap = 0
-): { gap: number; activeAddresses: SensitiveAddressData[] } => {
-  let gap = startingGap
-  const activeAddresses = []
-
-  for (let j = 0; j < addresses.length; j++) {
-    const address = addresses[j]
-    const isActive = results[j]
-
-    if (isActive) {
-      activeAddresses.push(address)
-      gap = 0
-    } else {
-      gap++
-    }
-  }
-
-  return {
-    gap,
-    activeAddresses
-  }
-}
-
-const getActiveAddressesResults = async (
-  addressesToCheckIfActive: string[],
-  client: ExplorerProvider
-): Promise<boolean[]> => {
-  const QUERY_LIMIT = 80
-  const results: boolean[] = []
-  let queryPage = 0
-
-  while (addressesToCheckIfActive.length > results.length) {
-    const addressesToQuery = addressesToCheckIfActive.slice(queryPage * QUERY_LIMIT, ++queryPage * QUERY_LIMIT)
-    const response = await client.addresses.postAddressesUsed(addressesToQuery)
-
-    results.push(...response)
-  }
-
-  return results
-}

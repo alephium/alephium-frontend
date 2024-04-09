@@ -20,13 +20,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
  * @jest-environment jsdom
  */
 
-import { ExplorerProvider, hashMessage } from '@alephium/web3'
+import { hashMessage } from '@alephium/web3'
 import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
 import { dangerouslyConvertUint8ArrayMnemonicToString, Keyring, keyring } from '@/index'
-
-import derivedAddresses from './fixtures/address-discovery.json'
 
 const valid24WordMnemonicString =
   'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava'
@@ -287,78 +285,6 @@ describe('keyring', function () {
 
   it('should fail to export the private key of an address that is not cached', () => {
     expect(() => keyring.exportPrivateKeyOfAddress('disAddressDoesNotExistBro')).toThrow()
-  })
-
-  it('should discover active addresses', async () => {
-    keyring.importMnemonicString(derivedAddresses.mnemonic)
-    const client = new ExplorerProvider('')
-    const mockedPostAddressesActive = jest.fn()
-    client.addresses.postAddressesUsed = mockedPostAddressesActive
-
-    // Scenario 1:
-    // All derived addresses are inactive.
-    // The API should be queried once.
-    // The function should return 0 active addresses.
-    mockedPostAddressesActive.mockResolvedValueOnce([
-      ...[false, false, false, false, false],
-      ...[false, false, false, false, false],
-      ...[false, false, false, false, false],
-      ...[false, false, false, false, false]
-    ])
-
-    let results = await keyring.discoverAndCacheActiveAddresses(client)
-    expect(client.addresses.postAddressesUsed).toHaveBeenCalledTimes(1)
-    expect(results).toHaveLength(0)
-    mockedPostAddressesActive.mockClear()
-
-    // Scenario 2:
-    // The 5th address of group 0 is active.
-    // The API should make an additional query to further investigate active addresses of group 0.
-    // The function should return the 5th address of group 0.
-    mockedPostAddressesActive
-      .mockResolvedValueOnce([
-        ...[false, false, false, false, true],
-        ...[false, false, false, false, false],
-        ...[false, false, false, false, false],
-        ...[false, false, false, false, false]
-      ])
-      .mockResolvedValueOnce([false, false, false, false, false])
-
-    results = await keyring.discoverAndCacheActiveAddresses(client)
-    expect(client.addresses.postAddressesUsed).toHaveBeenCalledTimes(2)
-    expect(results).toHaveLength(1)
-    expect(results.map((a) => a.hash)).toContain(derivedAddresses.group0[4])
-    mockedPostAddressesActive.mockClear()
-
-    // Scenario 3:
-    // The 5th and 8th addresses of group 0 and the 1st address of group 2 are active.
-    // The API should make 2 additional queries to further investigate active addresses of group 0 and 1 additional for group 2.
-    // The function should return the 5th and 8th addresses of group 0.
-    mockedPostAddressesActive
-      .mockResolvedValueOnce(
-        // all groups, query 1
-        [
-          ...[false, false, false, false, true],
-          ...[false, false, false, false, false],
-          ...[true, false, false, false, false],
-          ...[false, false, false, false, false]
-        ]
-      )
-      // group 0, query 2
-      .mockResolvedValueOnce([false, false, true, false, false])
-      // group 0, query 3
-      .mockResolvedValueOnce([false, false, false])
-      // group 2, query 1
-      .mockResolvedValueOnce([false, false, false, false, false])
-
-    results = await keyring.discoverAndCacheActiveAddresses(client)
-    expect(client.addresses.postAddressesUsed).toHaveBeenCalledTimes(4)
-    expect(results).toHaveLength(3)
-    const addresses = results.map((a) => a.hash)
-    expect(addresses).toContain(derivedAddresses.group0[4])
-    expect(addresses).toContain(derivedAddresses.group0[7])
-    expect(addresses).toContain(derivedAddresses.group2[0])
-    mockedPostAddressesActive.mockClear()
   })
 
   it('should sign a transaction with the private key of the address', () => {
