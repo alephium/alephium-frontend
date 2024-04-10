@@ -22,7 +22,7 @@ import { useGetNftsMetadataQuery } from '@/api/assets/nftsApi'
 import { Asset, NetworkName } from '@/types'
 import { difference } from 'lodash'
 
-export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
+export const useGetAssetsMetadata = (assetIds: Asset['tokenId'][], networkName: NetworkName) => {
   const tokenList = useGetTokenListQuery(networkName).data?.tokens
   const tokensInTokenList = tokenList?.filter((token) => assetIds.includes(token.id)) || []
 

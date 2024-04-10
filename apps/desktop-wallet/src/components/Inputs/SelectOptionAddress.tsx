@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -24,9 +23,8 @@ import AddressBadge from '@/components/AddressBadge'
 import AssetBadge from '@/components/AssetBadge'
 import Badge from '@/components/Badge'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
-import { useAppSelector } from '@/hooks/redux'
-import { makeSelectAddressesTokens } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
+import { useGetAddressesTokensBalancesQuery } from '@alephium/shared'
 
 interface SelectOptionAddressProps {
   address: Address
@@ -36,8 +34,8 @@ interface SelectOptionAddressProps {
 
 const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((s) => selectAddressesTokens(s, address.hash))
+  const addressTokens = useGetAddressesTokensBalancesQuery([address.hash])
+  const assets = addressTokens.data[0].tokenBalances ?? []
 
   const knownAssetsWithBalance = assets.filter((a) => a.balance > 0 && a.name)
   const unknownAssetsNb = assets.filter((a) => a.balance > 0 && !a.name).length

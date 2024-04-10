@@ -46,8 +46,8 @@ export const calculateAssetsData = (
   tokenPrices: TokenPriceEntity[]
 ) =>
   tokenBalances.reduce((acc, token) => {
-    const fungibleToken = fungibleTokens.find((t) => t.id === token.id)
-    const nftInfo = nfts.find((nft) => nft.id === token.id)
+    const fungibleToken = fungibleTokens.find((t) => t.id === token.tokenId)
+    const nftInfo = nfts.find((nft) => nft.id === token.tokenId)
     const decimals = fungibleToken?.decimals ?? 0
     const balance = BigInt(token.balance.toString())
     const tokenPrice =
@@ -60,7 +60,7 @@ export const calculateAssetsData = (
         : undefined
 
     acc.push({
-      id: token.id,
+      tokenId: token.tokenId,
       balance,
       lockedBalance: BigInt(token.lockedBalance.toString()),
       name: fungibleToken?.name ?? nftInfo?.name,

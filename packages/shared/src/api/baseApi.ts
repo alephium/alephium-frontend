@@ -27,7 +27,8 @@ export const baseApi = createApi({
     'TokenList',
     'NFTCollectionMetadata',
     'NFTCollectionUriMetaData',
-    'FungibleTokenBasicMetadata'
+    'FungibleTokenBasicMetadata',
+    'AddressTokenBalance'
   ],
   endpoints: () => ({})
 })
