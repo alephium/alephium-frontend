@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
-import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
 import { AlertTriangle, PlusSquare } from 'lucide-react-native'
 import { useEffect, useRef, useState } from 'react'
 import { Image } from 'react-native'
@@ -40,7 +40,6 @@ import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from 
 import { Address } from '~/types/addresses'
 import { SessionProposalEvent } from '~/types/walletConnect'
 import { getRandomLabelColor } from '~/utils/colors'
-import { mnemonicToSeed } from '~/utils/crypto'
 import { isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 interface WalletConnectSessionProposalModalProps extends ModalContentProps {
@@ -60,7 +59,6 @@ const WalletConnectSessionProposalModal = ({
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const addresses = useAppSelector(selectAllAddresses)
   const dispatch = useAppDispatch()
-  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const { requiredChainInfo, metadata } = parseSessionProposalEvent(proposalEvent)
   const group = requiredChainInfo?.addressGroup
   const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
@@ -96,11 +94,12 @@ const WalletConnectSessionProposalModal = ({
   const handleAddressGeneratePress = async () => {
     setLoading('Generating new address...')
 
-    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, walletMnemonic)
-    const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
-    const newAddress = { ...newAddressData, settings: { label: '', color: getRandomLabelColor(), isDefault: false } }
-
     try {
+      const newAddress = {
+        ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
+        settings: { label: '', color: getRandomLabelColor(), isDefault: false }
+      }
+
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
       await dispatch(syncLatestTransactions(newAddress.hash))

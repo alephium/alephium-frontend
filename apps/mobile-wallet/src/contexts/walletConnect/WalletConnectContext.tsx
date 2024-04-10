@@ -130,7 +130,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const addressIds = useAppSelector(selectAddressIds) as AddressHash[]
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
-  const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const url = useURL()
   const wcDeepLink = useRef<string>()
   const appState = useRef(AppState.currentState)
@@ -148,7 +148,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
-  const walletIsUnlocked = !!mnemonic
   const isWalletConnectClientReady =
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
@@ -552,7 +551,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       }
     },
     // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
-    // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
+    // the `hash` and the `publicKey`. Creating a selector that extracts those 3 doesn't help.
     // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
     // TODO: Separate offline/online address data slices
     [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse]
@@ -611,7 +610,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isWalletConnectEnabled && walletIsUnlocked) {
+      if (nextAppState === 'background' && isWalletConnectEnabled && isWalletUnlocked) {
         let secondsPassed = 0
 
         // Keep app alive for max 4 hours
@@ -645,7 +644,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [isWalletConnectEnabled, walletIsUnlocked])
+  }, [isWalletConnectEnabled, isWalletUnlocked])
 
   useEffect(() => {
     if (!isWalletConnectClientReady) return
@@ -988,7 +987,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [isSessionRequestModalOpen, sessionRequestEvent])
 
   useEffect(() => {
-    if (!walletIsUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
+    if (!isWalletUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
 
     if (!isWalletConnectEnabled) {
       showToast({
@@ -1002,7 +1001,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       wcDeepLink.current = url
     }
-  }, [walletIsUnlocked, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
+  }, [isWalletUnlocked, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
 
   const resetWalletConnectClientInitializationAttempts = () => {
     if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)

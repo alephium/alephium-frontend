@@ -101,7 +101,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isUnlocked = !!useAppSelector((s) => s.wallet.mnemonic)
+  const isUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)

@@ -29,13 +29,13 @@ import ModalWithBackdrop, { ModalWithBackdropProps } from '~/components/ModalWit
 import { Spinner } from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
-import { getStoredWallet, GetStoredWalletProps } from '~/persistent-storage/wallet'
+import { getDeprecatedStoredWallet, GetDeprecatedStoredWalletProps } from '~/persistent-storage/wallet'
 import { ShouldClearPin } from '~/types/misc'
-import { WalletState } from '~/types/wallet'
+import { DeprecatedWalletState } from '~/types/wallet'
 import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
-interface AuthenticationModalProps extends ModalWithBackdropProps, GetStoredWalletProps {
-  onConfirm: (pin?: string, wallet?: WalletState) => void
+interface AuthenticationModalProps extends ModalWithBackdropProps, GetDeprecatedStoredWalletProps {
+  onConfirm: (wallet?: DeprecatedWalletState) => void
   onClose?: () => void
   loadingText?: string
 }
@@ -60,11 +60,11 @@ const AuthenticationModal = ({
   const insets = useSafeAreaInsets()
 
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const [encryptedWallet, setEncryptedWallet] = useState<WalletState>()
+  const [encryptedWallet, setEncryptedWallet] = useState<DeprecatedWalletState>()
 
   const getWallet = useCallback(async () => {
     try {
-      const storedWallet = await getStoredWallet({ forcePinUsage, authenticationPrompt })
+      const storedWallet = await getDeprecatedStoredWallet({ forcePinUsage, authenticationPrompt })
 
       // This should never happen, but if it does, inform the user instead of being stuck
       if (!storedWallet) {
@@ -96,7 +96,7 @@ const AuthenticationModal = ({
 
     try {
       const decryptedWallet = await walletOpenAsyncUnsafe(pin, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
-      onConfirm(pin, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
+      onConfirm({ ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
       onClose && onClose()
 
       return false

@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { AddressHash, AssetAmount, client } from '@alephium/shared'
-import { transactionSign } from '@alephium/web3'
 
 import { store } from '~/store/store'
 import { Address } from '~/types/addresses'
@@ -146,7 +146,7 @@ export const signAndSendTransaction = async (fromAddress: AddressHash, txId: str
 
   if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
 
-  const signature = transactionSign(txId, address.privateKey)
+  const signature = keyring.signTransaction(txId, address.hash)
   const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 
   return { ...data, signature }

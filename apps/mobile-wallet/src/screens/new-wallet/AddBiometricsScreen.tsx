@@ -31,7 +31,6 @@ import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { enableBiometrics } from '~/persistent-storage/wallet'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { biometricsToggled } from '~/store/settingsSlice'
 import { resetNavigation } from '~/utils/navigation'
@@ -46,7 +45,6 @@ const instructions: Instruction[] = [
 const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBiometricsScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()
-  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const addressIds = useAppSelector(selectAddressIds)
 
   const [loading, setLoading] = useState(false)
@@ -57,7 +55,8 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
     setLoading(true)
 
     try {
-      await enableBiometrics(walletMnemonic)
+      // TODO
+      // await enableBiometrics(walletMnemonic)
       dispatch(biometricsToggled(true))
 
       sendAnalytics('Activated biometrics from wallet creation flow')

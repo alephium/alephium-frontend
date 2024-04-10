@@ -16,25 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { AddressMetadata } from '@alephium/shared'
-import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
 
 import { newAddressGenerated, syncLatestTransactions } from '~/store/addressesSlice'
 import { store } from '~/store/store'
-import { Mnemonic, WalletMetadata } from '~/types/wallet'
+import { WalletMetadata } from '~/types/wallet'
 import { persistAddressesSettings } from '~/utils/addresses'
-import { mnemonicToSeed } from '~/utils/crypto'
 
-export const importAddresses = async (
-  mnemonic: Mnemonic,
-  walletId: WalletMetadata['id'],
-  addressesMetadata: AddressMetadata[]
-) => {
-  const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, mnemonic)
+export const importAddresses = async (walletId: WalletMetadata['id'], addressesMetadata: AddressMetadata[]) => {
   const addressHashes = []
 
   for (const { index, label, color, isDefault } of addressesMetadata) {
-    const newAddressData = deriveNewAddressData(masterKey, undefined, index)
+    const newAddressData = keyring.generateAndCacheAddress({ addressIndex: index })
     const newAddress = { ...newAddressData, settings: { label, color, isDefault } }
 
     await persistAddressesSettings([newAddress], walletId)

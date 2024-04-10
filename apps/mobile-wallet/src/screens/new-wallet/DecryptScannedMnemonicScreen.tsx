@@ -84,10 +84,10 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
       const decryptedData = await decryptAsync(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
       const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData
-      const wallet = await generateAndStoreWallet(name, pin, mnemonic)
+      const wallet = await generateAndStoreWallet(name, mnemonic)
 
       try {
-        await importAddresses(wallet.mnemonic, wallet.id, addresses)
+        await importAddresses(wallet.id, addresses)
       } catch (e) {
         console.error(e)
 

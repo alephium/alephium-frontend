@@ -26,18 +26,10 @@ import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { storeBiometricsSettings } from '~/persistent-storage/settings'
-import {
-  deriveWalletStoredAddresses,
-  didBiometricsSettingsChange,
-  disableBiometrics,
-  enableBiometrics,
-  getWalletMetadata
-} from '~/persistent-storage/wallet'
-import { biometricsToggled } from '~/store/settingsSlice'
+import { getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
-import { WalletState } from '~/types/wallet'
-import { showToast } from '~/utils/layout'
+import { DeprecatedWalletState } from '~/types/wallet'
+import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation, restoreNavigation } from '~/utils/navigation'
 
 interface LoginWithPinScreenProps extends StackScreenProps<RootStackParamList, 'LoginWithPinScreen'>, ScreenProps {}
@@ -51,36 +43,26 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
   const handleSuccessfulLogin = useCallback(
-    async (pin?: string, wallet?: WalletState) => {
-      if (!pin || !wallet) return
+    async (deprecatedWallet?: DeprecatedWalletState) => {
+      if (!deprecatedWallet) return
 
       setIsPinModalVisible(false)
 
-      if (await didBiometricsSettingsChange()) {
-        try {
-          await enableBiometrics(wallet.mnemonic, 'Detected biometrics change, please re-activate')
-          await storeBiometricsSettings(true)
-          dispatch(biometricsToggled(true))
-        } catch (e: unknown) {
-          await disableBiometrics()
-          await storeBiometricsSettings(false)
-          dispatch(biometricsToggled(false))
+      try {
+        await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
 
-          showToast({
-            text1: 'Biometrics deactivated',
-            text2: 'You can reactivate them in the settings'
-          })
-        }
+        const needsAddressRegeneration = addressesStatus === 'uninitialized' && !isLoadingLatestTxs
+        const { addressesToInitialize, contacts, ...wallet } = await getStoredWallet(needsAddressRegeneration)
+
+        dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts }))
+
+        lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
+
+        sendAnalytics('Unlocked wallet')
+      } catch (e) {
+        console.error(e)
+        showExceptionToast(e, 'Could not migrate mnemonic and unlock wallet')
       }
-
-      const addressesToInitialize =
-        addressesStatus === 'uninitialized' && !isLoadingLatestTxs ? await deriveWalletStoredAddresses(wallet) : []
-      const metadata = await getWalletMetadata()
-
-      dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts: metadata?.contacts ?? [] }))
-      lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
-
-      sendAnalytics('Unlocked wallet')
     },
     [addressesStatus, dispatch, isLoadingLatestTxs, lastNavigationState, navigation]
   )

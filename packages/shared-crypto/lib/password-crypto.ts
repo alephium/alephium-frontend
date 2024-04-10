@@ -47,18 +47,6 @@ export const encrypt = (password: string, dataRaw: string, digest: Digest = 'sha
   return _encrypt(data, salt, derivedKey)
 }
 
-export const encryptAsync = async (
-  password: string,
-  dataRaw: string,
-  pbkdf2CustomFunc: Pbkdf2Function
-): Promise<string> => {
-  const data = Buffer.from(dataRaw, 'utf8')
-  const salt = randomBytes(saltByteLength)
-  const derivedKey = await keyFromPasswordAsync(password, salt, pbkdf2CustomFunc)
-
-  return _encrypt(data, salt, derivedKey)
-}
-
 const _encrypt = (data: Buffer, salt: Buffer, derivedKey: Buffer): string => {
   const iv = randomBytes(ivByteLength)
   const cipher = createCipher(derivedKey, iv)

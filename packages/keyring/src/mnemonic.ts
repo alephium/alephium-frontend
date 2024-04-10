@@ -102,7 +102,7 @@ export const mnemonicStringToUint8Array = (mnemonicStr: string): Uint8Array => {
 }
 
 // When JSON.stringify an Uint8Array it becomes a JS object that we need to cast back to an Uint8Array
-const mnemonicJsonStringifiedObjectToUint8Array = (mnemonic: unknown): Uint8Array => {
+export const mnemonicJsonStringifiedObjectToUint8Array = (mnemonic: unknown): Uint8Array => {
   if (!(mnemonic instanceof Object))
     throw new Error('Keyring: Could not convert stringified Uint8Array mnemonic back to Uint8Array')
 

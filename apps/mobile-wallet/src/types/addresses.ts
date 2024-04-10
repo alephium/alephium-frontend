@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NonSensitiveAddressData } from '@alephium/keyring'
 import { AddressHash, AddressIndex, AddressSettings, BalanceHistory } from '@alephium/shared'
-import { AddressKeyPair } from '@alephium/shared-crypto'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'
@@ -25,7 +25,7 @@ import { EntityState } from '@reduxjs/toolkit'
 import { TimeInMs } from '~/types/numbers'
 import { PendingTransaction } from '~/types/transactions'
 
-export type Address = AddressKeyPair &
+export type Address = NonSensitiveAddressData &
   Omit<explorer.AddressInfo, 'txNumber'> & {
     group: number
     settings: AddressSettings
@@ -36,7 +36,7 @@ export type Address = AddressKeyPair &
     balanceHistory: EntityState<BalanceHistory>
   }
 
-export type AddressPartial = AddressKeyPair & { settings: AddressSettings }
+export type AddressPartial = NonSensitiveAddressData & { settings: AddressSettings }
 
 export type AddressDiscoveryGroupData = {
   highestIndex: AddressIndex | undefined

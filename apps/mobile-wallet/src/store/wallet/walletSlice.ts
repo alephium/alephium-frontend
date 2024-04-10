@@ -32,8 +32,8 @@ const sliceName = 'wallet'
 const initialState: WalletState = {
   id: '',
   name: '',
-  mnemonic: '',
-  isMnemonicBackedUp: undefined
+  isMnemonicBackedUp: undefined,
+  isUnlocked: false
 }
 
 const resetState = () => initialState
@@ -45,7 +45,10 @@ const walletSlice = createSlice({
     mnemonicBackedUp: (state) => {
       state.isMnemonicBackedUp = true
     },
-    walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet
+    walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => ({
+      ...action.payload.wallet,
+      isUnlocked: true
+    })
   },
   extraReducers: (builder) => {
     builder.addCase(walletNameChanged, (state, { payload: name }) => {
@@ -54,10 +57,10 @@ const walletSlice = createSlice({
     builder.addMatcher(isAnyOf(appBecameInactive, appReset, walletDeleted), resetState)
     builder.addMatcher(
       isAnyOf(newWalletGenerated, newWalletImportedWithMetadata),
-      (_, { payload: { name, mnemonic, id, isMnemonicBackedUp } }) => ({
+      (_, { payload: { name, id, isMnemonicBackedUp } }) => ({
         id,
         name,
-        mnemonic,
+        isUnlocked: true,
         isMnemonicBackedUp
       })
     )

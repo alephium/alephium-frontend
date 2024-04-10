@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { deriveNewAddressData, walletImportAsyncUnsafe } from '@alephium/shared-crypto'
+import { keyring } from '@alephium/keyring'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useRef, useState } from 'react'
 
@@ -29,14 +29,12 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Address/AddressFormBaseScreen'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
-import { mnemonicToSeed } from '~/utils/crypto'
 
 interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'NewAddressScreen'>, ScrollScreenProps {}
 
 const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
-  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
 
@@ -50,11 +48,13 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
 
   const handleGeneratePress = async ({ isDefault, label, color, group }: AddressFormData) => {
     setLoading(true)
-    const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, walletMnemonic)
-    const newAddressData = deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes.current)
-    const newAddress = { ...newAddressData, settings: { label, color, isDefault } }
 
     try {
+      const newAddress = {
+        ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
+        settings: { label, color, isDefault }
+      }
+
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
       await dispatch(syncLatestTransactions(newAddress.hash))

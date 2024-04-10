@@ -41,7 +41,7 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { disableBiometrics, enableBiometrics } from '~/persistent-storage/wallet'
+import { disableBiometrics } from '~/persistent-storage/wallet'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 import WalletDeleteModal from '~/screens/Settings/WalletDeleteModal'
@@ -70,7 +70,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const analytics = useAppSelector((s) => s.settings.analytics)
-  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
@@ -93,7 +92,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
       sendAnalytics('Deactivated biometrics')
     } else {
-      await enableBiometrics(walletMnemonic)
+      // TODO
+      // await enableBiometrics(walletMnemonic)
       dispatch(biometricsToggled(true))
 
       sendAnalytics('Manually activated biometrics')

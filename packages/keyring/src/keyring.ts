@@ -36,6 +36,10 @@ type SensitiveAddressData = NonSensitiveAddressData & {
   privateKey: Uint8Array
 }
 
+type NullableSensitiveAddressData = NonSensitiveAddressData & {
+  privateKey: Uint8Array | null
+}
+
 type GenerateAddressProps = {
   group?: number
   addressIndex?: number
@@ -46,7 +50,7 @@ export class Keyring {
   private hdPath = "m/44'/1234'/0'/0"
   private hdWallet: HDKey | null
   private root: HDKey | null
-  private addresses: SensitiveAddressData[]
+  private addresses: NullableSensitiveAddressData[]
 
   constructor() {
     this.addresses = []
@@ -57,10 +61,20 @@ export class Keyring {
   // PUBLIC METHODS
 
   public clearCachedSecrets = () => {
-    this.addresses.map((address) => resetArray(address.privateKey))
-    this.addresses = []
+    this.addresses.forEach((address) => {
+      if (address.privateKey) {
+        resetArray(address.privateKey)
+        address.privateKey = null
+      }
+    })
+
     this.hdWallet = null
     this.root = null
+  }
+
+  public clearAll = () => {
+    this.clearCachedSecrets()
+    this.addresses = []
   }
 
   public generateRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Uint8Array => {
@@ -80,16 +94,24 @@ export class Keyring {
 
     const mnemonic = mnemonicStringToUint8Array(mnemonicStr)
 
-    this.clearCachedSecrets()
+    this.clearAll()
     this._initFromMnemonic(mnemonic, '')
 
     return mnemonic
   }
 
+  public initFromDecryptedMnemonic = async (decryptedMnemonic: Uint8Array, passphrase: string) => {
+    this.clearAll()
+    this._initFromMnemonic(decryptedMnemonic, passphrase)
+
+    passphrase = ''
+    resetArray(decryptedMnemonic)
+  }
+
   public initFromEncryptedMnemonic = async (encryptedMnemonic: string, password: string, passphrase: string) => {
     const { version, decryptedMnemonic } = await decryptMnemonic(encryptedMnemonic, password)
 
-    this.clearCachedSecrets()
+    this.clearAll()
     this._initFromMnemonic(decryptedMnemonic, passphrase)
 
     encryptedMnemonic = ''
@@ -109,12 +131,19 @@ export class Keyring {
   public signMessageHash = (messageHash: string, addressHash: AddressHash): string =>
     sign(messageHash, this.exportPrivateKeyOfAddress(addressHash))
 
-  public exportPrivateKeyOfAddress = (addressHash: AddressHash): string =>
-    bytesToHex(this._getAddress(addressHash).privateKey)
+  public exportPrivateKeyOfAddress = (addressHash: AddressHash): string => {
+    const address = this._getAddress(addressHash)
+
+    if (!address.privateKey) {
+      address.privateKey = this._deriveAddressAndKeys(address.index).privateKey
+    }
+
+    return bytesToHex(address.privateKey)
+  }
 
   // PRIVATE METHODS
 
-  private _getAddress = (addressHash: AddressHash): SensitiveAddressData => {
+  private _getAddress = (addressHash: AddressHash): NullableSensitiveAddressData => {
     const address = this.addresses.find(({ hash }) => hash === addressHash)
 
     if (!address) throw new Error(`Keyring: Could not find address with hash ${addressHash}`)
@@ -125,7 +154,13 @@ export class Keyring {
   private _generateAndCacheAddress = (props: GenerateAddressProps): SensitiveAddressData => {
     const cachedAddress = this.addresses.find(({ index }) => index === props.addressIndex)
 
-    if (cachedAddress) return cachedAddress
+    if (cachedAddress) {
+      if (!cachedAddress.privateKey) {
+        cachedAddress.privateKey = this._deriveAddressAndKeys(cachedAddress.index).privateKey
+      }
+
+      return cachedAddress as SensitiveAddressData
+    }
 
     const address = this._generateAddress(props)
 
