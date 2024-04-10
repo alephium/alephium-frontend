@@ -20,10 +20,11 @@ import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmo
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import { useAddressesFungibleTokens } from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -36,11 +37,9 @@ import Input from '@/components/Inputs/Input'
 import { SelectContainer, SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
 import Truncate from '@/components/Truncate'
-import { useAppSelector } from '@/hooks/redux'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import InputsSection from '@/modals/SendModals/InputsSection'
-import { makeSelectAddressesTokens } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 import { AssetAmountInputType } from '@/types/assets'
 import { onEnterOrSpace } from '@/utils/misc'
@@ -63,8 +62,8 @@ const AssetAmountsInput = ({
 }: AssetAmountsInputProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((state) => selectAddressesTokens(state, address.hash))
+  const { fungibleTokens: assets } = useAddressesFungibleTokens([address.hash])[0]
+
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const selectedValueRef = useRef<HTMLDivElement>(null)
 
@@ -82,7 +81,7 @@ const AssetAmountsInput = ({
   const disabled = remainingAvailableAssets.length === 0
   const availableAssetOptions: SelectOption<Asset['id']>[] = remainingAvailableAssets.map((asset) => ({
     value: asset.id,
-    label: asset.name ?? asset.id
+    label: asset.name
   }))
   const canAddMultipleAssets = allowMultiple && assetAmounts.length < assets.length
 

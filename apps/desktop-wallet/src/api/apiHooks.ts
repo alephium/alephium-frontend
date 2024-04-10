@@ -16,16 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useGetAddressesTokensBalancesQuery, useGetAssetsMetadata } from '@alephium/shared'
+import {
+  AddressFungibleToken,
+  isFungible,
+  useGetAddressesTokensBalancesQuery,
+  useGetAssetsMetadata
+} from '@alephium/shared'
 
 import { useAppSelector } from '@/hooks/redux'
+
+// TODO: Extract these hooks to shared
 
 export const useAssetsMetadataForCurrentNetwork = (assetIds: string[]) => {
   const networkName = useAppSelector((state) => state.network.name)
   return useGetAssetsMetadata(assetIds, networkName)
 }
 
-export const useAddressesTokens = (addressHashes: string[]) => {
+export const useAddressesAssets = (addressHashes: string[]) => {
   const { data: addressesTokens } = useGetAddressesTokensBalancesQuery(addressHashes)
   const addressesAssetsMetadata = useAssetsMetadataForCurrentNetwork(
     addressesTokens?.flatMap((a) => a.tokenBalances.map((t) => t.id)) || []
@@ -34,7 +41,15 @@ export const useAddressesTokens = (addressHashes: string[]) => {
   return (
     addressesTokens?.map((t) => ({
       addressHash: t.addressHash,
-      tokens: t.tokenBalances.map((b) => ({ ...b, ...addressesAssetsMetadata.find((a) => a.id === b.id) }))
+      assets: t.tokenBalances.map((b) => ({ ...b, ...addressesAssetsMetadata.find((a) => a.id === b.id) }))
     })) || []
   )
+}
+
+export const useAddressesFungibleTokens = (addressHashes: string[]) => {
+  const addressesAssets = useAddressesAssets(addressHashes)
+  return addressesAssets.map((a) => ({
+    addressHash: a.addressHash,
+    fungibleTokens: a.assets.filter(isFungible) as AddressFungibleToken[]
+  }))
 }

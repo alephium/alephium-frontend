@@ -22,9 +22,9 @@ import { orderBy } from 'lodash'
 import { calculateAmountWorth } from '@/numbers'
 import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
 
-export const isFungible = (asset: TokenInfo | NFT): asset is TokenInfo => (<TokenInfo>asset).decimals !== undefined
+export const isFungible = (asset: Partial<TokenInfo | NFT>): asset is TokenInfo => 'decimals' in asset
 
-export const isNonFungible = (asset: TokenInfo | NFT): asset is NFT => (<NFT>asset).collectionId !== undefined
+export const isNonFungible = (asset: Partial<TokenInfo | NFT>): asset is NFT => 'collectionId' in asset
 
 export const sortAssets = (assets: Asset[]) =>
   orderBy(
