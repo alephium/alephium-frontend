@@ -19,7 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { orderBy } from 'lodash'
 
 import { calculateAmountWorth } from '@/numbers'
-import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
+import { Asset, FungibleToken, FungibleTokenBasicMetadata, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
+import { TokenInfo } from '@alephium/token-list'
+
+export const isFungible = (asset: TokenInfo | NFT): asset is TokenInfo => (<TokenInfo>asset).decimals !== undefined
+
+export const isNonFungible = (asset: TokenInfo | NFT): asset is NFT => (<NFT>asset).collectionId !== undefined
 
 export const sortAssets = (assets: Asset[]) =>
   orderBy(

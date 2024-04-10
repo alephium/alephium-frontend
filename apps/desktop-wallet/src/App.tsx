@@ -19,18 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   AddressHash,
   localStorageNetworkSettingsMigrated,
-  PRICES_REFRESH_INTERVAL,
-  selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
   syncTokenPriceHistories,
-  syncUnknownTokensInfo,
-  syncVerifiedFungibleTokens,
   useGetTokenListQuery
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import { ALPH } from '@alephium/token-list'
 import { AnimatePresence } from 'framer-motion'
-import { difference, union } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
@@ -47,11 +41,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
 import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
-import {
-  makeSelectAddressesUnknownTokens,
-  selectAddressIds,
-  selectAllAddressVerifiedFungibleTokenSymbols
-} from '@/storage/addresses/addressesSelectors'
+import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { devModeShortcutDetected, localStorageDataMigrationFailed } from '@/storage/global/globalActions'
 import {
   localStorageGeneralSettingsMigrated,
@@ -59,10 +49,7 @@ import {
   systemLanguageMatchSucceeded
 } from '@/storage/settings/settingsActions'
 import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
-import {
-  makeSelectAddressesHashesWithPendingTransactions,
-  selectTransactionUnknownTokenIds
-} from '@/storage/transactions/transactionsSelectors'
+import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import { restorePendingTransactions } from '@/storage/transactions/transactionsStorageUtils'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
@@ -91,12 +78,6 @@ const App = () => {
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
   const { data: tokenList } = useGetTokenListQuery(networkName)
   const tokenListSymbols = tokenList?.tokens.map((token) => token.symbol)
-
-  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
-  const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens).map(({ id }) => id)
-  const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
-  const checkedUnknownTokenIds = useAppSelector((s) => s.fungibleTokens.checkedUnknownTokenIds)
-  const newUnknownTokens = difference(union(addressUnknownTokenIds, txUnknownTokenIds), checkedUnknownTokenIds)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
   const [isUpdateWalletModalVisible, setUpdateWalletModalVisible] = useState(!!newVersion)
@@ -191,15 +172,7 @@ const App = () => {
         }
       }
     }
-  }, [
-    addressHashes.length,
-    addressesStatus,
-    dispatch,
-    isSyncingAddressData,
-    networkStatus,
-    newUnknownTokens,
-    activeWalletId
-  ])
+  }, [addressHashes.length, addressesStatus, dispatch, isSyncingAddressData, networkStatus, activeWalletId])
 
   // Sync current and historical prices for each verified fungible
   // token found in each address

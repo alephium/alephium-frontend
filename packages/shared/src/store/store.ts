@@ -18,15 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AnyAction, Dispatch, ThunkDispatch } from '@reduxjs/toolkit'
 
-import { fungibleTokensApi, nftsApi } from '@/api'
-import fungibleTokensSlice from '@/store/assets/fungibleTokensSlice'
-import nftsSlice from '@/store/assets/nftsSlice'
 import clientsSlice from '@/store/clients/clientsSlice'
 import networkSlice from '@/store/network/networkSlice'
 import pricesHistorySlice from '@/store/prices/pricesHistorySlice'
 import pricesSlice from '@/store/prices/pricesSlice'
 import { ClientsState } from '@/types'
-import { FungibleTokensState, NFTsState } from '@/types/assets'
 import { NetworkState } from '@/types/network'
 import { PricesHistoryState, PricesState } from '@/types/price'
 import { baseApi } from '@/api/baseApi'
@@ -34,11 +30,9 @@ import { baseApi } from '@/api/baseApi'
 export const sharedReducer = {
   [pricesSlice.name]: pricesSlice.reducer,
   [pricesHistorySlice.name]: pricesHistorySlice.reducer,
-  [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
-  [nftsSlice.name]: nftsSlice.reducer,
   [networkSlice.name]: networkSlice.reducer,
   [clientsSlice.name]: clientsSlice.reducer,
-  [baseApi.reducerPath]: fungibleTokensApi.reducer
+  [baseApi.reducerPath]: baseApi.reducer
 }
 
 export const sharedMiddleware = [baseApi.middleware]
@@ -53,8 +47,6 @@ export const sharedMiddleware = [baseApi.middleware]
 export type SharedRootState = {
   [pricesSlice.name]: PricesState
   [pricesHistorySlice.name]: PricesHistoryState
-  [fungibleTokensSlice.name]: FungibleTokensState
-  [nftsSlice.name]: NFTsState
   [networkSlice.name]: NetworkState
   [clientsSlice.name]: ClientsState
 }

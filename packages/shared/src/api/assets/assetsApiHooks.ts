@@ -19,13 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useGetFungibleTokenMetadataQuery, useGetTokenListQuery } from '@/api/assets/fungibleTokensApi'
 import { useGetAssetsGenericInfoQuery } from '@/api/assets/genericAssetsApi'
 import { useGetNftsMetadataQuery } from '@/api/assets/nftsApi'
-import { Asset } from '@/types'
-import { NetworkId } from '@alephium/web3'
-import { skipToken } from '@reduxjs/toolkit/query'
+import { Asset, NetworkName } from '@/types'
 import { difference } from 'lodash'
 
-export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkId: NetworkId) => {
-  const tokenList = useGetTokenListQuery(networkId).data?.tokens
+export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
+  const tokenList = useGetTokenListQuery(networkName).data?.tokens
   const tokensInTokenList = tokenList?.filter((token) => assetIds.includes(token.id)) || []
 
   const genericInfoOfRemainingAssets =

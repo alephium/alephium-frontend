@@ -24,11 +24,8 @@ import {
   calculateAssetsData,
   contactsAdapter,
   NFT,
-  selectAllFungibleTokens,
-  selectAllNFTs,
   selectAllPrices,
   selectAllPricesHistories,
-  selectNFTIds,
   sortAssets,
   TokenDisplayBalances
 } from '@alephium/shared'
@@ -83,6 +80,7 @@ export const makeSelectAddressesAlphAsset = () =>
     }
   })
 
+/*
 export const makeSelectAddressesTokens = () =>
   createSelector(
     [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses(), selectAllPrices],
@@ -177,6 +175,28 @@ export const makeSelectAddressesNFTs = () =>
     return nfts.filter((nft) => addressesTokenIds.includes(nft.id))
   })
 
+const getAddressesTokenBalances = (addresses: Address[]) =>
+  addresses.reduce((acc, { tokens }) => {
+    tokens.forEach((token) => {
+      const existingToken = acc.find((t) => t.id === token.tokenId)
+
+      if (!existingToken) {
+        acc.push({
+          id: token.tokenId,
+          balance: BigInt(token.balance),
+          lockedBalance: BigInt(token.lockedBalance)
+        })
+      } else {
+        existingToken.balance = existingToken.balance + BigInt(token.balance)
+        existingToken.lockedBalance = existingToken.lockedBalance + BigInt(token.lockedBalance)
+      }
+    })
+
+    return acc
+  }, [] as TokenDisplayBalances[])
+
+*/
+
 export const { selectAll: selectAllContacts } = contactsAdapter.getSelectors<RootState>((state) => state.contacts)
 
 export const makeSelectContactByAddress = () =>
@@ -208,26 +228,6 @@ export const makeSelectAddressesHaveHistoricBalances = () =>
   )
 
 export const selectAddressesWithSomeBalance = createSelector(selectAllAddresses, filterAddressesWithoutAssets)
-
-const getAddressesTokenBalances = (addresses: Address[]) =>
-  addresses.reduce((acc, { tokens }) => {
-    tokens.forEach((token) => {
-      const existingToken = acc.find((t) => t.id === token.tokenId)
-
-      if (!existingToken) {
-        acc.push({
-          id: token.tokenId,
-          balance: BigInt(token.balance),
-          lockedBalance: BigInt(token.lockedBalance)
-        })
-      } else {
-        existingToken.balance = existingToken.balance + BigInt(token.balance)
-        existingToken.lockedBalance = existingToken.lockedBalance + BigInt(token.lockedBalance)
-      }
-    })
-
-    return acc
-  }, [] as TokenDisplayBalances[])
 
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],

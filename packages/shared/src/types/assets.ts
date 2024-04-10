@@ -67,15 +67,3 @@ export interface NFTTokenUriMetaData extends Omit<NFTTokenUriMetaDataBase, 'attr
 }
 
 export type NFT = NFTTokenUriMetaData & Omit<NFTMetadata, 'tokenUri'>
-
-export interface FungibleTokensState extends EntityState<FungibleToken> {
-  loadingVerified: boolean
-  loadingUnverified: boolean
-  loadingTokenTypes: boolean
-  status: 'initialized' | 'uninitialized' | 'initialization-failed'
-  checkedUnknownTokenIds: FungibleToken['id'][]
-}
-
-export interface NFTsState extends EntityState<NFT> {
-  loading: boolean
-}

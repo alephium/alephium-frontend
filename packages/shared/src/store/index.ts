@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 export * from '@/store/store'
 export * from '@/store/addresses'
 export * from '@/store/prices'
-export * from '@/store/assets'
 export * from '@/store/network'
 export * from '@/store/global'
 export * from '@/store/settings'
