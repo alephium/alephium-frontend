@@ -209,13 +209,16 @@ it('Should abbreviate token amount', () => {
       '0.0000000000000001'
     ),
     expect(formatAmountForDisplay({ amount: BigInt('15'), amountDecimals: 17, smartRounding: true })).toEqual(
-      '0.000000000000002'
+      '0.0000000000000002'
     ),
     expect(formatAmountForDisplay({ amount: BigInt('99100000'), amountDecimals: 17, smartRounding: true })).toEqual(
       '0.000000001'
     ),
+    expect(formatAmountForDisplay({ amount: BigInt('4590000000'), amountDecimals: 17, smartRounding: false })).toEqual(
+      '0.0000000459'
+    ),
     expect(formatAmountForDisplay({ amount: BigInt('4590000000'), amountDecimals: 17, smartRounding: true })).toEqual(
-      '0.0000005'
+      '0.00000005'
     ),
     expect(formatAmountForDisplay({ amount: BigInt('4110000000'), amountDecimals: 17, smartRounding: true })).toEqual(
       '0.00000004'
