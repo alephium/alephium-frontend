@@ -34,8 +34,8 @@ interface SelectOptionAddressProps {
 
 const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
-  const addressTokens = useGetAddressesTokensBalancesQuery([address.hash])
-  const assets = addressTokens.data[0].tokenBalances ?? []
+  const { data: addressesTokens } = useGetAddressesTokensBalancesQuery([address.hash])
+  const assets = addressesTokens?.[0].tokenBalances ?? []
 
   const knownAssetsWithBalance = assets.filter((a) => a.balance > 0 && a.name)
   const unknownAssetsNb = assets.filter((a) => a.balance > 0 && !a.name).length
