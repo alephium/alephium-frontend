@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { decrypt } from '@alephium/shared-crypto'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -27,6 +26,7 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
+import { decryptMnemonic } from '@alephium/keyring'
 
 interface PasswordConfirmationProps {
   onCorrectPasswordEntered: (password: string) => void
@@ -58,7 +58,7 @@ const PasswordConfirmation: FC<PasswordConfirmationProps> = ({
 
   const validatePassword = () => {
     try {
-      decrypt(password, walletStorage.load(storedWalletId).encrypted)
+      decryptMnemonic(password, walletStorage.load(storedWalletId).encrypted)
       onCorrectPasswordEntered(password)
     } catch (e) {
       console.error(e)
