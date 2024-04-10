@@ -130,7 +130,7 @@ export const extractNewTransactions = (
 ): Transaction[] =>
   incomingTransactions.filter((newTx) => !existingTransactions.some((existingTx) => existingTx === newTx.hash))
 
-export const extractTokenIds = (tokenIds: Asset['tokenId'][], ios: Transaction['inputs'] | Transaction['outputs']) => {
+export const extractTokenIds = (tokenIds: Asset['id'][], ios: Transaction['inputs'] | Transaction['outputs']) => {
   ios?.forEach((io) => {
     io.tokens?.forEach((token) => {
       if (!tokenIds.includes(token.id)) {

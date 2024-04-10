@@ -18,16 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { NFTCollectionMetadata, NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { chunk } from 'lodash'
+import posthog from 'posthog-js'
 
 import { baseApi } from '@/api/baseApi'
 import { client } from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
+import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { ONE_DAY_MS } from '@/constants'
 import { NFT } from '@/types'
-import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { isPromiseFulfilled } from '@/utils'
-import { chunk } from 'lodash'
-import posthog from 'posthog-js'
 
 export const nftsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

@@ -22,17 +22,12 @@ import {
   NFTTokenUriMetaData as NFTTokenUriMetaDataBase,
   Optional
 } from '@alephium/web3'
-import {
-  AddressBalance,
-  AddressTokenBalance,
-  FungibleTokenMetadata,
-  NFTMetadata,
-  Token
-} from '@alephium/web3/dist/src/api/api-explorer'
-import { EntityState } from '@reduxjs/toolkit'
+import { AddressBalance, FungibleTokenMetadata, NFTMetadata, Token } from '@alephium/web3/dist/src/api/api-explorer'
+
+export type TokenBalances = AddressBalance & { id: Token['id'] }
 
 // Same as TokenBalances, but amounts are in BigInt, useful for display purposes
-export type TokenDisplayBalances = Omit<AddressTokenBalance, 'balance' | 'lockedBalance'> & {
+export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & {
   balance: bigint
   lockedBalance: bigint
 }
@@ -48,7 +43,7 @@ export type AddressFungibleToken = FungibleToken & TokenDisplayBalances
 
 export type VerifiedAddressFungibleToken = AddressFungibleToken & { verified: true }
 
-export type AssetAmount = { id: Asset['tokenId']; amount?: bigint }
+export type AssetAmount = { id: Asset['id']; amount?: bigint }
 
 // We want to convert the type of decimals from string to number because our RAL
 // interface allows U256 but it doesn't make sense to have more than 2 billion

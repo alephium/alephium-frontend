@@ -17,15 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenList } from '@alephium/token-list'
+import { chunk } from 'lodash'
+import posthog from 'posthog-js'
 
 import { baseApi } from '@/api/baseApi'
+import { client } from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
+import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { ONE_DAY_MS } from '@/constants'
 import { FungibleTokenBasicMetadata, NetworkName } from '@/types'
-import { TOKENS_QUERY_LIMIT } from '@/api/limits'
-import { chunk } from 'lodash'
-import { client } from '@/api/client'
-import posthog from 'posthog-js'
 
 export const fungibleTokensApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

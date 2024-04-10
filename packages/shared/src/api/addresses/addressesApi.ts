@@ -20,8 +20,8 @@ import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { baseApi } from '@/api/baseApi'
 import { client } from '@/api/client'
-import { ONE_MINUTE_MS } from '@/constants'
 import { PAGINATION_PAGE_LIMIT } from '@/api/limits'
+import { ONE_MINUTE_MS } from '@/constants'
 import { TokenDisplayBalances } from '@/types'
 
 export const addressesApi = baseApi.injectEndpoints({
@@ -44,7 +44,7 @@ export const addressesApi = baseApi.injectEndpoints({
 
               addressTotalTokenBalances.push(
                 ...addressTokensPageResults.map((token) => ({
-                  tokenId: token.tokenId,
+                  id: token.tokenId,
                   balance: BigInt(token.balance),
                   lockedBalance: BigInt(token.lockedBalance)
                 }))

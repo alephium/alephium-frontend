@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { difference } from 'lodash'
+
 import { useGetFungibleTokenMetadataQuery, useGetTokenListQuery } from '@/api/assets/fungibleTokensApi'
 import { useGetAssetsGenericInfoQuery } from '@/api/assets/genericAssetsApi'
 import { useGetNftsMetadataQuery } from '@/api/assets/nftsApi'
 import { Asset, NetworkName } from '@/types'
-import { difference } from 'lodash'
 
-export const useGetAssetsMetadata = (assetIds: Asset['tokenId'][], networkName: NetworkName) => {
+export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
   const tokenList = useGetTokenListQuery(networkName).data?.tokens
   const tokensInTokenList = tokenList?.filter((token) => assetIds.includes(token.id)) || []
 

@@ -19,12 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesTokens } from '@/api/apiHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AssetBadge from '@/components/AssetBadge'
 import Badge from '@/components/Badge'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
 import { Address } from '@/types/addresses'
-import { useGetAddressesTokensBalancesQuery } from '@alephium/shared'
 
 interface SelectOptionAddressProps {
   address: Address
@@ -34,11 +34,10 @@ interface SelectOptionAddressProps {
 
 const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
-  const { data: addressesTokens } = useGetAddressesTokensBalancesQuery([address.hash])
-  const assets = addressesTokens?.[0].tokenBalances ?? []
+  const { tokens: addressTokens } = useAddressesTokens([address.hash])[0]
 
-  const knownAssetsWithBalance = assets.filter((a) => a.balance > 0 && a.name)
-  const unknownAssetsNb = assets.filter((a) => a.balance > 0 && !a.name).length
+  const knownAssetsWithBalance = addressTokens.filter((a) => a.balance > 0 && 'name' in a)
+  const unknownAssetsNb = addressTokens.filter((a) => a.balance > 0 && !('name' in a)).length
 
   return (
     <SelectOptionItemContent

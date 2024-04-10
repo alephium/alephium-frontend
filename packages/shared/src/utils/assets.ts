@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { TokenInfo } from '@alephium/token-list'
 import { orderBy } from 'lodash'
 
 import { calculateAmountWorth } from '@/numbers'
-import { Asset, FungibleToken, FungibleTokenBasicMetadata, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
-import { TokenInfo } from '@alephium/token-list'
+import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
 
 export const isFungible = (asset: TokenInfo | NFT): asset is TokenInfo => (<TokenInfo>asset).decimals !== undefined
 
@@ -46,8 +46,8 @@ export const calculateAssetsData = (
   tokenPrices: TokenPriceEntity[]
 ) =>
   tokenBalances.reduce((acc, token) => {
-    const fungibleToken = fungibleTokens.find((t) => t.id === token.tokenId)
-    const nftInfo = nfts.find((nft) => nft.id === token.tokenId)
+    const fungibleToken = fungibleTokens.find((t) => t.id === token.id)
+    const nftInfo = nfts.find((nft) => nft.id === token.id)
     const decimals = fungibleToken?.decimals ?? 0
     const balance = BigInt(token.balance.toString())
     const tokenPrice =
@@ -60,7 +60,7 @@ export const calculateAssetsData = (
         : undefined
 
     acc.push({
-      tokenId: token.tokenId,
+      id: token.id,
       balance,
       lockedBalance: BigInt(token.lockedBalance.toString()),
       name: fungibleToken?.name ?? nftInfo?.name,
