@@ -30,8 +30,7 @@ export type DecryptMnemonicResult = {
   version: EncryptedMnemonicVersion
 }
 
-// Deprecated
-type EncryptedMnemonicStoredAsString = {
+export type DeprecatedEncryptedMnemonicStoredAsString = {
   version: 1
   mnemonic: string
 }
@@ -67,7 +66,7 @@ export const encryptMnemonic = async (mnemonic: Uint8Array, password: string) =>
 export const decryptMnemonic = async (encryptedMnemonic: string, password: string): Promise<DecryptMnemonicResult> => {
   const { version, mnemonic } = (await encryptor.decrypt(password, encryptedMnemonic)) as
     | EncryptedMnemonicStoredAsUint8Array
-    | EncryptedMnemonicStoredAsString
+    | DeprecatedEncryptedMnemonicStoredAsString
 
   if (version === 1) {
     console.warn(

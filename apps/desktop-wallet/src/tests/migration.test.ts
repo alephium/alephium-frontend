@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { keyring } from '@alephium/keyring'
 import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { encrypt, walletGenerate } from '@alephium/shared-crypto'
+import { encrypt } from '@alephium/shared-crypto'
 import { nanoid } from 'nanoid'
 
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
@@ -29,9 +29,12 @@ import { DeprecatedAddressMetadata } from '@/types/addresses'
 import * as migrate from '@/utils/migration'
 import { stringToDoubleSHA256HexString } from '@/utils/misc'
 
-const testWallet = walletGenerate()
-const encryptedTestWallet = testWallet.encrypt('x')
-keyring.importMnemonicString(testWallet.mnemonic)
+const testWalletMnemonic =
+  'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava'
+
+const encryptedTestWallet =
+  '{"iv":"48d4c73c43693d5a604b44ea295aec7f60a84c463cacf7791bd3a100e72726d3f64e33fa6ab7f1aff269dbde984177195daa498a6c6d297ebb4971316b2add8d","encrypted":"f7f6fdc728eaf448459043b90bfd81f95b5f2e11d0878df99d1e30efa92b9cf3533cf6949f28166b819ad43f59bb9b8b511de4536c3b17b0493f016c2608beb9bc48fec636c671752627318eef62d2fbda7b8b245b873a74c1cd8259890d152f409ee51e90a3a36ad2c9e7b02b6de888f814e96acaa0641ccb46cceb3e5d4da11a9e450a7c00627d3bcad288a70d7ce55c6e21da2a007eb56aaf8bde16077fb5007f0b177a00418646e83ae2634a506745893580d9f3c5f19bdb901d7a9ac3d0","salt":"f63c1875736591412eb184d0709737ebcfab9a27c558b3aafe38b820ae5525fec8360f8f27526d4284b573182d9f569afb0bcadebaf7b9fc86feebdb18d9280b","version":1}'
+keyring.importMnemonicString(testWalletMnemonic)
 
 const activeWallet = {
   id: nanoid(),
@@ -531,7 +534,7 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
 
     localStorage.setItem(
       localStorageKey,
-      JSON.stringify({ encrypted: encrypt(testWallet.mnemonic, JSON.stringify(addressMetadata)) })
+      JSON.stringify({ encrypted: encrypt(testWalletMnemonic, JSON.stringify(addressMetadata)) })
     )
     localStorage.setItem(`wallet-${activeWallet.id}`, JSON.stringify({ encrypted: encryptedTestWallet }))
 
@@ -581,7 +584,7 @@ describe('_20240328_1221_migrateAddressAndContactsToUnencrypted', () => {
 
     localStorage.setItem(
       localStorageKey,
-      JSON.stringify({ encrypted: encrypt(testWallet.mnemonic, JSON.stringify(contacts)) })
+      JSON.stringify({ encrypted: encrypt(testWalletMnemonic, JSON.stringify(contacts)) })
     )
 
     localStorage.setItem(`wallet-${activeWallet.id}`, JSON.stringify({ encrypted: encryptedTestWallet }))

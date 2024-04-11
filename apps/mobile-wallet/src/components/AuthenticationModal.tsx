@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { decryptAsync, EncryptedMnemonicStoredAsString } from '@alephium/shared-crypto'
+import { DeprecatedEncryptedMnemonicStoredAsString } from '@alephium/keyring'
+import { decryptAsync } from '@alephium/shared-crypto'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -96,7 +97,7 @@ const AuthenticationModal = ({
 
     try {
       const data = await decryptAsync(pin, deprecatedEncryptedWallet.mnemonic, pbkdf2)
-      const { mnemonic } = JSON.parse(data) as EncryptedMnemonicStoredAsString
+      const { mnemonic } = JSON.parse(data) as DeprecatedEncryptedMnemonicStoredAsString
 
       onConfirm(mnemonic)
       onClose && onClose()
