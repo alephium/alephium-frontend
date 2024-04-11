@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
 import { fadeIn } from '@/animations'
+import { useAddressesUnknownTokens } from '@/api/apiHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import FocusableContent from '@/components/FocusableContent'
@@ -37,12 +38,7 @@ import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
-import {
-  makeSelectAddressesCheckedUnknownTokens,
-  makeSelectAddressesKnownFungibleTokens,
-  makeSelectAddressesNFTs,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 interface AssetsListProps {
@@ -69,8 +65,8 @@ const AssetsList = ({
   nftColumns
 }: AssetsListProps) => {
   const { t } = useTranslation()
-  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHashes))
+
+  const unknownTokens = useAddressesUnknownTokens(addressHashes)
 
   const [tabs, setTabs] = useState([
     { value: 'tokens', label: tokensTabTitle ?? '💰 ' + t('Tokens') },

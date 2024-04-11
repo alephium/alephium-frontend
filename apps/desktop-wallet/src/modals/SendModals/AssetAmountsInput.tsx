@@ -24,7 +24,11 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import { useAddressesFungibleTokens } from '@/api/apiHooks'
+import {
+  useAddressesFlattenFungibleTokens,
+  useAddressesFlattenKnownFungibleTokens,
+  useAddressesFungibleTokens
+} from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -62,7 +66,7 @@ const AssetAmountsInput = ({
 }: AssetAmountsInputProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const { fungibleTokens: assets } = useAddressesFungibleTokens([address.hash])[0]
+  const assets = useAddressesFlattenKnownFungibleTokens([address.hash])
 
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const selectedValueRef = useRef<HTMLDivElement>(null)

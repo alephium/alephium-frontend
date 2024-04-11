@@ -20,18 +20,24 @@ import { TokenInfo } from '@alephium/token-list'
 import { orderBy } from 'lodash'
 
 import { calculateAmountWorth } from '@/numbers'
-import { Asset, FungibleToken, KnownFungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
+import { Asset, FungibleToken, ListedFungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
 
 export const tokenIsFungible = (asset: Partial<TokenInfo | NFT>): asset is TokenInfo => 'decimals' in asset
 
+export const tokenIsKnownFungible = (asset: Partial<TokenInfo | NFT>): asset is TokenInfo =>
+  tokenIsFungible(asset) && 'symbol' in asset
+
 export const tokenIsNonFungible = (asset: Partial<TokenInfo | NFT>): asset is NFT => 'collectionId' in asset
 
-export const tokenIsKnown = (asset: Partial<TokenInfo | NFT>): asset is KnownFungibleToken => 'logoURI' in asset
+export const tokenIsListed = (asset: Partial<TokenInfo | NFT>): asset is ListedFungibleToken => 'logoURI' in asset
+
+// Todo: rename "unknown" to "uncategorized"?
+export const tokenIsUnknown = (asset: Partial<TokenInfo | NFT>) => !tokenIsFungible(asset) && !tokenIsNonFungible(asset)
 
 export const sortAssets = (assets: Asset[]) =>
   orderBy(
     assets,
-    [(a) => (tokenIsKnown(a) ? 0 : 1), (a) => a.worth ?? -1, (a) => a.name?.toLowerCase(), 'id'],
+    [(a) => (tokenIsListed(a) ? 0 : 1), (a) => a.worth ?? -1, (a) => a.name?.toLowerCase(), 'id'],
     ['asc', 'desc', 'asc', 'asc']
   )
 

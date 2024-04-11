@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { explorer } from '@alephium/web3'
 import { difference } from 'lodash'
 
 import { useGetFungibleTokensMetadataQuery, useGetTokenListQuery } from '@/api/assets/fungibleTokensApi'
@@ -27,20 +28,42 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
   const tokenList = useGetTokenListQuery(networkName).data?.tokens
   const tokensInTokenList = tokenList?.filter((token) => assetIds.includes(token.id)) || []
 
-  const genericInfoOfRemainingAssets =
+  const genericInfoOfNonListedAssets =
     useGetAssetsGenericInfoQuery(difference(assetIds, tokensInTokenList?.map((t) => t.id))).data || []
 
+  const groupedTokenIdsOfNonListedAssets = genericInfoOfNonListedAssets.reduce(
+    (acc, item) => {
+      const key = item.stdInterfaceId || explorer.TokenStdInterfaceId.NonStandard
+
+      return {
+        ...acc,
+        [key]: [...(acc[key] || []), item.token]
+      }
+    },
+    {} as Record<string, explorer.TokenInfo['token'][]>
+  )
+
   const fungibleTokensMetadata =
-    useGetFungibleTokensMetadataQuery(
-      genericInfoOfRemainingAssets.filter((t) => t.stdInterfaceId === 'fungible').map((t) => t.token)
-    )?.data || []
+    useGetFungibleTokensMetadataQuery(groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.Fungible])?.data ||
+    []
 
   const nftTokensMetadata =
-    useGetNftsMetadataQuery(
-      genericInfoOfRemainingAssets.filter((t) => t.stdInterfaceId === 'non-fungible').map((t) => t.token)
-    )?.data || []
+    useGetNftsMetadataQuery(groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.NonFungible])?.data || []
 
-  return [...tokensInTokenList, ...fungibleTokensMetadata, ...nftTokensMetadata]
+  const unknownTokensIds =
+    genericInfoOfNonListedAssets
+      .filter((i) => groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.NonStandard].includes(i.token))
+      .map((u) => ({ id: u.token })) || []
+
+  return {
+    groupedKnown: {
+      listed: tokensInTokenList,
+      fungible: fungibleTokensMetadata,
+      nft: nftTokensMetadata
+    },
+    flattenKnown: [...tokensInTokenList, ...fungibleTokensMetadata, ...nftTokensMetadata],
+    unknown: unknownTokensIds
+  }
 }
 
 // TODO: get list from backend (enum?)

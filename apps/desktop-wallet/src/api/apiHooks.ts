@@ -17,13 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  AddressFungibleToken,
-  tokenIsFungible,
-  tokenIsKnown,
+  tokenIsKnownFungible,
+  tokenIsListed,
+  tokenIsUnknown,
+  UnknownToken,
   useGetAddressesTokensBalancesQuery,
   useGetAssetsMetadata,
   useGetPricesQuery
 } from '@alephium/shared'
+import { groupBy } from 'lodash'
 
 import { useAppSelector } from '@/hooks/redux'
 
@@ -34,7 +36,7 @@ export const useAssetsMetadataForCurrentNetwork = (assetIds: string[]) => {
   return useGetAssetsMetadata(assetIds, networkName)
 }
 
-export const useAddressesAssets = (addressHashes: string[]) => {
+export const useAddressesAssets = (addressHashes: string[] = []) => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
   const { data: addressesTokens } = useGetAddressesTokensBalancesQuery(addressHashes)
   const addressesAssetsMetadata = useAssetsMetadataForCurrentNetwork(
@@ -42,7 +44,7 @@ export const useAddressesAssets = (addressHashes: string[]) => {
   )
 
   const tokenPrices = useGetPricesQuery({
-    tokenSymbols: addressesAssetsMetadata.filter(tokenIsKnown).map((t) => t.symbol),
+    tokenSymbols: addressesAssetsMetadata.groupedKnown.listed.map((t) => t.symbol),
     currency
   })
 
@@ -50,7 +52,7 @@ export const useAddressesAssets = (addressHashes: string[]) => {
     addressesTokens?.map((t) => ({
       addressHash: t.addressHash,
       assets: t.tokenBalances.map((b) => {
-        const tokenMetadata = addressesAssetsMetadata.find((a) => a.id === b.id)
+        const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === b.id)
         const worth = tokenMetadata && 'symbol' in tokenMetadata ? tokenPrices.data?.[tokenMetadata?.symbol] : undefined
 
         return {
@@ -63,13 +65,43 @@ export const useAddressesAssets = (addressHashes: string[]) => {
   )
 }
 
-export const useAddressesFungibleTokens = (addressHashes: string[]) => {
+export const useAddressesGroupedFungibleTokens = (addressHashes: string[]) => {
   const addressesAssets = useAddressesAssets(addressHashes)
+
+  const groupedTokens = groupBy(
+    addressesAssets.flatMap((a) => a.assets),
+    (t) => {
+      if (tokenIsListed(t)) {
+        return 'listed'
+      } else if (tokenIsUnknown(t)) {
+        return 'unknown'
+      } else {
+        return 'known'
+      }
+    }
+  )
+
   return addressesAssets.map((a) => ({
     addressHash: a.addressHash,
-    fungibleTokens: a.assets.filter(tokenIsFungible) as AddressFungibleToken[]
+    ...groupedTokens
   }))
 }
+
+export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[]) =>
+  useAddressesAssets(addressHashes)
+    .flatMap((a) => a.assets)
+    .filter((t) => tokenIsKnownFungible(t))
+
+export const useAddressesFlattenListedTokens = (addressHashes: string[] = []) =>
+  useAddressesAssets(addressHashes)
+    .flatMap((a) => a.assets)
+    .filter((t) => tokenIsListed(t))
+
+export const useAddressesFlattenUnknownTokens = (addressHashes: string[] = []) =>
+  useAddressesAssets(addressHashes).reduce(
+    (acc, a) => acc.concat(a.assets.filter(tokenIsUnknown).map((t) => ({ ...t, decimals: 0 }))),
+    [] as UnknownToken[]
+  )
 
 export const useAddressesWorth = (addressHashes: string[]) => {
   const addressesAssets = useAddressesAssets(addressHashes)
