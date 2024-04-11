@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { difference } from 'lodash'
 
-import { useGetFungibleTokenMetadataQuery, useGetTokenListQuery } from '@/api/assets/fungibleTokensApi'
+import { useGetFungibleTokensMetadataQuery, useGetTokenListQuery } from '@/api/assets/fungibleTokensApi'
 import { useGetAssetsGenericInfoQuery } from '@/api/assets/genericAssetsApi'
 import { useGetNftsMetadataQuery } from '@/api/assets/nftsApi'
 import { Asset, NetworkName } from '@/types'
@@ -31,7 +31,7 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
     useGetAssetsGenericInfoQuery(difference(assetIds, tokensInTokenList?.map((t) => t.id))).data || []
 
   const fungibleTokensMetadata =
-    useGetFungibleTokenMetadataQuery(
+    useGetFungibleTokensMetadataQuery(
       genericInfoOfRemainingAssets.filter((t) => t.stdInterfaceId === 'fungible').map((t) => t.token)
     )?.data || []
 
@@ -45,4 +45,5 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
 
 // TODO: get list from backend (enum?)
 // See: https://github.com/alephium/explorer-backend/issues/512
-export const useTokensWithAvailablePrice = () => ['ALPH', 'USDT', 'USDC', 'DAI', 'WBTC', 'WETH', 'AYIN']
+export const TOKENS_WITH_PRICE = ['ALPH', 'USDT', 'USDC', 'DAI', 'WBTC', 'WETH', 'AYIN']
+export const useTokensWithAvailablePrice = () => TOKENS_WITH_PRICE

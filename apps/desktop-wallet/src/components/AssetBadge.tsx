@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, isFungible, isNonFungible } from '@alephium/shared'
+import { Asset, tokenIsFungible, tokenIsNonFungible } from '@alephium/shared'
 import styled, { css } from 'styled-components'
 
 import { useAssetsMetadataForCurrentNetwork } from '@/api/apiHooks'
@@ -36,8 +36,8 @@ interface AssetBadgeProps {
 const AssetBadge = ({ assetId, amount, simple, hideNftName, className }: AssetBadgeProps) => {
   const tokenInfo = useAssetsMetadataForCurrentNetwork([assetId])[0]
 
-  const fungibleToken = isFungible(tokenInfo) ? tokenInfo : undefined
-  const nftInfo = isNonFungible(tokenInfo) ? tokenInfo : undefined
+  const fungibleToken = tokenIsFungible(tokenInfo) ? tokenInfo : undefined
+  const nftInfo = tokenIsNonFungible(tokenInfo) ? tokenInfo : undefined
 
   return (
     <div

@@ -20,23 +20,19 @@ import { TokenInfo } from '@alephium/token-list'
 import { orderBy } from 'lodash'
 
 import { calculateAmountWorth } from '@/numbers'
-import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
+import { Asset, FungibleToken, KnownFungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
 
-export const isFungible = (asset: Partial<TokenInfo | NFT>): asset is TokenInfo => 'decimals' in asset
+export const tokenIsFungible = (asset: Partial<TokenInfo | NFT>): asset is TokenInfo => 'decimals' in asset
 
-export const isNonFungible = (asset: Partial<TokenInfo | NFT>): asset is NFT => 'collectionId' in asset
+export const tokenIsNonFungible = (asset: Partial<TokenInfo | NFT>): asset is NFT => 'collectionId' in asset
+
+export const tokenIsKnown = (asset: Partial<TokenInfo | NFT>): asset is KnownFungibleToken => 'logoURI' in asset
 
 export const sortAssets = (assets: Asset[]) =>
   orderBy(
     assets,
-    [
-      (a) => (a.verified ? 0 : 1),
-      (a) => a.worth ?? -1,
-      (a) => a.verified === undefined,
-      (a) => a.name?.toLowerCase(),
-      'id'
-    ],
-    ['asc', 'desc', 'asc', 'asc', 'asc']
+    [(a) => (tokenIsKnown(a) ? 0 : 1), (a) => a.worth ?? -1, (a) => a.name?.toLowerCase(), 'id'],
+    ['asc', 'desc', 'asc', 'asc']
   )
 
 export const calculateAssetsData = (

@@ -44,7 +44,7 @@ export const fungibleTokensApi = baseApi.injectEndpoints({
       providesTags: (result, error, networkName) => [{ type: 'TokenList', networkName }],
       keepUnusedDataFor: ONE_DAY_MS / 1000
     }),
-    getFungibleTokenMetadata: build.query<FungibleTokenBasicMetadata[], string[]>({
+    getFungibleTokensMetadata: build.query<FungibleTokenBasicMetadata[], string[]>({
       queryFn: async (tokenIds) => {
         let tokensMetadata: FungibleTokenBasicMetadata[] = []
 
@@ -82,4 +82,4 @@ export const fungibleTokensApi = baseApi.injectEndpoints({
   })
 })
 
-export const { useGetTokenListQuery, useGetFungibleTokenMetadataQuery } = fungibleTokensApi
+export const { useGetTokenListQuery, useGetFungibleTokensMetadataQuery } = fungibleTokensApi

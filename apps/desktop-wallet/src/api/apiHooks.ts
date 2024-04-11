@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   AddressFungibleToken,
-  isFungible,
+  tokenIsFungible,
   useGetAddressesTokensBalancesQuery,
   useGetAssetsMetadata
 } from '@alephium/shared'
@@ -50,6 +50,6 @@ export const useAddressesFungibleTokens = (addressHashes: string[]) => {
   const addressesAssets = useAddressesAssets(addressHashes)
   return addressesAssets.map((a) => ({
     addressHash: a.addressHash,
-    fungibleTokens: a.assets.filter(isFungible) as AddressFungibleToken[]
+    fungibleTokens: a.assets.filter(tokenIsFungible) as AddressFungibleToken[]
   }))
 }
