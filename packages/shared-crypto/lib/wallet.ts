@@ -20,9 +20,8 @@ import { bs58 } from '@alephium/web3'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import blake from 'blakejs'
-import { pbkdf2 } from 'crypto'
 
-import { decryptAsync, encrypt, Pbkdf2Function } from './password-crypto'
+import { encrypt } from './password-crypto'
 
 type MnemonicLength = 12 | 24
 
@@ -39,7 +38,7 @@ type AddressKeyPair = {
 }
 
 // Remove after desktop wallet tests get adapted
-class EncryptedMnemonicStoredAsString {
+export class EncryptedMnemonicStoredAsString {
   readonly version: EncryptedMnemonicVersion = 1
   readonly mnemonic: string
 
@@ -151,26 +150,4 @@ export const walletEncrypt = (password: string, mnemonic: string) => {
   })
 
   return encrypt(password, JSON.stringify(storedState))
-}
-
-// Remove after @alephium/encryptor is used in mobile wallet
-const _pbkdf2 = (password: string, salt: Buffer): Promise<Buffer> =>
-  new Promise((resolve, reject) => {
-    pbkdf2(password, salt, 10000, 32, 'sha256', (err, data) => {
-      if (err) return reject(err)
-      resolve(data)
-    })
-  })
-
-// Remove after @alephium/encryptor is used in mobile wallet
-export const walletOpenAsyncUnsafe = async (
-  password: string,
-  encryptedWallet: string,
-  pbkdf2CustomFunc: Pbkdf2Function,
-  mnemonicToSeedCustomFunc: MnemonicToSeedFunction
-): Promise<Wallet> => {
-  const data = await decryptAsync(password, encryptedWallet, pbkdf2CustomFunc ?? _pbkdf2)
-  const config = JSON.parse(data) as EncryptedMnemonicStoredAsString
-
-  return getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, config.mnemonic)
 }

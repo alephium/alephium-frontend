@@ -27,21 +27,6 @@ describe('Wallet', function () {
     jest.clearAllMocks()
   })
 
-  describe('should call custom functions', () => {
-    const walletUtilsRewire = rewire('../dist/wallet')
-    const _pbkdf2 = walletUtilsRewire.__get__('_pbkdf2')
-
-    it('walletOpenAsyncUnsafe should call custom mnemonicToSeed and pbkdf2 function', async () => {
-      const wallet = wallets.wallets[0]
-      const password = wallet.password
-      const encryptedWallet = JSON.stringify(wallet.file)
-      const mnemonicToSeedCustomFunc = jest.fn((m: string) => Promise.resolve(bip39.mnemonicToSeedSync(m)))
-      const pbkdf2CustomFunc = jest.fn((p: string, s: Buffer) => _pbkdf2(p, s))
-      await walletUtils.walletOpenAsyncUnsafe(password, encryptedWallet, pbkdf2CustomFunc, mnemonicToSeedCustomFunc)
-      expect(mnemonicToSeedCustomFunc.mock.calls.length).toBe(1)
-      expect(pbkdf2CustomFunc.mock.calls.length).toBe(1)
-    })
-  })
   describe('the default pbkdf2 function', () => {
     const walletUtilsRewire = rewire('../dist/wallet')
     const _pbkdf2 = walletUtilsRewire.__get__('_pbkdf2')

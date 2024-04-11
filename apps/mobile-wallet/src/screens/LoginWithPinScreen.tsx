@@ -28,7 +28,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
-import { DeprecatedWalletState } from '~/types/wallet'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation, restoreNavigation } from '~/utils/navigation'
 
@@ -43,13 +42,13 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
   const handleSuccessfulLogin = useCallback(
-    async (deprecatedWallet?: DeprecatedWalletState) => {
-      if (!deprecatedWallet) return
+    async (deprecatedMnemonic?: string) => {
+      if (!deprecatedMnemonic) return
 
       setIsPinModalVisible(false)
 
       try {
-        await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
+        await migrateDeprecatedMnemonic(deprecatedMnemonic)
 
         const needsAddressRegeneration = addressesStatus === 'uninitialized' && !isLoadingLatestTxs
         const { addressesToInitialize, contacts, ...wallet } = await getStoredWallet(needsAddressRegeneration)
