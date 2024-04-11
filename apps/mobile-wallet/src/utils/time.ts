@@ -16,28 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Currency, NetworkSettings } from '@alephium/shared'
+// Copied from Uniswap
 
-import { ThemeType } from '~/style/themes'
+export function debounceCallback<T extends (...args: void[]) => void>(
+  func: T,
+  wait: number
+): { triggerDebounce: () => void; cancelDebounce: () => void } {
+  let timeout: NodeJS.Timeout
 
-// TODO: Remove usesBiometrics and requireAuth into a new SecuritySettings?
+  const cancelDebounce = (): void => {
+    clearTimeout(timeout)
+  }
 
-export interface GeneralSettings {
-  theme: ThemeType
-  discreetMode: boolean
-  requireAuth: boolean
-  currency: Currency
-  analytics: boolean
-  analyticsId?: string
-  walletConnect: boolean
-  usesBiometrics: boolean
+  return {
+    triggerDebounce: (): void => {
+      clearTimeout(timeout)
+      timeout = setTimeout(func, wait)
+    },
+    cancelDebounce
+  }
 }
-
-export interface Settings {
-  general: GeneralSettings
-  network: NetworkSettings
-}
-
-export type SettingsKey = keyof Settings
-
-export type SettingsPartial = GeneralSettings | NetworkSettings

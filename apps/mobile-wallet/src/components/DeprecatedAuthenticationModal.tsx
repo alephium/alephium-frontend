@@ -35,7 +35,7 @@ import { ShouldClearPin } from '~/types/misc'
 import { DeprecatedWalletState } from '~/types/wallet'
 import { pbkdf2 } from '~/utils/crypto'
 
-interface AuthenticationModalProps extends ModalWithBackdropProps, GetDeprecatedStoredWalletProps {
+interface DeprecatedAuthenticationModalProps extends ModalWithBackdropProps, GetDeprecatedStoredWalletProps {
   onConfirm: (deprecatedMnemonic?: string) => void
   onClose?: () => void
   loadingText?: string
@@ -50,14 +50,14 @@ const errorInstructionSet: Instruction[] = [
   { text: 'Please try again 💪', type: 'secondary' }
 ]
 
-const AuthenticationModal = ({
+const DeprecatedAuthenticationModal = ({
   onConfirm,
   onClose,
   forcePinUsage = false,
   authenticationPrompt,
   loadingText,
   ...props
-}: AuthenticationModalProps) => {
+}: DeprecatedAuthenticationModalProps) => {
   const insets = useSafeAreaInsets()
 
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
@@ -133,7 +133,7 @@ const AuthenticationModal = ({
   )
 }
 
-export default AuthenticationModal
+export default DeprecatedAuthenticationModal
 
 const ModalContent = styled.View`
   flex: 1;

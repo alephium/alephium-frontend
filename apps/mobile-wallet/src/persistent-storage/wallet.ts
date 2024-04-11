@@ -140,10 +140,6 @@ export const enableBiometrics = async (mnemonic: DeprecatedMnemonic, authenticat
   }
 }
 
-export const disableBiometrics = async () => {
-  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
-}
-
 export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
   try {
     const rawWalletMetadata = await AsyncStorage.getItem(WALLET_METADATA_STORAGE_KEY)
@@ -209,23 +205,6 @@ export const getDeprecatedStoredWallet = async (
 
   if (!mnemonic) {
     mnemonic = await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
-
-    // This is the case where biometrics were enabled, but something changed in the security settings of the device (new
-    // fingerprint or face ID was added)
-    if (!props?.forcePinUsage && usesBiometrics) {
-      await disableBiometrics()
-      await storeBiometricsSettings(false)
-
-      try {
-        await AsyncStorage.setItem(BIOMETRICS_SETTINGS_CHANGED, 'true')
-      } catch (e) {
-        sendAnalytics('Error', {
-          message: `Could not set ${BIOMETRICS_SETTINGS_CHANGED} flag to storage`,
-          exception: getHumanReadableError(e, '')
-        })
-        console.error(e)
-      }
-    }
   }
 
   return mnemonic
@@ -320,6 +299,7 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   await SecureStore.setItemAsync('wallet-mnemonic-v2', mnemonicStringified, defaultSecureStoreConfig)
   await SecureStore.deleteItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
   await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
+  await SecureStore.setItemAsync('is-mnemonic-migrated-to-v2', 'true')
 }
 
 export const dangerouslyExportWalletMnemonic = async (): Promise<string> => {

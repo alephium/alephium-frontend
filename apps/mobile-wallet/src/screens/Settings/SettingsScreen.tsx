@@ -27,7 +27,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
-import AuthenticationModal from '~/components/AuthenticationModal'
 import Button from '~/components/buttons/Button'
 import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
@@ -38,10 +37,10 @@ import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import { useBiometricPrompt } from '~/features/biometrics/hooks'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { disableBiometrics } from '~/persistent-storage/wallet'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 import WalletDeleteModal from '~/screens/Settings/WalletDeleteModal'
@@ -63,7 +62,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const deviceHasBiometricsData = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const requireAuth = useAppSelector((s) => s.settings.requireAuth)
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
+  const biometricsRequiredForTransactions = useAppSelector((s) => s.settings.requireAuth)
   const currentTheme = useAppSelector((s) => s.settings.theme)
   const currentCurrency = useAppSelector((s) => s.settings.currency)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
@@ -73,27 +73,25 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
+  const { triggerBiometricsPrompt } = useBiometricPrompt()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
-  const [isAuthenticationModalVisible, setIsAuthenticationModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [isWalletDeleteModalOpen, setIsWalletDeleteModalOpen] = useState(false)
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
-  const [authenticationPrompt, setAuthenticationPrompt] = useState('')
-  const [loadingText, setLoadingText] = useState('')
-  const [authCallback, setAuthCallback] = useState<() => void>(() => () => null)
 
   const toggleBiometrics = async () => {
     if (isBiometricsEnabled) {
-      await disableBiometrics()
-      dispatch(biometricsToggled(false))
+      triggerBiometricsPrompt({
+        successCallback: () => {
+          dispatch(biometricsToggled(false))
 
-      sendAnalytics('Deactivated biometrics')
+          sendAnalytics('Deactivated biometrics')
+        }
+      })
     } else {
-      // TODO
-      // await enableBiometrics(walletMnemonic)
       dispatch(biometricsToggled(true))
 
       sendAnalytics('Manually activated biometrics')
@@ -144,11 +142,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   const handleAuthRequimementToggle = () => {
-    if (requireAuth) {
-      setAuthCallback(() => () => toggleAuthRequirement())
-      setAuthenticationPrompt('Disable authentication')
-      setLoadingText('Disabling...')
-      setIsAuthenticationModalOpen(true)
+    if (biometricsRequiredForTransactions) {
+      triggerBiometricsPrompt({
+        successCallback: toggleAuthRequirement
+      })
     } else {
       toggleAuthRequirement()
     }
@@ -182,7 +179,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ScreenSectionTitle>Security</ScreenSectionTitle>
           <BoxSurface>
             <Row title="Require authentication" subtitle="For important actions" isLast>
-              <Toggle value={requireAuth} onValueChange={handleAuthRequimementToggle} />
+              <Toggle value={biometricsRequiredForTransactions} onValueChange={handleAuthRequimementToggle} />
             </Row>
             {deviceHasBiometricsData && (
               <Row title="Biometrics authentication" subtitle="Enhance your security" isLast>
@@ -236,52 +233,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         </ScreenSection>
       </ScrollScreenStyled>
 
-      <AuthenticationModal
-        visible={isAuthenticationModalVisible}
-        authenticationPrompt={authenticationPrompt}
-        loadingText={loadingText}
-        onConfirm={() => {
-          setIsAuthenticationModalOpen(false)
-          setAuthenticationPrompt('')
-          setLoadingText('')
-          authCallback()
-          setAuthCallback(() => () => null)
-        }}
-        onClose={() => {
-          setIsAuthenticationModalOpen(false)
-          setAuthenticationPrompt('')
-          setLoadingText('')
-          setAuthCallback(() => () => null)
-        }}
-      />
-
       <ModalWithBackdrop animationType="fade" visible={isThemeSwitchOverlayVisible} color="black" />
 
       <Portal>
-        <BottomModal
-          isOpen={isSwitchNetworkModalOpen}
-          onClose={() => setIsSwitchNetworkModalOpen(false)}
-          Content={(props) => (
-            <SwitchNetworkModal
-              onClose={() => setIsSwitchNetworkModalOpen(false)}
-              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
-              {...props}
-            />
-          )}
-        />
-
-        <BottomModal
-          isOpen={isCurrencySelectModalOpen}
-          onClose={() => setIsCurrencySelectModalOpen(false)}
-          Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isMnemonicModalVisible}
-          onClose={() => setIsMnemonicModalVisible(false)}
-          Content={(props) => <MnemonicModal {...props} />}
-        />
-
         <BottomModal
           isOpen={isSafePlaceWarningModalOpen}
           onClose={() => setIsSafePlaceWarningModalOpen(false)}
@@ -308,15 +262,45 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   variant="accent"
                   onPress={() => {
                     props.onClose && props.onClose()
-                    setAuthCallback(() => () => setIsMnemonicModalVisible(true))
-                    setAuthenticationPrompt("Verify it's you")
-                    setLoadingText('Verifying...')
-                    setIsAuthenticationModalOpen(true)
+
+                    if (biometricsRequiredForAppAccess) {
+                      triggerBiometricsPrompt({
+                        successCallback: () => setIsMnemonicModalVisible(true)
+                      })
+                    } else {
+                      setIsMnemonicModalVisible(true)
+                    }
                   }}
                 />
               </ScreenSection>
             </ModalContent>
           )}
+        />
+      </Portal>
+
+      <Portal>
+        <BottomModal
+          isOpen={isSwitchNetworkModalOpen}
+          onClose={() => setIsSwitchNetworkModalOpen(false)}
+          Content={(props) => (
+            <SwitchNetworkModal
+              onClose={() => setIsSwitchNetworkModalOpen(false)}
+              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
+              {...props}
+            />
+          )}
+        />
+
+        <BottomModal
+          isOpen={isCurrencySelectModalOpen}
+          onClose={() => setIsCurrencySelectModalOpen(false)}
+          Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
+        />
+
+        <BottomModal
+          isOpen={isMnemonicModalVisible}
+          onClose={() => setIsMnemonicModalVisible(false)}
+          Content={(props) => <MnemonicModal {...props} />}
         />
 
         <BottomModal

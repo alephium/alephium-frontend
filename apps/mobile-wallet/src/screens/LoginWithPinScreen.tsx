@@ -21,7 +21,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useState } from 'react'
 
 import { sendAnalytics } from '~/analytics'
-import AuthenticationModal from '~/components/AuthenticationModal'
+import DeprecatedAuthenticationModal from '~/components/DeprecatedAuthenticationModal'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -68,7 +68,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
   return (
     <Screen contrastedBg {...props}>
-      <AuthenticationModal
+      <DeprecatedAuthenticationModal
         visible={isPinModalVisible}
         forcePinUsage
         onConfirm={handleSuccessfulLogin}

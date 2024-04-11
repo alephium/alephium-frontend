@@ -24,7 +24,6 @@ import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import backupAnimationSrc from '~/animations/lottie/backup.json'
-import AuthenticationModal from '~/components/AuthenticationModal'
 import Button, { BackButton } from '~/components/buttons/Button'
 import FooterButtonContainer from '~/components/buttons/FooterButtonContainer'
 import BottomModal from '~/components/layout/BottomModal'
@@ -32,6 +31,8 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useHeaderContext } from '~/contexts/HeaderContext'
+import { useBiometricPrompt } from '~/features/biometrics/hooks'
+import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 
@@ -41,8 +42,9 @@ interface BackupIntroScreenProps
 
 const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => {
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+  const { triggerBiometricsPrompt } = useBiometricPrompt()
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
 
-  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
 
   useFocusEffect(
@@ -52,6 +54,16 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
       })
     }, [navigation, setHeaderOptions])
   )
+
+  const onShowSecretRecoveryPhraseButtonPress = () => {
+    if (biometricsRequiredForAppAccess) {
+      triggerBiometricsPrompt({
+        successCallback: () => setIsMnemonicModalVisible(true)
+      })
+    } else {
+      setIsMnemonicModalVisible(true)
+    }
+  }
 
   return (
     <>
@@ -81,21 +93,10 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
             iconProps={{ name: 'key' }}
             type="primary"
             variant="highlight"
-            onPress={() => setIsAuthenticationModalVisible(true)}
+            onPress={onShowSecretRecoveryPhraseButtonPress}
           />
         </FooterButtonContainer>
       </ScrollScreen>
-
-      <AuthenticationModal
-        visible={isAuthenticationModalVisible}
-        authenticationPrompt="Verify it's you"
-        loadingText="Verifying..."
-        onConfirm={() => {
-          setIsAuthenticationModalVisible(false)
-          setIsMnemonicModalVisible(true)
-        }}
-        onClose={() => setIsAuthenticationModalVisible(false)}
-      />
 
       <Portal>
         <BottomModal
