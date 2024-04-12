@@ -24,7 +24,7 @@ import { Asset, FungibleToken, ListedFungibleToken, NFT, TokenDisplayBalances, T
 
 export const tokenIsFungible = (asset: Partial<TokenInfo | NFT>): asset is TokenInfo => 'decimals' in asset
 
-export const tokenIsKnownFungible = (asset: Partial<TokenInfo | NFT>): asset is TokenInfo =>
+export const tokenIsKnownFungible = (asset: Partial<TokenInfo | NFT>): asset is Asset =>
   tokenIsFungible(asset) && 'symbol' in asset
 
 export const tokenIsNonFungible = (asset: Partial<TokenInfo | NFT>): asset is NFT => 'collectionId' in asset

@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CURRENCIES, selectDoVerifiedFungibleTokensNeedInitialization } from '@alephium/shared'
+import { AddressHash, CURRENCIES } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesFlattenAssets, useAddressesWorth } from '@/api/apiHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
@@ -31,12 +32,7 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
-import {
-  makeSelectAddressesTokens,
-  makeSelectAddressesTokensWorth,
-  selectAddressByHash,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressGridRowProps {
@@ -48,15 +44,12 @@ const maxDisplayedAssets = 7 // Allow 2 rows by default
 
 const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const { t } = useTranslation()
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((s) => selectAddressesTokens(s, addressHash))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const assets = useAddressesFlattenAssets([addressHash])
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const areTokenPricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const balanceInFiat = useAddressesWorth([addressHash])[0].worth
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
@@ -95,17 +88,13 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
             <Label>
               <AddressBadge addressHash={address.hash} hideColorIndication truncate disableA11y />
             </Label>
-            {stateUninitialized ? (
-              <SkeletonLoader height="15.5px" />
-            ) : (
-              <LastActivity>
-                {address.lastUsed ? `${t('Last activity')} ${dayjs(address.lastUsed).fromNow()}` : t('Never used')}
-              </LastActivity>
-            )}
+            <LastActivity>
+              {address.lastUsed ? `${t('Last activity')} ${dayjs(address.lastUsed).fromNow()}` : t('Never used')}
+            </LastActivity>
           </Column>
         </AddressNameCell>
         <Cell>
-          {verifiedFungibleTokensNeedInitialization || stateUninitialized ? (
+          {stateUninitialized ? (
             <SkeletonLoader height="33.5px" />
           ) : (
             <AssetLogos>

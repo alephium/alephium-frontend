@@ -45,7 +45,7 @@ import {
   makeSelectAddressesPendingTransactions
 } from '@/storage/transactions/transactionsSelectors'
 import { AddressConfirmedTransaction, Direction } from '@/types/transactions'
-import { getTransactionInfo } from '@/utils/transactions'
+import { useTransactionInfo } from '@/utils/transactions'
 
 interface TransactionListProps {
   addressHashes?: AddressHash[]
@@ -242,7 +242,7 @@ const applyFilters = ({
 
   return isDirectionsFilterEnabled || isAssetsFilterEnabled
     ? txs.filter((tx) => {
-        const { assets, infoType } = getTransactionInfo(tx, hideFromColumn)
+        const { assets, infoType } = useTransactionInfo(tx, hideFromColumn)
         const dir = infoType === 'pending' ? 'out' : infoType
 
         const passedDirectionsFilter = !isDirectionsFilterEnabled || directions.includes(dir)

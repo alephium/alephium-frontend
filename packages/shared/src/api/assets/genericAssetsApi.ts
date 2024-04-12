@@ -17,17 +17,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenInfo } from '@alephium/web3/dist/src/api/api-explorer'
+import { chunk } from 'lodash'
 
 import { baseApi } from '@/api/baseApi'
 import { client } from '@/api/client'
+import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { ONE_DAY_MS } from '@/constants'
 
 export const genericAssetsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getAssetsGenericInfo: build.query<TokenInfo[], string[]>({
-      queryFn: async (assetIds) => ({ data: await client.explorer.tokens.postTokens(assetIds) }),
-      providesTags: (result, error, assetIds) =>
-        assetIds.map((id) => ({
+    getTokensGenericInfo: build.query<TokenInfo[], string[]>({
+      queryFn: async (tokenIds) => {
+        const tokensInfo = await Promise.all(
+          chunk(tokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
+            client.explorer.tokens.postTokens(unknownTokenIdsChunk)
+          )
+        )
+
+        return { data: tokensInfo.flat() }
+      },
+      providesTags: (result, error, tokenIds) =>
+        tokenIds.map((id) => ({
           type: 'TokenInfo',
           id
         })),
@@ -36,4 +46,4 @@ export const genericAssetsApi = baseApi.injectEndpoints({
   })
 })
 
-export const { useGetAssetsGenericInfoQuery } = genericAssetsApi
+export const { useGetTokensGenericInfoQuery } = genericAssetsApi

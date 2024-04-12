@@ -20,7 +20,7 @@ import { explorer } from '@alephium/web3'
 import { difference } from 'lodash'
 
 import { useGetFungibleTokensMetadataQuery, useGetTokenListQuery } from '@/api/assets/fungibleTokensApi'
-import { useGetAssetsGenericInfoQuery } from '@/api/assets/genericAssetsApi'
+import { useGetTokensGenericInfoQuery } from '@/api/assets/genericAssetsApi'
 import { useGetNftsMetadataQuery } from '@/api/assets/nftsApi'
 import { Asset, NetworkName } from '@/types'
 
@@ -28,10 +28,11 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
   const tokenList = useGetTokenListQuery(networkName).data?.tokens
   const tokensInTokenList = tokenList?.filter((token) => assetIds.includes(token.id)) || []
 
-  const genericInfoOfNonListedAssets =
-    useGetAssetsGenericInfoQuery(difference(assetIds, tokensInTokenList?.map((t) => t.id))).data || []
+  const genericInfoOfNonListedAssets = useGetTokensGenericInfoQuery(
+    difference(assetIds, tokensInTokenList?.map((t) => t.id))
+  ).data
 
-  const groupedTokenIdsOfNonListedAssets = genericInfoOfNonListedAssets.reduce(
+  const groupedTokenIdsOfNonListedAssets = genericInfoOfNonListedAssets?.reduce(
     (acc, item) => {
       const key = item.stdInterfaceId || explorer.TokenStdInterfaceId.NonStandard
 
@@ -44,15 +45,16 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
   )
 
   const fungibleTokensMetadata =
-    useGetFungibleTokensMetadataQuery(groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.Fungible])?.data ||
-    []
+    useGetFungibleTokensMetadataQuery(groupedTokenIdsOfNonListedAssets?.[explorer.TokenStdInterfaceId.Fungible] || [])
+      ?.data || []
 
   const nftTokensMetadata =
-    useGetNftsMetadataQuery(groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.NonFungible])?.data || []
+    useGetNftsMetadataQuery(groupedTokenIdsOfNonListedAssets?.[explorer.TokenStdInterfaceId.NonFungible] || [])?.data ||
+    []
 
   const unknownTokensIds =
     genericInfoOfNonListedAssets
-      .filter((i) => groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.NonStandard].includes(i.token))
+      ?.filter((i) => groupedTokenIdsOfNonListedAssets?.[explorer.TokenStdInterfaceId.NonStandard]?.includes(i.token))
       .map((u) => ({ id: u.token })) || []
 
   return {

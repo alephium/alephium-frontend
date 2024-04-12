@@ -23,7 +23,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesWorth } from '@/api/apiHooks'
+import { useAddressesTotalWorth, useAddressesWorth } from '@/api/apiHooks'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
@@ -87,7 +87,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
   const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
 
-  const totalAmountWorth = useAddressesWorth(allAddressHashes).reduce((acc, w) => acc + w.worth, BigInt(0))
+  const totalAmountWorth = useAddressesTotalWorth(allAddressHashes)
 
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 

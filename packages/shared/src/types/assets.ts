@@ -39,12 +39,14 @@ export type FungibleToken = TokenInfo & { verified?: boolean }
 export type ListedFungibleToken = TokenInfo & { logoURI: string }
 
 // TODO: Use "uncategorized" instead of "unknown"?
-export type UnknownToken = Partial<TokenInfo> & { decimals: 0 }
+export type UnknownToken = Partial<TokenInfo> & { id: string; decimals: 0 }
 
 export type Asset = TokenDisplayBalances &
   Optional<FungibleToken, 'symbol' | 'name'> & {
     worth?: number
   }
+
+export type UnknownAsset = TokenDisplayBalances & UnknownToken
 
 export type AddressFungibleToken = FungibleToken & TokenDisplayBalances
 

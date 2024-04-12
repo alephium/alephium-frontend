@@ -39,7 +39,7 @@ import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 import { AddressTransaction } from '@/types/transactions'
-import { getTransactionInfo, isPendingTx } from '@/utils/transactions'
+import { useTransactionInfo, isPendingTx } from '@/utils/transactions'
 
 interface TransactionalInfoProps {
   transaction: AddressTransaction
@@ -60,7 +60,7 @@ const TransactionalInfo = ({
   const { addressHash: addressHashParam = '' } = useParams<{ addressHash: AddressHash }>()
   const addressHash = addressHashProp ?? addressHashParam
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const { assets, direction, lockTime, infoType } = getTransactionInfo(tx, showInternalInflows)
+  const { assets, direction, lockTime, infoType } = useTransactionInfo(tx, showInternalInflows)
   const isPending = isPendingTx(tx)
   const isFailedScriptTx = !isPending && !tx.scriptExecutionOk
   const { label, Icon, iconColor, iconBgColor } = useTransactionUI({ infoType, isFailedScriptTx })

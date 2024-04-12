@@ -33,7 +33,10 @@ export const pricesApi = baseApi.injectEndpoints({
           (symbol) => !!symbol && !!availableTokensSymbols && availableTokensSymbols.includes(symbol)
         )
 
-        const prices = await client.explorer.market.postMarketPrices({ currency }, tokensToFetch)
+        const prices = await client.explorer.market.postMarketPrices(
+          { currency: currency.toLowerCase() },
+          tokensToFetch
+        )
 
         return {
           data: tokensToFetch.reduce(

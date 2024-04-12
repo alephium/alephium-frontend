@@ -17,10 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  Asset,
+  calculateAmountWorth,
   tokenIsKnownFungible,
   tokenIsListed,
+  tokenIsNonFungible,
   tokenIsUnknown,
-  UnknownToken,
+  UnknownAsset,
   useGetAddressesTokensBalancesQuery,
   useGetAssetsMetadata,
   useGetPricesQuery
@@ -28,6 +31,7 @@ import {
 import { groupBy } from 'lodash'
 
 import { useAppSelector } from '@/hooks/redux'
+import { Address } from '@/types/addresses'
 
 // TODO: Extract these hooks to shared
 
@@ -36,7 +40,9 @@ export const useAssetsMetadataForCurrentNetwork = (assetIds: string[]) => {
   return useGetAssetsMetadata(assetIds, networkName)
 }
 
-export const useAddressesAssets = (addressHashes: string[] = []) => {
+export const useAddressesAssets = (
+  addressHashes: string[] = []
+): { addressHash: Address['hash']; assets: Asset[] }[] => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
   const { data: addressesTokens } = useGetAddressesTokensBalancesQuery(addressHashes)
   const addressesAssetsMetadata = useAssetsMetadataForCurrentNetwork(
@@ -53,19 +59,26 @@ export const useAddressesAssets = (addressHashes: string[] = []) => {
       addressHash: t.addressHash,
       assets: t.tokenBalances.map((b) => {
         const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === b.id)
-        const worth = tokenMetadata && 'symbol' in tokenMetadata ? tokenPrices.data?.[tokenMetadata?.symbol] : undefined
+        const tokenPrice =
+          tokenMetadata && 'symbol' in tokenMetadata ? tokenPrices.data?.[tokenMetadata?.symbol] : undefined
+
+        const worth = tokenPrice ? calculateAmountWorth(BigInt(b.balance), tokenPrice) : undefined
+        const decimals = tokenMetadata && 'decimals' in tokenMetadata ? tokenMetadata.decimals : 0
 
         return {
           ...b,
           ...tokenMetadata,
-          worth
+          balance: BigInt(b.balance),
+          lockedBalance: BigInt(b.lockedBalance),
+          worth,
+          decimals
         }
       })
     })) || []
   )
 }
 
-export const useAddressesGroupedFungibleTokens = (addressHashes: string[]) => {
+export const useAddressesGroupedAssets = (addressHashes: string[]) => {
   const addressesAssets = useAddressesAssets(addressHashes)
 
   const groupedTokens = groupBy(
@@ -73,10 +86,12 @@ export const useAddressesGroupedFungibleTokens = (addressHashes: string[]) => {
     (t) => {
       if (tokenIsListed(t)) {
         return 'listed'
-      } else if (tokenIsUnknown(t)) {
-        return 'unknown'
+      } else if (tokenIsNonFungible(t)) {
+        return 'nft'
+      } else if (tokenIsKnownFungible(t)) {
+        return 'fungible'
       } else {
-        return 'known'
+        return 'unknown'
       }
     }
   )
@@ -87,7 +102,10 @@ export const useAddressesGroupedFungibleTokens = (addressHashes: string[]) => {
   }))
 }
 
-export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[]) =>
+export const useAddressesFlattenAssets = (addressHashes: string[] = []) =>
+  useAddressesAssets(addressHashes).flatMap((a) => a.assets)
+
+export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[] = []) =>
   useAddressesAssets(addressHashes)
     .flatMap((a) => a.assets)
     .filter((t) => tokenIsKnownFungible(t))
@@ -100,13 +118,23 @@ export const useAddressesFlattenListedTokens = (addressHashes: string[] = []) =>
 export const useAddressesFlattenUnknownTokens = (addressHashes: string[] = []) =>
   useAddressesAssets(addressHashes).reduce(
     (acc, a) => acc.concat(a.assets.filter(tokenIsUnknown).map((t) => ({ ...t, decimals: 0 }))),
-    [] as UnknownToken[]
+    [] as UnknownAsset[]
   )
 
-export const useAddressesWorth = (addressHashes: string[]) => {
-  const addressesAssets = useAddressesAssets(addressHashes)
-  return addressesAssets.map((a) => ({
+export const useAddressesFlattenNfts = (addressHashes: string[] = []) =>
+  useAddressesAssets(addressHashes)
+    .flatMap((a) => a.assets)
+    .filter((t) => tokenIsNonFungible(t))
+
+export const useAddressesWorth = (addressHashes: string[]) =>
+  useAddressesAssets(addressHashes).map((a) => ({
     addressHash: a.addressHash,
-    worth: a.assets.reduce((acc, a) => acc + BigInt(a.worth || 0) * a.balance, BigInt(0))
+    worth: a.assets.reduce((acc, a) => acc + (a.worth || 0), 0)
   }))
+
+export const useAddressesTotalWorth = (addressHashes: string[]) => {
+  useAddressesAssets(addressHashes).reduce(
+    (acc, address) => acc + address.assets.reduce((acc, asset) => acc + (asset.worth || 0), 0),
+    0
+  )
 }

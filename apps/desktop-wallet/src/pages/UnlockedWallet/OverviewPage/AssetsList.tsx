@@ -18,12 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, Asset, CURRENCIES, NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { useAddressesUnknownTokens } from '@/api/apiHooks'
+import {
+  useAddressesFlattenKnownFungibleTokens,
+  useAddressesFlattenNfts,
+  useAddressesFlattenUnknownTokens
+} from '@/api/apiHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import FocusableContent from '@/components/FocusableContent'
@@ -66,7 +70,7 @@ const AssetsList = ({
 }: AssetsListProps) => {
   const { t } = useTranslation()
 
-  const unknownTokens = useAddressesUnknownTokens(addressHashes)
+  const unknownTokens = useAddressesFlattenUnknownTokens(addressHashes)
 
   const [tabs, setTabs] = useState([
     { value: 'tokens', label: tokensTabTitle ?? '💰 ' + t('Tokens') },
@@ -119,12 +123,8 @@ const AssetsList = ({
 }
 
 const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsListProps) => {
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
+  const knownFungibleTokens = useAddressesFlattenKnownFungibleTokens(addressHashes)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isLoadingFungibleTokens = useAppSelector(
-    (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified || s.fungibleTokens.loadingTokenTypes
-  )
 
   return (
     <>
@@ -132,7 +132,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
         {knownFungibleTokens.map((asset) => (
           <TokenListRow asset={asset} isExpanded={isExpanded} key={asset.id} />
         ))}
-        {(isLoadingFungibleTokens || stateUninitialized) && (
+        {stateUninitialized && (
           <TableRow>
             <SkeletonLoader height="37.5px" />
           </TableRow>
@@ -145,8 +145,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
 }
 
 const UnknownTokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsListProps) => {
-  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHashes))
+  const unknownTokens = useAddressesFlattenUnknownTokens(addressHashes)
 
   return (
     <>
@@ -228,17 +227,14 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
 
 const NFTsList = ({ className, addressHashes, isExpanded, onExpand, nftColumns }: AssetsListProps) => {
   const { t } = useTranslation()
-  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHashes))
+  const nfts = useAddressesFlattenNfts(addressHashes)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isLoadingNFTs = useAppSelector((s) => s.nfts.loading)
-  const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
   const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {isLoadingNFTs || isLoadingTokenTypes || stateUninitialized ? (
+        {stateUninitialized ? (
           <NFTList>
             <SkeletonLoader height="205px" />
             <SkeletonLoader height="205px" />

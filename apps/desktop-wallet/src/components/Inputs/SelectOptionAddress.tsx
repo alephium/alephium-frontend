@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesAssets } from '@/api/apiHooks'
+import { useAddressesFlattenAssets } from '@/api/apiHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AssetBadge from '@/components/AssetBadge'
 import Badge from '@/components/Badge'
@@ -34,7 +34,7 @@ interface SelectOptionAddressProps {
 
 const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
-  const { assets: addressTokens } = useAddressesAssets([address.hash])[0]
+  const addressTokens = useAddressesFlattenAssets([address.hash])
 
   const knownAssetsWithBalance = addressTokens.filter((a) => a.balance > 0 && 'name' in a)
   const unknownAssetsNb = addressTokens.filter((a) => a.balance > 0 && !('name' in a)).length

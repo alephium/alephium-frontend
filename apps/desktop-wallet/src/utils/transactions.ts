@@ -32,6 +32,7 @@ import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, explorer, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import dayjs from 'dayjs'
 
+import { useAddressesFlattenKnownFungibleTokens } from '@/api/apiHooks'
 import { SelectOption } from '@/components/Inputs/Select'
 import i18n from '@/i18n'
 import { store } from '@/storage/store'
@@ -128,10 +129,10 @@ export const directionOptions: {
   }
 ]
 
-export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
+export const useTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
   const state = store.getState()
-  const fungibleTokens = state.fungibleTokens.entities
   const internalAddresses = state.addresses.ids as AddressHash[]
+  const fungibleTokens = useAddressesFlattenKnownFungibleTokens()
 
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
@@ -177,7 +178,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     lockTime = lockTime.toISOString() === new Date(0).toISOString() ? undefined : lockTime
   }
 
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...fungibleTokens[token.id] }))]
+  const tokenAssets = [...tokens.map((token) => ({ ...token, ...fungibleTokens.find((t) => t.id === token.id) }))]
   const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
 
   return {

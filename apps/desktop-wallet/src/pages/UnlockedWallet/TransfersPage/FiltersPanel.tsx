@@ -16,23 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, selectDoVerifiedFungibleTokensNeedInitialization } from '@alephium/shared'
+import { Asset } from '@alephium/shared'
 import { colord } from 'colord'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesFlattenAssets } from '@/api/apiHooks'
 import Button from '@/components/Button'
 import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import {
-  makeSelectAddressesTokens,
-  selectAllAddresses,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Address } from '@/types/addresses'
 import { directionOptions } from '@/utils/transactions'
@@ -58,10 +55,8 @@ const FiltersPanel = ({
 }: FiltersPanelProps) => {
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector(selectAddressesTokens)
+  const assets = useAddressesFlattenAssets(selectedAddresses.map((address) => address.hash))
 
-  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
   const renderAddressesSelectedValue = () =>
@@ -96,10 +91,10 @@ const FiltersPanel = ({
   }
 
   useEffect(() => {
-    if (!verifiedFungibleTokensNeedInitialization && !stateUninitialized && !selectedAssets) {
+    if (!stateUninitialized && !selectedAssets) {
       setSelectedAssets(assets)
     }
-  }, [verifiedFungibleTokensNeedInitialization, assets, selectedAssets, setSelectedAssets, stateUninitialized])
+  }, [assets, selectedAssets, setSelectedAssets, stateUninitialized])
 
   return (
     <UnlockedWalletPanel className={className}>

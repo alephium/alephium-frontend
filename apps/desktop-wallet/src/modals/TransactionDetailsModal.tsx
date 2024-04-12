@@ -41,7 +41,7 @@ import SideModal from '@/modals/SideModal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { AddressConfirmedTransaction } from '@/types/transactions'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
-import { getTransactionInfo } from '@/utils/transactions'
+import { useTransactionInfo } from '@/utils/transactions'
 
 interface TransactionDetailsModalProps {
   transaction: AddressConfirmedTransaction
@@ -56,7 +56,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const { assets, direction, lockTime, infoType } = getTransactionInfo(transaction)
+  const { assets, direction, lockTime, infoType } = useTransactionInfo(transaction)
   const { label, Icon, iconColor } = useTransactionUI({
     infoType,
     isFailedScriptTx: !transaction.scriptExecutionOk
