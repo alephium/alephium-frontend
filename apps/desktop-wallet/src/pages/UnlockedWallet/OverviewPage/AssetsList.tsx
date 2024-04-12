@@ -42,7 +42,7 @@ import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
-import { selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 interface AssetsListProps {
@@ -70,7 +70,10 @@ const AssetsList = ({
 }: AssetsListProps) => {
   const { t } = useTranslation()
 
-  const unknownTokens = useAddressesFlattenUnknownTokens(addressHashes)
+  const allAddresses = useAppSelector(selectAllAddresses)
+  const usedAddressHashes = addressHashes && addressHashes.length > 0 ? addressHashes : allAddresses.map((a) => a.hash)
+
+  const unknownTokens = useAddressesFlattenUnknownTokens(usedAddressHashes)
 
   const [tabs, setTabs] = useState([
     { value: 'tokens', label: tokensTabTitle ?? '💰 ' + t('Tokens') },
@@ -95,14 +98,14 @@ const AssetsList = ({
           {
             tokens: (
               <TokensList
-                addressHashes={addressHashes}
+                addressHashes={usedAddressHashes}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
               />
             ),
             nfts: (
               <NFTsList
-                addressHashes={addressHashes}
+                addressHashes={usedAddressHashes}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
                 nftColumns={nftColumns}
@@ -110,7 +113,7 @@ const AssetsList = ({
             ),
             unknownTokens: (
               <UnknownTokensList
-                addressHashes={addressHashes}
+                addressHashes={usedAddressHashes}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
               />
@@ -126,6 +129,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
   const knownFungibleTokens = useAddressesFlattenKnownFungibleTokens(addressHashes)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
+  console.log(knownFungibleTokens)
   return (
     <>
       <motion.div {...fadeIn} className={className}>

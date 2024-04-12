@@ -32,7 +32,8 @@ export const tokenIsNonFungible = (asset: Partial<TokenInfo | NFT>): asset is NF
 export const tokenIsListed = (asset: Partial<TokenInfo | NFT>): asset is ListedFungibleToken => 'logoURI' in asset
 
 // Todo: rename "unknown" to "uncategorized"?
-export const tokenIsUnknown = (asset: Partial<TokenInfo | NFT>) => !tokenIsFungible(asset) && !tokenIsNonFungible(asset)
+export const tokenIsUnknown = (asset: Partial<TokenInfo | NFT>) =>
+  !tokenIsKnownFungible(asset) && !tokenIsNonFungible(asset)
 
 export const sortAssets = (assets: Asset[]) =>
   orderBy(
