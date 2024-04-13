@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AnyAction, Dispatch, ThunkDispatch } from '@reduxjs/toolkit'
 
+import { baseApi } from '@/api/baseApi'
 import clientsSlice from '@/store/clients/clientsSlice'
 import networkSlice from '@/store/network/networkSlice'
 import pricesHistorySlice from '@/store/prices/pricesHistorySlice'
@@ -25,7 +26,6 @@ import pricesSlice from '@/store/prices/pricesSlice'
 import { ClientsState } from '@/types'
 import { NetworkState } from '@/types/network'
 import { PricesHistoryState, PricesState } from '@/types/price'
-import { baseApi } from '@/api/baseApi'
 
 export const sharedReducer = {
   [pricesSlice.name]: pricesSlice.reducer,

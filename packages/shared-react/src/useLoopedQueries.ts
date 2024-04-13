@@ -16,7 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/redux'
-export * from '@/useInitializeClient'
-export * from '@/useInterval'
-export * from '@/useLoopedQueries'
+import { useEffect, useState } from 'react'
+
+export const useLoopedQueries = <T>(ids: string[], fetch: (id: string) => T) => {
+  const [result, setResult] = useState<T[]>([])
+
+  useEffect(() => {
+    const calls = ids.map((id) => fetch(id))
+
+    Promise.all(calls).then((res) => {
+      setResult(res)
+    })
+  }, [ids, fetch])
+
+  return { data: result.flat() }
+}

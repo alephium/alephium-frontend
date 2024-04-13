@@ -1043,6 +1043,9 @@ importers:
       '@alephium/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@alephium/shared-react':
+        specifier: workspace:*
+        version: link:../shared-react
       '@alephium/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config

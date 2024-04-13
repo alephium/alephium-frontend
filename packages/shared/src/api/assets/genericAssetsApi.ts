@@ -16,34 +16,40 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useLoopedQueries } from '@alephium/shared-react'
 import { TokenInfo } from '@alephium/web3/dist/src/api/api-explorer'
-import { chunk } from 'lodash'
+import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import { baseApi } from '@/api/baseApi'
 import { client } from '@/api/client'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { ONE_DAY_MS } from '@/constants'
 
+const batchedTokenGenericInfo = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokens(ids),
+  resolver: keyResolver('token'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: TOKENS_QUERY_LIMIT
+  })
+})
+
 export const genericAssetsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getTokensGenericInfo: build.query<TokenInfo[], string[]>({
-      queryFn: async (tokenIds) => {
-        const tokensInfo = await Promise.all(
-          chunk(tokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
-            client.explorer.tokens.postTokens(unknownTokenIdsChunk)
-          )
-        )
-
-        return { data: tokensInfo.flat() }
-      },
-      providesTags: (result, error, tokenIds) =>
-        tokenIds.map((id) => ({
+    getTokenGenericInfo: build.query<TokenInfo, string>({
+      queryFn: async (tokenId) => ({ data: await batchedTokenGenericInfo.fetch(tokenId) }),
+      providesTags: (result, error, tokenId) => [
+        {
           type: 'TokenInfo',
-          id
-        })),
+          id: tokenId
+        }
+      ],
       keepUnusedDataFor: ONE_DAY_MS / 1000
     })
   })
 })
 
-export const { useGetTokensGenericInfoQuery } = genericAssetsApi
+const { useLazyGetTokenGenericInfoQuery } = genericAssetsApi
+
+export const useGetTokensGenericInfoQuery = (tokenIds: string[]) =>
+  useLoopedQueries(tokenIds, useLazyGetTokenGenericInfoQuery)
