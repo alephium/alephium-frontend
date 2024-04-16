@@ -34,6 +34,10 @@ const batchedTokenGenericInfo = create({
   })
 })
 
+export const genericAssetsApi = {
+  getTokenGenericInfo: queryOptions
+}
+
 export const genericAssetsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getTokenGenericInfo: build.query<TokenInfo, string>({

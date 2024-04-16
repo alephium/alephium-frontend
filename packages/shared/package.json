@@ -30,8 +30,8 @@
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
-    "@alephium/typescript-config": "workspace:*",
     "@alephium/shared-react": "workspace:*",
+    "@alephium/typescript-config": "workspace:*",
     "@types/jest": "^29.4.0",
     "@types/node": "^16.10.1",
     "@types/rewire": "^2.5.28",
