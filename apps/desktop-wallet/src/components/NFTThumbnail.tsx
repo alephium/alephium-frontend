@@ -74,5 +74,6 @@ const NoImagePlaceHolder = styled.div`
   justify-content: center;
   background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.07).toHex()};
   min-height: 140px;
+  min-width: 140px;
   border-radius: var(--radius-big);
 `

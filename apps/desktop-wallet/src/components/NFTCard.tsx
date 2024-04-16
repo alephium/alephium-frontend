@@ -54,7 +54,7 @@ const NFTCardStyled = styled.div`
   background-color: ${({ theme }) => theme.bg.background2};
   border-radius: var(--radius-huge);
   transition: all cubic-bezier(0.2, 0.65, 0.5, 1) 0.1s;
-  height: 100%;
+  height: 200px;
 
   &:hover {
     cursor: pointer;
@@ -76,7 +76,6 @@ const NFTPictureContainer = styled(motion.div)`
   border-radius: var(--radius-big);
   overflow: hidden;
   background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
-  min-height: 140px;
 `
 
 const NFTName = styled(Truncate)`
