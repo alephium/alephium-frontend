@@ -77,6 +77,7 @@ const NFTThumbnailStyled = styled.img<Pick<NFTThumbnailProps, 'onClick'>>`
 `
 
 const ReactPlayerStyled = styled(ReactPlayer)`
+  overflow: hidden;
   border-radius: var(--radius-medium);
 `
 

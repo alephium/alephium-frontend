@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { FungibleToken, NFT } from '@alephium/shared'
 import { HelpCircle } from 'lucide-react'
+import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 
 interface AssetLogoProps {
-  assetId: FungibleToken['id']
   assetImageUrl: FungibleToken['logoURI'] | NFT['image']
   size: number
   assetName?: FungibleToken['name']
@@ -29,17 +29,29 @@ interface AssetLogoProps {
   className?: string
 }
 
-const AssetLogo = ({ assetId, assetImageUrl, size, assetName, className }: AssetLogoProps) => (
-  <div className={className}>
-    {assetImageUrl ? (
-      <LogoImage src={assetImageUrl} />
-    ) : assetName ? (
-      <Initials size={size}>{assetName.slice(0, 2)}</Initials>
-    ) : (
-      <HelpCircle size={size} />
-    )}
-  </div>
-)
+const AssetLogo = ({ assetImageUrl, size, assetName, className }: AssetLogoProps) => {
+  let VideoPlayer
+
+  if (assetImageUrl?.includes('.mp4')) {
+    VideoPlayer = <ReactPlayer url={assetImageUrl} muted width={size} height={size} />
+  }
+
+  return (
+    <div className={className}>
+      {assetImageUrl ? (
+        VideoPlayer ? (
+          VideoPlayer
+        ) : (
+          <LogoImage src={assetImageUrl} />
+        )
+      ) : assetName ? (
+        <Initials size={size}>{assetName.slice(0, 2)}</Initials>
+      ) : (
+        <HelpCircle size={size} />
+      )}
+    </div>
+  )
+}
 
 export default styled(AssetLogo)`
   display: flex;
