@@ -20,6 +20,7 @@ import { NFT, selectNFTById } from '@alephium/shared'
 import { colord } from 'colord'
 import { CameraOff } from 'lucide-react'
 import { useState } from 'react'
+import ReactPlayer from 'react-player'
 import styled, { css } from 'styled-components'
 
 import { useAppSelector } from '@/hooks/redux'
@@ -38,7 +39,15 @@ const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
 
   if (!nft) return null
 
-  return nft.image && !error ? (
+  let VideoPlayer
+
+  if (nft.image && nft.image.includes('.mp4')) {
+    VideoPlayer = <ReactPlayerStyled url={nft.image} playing loop muted width={size} height={size} />
+  }
+
+  return VideoPlayer ? (
+    VideoPlayer
+  ) : nft.image && !error ? (
     <NFTThumbnailStyled
       src={nft.image}
       alt={nft.description}
@@ -65,6 +74,10 @@ const NFTThumbnailStyled = styled.img<Pick<NFTThumbnailProps, 'onClick'>>`
     css`
       cursor: pointer;
     `}
+`
+
+const ReactPlayerStyled = styled(ReactPlayer)`
+  border-radius: var(--radius-medium);
 `
 
 const NoImagePlaceHolder = styled.div`
