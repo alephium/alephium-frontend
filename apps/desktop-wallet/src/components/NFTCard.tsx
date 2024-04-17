@@ -68,6 +68,7 @@ const CardContent = styled.div`
   display: flex;
   flex-direction: column;
   padding: 10px 10px 0 10px;
+  overflow: hidden;
 `
 
 const NFTPictureContainer = styled(motion.div)`
@@ -83,4 +84,5 @@ const NFTName = styled(Truncate)`
   font-weight: 600;
   margin: 10px 0;
   max-width: 100%;
+  text-overflow: ellipsis;
 `
