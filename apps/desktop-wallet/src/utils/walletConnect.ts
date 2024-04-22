@@ -16,11 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NetworkSettings, networkSettingsPresets } from '@alephium/shared'
+import { NetworkPreset, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
 import { SignClient } from '@walletconnect/sign-client/dist/types/client'
 
-import { NetworkPreset } from '@/types/network'
 import { SessionProposalEvent } from '@/types/walletConnect'
 
 // TODO: Move to shared
