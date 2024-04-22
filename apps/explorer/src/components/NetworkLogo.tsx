@@ -16,12 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NetworkPreset } from '@alephium/shared'
 import styled from 'styled-components'
 
-import { NetworkType } from '@/types/network'
-
 interface NetworkLogoProps {
-  network: NetworkType
+  network: NetworkPreset
   size?: number
 }
 
