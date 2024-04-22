@@ -20,7 +20,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 
-import { client } from '@/api/client'
+import { client } from '@/api/alephiumClient'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { CHART_DATE_FORMAT } from '@/constants'
 import { TokenHistoricalPrice, TokenPriceEntity, TokenPriceHistoryEntity } from '@/types/price'

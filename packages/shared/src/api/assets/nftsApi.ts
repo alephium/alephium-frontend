@@ -22,7 +22,7 @@ import { chunk } from 'lodash'
 import posthog from 'posthog-js'
 
 import { baseApi } from '@/api/baseApi'
-import { client } from '@/api/client'
+import { client } from '@/api/alephiumClient'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { ONE_DAY_MS } from '@/constants'

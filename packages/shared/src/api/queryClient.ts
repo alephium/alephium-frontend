@@ -16,13 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/api/alephiumClient'
-export * from '@/api/queryClient'
-export * from '@/api/fetchRetry'
-export * from '@/api/limits'
-export * from '@/api/baseQuery'
-export * from '@/api/assets/nftsApi'
-export * from '@/api/assets/fungibleTokensApi'
-export * from '@/api/assets/assetsApiHooks'
-export * from '@/api/addresses/addressesApi'
-export * from '@/api/prices/pricesApi'
+import { QueryClient } from '@tanstack/react-query'
+
+import { MAX_API_RETRIES } from '@/api'
+import { ONE_MINUTE_MS } from '@/constants'
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
+      retry: (failureCount) => {
+        if (failureCount > MAX_API_RETRIES) {
+          console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`)
+          return false
+        } else return true
+      },
+      staleTime: ONE_MINUTE_MS // default ms before cache data is considered stale
+    }
+  }
+})

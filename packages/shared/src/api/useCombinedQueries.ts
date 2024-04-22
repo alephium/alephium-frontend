@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/api/alephiumClient'
-export * from '@/api/queryClient'
-export * from '@/api/fetchRetry'
-export * from '@/api/limits'
-export * from '@/api/baseQuery'
-export * from '@/api/assets/nftsApi'
-export * from '@/api/assets/fungibleTokensApi'
-export * from '@/api/assets/assetsApiHooks'
-export * from '@/api/addresses/addressesApi'
-export * from '@/api/prices/pricesApi'
+import { useQueries, UseQueryOptions } from '@tanstack/react-query'
+
+export const useCombinedQueries = (queries: UseQueryOptions[]) =>
+  useQueries({
+    queries,
+    combine: (results) => ({
+      data: results.map((result) => result.data),
+      pending: results.some((result) => result.isPending)
+    })
+  })

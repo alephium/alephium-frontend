@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { baseApi } from '@/api/baseApi'
-import { client } from '@/api/client'
+import { client } from '@/api/alephiumClient'
 import { PAGINATION_PAGE_LIMIT } from '@/api/limits'
 import { ONE_MINUTE_MS } from '@/constants'
 import { TokenBalances } from '@/types'
