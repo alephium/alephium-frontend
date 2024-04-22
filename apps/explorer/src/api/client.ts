@@ -18,10 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { NetworkPreset } from '@alephium/shared'
+import { NetworkNames, NetworkPreset } from '@alephium/shared'
 import { ExplorerProvider, NodeProvider } from '@alephium/web3'
-
-import { networkTypes } from '@/types/network'
 
 export class Client {
   explorer: ExplorerProvider
@@ -39,12 +37,12 @@ export class Client {
     let explorerUrl: string | null | undefined = (window as any).VITE_BACKEND_URL
     let nodeUrl: string | null | undefined = (window as any).VITE_NODE_URL
 
-    let netType = (window as any).VITE_NETWORK_TYPE as NetworkPreset
+    let netType = (window as any).VITE_NETWORK_TYPE
 
     if (!explorerUrl || !nodeUrl) {
       explorerUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:9090'
       nodeUrl = import.meta.env.VITE_NODE_URL || 'http://localhost:12973'
-      netType = (import.meta.env.VITE_NETWORK_TYPE || 'testnet') as NetworkPreset
+      netType = import.meta.env.VITE_NETWORK_TYPE || 'testnet'
 
       console.info(`
         • DEVELOPMENT MODE •
@@ -68,7 +66,7 @@ export class Client {
 
     if (!netType) {
       throw new Error('The VITE_NETWORK_TYPE environment variable must be defined')
-    } else if (!networkTypes.includes(netType)) {
+    } else if (netType === 'custom' || !NetworkNames[netType as NetworkPreset]) {
       throw new Error('Value of the VITE_NETWORK_TYPE environment variable is invalid')
     }
 

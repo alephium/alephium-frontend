@@ -26,7 +26,7 @@ interface NetworkLogoProps {
 
 const NetworkLogo = ({ network, size = 25 }: NetworkLogoProps) => (
   <LogoContainer network={network} size={size}>
-    {network === 'mainnet' ? 'M' : 'T'}
+    {network === 'devnet' ? 'D' : network === 'mainnet' ? 'M' : 'T'}
   </LogoContainer>
 )
 
