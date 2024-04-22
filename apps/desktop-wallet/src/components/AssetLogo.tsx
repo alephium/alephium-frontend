@@ -29,29 +29,19 @@ interface AssetLogoProps {
   className?: string
 }
 
-const AssetLogo = ({ assetImageUrl, size, assetName, className }: AssetLogoProps) => {
-  let VideoPlayer
-
-  if (assetImageUrl?.includes('.mp4')) {
-    VideoPlayer = <ReactPlayer url={assetImageUrl} muted width={size} height={size} />
-  }
-
-  return (
-    <div className={className}>
-      {assetImageUrl ? (
-        VideoPlayer ? (
-          VideoPlayer
-        ) : (
-          <LogoImage src={assetImageUrl} />
-        )
-      ) : assetName ? (
-        <Initials size={size}>{assetName.slice(0, 2)}</Initials>
-      ) : (
-        <HelpCircle size={size} />
-      )}
-    </div>
-  )
-}
+const AssetLogo = ({ assetImageUrl, size, assetName, className }: AssetLogoProps) => (
+  <div className={className}>
+    {assetImageUrl?.endsWith('.mp4') ? (
+      <ReactPlayer url={assetImageUrl} muted width={size} height={size} />
+    ) : assetImageUrl ? (
+      <LogoImage src={assetImageUrl} />
+    ) : assetName ? (
+      <Initials size={size}>{assetName.slice(0, 2)}</Initials>
+    ) : (
+      <HelpCircle size={size} />
+    )}
+  </div>
+)
 
 export default styled(AssetLogo)`
   display: flex;

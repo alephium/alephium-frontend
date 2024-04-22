@@ -39,14 +39,8 @@ const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
 
   if (!nft) return null
 
-  let VideoPlayer
-
-  if (nft.image && nft.image.includes('.mp4')) {
-    VideoPlayer = <ReactPlayerStyled url={nft.image} playing loop muted width={size} height={size} />
-  }
-
-  return VideoPlayer ? (
-    VideoPlayer
+  return nft.image?.endsWith('.mp4') ? (
+    <ReactPlayerStyled url={nft.image} playing loop muted width={size} height={size} />
   ) : nft.image && !error ? (
     <NFTThumbnailStyled
       src={nft.image}
