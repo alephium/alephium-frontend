@@ -134,9 +134,8 @@ export const useAddressesWorth = (addressHashes: string[]) =>
     worth: a.assets.reduce((acc, a) => acc + (a.worth || 0), 0)
   }))
 
-export const useAddressesTotalWorth = (addressHashes: string[]) => {
+export const useAddressesTotalWorth = (addressHashes: string[]) =>
   useAddressesAssets(addressHashes).reduce(
     (acc, address) => acc + address.assets.reduce((acc, asset) => acc + (asset.worth || 0), 0),
     0
   )
-}

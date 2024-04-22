@@ -28,6 +28,7 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
   const tokenList = useGetTokenListQuery(networkName).data?.tokens
   const tokensInTokenList = tokenList?.filter((token) => assetIds.includes(token.id)) || []
 
+  // TODO: Solve this context issue. Should it go to shared-react?... Should we use the queryClient directly?
   const genericInfoOfNonListedAssets = useQueries({
     queries: assetIds.map((id) => getTokenGenericInfo(id)),
     combine: (results) => ({
