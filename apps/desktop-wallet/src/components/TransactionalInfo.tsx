@@ -233,7 +233,7 @@ const CellAddress = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
   ${({ hasMargins }) =>
     hasMargins &&
     css`
-      margin: 0 21px;
+      margin: 0 var(--spacing-4);
     `}
 
   ${({ alignRight }) =>
@@ -246,7 +246,7 @@ const CellAddress = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
 const DirectionAndAddresses = styled.div<{ stackVertically?: boolean }>`
   display: flex;
   align-items: center;
-  width: 30%;
+  min-width: 35%;
 
   ${({ stackVertically }) =>
     stackVertically &&
