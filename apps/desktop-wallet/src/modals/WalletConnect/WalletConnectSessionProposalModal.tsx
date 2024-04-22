@@ -108,7 +108,7 @@ const WalletConnectSessionProposalModal = ({
       Icon={() =>
         metadata?.icons &&
         metadata.icons.length > 0 &&
-        metadata.icons[0] && <AssetLogo assetImageUrl={metadata.icons[0]} assetId={metadata.url} size={50} />
+        metadata.icons[0] && <AssetLogo assetImageUrl={metadata.icons[0]} size={50} />
       }
     >
       {showNetworkWarning ? (

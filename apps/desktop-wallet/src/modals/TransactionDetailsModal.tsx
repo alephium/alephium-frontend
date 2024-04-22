@@ -334,6 +334,7 @@ const TransactionDirectionInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 90%;
   gap: 8px;
   font-weight: var(--fontWeight-semiBold);
   margin-top: var(--spacing-5);

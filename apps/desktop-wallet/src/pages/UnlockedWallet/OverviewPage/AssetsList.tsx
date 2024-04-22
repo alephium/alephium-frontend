@@ -179,7 +179,7 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   return (
     <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>
       <TokenRow>
-        <AssetLogoStyled assetId={asset.id} assetImageUrl={asset.logoURI} size={30} assetName={asset.name} />
+        <AssetLogoStyled assetImageUrl={asset.logoURI} size={30} assetName={asset.name} />
         <NameColumn>
           <TokenName>
             {asset.name ?? (
@@ -344,8 +344,7 @@ const PlaceholderText = styled.div`
 
 const NFTList = styled(TableRow)<{ columns?: number }>`
   display: grid;
-  grid-template-columns: repeat(${({ columns }) => columns ?? 5}, 1fr);
-  grid-auto-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(${({ columns }) => columns ?? 5}, minmax(0, 1fr));
   grid-auto-flow: initial;
   gap: 25px;
   padding: 15px;
@@ -359,7 +358,7 @@ const NFTList = styled(TableRow)<{ columns?: number }>`
     !columns &&
     css`
       @media ${deviceBreakPoints.desktop} {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     `}
 `
