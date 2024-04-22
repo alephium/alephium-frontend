@@ -489,5 +489,6 @@
   "Image URL": "Image URL",
   "Attributes": "Attributes",
   "Collection": "Collection",
-  "ID": "ID"
+  "ID": "ID",
+  "Copy ID": "Copy ID"
 }
