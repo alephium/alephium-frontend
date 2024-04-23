@@ -16,6 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export const networkTypes = ['testnet', 'mainnet'] as const
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-export type NetworkType = (typeof networkTypes)[number]
+import { BaseQueryFn } from '@reduxjs/toolkit/query'
+
+export const baseQuery: BaseQueryFn<() => Promise<any>, unknown, { message: string }> = async (fn) => {
+  try {
+    const result = await fn()
+    return { data: result }
+  } catch (error: any) {
+    return { error: { message: error || 'An error occurred' } }
+  }
+}

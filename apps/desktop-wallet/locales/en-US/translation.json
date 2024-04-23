@@ -386,7 +386,7 @@
   "Type your password to show the phrase.": "Type your password to show the phrase.",
   "Type your recovery phrase": "Type your recovery phrase",
   "Unable to convert the amount": "Unable to convert the amount",
-  "Unverified": "Unverified",
+  "No metadata": "No metadata",
   "Unknown": "Unknown",
   "Unknown token": "Unknown token",
   "Unknown tokens": "Unknown tokens",
@@ -484,5 +484,11 @@
   "Hide": "Hide",
   "Could not decode unsigned tx": "Could not decode unsigned tx",
   "Could not sign unsigned tx": "Could not sign unsigned tx",
-  "Could not sign message": "Could not sign message"
+  "Could not sign message": "Could not sign message",
+  "NFT details": "NFT details",
+  "Image URL": "Image URL",
+  "Attributes": "Attributes",
+  "Collection": "Collection",
+  "ID": "ID",
+  "Copy ID": "Copy ID"
 }

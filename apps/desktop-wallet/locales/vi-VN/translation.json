@@ -400,7 +400,7 @@
   "Unlocked at": "Đã mở khoá vào",
   "Unlocks at": "Mở khoá vào",
   "Unselect all": "Bỏ chọn tất cả",
-  "Unverified": "Chưa được xác nhận",
+  "No metadata": "Không có metadata",
   "Update": "Cập nhật",
   "Use an existing wallet": "Sử dụng ví đã có sẳn",
   "Use max amount": "Sử dụng tất cả số dư",
@@ -484,5 +484,11 @@
   "Hide": "Hide",
   "Could not decode unsigned tx": "Could not decode unsigned tx",
   "Could not sign unsigned tx": "Could not sign unsigned tx",
-  "Could not sign message": "Could not sign message"
+  "Could not sign message": "Could not sign message",
+  "NFT details": "NFT details",
+  "Image URL": "Image URL",
+  "Attributes": "Attributes",
+  "Collection": "Collection",
+  "ID": "ID",
+  "Copy ID": "Copy ID"
 }

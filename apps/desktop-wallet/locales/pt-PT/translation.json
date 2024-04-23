@@ -402,7 +402,7 @@
   "Unlocked at": "Desbloqueado em",
   "Unlocks at": "Desbloqueia em",
   "Unselect all": "Unselect all",
-  "Unverified": "Unverified",
+  "No metadata": "No metadata",
   "Update": "Atualizar",
   "Use an existing wallet": "Utilizar uma carteira existente",
   "Use max amount": "Usar o montante máximo",
@@ -484,5 +484,11 @@
   "Hide": "Hide",
   "Could not decode unsigned tx": "Could not decode unsigned tx",
   "Could not sign unsigned tx": "Could not sign unsigned tx",
-  "Could not sign message": "Could not sign message"
+  "Could not sign message": "Could not sign message",
+  "NFT details": "NFT details",
+  "Image URL": "Image URL",
+  "Attributes": "Attributes",
+  "Collection": "Collection",
+  "ID": "ID",
+  "Copy ID": "Copy ID"
 }

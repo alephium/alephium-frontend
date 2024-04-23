@@ -22,7 +22,7 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { fastTransition } from '@/animations'
+import { normalTransition } from '@/animations'
 import Button from '@/components/Button'
 import Scrollbar from '@/components/Scrollbar'
 import useFocusOnMount from '@/hooks/useFocusOnMount'
@@ -51,10 +51,10 @@ const SideModal = ({
     <ModalContainer onClose={onClose}>
       <Sidebar
         role="dialog"
-        initial={{ x: '110%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '110%' }}
-        {...fastTransition}
+        initial={{ x: 30, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: 30, opacity: 0 }}
+        {...normalTransition}
         width={width}
         onAnimationComplete={onAnimationComplete}
       >
@@ -82,18 +82,19 @@ const Sidebar = styled(motion.div)<{ width: number }>`
   width: 100%;
   max-width: ${({ width }) => width}px;
   max-height: 95vh;
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.background2};
   position: relative;
   overflow: auto;
   margin: 25px 20px 25px auto;
   border-radius: var(--radius-huge);
   border: 1px solid ${({ theme }) => theme.border.primary};
+  box-shadow: ${({ theme }) => theme.shadow.tertiary};
 `
 
 const ModalHeader = styled.div`
   display: flex;
   align-items: center;
-  padding: 15px 25px;
+  padding: 10px 20px;
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   background-color: ${({ theme }) => theme.bg.secondary};
 `

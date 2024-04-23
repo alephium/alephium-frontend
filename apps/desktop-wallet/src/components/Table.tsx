@@ -177,16 +177,12 @@ export const ExpandRow = ({ onClick }: { onClick: () => void }) => {
 
   return (
     <ExpandRowStyled>
-      <ExpandButton role="secondary" onClick={onClick} Icon={ChevronsUpDown} short>
+      <Button role="secondary" onClick={onClick} Icon={ChevronsUpDown} short>
         {t('Expand')}
-      </ExpandButton>
+      </Button>
     </ExpandRowStyled>
   )
 }
-
-const ExpandButton = styled(Button)`
-  opacity: 0;
-`
 
 const ExpandRowStyled = styled.div`
   position: absolute;
@@ -229,10 +225,6 @@ export const ExpandableTable = styled(Table)<{ isExpanded: boolean; maxHeightInP
     ${ExpandRowStyled} {
       opacity: 1;
       z-index: 3; // Make sure it is displayed above copy btns
-    }
-
-    ${ExpandButton} {
-      opacity: 1;
     }
   }
 `

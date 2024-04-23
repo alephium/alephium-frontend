@@ -172,7 +172,6 @@ export default styled(AppHeader)`
   gap: var(--spacing-1);
 
   backdrop-filter: ${({ invisible }) => (!invisible ? 'blur(10px)' : 'none')};
-  z-index: 1;
 `
 
 const OfflineIcon = styled.div`

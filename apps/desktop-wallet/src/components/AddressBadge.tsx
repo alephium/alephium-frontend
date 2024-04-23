@@ -37,7 +37,7 @@ interface AddressBadgeProps {
   disableCopy?: boolean
   appendHash?: boolean
   displayHashUnder?: boolean
-  showFull?: boolean
+  isShort?: boolean
   className?: string
 }
 
@@ -51,7 +51,7 @@ const AddressBadge = ({
   truncate,
   appendHash = false,
   displayHashUnder = false,
-  showFull,
+  isShort,
   withBorders
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
@@ -64,6 +64,7 @@ const AddressBadge = ({
       className={className}
       withBorders={contact || address ? withBorders : false}
       truncate={truncate}
+      isShort={isShort}
     >
       {contact ? (
         <Label truncate={truncate}>
@@ -106,7 +107,7 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate'>>`
+const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort'>>`
   display: flex;
   align-items: center;
   gap: 6px;
@@ -116,7 +117,8 @@ const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 't
     css`
       border: 1px solid ${({ theme }) => theme.border.primary};
       border-radius: 25px;
-      padding: 5px 10px;
+      padding: 4px 10px;
+      background: ${({ theme }) => theme.bg.highlight};
     `}
 
   ${({ truncate }) =>
@@ -125,6 +127,12 @@ const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 't
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    `}
+
+    ${({ isShort }) =>
+    isShort &&
+    css`
+      max-width: 220px;
     `}
 `
 

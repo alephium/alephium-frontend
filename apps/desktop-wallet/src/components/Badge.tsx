@@ -35,7 +35,7 @@ interface BadgeProps {
 
 const Badge: FC<HasTooltip<BadgeProps>> = ({ className, children, truncate, tooltip }) => (
   <div className={className} data-tooltip-id="default" data-tooltip-content={tooltip}>
-    {truncate ? <Truncate>{children}</Truncate> : <span>{children}</span>}
+    {truncate ? <Truncate>{children}</Truncate> : children}
   </div>
 )
 

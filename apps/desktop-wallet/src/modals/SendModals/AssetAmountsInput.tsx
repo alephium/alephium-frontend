@@ -221,7 +221,7 @@ const AssetAmountsInput = ({
                   disabled={disabled || !allowMultiple || !canAddMultipleAssets}
                   id={id}
                 >
-                  <AssetLogo assetId={asset.id} assetImageUrl={asset.logoURI} size={20} assetName={asset.name} />
+                  <AssetLogo assetImageUrl={asset.logoURI} size={20} assetName={asset.name} />
                   <AssetName>
                     <Truncate>
                       {asset.name ? (

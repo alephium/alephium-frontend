@@ -16,23 +16,72 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT } from '@alephium/shared'
-import styled from 'styled-components'
+import { NFT, selectNFTById } from '@alephium/shared'
+import { colord } from 'colord'
+import { CameraOff } from 'lucide-react'
+import { useState } from 'react'
+import ReactPlayer from 'react-player'
+import styled, { css } from 'styled-components'
+
+import { useAppSelector } from '@/hooks/redux'
 
 interface NFTThumbnailProps {
-  nft: NFT
+  nftId: NFT['id']
+  size?: string
+  onClick?: () => void
   className?: string
 }
 
-const NFTThumbnail = ({ nft, className }: NFTThumbnailProps) => (
-  <NFTThumbnailStyled src={nft.image} alt={nft.description} className={className} />
-)
+const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
+  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+
+  const [error, setError] = useState(false)
+
+  if (!nft) return null
+
+  return nft.image?.endsWith('.mp4') ? (
+    <ReactPlayerStyled url={nft.image} playing loop muted width={size} height={size} />
+  ) : nft.image && !error ? (
+    <NFTThumbnailStyled
+      src={nft.image}
+      alt={nft.description}
+      width={size}
+      height={size}
+      onError={() => setError(true)}
+      {...props}
+    />
+  ) : (
+    <NoImagePlaceHolder>
+      <CameraOff opacity={0.8} />
+    </NoImagePlaceHolder>
+  )
+}
 
 export default NFTThumbnail
 
-const NFTThumbnailStyled = styled.img`
-  width: 100px;
-  height: 100px;
+const NFTThumbnailStyled = styled.img<Pick<NFTThumbnailProps, 'onClick'>>`
   border-radius: var(--radius-medium);
   object-fit: cover;
+
+  ${({ onClick }) =>
+    onClick &&
+    css`
+      cursor: pointer;
+    `}
+`
+
+const ReactPlayerStyled = styled(ReactPlayer)`
+  overflow: hidden;
+  border-radius: var(--radius-medium);
+`
+
+const NoImagePlaceHolder = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.07).toHex()};
+  min-height: 140px;
+  min-width: 140px;
+  border-radius: var(--radius-big);
 `

@@ -16,140 +16,73 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT } from '@alephium/shared'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import { useState } from 'react'
+import { NFT, selectNFTById } from '@alephium/shared'
+import { colord } from 'colord'
+import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import Card3D, { card3DHoverTransition } from '@/components/Card3D'
+import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
+import { useAppSelector } from '@/hooks/redux'
 
 interface NFTCardProps {
-  nft: NFT
+  nftId: NFT['id']
+  onClick?: () => void
 }
 
-// TODO: Copied from explorer
+const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
+  const nft = useAppSelector((s) => selectNFTById(s, nftId))
 
-const NFTCard = ({ nft }: NFTCardProps) => {
-  const [isHovered, setIsHovered] = useState(false)
-
-  const y = useMotionValue(0.5)
-  const x = useMotionValue(0.5)
-
-  const springConfig = { damping: 10, stiffness: 100 }
-  const xSpring = useSpring(x, springConfig)
-  const ySpring = useSpring(y, springConfig)
-
-  const imagePosX = useTransform(xSpring, [0, 1], ['5px', '-5px'], {
-    clamp: true
-  })
-  const imagePosY = useTransform(ySpring, [0, 1], ['5px', '-5px'], {
-    clamp: true
-  })
-
-  const handlePointerMove = (pointerX: number, pointerY: number) => {
-    x.set(pointerX, true)
-    y.set(pointerY, true)
-  }
+  if (!nft) return null
 
   return (
-    <NFTCardStyled
-      onPointerMove={handlePointerMove}
-      onCardHover={setIsHovered}
-      frontFace={
-        <FrontFace>
-          <NFTPictureContainer>
-            <PictureContainerShadow animate={{ opacity: isHovered ? 1 : 0 }} />
-            <NFTPicture
-              style={{
-                backgroundImage: `url(${nft?.image})`,
-                x: imagePosX,
-                y: imagePosY,
-                scale: 1.5
-              }}
-              animate={{
-                scale: isHovered ? 1 : 1.5
-              }}
-              transition={card3DHoverTransition}
-            />
-          </NFTPictureContainer>
-          <NFTName>{nft?.name}</NFTName>
-        </FrontFace>
-      }
-      backFace={
-        <BackFace>
-          <BackFaceBackground style={{ backgroundImage: `url(${nft?.image})` }} />
-          <NFTDescription>{nft?.description}</NFTDescription>
-        </BackFace>
-      }
-    />
+    <NFTCardStyled onClick={onClick}>
+      <CardContent>
+        <NFTPictureContainer>
+          <NFTThumbnail nftId={nftId} size="100%" />
+        </NFTPictureContainer>
+        <NFTName>{nft.name || '-'}</NFTName>
+      </CardContent>
+    </NFTCardStyled>
   )
 }
 
 export default NFTCard
 
-const NFTCardStyled = styled(Card3D)`
-  background-color: ${({ theme }) => theme.bg.primary};
-`
-
-const FrontFace = styled.div`
-  padding: 10px;
-`
-
-const BackFace = styled.div`
-  padding: 20px;
-  height: 100%;
+const NFTCardStyled = styled.div`
+  display: flex;
   background-color: ${({ theme }) => theme.bg.background2};
-  border-radius: 9px;
-  position: relative;
+  border-radius: var(--radius-huge);
+  transition: all cubic-bezier(0.2, 0.65, 0.5, 1) 0.1s;
+  height: 200px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.05).toHex()};
+    transform: scale(1.02);
+  }
+`
+
+const CardContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 0 10px;
+  overflow: hidden;
 `
 
 const NFTPictureContainer = styled(motion.div)`
+  flex: 1;
   position: relative;
-  border-radius: 9px;
+  border-radius: var(--radius-big);
   overflow: hidden;
-`
-
-const PictureContainerShadow = styled(motion.div)`
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  box-shadow: inset 0 0 30px black;
-  z-index: 2;
-`
-
-const NFTPicture = styled(motion.div)`
-  max-width: 100%;
-  height: 150px;
-  background-repeat: no-repeat;
-  background-color: black;
-  background-size: contain;
-  background-position: center;
+  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
 `
 
 const NFTName = styled(Truncate)`
-  margin-top: 15px;
+  text-align: center;
   font-weight: 600;
-  margin: 15px 0;
+  margin: 10px 0;
   max-width: 100%;
-`
-
-const NFTDescription = styled.div`
-  display: -webkit-box;
-  -webkit-line-clamp: 10;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  position: relative;
-`
-
-const BackFaceBackground = styled.div`
-  position: absolute;
-  background-size: cover;
-  background-repeat: no-repeat;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  border-radius: 9px;
-  opacity: 0.1;
+  text-overflow: ellipsis;
 `

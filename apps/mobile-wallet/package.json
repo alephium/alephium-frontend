@@ -11,6 +11,7 @@
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
+    "test": "jest",
     "clean:node-modules": "rm -rf node_modules",
     "postinstall": "turbo build:deps"
   },
@@ -119,6 +120,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
     "jest": "^29.4.3",
+    "jest-expo": "~50.0.4",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
@@ -128,5 +130,11 @@
         "react-native-reanimated"
       ]
     }
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(?:.pnpm/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg))"
+    ]
   }
 }

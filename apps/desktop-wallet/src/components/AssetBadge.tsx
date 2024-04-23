@@ -29,10 +29,11 @@ interface AssetBadgeProps {
   simple?: boolean
   withBorder?: boolean
   withBackground?: boolean
+  hideNftName?: boolean
   className?: string
 }
 
-const AssetBadge = ({ assetId, amount, simple, className }: AssetBadgeProps) => {
+const AssetBadge = ({ assetId, amount, simple, hideNftName, className }: AssetBadgeProps) => {
   const fungibleToken = useAppSelector((s) => selectFungibleTokenById(s, assetId))
   const nftInfo = useAppSelector((s) => selectNFTById(s, assetId))
 
@@ -43,13 +44,12 @@ const AssetBadge = ({ assetId, amount, simple, className }: AssetBadgeProps) => 
       data-tooltip-content={fungibleToken?.name ?? nftInfo?.name ?? assetId}
     >
       <AssetLogo
-        assetId={assetId}
         assetImageUrl={fungibleToken?.logoURI || nftInfo?.image}
         size={20}
         assetName={fungibleToken?.name}
         isNft={!!nftInfo}
       />
-      {nftInfo?.name ? (
+      {nftInfo?.name && !hideNftName ? (
         <AssetSymbol>{nftInfo?.name}</AssetSymbol>
       ) : amount !== undefined ? (
         <Amount value={amount} suffix={fungibleToken?.symbol} decimals={fungibleToken?.decimals} />

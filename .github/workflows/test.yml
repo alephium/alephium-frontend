@@ -11,20 +11,10 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install pnpm package manager
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Install NPM dependencies
-        run: pnpm install
-
-      - name: Use Node.js for vitest
-        uses: actions/setup-node@v4
-        with:
-          node-version: 16
+      - name: 🏗 Setup monorepo
+        uses: ./.github/actions/setup-monorepo
 
       - name: Run test scripts of all workspaces in parallel
         run: pnpm run test
@@ -38,15 +28,10 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install pnpm package manager
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Install NPM dependencies
-        run: pnpm install
+      - name: 🏗 Setup monorepo
+        uses: ./.github/actions/setup-monorepo
 
       - name: Extract platform name
         id: get-os

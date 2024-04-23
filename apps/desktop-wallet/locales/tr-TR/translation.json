@@ -402,7 +402,7 @@
   "Unlocked at": "Kilidi açıldı",
   "Unlocks at": "Kilidi açılır",
   "Unselect all": "Unselect all",
-  "Unverified": "Unverified",
+  "No metadata": "No metadata",
   "Update": "Güncelle",
   "Use an existing wallet": "Varolan bir cüzdanı kullan",
   "Use max amount": "Tüm miktarı kullan",
@@ -484,5 +484,11 @@
   "Hide": "Hide",
   "Could not decode unsigned tx": "Could not decode unsigned tx",
   "Could not sign unsigned tx": "Could not sign unsigned tx",
-  "Could not sign message": "Could not sign message"
+  "Could not sign message": "Could not sign message",
+  "NFT details": "NFT details",
+  "Image URL": "Image URL",
+  "Attributes": "Attributes",
+  "Collection": "Collection",
+  "ID": "ID",
+  "Copy ID": "Copy ID"
 }

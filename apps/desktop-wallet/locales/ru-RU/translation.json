@@ -402,7 +402,7 @@
   "Unlocked at": "Разблокирован в",
   "Unlocks at": "Разблокируется в",
   "Unselect all": "Отменить выбор",
-  "Unverified": "Не проверено",
+  "No metadata": "Нет метаданных",
   "Update": "Обновить",
   "Use an existing wallet": "Использовать существующий кошелек",
   "Use max amount": "Использовать максимальную сумму",
@@ -484,5 +484,11 @@
   "Hide": "Hide",
   "Could not decode unsigned tx": "Could not decode unsigned tx",
   "Could not sign unsigned tx": "Could not sign unsigned tx",
-  "Could not sign message": "Could not sign message"
+  "Could not sign message": "Could not sign message",
+  "NFT details": "NFT details",
+  "Image URL": "Image URL",
+  "Attributes": "Attributes",
+  "Collection": "Collection",
+  "ID": "ID",
+  "Copy ID": "Copy ID"
 }

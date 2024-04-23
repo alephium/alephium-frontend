@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, CURRENCIES } from '@alephium/shared'
+import { AddressHash, Asset, CURRENCIES, NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import Amount from '@/components/Amount'
@@ -35,6 +35,8 @@ import TableCellAmount from '@/components/TableCellAmount'
 import TableTabBar from '@/components/TableTabBar'
 import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
+import ModalPortal from '@/modals/ModalPortal'
+import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import {
   makeSelectAddressesCheckedUnknownTokens,
   makeSelectAddressesKnownFungibleTokens,
@@ -54,6 +56,7 @@ interface AssetsListProps {
   isExpanded?: boolean
   onExpand?: () => void
   maxHeightInPx?: number
+  nftColumns?: number
 }
 
 const AssetsList = ({
@@ -62,7 +65,8 @@ const AssetsList = ({
   tokensTabTitle,
   unknownTokensTabTitle,
   nftsTabTitle,
-  maxHeightInPx
+  maxHeightInPx,
+  nftColumns
 }: AssetsListProps) => {
   const { t } = useTranslation()
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
@@ -101,6 +105,7 @@ const AssetsList = ({
                 addressHashes={addressHashes}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
+                nftColumns={nftColumns}
               />
             ),
             unknownTokens: (
@@ -174,20 +179,20 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   return (
     <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>
       <TokenRow>
-        <AssetLogoStyled assetId={asset.id} assetImageUrl={asset.logoURI} size={30} assetName={asset.name} />
+        <AssetLogoStyled assetImageUrl={asset.logoURI} size={30} assetName={asset.name} />
         <NameColumn>
           <TokenName>
             {asset.name ?? (
               <HashEllipsed hash={asset.id} tooltipText={t('Copy token hash')} disableCopy={!isExpanded} />
             )}
+            {asset.verified === false && (
+              <InfoIcon data-tooltip-id="default" data-tooltip-content={t('No metadata')}>
+                i
+              </InfoIcon>
+            )}
           </TokenName>
           {asset.symbol && <TokenSymbol>{asset.symbol}</TokenSymbol>}
         </NameColumn>
-        {/* {asset.verified === false && (
-          <Column>
-            <Badge color={theme.global.highlight}>{t('Unverified')}</Badge>
-          </Column>
-        )} */}
         <TableCellAmount>
           {stateUninitialized ? (
             <SkeletonLoader height="20px" width="30%" />
@@ -225,13 +230,14 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   )
 }
 
-const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsListProps) => {
+const NFTsList = ({ className, addressHashes, isExpanded, onExpand, nftColumns }: AssetsListProps) => {
   const { t } = useTranslation()
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHashes))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const isLoadingNFTs = useAppSelector((s) => s.nfts.loading)
   const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
+  const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
 
   return (
     <>
@@ -244,9 +250,9 @@ const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsList
             <SkeletonLoader height="205px" />
           </NFTList>
         ) : (
-          <NFTList role="row" tabIndex={isExpanded ? 0 : -1}>
+          <NFTList role="row" tabIndex={isExpanded ? 0 : -1} columns={nftColumns}>
             {nfts.map((nft) => (
-              <NFTCard key={nft.id} nft={nft} />
+              <NFTCard key={nft.id} nftId={nft.id} onClick={() => setSelectedNFTId(nft.id)} />
             ))}
             {nfts.length === 0 && <PlaceholderText>{t('No NFTs found.')}</PlaceholderText>}
           </NFTList>
@@ -254,6 +260,10 @@ const NFTsList = ({ className, addressHashes, isExpanded, onExpand }: AssetsList
       </motion.div>
 
       {!isExpanded && nfts.length > 4 && onExpand && <ExpandRow onClick={onExpand} />}
+
+      <ModalPortal>
+        {selectedNFTId && <NFTDetailsModal nftId={selectedNFTId} onClose={() => setSelectedNFTId(undefined)} />}
+      </ModalPortal>
     </>
   )
 }
@@ -273,8 +283,11 @@ const AssetLogoStyled = styled(AssetLogo)`
 `
 
 const TokenName = styled(Truncate)`
+  display: flex;
   font-size: 14px;
   font-weight: var(--fontWeight-medium);
+  gap: 5px;
+  align-items: center;
   width: 200px;
 `
 
@@ -282,6 +295,20 @@ const TokenSymbol = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 12px;
   width: 200px;
+`
+
+const InfoIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 14px;
+  width: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.font.tertiary};
+  background-color: ${({ theme }) => theme.bg.background2};
+  border-radius: 50%;
+  cursor: default;
 `
 
 const Column = styled.div`
@@ -315,15 +342,23 @@ const PlaceholderText = styled.div`
   justify-content: center;
 `
 
-const NFTList = styled(TableRow)`
+const NFTList = styled(TableRow)<{ columns?: number }>`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(${({ columns }) => columns ?? 5}, minmax(0, 1fr));
   grid-auto-flow: initial;
   gap: 25px;
   padding: 15px;
   border-radius: 0 0 12px 12px;
 
-  @media ${deviceBreakPoints.desktop} {
-    grid-template-columns: repeat(4, 1fr);
+  > * {
+    width: 100%;
   }
+
+  ${({ columns }) =>
+    !columns &&
+    css`
+      @media ${deviceBreakPoints.desktop} {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    `}
 `
