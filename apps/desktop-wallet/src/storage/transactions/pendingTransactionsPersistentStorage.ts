@@ -16,23 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  EncryptedStorageProps,
-  StatelessPersistentEncryptedStorage
-} from '@/storage/statelessEncryptedPersistentStorage'
+import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
 import { PendingTransaction } from '@/types/transactions'
 
-class PendingTransactionsStorage extends StatelessPersistentEncryptedStorage {
-  load(encryptedStorageProps: EncryptedStorageProps) {
-    return this._load(encryptedStorageProps) as PendingTransaction[]
-  }
-
-  store(transactions: PendingTransaction[], encryptedStorageProps: EncryptedStorageProps) {
-    this._storeStateless(JSON.stringify(transactions), encryptedStorageProps)
-  }
-}
-
-const version = '1'
-const Storage = new PendingTransactionsStorage('pending-transactions', version)
-
-export default Storage
+export const pendingTransactionsStorage = new PersistentArrayStorage<PendingTransaction>('pending-transactions')

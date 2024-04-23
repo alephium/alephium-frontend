@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair } from '@alephium/shared'
-import { addressToGroup, bs58, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { bs58, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import blake from 'blakejs'
@@ -25,12 +24,22 @@ import { pbkdf2 } from 'crypto'
 
 import { decrypt, decryptAsync, encrypt, encryptAsync, Pbkdf2Function } from './password-crypto'
 
-type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
-
 type MnemonicLength = 12 | 24
 
-class StoredState {
-  readonly version = 1
+type EncryptedMnemonicVersion = 1 | 2
+
+type MnemonicToSeedFunction = (mnemonic: string, passphrase?: string) => Promise<Buffer>
+
+// TODO: Delete
+export type AddressKeyPair = {
+  hash: string
+  index: number
+  publicKey: string
+  privateKey: string
+}
+
+class EncryptedMnemonicStoredAsString {
+  readonly version: EncryptedMnemonicVersion = 1
   readonly mnemonic: string
 
   constructor({ mnemonic }: { mnemonic: string }) {
@@ -38,6 +47,7 @@ class StoredState {
   }
 }
 
+// Deprecated, delete when mobile wallet get adapted
 type WalletProps = {
   address: string
   publicKey: string
@@ -47,6 +57,7 @@ type WalletProps = {
   masterKey: bip32.BIP32Interface
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export class Wallet {
   readonly address: string
   readonly publicKey: string
@@ -67,6 +78,7 @@ export class Wallet {
   encrypt = (password: string) => walletEncrypt(password, this.mnemonic)
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const getPath = (addressIndex?: number) => {
   if (
     addressIndex !== undefined &&
@@ -80,6 +92,7 @@ export const getPath = (addressIndex?: number) => {
   return `m/44'/${coinType}/0'/0/${addressIndex || '0'}`
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const getWalletFromSeed = (seed: Buffer, mnemonic: string): Wallet => {
   const masterKey = bip32.fromSeed(seed)
   const { hash, publicKey, privateKey } = deriveAddressAndKeys(masterKey)
@@ -87,12 +100,14 @@ export const getWalletFromSeed = (seed: Buffer, mnemonic: string): Wallet => {
   return new Wallet({ seed, address: hash, publicKey, privateKey, mnemonic, masterKey })
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const getWalletFromMnemonic = (mnemonic: string, passphrase = ''): Wallet => {
   const seed = bip39.mnemonicToSeedSync(mnemonic, passphrase)
 
   return getWalletFromSeed(seed, mnemonic)
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const getWalletFromMnemonicAsyncUnsafe = async (
   mnemonicToSeedCustomFunc: MnemonicToSeedFunction,
   mnemonic: string,
@@ -103,6 +118,7 @@ export const getWalletFromMnemonicAsyncUnsafe = async (
   return getWalletFromSeed(seed, mnemonic)
 }
 
+// Deprecated, delete when mobile wallet get adapted
 export const deriveAddressAndKeys = (masterKey: bip32.BIP32Interface, addressIndex?: number): AddressKeyPair => {
   const keyPair = masterKey.derivePath(getPath(addressIndex))
 
@@ -117,16 +133,6 @@ export const deriveAddressAndKeys = (masterKey: bip32.BIP32Interface, addressInd
   const address = bs58.encode(bytes)
 
   return { hash: address, publicKey, privateKey, index: addressIndex || 0 }
-}
-
-const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
-  let nextAvailableAddressIndex = startIndex
-
-  do {
-    nextAvailableAddressIndex++
-  } while (skipIndexes.includes(nextAvailableAddressIndex))
-
-  return nextAvailableAddressIndex
 }
 
 export const deriveNewAddressData = (
@@ -146,7 +152,7 @@ export const deriveNewAddressData = (
     : initialAddressIndex
   let newAddressData = deriveAddressAndKeys(masterKey, nextAddressIndex)
 
-  while (forGroup !== undefined && addressToGroup(newAddressData.hash, TOTAL_NUMBER_OF_GROUPS) !== forGroup) {
+  while (forGroup !== undefined && groupOfAddress(newAddressData.hash) !== forGroup) {
     nextAddressIndex = findNextAvailableAddressIndex(newAddressData.index, skipAddressIndexes)
     newAddressData = deriveAddressAndKeys(masterKey, nextAddressIndex)
   }
@@ -182,13 +188,13 @@ export const walletImport = (mnemonic: string, passphrase?: string) => {
 
 export const walletOpen = (password: string, encryptedWallet: string) => {
   const dataDecrypted = decrypt(password, encryptedWallet)
-  const config = JSON.parse(dataDecrypted) as StoredState
+  const config = JSON.parse(dataDecrypted) as EncryptedMnemonicStoredAsString
 
   return getWalletFromMnemonic(config.mnemonic)
 }
 
 export const walletEncrypt = (password: string, mnemonic: string) => {
-  const storedState = new StoredState({
+  const storedState = new EncryptedMnemonicStoredAsString({
     mnemonic
   })
 
@@ -222,7 +228,7 @@ export const walletOpenAsyncUnsafe = async (
   mnemonicToSeedCustomFunc: MnemonicToSeedFunction
 ): Promise<Wallet> => {
   const data = await decryptAsync(password, encryptedWallet, pbkdf2CustomFunc ?? _pbkdf2)
-  const config = JSON.parse(data) as StoredState
+  const config = JSON.parse(data) as EncryptedMnemonicStoredAsString
 
   return getWalletFromMnemonicAsyncUnsafe(mnemonicToSeedCustomFunc, config.mnemonic)
 }
@@ -232,9 +238,20 @@ export const walletEncryptAsyncUnsafe = (
   mnemonic: string,
   pbkdf2CustomFunc: Pbkdf2Function
 ): Promise<string> => {
-  const storedState = new StoredState({
+  const storedState = new EncryptedMnemonicStoredAsString({
     mnemonic
   })
 
   return encryptAsync(password, JSON.stringify(storedState), pbkdf2CustomFunc ?? _pbkdf2)
+}
+
+// TODO: Delete
+export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+  let nextAvailableAddressIndex = startIndex
+
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
 }

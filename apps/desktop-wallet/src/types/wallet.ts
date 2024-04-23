@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair } from '@alephium/shared'
-import { Wallet } from '@alephium/shared-crypto'
+import { NonSensitiveAddressData } from '@alephium/keyring'
 
 import { AddressBase } from '@/types/addresses'
 import { TimeInMs } from '@/types/numbers'
@@ -25,27 +24,22 @@ import { TimeInMs } from '@/types/numbers'
 export type ActiveWallet = {
   id: string
   name: string
-  mnemonic: string
-  passphrase?: string
+  isPassphraseUsed: boolean
 }
 
 export type GeneratedWallet = {
-  wallet: ActiveWallet & StoredWallet
+  wallet: StoredEncryptedWallet
   initialAddress: AddressBase
 }
 
 export type UnlockedWallet = {
   wallet: ActiveWallet
-  initialAddress: AddressKeyPair
+  initialAddress: NonSensitiveAddressData
 }
 
-export type StoredWallet = {
-  id: ActiveWallet['id']
-  name: ActiveWallet['name']
+// encrypted is a stringified instance of EncryptedMnemonicStoredAsString or EncryptedMnemonicStoredAsUint8Array
+// containing the mnemonic together with metadata.
+export type StoredEncryptedWallet = Omit<ActiveWallet, 'isPassphraseUsed'> & {
   encrypted: string
   lastUsed: TimeInMs
-}
-
-export type UnencryptedWallet = Wallet & {
-  name: ActiveWallet['name']
 }

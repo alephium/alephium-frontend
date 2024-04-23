@@ -26,7 +26,7 @@ import { fadeInOutScaleFast } from '@/animations'
 import Button from '@/components/Button'
 import Scrollbar from '@/components/Scrollbar'
 import { TabItem } from '@/components/TabBar'
-import { useAppSelector } from '@/hooks/redux'
+import useWalletLock from '@/hooks/useWalletLock'
 import discordLogo from '@/images/brand-icon-discord.svg'
 import githubLogo from '@/images/brand-icon-github.svg'
 import twitterLogo from '@/images/brand-icon-twitter.svg'
@@ -63,7 +63,7 @@ interface SettingsModalProps {
 const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.mnemonic)
+  const { isWalletUnlocked } = useWalletLock()
 
   const settingsModalTabs: SettingsTabItem[] = useMemo(
     () => [
@@ -78,7 +78,7 @@ const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
 
   const [currentTab, setCurrentTab] = useState<TabItem>(activeTab)
 
-  const enabledTabs = !isAuthenticated
+  const enabledTabs = !isWalletUnlocked
     ? settingsModalTabs.filter(({ value }) => value !== 'devtools')
     : settingsModalTabs
 

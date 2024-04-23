@@ -33,6 +33,7 @@ import Toggle from '@/components/Inputs/Toggle'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { useWalletConnectContext } from '@/contexts/walletconnect'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import useWalletLock from '@/hooks/useWalletLock'
 import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
 import AnalyticsStorage from '@/storage/analytics/analyticsPersistentStorage'
@@ -57,7 +58,7 @@ interface GeneralSettingsSectionProps {
 const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const isAuthenticated = useAppSelector((s) => !!s.activeWallet.mnemonic)
+  const { isWalletUnlocked } = useWalletLock()
   const { walletLockTimeInMinutes, discreetMode, passwordRequirement, language, theme, analytics, fiatCurrency } =
     useAppSelector((s) => s.settings)
   const posthog = usePostHog()
@@ -196,7 +197,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         InputComponent={<Toggle label={discreetModeText} toggled={discreetMode} onToggle={handleDiscreetModeToggle} />}
       />
       <HorizontalDivider />
-      {isAuthenticated && (
+      {isWalletUnlocked && (
         <>
           <KeyValueInput
             label={t('Password requirement')}

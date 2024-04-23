@@ -38,7 +38,7 @@ const AdvancedOperationsSideModal = (props: AdvancedOperationsSideModal) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const { generateAndSaveOneAddressPerGroup, discoverAndSaveUsedAddresses } = useAddressGeneration()
-  const isPassphraseUsed = useAppSelector((s) => s.activeWallet.passphrase)
+  const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const posthog = usePostHog()
 
   const [isAddressesGenerationModalOpen, setIsAddressesGenerationModalOpen] = useState(false)

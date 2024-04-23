@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { getHumanReadableError } from '@alephium/shared'
 import { AlertOctagon, AlertTriangle, Download, FileCode, TerminalSquare } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -73,7 +74,7 @@ const DevToolsSettingsSection = () => {
     if (!selectedAddress) return
 
     try {
-      await navigator.clipboard.writeText(selectedAddress.privateKey)
+      await navigator.clipboard.writeText(keyring.exportPrivateKeyOfAddress(selectedAddress.hash))
       dispatch(copiedToClipboard(t('Private key copied.')))
 
       posthog.capture('Copied address private key')

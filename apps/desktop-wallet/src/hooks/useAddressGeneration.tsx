@@ -16,10 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressKeyPair, AddressMetadata } from '@alephium/shared'
-import { deriveNewAddressData, getWalletFromMnemonic } from '@alephium/shared-crypto'
+import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
+import { AddressMetadata } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
+import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   addressDiscoveryFinished,
@@ -29,9 +30,9 @@ import {
 } from '@/storage/addresses/addressesActions'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
-import AddressMetadataStorage from '@/storage/addresses/addressMetadataPersistentStorage'
-import { getEncryptedStoragePropsFromActiveWallet } from '@/storage/encryptedPersistentStorage'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { AddressBase } from '@/types/addresses'
+import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -40,7 +41,6 @@ interface GenerateAddressProps {
 }
 
 interface DiscoverUsedAddressesProps {
-  mnemonic?: string
   walletId?: string
   skipIndexes?: number[]
   enableLoading?: boolean
@@ -52,33 +52,14 @@ interface GenerateOneAddressPerGroupProps {
   skipGroups?: number[]
 }
 
-const addressDiscoveryWorker = new Worker(new URL('../workers/addressDiscovery.ts', import.meta.url), {
-  type: 'module'
-})
-const deriveAddressesInGroupsWorker = new Worker(new URL('../workers/deriveAddressesInGroups.ts', import.meta.url), {
-  type: 'module'
-})
-const deriveAddressesFromIndexesWorker = new Worker(
-  new URL('../workers/deriveAddressesFromIndexes.ts', import.meta.url),
-  { type: 'module' }
-)
-
 const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
-  const mnemonic = useAppSelector((s) => s.activeWallet.mnemonic)
-  const passphrase = useAppSelector((s) => s.activeWallet.passphrase)
-  const explorerApiHost = useAppSelector((s) => s.network.settings.explorerApiHost)
 
   const currentAddressIndexes = addresses.map(({ index }) => index)
 
-  const generateAddress = ({ group }: GenerateAddressProps = {}): AddressKeyPair => {
-    if (!mnemonic) throw new Error('Could not generate address, mnemonic not found')
-
-    const { masterKey } = getWalletFromMnemonic(mnemonic, passphrase)
-
-    return deriveNewAddressData(masterKey, group, undefined, currentAddressIndexes)
-  }
+  const generateAddress = (group?: GenerateAddressProps['group']): NonSensitiveAddressData =>
+    keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes })
 
   const generateAndSaveOneAddressPerGroup = (
     { labelPrefix, labelColor, skipGroups = [] }: GenerateOneAddressPerGroupProps = { skipGroups: [] }
@@ -86,83 +67,65 @@ const useAddressGeneration = () => {
     const groups = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (_, group) => group).filter(
       (group) => !skipGroups.includes(group)
     )
+    const randomLabelColor = getRandomLabelColor()
 
-    deriveAddressesInGroupsWorker.onmessage = ({ data }: { data: (AddressKeyPair & { group: number })[] }) => {
-      const randomLabelColor = getRandomLabelColor()
-      const addresses: AddressBase[] = data.map((address) => ({
-        ...address,
+    try {
+      const addresses: AddressBase[] = groups.map((group) => ({
+        ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
         isDefault: false,
-        label: labelPrefix ? `${labelPrefix} ${address.group}` : '',
+        label: labelPrefix ? `${labelPrefix} ${group}` : '',
         color: labelColor ?? randomLabelColor
       }))
 
       saveNewAddresses(addresses)
+    } catch (e) {
+      console.error(e)
     }
-
-    deriveAddressesInGroupsWorker.postMessage({
-      mnemonic,
-      passphrase,
-      groups,
-      skipIndexes: currentAddressIndexes
-    })
   }
 
-  const restoreAddressesFromMetadata = async () => {
-    const { mnemonic, passphrase } = getEncryptedStoragePropsFromActiveWallet()
-
-    if (passphrase) return
-
-    const addressesMetadata: AddressMetadata[] = AddressMetadataStorage.load()
+  const restoreAddressesFromMetadata = async (walletId: StoredEncryptedWallet['id']) => {
+    const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
 
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
     if (addressesMetadata.length === 0) {
       const initialAddressSettings = getInitialAddressSettings()
-      AddressMetadataStorage.store({ index: 0, settings: initialAddressSettings })
+      addressMetadataStorage.storeOne(walletId, { index: 0, settings: initialAddressSettings })
       addressesMetadata.push({ index: 0, ...initialAddressSettings })
     }
 
     dispatch(addressRestorationStarted())
 
-    deriveAddressesFromIndexesWorker.onmessage = async ({ data }: { data: AddressKeyPair[] }) => {
-      const restoredAddresses: AddressBase[] = data.map((address) => ({
-        ...address,
-        ...(addressesMetadata.find((metadata) => metadata.index === address.index) as AddressMetadata)
+    try {
+      const addresses = addressesMetadata.map(({ index }) => ({
+        ...keyring.generateAndCacheAddress({ addressIndex: index }),
+        ...(addressesMetadata.find((metadata) => metadata.index === index) as AddressMetadata)
       }))
 
-      dispatch(addressesRestoredFromMetadata(restoredAddresses))
+      dispatch(addressesRestoredFromMetadata(addresses))
+    } catch (e) {
+      console.error(e)
     }
-
-    deriveAddressesFromIndexesWorker.postMessage({
-      mnemonic,
-      passphrase,
-      indexesToDerive: addressesMetadata.map((metadata) => metadata.index)
-    })
   }
 
   const discoverAndSaveUsedAddresses = async ({
-    mnemonic: mnemonicProp,
     skipIndexes,
     enableLoading = true
   }: DiscoverUsedAddressesProps = {}) => {
-    addressDiscoveryWorker.onmessage = ({ data }: { data: AddressKeyPair[] }) => {
-      const addresses: AddressBase[] = data.map((address) => ({
+    dispatch(addressDiscoveryStarted(enableLoading))
+
+    try {
+      const derivedAddresses = await discoverAndCacheActiveAddresses(skipIndexes)
+      const newAddresses = derivedAddresses.map((address) => ({
         ...address,
         isDefault: false,
         color: getRandomLabelColor()
       }))
 
-      saveNewAddresses(addresses)
+      saveNewAddresses(newAddresses)
       dispatch(addressDiscoveryFinished(enableLoading))
+    } catch (e) {
+      console.error(e)
     }
-
-    dispatch(addressDiscoveryStarted(enableLoading))
-
-    addressDiscoveryWorker.postMessage({
-      mnemonic: mnemonicProp ?? mnemonic,
-      passphrase,
-      skipIndexes: skipIndexes && skipIndexes.length > 0 ? skipIndexes : currentAddressIndexes,
-      clientUrl: explorerApiHost
-    })
   }
 
   return {

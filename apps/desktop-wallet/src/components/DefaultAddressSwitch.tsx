@@ -47,7 +47,12 @@ const DefaultAddressSwitch = () => {
   const handleDefaultAddressChange = useCallback(
     (addressHash: string) => {
       const newDefaultAddress = addresses.find((a) => a.hash === addressHash)
-      newDefaultAddress && changeDefaultAddress(newDefaultAddress)
+
+      try {
+        newDefaultAddress && changeDefaultAddress(newDefaultAddress)
+      } catch (e) {
+        console.error(e)
+      }
     },
     [addresses]
   )

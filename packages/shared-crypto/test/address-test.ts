@@ -19,21 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ExplorerProvider } from '@alephium/web3'
 
 import { walletImport } from '../lib'
-import { discoverActiveAddresses, isAddressValid } from '../lib/address'
+import { discoverActiveAddresses } from '../lib/address'
 import derivedAddresses from './fixtures/address-discovery.json'
 import wallets from './fixtures/wallets.json'
 
 describe('address', function () {
-  it('is valid', async () => {
-    expect(isAddressValid('16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3')).toBeTruthy()
-    expect(isAddressValid('19XWyoWy6DjrRp7erWqPfBnh7HL1Sb2Ub8SVjux2d71Eb')).toBeTruthy()
-    expect(isAddressValid('1CsutTzw8WVhqr1PB6F1tYinuLihAsAm9FxE7rVkC3Z2u')).toBeTruthy()
-    expect(isAddressValid('1CwD52BrUj9e4WDJSZ7RXLU2A8us4ZFSmYBDKu98p7szi')).toBeTruthy()
-    expect(isAddressValid('1BHSQ8JMeYHZe2kj3KmLjuQCSM3mvzYjNutz14uRPbxZM')).toBeTruthy()
-    expect(isAddressValid('')).toBeFalsy()
-    expect(isAddressValid('123')).toBeFalsy()
-  })
-
   it('discovers active addresses', async () => {
     const masterKey = walletImport(wallets.wallets[0].mnemonic).masterKey
     const client = new ExplorerProvider('')

@@ -25,11 +25,11 @@ import InfoBox from '@/components/InfoBox'
 import Select from '@/components/Inputs/Select'
 import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
-import { useGlobalContext } from '@/contexts/global'
 import { useAppSelector } from '@/hooks/redux'
+import useWalletLock from '@/hooks/useWalletLock'
 import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
-import { StoredWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface WalletSwitcherProps {
   onUnlock: () => void
@@ -41,7 +41,7 @@ const WalletSwitcher = ({ onUnlock }: WalletSwitcherProps) => {
   const location = useLocation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
   const wallets = useAppSelector((s) => s.global.wallets)
-  const { unlockWallet } = useGlobalContext()
+  const { unlockWallet } = useWalletLock()
 
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
   const [passphrase, setPassphrase] = useState('')
@@ -51,7 +51,7 @@ const WalletSwitcher = ({ onUnlock }: WalletSwitcherProps) => {
   const walletSelectOptions = wallets.map((wallet) => ({ value: wallet.id, label: wallet.name }))
   const selectedWalletOption = walletSelectOptions.find((wallet) => wallet.value === selectedWalletId)
 
-  const handleWalletSelect = (walletId: StoredWallet['id']) => {
+  const handleWalletSelect = (walletId: StoredEncryptedWallet['id']) => {
     setSelectedWalletId(walletId)
     setIsPasswordModalOpen(true)
   }
@@ -71,7 +71,9 @@ const WalletSwitcher = ({ onUnlock }: WalletSwitcherProps) => {
         if (location.pathname !== nextPageLocation) navigate(nextPageLocation)
       }
     })
-    if (passphrase) setPassphrase('')
+
+    setPassphrase('')
+    password = ''
   }
 
   return (
