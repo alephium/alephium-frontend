@@ -1,10 +1,10 @@
 {
   "isActive": true,
-  "title": "Version 2.2.4 is available!",
-  "description": "Please download & update from GitHub. If already on 2.2.4, there's nothing more to do!",
+  "title": "Version 2.2.5 is available!",
+  "description": "Please download & update your wallet.",
   "type": "info",
   "button": {
     "title": "Get it",
-    "link": "https://github.com/alephium/alephium-frontend/releases/tag/alephium-desktop-wallet%402.2.4"
+    "link": "https://github.com/alephium/alephium-frontend/releases/tag/alephium-desktop-wallet%402.2.5"
   }
 }

@@ -162,10 +162,9 @@ const smartRound = (amountString: string) => {
   const secondSignigicantDigit = parseInt(amountString.charAt(indexOfFirstNonZero + 1))
 
   if (secondSignigicantDigit >= 5) {
-    return (
-      amountString.slice(0, indexOfFirstNonZero - 1) +
-      (firstSignificantDigit === 9 ? '1' : (firstSignificantDigit + 1).toString())
-    )
+    return firstSignificantDigit === 9
+      ? amountString.slice(0, indexOfFirstNonZero - 1) + '1'
+      : amountString.slice(0, indexOfFirstNonZero) + (firstSignificantDigit + 1).toString()
   }
 
   return amountString.slice(0, indexOfFirstNonZero + 1)

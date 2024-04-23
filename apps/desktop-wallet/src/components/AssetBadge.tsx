@@ -44,7 +44,6 @@ const AssetBadge = ({ assetId, amount, simple, hideNftName, className }: AssetBa
       data-tooltip-content={fungibleToken?.name ?? nftInfo?.name ?? assetId}
     >
       <AssetLogo
-        assetId={assetId}
         assetImageUrl={fungibleToken?.logoURI || nftInfo?.image}
         size={20}
         assetName={fungibleToken?.name}

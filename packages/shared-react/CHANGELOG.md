@@ -1,5 +1,12 @@
 # @alephium/shared-react
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [5189168]
+  - @alephium/shared@0.7.10
+
 ## 0.0.1
 
 ### Patch Changes

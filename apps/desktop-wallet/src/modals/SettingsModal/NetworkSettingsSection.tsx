@@ -20,6 +20,8 @@ import {
   client,
   customNetworkSettingsSaved,
   getNetworkName,
+  NetworkName,
+  NetworkNames,
   networkPresetSwitched,
   NetworkSettings,
   networkSettingsPresets
@@ -39,7 +41,6 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import i18next from '@/i18n'
-import { NetworkName, NetworkNames } from '@/types/network'
 import { AlephiumWindow } from '@/types/window'
 import { useMountEffect } from '@/utils/hooks'
 

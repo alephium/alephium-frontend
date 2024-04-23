@@ -24,7 +24,7 @@ export default styled.div<{ color?: string }>`
   align-items: flex-end;
   flex-grow: 1;
   min-width: 6em;
-  flex-basis: 120px;
+  flex-basis: 100px;
   gap: 6px;
   font-weight: var(--fontWeight-semiBold);
 

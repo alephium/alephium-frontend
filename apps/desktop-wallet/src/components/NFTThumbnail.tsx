@@ -20,6 +20,7 @@ import { NFT, selectNFTById } from '@alephium/shared'
 import { colord } from 'colord'
 import { CameraOff } from 'lucide-react'
 import { useState } from 'react'
+import ReactPlayer from 'react-player'
 import styled, { css } from 'styled-components'
 
 import { useAppSelector } from '@/hooks/redux'
@@ -38,7 +39,9 @@ const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
 
   if (!nft) return null
 
-  return nft.image && !error ? (
+  return nft.image?.endsWith('.mp4') ? (
+    <ReactPlayerStyled url={nft.image} playing loop muted width={size} height={size} />
+  ) : nft.image && !error ? (
     <NFTThumbnailStyled
       src={nft.image}
       alt={nft.description}
@@ -67,6 +70,11 @@ const NFTThumbnailStyled = styled.img<Pick<NFTThumbnailProps, 'onClick'>>`
     `}
 `
 
+const ReactPlayerStyled = styled(ReactPlayer)`
+  overflow: hidden;
+  border-radius: var(--radius-medium);
+`
+
 const NoImagePlaceHolder = styled.div`
   height: 100%;
   display: flex;
@@ -74,5 +82,6 @@ const NoImagePlaceHolder = styled.div`
   justify-content: center;
   background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.07).toHex()};
   min-height: 140px;
+  min-width: 140px;
   border-radius: var(--radius-big);
 `

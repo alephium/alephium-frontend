@@ -1,5 +1,11 @@
 # @alephium/shared
 
+## 0.7.10
+
+### Patch Changes
+
+- 5189168: Fix smart rounding
+
 ## 0.7.9
 
 ### Patch Changes
