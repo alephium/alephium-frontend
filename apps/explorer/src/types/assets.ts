@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFTTokenUriMetaData } from '@alephium/shared'
 import { TokenInfo } from '@alephium/token-list'
 import { FungibleTokenMetadata, NFTMetadata as NFTMetadataBase } from '@alephium/web3/dist/src/api/api-explorer'
 
 import client from '@/api/client'
+import { NFTTokenUriMetaData } from '@alephium/web3'
 
 export type AssetType = Awaited<ReturnType<typeof client.node.guessStdTokenType>>
 
