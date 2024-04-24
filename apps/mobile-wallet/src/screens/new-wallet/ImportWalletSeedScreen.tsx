@@ -52,7 +52,7 @@ const devMnemonicToRestore = ''
 const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreenProps) => {
   const dispatch = useAppDispatch()
   const name = useAppSelector((s) => s.walletGeneration.walletName)
-  const deviceHasBiometricsData = useBiometrics()
+  const { deviceHasEnrolledBiometrics } = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
 
@@ -111,10 +111,13 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
     sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
 
-    resetNavigation(navigation, deviceHasBiometricsData ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen')
+    resetNavigation(
+      navigation,
+      deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen'
+    )
 
     setLoading(false)
-  }, [name, selectedWords, dispatch, navigation, deviceHasBiometricsData])
+  }, [name, selectedWords, dispatch, navigation, deviceHasEnrolledBiometrics])
 
   const handleWordInputChange = (inputText: string) => {
     const parsedInput = inputText.split(' ')[0]

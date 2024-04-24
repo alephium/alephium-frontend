@@ -46,7 +46,7 @@ interface NewWalletNameScreenProps extends StackScreenProps<RootStackParamList, 
 
 const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
-  const deviceHasBiometricsData = useBiometrics()
+  const { deviceHasEnrolledBiometrics } = useBiometrics()
   const dispatch = useAppDispatch()
 
   const [name, setName] = useState('')
@@ -69,7 +69,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
 
       setLoading(false)
 
-      resetNavigation(navigation, deviceHasBiometricsData ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+      resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
     }
   }
 
