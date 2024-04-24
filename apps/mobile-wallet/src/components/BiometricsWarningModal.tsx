@@ -27,7 +27,7 @@ interface BiometricsWarningModalProps extends ModalContentProps {
   confirmText?: string
 }
 
-const BiometricsWarningModal = ({ onConfirm, confirmText, ...props }: BiometricsWarningModalProps) => (
+const BiometricsWarningModal = ({ onConfirm, confirmText = 'Disable', ...props }: BiometricsWarningModalProps) => (
   <ModalContent verticalGap {...props}>
     <ScreenSection>
       <BottomModalScreenTitle>⚠️ Are you sure?</BottomModalScreenTitle>
@@ -40,7 +40,7 @@ const BiometricsWarningModal = ({ onConfirm, confirmText, ...props }: Biometrics
     <ScreenSection centered>
       <ButtonsRow>
         <Button title="Cancel" onPress={props.onClose} flex short />
-        <Button title={confirmText || 'Disable'} onPress={onConfirm} variant="alert" flex short />
+        <Button title={confirmText} onPress={onConfirm} variant="alert" flex short />
       </ButtonsRow>
     </ScreenSection>
   </ModalContent>
