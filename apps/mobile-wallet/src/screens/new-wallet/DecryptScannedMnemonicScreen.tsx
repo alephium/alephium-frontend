@@ -49,7 +49,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   const name = useAppSelector((s) => s.walletGeneration.walletName)
   const pin = useAppSelector((s) => s.credentials.pin)
   const dispatch = useAppDispatch()
-  const deviceHasBiometricsData = useBiometrics()
+  const { deviceHasEnrolledBiometrics } = useBiometrics()
   const inputRef = useRef<TextInput>(null)
 
   const [password, setPassword] = useState('')
@@ -100,7 +100,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
       if (contacts.length > 0) await importContacts(contacts)
 
-      resetNavigation(navigation, deviceHasBiometricsData ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+      resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
     } catch (e) {
       setError('Could not decrypt wallet with the given password.')
     } finally {

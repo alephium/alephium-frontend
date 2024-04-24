@@ -22,11 +22,8 @@ import {
   isEnrolledAsync,
   LocalAuthenticationResult
 } from 'expo-local-authentication'
-import { NativeModulesProxy } from 'expo-modules-core'
 
 // Copied from Uniswap and adapted
-
-const ELA = NativeModulesProxy.ExpoLocalAuthentication
 
 /**
  * Biometric authentication statuses
@@ -45,11 +42,64 @@ export enum BiometricAuthenticationStatus {
   Invalid = 'INVALID'
 }
 
-export async function enroll(): Promise<void> {
-  ELA?.enrollForAuthentication()
+type TriggerArgs<T> = {
+  params?: T
+  successCallback?: (params?: T) => void
+  failureCallback?: () => void
 }
 
-// TODO: [MOB-220] Move into a saga
+/**
+ * Hook shortcut to use the biometric prompt.
+ *
+ * It can be used by either declaring the success/failure callbacks at the time you call the hook,
+ * or by declaring them when you call the trigger function:
+ *
+ * Example 1:
+ *
+ * ```ts
+ * const { trigger } = useBiometricPrompt(() => { success() }, () => { failure() })
+ * triger({
+ *   params: { ... },
+ * })
+ * ```
+ *
+ * Example 2:
+ *
+ * ```ts
+ * const { trigger } = useBiometricPrompt()
+ * triger({
+ *  successCallback: () => { success() },
+ *  failureCallback: () => { success() },
+ *  params: { ... },
+ * })
+ * ```
+ *
+ * TODO(MOB-2523): standardize usage of this hook and remove the style of Example 1.
+ *
+ * @returns trigger Trigger the OS biometric flow and invokes successCallback on success.
+ */
+export function useBiometricPrompt<T = undefined>(
+  successCallback?: (params?: T) => void,
+  failureCallback?: () => void
+): {
+  triggerBiometricsPrompt: (args?: TriggerArgs<T>) => Promise<void>
+} {
+  const triggerBiometricsPrompt = async (args?: TriggerArgs<T>): Promise<void> => {
+    const authStatus = await tryLocalAuthenticate()
+
+    const _successCallback = args?.successCallback ?? successCallback
+    const _failureCallback = args?.failureCallback ?? failureCallback
+
+    if (biometricAuthenticationSuccessful(authStatus) || biometricAuthenticationDisabledByOS(authStatus)) {
+      _successCallback?.(args?.params)
+    } else {
+      _failureCallback?.()
+    }
+  }
+
+  return { triggerBiometricsPrompt }
+}
+
 export async function tryLocalAuthenticate(): Promise<BiometricAuthenticationStatus> {
   try {
     const compatible = await hasHardwareAsync()
@@ -67,8 +117,7 @@ export async function tryLocalAuthenticate(): Promise<BiometricAuthenticationSta
     const result = await authenticateAsync({
       cancelLabel: 'Cancel',
       promptMessage: 'Please authenticate',
-      requireConfirmation: false,
-      disableDeviceFallback: true
+      requireConfirmation: false
     })
 
     if (result.success === true) {
@@ -107,3 +156,9 @@ const isCanceledByUser = (result: LocalAuthenticationResult): boolean =>
 
 const isCanceledBySystem = (result: LocalAuthenticationResult): boolean =>
   result.success === false && result.error === 'system_cancel'
+
+const biometricAuthenticationSuccessful = (status: BiometricAuthenticationStatus): boolean =>
+  status === BiometricAuthenticationStatus.Authenticated
+
+const biometricAuthenticationDisabledByOS = (status: BiometricAuthenticationStatus): boolean =>
+  status === BiometricAuthenticationStatus.Unsupported || status === BiometricAuthenticationStatus.MissingEnrollment
