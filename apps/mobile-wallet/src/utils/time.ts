@@ -16,15 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { hasHardwareAsync, isEnrolledAsync } from 'expo-local-authentication'
+// Copied from Uniswap
 
-import { useAsyncData } from '~/hooks/useAsyncData'
+export function debounceCallback<T extends (...args: void[]) => void>(
+  func: T,
+  wait: number
+): { triggerDebounce: () => void; cancelDebounce: () => void } {
+  let timeout: NodeJS.Timeout
 
-const useBiometrics = () => {
-  const { data: deviceSupportsBiometrics } = useAsyncData(hasHardwareAsync)
-  const { data: deviceHasEnrolledBiometrics } = useAsyncData(isEnrolledAsync)
+  const cancelDebounce = (): void => {
+    clearTimeout(timeout)
+  }
 
-  return { deviceSupportsBiometrics, deviceHasEnrolledBiometrics }
+  return {
+    triggerDebounce: (): void => {
+      clearTimeout(timeout)
+      timeout = setTimeout(func, wait)
+    },
+    cancelDebounce
+  }
 }
-
-export default useBiometrics

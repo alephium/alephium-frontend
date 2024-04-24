@@ -58,8 +58,8 @@ const settingsSlice = createSlice({
     walletConnectToggled: (state) => {
       state.walletConnect = !state.walletConnect
     },
-    biometricsToggled: (state, action: PayloadAction<boolean>) => {
-      state.usesBiometrics = action.payload
+    biometricsToggled: (state) => {
+      state.usesBiometrics = !state.usesBiometrics
     }
   },
   extraReducers(builder) {

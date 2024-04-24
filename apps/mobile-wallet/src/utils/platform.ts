@@ -16,15 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { hasHardwareAsync, isEnrolledAsync } from 'expo-local-authentication'
+import { Platform } from 'react-native'
 
-import { useAsyncData } from '~/hooks/useAsyncData'
-
-const useBiometrics = () => {
-  const { data: deviceSupportsBiometrics } = useAsyncData(hasHardwareAsync)
-  const { data: deviceHasEnrolledBiometrics } = useAsyncData(isEnrolledAsync)
-
-  return { deviceSupportsBiometrics, deviceHasEnrolledBiometrics }
-}
-
-export default useBiometrics
+export const isAndroid = Platform.OS === 'android'
