@@ -56,7 +56,7 @@ const WalletConnectModal = (props: CenteredModalProps) => {
                 <Row>
                   <div style={{ width: 35 }}>
                     {metadata.icons[0] ? (
-                      <AssetLogo assetId={metadata.url} assetImageUrl={metadata.icons[0]} size={35} />
+                      <AssetLogo assetImageUrl={metadata.icons[0]} size={35} />
                     ) : (
                       <BinaryIcon size={35} color={theme.font.secondary} />
                     )}

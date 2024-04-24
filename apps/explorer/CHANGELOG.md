@@ -1,5 +1,15 @@
 # @alephium/explorer
 
+## 1.9.2
+
+### Patch Changes
+
+- 4db6b9c: Allow devnet as valid network type
+- Updated dependencies [5189168]
+  - @alephium/shared@0.7.10
+  - @alephium/shared-crypto@0.7.10
+  - @alephium/shared-react@0.0.2
+
 ## 1.9.1
 
 ### Patch Changes

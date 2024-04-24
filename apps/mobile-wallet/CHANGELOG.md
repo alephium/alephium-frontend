@@ -1,5 +1,15 @@
 # @alephium/mobile-wallet
 
+## 1.0.9
+
+### Patch Changes
+
+- fbeb9ca: Migrate network settings to node-v210 & backend-v117
+- Updated dependencies [5189168]
+  - @alephium/shared@0.7.10
+  - @alephium/shared-crypto@0.7.10
+  - @alephium/shared-react@0.0.2
+
 ## 1.0.8
 
 ### Patch Changes

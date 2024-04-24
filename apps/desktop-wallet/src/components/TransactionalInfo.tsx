@@ -110,29 +110,29 @@ const TransactionalInfo = ({
           ))}
         </AssetBadges>
       </CellAssetBadges>
-      {!showInternalInflows && (
-        <CellAddress alignRight hasMargins>
-          <HiddenLabel text={direction === 'swap' ? t('between') : t('from')} />
-          {isPending ? (
-            <AddressBadgeStyled addressHash={tx.fromAddress} truncate disableA11y withBorders />
-          ) : direction === 'out' || direction === 'swap' ? (
-            <AddressBadgeStyled addressHash={addressHash} truncate disableA11y withBorders />
-          ) : (
-            direction === 'in' && (
-              <IOList
-                currentAddress={addressHash}
-                isOut={false}
-                outputs={tx.outputs}
-                inputs={(tx as explorer.Transaction).inputs}
-                timestamp={(tx as explorer.Transaction).timestamp}
-                truncate
-                disableA11y
-              />
-            )
-          )}
-        </CellAddress>
-      )}
-      <DirectionAndAddress stackVertically={showInternalInflows}>
+      <DirectionAndAddresses stackVertically={showInternalInflows}>
+        {!showInternalInflows && (
+          <CellAddress alignRight hasMargins>
+            <HiddenLabel text={direction === 'swap' ? t('between') : t('from')} />
+            {isPending ? (
+              <AddressBadgeStyled addressHash={tx.fromAddress} truncate disableA11y withBorders />
+            ) : direction === 'out' || direction === 'swap' ? (
+              <AddressBadgeStyled addressHash={addressHash} truncate disableA11y withBorders />
+            ) : (
+              direction === 'in' && (
+                <IOList
+                  currentAddress={addressHash}
+                  isOut={false}
+                  outputs={tx.outputs}
+                  inputs={(tx as explorer.Transaction).inputs}
+                  timestamp={(tx as explorer.Transaction).timestamp}
+                  truncate
+                  disableA11y
+                />
+              )
+            )}
+          </CellAddress>
+        )}
         <CellDirection>
           <HiddenLabel text={direction === 'swap' ? t('and') : t('to')} />
           {!showInternalInflows ? (
@@ -172,7 +172,7 @@ const TransactionalInfo = ({
               ))}
           </DirectionalAddress>
         </CellAddress>
-      </DirectionAndAddress>
+      </DirectionAndAddresses>
       <TableCellAmount aria-hidden="true">
         {knownAssets.map(({ id, amount, decimals, symbol }) => (
           <AmountContainer key={id}>
@@ -229,12 +229,11 @@ const CellAddress = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
   flex-grow: 1;
   align-items: baseline;
   display: flex;
-  width: 100%;
 
   ${({ hasMargins }) =>
     hasMargins &&
     css`
-      margin: 0 21px;
+      margin: 0 var(--spacing-4);
     `}
 
   ${({ alignRight }) =>
@@ -244,15 +243,17 @@ const CellAddress = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
     `}
 `
 
-const DirectionAndAddress = styled.div<{ stackVertically?: boolean }>`
+const DirectionAndAddresses = styled.div<{ stackVertically?: boolean }>`
   display: flex;
   align-items: center;
+  min-width: 35%;
 
   ${({ stackVertically }) =>
     stackVertically &&
     css`
       flex-direction: column;
       align-items: flex-start;
+      width: 20%;
       gap: 5px;
     `}
 `
