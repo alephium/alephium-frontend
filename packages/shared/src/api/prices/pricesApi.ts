@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { uniq } from 'lodash'
 
+import { client } from '@/api/alephiumClient'
 import { TOKENS_WITH_PRICE } from '@/api/assets/assetsApiHooks'
 import { baseApi } from '@/api/baseApi'
-import { client } from '@/api/alephiumClient'
 import { ONE_MINUTE_MS } from '@/constants'
 import { Currency } from '@/types'
 

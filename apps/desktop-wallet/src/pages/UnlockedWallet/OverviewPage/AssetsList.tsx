@@ -129,7 +129,6 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
   const knownFungibleTokens = useAddressesFlattenKnownFungibleTokens(addressHashes)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
 
-  console.log(knownFungibleTokens)
   return (
     <>
       <motion.div {...fadeIn} className={className}>

@@ -105,12 +105,10 @@ export const useAddressesGroupedAssets = (addressHashes: string[]) => {
 export const useAddressesFlattenAssets = (addressHashes: string[] = []) =>
   useAddressesAssets(addressHashes).flatMap((a) => a.assets)
 
-export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[] = []) => {
-  console.log(addressHashes)
-  return useAddressesAssets(addressHashes)
+export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[] = []) =>
+  useAddressesAssets(addressHashes)
     .flatMap((a) => a.assets)
     .filter((t) => tokenIsKnownFungible(t))
-}
 
 export const useAddressesFlattenListedTokens = (addressHashes: string[] = []) =>
   useAddressesAssets(addressHashes)
