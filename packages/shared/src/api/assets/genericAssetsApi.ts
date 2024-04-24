@@ -32,9 +32,9 @@ const batchedTokenGenericInfo = create({
   })
 })
 
-export const getTokenGenericInfo = (tokenId: string) =>
+export const getTokenGenericInfoQuery = (tokenId: string) =>
   queryOptions({
-    queryFn: async () => await batchedTokenGenericInfo.fetch(tokenId),
     queryKey: ['tokenInfo', tokenId],
+    queryFn: async () => await batchedTokenGenericInfo.fetch(tokenId),
     staleTime: ONE_DAY_MS
   })

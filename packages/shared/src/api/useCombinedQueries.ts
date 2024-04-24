@@ -16,13 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useQueries, UseQueryOptions } from '@tanstack/react-query'
+import { queryOptions, useQueries, UseQueryResult } from '@tanstack/react-query'
 
-export const useCombinedQueries = (queries: UseQueryOptions[]) =>
+export const combineQueriesResult = <T>(results: UseQueryResult<T, Error>[]) => ({
+  data: results.flatMap((result) => result.data || []),
+  pending: results.flatMap((result) => result.isPending)
+})
+
+// TODO: MAKE TYPING WORK.
+export const useCombinedQueries = (queries: ReturnType<typeof queryOptions>[]) =>
   useQueries({
     queries,
-    combine: (results) => ({
-      data: results.map((result) => result.data),
-      pending: results.some((result) => result.isPending)
-    })
+    combine: combineQueriesResult
   })

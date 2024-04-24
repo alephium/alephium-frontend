@@ -19,13 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   AddressHash,
   localStorageNetworkSettingsMigrated,
-  queryClient,
   syncTokenCurrentPrices,
   syncTokenPriceHistories,
-  useGetTokenListQuery
+  useGetTokenList
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import { QueryClientProvider } from '@tanstack/react-query'
 import { AnimatePresence } from 'framer-motion'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -78,7 +76,8 @@ const App = () => {
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const { data: tokenList } = useGetTokenListQuery(networkName)
+
+  const { data: tokenList } = useGetTokenList(networkName)
   const tokenListSymbols = tokenList?.tokens.map((token) => token.symbol)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
@@ -205,27 +204,25 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-      <QueryClientProvider client={queryClient}>
-        <GlobalStyle />
+      <GlobalStyle />
 
-        {splashScreenVisible && <SplashScreen onSplashScreenShown={() => setSplashScreenVisible(false)} />}
+      {splashScreenVisible && <SplashScreen onSplashScreenShown={() => setSplashScreenVisible(false)} />}
 
-        <WalletConnectContextProvider>
-          <AppContainer showDevIndication={showDevIndication}>
-            <CenteredSection>
-              <Router />
-            </CenteredSection>
-            <BannerSection>{newVersion && <UpdateWalletBanner />}</BannerSection>
-            <AnnouncementBanner />
-          </AppContainer>
-        </WalletConnectContextProvider>
+      <WalletConnectContextProvider>
+        <AppContainer showDevIndication={showDevIndication}>
+          <CenteredSection>
+            <Router />
+          </CenteredSection>
+          <BannerSection>{newVersion && <UpdateWalletBanner />}</BannerSection>
+          <AnnouncementBanner />
+        </AppContainer>
+      </WalletConnectContextProvider>
 
-        <SnackbarManager />
-        {loading && <AppSpinner />}
-        <AnimatePresence>
-          {isUpdateWalletModalVisible && <UpdateWalletModal onClose={() => setUpdateWalletModalVisible(false)} />}
-        </AnimatePresence>
-      </QueryClientProvider>
+      <SnackbarManager />
+      {loading && <AppSpinner />}
+      <AnimatePresence>
+        {isUpdateWalletModalVisible && <UpdateWalletModal onClose={() => setUpdateWalletModalVisible(false)} />}
+      </AnimatePresence>
     </ThemeProvider>
   )
 }

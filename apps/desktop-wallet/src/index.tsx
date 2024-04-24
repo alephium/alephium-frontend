@@ -20,7 +20,9 @@ import '@/index.css' // Importing CSS through CSS file to avoid font flickering
 import '@/i18n'
 import '@yaireo/tagify/dist/tagify.css' // Tagify CSS: important to import after index.css file
 
+import { queryClient } from '@alephium/shared'
 import isPropValid from '@emotion/is-prop-valid'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { StrictMode, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -47,7 +49,9 @@ ReactDOM.render(
           <AnalyticsProvider>
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
               <GlobalContextProvider>
-                <App />
+                <QueryClientProvider client={queryClient}>
+                  <App />
+                </QueryClientProvider>
                 <Tooltips />
               </GlobalContextProvider>
             </StyleSheetManager>

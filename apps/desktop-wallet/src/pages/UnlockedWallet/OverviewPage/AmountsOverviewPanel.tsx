@@ -23,7 +23,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesTotalWorth, useAddressesWorth } from '@/api/apiHooks'
+import { useAddressesTotalWorth } from '@/api/apiHooks'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'

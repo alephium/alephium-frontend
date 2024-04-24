@@ -17,69 +17,54 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenList } from '@alephium/token-list'
-import { chunk } from 'lodash'
-import posthog from 'posthog-js'
+import { queryOptions } from '@tanstack/react-query'
+import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
-import { baseApi } from '@/api/baseApi'
 import { client } from '@/api/alephiumClient'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
-import { ONE_DAY_MS } from '@/constants'
-import { FungibleTokenBasicMetadata, NetworkName } from '@/types'
+import { ONE_DAY_MS, ONE_HOUR_MS } from '@/constants'
+import { NetworkName } from '@/types'
 
-export const fungibleTokensApi = baseApi.injectEndpoints({
-  endpoints: (build) => ({
-    getTokenList: build.query<TokenList, NetworkName>({
-      queryFn: (networkName) => {
-        if (!(['mainnet', 'testnet', 'devnet'] as NetworkName[]).includes(networkName)) {
-          return { error: { message: 'Invalid network ' + networkName } }
-        }
-
-        return exponentialBackoffFetchRetry(
-          `https://raw.githubusercontent.com/alephium/token-list/master/tokens/${networkName}.json`
-        ).then((res) => ({
-          data: res.json() as unknown as TokenList
-        }))
-      },
-      providesTags: (result, error, networkName) => [{ type: 'TokenList', networkName }],
-      keepUnusedDataFor: ONE_DAY_MS / 1000
-    }),
-    getFungibleTokensMetadata: build.query<FungibleTokenBasicMetadata[], string[]>({
-      queryFn: async (tokenIds) => {
-        let tokensMetadata: FungibleTokenBasicMetadata[] = []
-
-        try {
-          tokensMetadata = (
-            await Promise.all(
-              chunk(tokenIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
-                client.explorer.tokens.postTokensFungibleMetadata(unknownTokenIdsChunk)
-              )
-            )
-          )
-            .flat()
-            .map((token) => {
-              const parsedDecimals = parseInt(token.decimals)
-
-              return {
-                ...token,
-                decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0
-              }
-            })
-        } catch (e) {
-          console.error(e)
-          posthog.capture('Error', { message: 'Syncing unknown fungible tokens info' })
-        }
-
-        return { data: tokensMetadata }
-      },
-      providesTags: (result, error, tokenIds) =>
-        tokenIds.map((id) => ({
-          type: 'FungibleTokenBasicMetadata',
-          id
-        })),
-      keepUnusedDataFor: ONE_DAY_MS / 1000
-    })
+const fungibleTokensMetadata = create({
+  fetcher: async (ids: string[]) =>
+    await client.explorer.tokens.postTokensFungibleMetadata(ids.filter((id) => id !== '')),
+  resolver: keyResolver('id'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: TOKENS_QUERY_LIMIT
   })
 })
 
-export const { useGetTokenListQuery, useGetFungibleTokensMetadataQuery } = fungibleTokensApi
+export const getTokenListQuery = (networkName: NetworkName) =>
+  queryOptions({
+    queryKey: ['tokenList'],
+    queryFn: async () => {
+      if (!(['mainnet', 'testnet', 'devnet'] as NetworkName[]).includes(networkName)) {
+        console.error('Invalid network name')
+        return
+      }
+
+      const res = await exponentialBackoffFetchRetry(
+        `https://raw.githubusercontent.com/alephium/token-list/master/tokens/${networkName}.json`
+      )
+
+      return (await res.json()) as unknown as TokenList
+    },
+    staleTime: ONE_DAY_MS
+  })
+
+export const getFungibleTokenMetadataQuery = (tokenId: string) =>
+  queryOptions({
+    queryKey: ['unverifiedFungibleToken', tokenId],
+    queryFn: () =>
+      fungibleTokensMetadata.fetch(tokenId).then((r) => {
+        const parsedDecimals = parseInt(r.decimals)
+
+        return {
+          ...r,
+          decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0
+        }
+      }),
+    staleTime: ONE_HOUR_MS
+  })

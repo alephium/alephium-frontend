@@ -17,41 +17,46 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { explorer } from '@alephium/web3'
-import { useQueries } from '@tanstack/react-query'
+import { TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
+import { useQueries, useQuery } from '@tanstack/react-query'
 
-import { useGetFungibleTokensMetadataQuery, useGetTokenListQuery } from '@/api/assets/fungibleTokensApi'
-import { getTokenGenericInfo } from '@/api/assets/genericAssetsApi'
+import { getFungibleTokenMetadataQuery, getTokenListQuery } from '@/api/assets/fungibleTokensApi'
+import { getTokenGenericInfoQuery } from '@/api/assets/genericAssetsApi'
 import { useGetNftsMetadataQuery } from '@/api/assets/nftsApi'
+import { combineQueriesResult } from '@/api/useCombinedQueries'
 import { Asset, NetworkName } from '@/types'
 
+export const useGetTokenList = (networkName: NetworkName) => useQuery(getTokenListQuery(networkName))
+
 export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
-  const tokenList = useGetTokenListQuery(networkName).data?.tokens
-  const tokensInTokenList = tokenList?.filter((token) => assetIds.includes(token.id)) || []
+  const { data: tokenListResult } = useGetTokenList(networkName)
+  const tokensInTokenList = tokenListResult?.tokens.filter((token) => assetIds.includes(token.id)) || []
 
   // TODO: Solve this context issue. Should it go to shared-react?... Should we use the queryClient directly?
   const genericInfoOfNonListedAssets = useQueries({
-    queries: assetIds.map((id) => getTokenGenericInfo(id)),
-    combine: (results) => ({
-      data: results.flatMap((result) => result.data || []),
-      pending: results.some((result) => result.isPending)
-    })
+    queries: assetIds.map((id) => getTokenGenericInfoQuery(id)),
+    combine: combineQueriesResult
   }).data
 
-  const groupedTokenIdsOfNonListedAssets = genericInfoOfNonListedAssets?.reduce(
+  const groupedTokenIdsOfNonListedAssets = genericInfoOfNonListedAssets.reduce(
     (acc, item) => {
-      const key = item?.stdInterfaceId || explorer.TokenStdInterfaceId.NonStandard
+      const key = (item?.stdInterfaceId || explorer.TokenStdInterfaceId.NonStandard) as TokenStdInterfaceId
 
       return {
         ...acc,
         [key]: [...(acc[key] || []), item?.token]
       }
     },
-    {} as Record<string, explorer.TokenInfo['token'][]>
+    {} as Record<TokenStdInterfaceId, string[] | undefined>
   )
 
-  const fungibleTokensMetadata =
-    useGetFungibleTokensMetadataQuery(groupedTokenIdsOfNonListedAssets?.[explorer.TokenStdInterfaceId.Fungible] || [])
-      ?.data || []
+  const fungibleTokensMetadata = useQueries({
+    queries:
+      groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.Fungible]?.map((id) =>
+        getFungibleTokenMetadataQuery(id)
+      ) || [],
+    combine: combineQueriesResult
+  }).data
 
   const nftTokensMetadata =
     useGetNftsMetadataQuery(groupedTokenIdsOfNonListedAssets?.[explorer.TokenStdInterfaceId.NonFungible] || [])?.data ||

@@ -45,6 +45,7 @@ export const useAddressesAssets = (
 ): { addressHash: Address['hash']; assets: Asset[] }[] => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
   const { data: addressesTokens } = useGetAddressesTokensBalancesQuery(addressHashes)
+
   const addressesAssetsMetadata = useAssetsMetadataForCurrentNetwork(
     addressesTokens?.flatMap((a) => a.tokenBalances.map((t) => t.id)) || []
   )
@@ -82,7 +83,7 @@ export const useAddressesGroupedAssets = (addressHashes: string[]) => {
   const addressesAssets = useAddressesAssets(addressHashes)
 
   const groupedTokens = groupBy(
-    addressesAssets.flatMap((a) => a.assets),
+    addressesAssets?.flatMap((a) => a.assets),
     (t) => {
       if (tokenIsListed(t)) {
         return 'listed'
@@ -96,14 +97,14 @@ export const useAddressesGroupedAssets = (addressHashes: string[]) => {
     }
   )
 
-  return addressesAssets.map((a) => ({
+  return addressesAssets?.map((a) => ({
     addressHash: a.addressHash,
     ...groupedTokens
   }))
 }
 
 export const useAddressesFlattenAssets = (addressHashes: string[] = []) =>
-  useAddressesAssets(addressHashes).flatMap((a) => a.assets)
+  useAddressesAssets(addressHashes)?.flatMap((a) => a.assets)
 
 export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[] = []) =>
   useAddressesAssets(addressHashes)
@@ -116,7 +117,7 @@ export const useAddressesFlattenListedTokens = (addressHashes: string[] = []) =>
     .filter((t) => tokenIsListed(t))
 
 export const useAddressesFlattenUnknownTokens = (addressHashes: string[] = []) =>
-  useAddressesAssets(addressHashes).reduce(
+  useAddressesAssets(addressHashes)?.reduce(
     (acc, a) => acc.concat(a.assets.filter(tokenIsUnknown).map((t) => ({ ...t, decimals: 0 }))),
     [] as UnknownAsset[]
   )
@@ -127,13 +128,13 @@ export const useAddressesFlattenNfts = (addressHashes: string[] = []) =>
     .filter((t) => tokenIsNonFungible(t))
 
 export const useAddressesWorth = (addressHashes: string[]) =>
-  useAddressesAssets(addressHashes).map((a) => ({
+  useAddressesAssets(addressHashes)?.map((a) => ({
     addressHash: a.addressHash,
     worth: a.assets.reduce((acc, a) => acc + (a.worth || 0), 0)
   }))
 
-export const useAddressesTotalWorth = (addressHashes: string[]) =>
-  useAddressesAssets(addressHashes).reduce(
+export const useAddressesTotalWorth = (addressHashes: string[] = []) =>
+  useAddressesAssets(addressHashes)?.reduce(
     (acc, address) => acc + address.assets.reduce((acc, asset) => acc + (asset.worth || 0), 0),
     0
   )
