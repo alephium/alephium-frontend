@@ -20,11 +20,13 @@ import { explorer } from '@alephium/web3'
 import { TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries, useQuery } from '@tanstack/react-query'
 
-import { getFungibleTokenMetadataQuery, getNftMetadataQuery, getTokenGenericInfoQuery, getTokenListQuery } from '@/api'
+import { getNftMetadataQuery } from '@/api'
+import { assetsQueryCollection } from '@/api/assets/assetsQueriesCollection'
 import { combineQueriesResult } from '@/api/utils'
 import { Asset, NetworkName } from '@/types'
 
-export const useGetTokenList = (networkName: NetworkName) => useQuery(getTokenListQuery(networkName))
+export const useGetTokenList = (networkName: NetworkName) =>
+  useQuery(assetsQueryCollection.tokenList.getTokenListQuery(networkName))
 
 export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
   const { data: tokenListResult } = useGetTokenList(networkName)
@@ -32,7 +34,7 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
 
   // TODO: Solve this context issue. Should it go to shared-react?... Should we use the queryClient directly?
   const genericInfoOfNonListedAssets = useQueries({
-    queries: assetIds.map((id) => getTokenGenericInfoQuery(id)),
+    queries: assetIds.map((id) => assetsQueryCollection.generic.getTokenGenericInfo(id)),
     combine: combineQueriesResult
   }).data
 
