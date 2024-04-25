@@ -21,7 +21,7 @@ import { TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries, useQuery } from '@tanstack/react-query'
 
 import { getFungibleTokenMetadataQuery, getNftMetadataQuery, getTokenGenericInfoQuery, getTokenListQuery } from '@/api'
-import { combineQueriesResult } from '@/api/useCombinedQueries'
+import { combineQueriesResult } from '@/api/utils'
 import { Asset, NetworkName } from '@/types'
 
 export const useGetTokenList = (networkName: NetworkName) => useQuery(getTokenListQuery(networkName))

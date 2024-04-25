@@ -16,7 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { queryOptions, useQueries, UseQueryResult } from '@tanstack/react-query'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { QueryOptions, queryOptions, useQueries, UseQueryResult } from '@tanstack/react-query'
+
+type QueryFn<T> = (...args: any[]) => QueryOptions<T, unknown, T, string[]>
+
+interface Queries<T> {
+  [key: string]: QueryFn<T>
+}
+
+type QueriesCollection<T> = {
+  [P in keyof T]: Queries<T[P]>
+}
+
+export const createQueriesCollection = <T extends Record<string, Queries<any>>>(collection: T): QueriesCollection<T> =>
+  collection
 
 export const combineQueriesResult = <T>(results: UseQueryResult<T, Error>[]) => ({
   data: results.flatMap((result) => result.data || []),
