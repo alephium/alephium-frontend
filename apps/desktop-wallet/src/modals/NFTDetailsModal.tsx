@@ -17,12 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  getNftMetadataQuery,
   NFT,
   useGetNftCollectionDataQuery,
-  useGetNftCollectionMetadataQuery,
-  useGetNftsMetadataQuery
+  useGetNftCollectionMetadataQuery
 } from '@alephium/shared'
 import { skipToken } from '@reduxjs/toolkit/query'
+import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -41,7 +42,7 @@ interface NFTDetailsModalProps {
 
 const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const nft = useGetNftsMetadataQuery([nftId]).data?.[0]
+  const { data: nft } = useQuery(getNftMetadataQuery(nftId))
 
   const nftCollectionMetadata = useGetNftCollectionMetadataQuery(nft?.collectionId ?? skipToken)
   const nftCollectionData = useGetNftCollectionDataQuery(nftCollectionMetadata.data?.collectionUri ?? skipToken)

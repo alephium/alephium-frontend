@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, useGetNftsMetadataQuery } from '@alephium/shared'
+import { getNftMetadataQuery, NFT } from '@alephium/shared'
+import { useQuery } from '@tanstack/react-query'
 import { colord } from 'colord'
 import { CameraOff } from 'lucide-react'
 import { useState } from 'react'
@@ -30,7 +31,7 @@ interface NFTThumbnailProps {
 }
 
 const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
-  const nft = useGetNftsMetadataQuery([nftId]).data?.[0]
+  const { data: nft } = useQuery(getNftMetadataQuery(nftId))
 
   const [error, setError] = useState(false)
 

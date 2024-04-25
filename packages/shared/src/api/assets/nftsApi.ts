@@ -17,17 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
-import { NFTCollectionMetadata, NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
-import { chunk } from 'lodash'
-import posthog from 'posthog-js'
+import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { queryOptions } from '@tanstack/react-query'
+import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
-import { baseApi } from '@/api/baseApi'
 import { client } from '@/api/alephiumClient'
+import { baseApi } from '@/api/baseApi'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
-import { ONE_DAY_MS } from '@/constants'
-import { NFT } from '@/types'
-import { isPromiseFulfilled } from '@/utils'
+import { ONE_DAY_MS, ONE_HOUR_MS } from '@/constants'
+import { NFTTokenUriMetaData } from '@/types'
 
 export const nftsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -45,44 +44,32 @@ export const nftsApi = baseApi.injectEndpoints({
         })),
       providesTags: (result, error, collectionUri) => [{ type: 'NFTCollectionUriMetaData', collectionUri }],
       keepUnusedDataFor: ONE_DAY_MS / 1000
-    }),
-    getNftsMetadata: build.query<NFT[], string[]>({
-      queryFn: async (nftIds) => {
-        let nfts: NFT[] = []
-        let nftsMetadata: NFTMetadata[] = []
-
-        try {
-          nftsMetadata = (
-            await Promise.all(
-              chunk(nftIds, TOKENS_QUERY_LIMIT).map((unknownTokenIdsChunk) =>
-                client.explorer.tokens.postTokensNftMetadata(unknownTokenIdsChunk)
-              )
-            )
-          ).flat()
-        } catch (e) {
-          console.error(e)
-          posthog.capture('Error', { message: 'Syncing unknown NFT info' })
-        }
-
-        const promiseResults = await Promise.allSettled(
-          nftsMetadata.map(({ tokenUri, id }) =>
-            exponentialBackoffFetchRetry(tokenUri)
-              .then((res) => res.json())
-              .then((data) => ({ ...data, id }))
-          )
-        )
-        const nftsData = promiseResults.filter(isPromiseFulfilled).flatMap((r) => r.value)
-
-        nfts = nftsMetadata.map(({ id, collectionId }) => ({
-          id,
-          collectionId,
-          ...(nftsData.find((nftData) => nftData.id === id) || {})
-        }))
-
-        return { data: nfts }
-      }
     })
   })
 })
 
-export const { useGetNftCollectionMetadataQuery, useGetNftCollectionDataQuery, useGetNftsMetadataQuery } = nftsApi
+const nftsMetadataBatcher = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftMetadata(ids.filter((id) => id !== '')),
+  resolver: keyResolver('id'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: TOKENS_QUERY_LIMIT
+  })
+})
+
+export const getNftMetadataQuery = (tokenId: string) =>
+  queryOptions({
+    queryKey: ['nftMetadata', tokenId],
+    queryFn: async () => {
+      const nftsMetadata = await nftsMetadataBatcher.fetch(tokenId)
+
+      const nftsData = await exponentialBackoffFetchRetry(nftsMetadata.tokenUri).then(
+        (res) => res.json() as unknown as NFTTokenUriMetaData
+      )
+
+      return { ...nftsMetadata, ...nftsData }
+    },
+    staleTime: ONE_HOUR_MS
+  })
+
+export const { useGetNftCollectionMetadataQuery, useGetNftCollectionDataQuery } = nftsApi

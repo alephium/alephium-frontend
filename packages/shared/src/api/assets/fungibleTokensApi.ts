@@ -26,7 +26,7 @@ import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { ONE_DAY_MS, ONE_HOUR_MS } from '@/constants'
 import { NetworkName } from '@/types'
 
-const fungibleTokensMetadata = create({
+const fungibleTokensMetadataBatcher = create({
   fetcher: async (ids: string[]) =>
     await client.explorer.tokens.postTokensFungibleMetadata(ids.filter((id) => id !== '')),
   resolver: keyResolver('id'),
@@ -56,9 +56,9 @@ export const getTokenListQuery = (networkName: NetworkName) =>
 
 export const getFungibleTokenMetadataQuery = (tokenId: string) =>
   queryOptions({
-    queryKey: ['unverifiedFungibleToken', tokenId],
+    queryKey: ['fungibleTokenMetadata', tokenId],
     queryFn: () =>
-      fungibleTokensMetadata.fetch(tokenId).then((r) => {
+      fungibleTokensMetadataBatcher.fetch(tokenId).then((r) => {
         const parsedDecimals = parseInt(r.decimals)
 
         return {

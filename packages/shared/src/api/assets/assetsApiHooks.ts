@@ -20,9 +20,7 @@ import { explorer } from '@alephium/web3'
 import { TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries, useQuery } from '@tanstack/react-query'
 
-import { getFungibleTokenMetadataQuery, getTokenListQuery } from '@/api/assets/fungibleTokensApi'
-import { getTokenGenericInfoQuery } from '@/api/assets/genericAssetsApi'
-import { useGetNftsMetadataQuery } from '@/api/assets/nftsApi'
+import { getFungibleTokenMetadataQuery, getNftMetadataQuery, getTokenGenericInfoQuery, getTokenListQuery } from '@/api'
 import { combineQueriesResult } from '@/api/useCombinedQueries'
 import { Asset, NetworkName } from '@/types'
 
@@ -58,9 +56,13 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
     combine: combineQueriesResult
   }).data
 
-  const nftTokensMetadata =
-    useGetNftsMetadataQuery(groupedTokenIdsOfNonListedAssets?.[explorer.TokenStdInterfaceId.NonFungible] || [])?.data ||
-    []
+  const nftTokensMetadata = useQueries({
+    queries:
+      groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.NonFungible]?.map((id) =>
+        getNftMetadataQuery(id)
+      ) || [],
+    combine: combineQueriesResult
+  }).data
 
   const unknownTokensIds =
     genericInfoOfNonListedAssets
