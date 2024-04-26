@@ -83,7 +83,9 @@ const useAddressGeneration = () => {
     }
   }
 
-  const restoreAddressesFromMetadata = async (walletId: StoredEncryptedWallet['id']) => {
+  const restoreAddressesFromMetadata = async (walletId: StoredEncryptedWallet['id'], isPassphraseUsed: boolean) => {
+    if (isPassphraseUsed) return
+
     const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
 
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
