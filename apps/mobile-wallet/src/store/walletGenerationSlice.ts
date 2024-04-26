@@ -19,8 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { appReset } from '@alephium/shared'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
-import { newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
-import { walletUnlocked } from '~/store/wallet/walletSlice'
+import { newWalletImportedWithMetadata, walletDeleted, walletUnlocked } from '~/store/wallet/walletActions'
 
 const sliceName = 'walletGeneration'
 

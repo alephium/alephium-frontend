@@ -38,12 +38,7 @@ import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
-import {
-  getDeprecatedStoredWallet,
-  getStoredWallet,
-  initializeWalletFromStorage,
-  migrateDeprecatedMnemonic
-} from '~/persistent-storage/wallet'
+import { getDeprecatedStoredWallet, getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import EditAddressScreen from '~/screens/Addresses/Address/EditAddressScreen'
 import NewAddressScreen from '~/screens/Addresses/Address/NewAddressScreen'
@@ -65,7 +60,8 @@ import PublicKeysScreen from '~/screens/PublicKeysScreen'
 import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
 import { routeChanged } from '~/store/appSlice'
-import { walletUnlocked } from '~/store/wallet/walletSlice'
+import { walletUnlocked } from '~/store/wallet/walletActions'
+import { WalletMetadata } from '~/types/wallet'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { isNavStateRestorable, resetNavigation, restoreNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
@@ -150,8 +146,6 @@ const AppUnlockHandler = () => {
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsPrompt } = useBiometricPrompt()
@@ -159,17 +153,16 @@ const AppUnlockHandler = () => {
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
   const [needsWalletUnlock, setNeedsWalletUnlock] = useState(false)
 
-  const initializeWallet = useCallback(async () => {
-    await initializeWalletFromStorage()
+  const initializeWallet = useCallback(
+    (wallet: WalletMetadata) => {
+      dispatch(walletUnlocked(wallet))
 
-    const needsAddressRegeneration = addressesStatus === 'uninitialized' && !isLoadingLatestTxs
-    const { addressesToInitialize, contacts, ...wallet } = await getStoredWallet(needsAddressRegeneration)
-
-    dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts }))
-
-    lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
-    SplashScreen.hideAsync()
-  }, [addressesStatus, dispatch, isLoadingLatestTxs, lastNavigationState, navigation])
+      // TODO: Remove when resetting navigation to LandingScreen is removed
+      lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
+      SplashScreen.hideAsync()
+    },
+    [dispatch, lastNavigationState, navigation]
+  )
 
   const unlockApp = useCallback(async () => {
     if (isWalletUnlocked) return
@@ -179,10 +172,15 @@ const AppUnlockHandler = () => {
 
       if (!deprecatedWallet) {
         try {
+          const wallet = await getStoredWallet()
+
           if (biometricsRequiredForAppAccess) {
-            await triggerBiometricsPrompt({ successCallback: initializeWallet, failureCallback: unlockApp })
+            await triggerBiometricsPrompt({
+              successCallback: () => initializeWallet(wallet),
+              failureCallback: unlockApp
+            })
           } else {
-            await initializeWallet()
+            initializeWallet(wallet)
           }
         } catch {
           if (lastNavigationState) {
@@ -196,14 +194,7 @@ const AppUnlockHandler = () => {
       } else {
         if (await loadBiometricsSettings()) {
           await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
-
-          const needsAddressRegeneration = addressesStatus === 'uninitialized' && !isLoadingLatestTxs
-          const { addressesToInitialize, contacts, ...wallet } = await getStoredWallet(needsAddressRegeneration)
-
-          dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts }))
-
-          lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
-          SplashScreen.hideAsync()
+          initializeWallet(await getStoredWallet())
         } else {
           navigation.navigate('LoginWithPinScreen')
         }
@@ -221,11 +212,8 @@ const AppUnlockHandler = () => {
       }
     }
   }, [
-    addressesStatus,
     biometricsRequiredForAppAccess,
-    dispatch,
     initializeWallet,
-    isLoadingLatestTxs,
     isWalletUnlocked,
     lastNavigationState,
     navigation,
@@ -235,6 +223,7 @@ const AppUnlockHandler = () => {
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' && isWalletUnlocked && !isCameraOpen) {
+        // TODO: Show auth modal without first resetting navigation
         if (biometricsRequiredForAppAccess) resetNavigation(navigation, 'LandingScreen')
         dispatch(appBecameInactive())
         keyring.clearCachedSecrets()

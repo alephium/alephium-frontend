@@ -86,6 +86,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import {
@@ -825,15 +826,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     console.log('✅ VERIFIED USER PROVIDED DATA!')
 
+    const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
+
     const namespaces: SessionTypes.Namespaces = {
       alephium: {
         methods: requiredNamespace.methods,
         events: requiredNamespace.events,
-        accounts: [
-          `${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${
-            signerAddress.publicKey
-          }/default`
-        ]
+        accounts: [`${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${publicKey}/default`]
       }
     }
 

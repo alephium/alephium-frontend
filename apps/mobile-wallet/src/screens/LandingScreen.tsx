@@ -45,6 +45,7 @@ import { getWalletMetadata } from '~/persistent-storage/wallet'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 import { BORDER_RADIUS_BIG, BORDER_RADIUS_HUGE } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
+import { showExceptionToast } from '~/utils/layout'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
@@ -121,13 +122,11 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }
 
   useEffect(() => {
-    const checkForExistingWallet = async () => {
-      const walletMetadata = await getWalletMetadata()
-
-      setShowNewWalletButtons(!walletMetadata)
+    try {
+      getWalletMetadata().then((metadata) => setShowNewWalletButtons(!metadata))
+    } catch (e) {
+      showExceptionToast(e, 'Could not get wallet data')
     }
-
-    checkForExistingWallet()
   }, [])
 
   return (

@@ -24,6 +24,7 @@ import { CredentialsState } from '~/types/wallet'
 
 const sliceName = 'credentials'
 
+// TODO: DELETE?
 const initialState: CredentialsState = {
   pin: undefined
 }

@@ -24,8 +24,7 @@ import {
 } from '@alephium/shared'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { walletDeleted } from '~/store/wallet/walletActions'
-import { walletUnlocked } from '~/store/wallet/walletSlice'
+import { walletDeleted, walletUnlocked } from '~/store/wallet/walletActions'
 
 type ContactsState = EntityState<Contact>
 

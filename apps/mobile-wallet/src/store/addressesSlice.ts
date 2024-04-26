@@ -56,8 +56,7 @@ import { chunk } from 'lodash'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
 import { RootState } from '~/store/store'
-import { newWalletGenerated, walletDeleted } from '~/store/wallet/walletActions'
-import { walletUnlocked } from '~/store/wallet/walletSlice'
+import { newWalletGenerated, walletDeleted, walletUnlocked } from '~/store/wallet/walletActions'
 import { Address, AddressPartial } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 
@@ -283,12 +282,20 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(walletUnlocked, (state, action) => {
-        const { addressesToInitialize } = action.payload
+      .addCase(walletUnlocked, (state, { payload: { addresses } }) => {
+        const addressesToInitialize = addresses.filter((address) => !state.entities[address.hash])
 
         if (addressesToInitialize.length > 0) {
-          addressesAdapter.setAll(state, [])
-          addressesAdapter.addMany(state, addressesToInitialize.map(getInitialAddressState))
+          addressesAdapter.addMany(
+            state,
+            addressesToInitialize.map(({ index, hash, ...settings }) =>
+              getInitialAddressState({
+                index,
+                hash,
+                settings
+              })
+            )
+          )
         }
       })
       .addCase(newWalletGenerated, (state, action) => {

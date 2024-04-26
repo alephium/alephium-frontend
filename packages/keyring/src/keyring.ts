@@ -141,6 +141,8 @@ export class Keyring {
     return bytesToHex(address.privateKey)
   }
 
+  public isInitialized = () => this.root !== null
+
   // PRIVATE METHODS
 
   private _getAddress = (addressHash: AddressHash): NullableSensitiveAddressData => {

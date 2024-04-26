@@ -37,7 +37,7 @@ import SecretPhraseWordList, { SelectedWord } from '~/components/SecretPhraseWor
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
-import { dangerouslyExportWalletMnemonic, persistWalletMetadata } from '~/persistent-storage/wallet'
+import { dangerouslyExportWalletMnemonic, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { PossibleWordBox, SecretPhraseBox, Word } from '~/screens/new-wallet/ImportWalletSeedScreen'
 import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -74,7 +74,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {
-      await persistWalletMetadata({ isMnemonicBackedUp: true })
+      await updateStoredWalletMetadata({ isMnemonicBackedUp: true })
       dispatch(mnemonicBackedUp())
 
       sendAnalytics('Backed-up mnemonic')

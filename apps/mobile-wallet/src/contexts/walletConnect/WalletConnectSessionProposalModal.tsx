@@ -35,6 +35,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { persistSettings } from '~/persistent-storage/settings'
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { selectAddressesInGroup } from '~/store/addresses/addressesSelectors'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
@@ -95,10 +96,12 @@ const WalletConnectSessionProposalModal = ({
     setLoading('Generating new address...')
 
     try {
+      await initializeKeyringWithStoredWallet()
       const newAddress = {
         ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
         settings: { label: '', color: getRandomLabelColor(), isDefault: false }
       }
+      keyring.clearAll()
 
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))

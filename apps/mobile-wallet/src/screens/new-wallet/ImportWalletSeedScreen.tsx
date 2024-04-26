@@ -40,6 +40,7 @@ import { syncLatestTransactions } from '~/store/addressesSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { bip39Words } from '~/utils/bip39'
+import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
 interface ImportWalletSeedScreenProps
@@ -104,19 +105,23 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
     const mnemonicToImport = devMnemonicToRestore || selectedWords.map(({ word }) => word).join(' ')
 
-    const wallet = await generateAndStoreWallet(name, mnemonicToImport)
+    try {
+      const wallet = await generateAndStoreWallet(name, mnemonicToImport)
 
-    dispatch(newWalletGenerated(wallet))
-    dispatch(syncLatestTransactions(wallet.firstAddress.hash))
+      dispatch(newWalletGenerated(wallet))
+      dispatch(syncLatestTransactions(wallet.firstAddress.hash))
 
-    sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
+      sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
 
-    resetNavigation(
-      navigation,
-      deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen'
-    )
-
-    setLoading(false)
+      resetNavigation(
+        navigation,
+        deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen'
+      )
+    } catch (e) {
+      showExceptionToast(e, 'Could not import wallet')
+    } finally {
+      setLoading(false)
+    }
   }, [name, selectedWords, dispatch, navigation, deviceHasEnrolledBiometrics])
 
   const handleWordInputChange = (inputText: string) => {
