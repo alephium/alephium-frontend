@@ -17,20 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
+import { queryOptions } from '@tanstack/react-query'
 
-import { client } from '@/api/alephiumClient'
-import { baseApi } from '@/api/baseApi'
-import { PAGINATION_PAGE_LIMIT } from '@/api/limits'
-import { ONE_MINUTE_MS } from '@/constants'
+import { client, PAGINATION_PAGE_LIMIT } from '@/api'
 import { TokenBalances } from '@/types'
 
-export const addressesApi = baseApi.injectEndpoints({
-  endpoints: (build) => ({
-    getAddressesTokensBalances: build.query<{ addressHash: string; tokenBalances: TokenBalances[] }[], string[]>({
-      queryFn: async (addressHashes) => {
-        const results = []
-
-        for (const addressHash of addressHashes) {
+export const addressesQueries = {
+  balances: {
+    getAddressTokensBalances: (addressHash: string) =>
+      queryOptions({
+        queryKey: ['getAddressTokensBalances', addressHash],
+        queryFn: async () => {
           const addressTotalTokenBalances = [] as TokenBalances[]
           let addressTokensPageResults = [] as AddressTokenBalance[]
           let page = 1
@@ -51,22 +48,8 @@ export const addressesApi = baseApi.injectEndpoints({
             page += 1
           }
 
-          results.push({
-            addressHash,
-            tokenBalances: addressTotalTokenBalances
-          })
+          return addressTotalTokenBalances
         }
-
-        return { data: results }
-      },
-      providesTags: (result, error, addressHashes) =>
-        addressHashes.map((hash) => ({
-          type: 'AddressTokenBalance',
-          hash
-        })),
-      keepUnusedDataFor: ONE_MINUTE_MS / 1000
-    })
-  })
-})
-
-export const { useGetAddressesTokensBalancesQuery } = addressesApi
+      })
+  }
+}

@@ -78,7 +78,7 @@ const App = () => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
 
-  const { data: tokenList } = useQuery(assetsQueries.tokenList.getTokenListQuery(networkName))
+  const { data: tokenList } = useQuery(assetsQueries.tokenList.getTokenList(networkName))
   const tokenListSymbols = tokenList?.tokens.map((token) => token.symbol)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)

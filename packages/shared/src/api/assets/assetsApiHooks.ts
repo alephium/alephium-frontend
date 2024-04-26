@@ -25,10 +25,9 @@ import { combineQueriesResult } from '@/api/utils'
 import { Asset, NetworkName } from '@/types'
 
 export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
-  const { data: tokenListResult } = useQuery(assetsQueries.tokenList.getTokenListQuery(networkName))
+  const { data: tokenListResult } = useQuery(assetsQueries.tokenList.getTokenList(networkName))
   const tokensInTokenList = tokenListResult?.tokens.filter((token) => assetIds.includes(token.id)) || []
 
-  // TODO: Solve this context issue. Should it go to shared-react?... Should we use the queryClient directly?
   const genericInfoOfNonListedAssets = useQueries({
     queries: assetIds.map((id) => assetsQueries.generic.getTokenGenericInfo(id)),
     combine: combineQueriesResult
@@ -57,7 +56,7 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
   const nftTokensMetadata = useQueries({
     queries:
       groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.NonFungible]?.map((id) =>
-        assetsQueries.nfts.getNftMetadataQuery(id)
+        assetsQueries.nfts.getNftMetadata(id)
       ) || [],
     combine: combineQueriesResult
   }).data

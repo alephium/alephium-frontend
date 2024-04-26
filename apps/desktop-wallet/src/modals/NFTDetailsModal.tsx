@@ -36,12 +36,10 @@ interface NFTDetailsModalProps {
 
 const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const { data: nft } = useQuery(assetsQueries.nfts.getNftMetadataQuery(nftId))
+  const { data: nft } = useQuery(assetsQueries.nfts.getNftMetadata(nftId))
 
   const { data: nftCollectionMetadata } = useQuery(assetsQueries.nfts.getNftCollectionMetadata(nft?.collectionId))
-  const nftCollectionData = useQuery({
-    ...assetsQueries.nfts.getNftCollectionData(nftCollectionMetadata)
-  })
+  const nftCollectionData = useQuery(assetsQueries.nfts.getNftCollectionData(nftCollectionMetadata?.collectionUri))
 
   if (!nft) return null
 

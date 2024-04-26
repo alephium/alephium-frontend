@@ -16,12 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+export * from '@/api/utils'
 export * from '@/api/alephiumClient'
 export * from '@/api/queryClient'
 export * from '@/api/fetchRetry'
 export * from '@/api/limits'
 export * from '@/api/baseQuery'
 export * from '@/api/assets/assetsQueries'
+export * from '@/api/addresses/addressesQueries'
 export * from '@/api/assets/assetsApiHooks'
-export * from '@/api/addresses/addressesApi'
 export * from '@/api/prices/pricesApi'

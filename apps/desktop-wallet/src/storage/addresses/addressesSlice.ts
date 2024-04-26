@@ -38,7 +38,6 @@ import {
   syncAddressesAlphHistoricBalances,
   syncAddressesBalances,
   syncAddressesData,
-  syncAddressesTokensBalances,
   syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage,
@@ -130,19 +129,6 @@ const addressesSlice = createSlice({
         state.loadingTransactions = false
         state.loadingTokensBalances = false
       })
-      .addCase(syncAddressesTokensBalances.fulfilled, (state, action) => {
-        const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, tokenBalances }) => ({
-          id: hash,
-          changes: {
-            tokens: tokenBalances
-          }
-        }))
-
-        addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingTokensBalances = false
-      })
       .addCase(syncAddressesTransactions.fulfilled, (state, action) => {
         const addressData = action.payload
         const updatedAddresses = addressData.map(({ hash, transactions, mempoolTransactions }) => {
@@ -194,9 +180,6 @@ const addressesSlice = createSlice({
       })
       .addCase(syncAddressesTransactions.rejected, (state) => {
         state.loadingTransactions = false
-      })
-      .addCase(syncAddressesTokensBalances.rejected, (state) => {
-        state.loadingTokensBalances = false
       })
       .addCase(syncAddressTransactionsNextPage.fulfilled, (state, action) => {
         const addressTransactionsData = action.payload

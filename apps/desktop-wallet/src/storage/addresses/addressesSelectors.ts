@@ -16,26 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressFungibleToken,
-  AddressHash,
-  Asset,
-  calculateAmountWorth,
-  calculateAssetsData,
-  contactsAdapter,
-  NFT,
-  selectAllPrices,
-  selectAllPricesHistories,
-  sortAssets,
-  TokenDisplayBalances
-} from '@alephium/shared'
+import { AddressHash, Asset, contactsAdapter } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import { RootState } from '@/storage/store'
-import { Address } from '@/types/addresses'
 import { filterAddressesWithoutAssets } from '@/utils/addresses'
 
 export const {

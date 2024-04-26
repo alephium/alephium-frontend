@@ -67,15 +67,15 @@ export const assetsQueries = {
   generic: {
     getTokenGenericInfo: (tokenId: string) =>
       queryOptions({
-        queryKey: ['tokenInfo', tokenId],
+        queryKey: ['getTokenGenericInfo', tokenId],
         queryFn: async () => await tokenGenericInfoBatcher.fetch(tokenId),
         staleTime: ONE_DAY_MS
       })
   },
   tokenList: {
-    getTokenListQuery: (networkName: NetworkName) =>
+    getTokenList: (networkName: NetworkName) =>
       queryOptions({
-        queryKey: ['tokenList'],
+        queryKey: ['getTokenList'],
         queryFn: async () => {
           if (!(['mainnet', 'testnet', 'devnet'] as NetworkName[]).includes(networkName)) {
             console.error('Invalid network name')
@@ -94,7 +94,7 @@ export const assetsQueries = {
   fungibleTokens: {
     getFungibleTokenMetadata: (tokenId: string) =>
       queryOptions({
-        queryKey: ['fungibleTokenMetadata', tokenId],
+        queryKey: ['getFungibleTokenMetadata', tokenId],
         queryFn: () =>
           fungibleTokensMetadataBatcher.fetch(tokenId).then((r) => {
             const parsedDecimals = parseInt(r.decimals)
@@ -108,9 +108,9 @@ export const assetsQueries = {
       })
   },
   nfts: {
-    getNftMetadataQuery: (tokenId: string) =>
+    getNftMetadata: (tokenId: string) =>
       queryOptions({
-        queryKey: ['nftMetadata', tokenId],
+        queryKey: ['getNftMetadata', tokenId],
         queryFn: async () => {
           const nftsMetadata = await nftsMetadataBatcher.fetch(tokenId)
 
@@ -124,18 +124,18 @@ export const assetsQueries = {
       }),
     getNftCollectionMetadata: (collectionId?: string) =>
       queryOptions({
-        queryKey: ['nftCollectionMetadata', collectionId],
+        queryKey: ['getNftCollectionMetadata', collectionId],
         queryFn: async () => await nftsCollectionsMetadataBatcher.fetch(collectionId || ''),
         staleTime: ONE_DAY_MS,
         enabled: !!collectionId
       }),
     getNftCollectionData: (collectionUri?: string) =>
       queryOptions({
-        queryKey: ['nftCollectionData', collectionUri],
+        queryKey: ['getNftCollectionData', collectionUri],
         queryFn: () =>
-          exponentialBackoffFetchRetry(collectionUri || '').then((res) => ({
-            data: res.json() as unknown as NFTCollectionUriMetaData
-          })),
+          exponentialBackoffFetchRetry(collectionUri || '').then(
+            (res) => res.json() as unknown as NFTCollectionUriMetaData
+          ),
         enabled: !!collectionUri
       })
   }

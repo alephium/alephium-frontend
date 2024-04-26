@@ -17,18 +17,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  addressesQueries,
   Asset,
   calculateAmountWorth,
+  combineQueriesResult,
   sortAssets,
   tokenIsKnownFungible,
   tokenIsListed,
   tokenIsNonFungible,
   tokenIsUnknown,
   UnknownAsset,
-  useGetAddressesTokensBalancesQuery,
   useGetAssetsMetadata,
   useGetPricesQuery
 } from '@alephium/shared'
+import { useQueries } from '@tanstack/react-query'
 import { groupBy } from 'lodash'
 
 import { useAppSelector } from '@/hooks/redux'
@@ -45,7 +47,11 @@ export const useAddressesAssets = (
   addressHashes: string[] = []
 ): { addressHash: Address['hash']; assets: Asset[] }[] => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
-  const { data: addressesTokens } = useGetAddressesTokensBalancesQuery(addressHashes)
+
+  const { data: addressesTokens } = useQueries({
+    queries: addressHashes.map((h) => addressesQueries.balances.getAddressTokensBalances(h)),
+    combine: combineQueriesResult
+  })
 
   const addressesAssetsMetadata = useAssetsMetadataForCurrentNetwork(
     addressesTokens?.flatMap((a) => a.tokenBalances.map((t) => t.id)) || []
