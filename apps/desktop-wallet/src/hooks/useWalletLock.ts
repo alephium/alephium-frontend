@@ -59,6 +59,7 @@ const useWalletLock = () => {
     let encryptedWallet: StoredEncryptedWallet | null
     let initialAddress: NonSensitiveAddressData
     let version: EncryptedMnemonicVersion
+    const isPassphraseUsed = !!passphrase
 
     try {
       encryptedWallet = walletStorage.load(walletId)
@@ -88,15 +89,15 @@ const useWalletLock = () => {
       wallet: {
         id: encryptedWallet.id,
         name: encryptedWallet.name,
-        isPassphraseUsed: !!passphrase
+        isPassphraseUsed
       },
       initialAddress
     }
 
     dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
 
-    if (!passphrase) {
-      restoreAddressesFromMetadata(encryptedWallet.id)
+    if (!isPassphraseUsed) {
+      restoreAddressesFromMetadata(encryptedWallet.id, isPassphraseUsed)
 
       walletStorage.update(walletId, { lastUsed: Date.now() })
 

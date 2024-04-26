@@ -63,6 +63,9 @@ importers:
       '@actions/tool-cache':
         specifier: ^2.0.1
         version: 2.0.1
+      '@alephium/encryptor':
+        specifier: workspace:*
+        version: link:../../packages/encryptor
       '@alephium/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -1315,7 +1318,7 @@ packages:
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
     dependencies:
       '@alephium/web3': 0.38.0
-      '@alephium/web3-wallet': 0.38.0
+      '@alephium/web3-wallet': 0.38.2
       '@walletconnect/core': 2.11.0(@react-native-async-storage/async-storage@1.21.0)
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@1.21.0)
       '@walletconnect/sign-client': 2.11.0(@react-native-async-storage/async-storage@1.21.0)
@@ -1340,11 +1343,11 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /@alephium/web3-wallet@0.38.0:
-    resolution: {integrity: sha512-EE2F3d+Gx/IhLtOAY/DC8vrCzBcPKg7S0Pnu5sc48jWxliZ+0sBxqo1DOsH+8Mi3NGbLmmDHYvOhLQhtNhpQAg==}
+  /@alephium/web3-wallet@0.38.2:
+    resolution: {integrity: sha512-44pWPFym1848EHFDsGLUSwrJHT0NnmH0eZqCXz3/OWPOb2wimbhKZL+j/ILGyG/43VpsJk9YyQju5aewdiHTwQ==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@alephium/web3': 0.38.0
+      '@alephium/web3': 0.38.2
       '@noble/secp256k1': 1.7.1
       '@types/node': 16.18.74
       bip32: 3.1.0
@@ -1357,6 +1360,26 @@ packages:
 
   /@alephium/web3@0.38.0:
     resolution: {integrity: sha512-w3qBY7I1uFpWuCeQ1kGraUM//gVcs+wpNyuTf/UBiZmEm9yY+UVKny+daNq87ePTpjZZqDu2Jf2xYybmPuwjBg==}
+    engines: {node: '>=14.0.0', npm: '>=7.0.0'}
+    dependencies:
+      '@noble/secp256k1': 1.7.1
+      base-x: 4.0.0
+      bignumber.js: 9.1.2
+      binary-parser: 2.2.1
+      blakejs: 1.2.1
+      bn.js: 5.2.1
+      buffer: 6.0.3
+      cross-fetch: 3.1.8
+      crypto-browserify: 3.12.0
+      elliptic: 6.5.4
+      eventemitter3: 4.0.7
+      path-browserify: 1.0.1
+      stream-browserify: 3.0.0
+    transitivePeerDependencies:
+      - encoding
+
+  /@alephium/web3@0.38.2:
+    resolution: {integrity: sha512-LiImxkbGvb0IyLa7Q+QXAio/P9IWh+qYllks7ybiJR7k5q8qPkJE2nrgR2NxhjCYqlS+Qz1cDGFkvl11ylqYQg==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
     dependencies:
       '@noble/secp256k1': 1.7.1
@@ -5615,7 +5638,7 @@ packages:
     resolution: {integrity: sha512-ok/BTPFzFKVMwO5eOHRrvnBVHdRy9IrsrW1GpMaQ9MCnilNLXQKmAX8s1YXDFaai9xJpac2ySzV0YeRRECr2Vw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      '@babel/core': 7.23.7
+      '@babel/core': 7.23.6
       '@jest/types': 29.6.3
       '@jridgewell/trace-mapping': 0.3.20
       babel-plugin-istanbul: 6.1.1
@@ -5819,7 +5842,7 @@ packages:
       '@scure/base': 1.1.6
       '@types/debug': 4.1.12
       debug: 4.3.4
-      pony-cause: 2.1.10
+      pony-cause: 2.1.11
       semver: 7.5.4
       superstruct: 1.0.4
       uuid: 9.0.1
@@ -13061,7 +13084,7 @@ packages:
     dependencies:
       foreground-child: 3.1.1
       jackspeak: 2.3.6
-      minimatch: 9.0.4
+      minimatch: 9.0.3
       minipass: 7.0.4
       path-scurry: 1.10.1
 
@@ -13997,7 +14020,7 @@ packages:
     resolution: {integrity: sha512-pzqtp31nLv/XFOzXGuvhCb8qhjmTVo5vjVk19XE4CRlSWz0KoeJ3bw9XsA7nOp9YBf4qHjwBxkDzKcME/J29Yg==}
     engines: {node: '>=8'}
     dependencies:
-      '@babel/core': 7.23.7
+      '@babel/core': 7.23.6
       '@babel/parser': 7.23.6
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
@@ -15759,9 +15782,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
+    dev: true
 
-  /minimatch@9.0.4:
-    resolution: {integrity: sha512-KqWh+VchfxcMNRAJjj2tnsSJdNbHsVgnkBhTNrW7AjVo6OvLtxw8zfT9oLw1JSohlFzJ8jCoTgaoXvJ+kHt6fw==}
+  /minimatch@9.0.3:
+    resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
     engines: {node: '>=16 || 14 >=14.17'}
     dependencies:
       brace-expansion: 2.0.1
@@ -15978,7 +16002,7 @@ packages:
     resolution: {integrity: sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg==}
     engines: {node: '>= 0.10.5'}
     dependencies:
-      minimatch: 9.0.4
+      minimatch: 9.0.3
 
   /node-fetch-native@1.6.1:
     resolution: {integrity: sha512-bW9T/uJDPAJB2YNYEpWzE54U5O3MQidXsOyTfnbKYtTtFexRvGzb1waphBN4ZwP6EcIvYYEOwW0b72BpAqydTw==}
@@ -16638,8 +16662,8 @@ packages:
     resolution: {integrity: sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==}
     engines: {node: '>=4.0.0'}
 
-  /pony-cause@2.1.10:
-    resolution: {integrity: sha512-3IKLNXclQgkU++2fSi93sQ6BznFuxSLB11HdvZQ6JW/spahf/P1pAHBQEahr20rs0htZW0UDkM1HmA+nZkXKsw==}
+  /pony-cause@2.1.11:
+    resolution: {integrity: sha512-M7LhCsdNbNgiLYiP4WjsfLUuFmCfnjdF6jKe2R9NKl4WFN+HZPGHJZ9lnLP7f9ZnKe3U9nuWD0szirmj+migUg==}
     engines: {node: '>=12.0.0'}
     dev: false
 

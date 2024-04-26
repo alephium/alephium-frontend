@@ -81,6 +81,7 @@ const WalletsSettingsSection = () => {
               wallet={wallet}
               isCurrent={wallet.id === activeWallet.id}
               onWalletDelete={setWalletToRemove}
+              isPassphraseUsed={wallet.id === activeWallet.id && activeWallet.isPassphraseUsed}
             />
           ))}
         </BoxContainerStyled>
@@ -108,15 +109,40 @@ const WalletsSettingsSection = () => {
             <Button role="secondary" onClick={lockWallet}>
               {t('Lock current wallet')}
             </Button>
-            <Button role="secondary" onClick={() => setIsQRCodeModalVisible(true)}>
-              {t('Export current wallet')}
-            </Button>
+
+            <ButtonTooltipWrapper
+              data-tooltip-id="default"
+              data-tooltip-content={
+                activeWallet.isPassphraseUsed ? t('To export this wallet use it without a passphrase') : ''
+              }
+            >
+              <Button
+                role="secondary"
+                onClick={() => setIsQRCodeModalVisible(true)}
+                disabled={activeWallet.isPassphraseUsed}
+              >
+                {t('Export current wallet')}
+              </Button>
+            </ButtonTooltipWrapper>
+
             <Button role="secondary" variant="alert" onClick={() => setIsDisplayingSecretModal(true)}>
               {t('Show your secret recovery phrase')}
             </Button>
-            <Button variant="alert" onClick={() => setWalletToRemove(activeWallet as ActiveWallet)}>
-              {t('Remove current wallet')}
-            </Button>
+
+            <ButtonTooltipWrapper
+              data-tooltip-id="default"
+              data-tooltip-content={
+                activeWallet.isPassphraseUsed ? t('To delete this wallet use it without a passphrase') : ''
+              }
+            >
+              <Button
+                variant="alert"
+                onClick={() => setWalletToRemove(activeWallet as ActiveWallet)}
+                disabled={activeWallet.isPassphraseUsed}
+              >
+                {t('Remove current wallet')}
+              </Button>
+            </ButtonTooltipWrapper>
           </ActionButtons>
         </CurrentWalletSection>
       )}
@@ -140,9 +166,10 @@ interface WalletItemProps {
   wallet: StoredEncryptedWallet
   isCurrent: boolean
   onWalletDelete: (wallet: StoredEncryptedWallet) => void
+  isPassphraseUsed?: boolean
 }
 
-const WalletItem = ({ wallet, isCurrent, onWalletDelete }: WalletItemProps) => {
+const WalletItem = ({ wallet, isCurrent, onWalletDelete, isPassphraseUsed }: WalletItemProps) => {
   const { t } = useTranslation()
   const [isShowingDeleteButton, setIsShowingDeleteButton] = useState(false)
 
@@ -157,19 +184,24 @@ const WalletItem = ({ wallet, isCurrent, onWalletDelete }: WalletItemProps) => {
         {isCurrent && <CheckMark />}
       </WalletName>
 
-      <ButtonStyled
-        aria-label={t('Delete')}
-        tabIndex={0}
-        squared
-        role="secondary"
-        transparent
-        borderless
-        onClick={() => onWalletDelete(wallet)}
-        onBlur={() => setIsShowingDeleteButton(false)}
-        disabled={!isShowingDeleteButton}
-        isVisible={isShowingDeleteButton}
-        Icon={Trash}
-      />
+      <div
+        data-tooltip-id="default"
+        data-tooltip-content={isPassphraseUsed ? t('To delete this wallet use it without a passphrase') : ''}
+      >
+        <ButtonStyled
+          aria-label={t('Delete')}
+          tabIndex={0}
+          squared
+          role="secondary"
+          transparent
+          borderless
+          onClick={() => onWalletDelete(wallet)}
+          onBlur={() => setIsShowingDeleteButton(false)}
+          disabled={!isShowingDeleteButton || isPassphraseUsed}
+          isVisible={isShowingDeleteButton}
+          Icon={Trash}
+        />
+      </div>
     </WalletItemContainer>
   )
 }
@@ -218,4 +250,10 @@ const ButtonStyled = styled(Button)<{ isVisible: boolean }>`
 
 const BoxContainerStyled = styled(BoxContainer)`
   margin-top: var(--spacing-2);
+`
+
+const ButtonTooltipWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
 `
