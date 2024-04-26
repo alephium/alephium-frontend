@@ -21,7 +21,7 @@ export default {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '1.0.9',
+    version: '1.0.10',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -42,6 +42,33 @@ export default {
       },
       config: {
         usesNonExemptEncryption: false
+      },
+      // The following config was added due to: https://github.com/alephium/alephium-frontend/issues/489.
+      // The privacy manifests config should probably need to be removed once all of our deps that are using native APIs
+      // that require a privacy manifest have been updated to include one, and expo has been updated to allow updating
+      // to these versions. See https://github.com/alephium/alephium-frontend/pull/534 for more info.
+      //
+      // For further info into what each NSPrivacyAccessedAPITypeReasons refers to, see:
+      // https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api
+      privacyManifests: {
+        NSPrivacyAccessedAPITypes: [
+          {
+            NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
+            NSPrivacyAccessedAPITypeReasons: ['C617.1']
+          },
+          {
+            NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',
+            NSPrivacyAccessedAPITypeReasons: ['E174.1']
+          },
+          {
+            NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategorySystemBootTime',
+            NSPrivacyAccessedAPITypeReasons: ['35F9.1']
+          },
+          {
+            NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
+            NSPrivacyAccessedAPITypeReasons: ['CA92.1']
+          }
+        ]
       }
     },
     android: {
