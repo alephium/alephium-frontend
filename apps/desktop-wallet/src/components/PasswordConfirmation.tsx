@@ -56,9 +56,9 @@ const PasswordConfirmation: FC<PasswordConfirmationProps> = ({
 
   if (!storedWalletId) return null
 
-  const validatePassword = () => {
+  const validatePassword = async () => {
     try {
-      decryptMnemonic(password, walletStorage.load(storedWalletId).encrypted)
+      await decryptMnemonic(walletStorage.load(storedWalletId).encrypted, password)
       onCorrectPasswordEntered(password)
     } catch (e) {
       console.error(e)

@@ -371,7 +371,6 @@ export const _20240328_1221_migrateAddressAndContactsToUnencrypted = async (
           dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic),
           parsedMetadataJson.encrypted
         )) as AddressMetadata[]
-
         addressMetadataStorage.store(walletId, metadata)
       }
 
