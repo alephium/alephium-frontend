@@ -45,7 +45,7 @@ jobs:
         with:
           context: ./apps/explorer
           file: ./apps/explorer/docker/Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           tags: |
             docker.io/alephium/explorer:${{ steps.get_version.outputs.current-version }}
             docker.io/alephium/explorer:latest
