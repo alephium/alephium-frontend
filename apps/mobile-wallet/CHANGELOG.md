@@ -1,5 +1,12 @@
 # @alephium/mobile-wallet
 
+## 1.0.10
+
+### Patch Changes
+
+- c980000: Add privacy manifest file for iOS
+- c980000: Update dependencies
+
 ## 1.0.9
 
 ### Patch Changes
