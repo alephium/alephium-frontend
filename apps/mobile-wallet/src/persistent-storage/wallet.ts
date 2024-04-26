@@ -224,6 +224,7 @@ export const deleteWallet = async () => {
   try {
     await SecureStore.deleteItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
     await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
+    await SecureStore.deleteItemAsync(MNEMONIC_V2, defaultSecureStoreConfig)
   } catch (e) {
     sendAnalytics('Error', { message: 'Could not delete wallet from secure storage' })
     console.error(e)
