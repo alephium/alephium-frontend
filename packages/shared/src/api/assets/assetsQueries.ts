@@ -23,7 +23,6 @@ import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/bat
 import { exponentialBackoffFetchRetry } from '@/api'
 import { client } from '@/api/alephiumClient'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
-import { createQueriesCollection } from '@/api/utils'
 import { ONE_DAY_MS, ONE_HOUR_MS } from '@/constants'
 import { NetworkName, NFTTokenUriMetaData } from '@/types'
 
@@ -55,7 +54,7 @@ const nftsMetadataBatcher = create({
   })
 })
 
-export const assetsQueryCollection = createQueriesCollection({
+export const assetsQueries = {
   generic: {
     getTokenGenericInfo: (tokenId: string) =>
       queryOptions({
@@ -115,4 +114,4 @@ export const assetsQueryCollection = createQueriesCollection({
         staleTime: ONE_HOUR_MS
       })
   }
-})
+}

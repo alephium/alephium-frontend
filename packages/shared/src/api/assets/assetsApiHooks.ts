@@ -20,13 +20,12 @@ import { explorer } from '@alephium/web3'
 import { TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries, useQuery } from '@tanstack/react-query'
 
-import { getNftMetadataQuery } from '@/api'
-import { assetsQueryCollection } from '@/api/assets/assetsQueriesCollection'
+import { assetsQueries } from '@/api/assets/assetsQueries'
 import { combineQueriesResult } from '@/api/utils'
 import { Asset, NetworkName } from '@/types'
 
 export const useGetTokenList = (networkName: NetworkName) =>
-  useQuery(assetsQueryCollection.tokenList.getTokenListQuery(networkName))
+  useQuery(assetsQueries.tokenList.getTokenListQuery(networkName))
 
 export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
   const { data: tokenListResult } = useGetTokenList(networkName)
@@ -34,7 +33,7 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
 
   // TODO: Solve this context issue. Should it go to shared-react?... Should we use the queryClient directly?
   const genericInfoOfNonListedAssets = useQueries({
-    queries: assetIds.map((id) => assetsQueryCollection.generic.getTokenGenericInfo(id)),
+    queries: assetIds.map((id) => assetsQueries.generic.getTokenGenericInfo(id)),
     combine: combineQueriesResult
   }).data
 
@@ -53,7 +52,7 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
   const fungibleTokensMetadata = useQueries({
     queries:
       groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.Fungible]?.map((id) =>
-        getFungibleTokenMetadataQuery(id)
+        assetsQueries.fungibleTokens.getFungibleTokenMetadata(id)
       ) || [],
     combine: combineQueriesResult
   }).data
@@ -61,7 +60,7 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
   const nftTokensMetadata = useQueries({
     queries:
       groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.NonFungible]?.map((id) =>
-        getNftMetadataQuery(id)
+        assetsQueries.nfts.getNftMetadataQuery(id)
       ) || [],
     combine: combineQueriesResult
   }).data
