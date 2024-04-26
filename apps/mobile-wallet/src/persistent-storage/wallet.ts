@@ -46,6 +46,7 @@ const BIOMETRICS_WALLET_STORAGE_KEY = 'wallet-biometrics'
 const WALLET_METADATA_STORAGE_KEY = 'wallet-metadata'
 const IS_NEW_WALLET = 'is-new-wallet'
 const BIOMETRICS_SETTINGS_CHANGED = 'biometrics-settings-changed'
+const MNEMONIC_V2 = 'wallet-mnemonic-v2'
 
 export const generateAndStoreWallet = async (
   name: WalletStoredState['name'],
@@ -74,7 +75,7 @@ const persistWallet = async (
   isMnemonicBackedUp: boolean
 ): Promise<WalletState['id']> => {
   console.log('💽 Storing mnemonic')
-  await SecureStore.setItemAsync('wallet-mnemonic-v2', JSON.stringify(mnemonic), defaultSecureStoreConfig)
+  await SecureStore.setItemAsync(MNEMONIC_V2, JSON.stringify(mnemonic), defaultSecureStoreConfig)
 
   console.log('💽 Storing wallet initial metadata')
   const walletMetadata = generateWalletMetadata(walletName, isMnemonicBackedUp)
@@ -283,7 +284,7 @@ export const storeIsNewWallet = async (isNew: boolean) => {
 }
 
 export const initializeWalletFromStorage = async () => {
-  const decryptedMnemonic = await SecureStore.getItemAsync('wallet-mnemonic-v2', defaultSecureStoreConfig)
+  const decryptedMnemonic = await SecureStore.getItemAsync(MNEMONIC_V2, defaultSecureStoreConfig)
 
   if (!decryptedMnemonic) throw new Error('Could not initialize wallet: could not find stored wallet')
 
@@ -295,15 +296,14 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   // Delete old mnemonic records and store mnemonic as Uint8Array in secure store without authentication required
   // like Uniswap does
   const mnemonicUint8Array = keyring.importMnemonicString(deprecatedMnemonic)
-  const mnemonicStringified = JSON.stringify(mnemonicUint8Array)
-  await SecureStore.setItemAsync('wallet-mnemonic-v2', mnemonicStringified, defaultSecureStoreConfig)
+  await SecureStore.setItemAsync(MNEMONIC_V2, JSON.stringify(mnemonicUint8Array), defaultSecureStoreConfig)
   await SecureStore.deleteItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
   await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
   await SecureStore.setItemAsync('is-mnemonic-migrated-to-v2', 'true')
 }
 
 export const dangerouslyExportWalletMnemonic = async (): Promise<string> => {
-  const decryptedMnemonic = await SecureStore.getItemAsync('wallet-mnemonic-v2', defaultSecureStoreConfig)
+  const decryptedMnemonic = await SecureStore.getItemAsync(MNEMONIC_V2, defaultSecureStoreConfig)
 
   if (!decryptedMnemonic) throw new Error('Could not export mnemonic: could not find stored wallet')
 
