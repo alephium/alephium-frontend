@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   Asset,
   calculateAmountWorth,
+  sortAssets,
   tokenIsKnownFungible,
   tokenIsListed,
   tokenIsNonFungible,
@@ -58,23 +59,25 @@ export const useAddressesAssets = (
   return (
     addressesTokens?.map((t) => ({
       addressHash: t.addressHash,
-      assets: t.tokenBalances.map((b) => {
-        const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === b.id)
-        const tokenPrice =
-          tokenMetadata && 'symbol' in tokenMetadata ? tokenPrices.data?.[tokenMetadata?.symbol] : undefined
+      assets: sortAssets(
+        t.tokenBalances.map((b) => {
+          const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === b.id)
+          const tokenPrice =
+            tokenMetadata && 'symbol' in tokenMetadata ? tokenPrices.data?.[tokenMetadata?.symbol] : undefined
 
-        const worth = tokenPrice ? calculateAmountWorth(BigInt(b.balance), tokenPrice) : undefined
-        const decimals = tokenMetadata && 'decimals' in tokenMetadata ? tokenMetadata.decimals : 0
+          const worth = tokenPrice ? calculateAmountWorth(BigInt(b.balance), tokenPrice) : undefined
+          const decimals = tokenMetadata && 'decimals' in tokenMetadata ? tokenMetadata.decimals : 0
 
-        return {
-          ...b,
-          ...tokenMetadata,
-          balance: BigInt(b.balance),
-          lockedBalance: BigInt(b.lockedBalance),
-          worth,
-          decimals
-        }
-      })
+          return {
+            ...b,
+            ...tokenMetadata,
+            balance: BigInt(b.balance),
+            lockedBalance: BigInt(b.lockedBalance),
+            worth,
+            decimals
+          }
+        })
+      )
     })) || []
   )
 }

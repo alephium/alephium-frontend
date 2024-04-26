@@ -24,11 +24,8 @@ import { assetsQueries } from '@/api/assets/assetsQueries'
 import { combineQueriesResult } from '@/api/utils'
 import { Asset, NetworkName } from '@/types'
 
-export const useGetTokenList = (networkName: NetworkName) =>
-  useQuery(assetsQueries.tokenList.getTokenListQuery(networkName))
-
 export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
-  const { data: tokenListResult } = useGetTokenList(networkName)
+  const { data: tokenListResult } = useQuery(assetsQueries.tokenList.getTokenListQuery(networkName))
   const tokensInTokenList = tokenListResult?.tokens.filter((token) => assetIds.includes(token.id)) || []
 
   // TODO: Solve this context issue. Should it go to shared-react?... Should we use the queryClient directly?

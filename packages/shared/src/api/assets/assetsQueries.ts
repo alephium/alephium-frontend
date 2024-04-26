@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenList } from '@alephium/token-list'
+import { NFTCollectionUriMetaData } from '@alephium/web3'
 import { queryOptions } from '@tanstack/react-query'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
@@ -36,8 +37,7 @@ const tokenGenericInfoBatcher = create({
 })
 
 const fungibleTokensMetadataBatcher = create({
-  fetcher: async (ids: string[]) =>
-    await client.explorer.tokens.postTokensFungibleMetadata(ids.filter((id) => id !== '')),
+  fetcher: async (ids: string[]) => await client.explorer.tokens.postTokensFungibleMetadata(ids),
   resolver: keyResolver('id'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
@@ -46,8 +46,17 @@ const fungibleTokensMetadataBatcher = create({
 })
 
 const nftsMetadataBatcher = create({
-  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftMetadata(ids.filter((id) => id !== '')),
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftMetadata(ids),
   resolver: keyResolver('id'),
+  scheduler: windowedFiniteBatchScheduler({
+    windowMs: 10,
+    maxBatchSize: TOKENS_QUERY_LIMIT
+  })
+})
+
+const nftsCollectionsMetadataBatcher = create({
+  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensNftCollectionMetadata(ids),
+  resolver: keyResolver('address'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
     maxBatchSize: TOKENS_QUERY_LIMIT
@@ -112,6 +121,22 @@ export const assetsQueries = {
           return { ...nftsMetadata, ...nftsData }
         },
         staleTime: ONE_HOUR_MS
+      }),
+    getNftCollectionMetadata: (collectionId?: string) =>
+      queryOptions({
+        queryKey: ['nftCollectionMetadata', collectionId],
+        queryFn: async () => await nftsCollectionsMetadataBatcher.fetch(collectionId || ''),
+        staleTime: ONE_DAY_MS,
+        enabled: !!collectionId
+      }),
+    getNftCollectionData: (collectionUri?: string) =>
+      queryOptions({
+        queryKey: ['nftCollectionData', collectionUri],
+        queryFn: () =>
+          exponentialBackoffFetchRetry(collectionUri || '').then((res) => ({
+            data: res.json() as unknown as NFTCollectionUriMetaData
+          })),
+        enabled: !!collectionUri
       })
   }
 }

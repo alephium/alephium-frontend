@@ -18,12 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   AddressHash,
+  assetsQueries,
   localStorageNetworkSettingsMigrated,
   syncTokenCurrentPrices,
-  syncTokenPriceHistories,
-  useGetTokenList
+  syncTokenPriceHistories
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence } from 'framer-motion'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -77,7 +78,7 @@ const App = () => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
 
-  const { data: tokenList } = useGetTokenList(networkName)
+  const { data: tokenList } = useQuery(assetsQueries.tokenList.getTokenListQuery(networkName))
   const tokenListSymbols = tokenList?.tokens.map((token) => token.symbol)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
