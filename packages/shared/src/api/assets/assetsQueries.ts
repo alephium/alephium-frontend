@@ -75,7 +75,7 @@ export const assetsQueries = {
   tokenList: {
     getTokenList: (networkName: NetworkName) =>
       queryOptions({
-        queryKey: ['getTokenList'],
+        queryKey: ['getTokenList', networkName],
         queryFn: async () => {
           if (!(['mainnet', 'testnet', 'devnet'] as NetworkName[]).includes(networkName)) {
             console.error('Invalid network name')

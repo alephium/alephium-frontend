@@ -31,7 +31,7 @@ interface NFTCardProps {
 }
 
 const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
-  const { data: nft } = useQuery(assetsQueries.nfts.getNftMetadataQuery(nftId))
+  const { data: nft } = useQuery(assetsQueries.nfts.getNftMetadata(nftId))
 
   if (!nft) return null
 

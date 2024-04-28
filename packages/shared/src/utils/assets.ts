@@ -38,8 +38,8 @@ export const tokenIsUnknown = (asset: Partial<TokenInfo | NFT>) =>
 export const sortAssets = (assets: Asset[]) =>
   orderBy(
     assets,
-    [(a) => (tokenIsListed(a) ? 0 : 1), (a) => a.worth ?? -1, (a) => a.name?.toLowerCase(), 'id'],
-    ['asc', 'desc', 'asc', 'asc']
+    [(a) => (tokenIsListed(a) ? 1 : 0), (a) => a.worth ?? -1, (a) => a.name?.toLowerCase(), 'id'],
+    ['desc', 'desc', 'asc', 'asc']
   )
 
 export const calculateAssetsData = (

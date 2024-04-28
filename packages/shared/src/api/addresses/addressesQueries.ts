@@ -16,11 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions } from '@tanstack/react-query'
 
 import { client, PAGINATION_PAGE_LIMIT } from '@/api'
-import { TokenBalances } from '@/types'
 
 export const addressesQueries = {
   balances: {
@@ -28,8 +26,8 @@ export const addressesQueries = {
       queryOptions({
         queryKey: ['getAddressTokensBalances', addressHash],
         queryFn: async () => {
-          const addressTotalTokenBalances = [] as TokenBalances[]
-          let addressTokensPageResults = [] as AddressTokenBalance[]
+          const addressTotalTokenBalances = []
+          let addressTokensPageResults = []
           let page = 1
 
           while (page === 1 || addressTokensPageResults.length === PAGINATION_PAGE_LIMIT) {
@@ -38,18 +36,18 @@ export const addressesQueries = {
               page
             })
 
-            addressTotalTokenBalances.push(
-              ...addressTokensPageResults.map((token) => ({
-                ...token,
-                id: token.tokenId
-              }))
-            )
+            addressTotalTokenBalances.push(...addressTokensPageResults)
 
             page += 1
           }
 
           return addressTotalTokenBalances
         }
+      }),
+    getAddressAlphBalances: (addressHash: string) =>
+      queryOptions({
+        queryKey: ['getAddressAlphBalances', addressHash],
+        queryFn: async () => await client.explorer.addresses.getAddressesAddressBalance(addressHash)
       })
   }
 }

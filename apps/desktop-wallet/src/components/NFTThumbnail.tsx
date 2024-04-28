@@ -31,7 +31,7 @@ interface NFTThumbnailProps {
 }
 
 const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
-  const { data: nft } = useQuery(assetsQueries.nfts.getNftMetadataQuery(nftId))
+  const { data: nft } = useQuery(assetsQueries.nfts.getNftMetadata(nftId))
 
   const [error, setError] = useState(false)
 

@@ -269,7 +269,6 @@ const getDefaultAddressState = (address: AddressBase): Address => ({
   transactions: [],
   transactionsPageLoaded: 0,
   allTransactionPagesLoaded: false,
-  tokens: [],
   lastUsed: 0,
   alphBalanceHistory: balanceHistoryAdapter.getInitialState(),
   alphBalanceHistoryInitialized: false

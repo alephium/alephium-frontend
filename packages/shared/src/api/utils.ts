@@ -20,9 +20,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { queryOptions, useQueries, UseQueryResult } from '@tanstack/react-query'
 
-export const combineQueriesResult = <T>(results: UseQueryResult<T, Error>[]) => ({
-  data: results.flatMap((result) => result.data || []),
-  pending: results.flatMap((result) => result.isPending)
+export const combineQueriesResult = <R>(result: UseQueryResult<R, Error>[]) => ({
+  data: result.map((r) => r.data).filter((data): data is R => data !== undefined),
+  pending: result.some((r) => r.isPending)
 })
 
 // TODO: MAKE TYPING WORK.

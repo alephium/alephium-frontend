@@ -21,14 +21,14 @@ import {
   Asset,
   calculateAmountWorth,
   combineQueriesResult,
+  pricesQueries,
   sortAssets,
   tokenIsKnownFungible,
   tokenIsListed,
   tokenIsNonFungible,
   tokenIsUnknown,
   UnknownAsset,
-  useGetAssetsMetadata,
-  useGetPricesQuery
+  useGetAssetsMetadata
 } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
 import { groupBy } from 'lodash'
@@ -48,44 +48,59 @@ export const useAddressesAssets = (
 ): { addressHash: Address['hash']; assets: Asset[] }[] => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
 
-  const { data: addressesTokens } = useQueries({
+  const { data: addressesTokens, pending: tokensBalancesPending } = useQueries({
     queries: addressHashes.map((h) => addressesQueries.balances.getAddressTokensBalances(h)),
     combine: combineQueriesResult
   })
 
-  const addressesAssetsMetadata = useAssetsMetadataForCurrentNetwork(
-    addressesTokens?.flatMap((a) => a.tokenBalances.map((t) => t.id)) || []
-  )
-
-  const tokenPrices = useGetPricesQuery({
-    tokenSymbols: addressesAssetsMetadata.groupedKnown.listed.map((t) => t.symbol),
-    currency
+  const { data: addressesAlphBalances, pending: alphBalancePending } = useQueries({
+    queries: addressHashes.map((h) => addressesQueries.balances.getAddressAlphBalances(h)),
+    combine: combineQueriesResult
   })
 
-  return (
-    addressesTokens?.map((t) => ({
-      addressHash: t.addressHash,
-      assets: sortAssets(
-        t.tokenBalances.map((b) => {
-          const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === b.id)
-          const tokenPrice =
-            tokenMetadata && 'symbol' in tokenMetadata ? tokenPrices.data?.[tokenMetadata?.symbol] : undefined
+  const addressesAssetsMetadata = useAssetsMetadataForCurrentNetwork(
+    addressesTokens?.flatMap((a) => a.map((t) => t.tokenId)) || []
+  )
 
-          const worth = tokenPrice ? calculateAmountWorth(BigInt(b.balance), tokenPrice) : undefined
+  const { data: tokensPrices, pending: tokensPricesPending } = useQueries({
+    queries: addressesAssetsMetadata.groupedKnown.listed.map((t) =>
+      pricesQueries.getAssetPrice({
+        symbol: t.symbol,
+        currency
+      })
+    ),
+    combine: combineQueriesResult
+  })
+
+  if (!addressesTokens || [tokensBalancesPending, alphBalancePending, tokensPricesPending].some((p) => p === true))
+    return []
+
+  return addressHashes.map((addressHash, i) => {
+    const addressTokens = addressesTokens[i]
+
+    return {
+      addressHash,
+      assets: sortAssets(
+        addressTokens.map((t) => {
+          const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === t.tokenId)
+          
+          const tokenPrice = tokenMetadata && 'symbol' in tokenMetadata ? tokensPrices.find((t) => t) : undefined
+
+          const worth = tokenPrice ? calculateAmountWorth(BigInt(t.balance), tokenPrice.price) : undefined
           const decimals = tokenMetadata && 'decimals' in tokenMetadata ? tokenMetadata.decimals : 0
 
           return {
-            ...b,
             ...tokenMetadata,
-            balance: BigInt(b.balance),
-            lockedBalance: BigInt(b.lockedBalance),
+            id: t.tokenId,
+            balance: BigInt(t.balance),
+            lockedBalance: BigInt(t.lockedBalance),
             worth,
             decimals
           }
         })
       )
-    })) || []
-  )
+    }
+  })
 }
 
 export const useAddressesGroupedAssets = (addressHashes: string[]) => {

@@ -25,7 +25,6 @@ import {
   BalanceHistory
 } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
-import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'
 
 import { TimeInMs } from '@/types/numbers'
@@ -49,7 +48,6 @@ export type Address = AddressBase &
     transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
     transactionsPageLoaded: number
     allTransactionPagesLoaded: boolean
-    tokens: AddressTokenBalance[]
     lastUsed: TimeInMs
     alphBalanceHistory: EntityState<BalanceHistory>
     alphBalanceHistoryInitialized: boolean
