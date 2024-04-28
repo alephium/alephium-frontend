@@ -83,8 +83,11 @@ export const useAddressesAssets = (
       assets: sortAssets(
         addressTokens.map((t) => {
           const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === t.tokenId)
-          
-          const tokenPrice = tokenMetadata && 'symbol' in tokenMetadata ? tokensPrices.find((t) => t) : undefined
+
+          const tokenPrice =
+            tokenMetadata && tokenIsListed(tokenMetadata)
+              ? tokensPrices.find((p) => p?.symbol === tokenMetadata.symbol)
+              : undefined
 
           const worth = tokenPrice ? calculateAmountWorth(BigInt(t.balance), tokenPrice.price) : undefined
           const decimals = tokenMetadata && 'decimals' in tokenMetadata ? tokenMetadata.decimals : 0

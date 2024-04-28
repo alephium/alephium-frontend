@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { queryOptions } from '@tanstack/react-query'
 import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
-import { client, TOKENS_QUERY_LIMIT } from '@/api'
+import { client, TOKENS_QUERY_LIMIT, TOKENS_WITH_PRICE } from '@/api'
 import { Currency } from '@/types'
 
 const tokenPricesBatcher = create({
