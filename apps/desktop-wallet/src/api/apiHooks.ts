@@ -165,7 +165,7 @@ export const useAddressesFlattenListedTokens = (addressHashes: string[] = []) =>
     useAddressesAssets(addressHashes)
       .flatMap((a) => a.assets)
       .filter((t) => tokenIsListed(t))
-  )
+  ) as Asset[]
 
 export const useAddressesFlattenUnknownTokens = (addressHashes: string[] = []) =>
   deduplicateAssets(
@@ -180,7 +180,7 @@ export const useAddressesFlattenNfts = (addressHashes: string[] = []) =>
     useAddressesAssets(addressHashes)
       .flatMap((a) => a.assets)
       .filter((t) => tokenIsNonFungible(t))
-  )
+  ) as NFT[]
 
 export const useAddressesWorth = (addressHashes: string[]) =>
   useAddressesAssets(addressHashes)?.map((a) => ({

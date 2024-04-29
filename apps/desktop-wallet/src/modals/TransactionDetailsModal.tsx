@@ -22,6 +22,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import { useAddressesFlattenNfts } from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
 import Amount from '@/components/Amount'
@@ -54,8 +55,9 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const [selectedAddressHash, setSelectedAddressHash] = useState<AddressHash>()
   const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
-  const allNFTs = useAppSelector((s) => s.nfts.entities)
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
+  const allNFTs = useAddressesFlattenNfts(internalAddressHashes)
+
   const { assets, direction, lockTime, infoType } = useTransactionInfo(transaction)
   const { label, Icon, iconColor } = useTransactionUI({
     infoType,
@@ -72,8 +74,8 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
       : openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
 
   const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
-  const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs[token.id])
-  const nftsData = nfts.map((nft) => allNFTs[nft.id] as NFT)
+  const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs.find((nft) => nft.id === token.id))
+  const nftsData = nfts.flatMap((nft) => allNFTs.find((n) => nft.id === n.id) || [])
 
   return (
     <SideModal onClose={onClose} title={t('Transaction details')}>

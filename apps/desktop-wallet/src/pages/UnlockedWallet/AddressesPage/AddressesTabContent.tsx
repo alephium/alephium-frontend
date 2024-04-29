@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesFlattenKnownFungibleTokens } from '@/api/apiHooks'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
 import Toggle from '@/components/Inputs/Toggle'
@@ -40,7 +41,7 @@ interface AddressesTabContentProps {
 
 const AddressesTabContent = ({ tabsRowHeight }: AddressesTabContentProps) => {
   const addresses = useAppSelector(selectAllAddresses)
-  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
+  const fungibleTokens = useAddressesFlattenKnownFungibleTokens(addresses.map((address) => address.hash))
   const { t } = useTranslation()
 
   const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)

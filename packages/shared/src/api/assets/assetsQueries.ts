@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TokenList } from '@alephium/token-list'
+import { ALPH, TokenList } from '@alephium/token-list'
 import { NFTCollectionUriMetaData } from '@alephium/web3'
 import { queryOptions } from '@tanstack/react-query'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
@@ -68,7 +68,7 @@ export const assetsQueries = {
     getTokenGenericInfo: (tokenId: string) =>
       queryOptions({
         queryKey: ['getTokenGenericInfo', tokenId],
-        queryFn: async () => await tokenGenericInfoBatcher.fetch(tokenId),
+        queryFn: async () => tokenId === ALPH.id ? { token: ALPH.id, stdInterfaceId: 'fungible'} : await tokenGenericInfoBatcher.fetch(tokenId),
         staleTime: ONE_DAY_MS
       })
   },
