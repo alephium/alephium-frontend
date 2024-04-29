@@ -68,7 +68,7 @@ export const CURRENCIES: Record<Currency, CurrencyData> = {
   CAD: {
     name: 'Canadian Dollar',
     ticker: 'CAD',
-    symbol: '$'
+    symbol: 'CA$'
   },
   AUD: {
     name: 'Australian Dollar',
