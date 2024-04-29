@@ -200,7 +200,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <ScreenSectionTitle>Security</ScreenSectionTitle>
             {!deviceHasEnrolledBiometrics && (
               <AppText color="secondary" style={{ marginBottom: 20, paddingHorizontal: 10 }}>
-                Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint of Face ID in
+                Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in
                 your device's settings.
               </AppText>
             )}
