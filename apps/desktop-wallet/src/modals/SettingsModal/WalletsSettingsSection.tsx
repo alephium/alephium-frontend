@@ -60,6 +60,8 @@ const WalletsSettingsSection = () => {
     posthog.capture('Deleted wallet')
   }
 
+  const handleLockCurrentWalletClick = () => lockWallet('settings')
+
   return (
     <>
       <Section align="flex-start" role="table">
@@ -98,7 +100,7 @@ const WalletsSettingsSection = () => {
             </CurrentWalletBox>
           </InfoBox>
           <ActionButtons>
-            <Button role="secondary" onClick={() => lockWallet('settings')}>
+            <Button role="secondary" onClick={handleLockCurrentWalletClick}>
               {t('Lock current wallet')}
             </Button>
 
