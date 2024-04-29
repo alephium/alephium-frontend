@@ -63,14 +63,11 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const addresses = useAppSelector((s) => selectAddresses(s, addressHashes))
   const network = useAppSelector((s) => s.network)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
-  const isBalancesInitialized = useAppSelector((s) => s.addresses.balancesStatus === 'initialized')
 
   const selectAddressesHaveHistoricBalances = useMemo(makeSelectAddressesHaveHistoricBalances, [])
   const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAppSelector(selectAlphPrice)
-  const arePricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
@@ -93,7 +90,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
   const isOnline = network.status === 'online'
   const isHoveringChart = !!hoveredDataPointWorth
-  const showBalancesSkeletonLoader = !isBalancesInitialized || (!isBalancesInitialized && isLoadingBalances)
+  const showBalancesSkeletonLoader = false // TODO: Manage loading
 
   return (
     <UnlockedWalletPanelStyled className={className}>
@@ -106,7 +103,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                   ? dayjs(hoveredDataPointDate).format('DD/MM/YYYY') + ' (ALPH only)'
                   : t('Value today')}
               </Today>
-              {!arePricesInitialized || showBalancesSkeletonLoader ? (
+              {showBalancesSkeletonLoader ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
@@ -114,8 +111,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
                   <FiatDeltaPercentage>
-                    {!arePricesInitialized ||
-                    stateUninitialized ||
+                    {stateUninitialized ||
                     !haveHistoricBalancesLoaded ||
                     (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
                       <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
@@ -128,7 +124,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  !arePricesInitialized || stateUninitialized || !haveHistoricBalancesLoaded ? (
+                  stateUninitialized || !haveHistoricBalancesLoaded ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"

@@ -189,23 +189,21 @@ export const useAddressesWorth = (addressHashes: string[]) =>
   }))
 
 export const useAddressesTotalWorth = (addressHashes: string[] = []) =>
-  useAddressesAssets(addressHashes)?.reduce(
-    (acc, address) => acc + aggregateAssetsWorth(address.assets),
-    0
-  )
+  useAddressesAssets(addressHashes)?.reduce((acc, address) => acc + aggregateAssetsWorth(address.assets), 0)
 
-const aggregateAssetsWorth = (assets: (Asset | NFT)[]) => {
-  return assets.reduce((acc, a) => tokenIsFungible(a) ? acc + (a.worth || 0) : acc, 0)
-}
+const aggregateAssetsWorth = (assets: (Asset | NFT)[]) =>
+  assets.reduce((acc, a) => (tokenIsFungible(a) ? acc + (a.worth || 0) : acc), 0)
 
 const deduplicateAssets = (assets: (Asset | NFT)[]) => {
-  const uniqueAssetsMap = assets.reduce<{ [key: string]: (Asset | NFT) }>((acc, token) => {
+  const uniqueAssetsMap = assets.reduce<{ [key: string]: Asset | NFT }>((acc, token) => {
     const { id } = token
     if (acc[id]) {
       if (tokenIsFungible(token)) {
         const existingToken = acc[id] as Asset
 
-        existingToken.balance = existingToken.balance ? BigInt(existingToken.balance) + BigInt(token.balance) : BigInt(token.balance)
+        existingToken.balance = existingToken.balance
+          ? BigInt(existingToken.balance) + BigInt(token.balance)
+          : BigInt(token.balance)
 
         existingToken.lockedBalance = existingToken.lockedBalance
           ? BigInt(existingToken.lockedBalance) + BigInt(token.lockedBalance)
@@ -221,7 +219,6 @@ const deduplicateAssets = (assets: (Asset | NFT)[]) => {
 
         token.balance = BigInt(token.balance)
         token.lockedBalance = BigInt(token.lockedBalance)
-        token.worth = token.worth
       }
     }
     return acc
